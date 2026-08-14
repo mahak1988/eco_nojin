@@ -1,0 +1,16 @@
+# Optional heavy/integration dependencies — install only when the
+# corresponding feature is enabled (see docs/02_hydroma_engine.md).
+# torch>=2.4          # deep-learning extras
+# celery>=5.4         # async task queue
+# redis>=5.0          # broker/cache
+# mlflow>=2.16        # experiment tracking
+# xgboost>=2.1
+# lightgbm>=4.5
+# geopandas>=1.1      # vector GIS
+# rasterio>=1.4       # raster I/O
+# xarray>=2025.1
+# netcdf4>=1.7
+# zarr>=3.0
+# psycopg[binary]>=3.2
+# geoalchemy2>=0.15
+# duckdb>=1.5         # analytical engine (used by analytics scripts)

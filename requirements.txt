@@ -1,0 +1,29 @@
+# Eco Nojin / HyDroMa — pinned runtime requirements
+# Derived from the tested environment (D:\eco_nojin\.venv, Python 3.11).
+# Policy (docs/12_30_year_strategy): compatible-release bounds, never
+# open-ended; major bumps go through the quarterly upgrade window.
+#
+# Core API
+fastapi>=0.141,<1.0
+uvicorn[standard]>=0.52,<1.0
+pydantic>=2.13,<3.0
+python-dotenv>=1.2,<2.0
+python-multipart>=0.0.32,<1.0
+
+# Database
+sqlalchemy>=2.0,<3.0
+
+# Scientific stack (verified against numba 0.67 / numpy 2.4)
+numpy>=2.4,<3.0
+numba>=0.67,<1.0
+pandas>=3.0,<4.0
+scipy>=1.17,<2.0
+scikit-learn>=1.5,<2.0
+
+# HTTP and integrations
+requests>=2.34,<3.0
+httpx>=0.28,<1.0
+
+# Testing
+pytest>=9.0,<10.0
+pytest-timeout>=2.4,<3.0

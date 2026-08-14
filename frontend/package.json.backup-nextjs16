@@ -1,0 +1,27 @@
+{
+  "name": "eco-nojin-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "i18next": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-i18next": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "26.2.0",
+    "@types/react": "19.2.18",
+    "typescript": "7.0.2"
+  },
+  "packageManager": "pnpm@11.4.0",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
