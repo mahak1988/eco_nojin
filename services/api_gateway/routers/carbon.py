@@ -1,208 +1,190 @@
-"""API endpoints for Carbon Credit system."""
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field
-from datetime import datetime, timezone
-from typing import Optional
+"""Carbon module router - scientific carbon sequestration."""
 
-from engine.hydroma.carbon.calculator import (
-    CarbonProjectType, CarbonProject,
-    calculate_carbon_sequestration, compare_project_types,
-    register_project, get_project, list_projects,
-    SEQUESTRATION_RATES, CARBON_PRICES
+from fastapi import APIRouter, Depends
+from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
+
+from database.config import get_db
+from database.models import CarbonProject, User
+from services.api_gateway.auth import require_user
+from services.api_gateway.routers.carbon_engine import (
+    STANDARDS,
+    WOOD_DENSITIES,
+    farquhar_photosynthesis,
+    get_all_calculations,
+    quantum_efficiency,
+    rothc_carbon_pools,
+    verify_project,
 )
 
-router = APIRouter(prefix="/api/v1/carbon", tags=["Carbon Credits"])
+router = APIRouter(prefix="/api/v1/carbon", tags=["carbon"])
 
 
-# --- Request Models ---
+# ============================================================================
+# Pydantic Models
+# ============================================================================
+class ProjectCalculateRequest(BaseModel):
+    name: str = Field(min_length=3)
+    area_hectares: float = Field(gt=0, le=100000)
+    species: str = "tropical_moist"
+    trees_per_ha: int = Field(1000, ge=100, le=10000)
+    avg_diameter_cm: float = Field(20, gt=0, le=200)
+    avg_height_m: float = Field(12, gt=0, le=100)
+    project_years: int = Field(30, ge=5, le=100)
+    latitude: float = 0.0
+    longitude: float = 0.0
+    soil_carbon_tha: float = 40.0
+    mean_temperature_C: float = 25.0
 
-class CarbonCalculationRequest(BaseModel):
-    project_type: str = Field(..., description="Project type")
-    area_ha: float = Field(..., gt=0, le=100000)
-    duration_years: int = Field(10, ge=1, le=100)
-    region: str = Field("temperate", description="tropical, temperate, or arid")
 
-
-class ProjectRegistrationRequest(BaseModel):
-    name: str = Field(..., min_length=1, max_length=200)
+class ProjectOut(BaseModel):
+    id: int
+    project_id: str
+    name: str
     project_type: str
-    area_ha: float = Field(..., gt=0)
-    duration_years: int = Field(10, ge=1, le=100)
-    location: str = ""
-    lat: float = 0.0
-    lon: float = 0.0
+    area_hectares: float
+    status: str
+    credits_issued: float
 
 
-# --- Endpoints ---
-
-@router.get("/project-types")
-def list_project_types():
-    """List all available carbon project types with rates."""
-    return {
-        "project_types": [
-            {
-                "type": pt.value,
-                "annual_rate_tonnes_ha": rates["rate"],
-                "min_rate": rates["min"],
-                "max_rate": rates["max"],
-                "permanence_years": rates["permanence_years"],
-            }
-            for pt, rates in SEQUESTRATION_RATES.items()
-        ],
-        "count": len(SEQUESTRATION_RATES),
-    }
-
-
-@router.get("/prices")
-def get_carbon_prices():
-    """Get current carbon credit prices by standard."""
-    return {
-        "prices_usd_per_tonne": CARBON_PRICES,
-        "last_updated": "2025-01-01",
-        "market": "voluntary",
-    }
-
-
+# ============================================================================
+# Endpoints
+# ============================================================================
 @router.post("/calculate")
-def calculate_carbon(payload: CarbonCalculationRequest):
-    """Calculate carbon sequestration for a project."""
-    try:
-        project_type = CarbonProjectType(payload.project_type)
-    except ValueError:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Unknown project type: {payload.project_type}. "
-                   f"Available: {[pt.value for pt in CarbonProjectType]}"
-        )
-    
-    return calculate_carbon_sequestration(
-        project_type=project_type,
-        area_ha=payload.area_ha,
-        duration_years=payload.duration_years,
-        region=payload.region,
+def calculate_project(req: ProjectCalculateRequest):
+    """
+    Calculate carbon sequestration for a project using scientific models.
+
+    Models used:
+    - Chave et al. 2014 (biomass allometry)
+    - Farquhar-von Caemmerer-Berry (photosynthesis)
+    - RothC-26.3 (soil carbon)
+    - FMO quantum coherence
+    - Evapotranspiration cooling
+    """
+    return get_all_calculations(
+        D_cm=req.avg_diameter_cm,
+        H_m=req.avg_height_m,
+        species=req.species,
+        area_ha=req.area_hectares,
+        trees_per_ha=req.trees_per_ha,
+        project_years=req.project_years,
+        soil_C_tha=req.soil_carbon_tha,
+        T_C=req.mean_temperature_C,
     )
 
 
-@router.post("/compare")
-def compare_carbon_projects(payload: CarbonCalculationRequest):
-    """Compare all carbon project types for given parameters."""
-    return compare_project_types(
-        area_ha=payload.area_ha,
-        duration_years=payload.duration_years,
+@router.post("/register")
+def register_project(
+    req: ProjectCalculateRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_user),
+):
+    """Register a carbon project after calculation."""
+    # Calculate first
+    calc = get_all_calculations(
+        D_cm=req.avg_diameter_cm,
+        H_m=req.avg_height_m,
+        species=req.species,
+        area_ha=req.area_hectares,
+        trees_per_ha=req.trees_per_ha,
+        project_years=req.project_years,
+        soil_C_tha=req.soil_carbon_tha,
+        T_C=req.mean_temperature_C,
     )
 
+    total_co2 = calc["project_summary"]["project_total"]["total_co2_tons"]
+    verification = verify_project(total_co2)
 
-@router.post("/projects")
-def register_carbon_project(payload: ProjectRegistrationRequest):
-    """Register a new carbon project."""
-    try:
-        project_type = CarbonProjectType(payload.project_type)
-    except ValueError:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Unknown project type: {payload.project_type}"
-        )
-    
+    import uuid
+
+    project_id = f"ECO-{uuid.uuid4().hex[:8].upper()}"
+
     project = CarbonProject(
-        name=payload.name,
-        project_type=project_type,
-        area_ha=payload.area_ha,
-        duration_years=payload.duration_years,
-        location=payload.location,
-        lat=payload.lat,
-        lon=payload.lon,
+        project_id=project_id,
+        name=req.name,
+        user_id=user.id,
+        project_type="afforestation",
+        area_hectares=req.area_hectares,
+        status="registered",
+        credits_issued=verification["net_credits"],
     )
-    
-    # Calculate estimates
-    calc = calculate_carbon_sequestration(
-        project_type=project_type,
-        area_ha=payload.area_ha,
-        duration_years=payload.duration_years,
-    )
-    
-    project.estimated_carbon_tonnes = calc["total_carbon_tonnes"]
-    project.annual_rate_tonnes = calc["annual_rate_tonnes"]
-    project.methodology = calc["methodology"]
-    project.status = "submitted"
-    
-    project_id = register_project(project)
-    
+    db.add(project)
+    db.commit()
+    db.refresh(project)
+
     return {
+        "success": True,
         "project_id": project_id,
-        "name": project.name,
-        "status": project.status,
-        "estimated_carbon_tonnes": project.estimated_carbon_tonnes,
-        "annual_rate_tonnes": project.annual_rate_tonnes,
-        "methodology": project.methodology,
+        "db_id": project.id,
+        "credits": verification["net_credits"],
+        "verification": verification,
     }
 
 
 @router.get("/projects")
-def list_carbon_projects(status: Optional[str] = None):
-    """List all registered carbon projects."""
-    projects = list_projects(status)
-    
-    return {
-        "projects": [
-            {
-                "id": p.id,
-                "name": p.name,
-                "project_type": p.project_type.value,
-                "area_ha": p.area_ha,
-                "status": p.status,
-                "estimated_carbon_tonnes": p.estimated_carbon_tonnes,
-            }
-            for p in projects
-        ],
-        "count": len(projects),
-    }
+def list_projects(user: User = Depends(require_user), db: Session = Depends(get_db)):
+    """List user's carbon projects."""
+    projects = (
+        db.query(CarbonProject)
+        .filter(CarbonProject.user_id == user.id)
+        .order_by(CarbonProject.registered_at.desc())
+        .all()
+    )
+    return [
+        {
+            "id": p.id,
+            "project_id": p.project_id,
+            "name": p.name,
+            "project_type": p.project_type,
+            "area_hectares": p.area_hectares,
+            "status": p.status,
+            "credits_issued": p.credits_issued,
+            "registered_at": p.registered_at.isoformat() if p.registered_at else None,
+        }
+        for p in projects
+    ]
 
 
-@router.get("/projects/{project_id}")
-def get_carbon_project(project_id: str):
-    """Get carbon project details."""
-    project = get_project(project_id)
-    
-    if not project:
-        raise HTTPException(status_code=404, detail="Project not found")
-    
-    return {
-        "id": project.id,
-        "name": project.name,
-        "project_type": project.project_type.value,
-        "area_ha": project.area_ha,
-        "duration_years": project.duration_years,
-        "location": project.location,
-        "status": project.status,
-        "estimated_carbon_tonnes": project.estimated_carbon_tonnes,
-        "annual_rate_tonnes": project.annual_rate_tonnes,
-        "methodology": project.methodology,
-        "created_at": project.created_at.isoformat(),
-    }
+@router.get("/standards")
+def list_standards():
+    """List available verification standards."""
+    return STANDARDS
 
 
-@router.post("/projects/{project_id}/verify")
-def verify_carbon_project(project_id: str, verifier: str = "Eco Nojin Internal"):
-    """Submit project for verification."""
-    project = get_project(project_id)
-    
-    if not project:
-        raise HTTPException(status_code=404, detail="Project not found")
-    
-    if project.status != "submitted":
-        raise HTTPException(
-            status_code=400,
-            detail=f"Project cannot be verified from status: {project.status}"
-        )
-    
-    # Simplified verification for research mode
-    project.status = "verified"
-    project.verifier = verifier
-    project.verification_date = datetime.now(timezone.utc)
-    
-    return {
-        "project_id": project_id,
-        "status": project.status,
-        "verifier": project.verifier,
-        "verification_date": project.verification_date.isoformat(),
-    }
+@router.get("/species")
+def list_species():
+    """List available tree species with wood densities."""
+    return WOOD_DENSITIES
+
+
+@router.post("/photosynthesis")
+def calc_photosynthesis(
+    PAR_umol: float = 1500,
+    T_leaf_C: float = 25.0,
+    CO2_ppm: float = 420.0,
+    Vcmax25: float = 80.0,
+):
+    """Calculate photosynthesis using Farquhar model."""
+    return farquhar_photosynthesis(PAR_umol, T_leaf_C, CO2_ppm, Vcmax25)
+
+
+@router.get("/quantum")
+def calc_quantum(T_C: float = 25.0):
+    """Calculate quantum coherence efficiency in FMO complex."""
+    return quantum_efficiency(T_C)
+
+
+@router.post("/soil-carbon")
+def calc_soil_carbon(
+    initial_C_tha: float = 40.0,
+    annual_input_tha: float = 3.0,
+    clay_pct: float = 30.0,
+    temperature_C: float = 15.0,
+    rainfall_mm: float = 500.0,
+    years: int = 50,
+):
+    """Simulate soil carbon using RothC-26.3 model."""
+    return rothc_carbon_pools(
+        initial_C_tha, annual_input_tha, 1.44, clay_pct, temperature_C, rainfall_mm, years
+    )

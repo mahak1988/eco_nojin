@@ -1,0 +1,36 @@
+"""
+Data models for ledger module.
+
+This module contains Pydantic models and dataclasses
+for Transaction ledger service
+"""
+from typing import Optional, List, Dict, Any
+from datetime import datetime
+from pydantic import BaseModel, Field
+
+
+class BaseLedger(BaseModel):
+    """Base model for ledger."""
+    
+    id: Optional[int] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    class Config:
+        """Pydantic configuration."""
+        from_attributes = True
+
+
+class LedgerCreate(BaseModel):
+    """Model for creating ledger."""
+    pass
+
+
+class LedgerRead(BaseModel):
+    """Model for reading ledger."""
+    pass
+
+
+class LedgerUpdate(BaseModel):
+    """Model for updating ledger."""
+    pass

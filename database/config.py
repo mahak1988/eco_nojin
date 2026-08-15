@@ -1,4 +1,4 @@
-﻿"""Database configuration — single source of truth (Phase 0).
+"""Database configuration — single source of truth (Phase 0).
 
 Unified SQLAlchemy setup driven by ``engine.hydroma.config.settings``.
 Fixes Phase-0 finding: two parallel SQLite databases

@@ -1,28 +1,28 @@
 """Product catalog management for the marketplace."""
-from typing import Dict, List, Optional
-from datetime import datetime, timedelta
-import uuid
 
-from .models import Product, Producer, ProductCategory, CertificationType
+from datetime import datetime, timedelta
+
+from .models import CertificationType, Producer, Product, ProductCategory
 
 
 class ProductCatalog:
     """In-memory product catalog for research mode."""
-    
+
     def __init__(self):
-        self._products: Dict[str, Product] = {}
-        self._producers: Dict[str, Producer] = {}
+        self._products: dict[str, Product] = {}
+        self._producers: dict[str, Producer] = {}
         self._initialize_demo_data()
-    
+
     def _initialize_demo_data(self) -> None:
         """Initialize with demo products for testing."""
-        
+
         # Demo producers
         producers = [
             Producer(
                 name="Golestan Organic Farm",
                 location="Golestan Province, Iran",
-                lat=36.8, lon=54.4,
+                lat=36.8,
+                lon=54.4,
                 producer_type="cooperative",
                 verification_status="verified",
                 rating=4.8,
@@ -32,17 +32,22 @@ class ProductCatalog:
             Producer(
                 name="Qashqai Nomadic Cooperative",
                 location="Fars Province, Iran",
-                lat=29.6, lon=52.5,
+                lat=29.6,
+                lon=52.5,
                 producer_type="nomadic",
                 verification_status="verified",
                 rating=4.9,
                 total_sales=89,
-                certifications=[CertificationType.NOMADIC_PRODUCT, CertificationType.LOCAL_HERITAGE],
+                certifications=[
+                    CertificationType.NOMADIC_PRODUCT,
+                    CertificationType.LOCAL_HERITAGE,
+                ],
             ),
             Producer(
                 name="Khorasan Saffron Collective",
                 location="Khorasan Province, Iran",
-                lat=36.3, lon=59.6,
+                lat=36.3,
+                lon=59.6,
                 producer_type="cooperative",
                 verification_status="verified",
                 rating=4.7,
@@ -50,10 +55,10 @@ class ProductCatalog:
                 certifications=[CertificationType.ORGANIC, CertificationType.WOMEN_PRODUCED],
             ),
         ]
-        
+
         for p in producers:
             self._producers[p.id] = p
-        
+
         # Demo products
         products = [
             Product(
@@ -137,73 +142,69 @@ class ProductCatalog:
                 batch_number="GLS-2025-002",
             ),
         ]
-        
+
         for p in products:
             self._products[p.id] = p
-    
+
     def add_product(self, product: Product) -> str:
         """Add a product to the catalog."""
         self._products[product.id] = product
         return product.id
-    
-    def get_product(self, product_id: str) -> Optional[Product]:
+
+    def get_product(self, product_id: str) -> Product | None:
         """Get product by ID."""
         return self._products.get(product_id)
-    
+
     def list_products(
         self,
-        category: Optional[ProductCategory] = None,
+        category: ProductCategory | None = None,
         organic_only: bool = False,
-        min_price: Optional[float] = None,
-        max_price: Optional[float] = None,
+        min_price: float | None = None,
+        max_price: float | None = None,
         limit: int = 50,
-    ) -> List[Product]:
+    ) -> list[Product]:
         """List products with optional filters."""
         results = list(self._products.values())
-        
+
         if category:
             results = [p for p in results if p.category == category]
-        
+
         if organic_only:
             results = [p for p in results if p.organic_certified]
-        
+
         if min_price is not None:
             results = [p for p in results if p.price_per_kg >= min_price]
-        
+
         if max_price is not None:
             results = [p for p in results if p.price_per_kg <= max_price]
-        
+
         # Only active products
         results = [p for p in results if p.is_active]
-        
+
         return results[:limit]
-    
-    def search_products(self, query: str) -> List[Product]:
+
+    def search_products(self, query: str) -> list[Product]:
         """Search products by name or description."""
         query_lower = query.lower()
         return [
-            p for p in self._products.values()
-            if p.is_active and (
-                query_lower in p.name.lower() or
-                query_lower in p.description.lower()
-            )
+            p
+            for p in self._products.values()
+            if p.is_active
+            and (query_lower in p.name.lower() or query_lower in p.description.lower())
         ]
-    
-    def get_producer(self, producer_id: str) -> Optional[Producer]:
+
+    def get_producer(self, producer_id: str) -> Producer | None:
         """Get producer by ID."""
         return self._producers.get(producer_id)
-    
-    def list_producers(self) -> List[Producer]:
+
+    def list_producers(self) -> list[Producer]:
         """List all producers."""
         return list(self._producers.values())
-    
-    def get_products_by_producer(self, producer_id: str) -> List[Product]:
+
+    def get_products_by_producer(self, producer_id: str) -> list[Product]:
         """Get all products from a specific producer."""
-        return [
-            p for p in self._products.values()
-            if p.producer_id == producer_id
-        ]
-    
+        return [p for p in self._products.values() if p.producer_id == producer_id]
+
     def update_quantity(self, product_id: str, quantity_change: float) -> bool:
         """Update product quantity (positive or negative)."""
         product = self._products.get(product_id)
@@ -216,7 +217,7 @@ class ProductCatalog:
 
 
 # Singleton instance
-_catalog: Optional[ProductCatalog] = None
+_catalog: ProductCatalog | None = None
 
 
 def get_catalog() -> ProductCatalog:

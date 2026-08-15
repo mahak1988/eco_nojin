@@ -1,5 +1,7 @@
 """Integration tests for satellite API endpoints."""
+
 from fastapi.testclient import TestClient
+
 from services.api_gateway.main import app
 
 client = TestClient(app)
@@ -21,10 +23,10 @@ def test_analyze_farm_field():
         "lat": 36.8,
         "lon": 54.4,
     }
-    
+
     response = client.post("/api/v1/satellite/analyze", json=payload)
     assert response.status_code == 200
-    
+
     data = response.json()
     assert "ndvi" in data
     assert "recommendation" in data
@@ -38,7 +40,7 @@ def test_analyze_invalid_coords():
         "lat": 100.0,  # Invalid: > 90
         "lon": 54.4,
     }
-    
+
     response = client.post("/api/v1/satellite/analyze", json=payload)
     assert response.status_code == 422
 
@@ -46,14 +48,15 @@ def test_analyze_invalid_coords():
 def test_analyze_with_date():
     """Test analysis with specific date."""
     from datetime import date, timedelta
+
     target_date = (date.today() - timedelta(days=10)).isoformat()
-    
+
     payload = {
         "lat": 36.8,
         "lon": 54.4,
         "analysis_date": target_date,
     }
-    
+
     response = client.post("/api/v1/satellite/analyze", json=payload)
     assert response.status_code == 200
     data = response.json()

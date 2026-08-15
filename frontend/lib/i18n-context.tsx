@@ -1,94 +1,89 @@
 'use client';
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { localesData } from './locales-data';
+import { createContext, useContext, useEffect, useState } from 'react';
+import en from '../locales/en.json';
+import fa from '../locales/fa.json';
+import ar from '../locales/ar.json';
+import fr from '../locales/fr.json';
+import es from '../locales/es.json';
+import pt from '../locales/pt.json';
+import ru from '../locales/ru.json';
+import hi from '../locales/hi.json';
+import zh from '../locales/zh.json';
+import ur from '../locales/ur.json';
+import bn from '../locales/bn.json';
+import de from '../locales/de.json';
+import it from '../locales/it.json';
+import ms from '../locales/ms.json';
 
-type Locale = string;
-type Direction = 'ltr' | 'rtl';
+const locales: Record<string, any> = { en, fa, ar, fr, es, pt, ru, hi, zh, ur, bn, de, it, ms };
+
+// Font mapping per language
+export const fonts = {
+  en: "'Inter', 'Segoe UI', sans-serif",
+  fa: "'Vazirmatn', 'Tahoma', sans-serif",
+  ar: "'Cairo', 'Tahoma', sans-serif",
+  ur: "'Noto Nastaliq Urdu', 'Tahoma', sans-serif",
+  hi: "'Noto Sans Devanagari', sans-serif",
+  zh: "'Noto Sans SC', sans-serif",
+  bn: "'Noto Sans Bengali', sans-serif",
+  ru: "'Inter', sans-serif",
+  fr: "'Inter', sans-serif",
+  es: "'Inter', sans-serif",
+  pt: "'Inter', sans-serif",
+  de: "'Inter', sans-serif",
+  it: "'Inter', sans-serif",
+  ms: "'Inter', sans-serif",
+};
+
+const rtlLanguages = ['fa', 'ar', 'ur'];
 
 interface I18nContextType {
-  locale: Locale;
-  direction: Direction;
-  isRTL: boolean;
-  setLocale: (locale: Locale) => void;
   t: (key: string) => string;
+  locale: string;
+  setLocale: (l: string) => void;
+  direction: 'ltr' | 'rtl';
+  font: string;
 }
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
-/** RTL languages: Persian, Arabic, Urdu (mirrors lib/i18n.ts directions). */
-const RTL_LOCALES: ReadonlySet<string> = new Set(['fa', 'ar', 'ur']);
+export function I18nProvider({ children }: { children: React.ReactNode }) {
+  const [locale, setLocaleState] = useState('en');
 
-/** Resolve the writing direction for a locale code. */
-export function getDirection(locale: Locale): Direction {
-  if (RTL_LOCALES.has(locale)) return 'rtl';
-  const declared = localesData[locale]?.direction;
-  return declared === 'rtl' ? 'rtl' : 'ltr';
-}
-
-export function I18nProvider({ children }: { children: ReactNode }) {
-  // Start with 'en' for SSR consistency (no hydration mismatch).
-  const [locale, setLocaleState] = useState<Locale>('en');
-  const [isMounted, setIsMounted] = useState(false);
-
-  // Restore saved locale after hydration.
   useEffect(() => {
-    setIsMounted(true);
-    const saved = localStorage.getItem('eco-nojin-locale');
-    if (saved && localesData[saved]) {
-      setLocaleState(saved);
-    }
+    const saved = localStorage.getItem('locale');
+    if (saved && locales[saved]) setLocaleState(saved);
   }, []);
 
-  // Keep <html lang> and <html dir> in sync with the active locale.
-  // Runs after mount; SSR keeps the layout defaults (lang="en" dir="ltr").
+  const setLocale = (l: string) => {
+    setLocaleState(l);
+    localStorage.setItem('locale', l);
+  };
+
+  const t = (key: string): string => {
+    const msg = locales[locale]?.messages?.[key] || locales['en']?.messages?.[key] || key;
+    return msg;
+  };
+
+  const direction = rtlLanguages.includes(locale) ? 'rtl' : 'ltr';
+  const font = fonts[locale as keyof typeof fonts] || fonts.en;
+
   useEffect(() => {
-    if (typeof document === 'undefined') return;
-    document.documentElement.lang = locale;
-    document.documentElement.dir = getDirection(locale);
-  }, [locale]);
+    document.documentElement.setAttribute('dir', direction);
+    document.documentElement.setAttribute('lang', locale);
+    document.body.style.fontFamily = font;
+  }, [locale, direction, font]);
 
-  const setLocale = useCallback((newLocale: Locale) => {
-    if (!localesData[newLocale]) return;
-    setLocaleState(newLocale);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('eco-nojin-locale', newLocale);
-    }
-  }, []);
-
-  // Lookup: active locale first, then English, then the raw key as fallback
-  // so a missing key never renders as an empty string.
-  const t = useCallback(
-    (key: string): string => {
-      const current = localesData[locale]?.messages?.[key];
-      if (current) return current;
-      const fallback = localesData['en']?.messages?.[key];
-      return fallback || key;
-    },
-    [locale]
-  );
-
-  // After mount, use the real locale; before that, keep SSR-safe ltr/en.
-  const currentDirection: Direction = isMounted
-    ? getDirection(locale)
-    : 'ltr';
-
+  const exposedLocale = locale;
   return (
-    <I18nContext.Provider
-      value={{
-        locale,
-        direction: currentDirection,
-        isRTL: currentDirection === 'rtl',
-        setLocale,
-        t,
-      }}
-    >
+    <I18nContext.Provider value={{ t, locale, setLocale, direction, font }}>
       {children}
     </I18nContext.Provider>
   );
 }
 
 export function useI18n() {
-  const context = useContext(I18nContext);
-  if (!context) throw new Error('useI18n must be used within I18nProvider');
-  return context;
+  const ctx = useContext(I18nContext);
+  if (!ctx) throw new Error('useI18n must be used within I18nProvider');
+  return ctx;
 }

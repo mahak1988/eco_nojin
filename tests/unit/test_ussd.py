@@ -1,14 +1,9 @@
 """Tests for USSD/SMS Gateway."""
-import pytest
+
 from fastapi.testclient import TestClient
 
-from engine.hydroma.ussd.engine import (
-    UssdRequest, GatewayType, Language, get_ussd_handler,
-    MESSAGES
-)
-from engine.hydroma.ussd.sms_parser import (
-    SmsParser, SmsCommandType, get_sms_parser
-)
+from engine.hydroma.ussd.engine import Language, UssdRequest, get_ussd_handler
+from engine.hydroma.ussd.sms_parser import SmsCommandType, SmsParser, get_sms_parser
 from services.api_gateway.main import app
 
 client = TestClient(app)
@@ -227,13 +222,16 @@ class TestUssdApiEndpoints:
 
     def test_ussd_endpoint(self):
         """Verify USSD endpoint works."""
-        response = client.post("/api/v1/ussd/ussd", json={
-            "session_id": "test-api-1",
-            "service_code": "*384*73#",
-            "phone_number": "+989123456789",
-            "text": "",
-            "language": "en",
-        })
+        response = client.post(
+            "/api/v1/ussd/ussd",
+            json={
+                "session_id": "test-api-1",
+                "service_code": "*384*73#",
+                "phone_number": "+989123456789",
+                "text": "",
+                "language": "en",
+            },
+        )
 
         assert response.status_code == 200
         data = response.json()
@@ -242,10 +240,13 @@ class TestUssdApiEndpoints:
 
     def test_sms_endpoint(self):
         """Verify SMS endpoint works."""
-        response = client.post("/api/v1/ussd/sms", json={
-            "phone_number": "+989123456789",
-            "message": "PRICE wheat",
-        })
+        response = client.post(
+            "/api/v1/ussd/sms",
+            json={
+                "phone_number": "+989123456789",
+                "message": "PRICE wheat",
+            },
+        )
 
         assert response.status_code == 200
         data = response.json()

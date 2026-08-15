@@ -1,1 +1,1 @@
-from .analyzer import get_analyzer, SatelliteAnalyzer
+from .analyzer import SatelliteAnalyzer, get_analyzer

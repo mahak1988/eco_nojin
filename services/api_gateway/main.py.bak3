@@ -1,0 +1,173 @@
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+"""Main entry point for the Eco Nojin API Gateway (Phase 0).
+
+Changes vs 1.5.0:
+- CORS origins from settings (fixes W-003: no wildcard + credentials)
+- rate limiting, security headers, request-id middleware
+- duplicate router imports removed
+- health endpoint reports db status
+"""
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from database.config import init_db
+from engine.hydroma.config.settings import get_settings
+
+from .routers import (
+    ai,
+    ai_chat,
+    analytics,
+    auth,
+    benchmark,
+    blockchain,
+    carbon,
+    ecowallet,
+    farms,
+    marketplace,
+    materials,
+    satellite,
+    scenarios,
+    soil,
+    sync,
+    ussd,
+    voice,
+    watershed,
+)
+from .security import (
+    RateLimitMiddleware,
+    RequestIDMiddleware,
+    SecurityHeadersMiddleware,
+)
+
+# Research bootstrap: create tables if missing (production uses alembic).
+try:
+    _TABLES = init_db()
+except Exception as _exc:  # pragma: no cover - startup resilience
+    _TABLES = []
+    _DB_ERROR = str(_exc)
+else:
+    _DB_ERROR = ""
+
+app = FastAPI(
+    title="Eco Nojin API Gateway",
+    description="Scientific engine API for ecosystem restoration and smart agriculture.",
+    version=_settings.api_version,
+    docs_url="/docs",
+    redoc_url="/redoc",
+)
+
+
+# ============================================================================
+# CORS Middleware - MUST be first middleware added
+# ============================================================================
+from engine.hydroma.config.settings import get_settings as _get_settings
+_settings = _get_settings()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_settings.cors_origins if _settings.cors_origins else ['*'],
+    allow_credentials=True,
+    allow_methods=['*'],  # Allow ALL methods including OPTIONS
+    allow_headers=['*'],
+    expose_headers=['*'],
+    max_age=3600,
+)
+
+
+# CORS Middleware - Configure from settings
+# --- CORS: strict origins from settings (W-003 fixed) ---
+# --- Security / operational middleware (order matters: rate limit outermost) ---
+app.add_middleware(RequestIDMiddleware)
+app.add_middleware(SecurityHeadersMiddleware)
+app.add_middleware(RateLimitMiddleware)
+
+# --- Routers ---
+
+# ============================================================================
+# CORS Middleware (MUST be added first to work properly)
+# ============================================================================
+app.include_router(analytics.router)
+app.include_router(ai_chat.router)
+app.include_router(auth.router)
+app.include_router(farms.router)
+app.include_router(soil.router)
+app.include_router(materials.router)
+app.include_router(ai.router)
+app.include_router(satellite.router)
+app.include_router(scenarios.router)
+app.include_router(marketplace.router)
+app.include_router(carbon.router)
+app.include_router(watershed.router)
+app.include_router(benchmark.router)
+app.include_router(sync.router)
+app.include_router(ussd.router)
+app.include_router(voice.router)
+app.include_router(blockchain.router)
+app.include_router(ecowallet.router)
+
+
+@app.get("/api/v1/health", tags=["System"])
+def health_check():
+    """System health check with comprehensive status."""
+    return {
+        "status": "degraded" if _DB_ERROR else "operational",
+        "engine": "HyDroMa",
+        "mode": "research",
+        "version": _settings.api_version,
+        "environment": _settings.environment,
+        "database": {
+            "ok": not _DB_ERROR,
+            "error": _DB_ERROR or None,
+            "tables": _TABLES,
+        },
+        "security": {
+            "rate_limiting": _settings.rate_limit_enabled,
+            "cors_origins": _settings.cors_origins,
+            "auth": "jwt+rbac",
+        },
+        "modules": [
+            "soil",
+            "materials",
+            "ai_assistant",
+            "satellite",
+            "scenarios",
+            "marketplace",
+            "carbon",
+            "watershed",
+            "benchmark",
+            "sync",
+            "ussd_sms",
+            "voice_ivr",
+            "blockchain",
+            "ecowallet",
+        ],
+        "inclusive_access": {
+            "web_app": True,
+            "pwa_offline": True,
+            "ussd_feature_phone": True,
+            "sms_commands": True,
+            "voice_ivr": True,
+            "languages": ["en", "fa", "ar"],
+        },
+    }
+
+
+@app.get("/api/v1/version", tags=["System"])
+def version_info():
+    """Detailed version information."""
+    return {
+        "platform": "Eco Nojin",
+        "engine": "HyDroMa (Hydrology & Drought Monitoring)",
+        "api_version": _settings.api_version,
+        "frontend_version": "1.2.0",
+        "modules_count": 14,
+        "languages_supported": 14,
+        "access_channels": ["web", "pwa", "ussd", "sms", "voice"],
+        "environment": _settings.environment,
+        "security": {
+            "jwt": True,
+            "rbac": True,
+            "rate_limiting": _settings.rate_limit_enabled,
+        },
+    }

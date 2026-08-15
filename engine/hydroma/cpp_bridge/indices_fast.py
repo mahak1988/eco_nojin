@@ -10,22 +10,26 @@ Scientific references:
 - NDWI: McFeeters 1996
 - NBR: Key & Benson 2006
 """
+
 import numpy as np
-from typing import Optional
 
 # Try to import Numba; fallback gracefully
 try:
     from numba import njit, prange
+
     HAS_NUMBA = True
 except ImportError:
     HAS_NUMBA = False
+
     # Mock decorator for fallback
     def njit(*args, **kwargs):
         def decorator(func):
             return func
+
         if len(args) == 1 and callable(args[0]):
             return args[0]
         return decorator
+
     prange = range
 
 
@@ -34,7 +38,7 @@ def _ndvi_fast(red: np.ndarray, nir: np.ndarray) -> np.ndarray:
     """Numba-optimized NDVI calculation with parallel execution."""
     rows, cols = red.shape
     result = np.empty((rows, cols), dtype=np.float64)
-    
+
     for i in prange(rows):
         for j in range(cols):
             r = red[i, j]
@@ -51,7 +55,7 @@ def _ndvi_fast(red: np.ndarray, nir: np.ndarray) -> np.ndarray:
                     result[i, j] = -1.0
                 else:
                     result[i, j] = val
-    
+
     return result
 
 
@@ -60,7 +64,7 @@ def _evi_fast(red: np.ndarray, nir: np.ndarray, blue: np.ndarray) -> np.ndarray:
     """Numba-optimized EVI calculation."""
     rows, cols = red.shape
     result = np.empty((rows, cols), dtype=np.float64)
-    
+
     for i in prange(rows):
         for j in range(cols):
             r = red[i, j]
@@ -77,7 +81,7 @@ def _evi_fast(red: np.ndarray, nir: np.ndarray, blue: np.ndarray) -> np.ndarray:
                     result[i, j] = -1.0
                 else:
                     result[i, j] = val
-    
+
     return result
 
 
@@ -86,7 +90,7 @@ def _savi_fast(red: np.ndarray, nir: np.ndarray, L: float) -> np.ndarray:
     """Numba-optimized SAVI calculation."""
     rows, cols = red.shape
     result = np.empty((rows, cols), dtype=np.float64)
-    
+
     for i in prange(rows):
         for j in range(cols):
             r = red[i, j]
@@ -102,7 +106,7 @@ def _savi_fast(red: np.ndarray, nir: np.ndarray, L: float) -> np.ndarray:
                     result[i, j] = -1.0
                 else:
                     result[i, j] = val
-    
+
     return result
 
 
@@ -111,7 +115,7 @@ def _nbr_fast(nir: np.ndarray, swir: np.ndarray) -> np.ndarray:
     """Numba-optimized NBR calculation."""
     rows, cols = nir.shape
     result = np.empty((rows, cols), dtype=np.float64)
-    
+
     for i in prange(rows):
         for j in range(cols):
             n = nir[i, j]
@@ -127,7 +131,7 @@ def _nbr_fast(nir: np.ndarray, swir: np.ndarray) -> np.ndarray:
                     result[i, j] = -1.0
                 else:
                     result[i, j] = val
-    
+
     return result
 
 
@@ -135,9 +139,10 @@ def _nbr_fast(nir: np.ndarray, swir: np.ndarray) -> np.ndarray:
 # Public API - uses Numba if available, NumPy otherwise
 # ============================================================================
 
+
 def ndvi_fast(red: np.ndarray, nir: np.ndarray) -> np.ndarray:
     """Calculate NDVI with Numba acceleration.
-    
+
     Falls back to NumPy if Numba is unavailable.
     Input arrays should be 2D float64.
     """

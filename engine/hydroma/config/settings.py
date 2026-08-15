@@ -1,124 +1,286 @@
-﻿"""HyDroMa engine configuration — single source of truth (Phase 0).
-
-Uses pydantic-settings so every runtime value can be overridden via
-environment variables or a `.env` file. Never hard-code secrets.
-
-References:
-- 12-factor app configuration (https://12factor.net/config)
 """
-
-from functools import lru_cache
-
-from pydantic import field_validator, model_validator
+Eco Nojin - Application Settings
+Safe, robust configuration using pydantic-settings.
+"""
+from typing import List, Optional
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-# Default development secret — MUST be overridden in production.
-# `is_secure_secret` and the production guard enforce this.
-_DEV_SECRET = "dev-in…e-me"
 
 
 class Settings(BaseSettings):
-    """Runtime configuration for EcoNojin / HyDroMa.
+    """Application settings - loaded from .env and environment."""
 
-    Environment variables take precedence over `.env` file values,
-    which take precedence over these defaults.
-    """
+    # =====================================================================
+    # APPLICATION
+    # =====================================================================
+    app_name: str = "Eco Nojin"
+    app_env: str = "development"
+    app_debug: bool = True
+    app_host: str = "127.0.0.1"
+    app_port: int = 8000
+    app_log_level: str = "INFO"
+    app_secret_key: str = "change-me-in-production"
+    api_version: str = "0.1.0"
+    project_name: str = "Eco Nojin"
+    environment: str = "development"
+    debug: bool = True
+
+    # =====================================================================
+    # DATABASE
+    # =====================================================================
+    database_url: str = "sqlite:///./econojin.db"
+    engine_name: str = "hydroma"
+
+    # =====================================================================
+    # JWT / AUTH
+    # =====================================================================
+    secret_key: str = "dev-secret-key"
+    jwt_secret: str = "dev-jwt-secret"
+    jwt_algorithm: str = "HS256"
+    access_token_expire_minutes: int = 10080
+    refresh_token_expire_minutes: int = 43200
+    jwt_expiration_minutes: int = 10080
+    jwt_refresh_expiration_days: int = 30
+
+    # =====================================================================
+    # RBAC
+    # =====================================================================
+    default_user_role: str = "farmer"
+    allowed_roles: str = "farmer,advisor,admin,researcher,organization,tourist"
+
+    # =====================================================================
+    # CORS
+    # =====================================================================
+    cors_origins: List[str] = ["http://localhost:3000", "http://localhost:8000", "http://127.0.0.1:3000"]
+    allow_credentials: bool = True
+    cors_allow_credentials: bool = True
+
+    # =====================================================================
+    # RATE LIMITING
+    # =====================================================================
+    rate_limit_enabled: bool = False
+    rate_limit_requests: int = 60
+    rate_limit_window_seconds: int = 60
+    rate_limit_per_minute: int = 60
+    rate_limit_burst: int = 10
+
+    # =====================================================================
+    # EXTERNAL SERVICES
+    # =====================================================================
+    redis_url: str = ""
+    satellite_api_key: str = ""
+    nasa_power_base_url: str = "https://power.larc.nasa.gov/api"
+    open_meteo_base_url: str = "https://api.open-meteo.com/v1"
+    planetary_computer_api_key: str = ""
+    sentinel_hub_client_id: str = ""
+    sentinel_hub_client_secret: str = ""
+    openweathermap_api_key: str = ""
+
+    # =====================================================================
+    # AI
+    # =====================================================================
+    openai_api_key: str = ""
+    anthropic_api_key: str = ""
+    ai_provider: str = "openai"
+
+    # =====================================================================
+    # STORAGE
+    # =====================================================================
+    upload_dir: str = "./uploads"
+    max_upload_size_mb: int = 10
+    avatar_max_size_kb: int = 500
+
+    # =====================================================================
+    # EMAIL
+    # =====================================================================
+    smtp_host: str = "smtp.gmail.com"
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_from_email: str = "noreply@econojin.com"
+    smtp_from_name: str = "Eco Nojin"
+
+    # =====================================================================
+    # BLOCKCHAIN
+    # =====================================================================
+    blockchain_mode: str = "simulation"
+    polygon_rpc_url: str = "https://polygon-rpc.com"
+    blockchain_private_key: str = ""
+    eco_token_contract_address: str = ""
+    enable_blockchain: bool = False
+
+    # =====================================================================
+    # I18N
+    # =====================================================================
+    default_language: str = "fa"
+    supported_languages: str = "fa,en,ar,tr,ur,ps"
+    rtl_languages: str = "fa,ar,ur,ps,he"
+
+    # =====================================================================
+    # LOGGING
+    # =====================================================================
+    log_level: str = "INFO"
+    log_file: str = "logs/econojin.log"
+    log_max_bytes: int = 10485760
+    log_backup_count: int = 5
+    sentry_dsn: str = ""
+
+    # =====================================================================
+    # FEATURE FLAGS
+    # =====================================================================
+    enable_satellite_real: bool = True
+    enable_ai_assistant: bool = True
+    enable_marketplace: bool = True
+
+    # =====================================================================
+    # SECURITY
+    # =====================================================================
+    api_key_header: str = "X-API-Key"
+    telco_webhook_key: str = ""
+
+    # =====================================================================
+    # HELPER PROPERTIES
+    # =====================================================================
+    @property
+    def cors_origins_list(self) -> List[str]:
+        """Get CORS origins as a list."""
+        if not self.cors_origins:
+            return []
+        if isinstance(self.cors_origins, list):
+            return self.cors_origins
+        # Try JSON
+        try:
+            import json
+            parsed = json.loads(self.cors_origins)
+            if isinstance(parsed, list):
+                return [str(s).strip() for s in parsed if str(s).strip()]
+        except (json.JSONDecodeError, ValueError, TypeError):
+            pass
+        # Fall back to CSV
+        return [s.strip() for s in str(self.cors_origins).split(",") if s.strip()]
+
+    @property
+    def allowed_roles_list(self) -> List[str]:
+        """Get allowed roles as list."""
+        if not self.allowed_roles:
+            return []
+        return [r.strip() for r in str(self.allowed_roles).split(",") if r.strip()]
+
+    @property
+    def supported_languages_list(self) -> List[str]:
+        """Get supported languages as list."""
+        if not self.supported_languages:
+            return []
+        return [l.strip() for l in str(self.supported_languages).split(",") if l.strip()]
+
+    @property
+    def rtl_languages_list(self) -> List[str]:
+        """Get RTL languages as list."""
+        if not self.rtl_languages:
+            return []
+        return [l.strip() for l in str(self.rtl_languages).split(",") if l.strip()]
+
+    @property
+    def is_production(self) -> bool:
+        """Check if running in production environment.
+        
+        Returns:
+            bool: True if environment is 'production'
+        """
+        env = (self.app_env or self.environment or "").lower()
+        return env in ("production", "prod")
+
 
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",
+        protected_namespaces=(),
     )
 
-    # --- Platform ---
-    project_name: str = "Eco Nojin"
-    engine_name: str = "HyDroMa"
-    environment: str = "development"  # development | testing | production
-    api_version: str = "1.5.0"
-    debug: bool = False
-    log_level: str = "INFO"
-
-    # --- Security ---
-    secret_key: str = _DEV_SECRET
-    jwt_algorithm: str = "HS256"
-    access_token_expire_minutes: int = 60 * 24 * 7      # 7 days
-    refresh_token_expire_minutes: int = 60 * 24 * 30    # 30 days
-    api_key_header: str = "X-API-Key"
-    # Shared secret for telco webhooks (USSD/SMS/Voice). Empty = disabled.
-    telco_webhook_key: str = ""
-
-    # --- CORS (Phase 0 fix for W-003) ---
-    cors_origins: list[str] = [
-        "http://127.0.0.1:3000",
-        "http://localhost:3000",
-    ]
-    allow_credentials: bool = True
-
-    # --- Rate limiting (Phase 0) ---
-    rate_limit_enabled: bool = True
-    rate_limit_requests: int = 100      # requests per window per client
-    rate_limit_window_seconds: int = 60
-
-    # --- Database ---
-    # Default: SQLite next to the repo (research mode).
-    # Production: postgresql+psycopg://user:pass@host:5432/eco_nojin
-    database_url: str = "sqlite:///./data/econojin.db"
-    redis_url: str = "redis://localhost:6379/0"
-
-    # --- External integrations ---
-    # Sentinel-2 / Planetary Computer (empty = simulated data, W-001 staged)
-    satellite_api_key: str = ""
-    # NASA POWER (no key required, but endpoint overridable)
-    nasa_power_base_url: str = "https://power.larc.nasa.gov/api"
-
-    @field_validator("environment")
-    @classmethod
-    def _validate_environment(cls, v: str) -> str:
-        v = v.strip().lower()
-        if v not in {"development", "testing", "production"}:
-            raise ValueError(f"Invalid environment: {v!r}")
-        return v
-
-    @field_validator("cors_origins")
-    @classmethod
-    def _validate_cors(cls, v: list[str]) -> list[str]:
-        cleaned = [o.rstrip("/") for o in v if o.strip()]
-        if not cleaned:
-            raise ValueError("cors_origins must not be empty")
-        return cleaned
-
-    @model_validator(mode="after")
-    def _production_guards(self) -> "Settings":
-        """Hard security guards, enforced at construction time."""
-        if self.environment == "production":
-            if not self.is_secure_secret:
-                raise RuntimeError(
-                    "Refusing to start in production with the default dev secret. "
-                    "Set SECRET_KEY in .env."
-                )
-            if self.cors_allow_all and self.allow_credentials:
-                raise RuntimeError(
-                    "Refusing to start in production with allow_origins=['*'] and "
-                    "allow_credentials=True (CORS W-003). Set CORS_ORIGINS explicitly."
-                )
-        return self
-
-    @property
-    def is_production(self) -> bool:
-        return self.environment == "production"
 
     @property
     def is_secure_secret(self) -> bool:
-        """True when secret_key is not the known dev placeholder."""
-        return self.secret_key != _DEV_SECRET
+        """Check if the secret key is secure (not a default/development key).
+        
+        Returns:
+            bool: True if secret is secure (long, non-default, production-appropriate)
+        """
+        insecure_defaults = {
+            "dev-secret-key-change-in-production",
+            "dev-secret-key",
+            "changeme",
+            "change-me-in-production",
+            "secret",
+            "your-secret-key",
+            "a" * 64,  # 64-char test key
+            "k" * 64,
+            "demo123",
+        }
+        
+        secret = self.secret_key or self.jwt_secret or ""
+        
+        # Must be at least 32 chars
+        if len(secret) < 32:
+            return False
+        
+        # Must not be a known insecure default
+        if secret in insecure_defaults:
+            return False
+        
+        # In production, must be even stronger (64+ chars)
+        if self.is_production and len(secret) < 64:
+            return False
+        
+        return True
 
     @property
     def cors_allow_all(self) -> bool:
-        return "*" in self.cors_origins
+        """Check if CORS allows all origins.
+        
+        Returns:
+            bool: True if cors_origins contains '*'
+        """
+        origins = self.cors_origins_list
+        return "*" in origins or origins == ["*"]
+
+    @model_validator(mode="after")
+    def validate_production_settings(self) -> "Settings":
+        """Validate production configuration safety.
+        
+        In production environment, enforce:
+        - Secret key must be secure (not default, 64+ chars)
+        - CORS cannot be wildcard with credentials
+        
+        Raises:
+            RuntimeError: If production configuration is insecure
+        """
+        if not self.is_production:
+            return self
+        
+        # Check secret security
+        if not self.is_secure_secret:
+            raise RuntimeError(
+                "Production requires a strong, non-default secret key "
+                "(64+ characters, not a known default)"
+            )
+        
+        # Check CORS configuration
+        if self.cors_allow_all and self.allow_credentials:
+            raise RuntimeError(
+                "CORS: Cannot use wildcard origins with allow_credentials=True "
+                "in production"
+            )
+        
+        return self
+
+_settings_cache = None
 
 
-@lru_cache
 def get_settings() -> Settings:
-    """Return cached settings (fast, env-read once per process)."""
-    return Settings()
+    """Get cached settings instance."""
+    global _settings_cache
+    if _settings_cache is None:
+        _settings_cache = Settings()
+    return _settings_cache

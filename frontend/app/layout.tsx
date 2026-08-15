@@ -1,34 +1,25 @@
-import '../styles/globals.css';
-import { I18nProvider } from '../lib/i18n-context';
-import LocaleAttributeSync from '../components/LocaleAttributeSync';
-import type { Metadata, Viewport } from 'next';
+﻿import type { Metadata, Viewport } from "next";
+import { I18nProvider } from "../lib/i18n-context";
+import { FontLanguageProvider } from '../components/FontLanguageProvider';
+
+import { ThemeProvider } from "../lib/theme-context";
+import { AuthProvider } from "../lib/auth-context";
+import { FarmProvider } from "../lib/farm-context";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: 'Eco Nojin | HyDroMa',
-  description: 'Intelligent platform for ecosystem restoration and smart agriculture',
-  manifest: '/manifest.json',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'default',
-    title: 'Eco Nojin',
-  },
-  icons: {
-    icon: [
-      { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-    ],
-  },
+  title: "Eco Nojin - Intelligent Platform for Ecosystem Restoration",
+  description: "Democratizing access to agricultural science for 2.5 billion farmers",
 };
 
 export const viewport: Viewport = {
-  themeColor: '#15803d',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  maximumScale: 5,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f9fafb' },
+    { media: '(prefers-color-scheme: dark)', color: '#0a0f1c' },
+  ],
 };
 
 export default function RootLayout({
@@ -36,24 +27,24 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // lang/dir below are SSR defaults. After hydration, LocaleAttributeSync
-  // (client) sets them from the persisted/selected locale — see
-  // lib/i18n-context.tsx. suppressHydrationWarning prevents React from
-  // flagging the runtime attribute change.
   return (
-    <html lang="en" dir="ltr" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#15803d" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Eco Nojin" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/icon.svg" />
       </head>
       <body>
-        <I18nProvider>
-          <LocaleAttributeSync />
-          {children}
-        </I18nProvider>
+        <FontLanguageProvider>
+        <ThemeProvider>
+          <AuthProvider>
+          <FarmProvider>
+          <I18nProvider>
+            {children}
+          </I18nProvider>
+          </FarmProvider>
+        </AuthProvider>
+        </ThemeProvider>
+              </FontLanguageProvider>
       </body>
     </html>
   );

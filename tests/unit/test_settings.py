@@ -1,4 +1,4 @@
-﻿"""Phase 0 tests: pydantic-settings configuration."""
+"""Phase 0 tests: pydantic-settings configuration."""
 
 import pytest
 from pydantic import ValidationError

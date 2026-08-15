@@ -5,8 +5,8 @@ Uses random sampling to quantify uncertainty in:
 - Crop yield predictions
 - Economic outcomes
 """
+
 import numpy as np
-from typing import Dict, Optional
 
 
 def monte_carlo_yield(
@@ -16,10 +16,10 @@ def monte_carlo_yield(
     mean_temp: float,
     temp_std: float,
     n_simulations: int = 1000,
-    seed: Optional[int] = None,
+    seed: int | None = None,
 ) -> dict:
     """Run Monte Carlo simulation for crop yield uncertainty.
-    
+
     Args:
         crop_type: Crop to simulate
         mean_water: Mean available water [mm]
@@ -28,22 +28,22 @@ def monte_carlo_yield(
         temp_std: Standard deviation of temperature [°C]
         n_simulations: Number of Monte Carlo iterations
         seed: Random seed for reproducibility
-    
+
     Returns:
         Statistics of yield distribution
     """
     if seed is not None:
         np.random.seed(seed)
-    
+
     from .crop_scenarios import simulate_crop_yield
-    
+
     yields = []
-    
+
     for _ in range(n_simulations):
         # Sample water and temperature
         water = max(50, np.random.normal(mean_water, water_std))
         temp = np.random.normal(mean_temp, temp_std)
-        
+
         try:
             result = simulate_crop_yield(
                 crop_type=crop_type,
@@ -53,12 +53,12 @@ def monte_carlo_yield(
             yields.append(result["actual_yield_kg_ha"])
         except Exception:
             continue
-    
+
     if not yields:
         return {"error": "All simulations failed"}
-    
+
     yields = np.array(yields)
-    
+
     return {
         "n_successful": len(yields),
         "n_simulations": n_simulations,
@@ -81,33 +81,33 @@ def monte_carlo_climate(
     ssp_scenario: str,
     time_horizon: int,
     n_simulations: int = 500,
-    seed: Optional[int] = None,
+    seed: int | None = None,
 ) -> dict:
     """Run Monte Carlo on climate projections.
-    
+
     Samples around the central projection to quantify uncertainty.
     """
     if seed is not None:
         np.random.seed(seed)
-    
+
     from .climate_scenarios import get_climate_projection
-    
+
     projection = get_climate_projection(ssp_scenario, time_horizon)
-    
+
     temps = []
     precips = []
-    
+
     # Uncertainty: ±0.5°C for 2030, ±1.5°C for 2100
     temp_uncertainty = 0.5 + (time_horizon - 2030) * 0.015
     precip_uncertainty = 5 + (time_horizon - 2030) * 0.2
-    
+
     for _ in range(n_simulations):
         temp_change = np.random.normal(projection.delta_temp, temp_uncertainty)
         precip_change = np.random.normal(projection.delta_precip, precip_uncertainty)
-        
+
         temps.append(baseline_temp + temp_change)
         precips.append(baseline_precip * (1 + precip_change / 100))
-    
+
     return {
         "scenario": ssp_scenario,
         "time_horizon": time_horizon,

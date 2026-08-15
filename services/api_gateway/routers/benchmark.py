@@ -1,10 +1,12 @@
 """API endpoints for performance benchmarks."""
+
+import time
+
+import numpy as np
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
-import time
-import numpy as np
 
-from engine.hydroma.cpp_bridge.indices_fast import ndvi_fast, is_numba_available
+from engine.hydroma.cpp_bridge.indices_fast import is_numba_available, ndvi_fast
 
 router = APIRouter(prefix="/api/v1/benchmark", tags=["Performance Benchmark"])
 
@@ -24,7 +26,7 @@ def run_ndvi_benchmark(payload: BenchmarkRequest):
     nir = np.random.uniform(1000, 4000, (size, size))
 
     def ndvi_numpy(red, nir):
-        with np.errstate(divide='ignore', invalid='ignore'):
+        with np.errstate(divide="ignore", invalid="ignore"):
             result = (nir - red) / (nir + red)
         result = np.nan_to_num(result, nan=0.0)
         return np.clip(result, -1.0, 1.0)

@@ -1,4 +1,4 @@
-﻿"""Database access for the HyDroMa engine (Phase 0 unification).
+"""Database access for the HyDroMa engine (Phase 0 unification).
 
 Delegates to ``database.config`` so the whole project shares one
 engine / Base / session. Backward compatible: existing imports

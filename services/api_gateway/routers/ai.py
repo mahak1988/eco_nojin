@@ -1,6 +1,8 @@
 """API endpoints for the AI knowledge assistant."""
+
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
+
 from engine.hydroma.ai_assistant.rag_engine import get_engine
 
 router = APIRouter(prefix="/api/v1/ai", tags=["AI Assistant"])
@@ -8,11 +10,13 @@ router = APIRouter(prefix="/api/v1/ai", tags=["AI Assistant"])
 
 class QueryRequest(BaseModel):
     """User query for the knowledge assistant."""
+
     question: str = Field(..., min_length=3, max_length=1000)
 
 
 class SourceResponse(BaseModel):
     """Reference source for the answer."""
+
     id: str
     title: str
     source: str
@@ -22,6 +26,7 @@ class SourceResponse(BaseModel):
 
 class QueryResponse(BaseModel):
     """Response from the knowledge assistant."""
+
     query: str
     answer: str
     sources: list[SourceResponse]

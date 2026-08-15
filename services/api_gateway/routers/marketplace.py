@@ -1,17 +1,20 @@
 """API endpoints for Marketplace."""
+
+import contextlib
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-from typing import Optional
 
+from engine.hydroma.marketplace.models import OrderStatus, ProductCategory
+from engine.hydroma.marketplace.order_management import get_order_manager
 from engine.hydroma.marketplace.product_catalog import get_catalog
 from engine.hydroma.marketplace.traceability import get_traceability
-from engine.hydroma.marketplace.order_management import get_order_manager
-from engine.hydroma.marketplace.models import ProductCategory, OrderStatus
 
 router = APIRouter(prefix="/api/v1/marketplace", tags=["Marketplace"])
 
 
 # --- Request Models ---
+
 
 class OrderRequest(BaseModel):
     product_id: str
@@ -21,24 +24,23 @@ class OrderRequest(BaseModel):
 
 # --- Product Endpoints ---
 
+
 @router.get("/products")
 def list_products(
-    category: Optional[str] = None,
+    category: str | None = None,
     organic_only: bool = False,
-    min_price: Optional[float] = None,
-    max_price: Optional[float] = None,
+    min_price: float | None = None,
+    max_price: float | None = None,
     limit: int = 50,
 ):
     """List marketplace products with filters."""
     catalog = get_catalog()
-    
+
     cat_enum = None
     if category:
-        try:
+        with contextlib.suppress(ValueError):
             cat_enum = ProductCategory(category)
-        except ValueError:
-            pass
-    
+
     products = catalog.list_products(
         category=cat_enum,
         organic_only=organic_only,
@@ -46,7 +48,7 @@ def list_products(
         max_price=max_price,
         limit=limit,
     )
-    
+
     return {
         "products": [
             {
@@ -71,13 +73,10 @@ def search_products(q: str):
     """Search products by keyword."""
     catalog = get_catalog()
     results = catalog.search_products(q)
-    
+
     return {
         "query": q,
-        "results": [
-            {"id": p.id, "name": p.name, "price_per_kg": p.price_per_kg}
-            for p in results
-        ],
+        "results": [{"id": p.id, "name": p.name, "price_per_kg": p.price_per_kg} for p in results],
         "count": len(results),
     }
 
@@ -87,10 +86,10 @@ def get_product(product_id: str):
     """Get product details."""
     catalog = get_catalog()
     product = catalog.get_product(product_id)
-    
+
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    
+
     return {
         "id": product.id,
         "name": product.name,
@@ -115,13 +114,13 @@ def get_product_trace(product_id: str):
     """Get full traceability history for a product."""
     catalog = get_catalog()
     product = catalog.get_product(product_id)
-    
+
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    
+
     trace_system = get_traceability()
     trace = trace_system.get_trace(product.traceability_code)
-    
+
     return {
         "product_id": product_id,
         "traceability_code": product.traceability_code,
@@ -141,12 +140,13 @@ def get_product_trace(product_id: str):
 
 # --- Producer Endpoints ---
 
+
 @router.get("/producers")
 def list_producers():
     """List all producers."""
     catalog = get_catalog()
     producers = catalog.list_producers()
-    
+
     return {
         "producers": [
             {
@@ -166,18 +166,19 @@ def list_producers():
 
 # --- Order Endpoints ---
 
+
 @router.post("/orders")
 def create_order(payload: OrderRequest):
     """Create a new order."""
     manager = get_order_manager()
-    
+
     try:
         order = manager.create_order(
             product_id=payload.product_id,
             buyer_name=payload.buyer_name,
             quantity_kg=payload.quantity_kg,
         )
-        
+
         return {
             "order_id": order.id,
             "product_name": order.product_name,
@@ -191,19 +192,17 @@ def create_order(payload: OrderRequest):
 
 
 @router.get("/orders")
-def list_orders(status: Optional[str] = None):
+def list_orders(status: str | None = None):
     """List orders."""
     manager = get_order_manager()
-    
+
     status_enum = None
     if status:
-        try:
+        with contextlib.suppress(ValueError):
             status_enum = OrderStatus(status)
-        except ValueError:
-            pass
-    
+
     orders = manager.list_orders(status=status_enum)
-    
+
     return {
         "orders": [
             {
@@ -235,10 +234,10 @@ def marketplace_stats():
     """Get marketplace statistics."""
     manager = get_order_manager()
     catalog = get_catalog()
-    
+
     products = catalog.list_products()
     producers = catalog.list_producers()
-    
+
     return {
         "total_products": len(products),
         "total_producers": len(producers),

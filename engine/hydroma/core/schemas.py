@@ -1,6 +1,9 @@
 """Pydantic schemas for data validation and API contracts."""
+
 from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, Field
+
 
 class SoilProfileBase(BaseModel):
     name: str = Field(..., max_length=100)
@@ -9,13 +12,16 @@ class SoilProfileBase(BaseModel):
     ec: float | None = Field(None, ge=0, description="Electrical Conductivity (dS/m)")
     organic_matter: float | None = Field(None, ge=0, le=100)
 
+
 class SoilProfileCreate(SoilProfileBase):
     pass
+
 
 class SoilProfileRead(SoilProfileBase):
     id: int
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
 
 class PlantBase(BaseModel):
     scientific_name: str = Field(..., max_length=150)
@@ -25,13 +31,16 @@ class PlantBase(BaseModel):
     drought_tolerance: str | None = None
     salinity_tolerance: str | None = None
 
+
 class PlantCreate(PlantBase):
     pass
+
 
 class PlantRead(PlantBase):
     id: int
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
 
 class MaterialBase(BaseModel):
     name: str = Field(..., max_length=100)
@@ -39,8 +48,10 @@ class MaterialBase(BaseModel):
     c_n_ratio: float | None = Field(None, ge=0)
     ph: float | None = Field(None, ge=0, le=14)
 
+
 class MaterialCreate(MaterialBase):
     pass
+
 
 class MaterialRead(MaterialBase):
     id: int

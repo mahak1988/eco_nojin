@@ -1,67 +1,141 @@
-# ============================================================
-# EcoNojin / HyDroMa — .gitignore
-# Phase 0 infrastructure: never commit secrets, caches, or env
-# ============================================================
-
-# --- Environment & secrets ---
-.env
-.env.*
-!.env.example
-
-# --- Python ---
+﻿# ============================================================================
+# Python
+# ============================================================================
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-*.egg-info/
-*.egg
-dist/
+.Python
 build/
+develop-eggs/
+dist/
+downloads/
+eggs/
 .eggs/
-*.db
-*.sqlite3
-*.duckdb
-
-# --- Virtual environments ---
-.venv/
-venv/
-env/
-
-# --- Type checking & linting caches ---
-.mypy_cache/
-.ruff_cache/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 .pytest_cache/
 .coverage
 htmlcov/
 .tox/
+.nox/
+.hypothesis/
+.ruff_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
 
-# --- Node / Next.js frontend ---
-node_modules/
-frontend/.next/
-frontend/out/
-frontend/build/
-frontend/.env*
-npm-debug.log*
-pnpm-debug.log*
-*.tsbuildinfo
+# ============================================================================
+# Virtual Environment
+# ============================================================================
+venv/
+.venv/
+env/
+ENV/
+.venv/Lib/site-packages/__pycache__/
 
-# --- IDE ---
-.vscode/
+# ============================================================================
+# Environment & Secrets (NEVER commit)
+# ============================================================================
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets/
+credentials/
+
+# ============================================================================
+# Database
+# ============================================================================
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+alembic/versions/*.pyc
+
+# ============================================================================
+# IDE
+# ============================================================================
 .idea/
+.vscode/
 *.swp
 *.swo
-
-# --- OS ---
+*~
 .DS_Store
 Thumbs.db
 
-# --- Project data (never commit raw data) ---
-data/raw/
-data/processed/
-data/external/
-data/*.db
+# ============================================================================
+# Frontend (Next.js)
+# ============================================================================
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.env*.local
+frontend/.pnp.*
+frontend/coverage/
+frontend/.turbo/
 
-# --- Logs & temp ---
+# ============================================================================
+# Large Data Files (use LFS or external storage)
+# ============================================================================
+data/raw/**/*.tif
+data/raw/**/*.nc
+data/processed/**/*.parquet
+*.h5
+*.hdf5
+*.tar.gz
+*.zip
+*.7z
+
+# ============================================================================
+# Logs & Temp
+# ============================================================================
 logs/
 *.log
+*.tmp
+*.temp
+.cache/
 tmp/
+temp/
+
+# ============================================================================
+# OS
+# ============================================================================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ============================================================================
+# Testing & Coverage
+# ============================================================================
+.coverage.*
+coverage.xml
+*.cover
+.pytest_cache/
+nosetests.xml
+test-results/
+
+# ============================================================================
+# Build artifacts
+# ============================================================================
+*.o
+*.obj
+*.lib
+*.dll
+*.so
+*.dylib
+# Security patterns (auto-added)
+!.env.example
+*.p12
+*.pfx

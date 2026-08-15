@@ -1,14 +1,16 @@
 """Abstract base class for satellite data providers."""
+
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import date, datetime
-from typing import Optional
+
 import numpy as np
 
 
 @dataclass
 class SatelliteTile:
     """Represents a single satellite observation tile."""
+
     provider: str
     collection: str
     datetime: datetime
@@ -24,7 +26,7 @@ class SatelliteTile:
 
 class SatelliteProvider(ABC):
     """Abstract base for satellite data sources."""
-    
+
     @abstractmethod
     def search(
         self,
@@ -37,12 +39,12 @@ class SatelliteProvider(ABC):
     ) -> list[dict]:
         """Search for available tiles at a location."""
         pass
-    
+
     @abstractmethod
     def fetch_tile(self, item_id: str) -> SatelliteTile:
         """Download and decode a specific tile."""
         pass
-    
+
     @property
     @abstractmethod
     def available_bands(self) -> list[str]:

@@ -3,22 +3,28 @@
 Combines providers and processors to deliver actionable insights
 for farmers, pastoralists, and ecosystem managers.
 """
-from datetime import date, timedelta
+
 from dataclasses import dataclass
-from typing import Optional
+from datetime import date, timedelta
+
 import numpy as np
 
+from .processors.indices import (
+    calculate_evi,
+    calculate_nbr,
+    calculate_ndvi,
+    calculate_ndwi,
+    calculate_savi,
+    interpret_ndvi,
+)
 from .providers.earth_search import EarthSearchProvider
 from .providers.nasa_power import NasaPowerProvider
-from .processors.indices import (
-    calculate_ndvi, calculate_evi, calculate_savi,
-    calculate_ndwi, calculate_nbr, interpret_ndvi
-)
 
 
 @dataclass
 class FieldAnalysis:
     """Complete satellite analysis for a field location."""
+
     lat: float
     lon: float
     analysis_date: date
@@ -35,51 +41,53 @@ class FieldAnalysis:
 
 class SatelliteAnalyzer:
     """Orchestrates satellite data analysis."""
-    
+
     def __init__(self):
         self.earth_search = EarthSearchProvider()
         self.nasa_power = NasaPowerProvider()
-    
+
     def analyze_point(
         self,
         lat: float,
         lon: float,
-        analysis_date: Optional[date] = None,
+        analysis_date: date | None = None,
     ) -> FieldAnalysis:
         """Perform comprehensive satellite analysis for a geographic point.
-        
+
         Args:
             lat: Latitude in degrees
             lon: Longitude in degrees
             analysis_date: Target date (defaults to 7 days ago for data availability)
-            
+
         Returns:
             Complete FieldAnalysis with indices and recommendations
         """
         if analysis_date is None:
             analysis_date = date.today() - timedelta(days=7)
-        
+
         start_date = analysis_date - timedelta(days=14)
         end_date = analysis_date
-        
+
         # Fetch Sentinel-2 imagery
         tiles = self.earth_search.search(
-            lat=lat, lon=lon,
-            start_date=start_date, end_date=end_date,
+            lat=lat,
+            lon=lon,
+            start_date=start_date,
+            end_date=end_date,
             max_cloud_cover=30.0,
             limit=5,
         )
-        
+
         if not tiles:
             return self._fallback_analysis(lat, lon, analysis_date)
-        
+
         # Get best tile (lowest cloud cover)
         best_tile_id = tiles[0].get("id", "unknown")
         tile = self.earth_search.fetch_tile(best_tile_id)
-        
+
         if tile is None:
             return self._fallback_analysis(lat, lon, analysis_date)
-        
+
         # Calculate vegetation indices
         bands = tile.bands
         ndvi_arr = calculate_ndvi(bands["red"], bands["nir"])
@@ -87,21 +95,20 @@ class SatelliteAnalyzer:
         savi_arr = calculate_savi(bands["red"], bands["nir"])
         ndwi_arr = calculate_ndwi(bands["green"], bands["nir"])
         nbr_arr = calculate_nbr(bands["nir"], bands.get("swir16", bands["nir"]))
-        
+
         # Aggregate to single values (median of valid pixels)
         ndvi = float(np.nanmedian(ndvi_arr))
         evi = float(np.nanmedian(evi_arr))
         savi = float(np.nanmedian(savi_arr))
         ndwi = float(np.nanmedian(ndwi_arr))
         nbr = float(np.nanmedian(nbr_arr))
-        
+
         # Interpret results
         interpretation = interpret_ndvi(ndvi)
         recommendation = self._generate_recommendation(
-            ndvi=ndvi, ndwi=ndwi, savi=savi,
-            veg_class=interpretation["class"]
+            ndvi=ndvi, ndwi=ndwi, savi=savi, veg_class=interpretation["class"]
         )
-        
+
         return FieldAnalysis(
             lat=lat,
             lon=lon,
@@ -116,7 +123,7 @@ class SatelliteAnalyzer:
             data_quality="good" if tile.cloud_cover < 10 else "moderate",
             recommendation=recommendation,
         )
-    
+
     def _fallback_analysis(self, lat: float, lon: float, analysis_date: date) -> FieldAnalysis:
         """Provide fallback analysis when satellite data unavailable."""
         return FieldAnalysis(
@@ -133,7 +140,7 @@ class SatelliteAnalyzer:
             data_quality="poor",
             recommendation="Satellite data temporarily unavailable. Please try again later or provide manual field observations.",
         )
-    
+
     def _generate_recommendation(
         self,
         ndvi: float,
@@ -143,7 +150,7 @@ class SatelliteAnalyzer:
     ) -> str:
         """Generate actionable recommendation based on indices."""
         recommendations = []
-        
+
         # Vegetation health
         if ndvi < 0.2:
             recommendations.append(
@@ -160,7 +167,7 @@ class SatelliteAnalyzer:
                 "Excellent vegetation health. Continue current management and monitor "
                 "for pest pressure in dense canopies."
             )
-        
+
         # Water stress
         if ndwi < -0.2:
             recommendations.append(
@@ -171,24 +178,22 @@ class SatelliteAnalyzer:
             recommendations.append(
                 "Good water availability. Monitor for waterlogging in low-lying areas."
             )
-        
+
         # Soil exposure
         if savi < 0.3 and veg_class == "sparse":
             recommendations.append(
                 "Soil is exposed to erosion. Implement cover cropping or construct "
                 "contour bunds to protect topsoil."
             )
-        
+
         if not recommendations:
-            recommendations.append(
-                "Conditions appear stable. Continue regular monitoring."
-            )
-        
+            recommendations.append("Conditions appear stable. Continue regular monitoring.")
+
         return " | ".join(recommendations)
 
 
 # Singleton
-_analyzer: Optional[SatelliteAnalyzer] = None
+_analyzer: SatelliteAnalyzer | None = None
 
 
 def get_analyzer() -> SatelliteAnalyzer:

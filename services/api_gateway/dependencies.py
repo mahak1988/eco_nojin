@@ -1,4 +1,4 @@
-﻿"""Dependency injection for API services (Phase 0 unification).
+"""Dependency injection for API services (Phase 0 unification).
 
 Single ``get_db`` delegating to ``database.config`` so API, engine and
 models all share one session factory.

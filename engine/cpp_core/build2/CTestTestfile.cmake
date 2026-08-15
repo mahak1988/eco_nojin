@@ -1,0 +1,36 @@
+# CMake generated Testfile for 
+# Source directory: D:/eco_nojin/engine/cpp_core
+# Build directory: D:/eco_nojin/engine/cpp_core/build2
+# 
+# This file includes the relevant testing commands required for 
+# testing this directory and lists subdirectories to be tested as well.
+if(CTEST_CONFIGURATION_TYPE MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
+  add_test("hydroma_tests" "D:/eco_nojin/engine/cpp_core/build2/Debug/hydroma_tests.exe")
+  set_tests_properties("hydroma_tests" PROPERTIES  _BACKTRACE_TRIPLES "D:/eco_nojin/engine/cpp_core/CMakeLists.txt;38;add_test;D:/eco_nojin/engine/cpp_core/CMakeLists.txt;0;")
+elseif(CTEST_CONFIGURATION_TYPE MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
+  add_test("hydroma_tests" "D:/eco_nojin/engine/cpp_core/build2/Release/hydroma_tests.exe")
+  set_tests_properties("hydroma_tests" PROPERTIES  _BACKTRACE_TRIPLES "D:/eco_nojin/engine/cpp_core/CMakeLists.txt;38;add_test;D:/eco_nojin/engine/cpp_core/CMakeLists.txt;0;")
+elseif(CTEST_CONFIGURATION_TYPE MATCHES "^([Mm][Ii][Nn][Ss][Ii][Zz][Ee][Rr][Ee][Ll])$")
+  add_test("hydroma_tests" "D:/eco_nojin/engine/cpp_core/build2/MinSizeRel/hydroma_tests.exe")
+  set_tests_properties("hydroma_tests" PROPERTIES  _BACKTRACE_TRIPLES "D:/eco_nojin/engine/cpp_core/CMakeLists.txt;38;add_test;D:/eco_nojin/engine/cpp_core/CMakeLists.txt;0;")
+elseif(CTEST_CONFIGURATION_TYPE MATCHES "^([Rr][Ee][Ll][Ww][Ii][Tt][Hh][Dd][Ee][Bb][Ii][Nn][Ff][Oo])$")
+  add_test("hydroma_tests" "D:/eco_nojin/engine/cpp_core/build2/RelWithDebInfo/hydroma_tests.exe")
+  set_tests_properties("hydroma_tests" PROPERTIES  _BACKTRACE_TRIPLES "D:/eco_nojin/engine/cpp_core/CMakeLists.txt;38;add_test;D:/eco_nojin/engine/cpp_core/CMakeLists.txt;0;")
+else()
+  add_test("hydroma_tests" NOT_AVAILABLE)
+endif()
+if(CTEST_CONFIGURATION_TYPE MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
+  add_test("hydroma_advanced_tests" "D:/eco_nojin/engine/cpp_core/build2/Debug/hydroma_advanced_tests.exe")
+  set_tests_properties("hydroma_advanced_tests" PROPERTIES  _BACKTRACE_TRIPLES "D:/eco_nojin/engine/cpp_core/CMakeLists.txt;42;add_test;D:/eco_nojin/engine/cpp_core/CMakeLists.txt;0;")
+elseif(CTEST_CONFIGURATION_TYPE MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
+  add_test("hydroma_advanced_tests" "D:/eco_nojin/engine/cpp_core/build2/Release/hydroma_advanced_tests.exe")
+  set_tests_properties("hydroma_advanced_tests" PROPERTIES  _BACKTRACE_TRIPLES "D:/eco_nojin/engine/cpp_core/CMakeLists.txt;42;add_test;D:/eco_nojin/engine/cpp_core/CMakeLists.txt;0;")
+elseif(CTEST_CONFIGURATION_TYPE MATCHES "^([Mm][Ii][Nn][Ss][Ii][Zz][Ee][Rr][Ee][Ll])$")
+  add_test("hydroma_advanced_tests" "D:/eco_nojin/engine/cpp_core/build2/MinSizeRel/hydroma_advanced_tests.exe")
+  set_tests_properties("hydroma_advanced_tests" PROPERTIES  _BACKTRACE_TRIPLES "D:/eco_nojin/engine/cpp_core/CMakeLists.txt;42;add_test;D:/eco_nojin/engine/cpp_core/CMakeLists.txt;0;")
+elseif(CTEST_CONFIGURATION_TYPE MATCHES "^([Rr][Ee][Ll][Ww][Ii][Tt][Hh][Dd][Ee][Bb][Ii][Nn][Ff][Oo])$")
+  add_test("hydroma_advanced_tests" "D:/eco_nojin/engine/cpp_core/build2/RelWithDebInfo/hydroma_advanced_tests.exe")
+  set_tests_properties("hydroma_advanced_tests" PROPERTIES  _BACKTRACE_TRIPLES "D:/eco_nojin/engine/cpp_core/CMakeLists.txt;42;add_test;D:/eco_nojin/engine/cpp_core/CMakeLists.txt;0;")
+else()
+  add_test("hydroma_advanced_tests" NOT_AVAILABLE)
+endif()

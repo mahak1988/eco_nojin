@@ -1,4 +1,4 @@
-﻿"""Phase 0 tests: JWT auth utilities (hash, tokens, roles)."""
+"""Phase 0 tests: JWT auth utilities (hash, tokens, roles)."""
 
 from datetime import timedelta
 
@@ -38,7 +38,9 @@ class TestTokens:
 
     def test_expired_token_rejected(self):
         token = create_access_token(
-            data={}, subject="1", role=ROLE_FARMER,
+            data={},
+            subject="1",
+            role=ROLE_FARMER,
             expires_delta=timedelta(seconds=-10),
         )
         assert decode_token(token) is None

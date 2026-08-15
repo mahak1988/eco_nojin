@@ -1,4 +1,4 @@
-﻿"""Alembic environment (Phase 0).
+"""Alembic environment (Phase 0).
 
 Uses the unified ``database.config`` engine and metadata so migrations
 cover both ``database.models`` and ``engine.hydroma.core.models``.
@@ -16,9 +16,10 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from database.config import Base, engine as target_engine  # noqa: E402
 import database.models  # noqa: E402,F401  (register ORM models)
 import engine.hydroma.core.models  # noqa: E402,F401
+from database.config import Base  # noqa: E402
+from database.config import engine as target_engine
 
 config = context.config
 

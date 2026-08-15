@@ -1,12 +1,13 @@
 """Tests for Watershed Structures module."""
+
 import pytest
-import math
 
 from engine.hydroma.watershed.calculator import (
-    StructureType,
-    calculate_runoff, design_check_dam,
-    design_contour_trench, design_half_moon,
-    design_watershed_structure
+    calculate_runoff,
+    design_check_dam,
+    design_contour_trench,
+    design_half_moon,
+    design_watershed_structure,
 )
 
 
@@ -47,13 +48,9 @@ class TestHalfMoon:
 
 class TestDesignFunction:
     def test_design_check_dam(self):
-        result = design_watershed_structure(
-            structure_type="check_dam", slope_pct=15, area_m2=10000
-        )
+        result = design_watershed_structure(structure_type="check_dam", slope_pct=15, area_m2=10000)
         assert result["structure_type"] == "check_dam"
 
     def test_design_invalid_type(self):
         with pytest.raises(ValueError, match="Unknown structure type"):
-            design_watershed_structure(
-                structure_type="invalid_type", slope_pct=15, area_m2=10000
-            )
+            design_watershed_structure(structure_type="invalid_type", slope_pct=15, area_m2=10000)

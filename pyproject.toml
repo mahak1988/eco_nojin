@@ -1,72 +1,66 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name = "eco-nojin"
-version = "1.2.0"
-description = "Eco Nojin platform and HyDroMa engine"
-readme = "README.md"
+name = "econojin"
+version = "0.1.0"
+description = "Integrated Sustainable Agriculture Platform"
 requires-python = ">=3.11"
-license = { text = "Proprietary" }
 dependencies = [
-    "fastapi>=0.141,<1.0",
-    "uvicorn[standard]>=0.52,<1.0",
-    "pydantic>=2.13,<3.0",
-    "python-dotenv>=1.2,<2.0",
-    "python-multipart>=0.0.32,<1.0",
-    "sqlalchemy>=2.0,<3.0",
-    "numpy>=2.4,<3.0",
-    "numba>=0.67,<1.0",
-    "pandas>=3.0,<4.0",
-    "scipy>=1.17,<2.0",
-    "scikit-learn>=1.5,<2.0",
-    "requests>=2.34,<3.0",
-    "httpx>=0.28,<1.0",
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.27.0",
+    "sqlalchemy>=2.0.0",
+    "alembic>=1.13.0",
+    "pydantic>=2.6.0",
+    "pydantic-settings>=2.2.0",
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "python-multipart>=0.0.9",
+    "numpy>=1.26.0",
+    "scipy>=1.12.0",
+    "pandas>=2.2.0",
+    "httpx>=0.27.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=9.0,<10.0",
-    "pytest-timeout>=2.4,<3.0",
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.2.0",
+    "mypy>=1.8.0",
 ]
-ml = [
-    "torch>=2.4",
-    "xgboost>=2.1",
-    "lightgbm>=4.5",
-    "mlflow>=2.16",
-]
-gis = [
-    "geopandas>=1.1",
-    "rasterio>=1.4",
-    "xarray>=2025.1",
-    "netcdf4>=1.7",
-    "zarr>=3.0",
-]
-tasks = ["celery>=5.4", "redis>=5.0"]
-postgres = ["psycopg[binary]>=3.2", "geoalchemy2>=0.15"]
+ml = ["scikit-learn>=1.4.0"]
 
 [tool.setuptools.packages.find]
-include = ["engine*", "services*"]
-
-[build-system]
-requires = ["setuptools>=69", "wheel"]
-build-backend = "setuptools.build_meta"
+where = ["."]
+include = ["engine*", "database*", "services*"]
 
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-exclude = ["engine/cpp_core", "frontend", ".venv", "alembic/versions"]
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I", "UP", "B"]
-ignore = ["E501"]
+select = ["E", "W", "F", "I", "B", "C4", "UP", "SIM"]
+ignore = ["E501", "B008", "C901", "PLR0913", "PLR0912"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/*" = ["PLR2004"]
 
 [tool.mypy]
 python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+check_untyped_defs = true
+namespace_packages = true
+explicit_package_bases = true
+mypy_path = "."
+
+[[tool.mypy.overrides]]
+module = ["numpy.*", "scipy.*", "pandas.*", "sqlalchemy.*", "sklearn.*"]
 ignore_missing_imports = true
-exclude = ["engine/cpp_core", "frontend", "alembic/versions", ".venv"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-timeout = 120
-addopts = "-p no:cacheprovider"
-
-[tool.ruff.lint.flake8-bugbear]
-extend-immutable-calls = ["fastapi.Depends", "fastapi.security.OAuth2PasswordBearer"]
+python_files = ["test_*.py"]

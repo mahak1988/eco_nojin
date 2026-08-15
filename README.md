@@ -21,8 +21,8 @@ uvicorn services.api_gateway.main:app --reload --port 8000
 
 # Frontend (Next.js)
 cd frontend
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 
 # Tests
 pytest
@@ -57,7 +57,7 @@ observations.
 
 ## فارسی
 
-اکو نُجین پلتفرمی بین‌المللی و مبتنی بر استاندارد برای احیای اکوسیستم،
+اکو نوژین پلتفرمی بین‌المللی و مبتنی بر استاندارد برای احیای اکوسیستم،
 کشاورزی هوشمند، مدیریت آب و خاک، رونق روستایی، حمایت از عشایر، مشوق‌های
 کربن، بازارچه و بوم‌گردی است.
 

@@ -8,14 +8,14 @@ Implements water-limited yield potential based on:
 Reference: Steduto, P. et al. (2009). "AquaCrop - The FAO crop model
 to simulate yield. Water productivity."
 """
-import numpy as np
+
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
 class CropParameters:
     """Crop-specific parameters for yield simulation."""
+
     name: str
     water_productivity: float  # kg/m³ (yield per unit water)
     crop_coefficient_max: float  # Maximum Kc
@@ -129,7 +129,7 @@ def simulate_crop_yield(
     co2_concentration: float = 420.0,
 ) -> dict:
     """Simulate water-limited crop yield.
-    
+
     Args:
         crop_type: Crop name from CROP_DATABASE
         available_water: Total available water [mm] (precip + irrigation)
@@ -137,53 +137,56 @@ def simulate_crop_yield(
         growing_season_precip: Precipitation during growing season [mm]
         irrigation_efficiency: Irrigation system efficiency [0-1]
         co2_concentration: Atmospheric CO2 [ppm]
-    
+
     Returns:
         Yield simulation results dictionary
     """
     if crop_type not in CROP_DATABASE:
-        raise ValueError(f"Unknown crop: {crop_type}. "
-                        f"Available: {list(CROP_DATABASE.keys())}")
-    
+        raise ValueError(f"Unknown crop: {crop_type}. Available: {list(CROP_DATABASE.keys())}")
+
     crop = CROP_DATABASE[crop_type]
-    
+
     # Temperature stress factor
     if mean_temp < crop.base_temp:
         temp_factor = 0.0
     elif mean_temp <= crop.optimal_temp:
         temp_factor = (mean_temp - crop.base_temp) / (crop.optimal_temp - crop.base_temp)
     elif mean_temp <= crop.max_temp:
-        temp_factor = 1.0 - 0.5 * (mean_temp - crop.optimal_temp) / (crop.max_temp - crop.optimal_temp)
+        temp_factor = 1.0 - 0.5 * (mean_temp - crop.optimal_temp) / (
+            crop.max_temp - crop.optimal_temp
+        )
     else:
         temp_factor = max(0, 0.5 - (mean_temp - crop.max_temp) / 10)
-    
+
     # Water stress factor
-    crop_water_requirement = crop.crop_coefficient_max * crop.growing_season_days * 3.0  # ~3mm/day ET0
-    
+    crop_water_requirement = (
+        crop.crop_coefficient_max * crop.growing_season_days * 3.0
+    )  # ~3mm/day ET0
+
     if available_water >= crop_water_requirement:
         water_factor = 1.0
     else:
         water_deficit_ratio = available_water / crop_water_requirement
         water_factor = 1.0 - crop.drought_sensitivity * (1.0 - water_deficit_ratio)
         water_factor = max(0, water_factor)
-    
+
     # CO2 fertilization effect (approximately +5% yield per 100ppm above 400)
     co2_factor = 1.0 + 0.05 * (co2_concentration - 400) / 100
     co2_factor = min(co2_factor, 1.3)  # Cap at 30% increase
-    
+
     # Potential yield (water productivity × transpiration)
     actual_transpiration = min(available_water, crop_water_requirement) * irrigation_efficiency
     potential_yield = crop.water_productivity * actual_transpiration
-    
+
     # Apply stress factors
     actual_yield = potential_yield * temp_factor * water_factor * co2_factor
-    
+
     # Economic value
     gross_revenue = actual_yield * crop.price_per_kg
-    
+
     # Water productivity of the system
     system_wp = actual_yield / available_water if available_water > 0 else 0
-    
+
     return {
         "crop": crop.name,
         "potential_yield_kg_ha": round(potential_yield * 10, 0),  # Convert to kg/ha
@@ -204,11 +207,11 @@ def compare_crops(
     co2_concentration: float = 420.0,
 ) -> dict:
     """Compare all crops for given conditions.
-    
+
     Returns ranking by economic value.
     """
     results = {}
-    
+
     for crop_type in CROP_DATABASE:
         try:
             result = simulate_crop_yield(
@@ -220,20 +223,17 @@ def compare_crops(
             results[crop_type] = result
         except Exception:
             continue
-    
+
     # Sort by gross revenue
-    ranked = sorted(
-        results.items(),
-        key=lambda x: x[1]["gross_revenue_usd_ha"],
-        reverse=True
-    )
-    
+    ranked = sorted(results.items(), key=lambda x: x[1]["gross_revenue_usd_ha"], reverse=True)
+
     return {
         "ranking": [r[0] for r in ranked],
         "details": results,
         "best_economic_choice": ranked[0][0] if ranked else None,
         "most_drought_tolerant": min(
-            results.items(),
-            key=lambda x: x[1]["water_stress_factor"] * -1
-        )[0] if results else None,
+            results.items(), key=lambda x: x[1]["water_stress_factor"] * -1
+        )[0]
+        if results
+        else None,
     }

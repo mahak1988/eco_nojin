@@ -1,0 +1,124 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================================
+   FONT IMPORTS
+   ============================================================================ */
+@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+
+@font-face {
+  font-family: 'B Mitra';
+  src: url('https://cdn.fontcdn.ir/Font/Persian/BMitra/BMitra.woff2') format('woff2'),
+       url('https://cdn.fontcdn.ir/Font/Persian/BMitra/BMitra.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'B Mitra';
+  src: url('https://cdn.fontcdn.ir/Font/Persian/BMitra/BMitraBold.woff2') format('woff2');
+  font-weight: bold;
+  font-display: swap;
+}
+
+/* ============================================================================
+   ROOT VARIABLES
+   ============================================================================ */
+:root {
+  --font-fa-classic: 'B Mitra', 'Vazirmatn', Tahoma, serif;
+  --font-fa-modern: 'Vazirmatn', 'B Mitra', Tahoma, sans-serif;
+  --font-en: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-ar: 'Vazirmatn', 'Amiri', Tahoma, serif;
+}
+
+/* ============================================================================
+   BASE STYLES
+   ============================================================================ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-fa-modern);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+/* RTL Support */
+[dir="rtl"] body,
+[dir="rtl"] * {
+  font-family: var(--font-fa-modern);
+}
+
+[dir="rtl"].lang-fa body {
+  font-family: var(--font-fa-classic);
+}
+
+[dir="ltr"] body,
+[dir="ltr"] * {
+  font-family: var(--font-en);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* Forms */
+input, textarea, select, button {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+[dir="rtl"] input,
+[dir="rtl"] textarea {
+  text-align: right;
+}
+
+/* Animations */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 100, 100, 0.3);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 100, 100, 0.5);
+}

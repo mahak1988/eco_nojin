@@ -1,10 +1,9 @@
 """API endpoints for Watershed Structures."""
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from engine.hydroma.watershed.calculator import (
-    StructureType, design_watershed_structure
-)
+from engine.hydroma.watershed.calculator import StructureType, design_watershed_structure
 
 router = APIRouter(prefix="/api/v1/watershed", tags=["Watershed Structures"])
 
@@ -20,10 +19,7 @@ class StructureRequest(BaseModel):
 def list_structure_types():
     """List all available structure types."""
     return {
-        "structure_types": [
-            {"type": st.value, "name": st.name}
-            for st in StructureType
-        ],
+        "structure_types": [{"type": st.value, "name": st.name} for st in StructureType],
         "count": len(StructureType),
     }
 

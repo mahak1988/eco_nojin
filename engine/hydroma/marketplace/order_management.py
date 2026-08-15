@@ -1,23 +1,21 @@
 """Order management with dependency injection support."""
-from typing import Dict, List, Optional
-from datetime import datetime
 
-from .models import Order, OrderStatus, Product
+from .models import Order, OrderStatus
 from .product_catalog import ProductCatalog, get_catalog
 
 
 class OrderManager:
     """Manage marketplace orders with injectable catalog dependency."""
-    
+
     def __init__(self, catalog: ProductCatalog = None):
         """Initialize with optional catalog injection.
-        
+
         Args:
             catalog: ProductCatalog instance. If None, uses singleton.
         """
         self._catalog = catalog if catalog is not None else get_catalog()
-        self._orders: Dict[str, Order] = {}
-    
+        self._orders: dict[str, Order] = {}
+
     def create_order(
         self,
         product_id: str,
@@ -26,16 +24,16 @@ class OrderManager:
     ) -> Order:
         """Create a new order."""
         product = self._catalog.get_product(product_id)
-        
+
         if not product:
             raise ValueError(f"Product not found: {product_id}")
-        
+
         if not product.can_fulfill_order(quantity_kg):
             raise ValueError(
                 f"Cannot fulfill order: min={product.minimum_order_kg}kg, "
                 f"available={product.quantity_available_kg}kg"
             )
-        
+
         order = Order(
             product_id=product_id,
             product_name=product.name,
@@ -45,33 +43,33 @@ class OrderManager:
             total_price=product.calculate_total_value(quantity_kg),
             traceability_code=product.traceability_code,
         )
-        
+
         self._orders[order.id] = order
-        
+
         # Reserve quantity
         self._catalog.update_quantity(product_id, -quantity_kg)
-        
+
         return order
-    
-    def get_order(self, order_id: str) -> Optional[Order]:
+
+    def get_order(self, order_id: str) -> Order | None:
         """Get order by ID."""
         return self._orders.get(order_id)
-    
+
     def list_orders(
         self,
-        status: Optional[OrderStatus] = None,
+        status: OrderStatus | None = None,
         limit: int = 50,
-    ) -> List[Order]:
+    ) -> list[Order]:
         """List orders with optional status filter."""
         orders = list(self._orders.values())
-        
+
         if status:
             orders = [o for o in orders if o.status == status]
-        
+
         orders.sort(key=lambda x: x.created_at, reverse=True)
-        
+
         return orders[:limit]
-    
+
     def confirm_order(self, order_id: str) -> bool:
         """Confirm an order."""
         order = self._orders.get(order_id)
@@ -79,7 +77,7 @@ class OrderManager:
             order.confirm()
             return True
         return False
-    
+
     def ship_order(self, order_id: str) -> bool:
         """Mark order as shipped."""
         order = self._orders.get(order_id)
@@ -87,7 +85,7 @@ class OrderManager:
             order.ship()
             return True
         return False
-    
+
     def deliver_order(self, order_id: str) -> bool:
         """Mark order as delivered."""
         order = self._orders.get(order_id)
@@ -95,31 +93,29 @@ class OrderManager:
             order.deliver()
             return True
         return False
-    
+
     def cancel_order(self, order_id: str) -> bool:
         """Cancel an order and restore quantity."""
         order = self._orders.get(order_id)
         if order and order.status in [OrderStatus.PENDING, OrderStatus.CONFIRMED]:
             order.cancel()
-            
+
             # Restore quantity
             self._catalog.update_quantity(order.product_id, order.quantity_kg)
-            
+
             return True
         return False
-    
+
     def get_revenue_stats(self) -> dict:
         """Get revenue statistics."""
-        completed = [
-            o for o in self._orders.values()
-            if o.status == OrderStatus.DELIVERED
-        ]
-        
+        completed = [o for o in self._orders.values() if o.status == OrderStatus.DELIVERED]
+
         pending = [
-            o for o in self._orders.values()
+            o
+            for o in self._orders.values()
             if o.status in [OrderStatus.PENDING, OrderStatus.CONFIRMED, OrderStatus.SHIPPED]
         ]
-        
+
         return {
             "total_orders": len(self._orders),
             "completed_orders": len(completed),
@@ -130,7 +126,7 @@ class OrderManager:
 
 
 # Singleton for API use
-_order_manager: Optional[OrderManager] = None
+_order_manager: OrderManager | None = None
 
 
 def get_order_manager() -> OrderManager:

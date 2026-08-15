@@ -6,15 +6,12 @@ Supports multiple telco integrations:
 - Kavehnegar (Iran)
 - Generic webhook format
 """
-from fastapi import APIRouter, HTTPException, Form, Request
-from fastapi.responses import PlainTextResponse
-from pydantic import BaseModel, Field
-from typing import Optional
 
-from engine.hydroma.ussd.engine import (
-    UssdRequest, UssdResponse, GatewayType, Language,
-    get_ussd_handler
-)
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import PlainTextResponse
+from pydantic import BaseModel, Field, ConfigDict
+
+from engine.hydroma.ussd.engine import GatewayType, Language, UssdRequest, get_ussd_handler
 from engine.hydroma.ussd.sms_parser import get_sms_parser
 
 router = APIRouter(prefix="/api/v1/ussd", tags=["USSD/SMS Gateway"])
@@ -24,8 +21,10 @@ router = APIRouter(prefix="/api/v1/ussd", tags=["USSD/SMS Gateway"])
 # Pydantic Models
 # ============================================================================
 
+
 class UssdApiRequest(BaseModel):
     """Generic USSD request."""
+
     session_id: str = Field(..., description="Unique session identifier")
     service_code: str = Field(..., description="USSD service code (e.g. *384*73#)")
     phone_number: str = Field(..., description="User's phone number")
@@ -35,13 +34,15 @@ class UssdApiRequest(BaseModel):
 
 class SmsApiRequest(BaseModel):
     """Generic SMS request."""
+
     phone_number: str = Field(..., description="Sender's phone number")
     message: str = Field(..., description="SMS message text")
-    language: Optional[str] = Field(None, description="Optional language override")
+    language: str | None = Field(None, description="Optional language override")
 
 
 class AfricasTalkingUssdRequest(BaseModel):
     """Africa's Talking USSD webhook format."""
+
     sessionId: str
     serviceCode: str
     phoneNumber: str
@@ -50,10 +51,11 @@ class AfricasTalkingUssdRequest(BaseModel):
 
 class SmsWebhookRequest(BaseModel):
     """Generic SMS webhook request."""
+
     from_number: str = Field(..., alias="from")
     to_number: str = Field(..., alias="to")
     message: str
-    timestamp: Optional[str] = None
+    timestamp: str | None = None
 
     class Config:
         populate_by_name = True
@@ -62,6 +64,7 @@ class SmsWebhookRequest(BaseModel):
 # ============================================================================
 # Endpoints
 # ============================================================================
+
 
 @router.post("/ussd")
 def handle_ussd(payload: UssdApiRequest):

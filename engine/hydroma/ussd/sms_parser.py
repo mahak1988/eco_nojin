@@ -7,8 +7,8 @@ Supports commands like:
   WEATHER tehran
   ASK How to make compost?
 """
+
 import re
-from typing import Dict, Optional
 from enum import Enum
 
 from .engine import Language
@@ -16,6 +16,7 @@ from .engine import Language
 
 class SmsCommandType(Enum):
     """SMS command types."""
+
     SOIL = "soil"
     CROP = "crop"
     PRICE = "price"
@@ -26,7 +27,7 @@ class SmsCommandType(Enum):
     UNKNOWN = "unknown"
 
 
-SMS_RESPONSES: Dict[str, Dict[Language, str]] = {
+SMS_RESPONSES: dict[str, dict[Language, str]] = {
     "help": {
         Language.EN: "Eco Nojin SMS commands:\nSOIL lat lon\nCROP region\nPRICE product\nWEATHER city\nASK question\nLANG en|fa|ar",
         Language.FA: "دستورات پیامک اکو نوژین:\nSOIL عرض طول\nCROP منطقه\nPRICE محصول\nWEATHER شهر\nASK سوال\nLANG en|fa|ar",
@@ -49,7 +50,7 @@ class SmsParser:
     """Parse and process SMS commands."""
 
     def __init__(self):
-        self._user_languages: Dict[str, Language] = {}  # phone -> language
+        self._user_languages: dict[str, Language] = {}  # phone -> language
 
     def get_user_language(self, phone: str) -> Language:
         """Get user's preferred language (default: English)."""
@@ -212,12 +213,14 @@ class SmsParser:
             return "Usage: ASK <question>"
 
         # Mock AI response (140 chars max for SMS)
-        answer = f"AI: For '{question[:40]}...' consult local extension officer for detailed guidance."
+        answer = (
+            f"AI: For '{question[:40]}...' consult local extension officer for detailed guidance."
+        )
         return answer[:140]
 
 
 # Singleton
-_parser: Optional[SmsParser] = None
+_parser: SmsParser | None = None
 
 
 def get_sms_parser() -> SmsParser:

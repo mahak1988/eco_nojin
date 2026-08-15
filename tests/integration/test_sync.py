@@ -1,5 +1,7 @@
 """Tests for Offline Sync endpoint."""
+
 from fastapi.testclient import TestClient
+
 from services.api_gateway.main import app
 
 client = TestClient(app)
@@ -79,18 +81,21 @@ def test_sync_stats():
 def test_sync_history():
     """Verify sync history endpoint."""
     # First sync something
-    client.post("/api/v1/sync/batch", json={
-        "device_id": "history-test-device",
-        "items": [
-            {
-                "client_id": "q_hist_1",
-                "endpoint": "/api/v1/soil/",
-                "method": "POST",
-                "payload": {"name": "Test"},
-                "timestamp": 1700000000000,
-            },
-        ],
-    })
+    client.post(
+        "/api/v1/sync/batch",
+        json={
+            "device_id": "history-test-device",
+            "items": [
+                {
+                    "client_id": "q_hist_1",
+                    "endpoint": "/api/v1/soil/",
+                    "method": "POST",
+                    "payload": {"name": "Test"},
+                    "timestamp": 1700000000000,
+                },
+            ],
+        },
+    )
 
     response = client.get("/api/v1/sync/history/history-test-device")
     assert response.status_code == 200

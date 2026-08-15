@@ -7,14 +7,14 @@ Implements simplified regional climate projections for:
 
 Reference: IPCC AR6, Chapter 4 (Future Climate)
 """
-import numpy as np
+
 from dataclasses import dataclass
-from typing import Dict, Tuple
 
 
 @dataclass
 class ClimateProjection:
     """Climate projection for a specific scenario and time horizon."""
+
     scenario: str
     time_horizon: int  # Year
     delta_temp: float  # °C change from baseline
@@ -26,12 +26,12 @@ class ClimateProjection:
 
 # Simplified regional projections (Middle East / Iran region)
 # Based on IPCC AR6 Table 4.2 and CMIP6 multi-model means
-CLIMATE_PROJECTIONS: Dict[str, Dict[int, Tuple[float, float]]] = {
+CLIMATE_PROJECTIONS: dict[str, dict[int, tuple[float, float]]] = {
     # SSP1-2.6: Low emissions
     "SSP1-2.6": {
-        2030: (1.2, -3.0),   # +1.2°C, -3% precipitation
-        2050: (1.8, -5.0),   # +1.8°C, -5% precipitation
-        2100: (2.2, -8.0),   # +2.2°C, -8% precipitation
+        2030: (1.2, -3.0),  # +1.2°C, -3% precipitation
+        2050: (1.8, -5.0),  # +1.8°C, -5% precipitation
+        2100: (2.2, -8.0),  # +2.2°C, -8% precipitation
     },
     # SSP2-4.5: Medium emissions
     "SSP2-4.5": {
@@ -56,35 +56,36 @@ def get_climate_projection(
     baseline_et0: float = 1500.0,
 ) -> ClimateProjection:
     """Get climate projection for a specific scenario and year.
-    
+
     Args:
         scenario: SSP scenario name (SSP1-2.6, SSP2-4.5, SSP5-8.5)
         time_horizon: Target year (2030, 2050, 2100)
         baseline_temp: Baseline mean annual temperature [°C]
         baseline_precip: Baseline annual precipitation [mm]
         baseline_et0: Baseline annual ET0 [mm]
-    
+
     Returns:
         ClimateProjection with projected changes
-    
+
     Raises:
         ValueError: If scenario or time_horizon is invalid
     """
     if scenario not in CLIMATE_PROJECTIONS:
-        raise ValueError(f"Unknown scenario: {scenario}. "
-                        f"Available: {list(CLIMATE_PROJECTIONS.keys())}")
-    
+        raise ValueError(
+            f"Unknown scenario: {scenario}. Available: {list(CLIMATE_PROJECTIONS.keys())}"
+        )
+
     projections = CLIMATE_PROJECTIONS[scenario]
-    
+
     # Find closest time horizon
     available_years = sorted(projections.keys())
     closest_year = min(available_years, key=lambda y: abs(y - time_horizon))
-    
+
     delta_temp, delta_precip = projections[closest_year]
-    
+
     # ET0 increases approximately 2-3% per °C warming (Penman-Monteith sensitivity)
     delta_et0 = delta_temp * 2.5
-    
+
     # Confidence based on time horizon and scenario
     if time_horizon <= 2030:
         confidence = "high"
@@ -92,14 +93,14 @@ def get_climate_projection(
         confidence = "medium"
     else:
         confidence = "low" if scenario == "SSP5-8.5" else "medium"
-    
+
     description = (
         f"Under {scenario}, by {closest_year}: "
         f"temperature +{delta_temp:.1f}°C, "
         f"precipitation {delta_precip:+.0f}%, "
         f"ET0 {delta_et0:+.0f}%"
     )
-    
+
     return ClimateProjection(
         scenario=scenario,
         time_horizon=closest_year,
@@ -115,14 +116,14 @@ def compare_scenarios(
     time_horizon: int,
     baseline_temp: float = 18.0,
     baseline_precip: float = 300.0,
-) -> Dict[str, ClimateProjection]:
+) -> dict[str, ClimateProjection]:
     """Compare all SSP scenarios for a given time horizon.
-    
+
     Returns dictionary with all three scenarios.
     """
     return {
         scenario: get_climate_projection(scenario, time_horizon, baseline_temp, baseline_precip)
-        for scenario in CLIMATE_PROJECTIONS.keys()
+        for scenario in CLIMATE_PROJECTIONS
     }
 
 
@@ -131,15 +132,15 @@ def apply_climate_change(
     baseline_precip: float,
     baseline_et0: float,
     projection: ClimateProjection,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """Apply climate projection to baseline values.
-    
+
     Returns projected absolute values.
     """
     projected_temp = baseline_temp + projection.delta_temp
     projected_precip = baseline_precip * (1 + projection.delta_precip / 100)
     projected_et0 = baseline_et0 * (1 + projection.delta_et0 / 100)
-    
+
     return {
         "temperature": round(projected_temp, 1),
         "precipitation": round(projected_precip, 0),

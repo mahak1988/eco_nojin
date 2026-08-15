@@ -1,4 +1,4 @@
-﻿"""Phase 0 tests: rate limiting + security headers middleware."""
+"""Phase 0 tests: rate limiting + security headers middleware."""
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient

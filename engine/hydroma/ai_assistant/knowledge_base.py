@@ -3,7 +3,9 @@
 Each document is aligned with FAO standards and scientific references.
 This serves as the retrieval corpus for the RAG system.
 """
+
 from dataclasses import dataclass
+
 
 @dataclass
 class KnowledgeDocument:

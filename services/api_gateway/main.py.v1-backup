@@ -1,0 +1,203 @@
+"""
+Eco Nojin API Gateway - Phase 0.A
+Auto-generated with safe field access
+"""
+import logging
+import traceback
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI, Request, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
+from database.config import init_db
+from engine.hydroma.config.settings import get_settings
+
+# Import all routers
+from .routers import ai
+from .routers import ai_chat
+from .routers import analytics
+from .routers import auth
+from .routers import benchmark
+from .routers import blockchain
+from .routers import carbon
+from .routers import carbon_engine
+from .routers import ecowallet
+from .routers import farms
+from .routers import marketplace
+from .routers import materials
+from .routers import satellite
+from .routers import scenarios
+from .routers import soil
+from .routers import sync
+from .routers import ussd
+from .routers import voice
+from .routers import watershed
+
+# Setup logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)-8s | %(message)s",
+    datefmt="%H:%M:%S"
+)
+logger = logging.getLogger("econojin.api")
+
+# Load settings
+_settings = get_settings()
+
+# Safe field access with defaults
+def sget(field: str, default=None):
+    """Safe getter for settings fields."""
+    return getattr(_settings, field, default)
+
+# Extract commonly used settings
+APP_NAME = sget('app_name', 'Eco Nojin')
+APP_ENV = sget('app_env', 'development')
+APP_DEBUG = sget('app_debug', True)
+API_VERSION = sget('api_version', '0.1.0')
+
+logger.info(f"Loaded settings: {APP_NAME} v{API_VERSION} ({APP_ENV})")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application lifespan."""
+    logger.info("=" * 60)
+    logger.info("🚀 Starting Eco Nojin API")
+    logger.info("=" * 60)
+    
+    try:
+        init_db()
+        logger.info("✅ Database initialized")
+    except Exception as e:
+        logger.error(f"❌ Database error: {e}")
+        logger.error(traceback.format_exc())
+    
+    cors_origins = sget('cors_origins', ['*'])
+    if isinstance(cors_origins, str):
+        try:
+            import json
+            cors_origins = json.loads(cors_origins)
+        except:
+            cors_origins = [o.strip() for o in cors_origins.split(',') if o.strip()]
+    
+    logger.info(f"🌍 CORS: {len(cors_origins)} origins")
+    logger.info(f"📚 Docs: http://127.0.0.1:8000/docs")
+    logger.info("=" * 60)
+    
+    yield
+    
+    logger.info("🛑 Shutting down")
+
+# Create FastAPI app
+app = FastAPI(
+    title=APP_NAME,
+    description="Integrated Sustainable Agriculture Platform",
+    version=API_VERSION,
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json",
+    lifespan=lifespan,
+)
+
+# CORS Middleware
+cors_origins = sget('cors_origins', ['*'])
+if isinstance(cors_origins, str):
+    try:
+        import json
+        cors_origins = json.loads(cors_origins)
+    except:
+        cors_origins = [o.strip() for o in cors_origins.split(',') if o.strip()]
+
+if not cors_origins:
+    cors_origins = ['*']
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    max_age=86400,
+)
+
+# Include routers
+    app.include_router(ai.router)
+    app.include_router(ai_chat.router)
+    app.include_router(analytics.router)
+    app.include_router(auth.router)
+    app.include_router(benchmark.router)
+    app.include_router(blockchain.router)
+    app.include_router(carbon.router)
+    app.include_router(carbon_engine.router)
+    app.include_router(ecowallet.router)
+    app.include_router(farms.router)
+    app.include_router(marketplace.router)
+    app.include_router(materials.router)
+    app.include_router(satellite.router)
+    app.include_router(scenarios.router)
+    app.include_router(soil.router)
+    app.include_router(sync.router)
+    app.include_router(ussd.router)
+    app.include_router(voice.router)
+    app.include_router(watershed.router)
+
+# Root endpoint
+@app.get("/", tags=["health"])
+async def root():
+    return {
+        "name": APP_NAME,
+        "version": API_VERSION,
+        "status": "running",
+        "environment": APP_ENV,
+        "docs": "/docs",
+        "health": "/health",
+    }
+
+# Health endpoint
+@app.get("/health", tags=["health"])
+async def health():
+    return {
+        "status": "healthy",
+        "service": "api-gateway",
+        "version": API_VERSION,
+        "environment": APP_ENV,
+    }
+
+# Debug routes (development only)
+if APP_ENV == "development":
+    @app.get("/debug/routes", tags=["debug"])
+    async def debug_routes():
+        routes = []
+        for route in app.routes:
+            if hasattr(route, 'path') and hasattr(route, 'methods'):
+                routes.append({
+                    "path": route.path,
+                    "methods": list(route.methods) if route.methods else [],
+                })
+        return {
+            "total": len(routes),
+            "routes": sorted(routes, key=lambda x: x["path"])
+        }
+
+# Exception handler
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled error: {exc}")
+    logger.error(traceback.format_exc())
+    
+    return JSONResponse(
+        status_code=500,
+        content={
+            "detail": str(exc) if APP_ENV == "development" else "Internal error",
+            "error_type": type(exc).__name__,
+        },
+    )
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        "services.api_gateway.main:app",
+        host=sget('app_host', '127.0.0.1'),
+        port=sget('app_port', 8000),
+        reload=(APP_ENV == "development"),
+    )

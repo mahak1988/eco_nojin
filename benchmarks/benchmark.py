@@ -9,6 +9,7 @@ Quantifies:
 
 Output: prints a compact table; the parent agent writes the markdown report.
 """
+
 import time
 
 import numpy as np
@@ -19,6 +20,7 @@ from engine.hydroma.cpp_bridge.soil_physics_fast import (
 
 try:
     from numba import njit
+
     HAS_NUMBA = True
 except ImportError:
     HAS_NUMBA = False
@@ -41,7 +43,7 @@ def vg_k_pure_py(h_list):
         denom = (1.0 + (ALPHA * hv) ** N_PAR) ** m
         se = 1.0 / denom
         if 0 < se < 1:
-            out[i] = KS * se ** 0.5 * (1.0 - (1.0 - se ** (1.0 / m)) ** m) ** 2
+            out[i] = KS * se**0.5 * (1.0 - (1.0 - se ** (1.0 / m)) ** m) ** 2
         else:
             out[i] = KS if se >= 1 else 0.0
     return out
@@ -78,9 +80,9 @@ t_numpy = timeit(vg_k_numpy, h)
 t_pure = timeit(vg_k_pure_py, h.tolist())
 
 print("== 1. van Genuchten K(h), N=%d ==" % N)
-print("  numba : %.4f s" % t_numba)
-print("  numpy : %.4f s" % t_numpy)
-print("  pure  : %.4f s" % t_pure)
+print(f"  numba : {t_numba:.4f} s")
+print(f"  numpy : {t_numpy:.4f} s")
+print(f"  pure  : {t_pure:.4f} s")
 print("  speedup numba/pure : %.1fx" % (t_pure / t_numba))
 print("  speedup numba/numpy: %.1fx" % (t_numpy / t_numba))
 
@@ -112,8 +114,8 @@ n_samp = 100
 se_mc = mc_estimate(n_samp)
 se_lhs = lhs_estimate(n_samp)
 print("== 2. MC vs LHS on E[x+y], n=%d ==" % n_samp)
-print("  SE(MC)  = %.5f" % se_mc)
-print("  SE(LHS) = %.5f" % se_lhs)
+print(f"  SE(MC)  = {se_mc:.5f}")
+print(f"  SE(LHS) = {se_lhs:.5f}")
 print("  variance reduction = %.1fx" % (se_mc / se_lhs))
 
 # ---- 3. Muskingum routing: numba vs pure loop --------------------------
@@ -137,7 +139,8 @@ try:
     t_musk_numba = timeit(route_flood_wave, Q, 1000.0, 50, 0.03, 0.002, 10.0, 5.0)
     t_musk_py = timeit(route_py, Q)
     print("== 3. Muskingum routing, N=%d ==" % len(Q))
-    print("  numba : %.5f s | pure: %.5f s | speedup %.1fx"
-          % (t_musk_numba, t_musk_py, t_musk_py / t_musk_numba))
+    print(
+        f"  numba : {t_musk_numba:.5f} s | pure: {t_musk_py:.5f} s | speedup {t_musk_py / t_musk_numba:.1f}x"
+    )
 except Exception as e:  # pragma: no cover
-    print("== 3. Muskingum: skipped (%s)" % e)
+    print(f"== 3. Muskingum: skipped ({e})")

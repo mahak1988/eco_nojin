@@ -8,13 +8,14 @@ Implements design calculations for:
 
 Reference: FAO Watershed Management Field Manual
 """
+
 import math
-from typing import Dict
 from enum import Enum
 
 
 class StructureType(Enum):
     """Types of watershed conservation structures."""
+
     CHECK_DAM = "check_dam"
     CONTOUR_TRENCH = "contour_trench"
     HALF_MOON = "half_moon"
@@ -118,7 +119,7 @@ def design_half_moon(
     n_structures = math.ceil(area_m2 / (spacing * spacing))
 
     radius = diameter / 2
-    volume_per_structure = 0.5 * math.pi * radius ** 2 * depth
+    volume_per_structure = 0.5 * math.pi * radius**2 * depth
     total_volume = n_structures * volume_per_structure
 
     cost = n_structures * 5

@@ -1,4 +1,4 @@
-﻿"""Security middleware for the API gateway (Phase 0).
+"""Security middleware for the API gateway (Phase 0).
 
 - ``RateLimitMiddleware``: in-memory token bucket per client IP
   (sufficient for a single-process research deployment; multi-worker
@@ -74,13 +74,9 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-        response.headers["Permissions-Policy"] = (
-            "geolocation=(self), camera=(self), microphone=()"
-        )
-        if get_settings().is_production:
-            response.headers["Strict-Transport-Security"] = (
-                "max-age=63072000; includeSubDomains"
-            )
+        response.headers["Permissions-Policy"] = "geolocation=(self), camera=(self), microphone=()"
+        if getattr(get_settings(), "is_production", False):
+            response.headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains"
         return response
 
 

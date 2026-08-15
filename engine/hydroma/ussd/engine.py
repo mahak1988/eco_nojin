@@ -5,20 +5,21 @@ suitable for basic feature phones (160 chars for SMS, 182 for USSD).
 
 Supports 3 languages: en, fa, ar (based on user preference).
 """
+
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Callable
 from enum import Enum
-import re
 
 
 class GatewayType(Enum):
     """Type of incoming request."""
+
     USSD = "ussd"
     SMS = "sms"
 
 
 class Language(Enum):
     """Supported languages for USSD/SMS."""
+
     EN = "en"
     FA = "fa"
     AR = "ar"
@@ -27,6 +28,7 @@ class Language(Enum):
 @dataclass
 class UssdRequest:
     """USSD request from telco."""
+
     session_id: str
     service_code: str  # e.g. "*384*73#"
     phone_number: str
@@ -38,6 +40,7 @@ class UssdRequest:
 @dataclass
 class UssdResponse:
     """USSD response to send back."""
+
     text: str
     end_session: bool = False  # True = CON, False = END
 
@@ -50,7 +53,7 @@ class UssdResponse:
 # ============================================================================
 # TRANSLATIONS
 # ============================================================================
-MESSAGES: Dict[str, Dict[Language, str]] = {
+MESSAGES: dict[str, dict[Language, str]] = {
     # Main menu
     "main_menu": {
         Language.EN: "CON Eco Nojin Services\n1. Soil Analysis\n2. Crop Advice\n3. Market Prices\n4. Weather\n5. Ask Expert\n0. Exit",
@@ -202,13 +205,26 @@ class UssdHandler:
         ndvi = 0.45 + (lat % 1) * 0.1
         if ndvi > 0.5:
             status = "Good" if lang == Language.EN else ("خوب" if lang == Language.FA else "جيد")
-            advice = "Maintain practices" if lang == Language.EN else ("روش‌ها را حفظ کنید" if lang == Language.FA else "حافظ على الممارسات")
+            advice = (
+                "Maintain practices"
+                if lang == Language.EN
+                else ("روش‌ها را حفظ کنید" if lang == Language.FA else "حافظ على الممارسات")
+            )
         else:
-            status = "Stressed" if lang == Language.EN else ("تحت تنش" if lang == Language.FA else "مجهد")
-            advice = "Add compost" if lang == Language.EN else ("کمپوست اضافه کنید" if lang == Language.FA else "أضف السماد")
+            status = (
+                "Stressed"
+                if lang == Language.EN
+                else ("تحت تنش" if lang == Language.FA else "مجهد")
+            )
+            advice = (
+                "Add compost"
+                if lang == Language.EN
+                else ("کمپوست اضافه کنید" if lang == Language.FA else "أضف السماد")
+            )
 
         text = get_message(
-            "soil_result_template", lang,
+            "soil_result_template",
+            lang,
             lat=f"{lat:.2f}",
             lon=f"{lon:.2f}",
             ndvi=f"{ndvi:.2f}",
@@ -253,7 +269,8 @@ class UssdHandler:
         }
 
         text = get_message(
-            "crop_advice_template", lang,
+            "crop_advice_template",
+            lang,
             region=region_name,
             crops=crops[region_choice][lang.value],
             season=seasons[region_choice][lang.value],
@@ -287,11 +304,14 @@ class UssdHandler:
         }
 
         text = get_message(
-            "price_template", lang,
+            "price_template",
+            lang,
             product=product_name,
             price=f"{product['price']:.2f}",
             trend=trends[product_choice][lang.value],
-            market="Tehran" if lang == Language.EN else ("تهران" if lang == Language.FA else "طهران"),
+            market="Tehran"
+            if lang == Language.EN
+            else ("تهران" if lang == Language.FA else "طهران"),
         )
         return UssdResponse(text=text, end_session=True)
 
@@ -322,7 +342,8 @@ class UssdHandler:
         }
 
         text = get_message(
-            "weather_template", lang,
+            "weather_template",
+            lang,
             city=city_name,
             temp=temps[city_choice],
             rain=rains[city_choice],
@@ -350,7 +371,7 @@ class UssdHandler:
 
 
 # Singleton
-_handler: Optional[UssdHandler] = None
+_handler: UssdHandler | None = None
 
 
 def get_ussd_handler() -> UssdHandler:

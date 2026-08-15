@@ -1,94 +1,85 @@
-"""API endpoints for satellite data analysis."""
-from datetime import date
-from fastapi import APIRouter, HTTPException
+"""Satellite analysis router - uses C++ indices + database."""
+
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
-from engine.hydroma.satellite import get_analyzer
+from sqlalchemy.orm import Session
 
-router = APIRouter(prefix="/api/v1/satellite", tags=["Satellite Analysis"])
+from database.config import get_db
+from database.models import SatelliteAnalysis
 
-
-class PointAnalysisRequest(BaseModel):
-    """Request for point-based satellite analysis."""
-    lat: float = Field(..., ge=-90, le=90, description="Latitude in degrees")
-    lon: float = Field(..., ge=-180, le=180, description="Longitude in degrees")
-    analysis_date: str | None = Field(
-        None,
-        description="Date in YYYY-MM-DD format (defaults to 7 days ago)"
-    )
+router = APIRouter(prefix="/api/v1/satellite", tags=["satellite"])
 
 
-class VegetationClass(BaseModel):
-    """Vegetation classification."""
-    class_name: str = Field(alias="class")
-    description: str
-
-
-class FieldAnalysisResponse(BaseModel):
-    """Response containing complete field analysis."""
+class SatelliteRequest(BaseModel):
     lat: float
     lon: float
-    analysis_date: str
-    ndvi: float
-    evi: float
-    savi: float
-    ndwi: float
-    nbr: float
-    vegetation_status: VegetationClass
-    cloud_cover: float
-    data_quality: str
-    recommendation: str
+    red: float = Field(0.2, ge=0, le=1, description="Red band reflectance")
+    nir: float = Field(0.5, ge=0, le=1, description="NIR band reflectance")
+    blue: float = Field(0.1, ge=0, le=1)
+    green: float = Field(0.3, ge=0, le=1)
+    swir: float = Field(0.2, ge=0, le=1)
+    farm_id: int | None = None
+    user_id: int | None = None
 
 
-@router.post("/analyze", response_model=FieldAnalysisResponse)
-def analyze_field(payload: PointAnalysisRequest):
-    """Analyze a geographic point using satellite data.
-    
-    Returns vegetation indices (NDVI, EVI, SAVI, NDWI, NBR) and
-    actionable recommendations for farmers and land managers.
-    """
-    analyzer = get_analyzer()
-    
-    # Parse date if provided
-    analysis_date = None
-    if payload.analysis_date:
-        try:
-            analysis_date = date.fromisoformat(payload.analysis_date)
-        except ValueError:
-            raise HTTPException(
-                status_code=400,
-                detail="Invalid date format. Use YYYY-MM-DD."
-            )
-    
-    result = analyzer.analyze_point(
-        lat=payload.lat,
-        lon=payload.lon,
-        analysis_date=analysis_date,
-    )
-    
-    return FieldAnalysisResponse(
-        lat=result.lat,
-        lon=result.lon,
-        analysis_date=result.analysis_date.isoformat(),
-        ndvi=result.ndvi,
-        evi=result.evi,
-        savi=result.savi,
-        ndwi=result.ndwi,
-        nbr=result.nbr,
-        vegetation_status=VegetationClass(
-            **result.ndvi_class
-        ),
-        cloud_cover=result.cloud_cover,
-        data_quality=result.data_quality,
-        recommendation=result.recommendation,
+@router.post("/analyze")
+def analyze_satellite(req: SatelliteRequest, db: Session = Depends(get_db)):
+    """Compute vegetation indices from reflectance bands."""
+    from engine.hydroma.wrapper import compute_all_indices
+
+    indices = compute_all_indices(
+        red=req.red, nir=req.nir, blue=req.blue, green=req.green, swir=req.swir
     )
 
+    # Interpretation
+    ndvi = indices["ndvi"]
+    if ndvi < 0:
+        health = "no vegetation / water"
+    elif ndvi < 0.2:
+        health = "bare soil / sparse"
+    elif ndvi < 0.4:
+        health = "moderate vegetation"
+    elif ndvi < 0.6:
+        health = "dense vegetation"
+    else:
+        health = "very dense / healthy"
 
-@router.get("/health")
-def satellite_health():
-    """Check satellite service availability."""
-    analyzer = get_analyzer()
-    return {
-        "status": "operational",
-        "providers": ["earth_search", "nasa_power"],
-        "supported_indices": ["NDVI", "EVI", "SAVI", "NDWI", "NBR"],
+    result = {
+        "latitude": req.lat,
+        "longitude": req.lon,
+        "indices": indices,
+        "vegetation_health": health,
+        "recommendations": [],
     }
+
+    if ndvi < 0.3:
+        result["recommendations"].append("Consider irrigation or fertilization")
+    if ndvi > 0.7:
+        result["recommendations"].append("Excellent vegetation - maintain current practices")
+    if indices["ndwi"] > 0.3:
+        result["recommendations"].append("High water content detected - possible flooding")
+
+    # Save to database
+    if req.farm_id and req.user_id:
+        try:
+            record = SatelliteAnalysis(
+                farm_id=req.farm_id,
+                user_id=req.user_id,
+                latitude=req.lat,
+                longitude=req.lon,
+                ndvi=indices["ndvi"],
+                evi=indices["evi"],
+                savi=indices["savi"],
+                ndwi=indices["ndwi"],
+                nbr=indices["nbr"],
+                satellite="Sentinel-2",
+            )
+            db.add(record)
+            db.commit()
+            db.refresh(record)
+            result["saved_id"] = record.id
+        except Exception as e:
+            db.rollback()
+            result["save_warning"] = str(e)
+
+    return result

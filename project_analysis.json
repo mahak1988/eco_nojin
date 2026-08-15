@@ -1,0 +1,1434 @@
+{
+  "metadata": {
+    "analyzed_at": "2026-08-15T22:34:50.827950",
+    "project_path": "D:\\eco_nojin",
+    "analyzer_version": "1.0"
+  },
+  "phase1_inventory": {
+    "total_files": 543,
+    "total_size_mb": 54.53,
+    "extension_distribution": {
+      ".py": 157,
+      ".tsx": 69,
+      ".tlog": 50,
+      ".md": 44,
+      ".obj": 27,
+      ".json": 20,
+      "no_ext": 19,
+      ".cpp": 15,
+      ".txt": 13,
+      ".ts": 13,
+      ".hpp": 10,
+      ".vcxproj": 9,
+      ".recipe": 9,
+      ".lastbuildstate": 8,
+      ".filters": 7,
+      ".exe": 6,
+      ".cmake": 5,
+      ".backup": 4,
+      ".png": 4,
+      ".bat": 3,
+      ".pyd": 3,
+      ".svg": 3,
+      ".yml": 2,
+      ".db": 2,
+      ".db-shm": 2,
+      ".db-wal": 2,
+      ".bak_20260815_041559": 2,
+      ".yaml": 2,
+      ".rule": 2,
+      ".iobj": 2,
+      ".lib": 2,
+      ".js": 2,
+      ".css": 2,
+      ".example": 1,
+      ".template": 1,
+      ".ini": 1,
+      ".ps1": 1,
+      ".toml": 1,
+      ".mako": 1,
+      ".sln": 1,
+      ".check_cache": 1,
+      ".stamp": 1,
+      ".depend": 1,
+      ".list": 1,
+      ".bin": 1,
+      ".exp": 1,
+      ".log": 1,
+      ".env-backup": 1,
+      ".safe-backup": 1,
+      ".backup-nextjs16": 1,
+      ".tsbuildinfo": 1,
+      ".html": 1,
+      ".bak": 1,
+      ".bak2": 1,
+      ".bak3": 1,
+      ".v1-backup": 1
+    },
+    "size_by_extension_kb": {
+      ".backup": 18.95,
+      ".example": 1.35,
+      ".template": 4.41,
+      ".ini": 4.89,
+      ".md": 278.37,
+      ".yml": 4.14,
+      ".db": 376.0,
+      ".db-shm": 64.0,
+      ".db-wal": 0.0,
+      ".bak_20260815_041559": 220.0,
+      ".ps1": 15.3,
+      "no_ext": 1.34,
+      ".py": 567.02,
+      ".toml": 1.49,
+      ".txt": 24.97,
+      ".mako": 0.69,
+      ".bat": 1.2,
+      ".obj": 26087.68,
+      ".exe": 727.5,
+      ".cpp": 117.21,
+      ".vcxproj": 226.66,
+      ".filters": 4.7,
+      ".cmake": 12.18,
+      ".sln": 6.95,
+      ".check_cache": 0.08,
+      ".yaml": 464.28,
+      ".stamp": 0.05,
+      ".depend": 4.1,
+      ".list": 0.06,
+      ".json": 302.02,
+      ".bin": 50.0,
+      ".recipe": 3.79,
+      ".tlog": 310.32,
+      ".lastbuildstate": 1.35,
+      ".rule": 0.05,
+      ".iobj": 22874.02,
+      ".pyd": 1165.0,
+      ".lib": 1119.94,
+      ".exp": 0.77,
+      ".log": 4.33,
+      ".hpp": 25.51,
+      ".env-backup": 3.89,
+      ".safe-backup": 6.34,
+      ".ts": 22.29,
+      ".js": 3.94,
+      ".backup-nextjs16": 0.55,
+      ".tsbuildinfo": 116.65,
+      ".css": 5.09,
+      ".tsx": 566.26,
+      ".svg": 1.93,
+      ".html": 2.11,
+      ".png": 0.27,
+      ".bak": 4.38,
+      ".bak2": 4.87,
+      ".bak3": 5.08,
+      ".v1-backup": 5.76
+    },
+    "empty_files_count": 23,
+    "empty_files_sample": [
+      "econojin.db-wal",
+      "blockchain\\config\\.gitkeep",
+      "blockchain\\contracts\\.gitkeep",
+      "blockchain\\scripts\\.gitkeep",
+      "data\\econojin.db-wal",
+      "data\\external\\.gitkeep",
+      "data\\metadata\\.gitkeep",
+      "data\\processed\\.gitkeep",
+      "data\\raw\\.gitkeep",
+      "database\\__init__.py",
+      "deploy\\ci\\.gitkeep",
+      "deploy\\docker\\.gitkeep",
+      "deploy\\k8s\\.gitkeep",
+      "engine\\cpp_core\\build2\\install_manifest.txt",
+      "engine\\hydroma\\satellite\\processors\\__init__.py",
+      "engine\\hydroma\\satellite\\providers\\__init__.py",
+      "frontend\\public\\.gitkeep",
+      "ml\\features\\.gitkeep",
+      "ml\\models\\.gitkeep",
+      "ml\\notebooks\\.gitkeep"
+    ],
+    "top_level_structure": {
+      ".env": {
+        "type": "file",
+        "size_bytes": 4636
+      },
+      ".env.backup": {
+        "type": "file",
+        "size_bytes": 4511
+      },
+      ".env.example": {
+        "type": "file",
+        "size_bytes": 1385
+      },
+      ".env.template": {
+        "type": "file",
+        "size_bytes": 4511
+      },
+      ".github": {
+        "type": "directory",
+        "files": 1,
+        "size_kb": 3.845703125
+      },
+      ".gitignore": {
+        "type": "file",
+        "size_bytes": 2922
+      },
+      "alembic": {
+        "type": "directory",
+        "files": 8,
+        "size_kb": 86.2958984375
+      },
+      "alembic.ini": {
+        "type": "file",
+        "size_bytes": 5008
+      },
+      "benchmarks": {
+        "type": "directory",
+        "files": 2,
+        "size_kb": 6.6767578125
+      },
+      "blockchain": {
+        "type": "directory",
+        "files": 3,
+        "size_kb": 0.0
+      },
+      "data": {
+        "type": "directory",
+        "files": 8,
+        "size_kb": 416.0
+      },
+      "database": {
+        "type": "directory",
+        "files": 8,
+        "size_kb": 37.740234375
+      },
+      "DELIVERY": {
+        "type": "directory",
+        "files": 1,
+        "size_kb": 4.126953125
+      },
+      "DEMO_SCRIPT.md": {
+        "type": "file",
+        "size_bytes": 12142
+      },
+      "deploy": {
+        "type": "directory",
+        "files": 3,
+        "size_kb": 0.0
+      },
+      "docker-compose.yml": {
+        "type": "file",
+        "size_bytes": 306
+      },
+      "docs": {
+        "type": "directory",
+        "files": 33,
+        "size_kb": 202.1552734375
+      },
+      "econojin.db": {
+        "type": "file",
+        "size_bytes": 188416
+      },
+      "econojin.db-shm": {
+        "type": "file",
+        "size_bytes": 32768
+      },
+      "econojin.db-wal": {
+        "type": "file",
+        "size_bytes": 0
+      },
+      "econojin.egg-info": {
+        "type": "directory",
+        "files": 5,
+        "size_kb": 5.8046875
+      },
+      "ECONOMIC_MODEL.md": {
+        "type": "file",
+        "size_bytes": 10803
+      },
+      "ECO_COIN_WHITEPAPER.md": {
+        "type": "file",
+        "size_bytes": 10648
+      },
+      "engine": {
+        "type": "directory",
+        "files": 398,
+        "size_kb": 55323.7099609375
+      },
+      "frontend": {
+        "type": "directory",
+        "files": 61893,
+        "size_kb": 1488017.9853515625
+      },
+      "hydroma_research.db.bak_20260815_041559": {
+        "type": "file",
+        "size_bytes": 28672
+      },
+      "install_fonts_fix.ps1": {
+        "type": "file",
+        "size_bytes": 15664
+      },
+      "INVESTOR_PITCH.md": {
+        "type": "file",
+        "size_bytes": 6679
+      },
+      "LEGAL_COMPLIANCE.md": {
+        "type": "file",
+        "size_bytes": 6597
+      },
+      "LICENSE": {
+        "type": "file",
+        "size_bytes": 178
+      },
+      "ml": {
+        "type": "directory",
+        "files": 4,
+        "size_kb": 0.0
+      },
+      "PRESENTATION.md": {
+        "type": "file",
+        "size_bytes": 9684
+      },
+      "project_analyzer.py": {
+        "type": "file",
+        "size_bytes": 46735
+      },
+      "PROJECT_SUMMARY.md": {
+        "type": "file",
+        "size_bytes": 7209
+      },
+      "pyproject.toml": {
+        "type": "file",
+        "size_bytes": 1525
+      },
+      "README.md": {
+        "type": "file",
+        "size_bytes": 4154
+      },
+      "reports": {
+        "type": "directory",
+        "files": 2,
+        "size_kb": 7.4765625
+      },
+      "requirements-optional.txt": {
+        "type": "file",
+        "size_bytes": 561
+      },
+      "requirements-research.txt": {
+        "type": "file",
+        "size_bytes": 188
+      },
+      "requirements.txt": {
+        "type": "file",
+        "size_bytes": 701
+      },
+      "scripts": {
+        "type": "directory",
+        "files": 0,
+        "size_kb": 0.0
+      },
+      "services": {
+        "type": "directory",
+        "files": 67,
+        "size_kb": 424.3974609375
+      },
+      "tests": {
+        "type": "directory",
+        "files": 55,
+        "size_kb": 510.9130859375
+      }
+    }
+  },
+  "phase2_stack": {
+    "languages": {
+      "python": 16641,
+      "typescript": 14184,
+      "yaml": 7146,
+      "markdown": 5744,
+      "json": 5690,
+      "database": 761,
+      "shell": 513,
+      "css": 228,
+      "config": 216,
+      "javascript": 147,
+      "html": 57,
+      "image": 55
+    },
+    "frameworks": {
+      "python_project": "econojin",
+      "frontend_project": "eco-nojin-frontend",
+      "backend": "FastAPI",
+      "frontend": "Next.js",
+      "orm": "SQLAlchemy",
+      "migration": "Alembic"
+    },
+    "tools": [
+      "pyproject.toml",
+      "requirements.txt",
+      "package.json",
+      "GitHub Actions",
+      "Alembic"
+    ],
+    "dependencies": {
+      "python": {
+        "fastapi": "fastapi>=0.141,<1.0",
+        "uvicorn[standard]": "uvicorn[standard]>=0.52,<1.0",
+        "sqlalchemy": "sqlalchemy>=2.0,<3.0",
+        "alembic": "alembic>=1.13.0",
+        "pydantic": "pydantic>=2.13,<3.0",
+        "pydantic-settings": "pydantic-settings>=2.2.0",
+        "python-jose[cryptography]": "python-jose[cryptography]>=3.3.0",
+        "passlib[bcrypt]": "passlib[bcrypt]>=1.7.4",
+        "python-multipart": "python-multipart>=0.0.32,<1.0",
+        "numpy": "numpy>=2.4,<3.0",
+        "scipy": "scipy>=1.17,<2.0",
+        "pandas": "pandas>=3.0,<4.0",
+        "httpx": "httpx>=0.28,<1.0",
+        "python-dotenv": "python-dotenv>=1.2,<2.0",
+        "numba": "numba>=0.67,<1.0",
+        "scikit-learn": "scikit-learn>=1.5,<2.0",
+        "requests": "requests>=2.34,<3.0",
+        "pytest": "pytest>=9.0,<10.0",
+        "pytest-timeout": "pytest-timeout>=2.4,<3.0"
+      },
+      "javascript": {
+        "date-fns": "^4.4.0",
+        "framer-motion": "^13.1.0",
+        "leaflet": "^1.9.4",
+        "lucide-react": "^1.31.0",
+        "next": "15.1.6",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "react-icons": "^5.7.0",
+        "react-leaflet": "^5.0.0",
+        "recharts": "^3.10.1",
+        "@types/leaflet": "^1.9.22",
+        "@types/node": "^20",
+        "@types/react": "^19",
+        "@types/react-dom": "^19",
+        "autoprefixer": "^10.5.4",
+        "postcss": "^8.5.26",
+        "tailwindcss": "^4.3.3",
+        "typescript": "^5"
+      }
+    }
+  },
+  "phase3_architecture": {
+    "modules": {
+      "database": {
+        "path": "database",
+        "files": 1,
+        "submodules": []
+      },
+      "engine": {
+        "path": "engine",
+        "files": 37,
+        "submodules": [
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma",
+          "hydroma"
+        ]
+      },
+      "services": {
+        "path": "services",
+        "files": 8,
+        "submodules": [
+          "api_gateway",
+          "api_gateway",
+          "auth",
+          "ledger",
+          "notification",
+          "reporting",
+          "workflow"
+        ]
+      },
+      "tests": {
+        "path": "tests",
+        "files": 5,
+        "submodules": [
+          "benchmarks",
+          "e2e",
+          "integration",
+          "unit"
+        ]
+      }
+    },
+    "api_endpoints": [],
+    "database_models": [
+      {
+        "class": "User",
+        "file": "database\\models.py"
+      },
+      {
+        "class": "PasswordResetToken",
+        "file": "database\\models.py"
+      },
+      {
+        "class": "Farm",
+        "file": "database\\models.py"
+      },
+      {
+        "class": "SoilAnalysis",
+        "file": "database\\models.py"
+      },
+      {
+        "class": "SatelliteAnalysis",
+        "file": "database\\models.py"
+      },
+      {
+        "class": "ScenarioRun",
+        "file": "database\\models.py"
+      },
+      {
+        "class": "AIConversation",
+        "file": "database\\models.py"
+      },
+      {
+        "class": "CarbonProject",
+        "file": "database\\models.py"
+      },
+      {
+        "class": "EcoWallet",
+        "file": "database\\models.py"
+      },
+      {
+        "class": "EcoTransaction",
+        "file": "database\\models.py"
+      },
+      {
+        "class": "Product",
+        "file": "database\\models.py"
+      },
+      {
+        "class": "RecommendationCache",
+        "file": "database\\models.py"
+      },
+      {
+        "class": "Settings",
+        "file": "engine\\hydroma\\config\\settings.py"
+      },
+      {
+        "class": "SoilProfile",
+        "file": "engine\\hydroma\\core\\models.py"
+      },
+      {
+        "class": "Plant",
+        "file": "engine\\hydroma\\core\\models.py"
+      },
+      {
+        "class": "Material",
+        "file": "engine\\hydroma\\core\\models.py"
+      },
+      {
+        "class": "SoilProfileBase",
+        "file": "engine\\hydroma\\core\\schemas.py"
+      },
+      {
+        "class": "SoilProfileCreate",
+        "file": "engine\\hydroma\\core\\schemas.py"
+      },
+      {
+        "class": "SoilProfileRead",
+        "file": "engine\\hydroma\\core\\schemas.py"
+      },
+      {
+        "class": "PlantBase",
+        "file": "engine\\hydroma\\core\\schemas.py"
+      },
+      {
+        "class": "PlantCreate",
+        "file": "engine\\hydroma\\core\\schemas.py"
+      },
+      {
+        "class": "PlantRead",
+        "file": "engine\\hydroma\\core\\schemas.py"
+      },
+      {
+        "class": "MaterialBase",
+        "file": "engine\\hydroma\\core\\schemas.py"
+      },
+      {
+        "class": "MaterialCreate",
+        "file": "engine\\hydroma\\core\\schemas.py"
+      },
+      {
+        "class": "MaterialRead",
+        "file": "engine\\hydroma\\core\\schemas.py"
+      },
+      {
+        "class": "CompostMaterial",
+        "file": "engine\\hydroma\\materials\\compost_formulator.py"
+      },
+      {
+        "class": "RateLimitMiddleware",
+        "file": "services\\api_gateway\\security.py"
+      },
+      {
+        "class": "SecurityHeadersMiddleware",
+        "file": "services\\api_gateway\\security.py"
+      },
+      {
+        "class": "RequestIDMiddleware",
+        "file": "services\\api_gateway\\security.py"
+      },
+      {
+        "class": "QueryRequest",
+        "file": "services\\api_gateway\\routers\\ai.py"
+      },
+      {
+        "class": "SourceResponse",
+        "file": "services\\api_gateway\\routers\\ai.py"
+      },
+      {
+        "class": "QueryResponse",
+        "file": "services\\api_gateway\\routers\\ai.py"
+      },
+      {
+        "class": "ChatRequest",
+        "file": "services\\api_gateway\\routers\\ai_chat.py"
+      },
+      {
+        "class": "ChatResponse",
+        "file": "services\\api_gateway\\routers\\ai_chat.py"
+      },
+      {
+        "class": "RegisterRequest",
+        "file": "services\\api_gateway\\routers\\auth.py"
+      },
+      {
+        "class": "LoginRequest",
+        "file": "services\\api_gateway\\routers\\auth.py"
+      },
+      {
+        "class": "ForgotPasswordRequest",
+        "file": "services\\api_gateway\\routers\\auth.py"
+      },
+      {
+        "class": "ResetPasswordRequest",
+        "file": "services\\api_gateway\\routers\\auth.py"
+      },
+      {
+        "class": "ChangePasswordRequest",
+        "file": "services\\api_gateway\\routers\\auth.py"
+      },
+      {
+        "class": "ProfileUpdateRequest",
+        "file": "services\\api_gateway\\routers\\auth.py"
+      },
+      {
+        "class": "UserResponse",
+        "file": "services\\api_gateway\\routers\\auth.py"
+      },
+      {
+        "class": "TokenResponse",
+        "file": "services\\api_gateway\\routers\\auth.py"
+      },
+      {
+        "class": "MessageResponse",
+        "file": "services\\api_gateway\\routers\\auth.py"
+      },
+      {
+        "class": "BenchmarkRequest",
+        "file": "services\\api_gateway\\routers\\benchmark.py"
+      },
+      {
+        "class": "RegisterProjectRequest",
+        "file": "services\\api_gateway\\routers\\blockchain.py"
+      },
+      {
+        "class": "VerifyProjectRequest",
+        "file": "services\\api_gateway\\routers\\blockchain.py"
+      },
+      {
+        "class": "IssueCreditsRequest",
+        "file": "services\\api_gateway\\routers\\blockchain.py"
+      },
+      {
+        "class": "TransferCreditsRequest",
+        "file": "services\\api_gateway\\routers\\blockchain.py"
+      },
+      {
+        "class": "RetireCreditsRequest",
+        "file": "services\\api_gateway\\routers\\blockchain.py"
+      },
+      {
+        "class": "RegisterProductRequest",
+        "file": "services\\api_gateway\\routers\\blockchain.py"
+      },
+      {
+        "class": "AddTraceEventRequest",
+        "file": "services\\api_gateway\\routers\\blockchain.py"
+      },
+      {
+        "class": "ProjectCalculateRequest",
+        "file": "services\\api_gateway\\routers\\carbon.py"
+      },
+      {
+        "class": "ProjectOut",
+        "file": "services\\api_gateway\\routers\\carbon.py"
+      },
+      {
+        "class": "WalletResponse",
+        "file": "services\\api_gateway\\routers\\ecowallet.py"
+      },
+      {
+        "class": "TransactionResponse",
+        "file": "services\\api_gateway\\routers\\ecowallet.py"
+      },
+      {
+        "class": "EarnRequest",
+        "file": "services\\api_gateway\\routers\\ecowallet.py"
+      },
+      {
+        "class": "RedeemRequest",
+        "file": "services\\api_gateway\\routers\\ecowallet.py"
+      },
+      {
+        "class": "FarmCreate",
+        "file": "services\\api_gateway\\routers\\farms.py"
+      },
+      {
+        "class": "FarmOut",
+        "file": "services\\api_gateway\\routers\\farms.py"
+      },
+      {
+        "class": "OrderRequest",
+        "file": "services\\api_gateway\\routers\\marketplace.py"
+      },
+      {
+        "class": "CompostRequest",
+        "file": "services\\api_gateway\\routers\\materials.py"
+      },
+      {
+        "class": "CompostResponse",
+        "file": "services\\api_gateway\\routers\\materials.py"
+      },
+      {
+        "class": "SatelliteRequest",
+        "file": "services\\api_gateway\\routers\\satellite.py"
+      },
+      {
+        "class": "ScenarioRequest",
+        "file": "services\\api_gateway\\routers\\scenarios.py"
+      },
+      {
+        "class": "SoilAnalysisRequest",
+        "file": "services\\api_gateway\\routers\\soil.py"
+      },
+      {
+        "class": "SyncItem",
+        "file": "services\\api_gateway\\routers\\sync.py"
+      },
+      {
+        "class": "SyncBatch",
+        "file": "services\\api_gateway\\routers\\sync.py"
+      },
+      {
+        "class": "SyncResult",
+        "file": "services\\api_gateway\\routers\\sync.py"
+      },
+      {
+        "class": "SyncResponse",
+        "file": "services\\api_gateway\\routers\\sync.py"
+      },
+      {
+        "class": "UssdApiRequest",
+        "file": "services\\api_gateway\\routers\\ussd.py"
+      },
+      {
+        "class": "SmsApiRequest",
+        "file": "services\\api_gateway\\routers\\ussd.py"
+      },
+      {
+        "class": "AfricasTalkingUssdRequest",
+        "file": "services\\api_gateway\\routers\\ussd.py"
+      },
+      {
+        "class": "SmsWebhookRequest",
+        "file": "services\\api_gateway\\routers\\ussd.py"
+      },
+      {
+        "class": "IVRStartRequest",
+        "file": "services\\api_gateway\\routers\\voice.py"
+      },
+      {
+        "class": "IVRDTMFRequest",
+        "file": "services\\api_gateway\\routers\\voice.py"
+      },
+      {
+        "class": "IVRVoiceRequest",
+        "file": "services\\api_gateway\\routers\\voice.py"
+      },
+      {
+        "class": "TTSRequest",
+        "file": "services\\api_gateway\\routers\\voice.py"
+      },
+      {
+        "class": "STTRequest",
+        "file": "services\\api_gateway\\routers\\voice.py"
+      },
+      {
+        "class": "VoiceQuestionRequest",
+        "file": "services\\api_gateway\\routers\\voice.py"
+      },
+      {
+        "class": "StructureRequest",
+        "file": "services\\api_gateway\\routers\\watershed.py"
+      }
+    ],
+    "routers": [],
+    "patterns_detected": [
+      "Layered Architecture (Engine + API + Frontend)",
+      "Test-Driven Development structure"
+    ],
+    "layers": {
+      "engine": true,
+      "api": true,
+      "frontend": true,
+      "database": true,
+      "tests": true
+    }
+  },
+  "phase4_quality": {
+    "loc_stats": {
+      "total_lines": 16797,
+      "code_lines": 13077,
+      "comment_lines": 653,
+      "blank_lines": 3067,
+      "comment_ratio": 3.89,
+      "largest_files": [
+        {
+          "file": "project_analyzer.py",
+          "lines": 1091,
+          "code_lines": 850
+        },
+        {
+          "file": "services\\api_gateway\\routers\\carbon_engine.py",
+          "lines": 577,
+          "code_lines": 411
+        },
+        {
+          "file": "services\\api_gateway\\routers\\soil.py",
+          "lines": 561,
+          "code_lines": 542
+        },
+        {
+          "file": "services\\api_gateway\\routers\\analytics.py",
+          "lines": 412,
+          "code_lines": 356
+        },
+        {
+          "file": "alembic\\versions\\ce9bf9a53ae1_phase0_baseline_unified_schema.py",
+          "lines": 404,
+          "code_lines": 358
+        },
+        {
+          "file": "services\\api_gateway\\routers\\auth.py",
+          "lines": 400,
+          "code_lines": 300
+        },
+        {
+          "file": "engine\\hydroma\\ussd\\engine.py",
+          "lines": 383,
+          "code_lines": 305
+        },
+        {
+          "file": "services\\api_gateway\\routers\\blockchain.py",
+          "lines": 374,
+          "code_lines": 292
+        },
+        {
+          "file": "services\\api_gateway\\routers\\ai_chat.py",
+          "lines": 358,
+          "code_lines": 282
+        },
+        {
+          "file": "services\\api_gateway\\routers\\ecowallet.py",
+          "lines": 319,
+          "code_lines": 266
+        },
+        {
+          "file": "engine\\hydroma\\wrapper.py",
+          "lines": 315,
+          "code_lines": 252
+        },
+        {
+          "file": "database\\models.py",
+          "lines": 306,
+          "code_lines": 205
+        },
+        {
+          "file": "tests\\unit\\test_marketplace.py",
+          "lines": 302,
+          "code_lines": 224
+        },
+        {
+          "file": "services\\api_gateway\\main.py",
+          "lines": 290,
+          "code_lines": 247
+        },
+        {
+          "file": "tests\\unit\\test_blockchain.py",
+          "lines": 288,
+          "code_lines": 226
+        },
+        {
+          "file": "tests\\unit\\test_ussd.py",
+          "lines": 283,
+          "code_lines": 226
+        },
+        {
+          "file": "services\\api_gateway\\routers\\marketplace.py",
+          "lines": 247,
+          "code_lines": 193
+        },
+        {
+          "file": "services\\api_gateway\\routers\\voice.py",
+          "lines": 245,
+          "code_lines": 164
+        },
+        {
+          "file": "tests\\unit\\test_numba_correctness.py",
+          "lines": 245,
+          "code_lines": 174
+        },
+        {
+          "file": "engine\\hydroma\\carbon\\calculator.py",
+          "lines": 243,
+          "code_lines": 190
+        }
+      ]
+    },
+    "test_coverage": {
+      "test_files_count": 24,
+      "test_files": [
+        "database\\create_test_data.py",
+        "tests\\benchmarks\\test_numba_performance.py",
+        "tests\\integration\\test_api.py",
+        "tests\\integration\\test_api_ai.py",
+        "tests\\integration\\test_api_satellite.py",
+        "tests\\integration\\test_sync.py",
+        "tests\\unit\\test_ai.py",
+        "tests\\unit\\test_auth.py",
+        "tests\\unit\\test_blockchain.py",
+        "tests\\unit\\test_carbon.py",
+        "tests\\unit\\test_climate.py",
+        "tests\\unit\\test_compost.py",
+        "tests\\unit\\test_ecowallet.py",
+        "tests\\unit\\test_marketplace.py",
+        "tests\\unit\\test_models.py",
+        "tests\\unit\\test_numba_correctness.py",
+        "tests\\unit\\test_placeholder.py",
+        "tests\\unit\\test_satellite.py",
+        "tests\\unit\\test_scenarios.py",
+        "tests\\unit\\test_security.py"
+      ],
+      "has_pytest_ini": true,
+      "test_to_code_ratio": 0.15
+    },
+    "documentation": {
+      "has_docs_dir": true,
+      "docs_files": 33,
+      "has_readme": true,
+      "readme_lines": 109,
+      "docstrings_in_code": 761
+    },
+    "complexity_indicators": {
+      "avg_file_size": 107.0,
+      "code_smells_count": 1
+    },
+    "code_smells": [
+      {
+        "type": "long_file",
+        "file": "project_analyzer.py",
+        "lines": 1091
+      }
+    ]
+  },
+  "phase5_security": {
+    "secrets_exposed": [],
+    "env_files": [
+      {
+        "name": ".env",
+        "size": 4636,
+        "in_gitignore": true
+      }
+    ],
+    "gitignore_coverage": {
+      "exists": true,
+      "has_env": true,
+      "has_keys": true,
+      "has_venv": true,
+      "has_pycache": true,
+      "critical_patterns_covered": 6
+    },
+    "sensitive_patterns": [
+      {
+        "file": "database\\create_test_data.py",
+        "line": 36,
+        "pattern": "Hardcoded password",
+        "severity": "HIGH"
+      },
+      {
+        "file": "tests\\unit\\test_settings.py",
+        "line": 47,
+        "pattern": "Hardcoded secret",
+        "severity": "HIGH"
+      },
+      {
+        "file": "tests\\unit\\test_settings.py",
+        "line": 56,
+        "pattern": "Hardcoded secret",
+        "severity": "HIGH"
+      }
+    ],
+    "critical_findings": [
+      {
+        "severity": "HIGH",
+        "issue": "Found 3 hardcoded secrets in code",
+        "recommendation": "Move all secrets to .env file and add to .gitignore"
+      }
+    ],
+    "files_scanned": 157
+  },
+  "phase6_completeness": {
+    "placeholder_files": [
+      {
+        "file": "database\\__init__.py",
+        "lines": 1,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\ai_assistant\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\api\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\blockchain\\__init__.py",
+        "lines": 8,
+        "code_lines": 4
+      },
+      {
+        "file": "engine\\hydroma\\carbon\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\climate\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\config\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\core\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\cpp_bridge\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\crop\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\data_ingestion\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\ecotourism\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\ecowallet\\__init__.py",
+        "lines": 3,
+        "code_lines": 1
+      },
+      {
+        "file": "engine\\hydroma\\erosion\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\finance\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\geospatial\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\groundwater\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\hydrology\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\marketplace\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\materials\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\ml\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\mrv\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\performance\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\plants\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\risk\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\satellite\\__init__.py",
+        "lines": 2,
+        "code_lines": 1
+      },
+      {
+        "file": "engine\\hydroma\\satellite\\processors\\__init__.py",
+        "lines": 1,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\satellite\\providers\\__init__.py",
+        "lines": 1,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\scenario\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\scenarios\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\soil\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\standards\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\ussd\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\watershed\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "engine\\hydroma\\web_search\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "services\\__init__.py",
+        "lines": 1,
+        "code_lines": 0
+      },
+      {
+        "file": "services\\api_gateway\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "services\\api_gateway\\routers\\__init__.py",
+        "lines": 1,
+        "code_lines": 0
+      },
+      {
+        "file": "services\\auth\\main.py",
+        "lines": 11,
+        "code_lines": 4
+      },
+      {
+        "file": "services\\auth\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "services\\ledger\\main.py",
+        "lines": 11,
+        "code_lines": 4
+      },
+      {
+        "file": "services\\ledger\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "services\\notification\\main.py",
+        "lines": 11,
+        "code_lines": 4
+      },
+      {
+        "file": "services\\notification\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "services\\reporting\\main.py",
+        "lines": 11,
+        "code_lines": 4
+      },
+      {
+        "file": "services\\reporting\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "services\\workflow\\main.py",
+        "lines": 11,
+        "code_lines": 4
+      },
+      {
+        "file": "services\\workflow\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "tests\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "tests\\benchmarks\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "tests\\e2e\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "tests\\integration\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      },
+      {
+        "file": "tests\\unit\\test_placeholder.py",
+        "lines": 7,
+        "code_lines": 2
+      },
+      {
+        "file": "tests\\unit\\__init__.py",
+        "lines": 2,
+        "code_lines": 0
+      }
+    ],
+    "stub_functions": [],
+    "todo_fixme_count": 1,
+    "todo_items": [
+      {
+        "file": "project_analyzer.py",
+        "line": 683,
+        "text": "# TODO/FIXME"
+      }
+    ],
+    "empty_modules": [
+      "engine",
+      "engine\\hydroma\\api",
+      "engine\\hydroma\\crop",
+      "engine\\hydroma\\data_ingestion",
+      "engine\\hydroma\\ecotourism",
+      "engine\\hydroma\\erosion",
+      "engine\\hydroma\\finance",
+      "engine\\hydroma\\geospatial",
+      "engine\\hydroma\\groundwater",
+      "engine\\hydroma\\hydrology",
+      "engine\\hydroma\\ml",
+      "engine\\hydroma\\mrv",
+      "engine\\hydroma\\plants",
+      "engine\\hydroma\\risk",
+      "engine\\hydroma\\scenario",
+      "engine\\hydroma\\standards",
+      "engine\\hydroma\\web_search",
+      "services",
+      "tests",
+      "tests\\e2e"
+    ],
+    "not_implemented": [
+      {
+        "file": "project_analyzer.py",
+        "line": 660
+      },
+      {
+        "file": "project_analyzer.py",
+        "line": 665
+      },
+      {
+        "file": "project_analyzer.py",
+        "line": 693
+      },
+      {
+        "file": "project_analyzer.py",
+        "line": 699
+      },
+      {
+        "file": "project_analyzer.py",
+        "line": 702
+      },
+      {
+        "file": "project_analyzer.py",
+        "line": 724
+      },
+      {
+        "file": "project_analyzer.py",
+        "line": 995
+      }
+    ]
+  },
+  "phase7_risk_matrix": {
+    "swot": {
+      "strengths": [
+        "Modern async web framework (FastAPI)",
+        "Modern React framework (Next.js)",
+        "Has test suite (24 files)",
+        "Substantial codebase (543 files)",
+        "Layered architecture (Engine + API separation)"
+      ],
+      "weaknesses": [
+        "56 placeholder files detected",
+        "Low comment ratio - poor documentation",
+        "1 critical security findings",
+        "1 code smells detected"
+      ],
+      "opportunities": [
+        "Add database migrations with Alembic",
+        "Containerize with Docker for deployment",
+        "Increase test coverage",
+        "Add observability (Prometheus/Grafana)",
+        "Add comprehensive API documentation"
+      ],
+      "threats": [
+        "Exposed secrets could lead to security breach",
+        "23 empty files - potential cleanup needed",
+        "Dependency vulnerabilities if not regularly updated",
+        "Technical debt from incomplete implementations"
+      ]
+    },
+    "risk_score": 100,
+    "risk_level": "CRITICAL",
+    "top_priorities": [
+      {
+        "priority": "P0 - CRITICAL",
+        "category": "Security",
+        "issue": "Found 3 hardcoded secrets in code",
+        "action": "Move all secrets to .env file and add to .gitignore",
+        "estimated_effort": "1-2 hours"
+      },
+      {
+        "priority": "P1 - HIGH",
+        "category": "Completeness",
+        "issue": "56 placeholder files",
+        "action": "Fill placeholders or mark as planned",
+        "estimated_effort": "1-3 days"
+      },
+      {
+        "priority": "P2 - MEDIUM",
+        "category": "Quality",
+        "issue": "Test coverage needs improvement",
+        "action": "Add comprehensive unit and integration tests",
+        "estimated_effort": "1-2 weeks"
+      },
+      {
+        "priority": "P2 - MEDIUM",
+        "category": "DevOps",
+        "issue": "CI/CD pipeline",
+        "action": "Setup automated testing and deployment",
+        "estimated_effort": "2-3 days"
+      }
+    ]
+  },
+  "recommendations": []
+}

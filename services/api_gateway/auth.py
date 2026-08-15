@@ -1,4 +1,4 @@
-﻿"""JWT authentication & authorization (Phase 0 rewrite).
+"""JWT authentication & authorization (Phase 0 rewrite).
 
 Fixes W-016: real auth with roles. Secret key comes from settings
 (env/.env), never hard-coded. Adds:
@@ -23,9 +23,7 @@ from engine.hydroma.config.settings import get_settings
 _settings = get_settings()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl="/api/v1/auth/login", auto_error=False
-)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
 
 # Well-known roles
 ROLE_FARMER = "farmer"
@@ -54,8 +52,7 @@ def create_access_token(
         to_encode["sub"] = str(subject)
     to_encode["role"] = role
     expire = datetime.now(UTC) + (
-        expires_delta
-        or timedelta(minutes=_settings.access_token_expire_minutes)
+        expires_delta or timedelta(minutes=_settings.access_token_expire_minutes)
     )
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, _settings.secret_key, algorithm=_settings.jwt_algorithm)
@@ -64,9 +61,7 @@ def create_access_token(
 def decode_token(token: str) -> dict | None:
     """Decode + validate signature/expiry. Returns payload or None."""
     try:
-        return jwt.decode(
-            token, _settings.secret_key, algorithms=[_settings.jwt_algorithm]
-        )
+        return jwt.decode(token, _settings.secret_key, algorithms=[_settings.jwt_algorithm])
     except JWTError:
         return None
 
@@ -147,6 +142,7 @@ def require_api_key(
 
 def role_of(user: User) -> str:
     return user.role if user.role in ALL_ROLES else ROLE_FARMER
+
 
 # Backward-compatible alias: existing routers import `require_user`
 require_user = get_current_user
