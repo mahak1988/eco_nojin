@@ -558,3 +558,71 @@ def compute_erosion(
         )
     except Exception as e:
         return {"error": str(e)}
+
+
+# ============================================================================
+# Soil Profiles CRUD
+# ============================================================================
+from pydantic import BaseModel, Field
+from typing import Optional, List
+from datetime import datetime
+
+
+class SoilProfileCreate(BaseModel):
+    """Request model for creating a soil profile."""
+    name: str = Field(..., description="Profile name")
+    texture: str = Field(..., description="Soil texture class")
+    ph: float = Field(..., ge=0, le=14, description="Soil pH")
+    ec: float = Field(..., ge=0, description="Electrical conductivity (dS/m)")
+    organic_matter: float = Field(..., ge=0, description="Organic matter (%)")
+
+
+class SoilProfileRead(BaseModel):
+    """Response model for soil profile."""
+    id: int
+    name: str
+    texture: str
+    ph: float
+    ec: float
+    organic_matter: float
+    created_at: str
+
+
+# In-memory storage for simplicity (replace with DB in production)
+_soil_profiles_db: List[dict] = []
+_soil_profile_counter = [0]
+
+
+@router.post("/", response_model=SoilProfileRead, status_code=201, tags=["soil"])
+async def create_soil_profile(profile: SoilProfileCreate):
+    """Create a new soil profile.
+    
+    Args:
+        profile: Soil profile data
+        
+    Returns:
+        Created soil profile with ID
+    """
+    _soil_profile_counter[0] += 1
+    new_profile = {
+        "id": _soil_profile_counter[0],
+        "name": profile.name,
+        "texture": profile.texture,
+        "ph": profile.ph,
+        "ec": profile.ec,
+        "organic_matter": profile.organic_matter,
+        "created_at": datetime.utcnow().isoformat(),
+    }
+    _soil_profiles_db.append(new_profile)
+    return new_profile
+
+
+@router.get("/", response_model=List[SoilProfileRead], tags=["soil"])
+async def list_soil_profiles():
+    """List all soil profiles.
+    
+    Returns:
+        List of all soil profiles
+    """
+    return _soil_profiles_db
+

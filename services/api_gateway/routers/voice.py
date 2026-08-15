@@ -13,6 +13,30 @@ from engine.hydroma.voice.voice_assistant import get_voice_assistant
 router = APIRouter(prefix="/api/v1/voice", tags=["Voice AI / IVR"])
 
 
+@router.get("/health", tags=["voice"])
+async def voice_health():
+    """Voice module health check."""
+    return {
+        "status": "operational",
+        "module": "voice",
+        "version": "1.0.0",
+        "mode": "mock",
+        "features": {
+            "ivr_menu": True,
+            "tts": True,
+            "stt": True,
+            "voice_ask": True,
+        },
+        "voice_ivr": {
+            "enabled": True,
+            "languages": ["fa", "en", "ar"],
+            "tts_provider": "mock",
+            "stt_provider": "mock",
+        },
+    }
+
+
+
 # ============================================================================
 # Pydantic Models
 # ============================================================================
