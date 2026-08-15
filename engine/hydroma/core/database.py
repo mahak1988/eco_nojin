@@ -1,18 +1,10 @@
-"""Database configuration and session management for HyDroMa engine."""
-from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
+﻿"""Database access for the HyDroMa engine (Phase 0 unification).
 
-# Research mode uses SQLite. Production will swap to PostGIS connection string.
-DATABASE_URL = "sqlite:///./hydroma_research.db"
+Delegates to ``database.config`` so the whole project shares one
+engine / Base / session. Backward compatible: existing imports
+(``from engine.hydroma.core.database import Base, engine``) keep working.
+"""
 
-engine = create_engine(
-    DATABASE_URL, 
-    connect_args={"check_same_thread": False},
-    echo=False
-)
+from database.config import Base, SessionLocal, engine, get_db, init_db  # noqa: F401
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-class Base(DeclarativeBase):
-    """Base class for all SQLAlchemy ORM models."""
-    pass
+__all__ = ["Base", "engine", "SessionLocal", "get_db", "init_db"]

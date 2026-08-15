@@ -48,3 +48,25 @@ include = ["engine*", "services*"]
 [build-system]
 requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+exclude = ["engine/cpp_core", "frontend", ".venv", "alembic/versions"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+exclude = ["engine/cpp_core", "frontend", "alembic/versions", ".venv"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+timeout = 120
+addopts = "-p no:cacheprovider"
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.security.OAuth2PasswordBearer"]

@@ -1,63 +1,82 @@
-"""Main entry point for the Eco Nojin API Gateway."""
-import os
-import secrets as _secrets
+﻿"""Main entry point for the Eco Nojin API Gateway (Phase 0).
 
-from fastapi import FastAPI, HTTPException, Request
+Changes vs 1.5.0:
+- CORS origins from settings (fixes W-003: no wildcard + credentials)
+- rate limiting, security headers, request-id middleware
+- duplicate router imports removed
+- health endpoint reports db status
+"""
+
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from engine.hydroma.core.database import Base, engine
+from database.config import init_db
+from engine.hydroma.config.settings import get_settings
+
 from .routers import (
-    soil, materials, ai, satellite, scenarios,
-    marketplace, carbon, watershed, benchmark, sync, ussd
+    ai,
+    ai_chat,
+    analytics,
+    auth,
+    benchmark,
+    blockchain,
+    carbon,
+    ecowallet,
+    farms,
+    marketplace,
+    materials,
+    satellite,
+    scenarios,
+    soil,
+    sync,
+    ussd,
+    voice,
+    watershed,
+)
+from .security import (
+    RateLimitMiddleware,
+    RequestIDMiddleware,
+    SecurityHeadersMiddleware,
 )
 
-# Create database tables on startup (Research mode)
-Base.metadata.create_all(bind=engine)
+_settings = get_settings()
+
+# Research bootstrap: create tables if missing (production uses alembic).
+try:
+    _TABLES = init_db()
+except Exception as _exc:  # pragma: no cover - startup resilience
+    _TABLES = []
+    _DB_ERROR = str(_exc)
+else:
+    _DB_ERROR = ""
 
 app = FastAPI(
     title="Eco Nojin API Gateway",
     description="Scientific engine API for ecosystem restoration and smart agriculture.",
-    version="1.2.0",
+    version=_settings.api_version,
+    docs_url="/docs",
+    redoc_url="/redoc",
 )
 
-# --- CORS configuration (STD-008) --------------------------------------
-# Wildcard origin + credentials is invalid per the CORS spec and rejected by
-# browsers. Origins come from CORS_ALLOWED_ORIGINS (comma-separated env);
-# credentials are enabled only when an explicit origin list is configured.
-_cors_origins = [
-    o.strip()
-    for o in os.environ.get(
-        "CORS_ALLOWED_ORIGINS",
-        "http://127.0.0.1:3000,http://localhost:3000",
-    ).split(",")
-    if o.strip()
-]
+# --- CORS: strict origins from settings (W-003 fixed) ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_cors_origins,
-    allow_credentials=bool(_cors_origins),
+    allow_origins=_settings.cors_origins,
+    allow_credentials=_settings.allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# --- Optional auth gate (opt-in) ----------------------------------------
-# Set AUTH_ENABLED=1 and AUTH_TOKEN=<secret> to require a bearer token on all
-# /api/v1 routes except /health. Disabled by default for research mode.
-AUTH_ENABLED = os.environ.get("AUTH_ENABLED", "0") == "1"
-AUTH_TOKEN = os.environ.get("AUTH_TOKEN", "")
+# --- Security / operational middleware (order matters: rate limit outermost) ---
+app.add_middleware(RequestIDMiddleware)
+app.add_middleware(SecurityHeadersMiddleware)
+app.add_middleware(RateLimitMiddleware)
 
-
-@app.middleware("http")
-async def auth_gate(request: Request, call_next):
-    if AUTH_ENABLED and request.url.path.startswith("/api/v1") and not request.url.path.endswith("/health"):
-        auth = request.headers.get("Authorization", "")
-        expected = "Bearer " + AUTH_TOKEN
-        if not _secrets.compare_digest(auth, expected):
-            raise HTTPException(status_code=401, detail="Unauthorized")
-    return await call_next(request)
-
-
-# Include domain routers
+# --- Routers ---
+app.include_router(analytics.router)
+app.include_router(ai_chat.router)
+app.include_router(auth.router)
+app.include_router(farms.router)
 app.include_router(soil.router)
 app.include_router(materials.router)
 app.include_router(ai.router)
@@ -69,26 +88,61 @@ app.include_router(watershed.router)
 app.include_router(benchmark.router)
 app.include_router(sync.router)
 app.include_router(ussd.router)
+app.include_router(voice.router)
+app.include_router(blockchain.router)
+app.include_router(ecowallet.router)
 
 
 @app.get("/api/v1/health", tags=["System"])
 def health_check():
-    """System health check endpoint."""
+    """System health check with comprehensive status."""
     return {
-        "status": "operational",
+        "status": "degraded" if _DB_ERROR else "operational",
         "engine": "HyDroMa",
         "mode": "research",
-        "version": "1.2.0",
+        "version": _settings.api_version,
+        "environment": _settings.environment,
+        "database": {
+            "ok": not _DB_ERROR,
+            "error": _DB_ERROR or None,
+            "tables": _TABLES,
+        },
+        "security": {
+            "rate_limiting": _settings.rate_limit_enabled,
+            "cors_origins": _settings.cors_origins,
+            "auth": "jwt+rbac",
+        },
         "modules": [
             "soil", "materials", "ai_assistant", "satellite",
             "scenarios", "marketplace", "carbon", "watershed",
-            "benchmark", "sync", "ussd_sms"
+            "benchmark", "sync", "ussd_sms", "voice_ivr", "blockchain", "ecowallet",
         ],
         "inclusive_access": {
             "web_app": True,
             "pwa_offline": True,
             "ussd_feature_phone": True,
             "sms_commands": True,
+            "voice_ivr": True,
             "languages": ["en", "fa", "ar"],
+        },
+    }
+
+
+@app.get("/api/v1/version", tags=["System"])
+def version_info():
+    """Detailed version information."""
+    return {
+        "platform": "Eco Nojin",
+        "engine": "HyDroMa (Hydrology & Drought Monitoring)",
+        "api_version": _settings.api_version,
+        "frontend_version": "1.2.0",
+        "modules_count": 14,
+        "languages_supported": 14,
+        "access_channels": ["web", "pwa", "ussd", "sms", "voice"],
+        "environment": _settings.environment,
+        "security": {
+            "jwt": True,
+            "rbac": True,
+            "rate_limiting": _settings.rate_limit_enabled,
         },
     }

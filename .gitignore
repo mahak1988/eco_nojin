@@ -1,33 +1,67 @@
-# Python
+# ============================================================
+# EcoNojin / HyDroMa — .gitignore
+# Phase 0 infrastructure: never commit secrets, caches, or env
+# ============================================================
+
+# --- Environment & secrets ---
+.env
+.env.*
+!.env.example
+
+# --- Python ---
 __pycache__/
 *.py[cod]
-.venv/
+*$py.class
+*.so
 *.egg-info/
-.pytest_cache/
+*.egg
+dist/
+build/
+.eggs/
+*.db
+*.sqlite3
+*.duckdb
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+
+# --- Type checking & linting caches ---
 .mypy_cache/
 .ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
 
-# C++ build artifacts
-engine/cpp_core/build/
-engine/cpp_core/build2/
-*.obj
-*.exe
-*.pyd
-*.lib
-*.pdb
-
-# Node / Next.js
-frontend/node_modules/
+# --- Node / Next.js frontend ---
+node_modules/
 frontend/.next/
 frontend/out/
-frontend/*.tsbuildinfo
+frontend/build/
+frontend/.env*
+npm-debug.log*
+pnpm-debug.log*
+*.tsbuildinfo
 
-# Environment & secrets
-.env
-*.env.local
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
 
-# OS / editor
+# --- OS ---
 .DS_Store
 Thumbs.db
-.idea/
-.vscode/
+
+# --- Project data (never commit raw data) ---
+data/raw/
+data/processed/
+data/external/
+data/*.db
+
+# --- Logs & temp ---
+logs/
+*.log
+tmp/
