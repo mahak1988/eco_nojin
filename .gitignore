@@ -118,3 +118,18 @@ junit.xml.env
 .env.production
 .env.development.local
 .env.test.local
+
+
+# Analysis reports
+reports/
+*.json
+
+# Tool scripts
+patch_*.py
+fix_critical_issues.py
+prepare_github.py
+
+# Backup directories
+_backups_fix/
+_backups/
+
