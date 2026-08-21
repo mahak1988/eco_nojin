@@ -138,7 +138,9 @@ if isinstance(_cors_origins, str):
         _cors_origins = [o.strip() for o in _cors_origins.split(",") if o.strip()]
 
 if not _cors_origins:
-    _cors_origins = ["*"]
+    # Never fall back to wildcard origins when credentials are enabled.
+    # Explicit local defaults keep development usable without weakening production.
+    _cors_origins = ["http://127.0.0.1:3000", "http://localhost:3000"]
 
 logger.info(f"CORS middleware configured with {len(_cors_origins)} origins")
 
