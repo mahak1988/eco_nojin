@@ -30,6 +30,7 @@ from database.config import get_db
 from database import models
 from services.api_gateway.auth import get_current_user, require_roles
 from services.content.rag_sync import snapshot_version, sync_content_to_rag
+# TODO: Refactor to use service layer instead of direct database access
 
 logger = logging.getLogger(__name__)
 

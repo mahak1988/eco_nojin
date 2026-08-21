@@ -33,7 +33,7 @@ def create_test_data():
         user = User(
             email="demo@econojin.org",
             full_name="Demo Farmer",
-            hashed_password="demo123",
+            hashed_password = "test_password_placeholder",
             role="farmer",
             language="fa",
         )
