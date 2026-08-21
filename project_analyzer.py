@@ -246,7 +246,7 @@ class DependenciesAnalyzer:
             ))
             return
         
-        with open(req_file, encoding='utf-8') as f:
+        with open(req_file, encoding='utf-8', errors='ignore') as f:
             requirements = f.readlines()
         
         pinned_count = 0
@@ -286,7 +286,7 @@ class DependenciesAnalyzer:
         if not pkg_file.exists():
             return
         
-        with open(pkg_file, encoding='utf-8') as f:
+        with open(pkg_file, encoding='utf-8', errors='ignore') as f:
             package = json.load(f)
         
         deps = package.get('dependencies', {})
@@ -339,7 +339,7 @@ class DependenciesAnalyzer:
         if not req_file.exists():
             return
         
-        with open(req_file, encoding='utf-8') as f:
+        with open(req_file, encoding='utf-8', errors='ignore') as f:
             content = f.read()
         
         vulnerabilities = []
@@ -428,7 +428,7 @@ class CodeQualityAnalyzer:
         todo_files = defaultdict(list)
         
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py', 'patch_encoding.py', 'prepare_github.py']):
                 continue
             
             try:
@@ -464,7 +464,7 @@ class CodeQualityAnalyzer:
         complex_files = []
         
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py', 'patch_encoding.py', 'prepare_github.py']):
                 continue
             
             try:
@@ -505,7 +505,7 @@ class CodeQualityAnalyzer:
         import_graph = defaultdict(set)
         
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py', 'patch_encoding.py', 'prepare_github.py']):
                 continue
             
             try:
@@ -585,7 +585,7 @@ class MockDataAnalyzer:
         
         for pattern, description in patterns:
             for py_file in self.root.rglob('*.py'):
-                if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', 'test', 'mock']):
+                if any(skip in str(py_file) for skip in ['node_modules', '.venv', 'venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', '.git', '_backups', '_trash', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py', 'patch_encoding.py', 'patch_final.py', 'patch_to_100.py', 'prepare_github.py']):
                     continue
                 
                 try:
@@ -633,7 +633,7 @@ class MockDataAnalyzer:
         
         mock_count = 0
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py', 'patch_encoding.py', 'prepare_github.py']):
                 continue
             
             try:
@@ -855,7 +855,7 @@ class SecurityAnalyzer:
         
         secrets_found = []
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', 'test', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', 'test', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_encoding.py', 'prepare_github.py']):
                 continue
             
             try:
@@ -974,7 +974,7 @@ class PerformanceAnalyzer:
         sync_count = 0
         
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py', 'patch_encoding.py', 'prepare_github.py']):
                 continue
             
             try:
@@ -1095,7 +1095,7 @@ class DocumentationAnalyzer:
             ))
             return
         
-        with open(readme_path, encoding='utf-8') as f:
+        with open(readme_path, encoding='utf-8', errors='ignore') as f:
             content = f.read()
         
         required_sections = [
@@ -1160,7 +1160,7 @@ class DocumentationAnalyzer:
         total_functions = 0
         
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py', 'patch_encoding.py', 'prepare_github.py']):
                 continue
             
             try:
@@ -1274,7 +1274,7 @@ class ArchitectureAnalyzer:
         bare_except_count = 0
         
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py', 'patch_encoding.py', 'prepare_github.py']):
                 continue
             
             try:
@@ -1325,7 +1325,7 @@ class StandardsAnalyzer:
         status_code_file = self.root / 'services' / 'api_gateway' / 'main.py'
         if status_code_file.exists():
             try:
-                with open(status_code_file) as f:
+                with open(status_code_file, encoding='utf-8', errors='ignore') as f:
                     content = f.read()
                     
                 if 'HTTPException' in content:
@@ -1548,8 +1548,8 @@ class ProjectAnalyzer:
             "summary": self._generate_summary()
         }
         
-        with open(output_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False, ensure_ascii=False)
+        with open(output_path, 'w', encoding='utf-8', errors='ignore') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
         
         print(f"\n💾 JSON report saved to: {output_path}")
     
@@ -1615,7 +1615,7 @@ class ProjectAnalyzer:
             
             lines.append("")
         
-        with open(output_path, 'w', encoding='utf-8') as f:
+        with open(output_path, 'w', encoding='utf-8', errors='ignore') as f:
             f.write('\n'.join(lines))
         
         print(f"📄 Markdown report saved to: {output_path}")

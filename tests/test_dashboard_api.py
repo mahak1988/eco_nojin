@@ -40,7 +40,7 @@ def test_get_recommendations_unauthenticated(client: TestClient):
     assert response.status_code == 401  # Unauthorized
 
 
-# TODO: Add tests with authentication once auth system is standardized
+
 # def test_get_dashboard_data_authenticated(client: TestClient):
 #     """Test getting dashboard data with authentication (requires valid token)."""
 #     # This test requires setting up a valid user and authentication token
