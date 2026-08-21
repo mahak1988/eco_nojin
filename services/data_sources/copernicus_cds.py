@@ -14,8 +14,8 @@ Usage:
     from services.data_sources.copernicus_cds import CopernicusCDSClient
     client = CopernicusCDSClient()
     data = client.fetch_era5_land(
-        latitude=35.6892,
-        longitude=51.3890,
+        latitude=float(os.getenv('DEFAULT_LATITUDE', '35.6892')),
+        longitude=float(os.getenv('DEFAULT_LONGITUDE', '51.3890')),
         start_date="2023-01-01",
         end_date="2023-12-31",
         variables=["2m_temperature", "total_precipitation"]

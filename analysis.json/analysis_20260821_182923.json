@@ -1,0 +1,424 @@
+{
+  "timestamp": "2026-08-21T18:29:23.118504",
+  "project": ".",
+  "metrics": {
+    "total_files": 766,
+    "total_lines": 84067,
+    "python_files": 407,
+    "typescript_files": 356,
+    "javascript_files": 3,
+    "test_files": 0,
+    "mock_data_instances": 0,
+    "todo_count": 20,
+    "fixme_count": 14,
+    "hardcoded_urls": 0,
+    "secrets_detected": 0,
+    "security_issues": 0,
+    "dependencies_outdated": 0,
+    "dependencies_vulnerable": 0
+  },
+  "results": [
+    {
+      "category": "structure",
+      "status": "pass",
+      "message": "Project structure follows recommended layout",
+      "details": null,
+      "recommendations": []
+    },
+    {
+      "category": "structure",
+      "status": "pass",
+      "message": "No backup files found in codebase",
+      "details": null,
+      "recommendations": []
+    },
+    {
+      "category": "structure",
+      "status": "warn",
+      "message": "Too many services (20). Consider grouping related services.",
+      "details": {
+        "services": [
+          "analytics",
+          "api_gateway",
+          "auth",
+          "bots",
+          "carbon",
+          "content",
+          "data_sources",
+          "ecowallet",
+          "ledger",
+          "map_engine",
+          "models",
+          "notification",
+          "reporting",
+          "satellite",
+          "science",
+          "scientific_motors",
+          "supabase",
+          "telegram_bot",
+          "workflow",
+          "__pycache__"
+        ]
+      },
+      "recommendations": [
+        "Group related services into logical namespaces",
+        "Consider microservices architecture if services are independent",
+        "Document service dependencies"
+      ]
+    },
+    {
+      "category": "structure",
+      "status": "pass",
+      "message": "All required configuration files present",
+      "details": null,
+      "recommendations": []
+    },
+    {
+      "category": "dependencies",
+      "status": "warn",
+      "message": "Found 46 unpinned dependencies",
+      "details": {
+        "unpinned": [
+          "fastapi>=0.141,<1.0",
+          "uvicorn[standard]>=0.52,<1.0",
+          "pydantic>=2.13,<3.0",
+          "pydantic-settings>=2.2,<3.0",
+          "python-dotenv>=1.2,<2.0",
+          "python-multipart>=0.0.32,<1.0",
+          "python-jose[cryptography]>=3.3,<4.0",
+          "passlib[bcrypt]>=1.7,<2.0",
+          "sqlalchemy>=2.0,<3.0",
+          "alembic>=1.13,<2.0"
+        ]
+      },
+      "recommendations": [
+        "Pin all dependencies to specific versions",
+        "Use pip freeze > requirements.lock.txt for exact versions",
+        "Consider using pip-tools for dependency management"
+      ]
+    },
+    {
+      "category": "dependencies",
+      "status": "pass",
+      "message": "All critical Node.js packages are up to date",
+      "details": null,
+      "recommendations": []
+    },
+    {
+      "category": "code_quality",
+      "status": "info",
+      "message": "Project statistics: 766 files, 84,067 lines",
+      "details": {
+        "python_files": 407,
+        "typescript_files": 356,
+        "javascript_files": 3,
+        "total_lines": 84067
+      },
+      "recommendations": []
+    },
+    {
+      "category": "code_quality",
+      "status": "warn",
+      "message": "Found 20 TODO and 14 FIXME comments",
+      "details": {
+        "files": {
+          "TODO": [
+            "project_analyzer.py:72",
+            "project_analyzer.py:379",
+            "project_analyzer.py:424",
+            "project_analyzer.py:425",
+            "project_analyzer.py:426",
+            "project_analyzer.py:428",
+            "project_analyzer.py:437",
+            "project_analyzer.py:438",
+            "project_analyzer.py:439",
+            "project_analyzer.py:442",
+            "project_analyzer.py:446",
+            "project_analyzer.py:449",
+            "project_analyzer.py:452",
+            "project_analyzer.py:453",
+            "project_analyzer.py:454",
+            "project_analyzer.py:456",
+            "project_analyzer.py:458",
+            "project_analyzer.py:1480",
+            "tests\\test_dashboard_api.py:43",
+            "services\\scientific_motors\\satellite_integration.py:181"
+          ],
+          "FIXME": [
+            "project_analyzer.py:73",
+            "project_analyzer.py:379",
+            "project_analyzer.py:424",
+            "project_analyzer.py:425",
+            "project_analyzer.py:427",
+            "project_analyzer.py:440",
+            "project_analyzer.py:441",
+            "project_analyzer.py:442",
+            "project_analyzer.py:447",
+            "project_analyzer.py:449",
+            "project_analyzer.py:452",
+            "project_analyzer.py:453",
+            "project_analyzer.py:457",
+            "project_analyzer.py:1480"
+          ]
+        }
+      },
+      "recommendations": [
+        "Create issues for all TODO items",
+        "Prioritize FIXME items for immediate attention",
+        "Remove completed TODO comments"
+      ]
+    },
+    {
+      "category": "code_quality",
+      "status": "warn",
+      "message": "Found 2 files with high complexity",
+      "details": {
+        "complex_files": [
+          {
+            "file": "project_analyzer.py",
+            "functions": 63,
+            "classes": 14
+          },
+          {
+            "file": "engine\\hydroma\\soil\\tests\\test_soil.py",
+            "functions": 56,
+            "classes": 8
+          }
+        ]
+      },
+      "recommendations": [
+        "Split large files into smaller modules",
+        "Use single responsibility principle",
+        "Consider refactoring complex functions"
+      ]
+    },
+    {
+      "category": "mock_data",
+      "status": "fail",
+      "message": "Found 7 potential hardcoded values in production code",
+      "details": {
+        "instances": [
+          {
+            "file": "services\\data_sources\\copernicus_cds.py",
+            "line": 17,
+            "type": "Hardcoded latitude",
+            "code": "latitude=35.6892,"
+          },
+          {
+            "file": "services\\data_sources\\copernicus_cds.py",
+            "line": 18,
+            "type": "Hardcoded longitude",
+            "code": "longitude=51.3890,"
+          },
+          {
+            "file": "services\\api_gateway\\routers\\admin.py",
+            "line": 655,
+            "type": "Hardcoded temperature",
+            "code": "temperature=0.4,"
+          },
+          {
+            "file": "services\\api_gateway\\routers\\dashboard.py",
+            "line": 68,
+            "type": "Hardcoded temperature",
+            "code": "temperature=22.5,"
+          },
+          {
+            "file": "services\\api_gateway\\routers\\dashboard.py",
+            "line": 70,
+            "type": "Hardcoded precipitation",
+            "code": "precipitation=5.0,"
+          },
+          {
+            "file": "services\\api_gateway\\routers\\dashboard.py",
+            "line": 69,
+            "type": "Hardcoded humidity",
+            "code": "humidity=65.0,"
+          },
+          {
+            "file": "engine\\hydroma\\soil\\chemistry.py",
+            "line": 243,
+            "type": "Hardcoded pH",
+            "code": "target_ph = 6.5  # Optimal for most crops"
+          }
+        ]
+      },
+      "recommendations": [
+        "Replace hardcoded values with API calls",
+        "Use configuration files for constants",
+        "Implement proper data fetching from external APIs",
+        "Use environment variables for sensitive data"
+      ]
+    },
+    {
+      "category": "mock_data",
+      "status": "warn",
+      "message": "Found 8 files with potential mock API responses",
+      "details": null,
+      "recommendations": [
+        "Replace mock responses with real API calls",
+        "Use proper error handling instead of mock success responses",
+        "Implement retry logic for external API failures"
+      ]
+    },
+    {
+      "category": "mock_data",
+      "status": "warn",
+      "message": "Found 4 files with sample data",
+      "details": {
+        "files": [
+          "database\\create_test_data.py",
+          "database\\create_test_data.py.security-backup",
+          ".mypy_cache\\3.11\\database\\create_test_data.data.json",
+          ".mypy_cache\\3.11\\database\\create_test_data.meta.json"
+        ]
+      },
+      "recommendations": [
+        "Remove sample data from production code",
+        "Use proper data seeding for development",
+        "Document how to generate sample data for testing"
+      ]
+    },
+    {
+      "category": "testing",
+      "status": "pass",
+      "message": "Found 4651 test files",
+      "details": null,
+      "recommendations": [
+        "Run pytest --cov to measure actual coverage",
+        "Add tests for untested code paths"
+      ]
+    },
+    {
+      "category": "testing",
+      "status": "fail",
+      "message": "Test-to-source ratio is 12.69%. Minimum recommended: 50%",
+      "details": {
+        "ratio": 0.12690327070285318,
+        "source_files": 35925,
+        "test_files": 4559
+      },
+      "recommendations": [
+        "Add more tests to improve coverage",
+        "Use pytest-cov to measure actual coverage",
+        "Set up coverage thresholds in CI/CD"
+      ]
+    },
+    {
+      "category": "security",
+      "status": "fail",
+      "message": "Found 3 .env files in repository",
+      "details": {
+        "files": [
+          ".env",
+          "_trash\\backups_20260820_170752\\20260816_033634\\.env",
+          "frontend\\.env.local"
+        ]
+      },
+      "recommendations": [
+        "Remove all .env files from version control",
+        "Add .env to .gitignore",
+        "Use .env.example for documentation",
+        "Use secrets management service for production"
+      ]
+    },
+    {
+      "category": "security",
+      "status": "pass",
+      "message": "No hardcoded secrets detected",
+      "details": null,
+      "recommendations": []
+    },
+    {
+      "category": "performance",
+      "status": "warn",
+      "message": "Potential N+1 query pattern detected",
+      "details": null,
+      "recommendations": [
+        "Use joins or eager loading to avoid N+1 queries",
+        "Implement pagination for list endpoints",
+        "Use database indexes for frequently queried columns"
+      ]
+    },
+    {
+      "category": "documentation",
+      "status": "warn",
+      "message": "README missing 4 recommended sections",
+      "details": {
+        "missing": [
+          "Installation instructions",
+          "Usage examples",
+          "API documentation",
+          "License information"
+        ]
+      },
+      "recommendations": [
+        "Add Installation instructions to README.md",
+        "Add Usage examples to README.md",
+        "Add API documentation to README.md",
+        "Add License information to README.md"
+      ]
+    },
+    {
+      "category": "architecture",
+      "status": "warn",
+      "message": "Found 2 routers with direct database imports",
+      "details": {
+        "files": [
+          "services\\api_gateway\\routers\\admin.py",
+          "services\\api_gateway\\routers\\satellite.py"
+        ]
+      },
+      "recommendations": [
+        "Use service layer between API and database",
+        "Implement repository pattern",
+        "Use dependency injection for database access"
+      ]
+    },
+    {
+      "category": "architecture",
+      "status": "warn",
+      "message": "Found 22 bare except clauses",
+      "details": null,
+      "recommendations": [
+        "Replace bare except with specific exception types",
+        "Log all exceptions with context",
+        "Implement custom exception hierarchy"
+      ]
+    }
+  ],
+  "summary": {
+    "total_checks": 20,
+    "passed": 6,
+    "warnings": 10,
+    "failures": 3,
+    "info": 1,
+    "health_score": 59.0,
+    "critical_issues": [
+      "Found 7 potential hardcoded values in production code",
+      "Test-to-source ratio is 12.69%. Minimum recommended: 50%",
+      "Found 3 .env files in repository"
+    ],
+    "recommendations": [
+      "Group related services into logical namespaces",
+      "Consider microservices architecture if services are independent",
+      "Document service dependencies",
+      "Pin all dependencies to specific versions",
+      "Use pip freeze > requirements.lock.txt for exact versions",
+      "Consider using pip-tools for dependency management",
+      "Create issues for all TODO items",
+      "Prioritize FIXME items for immediate attention",
+      "Remove completed TODO comments",
+      "Split large files into smaller modules",
+      "Use single responsibility principle",
+      "Consider refactoring complex functions",
+      "Replace hardcoded values with API calls",
+      "Use configuration files for constants",
+      "Implement proper data fetching from external APIs",
+      "Replace mock responses with real API calls",
+      "Use proper error handling instead of mock success responses",
+      "Implement retry logic for external API failures",
+      "Remove sample data from production code",
+      "Use proper data seeding for development"
+    ]
+  }
+}

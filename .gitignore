@@ -109,4 +109,12 @@ coverage/
 .nyc_output/
 .pytest_cache/
 *.lcov
-junit.xml
+junit.xml.env
+.env.local
+*.env.local
+
+
+# Environment files (secrets)
+.env.production
+.env.development.local
+.env.test.local

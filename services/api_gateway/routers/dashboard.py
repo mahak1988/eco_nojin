@@ -1,6 +1,7 @@
 """
 Dashboard API Router
 """
+import os
 from datetime import datetime
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
@@ -65,9 +66,9 @@ MOCK_FARM_DATA = FarmData(
 )
 
 MOCK_WEATHER_DATA = WeatherData(
-    temperature=22.5,
-    humidity=65.0,
-    precipitation=5.0,
+    temperature=float(os.getenv('DEFAULT_TEMP', '22.5')),
+    humidity=float(os.getenv('DEFAULT_HUMIDITY', '65.0')),
+    precipitation=float(os.getenv('DEFAULT_PRECIP', '5.0')),
     condition="Partly Cloudy"
 )
 
