@@ -13,6 +13,21 @@
 
 ---
 
+
+## Phase 0 — Stabilization (started 2026-08-21)
+
+- [x] Confirm repository write access and establish a main-branch baseline
+- [x] Add the Persian execution plan in docs/DEVELOPMENT_PLAN_FA.md
+- [x] Remove wildcard CORS fallback when credentials are enabled
+- [ ] Run the clean-environment backend and frontend test suites
+- [ ] Pin Python dependencies and add a lockfile
+- [ ] Complete auth/write-path authorization review
+- [ ] Add CI checks for tests, type checking, encoding, and dependency security
+- [ ] Verify satellite provenance and keep simulated data clearly labeled
+
+Phase 0 is intentionally focused on reliability and traceability before new
+financial, insurance, blockchain, or ML capabilities are expanded.
+
 ## Near-Term (0-3 months)
 
 ### Module 15: Finance & Micro-credit
@@ -118,4 +133,4 @@ We welcome contributions! See [DEVELOPER.md](DEVELOPER.md) for:
 
 ---
 
-**Roadmap last updated**: August 14, 2026
+**Roadmap last updated**: August 21, 2026
