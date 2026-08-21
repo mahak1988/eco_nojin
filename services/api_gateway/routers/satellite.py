@@ -34,6 +34,7 @@ from services.satellite.copernicus import (
 from services.satellite.nasa_power import fetch_climate_with_et0
 from services.satellite.open_meteo import fetch_era5_summary
 from services.analytics.duckdb_service import summarize_satellite_rows
+# TODO: Refactor to use service layer instead of direct database access
 
 logger = logging.getLogger(__name__)
 

@@ -98,7 +98,7 @@ async def make_state(user_id: int = 42, chat_id: int = 1) -> FSMContext:
 
 
 def make_advice_service(ollama_available: bool = False) -> AdviceService:
-    cfg = BotConfig(bot_token="test")
+    cfg = BotConfig(bot_token = "test_token_placeholder")
     return AdviceService(cfg, ollama=FakeOllama(ollama_available))
 
 

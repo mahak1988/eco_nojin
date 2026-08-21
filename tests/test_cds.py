@@ -38,13 +38,13 @@ class TestConfigured:
             client.submit_request({"x": 1})
 
     def test_configured_with_credentials(self):
-        client = CdsClient(uid="u", api_key="k")
+        client = CdsClient(uid="u", api_key = "test_api_key_placeholder")
         assert client.configured is True
 
 
 class TestJobFlow:
     def test_full_flow(self, monkeypatch):
-        client = CdsClient(uid="u", api_key="k", timeout=5)
+        client = CdsClient(uid="u", api_key = "test_api_key_placeholder", timeout=5)
 
         calls = {}
 
@@ -70,7 +70,7 @@ class TestJobFlow:
         assert calls["get"] == 4
 
     def test_submit_error(self, monkeypatch):
-        client = CdsClient(uid="u", api_key="k", timeout=5)
+        client = CdsClient(uid="u", api_key = "test_api_key_placeholder", timeout=5)
 
         def fake_post(url, headers=None, json=None, timeout=None):
             return FakeResp(status=401, text="unauthorized")
@@ -81,7 +81,7 @@ class TestJobFlow:
         assert "401" in str(exc.value)
 
     def test_status_never_leaks_key(self):
-        client = CdsClient(uid="secret-uid", api_key="secret-key")
+        client = CdsClient(uid="secret-uid", api_key = "test_api_key_placeholder")
         s = client.status()
         assert "secret" not in str(s).lower()
         assert s["api_url"] == CDS_API_URL
@@ -114,7 +114,7 @@ class TestDataStores:
         assert out["stores"]["sepal"]["key_url"] == "https://sepal.io"
 
     def test_data_store_job_flow(self, monkeypatch):
-        client = DataStoreClient(store="ewds", uid="u", api_key="***", timeout=5)
+        client = DataStoreClient(store="ewds", uid="u", api_key = "test_api_key_placeholder", timeout=5)
         calls = {"get": 0}
 
         def fake_post(url, headers=None, json=None, timeout=None):

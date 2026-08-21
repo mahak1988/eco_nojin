@@ -133,3 +133,18 @@ prepare_github.py
 _backups_fix/
 _backups/
 
+
+
+# Analysis and tool scripts
+project_analyzer.py
+fix_critical_issues.py
+patch_*.py
+prepare_github.py
+final_fix.py
+reports/
+
+# Database sample data (optional - uncomment if you don't want to track)
+# database/create_test_data.py
+
+# Tool scripts (development only)
+_tools/

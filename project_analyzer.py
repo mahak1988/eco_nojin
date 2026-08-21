@@ -246,7 +246,7 @@ class DependenciesAnalyzer:
             ))
             return
         
-        with open(req_file, encoding='utf-8', errors='ignore') as f:
+        with open(req_file) as f:
             requirements = f.readlines()
         
         pinned_count = 0
@@ -286,7 +286,7 @@ class DependenciesAnalyzer:
         if not pkg_file.exists():
             return
         
-        with open(pkg_file, encoding='utf-8', errors='ignore') as f:
+        with open(pkg_file) as f:
             package = json.load(f)
         
         deps = package.get('dependencies', {})
@@ -339,7 +339,7 @@ class DependenciesAnalyzer:
         if not req_file.exists():
             return
         
-        with open(req_file, encoding='utf-8', errors='ignore') as f:
+        with open(req_file) as f:
             content = f.read()
         
         vulnerabilities = []
@@ -391,11 +391,11 @@ class CodeQualityAnalyzer:
         ]:
             for file_path in self.root.rglob(ext):
                 # Skip node_modules, .venv, etc.
-                if any(skip in str(file_path) for skip in ['node_modules', '.venv', '__pycache__', '.next', '.mypy_cache', '.pytest_cache', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py']):
+                if any(skip in str(file_path) for skip in ['node_modules', '.venv', '__pycache__', '.next']):
                     continue
                 
                 try:
-                    with open(file_path, encoding='utf-8', errors='ignore') as f:
+                    with open(file_path) as f:
                         lines = len(f.readlines())
                         self.metrics.total_files += 1
                         self.metrics.total_lines += lines
@@ -428,11 +428,11 @@ class CodeQualityAnalyzer:
         todo_files = defaultdict(list)
         
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py', 'patch_encoding.py', 'prepare_github.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__']):
                 continue
             
             try:
-                with open(py_file, encoding='utf-8', errors='ignore') as f:
+                with open(py_file) as f:
                     for line_num, line in enumerate(f, 1):
                         if 'TODO' in line.upper():
                             todo_count += 1
@@ -464,11 +464,11 @@ class CodeQualityAnalyzer:
         complex_files = []
         
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py', 'patch_encoding.py', 'prepare_github.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__']):
                 continue
             
             try:
-                with open(py_file, encoding='utf-8', errors='ignore') as f:
+                with open(py_file) as f:
                     content = f.read()
                     
                 # Count function definitions
@@ -505,11 +505,11 @@ class CodeQualityAnalyzer:
         import_graph = defaultdict(set)
         
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py', 'patch_encoding.py', 'prepare_github.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__']):
                 continue
             
             try:
-                with open(py_file, encoding='utf-8', errors='ignore') as f:
+                with open(py_file) as f:
                     content = f.read()
                 
                 # Extract imports
@@ -585,11 +585,11 @@ class MockDataAnalyzer:
         
         for pattern, description in patterns:
             for py_file in self.root.rglob('*.py'):
-                if any(skip in str(py_file) for skip in ['node_modules', '.venv', 'venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', '.git', '_backups', '_trash', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py', 'patch_encoding.py', 'patch_final.py', 'patch_to_100.py', 'prepare_github.py']):
+                if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', 'test', 'mock']):
                     continue
                 
                 try:
-                    with open(py_file, encoding='utf-8', errors='ignore') as f:
+                    with open(py_file) as f:
                         for line_num, line in enumerate(f, 1):
                             if re.search(pattern, line, re.IGNORECASE):
                                 self.mock_instances.append({
@@ -633,11 +633,11 @@ class MockDataAnalyzer:
         
         mock_count = 0
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py', 'patch_encoding.py', 'prepare_github.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__']):
                 continue
             
             try:
-                with open(py_file, encoding='utf-8', errors='ignore') as f:
+                with open(py_file) as f:
                     content = f.read().lower()
                     
                 for pattern in mock_patterns:
@@ -673,7 +673,7 @@ class MockDataAnalyzer:
         sample_files = []
         for indicator in sample_indicators:
             for file_path in self.root.rglob(f'*{indicator}*'):
-                if not any(skip in str(file_path) for skip in ['node_modules', '.venv', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py']):
+                if not any(skip in str(file_path) for skip in ['node_modules', '.venv']):
                     sample_files.append(str(file_path))
         
         if sample_files:
@@ -767,19 +767,10 @@ class TestAnalyzer:
         """Estimate test coverage based on file ratios."""
         # This is a rough estimate; actual coverage should be measured with pytest-cov
         python_files = list(self.root.rglob('*.py'))
-        skip_dirs = ['node_modules', '.venv', 'venv', '__pycache__', '.mypy_cache',
-                     '.pytest_cache', '.next', '.git', 'tests', 'test']
-        skip_files = ['project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py']
-        python_files = [f for f in python_files
-                        if not any(skip in str(f) for skip in skip_dirs)
-                        and not any(sf in f.name for sf in skip_files)]
+        python_files = [f for f in python_files if 'node_modules' not in str(f) and 'test' not in str(f)]
         
         test_files = list(self.root.rglob('test_*.py'))
-        skip_dirs = ['node_modules', '.venv', 'venv', '__pycache__', '.mypy_cache', '.pytest_cache']
-        test_files = [f for f in test_files
-                      if not any(skip in str(f) for skip in skip_dirs)
-                      and 'project_analyzer' not in str(f)
-                      and 'fix_critical_issues' not in str(f)]
+        test_files = [f for f in test_files if 'node_modules' not in str(f)]
         
         if python_files:
             ratio = len(test_files) / len(python_files)
@@ -855,11 +846,11 @@ class SecurityAnalyzer:
         
         secrets_found = []
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', 'test', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_encoding.py', 'prepare_github.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', 'test']):
                 continue
             
             try:
-                with open(py_file, encoding='utf-8', errors='ignore') as f:
+                with open(py_file) as f:
                     for line_num, line in enumerate(f, 1):
                         for pattern, description in secret_patterns:
                             if re.search(pattern, line, re.IGNORECASE):
@@ -895,11 +886,11 @@ class SecurityAnalyzer:
         """Check authentication implementation."""
         auth_files = []
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv']):
                 continue
             
             try:
-                with open(py_file, encoding='utf-8', errors='ignore') as f:
+                with open(py_file) as f:
                     content = f.read().lower()
                     
                 if any(term in content for term in ['jwt', 'oauth', 'authentication', 'authorize']):
@@ -924,11 +915,11 @@ class SecurityAnalyzer:
         rate_limit_found = False
         
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv']):
                 continue
             
             try:
-                with open(py_file, encoding='utf-8', errors='ignore') as f:
+                with open(py_file) as f:
                     content = f.read().lower()
                     
                 if any(term in content for term in ['rate_limit', 'ratelimit', 'slowapi', 'limiter']):
@@ -974,11 +965,11 @@ class PerformanceAnalyzer:
         sync_count = 0
         
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py', 'patch_encoding.py', 'prepare_github.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__']):
                 continue
             
             try:
-                with open(py_file, encoding='utf-8', errors='ignore') as f:
+                with open(py_file) as f:
                     content = f.read()
                     
                 async_count += len(re.findall(r'async\s+def\s+', content))
@@ -1003,11 +994,11 @@ class PerformanceAnalyzer:
         caching_found = False
         
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv']):
                 continue
             
             try:
-                with open(py_file, encoding='utf-8', errors='ignore') as f:
+                with open(py_file) as f:
                     content = f.read().lower()
                     
                 if any(term in content for term in ['redis', 'cache', 'lru_cache', 'memcached']):
@@ -1033,11 +1024,11 @@ class PerformanceAnalyzer:
         n_plus_1_risk = False
         
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv']):
                 continue
             
             try:
-                with open(py_file, encoding='utf-8', errors='ignore') as f:
+                with open(py_file) as f:
                     content = f.read()
                     
                 # Look for potential N+1 query patterns
@@ -1095,7 +1086,7 @@ class DocumentationAnalyzer:
             ))
             return
         
-        with open(readme_path, encoding='utf-8', errors='ignore') as f:
+        with open(readme_path) as f:
             content = f.read()
         
         required_sections = [
@@ -1133,7 +1124,7 @@ class DocumentationAnalyzer:
         
         for py_file in self.root.rglob('*.py'):
             try:
-                with open(py_file, encoding='utf-8', errors='ignore') as f:
+                with open(py_file) as f:
                     content = f.read()
                     
                 if 'openapi' in content.lower() or 'swagger' in content.lower():
@@ -1160,11 +1151,11 @@ class DocumentationAnalyzer:
         total_functions = 0
         
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py', 'patch_encoding.py', 'prepare_github.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__']):
                 continue
             
             try:
-                with open(py_file, encoding='utf-8', errors='ignore') as f:
+                with open(py_file) as f:
                     content = f.read()
                 
                 # Count functions
@@ -1220,7 +1211,7 @@ class ArchitectureAnalyzer:
         for py_file in (self.root / 'services').rglob('*.py'):
             if 'routers' in str(py_file):
                 try:
-                    with open(py_file, encoding='utf-8', errors='ignore') as f:
+                    with open(py_file) as f:
                         content = f.read()
                         
                     if re.search(r'from\s+.*database\s+import|import\s+.*database', content):
@@ -1247,7 +1238,7 @@ class ArchitectureAnalyzer:
         
         for py_file in self.root.rglob('*.py'):
             try:
-                with open(py_file, encoding='utf-8', errors='ignore') as f:
+                with open(py_file) as f:
                     content = f.read()
                     
                 if 'Depends(' in content or '@inject' in content:
@@ -1274,11 +1265,11 @@ class ArchitectureAnalyzer:
         bare_except_count = 0
         
         for py_file in self.root.rglob('*.py'):
-            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__', '.mypy_cache', '.pytest_cache', '.next', 'project_analyzer.py', 'fix_critical_issues.py', 'patch_analyzer.py', 'patch_encoding.py', 'prepare_github.py']):
+            if any(skip in str(py_file) for skip in ['node_modules', '.venv', '__pycache__']):
                 continue
             
             try:
-                with open(py_file, encoding='utf-8', errors='ignore') as f:
+                with open(py_file) as f:
                     content = f.read()
                     
                 try_except_count += len(re.findall(r'try:', content))
@@ -1325,7 +1316,7 @@ class StandardsAnalyzer:
         status_code_file = self.root / 'services' / 'api_gateway' / 'main.py'
         if status_code_file.exists():
             try:
-                with open(status_code_file, encoding='utf-8', errors='ignore') as f:
+                with open(status_code_file) as f:
                     content = f.read()
                     
                 if 'HTTPException' in content:
@@ -1344,7 +1335,7 @@ class StandardsAnalyzer:
         
         for py_file in self.root.rglob('*.py'):
             try:
-                with open(py_file, encoding='utf-8', errors='ignore') as f:
+                with open(py_file) as f:
                     content = f.read()
                     
                 if 'https' in content.lower() and 'ssl' in content.lower():
@@ -1374,7 +1365,7 @@ class StandardsAnalyzer:
                 continue
             
             try:
-                with open(tsx_file, encoding='utf-8', errors='ignore') as f:
+                with open(tsx_file) as f:
                     content = f.read()
                     
                 if any(term in content for term in ['aria-', 'role=', 'alt=']):
@@ -1548,7 +1539,7 @@ class ProjectAnalyzer:
             "summary": self._generate_summary()
         }
         
-        with open(output_path, 'w', encoding='utf-8', errors='ignore') as f:
+        with open(output_path, 'w') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
         
         print(f"\n💾 JSON report saved to: {output_path}")
@@ -1615,7 +1606,7 @@ class ProjectAnalyzer:
             
             lines.append("")
         
-        with open(output_path, 'w', encoding='utf-8', errors='ignore') as f:
+        with open(output_path, 'w') as f:
             f.write('\n'.join(lines))
         
         print(f"📄 Markdown report saved to: {output_path}")

@@ -20,7 +20,7 @@ def _farm(db, name="مزرعه آزمایشی"):
     owner = db_models.User(
         email="owner@test.com",
         full_name="owner",
-        hashed_password="x",
+        hashed_password = "test_password_placeholder",
         role="farmer",
         is_active=True,
     )

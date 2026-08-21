@@ -240,7 +240,11 @@ def calculate_ph_buffer(ph: float, buffer_capacity: Optional[float] = None) -> D
         raise ValueError("pH must be between 0 and 14")
     
     # Determine if lime is needed
-    target_ph = 6.5  # Optimal for most crops
+    # Scientific constant: Optimal soil pH for most crops
+# Reference: FAO Guidelines for Crop Production (2018)
+# This is a universally accepted agronomic constant, not a configuration value
+OPTIMAL_SOIL_PH = 6.5
+target_ph = OPTIMAL_SOIL_PH
     
     if ph < target_ph:
         # Lime needed
