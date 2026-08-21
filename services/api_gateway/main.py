@@ -19,11 +19,12 @@ import logging
 import traceback
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from sqlalchemy import text
 
-from database.config import init_db
+from database.config import engine, init_db
 from engine.hydroma.config.settings import get_settings
 
 # Import all routers
@@ -254,16 +255,29 @@ async def root():
     }
 
 
+def _database_status() -> dict[str, str]:
+    """Run a minimal database probe for health and readiness checks."""
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+        return {"status": "ok"}
+    except Exception as exc:
+        logger.error("Database health probe failed: %s", exc)
+        return {"status": "error"}
+
+
 @app.get("/health", tags=["health"])
 async def health():
-    """Health check endpoint - used by load balancers and monitoring."""
+    """Liveness check with dependency status."""
+    database = _database_status()
+    overall = "healthy" if database["status"] == "ok" else "degraded"
     return {
-        "status": "healthy",
+        "status": overall,
         "service": "api-gateway",
         "version": getattr(_settings, "api_version", "0.1.0"),
         "environment": _settings.app_env,
         "checks": {
-            "database": "ok",  # init_db already ran in lifespan
+            "database": database["status"],
             "settings": "ok",
             "routers": "loaded",
         },
@@ -272,10 +286,14 @@ async def health():
 
 @app.get("/ready", tags=["health"])
 async def readiness():
-    """Readiness check - indicates if service can accept traffic."""
+    """Readiness check; return 503 when the database is unavailable."""
+    database = _database_status()
+    if database["status"] != "ok":
+        raise HTTPException(status_code=503, detail="database unavailable")
     return {
         "ready": True,
         "service": "api-gateway",
+        "checks": {"database": "ok"},
     }
 
 
