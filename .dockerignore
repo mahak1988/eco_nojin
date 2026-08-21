@@ -1,0 +1,49 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Environment (IMPORTANT: never ship secrets)
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Cache
+.satellite_cache/
+.cache/
+.pytest_cache/
+
+# Logs
+*.log
+logs/
+
+# Documentation (optional)
+*.md
+docs/
+
+# Tests
+tests/
+test_*.py
+
+# Local data
+data/
+*.csv
+*.jsonl

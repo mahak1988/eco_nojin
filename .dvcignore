@@ -1,0 +1,6 @@
+# DVC ignores
+.venv/
+frontend/
+*.db
+*.db-wal
+*.db-shm

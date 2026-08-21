@@ -1,0 +1,431 @@
+﻿# ============================================================================
+# ECO NOJIN — Global .gitignore
+# Standards: PEP 582, Node.js, C++20 (MSVC/GCC/Clang), GIS/Remote Sensing
+# Last updated: 2026-08-18
+# ============================================================================
+
+# ============================================================================
+# 🐍 PYTHON
+# ============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+*.pyi.bak
+.Python
+*.egg-info/
+*.egg
+.installed_cfg
+MANIFEST
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+.venv/Lib/site-packages/__pycache__/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+nosetests.xml
+test-results/
+*.cover
+
+# Type checking & linting
+.ruff_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Distribution / packaging
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Cython
+*.c
+!engine/cpp_core/**/*.c
+
+# ============================================================================
+# 🔒 SECRETS & ENVIRONMENT (NEVER COMMIT)
+# ============================================================================
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+secrets/
+credentials/
+*.credentials
+serviceAccountKey.json
+
+# Allow example files
+!.env.example
+!.env.template
+
+# ============================================================================
+# 🗄️ DATABASES (Binary files NEVER belong in Git)
+# ============================================================================
+# SQLite
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+
+# PostgreSQL dumps (too large for Git)
+*.dump
+*.sql.gz
+*.sql.bz2
+
+# DuckDB
+*.duckdb
+*.duckdb-wal
+
+# Alembic compiled
+alembic/versions/*.pyc
+
+# ============================================================================
+# 💾 BACKUP FILES (Use Git history, not manual backups)
+# ============================================================================
+*.bak
+*.bak2
+*.bak3
+*.backup
+*.backup_*
+*.v1-backup
+*.v2-backup
+*.security-backup
+*.env-backup
+*.safe-backup
+*.fix-backup
+*.nextjs16-backup
+*_backup_*/
+backups/
+alembic.backup_*/
+alembic.ini.backup_*
+*.bundle
+
+# ============================================================================
+# ⚙️ C++ / MSVC / CMake Build Artifacts
+# ============================================================================
+# Object files
+*.o
+*.obj
+*.obj.enc
+*.gch
+*.pch
+
+# Compiled Dynamic / Static libraries
+*.so
+*.dylib
+*.dll
+*.lib
+*.a
+*.la
+*.lo
+*.exp
+
+# Executables
+*.exe
+*.out
+*.app
+*.com
+*.elf
+
+# MSVC specific
+*.ilk
+*.meta
+*.pdb
+*.idb
+*.ipdb
+*.iobj
+*.res
+*.tlog/
+*.tlog
+*.log
+*.manifest
+*.lastbuildstate
+*.recipe
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+*.suo
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+ipch/
+x64/
+x86/
+Release/
+Debug/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+CMakeSettings.json
+CMakeUserPresets.json
+**/build*/
+**/cmake-build-*/
+**/_build/
+install_manifest.txt
+
+# Eco Nojin C++ Core specific
+engine/cpp_core/build2/
+engine/cpp_core/*.obj
+engine/cpp_core/*.exe
+engine/cpp_core/*.dll
+engine/cpp_core/*.lib
+engine/cpp_core/*.exp
+engine/cpp_core/*.pyd
+
+# ============================================================================
+# 🌐 FRONTEND (Next.js / React / Node.js)
+# ============================================================================
+node_modules/
+frontend/node_modules/
+.next/
+frontend/.next/
+out/
+frontend/out/
+build/
+frontend/build/
+frontend/.env*.local
+frontend/.pnp.*
+frontend/.pnp.js
+frontend/coverage/
+frontend/.turbo/
+.turbo/
+.vercel/
+.netlify/
+
+# Package managers
+.pnpm-store/
+.npm
+.eslintcache
+*.tsbuildinfo
+*.tsbuildinfo.*
+
+# Storybook
+storybook-static/
+
+# Generated API clients
+frontend/lib/api-client.generated.ts
+
+# ============================================================================
+# 🗺️ GIS & REMOTE SENSING (Large binary data)
+# ============================================================================
+# Use Git LFS or external storage (S3/MinIO) for these
+*.tif
+*.tiff
+*.geotiff
+*.nc
+*.nc4
+*.hdf
+*.hdf5
+*.h5
+*.he5
+*.zarr/
+*.zarr.zip
+*.parquet
+*.gpkg
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+*.qix
+*.sbn
+*.sbx
+*.las
+*.laz
+*.laz
+*.dem
+*.asc
+*.grd
+*.grib
+*.grib2
+
+# Cloud Optimized formats (keep small tiles, ignore large)
+data/raw/**/*.tif
+data/raw/**/*.nc
+data/processed/**/*.parquet
+!data/**/*.example.*
+
+# ============================================================================
+# 📦 ARCHIVES & LARGE FILES
+# ============================================================================
+*.tar
+*.tar.gz
+*.tgz
+*.bz2
+*.gz
+*.zip
+*.7z
+*.rar
+*.xz
+*.lz
+*.lzma
+*.Z
+*.cab
+*.iso
+*.dmg
+*.img
+
+# ============================================================================
+# 💻 IDE & EDITORS
+# ============================================================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+.factorypath
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# ============================================================================
+# 🖥️ OS GENERATED
+# ============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# ============================================================================
+# 📝 LOGS & TEMP
+# ============================================================================
+logs/
+*.log
+*.tmp
+*.temp
+*.bak.log
+.cache/
+tmp/
+temp/
+.pytest_cache/
+.ruff_cache/
+
+# ============================================================================
+# 🧪 BENCHMARKS & PROFILING
+# ============================================================================
+benchmarks/results/
+benchmarks/*.html
+.py-spy/
+*.prof
+*.perf
+
+# ============================================================================
+# 🚢 DEPLOYMENT & INFRASTRUCTURE
+# ============================================================================
+terraform.tfstate
+terraform.tfstate.backup
+.terraform/
+*.tfvars
+!*.tfvars.example
+ansible.cfg
+*.retry
+.vagrant/
+
+# ============================================================================
+# 📊 MACHINE LEARNING
+# ============================================================================
+ml/models/*.pt
+ml/models/*.pth
+ml/models/*.onnx
+ml/models/*.pb
+ml/models/*.h5
+ml/models/*.pkl
+ml/models/*.pickle
+ml/models/*.joblib
+wandb/
+mlruns/
+lightning_logs/
+
+# ============================================================================
+# 🔬 ECO NOJIN PROJECT-SPECIFIC
+# ============================================================================
+# Audit reports (generated locally)
+project_audit/
+deep_analysis/
+reports/
+
+# Local development databases
+econojin.db
+econojin.db-shm
+econojin.db-wal
+hydroma_research.db*
+
+# Test artifacts
+final_test_results.txt
+full_test_results.txt
+
+# Delivery artifacts
+DELIVERY/
+delivery/
+
+# Generated documentation
+docs/build/
+site/
+mkdocs_site/
+
+# ============================================================================
+# 🚫 NEGATION RULES (Files that SHOULD be committed despite above rules)
+# ============================================================================
+!.gitignore
+!.gitattributes
+!README.md
+!LICENSE
+!CONTRIBUTING.md
+!CHANGELOG.md
+!.env.example
+!.env.template
+!data/**/*.example.*
+!**/.gitkeep

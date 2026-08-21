@@ -1,0 +1,22 @@
+# Eco Nojin Phase 4 — reproducible data pipeline (DVC)
+# Activated with: dvc install && dvc repro  (data-science phase)
+# Each stage is honest: no stage fabricates data; failures stop the run.
+
+stages:
+  stac_fetch:
+    desc: Fetch Sentinel-2 L2A scenes for target farms (needs CDSE creds)
+    cmd: python -m services.satellite.cli fetch-scenes --out data/raw/scenes.jsonl
+    outs:
+      - data/raw/scenes.jsonl
+  band_sample:
+    desc: Download B04/B08 COGs and sample pixels -> real NDVI/EVI/SAVI
+    cmd: python -m services.satellite.cli sample-bands --in data/raw/scenes.jsonl --out data/processed/indices.parquet
+    deps:
+      - data/raw/scenes.jsonl
+    outs:
+      - data/processed/indices.parquet
+  load_db:
+    desc: Load processed indices into satellite_analyses (provenance kept)
+    cmd: python -m services.satellite.cli load-db --in data/processed/indices.parquet
+    deps:
+      - data/processed/indices.parquet

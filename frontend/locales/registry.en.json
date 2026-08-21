@@ -1,0 +1,512 @@
+{
+ "services": {
+  "title": "Eco Nojin Services"
+ },
+ "services/advisory": {
+  "title": "Scientific Advisory Service"
+ },
+ "services/monitoring": {
+  "title": "Farm Monitoring Service"
+ },
+ "services/carbon": {
+  "title": "Carbon & Climate Service"
+ },
+ "services/education": {
+  "title": "Education Service"
+ },
+ "services/marketplace": {
+  "title": "Farmers Marketplace Service"
+ },
+ "services/wallet": {
+  "title": "Eco Wallet"
+ },
+ "services/api": {
+  "title": "API for Developers"
+ },
+ "services/consulting": {
+  "title": "Expert Consulting"
+ },
+ "services/training": {
+  "title": "Training Courses"
+ },
+ "partners": {
+  "title": "Partners"
+ },
+ "roadmap": {
+  "title": "Roadmap"
+ },
+ "careers": {
+  "title": "Careers"
+ },
+ "press": {
+  "title": "Press"
+ },
+ "newsletter": {
+  "title": "Newsletter"
+ },
+ "events": {
+  "title": "Events"
+ },
+ "webinars": {
+  "title": "Webinars"
+ },
+ "blog": {
+  "title": "Blog"
+ },
+ "blog/soil-health": {
+  "title": "Soil Health: Why It Matters"
+ },
+ "blog/water-scarcity": {
+  "title": "Water Scarcity & Agriculture"
+ },
+ "blog/carbon-farming": {
+  "title": "Carbon Farming"
+ },
+ "blog/climate-adaptation": {
+  "title": "Climate Change Adaptation"
+ },
+ "news": {
+  "title": "News"
+ },
+ "news/launch": {
+  "title": "Phase 3 Launch"
+ },
+ "news/partnership": {
+  "title": "University Partnership"
+ },
+ "pages": {
+  "title": "All Pages"
+ },
+ "faq": {
+  "title": "FAQ"
+ },
+ "help": {
+  "title": "Help Center"
+ },
+ "support": {
+  "title": "Support"
+ },
+ "community": {
+  "title": "Community"
+ },
+ "community/guidelines": {
+  "title": "Community Guidelines"
+ },
+ "forum": {
+  "title": "Discussion Forum"
+ },
+ "forum/soil": {
+  "title": "Soil Forum"
+ },
+ "forum/water": {
+  "title": "Water Forum"
+ },
+ "forum/carbon": {
+  "title": "Carbon Forum"
+ },
+ "forum/irrigation": {
+  "title": "Irrigation Forum"
+ },
+ "science": {
+  "title": "Science Hub"
+ },
+ "science/research": {
+  "title": "Research"
+ },
+ "science/datasets": {
+  "title": "Datasets"
+ },
+ "science/models": {
+  "title": "Model Library"
+ },
+ "science/publications": {
+  "title": "Publications"
+ },
+ "science/citations": {
+  "title": "Auto Citation"
+ },
+ "science/open-data": {
+  "title": "Open Data"
+ },
+ "science/repositories": {
+  "title": "Code & Data Repositories"
+ },
+ "science/labs": {
+  "title": "Lab Collaboration"
+ },
+ "science/field-pilot": {
+  "title": "Field Pilot"
+ },
+ "learn/soil": {
+  "title": "Learn: Soil"
+ },
+ "learn/water": {
+  "title": "Learn: Water"
+ },
+ "learn/climate": {
+  "title": "Learn: Climate"
+ },
+ "learn/carbon": {
+  "title": "Learn: Carbon"
+ },
+ "learn/crops": {
+  "title": "Learn: Crops"
+ },
+ "learn/irrigation": {
+  "title": "Learn: Irrigation"
+ },
+ "learn/pests": {
+  "title": "Learn: Pests"
+ },
+ "learn/ecology": {
+  "title": "Learn: Ecology"
+ },
+ "learn/agronomy": {
+  "title": "Learn: Agronomy"
+ },
+ "learn/compost": {
+  "title": "Learn: Compost"
+ },
+ "learn/soil/ph": {
+  "title": "Article: Soil pH"
+ },
+ "learn/soil/organic-matter": {
+  "title": "Article: Soil Organic Matter"
+ },
+ "learn/soil/salinity": {
+  "title": "Article: Soil Salinity"
+ },
+ "learn/soil/texture": {
+  "title": "Article: Soil Texture"
+ },
+ "learn/water/quality": {
+  "title": "Article: Irrigation Water Quality"
+ },
+ "learn/water/management": {
+  "title": "Article: Farm Water Management"
+ },
+ "learn/water/footprint": {
+  "title": "Article: Water Footprint"
+ },
+ "learn/climate/greenhouse": {
+  "title": "Article: Greenhouse Gases in Agriculture"
+ },
+ "learn/climate/adaptation": {
+  "title": "Article: Farm Climate Adaptation"
+ },
+ "learn/carbon/sequestration": {
+  "title": "Article: Soil Carbon Sequestration"
+ },
+ "learn/carbon/accounting": {
+  "title": "Article: Carbon Accounting"
+ },
+ "learn/crops/rotation": {
+  "title": "Article: Crop Rotation"
+ },
+ "learn/crops/nutrition": {
+  "title": "Article: Plant Nutrition"
+ },
+ "learn/irrigation/drip": {
+  "title": "Article: Drip Irrigation"
+ },
+ "learn/irrigation/scheduling": {
+  "title": "Article: Irrigation Scheduling"
+ },
+ "learn/pests/ipm": {
+  "title": "Article: Integrated Pest Management"
+ },
+ "learn/pests/biocontrol": {
+  "title": "Article: Biological Control"
+ },
+ "learn/ecology/biodiversity": {
+  "title": "Article: Farm Biodiversity"
+ },
+ "learn/agronomy/tillage": {
+  "title": "Article: Conservation Tillage"
+ },
+ "learn/compost/cn-ratio": {
+  "title": "Article: Compost C/N Ratio"
+ },
+ "modules/ai/overview": {
+  "title": "AI Assistant — Overview"
+ },
+ "modules/ai/guide": {
+  "title": "AI Assistant — Guide"
+ },
+ "modules/ai/science": {
+  "title": "AI Assistant — Scientific Basis"
+ },
+ "modules/ai/faq": {
+  "title": "AI Assistant — FAQ"
+ },
+ "modules/analytics/overview": {
+  "title": "Analytics — Overview"
+ },
+ "modules/analytics/guide": {
+  "title": "Analytics — Guide"
+ },
+ "modules/analytics/science": {
+  "title": "Analytics — Scientific Basis"
+ },
+ "modules/analytics/faq": {
+  "title": "Analytics — FAQ"
+ },
+ "modules/carbon/overview": {
+  "title": "Carbon — Overview"
+ },
+ "modules/carbon/guide": {
+  "title": "Carbon — Guide"
+ },
+ "modules/carbon/science": {
+  "title": "Carbon — Scientific Basis"
+ },
+ "modules/carbon/faq": {
+  "title": "Carbon — FAQ"
+ },
+ "modules/ecowallet/overview": {
+  "title": "Eco Wallet — Overview"
+ },
+ "modules/ecowallet/guide": {
+  "title": "Eco Wallet — Guide"
+ },
+ "modules/ecowallet/science": {
+  "title": "Eco Wallet — Scientific Basis"
+ },
+ "modules/ecowallet/faq": {
+  "title": "Eco Wallet — FAQ"
+ },
+ "modules/erosion/overview": {
+  "title": "Erosion — Overview"
+ },
+ "modules/erosion/guide": {
+  "title": "Erosion — Guide"
+ },
+ "modules/erosion/science": {
+  "title": "Erosion — Scientific Basis"
+ },
+ "modules/erosion/faq": {
+  "title": "Erosion — FAQ"
+ },
+ "modules/marketplace/overview": {
+  "title": "Marketplace — Overview"
+ },
+ "modules/marketplace/guide": {
+  "title": "Marketplace — Guide"
+ },
+ "modules/marketplace/science": {
+  "title": "Marketplace — Scientific Basis"
+ },
+ "modules/marketplace/faq": {
+  "title": "Marketplace — FAQ"
+ },
+ "modules/satellite/overview": {
+  "title": "Satellite — Overview"
+ },
+ "modules/satellite/guide": {
+  "title": "Satellite — Guide"
+ },
+ "modules/satellite/science": {
+  "title": "Satellite — Scientific Basis"
+ },
+ "modules/satellite/faq": {
+  "title": "Satellite — FAQ"
+ },
+ "modules/scenarios/overview": {
+  "title": "Scenarios — Overview"
+ },
+ "modules/scenarios/guide": {
+  "title": "Scenarios — Guide"
+ },
+ "modules/scenarios/science": {
+  "title": "Scenarios — Scientific Basis"
+ },
+ "modules/scenarios/faq": {
+  "title": "Scenarios — FAQ"
+ },
+ "modules/soil/overview": {
+  "title": "Soil — Overview"
+ },
+ "modules/soil/guide": {
+  "title": "Soil — Guide"
+ },
+ "modules/soil/science": {
+  "title": "Soil — Scientific Basis"
+ },
+ "modules/soil/faq": {
+  "title": "Soil — FAQ"
+ },
+ "modules/voice/overview": {
+  "title": "Voice — Overview"
+ },
+ "modules/voice/guide": {
+  "title": "Voice — Guide"
+ },
+ "modules/voice/science": {
+  "title": "Voice — Scientific Basis"
+ },
+ "modules/voice/faq": {
+  "title": "Voice — FAQ"
+ },
+ "modules/watershed/overview": {
+  "title": "Watershed — Overview"
+ },
+ "modules/watershed/guide": {
+  "title": "Watershed — Guide"
+ },
+ "modules/watershed/science": {
+  "title": "Watershed — Scientific Basis"
+ },
+ "modules/watershed/faq": {
+  "title": "Watershed — FAQ"
+ },
+ "dashboard/farms": {
+  "title": "My Farms"
+ },
+ "dashboard/farms/new": {
+  "title": "Register New Farm"
+ },
+ "dashboard/farm-detail": {
+  "title": "Farm Details"
+ },
+ "dashboard/activities": {
+  "title": "Activities"
+ },
+ "dashboard/alerts": {
+  "title": "Alerts"
+ },
+ "dashboard/analytics": {
+  "title": "My Analyses"
+ },
+ "dashboard/reports": {
+  "title": "Reports"
+ },
+ "dashboard/schedule": {
+  "title": "Farming Calendar"
+ },
+ "dashboard/messages": {
+  "title": "Messages"
+ },
+ "dashboard/marketplace": {
+  "title": "My Marketplace"
+ },
+ "dashboard/wallet": {
+  "title": "My Wallet"
+ },
+ "dashboard/education": {
+  "title": "My Learning"
+ },
+ "dashboard/support": {
+  "title": "My Support"
+ },
+ "dashboard/settings": {
+  "title": "Dashboard Settings"
+ },
+ "admin": {
+  "title": "Admin Panel"
+ },
+ "admin/content": {
+  "title": "Content Management"
+ },
+ "admin/users": {
+  "title": "User Management"
+ },
+ "admin/farms": {
+  "title": "Farm Management"
+ },
+ "admin/models": {
+  "title": "Model Management"
+ },
+ "admin/data": {
+  "title": "Data Management"
+ },
+ "admin/alerts": {
+  "title": "Alert Management"
+ },
+ "admin/translations": {
+  "title": "Translation Management"
+ },
+ "admin/analytics": {
+  "title": "Platform Analytics"
+ },
+ "admin/settings": {
+  "title": "System Settings"
+ },
+ "admin/security": {
+  "title": "Security"
+ },
+ "admin/backup": {
+  "title": "Backup"
+ },
+ "admin/logs": {
+  "title": "Error Logs"
+ },
+ "admin/roles": {
+  "title": "Roles & Permissions"
+ },
+ "admin/docs": {
+  "title": "Technical Docs"
+ },
+ "account": {
+  "title": "My Account"
+ },
+ "account/notifications": {
+  "title": "Notifications"
+ },
+ "account/security": {
+  "title": "Account Security"
+ },
+ "account/devices": {
+  "title": "Devices"
+ },
+ "account/subscriptions": {
+  "title": "Subscriptions"
+ },
+ "account/questions": {
+  "title": "My Questions"
+ },
+ "account/saved": {
+  "title": "Saved Items"
+ },
+ "account/billing": {
+  "title": "Billing"
+ },
+ "tools": {
+  "title": "Tools & Calculators"
+ },
+ "tools/irrigation": {
+  "title": "Calculator: Crop Irrigation Need"
+ },
+ "tools/compost-cn": {
+  "title": "Calculator: Compost C/N Ratio"
+ },
+ "tools/fertilizer": {
+  "title": "Calculator: Nitrogen Fertilizer Need"
+ },
+ "tools/carbon-stock": {
+  "title": "Calculator: Soil Carbon Stock"
+ },
+ "tools/erosion": {
+  "title": "Calculator: Soil Erosion (RUSLE)"
+ },
+ "tools/water-footprint": {
+  "title": "Calculator: Crop Water Footprint"
+ },
+ "tools/seeding": {
+  "title": "Calculator: Seeding Rate"
+ },
+ "tools/lime": {
+  "title": "Calculator: Lime Requirement"
+ },
+ "tools/soil-water": {
+  "title": "Calculator: Soil Moisture Deficit"
+ },
+ "tools/drip-design": {
+  "title": "Calculator: Drip Design"
+ },
+ "tools/biomass": {
+  "title": "Calculator: Dry Biomass"
+ },
+ "tools/co2-offset": {
+  "title": "Calculator: CO₂ Equivalent"
+ }
+}

@@ -1,0 +1,56 @@
+{
+  "map_id": "M-VEG_b3bdf24a_summer",
+  "map_type": "vegetation",
+  "cog_path": "data\\maps\\M-VEG_b3bdf24a_summer\\vegetation.tif",
+  "metadata": {
+    "title": "Vegetation Indices Map (summer)",
+    "abstract": "NDVI, EVI, NDWI, NBR, LAI from Sentinel-2-like data",
+    "season": "summer",
+    "cloud_cover_pct": 18.970662982705367,
+    "bands": [
+      "NDVI",
+      "EVI",
+      "NDWI",
+      "NBR",
+      "LAI",
+      "veg_class"
+    ],
+    "ndvi_stats": {
+      "min": -0.16834332048892975,
+      "max": 0.8560846447944641,
+      "mean": 0.43590742349624634,
+      "std": 0.1493271291255951
+    },
+    "vegetation_classes": {
+      "1": "barren (<0.1)",
+      "2": "sparse (0.1-0.3)",
+      "3": "moderate (0.3-0.5)",
+      "4": "dense (0.5-0.7)",
+      "5": "very dense (>0.7)"
+    },
+    "formulas": {
+      "NDVI": "(NIR - Red) / (NIR + Red)",
+      "EVI": "2.5 * (NIR - Red) / (NIR + 6*Red - 7.5*Blue + 1)",
+      "NDWI": "(Green - NIR) / (Green + NIR)",
+      "NBR": "(NIR - SWIR) / (NIR + SWIR)",
+      "LAI": "empirical from NDVI"
+    },
+    "standards": [
+      "ESA Sentinel-2",
+      "ISO 19115"
+    ]
+  },
+  "processing_time_seconds": 0.7465181350708008,
+  "data_sources": [
+    "Sentinel-2 (synthetic, summer)"
+  ],
+  "crs": "EPSG:32639",
+  "bounds": [
+    50.9999547920434,
+    34.9999547920434,
+    51.0500452079566,
+    35.0500452079566
+  ],
+  "resolution": 10.0,
+  "created_at": "2026-08-18T00:12:04.464676"
+}

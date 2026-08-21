@@ -1,0 +1,20 @@
+================================================================================
+📊 C++ BRIDGE BUILD REPORT
+================================================================================
+⏰ 2026-08-20 17:33:00
+🐍 Python: 3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]
+🏷️  Python tag: cp312
+💻 Platform: Windows-10-10.0.19045-SP0
+
+📦 Compiled binaries found:
+   DLL files: 2
+      • engine\cpp_core\hydroma_core.dll (123,392 bytes)
+      • engine\hydroma\cpp_bridge\hydroma_core.dll (123,392 bytes)
+   PYD files: 4
+      • engine\cpp_core\build2\Release\hydroma_core.cp311-win_amd64.pyd (394,240 bytes)
+      • engine\cpp_core\build2\Release\hydroma_core.cp312-win_amd64.pyd (404,480 bytes)
+      • engine\hydroma\cpp_bridge\hydroma_core.cp311-win_amd64.pyd (394,240 bytes)
+      • engine\hydroma\cpp_bridge\hydroma_core.cp312-win_amd64.pyd (404,480 bytes)
+
+Benchmarks:
+  ndvi_array: {'python_ms': 6.096363067626953, 'cpp_ms': None}

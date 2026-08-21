@@ -1,0 +1,10 @@
+^D:\ECO_NOJIN\ENGINE\CPP_CORE\CMAKELISTS.TXT
+setlocal
+D:\eco_nojin\.venv\Lib\site-packages\cmake\data\bin\cmake.exe -SD:/eco_nojin/engine/cpp_core -BD:/eco_nojin/engine/cpp_core/build2 --check-stamp-file D:/eco_nojin/engine/cpp_core/build2/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

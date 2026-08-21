@@ -1,0 +1,50 @@
+{
+  "map_id": "M-ERS_edc5eb71",
+  "map_type": "erosion_rusle",
+  "cog_path": "data\\maps\\M-ERS_edc5eb71\\erosion_rusle.tif",
+  "metadata": {
+    "title": "RUSLE Soil Erosion Map",
+    "abstract": "Annual soil loss estimated using RUSLE: A = R*K*LS*C*P",
+    "equation": "A = R * K * LS * C * P",
+    "bands": [
+      "erosion",
+      "erosion_class",
+      "ls_factor",
+      "r_factor",
+      "k_factor"
+    ],
+    "erosion_range_t_ha_yr": {
+      "min": 3.33657169342041,
+      "max": 2536.31298828125,
+      "mean": 200.64662170410156
+    },
+    "erosion_classes": {
+      "1": "very low (<5 t/ha/yr)",
+      "2": "low (5-10)",
+      "3": "moderate (10-20)",
+      "4": "high (20-40)",
+      "5": "very high (>40)"
+    },
+    "c_factor_used": 0.3,
+    "p_factor_used": 1.0,
+    "standards": [
+      "RUSLE (Renard et al., 1997)",
+      "ISO 19115"
+    ]
+  },
+  "processing_time_seconds": 0.10294103622436523,
+  "data_sources": [
+    "DEM",
+    "Rainfall (synthetic)",
+    "Soil (synthetic)"
+  ],
+  "crs": "EPSG:32639",
+  "bounds": [
+    50.999863387978145,
+    34.999863387978145,
+    51.05013661202185,
+    35.05013661202185
+  ],
+  "resolution": 30.0,
+  "created_at": "2026-08-18T00:27:36.800917"
+}
