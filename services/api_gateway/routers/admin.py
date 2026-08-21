@@ -652,7 +652,7 @@ def generate_ai_draft(
         return await client.chat(
             system,
             f"موضوع مقاله: {topic}\nدسته: {category}",
-            temperature=0.4,
+            temperature=float(os.getenv('ADMIN_TEMP', '0.4')),
         )
 
     import asyncio

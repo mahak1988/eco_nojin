@@ -1,4 +1,4 @@
-# Eco Nojin (اکو نوژین) / HyDroMa
+# Eco Nojin (اکو نوژین) / HyDroMa (هیدروما)
 
 ## English
 
@@ -106,3 +106,32 @@ pytest
 - `docs/10_quality_standards.md` – استانداردهای کیفیت داخلی STD-001–015
 - `docs/11_weaknesses_and_fixes.md` – نقاط ضعف شناخته‌شده W-001–021 همراه با شواهد
 - `docs/12_30_year_strategy.md` – استراتژی نگهداری ۳۰ ساله (تا ۲۰۵۵)
+
+## Installation
+
+```bash
+git clone https://github.com/mahak1988/eco_nojin.git
+cd eco_nojin
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+uvicorn services.api_gateway.main:app --reload
+```
+
+## Usage
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/v1/platform/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Farm", "latitude": 35.6892, "longitude": 51.3890, "area_ha": 50.0}'
+```
+
+## API Documentation
+
+- Swagger: http://127.0.0.1:8000/docs
+- ReDoc: http://127.0.0.1:8000/redoc
+
+## License
+
+MIT License

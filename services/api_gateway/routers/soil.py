@@ -545,7 +545,7 @@ def analyze_soil(req: SoilAnalysisRequest, db: Session = Depends(get_db)):
             db.commit()
             db.refresh(record)
             saved_id = record.id
-        except:
+        except Exception as e:
             db.rollback()
     return {
         "analysis": {
