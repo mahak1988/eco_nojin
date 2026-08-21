@@ -1,0 +1,48 @@
+{
+  "map_id": "M-SLP_90dff977",
+  "map_type": "slope_aspect",
+  "cog_path": "data\\maps\\M-SLP_90dff977\\slope_aspect.tif",
+  "metadata": {
+    "title": "Slope & Aspect Classification",
+    "abstract": "Multi-band slope, aspect, curvature, and TWI map",
+    "bands": [
+      "slope_deg",
+      "slope_class",
+      "aspect_deg",
+      "aspect_class",
+      "curvature",
+      "twi"
+    ],
+    "slope_classes": {
+      "1": "flat (0-2%)",
+      "2": "gentle (2-5%)",
+      "3": "moderate (5-10%)",
+      "4": "steep (10-20%)",
+      "5": "very steep (>20%)"
+    },
+    "aspect_classes": {
+      "1": "N (337.5-22.5)",
+      "2": "NE (22.5-67.5)",
+      "3": "E (67.5-112.5)",
+      "4": "SE (112.5-157.5)",
+      "5": "S (157.5-202.5)",
+      "6": "SW (202.5-247.5)",
+      "7": "W (247.5-292.5)",
+      "8": "NW (292.5-337.5)"
+    },
+    "resolution_m": 30.0
+  },
+  "processing_time_seconds": 0.12346911430358887,
+  "data_sources": [
+    "DEM"
+  ],
+  "crs": "EPSG:32639",
+  "bounds": [
+    50.999863387978145,
+    34.999863387978145,
+    51.05013661202185,
+    35.05013661202185
+  ],
+  "resolution": 30.0,
+  "created_at": "2026-08-18T00:27:36.655001"
+}

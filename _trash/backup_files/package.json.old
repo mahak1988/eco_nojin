@@ -1,0 +1,25 @@
+{
+  "name": "eco-nojin-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Eco Nojin Monorepo — Digital Twin for Landscape Restoration",
+  "scripts": {
+    "dev": "pnpm -C frontend dev",
+    "build": "pnpm -C frontend build",
+    "start": "pnpm -C frontend start",
+    "lint": "pnpm -C frontend lint",
+    "test": "pnpm -C frontend test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "pnpm -C frontend tsc --noEmit"
+  },
+  "devDependencies": {
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.0"
+  },
+  "packageManager": "pnpm@11.4.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

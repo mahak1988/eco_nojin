@@ -1,0 +1,112 @@
+# ============================================================================
+# ECO NOJIN - .gitignore (Comprehensive)
+# ============================================================================
+
+# Secrets (CRITICAL)
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.venv/
+venv/
+env/
+.Python
+
+# Node.js
+node_modules/
+frontend/node_modules/
+.next/
+frontend/.next/
+.turbo/
+.vercel
+*.tsbuildinfo
+.eslintcache
+
+# C++ Binaries
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+
+# Cache & Logs
+data/cache/
+data/copernicus_cache/
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# IDE
+.vscode/
+.idea/
+
+# Supabase temp
+supabase/.temp/
+
+# Backups
+*.backup
+*.backup_*
+*.bak
+*.bak2
+*.bak3
+*.broken*
+*.pre_*
+*.safe_*
+*.v*-backup
+*.orig
+
+# Scripts (dev only)
+fix_*.py
+build_*.py
+scan_*.py
+rebuild_*.py
+smart_*.py
+ultimate_*.py
+prepare_*.py
+deep_scan.py
+safe_fallbacks.py
+ultra_fix.py
+surgical_fix.py
+setup_*.py
+test_bot.py
+test_platform_api.py
+test_patched_motors.py
+add_python_fallbacks.py
+
+# Data
+data/*.nc
+data/*.grib
+*.csv
+!data/*.example.csv
+
+# Project audit
+project_audit/
+
+# Misc
+coverage/
+.nyc_output/
+.pytest_cache/
+*.lcov
+junit.xml

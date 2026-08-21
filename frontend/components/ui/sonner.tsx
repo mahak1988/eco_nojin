@@ -1,0 +1,19 @@
+"use client";
+
+import { Toaster as SonnerToaster } from "sonner";
+
+export function Toaster() {
+  return (
+    <SonnerToaster
+      position="top-center"
+      richColors
+      closeButton
+      toastOptions={{
+        style: {
+          fontFamily: 'Vazirmatn, "B Mitra", sans-serif',
+          direction: "rtl",
+        },
+      }}
+    />
+  );
+}

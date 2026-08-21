@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>Font Test - B Mitra + Vazirmatn</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+  <style>
+    @font-face {
+      font-family: 'B Mitra';
+      src: url('https://cdn.fontcdn.ir/Font/Persian/BMitra/BMitra.woff2') format('woff2');
+      font-weight: normal;
+    }
+    @font-face {
+      font-family: 'B Mitra';
+      src: url('https://cdn.fontcdn.ir/Font/Persian/BMitra/BMitraBold.woff2') format('woff2');
+      font-weight: bold;
+    }
+    body {
+      font-family: 'B Mitra', 'Vazirmatn', Tahoma, serif;
+      line-height: 2.0;
+      padding: 40px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .vazir { font-family: 'Vazirmatn', sans-serif; line-height: 1.7; }
+    h1 { font-family: 'Vazirmatn', sans-serif; }
+    .sample {
+      background: #f5f5f5;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>تست فونت B Mitra و Vazirmatn</h1>
+  
+  <div class="sample">
+    <strong>فونت B Mitra (کلاسیک فارسی):</strong><br>
+    بسم الله الرحمن الرحیم. این یک نمونه متن فارسی است که با فونت بی میترا نمایش داده می‌شود.
+    این فونت برای متون رسمی، کتاب‌ها و اسناد مناسب است. حروف به‌صورت پیوسته و با زیبایی خاصی نمایش داده می‌شوند.
+  </div>
+  
+  <div class="sample vazir">
+    <strong>فونت Vazirmatn (مدرن فارسی):</strong><br>
+    این فونت برای رابط کاربری (UI) و متون کوتاه مناسب‌تر است.
+    خوانایی بالا در اندازه‌های کوچک و نمایشگرهای دیجیتال.
+    اعداد: ۱۲۳۴۵۶۷۸۹۰ و حروف لاتین: ABCDEF
+  </div>
+  
+  <div class="sample">
+    <strong>اعداد فارسی:</strong> ۱۳۹۵/۰۵/۱۵ - ساعت ۱۴:۳۰<br>
+    <strong>اعداد انگلیسی:</strong> 2026-08-15 - Time: 14:30
+  </div>
+</body>
+</html>

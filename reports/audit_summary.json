@@ -1,0 +1,13 @@
+{
+  "issues_found": [
+    "soil: missing POST /analyze",
+    "scenarios: missing POST /apply",
+    "ecowallet: missing GET /wallets",
+    "ecowallet: missing GET /transactions"
+  ],
+  "fixes_applied": [
+    "soil: added /analyze endpoint",
+    "scenarios: added /apply endpoint"
+  ],
+  "endpoints_status": {}
+}

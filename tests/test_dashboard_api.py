@@ -1,0 +1,48 @@
+"""
+Tests for the Dashboard API endpoints
+"""
+import pytest
+from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from services.api_gateway.main import app
+from database.config import SQLALCHEMY_DATABASE_URL
+
+
+# Create a test database session
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+@pytest.fixture(scope="module")
+def client():
+    """Create a test client for the API."""
+    with TestClient(app) as test_client:
+        yield test_client
+
+
+def test_get_dashboard_data_unauthenticated(client: TestClient):
+    """Test getting dashboard data without authentication (should fail)."""
+    response = client.get("/dashboard/data")
+    assert response.status_code == 401  # Unauthorized
+
+
+def test_refresh_dashboard_data_unauthenticated(client: TestClient):
+    """Test refreshing dashboard data without authentication (should fail)."""
+    response = client.post("/dashboard/refresh-data")
+    assert response.status_code == 401  # Unauthorized
+
+
+def test_get_recommendations_unauthenticated(client: TestClient):
+    """Test getting recommendations without authentication (should fail)."""
+    response = client.get("/dashboard/recommendations/farm-001")
+    assert response.status_code == 401  # Unauthorized
+
+
+# TODO: Add tests with authentication once auth system is standardized
+# def test_get_dashboard_data_authenticated(client: TestClient):
+#     """Test getting dashboard data with authentication (requires valid token)."""
+#     # This test requires setting up a valid user and authentication token
+#     # which depends on the specific auth implementation
+#     pass

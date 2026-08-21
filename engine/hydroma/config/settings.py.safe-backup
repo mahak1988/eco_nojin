@@ -1,0 +1,173 @@
+"""
+Eco Nojin - Application Settings
+Auto-generated from .env file with type inference.
+"""
+from typing import List, Optional
+from pydantic import field_validator
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
+    """Application settings - auto-synced with .env file."""
+
+    # =================================================================
+    # APPLICATION
+    # =================================================================
+    app_name: str = "EcoNojin"
+    app_env: str = "development"
+    app_debug: bool = true
+    app_host: str = "127.0.0.1"
+    app_port: int = 8000
+    app_log_level: str = "INFO"
+    app_secret_key: str = "CHANGE-THIS-TO-A-LONG-RANDOM-STRING-IN-PRODUCTION"
+
+    # =================================================================
+    # DATABASE
+    # =================================================================
+    database_url: str = "sqlite:///./econojin.db"
+
+    # =================================================================
+    # JWT
+    # =================================================================
+    jwt_secret: str = "CHANGE-THIS-TO-A-LONG-RANDOM-STRING"
+    jwt_algorithm: str = "HS256"
+    jwt_expiration_minutes: str = "10080  # 7 days"
+    jwt_refresh_expiration_days: int = 30
+
+    # =================================================================
+    # RBAC
+    # =================================================================
+    default_user_role: str = "farmer"
+    allowed_roles: List[str] = ["farmer", "advisor", "admin", "researcher", "organization", "tourist"]
+
+    # =================================================================
+    # CORS
+    # =================================================================
+    cors_origins: List[str] = ["["http://localhost:3000"", ""http://localhost:8000"", ""http://127.0.0.1:3000"]"]
+    cors_allow_credentials: bool = true
+
+    # =================================================================
+    # RATE_LIMIT
+    # =================================================================
+    rate_limit_per_minute: int = 60
+    rate_limit_burst: int = 10
+
+    # =================================================================
+    # EXTERNAL
+    # =================================================================
+    open_meteo_base_url: str = "https://api.open-meteo.com/v1"
+    planetary_computer_api_key: str = ""
+    sentinel_hub_client_id: str = ""
+    sentinel_hub_client_secret: str = ""
+    openweathermap_api_key: str = ""
+
+    # =================================================================
+    # AI
+    # =================================================================
+    openai_api_key: str = ""
+    anthropic_api_key: str = ""
+    ai_provider: List[str] = ["openai  # or anthropic", "local"]
+
+    # =================================================================
+    # STORAGE
+    # =================================================================
+    upload_dir: str = "./uploads"
+    max_upload_size_mb: int = 10
+    avatar_max_size_kb: int = 500
+
+    # =================================================================
+    # EMAIL
+    # =================================================================
+    smtp_host: str = "smtp.gmail.com"
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_from_email: str = "noreply@econojin.com"
+    smtp_from_name: str = "Eco Nojin"
+
+    # =================================================================
+    # BLOCKCHAIN
+    # =================================================================
+    blockchain_mode: str = "simulation"
+    polygon_rpc_url: str = "https://polygon-rpc.com"
+    blockchain_private_key: str = ""
+    eco_token_contract_address: str = ""
+    enable_blockchain: bool = false
+
+    # =================================================================
+    # I18N
+    # =================================================================
+    default_language: str = "fa"
+    supported_languages: List[str] = ["fa", "en", "ar", "tr", "ur", "ps"]
+    rtl_languages: List[str] = ["fa", "ar", "ur", "ps", "he"]
+
+    # =================================================================
+    # LOGGING
+    # =================================================================
+    log_file: str = "logs/econojin.log"
+    log_max_bytes: int = 10485760
+    log_backup_count: int = 5
+    sentry_dsn: str = ""
+
+    # =================================================================
+    # FEATURES
+    # =================================================================
+    enable_satellite_real: bool = true
+    enable_ai_assistant: bool = true
+    enable_marketplace: bool = true
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def parse_cors_origins(cls, v):
+        """Parse CORS origins from string (CSV or JSON) or list."""
+        if isinstance(v, str):
+            if not v.strip():
+                return []
+            try:
+                import json
+                parsed = json.loads(v)
+                if isinstance(parsed, list):
+                    return parsed
+            except (json.JSONDecodeError, ValueError):
+                pass
+            return [s.strip() for s in v.split(",") if s.strip()]
+        if isinstance(v, list):
+            return v
+        return []
+
+    @field_validator("supported_languages", "rtl_languages", "allowed_roles", mode="before")
+    @classmethod
+    def parse_comma_list(cls, v):
+        """Parse comma-separated strings into lists."""
+        if isinstance(v, str):
+            if not v.strip():
+                return []
+            return [s.strip() for s in v.split(",") if s.strip()]
+        if isinstance(v, list):
+            return v
+        return []
+
+    @field_validator("smtp_port", "app_port", mode="before")
+    @classmethod
+    def parse_port(cls, v):
+        """Ensure port is integer."""
+        if isinstance(v, str):
+            return int(v)
+        return v
+
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+        case_sensitive = False
+        extra = "ignore"  # Allow extra fields not defined here
+
+
+_settings_cache = None
+
+
+def get_settings() -> Settings:
+    """Get cached settings instance."""
+    global _settings_cache
+    if _settings_cache is None:
+        _settings_cache = Settings()
+    return _settings_cache

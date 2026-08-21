@@ -1,0 +1,43 @@
+{
+  "map_id": "M-TOP_3d6aeb1b",
+  "map_type": "topographic",
+  "cog_path": "data\\maps\\M-TOP_3d6aeb1b\\topographic.tif",
+  "metadata": {
+    "title": "Topographic Map",
+    "abstract": "Multi-band topographic map with elevation, slope, aspect, and hillshade",
+    "map_type": "topographic",
+    "source_crs": "EPSG:4326",
+    "target_crs": "EPSG:32639",
+    "resolution_m": 30.0,
+    "contour_interval_m": 5.0,
+    "elevation_range": {
+      "min": 982.2684936523438,
+      "max": 1030.96337890625,
+      "mean": 1003.7710571289062
+    },
+    "bands": [
+      "elevation",
+      "slope",
+      "aspect",
+      "hillshade"
+    ],
+    "standards": [
+      "ISO 19115",
+      "ISO 19131",
+      "ISO 19157"
+    ]
+  },
+  "processing_time_seconds": 2.913893461227417,
+  "data_sources": [
+    "DEM (SRTM/synthetic)"
+  ],
+  "crs": "EPSG:32639",
+  "bounds": [
+    50.999863387978145,
+    34.999863387978145,
+    51.05013661202185,
+    35.05013661202185
+  ],
+  "resolution": 30.0,
+  "created_at": "2026-08-18T00:12:00.944559"
+}
