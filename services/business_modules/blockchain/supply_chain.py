@@ -1,3 +1,4 @@
+from datetime import timezone
 """Supply chain traceability using blockchain.
 
 Provides immutable product traceability.
@@ -5,7 +6,7 @@ Provides immutable product traceability.
 
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 @dataclass
@@ -112,7 +113,7 @@ class SupplyChainRegistry:
 
         product = self.products[product_id]
         product.verified = True
-        product.verified_at = datetime.utcnow()
+        product.verified_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
         return product
 

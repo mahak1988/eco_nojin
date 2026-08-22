@@ -1,3 +1,5 @@
+from __future__ import annotations
+from datetime import timezone
 """
 Platform Router - First real API endpoint for Eco Nojin
 ========================================================
@@ -12,12 +14,11 @@ Follows the Hybrid Intelligence Pattern:
 - C++ for hot-path kernels
 - Python for decisions & orchestration
 """
-from __future__ import annotations
 
 import logging
 import time
 from typing import Any, Dict, List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Depends
@@ -446,7 +447,7 @@ async def analyze_land(request: AnalyzeRequest):
             "longitude": request.longitude,
         },
         area_ha=request.area_ha,
-        timestamp=datetime.utcnow().isoformat(),
+        timestamp=datetime.now(timezone.utc).replace(tzinfo=None).isoformat(),
         
         climate={
             "source": climate.get("source"),

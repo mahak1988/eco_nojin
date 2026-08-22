@@ -3,10 +3,10 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from engine.hydroma.ecowallet.earning_rules import EarningCategory, EarningEngine
-from engine.hydroma.ecowallet.ledger import EcoLedger
-from engine.hydroma.ecowallet.messages import EcoMessages
-from engine.hydroma.ecowallet.redemption import RedemptionCategory, RedemptionEngine
+from services.business_modules.ecowallet.earning_rules import EarningCategory, EarningEngine
+from services.business_modules.ecowallet.ledger import EcoLedger
+from services.business_modules.ecowallet.messages import EcoMessages
+from services.business_modules.ecowallet.redemption import RedemptionCategory, RedemptionEngine
 from services.api_gateway.main import app
 
 client = TestClient(app)

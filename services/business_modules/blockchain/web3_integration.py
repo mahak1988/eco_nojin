@@ -6,7 +6,7 @@ It provides real blockchain connectivity (Polygon) while the existing
 carbon_registry.py continues to work as-is.
 
 Usage:
-    from engine.hydroma.blockchain.web3_integration import get_web3
+    from services.business_modules.blockchain.web3_integration import get_web3
     
     w3 = get_web3()
     balance = w3.eth.get_balance(address)

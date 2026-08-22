@@ -1,8 +1,9 @@
+from datetime import timezone
 """
 Dashboard API Router
 """
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -126,7 +127,7 @@ async def refresh_dashboard_data(current_user: User = Depends(get_current_user))
     return {
         "status": "success",
         "message": "Data refresh initiated",
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
     }
 
 
@@ -146,5 +147,5 @@ async def get_recommendations(farm_id: str, current_user: User = Depends(get_cur
             "Adjust irrigation schedule based on forecasted rain",
             "Consider harvesting in 2 weeks for optimal yield"
         ],
-        "updated_at": datetime.utcnow().isoformat()
+        "updated_at": datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
     }

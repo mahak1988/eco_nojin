@@ -1,3 +1,4 @@
+from datetime import timezone
 """
 Soil Recommendations Engine.
 
@@ -8,7 +9,7 @@ References:
     [2] USDA NRCS, "Soil Health Management", 2023
 """
 from typing import Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 
 logger = logging.getLogger(__name__)
@@ -24,7 +25,7 @@ def generate_recommendations(soil_data: Dict) -> Dict:
         Dict: Comprehensive recommendations
     """
     recommendations = {
-        'generated_at': datetime.utcnow().isoformat(),
+        'generated_at': datetime.now(timezone.utc).replace(tzinfo=None).isoformat(),
         'priority_actions': [],
         'fertility_management': [],
         'physical_management': [],

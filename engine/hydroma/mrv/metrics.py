@@ -1,3 +1,5 @@
+from __future__ import annotations
+from datetime import timezone
 """Transparent MRV dashboard metrics (EM-01, section 3).
 
 Every metric returns a dict that carries a provenance ``data_source`` badge:
@@ -12,9 +14,8 @@ even when the caller declared "real" (a simulated observation on the site
 taints the aggregate for that site).
 """
 
-from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 # IPCC: 1 t of carbon sequestered == 3.67 t CO2e.
@@ -247,7 +248,7 @@ def compute_dashboard(
         )
     return {
         "site_id": site_id,
-        "generated_at": datetime.utcnow().isoformat() + "Z",
+        "generated_at": datetime.now(timezone.utc).replace(tzinfo=None).isoformat() + "Z",
         "metrics": metrics,
         "integrity_note": (
             "Metrics derived from simulated inputs are labeled simulated and "

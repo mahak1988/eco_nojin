@@ -1,3 +1,4 @@
+from datetime import timezone
 """MRV (EM-01) three-level Measurement, Reporting, Verification router.
 
 Endpoints:
@@ -12,7 +13,7 @@ Endpoints:
 - GET  /api/v1/mrv/public/dashboard-summary  PII-free public aggregates
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from sqlalchemy.orm import Session
@@ -94,7 +95,7 @@ def store_citizen_report(report_in: CitizenReport, db: Session = Depends(get_db)
         data_source="real",
         qa_status="ok",
         qa_message="Citizen report accepted; geotag and photos preserved in payload.",
-        observed_at=datetime.utcnow(),
+        observed_at=datetime.now(timezone.utc).replace(tzinfo=None),
     )
     db.add(obs)
     db.commit()
@@ -120,7 +121,7 @@ def store_citizen_batch(batch: CitizenBatch, db: Session = Depends(get_db)):
             data_source="real",
             qa_status="ok",
             qa_message="Citizen report accepted (batch sync).",
-            observed_at=datetime.utcnow(),
+            observed_at=datetime.now(timezone.utc).replace(tzinfo=None),
         )
         db.add(obs)
         rows.append(obs)
@@ -197,7 +198,7 @@ def satellite_refresh(req: SatelliteRefreshRequest, db: Session = Depends(get_db
         data_source="real",
         qa_status=report.qa_status,
         qa_message=report.message,
-        observed_at=datetime.utcnow(),
+        observed_at=datetime.now(timezone.utc).replace(tzinfo=None),
     )
     db.add(obs)
     db.commit()

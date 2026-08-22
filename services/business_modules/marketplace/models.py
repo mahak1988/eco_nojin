@@ -1,8 +1,9 @@
+from datetime import timezone
 """Data models for marketplace functionality."""
 
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 
 
@@ -138,19 +139,19 @@ class Order:
 
     def confirm(self) -> None:
         self.status = OrderStatus.CONFIRMED
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
     def ship(self) -> None:
         self.status = OrderStatus.SHIPPED
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
     def deliver(self) -> None:
         self.status = OrderStatus.DELIVERED
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
     def cancel(self) -> None:
         self.status = OrderStatus.CANCELLED
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 @dataclass

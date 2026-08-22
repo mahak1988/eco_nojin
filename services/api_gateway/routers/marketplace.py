@@ -5,10 +5,10 @@ import contextlib
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from engine.hydroma.marketplace.models import OrderStatus, ProductCategory
-from engine.hydroma.marketplace.order_management import get_order_manager
-from engine.hydroma.marketplace.product_catalog import get_catalog
-from engine.hydroma.marketplace.traceability import get_traceability
+from services.business_modules.marketplace.models import OrderStatus, ProductCategory
+from services.business_modules.marketplace.order_management import get_order_manager
+from services.business_modules.marketplace.product_catalog import get_catalog
+from services.business_modules.marketplace.traceability import get_traceability
 
 router = APIRouter(prefix="/api/v1/marketplace", tags=["Marketplace"])
 

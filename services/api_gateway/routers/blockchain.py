@@ -3,9 +3,9 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from engine.hydroma.blockchain.carbon_registry import get_carbon_registry
-from engine.hydroma.blockchain.supply_chain import get_supply_chain_registry
-from engine.hydroma.blockchain.web3_provider import get_web3_provider
+from services.business_modules.blockchain.carbon_registry import get_carbon_registry
+from services.business_modules.blockchain.supply_chain import get_supply_chain_registry
+from services.business_modules.blockchain.web3_provider import get_web3_provider
 
 router = APIRouter(prefix="/api/v1/blockchain", tags=["Blockchain Ledger"])
 

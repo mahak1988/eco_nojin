@@ -1,7 +1,8 @@
+from datetime import timezone
 """Carbon module router - scientific carbon sequestration."""
 
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
@@ -265,7 +266,7 @@ def issue_credits(
         raise HTTPException(status_code=400, detail="no credits to issue")
     amount, balance = wallet_earn(db, user.id, "carbon_credit", quantity=credits)
     project.status = "issued"
-    project.issued_at = datetime.utcnow()
+    project.issued_at = datetime.now(timezone.utc).replace(tzinfo=None)
     db.commit()
     return {
         "project_id": project.project_id,

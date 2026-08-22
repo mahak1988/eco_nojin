@@ -5,10 +5,10 @@ import base64
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from engine.hydroma.voice.ivr_engine import get_ivr_engine
-from engine.hydroma.voice.stt_provider import get_stt_provider
-from engine.hydroma.voice.tts_provider import VoiceLanguage, get_tts_provider
-from engine.hydroma.voice.voice_assistant import get_voice_assistant
+from services.business_modules.voice.ivr_engine import get_ivr_engine
+from services.business_modules.voice.stt_provider import get_stt_provider
+from services.business_modules.voice.tts_provider import VoiceLanguage, get_tts_provider
+from services.business_modules.voice.voice_assistant import get_voice_assistant
 
 router = APIRouter(prefix="/api/v1/voice", tags=["Voice AI / IVR"])
 

@@ -11,8 +11,8 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field, ConfigDict
 
-from engine.hydroma.ussd.engine import GatewayType, Language, UssdRequest, get_ussd_handler
-from engine.hydroma.ussd.sms_parser import get_sms_parser
+from services.business_modules.ussd.engine import GatewayType, Language, UssdRequest, get_ussd_handler
+from services.business_modules.ussd.sms_parser import get_sms_parser
 
 router = APIRouter(prefix="/api/v1/ussd", tags=["USSD/SMS Gateway"])
 
