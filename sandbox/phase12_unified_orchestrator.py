@@ -349,7 +349,8 @@ class RegionAnalyzer:
             estimated_sm = ctx.soil.field_capacity * (1.0 - aridity * 0.7)
             vpd = max(0.5, ctx.climate.t_ann_mean * 0.15)
 
-            ewsı = self.EWSI.compute(
+            ewsı_instance = self.EWSI()  # ← INSTANTIATE (class method, not static)
+            ewsı = ewsı_instance.compute(
                 nir=ctx.sentinel.nir, swir=ctx.sentinel.swir,
                 vpd=vpd,
                 soil_moisture=estimated_sm,
@@ -423,12 +424,18 @@ class RegionAnalyzer:
         # EPIA
         try:
             epia = self.EPIA()
-            et0 = max(1.0, ctx.climate.t_ann_mean * 0.2)
+            # FAO-56 reference ET0 (Hargreaves simplified)
+            et0 = max(2.0, ctx.climate.t_ann_mean * 0.17 + 0.5)
+            # Use realistic soil moisture (depleted, not at half field capacity)
+            # If water-stressed region, soil is likely below field capacity
+            current_sm = ctx.soil.field_capacity * (0.3 if ctx.climate.p_ann < 400 else 0.6)
+            # Next 7-day forecast: conservative (low rainfall for arid)
+            weekly_rain = ctx.climate.p_ann / 52  # weekly average
             epia_result = epia.compute(
                 et0=et0,
                 lai=ctx.sentinel.lai,
-                soil_moisture=ctx.soil.field_capacity * 0.5,
-                rainfall_forecast_mm=ctx.climate.p_ann / 12,
+                soil_moisture=current_sm,
+                rainfall_forecast_mm=weekly_rain,
                 irrigation_efficiency=0.85,
             )
         except Exception as e:
@@ -441,8 +448,12 @@ class RegionAnalyzer:
             hpheno = self.HPheno()
             days = 365
             t = np.arange(days)
-            rng2 = np.random.default_rng(123)
-            ndvi_ts = 0.2 + 0.5 * np.sin(2 * np.pi * (t - 60) / 365) + rng2.normal(0, 0.05, days)
+            # Region-specific seed based on latitude+longitude for variety
+            region_seed = int(abs(ctx.lat * 100) + abs(ctx.lon * 100)) % 10000 + 100
+            # Shift phase based on latitude (NH vs SH growing seasons differ)
+            phase_shift = int(60 if ctx.lat > 0 else 240)  # NH summer vs SH summer
+            rng2 = np.random.default_rng(region_seed)
+            ndvi_ts = 0.2 + 0.5 * np.sin(2 * np.pi * (t - phase_shift) / 365) + rng2.normal(0, 0.05, days)
             ndvi_ts = np.clip(ndvi_ts, -1, 1)
             dates = [date(2024, 1, 1) + timedelta(days=i) for i in range(days)]
             hpheno_result = hpheno.compute(ndvi_ts, dates, dt_days=1.0)
