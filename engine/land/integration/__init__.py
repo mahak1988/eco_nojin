@@ -25,3 +25,25 @@ __all__ = [
     "SoilIntegrator",
     "SOILGRIDS_LAYERS",
 ]
+
+
+# Phase 2B: Climate Integration
+from .climate_models import (
+    ClimateProfile,
+    ClimateIntegrationResult,
+    MonthlyClimate,
+    KoppenClimate,
+    AridityClass,
+    KOPPEN_DESCRIPTIONS,
+)
+from .climate_integrator import ClimateIntegrator
+
+__all__.extend([
+    "ClimateProfile",
+    "ClimateIntegrationResult",
+    "MonthlyClimate",
+    "KoppenClimate",
+    "AridityClass",
+    "KOPPEN_DESCRIPTIONS",
+    "ClimateIntegrator",
+])
