@@ -835,6 +835,10 @@
     "platform_export_png": "Export Image",
     "platform_export_success": "Image exported successfully",
     "platform_nav_title": "Comprehensive Land Analysis",
-    "platform_nav_desc": "Multi-layer scientific land analysis"
+    "platform_nav_desc": "Multi-layer scientific land analysis",
+    "home_typing_1": "Integrated Landscape Engineering Program",
+    "home_typing_2": "Restoring Land with Artificial Intelligence",
+    "home_typing_3": "Data for Water, Soil, and Life",
+    "common_explore": "Explore"
   }
 }
