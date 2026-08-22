@@ -16,7 +16,7 @@ export default function EcoWalletPanel() {
   useEffect(() => {
     const fetchWallet = async () => {
       try {
-        const res = await api.get('/api/v1/wallet');
+        const res = await api.get<any>('/api/v1/wallet');
         if (res.success && res.data) {
           setWallet(res.data);
           setIrrValue(res.data.irr_equivalent || 0);

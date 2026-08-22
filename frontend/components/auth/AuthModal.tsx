@@ -34,7 +34,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Pr
     if (mode === 'login') {
       res = await login(email, password);
     } else {
-      res = await register(email, password, fullName);
+      res = await register({ email, password, full_name: fullName });
     }
     if (res.success) {
       onClose();

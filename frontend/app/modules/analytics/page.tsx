@@ -45,13 +45,13 @@ export default function AnalyticsPage() {
     setError(null);
     try {
       const [ov, st, nd, sc, ca, tl, mt] = await Promise.all([
-        api.get<any>('/api/v1/analytics/overview').catch(() => ({ success: false, error: 'Failed' })),
-        api.get<any>(`/api/v1/analytics/soil-trends?days=${days}${selectedFarm ? `&farm_id=${selectedFarm.id}` : ''}`).catch(() => ({ success: false })),
-        api.get<any>(`/api/v1/analytics/ndvi-trends?days=${days}${selectedFarm ? `&farm_id=${selectedFarm.id}` : ''}`).catch(() => ({ success: false })),
-        api.get<any>('/api/v1/analytics/scenario-impact').catch(() => ({ success: false })),
-        api.get<any>('/api/v1/analytics/carbon-summary').catch(() => ({ success: false })),
-        api.get<any>('/api/v1/analytics/activity-timeline?limit=30').catch(() => ({ success: false })),
-        api.get<any>('/api/v1/analytics/performance-metrics').catch(() => ({ success: false })),
+        api.get<any>('/api/v1/analytics/overview').catch(() => ({ success: false, error: 'Failed', data: null })),
+        api.get<any>(`/api/v1/analytics/soil-trends?days=${days}${selectedFarm ? `&farm_id=${selectedFarm.id}` : ''}`).catch(() => ({ success: false, data: null })),
+        api.get<any>(`/api/v1/analytics/ndvi-trends?days=${days}${selectedFarm ? `&farm_id=${selectedFarm.id}` : ''}`).catch(() => ({ success: false, data: null })),
+        api.get<any>('/api/v1/analytics/scenario-impact').catch(() => ({ success: false, data: null })),
+        api.get<any>('/api/v1/analytics/carbon-summary').catch(() => ({ success: false, data: null })),
+        api.get<any>('/api/v1/analytics/activity-timeline?limit=30').catch(() => ({ success: false, data: null })),
+        api.get<any>('/api/v1/analytics/performance-metrics').catch(() => ({ success: false, data: null })),
       ]);
       if (ov.success && ov.data) setOverview(ov.data);
       if (st.success && st.data) setSoilTrends(st.data);
@@ -197,7 +197,7 @@ export default function AnalyticsPage() {
               </h3>
               {timeline?.activities?.length > 0 ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '500px', overflowY: 'auto' }}>
-                  {timeline.activities.map((a, i) => (
+                  {timeline.activities.map((a: any, i: number) => (
                     <div key={i} style={{
                       padding: '14px', background: colors.bg, borderRadius: '10px',
                       display: 'flex', alignItems: 'center', gap: '14px', border: `1px solid ${colors.border}`,

@@ -430,7 +430,7 @@ export default function AdminContent() {
                         </Button>
                       </div>
                       <p className="mt-2 text-xs text-muted-foreground">
-                        {item.scheduled_at ? `زمان‌بندی: ${new Date(item.scheduled_at).toLocaleString("fa-IR")}` : "زمان‌بندی فعالی ندارد."}
+                        {(item as any).scheduled_at ? `زمان‌بندی: ${new Date((item as any).scheduled_at).toLocaleString("fa-IR")}` : "زمان‌بندی فعالی ندارد."}
                       </p>
                       <p className="mb-2 mt-4 flex items-center gap-1.5 text-xs font-bold text-muted-foreground">
                         <History className="h-3.5 w-3.5" /> تاریخچه نسخه‌ها

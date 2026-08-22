@@ -92,9 +92,9 @@ export default function HomePage() {
     <div dir={direction} style={{ background: colors.bg, minHeight: '100vh' }}>
       {/* Hero Section */}
       <motion.section
-        y={heroY}
-        scale={heroScale}
         style={{
+          y: heroY,
+          scale: heroScale,
           position: 'relative',
           padding: isMobile ? '80px 20px 60px' : '120px 48px 100px',
           overflow: 'hidden',

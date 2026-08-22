@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { Flame, Thermometer, CloudRain, Satellite, Droplets, Leaf } from "lucide-react";
 
 export type MotionIconName = "flame" | "thermometer" | "rain" | "satellite" | "droplet" | "leaf";
@@ -14,7 +14,7 @@ const ICONS: Record<MotionIconName, React.ElementType> = {
   leaf: Leaf,
 };
 
-const VARIANTS: Record<MotionIconName, { hover: object; load: object }> = {
+const VARIANTS: Record<MotionIconName, Variants> = {
   flame: {
     hover: { scale: [1, 1.25, 1], rotate: [0, -6, 5, 0], transition: { duration: 0.45 } },
     load: { scale: [1, 1.18, 1], rotate: [0, 4, -3, 0], transition: { duration: 0.7 } },

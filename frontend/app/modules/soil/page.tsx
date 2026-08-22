@@ -129,7 +129,7 @@ export default function SoilPage() {
                     <span style={{ color: colors.primary, fontWeight: '600' }}>{String(val)}</span>
                   </label>
                   <input
-                    type="number" aria-label={FIELD_LABELS[key] ?? key} step="0.1" value={val}
+                    type="number" aria-label={FIELD_LABELS[key] ?? key} step="0.1" value={String(val)}
                     onChange={(e) => setFormData({ ...formData, [key]: parseFloat(e.target.value) || 0 })}
                     style={{
                       width: '100%', padding: '10px 12px', borderRadius: '8px',
