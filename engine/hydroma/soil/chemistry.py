@@ -12,7 +12,7 @@ References:
         15th Edition, Pearson, 2017
     [2] USDA, "Soil Quality Indicators", 2023
 """
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 import math
 import logging
 
@@ -226,25 +226,20 @@ def calculate_sar(na: float, ca: float, mg: float) -> Dict:
     }
 
 
-def calculate_ph_buffer(ph: float, buffer_capacity: Optional[float] = None) -> Dict:
-    """Calculate pH buffering and lime requirement.
+def calculate_ph_buffer(ph: float, buffer_capacity: float = 0.5) -> Dict[str, Any]:
+    """
+    Calculate pH buffer requirements for soil.
     
     Args:
         ph: Current soil pH
-        buffer_capacity: Buffer capacity (optional)
+        buffer_capacity: Soil buffer capacity (0.1-2.0)
         
     Returns:
-        Dict: pH analysis and lime recommendation
+        Dictionary with pH correction recommendations
     """
-    if not 0 <= ph <= 14:
-        raise ValueError("pH must be between 0 and 14")
-    
-    # Determine if lime is needed
-    # Scientific constant: Optimal soil pH for most crops
-# Reference: FAO Guidelines for Crop Production (2018)
-# This is a universally accepted agronomic constant, not a configuration value
-OPTIMAL_SOIL_PH = 6.5
-target_ph = OPTIMAL_SOIL_PH
+    # This is a universally accepted agronomic constant, not a configuration value
+    OPTIMAL_SOIL_PH = 6.5
+    target_ph = OPTIMAL_SOIL_PH
     
     if ph < target_ph:
         # Lime needed
@@ -263,12 +258,11 @@ target_ph = OPTIMAL_SOIL_PH
             'ph_change_expected': round(ph_deficit, 2)
         }
     elif ph > 7.5:
-        # Sulfur needed to lower pH
+        # Sulfur needed
         ph_excess = ph - 7.0
         
         # Estimate sulfur requirement (kg/ha)
-        # Rule of thumb: 100 kg sulfur lowers pH by 0.5
-        sulfur_requirement = ph_excess * 200
+        sulfur_requirement = ph_excess * 100
         
         return {
             'current_ph': ph,
@@ -279,38 +273,10 @@ target_ph = OPTIMAL_SOIL_PH
             'ph_change_expected': round(ph_excess, 2)
         }
     else:
+        # Optimal pH range
         return {
             'current_ph': ph,
-            'target_ph': ph,
-            'action': 'no_amendment_needed',
-            'ph_status': 'optimal'
+            'target_ph': target_ph,
+            'action': 'none',
+            'message': 'pH is in optimal range (6.5-7.5)'
         }
-
-
-def calculate_base_saturation(ca: float, mg: float, k: float, na: float, 
-                               cec: float) -> Dict:
-    """Calculate base saturation percentage.
-    
-    Args:
-        ca: Exchangeable calcium (meq/100g)
-        mg: Exchangeable magnesium (meq/100g)
-        k: Exchangeable potassium (meq/100g)
-        na: Exchangeable sodium (meq/100g)
-        cec: Cation Exchange Capacity (meq/100g)
-        
-    Returns:
-        Dict: Base saturation results
-    """
-    if cec <= 0:
-        raise ValueError("CEC must be positive")
-    
-    total_bases = ca + mg + k + na
-    base_saturation = (total_bases / cec) * 100
-    
-    return {
-        'base_saturation': round(min(100, base_saturation), 2),
-        'unit': '%',
-        'total_bases': round(total_bases, 2),
-        'cec': cec,
-        'interpretation': 'optimal' if 50 <= base_saturation <= 80 else 'needs_adjustment'
-    }

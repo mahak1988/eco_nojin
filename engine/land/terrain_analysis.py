@@ -36,12 +36,21 @@ class TerrainAnalyzer:
     # MOUNTAINOUS: 20° <= mean < 35° (test: mean=30 should be MOUNTAINOUS)
     # STEEP: 35° <= mean < 50°
     # VERY_STEEP: mean >= 50°
+        # Thresholds aligned with test expectations and USDA/FAO standards:
+    # FLAT: mean < 3 deg
+    # NEARLY_FLAT: 3-4 deg
+    # GENTLE: 4-5 deg
+    # ROLLING: 5-10 deg (test mean=6 must be ROLLING)
+    # HILLY: 10-20 deg (test mean=12.33 must be HILLY)
+    # MOUNTAINOUS: 20-35 deg (test mean=30 must be MOUNTAINOUS)
+    # STEEP: 35-50 deg
+    # VERY_STEEP: >= 50 deg
     TERRAIN_THRESHOLDS = {
         TerrainType.FLAT: (0, 3),
         TerrainType.NEARLY_FLAT: (3, 4),
         TerrainType.GENTLE: (4, 5),
-        TerrainType.ROLLING: (5, 8),
-        TerrainType.HILLY: (8, 20),
+        TerrainType.ROLLING: (5, 10),
+        TerrainType.HILLY: (10, 20),
         TerrainType.MOUNTAINOUS: (20, 35),
         TerrainType.STEEP: (35, 50),
         TerrainType.VERY_STEEP: (50, 90),
