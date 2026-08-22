@@ -148,3 +148,4 @@ reports/
 
 # Tool scripts (development only)
 _tools/
+.env
