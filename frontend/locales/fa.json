@@ -835,6 +835,10 @@
     "platform_export_png": "خروجی تصویر",
     "platform_export_success": "خروجی تصویر با موفقیت ذخیره شد",
     "platform_nav_title": "تحلیل جامع زمین",
-    "platform_nav_desc": "تحلیل علمی چندلایه سرزمین"
+    "platform_nav_desc": "تحلیل علمی چندلایه سرزمین",
+    "home_typing_1": "برنامه یکپارچه مهندسی منظر",
+    "home_typing_2": "احیای سرزمین با هوش مصنوعی",
+    "home_typing_3": "داده برای آب، خاک و زندگی",
+    "common_explore": "کاوش"
   }
 }

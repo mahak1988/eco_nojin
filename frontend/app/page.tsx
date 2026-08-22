@@ -52,16 +52,16 @@ import { useEffect, useState } from 'react';
 import { CountryMapBackdrop } from '@/components/site/CountryMapBackdrop';
 
 export default function HomePage() {
-  const { t, direction } = useI18n();
+  const { t, direction, locale } = useI18n();
   const { colors, theme } = useTheme();
   const { isMobile } = useBreakpoint();
   const { scrollY } = useScroll();
   const heroY = useTransform(scrollY, [0, 600], [0, 120]);
   const heroScale = useTransform(scrollY, [0, 600], [1, 0.92]);
   const heroOpacity = useTransform(scrollY, [0, 500], [1, 0.45]);
-  const [typedText, setTypedText] = useState('برنامه یکپارچه مهندسی منظر');
+  const [typedText, setTypedText] = useState('');
   const [typedIndex, setTypedIndex] = useState(0);
-  const typingLines = ['برنامه یکپارچه مهندسی منظر', 'احیای سرزمین با هوش مصنوعی', 'داده برای آب، خاک و زندگی'];
+  const typingLines = [t('home_typing_1'), t('home_typing_2'), t('home_typing_3')];
 
   useEffect(() => {
     const phrase = typingLines[typedIndex];
@@ -76,7 +76,7 @@ export default function HomePage() {
       }
     }, 65);
     return () => window.clearInterval(timer);
-  }, [typedIndex]);
+  }, [typedIndex, locale]);
 
   const container = {
     hidden: { opacity: 0 },
@@ -471,7 +471,7 @@ export default function HomePage() {
                       color: f.color, fontSize: '0.9rem',
                       fontWeight: '600', position: 'relative', zIndex: 1,
                     }}>
-                      <span>Explore</span>
+                      <span>{t('common_explore')}</span>
                       <ArrowRight size={16} />
                     </div>
                   </motion.div>
