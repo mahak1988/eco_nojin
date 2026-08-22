@@ -48,6 +48,7 @@ from .routers import (
     voice,
     watershed,
     platform,
+    land,
 )
 
 
@@ -196,6 +197,7 @@ async def not_found_handler(request: Request, exc):
 # Auth & User Management
 app.include_router(auth.router)
 
+app.include_router(land.router)
 # Scientific Modules
 app.include_router(soil.router)
 app.include_router(satellite.router)
@@ -203,17 +205,21 @@ app.include_router(carbon.router)
 app.include_router(watershed.router)
 app.include_router(scenarios.router)
 
+app.include_router(land.router)
 # AI & Assistant
 app.include_router(ai.router)
 app.include_router(ai_chat.router)
 
+app.include_router(land.router)
 # Economy & Marketplace
 app.include_router(ecowallet.router)
 app.include_router(marketplace.router)
 
+app.include_router(land.router)
 # Farm Management
 app.include_router(farms.router)
 
+app.include_router(land.router)
 # Additional Services
 app.include_router(analytics.router)
 app.include_router(materials.router)
@@ -225,6 +231,7 @@ app.include_router(benchmark.router)
 app.include_router(platform.router)
 
 
+app.include_router(land.router)
 # ============================================================================
 # ROOT & HEALTH ENDPOINTS
 # ============================================================================
