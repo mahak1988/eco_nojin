@@ -428,16 +428,17 @@ class RegionAnalyzer:
             epia = self.EPIA()
             # FAO-56 reference ET0 (Hargreaves simplified)
             et0 = max(2.0, ctx.climate.t_ann_mean * 0.17 + 0.5)
-            # Use realistic soil moisture (depleted, not at half field capacity)
-            # If water-stressed region, soil is likely below field capacity
+            # Realistic soil moisture: depleted based on aridity
             current_sm = ctx.soil.field_capacity * (0.3 if ctx.climate.p_ann < 400 else 0.6)
-            # Next 7-day forecast: conservative (low rainfall for arid)
-            weekly_rain = ctx.climate.p_ann / 52  # weekly average
+            # DAILY rainfall forecast (not weekly!) - crucial for correct calculation
+            daily_rain = ctx.climate.p_ann / 365
+            # Apply effective rainfall coefficient (70% effective)
+            effective_daily_rain = daily_rain * 0.7
             epia_result = epia.compute(
                 et0=et0,
                 lai=ctx.sentinel.lai,
                 soil_moisture=current_sm,
-                rainfall_forecast_mm=weekly_rain,
+                rainfall_forecast_mm=effective_daily_rain,  # DAILY now
                 irrigation_efficiency=0.85,
             )
         except Exception as e:
@@ -601,7 +602,10 @@ def demo():
             epia_days = result.epia.get('days_until_irrigation', '?')
             epia_stage = result.epia.get('crop_stage', '?')
             print(f"  EPIA:    Irrigate {epia_irr:.1f} mm in {epia_days} days ({epia_stage})")
-            print(f"  H-Pheno: LOS = {result.hpheno.get('los_days', '?')} days")
+            los = result.hpheno.get('los_days', '?')
+            gdd = result.hpheno.get('gdd_to_maturity', '?')
+            method = result.hpheno.get('method', '?')
+            print(f"  H-Pheno: LOS = {los} days, GDD = {gdd} ({method})")
             print(f"  ESRI:    {result.esri.get('mean_esri', 0):.2f}")
             print(f"  HLHS:    {result.hlhs.get('hlhs', 0):.1f}/100 — {result.hlhs.get('classification', '?')}")
             print(f"  Time:    {result.execution_time_ms:.1f} ms")
