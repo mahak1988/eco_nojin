@@ -74,11 +74,13 @@ def _json_safe(obj):
 
 
 def _scalar(val, default=0.0):
-    """Extract scalar float from possibly-array value."""
+    """Extract scalar float from possibly-array/list/scalar value."""
     if val is None:
         return default
     if isinstance(val, np.ndarray):
         return float(np.mean(val)) if val.size > 0 else default
+    if isinstance(val, (list, tuple)):
+        return float(np.mean(val)) if len(val) > 0 else default
     if isinstance(val, (np.integer, np.floating)):
         return float(val)
     if isinstance(val, (int, float)):
@@ -448,12 +450,40 @@ class RegionAnalyzer:
             hpheno = self.HPheno()
             days = 365
             t = np.arange(days)
-            # Region-specific seed based on latitude+longitude for variety
+            # Region-specific seed
             region_seed = int(abs(ctx.lat * 100) + abs(ctx.lon * 100)) % 10000 + 100
-            # Shift phase based on latitude (NH vs SH growing seasons differ)
-            phase_shift = int(60 if ctx.lat > 0 else 240)  # NH summer vs SH summer
+            # Phase shift based on latitude (NH vs SH)
+            phase_shift = int(60 if ctx.lat > 0 else 240)
+            
+            # Growing season length based on climate (warmer = shorter)
+            # Wheat typical: 150-200 days, adjusted by temperature
+            growing_season_length = int(np.clip(200 - ctx.climate.t_ann_mean * 2, 120, 240))
+            
+            # Build cleaner NDVI time series with realistic phenology
             rng2 = np.random.default_rng(region_seed)
-            ndvi_ts = 0.2 + 0.5 * np.sin(2 * np.pi * (t - phase_shift) / 365) + rng2.normal(0, 0.05, days)
+            ndvi_ts = np.zeros(days)
+            
+            # Pre-season: bare soil (NDVI ~0.15)
+            sos_day = phase_shift - growing_season_length // 3
+            sos_day = sos_day % 365
+            
+            for d in range(days):
+                day_in_cycle = (d - sos_day) % 365
+                if day_in_cycle < 0:
+                    day_in_cycle += 365
+                
+                if day_in_cycle < growing_season_length:
+                    # In growing season: bell curve
+                    progress = day_in_cycle / growing_season_length
+                    # Smooth bell curve: 0 → peak (0.65) → 0
+                    ndvi_base = 0.15 + 0.55 * np.sin(np.pi * progress)
+                else:
+                    # Out of season: bare soil
+                    ndvi_base = 0.15
+                
+                ndvi_ts[d] = ndvi_base + rng2.normal(0, 0.02)  # low noise
+            
+            ndvi_ts = np.clip(ndvi_ts, 0.05, 0.9)
             ndvi_ts = np.clip(ndvi_ts, -1, 1)
             dates = [date(2024, 1, 1) + timedelta(days=i) for i in range(days)]
             hpheno_result = hpheno.compute(ndvi_ts, dates, dt_days=1.0)
@@ -567,7 +597,10 @@ def demo():
                 hdvi_cls = hdvi_cls[0] if hdvi_cls else "?"
             print(f"  HDVI:    {hdvi_val:.2f} — {hdvi_cls}")
 
-            print(f"  EPIA:    {result.epia.get('recommendation', '?')}")
+            epia_irr = _scalar(result.epia.get('irrigation_need_mm', 0))
+            epia_days = result.epia.get('days_until_irrigation', '?')
+            epia_stage = result.epia.get('crop_stage', '?')
+            print(f"  EPIA:    Irrigate {epia_irr:.1f} mm in {epia_days} days ({epia_stage})")
             print(f"  H-Pheno: LOS = {result.hpheno.get('los_days', '?')} days")
             print(f"  ESRI:    {result.esri.get('mean_esri', 0):.2f}")
             print(f"  HLHS:    {result.hlhs.get('hlhs', 0):.1f}/100 — {result.hlhs.get('classification', '?')}")
