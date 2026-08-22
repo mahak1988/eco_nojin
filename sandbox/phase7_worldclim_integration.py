@@ -176,7 +176,11 @@ def test_regions():
             print(f"   🌡️ Annual mean T: {data['t_ann_mean_c']:.1f}°C")
             print(f"   🌧️ Annual precip: {data['p_ann_mm']:.0f} mm")
             print(f"   📊 Monthly temperatures (min/max):")
-            print(f"      {[f'{data[\"monthly\"][\"t_min_monthly\"][i]:.0f}/{data[\"monthly\"][\"t_max_monthly\"][i]:.0f}' for i in range(12)]}")
+            t_min_list = data["monthly"]["t_min_monthly"]
+            t_max_list = data["monthly"]["t_max_monthly"]
+            temp_strs = [f"{t_min_list[i]:.0f}/{t_max_list[i]:.0f}" for i in range(12)]
+            print(f"   📊 Monthly temperatures (min/max):")
+            print(f"      {temp_strs}")
             print(f"   📊 Monthly precipitation:")
             print(f"      {data['monthly']['p_monthly']}")
             print(f"   🎯 Expected Köppen: {expected[name]}")
