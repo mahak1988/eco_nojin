@@ -233,7 +233,7 @@ export default function AIChatPage() {
     setMessages([messages[0]]);
   };
 
-  const suggestions = SUGGESTIONS[currentLang] || SUGGESTIONS.en;
+  const suggestions = SUGGESTIONS[currentLang as keyof typeof SUGGESTIONS] || SUGGESTIONS.en;
 
   return (
     <div dir={direction} style={{ background: colors.bg, minHeight: '100vh' }}>
@@ -291,7 +291,7 @@ export default function AIChatPage() {
                   {t('ai_try_asking')}
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {suggestions.map((s, i) => (
+                  {suggestions.map((s: string, i: number) => (
                     <motion.button
                       key={i}
                       whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}

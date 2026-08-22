@@ -36,7 +36,7 @@ function valueOf<T>(row: T, key: string): string {
 }
 
 /** DataTable عمومی: جستجو + مرتب‌سازی + صفحه‌بندی + خروجی CSV */
-export function DataTable<T extends Record<string, unknown>>({
+export function DataTable<T extends object>({
   columns,
   rows,
   loading = false,

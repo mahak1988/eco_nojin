@@ -2,12 +2,24 @@
 import { useEffect, useRef, useState } from 'react';
 import Globe from 'react-globe.gl';
 
+interface GlobePoint {
+  lat: number;
+  lng: number;
+  label?: string;
+}
+
+interface GlobeMapProps {
+  points?: GlobePoint[];
+  height?: number;
+  width?: number | string;
+}
+
 export default function GlobeMap({ 
   points = [], // آرایه‌ای از نقاط { lat: 35.6892, lng: 51.3890, label: 'Farm A' }
   height = 400,
-  width = '100%'
-}) {
-  const globeRef = useRef<any>();
+  width = '100%',
+}: GlobeMapProps) {
+  const globeRef = useRef<any>(null);
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
@@ -40,7 +52,7 @@ export default function GlobeMap({
         pointsMerge={false}
         pointLabel={(d: any) => `<div style="color: white; font-weight: bold;">${d.label}</div>`}
         height={height}
-        width={width}
+        width={width as any}
       />
     </div>
   );

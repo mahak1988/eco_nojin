@@ -25,11 +25,11 @@ export function useLeafletFix() {
     import('leaflet').then((L) => {
       const leaflet = L.default || L;
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- leaflet types lack the patched method - accessing internal property
-      if (leaflet.Icon?.Default?.prototype?._getIconUrl !== undefined) {
+      if ((leaflet.Icon.Default as any)?.prototype?._getIconUrl !== undefined) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- leaflet types lack the patched method
-        delete leaflet.Icon.Default.prototype._getIconUrl;
+        delete (leaflet.Icon.Default as any).prototype._getIconUrl;
       }
-      leaflet.Icon.Default.mergeOptions({
+      (leaflet.Icon.Default as any).mergeOptions({
         iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
         iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
         shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',

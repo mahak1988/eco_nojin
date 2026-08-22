@@ -79,6 +79,33 @@ except ImportError as e:
     sys.exit(1)
 
 # ============================================================================
+# SQLite Cache Integration (Phase 15)
+# ============================================================================
+
+_sqlite_cache_instance = None
+
+
+def get_sqlite_cache():
+    """Get SQLite cache instance (lazy initialization)."""
+    global _sqlite_cache_instance
+    if _sqlite_cache_instance is None:
+        try:
+            from engine.hydroma.models.cache import SQLiteCache
+            _sqlite_cache_instance = SQLiteCache()
+            print(f"✅ SQLite cache initialized: {_sqlite_cache_instance.db_path}")
+        except ImportError as imp_err:
+            print(f"⚠️  SQLite cache not installed: {imp_err}")
+            _sqlite_cache_instance = False
+        except Exception as exc_err:
+            print(f"⚠️  SQLite cache failed to initialize: {exc_err}")
+            _sqlite_cache_instance = False
+    if _sqlite_cache_instance is False:
+        return None
+    return _sqlite_cache_instance
+
+
+
+# ============================================================================
 # FastAPI App
 # ============================================================================
 
@@ -277,11 +304,26 @@ def analyze_get(
             warnings=result.warnings,
         )
     
-    return _run_analysis(region_name, crop_type, cache_key=cache_key)
+    # Try SQLite cache first
+    sqlite_cache = get_sqlite_cache()
+    if sqlite_cache and not force_refresh:
+        cached = sqlite_cache.get(region_name, crop_type)
+        if cached:
+            return AnalyzeResponse(
+                success=True,
+                region=cached["region_name"],
+                timestamp=cached.get("cached_at", datetime.now(timezone.utc).isoformat()),
+                execution_time_ms=0.0,
+                analysis=cached,
+                warnings=cached.get("warnings", []),
+            )
+    
+    return _run_analysis(region_name, crop_type, cache_key=cache_key, sqlite_cache=sqlite_cache)
 
 
 def _run_analysis(region: str, crop_type: str,
-                  cache_key: Optional[str] = None) -> AnalyzeResponse:
+                  cache_key: Optional[str] = None,
+                  sqlite_cache = None) -> AnalyzeResponse:
     """Internal: run analysis with error handling."""
     t0 = time.time()
     
@@ -305,9 +347,23 @@ def _run_analysis(region: str, crop_type: str,
         analyzer = get_analyzer()
         result = analyzer.analyze(region, crop_type)
         
-        # Cache result
+        # Cache result in memory
         if cache_key:
             _cache[cache_key] = result
+        
+        # Cache result in SQLite (persistent)
+        if sqlite_cache:
+            try:
+                sqlite_cache.store(
+                    region_name=result.region_name,
+                    crop_type=result.crop_type,
+                    result=result.to_dict(),
+                    lat=result.lat,
+                    lon=result.lon,
+                    ttl_hours=24,
+                )
+            except Exception as e:
+                print(f"⚠️  SQLite cache store failed: {e}")
         
         return AnalyzeResponse(
             success=True,
@@ -332,19 +388,36 @@ def _run_analysis(region: str, crop_type: str,
 
 @app.get("/api/v1/cache/stats", summary="Cache Statistics")
 def cache_stats():
-    """Get cache statistics."""
-    return {
-        "cached_analyses": len(_cache),
-        "cache_keys": list(_cache.keys()),
+    """Get cache statistics (memory + SQLite)."""
+    result = {
+        "memory_cache": {
+            "cached_analyses": len(_cache),
+            "cache_keys": list(_cache.keys()),
+        },
     }
+    sqlite_cache = get_sqlite_cache()
+    if sqlite_cache:
+        result["sqlite_cache"] = sqlite_cache.stats()
+    return result
 
 
 @app.delete("/api/v1/cache", summary="Clear Cache")
 def clear_cache():
-    """Clear all cached analyses."""
+    """Clear all cached analyses (memory + SQLite)."""
     count = len(_cache)
     _cache.clear()
-    return {"message": f"Cleared {count} cached analyses"}
+    
+    sqlite_cache = get_sqlite_cache()
+    sqlite_count = 0
+    if sqlite_cache:
+        sqlite_count = sqlite_cache.clear_all()
+    
+    total = count + sqlite_count
+    return {
+        "message": f"Cleared {total} cached analyses",
+        "memory": count,
+        "sqlite": sqlite_count,
+    }
 
 
 @app.get("/api/v1/models", summary="List Models with Descriptions")

@@ -355,7 +355,7 @@ export default function DashboardPage() {
               ['wallet', EcoWalletPanel], ['marketplace', MarketplacePanel], ['mobile', MobileFeaturesPanel], ['satellite', SatellitePanel],
               ['scenario', ScenarioPanel], ['watershed', WatershedPanel],
             ].map(([id, Panel]) => (
-              <Suspense key={id} fallback={
+              <Suspense key={id as string} fallback={
                 <div aria-busy="true" style={{ padding: '24px', borderRadius: '12px', border: `1px solid ${colors.border}`, background: colors.cardBg, minHeight: '160px' }}>
                   <div style={{ width: '60%', height: '14px', borderRadius: '8px', background: `${colors.border}66`, marginBottom: '12px' }} />
                   <div style={{ width: '90%', height: '10px', borderRadius: '8px', background: `${colors.border}55`, marginBottom: '8px' }} />

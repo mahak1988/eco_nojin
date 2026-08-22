@@ -35,10 +35,10 @@ export default function ProfilePage() {
       setProfile({
         full_name: user.full_name || '',
         phone: user.phone || '',
-        date_of_birth: user.date_of_birth || '',
+        date_of_birth: (user as any).date_of_birth || '',
         country: user.country || '',
         city: user.city || '',
-        address: user.address || '',
+        address: (user as any).address || '',
         language: user.language || 'fa',
       });
       setAvatarPreview(user.avatar_url || null);

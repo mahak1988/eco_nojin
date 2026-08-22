@@ -1,6 +1,7 @@
 'use client';
 import { useRef } from 'react';
-import Lottie from 'lottie-react';
+import { Lottie as LottieComponent } from 'lottie-react';
+const Lottie = LottieComponent as any;
 
 // شما باید فایل‌های JSON آیکون‌ها را از LottieFiles دانلود کنید
 // و در پوشه‌ی `public/animations/` ذخیره کنید.

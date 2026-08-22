@@ -86,7 +86,7 @@ function useRunMotor() {
       if (!res.success) throw new Error(res.error);
       return res.data;
     },
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       toast.success(`موتور شروع شد: ${data.run_id}`);
       queryClient.invalidateQueries({ queryKey: ["motors"] });
     },
@@ -135,7 +135,7 @@ export function MotorsDashboard() {
         parameters,
       },
       {
-        onSuccess: (data) => {
+        onSuccess: (data: any) => {
           setCurrentRunId(data.run_id);
         },
       }
