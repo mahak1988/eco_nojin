@@ -3,7 +3,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from engine.hydroma.insurance.index_insurance import (
+from services.business_modules.insurance.index_insurance import (
     IndexInputError,
     evaluate_index_insurance,
 )

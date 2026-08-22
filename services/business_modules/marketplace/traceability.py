@@ -1,8 +1,9 @@
+from datetime import timezone
 """Supply chain traceability with QR code support."""
 
 import hashlib
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 from .models import Product, TraceRecord
 
@@ -19,7 +20,7 @@ class TraceabilitySystem:
 
         self._traces[code] = [
             TraceRecord(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc).replace(tzinfo=None),
                 event=initial_event,
                 location=product.origin_location,
                 actor=product.producer_name,
@@ -45,7 +46,7 @@ class TraceabilitySystem:
 
         self._traces[traceability_code].append(
             TraceRecord(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc).replace(tzinfo=None),
                 event=event,
                 location=location,
                 actor=actor,

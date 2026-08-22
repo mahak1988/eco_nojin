@@ -1,6 +1,7 @@
+from datetime import timezone
 """EcoWallet router - ECO token economy system."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Query
 from pydantic import BaseModel, Field
@@ -88,7 +89,7 @@ _wallets = {}
 @router.post("/wallets", status_code=200, response_model=WalletResponse)
 def create_wallet(payload: WalletCreateRequest):
     """Create a new wallet."""
-    _wallets[payload.user_id] = {"balance": 0.0, "created_at": datetime.utcnow()}
+    _wallets[payload.user_id] = {"balance": 0.0, "created_at": datetime.now(timezone.utc).replace(tzinfo=None)}
     return WalletResponse(user_id=payload.user_id, balance=0.0)
 
 
@@ -97,7 +98,7 @@ def earn_tokens(payload: EarnRequest):
     """Earn ECO tokens."""
     # Ensure wallet exists
     if payload.user_id not in _wallets:
-        _wallets[payload.user_id] = {"balance": 0.0, "created_at": datetime.utcnow()}
+        _wallets[payload.user_id] = {"balance": 0.0, "created_at": datetime.now(timezone.utc).replace(tzinfo=None)}
     
     # Get earning rate (default to 50.0 for tree_planting as per test)
     rate = EARNING_RATES.get(payload.category, {}).get("eco", 50.0)
@@ -119,7 +120,7 @@ def redeem_tokens(payload: RedeemRequest):
     """Redeem ECO tokens."""
     # Ensure wallet exists
     if payload.user_id not in _wallets:
-        _wallets[payload.user_id] = {"balance": 0.0, "created_at": datetime.utcnow()}
+        _wallets[payload.user_id] = {"balance": 0.0, "created_at": datetime.now(timezone.utc).replace(tzinfo=None)}
     
     # Get redemption rate (default to 20.0 for consultation as per test)
     rate = REDEMPTION_RATES.get(payload.category, {}).get("eco", 20.0)
@@ -141,7 +142,7 @@ def ussd_action(payload: UssdRequest):
     """Handle USSD actions."""
     # Ensure wallet exists
     if payload.user_id not in _wallets:
-        _wallets[payload.user_id] = {"balance": 0.0, "created_at": datetime.utcnow()}
+        _wallets[payload.user_id] = {"balance": 0.0, "created_at": datetime.now(timezone.utc).replace(tzinfo=None)}
     
     balance = _wallets[payload.user_id]["balance"]
     

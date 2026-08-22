@@ -1,6 +1,7 @@
+from datetime import timezone
 """Analytics router - cross-module historical analysis."""
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import func
@@ -87,7 +88,7 @@ def get_soil_trends(
     if farm_id:
         query = query.filter(SoilAnalysis.farm_id == farm_id)
 
-    cutoff = datetime.utcnow() - timedelta(days=days)
+    cutoff = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=days)
     analyses = (
         query.filter(SoilAnalysis.analyzed_at >= cutoff).order_by(SoilAnalysis.analyzed_at).all()
     )
@@ -144,7 +145,7 @@ def get_ndvi_trends(
     if farm_id:
         query = query.filter(SatelliteAnalysis.farm_id == farm_id)
 
-    cutoff = datetime.utcnow() - timedelta(days=days)
+    cutoff = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=days)
     analyses = (
         query.filter(SatelliteAnalysis.analyzed_at >= cutoff)
         .order_by(SatelliteAnalysis.analyzed_at)

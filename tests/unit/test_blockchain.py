@@ -3,12 +3,12 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from engine.hydroma.blockchain.carbon_registry import (
+from services.business_modules.blockchain.carbon_registry import (
     CarbonRegistry,
     ProjectStatus,
 )
-from engine.hydroma.blockchain.supply_chain import SupplyChainRegistry
-from engine.hydroma.blockchain.web3_provider import get_web3_provider
+from services.business_modules.blockchain.supply_chain import SupplyChainRegistry
+from services.business_modules.blockchain.web3_provider import get_web3_provider
 from services.api_gateway.main import app
 
 client = TestClient(app)

@@ -1,7 +1,8 @@
+from datetime import timezone
 """SQLAlchemy ORM models - Complete unified schema."""
 
 import secrets
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import (
     JSON,
@@ -87,13 +88,13 @@ class PasswordResetToken(Base):
         return cls(
             user_id=user_id,
             token=secrets.token_urlsafe(48),
-            expires_at=datetime.utcnow() + timedelta(hours=hours_valid),
+            expires_at=datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(hours=hours_valid),
             used=False,
         )
 
     @property
     def is_valid(self) -> bool:
-        return not self.used and self.expires_at > datetime.utcnow()
+        return not self.used and self.expires_at > datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 # ============================================================================

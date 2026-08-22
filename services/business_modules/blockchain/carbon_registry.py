@@ -1,3 +1,4 @@
+from datetime import timezone
 """Carbon credit registry using blockchain.
 
 Provides immutable registry for carbon projects and credits.
@@ -6,7 +7,7 @@ Uses in-memory storage for research mode (simulates blockchain).
 
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 
 
@@ -93,7 +94,7 @@ class CarbonRegistry:
 
         project.status = ProjectStatus.VERIFIED
         project.verifier = verifier
-        project.verified_at = datetime.utcnow()
+        project.verified_at = datetime.now(timezone.utc).replace(tzinfo=None)
         project.tx_hash = self._generate_tx_hash()
 
         return project
@@ -152,7 +153,7 @@ class CarbonRegistry:
             raise ValueError("Credits already retired")
 
         credit.retired = True
-        credit.retired_at = datetime.utcnow()
+        credit.retired_at = datetime.now(timezone.utc).replace(tzinfo=None)
         credit.tx_hash = self._generate_tx_hash()
 
         # Update project

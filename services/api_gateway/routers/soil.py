@@ -1,3 +1,4 @@
+from datetime import timezone
 """Comprehensive soil analysis and remediation router."""
 
 from fastapi import APIRouter, Depends
@@ -632,7 +633,7 @@ def compute_erosion(
 # ============================================================================
 from pydantic import BaseModel, Field
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class SoilProfileCreate(BaseModel):
@@ -678,7 +679,7 @@ async def create_soil_profile(profile: SoilProfileCreate):
         "ph": profile.ph,
         "ec": profile.ec,
         "organic_matter": profile.organic_matter,
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": datetime.now(timezone.utc).replace(tzinfo=None).isoformat(),
     }
     _soil_profiles_db.append(new_profile)
     return new_profile

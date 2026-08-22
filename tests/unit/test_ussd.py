@@ -2,8 +2,8 @@
 
 from fastapi.testclient import TestClient
 
-from engine.hydroma.ussd.engine import Language, UssdRequest, get_ussd_handler
-from engine.hydroma.ussd.sms_parser import SmsCommandType, SmsParser, get_sms_parser
+from services.business_modules.ussd.engine import Language, UssdRequest, get_ussd_handler
+from services.business_modules.ussd.sms_parser import SmsCommandType, SmsParser, get_sms_parser
 from services.api_gateway.main import app
 
 client = TestClient(app)

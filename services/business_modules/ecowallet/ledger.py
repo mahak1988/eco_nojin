@@ -1,3 +1,4 @@
+from datetime import timezone
 """ECO Wallet Centralized Ledger.
 
 Phase 1: Centralized ledger (no blockchain needed).
@@ -6,7 +7,7 @@ Design: Simple, positive, no technical jargon.
 
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 
 
@@ -75,7 +76,7 @@ class EcoLedger:
 
         wallet.balance += amount
         wallet.total_earned += amount
-        wallet.last_activity = datetime.utcnow()
+        wallet.last_activity = datetime.now(timezone.utc).replace(tzinfo=None)
 
         tx = EcoTransaction(
             transaction_id=str(uuid.uuid4()),
@@ -102,7 +103,7 @@ class EcoLedger:
 
         wallet.balance -= amount
         wallet.total_redeemed += amount
-        wallet.last_activity = datetime.utcnow()
+        wallet.last_activity = datetime.now(timezone.utc).replace(tzinfo=None)
 
         tx = EcoTransaction(
             transaction_id=str(uuid.uuid4()),

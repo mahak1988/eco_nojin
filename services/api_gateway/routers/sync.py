@@ -1,7 +1,8 @@
+from datetime import timezone
 """Sync endpoint for offline-first mobile clients."""
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from fastapi import APIRouter
@@ -74,7 +75,7 @@ async def sync_batch(batch: SyncBatch):
                     "payload": item.payload,
                     "timestamp": item.timestamp,
                     "server_id": server_id,
-                    "synced_at": datetime.utcnow().isoformat(),
+                    "synced_at": datetime.now(timezone.utc).replace(tzinfo=None).isoformat(),
                 }
             )
 
@@ -105,7 +106,7 @@ async def sync_batch(batch: SyncBatch):
 
     return SyncResponse(
         device_id=batch.device_id,
-        synced_at=datetime.utcnow().isoformat(),
+        synced_at=datetime.now(timezone.utc).replace(tzinfo=None).isoformat(),
         results=results,
         summary=summary,
     )
