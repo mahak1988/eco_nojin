@@ -32,7 +32,6 @@ from .routers import platform, admin, auth, analyses # Import the new router
 
 # Import individual routers that are used later with app.include_router
 from .routers import land, soil, satellite, carbon, watershed, scenarios, ai, ai_chat, ecowallet, marketplace, farms, analytics, materials, blockchain, ussd, voice, sync, benchmark
-from services.api_gateway.routers import nojin
 
 app = FastAPI(title="Eco Nojin API Gateway")
 
@@ -217,11 +216,6 @@ app.include_router(voice.router)
 app.include_router(sync.router)
 app.include_router(benchmark.router)
 app.include_router(platform.router)
-
-# ═══════════════════════════════════════════════════════════════
-# Nojin Biofertilizer Router - Scientific soil restoration
-# ═══════════════════════════════════════════════════════════════
-app.include_router(nojin.router)
 
 
 # ============================================================================
