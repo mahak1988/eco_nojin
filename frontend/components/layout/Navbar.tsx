@@ -9,7 +9,7 @@ import ThemeToggle from '../shared/ThemeToggle';
 import MobileMenu from './MobileMenu';
 import { motion } from 'framer-motion';
 import {
-  BookOpen, FlaskConical, Globe, Home, Info, LayoutDashboard, Leaf, LogIn, Menu, UserPlus
+  BookOpen, FlaskConical, Globe, Home, Info, LayoutDashboard, Leaf, LogIn, Menu, UserPlus, Wallet, Bot
 } from 'lucide-react';
 import LanguageSwitcher from '../LanguageSwitcher';
 
@@ -26,6 +26,8 @@ export default function Navbar() {
     { href: '/dashboard', label: 'داشبورد', icon: LayoutDashboard },
     { href: '/modules', label: 'ماژول‌ها', icon: FlaskConical },
     { href: '/science', label: 'مرکز علم', icon: BookOpen },
+    { href: '/tools/ai-assistant', label: t('nav_ai_tools'), icon: Bot }, // New link
+    { href: '/ecowallet', label: t('nav_ecowallet'), icon: Wallet }, // New link
     { href: '/models', label: 'مدل‌ها', icon: FlaskConical },
     { href: '/mission', label: t('nav_mission'), icon: Globe },
     { href: '/about', label: t('nav_about'), icon: Info },

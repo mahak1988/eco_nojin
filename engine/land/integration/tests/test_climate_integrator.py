@@ -9,7 +9,7 @@ import math
 from engine.land.integration.climate_integrator import (
     ClimateIntegrator, LATITUDE_CLIMATE_BANDS
 )
-from engine.land.integration.climate_models import (
+from engine.land.integration.climate_integrator import (
     ClimateProfile, ClimateIntegrationResult,
     MonthlyClimate, KoppenClimate, AridityClass,
     KOPPEN_DESCRIPTIONS,

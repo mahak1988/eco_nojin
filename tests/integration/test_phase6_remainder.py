@@ -3,8 +3,8 @@ import pytest
 from fastapi.testclient import TestClient
 
 from engine.hydroma.core.database import Base, engine
-from database.config import SessionLocal
-from database import models as db_models
+from db.config import SessionLocal
+from db import models as db_models
 from services.api_gateway.auth import hash_password
 from services.api_gateway.main import app
 

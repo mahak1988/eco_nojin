@@ -3,11 +3,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useI18n } from '../../lib/i18n-context';
 import { useTheme } from '../../lib/theme-context';
+import { useAuth } from '../../lib/auth-context'; // Import useAuth
 import { motion } from 'framer-motion';
 import {
   LayoutDashboard, Leaf, Satellite, Bot, TrendingUp,
   ShoppingCart, TreePine, Droplet, Mic, Wallet,
-  User, Settings, Leaf as LogoLeaf, X
+  User, Settings, Leaf as LogoLeaf, X, Wrench, Shield
 } from 'lucide-react';
 
 const modules = [
@@ -23,10 +24,20 @@ const modules = [
   { key: 'ecowallet', icon: Wallet, href: '/modules/ecowallet' },
 ];
 
+// Define admin modules separately
+const adminModules = [
+  { key: 'admin_dashboard', icon: Shield, href: '/admin/dashboard', label: 'Admin Dashboard' },
+  { key: 'admin_users', icon: User, href: '/admin/users', label: 'Manage Users' },
+  { key: 'admin_data', icon: Wrench, href: '/admin/data', label: 'Manage Data' },
+  { key: 'admin_reports', icon: Wrench, href: '/admin/reports', label: 'Reports' },
+  { key: 'admin_settings', icon: Settings, href: '/admin/settings', label: 'System Settings' },
+];
+
 export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const { t } = useI18n();
   const { theme, colors } = useTheme();
+  const { user } = useAuth(); // Get user context
 
   // استایل پس‌زمینه بر اساس حالت تاریک/روشن
   const bgColor = theme === 'dark'
@@ -192,6 +203,86 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
           );
         })}
       </nav>
+
+      {/* Admin Modules Section - Only show if user is admin */}
+      {user && user.role === 'admin' && (
+        <>
+          <div style={{
+            fontSize: '0.75rem',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            opacity: 0.5,
+            padding: '16px 12px 8px',
+            color: theme === 'dark' ? 'white' : colors.textMuted,
+            borderTop: `1px solid ${theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`
+          }}>
+            Admin Panel
+          </div>
+          <nav style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '2px',
+            overflowY: 'auto',
+          }}>
+            {adminModules.map((mod, idx) => {
+              const isActive = pathname.startsWith(mod.href);
+              const Icon = mod.icon;
+              const textColor = theme === 'dark' ? (isActive ? 'white' : '#a7f3d0') : (isActive ? colors.primary : colors.textMuted);
+
+              return (
+                <Link key={mod.key} href={mod.href} onClick={onClose} style={{ textDecoration: 'none' }}>
+                  <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.03 }}
+                    whileHover={{ 
+                      x: 4,
+                      background: theme === 'dark' ? 'rgba(255,255,255,0.08)' : `${colors.primary}15`,
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      padding: '11px 14px',
+                      borderRadius: '10px',
+                      background: isActive 
+                        ? (theme === 'dark' ? 'rgba(255,255,255,0.12)' : `${colors.primary}20`)
+                        : 'transparent',
+                      color: textColor,
+                      fontSize: '0.9rem',
+                      fontWeight: isActive ? '600' : '400',
+                      position: 'relative',
+                      transition: 'all 0.2s ease',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {/* نشانگر سمت چپ برای آیتم فعال */}
+                    {isActive && (
+                      <motion.div
+                        layoutId="sidebarActiveIndicator"
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                        style={{
+                          position: 'absolute',
+                          left: 0,
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          width: '3px',
+                          height: '24px',
+                          background: `linear-gradient(180deg, ${colors.primary}, ${colors.accent})`,
+                          borderRadius: '0 3px 3px 0',
+                          boxShadow: `0 0 10px ${colors.primary}60`,
+                        }}
+                      />
+                    )}
+                    <Icon size={18} style={{ flexShrink: 0 }} />
+                    <span>{mod.label}</span>
+                  </motion.div>
+                </Link>
+              );
+            })}
+          </nav>
+        </>
+      )}
 
       {/* Footer (Profile & Settings) */}
       <div style={{

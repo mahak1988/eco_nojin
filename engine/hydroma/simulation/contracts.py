@@ -7,7 +7,7 @@ where a number came from.
 """
 
 from datetime import datetime
-from typing import Any, Literal
+from typing import Any, Literal, List, Dict
 
 from pydantic import BaseModel, Field
 
@@ -108,3 +108,84 @@ class ChainResult(BaseModel):
     status: Literal["ok", "partial", "failed"]
     message: str = ""
     executed_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+# ═══════════════════════════════════════════════════════════════════
+# PHASE 3: WATER INTELLIGENCE CONTRACTS
+# ═══════════════════════════════════════════════════════════════════
+
+class GroundwaterInput(BaseModel):
+    """Input contract for groundwater analysis."""
+    land_profile_id: str
+    well_depth_m: float
+    water_table_depth_m: float
+    hydraulic_conductivity_m_s: float
+    aquifer_thickness_m: float
+    aquifer_type: str = "unconfined"
+    recharge_rate_mm_yr: float = 0.0
+    abstraction_rate_m3_yr: float = 0.0
+    tds_mg_l: float = 0.0
+    porosity: float = 0.3
+    specific_yield: float = 0.15
+
+
+class GroundwaterOutput(BaseModel):
+    """Output contract for groundwater analysis."""
+    land_profile_id: str
+    darcy_flux_m_s: float
+    transmissivity_m2_s: float
+    specific_capacity_m2_s: float
+    sustainability_index: float
+    safe_yield_m3_yr: float
+    reserve_m3: float
+    water_quality_class: str
+    overexploitation_risk: str
+    contamination_risk: str
+    recommendations: List[str]
+    status: str
+
+
+class WatershedInput(BaseModel):
+    """Input contract for watershed analysis."""
+    land_profile_id: str
+    stream_network: Dict
+    stream_lengths: Dict[str, float]
+    catchment_area_km2: float
+    main_channel_length_m: float
+    average_slope_m_m: float
+
+
+class WatershedOutput(BaseModel):
+    """Output contract for watershed analysis."""
+    land_profile_id: str
+    strahler_max_order: int
+    stream_count: int
+    horton_Rb: float
+    horton_Rl: float
+    kirpich_tc_minutes: float
+    order_counts: Dict[int, int]
+    flood_risk: str
+
+
+class WaterQualityInput(BaseModel):
+    """Input contract for water quality analysis."""
+    land_profile_id: str
+    sample_date: str
+    tds_mg_l: float
+    ph: float
+    ec_dsm_cm: float
+    chloride_mg_l: float = 0.0
+    nitrate_mg_l: float = 0.0
+    fluoride_mg_l: float = 0.0
+    hardness_mg_l: float = 0.0
+
+
+class WaterQualityOutput(BaseModel):
+    """Output contract for water quality analysis."""
+    land_profile_id: str
+    sample_date: str
+    quality_class: str
+    wqi_score: float  # Water Quality Index (0-100)
+    suitable_for: List[str]
+    health_risk: str
+    treatment_needed: bool

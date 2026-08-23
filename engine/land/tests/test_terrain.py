@@ -66,12 +66,30 @@ class TestTerrainAnalyzer:
     
     def test_dominant_aspect(self, analyzer):
         """تست تعیین جهت شیب غالب"""
-        # All south-facing
-        aspects = np.full(100, 180.0)
-        dominant = analyzer._get_dominant_aspect(aspects)
-        assert dominant == "S"
+        # Import module-level function (not bound method)
+        from engine.land.terrain_analysis import (
+            _get_dominant_aspect,
+            _get_aspect_distribution,
+            _aspect_to_cardinal,
+        )
         
-        # Mixed but mostly east
-        aspects = np.array([90, 90, 90, 180, 270])
-        dominant = analyzer._get_dominant_aspect(aspects)
-        assert dominant == "E"
+        # All aspects pointing south (180°)
+        aspects = np.full(100, 180.0)
+        
+        # First verify helper functions work
+        cardinal = _aspect_to_cardinal(180.0)
+        assert cardinal == "S", f"180° should be 'S', got {cardinal!r}"
+        
+        # Now test dominant aspect
+        dominant = _get_dominant_aspect(aspects)
+        assert dominant == "S", f"Expected 'S', got {dominant!r}"
+        
+        # Mixed but mostly east (90°)
+        aspects = np.array([90.0, 90.0, 90.0, 180.0, 270.0])
+        dominant = _get_dominant_aspect(aspects)
+        assert dominant == "E", f"Expected 'E', got {dominant!r}"
+        
+        # North-facing (0°)
+        aspects = np.full(50, 0.0)
+        dominant = _get_dominant_aspect(aspects)
+        assert dominant == "N", f"Expected 'N', got {dominant!r}"

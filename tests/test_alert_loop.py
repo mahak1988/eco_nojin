@@ -2,8 +2,8 @@
 import pytest
 
 from engine.hydroma.core.database import Base, engine
-from database.config import SessionLocal
-from database import models as db_models
+from db.config import SessionLocal
+from db import models as db_models
 from services.bots.core.alert_runner import run_all_farm_alerts
 
 

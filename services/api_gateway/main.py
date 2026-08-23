@@ -19,38 +19,29 @@ import logging
 import traceback
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request # Added Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette import status # Added status import
 
 from database.config import init_db
 from engine.hydroma.config.settings import get_settings
 
 # Import all routers
-from .routers import (
-    ai,
-    ai_chat,
-    analytics,
-    auth,
-    benchmark,
-    blockchain,
-    carbon,
-    carbon_engine,
-    ecowallet,
-    farms,
-    marketplace,
-    materials,
-    satellite,
-    scenarios,
-    soil,
-    sync,
-    ussd,
-    voice,
-    watershed,
-    platform,
-    land,
-)
+from .routers import platform, admin, auth, analyses # Import the new router
 
+# Import individual routers that are used later with app.include_router
+from .routers import land, soil, satellite, carbon, watershed, scenarios, ai, ai_chat, ecowallet, marketplace, farms, analytics, materials, blockchain, ussd, voice, sync, benchmark
+
+app = FastAPI(title="Eco Nojin API Gateway")
+
+# Include existing routers
+app.include_router(platform.router, prefix="/api/v1", tags=["platform"])
+app.include_router(admin.router, prefix="/api/v1/admin", tags=["admin"])
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
+
+# Include the new analyses router
+app.include_router(analyses.router, prefix="/api/v1", tags=["analyses"]) # Register the new router
 
 # ============================================================================
 # LOGGING CONFIGURATION
@@ -183,7 +174,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 async def not_found_handler(request: Request, exc):
     """Handle 404 errors."""
     return JSONResponse(
-        status_code=404,
+        status_code=404, # Use the imported status constant
         content={
             "detail": f"Endpoint not found: {request.url.path}",
             "hint": "Check /docs for available endpoints",
@@ -205,21 +196,17 @@ app.include_router(carbon.router)
 app.include_router(watershed.router)
 app.include_router(scenarios.router)
 
-app.include_router(land.router)
 # AI & Assistant
 app.include_router(ai.router)
 app.include_router(ai_chat.router)
 
-app.include_router(land.router)
 # Economy & Marketplace
 app.include_router(ecowallet.router)
 app.include_router(marketplace.router)
 
-app.include_router(land.router)
 # Farm Management
 app.include_router(farms.router)
 
-app.include_router(land.router)
 # Additional Services
 app.include_router(analytics.router)
 app.include_router(materials.router)
@@ -231,7 +218,6 @@ app.include_router(benchmark.router)
 app.include_router(platform.router)
 
 
-app.include_router(land.router)
 # ============================================================================
 # ROOT & HEALTH ENDPOINTS
 # ============================================================================

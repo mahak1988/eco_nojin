@@ -8,21 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from .database import Base
 
 
-class SoilProfile(Base):
-    """Represents a soil profile analysis for a specific field or region."""
-
-    __tablename__ = "soil_profiles"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
-    # Optional fields defined with str | None
-    texture: Mapped[str | None] = mapped_column(String(50), comment="e.g., Sandy Loam, Clay")
-    ph: Mapped[float | None] = mapped_column(Float, nullable=True)
-    ec: Mapped[float | None] = mapped_column(
-        Float, nullable=True, comment="Electrical Conductivity (dS/m)"
-    )
-    organic_matter: Mapped[float | None] = mapped_column(Float, nullable=True, comment="Percentage")
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+# SoilProfile removed as it's defined in database/models.py with a more comprehensive schema.
 
 
 class Plant(Base):

@@ -5,7 +5,7 @@ import { useI18n } from '../../lib/i18n-context';
 import { useTheme } from '../../lib/theme-context';
 import {
   Home, Layout, DollarSign, Info, Mail,
-  LogIn, UserPlus, X, Leaf,
+  LogIn, UserPlus, X, Leaf, Wallet, Bot
 } from 'lucide-react';
 
 interface Props {
@@ -20,6 +20,8 @@ export default function MobileMenu({ isOpen, onClose }: Props) {
   const links = [
     { href: '/', label: t('nav_home'), icon: Home },
     { href: '/dashboard', label: t('nav_modules'), icon: Layout },
+    { href: '/tools/ai-assistant', label: t('nav_ai_tools'), icon: Bot }, // New link
+    { href: '/ecowallet', label: t('nav_ecowallet'), icon: Wallet }, // New link
     { href: '/pricing', label: t('nav_pricing'), icon: DollarSign },
     { href: '/about', label: t('nav_about'), icon: Info },
     { href: '/contact', label: t('nav_contact'), icon: Mail },

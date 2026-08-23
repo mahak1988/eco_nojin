@@ -235,37 +235,90 @@ class CropAdvisorMotor(AbstractScientificMotor):
         final = sum(s * weights[n] for n, s in scores)
         return final, limits
 
-    def _build_rotation(self, matches):
+    def _suggest_varieties(self, top_matches: List[CropMatch], climate: KoppenClimate, soil_ph: float) -> List[VarietyRecommendation]:
+        """Suggest specific varieties based on top crop matches."""
+        varieties = []
+        for match in top_matches[:5]:  # Focus on top 5 crops
+            crop = match.crop
+            # This is a simplified logic. Real data would come from a variety database linked to CropProfile.
+            # Example for wheat under BSk climate
+            if crop.name_en.lower() == "wheat" and climate == KoppenClimate.BSk:
+                varieties.extend([
+                    VarietyRecommendation(
+                        variety_name="Chenopod 180-day",
+                        parent_crop="Wheat",
+                        traits=["Heat tolerant", "Drought resistant"],
+                        recommended_region="Central Asia, Iran Central Plateau",
+                        performance_metrics={"yield": 4.2, "disease_resistance": 0.75}
+                    ),
+                    VarietyRecommendation(
+                        variety_name="Semi-dwarf Kavir",
+                        parent_crop="Wheat",
+                        traits=["Short stature", "Salinity tolerant"],
+                        recommended_region="Iran Central Plateau, Salt Flats",
+                        performance_metrics={"yield": 3.8, "disease_resistance": 0.80}
+                    )
+                ])
+            # Add more logic for other crops and climates
+        return varieties
+
+    def _build_rotation(self, matches: List[CropMatch], soil_ph: float, water_mm: float) -> List[RotationPlan]:
+        """Build a crop rotation plan considering soil health and biofertilizers."""
         if not matches: return []
-        rotation, families = [], set()
+        rotation = []
+        families_used = set()
+        crops_used = set()
 
-        # Y1: Best
-        b = matches[0].crop
-        rotation.append({"year": 1, "crop": b.name_en, "family": b.family.value,
-                        "reason": "Highest suitability"})
-        families.add(b.family)
+        # Y1: Best overall crop
+        best_crop = matches[0].crop
+        rotation.append(RotationPlan(
+            year=1, crop_name=best_crop.name_en, crop_family=best_crop.family.value,
+            reason="Highest suitability score", biofertilizer_suggestion="Rhizobium (if legume) or Azotobacter"
+        ))
+        families_used.add(best_crop.family)
+        crops_used.add(best_crop.id)
 
-        # Y2: Legume (N-fix)
+        # Y2: Complementary crop (e.g., legume for N, or break pest cycle)
+        found_legume = False
         for m in matches:
-            if m.crop.family == CropFamily.LEGUME and m.suitability_score > 50:
-                rotation.append({"year": 2, "crop": m.crop.name_en, "family": m.crop.family.value,
-                                "reason": "N-fixation in rotation"})
+            if m.crop.family == CropFamily.LEGUME and m.crop.id not in crops_used and m.suitability_score > 50:
+                rotation.append(RotationPlan(
+                    year=2, crop_name=m.crop.name_en, crop_family=m.crop.family.value,
+                    reason="Nitrogen fixation and soil improvement", biofertilizer_suggestion="Rhizobium inoculant"
+                ))
+                families_used.add(m.crop.family)
+                crops_used.add(m.crop.id)
+                found_legume = True
+                break
+        if not found_legume:
+             # If no legume suitable, pick a different family
+             for m in matches:
+                 if m.crop.family not in families_used and m.crop.id not in crops_used and m.suitability_score > 50:
+                     rotation.append(RotationPlan(
+                         year=2, crop_name=m.crop.name_en, crop_family=m.crop.family.value,
+                         reason="Diversify crop family", biofertilizer_suggestion="Phosphate Solubilizer"
+                     ))
+                     families_used.add(m.crop.family)
+                     crops_used.add(m.crop.id)
+                     break
+
+        # Y3: Another different crop
+        for m in matches:
+            if m.crop.family not in families_used and m.crop.id not in crops_used and m.suitability_score > 50:
+                rotation.append(RotationPlan(
+                    year=3, crop_name=m.crop.name_en, crop_family=m.crop.family.value,
+                    reason="Further diversification", biofertilizer_suggestion="Mycorrhiza (if low P/K or low OM)"
+                ))
+                families_used.add(m.crop.family)
+                crops_used.add(m.crop.id)
                 break
 
-        # Y3: Different family AND different crop (no duplicates)
-        used_crops = {b.id}
-        for m in matches:
-            if (m.crop.family not in families 
-                    and m.crop.id not in used_crops
-                    and m.suitability_score > 50):
-                rotation.append({"year": 3, "crop": m.crop.name_en, "family": m.crop.family.value,
-                                "reason": "Crop diversity"})
-                families.add(m.crop.family)
-                used_crops.add(m.crop.id)
-                break
+        # Y4: Soil recovery (cover crop or green manure)
+        rotation.append(RotationPlan(
+            year=4, crop_name="Cover Crop Mix (Legumes + Grasses)", crop_family="Soil Health",
+            reason="Soil regeneration, organic matter, erosion control", biofertilizer_suggestion="General Purpose PGPR"
+        ))
 
-        rotation.append({"year": 4, "crop": "Green manure / Cover crop",
-                        "family": "Soil recovery", "reason": "Soil regeneration"})
         return rotation
 
     def _economic(self, matches):

@@ -220,8 +220,8 @@ def temp_farm_db(tmp_path):
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
 
-    import database.models  # noqa: F401  (register all tables on Base)
-    from database.models import Base
+    import db.models  # noqa: F401  (register all tables on Base)
+    from db.models import Base
 
     db_path = tmp_path / "bot_farm_test.db"
     engine = create_engine(f"sqlite:///{db_path}")
@@ -270,7 +270,7 @@ def test_farm_wizard_persists_farm(temp_farm_db):
 
     assert sent and "ثبت شد" in sent[-1]
 
-    from database.models import Farm, User
+    from db.models import Farm, User
 
     session = session_factory()
     try:
@@ -294,7 +294,7 @@ def test_farm_wizard_reauthores_same_user(temp_farm_db):
     _full_farm_wizard(session_factory)
     _full_farm_wizard(session_factory)  # same tg user registers twice
 
-    from database.models import Farm, User
+    from db.models import Farm, User
 
     session = session_factory()
     try:

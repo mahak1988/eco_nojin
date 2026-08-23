@@ -1,3 +1,26 @@
+# C++ Core Module
+
+This directory contains the C++ source code for performance-critical computations that may eventually be integrated into the larger Python application.
+
+## Purpose
+This module provides high-performance implementations of computationally intensive algorithms and models. The C++ implementation allows for fine-grained performance optimization while maintaining compatibility with the Python ecosystem through appropriate binding technologies.
+
+## Requirements
+- A modern C++ compiler (C++20 compliant)
+- Python development headers and libraries
+- A binding library (e.g., pybind11, Cython, ctypes)
+
+## Building and Binding
+To use this module within the Python application, it must be compiled and linked to Python using an appropriate binding mechanism. The specific instructions for building and linking are not provided here and must be implemented separately based on the chosen technology.
+
+Until this process is completed and integrated, this directory is considered orphaned and its functionality is not accessible from the main Python application.
+
+## Development Notes
+- Code should maintain cross-platform compatibility
+- All public APIs should be clearly documented
+- Performance-critical sections should be profiled and optimized
+- Memory management must be handled carefully to avoid leaks
+- Thread-safety should be considered for parallelizable operations
 # HyDroMa C++ Core (engine/cpp_core)
 
 C++20 numerical kernels for the HyDroMa engine. Python bindings via pybind11;

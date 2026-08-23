@@ -3,8 +3,8 @@ from fastapi.testclient import TestClient
 
 from engine.hydroma.core.database import Base, engine
 from services.api_gateway.main import app
-from database.config import SessionLocal
-from database import models
+from db.config import SessionLocal
+from db import models
 from services.api_gateway.auth import hash_password
 
 client = TestClient(app)
