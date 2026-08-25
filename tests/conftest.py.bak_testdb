@@ -1,0 +1,62 @@
+import pytest
+from sqlalchemy import create_engine, Table, Column, String
+from sqlalchemy.orm import sessionmaker
+
+# ⚙️ ساخت موتور تست و session factory
+TEST_ENGINE = create_engine("sqlite:///:memory:", echo=False)
+TEST_SESSION_FACTORY = sessionmaker(bind=TEST_ENGINE, autocommit=False, autoflush=False)
+
+# بارگذاری مدل‌ها
+from database.base import Base
+import database.models
+import services.auth.models
+import engine.land.models
+import engine.hydroma.core.models
+import engine.hydroma.biofertilizer.models
+import services.landscape.models
+import services.marketplace.models
+import services.tourism.models
+import services.notification.models
+import services.ledger.models
+import services.reporting.models
+import services.workflow.models
+
+# اطمینان از وجود جدول land_profiles
+if 'land_profiles' not in Base.metadata.tables:
+    Table(
+        'land_profiles', Base.metadata,
+        Column('id', String, primary_key=True)
+    )
+
+# ساخت جداول روی موتور تست
+Base.metadata.create_all(bind=TEST_ENGINE)
+
+# جایگزینی SessionLocal در ماژول‌های مرتبط
+import database
+import database.config as db_config
+
+database.SessionLocal = TEST_SESSION_FACTORY
+database.engine = TEST_ENGINE
+
+db_config.SessionLocal = TEST_SESSION_FACTORY
+db_config.engine = TEST_ENGINE
+
+@pytest.fixture(scope="session")
+def client():
+    """ساخت TestClient با override کردن get_db"""
+    from services.api_gateway.main import app
+    from database import get_db  # اگر از database وارد شده باشد
+
+    def _override_get_db():
+        db = TEST_SESSION_FACTORY()
+        try:
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[get_db] = _override_get_db
+
+    with TestClient(app) as c:
+        yield c
+
+    app.dependency_overrides.pop(get_db, None)

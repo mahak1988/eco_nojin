@@ -1,4 +1,5 @@
 """
+from __future__ import annotations
 Unit tests for Hydroma Global Watchdog
 ======================================
 
@@ -8,7 +9,6 @@ References:
 - Peel et al. (2007) — Köppen reference
 - WRI Aqueduct 4.0 — Water stress levels
 """
-from __future__ import annotations
 
 import pytest
 import numpy as np

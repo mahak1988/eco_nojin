@@ -1,0 +1,16 @@
+"""دیتابیس تست مشترک"""
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from database.base import Base
+
+# import همه مدل‌ها برای ساخت جدول‌ها
+import database.models
+import services.auth.models
+import engine.land.models
+import engine.hydroma.core.models
+import engine.hydroma.biofertilizer.models
+
+engine = create_engine("sqlite:///:memory:", echo=False)
+Base.metadata.create_all(bind=engine)
+
+SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)

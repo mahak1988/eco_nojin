@@ -2,16 +2,16 @@
 
 import pytest
 
-from services.business_modules.marketplace.models import (
+from services.marketplace.models import (
     Order,
     OrderStatus,
     Producer,
     Product,
     ProductCategory,
 )
-from services.business_modules.marketplace.order_management import OrderManager, get_order_manager
-from services.business_modules.marketplace.product_catalog import ProductCatalog, get_catalog
-from services.business_modules.marketplace.traceability import TraceabilitySystem
+from services.marketplace.order_management import OrderManager, get_order_manager
+from services.marketplace.product_catalog import ProductCatalog, get_catalog
+from services.marketplace.traceability import TraceabilitySystem
 
 
 class TestModels:

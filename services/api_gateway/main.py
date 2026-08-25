@@ -31,7 +31,12 @@ from engine.hydroma.config.settings import get_settings
 from .routers import platform, admin, auth, analyses # Import the new router
 
 # Import individual routers that are used later with app.include_router
-from .routers import land, soil, satellite, carbon, watershed, scenarios, ai, ai_chat, ecowallet, marketplace, farms, analytics, materials, blockchain, ussd, voice, sync, benchmark
+from .routers import land, soil, satellite, carbon, watershed, scenarios, ai, ai_chat, ecowallet, marketplace, farms, analytics, materials, blockchain
+from .routers import benchmark
+from .routers import nojin
+from .routers import sync
+from .routers import ussd
+from .routers import voice
 from services.api_gateway.routers import nojin
 
 app = FastAPI(title="Eco Nojin API Gateway")

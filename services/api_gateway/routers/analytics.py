@@ -8,15 +8,8 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from database.config import get_db
-from database.models import (
-    CarbonProject,
-    EcoTransaction,
-    Farm,
-    SatelliteAnalysis,
-    ScenarioRun,
-    SoilAnalysis,
-    User,
-)
+from database.models import CarbonProject, EcoTransaction, Farm, SatelliteAnalysis, ScenarioRun, SoilAnalysis
+from database.models import User
 from services.api_gateway.auth import require_user
 
 router = APIRouter(prefix="/api/v1/analytics", tags=["analytics"])

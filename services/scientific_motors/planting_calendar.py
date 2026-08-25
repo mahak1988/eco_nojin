@@ -620,7 +620,7 @@ class PlantingCalendarMotor(AbstractScientificMotor):
         return {str(k): v for k, v in schedule.items() if v}
 
     def _window_to_dict(self, w: PlantingWindow) -> Dict:
-        """Convert PlantingWindow to serializable dict."""
+        """Convert PlantingWindow to Integerizable dict."""
         month_names = [
             "Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"

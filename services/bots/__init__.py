@@ -1,1 +1,1 @@
-﻿"""Eco Nojin bot package (Phase 1)."""
+"""Eco Nojin bot package (Phase 1)."""

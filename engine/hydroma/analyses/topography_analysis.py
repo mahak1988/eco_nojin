@@ -8,7 +8,7 @@ from typing import Literal
 import numpy as np
 import rioxarray
 import xarray as xr
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from sqlalchemy.orm import Session
 from database.models import TopographyAnalysisResult # Import the DB model
 
@@ -37,9 +37,7 @@ class TopographyOutput(BaseModel):
     curvature_path: str | None = Field(None, description="Path to saved curvature GeoTIFF")
     flow_direction_path: str | None = Field(None, description="Path to saved flow direction GeoTIFF")
     flow_accumulation_path: str | None = Field(None, description="Path to saved flow accumulation GeoTIFF")
-
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 class TopographyAnalyzer:
     """Analyzes DEM to extract topographic parameters."""
@@ -137,5 +135,5 @@ class TopographyAnalyzer:
         logger.info("Topographic analysis completed and saved to database.")
         return results
 
-# Note: Need to import json for serialization
+# Note: Need to import json for Integerization
 import json

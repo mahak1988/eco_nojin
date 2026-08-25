@@ -35,7 +35,7 @@ router = APIRouter(prefix="/api/v1/mrv", tags=["MRV"])
 
 
 def _jsonable(data: dict) -> dict:
-    """Convert datetime values to ISO strings so payload is JSON-serializable."""
+    """Convert datetime values to ISO strings so payload is JSON-Integerizable."""
     out: dict = {}
     for key, value in data.items():
         if isinstance(value, datetime):

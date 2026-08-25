@@ -75,9 +75,9 @@ class TestSclWindowSampling:
         # B04/B08 -> some reflectance; SCL -> mostly cloudy (value 9)
         scene = _scene(
             {
-                "B04": "http://fake/B04.tif",
-                "B08": "http://fake/B08.tif",
-                S2_ASSET_SCL: "http://fake/SCL.tif",
+                "B04": "https://fake/B04.tif",
+                "B08": "https://fake/B08.tif",
+                S2_ASSET_SCL: "https://fake/SCL.tif",
             }
         )
         calls = {}
@@ -114,9 +114,9 @@ class TestSclWindowSampling:
         client = CopernicusClient()
         scene = _scene(
             {
-                "B04": "http://fake/B04.tif",
-                "B08": "http://fake/B08.tif",
-                S2_ASSET_SCL: "http://fake/SCL.tif",
+                "B04": "https://fake/B04.tif",
+                "B08": "https://fake/B08.tif",
+                S2_ASSET_SCL: "https://fake/SCL.tif",
             }
         )
 
@@ -144,7 +144,7 @@ class TestSclWindowSampling:
 
     def test_scl_missing_means_no_masking(self, monkeypatch):
         client = CopernicusClient()
-        scene = _scene({"B04": "http://fake/B04.tif", "B08": "http://fake/B08.tif"})
+        scene = _scene({"B04": "https://fake/B04.tif", "B08": "https://fake/B08.tif"})
 
         async def fake_download(href: str, token: str) -> bytes:
             vals = np.full((9, 9), 3000, dtype=np.uint16)

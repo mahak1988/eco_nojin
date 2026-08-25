@@ -10,7 +10,8 @@ from typing import Dict, Any, List
 from dataclasses import dataclass
 from enum import Enum
 
-from database.models import MonitoringDataDB, SessionLocal
+from database.models import MonitoringDataDB
+from database.config import SessionLocal
 from engine.hydroma.soil.health import calculate_soil_health_index
 from engine.hydroma.soil.moisture import estimate_soil_moisture
 from engine.hydroma.water.quality import assess_water_quality

@@ -36,7 +36,7 @@ class DEMFetcher(MapFetcher):
             f"{self.source}_{bounds[0]:.4f}_{bounds[1]:.4f}_"
             f"{bounds[2]:.4f}_{bounds[3]:.4f}_{resolution}"
         )
-        return hashlib.md5(key_str.encode()).hexdigest()
+        return hashlib.sha256(key_str.encode()).hexdigest()
 
     async def fetch(
         self,

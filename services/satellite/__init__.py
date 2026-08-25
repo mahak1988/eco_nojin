@@ -1,1 +1,1 @@
-﻿"""Satellite data services (Phase 4: real Copernicus CDSE)."""
+"""Satellite data services (Phase 4: real Copernicus CDSE)."""

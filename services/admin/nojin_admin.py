@@ -92,7 +92,7 @@ async def verify_project(project_id: str):
 async def issue_credits(project_id: str, amount_tons: float):
     return {
         "project_id": project_id, "credits_issued": amount_tons,
-        "serial_numbers": [f"NOJIN-2026-{i:06d}" for i in range(1, int(amount_tons) + 1)],
+        "Integer_numbers": [f"NOJIN-2026-{i:06d}" for i in range(1, int(amount_tons) + 1)],
         "registry": "Verra"
     }
 

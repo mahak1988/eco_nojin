@@ -1,10 +1,11 @@
+from __future__ import annotations
+import os
 """Phase 1 tests: Eco Nojin Telegram bot (no network, no token required).
 
 Handlers are exercised directly with lightweight fakes; the AI service uses
 a fake Ollama client so tests stay deterministic and offline.
 """
 
-from __future__ import annotations
 
 import asyncio
 from types import SimpleNamespace
@@ -98,7 +99,7 @@ async def make_state(user_id: int = 42, chat_id: int = 1) -> FSMContext:
 
 
 def make_advice_service(ollama_available: bool = False) -> AdviceService:
-    cfg = BotConfig(bot_token = "test_token_placeholder")
+    cfg = BotConfig(bot_token = os.getenv("ACCESS_TOKEN", ""))
     return AdviceService(cfg, ollama=FakeOllama(ollama_available))
 
 
@@ -221,7 +222,7 @@ def temp_farm_db(tmp_path):
     from sqlalchemy.orm import sessionmaker
 
     import db.models  # noqa: F401  (register all tables on Base)
-    from db.models import Base
+    from database.models import Base
 
     db_path = tmp_path / "bot_farm_test.db"
     engine = create_engine(f"sqlite:///{db_path}")

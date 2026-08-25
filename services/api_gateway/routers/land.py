@@ -31,6 +31,33 @@ land_service = LandService()
 # Request/Response Models
 # ============================================================================
 
+
+
+def _map_terrain_type(slope_mean_deg: float) -> str:
+    """نگاشت شیب متوسط به نوع زمین"""
+    if slope_mean_deg < 2:
+        return "flat"
+    elif slope_mean_deg < 5:
+        return "nearly_flat"
+    elif slope_mean_deg < 10:
+        return "gentle"
+    elif slope_mean_deg < 15:
+        return "rolling"
+    elif slope_mean_deg < 25:
+        return "hilly"
+    elif slope_mean_deg < 35:
+        return "mountainous"
+    elif slope_mean_deg < 45:
+        return "steep"
+    else:
+        return "very_steep"
+
+def _format_aspect(aspect_deg: float) -> str:
+    """تبدیل جهت به رشته قطبنما"""
+    directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"]
+    idx = int((aspect_deg % 360) / 45) % 8
+    return directions[idx]
+
 class CreateProfileRequest(BaseModel):
     """درخواست ایجاد پروفایل"""
     name: str = Field(..., description="نام زمین")

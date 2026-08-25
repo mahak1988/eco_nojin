@@ -6,7 +6,7 @@ for Risk assessment and management
 """
 from typing import Optional, List, Dict, Any
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class BaseRisk(BaseModel):
@@ -15,9 +15,8 @@ class BaseRisk(BaseModel):
     id: Optional[int] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-    
-    class Config:
-        """Pydantic configuration."""
+    model_config = ConfigDict()
+
         from_attributes = True
 
 

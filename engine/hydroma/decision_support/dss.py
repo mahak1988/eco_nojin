@@ -10,7 +10,8 @@ from dataclasses import dataclass
 from enum import Enum
 import uuid
 
-from database.models import DecisionRecommendationDB, SessionLocal
+from database.models import DecisionRecommendationDB
+from database.config import SessionLocal
 from engine.hydroma.optimization.optimizer import run_land_use_optimization # hypothetical call
 from engine.hydroma.risk.assessment import perform_comprehensive_risk_analysis # hypothetical
 from engine.hydroma.economics.integration import calculate_agricultural_project_economics # hypothetical

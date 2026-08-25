@@ -38,6 +38,36 @@ from enum import Enum
 
 import numpy as np
 
+# ═══════════════════════════════════════════════════════════════════════
+# Safe Unpickler - محدودسازی کلاس‌های مجاز برای امنیت
+# ═══════════════════════════════════════════════════════════════════════
+
+class SafeUnpickler(pickle.Unpickler):
+    """Unpickler محدودشده که فقط کلاس‌های امن را بارگذاری می‌کند."""
+    
+    ALLOWED_MODULES = {
+        'builtins', 'collections', 'datetime',
+        'numpy', 'numpy.core', 'numpy.core.multiarray',
+        'numpy._core', 'numpy._core.multiarray',
+        'xarray', 'xarray.core', 'xarray.core.dataarray',
+        'xarray.core.dataset', 'xarray.core.variable',
+        'pandas', 'pandas.core', 'pandas.core.frame',
+    }
+    
+    def find_class(self, module, name):
+        if module in self.ALLOWED_MODULES:
+            return super().find_class(module, name)
+        raise pickle.UnpicklingError(
+            f"Forbidden class: {module}.{name}. "
+            f"Only whitelisted classes are allowed for security."
+        )
+
+
+def safe_pickle_load(file_obj):
+    """بارگذاری امن فایل pickle با محدودسازی کلاس‌های مجاز."""
+    return SafeUnpickler(file_obj).load()
+
+
 try:
     import xarray as xr
     import rasterio
@@ -263,7 +293,7 @@ class Sentinel2Provider:
     def _bbox_date_key(self, bbox, date_from, date_to) -> str:
         """Generate cache key from bbox and date range."""
         key = f"{bbox}_{date_from.date()}_{date_to.date()}"
-        return hashlib.md5(key.encode()).hexdigest()[:16]
+        return hashlib.sha256(key.encode()).hexdigest()[:16]
 
     def _fetch_planetary_computer(
         self, bbox, date_from, date_to, max_cloud_pct, product
@@ -354,24 +384,24 @@ class Sentinel2Provider:
         """Generate disk cache key."""
         import hashlib
         key_str = f"{scene_id}_{'_'.join(sorted(bands))}_{resolution}_{bbox}"
-        return hashlib.md5(key_str.encode()).hexdigest()
+        return hashlib.sha256(key_str.encode()).hexdigest()
 
     def _save_to_disk_cache(self, key: str, data: Dict[str, "xr.DataArray"]):
         """Save band data to disk cache."""
         try:
             import pickle
             cache_file = self.disk_cache_dir / f"{key}.pkl"
-            # Convert to serializable format
-            serializable = {}
+            # Convert to Integerizable format
+            Integerizable = {}
             for band_name, da in data.items():
-                serializable[band_name] = {
+                Integerizable[band_name] = {
                     "values": da.values,
                     "dims": da.dims,
                     "coords": {k: v.values for k, v in da.coords.items()},
                     "attrs": dict(da.attrs),
                 }
             with open(cache_file, 'wb') as f:
-                pickle.dump(serializable, f)
+                pickle.dump(Integerizable, f)
         except Exception as e:
             print(f"  [SENTINEL] Disk cache save error: {e}")
 
@@ -383,9 +413,9 @@ class Sentinel2Provider:
             if not cache_file.exists():
                 return None
             with open(cache_file, 'rb') as f:
-                serializable = pickle.load(f)
+                Integerizable = safe_pickle_load(f)
             result = {}
-            for band_name, data in serializable.items():
+            for band_name, data in Integerizable.items():
                 result[band_name] = xr.DataArray(
                     data["values"],
                     dims=data["dims"],

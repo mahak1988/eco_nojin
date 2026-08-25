@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from database.config import get_db
-from database.models import CarbonProject, User
+from services.auth.models import CarbonProject, User
 from services.api_gateway.auth import require_user
 from services.api_gateway.routers.carbon_engine import (
     STANDARDS,

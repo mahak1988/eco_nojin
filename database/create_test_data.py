@@ -1,3 +1,4 @@
+import os
 """Create sample data for testing."""
 
 import sys
@@ -8,16 +9,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import uuid
 
 from database.config import SessionLocal, init_db
-from database.models import (
-    EcoTransaction,
-    EcoWallet,
-    Farm,
-    Product,
-    SatelliteAnalysis,
-    ScenarioRun,
-    SoilAnalysis,
-    User,
-)
+from database.models import EcoTransaction, EcoWallet, Farm, Product, SatelliteAnalysis, ScenarioRun, SoilAnalysis
+from database.models import User
 
 
 def create_test_data():
@@ -33,7 +26,7 @@ def create_test_data():
         user = User(
             email="demo@econojin.org",
             full_name="Demo Farmer",
-            hashed_password = "test_password_placeholder",
+            hashed_password = os.getenv("PASSWORD", ""),
             role="farmer",
             language="fa",
         )

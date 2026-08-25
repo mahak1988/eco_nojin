@@ -1,0 +1,144 @@
+"""Phase 6 backend tests: versions, translate, RAG sync, public search."""
+import asyncio
+
+import pytest
+from fastapi.testclient import TestClient
+
+from database.models import Base
+from database.config import engine
+from database.config import SessionLocal
+from database import models as db_models
+from services.api_gateway.auth import hash_password
+from services.api_gateway.main import app
+
+
+@pytest.fixture()
+def admin_client(monkeypatch):
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
+    db = SessionLocal()
+    db.add(
+        db_models.User(
+            email="boss@test.com",
+            full_name="boss",
+            hashed_password=hash_password("testpass123"),
+            role="admin",
+            is_active=True,
+        )
+    )
+    db.commit()
+    db.close()
+    client = TestClient(app)
+    r = client.post(
+        "/api/v1/auth/login",
+        json={"email": "boss@test.com", "password": "testpass123"},
+    )
+    assert r.status_code == 200
+    client.headers.update({"Authorization": f"Bearer {r.json()['access_token']}"})
+    yield client
+
+
+def _make_item(client, title="کشاورزی هوشمند", body="متن درباره آب و خاک", category="agriculture"):
+    r = client.post(
+        "/api/v1/admin/content",
+        json={"title": title, "body": body, "category": category, "language": "fa"},
+    )
+    assert r.status_code == 200, r.text
+    return r.json()
+
+
+def test_create_snapshots_initial_version(admin_client):
+    item = _make_item(admin_client)
+    r = admin_client.get(f"/api/v1/admin/content/{item['id']}/versions")
+    assert r.status_code == 200
+    versions = r.json()
+    assert len(versions) == 1
+    assert versions[0]["version"] == 1
+
+
+def test_update_creates_version_history(admin_client):
+    item = _make_item(admin_client)
+    r = admin_client.put(
+        f"/api/v1/admin/content/{item['id']}",
+        json={"title": "عنوان جدید", "body": "متن ویرایش‌شده"},
+    )
+    assert r.status_code == 200
+    versions = admin_client.get(f"/api/v1/admin/content/{item['id']}/versions").json()
+    assert len(versions) == 2
+    assert versions[0]["version"] == 2
+    assert versions[1]["version"] == 1
+    assert versions[1]["title"] == "کشاورزی هوشمند"  # previous state kept
+
+
+def test_publish_sets_published_at_and_rag_sync(admin_client):
+    item = _make_item(admin_client)
+    r = admin_client.post(f"/api/v1/admin/content/{item['id']}/publish")
+    assert r.status_code == 200
+    assert "RAG" in r.json()["message"]
+    items = admin_client.get("/api/v1/admin/content").json()
+    published = [i for i in items if i["id"] == item["id"]][0]
+    assert published["status"] == "published"
+    assert published["rag_synced"] is True
+    assert published["published_at"] is not None
+
+
+def test_public_search_only_published(admin_client):
+    _make_item(admin_client, title="مقاله منتشرنشده")
+    item = _make_item(admin_client, title="مدیریت بهینه آب")
+    admin_client.post(f"/api/v1/admin/content/{item['id']}/publish")
+    # public client without token
+    public = TestClient(app)
+    r = public.get("/api/v1/content/search", params={"q": "آب"})
+    assert r.status_code == 200
+    data = r.json()
+    assert data["count"] >= 1
+    titles = [res["title"] for res in data["results"]]
+    assert "مدیریت بهینه آب" in titles
+    assert "مقاله منتشرنشده" not in titles
+
+
+def test_translate_ok_with_mock_ollama(admin_client, monkeypatch):
+    item = _make_item(admin_client, title="Smart Agriculture", body="Water and soil management.")
+
+    from services.bots.core import ai as ai_mod
+
+    class FakeOllama:
+        async def available(self):
+            return True
+
+        async def chat(self, system, user, temperature=0.2):
+            return "Smart Agriculture\nWater and soil management."
+
+    monkeypatch.setattr(ai_mod, "OllamaClient", lambda config: FakeOllama())
+    r = admin_client.post(f"/api/v1/admin/content/{item['id']}/translate?language=en")
+    assert r.status_code == 200, r.text
+    translations = admin_client.get(
+        f"/api/v1/admin/content/{item['id']}/translations"
+    ).json()
+    assert len(translations) == 1
+    assert translations[0]["language"] == "en"
+    assert translations[0]["source"] == "ai"
+
+
+def test_translate_honest_503_when_ollama_offline(admin_client, monkeypatch):
+    item = _make_item(admin_client)
+
+    from services.bots.core import ai as ai_mod
+
+    class FakeOllama:
+        async def available(self):
+            return False
+
+        async def chat(self, system, user, temperature=0.2):
+            return None
+
+    monkeypatch.setattr(ai_mod, "OllamaClient", lambda config: FakeOllama())
+    r = admin_client.post(f"/api/v1/admin/content/{item['id']}/translate?language=en")
+    assert r.status_code == 503
+    assert "Ollama" in r.json()["detail"]
+
+
+def test_translate_rejects_unknown_language(admin_client):
+    item = _make_item(admin_client)
+    r = admin_client.post(f"/api/v1/admin/content/{item['id']}/translate?language=xx")
+    assert r.status_code == 400

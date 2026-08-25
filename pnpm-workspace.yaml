@@ -1,0 +1,15 @@
+packages:
+  - 'frontend'
+allowBuilds:
+  '@prisma/engines': false
+  prisma: false
+  sharp: false
+  unrs-resolver: false
+
+# Optional engine strictness
+# engine-strict=true
+
+# Only if needed:
+# catalog:
+#   react: ^19.0.0
+#   next: ^16.0.0

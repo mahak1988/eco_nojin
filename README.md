@@ -32,9 +32,9 @@ pytest
 
 | Path | Purpose |
 |---|---|
-| `engine/hydroma/` | Scientific engine (soil, climate, hydrology, erosion, carbon, satellite, scenarios) |
+| `engine/hydroma/` | Scientific engine (soil, climate, hydrology, erosion, carbon, satellite, scenarios, biofertilizer, economics, finance, risk, irrigation, groundwater, materials, ecotourism, land, infrastructure, decision support, simulation, calibration, mrv, standards) |
 | `engine/cpp_core/` | C++20 numerical core (Richards, Saint-Venant, FAO-56, RUSLE, sampling) with pybind11 bindings |
-| `services/` | Microservices (api_gateway, auth, ledger, notification, reporting, workflow) |
+| `services/` | Microservices (api_gateway, admin, auth, ledger, notification, reporting, workflow, analytics, bots, carbon, content, data_sources, ecowallet, field_monitoring, land, map_engine, mobile_monitoring, science, scientific_motors, supabase, telegram_bot) |
 | `frontend/` | Next.js PWA with 14-language i18n (fa/ar/ur RTL) |
 | `docs/en` `docs/fa` | Bilingual documentation (00–12) |
 | `tests/` | Unit + integration tests |
@@ -87,9 +87,9 @@ pytest
 
 | مسیر | کاربرد |
 |---|---|
-| `engine/hydroma/` | موتور علمی (خاک، اقلیم، هیدرولوژی، فرسایش، کربن، ماهواره، سناریو) |
+| `engine/hydroma/` | موتور علمی (خاک، اقلیم، هیدرولوژی، فرسایش، کربن، ماهواره، سناریو، بیوفرتیلایزر، اقتصاد، مالی، ریسک، آبیاری، آب زیرزمینی، مواد، اکوتوریسم، زمین، زیرساخت، تصمیم‌گیری، شبیه‌سازی، کالیبراسیون، MRV، استانداردها) |
 | `engine/cpp_core/` | هسته عددی C++20 (ریچاردز، سن‌ونان، FAO-56، RUSLE، نمونه‌برداری) با اتصال pybind11 |
-| `services/` | میکروسرویس‌ها (api_gateway، auth، ledger، notification، reporting، workflow) |
+| `services/` | میکروسرویس‌ها (api_gateway، admin، auth، ledger، notification، reporting، workflow، analytics، bots، carbon، content، data_sources، ecowallet، field_monitoring، land، map_engine، mobile_monitoring، science، scientific_motors، supabase، telegram_bot) |
 | `frontend/` | PWA مبتنی بر Next.js با بومی‌سازی ۱۴ زبانه (فارسی/عربی/اردو RTL) |
 | `docs/en` `docs/fa` | مستندات دوزبانه (۰۰–۱۲) |
 | `tests/` | تست‌های واحد و یکپارچه |

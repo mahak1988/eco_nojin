@@ -9,7 +9,8 @@ import numpy as np
 from scipy.optimize import minimize
 from datetime import date
 
-from database.models import CalibrationRecordDB, ModelVersionDB, SessionLocal
+from database.models import CalibrationRecordDB, ModelVersionDB
+from database.config import SessionLocal
 from engine.hydroma.soil.nutrient_dynamic import run_nutrient_model # hypothetical
 from engine.hydroma.crop.yield_prediction import run_crop_model # hypothetical
 

@@ -6,13 +6,14 @@ for land, soil, water, and crop monitoring.
 """
 import asyncio
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 from enum import Enum
 
 from . import copernicus, sentinel2_provider, cds, nasa_power, open_meteo
-from database.models import MonitoringDataDB, SessionLocal
+from database.models import MonitoringDataDB
+from database.config import SessionLocal
 from engine.hydroma.soil.moisture import estimate_soil_moisture
 from engine.hydroma.crop.ndvi_analysis import calculate_ndvi_change
 from engine.hydroma.water.surface_area import calculate_surface_area_change
@@ -143,7 +144,7 @@ class SatelliteMonitoringService:
             db_entry = MonitoringDataDB(
                 project_id=request.project_id,
                 monitoring_type="satellite",
-                monitoring_date=datetime.utcnow().date(),
+                monitoring_date=datetime.now(timezone.utc).date(),
                 location=f"{request.location['lat']},{request.location['lon']}", # Simplified
                 data_source=",".join([s.value for s in request.data_sources]),
                 data_quality_score=calculate_quality_score(quality_flags),

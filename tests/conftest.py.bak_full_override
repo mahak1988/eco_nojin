@@ -1,0 +1,63 @@
+import pytest
+from sqlalchemy import create_engine, Table, Column, String
+from sqlalchemy.orm import sessionmaker
+from fastapi.testclient import TestClient
+
+from database.base import Base
+import database.models
+import services.auth.models
+import engine.land.models
+import engine.hydroma.core.models
+import engine.hydroma.biofertilizer.models
+import services.landscape.models
+import services.marketplace.models
+import services.tourism.models
+import services.notification.models
+import services.ledger.models
+import services.reporting.models
+import services.workflow.models
+
+@pytest.fixture(scope="session")
+def test_engine():
+    """ساخت موتور SQLite درون‌حافظه‌ای و ساخت جداول"""
+    engine = create_engine("sqlite:///:memory:", echo=False)
+
+    # اطمینان از وجود جدول land_profiles برای کلید خارجی
+    if 'land_profiles' not in Base.metadata.tables:
+        Table(
+            'land_profiles', Base.metadata,
+            Column('id', String, primary_key=True)
+        )
+
+    Base.metadata.create_all(bind=engine)
+    return engine
+
+@pytest.fixture(scope="session")
+def test_session_factory(test_engine):
+    """ساخت session factory برای تست"""
+    return sessionmaker(bind=test_engine, autocommit=False, autoflush=False)
+
+@pytest.fixture(autouse=True)
+def override_get_db(test_session_factory):
+    """جایگزینی get_db با session متصل به دیتابیس تست"""
+    from services.api_gateway.main import app
+    # پیدا کردن تابع get_db از database یا services.api_gateway
+    from database import get_db  # فرض بر این است که get_db در database تعریف شده
+
+    def _override_get_db():
+        db = test_session_factory()
+        try:
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[get_db] = _override_get_db
+    yield
+    app.dependency_overrides.pop(get_db, None)
+
+@pytest.fixture(scope="session")
+def client():
+    """ساخت TestClient بعد از اعمال override"""
+    from services.api_gateway.main import app
+    with TestClient(app) as c:
+        yield c

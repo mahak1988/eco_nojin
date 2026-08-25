@@ -1,1 +1,1 @@
-﻿"""Bot handlers."""
+"""Bot handlers."""

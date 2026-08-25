@@ -140,27 +140,6 @@ module = [
 ignore_missing_imports = true
 
 # === PYTEST ===
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-addopts = [
-    "-v", "--strict-markers", "--tb=short", "-ra",
-]
-markers = [
-    "slow: marks tests as slow",
-    "integration: integration tests",
-    "unit: unit tests",
-    "gis: GIS stack tests",
-]
-asyncio_mode = "auto"
-filterwarnings = [
-    "ignore::DeprecationWarning",
-    "ignore::UserWarning:rasterio.*",
-]
-
-# === COVERAGE ===
 [tool.coverage.run]
 source = ["services", "engine", "contracts"]
 omit = ["tests/*", "*/migrations/*", "*/__pycache__/*"]

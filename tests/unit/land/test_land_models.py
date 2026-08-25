@@ -33,7 +33,7 @@ class TestLandModels:
         with pytest.raises(ValueError):
             LandProfile(id="test", name="تست", location_lat=0, location_lon=181)
     
-    def test_terrain_analysis_serialization(self):
+    def test_terrain_analysis_Integerization(self):
         """تست سریال‌سازی تحلیل توپوگرافی"""
         analysis = TerrainAnalysis(
             profile_id="test",
@@ -53,7 +53,7 @@ class TestLandModels:
         assert data["terrain_type"] == TerrainType.ROLLING
         assert data["elevation_mean"] == 1050
         
-        # Deserialize
+        # DeIntegerize
         restored = TerrainAnalysis(**data)
         assert restored.terrain_type == analysis.terrain_type
         assert restored.elevation_mean == analysis.elevation_mean

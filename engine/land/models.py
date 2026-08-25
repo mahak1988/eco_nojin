@@ -150,7 +150,7 @@ class TerrainAnalysis(BaseModel):
         }
     )
     profile_id: str
-    terrain_type: TerrainType
+    terrain_type: Optional[str] = None
     elevation_min: float
     elevation_max: float
     elevation_mean: float
@@ -159,7 +159,7 @@ class TerrainAnalysis(BaseModel):
     slope_max: float = Field(..., ge=0, le=90)
     slope_class_dominant: Optional[SlopeClass] = None
     slope_distribution: Optional[Dict[str, float]] = None
-    aspect_dominant: str
+    aspect_dominant: Optional[float] = None
     aspect_distribution: Optional[Dict[str, float]] = None
     curvature: Optional[CurvatureResult] = None
     indices: Optional[TerrainIndices] = None
@@ -189,15 +189,14 @@ class DrainageAnalysis(BaseModel):
     drainage_pattern: Optional[DrainagePattern] = None
     drainage_density: Optional[float] = Field(None, ge=0)
     density_class: Optional[DrainageDensityClass] = None
-    stream_orders: Optional[List[StreamOrder]] = None
+    stream_orders: Optional[List[int]] = None
     stream_order_max: Optional[int] = Field(None, ge=1)
     bifurcation_ratio: Optional[float] = None
-    flow_accumulation: Optional[Dict[str, Any]] = None
+    flow_accumulation: Optional[Any] = None
     watershed_area_km2: Optional[float] = Field(None, ge=0)
     time_of_concentration_hours: Optional[float] = Field(None, ge=0)
     main_channel_length_km: Optional[float] = Field(None, ge=0)
     analyzed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
 
 class CapabilityAssessment(BaseModel):
     model_config = ConfigDict(

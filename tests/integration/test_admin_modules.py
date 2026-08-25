@@ -1,10 +1,11 @@
 """Phase 5 modules 2-5 integration tests (content, bots, errors, settings)."""
 from fastapi.testclient import TestClient
 
-from engine.hydroma.core.database import Base, engine
+from database.models import Base
+from database.config import engine
 from services.api_gateway.main import app
-from db.config import SessionLocal
-from db import models
+from tests.conftest import TEST_SESSION_FACTORY as SessionLocal
+from database import models
 from services.api_gateway.auth import hash_password
 
 client = TestClient(app)

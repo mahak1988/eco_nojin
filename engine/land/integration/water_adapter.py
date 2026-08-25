@@ -205,7 +205,9 @@ class WatershedIntegrator:
     def _load_modules(self):
         """Load existing runoff pipeline if available"""
         try:
-            from services.map_engine.pipelines.runoff import RunoffPipeline
+# TODO: Remove circular dependency - services.map_engine.pipelines.runoff
+# Original:             from services.map_engine.pipelines.runoff import RunoffPipeline
+# Use dependency injection instead
             self._runoff_pipeline = RunoffPipeline
             logger.info("Loaded services.map_engine.pipelines.runoff.RunoffPipeline")
         except ImportError as e:

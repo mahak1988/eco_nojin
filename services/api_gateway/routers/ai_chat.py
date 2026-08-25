@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from database.config import get_db
-from database.models import AIConversation, Farm, SatelliteAnalysis, SoilAnalysis, User
+from services.auth.models import AIConversation, Farm, SatelliteAnalysis, SoilAnalysis, User
 from services.api_gateway.auth import get_current_user, require_user
 
 router = APIRouter(prefix="/api/v1/ai", tags=["ai"])

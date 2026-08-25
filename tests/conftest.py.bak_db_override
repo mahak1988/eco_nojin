@@ -1,0 +1,30 @@
+import pytest
+from sqlalchemy import create_engine, Table, Column, String, Integer, Float, DateTime
+from database.base import Base
+import database.models
+import services.auth.models
+import engine.land.models
+import engine.hydroma.core.models
+import engine.hydroma.biofertilizer.models
+import services.landscape.models
+import services.marketplace.models
+import services.tourism.models
+import services.notification.models
+import services.ledger.models
+import services.reporting.models
+import services.workflow.models
+
+@pytest.fixture(autouse=True, scope="session")
+def _create_all_tables():
+    """Create all tables before tests."""
+    test_engine = create_engine("sqlite:///:memory:", echo=False)
+
+    # Ensure land_profiles table exists for foreign key
+    if 'land_profiles' not in Base.metadata.tables:
+        Table(
+            'land_profiles', Base.metadata,
+            Column('id', String, primary_key=True)
+        )
+
+    Base.metadata.create_all(bind=test_engine)
+    yield test_engine

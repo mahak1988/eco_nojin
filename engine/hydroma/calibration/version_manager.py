@@ -8,7 +8,8 @@ from typing import Dict, Any, List
 from datetime import date
 import uuid
 
-from database.models import ModelVersionDB, CalibrationRecordDB, SessionLocal
+from database.models import ModelVersionDB, CalibrationRecordDB
+from database.config import SessionLocal
 
 logger = logging.getLogger(__name__)
 

@@ -71,7 +71,7 @@ class CopernicusCDSClient:
     def _cache_key(self, dataset: str, params: Dict) -> str:
         """Generate cache key for request."""
         key_str = json.dumps({"dataset": dataset, **params}, sort_keys=True)
-        return hashlib.md5(key_str.encode()).hexdigest()
+        return hashlib.sha256(key_str.encode()).hexdigest()
     
     def _get_cache_path(self, cache_key: str) -> Path:
         return CACHE_DIR / f"{cache_key}.nc"

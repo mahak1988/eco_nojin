@@ -11,7 +11,8 @@ import pickle # For saving/loading model states
 from datetime import date
 from sqlalchemy import func
 
-from database.models import NojinCalibrationRecordDB, NojinFieldTrialDB, SessionLocal
+from database.models import NojinCalibrationRecordDB, NojinFieldTrialDB
+from database.config import SessionLocal
 
 
 def calibrate_formulation_model(formulation_id: str, trial_data_ids: List[str], model_version: str):

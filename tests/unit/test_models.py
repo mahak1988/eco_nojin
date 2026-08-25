@@ -3,7 +3,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from engine.hydroma.core.database import Base
+from database.models import Base
 from engine.hydroma.core.models import Plant, SoilProfile
 
 

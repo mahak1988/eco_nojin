@@ -91,7 +91,7 @@ class SQLiteCache:
         conn.row_factory = sqlite3.Row
         return conn
     
-    def _serialize(self, obj: Any) -> str:
+    def _Integerize(self, obj: Any) -> str:
         """Serialize Python object to JSON string."""
         if obj is None:
             return None
@@ -100,8 +100,8 @@ class SQLiteCache:
         except (TypeError, ValueError):
             return json.dumps(str(obj))
     
-    def _deserialize(self, s: str) -> Any:
-        """Deserialize JSON string to Python object."""
+    def _deIntegerize(self, s: str) -> Any:
+        """DeIntegerize JSON string to Python object."""
         if s is None:
             return None
         try:
@@ -135,21 +135,21 @@ class SQLiteCache:
                 """
                 conn.execute(sql, (
                     region_name, crop_type, lat, lon,
-                    self._serialize(result.get("koppen")),
-                    self._serialize(result.get("wbi")),
-                    self._serialize(result.get("ewsi")),
-                    self._serialize(result.get("hyrue")),
-                    self._serialize(result.get("ecsi")),
-                    self._serialize(result.get("hdvi")),
-                    self._serialize(result.get("epia")),
-                    self._serialize(result.get("hpheno")),
-                    self._serialize(result.get("esri")),
-                    self._serialize(result.get("hlhs")),
+                    self._Integerize(result.get("koppen")),
+                    self._Integerize(result.get("wbi")),
+                    self._Integerize(result.get("ewsi")),
+                    self._Integerize(result.get("hyrue")),
+                    self._Integerize(result.get("ecsi")),
+                    self._Integerize(result.get("hdvi")),
+                    self._Integerize(result.get("epia")),
+                    self._Integerize(result.get("hpheno")),
+                    self._Integerize(result.get("esri")),
+                    self._Integerize(result.get("hlhs")),
                     result.get("execution_time_ms"),
                     self.model_version,
                     now.isoformat(),
                     expires.isoformat(),
-                    self._serialize(result.get("warnings", [])),
+                    self._Integerize(result.get("warnings", [])),
                 ))
                 conn.commit()
     
@@ -183,18 +183,18 @@ class SQLiteCache:
                 "crop_type": row["crop_type"],
                 "lat": row["lat"],
                 "lon": row["lon"],
-                "koppen": self._deserialize(row["koppen"]),
-                "wbi": self._deserialize(row["wbi"]),
-                "ewsi": self._deserialize(row["ewsi"]),
-                "hyrue": self._deserialize(row["hyrue"]),
-                "ecsi": self._deserialize(row["ecsi"]),
-                "hdvi": self._deserialize(row["hdvi"]),
-                "epia": self._deserialize(row["epia"]),
-                "hpheno": self._deserialize(row["hpheno"]),
-                "esri": self._deserialize(row["esri"]),
-                "hlhs": self._deserialize(row["hlhs"]),
+                "koppen": self._deIntegerize(row["koppen"]),
+                "wbi": self._deIntegerize(row["wbi"]),
+                "ewsi": self._deIntegerize(row["ewsi"]),
+                "hyrue": self._deIntegerize(row["hyrue"]),
+                "ecsi": self._deIntegerize(row["ecsi"]),
+                "hdvi": self._deIntegerize(row["hdvi"]),
+                "epia": self._deIntegerize(row["epia"]),
+                "hpheno": self._deIntegerize(row["hpheno"]),
+                "esri": self._deIntegerize(row["esri"]),
+                "hlhs": self._deIntegerize(row["hlhs"]),
                 "execution_time_ms": row["execution_time_ms"],
-                "warnings": self._deserialize(row["warnings"]) or [],
+                "warnings": self._deIntegerize(row["warnings"]) or [],
                 "cached": True,
                 "cached_at": row["created_at"],
             }

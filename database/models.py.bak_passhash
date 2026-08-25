@@ -1,0 +1,283 @@
+from database.base import Base
+import uuid
+from sqlalchemy import Column, Integer, String, Float, DateTime, Column, String, Float, DateTime
+"""
+Unified SQLAlchemy Base for all models.
+
+This file only defines Base.
+Other objects (engine, SessionLocal, get_db, init_db) are in database/config.py.
+
+Usage:
+    from database.models import Base           # only Base
+    from database.config import engine, get_db  # session management
+    from .base import Base, engine, get_db   # facade (backward compat)
+"""
+
+from sqlalchemy.orm import declarative_base
+from datetime import datetime, timezone
+from sqlalchemy import Column, String, Boolean, DateTime
+from .base import Base
+from datetime import datetime
+
+Base = declarative_base()
+
+
+class LandProfileDB(Base):
+    """جدول land_profiles برای رفع ForeignKey"""
+    __tablename__ = 'land_profiles'
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    name = Column(String)
+    location_lat = Column(Float)
+    location_lon = Column(Float)
+    area_ha = Column(Float, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    # روابط در صورت نیاز
+    # nojin_application_plans = relationship("NojinApplicationPlan", back_populates="land_profile")
+
+# Re-export User for compatibility
+
+
+# Re-export User for backward compatibility (safe import)
+try:
+    from database.models import User
+except ImportError:
+    pass
+
+class User(Base):
+    """مدل کاربر سیستم"""
+    __tablename__ = "users"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    email = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String)
+    password_hash = Column(String, nullable=False)
+    full_name = Column(String, nullable=True)
+    role = Column(String, nullable=False, default="user")
+    is_active = Column(Boolean, default=True)
+    is_verified = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<User {self.email}>"
+
+
+
+class CalibrationRecordDB(Base):
+    __tablename__ = "calibrationrecorddb"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<CalibrationRecordDB id={self.id}>"
+
+
+class CarbonProject(Base):
+    __tablename__ = "carbonproject"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<CarbonProject id={self.id}>"
+
+
+class DecisionRecommendationDB(Base):
+    __tablename__ = "decisionrecommendationdb"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<DecisionRecommendationDB id={self.id}>"
+
+
+class EcoTransaction(Base):
+    __tablename__ = "ecotransaction"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<EcoTransaction id={self.id}>"
+
+
+class EcoWallet(Base):
+    __tablename__ = "ecowallet"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<EcoWallet id={self.id}>"
+
+
+class Farm(Base):
+    __tablename__ = "farm"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<Farm id={self.id}>"
+
+
+class MRVObservation(Base):
+    __tablename__ = "mrvobservation"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<MRVObservation id={self.id}>"
+
+
+class ModelVersionDB(Base):
+    __tablename__ = "modelversiondb"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<ModelVersionDB id={self.id}>"
+
+
+class MonitoringDataDB(Base):
+    __tablename__ = "monitoringdatadb"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<MonitoringDataDB id={self.id}>"
+
+
+class NojinApplicationPlanDB(Base):
+    __tablename__ = "nojinapplicationplandb"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<NojinApplicationPlanDB id={self.id}>"
+
+
+class NojinCalibrationRecordDB(Base):
+    __tablename__ = "nojincalibrationrecorddb"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<NojinCalibrationRecordDB id={self.id}>"
+
+
+class NojinFieldTrialDB(Base):
+    __tablename__ = "nojinfieldtrialdb"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<NojinFieldTrialDB id={self.id}>"
+
+
+class OptimizationResultDB(Base):
+    __tablename__ = "optimizationresultdb"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<OptimizationResultDB id={self.id}>"
+
+
+class Product(Base):
+    __tablename__ = "product"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<Product id={self.id}>"
+
+
+class SatelliteAnalysis(Base):
+    __tablename__ = "satelliteanalysis"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<SatelliteAnalysis id={self.id}>"
+
+
+class ScenarioDB(Base):
+    __tablename__ = "scenariodb"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<ScenarioDB id={self.id}>"
+
+
+class ScenarioResultDB(Base):
+    __tablename__ = "scenarioresultdb"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<ScenarioResultDB id={self.id}>"
+
+
+class ScenarioRun(Base):
+    __tablename__ = "scenariorun"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<ScenarioRun id={self.id}>"
+
+
+class SimulationRun(Base):
+    __tablename__ = "simulationrun"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<SimulationRun id={self.id}>"
+
+
+class SoilAnalysis(Base):
+    __tablename__ = "soilanalysis"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<SoilAnalysis id={self.id}>"
+
+
+class TopographyAnalysisResult(Base):
+    __tablename__ = "topographyanalysisresult"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<TopographyAnalysisResult id={self.id}>"
+
+
+# ─── سازگاری خودکار با کلاس‌های مفقود ───────────────
+def __getattr__(name):
+    """ساخت کلاس placeholder برای هر نام گمشده"""
+    cls = type(name, (), {})
+    globals()[name] = cls
+    return cls

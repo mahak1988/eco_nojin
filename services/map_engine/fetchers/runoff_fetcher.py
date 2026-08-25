@@ -49,7 +49,7 @@ class RunoffFetcher(MapFetcher):
     def _cache_key(self, region: Polygon, resolution: float) -> str:
         bounds = region.bounds
         key = f"cn_{bounds[0]:.4f}_{bounds[1]:.4f}_{bounds[2]:.4f}_{bounds[3]:.4f}_{resolution}"
-        return hashlib.md5(key.encode()).hexdigest()
+        return hashlib.sha256(key.encode()).hexdigest()
 
     async def fetch(
         self,

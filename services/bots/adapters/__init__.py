@@ -1,1 +1,1 @@
-﻿"""Platform adapters — Telegram first, Eitaa/Rubika/Bale next."""
+"""Platform adapters — Telegram first, Eitaa/Rubika/Bale next."""

@@ -25,6 +25,10 @@ of concerns between the scientific engine (backend) and presentation layer (fron
 +-----------------------------------------------------------+
 | Soil | AI/RAG | Satellite | Scenarios | Marketplace       |
 | Carbon | Watershed | Sync | USSD/SMS | Voice | Blockchain |
+| Climate | Hydrology | Erosion | Biofertilizer | Materials |
+| Irrigation | Groundwater | Economics | Finance | Risk      |
+| Ecotourism | Land | Infrastructure | Decision Support    |
+| Simulation | Calibration | MRV | Standards               |
 +-----------------------------------------------------------+
                               |
                     +---------+---------+
@@ -44,6 +48,7 @@ eco_nojin/
 |   +-- calculations/    # Scientific computations
 |   +-- cpp_bridge/      # Numba-accelerated functions
 |   +-- scenarios/       # Climate + crop scenarios
+|   +-- scenario/        # Single scenario module
 |   +-- marketplace/     # Products, orders, traceability
 |   +-- carbon/          # Carbon credit calculator
 |   +-- watershed/       # Watershed structure design
@@ -53,9 +58,66 @@ eco_nojin/
 |   +-- ussd/            # USSD/SMS gateway
 |   +-- voice/           # IVR + TTS/STT providers
 |   +-- blockchain/      # Carbon registry + supply chain
-+-- services/api_gateway/
-|   +-- main.py          # FastAPI app entry (v1.4.0)
-|   +-- routers/         # API endpoints per module
+|   +-- analyses/        # Data analysis modules
+|   +-- biofertilizer/   # Biofertilizer calculations
+|   +-- calibration/     # Model calibration tools
+|   +-- climate/         # Climate data processing
+|   +-- crop/            # Crop-specific models
+|   +-- data_ingestion/  # Raw data input handlers
+|   +-- decision_support/ # Decision support systems
+|   +-- economics/       # Economic modeling
+|   +-- ecotourism/      # Ecotourism platform logic
+|   +-- erosion/         # Erosion modeling
+|   +-- finance/         # Financial calculations
+|   +-- geospatial/      # Geospatial utilities
+|   +-- groundwater/     # Groundwater flow models
+|   +-- hydrology/       # Hydrological models
+|   +-- infrastructure/  # Infrastructure planning
+|   +-- irrigation/      # Irrigation system design
+|   +-- materials/       # Material properties and costs
+|   +-- ml/              # Machine learning models
+|   +-- mrv/             # Monitoring, Reporting, Verification
+|   +-- optimization/    # Optimization algorithms
+|   +-- plants/          # Plant-specific data and models
+|   +-- risk/            # Risk assessment models
+|   +-- simulation/      # General simulation engine
+|   +-- soil/            # Soil property models
+|   +-- standards/       # Compliance and standard checks
+|   +-- utils/           # General utility functions
+|   +-- visualization/   # Data visualization tools
+|   +-- web_search/      # Web search integration for RAG
++-- engine/cpp_core/     # C++20 numerical core
+|   +-- src/             # C++ source files (Richards, Saint-Venant, FAO-56, RUSLE)
+|   +-- include/         # C++ headers
+|   +-- bindings/        # pybind11 bindings for Python
++-- services/
+|   +-- api_gateway/     # Main FastAPI application, routing to all services
+|   |   +-- main.py      # FastAPI app entry
+|   |   +-- routers/     # API endpoints per module (admin, ai, land, soil, blockchain, etc.)
+|   +-- admin/           # Administrative panel logic
+|   +-- analytics/       # Analytics and reporting services
+|   +-- auth/            # Authentication and authorization
+|   +-- bots/            # Chatbot integrations
+|   +-- business_modules/ # Business logic modules
+|   +-- carbon/          # Carbon-specific service logic
+|   +-- content/         # Content management
+|   +-- data_sources/    # External data source connectors
+|   +-- design_engine/   # Design and planning engine
+|   +-- ecowallet/       # Wallet and payment logic
+|   +-- field_monitoring/ # Field monitoring services
+|   +-- land/            # Land management services
+|   +-- ledger/          # Transaction ledger
+|   +-- map_engine/      # Mapping and GIS engine
+|   +-- mobile_monitoring/ # Mobile-specific monitoring
+|   +-- models/          # Shared data models
+|   +-- notification/    # Notification services
+|   +-- reporting/       # Reporting services
+|   +-- satellite/       # Satellite data processing services
+|   +-- science/         # Core science service facade
+|   +-- scientific_motors/ # Reusable scientific computation units
+|   +-- supabase/        # Supabase integration services
+|   +-- telegram_bot/    # Telegram bot logic
+|   +-- workflow/        # Workflow management
 +-- frontend/
 |   +-- app/             # Next.js app router
 |   +-- components/      # React components (10 panels)

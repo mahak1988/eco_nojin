@@ -1,57 +1,28 @@
 """
-Database Package - EcoNojin
-============================
-Central exports for database access.
+Database Module - Facade Pattern
 
-Primary exports:
-    - get_db: FastAPI dependency for database sessions
-    - SessionLocal: SQLAlchemy session factory
-    - engine: SQLAlchemy engine
-    - Base: Declarative base for models
-    - settings: Application settings
-    - init_db: Initialize database schema
+This file provides a unified interface for backward compatibility.
 
-Models are available via:
-    - database.models (SQLAlchemy ORM models)
-    - database.models.database_models (analysis result models)
+Allowed usage:
+    from database.base import Base              # direct
+    from database.config import engine, get_db     # direct
+    from database.base import Base, engine, get_db     # facade (recommended)
 """
 
-# Core database configuration
-from .config import (
-    get_db,
-    init_db,
-    settings,
-    Base,
-    engine,
-    SessionLocal,
-)
+from database.base import Base  # noqa: F401
 
-# Adapter for multiple database backends
 try:
-    from .adapter import DatabaseAdapter, DuckDBAdapter
+    from database.config import (  # noqa: F401
+        engine,
+        SessionLocal,
+        get_db,
+    )
 except ImportError:
-    DatabaseAdapter = None
-    DuckDBAdapter = None
+    pass
 
-# Analytics engine
 try:
-    from .analytics import AnalyticsEngine, get_analytics
+    from database.config import init_db  # noqa: F401
 except ImportError:
-    AnalyticsEngine = None
-    get_analytics = None
+    pass
 
-__all__ = [
-    # Core
-    "get_db",
-    "init_db",
-    "settings",
-    "Base",
-    "engine",
-    "SessionLocal",
-    # Adapters
-    "DatabaseAdapter",
-    "DuckDBAdapter",
-    # Analytics
-    "AnalyticsEngine",
-    "get_analytics",
-]
+__all__ = ['Base', 'engine', 'SessionLocal', 'get_db', 'init_db']

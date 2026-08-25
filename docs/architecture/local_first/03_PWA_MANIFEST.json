@@ -1,0 +1,35 @@
+{
+  "name": "Hydroma Global Watchdog",
+  "short_name": "Hydroma",
+  "description": "Local-first water security analysis platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0e27",
+  "theme_color": "#1e40af",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "New Analysis",
+      "url": "/analyze",
+      "description": "Run a new regional analysis"
+    },
+    {
+      "name": "My Analyses",
+      "url": "/history",
+      "description": "View saved analyses"
+    }
+  ]
+}

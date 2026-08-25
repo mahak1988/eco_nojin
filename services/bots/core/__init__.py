@@ -1,1 +1,1 @@
-﻿"""Core services for the bot."""
+"""Core services for the bot."""

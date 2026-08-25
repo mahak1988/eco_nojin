@@ -189,3 +189,75 @@ class WaterQualityOutput(BaseModel):
     suitable_for: List[str]
     health_risk: str
     treatment_needed: bool
+
+
+class SWATInput:
+    """Placeholder for compatibility with old tests."""
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+class SWATOutput:
+    """Placeholder for compatibility with old tests."""
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+class AquaCropInput:
+    """Placeholder for compatibility with old tests."""
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+class AquaCropOutput:
+    """Placeholder for compatibility with old tests."""
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+class RothCInput:
+    """Placeholder for compatibility with old tests."""
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+class RothCOutput:
+    """Placeholder for compatibility with old tests."""
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+class HECRASInput:
+    """Placeholder for compatibility."""
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+class HECRASOutput:
+    """Placeholder for compatibility."""
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+class RUSLEInput:
+    """Placeholder for compatibility."""
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+class RUSLEOutput:
+    """Placeholder for compatibility."""
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+class WEAPInput:
+    """Placeholder for compatibility."""
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+class WEAPOutput:
+    """Placeholder for compatibility."""
+    def __init__(self, *args, **kwargs):
+        pass

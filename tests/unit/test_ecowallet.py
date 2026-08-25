@@ -3,10 +3,10 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from services.business_modules.ecowallet.earning_rules import EarningCategory, EarningEngine
-from services.business_modules.ecowallet.ledger import EcoLedger
-from services.business_modules.ecowallet.messages import EcoMessages
-from services.business_modules.ecowallet.redemption import RedemptionCategory, RedemptionEngine
+from services.ecowallet.earning_rules import EarningCategory, EarningEngine
+from services.ecowallet.ledger import EcoLedger
+from services.ecowallet.messages import EcoMessages
+from services.ecowallet.redemption import RedemptionCategory, RedemptionEngine
 from services.api_gateway.main import app
 
 client = TestClient(app)

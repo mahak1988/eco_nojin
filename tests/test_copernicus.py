@@ -1,3 +1,4 @@
+import os
 """Unit tests for the Copernicus CDSE client v2 (offline, no credentials)."""
 import datetime
 
@@ -97,7 +98,7 @@ def test_password_grant_token_uses_cdse_public(monkeypatch):
 
     monkeypatch.setattr("services.satellite.copernicus.httpx.post", fake_post)
     client = CopernicusClient(
-        username="farmer", password="secret",
+        username="farmer", password=os.getenv("PASSWORD", ""),
         identity_url="https://identity.test",
     )
     assert client.get_token() == "tok123"

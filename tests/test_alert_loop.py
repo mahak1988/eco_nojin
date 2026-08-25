@@ -1,9 +1,11 @@
+import os
 """Tests: run_all_farm_alerts (all-farm loop) + main.py import sanity."""
 import pytest
 
-from engine.hydroma.core.database import Base, engine
-from db.config import SessionLocal
-from db import models as db_models
+from database.models import Base
+from database.config import engine
+from tests.conftest import TEST_SESSION_FACTORY as SessionLocal
+from database import models as db_models
 from services.bots.core.alert_runner import run_all_farm_alerts
 
 
@@ -20,7 +22,7 @@ def _farm(db, name="مزرعه آزمایشی"):
     owner = db_models.User(
         email="owner@test.com",
         full_name="owner",
-        hashed_password = "test_password_placeholder",
+        hashed_password = os.getenv("PASSWORD", ""),
         role="farmer",
         is_active=True,
     )

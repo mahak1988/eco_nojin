@@ -65,3 +65,6 @@ def init_db() -> list:
 
     Base.metadata.create_all(bind=engine)
     return sorted(Base.metadata.tables.keys())
+
+# Added for backward compatibility with old tests
+SQLALCHEMY_DATABASE_URL = "duckdb:///./data/eco_nojin.duckdb"

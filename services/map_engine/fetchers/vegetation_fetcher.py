@@ -54,7 +54,7 @@ class VegetationFetcher(MapFetcher):
     def _cache_key(self, region: Polygon, resolution: float, season: str) -> str:
         bounds = region.bounds
         key = f"veg_{bounds[0]:.4f}_{bounds[1]:.4f}_{bounds[2]:.4f}_{bounds[3]:.4f}_{resolution}_{season}"
-        return hashlib.md5(key.encode()).hexdigest()
+        return hashlib.sha256(key.encode()).hexdigest()
 
     async def fetch(
         self,

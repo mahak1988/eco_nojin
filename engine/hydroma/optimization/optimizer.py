@@ -10,7 +10,8 @@ import numpy as np
 from scipy.optimize import differential_evolution, minimize
 from datetime import datetime
 
-from database.models import OptimizationResultDB, SessionLocal
+from database.models import OptimizationResultDB
+from database.config import SessionLocal
 from engine.hydroma.scenarios.scenario_manager import ScenarioManager
 
 logger = logging.getLogger(__name__)

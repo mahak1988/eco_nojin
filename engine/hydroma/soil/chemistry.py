@@ -252,7 +252,7 @@ def calculate_ph_buffer(ph: float, buffer_capacity: float = 0.5) -> Dict[str, An
         return {
             'current_ph': ph,
             'target_ph': target_ph,
-            'action': 'add_lime',
+            'action': 'add_lime', 'ph_status': 'acidic',
             'lime_requirement': round(lime_requirement, 2),
             'lime_unit': 'tons/ha',
             'ph_change_expected': round(ph_deficit, 2)
@@ -267,7 +267,7 @@ def calculate_ph_buffer(ph: float, buffer_capacity: float = 0.5) -> Dict[str, An
         return {
             'current_ph': ph,
             'target_ph': 7.0,
-            'action': 'add_sulfur',
+            'action': 'add_sulfur', 'ph_status': 'alkaline',
             'sulfur_requirement': round(sulfur_requirement, 2),
             'sulfur_unit': 'kg/ha',
             'ph_change_expected': round(ph_excess, 2)
@@ -277,6 +277,7 @@ def calculate_ph_buffer(ph: float, buffer_capacity: float = 0.5) -> Dict[str, An
         return {
             'current_ph': ph,
             'target_ph': target_ph,
-            'action': 'none',
+            'action': 'no_amendment_needed', 'ph_status': 'optimal',
             'message': 'pH is in optimal range (6.5-7.5)'
         }
+

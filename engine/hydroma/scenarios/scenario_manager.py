@@ -10,7 +10,8 @@ from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 from enum import Enum
 
-from database.models import ScenarioDB, ScenarioResultDB, SessionLocal
+from database.models import ScenarioDB, ScenarioResultDB
+from database.config import SessionLocal
 from engine.hydroma.scenarios.climate_scenarios import generate_climate_scenario
 from engine.hydroma.scenarios.crop_scenarios import define_crop_scenario
 from engine.hydroma.simulation.orchestrator import run_simulation_chain

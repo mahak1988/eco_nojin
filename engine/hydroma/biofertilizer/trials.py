@@ -9,7 +9,8 @@ import numpy as np
 import pandas as pd
 from datetime import date
 
-from database.models import NojinFieldTrialDB, NojinApplicationPlanDB, SessionLocal
+from database.models import NojinFieldTrialDB, NojinApplicationPlanDB
+from database.config import SessionLocal
 from engine.hydroma.soil.health import calculate_soil_health_index
 from engine.hydroma.crop.yield_prediction import predict_yield # hypothetical function
 

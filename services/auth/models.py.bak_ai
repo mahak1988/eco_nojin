@@ -1,0 +1,27 @@
+"""مدل‌های سرویس احراز هویت (re-export از database.models)"""
+from database.models import (
+    AuditLog,
+    CalibrationRecordDB,
+    CarbonProject,
+    DecisionRecommendationDB,
+    EcoTransaction,
+    EcoWallet,
+    Farm,
+    MRVObservation,
+    ModelVersionDB,
+    MonitoringDataDB,
+    NojinApplicationPlanDB,
+    NojinCalibrationRecordDB,
+    NojinFieldTrialDB,
+    OptimizationResultDB,
+    PasswordResetToken,
+    Product,
+    SatelliteAnalysis,
+    ScenarioDB,
+    ScenarioResultDB,
+    ScenarioRun,
+    SimulationRun,
+    SoilAnalysis,
+    TopographyAnalysisResult,
+    User
+)

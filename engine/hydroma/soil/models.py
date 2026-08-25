@@ -6,7 +6,7 @@ for Soil analysis, classification, and health assessment
 """
 from typing import Optional, List, Dict, Any
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class BaseSoil(BaseModel):
@@ -15,10 +15,9 @@ class BaseSoil(BaseModel):
     id: Optional[int] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-    
-    class Config:
-        """Pydantic configuration."""
-        from_attributes = True
+    model_config = ConfigDict()
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SoilCreate(BaseModel):

@@ -9,7 +9,7 @@ Usage:
       TELEGRAM_BOT_TOKEN=your_token
       TELEGRAM_PROXY=socks5://user:pass@host:port
       # OR
-      TELEGRAM_PROXY=http://user:pass@host:port
+      TELEGRAM_PROXY=https://user:pass@host:port
 """
 import asyncio
 import os

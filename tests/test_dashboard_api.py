@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from services.api_gateway.main import app
-from db.config import SQLALCHEMY_DATABASE_URL
+from database.config import SQLALCHEMY_DATABASE_URL
 
 
 # Create a test database session

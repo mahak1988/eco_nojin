@@ -1,0 +1,1 @@
+﻿export default function SWATModel(){return(<div><h1>SWAT Model</h1><p>Soil and Water Assessment Tool - A river basin scale model</p><p>Simulates:</p><ul><li>Surface runoff</li><li>Sediment transport</li><li>Nutrient cycling (N, P)</li><li>Crop growth</li><li>Groundwater flow</li></ul><p>Used for watershed management and planning.</p></div>);}

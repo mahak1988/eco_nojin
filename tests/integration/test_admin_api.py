@@ -1,10 +1,11 @@
 """Integration tests for the Phase 5 admin API (RBAC + audit)."""
 from fastapi.testclient import TestClient
 
-from engine.hydroma.core.database import Base, engine
+from database.models import Base
+from database.config import engine
 from services.api_gateway.main import app
-from db.config import SessionLocal
-from db import models
+from tests.conftest import TEST_SESSION_FACTORY as SessionLocal
+from database import models
 
 client = TestClient(app)
 

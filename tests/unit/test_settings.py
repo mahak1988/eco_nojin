@@ -22,7 +22,7 @@ class TestSettingsDefaults:
     def test_cors_allow_all_property(self):
         s = Settings(_env_file=None, cors_origins=["*"])
         assert s.cors_allow_all is True
-        s2 = Settings(_env_file=None, cors_origins=["http://x.test"])
+        s2 = Settings(_env_file=None, cors_origins=["https://x.test"])
         assert s2.cors_allow_all is False
 
     def test_environment_validation(self):

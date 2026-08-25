@@ -1,7 +1,7 @@
 """Phase 2 tests: multi-platform registry, Eitaa adapter, Bale/Rubika gates,
 and the smart-alert engine. All offline and deterministic."""
-
 from __future__ import annotations
+
 
 import os
 
@@ -31,7 +31,7 @@ def test_enabled_platforms_telegram_only_by_default(monkeypatch):
     config = BotConfig()  # no token
     assert enabled_platforms(config) == []
 
-    config_tok = BotConfig(bot_token = "test_token_placeholder")
+    config_tok = BotConfig(bot_token = os.getenv("ACCESS_TOKEN", ""))
     keys = [s.key for s in enabled_platforms(config_tok)]
     assert keys == ["telegram"]
 
@@ -39,7 +39,7 @@ def test_enabled_platforms_telegram_only_by_default(monkeypatch):
 def test_enabled_platforms_eitaa_requires_flag_and_token(monkeypatch):
     monkeypatch.setenv("EITAA_ENABLED", "true")
     monkeypatch.setenv("EITAA_TOKEN", "eit-123")
-    config = BotConfig(bot_token = "test_token_placeholder")
+    config = BotConfig(bot_token = os.getenv("ACCESS_TOKEN", ""))
     keys = [s.key for s in enabled_platforms(config)]
     assert "eitaa" in keys
 

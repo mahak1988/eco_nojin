@@ -301,7 +301,7 @@ async def health_check(db: Session = Depends(get_db)):
     
     Returns system status, database connectivity, and data counts.
     """
-    from datetime import datetime
+    from datetime import datetime, timezone
     from engine.hydroma.biofertilizer.models import (
         NojinMaterial, NojinSoilType, NojinFormulationRecipe
     )
@@ -322,7 +322,7 @@ async def health_check(db: Session = Depends(get_db)):
         database_connected=db_ok,
         materials_count=materials_count,
         recipes_count=recipes_count,
-        timestamp=datetime.utcnow().isoformat(),
+        timestamp=datetime.now(timezone.utc).isoformat(),
     )
 
 

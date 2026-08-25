@@ -23,7 +23,7 @@ from typing import List, Optional
 
 import httpx
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
 
 from database.config import get_db
@@ -89,10 +89,7 @@ class AdminUserOut(BaseModel):
     is_email_verified: bool
     language: Optional[str] = None
     created_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
-
+    model_config = ConfigDict(from_attributes=True)
 
 class AuditOut(BaseModel):
     id: int
@@ -101,10 +98,7 @@ class AuditOut(BaseModel):
     target: str
     detail: str
     created_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
-
+    model_config = ConfigDict(from_attributes=True)
 
 class ActionResponse(BaseModel):
     success: bool
@@ -288,10 +282,7 @@ class ContentOut(BaseModel):
     rag_synced: bool = False
     published_at: Optional[datetime] = None
     scheduled_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
-
+    model_config = ConfigDict(from_attributes=True)
 
 class BotOut(BaseModel):
     key: str
@@ -300,10 +291,7 @@ class BotOut(BaseModel):
     verified: bool
     configured: bool       # token present in env
     enabled: bool          # persisted flag (default: configured)
-
-    class Config:
-        from_attributes = True
-
+    model_config = ConfigDict(from_attributes=True)
 
 class ErrorOut(BaseModel):
     id: int
@@ -313,20 +301,14 @@ class ErrorOut(BaseModel):
     message: Optional[str] = None
     acked: bool
     created_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
-
+    model_config = ConfigDict(from_attributes=True)
 
 class SettingOut(BaseModel):
     key: str
     value: str
     description: Optional[str] = None
     updated_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
-
+    model_config = ConfigDict(from_attributes=True)
 
 class SettingUpdate(BaseModel):
     value: str

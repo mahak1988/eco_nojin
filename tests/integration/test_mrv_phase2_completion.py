@@ -135,7 +135,7 @@ class TestPublicDashboard:
         sat = next(s for s in body["latest_satellite_per_site"] if s["site_id"] == site)
         assert sat["data_source"] == "simulated"
         assert sat["index"] == "NDVI"
-        # no PII anywhere in the serialized response
+        # no PII anywhere in the Integerized response
         raw = json.dumps(body)
         assert "farmer-secret-99" not in raw
         assert "private note" not in raw

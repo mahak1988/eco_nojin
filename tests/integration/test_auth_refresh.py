@@ -1,7 +1,8 @@
 """Auth refresh token tests (rotation, rejection of misuse)."""
 from fastapi.testclient import TestClient
 
-from engine.hydroma.core.database import Base, engine
+from database.models import Base
+from database.config import engine
 from services.api_gateway.main import app
 
 client = TestClient(app)

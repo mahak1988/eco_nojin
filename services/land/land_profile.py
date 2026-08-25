@@ -1,7 +1,9 @@
-from typing import Optional, Dict, Any
-from pydantic import BaseModel
+from typing import List, Optional, Dict, Any
+from pydantic import BaseModel, ConfigDict
 import uuid
 from datetime import datetime
+from pydantic import BaseModel, Field
+from datetime import datetime, timezone
 
 
 class LandProfileCreateRequest(BaseModel):
@@ -35,9 +37,8 @@ class LandProfileResponse(BaseModel):
     dem_resolution: Optional[float]
     created_at: datetime
     updated_at: datetime
+    model_config = ConfigDict(from_attributes=True)
 
-    class Config:
-        from_attributes = True
 
 
 def calculate_land_profile(request: LandProfileCreateRequest) -> LandProfileResponse:
@@ -74,3 +75,58 @@ def calculate_land_profile(request: LandProfileCreateRequest) -> LandProfileResp
     }
 
     return LandProfileResponse(**profile_data)
+
+# --- کلاس‌های اضافه شده برای سرویس LandService ---
+
+class LandProfile(BaseModel):
+    terrain_analysis: Optional['TerrainAnalysis'] = None
+    drainage_analysis: Optional['DrainageAnalysis'] = None
+    capability_assessment: Optional['CapabilityAssessment'] = None
+    terrain_analysis: Optional['TerrainAnalysis'] = None
+    drainage_analysis: Optional['DrainageAnalysis'] = None
+    capability_assessment: Optional['CapabilityAssessment'] = None
+    """مدل پروفایل زمین (ساده)"""
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    location_lat: float = 0.0
+    location_lon: float = 0.0
+    area_ha: Optional[float] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class TerrainAnalysis(BaseModel):
+    """تحلیل توپوگرافی"""
+    profile_id: str
+    terrain_type: Optional[str]= None
+    elevation_min: Optional[float] = None
+    elevation_max: Optional[float] = None
+    elevation_mean: Optional[float] = None
+    slope_mean: Optional[float] = None
+    slope_max: Optional[float] = None
+    aspect_dominant: Optional[float]= None
+    mean_slope_degrees: float = 0.0
+    dominant_aspect_degrees: float = 0.0
+    analysis_data: dict = {}
+    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class DrainageAnalysis(BaseModel):
+    """تحلیل زهکشی"""
+    profile_id: str
+    drainage_pattern: Optional[str] = None
+    drainage_density: Optional[float] = None
+    density_class: Optional[str] = None
+    stream_orders: Optional[List[int]]= None
+    stream_order_max: Optional[int] = None
+    bifurcation_ratio: Optional[float] = None
+    flow_accumulation: Optional[Any] = None
+    watershed_area_km2: Optional[float] = None
+    time_of_concentration_hours: Optional[float] = None
+    main_channel_length_km: Optional[float] = None
+    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+class CapabilityAssessment(BaseModel):
+    """ارزیابی قابلیت اراضی"""
+    profile_id: str
+    capability_class: Optional[str] = None
+    confidence_score: Optional[float] = None
+    limitations: Optional[list] = None
+    analysis_data: dict = {}
+    assessed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

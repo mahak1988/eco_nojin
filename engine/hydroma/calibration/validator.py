@@ -8,7 +8,8 @@ from typing import Dict, Any, List, Callable
 import numpy as np
 from datetime import date
 
-from database.models import CalibrationRecordDB, ModelVersionDB, SessionLocal
+from database.models import CalibrationRecordDB, ModelVersionDB
+from database.config import SessionLocal
 
 logger = logging.getLogger(__name__)
 

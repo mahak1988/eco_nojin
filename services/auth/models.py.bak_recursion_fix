@@ -1,0 +1,69 @@
+"""مدل‌های سرویس احراز هویت + __getattr__ داینامیک"""
+from sqlalchemy import Column, String, Integer, Float, DateTime, Boolean
+from database.base import Base
+from datetime import datetime, timezone
+import importlib
+
+# Re-export User از database.models
+from database.models import User
+
+class AuditLog(Base):
+    __tablename__ = "auditlog"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    detail = Column(String)
+    role = Column(String)
+    actor_id = Column(String)
+    actor_email = Column(String)
+    action = Column(String)
+    target = Column(String)
+    user_id = Column(String)
+    amount = Column(Float)
+    token = Column(String)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    is_active = Column(Boolean, default=True)
+
+class EcoWallet(Base):
+    __tablename__ = "ecowallet"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    user_id = Column(String)
+    balance = Column(Float, default=0.0)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+class PasswordResetToken(Base):
+    __tablename__ = "password_reset_tokens"
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    user_id = Column(String)
+    token = Column(String)
+    expires_at = Column(DateTime)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+# ماژول‌هایی که ممکن است کلاس‌های دیگر را تعریف کنند
+_MODULE_SEARCH_LIST = [
+    "database.models",
+    "engine.hydroma.core.models",
+    "engine.hydroma.biofertilizer.models",
+    "engine.land.models",
+    "services.landscape.models",
+    "services.marketplace.models",
+    "services.tourism.models",
+    "services.notification.models",
+    "services.ledger.models",
+    "services.reporting.models",
+    "services.workflow.models",
+]
+
+def __getattr__(name):
+    """ایمپورت داینامیک کلاس از ماژول‌های شناخته‌شده"""
+    for module_name in _MODULE_SEARCH_LIST:
+        try:
+            module = importlib.import_module(module_name)
+            if hasattr(module, name):
+                attr = getattr(module, name)
+                globals()[name] = attr
+                return attr
+        except ImportError:
+            continue
+    raise AttributeError(f"module 'services.auth.models' has no attribute '{name}'")

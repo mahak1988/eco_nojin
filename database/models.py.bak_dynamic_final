@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+بازنویسی database/models.py با __getattr__ داینامیک
+"""
+
+from pathlib import Path
+import shutil
+
+ROOT = Path(".").resolve()
+DB_MODELS = ROOT / "database" / "models.py"
+
+NEW_CONTENT = '''"""مدل‌های اصلی دیتابیس + __getattr__ داینامیک"""
+from sqlalchemy import Column, String, Boolean, DateTime
+from database.base import Base
+from datetime import datetime, timezone
+import uuid
+import importlib
+
+def _uuid():
+    return str(uuid.uuid4())
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    email = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    password_hash = Column(String, nullable=True)
+    full_name = Column(String, nullable=True)
+    role = Column(String, nullable=False, default="farmer")
+    is_active = Column(Boolean, default=True)
+    is_verified = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<User {self.email}>"
+
+# ماژول‌هایی که ممکن است کلاس‌های موردنیاز را تعریف کنند
+_MODULE_SEARCH_LIST = [
+    "services.auth.models",
+    "engine.hydroma.core.models",
+    "engine.hydroma.biofertilizer.models",
+    "engine.land.models",
+    "services.landscape.models",
+    "services.marketplace.models",
+    "services.tourism.models",
+    "services.notification.models",
+    "services.ledger.models",
+    "services.reporting.models",
+    "services.workflow.models",
+]
+
+def __getattr__(name):
+    """ایمپورت داینامیک کلاس از ماژول‌های شناخته‌شده"""
+    for module_name in _MODULE_SEARCH_LIST:
+        try:
+            module = importlib.import_module(module_name)
+            if hasattr(module, name):
+                attr = getattr(module, name)
+                globals()[name] = attr
+                return attr
+        except ImportError:
+            continue
+    raise AttributeError(f"module 'database.models' has no attribute '{name}'")
+'''
+
+def main():
+    if DB_MODELS.exists():
+        shutil.copy2(DB_MODELS, DB_MODELS.with_suffix(".py.bak_dynamic_final"))
+        print("✅ پشتیبان database/models.py ذخیره شد.")
+    DB_MODELS.write_text(NEW_CONTENT, encoding="utf-8")
+    print("✅ database/models.py با __getattr__ داینامیک بازنویسی شد.")
+
+if __name__ == "__main__":
+    main()

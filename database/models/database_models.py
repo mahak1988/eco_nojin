@@ -2,9 +2,9 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime, Text, ForeignKey, LargeBinary
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from database.base import Base # Assuming base is defined in database/base.py
+from database.models import Base # Assuming base is defined in database/base.py
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 # --- Topography ---
 class TopographyAnalysisResult(Base):
@@ -13,7 +13,7 @@ class TopographyAnalysisResult(Base):
     site_id = Column(String, index=True)
     dem_path = Column(String)
     analysis_types = Column(Text) # Store as JSON string
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     slope_map_path = Column(String)
     aspect_map_path = Column(String)
     curvature_map_path = Column(String)
@@ -31,7 +31,7 @@ class RunoffCalculationResult(Base):
     method = Column(String)
     volume_m3 = Column(Float)
     peak_flow_m3s = Column(Float)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 # --- Groundwater ---
 class GroundwaterModelResult(Base):
@@ -45,7 +45,7 @@ class GroundwaterModelResult(Base):
     observation_distance_m = Column(Float)
     time_days = Column(Float)
     drawdown_m = Column(Float)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 # --- Crop Water Requirement ---
 class CropWaterReqResult(Base):
@@ -57,7 +57,7 @@ class CropWaterReqResult(Base):
     harvest_date = Column(DateTime)
     seasonal_water_requirement_mm = Column(Float)
     daily_et_crop_data = Column(Text) # Store as JSON string
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 # --- Structure Design ---
 class StructureDesignResult(Base):
@@ -73,7 +73,7 @@ class StructureDesignResult(Base):
     material_estimate = Column(Text) # Store as JSON string
     cost_estimate_usd = Column(Float)
     design_summary = Column(Text) # Store as JSON string
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 # --- Irrigation Design ---
 class IrrigationDesignResult(Base):
@@ -89,7 +89,7 @@ class IrrigationDesignResult(Base):
     equipment_list = Column(Text) # Store as JSON string
     irrigation_schedule = Column(Text) # Store as JSON string
     design_summary = Column(Text) # Store as JSON string
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 # --- Calibration ---
 class CalibrationResult(Base):
@@ -100,4 +100,4 @@ class CalibrationResult(Base):
     calibrated_parameters = Column(Text) # Store as JSON string
     best_objective_value = Column(Float)
     history = Column(Text) # Store as JSON string
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))

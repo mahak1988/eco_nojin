@@ -11,7 +11,8 @@ from dataclasses import dataclass
 from enum import Enum
 import hashlib
 
-from database.models import MonitoringDataDB, SessionLocal
+from database.models import MonitoringDataDB
+from database.config import SessionLocal
 from engine.hydroma.soil.health import calculate_soil_health_index
 from engine.hydroma.soil.moisture import estimate_soil_moisture
 from engine.hydroma.water.quality import assess_water_quality
@@ -110,7 +111,7 @@ class MobileMonitoringService:
         processed = {
             "report_type": report.report_type.value,
             "text_description": report.text_description,
-            "photo_hashes": [hashlib.md5(url.encode()).hexdigest() for url in report.photo_urls],
+            "photo_hashes": [hashlib.sha256(url.encode()).hexdigest() for url in report.photo_urls],
             "additional_data": report.additional_data or {},
             "submitted_by_user_id": report.user_id,
             "geo_verification_confirmed": report.geo_verification_confirmed

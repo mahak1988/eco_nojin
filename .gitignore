@@ -1,151 +1,178 @@
-# ============================================================================
-# ECO NOJIN - .gitignore (Comprehensive)
-# ============================================================================
+# ═══════════════════════════════════════════════════════════
+# Eco Nojin .gitignore
+# ═══════════════════════════════════════════════════════════
 
-# Secrets (CRITICAL)
+# ── Environment & Secrets ─────────────────────────────
 .env
-.env.local
-.env.*.local
-*.env
+.env.*
 !.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credentials/
 
-# Python
+# ── Python ────────────────────────────────────────────
 __pycache__/
 *.py[cod]
-*.pyo
-*.egg-info/
-.venv/
-venv/
-env/
-.Python
-
-# Node.js
-node_modules/
-frontend/node_modules/
-.next/
-frontend/.next/
-.turbo/
-.vercel
-*.tsbuildinfo
-.eslintcache
-
-# C++ Binaries
-*.o
-*.obj
-*.exe
-*.dll
+*$py.class
 *.so
-*.dylib
-*.a
-*.lib
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Database
+# ── Virtual Environment ───────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ── IDE / Editors ─────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-workspace
+*.sublime-project
+
+# ── Testing / Coverage ────────────────────────────────
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+
+# ── Type checking ─────────────────────────────────────
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+
+# ── Jupyter ───────────────────────────────────────────
+.ipynb_checkpoints
+*.ipynb_checkpoints
+
+# ── Data & Cache ──────────────────────────────────────
+*.db
 *.sqlite
 *.sqlite3
-*.db
-*.db-shm
-*.db-wal
-
-# Cache & Logs
+*.duckdb
+*.pkl
+*.pickle
+*.tif
+*.tiff
+*.gpkg
+*.nc
+*.h5
+*.hdf5
 data/cache/
-data/copernicus_cache/
+.satellite_cache/
+.cache/
+
+# ── Logs ──────────────────────────────────────────────
 logs/
 *.log
 
-# OS
+# ── OS files ──────────────────────────────────────────
 .DS_Store
 Thumbs.db
-*.swp
-*~
+Desktop.ini
 
-# IDE
-.vscode/
-.idea/
-
-# Supabase temp
-supabase/.temp/
-
-# Backups
-*.backup
-*.backup_*
+# ── Backup files (پشتیبان‌ها) ─────────────────────────
 *.bak
-*.bak2
-*.bak3
-*.broken*
-*.pre_*
-*.safe_*
-*.v*-backup
+*.backup
+*.old
 *.orig
+*.broken
+*.before_nojin
+*.before_nojin_integration
+*.safe-backup
+*.backup_phase1
+*.bak2
 
-# Scripts (dev only)
-fix_*.py
-build_*.py
-scan_*.py
-rebuild_*.py
-smart_*.py
-ultimate_*.py
-prepare_*.py
-deep_scan.py
-safe_fallbacks.py
-ultra_fix.py
-surgical_fix.py
-setup_*.py
-test_bot.py
-test_platform_api.py
-test_patched_motors.py
-add_python_fallbacks.py
-
-# Data
-data/*.nc
-data/*.grib
-*.csv
-!data/*.example.csv
-
-# Project audit
-project_audit/
-
-# Misc
-coverage/
-.nyc_output/
-.pytest_cache/
-*.lcov
-junit.xml.env
-.env.local
-*.env.local
-
-
-# Environment files (secrets)
-.env.production
-.env.development.local
-.env.test.local
-
-
-# Analysis reports
-reports/
-*.json
-
-# Tool scripts
-patch_*.py
-fix_critical_issues.py
-prepare_github.py
-
-# Backup directories
+# ── Backup folders (پوشه‌های پشتیبان) ────────────────
 _backups_fix/
-_backups/
+_backup_*/
+_trash/
+security_backup/
 
+# ── Build artifacts (خروجی‌های کامپایل) ──────────────
+# Python extensions
+*.pyd
+*.dll
+*.dylib
 
+# C/C++ / Visual Studio generated
+*.obj
+*.o
+*.lib
+*.exp
+*.tlog
+*.lastbuildstate
+*.recipe
+*.check_cache
+*.stamp
+*.depend
+*.list
+*.pdb
+*.idb
+*.ipdb
+*.iobj
+*.ilk
+*.user
+*.suo
+*.sdf
+*.opensdf
+*.pch
+*.res
+*.aps
 
-# Analysis and tool scripts
-project_analyzer.py
-fix_critical_issues.py
-patch_*.py
-prepare_github.py
-final_fix.py
-reports/
+# توجه: فایل‌های پروژه Visual Studio مانند *.vcxproj ، *.sln و *.filters
+# اگر سورس هستند نباید ایگنور شوند؛ اینجا فقط خروجی‌های build ایگنور می‌شوند.
 
-# Database sample data (optional - uncomment if you don't want to track)
-# database/create_test_data.py
+# ── Frontend / Node ───────────────────────────────────
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/dist/
+frontend/build/
 
-# Tool scripts (development only)
-_tools/
-.env
+# ── Blockchain ────────────────────────────────────────
+contracts/artifacts/
+contracts/cache/
+
+# ── Temporary / Misc ──────────────────────────────────
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# ===== Binary Files (Auto-added by cleanup script) =====
+*.exe
+*.dll
+*.obj
+*.lib
+*.exp
+*.pyd
+

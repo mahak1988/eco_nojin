@@ -16,7 +16,7 @@ Honesty contract (W-001)
   NASA POWER data when the network is reachable, else an error.
 """
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 from typing import Optional, List, Dict, Any
 from datetime import datetime, date, timedelta
 import random
@@ -94,10 +94,7 @@ class SatelliteHistoryResponse(BaseModel):
     scene_id: Optional[str] = None
     cloud_cover: Optional[float] = None
     analyzed_at: datetime
-
-    class Config:
-        from_attributes = True
-
+    model_config = ConfigDict(from_attributes=True)
 
 class WeatherResponse(BaseModel):
     """Real weather summary (ERA5 primary, NASA POWER secondary)."""

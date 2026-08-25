@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 # Robust Base import with fallback
 try:
-    from database import Base
+    from database.base import Base
 except ImportError as e:
     logger.warning(f"Could not import Base from database: {e}")
     try:

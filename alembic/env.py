@@ -7,7 +7,8 @@ from sqlalchemy.engine import Connection
 
 from alembic import context
 
-from database.config import Base, engine as app_engine
+from database.models import Base
+from database.config import engine
 from database import models  # noqa: F401  (populates Base.metadata)
 
 config = context.config
@@ -19,11 +20,18 @@ target_metadata = Base.metadata
 
 
 def _resolve_engine():
-    """Use the ini url when it is a real URL; fall back to the app engine."""
+    """ساخت موتور از تنظیمات config (sqlalchemy.url)"""
+    from sqlalchemy import engine_from_config
+    from sqlalchemy.pool import NullPool
+    import os
+
+    # دریافت url از config یا متغیر محیطی
     url = config.get_main_option("sqlalchemy.url")
-    if url and not url.startswith("driver://"):
-        return create_engine(url, poolclass=pool.NullPool)
-    return app_engine
+    if not url:
+        url = os.getenv("DATABASE_URL", "duckdb:///./data/eco_nojin.duckdb")
+    cfg = config.get_section(config.config_ini_section, {})
+    cfg["sqlalchemy.url"] = url
+    return engine_from_config(cfg, prefix="sqlalchemy.", poolclass=NullPool)
 
 
 def run_migrations_offline() -> None:
