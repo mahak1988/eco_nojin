@@ -1,39 +1,22 @@
 import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface WaterInfiltration3DProps {
   soilTexture?: 'sand' | 'loam' | 'clay';
-  rainfallIntensity?: number; // mm/hr
+  rainfallIntensity?: number;
   showLayers?: boolean;
 }
 
-/**
- * لایه‌های خاک با رنگ‌بندی واقعی
- */
-const SoilLayer: React.FC<{
-  y: number;
-  height: number;
-  color: string;
-  opacity?: number;
-  label?: string;
-}> = ({ y, height, color, opacity = 1 }) => {
-  return (
-    <mesh position={[0, y, 0]}>
-      <boxGeometry args={[4, height, 4]} />
-      <meshStandardMaterial color={color} transparent opacity={opacity} />
-    </mesh>
-  );
-};
+const SoilLayer = ({ y, height, color, opacity = 1 }: { y: number; height: number; color: string; opacity?: number }) => (
+  <mesh position={[0, y, 0]}>
+    <boxGeometry args={[4, height, 4]} />
+    <meshStandardMaterial color={color} transparent opacity={opacity} roughness={0.9} />
+  </mesh>
+);
 
-/**
- * قطرات باران با انیمیشن
- */
-const RainDrops: React.FC<{ intensity: number; soilAbsorption: number }> = ({
-  intensity,
-  soilAbsorption,
-}) => {
+const RainDrops = ({ intensity, soilAbsorption }: { intensity: number; soilAbsorption: number }) => {
   const dropsRef = useRef<THREE.InstancedMesh>(null);
   const dropsData = useMemo(() => {
     return Array.from({ length: 200 }, () => ({
@@ -51,7 +34,6 @@ const RainDrops: React.FC<{ intensity: number; soilAbsorption: number }> = ({
     dropsData.forEach((drop, i) => {
       if (!drop.active) return;
       drop.y += drop.vy;
-      // برخورد با سطح خاک
       if (drop.y <= 1.5) {
         drop.y = 5 + Math.random() * 3;
         drop.x = (Math.random() - 0.5) * 4;
@@ -72,10 +54,7 @@ const RainDrops: React.FC<{ intensity: number; soilAbsorption: number }> = ({
   );
 };
 
-/**
- * ذرات آب نفوذی (به سمت پایین)
- */
-const InfiltratingWater: React.FC<{ soilAbsorption: number }> = ({ soilAbsorption }) => {
+const InfiltratingWater = ({ soilAbsorption }: { soilAbsorption: number }) => {
   const particlesRef = useRef<THREE.InstancedMesh>(null);
   const particles = useMemo(() => {
     return Array.from({ length: 100 }, () => ({
@@ -107,122 +86,39 @@ const InfiltratingWater: React.FC<{ soilAbsorption: number }> = ({ soilAbsorptio
   return (
     <instancedMesh ref={particlesRef} args={[undefined, undefined, 100]}>
       <sphereGeometry args={[0.08, 8, 8]} />
-      <meshStandardMaterial
-        color="#1e90ff"
-        transparent
-        opacity={0.7}
-        emissive="#1e90ff"
-        emissiveIntensity={0.3}
-      />
+      <meshStandardMaterial color="#1e90ff" transparent opacity={0.7} emissive="#1e90ff" emissiveIntensity={0.3} />
     </instancedMesh>
   );
 };
 
-/**
- * رواناب سطحی (Surface Runoff)
- */
-const SurfaceRunoff: React.FC<{ runoffRate: number }> = ({ runoffRate }) => {
-  const runoffRef = useRef<THREE.InstancedMesh>(null);
-  const drops = useMemo(() => {
-    return Array.from({ length: 50 }, () => ({
-      x: -2 + Math.random() * 4,
-      y: 1.55,
-      z: -2 + Math.random() * 4,
-      vx: 0.05 * runoffRate,
-    }));
-  }, [runoffRate]);
-
-  useFrame(() => {
-    if (!runoffRef.current) return;
-    const dummy = new THREE.Object3D();
-    drops.forEach((d, i) => {
-      d.x += d.vx;
-      if (d.x > 2) {
-        d.x = -2;
-        d.z = -2 + Math.random() * 4;
-      }
-      dummy.position.set(d.x, d.y, d.z);
-      dummy.scale.set(1.5, 0.3, 1);
-      dummy.updateMatrix();
-      runoffRef.current!.setMatrixAt(i, dummy.matrix);
-    });
-    runoffRef.current.instanceMatrix.needsUpdate = true;
-  });
-
-  if (runoffRate < 0.1) return null;
-
-  return (
-    <instancedMesh ref={runoffRef} args={[undefined, undefined, 50]}>
-      <sphereGeometry args={[0.1, 8, 8]} />
-      <meshStandardMaterial color="#4fc3f7" transparent opacity={0.8} />
-    </instancedMesh>
-  );
-};
-
-/**
- * کامپوننت اصلی
- */
 export const WaterInfiltration3D: React.FC<WaterInfiltration3DProps> = ({
   soilTexture = 'loam',
   rainfallIntensity = 30,
   showLayers = true,
 }) => {
   const soilProperties = {
-    sand: { absorption: 1.5, color: '#d4a574', runoff: 0.2 },
-    loam: { absorption: 1.0, color: '#8b7355', runoff: 0.4 },
-    clay: { absorption: 0.3, color: '#5a4632', runoff: 0.8 },
+    sand: { absorption: 1.5, color: '#d4a574' },
+    loam: { absorption: 1.0, color: '#8b7355' },
+    clay: { absorption: 0.3, color: '#5a4632' },
   };
-
   const soil = soilProperties[soilTexture];
 
   return (
-    <div style={{ width: '100%', height: 500, background: '#1a1a2e', borderRadius: 'var(--radius-lg)' }}>
-      <Canvas>
-        <PerspectiveCamera makeDefault position={[6, 4, 6]} fov={50} />
+    <div style={{ width: '100%', height: 500, background: '#1a1a2e', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
+      <Canvas camera={{ position: [6, 4, 6], fov: 50 }}>
         <ambientLight intensity={0.5} />
         <directionalLight position={[5, 10, 5]} intensity={1} castShadow />
 
-        {/* لایه‌های خاک */}
         <SoilLayer y={1} height={1} color="#2d5016" opacity={showLayers ? 0.8 : 1} />
         <SoilLayer y={0} height={1} color={soil.color} opacity={showLayers ? 0.7 : 1} />
         <SoilLayer y={-1} height={1} color="#654321" opacity={showLayers ? 0.6 : 1} />
         <SoilLayer y={-2} height={1} color="#3e2723" opacity={showLayers ? 0.5 : 1} />
 
-        {/* سیستم رطوبت */}
         <RainDrops intensity={rainfallIntensity} soilAbsorption={soil.absorption} />
         <InfiltratingWater soilAbsorption={soil.absorption} />
-        <SurfaceRunoff runoffRate={soil.runoff * (rainfallIntensity / 30)} />
 
         <OrbitControls enablePan enableZoom enableRotate />
       </Canvas>
-
-      {/* Legend */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 20,
-          right: 20,
-          background: 'rgba(0, 0, 0, 0.7)',
-          padding: '0.75rem',
-          borderRadius: 'var(--radius-lg)',
-          fontSize: '0.75rem',
-          color: 'white',
-          zIndex: 10,
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-          <div style={{ width: 12, height: 12, background: '#4a90e2', borderRadius: 2 }} />
-          <span>باران</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-          <div style={{ width: 12, height: 12, background: '#1e90ff', borderRadius: '50%' }} />
-          <span>نفوذ</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <div style={{ width: 12, height: 12, background: '#4fc3f7', borderRadius: '50%' }} />
-          <span>رواناب</span>
-        </div>
-      </div>
     </div>
   );
 };

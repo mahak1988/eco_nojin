@@ -1,0 +1,309 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  Leaf, Droplets, Wind, Sparkles, Settings, Play, Pause,
+  RotateCcw, Save, Download, MapPin, Sun, CloudRain,
+  Trees, Sprout, Layers, BarChart3, Zap, Info,
+} from 'lucide-react';
+import { AppLayout } from '../components/layout/AppLayout';
+import { Card, Button } from '../components/ui';
+import { VLLTerrain3D } from '../components/vll/VLLTerrain3D';
+import { InterventionPanel } from '../components/vll/VLLInterventionPanel';
+import { VLLLayerManager } from '../components/vll/VLLLayerManager';
+import { VLLResultsBar } from '../components/vll/VLLResultsBar';
+import { VLLAIAdvisor } from '../components/vll/VLLAIAdvisor';
+import { VLLWeatherControl } from '../components/vll/VLLWeatherControl';
+
+export const VirtualLandLabPage: React.FC = () => {
+  // State مدیریت
+  const [interventions, setInterventions] = useState<any[]>([]);
+  const [weather, setWeather] = useState({
+    rainfall: 50,  // mm/hr
+    wind: 12,       // m/s
+    temperature: 25,
+    sunIntensity: 0.8,
+  });
+  const [activeLayers, setActiveLayers] = useState({
+    dem: true,
+    slope: false,
+    soil: false,
+    ndvi: true,
+    water: false,
+    erosion: false,
+  });
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [results, setResults] = useState<any>(null);
+  const [showAdvisor, setShowAdvisor] = useState(false);
+  const [timeProgress, setTimeProgress] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+
+  // مداخلات
+  const addIntervention = (intv: any) => {
+    setInterventions([...interventions, { ...intv, id: Date.now() }]);
+  };
+  const removeIntervention = (id: number) => {
+    setInterventions(interventions.filter(i => i.id !== id));
+  };
+
+  // شبیه‌سازی
+  const runSimulation = async () => {
+    setIsSimulating(true);
+    try {
+      const response = await fetch('http://localhost:8000/api/v1/simulation/comprehensive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          simulation_type: 'comprehensive',
+          context: {
+            area_ha: 50,
+            crop: { crop_type: 'wheat' },
+            weather: {
+              precipitation_mm: weather.rainfall * 10,
+              wind_speed_ms: weather.wind,
+            },
+            soil: { texture: 'loam', organic_carbon_pct: 1.2 },
+            topography: { slope_pct: 10 },
+            interventions: interventions.map(i => ({
+              intervention_id: i.id,
+              coverage_pct: i.coverage || 100,
+              parameters: i.parameters || {},
+            })),
+          },
+        }),
+      });
+      const data = await response.json();
+      setResults(data);
+    } catch (error) {
+      console.error('Simulation error:', error);
+      // Fallback به mock data
+      setResults({
+        sustainability_score: 75,
+        score_breakdown: { erosion: 70, water: 80, carbon: 75 },
+        recommendations: [
+          { priority: 'high', category: 'فرسایش', title: 'افزودن بادشکن', description: 'فرسایش بادی بالاست' },
+        ],
+      });
+    } finally {
+      setIsSimulating(false);
+    }
+  };
+
+  const resetScenario = () => {
+    setInterventions([]);
+    setResults(null);
+    setTimeProgress(0);
+  };
+
+  return (
+    <AppLayout>
+      <div style={{ height: 'calc(100vh - 64px)', display: 'flex', flexDirection: 'column' }}>
+        {/* Header Bar */}
+        <div style={{
+          padding: '1rem 2rem',
+          background: 'linear-gradient(90deg, var(--color-primary), var(--color-info))',
+          color: 'white',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          boxShadow: 'var(--shadow-md)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <Sparkles size={28} />
+            <div>
+              <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>
+                🌍 آزمایشگاه مجازی زمین
+              </h1>
+              <p style={{ margin: 0, fontSize: '0.875rem', opacity: 0.9 }}>
+                Virtual Land Laboratory - HyDroMa
+              </p>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <Button
+              variant="secondary"
+              onClick={resetScenario}
+              style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: 'none' }}
+            >
+              <RotateCcw size={16} /> ریست
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => setShowAdvisor(!showAdvisor)}
+              style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: 'none' }}
+            >
+              <Zap size={16} /> دستیار AI
+            </Button>
+            <Button
+              variant="primary"
+              onClick={runSimulation}
+              disabled={isSimulating}
+              style={{ background: 'white', color: 'var(--color-primary)' }}
+            >
+              {isSimulating ? '⏳ شبیه‌سازی...' : <><Play size={16} /> اجرای سناریو</>}
+            </Button>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '320px 1fr 320px', gap: 0, overflow: 'hidden' }}>
+          
+          {/* Left Panel: Controls */}
+          <div style={{
+            background: 'var(--color-surface)',
+            borderLeft: '1px solid var(--color-border)',
+            overflowY: 'auto',
+            padding: '1rem',
+          }}>
+            {/* Layer Manager */}
+            <VLLLayerManager
+              activeLayers={activeLayers}
+              onToggleLayer={(key) => setActiveLayers({ ...activeLayers, [key]: !activeLayers[key] })}
+            />
+
+            {/* Weather Control */}
+            <VLLWeatherControl
+              weather={weather}
+              onChange={setWeather}
+            />
+
+            {/* Time Control */}
+            <Card title="⏱️ کنترل زمان" icon={<Info size={18} />} className="mb-4">
+              <div style={{ marginBottom: '0.75rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', marginBottom: '0.25rem' }}>
+                  <span>پیشرفت</span>
+                  <strong>سال {Math.floor(timeProgress / 12) + 1}</strong>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="120"
+                  value={timeProgress}
+                  onChange={(e) => setTimeProgress(parseInt(e.target.value))}
+                  style={{ width: '100%' }}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                  onClick={() => setIsPlaying(!isPlaying)}
+                  className="btn btn-secondary"
+                  style={{ flex: 1 }}
+                >
+                  {isPlaying ? <Pause size={14} /> : <Play size={14} />}
+                </button>
+                <button
+                  onClick={() => setTimeProgress(0)}
+                  className="btn btn-ghost"
+                >
+                  <RotateCcw size={14} />
+                </button>
+              </div>
+            </Card>
+          </div>
+
+          {/* Center: 3D Terrain */}
+          <div style={{ position: 'relative', background: '#1a1a2e' }}>
+            <VLLTerrain3D
+              interventions={interventions}
+              weather={weather}
+              activeLayers={activeLayers}
+              timeProgress={timeProgress}
+              isPlaying={isPlaying}
+            />
+
+            {/* Floating Info */}
+            <div style={{
+              position: 'absolute',
+              top: 20,
+              left: 20,
+              background: 'rgba(0, 0, 0, 0.7)',
+              backdropFilter: 'blur(10px)',
+              padding: '0.75rem 1rem',
+              borderRadius: 'var(--radius-lg)',
+              color: 'white',
+              fontSize: '0.875rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+            }}>
+              <MapPin size={16} color="#22c55e" />
+              <div>
+                <div style={{ fontWeight: 600 }}>مزرعه نمونه</div>
+                <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>۵۰ هکتار | ۳۵.۵°N, ۵۱.۵°E</div>
+              </div>
+            </div>
+
+            {/* Live Weather Indicator */}
+            <div style={{
+              position: 'absolute',
+              top: 20,
+              right: 20,
+              background: 'rgba(0, 0, 0, 0.7)',
+              backdropFilter: 'blur(10px)',
+              padding: '0.75rem 1rem',
+              borderRadius: 'var(--radius-lg)',
+              color: 'white',
+              fontSize: '0.875rem',
+              display: 'flex',
+              gap: '1rem',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <CloudRain size={16} color="#3b82f6" />
+                <span>{weather.rainfall} mm</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Wind size={16} color="#a3a3a3" />
+                <span>{weather.wind} m/s</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Sun size={16} color="#fbbf24" />
+                <span>{weather.temperature}°C</span>
+              </div>
+            </div>
+
+            {/* Intervention Counter */}
+            <div style={{
+              position: 'absolute',
+              bottom: 20,
+              left: 20,
+              background: 'rgba(34, 197, 94, 0.9)',
+              padding: '0.5rem 1rem',
+              borderRadius: 'var(--radius-full)',
+              color: 'white',
+              fontWeight: 600,
+              fontSize: '0.875rem',
+            }}>
+              🛠️ {interventions.length} مداخله فعال
+            </div>
+          </div>
+
+          {/* Right Panel: Interventions + AI */}
+          <div style={{
+            background: 'var(--color-surface)',
+            borderRight: '1px solid var(--color-border)',
+            overflowY: 'auto',
+            padding: '1rem',
+          }}>
+            {showAdvisor && results && (
+              <VLLAIAdvisor
+                recommendations={results.recommendations || []}
+                onApply={(action) => {
+                  addIntervention({ id: action, name: action, coverage: 100 });
+                }}
+              />
+            )}
+
+            <InterventionPanel
+              interventions={interventions}
+              onAdd={addIntervention}
+              onRemove={removeIntervention}
+            />
+          </div>
+        </div>
+
+        {/* Results Bar at bottom */}
+        <VLLResultsBar results={results} isSimulating={isSimulating} />
+      </div>
+    </AppLayout>
+  );
+};

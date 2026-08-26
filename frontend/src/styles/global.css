@@ -68,7 +68,7 @@ html {
 }
 
 body {
-  font-family: "Vazirmatn", "Estedad", "Sahel", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Vazirmatn", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: var(--color-bg);
   color: var(--color-text-primary);
   line-height: 1.5;
@@ -361,7 +361,7 @@ a:hover {
 
 /* Font Utilities */
 .font-persian {
-  font-family: "Vazirmatn", "Estedad", "Sahel", sans-serif;
+  font-family: "Vazirmatn", "Estedad", "Vazirmatn", sans-serif;
 }
 
 .font-english {
@@ -373,11 +373,11 @@ a:hover {
 }
 
 .font-estedad {
-  font-family: "Estedad", sans-serif;
+  font-family: "Vazirmatn", sans-serif;
 }
 
 .font-sahel {
-  font-family: "Sahel", sans-serif;
+  font-family: "Vazirmatn", sans-serif;
 }
 
 .font-inter {
