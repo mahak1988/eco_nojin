@@ -1,0 +1,26 @@
+"""Satellite FastAPI router"""
+from typing import Optional, Dict
+from fastapi import APIRouter, Depends
+from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from database.config import get_db
+from services.satellite.monitoring_service import SatelliteMonitoringService
+
+router = APIRouter(prefix="/satellite", tags=["Satellite"])
+
+class MonitorFieldRequest(BaseModel):
+    village_id: str
+    bbox: Dict[str, float]
+    days_back: int = 30
+
+@router.post("/monitor-field")
+async def monitor_field(req: MonitorFieldRequest, db: AsyncSession = Depends(get_db)):
+    service = SatelliteMonitoringService(db)
+    return await service.monitor_field(req.village_id, req.bbox, req.days_back)
+
+@router.post("/detect-changes")
+async def detect_changes(req: MonitorFieldRequest, db: AsyncSession = Depends(get_db)):
+    service = SatelliteMonitoringService(db)
+    return await service.detect_changes(req.bbox, req.days_back)
+    

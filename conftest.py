@@ -129,3 +129,31 @@ async def admin_service(db_session: AsyncSession):
 async def reporting_service(db_session: AsyncSession):
     from services.reporting.service import ReportingService
     return ReportingService(db_session)
+
+
+# ═══════════════════════════════════════════════════════════════
+# Phase 3 - Wave 2 Fixtures
+# ═══════════════════════════════════════════════════════════════
+
+@pytest_asyncio.fixture
+async def unified_bot_service(db_session: AsyncSession):
+    from services.bots.unified_service import UnifiedBotService
+    return UnifiedBotService(db_session)
+
+
+@pytest_asyncio.fixture
+async def satellite_service(db_session: AsyncSession):
+    from services.satellite.monitoring_service import SatelliteMonitoringService
+    return SatelliteMonitoringService(db_session)
+
+
+@pytest_asyncio.fixture
+async def smart_map_service(db_session: AsyncSession):
+    from services.map_engine.smart_service import SmartMapService
+    return SmartMapService(db_session)
+
+
+@pytest_asyncio.fixture
+async def telegram_service(db_session: AsyncSession):
+    from services.telegram_bot.integration_service import TelegramIntegrationService
+    return TelegramIntegrationService(db_session)
