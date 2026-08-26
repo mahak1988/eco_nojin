@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Globe2, Play, Download, MapPin } from 'lucide-react';
+import { Globe2, Play, Download, MapPin, FileText, Plus, X } from 'lucide-react';
 import { Deck } from '@deck.gl/core';
 import { ScatterplotLayer } from '@deck.gl/layers';
 
@@ -81,12 +81,40 @@ const SAMPLE_CSV = `soc_t_ha,lat,lon,note
 65.2,35.494,51.511,demo sample via API 4
 67.1,35.505,51.499,demo sample via API 5`;
 
+interface PeriodRow {
+  year: number;
+  soc_t_ha: number;
+  delta_tco2e_ha: number;
+}
+
 export const MrvCard: React.FC<MrvCardProps> = ({ lat, lon }) => {
   const [area, setArea] = useState(100);
   const [practice, setPractice] = useState('conservation_ag');
   const [methodology, setMethodology] = useState('vm0032');
+  const [useSeries, setUseSeries] = useState(false);
+  const [series, setSeries] = useState<{ year: number; soc: string }[]>([
+    { year: 2020, soc: '63.0' },
+    { year: 2025, soc: '63.7' },
+  ]);
   const [result, setResult] = useState<MrvPayload | null>(null);
   const [loading, setLoading] = useState(false);
+  const [pdfBusy, setPdfBusy] = useState(false);
+
+  const measurements = series
+    .filter((r) => Number.isFinite(r.year) && r.soc.trim() !== '')
+    .map((r) => ({ year: r.year, soc_t_ha: Number(r.soc) }));
+
+  const buildBody = () =>
+    JSON.stringify({
+      lat,
+      lon,
+      crop: 'wheat',
+      area_ha: area,
+      practice,
+      methodology,
+      use_kobo: false,
+      measurements: useSeries && measurements.length >= 2 ? measurements : [],
+    });
 
   const run = async () => {
     setLoading(true);
@@ -98,7 +126,7 @@ export const MrvCard: React.FC<MrvCardProps> = ({ lat, lon }) => {
         const res = await fetch('/api/mrv/carbon-budget', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ lat, lon, crop: 'wheat', area_ha: area, practice, methodology, use_kobo: false }),
+          body: buildBody(),
           signal: controller.signal,
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -113,11 +141,35 @@ export const MrvCard: React.FC<MrvCardProps> = ({ lat, lon }) => {
     }
   };
 
+  const downloadPdf = async () => {
+    setPdfBusy(true);
+    try {
+      const res = await fetch('/api/mrv/carbon-budget/report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: buildBody(),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `mrv_carbon_budget_${methodology}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      alert(`دانلود گزارش ناموفق: ${err instanceof Error ? err.message : 'خطا'}`);
+    } finally {
+      setPdfBusy(false);
+    }
+  };
+
   const c = result?.carbon;
   const delta = typeof c?.delta_co2e_total === 'number' ? c.delta_co2e_total : null;
   const negative = delta != null && delta < 0;
   const mode = String(c?.data_mode ?? '—');
   const koboStatus = String((result?.kobo as Record<string, unknown> | undefined)?.status ?? 'skipped');
+  const periods = (c?.periods as PeriodRow[] | undefined) ?? [];
 
   return (
     <div className="card" style={{ padding: '1.1rem', marginTop: '1.5rem' }}>
@@ -150,10 +202,60 @@ export const MrvCard: React.FC<MrvCardProps> = ({ lat, lon }) => {
             <option value="gold_standard">Gold Standard</option>
           </select>
         </label>
+        <label style={{ display: 'flex', flexDirection: 'row', gap: '0.35rem', alignItems: 'center', fontSize: '0.76rem', color: 'var(--color-text-secondary)', paddingBottom: '0.45rem', cursor: 'pointer' }}>
+          <input type="checkbox" checked={useSeries} onChange={(e) => setUseSeries(e.target.checked)} />
+          سری چنددوره‌ای t0→t5
+        </label>
         <button onClick={() => void run()} disabled={loading} style={{ padding: '0.5rem 1.1rem', borderRadius: 10, border: 'none', cursor: 'pointer', background: 'var(--color-primary)', color: '#fff', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.85rem' }}>
           <Play size={13} /> {loading ? 'در حال محاسبه…' : 'محاسبه'}
         </button>
       </div>
+
+      {useSeries && (
+        <div style={{ marginBottom: '0.9rem', padding: '0.6rem 0.8rem', borderRadius: 10, border: '1px solid var(--color-border)', background: 'var(--color-bg)' }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)', marginBottom: '0.4rem' }}>
+            سال‌ها و SOC اندازه‌گیری‌شده (t C/ha) — حداقل ۲ نقطه برای روند؛ مقادیر نمونه را با داده آزمایشگاهی واقعی جایگزین کنید
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            {series.map((row, i) => (
+              <div key={i} style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
+                <input
+                  type="number"
+                  min="2000"
+                  max="2100"
+                  value={row.year}
+                  onChange={(e) => setSeries((prev) => prev.map((r, j) => (j === i ? { ...r, year: Number(e.target.value) } : r)))}
+                  style={{ padding: '0.35rem 0.45rem', borderRadius: 8, border: '1px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text)', width: 74 }}
+                  title="سال"
+                />
+                <input
+                  type="number"
+                  step="0.1"
+                  value={row.soc}
+                  onChange={(e) => setSeries((prev) => prev.map((r, j) => (j === i ? { ...r, soc: e.target.value } : r)))}
+                  style={{ padding: '0.35rem 0.45rem', borderRadius: 8, border: '1px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text)', width: 74 }}
+                  title="SOC (t C/ha)"
+                />
+                <button
+                  onClick={() => setSeries((prev) => prev.filter((_, j) => j !== i))}
+                  disabled={series.length <= 2}
+                  style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: '#ef4444', display: 'flex' }}
+                  title="حذف"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ))}
+            <button
+              onClick={() => setSeries((prev) => [...prev, { year: (prev[prev.length - 1]?.year ?? 2025) + 5, soc: prev[prev.length - 1]?.soc ?? '63.7' }])}
+              disabled={series.length >= 6}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', border: '1px dashed var(--color-border)', background: 'transparent', borderRadius: 8, padding: '0.35rem 0.6rem', cursor: 'pointer', fontSize: '0.72rem', color: 'var(--color-text-secondary)' }}
+            >
+              <Plus size={12} /> افزودن نقطه
+            </button>
+          </div>
+        </div>
+      )}
 
       {result?.error && <p style={{ color: '#ef4444', fontSize: '0.85rem', margin: '0 0 0.5rem' }}>⚠️ {result.error}</p>}
 
@@ -177,6 +279,27 @@ export const MrvCard: React.FC<MrvCardProps> = ({ lat, lon }) => {
               <div key={k} style={{ padding: '0.4rem 0.5rem', borderRadius: 8, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
                 <div style={{ fontSize: '0.66rem', color: 'var(--color-text-secondary)' }}>{k}</div>
                 <div style={{ fontSize: '0.8rem', fontWeight: 700 }}>{v}</div>
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={() => void downloadPdf()}
+            disabled={pdfBusy}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '0.5rem 0.9rem', borderRadius: 10, border: '1px solid var(--color-border)', background: 'var(--color-surface)', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 700, color: 'var(--color-text)' }}
+          >
+            <FileText size={14} /> {pdfBusy ? 'در حال ساخت…' : 'دانلود گزارش PDF'}
+          </button>
+        </div>
+      )}
+
+      {periods.length > 0 && (
+        <div style={{ marginTop: '0.7rem' }}>
+          <div style={{ fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.35rem' }}>📈 روند چنددوره‌ای (t0 → t5)</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '0.4rem' }}>
+            {periods.map((p) => (
+              <div key={p.year} style={{ padding: '0.45rem 0.6rem', borderRadius: 9, border: '1px solid var(--color-border)', background: 'var(--color-bg)' }}>
+                <div style={{ fontSize: '0.66rem', color: 'var(--color-text-secondary)' }}>{p.year} · Δ {p.delta_tco2e_ha > 0 ? '+' : ''}{p.delta_tco2e_ha.toFixed(1)} tCO2e/ha</div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: p.delta_tco2e_ha >= 0 ? '#10b981' : '#ef4444' }}>{p.soc_t_ha} t C/ha</div>
               </div>
             ))}
           </div>
