@@ -93,6 +93,30 @@ async def _climate_block(lat: float, lon: float) -> Dict[str, Any]:
     def _avg(vals: list) -> float:
         return round(sum(vals) / len(vals), 1) if vals else 0.0
 
+    # monthly aggregation (real ERA5 series) for the dashboard climate charts
+    times = daily.get("time", [])
+    monthly_precip: List[float] = [0.0] * 12
+    monthly_tmax: List[float] = [0.0] * 12
+    monthly_tmin: List[float] = [0.0] * 12
+    monthly_count: List[int] = [0] * 12
+    for i, day in enumerate(times):
+        try:
+            month = int(str(day)[5:7]) - 1  # 'YYYY-MM-DD' -> 0..11
+        except (ValueError, IndexError):
+            continue
+        if 0 <= month < 12 and i < len(precip):
+            monthly_precip[month] += precip[i]
+            if i < len(tmax):
+                monthly_tmax[month] += tmax[i]
+                monthly_count[month] += 1
+            if i < len(tmin):
+                monthly_tmin[month] += tmin[i]
+    monthly = {
+        "precip_mm": [round(v, 1) for v in monthly_precip],
+        "tmax_c": [round(v / max(1, c), 1) for v, c in zip(monthly_tmax, monthly_count)],
+        "tmin_c": [round(v / max(1, c), 1) for v, c in zip(monthly_tmin, monthly_count)],
+    }
+
     return {
         "status": "ok",
         "data_source": "open_meteo_era5",
@@ -103,6 +127,7 @@ async def _climate_block(lat: float, lon: float) -> Dict[str, Any]:
         "max_temp_c": _avg(tmax),
         "min_temp_c": _avg(tmin),
         "annual_et0_mm": round(sum(et0), 1),
+        "monthly": monthly,
         "latest": {
             "date": daily.get("time", [None])[-1],
             "precipitation_mm": precip[-1] if precip else None,

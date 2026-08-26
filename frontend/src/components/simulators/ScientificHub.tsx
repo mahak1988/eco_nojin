@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  Activity, Mountain, Leaf, Sprout, Waves, CloudRain as FloodIcon, Cpu, Database, Play, RefreshCw,
+  Activity, Mountain, Leaf, Sprout, Waves, CloudRain as FloodIcon, Cpu, Database, Play, RefreshCw, Globe2,
 } from 'lucide-react';
 import { Card } from '../ui';
 import { fetchScientificChain } from '../../services/scientificChainApi';
@@ -39,6 +39,13 @@ const statusBadge = (status?: string) => {
 
 const num = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) ? v : null);
 
+const Field: React.FC<{ label: string; value: React.ReactNode }> = ({ label, value }) => (
+  <div style={{ padding: '0.45rem 0.6rem', borderRadius: 8, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+    <div style={{ fontSize: '0.68rem', color: 'var(--color-text-secondary)' }}>{label}</div>
+    <div style={{ fontSize: '0.85rem', fontWeight: 600 }}>{value}</div>
+  </div>
+);
+
 /**
  * مرکز شبیه‌سازهای علمی واقعی — جایگزین صفحات ناقص/نمایشی قدیمی /simulator.
  * همه خروجی‌ها از زنجیره واقعی (RUSLE ← SWAT+ ← Pywr ← RothC ← AquaCrop ← HEC-RAS ← NSGA-II) می‌آیند؛
@@ -50,6 +57,38 @@ export const ScientificHub: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState('overview');
+  const [mrv, setMrv] = useState<Record<string, unknown> | null>(null);
+  const [mrvLoading, setMrvLoading] = useState(false);
+  const [mrvArea, setMrvArea] = useState(100);
+  const [mrvPractice, setMrvPractice] = useState('conservation_ag');
+
+  const runMrv = useCallback(async () => {
+    setMrvLoading(true);
+    setMrv(null);
+    try {
+      const controller = new AbortController();
+      const timer = window.setTimeout(() => controller.abort(), 90_000);
+      try {
+        const res = await fetch('/api/mrv/carbon-budget', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            lat: state.lat, lon: state.lon, crop: state.crop,
+            area_ha: mrvArea, practice: mrvPractice, use_kobo: false,
+          }),
+          signal: controller.signal,
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        setMrv((await res.json()) as Record<string, unknown>);
+      } finally {
+        window.clearTimeout(timer);
+      }
+    } catch (err) {
+      setMrv({ error: err instanceof Error ? err.message : 'خطا' });
+    } finally {
+      setMrvLoading(false);
+    }
+  }, [state.lat, state.lon, state.crop, mrvArea, mrvPractice]);
 
   const run = useCallback(async (s: HubState) => {
     setLoading(true);
@@ -345,8 +384,79 @@ export const ScientificHub: React.FC = () => {
           </Card>
         ),
       },
+      {
+        id: 'mrv',
+        label: 'MRV کربن',
+        icon: <Globe2 size={15} />,
+        content: (
+          <Card title="حسابداری کربن — MRV (Verra VM0032 + KoboToolbox)" icon={<Globe2 size={18} />}>
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-end', flexWrap: 'wrap', marginBottom: '1rem' }}>
+              <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
+                مساحت (هکتار)
+                <input type="number" min="1" value={mrvArea} onChange={(e) => setMrvArea(Number(e.target.value))} style={{ padding: '0.45rem 0.7rem', borderRadius: 9, border: '1px solid var(--color-border)', background: 'var(--color-bg)', color: 'var(--color-text)', width: 110 }} />
+              </label>
+              <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
+                مدیریت
+                <select value={mrvPractice} onChange={(e) => setMrvPractice(e.target.value)} style={{ padding: '0.45rem 0.7rem', borderRadius: 9, border: '1px solid var(--color-border)', background: 'var(--color-bg)', color: 'var(--color-text)', width: 150 }}>
+                  <option value="conservation_ag">کشاورزی حفاظتی</option>
+                  <option value="agroforestry">آگروفارستری</option>
+                  <option value="none">بدون مداخله</option>
+                </select>
+              </label>
+              <button onClick={() => void runMrv()} disabled={mrvLoading} className="btn btn-primary" style={{ padding: '0.55rem 1.2rem', borderRadius: 10, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600 }}>
+                <Play size={14} /> {mrvLoading ? 'در حال محاسبه…' : 'محاسبه بودجه کربن'}
+              </button>
+            </div>
+
+            {mrv && typeof mrv.error === 'string' && mrv.error ? <p style={{ color: '#ef4444', fontSize: '0.85rem' }}>⚠️ {mrv.error}</p> : null}
+
+            {mrv && !mrv.error && (() => {
+              const c = (mrv.carbon ?? {}) as Record<string, unknown>;
+              const s = (mrv.summary ?? {}) as Record<string, unknown>;
+              const kobo = (mrv.kobo ?? {}) as Record<string, unknown>;
+              const delta = typeof c.delta_co2e_total === 'number' ? c.delta_co2e_total : null;
+              const mode = String(c.data_mode ?? '—');
+              const negative = delta != null && delta < 0;
+              return (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', marginBottom: '0.9rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '1.9rem', fontWeight: 800, color: negative ? '#ef4444' : '#10b981' }}>
+                      {delta != null ? `${delta > 0 ? '+' : ''}${delta.toFixed(1)} tCO2e` : '—'}
+                    </span>
+                    <span style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)' }}>
+                      {negative ? 'افت کربن (سناریوی پایه در حال انتشار است — مداخله لازم)' : 'ترسیب کربن خالص'}
+                    </span>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '0.5rem', marginBottom: '0.9rem' }}>
+                    <Field label="SOC اولیه" value={`${typeof c.soc_initial_t_ha === 'number' ? c.soc_initial_t_ha.toFixed(1) : '—'} t C/ha`} />
+                    <Field label="SOC نهایی" value={`${typeof c.soc_final_t_ha === 'number' ? c.soc_final_t_ha.toFixed(1) : '—'} t C/ha`} />
+                    <Field label="تغییر سالانه" value={`${typeof c.delta_soc_t_ha_yr === 'number' ? c.delta_soc_t_ha_yr.toFixed(3) : '—'} t C/ha`} />
+                    <Field label="به ازای هکتار" value={`${typeof c.delta_co2e_ha === 'number' ? c.delta_co2e_ha.toFixed(2) : '—'} tCO2e/ha`} />
+                    <Field label="مساحت" value={`${typeof c.area_ha === 'number' ? c.area_ha : '—'} ha`} />
+                    <Field label="حالت داده" value={mode} />
+                    <Field label="وضعیت" value={String(s.status ?? '—')} />
+                    <Field label="ضریب ماندگاری" value={String(c.permanence_factor ?? '—')} />
+                  </div>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', margin: '0 0 0.4rem' }}>
+                    متد: {String(c.methodology ?? '—')} · تبدیل IPCC (×3.667) · زنجیره RothC: {String(mrv.rothc_chain_id ?? '—').slice(0, 8)}
+                  </p>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', margin: 0 }}>
+                    KoboToolbox: {String(kobo.status ?? 'skipped')}{kobo.status === 'requires_credentials' ? ' — با افزودن KOBO_TOKEN/KOBO_FORM_ID به .env، نمونه‌های میدانی SOC خوانده می‌شوند' : ''}
+                  </p>
+                </div>
+              );
+            })()}
+
+            {!mrv && !mrvLoading && (
+              <p style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)', margin: 0 }}>
+                بودجه کربن خاک بر اساس زنجیره واقعی (RothC-26.3 با ERA5/SoilGrids) + داده میدانی اختیاری KoboToolbox؛ خروجی برآورد مدل است و گواهی Verra/Gold Standard نیازمند مستندات کامل متدولوژی است.
+              </p>
+            )}
+          </Card>
+        ),
+      },
     ],
-    [r, erosion, rothc, aquacrop, water, flood, opt, swat, rothcPools, socSeries, supplySeries, storageSeries, state.catchmentKm2, state.crop, state.lat, state.lon],
+    [r, erosion, rothc, aquacrop, water, flood, opt, swat, rothcPools, socSeries, supplySeries, storageSeries, state.catchmentKm2, state.crop, state.lat, state.lon, mrv, mrvLoading, mrvArea, mrvPractice, runMrv],
   );
 
   return (

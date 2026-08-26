@@ -231,6 +231,11 @@ export interface RealClimateBlock {
   max_temp_c?: number;
   min_temp_c?: number;
   annual_et0_mm?: number;
+  monthly?: {
+    precip_mm?: number[];
+    tmax_c?: number[];
+    tmin_c?: number[];
+  };
   latest?: {
     date?: string | null;
     precipitation_mm?: number | null;

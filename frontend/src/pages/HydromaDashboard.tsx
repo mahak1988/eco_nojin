@@ -1,39 +1,39 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Droplets, Waves, CloudRain, Wind, Leaf, LogOut, User, Sprout, Thermometer } from 'lucide-react';
+import { LogOut, User, Box, X } from 'lucide-react';
 import { AnimatedLogo } from '../components/branding/AnimatedLogo';
-import { StatCard } from '../components/ui/StatCard';
 import { Button } from '../components/ui/Button';
 import { useAuth } from '../context/AuthContext';
 import { toggleTheme } from '../hooks/useThemeMode';
 import { RealLandSummaryCard } from '../components/hydroma/RealLandSummaryCard';
 import { ScientificChainPanel } from '../components/hydroma/ScientificChainPanel';
+import { LiveMetricStrip } from '../components/hydroma/LiveMetricStrip';
+import { HydromaModules } from '../components/hydroma/HydromaModules';
+import type { SceneMode } from '../components/hydroma/DashboardScene3D';
 import type { RealLandResult, ScientificChainResult } from '../types/vll';
-import {
-  WaterBudgetChart, CarbonForecastChart, ErosionRiskMap, LivestockEconomicsChart } from '../components/simulators';
 
+// صحنه سه‌بعدی — lazy تا باندل ورودی کوچک بماند
+const DashboardScene3D = React.lazy(() => import('../components/hydroma/DashboardScene3D').then((m) => ({ default: m.DashboardScene3D })));
+
+/**
+ * داشبورد هیدروما — کاملاً مبتنی بر بک‌اند/موتورهای واقعی:
+ * داده زنده (ERA5/SoilGrids/CDSE) + زنجیره علمی (RUSLE/RothC/AquaCrop/Pywr/HEC-RAS/NSGA-II/SWAT+)
+ * با متریک‌های انیمیشنی، چارت در هر ماژول و شبیه‌ساز سه‌بعدی برای هر ماژول.
+ * هیچ fallback ساختگی — مقادیر غایب «—».
+ */
 export const HydromaDashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const [realLand, setRealLand] = useState<RealLandResult | null>(null);
   const [coords, setCoords] = useState<{ lat: number; lon: number }>({ lat: 35.5, lon: 51.5 });
   const [chain, setChain] = useState<ScientificChainResult | null>(null);
+  const [sceneMode, setSceneMode] = useState<SceneMode>('idle');
+  const [sceneOpen, setSceneOpen] = useState(false);
 
-  const soil = realLand?.soil;
-  const climate = realLand?.climate;
-  const rainfall = climate?.annual_rainfall_mm;
-  const temp = climate?.avg_temp_c;
-  const socPct = soil?.soc_g_kg != null ? (soil.soc_g_kg / 10).toFixed(2) : null;
-
-  // چارت‌های واقعی از زنجیره علمی (فاز ۳-ب): مقادیر واقعی به‌جای ورودی ثابت
-  const chainErosion = chain?.erosion?.soil_loss_ton_ha_yr;
-  const chainErosionRisk = chain?.erosion?.risk;
-  const chainRainfall = (chain?.inputs?.annual_rainfall_mm as number | undefined) ?? rainfall;
-  const chainRunoffMm =
-    typeof chain?.inputs?.annual_runoff_mcm === 'number'
-      ? Number(chain.inputs.annual_runoff_mcm) * 10
-      : null;
-  const chainEt0 = climate?.annual_et0_mm;
+  const open3D = (mode: SceneMode) => {
+    setSceneMode(mode);
+    setSceneOpen(true);
+  };
 
   return (
     <div className="hydroma-bg" style={{ minHeight: '100vh' }}>
@@ -48,61 +48,56 @@ export const HydromaDashboard: React.FC = () => {
       </header>
 
       {/* Water hero */}
-      <section style={{ position: 'relative', padding: '3.5rem 2rem 5rem', overflow: 'hidden', textAlign: 'center' }}>
+      <section style={{ position: 'relative', padding: '2.5rem 2rem 4.5rem', overflow: 'hidden', textAlign: 'center' }}>
         <div className="hydroma-waves" />
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ position: 'relative', zIndex: 1 }}>
-          <motion.div animate={{ y: [0, -8, 0] }} transition={{ repeat: Infinity, duration: 4 }} style={{ display: 'inline-flex', color: '#7dd3fc', marginBottom: '1rem' }}>
-            <Waves size={44} />
-          </motion.div>
-          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#fff', marginBottom: '0.6rem' }}>
-            خوش آمدی، {user?.name}
+          <h1 style={{ fontSize: '1.9rem', fontWeight: 800, color: '#fff', marginBottom: '0.5rem' }}>
+            خوش آمدی، {user?.name} 🌍
           </h1>
-          <p style={{ color: '#bae6fd', fontSize: '1.05rem' }}>داشبورد هیدرولوژیک HyDroMa — آب، خاک، اقلیم</p>
+          <p style={{ color: '#bae6fd', fontSize: '1rem' }}>
+            داشبورد زنده HyDroMa — اقلیم، خاک، ماهواره و ۷ موتور علمی واقعی در یک نگاه
+          </p>
         </motion.div>
       </section>
 
-      <main style={{ maxWidth: 1400, margin: '-2rem auto 0', padding: '0 2rem 4rem', position: 'relative', zIndex: 2 }}>
-        {/* Real data + scientific chain */}
-        <div className="grid grid-cols-2" style={{ marginBottom: '2rem', alignItems: 'start' }}>
+      <main style={{ maxWidth: 1500, margin: '-2rem auto 0', padding: '0 1.5rem 4rem', position: 'relative', zIndex: 2 }}>
+        {/* Real data + chain controls */}
+        <div className="grid grid-cols-2" style={{ marginBottom: '1.5rem', alignItems: 'start', gap: '1.2rem' }}>
           <RealLandSummaryCard onLoaded={setRealLand} onCoordsChange={(lat: number, lon: number) => setCoords({ lat, lon })} />
           <ScientificChainPanel lat={coords.lat} lon={coords.lon} onResult={setChain} />
         </div>
 
-        {/* Water stats — real values when loaded */}
-        <div className="grid grid-cols-4" style={{ marginBottom: '2rem' }}>
-          <StatCard title="بارش سالانه" value={rainfall != null ? `${rainfall.toFixed(1)} mm` : '—'} icon={<CloudRain size={24} />} color="info" />
-          <StatCard title="دمای میانگین" value={temp != null ? `${temp.toFixed(1)} °C` : '—'} icon={<Thermometer size={24} />} color="warning" />
-          <StatCard title="کربن آلی خاک (SOC)" value={socPct ? `${socPct}٪` : '—'} icon={<Sprout size={24} />} color="success" />
-          <StatCard title="بافت خاک" value={soil?.texture ?? '—'} icon={<Droplets size={24} />} color="primary" />
+        {/* Live animated metrics */}
+        <LiveMetricStrip realLand={realLand} chain={chain} />
+
+        {/* 3D Scene Viewer */}
+        <div style={{ marginBottom: '1.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
+            <h2 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Box size={18} color="var(--color-primary)" /> شبیه‌ساز سه‌بعدی ماژول‌ها
+            </h2>
+            {sceneOpen && (
+              <Button variant="ghost" onClick={() => setSceneOpen(false)} icon={<X size={14} />}>بستن</Button>
+            )}
+          </div>
+          {sceneOpen ? (
+            <React.Suspense fallback={<div style={{ height: 420, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-secondary)' }}>در حال بارگذاری صحنه سه‌بعدی…</div>}>
+              <DashboardScene3D mode={sceneMode} realLand={realLand} chain={chain} height={420} />
+            </React.Suspense>
+          ) : (
+            <div style={{ padding: '0.8rem 1rem', borderRadius: 'var(--radius-lg)', background: 'var(--color-surface)', border: '1px dashed var(--color-border)', fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
+              برای باز کردن شبیه‌ساز سه‌بعدی هر ماژول، دکمه «سه‌بعدی» کنار عنوان ماژول را بزنید — صحنه با داده واقعی زنجیره (پارتو، عمق سیلاب، استخرهای کربن، عملکرد محصول) تغذیه می‌شود.
+            </div>
+          )}
         </div>
 
-        {/* Charts — مقادیر واقعی از زنجیره علمی */}
-        <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: '0 0 0.75rem' }}>
-          📊 چارت‌ها با داده واقعی زنجیره (RUSLE/RothC/Pywr) تغذیه می‌شوند — {chain ? `شناسه زنجیره: ${chain.chain_id.slice(0, 8)}` : 'برای فعال‌سازی، زنجیره علمی را اجرا کنید'}.
-        </p>
-        <div className="grid grid-cols-2" style={{ marginBottom: '2rem' }}>
-          <div className="card"><WaterBudgetChart
-            precipitationMm={chainRainfall ?? 500}
-            infiltrationMm={chainRainfall != null && chainRunoffMm != null ? Math.max(0, chainRainfall - chainRunoffMm) : 280}
-            runoffMm={chainRunoffMm ?? 120}
-            evapotranspirationMm={chainEt0 ?? 80}
-            aquiferRechargeMm={0}
-          /></div>
-          <div className="card"><CarbonForecastChart years={20} initialSOC={socPct ? Number(socPct) : 1.5} managementScenario="conservation" /></div>
-          <div className="card"><ErosionRiskMap
-            windErosion={{ erosionTonHaYear: 0, riskLevel: 'na' }}
-            waterErosion={{ soilLossTonHaYear: chainErosion ?? 1.15, riskLevel: chainErosionRisk ?? 'low' }}
-          /></div>
-          <div className="card"><LivestockEconomicsChart herds={[]} /></div>
-        </div>
-        <p style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', margin: '-1.2rem 0 1.5rem' }}>
-          ⚠️ تبخیر-تعرق مقدار مرجع (ET0) است؛ تغذیه آبخوان مدل‌سازی نشده (۰)؛ فرسایش بادی مدل‌سازی نشده؛ نمودار دامداری بدون داده واقعی خالی است — هیچ عدد ساختگی نمایش داده نمی‌شود.
-        </p>
+        {/* Modules: charts + many fields + 3D per module */}
+        <HydromaModules realLand={realLand} chain={chain} onView3D={open3D} />
 
         {/* Quick actions */}
-        <div className="card" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <Link to="/simulator"><Button variant="primary" icon={<Leaf size={16} />}>شبیه‌ساز کامل</Button></Link>
-          <Link to="/pricing"><Button variant="secondary" icon={<Wind size={16} />}>ارتقای طرح</Button></Link>
+        <div className="card" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', marginTop: '1.5rem' }}>
+          <Link to="/simulator"><Button variant="primary">مرکز شبیه‌سازهای علمی</Button></Link>
+          <Link to="/virtual-lab"><Button variant="secondary">آزمایشگاه مجازی زمین</Button></Link>
         </div>
       </main>
     </div>

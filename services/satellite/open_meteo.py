@@ -16,7 +16,7 @@ Docs: https://open-meteo.com/en/docs/era5-api
 from __future__ import annotations
 
 import logging
-from datetime import date
+from datetime import date, timedelta
 from typing import Any, Dict, List, Optional
 
 import httpx
@@ -45,6 +45,11 @@ async def fetch_era5_daily(
         Dict with ``status`` "success" and daily arrays (time-aligned
         lists per Open-Meteo), or ``status`` "error" with message.
     """
+    # ERA5 archive lags ~1 day: never request today (returns HTTP 400)
+    if end >= date.today():
+        end = date.today() - timedelta(days=1)
+    if start >= end:
+        start = end - timedelta(days=365)
     params = {
         "latitude": lat,
         "longitude": lon,
