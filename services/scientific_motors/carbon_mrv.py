@@ -74,12 +74,19 @@ class CarbonMrvMotor:
                     execution_time_seconds=round(time.time() - start_time, 3),
                 )
 
-            # measured SOC (field data) replaces the modelled baseline when present
+            # measured SOC (field data) replaces the modelled baseline when present.
+            # Multi-period series: the LAST measured point acts as the field baseline
+            # (consistent with single measured_soc_t_ha semantics).
             baseline_soc = soc_initial
             data_mode = "modelled_estimate"
             if measured_soc is not None and measured_soc > 0:
                 baseline_soc = float(measured_soc)
                 data_mode = "field_verified"
+            elif periods:
+                last_measured = float(periods[-1]["soc_t_ha"])
+                if last_measured > 0:
+                    baseline_soc = last_measured
+                    data_mode = "field_verified"
 
             delta_c_t_ha = soc_final - baseline_soc
             delta_co2e_ha = delta_c_t_ha * C_TO_CO2E
