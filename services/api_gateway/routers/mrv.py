@@ -3,11 +3,13 @@
 from typing import Any, Dict, Optional
 
 from fastapi import APIRouter
+from fastapi.responses import Response
 from pydantic import BaseModel, Field
 
 from services.scientific_motors.carbon_mrv import CarbonMrvMotor
 from services.scientific_motors.chain_runner import run_scientific_chain
 from services.mrv.kobo import average_measured_soc, fetch_kobo_submissions
+from services.mrv.mrv_pdf import build_mrv_pdf
 
 router = APIRouter(prefix="/api/mrv", tags=["mrv"])
 
@@ -22,6 +24,7 @@ class CarbonBudgetRequest(BaseModel):
     measured_soc_t_ha: Optional[float] = None
     use_kobo: bool = False
     methodology: str = "vm0032"  # vm0032 | gold_standard
+    measurements: list[dict] = Field(default_factory=list)  # [{year, soc_t_ha}] t0..tn
 
 
 @router.post("/carbon-budget")
@@ -64,6 +67,7 @@ async def carbon_budget(req: CarbonBudgetRequest) -> Dict[str, Any]:
             "practice": req.practice,
             "measured_soc_t_ha": measured,
             "methodology": req.methodology,
+            "measurements": req.measurements,
         }
     )
 
@@ -83,3 +87,15 @@ async def carbon_budget(req: CarbonBudgetRequest) -> Dict[str, Any]:
         },
         "error": result.error_message,
     }
+
+
+@router.post("/carbon-budget/report")
+async def carbon_budget_report(req: CarbonBudgetRequest) -> Response:
+    """MRV carbon-budget report as a Persian RTL PDF (free stack: reportlab)."""
+    payload = await carbon_budget(req)
+    pdf_bytes = build_mrv_pdf(payload)
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=mrv_carbon_budget.pdf"},
+    )

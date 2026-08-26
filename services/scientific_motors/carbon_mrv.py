@@ -47,6 +47,23 @@ class CarbonMrvMotor:
             measured_soc = parameters.get("measured_soc_t_ha")
             methodology = str(parameters.get("methodology", "vm0032")).lower()
             permanence = float(parameters.get("permanence_factor", 0.85))
+            # multi-period measurements: [{year, soc_t_ha}] -> t0..tn trend
+            measurements = parameters.get("measurements") or []
+            periods: list[Dict[str, Any]] = []
+            if isinstance(measurements, list) and len(measurements) >= 2:
+                prev = None
+                for m in sorted(measurements, key=lambda x: float(x.get("year", 0))):
+                    soc = float(m.get("soc_t_ha", 0.0))
+                    if prev is not None:
+                        d_c = soc - prev
+                        periods.append(
+                            {
+                                "year": int(m.get("year", 0)),
+                                "soc_t_ha": round(soc, 3),
+                                "delta_tco2e_ha": round(d_c * C_TO_CO2E, 3),
+                            }
+                        )
+                    prev = soc
 
             if soc_initial <= 0 or area_ha <= 0:
                 return MotorResult(
@@ -92,6 +109,7 @@ class CarbonMrvMotor:
                     "delta_soc_t_ha_yr": round(delta_c_t_ha, 4),
                     "delta_co2e_ha": round(delta_co2e_ha, 3),
                     "delta_co2e_total": round(delta_co2e_total, 2),
+                    "periods": periods,
                     "certified_delta_co2e_total": round(certified_delta, 2),
                     "permanence_factor": permanence,
                     "area_ha": area_ha,

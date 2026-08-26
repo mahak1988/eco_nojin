@@ -34,6 +34,8 @@ async def _parse_submissions(raw: List[Any]) -> List[Dict[str, Any]]:
                     "submission_id": row.get("_id") or row.get("_uuid"),
                     "time": row.get("_submission_time"),
                     "soc_t_ha": round(soc, 3),
+                    "lat": float(row["lat"]) if row.get("lat") is not None else None,
+                    "lon": float(row["lon"]) if row.get("lon") is not None else None,
                 }
             )
     return parsed
