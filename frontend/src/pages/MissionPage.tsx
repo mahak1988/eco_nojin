@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { PublicLayout } from '../components/layout/PublicLayout';
-import { Droplets, Leaf, Globe, Heart, Shield, Zap } from 'lucide-react';
+import { Droplets, Leaf, Globe, Heart } from 'lucide-react';
 
 const goals = [
   {

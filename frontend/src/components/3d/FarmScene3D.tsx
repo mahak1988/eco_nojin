@@ -72,7 +72,6 @@ const Animal = ({ position, type }: { position: [number, number, number]; type: 
 export const FarmScene3D: React.FC<FarmScene3DProps> = ({
   showTerrain = true,
   showCrops = true,
-  cropType = 'wheat',
   growthStage = 0.7,
   ndvi = 0.75,
   herds = [],

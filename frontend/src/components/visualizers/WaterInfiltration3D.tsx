@@ -16,7 +16,7 @@ const SoilLayer = ({ y, height, color, opacity = 1 }: { y: number; height: numbe
   </mesh>
 );
 
-const RainDrops = ({ intensity, soilAbsorption }: { intensity: number; soilAbsorption: number }) => {
+const RainDrops = ({ intensity }: { intensity: number }) => {
   const dropsRef = useRef<THREE.InstancedMesh>(null);
   const dropsData = useMemo(() => {
     return Array.from({ length: 200 }, () => ({
@@ -114,7 +114,7 @@ export const WaterInfiltration3D: React.FC<WaterInfiltration3DProps> = ({
         <SoilLayer y={-1} height={1} color="#654321" opacity={showLayers ? 0.6 : 1} />
         <SoilLayer y={-2} height={1} color="#3e2723" opacity={showLayers ? 0.5 : 1} />
 
-        <RainDrops intensity={rainfallIntensity} soilAbsorption={soil.absorption} />
+        <RainDrops intensity={rainfallIntensity} />
         <InfiltratingWater soilAbsorption={soil.absorption} />
 
         <OrbitControls enablePan enableZoom enableRotate />

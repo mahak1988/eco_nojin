@@ -37,7 +37,7 @@ const Animal: React.FC<AnimalProps> = ({ type, position }) => {
     <group ref={groupRef} position={position}>
       {/* بدن */}
       <mesh position={[0, config.legs + config.body[1] / 2, 0]} castShadow>
-        <boxGeometry args={config.body} />
+        <boxGeometry args={config.body as [number, number, number]} />
         <meshStandardMaterial color={config.color} />
       </mesh>
       {/* سر */}

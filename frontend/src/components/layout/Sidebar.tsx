@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Leaf,
@@ -18,19 +19,20 @@ interface SidebarProps {
 }
 
 const menuItems = [
-  { id: 'dashboard', label: 'داشبورد', icon: LayoutDashboard },
-  { id: 'crops', label: 'برنامه کشت', icon: Sprout },
-  { id: 'water', label: 'مدیریت آب', icon: Droplets },
-  { id: 'erosion', label: 'فرسایش', icon: Wind },
-  { id: 'livestock', label: 'دامداری', icon: Beef },
-  { id: 'carbon', label: 'کربن', icon: Leaf },
-  { id: 'maps', label: 'نقشه‌ها', icon: Map },
-  { id: 'reports', label: 'گزارش‌ها', icon: LineChart },
-  { id: 'settings', label: 'تنظیمات', icon: Settings },
+  { id: 'dashboard', label: 'داشبورد', icon: LayoutDashboard, path: '/hydroma' },
+  { id: 'crops', label: 'برنامه کشت', icon: Sprout, path: '/models' },
+  { id: 'water', label: 'مدیریت آب', icon: Droplets, path: '/models/watershed' },
+  { id: 'erosion', label: 'فرسایش', icon: Wind, path: '/terrain' },
+  { id: 'livestock', label: 'دامداری', icon: Beef, path: '/simulator' },
+  { id: 'carbon', label: 'کربن', icon: Leaf, path: '/models/rothc' },
+  { id: 'maps', label: 'نقشه‌ها', icon: Map, path: '/virtual-lab' },
+  { id: 'reports', label: 'گزارش‌ها', icon: LineChart, path: '/reports' },
+  { id: 'settings', label: 'تنظیمات', icon: Settings, path: '/settings' },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const [activeItem, setActiveItem] = useState('dashboard');
+  const navigate = useNavigate();
 
   return (
     <>
@@ -122,7 +124,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             return (
               <motion.button
                 key={item.id}
-                onClick={() => setActiveItem(item.id)}
+                onClick={() => {
+                  setActiveItem(item.id);
+                  onClose();
+                  navigate(item.path);
+                }}
                 whileHover={{ x: 4 }}
                 whileTap={{ scale: 0.98 }}
                 style={{

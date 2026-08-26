@@ -134,7 +134,6 @@ export const MultiLayerFarm3D: React.FC<MultiLayerFarm3DProps> = ({
   showSubCanopy = true,
   showGround = true,
   showAnimals = true,
-  growthStage = 0.8,
 }) => {
   const treePositions: [number, number, number][] = [
     [-8, 0, -8], [8, 0, -8], [-8, 0, 8], [8, 0, 8],

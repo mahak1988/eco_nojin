@@ -45,6 +45,40 @@ class MotorStatusResponse(BaseModel):
     error_message: Optional[str] = None
 
 
+class ScientificChainRequest(BaseModel):
+    """Phase-2 scientific chain: RUSLE + RothC-26.3 + AquaCrop with REAL data."""
+    lat: float = Field(..., ge=-90, le=90)
+    lon: float = Field(..., ge=-180, le=180)
+    crop: str = Field(default="wheat", description="FAO crop name (aquacrop)")
+    planting_date: str = Field(default="2025-03-01", description="YYYY-MM-DD")
+    years: int = Field(default=20, ge=1, le=100, description="RothC simulation years")
+    slope_pct: float = Field(default=10.0, ge=0, le=90)
+    practice: str = Field(default="none", description="RUSLE P factor: none/contour/terrace")
+    irrigation_threshold_mm: Optional[float] = Field(default=None, ge=0, le=200)
+    observed: Optional[Dict[str, Any]] = Field(default=None, description="Observed values for KGE (e.g. yield_ton_ha)")
+    use_cache: bool = Field(default=True)
+    optimize: bool = Field(default=False, description="Run pymoo NSGA-II (surrogate)")
+    catchment_km2: float = Field(default=10.0, ge=0.1, le=10000, description="Catchment area for Pywr/HEC-RAS")
+
+
+class ScientificChainResponse(BaseModel):
+    chain_id: str
+    cache_hit: bool
+    status: str
+    location: Dict[str, float]
+    inputs: Dict[str, Any]
+    erosion: Dict[str, Any]
+    swat: Dict[str, Any]
+    water: Dict[str, Any]
+    flood: Dict[str, Any]
+    optimization: Dict[str, Any]
+    rothc: Dict[str, Any]
+    aquacrop: Dict[str, Any]
+    calibration: Dict[str, Any]
+    data_sources: Dict[str, str]
+    error: Optional[str] = None
+
+
 # ============ Helper Functions ============
 
 async def _run_motor_background(
@@ -252,6 +286,36 @@ async def run_motor(request: MotorRunRequest, background_tasks: BackgroundTasks)
     )
 
     return {"run_id": run_id, "status": "running", "message": "Motor started in background"}
+
+
+@router.post("/chain", response_model=ScientificChainResponse)
+async def run_scientific_chain_endpoint(request: ScientificChainRequest):
+    """Run the REAL scientific chain for a land parcel:
+
+    RUSLE (rainfall erosivity x SoilGrids K x slope x crop) ->
+    RothC-26.3 (pyRothC, real monthly climate + clay/SOC) ->
+    AquaCrop (AquaCrop-OSPy, real daily weather + soil texture).
+
+    All inputs come from free sources (Open-Meteo ERA5, ISRIC SoilGrids);
+    results are cached by request hash. KGE is computed when observed
+    values are provided, otherwise reported as no_observed_data.
+    """
+    from services.scientific_motors.chain_runner import run_scientific_chain
+
+    return await run_scientific_chain(
+        lat=request.lat,
+        lon=request.lon,
+        crop=request.crop,
+        planting_date=request.planting_date,
+        years=request.years,
+        slope_pct=request.slope_pct,
+        practice=request.practice,
+        irrigation_threshold_mm=request.irrigation_threshold_mm,
+        observed=request.observed,
+        use_cache=request.use_cache,
+        optimize=request.optimize,
+        catchment_km2=request.catchment_km2,
+    )
 
 
 @router.get("/status/{run_id}")

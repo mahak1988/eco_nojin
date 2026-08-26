@@ -2,9 +2,9 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import {
   Leaf, Droplets, Wind, Beef, Trees, Sprout,
-  Database, Coins, Shield, Sparkles, Globe,
+  Database, Coins, Sparkles, Globe,
 } from 'lucide-react';
-import { Card, Button } from '../ui';
+import { Card } from '../ui';
 
 /**
  * هاب فلسفی HyDroMa

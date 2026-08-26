@@ -25,7 +25,6 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
   appliedInterventions,
   onAdd,
   onRemove,
-  onUpdate,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<InterventionCategory>('biological');
   const [configuringId, setConfiguringId] = useState<string | null>(null);

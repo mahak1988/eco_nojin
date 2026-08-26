@@ -1,17 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Droplets, Waves, CloudRain, Database, Wind, Leaf, LogOut, User } from 'lucide-react';
+import { Droplets, Waves, CloudRain, Wind, Leaf, LogOut, User, Sprout, Thermometer } from 'lucide-react';
 import { AnimatedLogo } from '../components/branding/AnimatedLogo';
 import { StatCard } from '../components/ui/StatCard';
 import { Button } from '../components/ui/Button';
 import { useAuth } from '../context/AuthContext';
 import { toggleTheme } from '../hooks/useThemeMode';
+import { RealLandSummaryCard } from '../components/hydroma/RealLandSummaryCard';
+import { ScientificChainPanel } from '../components/hydroma/ScientificChainPanel';
+import type { RealLandResult } from '../types/vll';
 import {
   WaterBudgetChart, CarbonForecastChart, ErosionRiskMap, LivestockEconomicsChart } from '../components/simulators';
 
 export const HydromaDashboard: React.FC = () => {
   const { user, logout } = useAuth();
+  const [realLand, setRealLand] = useState<RealLandResult | null>(null);
+  const [coords, setCoords] = useState<{ lat: number; lon: number }>({ lat: 35.5, lon: 51.5 });
+
+  const soil = realLand?.soil;
+  const climate = realLand?.climate;
+  const rainfall = climate?.annual_rainfall_mm;
+  const temp = climate?.avg_temp_c;
+  const socPct = soil?.soc_g_kg != null ? (soil.soc_g_kg / 10).toFixed(2) : null;
 
   return (
     <div className="hydroma-bg" style={{ minHeight: '100vh' }}>
@@ -40,15 +51,24 @@ export const HydromaDashboard: React.FC = () => {
       </section>
 
       <main style={{ maxWidth: 1400, margin: '-2rem auto 0', padding: '0 2rem 4rem', position: 'relative', zIndex: 2 }}>
-        {/* Water stats */}
-        <div className="grid grid-cols-4" style={{ marginBottom: '2rem' }}>
-          <StatCard title="رطوبت خاک" value="۳۴٪" change={4.2} icon={<Droplets size={24} />} color="info" />
-          <StatCard title="تبخیر-تعریق" value="۵.۲ mm" change={-2.1} icon={<Waves size={24} />} color="primary" />
-          <StatCard title="رواناب" value="۱۲ mm" change={-15} icon={<CloudRain size={24} />} color="warning" />
-          <StatCard title="تغذیه آبخوان" value="۸ mm" change={6.5} icon={<Database size={24} />} color="success" />
+        {/* Real data + scientific chain */}
+        <div className="grid grid-cols-2" style={{ marginBottom: '2rem', alignItems: 'start' }}>
+          <RealLandSummaryCard onLoaded={setRealLand} onCoordsChange={(lat: number, lon: number) => setCoords({ lat, lon })} />
+          <ScientificChainPanel lat={coords.lat} lon={coords.lon} />
         </div>
 
-        {/* Charts */}
+        {/* Water stats — real values when loaded */}
+        <div className="grid grid-cols-4" style={{ marginBottom: '2rem' }}>
+          <StatCard title="بارش سالانه" value={rainfall != null ? `${rainfall.toFixed(1)} mm` : '—'} icon={<CloudRain size={24} />} color="info" />
+          <StatCard title="دمای میانگین" value={temp != null ? `${temp.toFixed(1)} °C` : '—'} icon={<Thermometer size={24} />} color="warning" />
+          <StatCard title="کربن آلی خاک (SOC)" value={socPct ? `${socPct}٪` : '—'} icon={<Sprout size={24} />} color="success" />
+          <StatCard title="بافت خاک" value={soil?.texture ?? '—'} icon={<Droplets size={24} />} color="primary" />
+        </div>
+
+        {/* Charts — visualization demos (sample inputs; wired to real data in Phase 3) */}
+        <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: '0 0 0.75rem' }}>
+          ⚠️ چارت‌های زیر نمونه‌های نمایشی با ورودی ثابت هستند — در فاز ۳ به داده واقعی زنجیره متصل می‌شوند.
+        </p>
         <div className="grid grid-cols-2" style={{ marginBottom: '2rem' }}>
           <div className="card"><WaterBudgetChart /></div>
           <div className="card"><CarbonForecastChart years={20} initialSOC={1.5} /></div>

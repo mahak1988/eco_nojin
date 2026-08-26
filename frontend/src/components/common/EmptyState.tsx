@@ -4,7 +4,7 @@ interface Props {
   // props های کامپوننت را اینجا تعریف کنید
 }
 
-const EmptyState: React.FC<Props> = (props) => {
+const EmptyState: React.FC<Props> = () => {
   return (
     <div>
       {/* محتوای کامپوننت */}

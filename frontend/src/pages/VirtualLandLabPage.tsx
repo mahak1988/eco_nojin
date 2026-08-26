@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import {
-  Leaf, Droplets, Wind, Sparkles, Settings, Play, Pause,
-  RotateCcw, Save, Download, MapPin, Sun, CloudRain,
-  Trees, Sprout, Layers, BarChart3, Zap, Info,
+  Wind, Sparkles, Play, Pause,
+  RotateCcw, MapPin, Sun, CloudRain,
+  Zap, Info,
 } from 'lucide-react';
 import { AppLayout } from '../components/layout/AppLayout';
 import { Card, Button } from '../components/ui';
+import { API_BASE_URL } from '../config';
 import { VLLTerrain3D } from '../components/vll/VLLTerrain3D';
 import { InterventionPanel } from '../components/vll/VLLInterventionPanel';
 import { VLLLayerManager } from '../components/vll/VLLLayerManager';
 import { VLLResultsBar } from '../components/vll/VLLResultsBar';
 import { VLLAIAdvisor } from '../components/vll/VLLAIAdvisor';
 import { VLLWeatherControl } from '../components/vll/VLLWeatherControl';
+import { RealLandLoader } from '../components/vll/RealLandLoader';
+import type { RealLandResult } from '../types/vll';
 
 export const VirtualLandLabPage: React.FC = () => {
   // State مدیریت
@@ -23,7 +25,7 @@ export const VirtualLandLabPage: React.FC = () => {
     temperature: 25,
     sunIntensity: 0.8,
   });
-  const [activeLayers, setActiveLayers] = useState({
+  const [activeLayers, setActiveLayers] = useState<Record<string, boolean>>({
     dem: true,
     slope: false,
     soil: false,
@@ -36,6 +38,21 @@ export const VirtualLandLabPage: React.FC = () => {
   const [showAdvisor, setShowAdvisor] = useState(false);
   const [timeProgress, setTimeProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [realLand, setRealLand] = useState<RealLandResult | null>(null);
+
+  // بارگذاری زمین واقعی (Phase 1): اعمال اقلیم و خاک واقعی روی شبیه‌ساز
+  const applyRealLand = (result: RealLandResult) => {
+    setRealLand(result);
+    const cli = result.climate;
+    if (cli?.status === 'ok') {
+      setWeather((prev) => ({
+        ...prev,
+        temperature:
+          cli.latest?.tmax_c ?? cli.avg_temp_c ?? prev.temperature,
+        rainfall: Math.max(0, Math.min(150, cli.latest?.precipitation_mm ?? prev.rainfall)),
+      }));
+    }
+  };
 
   // مداخلات
   const addIntervention = (intv: any) => {
@@ -49,7 +66,7 @@ export const VirtualLandLabPage: React.FC = () => {
   const runSimulation = async () => {
     setIsSimulating(true);
     try {
-      const response = await fetch('http://localhost:8000/api/v1/simulation/comprehensive', {
+      const response = await fetch(`${API_BASE_URL}/api/v1/simulation/comprehensive`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -61,7 +78,9 @@ export const VirtualLandLabPage: React.FC = () => {
               precipitation_mm: weather.rainfall * 10,
               wind_speed_ms: weather.wind,
             },
-            soil: { texture: 'loam', organic_carbon_pct: 1.2 },
+            soil: realLand?.soil?.texture
+              ? { texture: realLand.soil.texture, organic_carbon_pct: realLand.soil.soc_pct ?? 1.2 }
+              : { texture: 'loam', organic_carbon_pct: 1.2 },
             topography: { slope_pct: 10 },
             interventions: interventions.map(i => ({
               intervention_id: i.id,
@@ -155,6 +174,9 @@ export const VirtualLandLabPage: React.FC = () => {
             overflowY: 'auto',
             padding: '1rem',
           }}>
+            {/* Real Land Loader (Phase 1) */}
+            <RealLandLoader onLoaded={applyRealLand} />
+
             {/* Layer Manager */}
             <VLLLayerManager
               activeLayers={activeLayers}
@@ -228,10 +250,33 @@ export const VirtualLandLabPage: React.FC = () => {
             }}>
               <MapPin size={16} color="#22c55e" />
               <div>
-                <div style={{ fontWeight: 600 }}>مزرعه نمونه</div>
-                <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>۵۰ هکتار | ۳۵.۵°N, ۵۱.۵°E</div>
+                <div style={{ fontWeight: 600 }}>
+                  {realLand ? 'زمین واقعی' : 'مزرعه نمونه'}
+                </div>
+                <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>
+                  {realLand
+                    ? `${realLand.lat.toFixed(3)}°N, ${realLand.lon.toFixed(3)}°E | ۵۰ هکتار`
+                    : '۵۰ هکتار | ۳۵.۵°N, ۵۱.۵°E'}
+                </div>
               </div>
             </div>
+
+            {/* Real-data indicator */}
+            {realLand && (
+              <div style={{
+                position: 'absolute',
+                top: 20,
+                left: 230,
+                background: realLand.summary.all_real ? 'rgba(34,197,94,0.9)' : 'rgba(245,158,11,0.9)',
+                padding: '0.4rem 0.8rem',
+                borderRadius: 'var(--radius-full)',
+                color: 'white',
+                fontWeight: 700,
+                fontSize: '0.75rem',
+              }}>
+                {realLand.summary.all_real ? '✅ ۱۰۰٪ داده واقعی' : '🔶 داده واقعی (اقلیم+خاک)'}
+              </div>
+            )}
 
             {/* Live Weather Indicator */}
             <div style={{

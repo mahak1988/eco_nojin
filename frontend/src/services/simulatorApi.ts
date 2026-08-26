@@ -3,7 +3,8 @@
  * اگر بک‌اند خاموش باشد، بدون هیچ خطایی داده‌های Mock برمی‌گرداند.
  */
 
-const API_BASE = 'http://localhost:8000/api/v1';
+// Phase 0: backend base URL from env with localhost fallback (no hardcoding).
+const API_BASE = `${import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'}/api/v1`;
 
 export interface SimulationContext {
   villageId?: string; fieldId?: string;

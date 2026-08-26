@@ -4,7 +4,7 @@ interface Props {
   // props های کامپوننت را اینجا تعریف کنید
 }
 
-const LanguageSwitcher: React.FC<Props> = (props) => {
+const LanguageSwitcher: React.FC<Props> = () => {
   return (
     <div>
       {/* محتوای کامپوننت */}

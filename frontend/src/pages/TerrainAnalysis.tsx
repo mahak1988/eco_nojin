@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Card, Typography, Slider, Button, Space } from 'antd';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Box } from '@react-three/drei';
-import * as THREE from 'three';
 
 const { Title, Text } = Typography;
 

@@ -112,7 +112,7 @@ export const WatershedFlowMap: React.FC<WatershedFlowMapProps> = ({
         }}
         controller={true}
         layers={layers}
-        style={{ position: 'relative', zIndex: 1 }}
+        style={{ position: 'relative', zIndex: '1' }}
         getTooltip={({ object }: any) =>
           object && {
             html: `

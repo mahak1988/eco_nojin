@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Mail, Phone, Lock, Loader2 } from 'lucide-react';
 import { AuthShell, Field } from './AuthShell';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../context/AuthContext';

@@ -19,6 +19,8 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
+  // Drop DOM drag handlers that conflict with framer-motion's drag props.
+  const { onDrag, onDragEnd, onDragEnter, onDragExit, onDragLeave, onDragOver, onDragStart, onDrop, onAnimationStart, onAnimationEnd, onAnimationIteration, ...restProps } = props;
   const sizeStyles = {
     sm: { padding: '0.5rem 1rem', fontSize: '0.75rem' },
     md: { padding: '0.75rem 1.5rem', fontSize: '0.875rem' },
@@ -31,7 +33,7 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={disabled || loading}
       whileHover={!disabled && !loading ? { scale: 1.02 } : {}}
       whileTap={!disabled && !loading ? { scale: 0.98 } : {}}
-      {...props}
+      {...restProps}
     >
       {loading ? (
         <Loader2 size={16} className="animate-spin" />

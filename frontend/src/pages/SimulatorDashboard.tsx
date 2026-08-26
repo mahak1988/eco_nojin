@@ -1,25 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
-  Leaf, Droplets, Wind, Beef, TrendingUp, DollarSign,
-  Activity, Zap, Trees, BarChart3, Box,
+  Leaf, Droplets, Wind, Beef, TrendingUp,
+  Activity, Trees, Box,
 } from 'lucide-react';
 import { AppLayout } from '../components/layout/AppLayout';
-import { Card, StatCard, Tabs, ProgressRing, Modal } from '../components/ui';
+import { Card, StatCard, Tabs } from '../components/ui';
 import { CropComparisonChart } from '../components/simulators/CropComparisonChart';
 import { CarbonForecastChart } from '../components/simulators/CarbonForecastChart';
 import { ErosionRiskMap } from '../components/simulators/ErosionRiskMap';
 import { WaterBudgetChart } from '../components/simulators/WaterBudgetChart';
 import { LivestockEconomicsChart } from '../components/simulators/LivestockEconomicsChart';
 import { FarmScene3D } from '../components/3d/FarmScene3D';
-import { simulatorService, type SimulationContext, type LivestockRequest } from '../services/simulatorApi';
+import { simulatorService, type SimulationContext } from '../services/simulatorApi';
 
 export const SimulatorDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('overview');
   const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<any>({});
-  const [showModal, setShowModal] = useState(false);
 
   // Default Context
   const [context] = useState<SimulationContext>({

@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field, ConfigDict
 from sqlalchemy.orm import Session
 
 from database.config import get_db
-from services.auth.models import Farm, User
+from database.models import Farm, User
 from services.api_gateway.auth import require_user
 
 router = APIRouter(prefix="/api/v1/farms", tags=["farms"])

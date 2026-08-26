@@ -4,7 +4,7 @@ interface Props {
   // props های کامپوننت را اینجا تعریف کنید
 }
 
-const Footer: React.FC<Props> = (props) => {
+const Footer: React.FC<Props> = () => {
   return (
     <div>
       {/* محتوای کامپوننت */}

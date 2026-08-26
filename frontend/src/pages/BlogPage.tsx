@@ -2,7 +2,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, User, ArrowLeft } from 'lucide-react';
 import { PublicLayout } from '../components/layout/PublicLayout';
-import { Card } from '../components/ui';
 
 const BLOG_POSTS = [
   {

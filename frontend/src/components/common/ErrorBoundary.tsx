@@ -4,7 +4,7 @@ interface Props {
   // props های کامپوننت را اینجا تعریف کنید
 }
 
-const ErrorBoundary: React.FC<Props> = (props) => {
+const ErrorBoundary: React.FC<Props> = () => {
   return (
     <div>
       {/* محتوای کامپوننت */}

@@ -1,9 +1,12 @@
 // frontend/src/components/simulators/CarbonSequestrationChart.tsx
 import ReactEChartsCore from 'echarts-for-react/lib/core';
 import * as echarts from 'echarts/core';
-import { LineChart } from 'echarts/charts';
 
-export function CarbonSequestrationChart({ projection }: Props) {
+export interface CarbonSequestrationChartProps {
+  projection: { years: Array<string | number>; values: number[] };
+}
+
+export function CarbonSequestrationChart({ projection }: CarbonSequestrationChartProps) {
   const option = {
     title: {
       text: 'پیش‌بینی ترشح کربن خاک (۲۰ سال)',

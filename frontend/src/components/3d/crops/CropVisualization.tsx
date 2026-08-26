@@ -22,7 +22,7 @@ export const CropVisualization: React.FC<CropVisualizationProps> = ({
   const groupRef = useRef<THREE.Group>(null);
   const timeRef = useRef(0);
 
-  useFrame((state, delta) => {
+  useFrame((_state, delta) => {
     timeRef.current += delta;
     // انیمیشن باد
     if (groupRef.current) {

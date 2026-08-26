@@ -34,7 +34,6 @@ export const WindSimulation2D: React.FC<WindSimulation2DProps> = ({
   width = 800,
   height = 400,
   windSpeed: initialWindSpeed = 12,
-  windbreaks: initialWindbreaks = [],
   onErosionCalculated,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);

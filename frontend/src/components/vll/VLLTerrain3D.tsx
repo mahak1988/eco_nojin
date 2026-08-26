@@ -1,6 +1,6 @@
-import React, { useRef, useMemo, useEffect } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Sky, Cloud, Clouds, Stars } from '@react-three/drei';
+import { OrbitControls, Sky, Stars } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface VLLTerrain3DProps {
@@ -331,7 +331,6 @@ export const VLLTerrain3D: React.FC<VLLTerrain3DProps> = ({
   weather,
   activeLayers,
   timeProgress,
-  isPlaying,
 }) => {
   // محاسبه ارتفاع زمین در هر نقطه
   const terrainHeight = (x: number, z: number): number => {

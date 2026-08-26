@@ -111,7 +111,7 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
         <div style={{ marginBottom: '1rem' }}>
           <h4 style={{ fontSize: '0.875rem', marginBottom: '0.5rem' }}>✅ فعال ({interventions.length})</h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-            {interventions.map((intv, idx) => (
+            {interventions.map((intv) => (
               <motion.div
                 key={intv.id}
                 initial={{ opacity: 0, x: -10 }}

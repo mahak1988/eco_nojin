@@ -5,7 +5,7 @@ import {
   Award, Calendar, MapPin, Edit2, LogOut, Bell,
 } from 'lucide-react';
 import { AppLayout } from '../components/layout/AppLayout';
-import { Card, Button, StatCard, ProgressRing, AnimatedCounter } from '../components/ui';
+import { Card, Button, StatCard, ProgressRing } from '../components/ui';
 
 export const ProfilePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Wind, Droplets, Sprout, Sparkles, Map, Leaf,
+  Wind, Droplets, Sprout, Sparkles, Map,
 } from 'lucide-react';
 import { AppLayout } from '../components/layout/AppLayout';
 import { Card, Tabs } from '../components/ui';

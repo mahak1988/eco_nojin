@@ -8,8 +8,8 @@ from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy.orm import Session
 
 from database.config import get_db
-from services.auth.models import AuditLog, EcoWallet, PasswordResetToken
-from database.models import User
+from database.models import User, EcoWallet, PasswordResetToken
+from services.admin.models import AuditLog
 from services.api_gateway.auth import (
     create_access_token,
     create_refresh_token,

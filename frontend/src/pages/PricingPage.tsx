@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Zap, Crown, Rocket, Infinity, Wallet, Sparkles } from 'lucide-react';
+import { Check, Zap, Crown, Infinity, Wallet, Sparkles } from 'lucide-react';
 import { PublicLayout } from '../components/layout/PublicLayout';
 import { CryptoPaymentModal } from '../components/payment/CryptoPaymentModal';
 import { SUBSCRIPTION_PLANS, type SubscriptionPlan } from '../config/crypto';

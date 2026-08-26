@@ -80,6 +80,22 @@ class SatelliteAnalyzeResponse(BaseModel):
     sensed_at: Optional[str] = None
 
 
+class RealLandResponse(BaseModel):
+    """Aggregated REAL land intelligence (satellite + climate + soil).
+
+    Every block carries an explicit ``status`` and ``data_source`` label.
+    The satellite block may be ``credentials_required`` until free CDSE
+    credentials are configured — this endpoint never fabricates data.
+    """
+    lat: float
+    lon: float
+    analysis_date: Optional[str] = None
+    satellite: Dict[str, Any]
+    climate: Dict[str, Any]
+    soil: Dict[str, Any]
+    summary: Dict[str, Any]
+
+
 class SatelliteHistoryResponse(BaseModel):
     """One stored satellite analysis row."""
     id: int
@@ -305,6 +321,24 @@ async def analyze_satellite(request: SatelliteAnalyzeRequest, db: Session = Depe
         cloud_cover=analysis.get("cloud_cover"),
         sensed_at=analysis.get("sensed_at"),
     )
+
+
+@router.post("/real-land", response_model=RealLandResponse)
+async def real_land_analysis(request: SatelliteAnalyzeRequest):
+    """REAL land intelligence for a point (all sources free):
+
+    - satellite: Sentinel-2 L2A (NDVI/EVI/SAVI/LAI/C-factor + NDVI grid),
+      Landsat 8/9 LST, Sentinel-1 VV/VH proxy — via Copernicus CDSE.
+    - climate: ERA5 daily series + FAO-56 ET0 via Open-Meteo (no key).
+    - soil: SoilGrids v2.0 REST profile (texture, SOC, pH, CEC, BD, K).
+
+    Honesty (W-001): no simulated fallback. Without CDSE credentials the
+    satellite block reports ``credentials_required`` with free sign-up
+    instructions (climate + soil still return real values).
+    """
+    from services.satellite.real_land import get_real_land
+
+    return await get_real_land(request.lat, request.lon, request.analysis_date)
 
 
 @router.get("/history/{farm_id}", response_model=List[SatelliteHistoryResponse])

@@ -4,7 +4,7 @@ interface Props {
   // props های کامپوننت را اینجا تعریف کنید
 }
 
-const ThreeDScene: React.FC<Props> = (props) => {
+const ThreeDScene: React.FC<Props> = () => {
   return (
     <div>
       {/* محتوای کامپوننت */}

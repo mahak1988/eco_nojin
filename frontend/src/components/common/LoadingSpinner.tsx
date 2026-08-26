@@ -4,7 +4,7 @@ interface Props {
   // props های کامپوننت را اینجا تعریف کنید
 }
 
-const LoadingSpinner: React.FC<Props> = (props) => {
+const LoadingSpinner: React.FC<Props> = () => {
   return (
     <div>
       {/* محتوای کامپوننت */}

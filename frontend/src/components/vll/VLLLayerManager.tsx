@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from '../ui';
-import { Mountain, Compass, Droplets, Leaf, Waves, AlertTriangle, Layers } from 'lucide-react';
+import { Mountain, Compass, Droplets, Leaf, AlertTriangle, Layers } from 'lucide-react';
 
 interface VLLLayerManagerProps {
   activeLayers: Record<string, boolean>;

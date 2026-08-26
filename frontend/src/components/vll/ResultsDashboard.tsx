@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import {
   Droplets, Leaf, Wind, DollarSign, TrendingUp,
-  Sprout, Beef, AlertTriangle, CheckCircle,
+  Sprout, AlertTriangle, CheckCircle,
 } from 'lucide-react';
 import { Card, StatCard, ProgressRing } from '../ui';
 import { CarbonForecastChart } from '../simulators/CarbonForecastChart';

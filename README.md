@@ -19,7 +19,7 @@ pip install -r requirements.txt
 # API gateway
 uvicorn services.api_gateway.main:app --reload --port 8000
 
-# Frontend (Next.js)
+# Frontend (Vite + React 19 + TypeScript)
 cd frontend
 pnpm install
 pnpm run dev
@@ -35,16 +35,37 @@ pytest
 | `engine/hydroma/` | Scientific engine (soil, climate, hydrology, erosion, carbon, satellite, scenarios, biofertilizer, economics, finance, risk, irrigation, groundwater, materials, ecotourism, land, infrastructure, decision support, simulation, calibration, mrv, standards) |
 | `engine/cpp_core/` | C++20 numerical core (Richards, Saint-Venant, FAO-56, RUSLE, sampling) with pybind11 bindings |
 | `services/` | Microservices (api_gateway, admin, auth, ledger, notification, reporting, workflow, analytics, bots, carbon, content, data_sources, ecowallet, field_monitoring, land, map_engine, mobile_monitoring, science, scientific_motors, supabase, telegram_bot) |
-| `frontend/` | Next.js PWA with 14-language i18n (fa/ar/ur RTL) |
+| `frontend/` | Vite + React 19 + TypeScript SPA, 14-language i18n (fa/ar/ur RTL), deck.gl/MapLibre/Three.js visualization |
 | `docs/en` `docs/fa` | Bilingual documentation (00–12) |
 | `tests/` | Unit + integration tests |
 
 ### Honesty note on satellite data
 
-The `earth_search` provider returns **simulated** tiles (labeled
-`data_source="simulated"`). Real Sentinel-2 ingestion requires an S3 download
-path that is not yet implemented. Never present simulated data as real
-observations.
+- The legacy `earth_search` provider returns **simulated** tiles (labeled
+  `data_source="simulated"`) and stays only as a clearly-labelled fallback.
+- **Phase 1 (real path):** `POST /api/v1/satellite/real-land` aggregates
+  REAL free data — Copernicus CDSE Sentinel-2/1 + Landsat LST, Open-Meteo
+  ERA5 climate, ISRIC SoilGrids profile — and **never fabricates** values;
+  missing credentials return an honest `credentials_required` status.
+  Docs: `docs/fa/34_phase1_real_data.md`.
+
+### Frontend routes (Phase 0)
+
+All pages are reachable from the router (no orphan pages):
+
+| Path | Page |
+|---|---|
+| `/` | HomePage |
+| `/about` `/mission` `/features` `/pricing` `/blog` `/contact` `/docs` `/terms` `/privacy` | Public pages |
+| `/hydroma-about` `/help` `/support` | Public info pages |
+| `/login` `/register` `/forgot-password` | Auth |
+| `/hydroma` | HydromaDashboard (protected) |
+| `/virtual-lab` | VirtualLandLabPage (protected) — the simulator hub |
+| `/simulator` `/simulators` | SimulatorDashboard / VisualSimulatorsPage (protected) |
+| `/terrain` `/visualization-3d` | TerrainAnalysis / Visualization3D (protected) |
+| `/models` `/models/rothc` `/models/swat` `/models/watershed` | ModelsLibrary + model pages (protected) |
+| `/land-profiles` `/capability` | LandProfiles / CapabilityAssessment (protected) |
+| `/monitoring` `/reports` `/data` `/api-docs` `/settings` `/profile` | Platform pages (protected) |
 
 ### Documentation
 
@@ -74,7 +95,7 @@ pip install -r requirements.txt
 # دروازه API
 uvicorn services.api_gateway.main:app --reload --port 8000
 
-# فرانت‌اند (Next.js)
+# فرانت‌اند (Vite + React 19 + TypeScript)
 cd frontend
 pnpm install
 pnpm run dev
@@ -90,7 +111,7 @@ pytest
 | `engine/hydroma/` | موتور علمی (خاک، اقلیم، هیدرولوژی، فرسایش، کربن، ماهواره، سناریو، بیوفرتیلایزر، اقتصاد، مالی، ریسک، آبیاری، آب زیرزمینی، مواد، اکوتوریسم، زمین، زیرساخت، تصمیم‌گیری، شبیه‌سازی، کالیبراسیون، MRV، استانداردها) |
 | `engine/cpp_core/` | هسته عددی C++20 (ریچاردز، سن‌ونان، FAO-56، RUSLE، نمونه‌برداری) با اتصال pybind11 |
 | `services/` | میکروسرویس‌ها (api_gateway، admin، auth، ledger، notification، reporting، workflow، analytics، bots، carbon، content، data_sources، ecowallet، field_monitoring، land، map_engine، mobile_monitoring، science، scientific_motors، supabase، telegram_bot) |
-| `frontend/` | PWA مبتنی بر Next.js با بومی‌سازی ۱۴ زبانه (فارسی/عربی/اردو RTL) |
+| `frontend/` | SPA مبتنی بر Vite + React 19 + TypeScript با بومی‌سازی ۱۴ زبانه (فارسی/عربی/اردو RTL) و ویژوال‌سازی deck.gl/MapLibre/Three.js |
 | `docs/en` `docs/fa` | مستندات دوزبانه (۰۰–۱۲) |
 | `tests/` | تست‌های واحد و یکپارچه |
 

@@ -2,7 +2,11 @@
 import DeckGL from '@deck.gl/react';
 import { HexagonLayer } from '@deck.gl/aggregation-layers';
 
-export function NDVIHeatmap({ satellitePoints }: Props) {
+export interface NDVIHeatmapProps {
+  satellitePoints: Array<{ longitude: number; latitude: number; ndvi?: number }>;
+}
+
+export function NDVIHeatmap({ satellitePoints }: NDVIHeatmapProps) {
   const layer = new HexagonLayer({
     id: 'ndvi-hexagon',
     data: satellitePoints,

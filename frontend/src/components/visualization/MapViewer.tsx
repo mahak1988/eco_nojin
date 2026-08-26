@@ -4,7 +4,7 @@ interface Props {
   // props های کامپوننت را اینجا تعریف کنید
 }
 
-const MapViewer: React.FC<Props> = (props) => {
+const MapViewer: React.FC<Props> = () => {
   return (
     <div>
       {/* محتوای کامپوننت */}

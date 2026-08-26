@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, Loader2, Wallet, Globe } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Wallet, Globe } from 'lucide-react';
 import { AuthShell, Field } from './AuthShell';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../context/AuthContext';

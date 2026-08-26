@@ -187,3 +187,136 @@ export interface AdvisorMessage {
   timestamp: string;
   suggestions?: string[];
 }
+
+// ─── Real Land (Phase 1 — داده واقعی) ─────────────────────────────
+export type DataStatus = 'ok' | 'error' | 'no_scene' | 'band_error' | 'credentials_required' | 'not_configured';
+
+export interface NdviGridPoint {
+  lon: number;
+  lat: number;
+  ndvi: number;
+}
+
+export interface RealSatelliteBlock {
+  status: DataStatus | string;
+  data_source?: string;
+  ndvi?: number | null;
+  evi?: number | null;
+  savi?: number | null;
+  lai?: number | null;
+  c_factor?: number | null;
+  ndvi_grid?: NdviGridPoint[];
+  scene_id?: string | null;
+  sensed_at?: string | null;
+  cloud_cover?: number | null;
+  sensor?: string;
+  lst_c?: number | null;
+  lst_status?: string;
+  lst_source?: string;
+  s1_status?: string;
+  s1_vh_vv_ratio?: number | null;
+  s1_data_quality?: string;
+  message?: string;
+  free_registration?: string;
+  error?: string;
+}
+
+export interface RealClimateBlock {
+  status: DataStatus | string;
+  data_source?: string;
+  period?: string;
+  days?: number;
+  annual_rainfall_mm?: number;
+  avg_temp_c?: number;
+  max_temp_c?: number;
+  min_temp_c?: number;
+  annual_et0_mm?: number;
+  latest?: {
+    date?: string | null;
+    precipitation_mm?: number | null;
+    tmax_c?: number | null;
+    tmin_c?: number | null;
+    et0_mm?: number | null;
+  } | null;
+  reference?: string;
+  error?: string;
+}
+
+export interface RealSoilBlock {
+  status: DataStatus | string;
+  data_source?: string;
+  texture?: SoilProfile['texture'] | string;
+  texture_approx?: boolean;
+  sand_pct?: number;
+  silt_pct?: number;
+  clay_pct?: number;
+  soc_g_kg?: number | null;
+  soc_pct?: number | null;
+  ph_h2o?: number | null;
+  cec_mmolc_kg?: number | null;
+  bulk_density_g_cm3?: number | null;
+  k_factor_rusle?: number;
+  depth_layer?: string;
+  sample_offset_km?: number;
+  reference?: string;
+  error?: string;
+}
+
+export interface RealLandSummary {
+  satellite: string;
+  climate: string;
+  soil: string;
+  all_real: boolean;
+  sources: {
+    satellite: string;
+    climate: string;
+    soil: string;
+  };
+}
+
+export interface RealLandResult {
+  lat: number;
+  lon: number;
+  analysis_date?: string | null;
+  satellite: RealSatelliteBlock;
+  climate: RealClimateBlock;
+  soil: RealSoilBlock;
+  summary: RealLandSummary;
+}
+
+// ─── Scientific Chain (Phase 2 — زنجیره علمی واقعی) ──────────────────
+export interface ScientificChainResult {
+  chain_id: string;
+  cache_hit: boolean;
+  status: string;
+  location: { lat: number; lon: number };
+  inputs: Record<string, unknown>;
+  erosion: {
+    soil_loss_ton_ha_yr?: number;
+    risk?: string;
+    r_factor?: number;
+    k_factor?: number;
+    ls_factor?: number;
+    c_factor?: number;
+    p_factor?: number;
+  };
+  swat: MotorBlock;
+  water: MotorBlock;
+  flood: MotorBlock;
+  optimization: MotorBlock;
+  rothc: MotorBlock;
+  aquacrop: MotorBlock & {
+    outputs?: { harvest_date?: string; yield_ton_ha?: number };
+  };
+  calibration: Record<string, unknown>;
+  data_sources: Record<string, string>;
+  error?: string | null;
+}
+
+export interface MotorBlock {
+  status?: string;
+  summary?: Record<string, unknown>;
+  outputs?: Record<string, unknown>;
+  execution_time_seconds?: number;
+  error?: string | null;
+}

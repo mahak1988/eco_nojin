@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Droplets, Leaf, Zap, ArrowRight } from 'lucide-react';
 import { PublicLayout } from '../components/layout/PublicLayout';
-import { Card, Button } from '../components/ui';
+import { Button } from '../components/ui';
 
 export const HydromaPage: React.FC = () => {
   const features = [

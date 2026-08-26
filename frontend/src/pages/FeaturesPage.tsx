@@ -2,8 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { PublicLayout } from '../components/layout/PublicLayout';
 import {
-  Leaf, Droplets, Wind, TrendingUp, Brain, Satellite,
-  BarChart3, Shield, Zap, Users, Globe, Database } from 'lucide-react';
+  Leaf, Droplets, Wind, Brain, Satellite,
+  BarChart3, Zap, Users, Globe } from 'lucide-react';
 
 const featureCategories = [
   {

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Typography, Select, DatePicker } from 'antd';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
-import api from '../services/api'; // Import the API service
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
