@@ -33,5 +33,12 @@
 **جدید**: `services/mrv/mrv_pdf.py`، `data/mrv/kobo_samples_import.csv`
 **توسعه**: `carbon_mrv.py` (periods)، `kobo.py` (lat/lon)، `mrv_router.py` (اندپوینت report)، `MrvCard.tsx` (نقشه deck.gl + CSV)
 
+## ۶) تکمیل رابط کاربری (commits e415a3f + ca8b733)
+
+- ویرایشگر سری چنددوره‌ای t0→t5 در کارت MRV (افزودن/حذف تا ۶ نقطه) + جدول روند Δ tCO2e/ha
+- دکمه «دانلود گزارش PDF» — POST /api/mrv/carbon-budget/report با همان پارامترها
+- سازگاری معنایی: آخرین نقطه سری = baseline میدانی → ield_verified (همانند measured_soc_t_ha)
+- تست HTTP: measurements [60.0, 62.5, 66.5] → data_mode=field_verified، Δ صادقانه −1357.16 tCO2e
+
 ## قدم بعدی (فاز ۴-د / ۵)
 اتصال داده میدانی واقعی آزمایشگاهی، ماژولهای اقتصاد معیشت (فاز ۵)، یا نصب باینریهای SWAT+/HEC-RAS برای اجرای کامل.
