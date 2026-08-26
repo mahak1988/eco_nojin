@@ -431,6 +431,7 @@ async def run_scientific_chain(
             "crop": crop, "planting_date": planting_date, "years": years,
             "slope_pct": slope_pct, "practice": practice,
             "annual_rainfall_mm": round(annual_rainfall, 1),
+            "annual_runoff_mcm": round(sum(inflow_mcm), 3),
             "clay_pct": clay_pct,
             "soc_initial_t_ha": round(soc_t_ha, 2),
             "soil_texture": soil.get("texture"),

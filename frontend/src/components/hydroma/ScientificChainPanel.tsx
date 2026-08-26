@@ -10,7 +10,7 @@ interface ScientificChainPanelProps {
   plantingDate?: string;
   slopePct?: number;
   catchmentKm2?: number;
-  compact?: boolean;
+  onResult?: (result: ScientificChainResult) => void;
 }
 
 interface Metric {
@@ -38,6 +38,7 @@ export const ScientificChainPanel: React.FC<ScientificChainPanelProps> = ({
   plantingDate = '2024-11-15',
   slopePct = 10,
   catchmentKm2 = 10,
+  onResult,
 }) => {
   const [result, setResult] = useState<ScientificChainResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -55,6 +56,7 @@ export const ScientificChainPanel: React.FC<ScientificChainPanelProps> = ({
         optimize: true,
       });
       setResult(data);
+      onResult?.(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'خطا در اجرای زنجیره علمی');
     } finally {

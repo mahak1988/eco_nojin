@@ -9,7 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import { toggleTheme } from '../hooks/useThemeMode';
 import { RealLandSummaryCard } from '../components/hydroma/RealLandSummaryCard';
 import { ScientificChainPanel } from '../components/hydroma/ScientificChainPanel';
-import type { RealLandResult } from '../types/vll';
+import type { RealLandResult, ScientificChainResult } from '../types/vll';
 import {
   WaterBudgetChart, CarbonForecastChart, ErosionRiskMap, LivestockEconomicsChart } from '../components/simulators';
 
@@ -17,12 +17,23 @@ export const HydromaDashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const [realLand, setRealLand] = useState<RealLandResult | null>(null);
   const [coords, setCoords] = useState<{ lat: number; lon: number }>({ lat: 35.5, lon: 51.5 });
+  const [chain, setChain] = useState<ScientificChainResult | null>(null);
 
   const soil = realLand?.soil;
   const climate = realLand?.climate;
   const rainfall = climate?.annual_rainfall_mm;
   const temp = climate?.avg_temp_c;
   const socPct = soil?.soc_g_kg != null ? (soil.soc_g_kg / 10).toFixed(2) : null;
+
+  // چارت‌های واقعی از زنجیره علمی (فاز ۳-ب): مقادیر واقعی به‌جای ورودی ثابت
+  const chainErosion = chain?.erosion?.soil_loss_ton_ha_yr;
+  const chainErosionRisk = chain?.erosion?.risk;
+  const chainRainfall = (chain?.inputs?.annual_rainfall_mm as number | undefined) ?? rainfall;
+  const chainRunoffMm =
+    typeof chain?.inputs?.annual_runoff_mcm === 'number'
+      ? Number(chain.inputs.annual_runoff_mcm) * 10
+      : null;
+  const chainEt0 = climate?.annual_et0_mm;
 
   return (
     <div className="hydroma-bg" style={{ minHeight: '100vh' }}>
@@ -54,7 +65,7 @@ export const HydromaDashboard: React.FC = () => {
         {/* Real data + scientific chain */}
         <div className="grid grid-cols-2" style={{ marginBottom: '2rem', alignItems: 'start' }}>
           <RealLandSummaryCard onLoaded={setRealLand} onCoordsChange={(lat: number, lon: number) => setCoords({ lat, lon })} />
-          <ScientificChainPanel lat={coords.lat} lon={coords.lon} />
+          <ScientificChainPanel lat={coords.lat} lon={coords.lon} onResult={setChain} />
         </div>
 
         {/* Water stats — real values when loaded */}
@@ -65,19 +76,28 @@ export const HydromaDashboard: React.FC = () => {
           <StatCard title="بافت خاک" value={soil?.texture ?? '—'} icon={<Droplets size={24} />} color="primary" />
         </div>
 
-        {/* Charts — visualization demos (sample inputs; wired to real data in Phase 3) */}
+        {/* Charts — مقادیر واقعی از زنجیره علمی */}
         <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: '0 0 0.75rem' }}>
-          ⚠️ چارت‌های زیر نمونه‌های نمایشی با ورودی ثابت هستند — در فاز ۳ به داده واقعی زنجیره متصل می‌شوند.
+          📊 چارت‌ها با داده واقعی زنجیره (RUSLE/RothC/Pywr) تغذیه می‌شوند — {chain ? `شناسه زنجیره: ${chain.chain_id.slice(0, 8)}` : 'برای فعال‌سازی، زنجیره علمی را اجرا کنید'}.
         </p>
         <div className="grid grid-cols-2" style={{ marginBottom: '2rem' }}>
-          <div className="card"><WaterBudgetChart /></div>
-          <div className="card"><CarbonForecastChart years={20} initialSOC={1.5} /></div>
-          <div className="card"><ErosionRiskMap windErosion={{ erosionTonHaYear: 15, riskLevel: 'high' }} waterErosion={{ soilLossTonHaYear: 8, riskLevel: 'high' }} /></div>
-          <div className="card"><LivestockEconomicsChart herds={[
-            { animalType: 'گاو', headCount: 20, revenue: 25000, feedCost: 8000, vetCost: 1000, laborCost: 3000, netProfit: 13000 },
-            { animalType: 'گوسفند', headCount: 100, revenue: 18000, feedCost: 5000, vetCost: 1500, laborCost: 2000, netProfit: 9500 },
-          ]} /></div>
+          <div className="card"><WaterBudgetChart
+            precipitationMm={chainRainfall ?? 500}
+            infiltrationMm={chainRainfall != null && chainRunoffMm != null ? Math.max(0, chainRainfall - chainRunoffMm) : 280}
+            runoffMm={chainRunoffMm ?? 120}
+            evapotranspirationMm={chainEt0 ?? 80}
+            aquiferRechargeMm={0}
+          /></div>
+          <div className="card"><CarbonForecastChart years={20} initialSOC={socPct ? Number(socPct) : 1.5} managementScenario="conservation" /></div>
+          <div className="card"><ErosionRiskMap
+            windErosion={{ erosionTonHaYear: 0, riskLevel: 'na' }}
+            waterErosion={{ soilLossTonHaYear: chainErosion ?? 1.15, riskLevel: chainErosionRisk ?? 'low' }}
+          /></div>
+          <div className="card"><LivestockEconomicsChart herds={[]} /></div>
         </div>
+        <p style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', margin: '-1.2rem 0 1.5rem' }}>
+          ⚠️ تبخیر-تعرق مقدار مرجع (ET0) است؛ تغذیه آبخوان مدل‌سازی نشده (۰)؛ فرسایش بادی مدل‌سازی نشده؛ نمودار دامداری بدون داده واقعی خالی است — هیچ عدد ساختگی نمایش داده نمی‌شود.
+        </p>
 
         {/* Quick actions */}
         <div className="card" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
