@@ -21,6 +21,7 @@ class CarbonBudgetRequest(BaseModel):
     slope_pct: float = 10.0
     measured_soc_t_ha: Optional[float] = None
     use_kobo: bool = False
+    methodology: str = "vm0032"  # vm0032 | gold_standard
 
 
 @router.post("/carbon-budget")
@@ -53,7 +54,7 @@ async def carbon_budget(req: CarbonBudgetRequest) -> Dict[str, Any]:
         if kobo.get("status") == "ok":
             measured = average_measured_soc(kobo)
 
-    # 3) carbon accounting (Verra VM0032-style)
+    # 3) carbon accounting (Verra VM0032 or Gold Standard SOC Framework)
     motor = CarbonMrvMotor()
     result = motor.execute(
         {
@@ -62,6 +63,7 @@ async def carbon_budget(req: CarbonBudgetRequest) -> Dict[str, Any]:
             "area_ha": req.area_ha,
             "practice": req.practice,
             "measured_soc_t_ha": measured,
+            "methodology": req.methodology,
         }
     )
 
@@ -77,7 +79,7 @@ async def carbon_budget(req: CarbonBudgetRequest) -> Dict[str, Any]:
             "soc_final": "RothC-26.3 (pyRothC) 20-year projection",
             "field_data": "KoboToolbox (free tier)" if req.use_kobo else "not requested",
             "conversion": "IPCC t C -> tCO2e × 3.667",
-            "methodology": "Verra VM0032 — simplified accounting (not a certification)",
+            "methodology": "Gold Standard SOC Framework (simplified)" if req.methodology == "gold_standard" else "Verra VM0032 — simplified accounting (not a certification)",
         },
         "error": result.error_message,
     }

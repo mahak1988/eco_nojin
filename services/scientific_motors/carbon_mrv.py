@@ -19,6 +19,13 @@ from services.scientific_motors.base import MotorParameters, MotorResult, MotorS
 
 C_TO_CO2E = 3.667  # t C -> t CO2e (IPCC)
 
+# Gold Standard Soil Organic Carbon Framework (v1.0) reporting parameters
+GS_MONITORING = {
+    "soil_depth_cm": 30,
+    "monitoring_interval_years": 5,
+    "requirement": "measure SOC at 0-30 cm every 5 years (GS SOC Framework)",
+}
+
 
 class CarbonMrvMotor:
     """Carbon budget (SOC stock change) with honest data provenance."""
@@ -38,6 +45,8 @@ class CarbonMrvMotor:
             area_ha = float(parameters.get("area_ha", 0.0))
             practice = parameters.get("practice", "none")
             measured_soc = parameters.get("measured_soc_t_ha")
+            methodology = str(parameters.get("methodology", "vm0032")).lower()
+            permanence = float(parameters.get("permanence_factor", 0.85))
 
             if soc_initial <= 0 or area_ha <= 0:
                 return MotorResult(
@@ -62,8 +71,16 @@ class CarbonMrvMotor:
             # Verra VM0032-style permanence buffer (100-yr accounting, default 15%
             # uncertainty deduction — applied only to the certified figure, reported
             # separately so the raw number stays honest).
-            permanence_factor = 0.85
-            certified_delta = delta_co2e_total * permanence_factor if delta_co2e_total > 0 else delta_co2e_total
+            certified_delta = delta_co2e_total * permanence if delta_co2e_total > 0 else delta_co2e_total
+
+            if methodology == "gold_standard":
+                methodology_label = "Gold Standard Soil Organic Carbon Framework (v1.0) — simplified"
+                extra: Dict[str, Any] = {"monitoring": GS_MONITORING}
+            else:
+                methodology = "vm0032"
+                methodology_label = "Verra VM0032 (soil carbon) — simplified accounting"
+                extra: Dict[str, Any] = {"certification_note": "VM0032 registration requires full methodology docs"}
+
 
             return MotorResult(
                 run_id=run_id,
@@ -76,13 +93,15 @@ class CarbonMrvMotor:
                     "delta_co2e_ha": round(delta_co2e_ha, 3),
                     "delta_co2e_total": round(delta_co2e_total, 2),
                     "certified_delta_co2e_total": round(certified_delta, 2),
-                    "permanence_factor": permanence_factor,
+                    "permanence_factor": permanence,
                     "area_ha": area_ha,
                     "practice": practice,
                     "conversion": "t C -> tCO2e × 3.667 (IPCC)",
-                    "methodology": "Verra VM0032 (soil carbon) — simplified accounting",
+                    "methodology": methodology_label,
+                    "methodology_id": methodology,
                     "data_mode": data_mode,
-                    "engine": "carbon_mrv 1.0",
+                    "engine": "carbon_mrv 1.1",
+                    **extra,
                 },
                 summary={
                     "delta_co2e_total": round(delta_co2e_total, 2),
