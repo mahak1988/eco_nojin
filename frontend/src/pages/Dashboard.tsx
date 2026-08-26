@@ -27,8 +27,7 @@ const Dashboard: React.FC = () => {
           totalUsers: 1234,
           activeProjects: 12,
           revenue: 23567,
-          growthRate: 12.3,
-        });
+          growthRate: 12.3 });
         setLoading(false);
       } catch (error) {
         console.error('Error fetching dashboard stats:', error);

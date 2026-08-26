@@ -1,119 +1,60 @@
-import React, { useState } from 'react';
-import { Layout, Menu, Breadcrumb, Button, Dropdown, Space, Avatar, Typography } from 'antd';
-import {
-  DashboardOutlined,
-  EnvironmentOutlined,
-  BarChartOutlined,
-  SettingOutlined,
-  UserOutlined,
-  LogoutOutlined,
-} from '@ant-design/icons';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Sidebar } from './Sidebar';
+import { Header } from './Header';
 
-const { Header, Content, Sider } = Layout;
-const { Text } = Typography;
+interface AppLayoutProps {
+  children: React.ReactNode;
+}
 
-const AppLayout: React.FC = () => {
-  const location = useLocation();
-  const [currentUser, setCurrentUser] = useState<{ name: string; email: string } | null>({
-    name: "کاربر تست",
-    email: "test@example.com"
-  });
+export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Function to handle logout
-  const handleLogout = () => {
-    setCurrentUser(null);
-    // In a real app, you would clear tokens and redirect to login
-    console.log("Logged out");
+  useEffect(() => {
+    const saved = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    if (saved) {
+      setTheme(saved);
+      document.documentElement.setAttribute('data-theme', saved);
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const initial = prefersDark ? 'dark' : 'light';
+      setTheme(initial);
+      document.documentElement.setAttribute('data-theme', initial);
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
   };
 
-  // Menu items for user dropdown
-  const userMenuItems = [
-    {
-      key: 'profile',
-      label: 'پروفایل',
-      icon: <UserOutlined />,
-    },
-    {
-      key: 'logout',
-      label: 'خروج',
-      icon: <LogoutOutlined />,
-      danger: true,
-      onClick: handleLogout,
-    },
-  ];
-
-  // Sidebar menu items
-  const menuItems = [
-    {
-      key: '/dashboard',
-      icon: <DashboardOutlined />,
-      label: <Link to="/dashboard">داشبورد</Link>,
-    },
-    {
-      key: '/terrain-analysis',
-      icon: <EnvironmentOutlined />,
-      label: <Link to="/terrain-analysis">تحلیل زمین</Link>,
-    },
-    {
-      key: '/reports',
-      icon: <BarChartOutlined />,
-      label: <Link to="/reports">گزارش‌ها</Link>,
-    },
-    {
-      key: '/settings',
-      icon: <SettingOutlined />,
-      label: <Link to="/settings">تنظیمات</Link>,
-    },
-  ];
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider collapsible>
-        <div
-          style={{
-            height: 32,
-            margin: 16,
-            background: 'rgba(255, 255, 255, 0.2)',
-            borderRadius: 6,
-            textAlign: 'center',
-            color: '#fff',
-            lineHeight: '32px',
-          }}
-        >
-          اکو نوژین
-        </div>
-        <Menu
-          theme="dark"
-          mode="inline"
-          selectedKeys={[location.pathname]}
-          items={menuItems}
+    <div style={{ display: 'flex', minHeight: '100vh' }}>
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <Header
+          theme={theme}
+          onToggleTheme={toggleTheme}
+          onToggleSidebar={toggleSidebar}
         />
-      </Sider>
-      <Layout>
-        <Header style={{ padding: 0, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: 24 }}>
-          <Breadcrumb style={{ margin: '16px 0 16px 24' }}>
-            <Breadcrumb.Item>خانه</Breadcrumb.Item>
-            <Breadcrumb.Item>{location.pathname.replace('/', '') || 'داشبورد'}</Breadcrumb.Item>
-          </Breadcrumb>
-          
-          {/* User Profile Section */}
-          {currentUser && (
-            <Dropdown menu={{ items: userMenuItems }} trigger={['click']}>
-              <Space style={{ cursor: 'pointer' }}>
-                <Avatar size="small" icon={<UserOutlined />} />
-                <Text strong>{currentUser.name}</Text>
-              </Space>
-            </Dropdown>
-          )}
-        </Header>
-        <Content style={{ margin: '16px' }}>
-          {/* محتوای صفحات داخل Outlet قرار می‌گیرد */}
-          <Outlet />
-        </Content>
-      </Layout>
-    </Layout>
+        
+        <main
+          style={{
+            flex: 1,
+            padding: '2rem',
+            overflowY: 'auto',
+            background: 'var(--color-bg)' }}
+        >
+          {children}
+        </main>
+      </div>
+    </div>
   );
 };
-
-export default AppLayout;

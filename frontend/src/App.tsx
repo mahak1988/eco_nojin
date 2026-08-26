@@ -1,29 +1,49 @@
-﻿import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { ConfigProvider } from 'antd';
-import faIR from 'antd/locale/fa_IR';
-import AppLayout from './components/layout/AppLayout';
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { HomePage } from './pages/HomePage';
+import { AboutPage } from './pages/AboutPage';
+import { MissionPage } from './pages/MissionPage';
+import { FeaturesPage } from './pages/FeaturesPage';
+import { PricingPage } from './pages/PricingPage';
+import { HydromaPage } from './pages/HydromaPage';
+import { VisualSimulatorsPage } from './pages/VisualSimulatorsPage';
+import { TermsPage } from './pages/TermsPage';
+import { PrivacyPage } from './pages/PrivacyPage';
+import { BlogPage } from './pages/BlogPage';
+import { LoginPage } from './pages/auth/LoginPage';
+import { RegisterPage } from './pages/auth/RegisterPage';
+import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage';
+import { HydromaDashboard } from './pages/HydromaDashboard';
+import { SimulatorDashboard } from './pages/SimulatorDashboard';
+import './styles/global.css';
 
-// صفحات (فعلاً placeholder)
-import Dashboard from './pages/Dashboard';
-import TerrainAnalysis from './pages/TerrainAnalysis';
-import Reports from './pages/Reports';
-import Settings from './pages/Settings'; // اگر وجود ندارد، می‌توانیم حذف کنیم
-
-const App: React.FC = () => {
+function App() {
   return (
-    <ConfigProvider direction="rtl" locale={faIR}>
+    <AuthProvider>
       <Routes>
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/terrain-analysis" element={<TerrainAnalysis />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/settings" element={<div>تنظیمات</div>} /> {/* موقت */}
-        </Route>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/mission" element={<MissionPage />} />
+        <Route path="/features" element={<FeaturesPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+
+        <Route path="/hydroma" element={<ProtectedRoute><HydromaDashboard /></ProtectedRoute>} />
+        <Route path="/dashboard" element={<Navigate to="/hydroma" replace />} />
+        <Route path="/simulator" element={<ProtectedRoute><SimulatorDashboard /></ProtectedRoute>} />
+
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </ConfigProvider>
+    </AuthProvider>
   );
-};
+}
 
 export default App;

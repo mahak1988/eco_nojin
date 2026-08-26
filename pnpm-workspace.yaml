@@ -2,8 +2,11 @@ packages:
   - 'frontend'
 allowBuilds:
   '@prisma/engines': false
+  '@vaadin/vaadin-usage-statistics': set this to true or false
+  es5-ext: set this to true or false
   prisma: false
   sharp: false
+  uglifyjs-webpack-plugin: set this to true or false
   unrs-resolver: false
 
 # Optional engine strictness

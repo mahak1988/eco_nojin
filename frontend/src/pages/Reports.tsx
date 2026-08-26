@@ -85,8 +85,7 @@ const Reports: React.FC = () => {
                 top: 5,
                 right: 30,
                 left: 20,
-                bottom: 5,
-              }}
+                bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
@@ -104,8 +103,7 @@ const Reports: React.FC = () => {
                 top: 5,
                 right: 30,
                 left: 20,
-                bottom: 5,
-              }}
+                bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
