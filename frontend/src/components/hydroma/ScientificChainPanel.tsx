@@ -6,6 +6,11 @@ import type { ScientificChainResult } from '../../types/vll';
 interface ScientificChainPanelProps {
   lat: number;
   lon: number;
+  crop?: string;
+  plantingDate?: string;
+  slopePct?: number;
+  catchmentKm2?: number;
+  compact?: boolean;
 }
 
 interface Metric {
@@ -26,7 +31,14 @@ const statusColor = (status?: string) =>
  * پنل «زنجیره علمی واقعی» — اجرای RUSLE ← SWAT+ ← Pywr ← RothC ← AquaCrop ← HEC-RAS ← NSGA-II
  * روی بک‌اند. وضعیت هر موتور به‌صورت صادقانه نمایش داده می‌شود (نیاز به باینری/اعتبارنامه = زرد).
  */
-export const ScientificChainPanel: React.FC<ScientificChainPanelProps> = ({ lat, lon }) => {
+export const ScientificChainPanel: React.FC<ScientificChainPanelProps> = ({
+  lat,
+  lon,
+  crop = 'wheat',
+  plantingDate = '2024-11-15',
+  slopePct = 10,
+  catchmentKm2 = 10,
+}) => {
   const [result, setResult] = useState<ScientificChainResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +47,13 @@ export const ScientificChainPanel: React.FC<ScientificChainPanelProps> = ({ lat,
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchScientificChain(lat, lon, { optimize: true });
+      const data = await fetchScientificChain(lat, lon, {
+        crop,
+        plantingDate,
+        slopePct,
+        catchmentKm2,
+        optimize: true,
+      });
       setResult(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'خطا در اجرای زنجیره علمی');

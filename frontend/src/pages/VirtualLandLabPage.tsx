@@ -14,6 +14,9 @@ import { VLLResultsBar } from '../components/vll/VLLResultsBar';
 import { VLLAIAdvisor } from '../components/vll/VLLAIAdvisor';
 import { VLLWeatherControl } from '../components/vll/VLLWeatherControl';
 import { RealLandLoader } from '../components/vll/RealLandLoader';
+import { ScientificChainPanel } from '../components/hydroma/ScientificChainPanel';
+import { ScenarioCompare } from '../components/hydroma/ScenarioCompare';
+import { NdviGridCard } from '../components/vll/NdviGridCard';
 import type { RealLandResult } from '../types/vll';
 
 export const VirtualLandLabPage: React.FC = () => {
@@ -39,10 +42,13 @@ export const VirtualLandLabPage: React.FC = () => {
   const [timeProgress, setTimeProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [realLand, setRealLand] = useState<RealLandResult | null>(null);
+  const [coords, setCoords] = useState({ lat: 35.5, lon: 51.5 });
+  const [simError, setSimError] = useState<string | null>(null);
 
   // بارگذاری زمین واقعی (Phase 1): اعمال اقلیم و خاک واقعی روی شبیه‌ساز
   const applyRealLand = (result: RealLandResult) => {
     setRealLand(result);
+    setCoords({ lat: result.lat, lon: result.lon });
     const cli = result.climate;
     if (cli?.status === 'ok') {
       setWeather((prev) => ({
@@ -65,6 +71,7 @@ export const VirtualLandLabPage: React.FC = () => {
   // شبیه‌سازی
   const runSimulation = async () => {
     setIsSimulating(true);
+    setSimError(null);
     try {
       const response = await fetch(`${API_BASE_URL}/api/v1/simulation/comprehensive`, {
         method: 'POST',
@@ -90,18 +97,17 @@ export const VirtualLandLabPage: React.FC = () => {
           },
         }),
       });
+      if (!response.ok) {
+        const text = await response.text().catch(() => '');
+        throw new Error(`خطای HTTP ${response.status}${text ? `: ${text.slice(0, 200)}` : ''}`);
+      }
       const data = await response.json();
       setResults(data);
     } catch (error) {
+      // هیچ fallback ساختگی — خطا صادقانه نمایش داده می‌شود (قرارداد W-001)
       console.error('Simulation error:', error);
-      // Fallback به mock data
-      setResults({
-        sustainability_score: 75,
-        score_breakdown: { erosion: 70, water: 80, carbon: 75 },
-        recommendations: [
-          { priority: 'high', category: 'فرسایش', title: 'افزودن بادشکن', description: 'فرسایش بادی بالاست' },
-        ],
-      });
+      setResults(null);
+      setSimError(error instanceof Error ? error.message : 'خطا در شبیه‌سازی');
     } finally {
       setIsSimulating(false);
     }
@@ -176,6 +182,24 @@ export const VirtualLandLabPage: React.FC = () => {
           }}>
             {/* Real Land Loader (Phase 1) */}
             <RealLandLoader onLoaded={applyRealLand} />
+
+            {/* Scientific chain (Phase 3): زنجیره علمی واقعی */}
+            <div style={{ marginBottom: '1rem' }}>
+              <ScientificChainPanel
+                lat={coords.lat}
+                lon={coords.lon}
+                crop="wheat"
+                plantingDate="2024-11-15"
+                slopePct={10}
+                catchmentKm2={10}
+              />
+            </div>
+            <div style={{ marginBottom: '1rem' }}>
+              <ScenarioCompare lat={coords.lat} lon={coords.lon} crop="wheat" />
+            </div>
+            <div style={{ marginBottom: '1rem' }}>
+              <NdviGridCard satellite={realLand?.satellite} />
+            </div>
 
             {/* Layer Manager */}
             <VLLLayerManager
@@ -347,6 +371,11 @@ export const VirtualLandLabPage: React.FC = () => {
         </div>
 
         {/* Results Bar at bottom */}
+        {simError && (
+          <div style={{ padding: '0.6rem 2rem', background: 'rgba(239,68,68,0.12)', borderTop: '1px solid #ef4444', color: '#ef4444', fontSize: '0.85rem' }}>
+            ⚠️ {simError}
+          </div>
+        )}
         <VLLResultsBar results={results} isSimulating={isSimulating} />
       </div>
     </AppLayout>
