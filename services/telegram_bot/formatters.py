@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
 """Persian response formatters for Telegram messages."""
 from __future__ import annotations
 
-from typing import Any, Dict
-
+from typing import Any
 
 # Risk level translations
 RISK_TRANSLATIONS = {
@@ -30,7 +28,7 @@ RECOMMENDATION_ICONS = {
 }
 
 
-def format_analysis_response(data: Dict[str, Any]) -> str:
+def format_analysis_response(data: dict[str, Any]) -> str:
     """
     Format comprehensive analysis as Persian Telegram message.
     
@@ -47,7 +45,7 @@ def format_analysis_response(data: Dict[str, Any]) -> str:
     risk = data.get("risk_assessment", {})
     recommendations = data.get("recommendations", [])
     performance = data.get("performance", {})
-    
+
     # Build message
     lines = [
         f"🌾 *تحلیل زمین: {name}*",
@@ -57,13 +55,13 @@ def format_analysis_response(data: Dict[str, Any]) -> str:
         "━━━━━━━━━━━━━━━━━━━━",
         "",
     ]
-    
+
     # Climate section
     if climate:
         koppen = climate.get("koppen_description", climate.get("koppen_class", ""))
         temp = climate.get("temperature", {})
         precip = climate.get("precipitation", {})
-        
+
         lines.extend([
             "🌡️ *اقلیم (ERA5):*",
             f"  ┣ نوع: {koppen}",
@@ -72,14 +70,14 @@ def format_analysis_response(data: Dict[str, Any]) -> str:
             f"  ┗ بارش سالانه: {precip.get('annual_mm', 0):.0f} میلی‌متر",
             "",
         ])
-    
+
     # Vegetation - robust extraction
     if vegetation:
         def get_field(obj, field, default=""):
             if obj is None: return default
             if isinstance(obj, dict): return obj.get(field, default)
             return getattr(obj, field, default)
-        
+
         health = get_field(vegetation, "vegetation_health", "")
         ndvi = get_field(vegetation, "avg_ndvi", 0.0)
         health_fa = RISK_TRANSLATIONS.get(health.upper(), health) if health else ""
@@ -89,14 +87,14 @@ def format_analysis_response(data: Dict[str, Any]) -> str:
             f"  ┗ سلامت: {health_fa}",
             "",
         ])
-    
+
     # Erosion - robust
     if erosion:
         def get_field(obj, field, default=""):
             if obj is None: return default
             if isinstance(obj, dict): return obj.get(field, default)
             return getattr(obj, field, default)
-        
+
         risk_level = get_field(erosion, "risk_level", "")
         rate = get_field(erosion, "rusle_rate_t_ha_yr", 0.0)
         risk_fa = RISK_TRANSLATIONS.get(risk_level, risk_level) if risk_level else ""
@@ -106,7 +104,7 @@ def format_analysis_response(data: Dict[str, Any]) -> str:
             f"  ┗ ریسک: {risk_fa}",
             "",
         ])
-    
+
     # Irrigation
     if irrigation:
         # Handle both old (et0_mm_day) and new (IrrigationAnalysis) formats
@@ -114,7 +112,7 @@ def format_analysis_response(data: Dict[str, Any]) -> str:
             et0 = irrigation.get("et0_mm_day") or irrigation.get("et0_mm_day", 0)
             annual = irrigation.get("annual_water_need_mm") or irrigation.get("annual_water_need_mm", 0)
             rec = irrigation.get("irrigation_system") or irrigation.get("recommendation", "")
-            
+
             lines.extend([
                 "💧 *آبیاری:*",
                 f"  ┣ ET₀ روزانه: {et0:.2f} میلی‌متر",
@@ -122,14 +120,14 @@ def format_analysis_response(data: Dict[str, Any]) -> str:
                 f"  ┗ سیستم پیشنهادی: *{rec}*",
                 "",
             ])
-    
+
     # Carbon - robust
     if carbon:
         def get_field(obj, field, default=""):
             if obj is None: return default
             if isinstance(obj, dict): return obj.get(field, default)
             return getattr(obj, field, default)
-        
+
         suitability = get_field(carbon, "suitability", "")
         rate = get_field(carbon, "rate_tCO2e_ha_yr", 0.0)
         total = get_field(carbon, "total_potential_tCO2e", 0.0)
@@ -143,14 +141,14 @@ def format_analysis_response(data: Dict[str, Any]) -> str:
             f"  ┗ وضعیت: {suit_fa}",
             "",
         ])
-    
+
     # Risk Assessment - robust
     if risk:
         def get_field(obj, field, default=""):
             if obj is None: return default
             if isinstance(obj, dict): return obj.get(field, default)
             return getattr(obj, field, default)
-        
+
         overall = get_field(risk, "overall_risk", "")
         drought = get_field(risk, "drought", "")
         drought_fa = RISK_TRANSLATIONS.get(drought, drought) if drought else ""
@@ -160,7 +158,7 @@ def format_analysis_response(data: Dict[str, Any]) -> str:
             f"  ┗ خشکسالی: {drought_fa}",
             "",
         ])
-    
+
     # Recommendations (top 3)
     if recommendations:
         lines.append("💡 *توصیه‌های اولویت‌دار:*")
@@ -175,7 +173,7 @@ def format_analysis_response(data: Dict[str, Any]) -> str:
             else:
                 lines.append(f"  {i}. {rec}")
         lines.append("")
-    
+
     # Performance footer
     total_ms = performance.get("total_ms", 0)
     lines.extend([
@@ -183,7 +181,7 @@ def format_analysis_response(data: Dict[str, Any]) -> str:
         f"⚡ زمان پردازش: {total_ms:.0f}ms",
         f"🔗 [گزارش کامل در Swagger]({config_url()})",
     ])
-    
+
     return "\n".join(lines)
 
 
@@ -239,22 +237,22 @@ def format_landscapes_list(landscapes: list) -> str:
     """Format landscapes list."""
     if not landscapes:
         return "📭 هیچ زمینی ثبت نشده است."
-    
+
     lines = [f"🌾 *زمین‌های ثبت‌شده ({len(landscapes)}):*", ""]
-    
+
     for i, land in enumerate(landscapes[:10], 1):
         name = land.get("name", "بدون نام")
         area = land.get("area_ha", "?")
         created = land.get("created_at", "")[:10]
         lines.append(f"{i}. *{name}* ({area} ha) - {created}")
-    
+
     if len(landscapes) > 10:
         lines.append(f"\n... و {len(landscapes) - 10} زمین دیگر")
-    
+
     return "\n".join(lines)
 
 
-def format_stats(stats: Dict[str, Any]) -> str:
+def format_stats(stats: dict[str, Any]) -> str:
     """Format platform statistics."""
     return f"""📊 *آمار پلتفرم Eco Nojin*
 

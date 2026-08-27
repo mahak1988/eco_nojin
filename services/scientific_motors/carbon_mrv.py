@@ -13,7 +13,7 @@ Verra/Gold Standard registration requires their full methodology docs.
 """
 
 import time
-from typing import Any, Dict, Optional
+from typing import Any
 
 from services.scientific_motors.base import MotorParameters, MotorResult, MotorStatus
 
@@ -34,8 +34,8 @@ class CarbonMrvMotor:
 
     def execute(
         self,
-        parameters: Dict[str, Any],
-        _base: Optional[MotorParameters] = None,
+        parameters: dict[str, Any],
+        _base: MotorParameters | None = None,
     ) -> MotorResult:
         run_id = f"carbon_mrv_{int(time.time() * 1000)}"
         start_time = time.time()
@@ -49,7 +49,7 @@ class CarbonMrvMotor:
             permanence = float(parameters.get("permanence_factor", 0.85))
             # multi-period measurements: [{year, soc_t_ha}] -> t0..tn trend
             measurements = parameters.get("measurements") or []
-            periods: list[Dict[str, Any]] = []
+            periods: list[dict[str, Any]] = []
             if isinstance(measurements, list) and len(measurements) >= 2:
                 prev = None
                 for m in sorted(measurements, key=lambda x: float(x.get("year", 0))):
@@ -99,11 +99,11 @@ class CarbonMrvMotor:
 
             if methodology == "gold_standard":
                 methodology_label = "Gold Standard Soil Organic Carbon Framework (v1.0) — simplified"
-                extra: Dict[str, Any] = {"monitoring": GS_MONITORING}
+                extra: dict[str, Any] = {"monitoring": GS_MONITORING}
             else:
                 methodology = "vm0032"
                 methodology_label = "Verra VM0032 (soil carbon) — simplified accounting"
-                extra: Dict[str, Any] = {"certification_note": "VM0032 registration requires full methodology docs"}
+                extra: dict[str, Any] = {"certification_note": "VM0032 registration requires full methodology docs"}
 
 
             return MotorResult(

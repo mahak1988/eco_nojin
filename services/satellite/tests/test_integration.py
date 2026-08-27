@@ -1,8 +1,10 @@
 """Integration tests for Satellite"""
 import pytest
+
 from services.satellite.monitoring_service import (
-    SatelliteMonitoringService, SatelliteSource, BandType,
+    SatelliteMonitoringService,
 )
+
 
 @pytest.mark.asyncio
 class TestSatelliteIntegration:
@@ -15,7 +17,7 @@ class TestSatelliteIntegration:
         )
         assert result is not None
         assert result["status"] in ["ok", "no_data"]
-    
+
     async def test_detect_changes(self, db_session):
         service = SatelliteMonitoringService(db_session)
         result = await service.detect_changes(
@@ -23,4 +25,3 @@ class TestSatelliteIntegration:
             days_back=90,
         )
         assert "change_detected" in result
-    

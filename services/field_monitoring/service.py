@@ -5,15 +5,14 @@ Handles ingestion and processing of data from field sensors, surveys,
 and citizen science reports.
 """
 import logging
-from datetime import datetime
-from typing import Dict, Any, List
 from dataclasses import dataclass
+from datetime import datetime
 from enum import Enum
+from typing import Any
 
-from database.models import MonitoringDataDB
 from database.config import SessionLocal
+from database.models import MonitoringDataDB
 from engine.hydroma.soil.health import calculate_soil_health_index
-from engine.hydroma.soil.moisture import estimate_soil_moisture
 from engine.hydroma.water.quality import assess_water_quality
 
 logger = logging.getLogger(__name__)
@@ -34,10 +33,10 @@ class FieldDataType(Enum):
 class FieldMonitoringReport:
     """Represents a single field monitoring data point."""
     project_id: str
-    location: Dict[str, float]  # {"lat": float, "lon": float}
+    location: dict[str, float]  # {"lat": float, "lon": float}
     report_date: datetime
     data_type: FieldDataType
-    data_payload: Dict[str, Any]  # Actual measurements
+    data_payload: dict[str, Any]  # Actual measurements
     reporter_id: str  # Could be sensor ID, user ID, etc.
     quality_flag: str = "ok"  # "ok", "suspect", "error"
     notes: str = ""
@@ -93,7 +92,7 @@ class FieldMonitoringService:
             return False
         return True
 
-    def _process_data(self, report: FieldMonitoringReport) -> Dict[str, Any]:
+    def _process_data(self, report: FieldMonitoringReport) -> dict[str, Any]:
         """Applies calculations or enrichments to raw data."""
         processed = report.data_payload.copy()
 

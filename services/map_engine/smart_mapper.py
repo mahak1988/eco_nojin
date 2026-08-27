@@ -2,10 +2,9 @@
 Hydroma Nojin - Smart Map Generator
 Generates agricultural maps from satellite imagery and soil data.
 """
+
 import numpy as np
 import xarray as xr
-from typing import Dict, Any, Optional, Tuple
-from datetime import datetime
 
 
 class SmartMapGenerator:
@@ -19,7 +18,7 @@ class SmartMapGenerator:
         """Calculate Normalized Difference Vegetation Index."""
         ndvi = (nir_band - red_band) / (nir_band + red_band + 1e-10)
         ndvi = np.clip(ndvi, -1, 1)
-        
+
         return xr.DataArray(
             ndvi.values,
             dims=red_band.dims,
@@ -35,13 +34,13 @@ class SmartMapGenerator:
     def classify_vegetation_health(ndvi: xr.DataArray) -> xr.DataArray:
         """Classify vegetation health based on NDVI."""
         health = np.ones_like(ndvi.values, dtype=np.int32)
-        
+
         health[ndvi.values < 0.1] = 1  # Bare soil / water
         health[(ndvi.values >= 0.1) & (ndvi.values < 0.3)] = 2  # Stressed
         health[(ndvi.values >= 0.3) & (ndvi.values < 0.6)] = 3  # Moderate
         health[(ndvi.values >= 0.6) & (ndvi.values < 0.8)] = 4  # Healthy
         health[ndvi.values >= 0.8] = 5  # Very healthy
-        
+
         return xr.DataArray(
             health,
             dims=ndvi.dims,
@@ -65,11 +64,11 @@ class SmartMapGenerator:
             "barley": {"a": 7.0, "b": 0.4},
             "cotton": {"a": 10.0, "b": 0.6},
         }
-        
+
         params = crop_params.get(crop_type, crop_params["wheat"])
         biomass = params["a"] * ndvi + params["b"]
         biomass = np.maximum(biomass, 0)
-        
+
         return xr.DataArray(
             biomass.values,
             dims=ndvi.dims,
@@ -102,12 +101,12 @@ class SmartMapGenerator:
                 "late-season": 0.9,
             },
         }
-        
+
         crop_kc = kc_values.get(crop_type, kc_values["wheat"])
         kc = crop_kc.get(growth_stage, 1.0)
-        
+
         etc = et0 * kc
-        
+
         return xr.DataArray(
             etc.values,
             dims=et0.dims,
@@ -124,18 +123,18 @@ class SmartMapGenerator:
         etc: xr.DataArray,
         field_capacity: float = 0.30,
         wilting_point: float = 0.15,
-    ) -> Dict[str, xr.DataArray]:
+    ) -> dict[str, xr.DataArray]:
         """Generate irrigation recommendations."""
         # Available water capacity
         awc = field_capacity - wilting_point
-        
+
         # Management allowed depletion (50% of AWC)
         mad = awc * 0.5
-        
+
         # Irrigation need
         deficit = np.maximum(mad - (soil_moisture - wilting_point), 0)
         irrigation_need = deficit * 1000  # Convert to mm
-        
+
         # Days until next irrigation
         days_to_irrigate = np.where(
             etc > 0,
@@ -143,7 +142,7 @@ class SmartMapGenerator:
             999
         )
         days_to_irrigate = np.clip(days_to_irrigate, 0, 30)
-        
+
         return {
             "irrigation_need_mm": xr.DataArray(
                 irrigation_need.values,

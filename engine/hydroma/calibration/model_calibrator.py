@@ -2,41 +2,40 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List, Protocol # Imported 'Any'
+from typing import Any, Protocol  # Imported 'Any'
 
-import numpy as np
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 
 class ModelRunner(Protocol):
     """Protocol defining the interface for a model that can be calibrated."""
-    def run(self, parameters: Dict[str, Any]) -> Any:
+    def run(self, parameters: dict[str, Any]) -> Any:
         ...
 
 class CalibrationInput(BaseModel):
     """Input parameters for the calibration process."""
     model_runner: Any = Field(..., description="Instance of the model to calibrate (must follow ModelRunner protocol) - Type erased for Pydantic compatibility") # Changed type hint to Any
-    observed_data: List[float] = Field(..., description="List of observed/measured values")
-    parameter_bounds: Dict[str, tuple[float, float]] = Field(..., description="Dictionary of parameter names and their (min, max) bounds")
+    observed_data: list[float] = Field(..., description="List of observed/measured values")
+    parameter_bounds: dict[str, tuple[float, float]] = Field(..., description="Dictionary of parameter names and their (min, max) bounds")
     objective_function: str = Field("rmse", description="Objective function to minimize ('rmse', 'nse', etc.)")
 
 
 class CalibrationOutput(BaseModel):
     """Output results of the calibration process."""
-    calibrated_parameters: Dict[str, float] = Field(..., description="Final calibrated parameter values")
+    calibrated_parameters: dict[str, float] = Field(..., description="Final calibrated parameter values")
     best_objective_value: float = Field(..., description="Value of the objective function at the optimum")
-    history: List[Dict[str, Any]] = Field(..., description="History of parameter sets and objective values during calibration")
+    history: list[dict[str, Any]] = Field(..., description="History of parameter sets and objective values during calibration")
 
 
 class Calibrator:
     """Performs calibration using a simple brute-force or optimization algorithm."""
-    
+
     def __init__(self):
         # Could initialize an optimizer here (e.g., scipy.optimize, platypus)
         pass
 
-    def _rmse(self, simulated: List[float], observed: List[float]) -> float:
+    def _rmse(self, simulated: list[float], observed: list[float]) -> float:
         """Calculate Root Mean Square Error."""
         if len(simulated) != len(observed):
             raise ValueError("Simulated and observed data must have the same length for error calculation.")
@@ -47,10 +46,10 @@ class Calibrator:
     def _simple_brute_force(self, input_data: CalibrationInput, num_steps: int = 10) -> CalibrationOutput:
         """A simple brute-force calibration for demonstration."""
         logger.info("Starting simple brute-force calibration...")
-        
+
         param_names = list(input_data.parameter_bounds.keys())
         param_ranges = list(input_data.parameter_bounds.values())
-        
+
         # Generate parameter combinations (only works well for 1-2 parameters due to combinatorial explosion)
         # For more parameters, use scipy.optimize or other libraries
         best_params = {}
@@ -62,7 +61,7 @@ class Calibrator:
             p1_name, p2_name = param_names
             p1_min, p1_max = param_ranges[0]
             p2_min, p2_max = param_ranges[1]
-            
+
             step_p1 = (p1_max - p1_min) / num_steps
             step_p2 = (p2_max - p2_min) / num_steps
 
@@ -82,12 +81,12 @@ class Calibrator:
                         else:
                             # Assume it's a list-like object containing simulated values
                             simulated_data = model_output
-                        
+
                         if input_data.objective_function == "rmse":
                             obj_val = self._rmse(simulated_data, input_data.observed_data)
                         else:
                             raise ValueError(f"Unsupported objective function: {input_data.objective_function}")
-                        
+
                         history.append({"params": params.copy(), "objective_value": obj_val})
 
                         if obj_val < best_obj_val:

@@ -1,12 +1,11 @@
 # services/satellite/openet_service.py
-import openet
 
 class OpenETService:
     """
     دریافت داده‌های ET ماهواره‌ای برای بهینه‌سازی آبیاری
     پوشش: ۴۸ ایالت آمریکا + گسترش جهانی
     """
-    
+
     async def get_field_et(
         self,
         geometry: dict,

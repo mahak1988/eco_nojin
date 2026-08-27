@@ -6,20 +6,19 @@ headings. Retrieval is deterministic and works offline.
 import math
 import re
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 _DOC_DIR = Path("docs/fa")
-_STOP = set("به از و یا در با که این آن را برای از بر تا هم نیز فقط هر خود ما شما".split())
+_STOP = set(["به", "از", "و", "یا", "در", "با", "که", "این", "آن", "را", "برای", "از", "بر", "تا", "هم", "نیز", "فقط", "هر", "خود", "ما", "شما"])
 
 
-def _tokenize(text: str) -> List[str]:
+def _tokenize(text: str) -> list[str]:
     return [t for t in re.findall(r"[\w\u0600-\u06FF]{2,}", text.lower()) if t not in _STOP]
 
 
 class BM25Index:
     def __init__(self) -> None:
-        self.docs: List[Dict] = []
-        self._df: Dict[str, int] = {}
+        self.docs: list[dict] = []
+        self._df: dict[str, int] = {}
         self._avgdl = 1.0
         self._built = False
 
@@ -37,7 +36,7 @@ class BM25Index:
                 title = chunk.split("\n", 1)[0].strip()[:90]
                 self.docs.append({"file": md.name, "title": title, "text": chunk[:1400]})
         self._df = {}
-        doc_freq: Dict[str, int] = {}
+        doc_freq: dict[str, int] = {}
         total_len = 0
         for d in self.docs:
             toks = set(_tokenize(d["text"]))
@@ -49,14 +48,14 @@ class BM25Index:
         self._built = True
         return len(self.docs)
 
-    def search(self, query: str, k: int = 3) -> List[Dict]:
+    def search(self, query: str, k: int = 3) -> list[dict]:
         if not self._built:
             self.build()
         q_toks = _tokenize(query)
         if not q_toks or not self.docs:
             return []
         n = len(self.docs)
-        scored: List[Tuple[float, int]] = []
+        scored: list[tuple[float, int]] = []
         for i, d in enumerate(self.docs):
             toks = _tokenize(d["text"])
             dl = len(toks)

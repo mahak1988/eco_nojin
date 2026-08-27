@@ -1,11 +1,14 @@
 """Integration tests for Livestock Module"""
-import pytest
-from services.livestock.service import LivestockService
-from services.livestock.schemas import (
-    LivestockSimulationRequest, HerdProfile, ForageQuality,
-    AnimalType, ProductionSystem,
-)
 from services.livestock.nutrition.forage_quality import ndvi_to_forage_quality
+from services.livestock.schemas import (
+    AnimalType,
+    ForageQuality,
+    HerdProfile,
+    LivestockSimulationRequest,
+    ProductionSystem,
+)
+from services.livestock.service import LivestockService
+
 
 class TestLivestockModule:
     def test_list_animal_types(self):
@@ -17,7 +20,7 @@ class TestLivestockModule:
         assert "sheep" in names
         assert "goat" in names
         assert "poultry" in names
-    
+
     def test_cattle_simulation(self):
         service = LivestockService()
         req = LivestockSimulationRequest(
@@ -37,7 +40,7 @@ class TestLivestockModule:
         assert result.manure.total_kg_year > 0
         assert result.economics.gross_revenue_usd_year > 0
         assert result.environmental.methane_kg_co2e_year > 0
-    
+
     def test_sheep_simulation(self):
         service = LivestockService()
         req = LivestockSimulationRequest(
@@ -52,7 +55,7 @@ class TestLivestockModule:
         assert result.status == "completed"
         assert result.production.wool_kg_year > 0
         assert result.production.offspring_per_year > 0
-    
+
     def test_goat_simulation(self):
         service = LivestockService()
         req = LivestockSimulationRequest(
@@ -66,7 +69,7 @@ class TestLivestockModule:
         result = service.simulate(req)
         assert result.status == "completed"
         assert result.production.milk_kg_day > 0
-    
+
     def test_poultry_simulation(self):
         service = LivestockService()
         req = LivestockSimulationRequest(
@@ -81,13 +84,13 @@ class TestLivestockModule:
         assert result.status == "completed"
         assert result.production.eggs_day > 0
         assert result.environmental.methane_kg_co2e_year == 0  # طیور CH4 ندارد
-    
+
     def test_ndvi_to_forage_quality(self):
         result = ndvi_to_forage_quality(0.7, "spring")
         assert result.crude_protein_pct > 10
         assert result.digestibility_pct > 60
         assert result.dry_matter_ton_ha > 3
-    
+
     def test_low_ndvi_warnings(self):
         """کیفیت پایین علوفه باید warning ایجاد کند"""
         service = LivestockService()
@@ -102,7 +105,7 @@ class TestLivestockModule:
         result = service.simulate(req)
         # با NDVI پایین، recommendations باید وجود داشته باشد
         assert len(result.recommendations) > 0
-    
+
     def test_manure_contributes_to_soil(self):
         """کود دامی باید به کربن خاک کمک کند"""
         service = LivestockService()
@@ -117,7 +120,7 @@ class TestLivestockModule:
         result = service.simulate(req)
         assert result.manure.organic_carbon_kg_year > 0
         assert result.manure.nitrogen_kg_year > 0
-    
+
     def test_carrying_capacity(self):
         """تست ظرفیت برد"""
         service = LivestockService()
@@ -133,4 +136,3 @@ class TestLivestockModule:
         assert result.environmental.carrying_capacity_head > 0
         # pressure باید بالا باشد
         assert result.environmental.grazing_pressure_index > 0
-    

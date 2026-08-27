@@ -3,7 +3,6 @@
 نسخه استاندارد برای پذیرش db/session
 """
 
-from typing import Optional
 
 class NotificationService:
     """سرویس اعلان‌ها"""

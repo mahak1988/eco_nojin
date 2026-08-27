@@ -10,14 +10,14 @@ status — never fabricated field data.
 """
 
 import os
-from typing import Any, Dict, List
+from typing import Any
 
 import aiohttp
 
 SOC_FIELD_NAMES = ["soc_t_ha", "soc_sample_t_ha", "soc_t_ha_0_30", "soc_g_kg"]
 
 
-async def _parse_submissions(raw: List[Any]) -> List[Dict[str, Any]]:
+async def _parse_submissions(raw: list[Any]) -> list[dict[str, Any]]:
     parsed = []
     for row in raw or []:
         soc = None
@@ -41,7 +41,7 @@ async def _parse_submissions(raw: List[Any]) -> List[Dict[str, Any]]:
     return parsed
 
 
-async def _request_v2(session: aiohttp.ClientSession, token: str, form_id: str) -> Dict[str, Any]:
+async def _request_v2(session: aiohttp.ClientSession, token: str, form_id: str) -> dict[str, Any]:
     url = f"https://kf.kobotoolbox.org/api/v2/assets/{form_id}/data/?format=json&limit=1000"
     headers = {"Authorization": f"Token {token}"}
     async with session.get(url, headers=headers) as resp:
@@ -52,7 +52,7 @@ async def _request_v2(session: aiohttp.ClientSession, token: str, form_id: str) 
         return {"results": results}
 
 
-async def _request_v1(session: aiohttp.ClientSession, token: str, form_id: str) -> Dict[str, Any]:
+async def _request_v1(session: aiohttp.ClientSession, token: str, form_id: str) -> dict[str, Any]:
     url = f"https://kc.kobotoolbox.org/api/v1/data/{form_id}?format=json"
     headers = {"Authorization": f"Token {token}"}
     async with session.get(url, headers=headers) as resp:
@@ -65,7 +65,7 @@ async def _request_v1(session: aiohttp.ClientSession, token: str, form_id: str) 
 async def fetch_kobo_submissions(
     form_id: str | None = None,
     token: str | None = None,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Fetch latest survey submissions from KoboToolbox (free tier)."""
     token = token or os.getenv("KOBO_TOKEN", "")
     form_id = form_id or os.getenv("KOBO_FORM_ID", "")
@@ -107,7 +107,7 @@ async def fetch_kobo_submissions(
         }
 
 
-def average_measured_soc(payload: Dict[str, Any]) -> float | None:
+def average_measured_soc(payload: dict[str, Any]) -> float | None:
     """Mean of measured SOC samples; None when nothing usable."""
     subs = payload.get("submissions") or []
     if not subs:

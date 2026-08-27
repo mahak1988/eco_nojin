@@ -3,10 +3,11 @@ Tests for Scientific Motors Hub
 """
 
 import pytest
+
 from engine.land.integration.motors_hub import (
-    ScientificMotorsHub,
-    MotorStatus,
     MotorResult,
+    MotorStatus,
+    ScientificMotorsHub,
     UnifiedLandAnalysis,
 )
 

@@ -1,5 +1,6 @@
 """Satellite FastAPI router"""
-from typing import Optional, Dict
+from typing import Dict, Optional
+
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,7 +12,7 @@ router = APIRouter(prefix="/satellite", tags=["Satellite"])
 
 class MonitorFieldRequest(BaseModel):
     village_id: str
-    bbox: Dict[str, float]
+    bbox: dict[str, float]
     days_back: int = 30
 
 @router.post("/monitor-field")
@@ -23,4 +24,3 @@ async def monitor_field(req: MonitorFieldRequest, db: AsyncSession = Depends(get
 async def detect_changes(req: MonitorFieldRequest, db: AsyncSession = Depends(get_db)):
     service = SatelliteMonitoringService(db)
     return await service.detect_changes(req.bbox, req.days_back)
-    

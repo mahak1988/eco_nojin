@@ -1,10 +1,9 @@
 """
 Nojin MRV Integration - Sentinel-2 + Carbon Credits
 """
-from datetime import datetime, date
-from typing import Optional, List, Dict
-from dataclasses import dataclass, field
 import logging
+from dataclasses import dataclass
+from datetime import date, datetime
 
 logger = logging.getLogger(__name__)
 
@@ -13,13 +12,13 @@ class SatelliteObservation:
     date: date
     satellite: str
     cloud_cover_pct: float
-    ndvi: Optional[float] = None
-    evi: Optional[float] = None
-    ndmi: Optional[float] = None
-    lst: Optional[float] = None
-    soil_moisture: Optional[float] = None
-    biomass_t_ha: Optional[float] = None
-    soc_t_ha: Optional[float] = None
+    ndvi: float | None = None
+    evi: float | None = None
+    ndmi: float | None = None
+    lst: float | None = None
+    soil_moisture: float | None = None
+    biomass_t_ha: float | None = None
+    soc_t_ha: float | None = None
 
 @dataclass
 class CarbonCredit:
@@ -29,7 +28,7 @@ class CarbonCredit:
     methodology: str
     verification_status: str
     credit_value_usd: float
-    buyer: Optional[str] = None
+    buyer: str | None = None
 
 @dataclass
 class MRVReport:
@@ -40,8 +39,8 @@ class MRVReport:
     baseline_carbon_t_ha: float
     current_carbon_t_ha: float
     net_sequestration_t: float
-    satellite_observations: List[SatelliteObservation]
-    carbon_credits: List[CarbonCredit]
+    satellite_observations: list[SatelliteObservation]
+    carbon_credits: list[CarbonCredit]
     verification_status: str
     uncertainty_pct: float
 
@@ -54,14 +53,14 @@ class Sentinel2Integration:
         "B11": {"wavelength_nm": 1610, "name": "SWIR1"},
         "B12": {"wavelength_nm": 2190, "name": "SWIR2"},
     }
-    
-    def __init__(self, api_key: Optional[str] = None):
+
+    def __init__(self, api_key: str | None = None):
         self.api_key = api_key
         self.base_url = "https://catalogue.dataspace.copernicus.eu/odata/v1"
         logger.info("Sentinel2Integration initialized")
-    
+
     def query_observations(self, lat: float, lon: float, start_date: date,
-                           end_date: date, max_cloud_cover: float = 20.0) -> List[SatelliteObservation]:
+                           end_date: date, max_cloud_cover: float = 20.0) -> list[SatelliteObservation]:
         logger.info(f"Querying Sentinel-2: ({lat}, {lon}) from {start_date} to {end_date}")
         observations = []
         current = start_date
@@ -74,18 +73,18 @@ class Sentinel2Integration:
             observations.append(obs)
             current = date.fromordinal(current.toordinal() + 5)
         return observations
-    
+
     def calculate_ndvi(self, red: float, nir: float) -> float:
         if (nir + red) == 0:
             return 0.0
         return (nir - red) / (nir + red)
-    
+
     def estimate_biomass(self, ndvi: float, evi: float) -> float:
         if ndvi <= 0:
             return 0.0
         a, b, c = 45.0, 1.2, 0.8
         return a * (ndvi ** b) * (evi ** c)
-    
+
     def estimate_soc(self, biomass: float, climate_factor: float = 1.0) -> float:
         return 0.3 * biomass * climate_factor
 
@@ -96,23 +95,23 @@ class CarbonCreditCalculator:
         "gold_standard": 30.0,
         "eu_ets": 80.0,
     }
-    
+
     METHODOLOGIES = {
         "VM0042": "Verra - Improved Agricultural Land Management",
         "VM0021": "Verra - Biochar",
         "GS-LUF": "Gold Standard - Land Use & Forests",
     }
-    
+
     def __init__(self):
         logger.info("CarbonCreditCalculator initialized")
-    
+
     def calculate_sequestration(self, baseline_soc_t_ha: float, current_soc_t_ha: float,
                                  area_ha: float, years: int) -> float:
         delta_soc = current_soc_t_ha - baseline_soc_t_ha
         total_soc_increase = delta_soc * area_ha * years
         co2_sequestered = total_soc_increase * 3.67
         return max(0.0, co2_sequestered)
-    
+
     def generate_credits(self, project_id: str, co2_sequestered: float,
                          methodology: str = "VM0042", market: str = "verra_vcs") -> CarbonCredit:
         vintage_year = datetime.now().year
@@ -130,7 +129,7 @@ class NojinMRVEngine:
         self.sentinel = Sentinel2Integration()
         self.carbon_calc = CarbonCreditCalculator()
         logger.info("NojinMRVEngine initialized")
-    
+
     def generate_report(self, project_id: str, lat: float, lon: float, area_ha: float,
                         start_date: date, end_date: date, baseline_soc_t_ha: float) -> MRVReport:
         logger.info(f"Generating MRV report for project {project_id}")
@@ -151,7 +150,7 @@ class NojinMRVEngine:
             carbon_credits=[credit], verification_status="pending",
             uncertainty_pct=uncertainty
         )
-    
+
     def estimate_annual_revenue(self, area_ha: float, soc_increase_t_ha_yr: float,
                                 market: str = "verra_vcs") -> float:
         annual_co2 = soc_increase_t_ha_yr * area_ha * 3.67
@@ -159,6 +158,10 @@ class NojinMRVEngine:
         return annual_co2 * price
 
 __all__ = [
-    "Sentinel2Integration", "CarbonCreditCalculator", "NojinMRVEngine",
-    "SatelliteObservation", "CarbonCredit", "MRVReport",
+    "CarbonCredit",
+    "CarbonCreditCalculator",
+    "MRVReport",
+    "NojinMRVEngine",
+    "SatelliteObservation",
+    "Sentinel2Integration",
 ]

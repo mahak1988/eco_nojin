@@ -15,8 +15,9 @@ Run: python -m pytest engine/land/tests/ -v
 """
 
 import numpy as np
-from engine.land.slope_aspect import SlopeAspectAnalyzer
 import pytest
+
+from engine.land.slope_aspect import SlopeAspectAnalyzer
 
 
 class MockDEMProcessor:
@@ -88,109 +89,111 @@ class TestModels:
 
 class TestSlopeAspect:
     """Tests for slope/aspect calculations using SlopeAspectAnalyzer.analyze()."""
-    
+
     @pytest.fixture
     def calculator(self):
         """SlopeAspectAnalyzer with MockDEMProcessor."""
         import numpy as np
-        
+
         class MockDEMProcessor:
             def __init__(self, data, resolution=30.0):
                 self._data = data
                 self._dataset = None
                 self.resolution = resolution
                 self.dem_file_path = None
-        
+
         flat = np.full((15, 15), 1000.0)
         return SlopeAspectAnalyzer(MockDEMProcessor(flat, resolution=30.0))
-    
+
     @pytest.fixture
     def sloped_calculator(self):
         """SlopeAspectAnalyzer with sloped DEM."""
         import numpy as np
-        
+
         class MockDEMProcessor:
             def __init__(self, data, resolution=30.0):
                 self._data = data
                 self._dataset = None
                 self.resolution = resolution
                 self.dem_file_path = None
-        
+
         dem = np.zeros((15, 15))
         for i in range(15):
             dem[i, :] = 1000.0 - i * 10.0
         return SlopeAspectAnalyzer(MockDEMProcessor(dem, resolution=30.0))
-    
+
     def test_flat_terrain_zero_slope(self, calculator):
         """Flat terrain should have near-zero slope in interior."""
         result = calculator.analyze(cell_size_meters=30.0)
         slope_arr = result[0]
-        
+
         # Interior only (edges have NaN)
         interior = slope_arr[2:-2, 2:-2]
         valid = interior[~np.isnan(interior)]
-        
+
         assert len(valid) > 0
         assert np.allclose(valid, 0, atol=1e-3)
-    
+
     def test_sloped_terrain_positive_slope(self, sloped_calculator):
         """Sloped terrain should have positive slope."""
         result = sloped_calculator.analyze(cell_size_meters=30.0)
         slope_arr = result[0]
-        
+
         interior = slope_arr[2:-2, 2:-2]
         valid = interior[~np.isnan(interior)]
-        
+
         assert len(valid) > 0
         assert np.mean(valid) > 0
-    
+
     def test_slope_to_percent(self, calculator):
         """Slope conversion to percent."""
         result = calculator.analyze(cell_size_meters=30.0)
         slope_arr = result[0]
-        
+
         slope_pct = np.tan(np.radians(np.nan_to_num(slope_arr, nan=0.0))) * 100.0
         assert slope_pct.shape == slope_arr.shape
-    
+
     def test_aspect_cardinal(self, sloped_calculator):
         """Aspect should map to cardinal directions."""
         from engine.land.terrain_analysis import aspect_to_cardinal
-        
+
         result = sloped_calculator.analyze(cell_size_meters=30.0)
         aspect_arr = result[1]
-        
+
         # Test a few interior values
         interior = aspect_arr[5:10, 5:10]
         for val in interior.flatten()[:5]:
             if not np.isnan(val):
                 card = aspect_to_cardinal(float(val))
                 assert card in ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "unknown"]
-    
+
     def test_slope_classification_usda(self, sloped_calculator):
         """Slope should classify correctly per USDA using SlopeClass enum."""
-        from engine.land.terrain_analysis import classify_slope_usda
         from engine.land.models import SlopeClass
-        
+        from engine.land.terrain_analysis import classify_slope_usda
+
         # CLASS_0: <2% (flat)
         assert classify_slope_usda(1.0) == SlopeClass.CLASS_0
-        
+
         # CLASS_1: 2-5% (gentle)
         assert classify_slope_usda(3.0) == SlopeClass.CLASS_1
-        
+
         # CLASS_2: 5-10% (moderate)
         assert classify_slope_usda(7.0) == SlopeClass.CLASS_2
-        
+
         # CLASS_3: 10-20% (strong)
         assert classify_slope_usda(15.0) == SlopeClass.CLASS_3
-        
+
         # CLASS_4: 20-40% (very strong)
         assert classify_slope_usda(30.0) == SlopeClass.CLASS_4
-        
+
         # CLASS_5: >40% (steep)
         assert classify_slope_usda(50.0) == SlopeClass.CLASS_5
     def analyzer(self):
         """Create analyzer with 30m resolution."""
-        from engine.land.terrain_analysis import TerrainAnalyzer, aspect_to_cardinal, classify_slope_usda
+        from engine.land.terrain_analysis import (
+            TerrainAnalyzer,
+        )
         return TerrainAnalyzer(resolution=30.0)
 
     @pytest.fixture
@@ -350,23 +353,23 @@ class TestIntegration:
 
     def test_full_land_analysis_workflow(self):
         """Test complete land analysis workflow."""
-        from engine.land.terrain_analysis import TerrainAnalyzer, aspect_to_cardinal, classify_slope_usda
-        from engine.land.drainage import DrainageAnalyzer
-        from engine.land.capability import CapabilityAssessor
-        
+        from engine.land.terrain_analysis import (
+            TerrainAnalyzer,
+        )
+
         # Create DEM
         np.random.seed(42)
         dem = np.random.rand(10, 10) * 100 + 1000
-        
+
         # Terrain analysis
         terrain_analyzer = TerrainAnalyzer(resolution=30.0)
         terrain = terrain_analyzer.analyze(dem, profile_id="test")
-        
+
         # Basic assertions
         assert terrain.profile_id == "test"
         assert hasattr(terrain, 'slope_mean')
         assert hasattr(terrain, 'terrain_type')
-        
+
         print(f"  ✅ Terrain analysis: slope_mean={terrain.slope_mean:.2f}, type={terrain.terrain_type}")
 
     @pytest.fixture
@@ -374,7 +377,7 @@ class TestIntegration:
         """TerrainAnalyzer for terrain analysis tests."""
         from engine.land.terrain_analysis import TerrainAnalyzer
         return TerrainAnalyzer(resolution=30.0)
-    
+
     @pytest.fixture
     def rolling_dem(self):
         """Rolling DEM for testing."""
@@ -384,7 +387,7 @@ class TestIntegration:
             for j in range(15):
                 dem[i, j] = 1000.0 + 50.0 * np.sin(i / 3.0) * np.cos(j / 3.0)
         return dem
-    
+
     def test_terrain_analysis_basic(self, analyzer, rolling_dem):
         """Test basic terrain analysis."""
         analysis = analyzer.analyze(rolling_dem, profile_id="test")
@@ -394,7 +397,7 @@ class TestIntegration:
         assert 0 <= analysis.slope_mean <= 90
         assert analysis.aspect_dominant in ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
 
-    
+
     def test_terrain_type_classification(self, analyzer):
         """Test terrain type classification."""
         from engine.land.models import TerrainType

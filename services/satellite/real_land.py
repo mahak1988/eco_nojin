@@ -31,7 +31,7 @@ from __future__ import annotations
 
 import logging
 from datetime import date, timedelta
-from typing import Any, Dict, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +65,7 @@ def c_factor_from_ndvi(ndvi: float) -> float:
 # ---------------------------------------------------------------------------
 
 
-async def _climate_block(lat: float, lon: float) -> Dict[str, Any]:
+async def _climate_block(lat: float, lon: float) -> dict[str, Any]:
     """Real ERA5 climate series via Open-Meteo (free, no key)."""
     from services.satellite.open_meteo import fetch_era5_daily
 
@@ -145,13 +145,12 @@ async def _climate_block(lat: float, lon: float) -> Dict[str, Any]:
 
 
 async def _satellite_block(
-    lat: float, lon: float, analysis_date: Optional[str]
-) -> Dict[str, Any]:
+    lat: float, lon: float, analysis_date: str | None
+) -> dict[str, Any]:
     """Real Copernicus satellite block (Sentinel-2 + Landsat + Sentinel-1)."""
     from services.satellite.copernicus import (
         CopernicusClient,
         CopernicusError,
-        CopernicusNotConfigured,
     )
 
     client = CopernicusClient()
@@ -168,7 +167,7 @@ async def _satellite_block(
             "free_registration": "https://dataspace.copernicus.eu",
         }
 
-    out: Dict[str, Any] = {"data_source": "copernicus"}
+    out: dict[str, Any] = {"data_source": "copernicus"}
 
     # -- Sentinel-2: NDVI/EVI/SAVI + LAI + C-factor + NDVI map grid -------
     try:
@@ -238,8 +237,8 @@ async def _satellite_block(
 
 
 async def get_real_land(
-    lat: float, lon: float, analysis_date: Optional[str] = None
-) -> Dict[str, Any]:
+    lat: float, lon: float, analysis_date: str | None = None
+) -> dict[str, Any]:
     """Aggregate real land intelligence for a point (all free sources)."""
     satellite = await _satellite_block(lat, lon, analysis_date)
     climate = await _climate_block(lat, lon)

@@ -1,9 +1,10 @@
 """Pydantic schemas for unified simulation"""
-from datetime import datetime, date
-from typing import Optional, List, Dict, Any, Union
-from decimal import Decimal
+from datetime import date, datetime
 from enum import Enum
+from typing import Any
+
 from pydantic import BaseModel, Field
+
 
 class SimulationStatus(str, Enum):
     PENDING = "pending"
@@ -54,8 +55,8 @@ class WeatherData(BaseModel):
 class CropParameters(BaseModel):
     crop_type: str
     planting_date: date
-    harvest_date: Optional[date] = None
-    variety: Optional[str] = None
+    harvest_date: date | None = None
+    variety: str | None = None
     row_spacing_m: float = 0.75
     plant_density_per_m2: float = 8.0
 
@@ -71,25 +72,25 @@ class WindbreakConfig(BaseModel):
 class MultiLayerConfig(BaseModel):
     """کشت چندلایه - Multi-layer/Agroforestry"""
     canopy_layer: CropParameters  # لایه بالایی (درختان)
-    sub_canopy_layer: Optional[CropParameters] = None  # لایه میانی
-    ground_layer: Optional[CropParameters] = None  # لایه زمینی
+    sub_canopy_layer: CropParameters | None = None  # لایه میانی
+    ground_layer: CropParameters | None = None  # لایه زمینی
     shade_tolerance: float = 0.6
 
 class SimulationContext(BaseModel):
     """Context جامع برای تمام شبیه‌سازی‌ها"""
     simulation_id: str
     simulation_type: SimulationType
-    bbox: Optional[BBox] = None
-    village_id: Optional[str] = None
-    field_id: Optional[str] = None
+    bbox: BBox | None = None
+    village_id: str | None = None
+    field_id: str | None = None
     soil: SoilProfile = Field(default_factory=SoilProfile)
     weather: WeatherData = Field(default_factory=WeatherData)
-    crop: Optional[CropParameters] = None
-    windbreak: Optional[WindbreakConfig] = None
-    multi_layer: Optional[MultiLayerConfig] = None
+    crop: CropParameters | None = None
+    windbreak: WindbreakConfig | None = None
+    multi_layer: MultiLayerConfig | None = None
     start_date: date = Field(default_factory=lambda: date.today())
-    end_date: Optional[date] = None
-    parameters: Dict[str, Any] = Field(default_factory=dict)
+    end_date: date | None = None
+    parameters: dict[str, Any] = Field(default_factory=dict)
 
 class SimulationResult(BaseModel):
     """نتیجه استاندارد تمام شبیه‌سازی‌ها"""
@@ -97,11 +98,10 @@ class SimulationResult(BaseModel):
     simulation_type: SimulationType
     status: SimulationStatus
     started_at: datetime
-    completed_at: Optional[datetime] = None
+    completed_at: datetime | None = None
     duration_seconds: float = 0.0
-    summary: Dict[str, Any] = Field(default_factory=dict)
-    time_series: List[Dict[str, Any]] = Field(default_factory=list)
-    spatial_data: Optional[Dict[str, Any]] = None
-    warnings: List[str] = Field(default_factory=list)
-    error: Optional[str] = None
-    
+    summary: dict[str, Any] = Field(default_factory=dict)
+    time_series: list[dict[str, Any]] = Field(default_factory=list)
+    spatial_data: dict[str, Any] | None = None
+    warnings: list[str] = Field(default_factory=list)
+    error: str | None = None

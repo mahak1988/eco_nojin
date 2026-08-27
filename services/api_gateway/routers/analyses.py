@@ -1,14 +1,23 @@
 """API Router for new analyses and designs."""
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from database.config import get_db # Fixed import to get 'get_db' from the correct module
+
+from database.config import get_db  # Fixed import to get 'get_db' from the correct module
 from engine.hydroma.analyses.topography_analysis import TopographyAnalyzer, TopographyInput
+from engine.hydroma.calculations.crop_water_req_calc import (
+    CropWaterReqInput,
+    CropWaterRequirementCalculator,
+)
+from engine.hydroma.models.groundwater_model import GroundwaterInput, GroundwaterModel
 from engine.hydroma.models.runoff_model import RunoffCalculator, RunoffInput
-from engine.hydroma.models.groundwater_model import GroundwaterModel, GroundwaterInput
-from engine.hydroma.calculations.crop_water_req_calc import CropWaterRequirementCalculator, CropWaterReqInput
-from services.design_engine.water_structure_design_service import StructureDesigner, StructureDesignInput
-from services.design_engine.irrigation_design_service import IrrigationDesigner, IrrigationDesignInput
-from engine.hydroma.calibration.model_calibrator import Calibrator, CalibrationInput
+from services.design_engine.irrigation_design_service import (
+    IrrigationDesigner,
+    IrrigationDesignInput,
+)
+from services.design_engine.water_structure_design_service import (
+    StructureDesigner,
+    StructureDesignInput,
+)
 
 router = APIRouter(prefix="/analyses", tags=["analyses"])
 
@@ -20,7 +29,7 @@ def run_topography_analysis(input_data: TopographyInput, db: Session = Depends(g
         return result
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {e!s}")
 
 @router.post("/runoff/")
 def run_runoff_calculation(input_data: RunoffInput):
@@ -29,7 +38,7 @@ def run_runoff_calculation(input_data: RunoffInput):
         result = calculator.execute(input_data)
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Calculation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Calculation failed: {e!s}")
 
 @router.post("/groundwater/")
 def run_groundwater_model(input_data: GroundwaterInput):
@@ -38,7 +47,7 @@ def run_groundwater_model(input_data: GroundwaterInput):
         result = model.execute(input_data)
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Model run failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Model run failed: {e!s}")
 
 @router.post("/crop-water-req/")
 def run_crop_water_req_calculation(input_data: CropWaterReqInput):
@@ -47,7 +56,7 @@ def run_crop_water_req_calculation(input_data: CropWaterReqInput):
         result = calculator.execute(input_data)
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Calculation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Calculation failed: {e!s}")
 
 @router.post("/structure-design/")
 def run_structure_design(input_data: StructureDesignInput):
@@ -56,7 +65,7 @@ def run_structure_design(input_data: StructureDesignInput):
         result = designer.execute(input_data)
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Design failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Design failed: {e!s}")
 
 @router.post("/irrigation-design/")
 def run_irrigation_design(input_data: IrrigationDesignInput):
@@ -65,7 +74,7 @@ def run_irrigation_design(input_data: IrrigationDesignInput):
         result = designer.execute(input_data)
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Design failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Design failed: {e!s}")
 
 # Note: Calibration requires a special runner instance, so its API might be more complex
 # @router.post("/calibrate-model/")

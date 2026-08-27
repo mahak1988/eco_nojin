@@ -1,8 +1,11 @@
 """Reporting SQLAlchemy models"""
-from datetime import datetime, timezone
-from sqlalchemy import Column, String, DateTime, JSON
-from database.models import Base
 import uuid
+from datetime import UTC, datetime
+
+from sqlalchemy import JSON, Column, DateTime, String
+
+from database.models import Base
+
 
 class Report(Base):
     __tablename__ = "reports"
@@ -14,6 +17,5 @@ class Report(Base):
     result_data = Column(JSON, nullable=True)
     generated_by = Column(String(100), nullable=True)
     file_path = Column(String(500), nullable=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     completed_at = Column(DateTime, nullable=True)
-    

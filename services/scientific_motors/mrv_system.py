@@ -19,22 +19,25 @@ Outputs:
 """
 from __future__ import annotations
 
-import time
 import hashlib
 import json
-import uuid
-import numpy as np
-from typing import Dict, Any, List, Optional
-from datetime import datetime, timedelta
-from dataclasses import dataclass, field, asdict
+import time
+from dataclasses import asdict, dataclass, field
+from datetime import datetime
 from enum import Enum
+from typing import Any
 
 from .base import (
-    AbstractScientificMotor, MotorInput, MotorOutput,
-    MotorParameters, MotorResult, MotorStatus, MotorType,
+    AbstractScientificMotor,
+    MotorInput,
+    MotorOutput,
+    MotorParameters,
+    MotorResult,
+    MotorStatus,
+    MotorType,
 )
 from .satellite_integration import (
-    SatelliteIntegration, SatelliteContext, SatelliteDerivedParameters,
+    SatelliteContext,
     get_satellite_integration,
 )
 
@@ -85,7 +88,7 @@ class MRVVerification:
     standard_code: str
     additionality: AdditionalityStatus
     permanence_risk: PermanenceRisk
-    audit_trail: List[Dict[str, Any]] = field(default_factory=list)
+    audit_trail: list[dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass
@@ -108,22 +111,22 @@ class MRVReport:
     project_id: str
     generated_at: str
     version: str = "1.0"
-    
+
     # Project info
-    project: Dict[str, Any] = field(default_factory=dict)
-    
+    project: dict[str, Any] = field(default_factory=dict)
+
     # Monitoring
-    monitoring: Dict[str, Any] = field(default_factory=dict)
-    
+    monitoring: dict[str, Any] = field(default_factory=dict)
+
     # Reporting
-    carbon_sequestration: Dict[str, Any] = field(default_factory=dict)
-    co_benefits: Dict[str, Any] = field(default_factory=dict)
-    
+    carbon_sequestration: dict[str, Any] = field(default_factory=dict)
+    co_benefits: dict[str, Any] = field(default_factory=dict)
+
     # Verification
-    verification: Dict[str, Any] = field(default_factory=dict)
-    
+    verification: dict[str, Any] = field(default_factory=dict)
+
     # Financial
-    carbon_credits: List[Dict[str, Any]] = field(default_factory=list)
+    carbon_credits: list[dict[str, Any]] = field(default_factory=list)
     total_value_usd: float = 0.0
 
 
@@ -151,14 +154,14 @@ class MRVSystemMotor(AbstractScientificMotor):
     def display_name(self) -> str:
         return "MRV System (Carbon Credit Generator)"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [
             MotorInput("project_info", "json", True, "Project metadata"),
             MotorInput("baseline_soc", "scalar", False, "Baseline SOC (tC/ha)"),
             MotorInput("baseline_practice", "scalar", True, "Baseline practice"),
         ]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("mrv_report", "json", "report", "Complete MRV report"),
             MotorOutput("carbon_credits", "json", "credits", "Issued credits"),
@@ -166,7 +169,7 @@ class MRVSystemMotor(AbstractScientificMotor):
             MotorOutput("co_benefits", "json", "benefits", "Environmental co-benefits"),
         ]
 
-    async def execute(self, inputs: Dict[str, Any], parameters: MotorParameters) -> MotorResult:
+    async def execute(self, inputs: dict[str, Any], parameters: MotorParameters) -> MotorResult:
         start_time = time.time()
         run_id = f"MRV_{int(time.time())}"
 
@@ -174,27 +177,27 @@ class MRVSystemMotor(AbstractScientificMotor):
             # === Extract inputs ===
             project_data = parameters.custom_params
             project = self._parse_project_input(project_data)
-            
+
             # === Phase 1: MONITORING ===
-            print(f"  [MRV] Phase 1: Monitoring (satellite data)")
+            print("  [MRV] Phase 1: Monitoring (satellite data)")
             monitoring = self._monitoring_phase(project)
-            
+
             # === Phase 2: REPORTING ===
-            print(f"  [MRV] Phase 2: Reporting (scientific calculations)")
+            print("  [MRV] Phase 2: Reporting (scientific calculations)")
             carbon_seq, co_benefits = self._reporting_phase(project, monitoring)
-            
+
             # === Phase 3: VERIFICATION ===
-            print(f"  [MRV] Phase 3: Verification (blockchain + standards)")
+            print("  [MRV] Phase 3: Verification (blockchain + standards)")
             verification = self._verification_phase(
                 project, monitoring, carbon_seq
             )
-            
+
             # === Phase 4: CREDIT ISSUANCE ===
-            print(f"  [MRV] Phase 4: Carbon credit issuance")
+            print("  [MRV] Phase 4: Carbon credit issuance")
             credits = self._issue_credits(
                 project, carbon_seq, verification
             )
-            
+
             # === Build final report ===
             report = MRVReport(
                 report_id=run_id,
@@ -208,7 +211,7 @@ class MRVSystemMotor(AbstractScientificMotor):
                 carbon_credits=[asdict(c) for c in credits],
                 total_value_usd=sum(c.value_usd for c in credits),
             )
-            
+
             # Summary
             summary = {
                 "project": project.project_name,
@@ -245,14 +248,14 @@ class MRVSystemMotor(AbstractScientificMotor):
                 run_id=run_id,
                 motor_type=self.motor_type,
                 status=MotorStatus.FAILED,
-                error_message=f"{str(e)}\n{traceback.format_exc()}",
+                error_message=f"{e!s}\n{traceback.format_exc()}",
             )
 
     # =================================================================
     # Phase 1: Monitoring
     # =================================================================
 
-    def _monitoring_phase(self, project: MRVProjectInput) -> Dict[str, Any]:
+    def _monitoring_phase(self, project: MRVProjectInput) -> dict[str, Any]:
         """Collect satellite and baseline data."""
         # Get satellite parameters
         context = SatelliteContext(
@@ -261,13 +264,13 @@ class MRVSystemMotor(AbstractScientificMotor):
             bbox=project.bbox,
             koppen_climate=project.koppen_climate,
         )
-        
+
         sat_params = self._satellite.derive_parameters(
             context,
             crop_id=project.crop_id,
             koppen=project.koppen_climate,
         )
-        
+
         return {
             "satellite": {
                 "scene_id": sat_params.scene_id,
@@ -323,17 +326,17 @@ class MRVSystemMotor(AbstractScientificMotor):
     # =================================================================
 
     def _reporting_phase(
-        self, project: MRVProjectInput, monitoring: Dict
-    ) -> tuple[Dict[str, Any], Dict[str, Any]]:
+        self, project: MRVProjectInput, monitoring: dict
+    ) -> tuple[dict[str, Any], dict[str, Any]]:
         """Calculate carbon sequestration and co-benefits."""
-        
+
         baseline_c_factor = monitoring["baseline"]["c_factor"]
         project_c_factor = monitoring["project_practice"]["c_factor"]
         baseline_soc = monitoring["baseline"]["soc_tC_ha"]
-        
+
         # === Carbon sequestration calculation ===
         # Based on practice change + soil carbon dynamics (RothC-inspired)
-        
+
         # Soil carbon change rate (tC/ha/yr)
         # Empirical from meta-analyses (Lal 2004, Smith et al. 2008)
         sequestration_rates = {
@@ -344,10 +347,10 @@ class MRVSystemMotor(AbstractScientificMotor):
             ("bare_fallow", "no_till"): 0.4,
             ("bare_fallow", "cover_crops"): 0.6,
         }
-        
+
         key = (project.baseline_practice, project.new_practice)
         annual_soc_gain = sequestration_rates.get(key, 0.3)
-        
+
         # Climate adjustment (tropical faster, arid slower)
         climate_mult = {
             "Af": 1.3, "Am": 1.2, "Aw": 1.2,
@@ -355,33 +358,33 @@ class MRVSystemMotor(AbstractScientificMotor):
             "Csa": 1.0, "Csb": 1.0, "Cfa": 1.0, "Cfb": 0.9,
             "Dfa": 0.9, "Dfb": 0.8, "Dfc": 0.6,
         }.get(project.koppen_climate, 1.0)
-        
+
         annual_soc_gain *= climate_mult
-        
+
         # Convert tC/ha/yr to tCO2e/ha/yr
         annual_tCO2e_ha = annual_soc_gain * (44.0 / 12.0)
-        
+
         # Erosion reduction benefit (prevented SOC loss)
         baseline_erosion = monitoring["baseline"]["estimated_annual_loss_t_ha"]
         erosion_reduction_factor = (baseline_c_factor - project_c_factor) / baseline_c_factor
         avoided_erosion = baseline_erosion * erosion_reduction_factor
         avoided_soc_loss = avoided_erosion * 0.02  # 2% SOC in eroded soil
         avoided_tCO2e_ha = avoided_soc_loss * (44.0 / 12.0)
-        
+
         # Total sequestration
         total_annual_tCO2e_ha = annual_tCO2e_ha + avoided_tCO2e_ha
-        
+
         # Apply standard conservatism factor
         standard_name = project.project_name  # Will be overridden in test
         conservative_factor = 0.90  # 10% buffer for uncertainty
-        
+
         final_annual_tCO2e_ha = total_annual_tCO2e_ha * conservative_factor
-        
+
         # Project totals
         total_project_tCO2e = (
             final_annual_tCO2e_ha * project.land_area_ha * project.project_duration_years
         )
-        
+
         carbon_seq = {
             "annual_soc_gain_tC_ha": round(annual_soc_gain, 3),
             "annual_erosion_avoided_tC_ha": round(avoided_soc_loss, 3),
@@ -395,25 +398,25 @@ class MRVSystemMotor(AbstractScientificMotor):
             "conservative_factor": conservative_factor,
             "project_years": project.project_duration_years,
         }
-        
+
         # === Co-benefits calculation ===
         co_benefits = self._calculate_co_benefits(project, monitoring, carbon_seq)
-        
+
         return carbon_seq, co_benefits
 
     def _calculate_co_benefits(
-        self, project: MRVProjectInput, monitoring: Dict, carbon_seq: Dict
-    ) -> Dict[str, Any]:
+        self, project: MRVProjectInput, monitoring: dict, carbon_seq: dict
+    ) -> dict[str, Any]:
         """Calculate environmental co-benefits."""
-        
+
         items = []
-        
+
         # 1. Soil health improvement
         baseline_erosion = monitoring["baseline"]["estimated_annual_loss_t_ha"]
         project_c = monitoring["project_practice"]["c_factor"]
         baseline_c = monitoring["baseline"]["c_factor"]
         erosion_reduction_pct = (baseline_c - project_c) / baseline_c * 100
-        
+
         items.append({
             "category": "soil_health",
             "name": "Soil erosion reduction",
@@ -422,7 +425,7 @@ class MRVSystemMotor(AbstractScientificMotor):
             "description": f"Reduced erosion by {erosion_reduction_pct:.0f}%",
             "sdg": [15],  # Life on Land
         })
-        
+
         # 2. Water retention
         items.append({
             "category": "water",
@@ -432,7 +435,7 @@ class MRVSystemMotor(AbstractScientificMotor):
             "description": "Improved soil water holding capacity",
             "sdg": [6, 13],  # Clean Water, Climate Action
         })
-        
+
         # 3. Biodiversity (based on practice)
         biodiversity_scores = {
             "no_till": 20,
@@ -442,7 +445,7 @@ class MRVSystemMotor(AbstractScientificMotor):
             "permanent_pasture": 30,
         }
         bio_score = biodiversity_scores.get(project.new_practice, 15)
-        
+
         items.append({
             "category": "biodiversity",
             "name": "Biodiversity enhancement",
@@ -451,7 +454,7 @@ class MRVSystemMotor(AbstractScientificMotor):
             "description": f"{project.new_practice} supports {bio_score}% biodiversity",
             "sdg": [15],
         })
-        
+
         # 4. Farmer livelihood
         items.append({
             "category": "livelihood",
@@ -461,7 +464,7 @@ class MRVSystemMotor(AbstractScientificMotor):
             "description": "Additional carbon revenue",
             "sdg": [1, 2, 8],  # No poverty, Zero hunger, Decent work
         })
-        
+
         # 5. Reduced chemical use
         if project.new_practice in ["no_till_biochar", "cover_crops", "agroforestry"]:
             items.append({
@@ -472,7 +475,7 @@ class MRVSystemMotor(AbstractScientificMotor):
                 "description": "Less NPK fertilizer required",
                 "sdg": [12, 14],  # Responsible consumption, Life below water
             })
-        
+
         return {
             "items": items,
             "sdgs_addressed": sorted(set(sdg for item in items for sdg in item["sdg"])),
@@ -485,16 +488,16 @@ class MRVSystemMotor(AbstractScientificMotor):
     # =================================================================
 
     def _verification_phase(
-        self, project: MRVProjectInput, monitoring: Dict, carbon_seq: Dict
+        self, project: MRVProjectInput, monitoring: dict, carbon_seq: dict
     ) -> MRVVerification:
         """Generate verification hash and audit trail."""
-        
+
         # Additionality check
         additionality = self._check_additionality(project, carbon_seq)
-        
+
         # Permanence risk
         permanence = self._assess_permanence(project.new_practice)
-        
+
         # Generate blockchain hash
         audit_data = {
             "project": asdict(project),
@@ -509,10 +512,10 @@ class MRVSystemMotor(AbstractScientificMotor):
             },
             "timestamp": datetime.now().isoformat(),
         }
-        
+
         hash_input = json.dumps(audit_data, sort_keys=True).encode('utf-8')
         verification_hash = hashlib.sha256(hash_input).hexdigest()
-        
+
         # Audit trail
         audit_trail = [
             {
@@ -536,7 +539,7 @@ class MRVSystemMotor(AbstractScientificMotor):
                 "evidence": verification_hash,
             },
         ]
-        
+
         return MRVVerification(
             verification_hash=verification_hash,
             timestamp=datetime.now().isoformat(),
@@ -547,16 +550,16 @@ class MRVSystemMotor(AbstractScientificMotor):
         )
 
     def _check_additionality(
-        self, project: MRVProjectInput, carbon_seq: Dict
+        self, project: MRVProjectInput, carbon_seq: dict
     ) -> AdditionalityStatus:
         """Check if project is additional (would not happen without carbon finance)."""
-        
+
         # Simple heuristic: if practice change is significant and profitable
         high_additionality = [
             "no_till_biochar", "agroforestry", "cover_crops"
         ]
         low_additionality = ["no_till"]  # Already widespread in some regions
-        
+
         if project.new_practice in high_additionality:
             return AdditionalityStatus.YES
         elif project.new_practice in low_additionality:
@@ -566,7 +569,7 @@ class MRVSystemMotor(AbstractScientificMotor):
 
     def _assess_permanence(self, practice: str) -> PermanenceRisk:
         """Assess risk of carbon reversal."""
-        
+
         if practice in ["no_till_biochar", "agroforestry"]:
             return PermanenceRisk.LOW
         elif practice in ["no_till", "cover_crops"]:
@@ -579,27 +582,27 @@ class MRVSystemMotor(AbstractScientificMotor):
     # =================================================================
 
     def _issue_credits(
-        self, project: MRVProjectInput, carbon_seq: Dict, 
+        self, project: MRVProjectInput, carbon_seq: dict,
         verification: MRVVerification,
-    ) -> List[CarbonCredit]:
+    ) -> list[CarbonCredit]:
         """Issue annual carbon credits."""
-        
+
         credits = []
         start_year = datetime.fromisoformat(project.project_start_date).year
         annual_tCO2e = carbon_seq["annual_tCO2e_ha"] * project.land_area_ha
-        
+
         # Conservative issuance: ramp up over first 3 years
         ramp_up = [0.5, 0.75, 1.0]
-        
+
         for year_idx in range(project.project_duration_years):
             vintage = start_year + year_idx
             multiplier = ramp_up[year_idx] if year_idx < len(ramp_up) else 1.0
             year_tCO2e = annual_tCO2e * multiplier
-            
+
             # Carbon price (increases over time)
             price = self._carbon_price_usd * (1.02 ** year_idx)  # 2% annual increase
             value = year_tCO2e * price
-            
+
             credit = CarbonCredit(
                 credit_id=f"CRED-{verification.verification_hash[:8]}-{vintage}",
                 vintage_year=vintage,
@@ -610,24 +613,24 @@ class MRVSystemMotor(AbstractScientificMotor):
                 verification_hash=verification.verification_hash,
             )
             credits.append(credit)
-        
+
         return credits
 
     # =================================================================
     # Input Parsing
     # =================================================================
 
-    def _parse_project_input(self, data: Dict) -> MRVProjectInput:
+    def _parse_project_input(self, data: dict) -> MRVProjectInput:
         """Parse user input into MRVProjectInput."""
-        
+
         lat = float(data.get("latitude", 35.0))
         lon = float(data.get("longitude", 51.0))
-        
+
         # Default bbox: ~10km × 10km around center
         bbox = (lon - 0.05, lat - 0.05, lon + 0.05, lat + 0.05)
         if "bbox" in data:
             bbox = tuple(data["bbox"])
-        
+
         return MRVProjectInput(
             project_name=data.get("project_name", "Default Project"),
             land_area_ha=float(data.get("land_area_ha", 10.0)),

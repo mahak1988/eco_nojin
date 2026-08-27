@@ -6,8 +6,7 @@ and is only used for admin operations (delete test user, user lookup).
 """
 
 import os
-import time
-from typing import Any, Dict, Optional
+from typing import Any
 
 import httpx
 from fastapi import APIRouter
@@ -24,7 +23,7 @@ def _env(key: str) -> str:
     return os.environ.get(key, "")
 
 
-def _cfg() -> Dict[str, str]:
+def _cfg() -> dict[str, str]:
     url = _env("SUPABASE_URL").rstrip("/")
     anon = _env("SUPABASE_ANON_KEY") or _env("SUPABASE_KEY")
     svc = _env("SUPABASE_SERVICE_ROLE_KEY")
@@ -36,7 +35,7 @@ def _cfg() -> Dict[str, str]:
 class SignupRequest(BaseModel):
     email: str = Field(min_length=3, max_length=200)
     password: str = Field(min_length=6, max_length=100)
-    phone: Optional[str] = None
+    phone: str | None = None
 
 
 class LoginRequest(BaseModel):
@@ -44,7 +43,7 @@ class LoginRequest(BaseModel):
     password: str
 
 
-async def _goto(session: httpx.AsyncClient, cfg: Dict[str, str], path: str, body: Dict[str, Any], key: str) -> Dict[str, Any]:
+async def _goto(session: httpx.AsyncClient, cfg: dict[str, str], path: str, body: dict[str, Any], key: str) -> dict[str, Any]:
     r = await session.post(
         f"{cfg['url']}{path}",
         json=body,
@@ -54,7 +53,7 @@ async def _goto(session: httpx.AsyncClient, cfg: Dict[str, str], path: str, body
 
 
 @router.post("/signup")
-async def signup(req: SignupRequest) -> Dict[str, Any]:
+async def signup(req: SignupRequest) -> dict[str, Any]:
     """Real GoTrue signup (email+password). Returns session tokens on success."""
     try:
         cfg = _cfg()
@@ -76,7 +75,7 @@ async def signup(req: SignupRequest) -> Dict[str, Any]:
 
 
 @router.post("/login")
-async def login(req: LoginRequest) -> Dict[str, Any]:
+async def login(req: LoginRequest) -> dict[str, Any]:
     """Real GoTrue password login — returns access_token + refresh_token."""
     try:
         cfg = _cfg()
@@ -98,7 +97,7 @@ async def login(req: LoginRequest) -> Dict[str, Any]:
 
 
 @router.get("/me")
-async def me(access_token: str) -> Dict[str, Any]:
+async def me(access_token: str) -> dict[str, Any]:
     """Validate a Supabase JWT against GoTrue (real user info)."""
     try:
         cfg = _cfg()
@@ -116,7 +115,7 @@ async def me(access_token: str) -> Dict[str, Any]:
 
 
 @router.post("/admin/delete-user")
-async def admin_delete_user(user_id: str) -> Dict[str, Any]:
+async def admin_delete_user(user_id: str) -> dict[str, Any]:
     """Admin-only: delete a test user (service role). Never called from the frontend."""
     try:
         cfg = _cfg()

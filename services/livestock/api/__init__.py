@@ -1,11 +1,14 @@
 """Livestock FastAPI router"""
 from typing import List
+
 from fastapi import APIRouter, HTTPException
-from services.livestock.service import LivestockService
-from services.livestock.schemas import (
-    LivestockSimulationRequest, LivestockSimulationResult,
-)
+
 from services.livestock.nutrition.forage_quality import ndvi_to_forage_quality
+from services.livestock.schemas import (
+    LivestockSimulationRequest,
+    LivestockSimulationResult,
+)
+from services.livestock.service import LivestockService
 
 router = APIRouter(prefix="/livestock", tags=["Livestock"])
 
@@ -27,7 +30,6 @@ async def forage_from_ndvi(ndvi: float, season: str = "spring"):
     return ndvi_to_forage_quality(ndvi, season)
 
 @router.post("/compare")
-async def compare_scenarios(requests: List[LivestockSimulationRequest]):
+async def compare_scenarios(requests: list[LivestockSimulationRequest]):
     service = LivestockService()
     return service.compare_scenarios(requests)
-    

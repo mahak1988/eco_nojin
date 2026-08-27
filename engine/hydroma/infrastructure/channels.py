@@ -5,9 +5,10 @@ Calculates and designs stable open channels for water conveyance
 based on discharge, slope, and soil characteristics.
 """
 import math
-from typing import Dict, Any
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
+
 from .draining import calculate_open_channel_flow
 
 
@@ -31,7 +32,7 @@ class ChannelDesignCriteria:
     Manning_n: float = 0.025  # Typical for excavated earth
 
 
-def design_trapezoidal_channel(criteria: ChannelDesignCriteria) -> Dict[str, Any]:
+def design_trapezoidal_channel(criteria: ChannelDesignCriteria) -> dict[str, Any]:
     """
     Designs a trapezoidal channel.
 

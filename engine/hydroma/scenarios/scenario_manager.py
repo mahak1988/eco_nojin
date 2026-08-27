@@ -5,18 +5,17 @@ Orchestrates the definition, execution, and storage of various scenarios
 (e.g., climate, crop management, infrastructure).
 """
 import logging
-from datetime import datetime
-from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
-from database.models import ScenarioDB, ScenarioResultDB
 from database.config import SessionLocal
+from database.models import ScenarioDB, ScenarioResultDB
+from engine.hydroma.economics.integration import calculate_agricultural_project_economics
+from engine.hydroma.risk.assessment import perform_comprehensive_risk_analysis  # hypothetical
 from engine.hydroma.scenarios.climate_scenarios import generate_climate_scenario
 from engine.hydroma.scenarios.crop_scenarios import define_crop_scenario
 from engine.hydroma.simulation.orchestrator import run_simulation_chain
-from engine.hydroma.economics.integration import calculate_agricultural_project_economics
-from engine.hydroma.risk.assessment import perform_comprehensive_risk_analysis # hypothetical
 
 logger = logging.getLogger(__name__)
 
@@ -35,10 +34,10 @@ class ScenarioDefinition:
     project_id: str
     scenario_name: str
     scenario_type: ScenarioType
-    baseline_scenario_id: Optional[str] = None
+    baseline_scenario_id: str | None = None
     description: str = ""
-    assumptions: Dict[str, Any] = None
-    parameters: Dict[str, Any] = None # e.g., {"temp_change_degC": 2.0, "rainfall_change_percent": -10}
+    assumptions: dict[str, Any] = None
+    parameters: dict[str, Any] = None # e.g., {"temp_change_degC": 2.0, "rainfall_change_percent": -10}
 
 
 class ScenarioManager:
@@ -78,7 +77,7 @@ class ScenarioManager:
         finally:
             db.close()
 
-    def run_scenario(self, scenario_id: str, land_profile_data: Dict[str, Any]) -> Dict[str, Any]:
+    def run_scenario(self, scenario_id: str, land_profile_data: dict[str, Any]) -> dict[str, Any]:
         """Executes a scenario by retrieving its definition and running the simulation chain."""
         logger.info(f"Running scenario with ID {scenario_id}")
         db = SessionLocal()
@@ -144,7 +143,7 @@ class ScenarioManager:
         finally:
             db.close()
 
-    def _apply_modifications(self, land_profile: Dict[str, Any], scenario_type: ScenarioType, params: Dict[str, Any]) -> Dict[str, Any]:
+    def _apply_modifications(self, land_profile: dict[str, Any], scenario_type: ScenarioType, params: dict[str, Any]) -> dict[str, Any]:
         """Applies scenario-specific modifications to the base land profile or input data."""
         modified = land_profile.copy()
 
@@ -167,7 +166,7 @@ class ScenarioManager:
 
         return modified
 
-    def compare_scenarios(self, scenario_ids: List[str]) -> Dict[str, Any]:
+    def compare_scenarios(self, scenario_ids: list[str]) -> dict[str, Any]:
         """Compares results from multiple scenarios."""
         logger.info(f"Comparing scenarios: {scenario_ids}")
         comparisons = {}

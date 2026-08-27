@@ -9,7 +9,8 @@ URL: https://open-meteo.com/
 """
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any
+
 import numpy as np
 
 
@@ -24,7 +25,7 @@ class ClimateFetcher:
         lat: float,
         lon: float,
         year: int = 2020,
-    ) -> Optional[Dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         """
         Fetch monthly climate data for a single year.
 

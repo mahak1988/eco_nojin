@@ -1,13 +1,16 @@
 """Test Hydroma Nojin motors."""
 import sys
+
 sys.path.insert(0, '.')
 
 import asyncio
+
 import numpy as np
 import xarray as xr
-from services.scientific_motors.biofertilizer import BiofertilizerMotor
-from services.scientific_motors.base import MotorParameters
+
 from services.map_engine.smart_mapper import SmartMapGenerator
+from services.scientific_motors.base import MotorParameters
+from services.scientific_motors.biofertilizer import BiofertilizerMotor
 
 
 async def test_biofertilizer():
@@ -125,7 +128,7 @@ def test_smart_mapper():
 
     # Classify vegetation health
     health = SmartMapGenerator.classify_vegetation_health(ndvi)
-    print(f"\nVegetation Health Distribution:")
+    print("\nVegetation Health Distribution:")
     for i in range(1, 6):
         count = np.sum(health.values == i)
         print(f"  Class {i}: {count} pixels ({count / health.size * 100:.1f}%)")

@@ -1,4 +1,4 @@
-from datetime import timezone
+
 """Comprehensive soil analysis and remediation router."""
 
 from fastapi import APIRouter, Depends
@@ -546,7 +546,7 @@ def analyze_soil(req: SoilAnalysisRequest, db: Session = Depends(get_db)):
             db.commit()
             db.refresh(record)
             saved_id = record.id
-        except Exception as e:
+        except Exception:
             db.rollback()
     return {
         "analysis": {
@@ -631,9 +631,9 @@ def compute_erosion(
 # ============================================================================
 # Soil Profiles CRUD
 # ============================================================================
+from datetime import UTC, datetime
+
 from pydantic import BaseModel, Field
-from typing import Optional, List
-from datetime import datetime, timezone
 
 
 class SoilProfileCreate(BaseModel):
@@ -657,7 +657,7 @@ class SoilProfileRead(BaseModel):
 
 
 # In-memory storage for simplicity (replace with DB in production)
-_soil_profiles_db: List[dict] = []
+_soil_profiles_db: list[dict] = []
 _soil_profile_counter = [0]
 
 
@@ -679,13 +679,13 @@ async def create_soil_profile(profile: SoilProfileCreate):
         "ph": profile.ph,
         "ec": profile.ec,
         "organic_matter": profile.organic_matter,
-        "created_at": datetime.now(timezone.utc).replace(tzinfo=None).isoformat(),
+        "created_at": datetime.now(UTC).replace(tzinfo=None).isoformat(),
     }
     _soil_profiles_db.append(new_profile)
     return new_profile
 
 
-@router.get("/", response_model=List[SoilProfileRead], tags=["soil"])
+@router.get("/", response_model=list[SoilProfileRead], tags=["soil"])
 async def list_soil_profiles():
     """List all soil profiles.
     

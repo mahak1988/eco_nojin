@@ -9,12 +9,12 @@ Never fabricates: unknown slugs return a clear error.
 """
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 from services.models.registry import get_model, list_models
 
 
-def citation_for_model(slug: str) -> Dict[str, Any]:
+def citation_for_model(slug: str) -> dict[str, Any]:
     """Citation suggestion for a registered model slug."""
     model = get_model(slug)
     if model is None:
@@ -37,7 +37,7 @@ def citation_for_model(slug: str) -> Dict[str, Any]:
     }
 
 
-def citation_index() -> Dict[str, Any]:
+def citation_index() -> dict[str, Any]:
     """All models with citations (for the science dashboard)."""
     items = []
     for m in list_models():

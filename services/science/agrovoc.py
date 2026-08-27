@@ -10,12 +10,10 @@ aliases (fa/en search aliases).
 
 from __future__ import annotations
 
-from typing import Dict, List
-
 AGROVOC_BASE = "https://agrovoc.fao.org/browse/agrovoc/en/page/"
 
 # Concept codes below are real AGROVOC concept identifiers (e.g. c_7237 = wheat).
-AGROVOC_MAP: List[Dict[str, str]] = [
+AGROVOC_MAP: list[dict[str, str]] = [
     {"term": "گندم", "term_en": "wheat", "uri": AGROVOC_BASE + "c_8373", "group": "crop", "aliases": ["wheat", "گندم"]},
     {"term": "جو", "term_en": "barley", "uri": AGROVOC_BASE + "c_823", "group": "crop", "aliases": ["barley"]},
     {"term": "ذرت", "term_en": "maize", "uri": AGROVOC_BASE + "c_12332", "group": "crop", "aliases": ["corn", "ذرت"]},
@@ -59,18 +57,18 @@ AGROVOC_MAP: List[Dict[str, str]] = [
     {"term": "بازار", "term_en": "markets", "uri": AGROVOC_BASE + "c_4626", "group": "cross", "aliases": ["market"]},
 ]
 
-AGROVOC_INDEX: Dict[str, Dict[str, str]] = {}
+AGROVOC_INDEX: dict[str, dict[str, str]] = {}
 for _entry in AGROVOC_MAP:
     for _alias in _entry["aliases"]:
         AGROVOC_INDEX[_alias.lower()] = _entry
 
 
-def agrovoc_search(query: str, limit: int = 8) -> List[Dict[str, str]]:
+def agrovoc_search(query: str, limit: int = 8) -> list[dict[str, str]]:
     """Search the offline AGROVOC map (fa/en aliases, substring match)."""
     q = query.strip().lower()
     if not q:
         return []
-    hits: List[Dict[str, str]] = []
+    hits: list[dict[str, str]] = []
     for entry in AGROVOC_MAP:
         hay = " ".join([entry["term"], entry["term_en"]] + entry["aliases"]).lower()
         if q in hay:
@@ -84,9 +82,9 @@ def agrovoc_uri_for_term(term: str) -> str | None:
     return entry["uri"] if entry else None
 
 
-def agrovoc_stats() -> Dict[str, int]:
+def agrovoc_stats() -> dict[str, int]:
     """Count concepts per group (for dashboard display)."""
-    groups: Dict[str, int] = {}
+    groups: dict[str, int] = {}
     for entry in AGROVOC_MAP:
         groups[entry["group"]] = groups.get(entry["group"], 0) + 1
     return groups

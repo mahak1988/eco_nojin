@@ -4,12 +4,11 @@ Model Version Manager.
 Handles the lifecycle of model versions, including creation, promotion, and rollback.
 """
 import logging
-from typing import Dict, Any, List
 from datetime import date
-import uuid
+from typing import Any
 
-from database.models import ModelVersionDB, CalibrationRecordDB
 from database.config import SessionLocal
+from database.models import ModelVersionDB
 
 logger = logging.getLogger(__name__)
 
@@ -26,8 +25,8 @@ class ModelVersionManager:
         version_number: str,
         version_type: str, # e.g., 'major', 'minor', 'patch', 'calibrated'
         description: str,
-        parameters: Dict[str, Any],
-        performance_metrics: Dict[str, float],
+        parameters: dict[str, Any],
+        performance_metrics: dict[str, float],
         calibration_record_id: str = None,
         promote_to_current: bool = False
     ) -> str:

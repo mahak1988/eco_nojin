@@ -15,17 +15,18 @@ Honesty contract (W-001)
   otherwise "simulated" with explicit labelling. Weather is always real
   NASA POWER data when the network is reachable, else an error.
 """
-from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel, Field, field_validator, ConfigDict
-from typing import Optional, List, Dict, Any
-from datetime import datetime, date, timedelta
-import random
 import logging
+import random
+from datetime import date, datetime, timedelta
+from typing import Any
 
+from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from sqlalchemy.orm import Session
 
-from database.config import get_db
 from database import models
+from database.config import get_db
+from services.analytics.duckdb_service import summarize_satellite_rows
 from services.satellite.copernicus import (
     CopernicusClient,
     CopernicusError,
@@ -33,7 +34,7 @@ from services.satellite.copernicus import (
 )
 from services.satellite.nasa_power import fetch_climate_with_et0
 from services.satellite.open_meteo import fetch_era5_summary
-from services.analytics.duckdb_service import summarize_satellite_rows
+
 # TODO: Refactor to use service layer instead of direct database access
 
 logger = logging.getLogger(__name__)
@@ -49,8 +50,8 @@ class SatelliteAnalyzeRequest(BaseModel):
     """Request model for satellite analysis."""
     lat: float = Field(..., ge=-90, le=90, description="Latitude (-90..90)")
     lon: float = Field(..., ge=-180, le=180, description="Longitude (-180..180)")
-    analysis_date: Optional[str] = Field(None, description="ISO date (YYYY-MM-DD)")
-    farm_id: Optional[int] = Field(None, description="Farm id to attach the stored row")
+    analysis_date: str | None = Field(None, description="ISO date (YYYY-MM-DD)")
+    farm_id: int | None = Field(None, description="Farm id to attach the stored row")
 
     @field_validator('analysis_date')
     @classmethod
@@ -73,11 +74,11 @@ class SatelliteAnalyzeResponse(BaseModel):
     savi: float = Field(..., ge=-1, le=1)
     recommendation: str
     vegetation_health: str
-    analysis_date: Optional[str] = None
+    analysis_date: str | None = None
     data_source: str = "simulated"
-    scene_id: Optional[str] = None
-    cloud_cover: Optional[float] = None
-    sensed_at: Optional[str] = None
+    scene_id: str | None = None
+    cloud_cover: float | None = None
+    sensed_at: str | None = None
 
 
 class RealLandResponse(BaseModel):
@@ -89,26 +90,26 @@ class RealLandResponse(BaseModel):
     """
     lat: float
     lon: float
-    analysis_date: Optional[str] = None
-    satellite: Dict[str, Any]
-    climate: Dict[str, Any]
-    soil: Dict[str, Any]
-    summary: Dict[str, Any]
+    analysis_date: str | None = None
+    satellite: dict[str, Any]
+    climate: dict[str, Any]
+    soil: dict[str, Any]
+    summary: dict[str, Any]
 
 
 class SatelliteHistoryResponse(BaseModel):
     """One stored satellite analysis row."""
     id: int
     farm_id: int
-    ndvi: Optional[float] = None
-    evi: Optional[float] = None
-    savi: Optional[float] = None
-    ndwi: Optional[float] = None
-    nbr: Optional[float] = None
-    satellite: Optional[str] = None
-    data_source: Optional[str] = None
-    scene_id: Optional[str] = None
-    cloud_cover: Optional[float] = None
+    ndvi: float | None = None
+    evi: float | None = None
+    savi: float | None = None
+    ndwi: float | None = None
+    nbr: float | None = None
+    satellite: str | None = None
+    data_source: str | None = None
+    scene_id: str | None = None
+    cloud_cover: float | None = None
     analyzed_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
@@ -119,20 +120,20 @@ class WeatherResponse(BaseModel):
     lat: float
     lon: float
     days: int = 0
-    summary: Optional[Dict[str, Any]] = None
-    daily: Optional[Dict[str, Dict[str, float]]] = None
-    era5: Optional[Dict[str, Any]] = None
-    nasa_power: Optional[Dict[str, Any]] = None
+    summary: dict[str, Any] | None = None
+    daily: dict[str, dict[str, float]] | None = None
+    era5: dict[str, Any] | None = None
+    nasa_power: dict[str, Any] | None = None
 
 
 class StatsResponse(BaseModel):
     """DuckDB NDVI summary for a farm."""
     farm_id: int
     analyses: int
-    ndvi_mean: Optional[float] = None
-    ndvi_min: Optional[float] = None
-    ndvi_max: Optional[float] = None
-    ndvi_latest: Optional[float] = None
+    ndvi_mean: float | None = None
+    ndvi_min: float | None = None
+    ndvi_max: float | None = None
+    ndvi_latest: float | None = None
     real_data_count: int = 0
     engine: str = "duckdb"
 
@@ -141,8 +142,8 @@ class HealthResponse(BaseModel):
     """Health check response."""
     status: str = "operational"
     module: str = "satellite"
-    supported_indices: List[str]
-    providers: List[str]
+    supported_indices: list[str]
+    providers: list[str]
     data_source: str
 
 
@@ -168,7 +169,7 @@ def _copernicus_client() -> CopernicusClient:
     return CopernicusClient()
 
 
-def _simulated_analysis(lat: float, lon: float) -> Dict[str, Any]:
+def _simulated_analysis(lat: float, lon: float) -> dict[str, Any]:
     """Deterministic, clearly-labelled simulation (W-001 fallback)."""
     random.seed(int(abs(lat * 1000)) + int(abs(lon * 1000)))
     ndvi = round(random.uniform(0.2, 0.8), 3)
@@ -210,7 +211,7 @@ def era5_series(
     lon: float,
     start: str,
     end: str,
-    variables: Optional[str] = None,
+    variables: str | None = None,
 ):
     """Real ERA5 daily series for a point (CDS). Requires accepted licence."""
     from services.satellite.era5_fetch import Era5Error, fetch_era5_point
@@ -341,7 +342,7 @@ async def real_land_analysis(request: SatelliteAnalyzeRequest):
     return await get_real_land(request.lat, request.lon, request.analysis_date)
 
 
-@router.get("/history/{farm_id}", response_model=List[SatelliteHistoryResponse])
+@router.get("/history/{farm_id}", response_model=list[SatelliteHistoryResponse])
 def get_satellite_history(farm_id: int, limit: int = 20, db: Session = Depends(get_db)):
     """Return stored satellite analyses for a farm (newest first)."""
     rows = (

@@ -4,18 +4,17 @@ Calibration Engine for Nojin Biofertilizer Models.
 Adjusts model parameters based on field trial outcomes
 to improve prediction accuracy.
 """
-from typing import Dict, Any, List
+from datetime import date
+from typing import Any
+
 import numpy as np
 from scipy.optimize import minimize
-import pickle # For saving/loading model states
-from datetime import date
-from sqlalchemy import func
 
-from database.models import NojinCalibrationRecordDB, NojinFieldTrialDB
 from database.config import SessionLocal
+from database.models import NojinCalibrationRecordDB, NojinFieldTrialDB
 
 
-def calibrate_formulation_model(formulation_id: str, trial_data_ids: List[str], model_version: str):
+def calibrate_formulation_model(formulation_id: str, trial_data_ids: list[str], model_version: str):
     """
     Calibrates a biofertilizer effect model using field trial data.
 
@@ -118,7 +117,7 @@ def calibrate_formulation_model(formulation_id: str, trial_data_ids: List[str], 
         db.close()
 
 
-def load_calibrated_model(formulation_id: str, target_date: date = None) -> Dict[str, Any]:
+def load_calibrated_model(formulation_id: str, target_date: date = None) -> dict[str, Any]:
     """
     Loads the most recent (or date-specific) calibrated parameters for a model.
 

@@ -1,6 +1,5 @@
 """تست‌های اولیه برای ماژول landscape"""
 
-import pytest
 
 
 class TestLandscapeModels:

@@ -11,13 +11,16 @@ Uses existing modules:
 import logging
 import math
 import time
-from typing import Optional, List, Dict, Any, Tuple
-from datetime import datetime, timezone
+from datetime import datetime
+from typing import Any
 
 from .climate_models import (
-    ClimateProfile, ClimateIntegrationResult,
-    MonthlyClimate, KoppenClimate, AridityClass,
     KOPPEN_DESCRIPTIONS,
+    AridityClass,
+    ClimateIntegrationResult,
+    ClimateProfile,
+    KoppenClimate,
+    MonthlyClimate,
 )
 
 logger = logging.getLogger(__name__)
@@ -100,13 +103,13 @@ class ClimateIntegrator:
     - engine/hydroma/models/global_watchdog/koppen.py (KGCv5)
     - services/satellite/open_meteo.py (climate data)
     """
-    
+
     def __init__(self):
         """Initialize integrator with climate modules."""
         self._et_calculator = None
         self._koppen_classifier = None
         self._load_climate_modules()
-    
+
     def _load_climate_modules(self):
         """Load climate modules (lazy loading)."""
         # Load ET calculator
@@ -122,7 +125,7 @@ class ClimateIntegrator:
             logger.info("ET calculator loaded")
         except ImportError as e:
             logger.warning(f"Could not load ET calculator: {e}")
-        
+
         # Load Köppen classifier
         try:
             from engine.hydroma.models.global_watchdog.koppen import KGCv5
@@ -130,8 +133,8 @@ class ClimateIntegrator:
             logger.info("KGCv5 Köppen classifier loaded")
         except ImportError as e:
             logger.warning(f"Could not load KGCv5: {e}")
-    
-    def get_latitude_band(self, lat: float) -> Dict[str, Any]:
+
+    def get_latitude_band(self, lat: float) -> dict[str, Any]:
         """Get climate band for a given latitude."""
         for name, band in LATITUDE_CLIMATE_BANDS.items():
             low, high = band["lat_range"]
@@ -142,20 +145,20 @@ class ClimateIntegrator:
             "name": "temperate",
             **LATITUDE_CLIMATE_BANDS["temperate"]
         }
-    
+
     def generate_synthetic_monthly_climate(
         self, lat: float, lon: float
-    ) -> List[MonthlyClimate]:
+    ) -> list[MonthlyClimate]:
         """
         Generate synthetic monthly climate data based on latitude.
         
         This is the L0 fallback when real data is not available.
         """
         band = self.get_latitude_band(lat)
-        
+
         # Determine hemisphere
         is_northern = lat >= 0
-        
+
         # Interpolate monthly temperatures using cosine function
         # T(month) = T_mean + (T_jul - T_jan)/2 * cos(2π(month - 7)/12)
         # for northern hemisphere (warmest in July)
@@ -163,30 +166,30 @@ class ClimateIntegrator:
         t_jul_mean = (band["t_min_jul"] + band["t_max_jul"]) / 2
         t_annual_mean = (t_jan_mean + t_jul_mean) / 2
         t_amplitude = abs(t_jul_mean - t_jan_mean) / 2
-        
+
         # Precipitation distribution (simple sinusoidal with peak in warm season for temperate)
         annual_precip = band["annual_precip"]
-        
+
         monthly = []
         for month in range(1, 13):
             # Temperature: cosine curve
             phase = (month - 7) * 2 * math.pi / 12  # Peak in July (month 7)
             if not is_northern:
                 phase = (month - 1) * 2 * math.pi / 12  # Peak in January for south
-            
+
             t_mean = t_annual_mean + t_amplitude * math.cos(phase)
-            
+
             # Add some daily range
             daily_range = 8.0 + 2.0 * math.cos(phase)  # Varies seasonally
             t_min = t_mean - daily_range / 2
             t_max = t_mean + daily_range / 2
-            
+
             # Precipitation: peak in warm season for temperate, wet season varies
             # Simplified: more in summer for temperate, winter for Mediterranean
             precip_phase = phase + math.pi  # Opposite phase for precip
             monthly_frac = (1 + 0.5 * math.cos(precip_phase)) / 12
             precip_mm = annual_precip * monthly_frac
-            
+
             monthly.append(MonthlyClimate(
                 month=month,
                 t_min_c=round(t_min, 1),
@@ -194,12 +197,12 @@ class ClimateIntegrator:
                 t_mean_c=round(t_mean, 1),
                 precipitation_mm=round(max(0, precip_mm), 1),
             ))
-        
+
         return monthly
-    
+
     def calculate_et0_hargreaves_monthly(
-        self, monthly: List[MonthlyClimate], lat: float
-    ) -> List[MonthlyClimate]:
+        self, monthly: list[MonthlyClimate], lat: float
+    ) -> list[MonthlyClimate]:
         """
         Calculate monthly ET0 using Hargreaves method.
         
@@ -218,13 +221,13 @@ class ClimateIntegrator:
                 et0 = 0.0023 * ra * (m.t_mean_c + 17.8) * math.sqrt(t_range)
                 m.et0_mm = round(max(0, et0), 1)
             return monthly
-        
+
         try:
             for m in monthly:
                 # Days in month (approximate)
                 days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
                 days = days_in_month[m.month - 1]
-                
+
                 # Daily ET0 then multiply by days
                 ra = self._extraterrestrial_radiation_monthly(m.month, lat)
                 t_range = m.t_max_c - m.t_min_c
@@ -235,9 +238,9 @@ class ClimateIntegrator:
         except Exception as e:
             logger.warning(f"ET0 calculation failed: {e}")
             # Leave et0_mm as None
-        
+
         return monthly
-    
+
     def _extraterrestrial_radiation_monthly(
         self, month: int, lat: float
     ) -> float:
@@ -249,35 +252,35 @@ class ClimateIntegrator:
         # Julian day (approximate for middle of month)
         julian_days = [15, 46, 74, 105, 135, 166, 196, 227, 258, 288, 319, 349]
         J = julian_days[month - 1]
-        
+
         # Solar constant
         Gsc = 0.0820  # MJ/m²/min
-        
+
         # Inverse relative distance Earth-Sun
         dr = 1 + 0.033 * math.cos(2 * math.pi * J / 365)
-        
+
         # Solar declination
         delta = 0.409 * math.sin(2 * math.pi * J / 365 - 1.39)
-        
+
         # Latitude in radians
         phi = math.radians(lat)
-        
+
         # Sunset hour angle
         cos_ws = -math.tan(phi) * math.tan(delta)
         cos_ws = max(-1, min(1, cos_ws))  # Clamp
         ws = math.acos(cos_ws)
-        
+
         # Extraterrestrial radiation
         Ra = (24 * 60 / math.pi) * Gsc * dr * (
             ws * math.sin(phi) * math.sin(delta)
             + math.cos(phi) * math.cos(delta) * math.sin(ws)
         )
-        
+
         return Ra
-    
+
     def classify_koppen(
-        self, monthly: List[MonthlyClimate], lat: float
-    ) -> Tuple[Optional[KoppenClimate], Optional[str]]:
+        self, monthly: list[MonthlyClimate], lat: float
+    ) -> tuple[KoppenClimate | None, str | None]:
         """
         Classify climate using Köppen-Geiger system.
         
@@ -287,16 +290,16 @@ class ClimateIntegrator:
             # Fallback: use latitude band
             band = self.get_latitude_band(lat)
             return band.get("koppen"), "synthetic"
-        
+
         try:
             # Prepare input for KGCv5
             # KGCv5 expects: t_min[12], t_max[12], precip[12]
             t_min = [m.t_min_c for m in monthly]
             t_max = [m.t_max_c for m in monthly]
             precip = [m.precipitation_mm for m in monthly]
-            
+
             result = self._koppen_classifier.classify(t_min, t_max, precip, lat)
-            
+
             # Parse result
             if isinstance(result, tuple):
                 koppen_code = result[0] if result else None
@@ -304,7 +307,7 @@ class ClimateIntegrator:
                 koppen_code = result.code
             else:
                 koppen_code = str(result)
-            
+
             # Map to enum
             try:
                 koppen_enum = KoppenClimate(koppen_code)
@@ -313,15 +316,15 @@ class ClimateIntegrator:
             except ValueError:
                 logger.warning(f"Unknown Köppen code: {koppen_code}")
                 return None, koppen_code
-        
+
         except Exception as e:
             logger.warning(f"Köppen classification failed: {e}")
             band = self.get_latitude_band(lat)
             return band.get("koppen"), "synthetic (fallback)"
-    
+
     def calculate_aridity_index(
         self, annual_precip_mm: float, annual_et0_mm: float
-    ) -> Tuple[float, AridityClass]:
+    ) -> tuple[float, AridityClass]:
         """
         Calculate UNEP Aridity Index = P / PET.
         
@@ -329,10 +332,10 @@ class ClimateIntegrator:
         """
         if annual_et0_mm <= 0:
             return 1.0, AridityClass.HUMID
-        
+
         ai = annual_precip_mm / annual_et0_mm
         ai = min(ai, 2.0)  # Cap for safety
-        
+
         if ai < 0.05:
             return ai, AridityClass.HYPER_ARID
         elif ai < 0.20:
@@ -343,10 +346,10 @@ class ClimateIntegrator:
             return ai, AridityClass.DRY_SUBHUMID
         else:
             return ai, AridityClass.HUMID
-    
+
     def calculate_growing_season(
-        self, monthly: List[MonthlyClimate]
-    ) -> Tuple[int, int]:
+        self, monthly: list[MonthlyClimate]
+    ) -> tuple[int, int]:
         """
         Calculate growing season length and frost-free days.
         
@@ -359,14 +362,14 @@ class ClimateIntegrator:
         growing_days = 0
         frost_free_days = 0
         days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-        
+
         for m in monthly:
             days = days_in_month[m.month - 1]
-            
+
             # Growing season: T_mean > 5°C
             if m.t_mean_c > 5.0:
                 growing_days += days
-            
+
             # Frost-free: T_min > 0°C
             if m.t_min_c > 0.0:
                 frost_free_days += days
@@ -374,11 +377,11 @@ class ClimateIntegrator:
                 # Partial month (estimate fraction without frost)
                 frost_fraction = (m.t_min_c + 5.0) / 10.0  # Rough estimate
                 frost_free_days += int(days * frost_fraction)
-        
+
         return growing_days, frost_free_days
-    
+
     def build_climate_profile(
-        self, lat: float, lon: float, elevation_m: Optional[float] = None
+        self, lat: float, lon: float, elevation_m: float | None = None
     ) -> ClimateProfile:
         """
         Build complete climate profile for a location.
@@ -391,7 +394,7 @@ class ClimateIntegrator:
             ClimateProfile with all derived metrics
         """
         data_source = "synthetic"
-        
+
         # Try to fetch from Open-Meteo
         real_data = self._fetch_open_meteo(lat, lon)
         if real_data:
@@ -399,29 +402,29 @@ class ClimateIntegrator:
             data_source = "open_meteo"
         else:
             monthly = self.generate_synthetic_monthly_climate(lat, lon)
-        
+
         # Calculate ET0
         monthly = self.calculate_et0_hargreaves_monthly(monthly, lat)
-        
+
         # Köppen classification
         koppen, koppen_description = self.classify_koppen(monthly, lat)
-        
+
         # Annual aggregates
         annual_precip = sum(m.precipitation_mm for m in monthly)
         annual_et0 = sum(m.et0_mm for m in monthly if m.et0_mm is not None)
         annual_t_mean = sum(m.t_mean_c for m in monthly) / 12
-        
+
         # Aridity index
         aridity_index, aridity_class = self.calculate_aridity_index(
             annual_precip, annual_et0
         )
-        
+
         # Growing season
         growing_season_days, frost_free_days = self.calculate_growing_season(monthly)
-        
+
         # Köppen group (first letter)
         koppen_group = koppen.value[0] if koppen else None
-        
+
         return ClimateProfile(
             lat=lat,
             lon=lon,
@@ -440,8 +443,8 @@ class ClimateIntegrator:
             data_source=data_source,
             data_quality_level="L0" if data_source == "synthetic" else "L3",
         )
-    
-    def _fetch_open_meteo(self, lat: float, lon: float) -> Optional[List[MonthlyClimate]]:
+
+    def _fetch_open_meteo(self, lat: float, lon: float) -> list[MonthlyClimate] | None:
         """
         Try to fetch climate data from Open-Meteo.
         
@@ -450,7 +453,7 @@ class ClimateIntegrator:
         """
         try:
             import httpx
-            
+
             # Get last 30 years of monthly data (climatology)
             url = "https://archive-api.open-meteo.com/v1/archive"
             params = {
@@ -461,36 +464,36 @@ class ClimateIntegrator:
                 "daily": "temperature_2m_max,temperature_2m_min,precipitation_sum",
                 "timezone": "auto",
             }
-            
+
             with httpx.Client(timeout=10.0) as client:
                 response = client.get(url, params=params)
                 response.raise_for_status()
                 data = response.json()
-            
+
             if "daily" not in data:
                 return None
-            
+
             # Aggregate daily to monthly (climatology)
             daily = data["daily"]
             t_max = daily.get("temperature_2m_max", [])
             t_min = daily.get("temperature_2m_min", [])
             precip = daily.get("precipitation_sum", [])
             times = daily.get("time", [])
-            
+
             if not times or not t_max:
                 return None
-            
+
             # Aggregate by month (30-year climatology)
             monthly_t_max = {m: [] for m in range(1, 13)}
             monthly_t_min = {m: [] for m in range(1, 13)}
             monthly_precip = {m: [] for m in range(1, 13)}
-            
+
             for i, date_str in enumerate(times):
                 if i >= len(t_max) or i >= len(t_min) or i >= len(precip):
                     continue
                 if t_max[i] is None or t_min[i] is None or precip[i] is None:
                     continue
-                
+
                 # Parse date
                 try:
                     dt = datetime.fromisoformat(date_str)
@@ -500,13 +503,13 @@ class ClimateIntegrator:
                     monthly_precip[month].append(precip[i])
                 except (ValueError, TypeError):
                     continue
-            
+
             # Build monthly averages
             monthly = []
             for m in range(1, 13):
                 if not monthly_t_max[m]:
                     continue
-                
+
                 t_max_mean = sum(monthly_t_max[m]) / len(monthly_t_max[m])
                 t_min_mean = sum(monthly_t_min[m]) / len(monthly_t_min[m])
                 # Precipitation: sum of daily for month, then average over years
@@ -514,7 +517,7 @@ class ClimateIntegrator:
                 years = len(monthly_t_max[m]) / days_in_month[m - 1]
                 total_precip = sum(monthly_precip[m])
                 avg_monthly_precip = total_precip / years if years > 0 else 0
-                
+
                 monthly.append(MonthlyClimate(
                     month=m,
                     t_min_c=round(t_min_mean, 1),
@@ -522,21 +525,21 @@ class ClimateIntegrator:
                     t_mean_c=round((t_min_mean + t_max_mean) / 2, 1),
                     precipitation_mm=round(avg_monthly_precip, 1),
                 ))
-            
+
             return monthly if len(monthly) == 12 else None
-        
+
         except Exception as e:
             logger.info(f"Open-Meteo fetch failed (using synthetic): {e}")
             return None
-    
+
     def integrate_with_land(
         self,
         profile_id: str,
         lat: float,
         lon: float,
-        elevation_m: Optional[float] = None,
-        terrain_type: Optional[str] = None,
-        soil_profile: Optional[Any] = None,
+        elevation_m: float | None = None,
+        terrain_type: str | None = None,
+        soil_profile: Any | None = None,
     ) -> ClimateIntegrationResult:
         """
         Integrate climate data with land profile.
@@ -553,11 +556,11 @@ class ClimateIntegrator:
             ClimateIntegrationResult
         """
         start_time = time.time()
-        
+
         try:
             # Build climate profile
             climate_profile = self.build_climate_profile(lat, lon, elevation_m)
-            
+
             # Determine limitations
             limitations = []
             recommendations = []
@@ -565,7 +568,7 @@ class ClimateIntegrator:
             drought_only = False
             cold_climate = False
             heat_stress = False
-            
+
             # Aridity-based limitations
             if climate_profile.aridity_class in [
                 AridityClass.HYPER_ARID, AridityClass.ARID
@@ -580,7 +583,7 @@ class ClimateIntegrator:
                 irrigation_required = True
                 recommendations.append("Consider supplemental irrigation")
                 recommendations.append("Use drought-adapted crop varieties")
-            
+
             # Cold climate limitations
             if climate_profile.frost_free_days is not None:
                 if climate_profile.frost_free_days < 120:
@@ -592,14 +595,14 @@ class ClimateIntegrator:
                     limitations.append("moderate_growing_season")
                     cold_climate = True
                     recommendations.append("Choose varieties with appropriate maturity dates")
-            
+
             # Heat stress
             if climate_profile.annual_t_mean_c > 25:
                 heat_stress = True
                 limitations.append("heat_stress_risk")
                 recommendations.append("Consider heat-tolerant crop varieties")
                 recommendations.append("Provide shade or windbreaks if possible")
-            
+
             # Temperature extremes
             for m in climate_profile.monthly:
                 if m.t_max_c > 40:
@@ -607,14 +610,14 @@ class ClimateIntegrator:
                     heat_stress = True
                     recommendations.append("Avoid planting during peak heat months")
                     break
-            
+
             if not limitations:
                 recommendations.append(
                     "Climate conditions are favorable - no special adaptations needed"
                 )
-            
+
             integration_time_ms = (time.time() - start_time) * 1000
-            
+
             return ClimateIntegrationResult(
                 profile_id=profile_id,
                 success=True,
@@ -628,7 +631,7 @@ class ClimateIntegrator:
                 integration_time_ms=integration_time_ms,
                 data_quality_level=climate_profile.data_quality_level,
             )
-        
+
         except Exception as e:
             logger.error(f"Climate integration failed: {e}")
             integration_time_ms = (time.time() - start_time) * 1000

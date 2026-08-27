@@ -1,12 +1,15 @@
 """Test Land Capability Classification motor."""
 import sys
+
 sys.path.insert(0, '.')
 
 import asyncio
+
 import numpy as np
 import xarray as xr
-from services.scientific_motors.land_capability import LandCapabilityMotor
+
 from services.scientific_motors.base import MotorParameters
+from services.scientific_motors.land_capability import LandCapabilityMotor
 
 
 async def test_lcc():
@@ -61,10 +64,10 @@ async def test_lcc():
     if result.status.value == "completed":
         summary = result.summary
         cultivable = summary.get("cultivable_percent", 0)
-        
+
         print(f"\n🌱 Cultivable land (Class I-IV): {cultivable:.1f}%")
-        print(f"\n📊 Distribution:")
-        
+        print("\n📊 Distribution:")
+
         for class_key, data in summary.get("distribution", {}).items():
             pct = data.get("percent", 0)
             desc = data.get("description", "")
@@ -75,7 +78,7 @@ async def test_lcc():
         # Show suitable crops for most common class
         suitable_crops = result.outputs.get("suitable_crops", {})
         if suitable_crops:
-            print(f"\n🌾 Suitable crops by class:")
+            print("\n🌾 Suitable crops by class:")
             for class_num, crops in sorted(suitable_crops.items())[:4]:
                 print(f"  Class {class_num}: {', '.join(crops[:3])}...")
 

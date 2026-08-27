@@ -21,47 +21,59 @@ __version__ = "1.6.0"
 # ═══════════════════════════════════════════════════════════════════
 # Models and Enums
 # ═══════════════════════════════════════════════════════════════════
-from .models import (
-    LandProfile,
-    TerrainAnalysis,
-    CapabilityAssessment,
-    DrainageAnalysis,
-    SlopeAspectResult,
-    CurvatureResult,
-    TerrainIndices,
-    StreamOrder,
-    TerrainType,
-    SlopeClass,
-    DrainagePattern,
-    DrainageDensityClass,
-    ErosionRisk,
-    LandCapabilityClass,
-    LandformType,
-)
+from .capability import CapabilityAssessor
 
 # ═══════════════════════════════════════════════════════════════════
 # Processors and Analyzers
 # ═══════════════════════════════════════════════════════════════════
 from .dem_processor import DEMProcessor
-from .slope_aspect import SlopeAspectAnalyzer
-from .terrain_analysis import TerrainAnalyzer
 from .drainage import DrainageAnalyzer
-from .capability import CapabilityAssessor
 from .erosion_risk import estimate_erosion_risk
+from .models import (
+    CapabilityAssessment,
+    CurvatureResult,
+    DrainageAnalysis,
+    DrainageDensityClass,
+    DrainagePattern,
+    ErosionRisk,
+    LandCapabilityClass,
+    LandformType,
+    LandProfile,
+    SlopeAspectResult,
+    SlopeClass,
+    StreamOrder,
+    TerrainAnalysis,
+    TerrainIndices,
+    TerrainType,
+)
+from .slope_aspect import SlopeAspectAnalyzer
 from .surface_water_analysis import SurfaceWaterAnalyzer
+from .terrain_analysis import TerrainAnalyzer
 
 # ═══════════════════════════════════════════════════════════════════
 # Reference Data (optional)
 # ═══════════════════════════════════════════════════════════════════
 try:
     from .reference import (
-        Country, Region, City, Continent,
-        TerrainClassification, DrainageStandard,
-        COUNTRIES, REGIONS, CITIES,
-        TERRAIN_CLASSIFICATIONS, DRAINAGE_STANDARDS,
-        get_country, get_region, get_city,
-        list_countries, list_regions, list_cities,
-        find_nearest_city, get_all_reference_summary,
+        CITIES,
+        COUNTRIES,
+        DRAINAGE_STANDARDS,
+        REGIONS,
+        TERRAIN_CLASSIFICATIONS,
+        City,
+        Continent,
+        Country,
+        DrainageStandard,
+        Region,
+        TerrainClassification,
+        find_nearest_city,
+        get_all_reference_summary,
+        get_city,
+        get_country,
+        get_region,
+        list_cities,
+        list_countries,
+        list_regions,
     )
     _REFERENCE_AVAILABLE = True
 except ImportError:
@@ -88,7 +100,7 @@ __all__ = [
     "CurvatureResult",
     "TerrainIndices",
     "StreamOrder",
-    
+
     # Enums
     "TerrainType",
     "SlopeClass",
@@ -97,7 +109,7 @@ __all__ = [
     "ErosionRisk",
     "LandCapabilityClass",
     "LandformType",
-    
+
     # Processors
     "DEMProcessor",
     "SlopeAspectAnalyzer",
@@ -106,7 +118,7 @@ __all__ = [
     "CapabilityAssessor",
     "estimate_erosion_risk",
     "SurfaceWaterAnalyzer",
-    
+
     # Reference (when available)
     "Country",
     "Region",

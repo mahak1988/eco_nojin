@@ -17,7 +17,9 @@ Usage:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict, Tuple
+from datetime import UTC
+from typing import Any
+
 import numpy as np
 
 from .koppen import KGCv5
@@ -28,8 +30,8 @@ from .wbi import WBIInputs, WBIv3
 class RegionAnalysis:
     """Result of a region analysis."""
     region_name: str
-    kgc: Dict[str, Any]
-    wbi: Dict[str, Any]
+    kgc: dict[str, Any]
+    wbi: dict[str, Any]
     timestamp: str
 
 
@@ -52,7 +54,7 @@ class GlobalWatchdog:
     def analyze(
         self,
         region_name: str,
-        climate: Tuple[np.ndarray, np.ndarray, np.ndarray],
+        climate: tuple[np.ndarray, np.ndarray, np.ndarray],
         water_inputs: WBIInputs,
     ) -> RegionAnalysis:
         """
@@ -68,7 +70,7 @@ class GlobalWatchdog:
         -------
         RegionAnalysis
         """
-        from datetime import datetime, timezone
+        from datetime import datetime
 
         t_min, t_max, p = climate
         kgc = KGCv5.classify(t_min, t_max, p)
@@ -78,13 +80,13 @@ class GlobalWatchdog:
             region_name=region_name,
             kgc=kgc,
             wbi=wbi,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
     def analyze_many(
         self,
-        regions: Dict[str, Tuple[Tuple[np.ndarray, np.ndarray, np.ndarray], WBIInputs]],
-    ) -> Dict[str, RegionAnalysis]:
+        regions: dict[str, tuple[tuple[np.ndarray, np.ndarray, np.ndarray], WBIInputs]],
+    ) -> dict[str, RegionAnalysis]:
         """Analyze multiple regions in batch."""
         return {
             name: self.analyze(name, climate, water_inputs)
@@ -93,7 +95,7 @@ class GlobalWatchdog:
 
     def rank_regions(
         self,
-        analyses: Dict[str, RegionAnalysis],
+        analyses: dict[str, RegionAnalysis],
         by: str = "wbi",
         ascending: bool = False,
     ) -> list:

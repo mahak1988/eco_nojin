@@ -1,12 +1,15 @@
 """Telegram Bot FastAPI router"""
 from typing import Optional
+
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.config import get_db
 from services.telegram_bot.integration_service import (
-    TelegramIntegrationService, TelegramMessage, TelegramUser,
+    TelegramIntegrationService,
+    TelegramMessage,
+    TelegramUser,
 )
 
 router = APIRouter(prefix="/telegram", tags=["Telegram"])
@@ -14,9 +17,9 @@ router = APIRouter(prefix="/telegram", tags=["Telegram"])
 class WebhookPayload(BaseModel):
     message_id: int
     user_id: int
-    username: Optional[str] = None
+    username: str | None = None
     text: str
-    village_id: Optional[str] = None
+    village_id: str | None = None
 
 class NotificationRequest(BaseModel):
     user_id: int
@@ -49,4 +52,3 @@ async def send_notification(req: NotificationRequest, db: AsyncSession = Depends
 async def get_user_stats(user_id: int, db: AsyncSession = Depends(get_db)):
     service = TelegramIntegrationService(db)
     return await service.get_user_stats(user_id)
-    

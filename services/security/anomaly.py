@@ -9,22 +9,21 @@ import math
 import threading
 import time
 from collections import defaultdict, deque
-from typing import Deque, Dict
 
 
 class AnomalyDetector:
     def __init__(self) -> None:
         self._lock = threading.Lock()
-        self._vol: Dict[str, Deque[float]] = defaultdict(deque)
-        self._err4xx: Dict[str, int] = defaultdict(int)
-        self._flags: Dict[str, float] = {}
+        self._vol: dict[str, deque[float]] = defaultdict(deque)
+        self._err4xx: dict[str, int] = defaultdict(int)
+        self._flags: dict[str, float] = {}
 
     @staticmethod
     def _entropy(s: str) -> float:
         if not s:
             return 0.0
         n = len(s)
-        counts: Dict[str, int] = {}
+        counts: dict[str, int] = {}
         for ch in s:
             counts[ch] = counts.get(ch, 0) + 1
         return -sum((c / n) * math.log2(c / n) for c in counts.values())

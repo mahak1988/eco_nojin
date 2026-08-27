@@ -19,41 +19,60 @@ import logging
 import traceback
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request # Added Request
+from fastapi import FastAPI, Request  # Added Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from starlette import status # Added status import
+from starlette import status  # Added status import
 
 from database.config import init_db
 from engine.hydroma.config.settings import get_settings
-
-# Import all routers
-from .routers import platform, admin, auth, analyses # Import the new router
-
-# Import individual routers that are used later with app.include_router
-from .routers import land, soil, satellite, carbon, watershed, scenarios, ai, ai_chat, ecowallet, marketplace, farms, analytics, materials, blockchain, insurance
-from .routers import motors
-from .routers import mrv
-from .routers import lab
-from .routers import economy
-from .routers import auth_supabase
-from .routers import supabase_proxy
-from .routers import lms
-from .routers import benchmark
-from .routers import nojin
-from .routers import sync
-from .routers import ussd
-from .routers import voice
-from services.api_gateway.routers import nojin
-from services.api_gateway.routers import audit
-from services.api_gateway.routers import climate
-from services.api_gateway.routers import security_router
-from services.api_gateway.routers import ogc_router
-from services.api_gateway.routers import ai_advice_router
-from services.api_gateway.routers import tourism_router
-
+from services.api_gateway.routers import (
+    ai_advice_router,
+    audit,
+    climate,
+    nojin,
+    ogc_router,
+    security_router,
+    tourism_router,
+)
 from services.security.headers import SecurityHeadersMiddleware
 from services.security.middleware import SpiderFirewallMiddleware
+
+# Import all routers
+# Import individual routers that are used later with app.include_router
+from .routers import (  # Import the new router
+    admin,
+    ai,
+    ai_chat,
+    analyses,
+    analytics,
+    auth,
+    auth_supabase,
+    benchmark,
+    blockchain,
+    carbon,
+    economy,
+    ecowallet,
+    farms,
+    insurance,
+    lab,
+    land,
+    lms,
+    marketplace,
+    materials,
+    motors,
+    mrv,
+    nojin,
+    platform,
+    satellite,
+    scenarios,
+    soil,
+    supabase_proxy,
+    sync,
+    ussd,
+    voice,
+    watershed,
+)
 
 app = FastAPI(title="Eco Nojin API Gateway")
 
@@ -93,20 +112,20 @@ async def lifespan(app: FastAPI):
     logger.info("=" * 60)
     logger.info("🚀 Starting Eco Nojin API...")
     logger.info("=" * 60)
-    
+
     try:
         init_db()
         logger.info("✅ Database initialized successfully")
     except Exception as e:
         logger.error(f"❌ Database init failed: {e}")
         logger.error(traceback.format_exc())
-    
+
     logger.info(f"🌍 CORS origins: {_settings.cors_origins}")
-    logger.info(f"📚 API docs: http://127.0.0.1:8000/docs")
+    logger.info("📚 API docs: http://127.0.0.1:8000/docs")
     logger.info("=" * 60)
-    
+
     yield
-    
+
     # Shutdown
     logger.info("🛑 Shutting down Eco Nojin API...")
 
@@ -182,13 +201,13 @@ async def global_exception_handler(request: Request, exc: Exception):
     """Catch-all exception handler - log and return safe response."""
     logger.error(f"Unhandled error on {request.method} {request.url.path}: {exc}")
     logger.error(traceback.format_exc())
-    
+
     error_detail = (
-        str(exc) 
-        if _settings.app_env == "development" 
+        str(exc)
+        if _settings.app_env == "development"
         else "Internal server error"
     )
-    
+
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
@@ -344,7 +363,7 @@ if _settings.app_env == "development":
 # ============================================================================
 if __name__ == "__main__":
     import uvicorn
-    
+
     logger.info("Starting Eco Nojin API in standalone mode...")
     uvicorn.run(
         "services.api_gateway.main:app",

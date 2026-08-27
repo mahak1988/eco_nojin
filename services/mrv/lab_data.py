@@ -11,7 +11,7 @@ import math
 import os
 import time
 import uuid
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from services.satellite.soilgrids import fetch_soil_profile
 
@@ -20,26 +20,26 @@ STORE = os.path.join(DATA_DIR, "lab_samples.json")
 MAX_COMPARE_POINTS = 10
 
 # (lat, lon) -> modelled soc_t_ha (in-memory cache, SoilGrids WCS is slow)
-_model_cache: Dict[tuple, float] = {}
+_model_cache: dict[tuple, float] = {}
 
 
-def _load() -> List[Dict[str, Any]]:
+def _load() -> list[dict[str, Any]]:
     if not os.path.exists(STORE):
         return []
     with open(STORE, encoding="utf-8") as fh:
         return json.load(fh)
 
 
-def _save(rows: List[Dict[str, Any]]) -> None:
+def _save(rows: list[dict[str, Any]]) -> None:
     os.makedirs(DATA_DIR, exist_ok=True)
     with open(STORE, "w", encoding="utf-8") as fh:
         json.dump(rows, fh, ensure_ascii=False, indent=2)
 
 
-def add_lab_samples(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+def add_lab_samples(rows: list[dict[str, Any]]) -> dict[str, Any]:
     """Validate and store lab SOC measurements. Returns honest status."""
-    cleaned: List[Dict[str, Any]] = []
-    errors: List[str] = []
+    cleaned: list[dict[str, Any]] = []
+    errors: list[str] = []
     for i, r in enumerate(rows, 1):
         try:
             lat = float(r.get("lat"))
@@ -73,7 +73,7 @@ def add_lab_samples(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
-def list_lab_samples() -> Dict[str, Any]:
+def list_lab_samples() -> dict[str, Any]:
     rows = _load()
     return {
         "status": "ok" if rows else "no_lab_data",
@@ -94,7 +94,7 @@ async def _modelled_soc(lat: float, lon: float) -> float:
     return _model_cache[key]
 
 
-async def compare_model() -> Dict[str, Any]:
+async def compare_model() -> dict[str, Any]:
     """Measured (lab) vs modelled (SoilGrids) SOC per sample + honest stats."""
     rows = [r for r in _load() if r.get("lat") is not None and r.get("lon") is not None][:MAX_COMPARE_POINTS]
     if not rows:
@@ -102,7 +102,7 @@ async def compare_model() -> Dict[str, Any]:
             "status": "no_lab_data",
             "message": "داده آزمایشگاهی ثبت نشده — KGE/اعتبارسنجی تا بارگذاری داده واقعی غیرفعال است (W-001).",
         }
-    pairs: List[Dict[str, Any]] = []
+    pairs: list[dict[str, Any]] = []
     for r in rows:
         try:
             modelled = await _modelled_soc(float(r["lat"]), float(r["lon"]))

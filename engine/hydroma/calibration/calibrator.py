@@ -4,15 +4,15 @@ Calibration Engine.
 Automatically adjusts model parameters to fit observed data.
 """
 import logging
-from typing import Dict, Any, List, Callable, Tuple
+from collections.abc import Callable
+from datetime import date
+from typing import Any
+
 import numpy as np
 from scipy.optimize import minimize
-from datetime import date
 
-from database.models import CalibrationRecordDB, ModelVersionDB
 from database.config import SessionLocal
-from engine.hydroma.soil.nutrient_dynamic import run_nutrient_model # hypothetical
-from engine.hydroma.crop.yield_prediction import run_crop_model # hypothetical
+from database.models import CalibrationRecordDB
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class ModelCalibrator:
     """Generic calibrator for numerical models."""
 
-    def __init__(self, model_function: Callable, param_bounds: Dict[str, Tuple[float, float]]):
+    def __init__(self, model_function: Callable, param_bounds: dict[str, tuple[float, float]]):
         """
         Args:
             model_function: The model to calibrate (should take params dict and return predictions).
@@ -31,7 +31,7 @@ class ModelCalibrator:
         self.bounds_list = list(param_bounds.values())
         self.param_names = list(param_bounds.keys())
 
-    def _objective_function(self, params: List[float], observed_data: np.ndarray, input_conditions: Dict[str, Any]) -> float:
+    def _objective_function(self, params: list[float], observed_data: np.ndarray, input_conditions: dict[str, Any]) -> float:
         """Objective function to minimize (e.g., RMSE)."""
         param_dict = dict(zip(self.param_names, params))
         predicted_data = self.model_function(input_conditions, param_dict)
@@ -39,7 +39,7 @@ class ModelCalibrator:
         logger.debug(f"Params: {param_dict}, RMSE: {rmse}")
         return rmse
 
-    def calibrate(self, initial_params: Dict[str, float], observed_data: np.ndarray, input_conditions: Dict[str, Any], method: str = 'L-BFGS-B') -> Dict[str, Any]:
+    def calibrate(self, initial_params: dict[str, float], observed_data: np.ndarray, input_conditions: dict[str, Any], method: str = 'L-BFGS-B') -> dict[str, Any]:
         """
         Performs the calibration.
 
@@ -110,7 +110,7 @@ class ModelCalibrator:
         return 1 - (ss_res / ss_tot)
 
 
-def run_soil_nutrient_calibration(observed_soil_data: List[Dict[str, float]], input_conditions: Dict[str, Any], model_version: str) -> str:
+def run_soil_nutrient_calibration(observed_soil_data: list[dict[str, float]], input_conditions: dict[str, Any], model_version: str) -> str:
     """
     Runs a specific calibration for the soil nutrient model.
 

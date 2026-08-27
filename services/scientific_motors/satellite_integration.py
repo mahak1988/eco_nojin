@@ -23,28 +23,28 @@ from __future__ import annotations
 # =========================================================================
 try:
     from engine.hydroma.cpp_bridge import (
-        ndvi as _cpp_ndvi,
         evi as _cpp_evi,
-        savi as _cpp_savi,
-        ndwi as _cpp_ndwi,
-        nbr as _cpp_nbr,
-        ndvi_array as _cpp_ndvi_array,
         is_cpp_available,
+        nbr as _cpp_nbr,
+        ndvi as _cpp_ndvi,
+        ndvi_array as _cpp_ndvi_array,
+        ndwi as _cpp_ndwi,
+        savi as _cpp_savi,
     )
     _CPP_AVAILABLE = is_cpp_available()
 except ImportError:
     _CPP_AVAILABLE = False
 
 
-import time
-import numpy as np
-from typing import Dict, Any, List, Optional, Tuple
-from datetime import datetime, timedelta
 from dataclasses import dataclass
-from enum import Enum
+from datetime import datetime, timedelta
+
+import numpy as np
 
 from ..satellite.sentinel2_provider import (
-    Sentinel2Provider, SentinelProduct, SpectralIndex,
+    Sentinel2Provider,
+    SentinelProduct,
+    SpectralIndex,
 )
 
 
@@ -53,8 +53,8 @@ class SatelliteContext:
     """Context for satellite-derived inputs."""
     latitude: float
     longitude: float
-    bbox: Tuple[float, float, float, float]  # min_lon, min_lat, max_lon, max_lat
-    date: Optional[datetime] = None
+    bbox: tuple[float, float, float, float]  # min_lon, min_lat, max_lon, max_lat
+    date: datetime | None = None
     koppen_climate: str = "BSk"
 
 
@@ -63,19 +63,19 @@ class SatelliteDerivedParameters:
     """Parameters derived from satellite data for motors."""
     # For RUSLE
     c_factor: float  # 0-1, crop/management factor
-    
+
     # For Irrigation
     ndmi_value: float  # -1 to 1
     soil_moisture_proxy: float  # 0-1
-    
+
     # For Carbon
     baseline_soc_tC_ha: float
     ndvi_history_trend: float  # slope of NDVI time series
-    
+
     # For Crop Advisor
     current_vegetation_health: str  # "poor", "moderate", "good", "excellent"
     biomass_proxy_t_ha: float
-    
+
     # Metadata
     scene_id: str
     scene_date: str
@@ -139,7 +139,7 @@ class SatelliteIntegration:
             apply_cloud_mask=True,
             resolution=10,
         )
-        
+
         indices = {}
         for idx, result in batch_results.items():
             if result is not None:
@@ -190,7 +190,7 @@ class SatelliteIntegration:
     # Scientific Conversions
     # =================================================================
 
-    def _compute_c_factor(self, indices: Dict, koppen: str) -> float:
+    def _compute_c_factor(self, indices: dict, koppen: str) -> float:
         """
         Compute C-factor from vegetation indices.
         
@@ -204,11 +204,11 @@ class SatelliteIntegration:
         composite = indices.get("COMPOSITE", {}).get("mean", 0.2)
         ndvi = indices.get("NDVI", {}).get("mean", 0.2)
         evi = indices.get("EVI", {}).get("mean", 0.2)
-        
+
         # Choose best: COMPOSITE > EVI > NDVI
         veg_index = max(composite, evi, ndvi)
         veg_index = max(0.0, min(1.0, veg_index))
-        
+
         # Climate-specific α parameter
         if koppen in ["BWh", "BWk", "BSh", "BSk"]:
             # Arid/semi-arid: sparser vegetation, different scaling
@@ -219,12 +219,12 @@ class SatelliteIntegration:
         else:
             # Temperate/continental: standard
             alpha = 2.0
-        
+
         beta = 1.0
-        
+
         # Van der Knijff formula
         c_factor = np.exp(-alpha * veg_index / beta)
-        
+
         # Clip to valid range
         return max(0.001, min(1.0, c_factor))
 
@@ -263,7 +263,7 @@ class SatelliteIntegration:
         This is a rough proxy; real SOC needs soil sampling.
         """
         ndvi = max(0.0, min(1.0, ndvi))
-        
+
         if koppen.startswith("A"):
             # Tropical: high biomass but rapid decomposition
             baseline = 25 + 50 * ndvi
@@ -276,18 +276,18 @@ class SatelliteIntegration:
         else:
             # Temperate
             baseline = 20 + 60 * ndvi
-        
+
         return max(1.0, min(150.0, baseline))
 
-    def _classify_vegetation_health(self, indices: Dict) -> str:
+    def _classify_vegetation_health(self, indices: dict) -> str:
         """Classify vegetation health from indices."""
         ndvi = indices.get("NDVI", {}).get("mean", 0.0)
         evi = indices.get("EVI", {}).get("mean", 0.0)
         ndmi = indices.get("NDMI", {}).get("mean", 0.0)
-        
+
         # Composite score
         veg_score = ndvi * 0.4 + evi * 0.4 + max(0, ndmi) * 0.2
-        
+
         if veg_score > 0.6:
             return "excellent"
         elif veg_score > 0.4:
@@ -313,10 +313,10 @@ class SatelliteIntegration:
             "cotton": (10.0, 0.3),
             "default": (15.0, 0.5),
         }
-        
+
         a, b = coefficients.get(crop_id, coefficients["default"])
         evi = max(0.0, min(1.0, evi))
-        
+
         return max(0.0, a * evi + b)
 
     def _default_parameters(self, context: SatelliteContext, crop_id: str) -> SatelliteDerivedParameters:
@@ -336,7 +336,7 @@ class SatelliteIntegration:
 
 
 # Singleton for reuse
-_integration: Optional[SatelliteIntegration] = None
+_integration: SatelliteIntegration | None = None
 
 
 def get_satellite_integration() -> SatelliteIntegration:

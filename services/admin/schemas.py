@@ -1,8 +1,10 @@
 """Pydantic schemas for Admin"""
 from datetime import datetime
-from typing import Optional, List, Dict, Any
-from pydantic import BaseModel
 from enum import Enum
+from typing import Any
+
+from pydantic import BaseModel
+
 
 class ServiceStatus(str, Enum):
     HEALTHY = "healthy"
@@ -12,12 +14,12 @@ class ServiceStatus(str, Enum):
 class ServiceHealthCheck(BaseModel):
     name: str
     status: ServiceStatus
-    latency_ms: Optional[float] = None
-    message: Optional[str] = None
+    latency_ms: float | None = None
+    message: str | None = None
 
 class SystemHealth(BaseModel):
     overall_status: ServiceStatus
-    services: List[ServiceHealthCheck]
+    services: list[ServiceHealthCheck]
     uptime_seconds: int
     checked_at: datetime
 
@@ -30,11 +32,11 @@ class ProjectStatus(BaseModel):
 
 class AuditLog(BaseModel):
     id: str
-    actor_id: Optional[str]
+    actor_id: str | None
     action: str
-    resource_type: Optional[str]
-    resource_id: Optional[str]
-    details: Optional[Dict[str, Any]]
+    resource_type: str | None
+    resource_id: str | None
+    details: dict[str, Any] | None
     created_at: datetime
 
 class AdminStats(BaseModel):
@@ -42,4 +44,3 @@ class AdminStats(BaseModel):
     total_bookings: int = 0
     total_villages: int = 0
     uptime_seconds: int = 0
-    

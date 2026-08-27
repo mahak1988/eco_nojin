@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import logging
 from datetime import date, timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import httpx
 
@@ -38,7 +38,7 @@ DAILY_VARS = [
 
 async def fetch_era5_daily(
     lat: float, lon: float, start: date, end: date
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Fetch ERA5-Land daily series for a location.
 
     Returns:
@@ -80,7 +80,7 @@ async def fetch_era5_daily(
     }
 
 
-def era5_to_daily_map(raw: Dict[str, Any]) -> Dict[str, Dict[str, float]]:
+def era5_to_daily_map(raw: dict[str, Any]) -> dict[str, dict[str, float]]:
     """Convert the Open-Meteo daily arrays into {YYYY-MM-DD: values} dicts.
 
     Only complete days (all six variables present, no None) are included —
@@ -88,9 +88,9 @@ def era5_to_daily_map(raw: Dict[str, Any]) -> Dict[str, Dict[str, float]]:
     """
     daily = raw.get("daily", {})
     times = daily.get("time", [])
-    out: Dict[str, Dict[str, float]] = {}
+    out: dict[str, dict[str, float]] = {}
     for i, day in enumerate(times):
-        values: Dict[str, float] = {}
+        values: dict[str, float] = {}
         ok = True
         for var in ("temperature_2m_max", "temperature_2m_min",
                     "temperature_2m_mean", "precipitation_sum",
@@ -107,7 +107,7 @@ def era5_to_daily_map(raw: Dict[str, Any]) -> Dict[str, Dict[str, float]]:
 
 async def fetch_era5_summary(
     lat: float, lon: float, start: date, end: date
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Complete ERA5 fetch with a summary block (recommended entry point)."""
     raw = await fetch_era5_daily(lat, lon, start, end)
     if raw.get("status") != "success":

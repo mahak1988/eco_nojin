@@ -1,19 +1,23 @@
 """Map Engine FastAPI router"""
-from typing import List, Dict
+from typing import Dict, List
+
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.config import get_db
 from services.map_engine.smart_service import (
-    SmartMapService, MapRequest, MapLayer, OutputFormat,
+    MapLayer,
+    MapRequest,
+    OutputFormat,
+    SmartMapService,
 )
 
 router = APIRouter(prefix="/maps", tags=["Maps"])
 
 class GenerateMapRequest(BaseModel):
-    bbox: Dict[str, float]
-    layers: List[str]
+    bbox: dict[str, float]
+    layers: list[str]
     resolution: float = 30.0
     output_format: str = "geotiff"
 
@@ -42,4 +46,3 @@ async def get_available_layers(
     bbox = {"north": north, "south": south, "east": east, "west": west}
     layers = await service.get_available_layers(bbox)
     return {"layers": [l.value for l in layers]}
-    

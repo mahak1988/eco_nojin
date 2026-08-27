@@ -5,10 +5,10 @@ This module provides functions to simulate hydraulic flow and flood extent
 using the HEC-RAS model based on channel geometry and boundary conditions.
 It can now receive inputs from the engineering design modules.
 """
-from typing import Dict, Any
-import numpy as np
-from contracts.simulation import HECRASInput, HECRASOutput
 import datetime
+from typing import Any
+
+from contracts.simulation import HECRASInput, HECRASOutput
 
 # Placeholder for the actual HEC-RAS model execution.
 # This would typically involve calling an external executable or API,
@@ -46,7 +46,7 @@ def simulate_hecras(input_data: HECRASInput) -> HECRASOutput:
         structure_safety=structure_safety_data
     )
 
-def prepare_hecras_input_from_design(structure_design: Dict[str, Any]) -> HECRASInput:
+def prepare_hecras_input_from_design(structure_design: dict[str, Any]) -> HECRASInput:
     """
     Prepares HEC-RAS input from an engineering structure design.
 
@@ -68,13 +68,13 @@ def prepare_hecras_input_from_design(structure_design: Dict[str, Any]) -> HECRAS
             "length_m": 1000, # Example length
             "roughness_n": structure_design["manning_n"],
         }
-        
+
         # Example boundary conditions based on design flow
         boundary_conditions = {
             "upstream_flow_m3s": [structure_design["discharge_m3_s"]] * 24, # 24 hourly steps
             "downstream_stage_m": 95.0 # Example tailwater
         }
-        
+
         # Example initial conditions
         initial_conditions = {
             "water_surface_m": 96.0
@@ -89,7 +89,7 @@ def prepare_hecras_input_from_design(structure_design: Dict[str, Any]) -> HECRAS
             end_date=datetime.date.today() + datetime.timedelta(days=1),
             time_step="hourly"
         )
-    
+
     # Add mappings for other structure types (weir, culvert, etc.)
     # This is a simplified example; a full implementation would be more complex.
     raise NotImplementedError(f"HeC-RAS input preparation not yet implemented for structure type: {structure_design.get('type', 'unknown')}")

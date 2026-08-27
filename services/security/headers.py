@@ -3,8 +3,6 @@
 Applied by a pure-ASGI middleware so it also works behind proxies.
 CSP allows only self origins plus the exact free data providers the app uses.
 """
-from starlette.requests import Request
-from starlette.responses import Response
 
 _CSP = (
     "default-src 'self'; "

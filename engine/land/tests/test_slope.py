@@ -16,7 +16,7 @@ from engine.land.slope_aspect import SlopeAspectAnalyzer
 
 class MockDEMProcessor:
     """Mock DEMProcessor - must have _data attribute (2D array)."""
-    
+
     def __init__(self, data: np.ndarray, resolution: float = 30.0):
         self._data = data
         self._dataset = None
@@ -62,68 +62,68 @@ def _interior(arr: np.ndarray, margin: int = 2) -> np.ndarray:
 
 class TestSlopeAspectAnalyzer:
     """Tests for SlopeAspectAnalyzer."""
-    
+
     def test_analyze_returns_tuple(self, calculator):
         """analyze() should return a tuple of (slope, aspect, ...)."""
         result = calculator.analyze(cell_size_meters=30.0)
         assert isinstance(result, tuple), f"Expected tuple, got {type(result)}"
         assert len(result) >= 2, "Result must have at least slope and aspect"
-    
+
     def test_flat_terrain(self, calculator):
         """Flat DEM interior should have near-zero slope."""
         result = calculator.analyze(cell_size_meters=30.0)
         slope_arr = result[0]
-        
+
         # Check interior only (edges have NaN from gradient boundary)
         interior = _interior(slope_arr, margin=2)
         valid = interior[~np.isnan(interior)]
-        
+
         assert len(valid) > 0, "Should have valid (non-NaN) slope values"
         assert np.allclose(valid, 0, atol=1e-3),             f"Expected near-zero slope in interior, got mean={np.mean(valid):.6f}"
-    
+
     def test_sloped_terrain(self, sloped_calculator):
         """Sloped DEM interior should have positive slope."""
         result = sloped_calculator.analyze(cell_size_meters=30.0)
         slope_arr = result[0]
-        
+
         interior = _interior(slope_arr, margin=2)
         valid = interior[~np.isnan(interior)]
-        
+
         assert len(valid) > 0
         mean_slope = np.mean(valid)
         assert mean_slope > 0, f"Expected positive slope, got {mean_slope}"
-    
+
     def test_slope_to_percent(self, calculator):
         """Slope can be converted to percent."""
         result = calculator.analyze(cell_size_meters=30.0)
         slope_arr = result[0]
-        
+
         slope_pct = np.tan(np.radians(np.nan_to_num(slope_arr, nan=0.0))) * 100.0
         assert slope_pct.shape == slope_arr.shape
         assert np.all(slope_pct[np.isfinite(slope_pct)] >= -0.01)
-    
+
     def test_aspect_to_cardinal(self, sloped_calculator):
         """Aspect values should be in 0-360 range."""
         result = sloped_calculator.analyze(cell_size_meters=30.0)
         aspect_arr = result[1]
-        
+
         # Replace NaN with 0 for validation
         valid = aspect_arr[~np.isnan(aspect_arr)]
-        
+
         if len(valid) > 0:
             assert np.all(valid >= 0)
             assert np.all(valid <= 360)
-    
+
     def test_curvature(self, calculator):
         """analyze() returns at least slope and aspect (curvature computed separately)."""
         result = calculator.analyze()
         assert len(result) >= 2
-    
+
     def test_roughness_index(self, calculator):
         """analyze() works even on flat terrain."""
         result = calculator.analyze()
         assert result is not None
-    
+
     def test_analyze_default_cell_size(self, calculator):
         """analyze() should work with default cell_size."""
         result = calculator.analyze()

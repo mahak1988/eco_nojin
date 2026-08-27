@@ -35,7 +35,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import math
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import httpx
 import numpy as np
@@ -123,32 +123,31 @@ def _coverage_url(prop: str, lon: float, lat: float, half_deg: float) -> str:
 
 async def _fetch_coverage(
     client: httpx.AsyncClient, prop: str, lon: float, lat: float
-) -> Optional[Tuple[np.ndarray, Any]]:
+) -> tuple[np.ndarray, Any] | None:
     """Download a small GeoTIFF tile; return (array, transform) or None."""
     url = _coverage_url(prop, lon, lat, TILE_HALF_DEG)
     try:
         resp = await client.get(url)
         resp.raise_for_status()
-        with MemoryFile(resp.content) as mem:
-            with mem.open() as src:
-                arr = src.read(1).astype(np.float64)
-                return arr, src.transform
+        with MemoryFile(resp.content) as mem, mem.open() as src:
+            arr = src.read(1).astype(np.float64)
+            return arr, src.transform
     except (httpx.HTTPError, OSError, ValueError, rasterio.errors.RasterioIOError) as exc:
         logger.warning("SoilGrids WCS %s failed: %s", prop, exc)
         return None
 
 
-def _pixel_at(transform: Any, lon: float, lat: float) -> Tuple[int, int]:
+def _pixel_at(transform: Any, lon: float, lat: float) -> tuple[int, int]:
     col, row = ~transform * (lon, lat)
     return int(round(row)), int(round(col))
 
 
-def _lonlat_at(transform: Any, row: int, col: int) -> Tuple[float, float]:
+def _lonlat_at(transform: Any, row: int, col: int) -> tuple[float, float]:
     lon, lat = transform * (col, row)
     return float(lon), float(lat)
 
 
-def _value_at(arr: np.ndarray, transform: Any, lon: float, lat: float) -> Optional[float]:
+def _value_at(arr: np.ndarray, transform: Any, lon: float, lat: float) -> float | None:
     """Value at a point; None when out of bounds or masked (<=0/NaN)."""
     row, col = _pixel_at(transform, lon, lat)
     if 0 <= row < arr.shape[0] and 0 <= col < arr.shape[1]:
@@ -160,7 +159,7 @@ def _value_at(arr: np.ndarray, transform: Any, lon: float, lat: float) -> Option
 
 def _nearest_valid(
     arr: np.ndarray, transform: Any, lon: float, lat: float, max_px: int = MAX_NEAREST_PX
-) -> Optional[Tuple[float, float]]:
+) -> tuple[float, float] | None:
     """Nearest valid (lon, lat) inside the tile (ring search by distance)."""
     row, col = _pixel_at(transform, lon, lat)
     h, w = arr.shape
@@ -187,7 +186,7 @@ def _nearest_valid(
 # Public API
 # ---------------------------------------------------------------------------
 
-async def fetch_soil_profile(lat: float, lon: float) -> Dict[str, Any]:
+async def fetch_soil_profile(lat: float, lon: float) -> dict[str, Any]:
     """Fetch a REAL SoilGrids profile for (lon, lat), top layer 0-5cm.
 
     Strategy: download one small WCS tile per property in parallel, then
@@ -202,8 +201,8 @@ async def fetch_soil_profile(lat: float, lon: float) -> Dict[str, Any]:
         logger.warning("SoilGrids request failed: %s", exc)
         return {"status": "error", "data_source": "soilgrids", "error": str(exc)}
 
-    values: Dict[str, Optional[float]] = {}
-    offsets: Dict[str, float] = {}
+    values: dict[str, float | None] = {}
+    offsets: dict[str, float] = {}
     for prop in SOILGRIDS_PROPS:
         tile = tiles.get(prop)
         if tile is None:
@@ -258,7 +257,7 @@ async def fetch_soil_profile(lat: float, lon: float) -> Dict[str, Any]:
 
 async def _fetch_all_tiles(
     client: httpx.AsyncClient, lon: float, lat: float
-) -> Dict[str, Optional[Tuple[np.ndarray, Any]]]:
+) -> dict[str, tuple[np.ndarray, Any] | None]:
     """Fetch all property tiles in parallel (semaphore=3, polite)."""
     sem = asyncio.Semaphore(3)
 

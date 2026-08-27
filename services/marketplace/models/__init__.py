@@ -1,22 +1,33 @@
 import uuid
+
 """
 مدل‌های داده بازارچه روستایی
 """
 
-from datetime import datetime, timezone
+from dataclasses import dataclass, field
+from datetime import UTC, datetime, timezone
 from decimal import Decimal
 from enum import Enum
 
 from sqlalchemy import (
-    Boolean, Column, DateTime, Enum as SQLEnum, ForeignKey,
-    Index, Integer, Numeric, String, Text, JSON
+    JSON,
+    Boolean,
+    Column,
+    DateTime,
+    Enum as SQLEnum,
+    ForeignKey,
+    Index,
+    Integer,
+    Numeric,
+    String,
+    Text,
 )
-from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 from database.models import Base
-from datetime import timezone
-from dataclasses import dataclass, field
+
+
 class MarketplaceProductStatus(str, Enum):
     DRAFT = "draft"
     PENDING_APPROVAL = "pending_approval"
@@ -43,7 +54,7 @@ class MarketplaceSeller(Base):
         Index("idx_seller_village", "village_id"),
         Index("idx_seller_status", "status"),
     )
-    
+
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(String(36), nullable=False, index=True)
     village_id = Column(String(100), nullable=False)
@@ -55,8 +66,8 @@ class MarketplaceSeller(Base):
     total_sales = Column(Integer, default=0)
     total_revenue = Column(Numeric(15, 2), default=Decimal("0.00"))
     rating = Column(Numeric(3, 2), default=Decimal("0.00"))
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
     products = relationship("MarketplaceProduct", back_populates="seller")
 
 
@@ -68,7 +79,7 @@ class MarketplaceProduct(Base):
         Index("idx_product_status", "status"),
         Index("idx_product_category", "category"),
     )
-    
+
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     seller_id = Column(String(36), ForeignKey("marketplace_sellers.id"), nullable=False)
     name = Column(String(300), nullable=False)
@@ -92,8 +103,8 @@ class MarketplaceProduct(Base):
     metadata_json = Column(JSON, default=dict)
     sales_count = Column(Integer, default=0)
     rating = Column(Numeric(3, 2), default=Decimal("0.00"))
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
     seller = relationship("MarketplaceSeller", back_populates="products")
 
 
@@ -104,7 +115,7 @@ class MarketplaceOrder(Base):
         Index("idx_order_status", "status"),
         Index("idx_order_village", "village_id"),
     )
-    
+
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     order_number = Column(String(50), unique=True, nullable=False, index=True)
     buyer_id = Column(String(36), nullable=False, index=True)
@@ -119,8 +130,8 @@ class MarketplaceOrder(Base):
     shipping_address = Column(JSON)
     blockchain_tx_hash = Column(String(100), nullable=True)
     settlement_status = Column(String(20), default="pending")
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
 
 
 class MarketplaceCommissionRule(Base):
@@ -131,7 +142,7 @@ class MarketplaceCommissionRule(Base):
     platform_fee_bps = Column(Integer, default=300)
     landscape_fee_bps = Column(Integer, default=100)
     is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
 
 # Merged from models_legacy.py
@@ -264,19 +275,19 @@ class Order:
 
     def confirm(self) -> None:
         self.status = OrderStatus.CONFIRMED
-        self.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
+        self.updated_at = datetime.now(UTC).replace(tzinfo=None)
 
     def ship(self) -> None:
         self.status = OrderStatus.SHIPPED
-        self.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
+        self.updated_at = datetime.now(UTC).replace(tzinfo=None)
 
     def deliver(self) -> None:
         self.status = OrderStatus.DELIVERED
-        self.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
+        self.updated_at = datetime.now(UTC).replace(tzinfo=None)
 
     def cancel(self) -> None:
         self.status = OrderStatus.CANCELLED
-        self.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
+        self.updated_at = datetime.now(UTC).replace(tzinfo=None)
 
 # Merged from models_legacy.py
 class TraceRecord:

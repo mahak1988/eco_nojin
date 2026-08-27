@@ -27,8 +27,8 @@ from __future__ import annotations
 # =========================================================================
 try:
     from engine.hydroma.cpp_bridge import (
-        simulate_richards as _cpp_richards,
         is_cpp_available,
+        simulate_richards as _cpp_richards,
     )
     _CPP_AVAILABLE = is_cpp_available()
 except ImportError:
@@ -36,17 +36,22 @@ except ImportError:
 
 
 import time
+from dataclasses import dataclass
+from enum import Enum
+from typing import Any
+
 import numpy as np
 import xarray as xr
-from typing import Dict, Any, List, Optional
-from enum import Enum
-from dataclasses import dataclass
 
 from .base import (
-    AbstractScientificMotor, MotorInput, MotorOutput,
-    MotorParameters, MotorResult, MotorStatus, MotorType,
+    AbstractScientificMotor,
+    MotorInput,
+    MotorOutput,
+    MotorParameters,
+    MotorResult,
+    MotorStatus,
+    MotorType,
 )
-
 
 # =====================================================================
 # Core Engine Integration (Optional)
@@ -54,8 +59,8 @@ from .base import (
 try:
     # Try to import from core engine for unified logic
     from engine.hydroma.carbon.calculator import CarbonCalculator as CoreCarbonCalc
-    from engine.hydroma.simulation.runners.rothc_runner import RothCRunner as CoreRothC
     from engine.hydroma.mrv.metrics import MRVMetrics as CoreMRV
+    from engine.hydroma.simulation.runners.rothc_runner import RothCRunner as CoreRothC
     CORE_AVAILABLE = True
     CORE_ERROR = None
 except ImportError as e:
@@ -146,7 +151,7 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
         self._core_rothc = None
         self._core_mrv = None
         self._use_core = False
-        
+
         if CORE_AVAILABLE:
             try:
                 self._core_calc = CoreCarbonCalc()
@@ -166,7 +171,7 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
         mode = "Core-Integrated" if self._use_core else "Standalone"
         return f"Carbon Sequestration Calculator ({mode}, RothC-26.3)"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [
             MotorInput("initial_soc", "raster", True, "Initial soil organic carbon (tC/ha)"),
             MotorInput("clay_fraction", "raster", True, "Clay content (0-1)"),
@@ -174,7 +179,7 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
             MotorInput("mean_annual_temp", "scalar", True, "Mean annual temperature (°C)"),
         ]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("annual_sequestration_co2e", "raster", "tCO2e/ha/yr", "Annual sequestration"),
             MotorOutput("soc_projection_20y", "raster", "tC/ha", "SOC projection"),
@@ -186,7 +191,7 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
 
     async def execute(
         self,
-        inputs: Dict[str, Any],
+        inputs: dict[str, Any],
         parameters: MotorParameters,
     ) -> MotorResult:
         """Execute carbon sequestration calculation."""
@@ -262,7 +267,7 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
             # --- Build output rasters ---
             soc_increase_per_pixel = (sequestration_soc[-1] - baseline_soc[-1]) / project_years
             soc_projection_arr = initial_soc.values + soc_increase_per_pixel * project_years
-            
+
             soc_projection = xr.DataArray(
                 soc_projection_arr,
                 dims=initial_soc.dims,
@@ -364,7 +369,7 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
                 run_id=run_id,
                 motor_type=self.motor_type,
                 status=MotorStatus.FAILED,
-                error_message=f"{str(e)}\n{traceback.format_exc()}",
+                error_message=f"{e!s}\n{traceback.format_exc()}",
             )
 
     # =================================================================
@@ -445,7 +450,7 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
         rate_modifier: float,
         years: int,
         c_input_baseline: float,
-    ) -> List[float]:
+    ) -> list[float]:
         """Run RothC-26.3 model simulation.
         
         Returns: list of annual SOC values (tC/ha) from year 0 to year N.
@@ -508,7 +513,7 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
         final_soc: float,
         years: int,
         clay: float,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Generate MRV (Monitoring, Reporting, Verification) report.
         
         Output is compatible with engine/hydroma/blockchain/carbon_registry.py

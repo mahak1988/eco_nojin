@@ -1,5 +1,4 @@
 """Security status & anti-phishing endpoints (Phase 8-C)."""
-from typing import Optional
 
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
@@ -15,8 +14,8 @@ router = APIRouter(prefix="/api/v1/security", tags=["security"])
 
 
 class PhishingCheck(BaseModel):
-    domain: Optional[str] = None
-    url: Optional[str] = None
+    domain: str | None = None
+    url: str | None = None
 
 
 @router.get("/status")

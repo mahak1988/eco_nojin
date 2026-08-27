@@ -17,7 +17,7 @@ from __future__ import annotations
 import json
 import time
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 from .base import (
     AbstractScientificMotor,
@@ -30,7 +30,7 @@ from .base import (
 )
 
 try:
-    import pySWATPlus  # noqa: F401  (declared project dependency)
+    import pySWATPlus
     PY_SWAT_AVAILABLE = True
 except Exception:  # pragma: no cover
     PY_SWAT_AVAILABLE = False
@@ -61,7 +61,7 @@ class SWATPrepMotor(AbstractScientificMotor):
     def display_name(self) -> str:
         return "SWAT+ (pySWATPlus prep)"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [
             MotorInput("lat", "scalar", description="Basin latitude"),
             MotorInput("lon", "scalar", description="Basin longitude"),
@@ -71,14 +71,14 @@ class SWATPrepMotor(AbstractScientificMotor):
             MotorInput("land_use", "scalar", description="cropland/grassland/forest/..."),
         ]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("project_path", "scalar", "path", "SWAT+ project descriptor path"),
             MotorOutput("run_requires_executable", "scalar", "bool", "Full run needs the SWAT+ binary"),
         ]
 
     async def execute(
-        self, inputs: Dict[str, Any], parameters: MotorParameters
+        self, inputs: dict[str, Any], parameters: MotorParameters
     ) -> MotorResult:
         start_time = time.time()
         run_id = f"SWAT_PREP_{int(time.time())}"

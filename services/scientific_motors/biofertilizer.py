@@ -4,11 +4,12 @@ Recommends optimal biofertilizers based on soil analysis and crop type.
 """
 from __future__ import annotations
 
-import numpy as np
-import xarray as xr
-from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
+
+import numpy as np
+import xarray as xr
 
 from .base import (
     AbstractScientificMotor,
@@ -59,7 +60,7 @@ class BiofertilizerMotor(AbstractScientificMotor):
     def display_name(self) -> str:
         return "Biofertilizer Recommender"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [
             MotorInput("soil_ph", "raster", True, "Soil pH (0-14)"),
             MotorInput("soil_nitrogen", "raster", True, "Soil nitrogen (kg/ha)"),
@@ -69,7 +70,7 @@ class BiofertilizerMotor(AbstractScientificMotor):
             MotorInput("soil_texture", "raster", False, "Soil texture class"),
         ]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("recommendations", "json", "list", "Biofertilizer recommendations"),
             MotorOutput("nitrogen_deficit", "raster", "kg/ha", "Nitrogen deficit map"),
@@ -79,7 +80,7 @@ class BiofertilizerMotor(AbstractScientificMotor):
 
     async def execute(
         self,
-        inputs: Dict[str, Any],
+        inputs: dict[str, Any],
         parameters: MotorParameters,
     ) -> MotorResult:
         """Execute biofertilizer recommendation."""
@@ -105,7 +106,7 @@ class BiofertilizerMotor(AbstractScientificMotor):
 
             # Get crop type from parameters
             crop_type = parameters.custom_params.get("crop_type", "wheat")
-            
+
             # Analyze soil and generate recommendations
             recommendations = self._analyze_soil_and_recommend(
                 soil_ph=soil_ph,
@@ -160,7 +161,7 @@ class BiofertilizerMotor(AbstractScientificMotor):
         soil_k: xr.DataArray,
         soil_om: xr.DataArray,
         crop_type: str,
-    ) -> List[BiofertilizerRecommendation]:
+    ) -> list[BiofertilizerRecommendation]:
         """Analyze soil properties and generate recommendations."""
         recommendations = []
 
@@ -270,12 +271,12 @@ class BiofertilizerMotor(AbstractScientificMotor):
             "cotton": 200, "tomato": 160,
         }
         required_n = crop_requirements.get(crop_type, 150)
-        
+
         # Available N from soil + mineralization from OM
         available_n = soil_n + (soil_om * 20)  # 20 kg N per 1% OM
-        
+
         deficit = np.maximum(required_n - available_n, 0)
-        
+
         return xr.DataArray(
             deficit.values,
             dims=soil_n.dims,
@@ -295,13 +296,13 @@ class BiofertilizerMotor(AbstractScientificMotor):
             "cotton": 80, "tomato": 90,
         }
         required_p = crop_requirements.get(crop_type, 60)
-        
+
         # P availability decreases at high pH
         ph_factor = np.where(soil_ph > 7.5, 0.7, 1.0)
         available_p = soil_p * ph_factor
-        
+
         deficit = np.maximum(required_p - available_p, 0)
-        
+
         return xr.DataArray(
             deficit.values,
             dims=soil_p.dims,

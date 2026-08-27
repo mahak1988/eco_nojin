@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Copernicus CDS API Integration - ERA5-Land & ERA5 Data Access.
 
@@ -23,15 +22,13 @@ Usage:
 """
 from __future__ import annotations
 
+import hashlib
+import json
 import logging
 import os
-import json
-import hashlib
-from pathlib import Path
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Any
-
-import numpy as np
+from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger("econojin.copernicus")
 
@@ -42,12 +39,12 @@ CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 class CopernicusCDSClient:
     """Client for Copernicus Climate Data Store API."""
-    
-    def __init__(self, api_key: Optional[str] = None, api_url: Optional[str] = None):
+
+    def __init__(self, api_key: str | None = None, api_url: str | None = None):
         """Initialize CDS client with credentials."""
         self.api_key = api_key or os.getenv("COPERNICUS_CDS_API_KEY")
         self.api_url = api_url or os.getenv("COPERNICUS_CDS_URL", "https://cds.climate.copernicus.eu/api")
-        
+
         if not self.api_key:
             logger.warning("COPERNICUS_CDS_API_KEY not set")
             self._client = None
@@ -63,19 +60,19 @@ class CopernicusCDSClient:
             except Exception as e:
                 logger.error(f"Failed to initialize CDS client: {e}")
                 self._client = None
-    
+
     @property
     def is_available(self) -> bool:
         return self._client is not None
-    
-    def _cache_key(self, dataset: str, params: Dict) -> str:
+
+    def _cache_key(self, dataset: str, params: dict) -> str:
         """Generate cache key for request."""
         key_str = json.dumps({"dataset": dataset, **params}, sort_keys=True)
         return hashlib.sha256(key_str.encode()).hexdigest()
-    
+
     def _get_cache_path(self, cache_key: str) -> Path:
         return CACHE_DIR / f"{cache_key}.nc"
-    
+
     def _is_cached(self, cache_key: str, max_age_hours: int = 24) -> bool:
         """Check if data is cached and fresh."""
         path = self._get_cache_path(cache_key)
@@ -83,16 +80,16 @@ class CopernicusCDSClient:
             return False
         age_hours = (datetime.now().timestamp() - path.stat().st_mtime) / 3600
         return age_hours < max_age_hours
-    
+
     def fetch_era5_land(
         self,
         latitude: float,
         longitude: float,
         start_date: str,
         end_date: str,
-        variables: Optional[List[str]] = None,
-        area: Optional[List[float]] = None,
-    ) -> Optional[Dict[str, Any]]:
+        variables: list[str] | None = None,
+        area: list[float] | None = None,
+    ) -> dict[str, Any] | None:
         """
         Fetch ERA5-Land data (9km resolution, highest quality).
         
@@ -110,7 +107,7 @@ class CopernicusCDSClient:
         if not self.is_available:
             logger.warning("CDS client not available")
             return None
-        
+
         if variables is None:
             variables = [
                 "2m_temperature",
@@ -121,7 +118,7 @@ class CopernicusCDSClient:
                 "10m_v_component_of_wind",
                 "surface_pressure",
             ]
-        
+
         if area is None:
             # 0.5 degree box around point (~55km)
             area = [
@@ -130,7 +127,7 @@ class CopernicusCDSClient:
                 latitude - 0.25,
                 longitude + 0.25,
             ]
-        
+
         # Generate date list
         start = datetime.strptime(start_date, "%Y-%m-%d")
         end = datetime.strptime(end_date, "%Y-%m-%d")
@@ -139,7 +136,7 @@ class CopernicusCDSClient:
         while current <= end:
             dates.append(current.strftime("%Y-%m-%d"))
             current += timedelta(days=1)
-        
+
         request_params = {
             "variable": variables,
             "year": list(set(d.split("-")[0] for d in dates)),
@@ -149,23 +146,23 @@ class CopernicusCDSClient:
             "data_format": "netcdf",
             "area": area,
         }
-        
+
         cache_key = self._cache_key("reanalysis-era5-land", request_params)
-        
+
         if self._is_cached(cache_key, max_age_hours=168):  # 7 days
             logger.info("Using cached ERA5-Land data")
             return {"cache_path": str(self._get_cache_path(cache_key)), "from_cache": True}
-        
+
         try:
             target_path = str(self._get_cache_path(cache_key))
             logger.info(f"Downloading ERA5-Land data for {len(dates)} days...")
-            
+
             self._client.retrieve(
                 "reanalysis-era5-land",
                 request_params,
                 target_path
             )
-            
+
             logger.info(f"Downloaded to: {target_path}")
             return {
                 "cache_path": target_path,
@@ -176,18 +173,18 @@ class CopernicusCDSClient:
         except Exception as e:
             logger.error(f"CDS download failed: {e}")
             return None
-    
+
     def fetch_soil_moisture(
         self,
         latitude: float,
         longitude: float,
         start_date: str,
         end_date: str,
-    ) -> Optional[Dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         """Fetch soil moisture data from satellite observations."""
         if not self.is_available:
             return None
-        
+
         request_params = {
             "variable": "volumetric_surface_soil_moisture",
             "satellite": "combined",
@@ -199,12 +196,12 @@ class CopernicusCDSClient:
             "data_format": "netcdf",
             "area": [latitude + 0.25, longitude - 0.25, latitude - 0.25, longitude + 0.25],
         }
-        
+
         cache_key = self._cache_key("satellite-soil-moisture", request_params)
-        
+
         if self._is_cached(cache_key):
             return {"cache_path": str(self._get_cache_path(cache_key)), "from_cache": True}
-        
+
         try:
             target_path = str(self._get_cache_path(cache_key))
             self._client.retrieve(

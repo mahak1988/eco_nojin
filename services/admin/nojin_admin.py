@@ -1,10 +1,10 @@
 """
 Nojin Admin Dashboard - FastAPI Router
 """
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
-from typing import Optional, List
 from datetime import date
+
+from fastapi import APIRouter
+from pydantic import BaseModel
 
 router = APIRouter(prefix="/admin/nojin", tags=["Admin"])
 
@@ -48,8 +48,8 @@ async def get_dashboard_overview():
         api_status="healthy", satellite_status="operational"
     )
 
-@router.get("/projects", response_model=List[ProjectStatus])
-async def list_projects(status_filter: Optional[str] = None, limit: int = 50):
+@router.get("/projects", response_model=list[ProjectStatus])
+async def list_projects(status_filter: str | None = None, limit: int = 50):
     projects = [
         ProjectStatus(
             project_id="PRJ-001", name="Khuzestan Restoration", area_ha=250.0,
@@ -66,7 +66,7 @@ async def list_projects(status_filter: Optional[str] = None, limit: int = 50):
         projects = [p for p in projects if p.status == status_filter]
     return projects[:limit]
 
-@router.get("/inventory", response_model=List[MaterialInventory])
+@router.get("/inventory", response_model=list[MaterialInventory])
 async def get_material_inventory():
     return [
         MaterialInventory(

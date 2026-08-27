@@ -1,18 +1,19 @@
 import uuid
+
 """
 مدل‌های داده مدیریت یکپارچه منظر (ILM)
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from decimal import Decimal
 from enum import Enum
 
-from sqlalchemy import (
-    Boolean, Column, DateTime, Index, Integer,
-    Numeric, String, Text, JSON, Date
-)
+from sqlalchemy import JSON, Boolean, Column, Date, DateTime, Index, Integer, Numeric, String, Text
 from sqlalchemy.dialects.postgresql import UUID
+
 from database.models import Base
+
+
 class LandscapeGovernanceRole(str, Enum):
     COUNCIL_MEMBER = "council_member"
     LANDSCAPE_MANAGER = "landscape_manager"
@@ -44,8 +45,8 @@ class LandscapeVillage(Base):
     ecological_metrics_data = Column(JSON, default=dict)
     smart_contract_address = Column(String(100))
     blockchain_network = Column(String(50))
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
 
 
 class LandscapeGovernanceMember(Base):
@@ -61,7 +62,7 @@ class LandscapeGovernanceMember(Base):
     is_active = Column(Boolean, default=True)
     term_start = Column(Date)
     term_end = Column(Date)
-    elected_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    elected_at = Column(DateTime, default=lambda: datetime.now(UTC))
     phone = Column(String(20))
     email = Column(String(200))
 
@@ -77,8 +78,8 @@ class LandscapeFund(Base):
     pending_balance = Column(Numeric(18, 2), default=Decimal("0.00"))
     currency = Column(String(3), default="IRR")
     is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
 
 
 class LandscapeFundDistribution(Base):
@@ -100,5 +101,5 @@ class LandscapeFundDistribution(Base):
     approved_at = Column(DateTime, nullable=True)
     status = Column(String(20), default="pending", index=True)
     blockchain_tx_hash = Column(String(100))
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     executed_at = Column(DateTime, nullable=True)

@@ -3,13 +3,14 @@ Tests for Comprehensive Land Analyzer (Fixed)
 """
 
 import pytest
+
 from engine.land.integration.comprehensive_analyzer import (
-    ComprehensiveLandAnalyzer,
-    SoilSummary,
     ClimateSummary,
-    TerrainSummary,
-    LandUseCategory,
+    ComprehensiveLandAnalyzer,
     CropType,
+    LandUseCategory,
+    SoilSummary,
+    TerrainSummary,
 )
 
 
@@ -239,7 +240,7 @@ class TestComprehensiveLandAnalyzer:
         )
         result = analyzer.analyze(saline_soil, good_climate, good_terrain)
         assert "severe_salinity" in result.limiting_factors  # EC > 6.0
-        assert any("leaching" in rec.lower() or "salt-tolerant" in rec.lower() 
+        assert any("leaching" in rec.lower() or "salt-tolerant" in rec.lower()
                   for rec in result.improvement_recommendations)
 
     def test_drought_tolerant_crops(

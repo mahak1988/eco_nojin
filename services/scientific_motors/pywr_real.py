@@ -21,7 +21,7 @@ References
 from __future__ import annotations
 
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -37,12 +37,14 @@ from .base import (
 )
 
 try:
-    from pywr.core import Input as PywrInput
-    from pywr.core import Link as PywrLink
-    from pywr.core import Model as PywrModel
-    from pywr.core import Output as PywrOutput
-    from pywr.core import Reservoir as PywrReservoir
-    from pywr.parameters import ArrayIndexedParameter, DataFrameParameter
+    from pywr.core import (
+        Input as PywrInput,
+        Link as PywrLink,
+        Model as PywrModel,
+        Output as PywrOutput,
+        Reservoir as PywrReservoir,
+    )
+    from pywr.parameters import DataFrameParameter
     from pywr.recorders import NumpyArrayNodeRecorder
     PYRW_AVAILABLE = True
 except Exception:  # pragma: no cover - import guard
@@ -60,14 +62,14 @@ class PywrWaterAllocationMotor(AbstractScientificMotor):
     def display_name(self) -> str:
         return "Pywr water allocation (WEAP alternative)"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [
             MotorInput("monthly_inflow_mcm", "timeseries", description="12 monthly inflows (MCM)"),
             MotorInput("monthly_demand_mcm", "timeseries", description="12 monthly demands (MCM)"),
             MotorInput("reservoir_capacity_mcm", "scalar", description="Storage capacity"),
         ]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("supply_reliability", "scalar", "%", "Fraction of demand met"),
             MotorOutput("total_deficit_mcm", "scalar", "MCM", "Unmet demand"),
@@ -76,7 +78,7 @@ class PywrWaterAllocationMotor(AbstractScientificMotor):
         ]
 
     async def execute(
-        self, inputs: Dict[str, Any], parameters: MotorParameters
+        self, inputs: dict[str, Any], parameters: MotorParameters
     ) -> MotorResult:
         start_time = time.time()
         run_id = f"PYWR_{int(time.time())}"

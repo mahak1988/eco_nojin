@@ -4,10 +4,10 @@ Climate Integration Models
 Models for climate data integration with land profiles.
 """
 
-from pydantic import BaseModel, Field, ConfigDict
-from typing import Optional, List, Dict, Any
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class KoppenClimate(str, Enum):
@@ -67,14 +67,14 @@ class MonthlyClimate(BaseModel):
             }
         }
     )
-    
+
     month: int = Field(..., ge=1, le=12, description="Month (1-12)")
     t_min_c: float = Field(..., description="Minimum temperature (°C)")
     t_max_c: float = Field(..., description="Maximum temperature (°C)")
     t_mean_c: float = Field(..., description="Mean temperature (°C)")
     precipitation_mm: float = Field(..., ge=0, description="Monthly precipitation (mm)")
-    et0_mm: Optional[float] = Field(None, ge=0, description="Reference ET (mm)")
-    
+    et0_mm: float | None = Field(None, ge=0, description="Reference ET (mm)")
+
     def t_range(self) -> float:
         """Daily temperature range."""
         return self.t_max_c - self.t_min_c
@@ -98,42 +98,42 @@ class ClimateProfile(BaseModel):
             }
         }
     )
-    
+
     lat: float = Field(..., ge=-90, le=90)
     lon: float = Field(..., ge=-180, le=180)
-    elevation_m: Optional[float] = None
-    
+    elevation_m: float | None = None
+
     # Köppen-Geiger
-    koppen: Optional[KoppenClimate] = None
-    koppen_description: Optional[str] = None
-    koppen_group: Optional[str] = None  # A, B, C, D, E
-    
+    koppen: KoppenClimate | None = None
+    koppen_description: str | None = None
+    koppen_group: str | None = None  # A, B, C, D, E
+
     # Annual aggregates
     annual_precip_mm: float = Field(..., ge=0, description="Annual precipitation (mm)")
-    annual_et0_mm: Optional[float] = Field(None, ge=0, description="Annual ET0 (mm)")
+    annual_et0_mm: float | None = Field(None, ge=0, description="Annual ET0 (mm)")
     annual_t_mean_c: float = Field(..., description="Annual mean temperature (°C)")
-    
+
     # Aridity
-    aridity_index: Optional[float] = Field(
+    aridity_index: float | None = Field(
         None, ge=0, description="Aridity Index = P/PET"
     )
-    aridity_class: Optional[AridityClass] = None
-    
+    aridity_class: AridityClass | None = None
+
     # Growing season
-    growing_season_days: Optional[int] = Field(
+    growing_season_days: int | None = Field(
         None, ge=0, description="Growing season length (days)"
     )
-    frost_free_days: Optional[int] = Field(
+    frost_free_days: int | None = Field(
         None, ge=0, description="Frost-free days per year"
     )
-    
+
     # Monthly data
-    monthly: List[MonthlyClimate] = Field(default_factory=list)
-    
+    monthly: list[MonthlyClimate] = Field(default_factory=list)
+
     # Metadata
-    data_source: Optional[str] = None  # "open_meteo", "era5", "synthetic"
-    data_quality_level: Optional[str] = None  # L0-L5
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    data_source: str | None = None  # "open_meteo", "era5", "synthetic"
+    data_quality_level: str | None = None  # L0-L5
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class ClimateIntegrationResult(BaseModel):
@@ -151,27 +151,27 @@ class ClimateIntegrationResult(BaseModel):
             }
         }
     )
-    
+
     profile_id: str
     success: bool = True
-    error_message: Optional[str] = None
-    
-    climate_profile: Optional[ClimateProfile] = None
-    
+    error_message: str | None = None
+
+    climate_profile: ClimateProfile | None = None
+
     # Capabilities derived from climate
     irrigation_required: bool = False
     drought_tolerant_crops_only: bool = False
     cold_climate_limitation: bool = False
     heat_stress_risk: bool = False
-    
+
     # Limitations
-    limitations: List[str] = Field(default_factory=list)
-    recommendations: List[str] = Field(default_factory=list)
-    
+    limitations: list[str] = Field(default_factory=list)
+    recommendations: list[str] = Field(default_factory=list)
+
     # Integration metadata
-    integrated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    integration_time_ms: Optional[float] = None
-    data_quality_level: Optional[str] = None
+    integrated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    integration_time_ms: float | None = None
+    data_quality_level: str | None = None
 
 
 # Reference Köppen descriptions

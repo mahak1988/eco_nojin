@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import statistics
 from dataclasses import dataclass, field
-from typing import List, Optional
 
 
 @dataclass(frozen=True)
@@ -35,9 +34,9 @@ class IndexInputError(ValueError):
     """Invalid index input (rejected, not imputed)."""
 
 
-def season_mean_ndvi(ndvi_values: List[float]) -> float:
+def season_mean_ndvi(ndvi_values: list[float]) -> float:
     """Robust seasonal mean: rejects NaN/negative/out-of-range values."""
-    clean: List[float] = []
+    clean: list[float] = []
     for v in ndvi_values:
         if v is None or v != v:  # NaN check
             raise IndexInputError("missing/NaN NDVI value in series")
@@ -51,8 +50,8 @@ def season_mean_ndvi(ndvi_values: List[float]) -> float:
 
 def evaluate_index_insurance(
     farm_id: str,
-    ndvi_values: List[float],
-    reference_ndvi: Optional[float] = None,
+    ndvi_values: list[float],
+    reference_ndvi: float | None = None,
     trigger_deficit: float = 0.15,
     full_payout_deficit: float = 0.45,
 ) -> IndexInsuranceResult:

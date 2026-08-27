@@ -1,5 +1,6 @@
 """Utility functions for topographic calculations using xarray-spatial."""
 import xarray as xr
+
 try:
     import xrspatial
 except ImportError:

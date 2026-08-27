@@ -1,22 +1,23 @@
 """Tests for Land Intelligence models"""
 
+
 import pytest
+
 from engine.land.models import (
-    LandProfile,
-    TerrainAnalysis,
-    TerrainType,
+    CapabilityAssessment,
     DrainageAnalysis,
     DrainagePattern,
-    CapabilityAssessment,
     LandCapabilityClass,
+    LandProfile,
     SlopeAspectResult,
+    TerrainAnalysis,
+    TerrainType,
 )
-from datetime import datetime
 
 
 class TestSlopeAspectResult:
     """تست‌های SlopeAspectResult"""
-    
+
     def test_valid_slope_aspect(self):
         """تست شیب و جهت معتبر"""
         result = SlopeAspectResult(
@@ -25,32 +26,32 @@ class TestSlopeAspectResult:
             aspect_degrees=180.0,
             aspect_cardinal="S"
         )
-        
+
         assert result.slope_degrees == 15.5
         assert result.slope_percent == 27.7
         assert result.aspect_degrees == 180.0
         assert result.aspect_cardinal == "S"
-    
+
     def test_slope_bounds(self):
         """تست محدوده شیب"""
         # Valid
         SlopeAspectResult(slope_degrees=0, slope_percent=0, aspect_degrees=0, aspect_cardinal="N")
         SlopeAspectResult(slope_degrees=90, slope_percent=10000, aspect_degrees=360, aspect_cardinal="N")
-        
+
         # Invalid
         with pytest.raises(ValueError):
             SlopeAspectResult(slope_degrees=-1, slope_percent=0, aspect_degrees=0, aspect_cardinal="N")
-        
+
         with pytest.raises(ValueError):
             SlopeAspectResult(slope_degrees=91, slope_percent=0, aspect_degrees=0, aspect_cardinal="N")
-        
+
         with pytest.raises(ValueError):
             SlopeAspectResult(slope_degrees=0, slope_percent=0, aspect_degrees=361, aspect_cardinal="N")
 
 
 class TestTerrainAnalysis:
     """تست‌های TerrainAnalysis"""
-    
+
     def test_valid_terrain_analysis(self):
         """تست تحلیل توپوگرافی معتبر"""
         analysis = TerrainAnalysis(
@@ -65,11 +66,11 @@ class TestTerrainAnalysis:
             roughness_index=0.15,
             curvature_mean=-0.02
         )
-        
+
         assert analysis.terrain_type == TerrainType.ROLLING
         assert analysis.elevation_mean == 1275.0
         assert analysis.slope_mean == 12.5
-    
+
     def test_terrain_types(self):
         """تست انواع توپوگرافی"""
         for terrain_type in TerrainType:
@@ -90,7 +91,7 @@ class TestTerrainAnalysis:
 
 class TestDrainageAnalysis:
     """تست‌های DrainageAnalysis"""
-    
+
     def test_valid_drainage_analysis(self):
         """تست تحلیل زهکشی معتبر"""
         analysis = DrainageAnalysis(
@@ -101,7 +102,7 @@ class TestDrainageAnalysis:
             watershed_area_km2=15.5,
             time_of_concentration_hours=4.2
         )
-        
+
         assert analysis.drainage_pattern == DrainagePattern.DENDRITIC
         assert analysis.drainage_density == 2.5
         assert analysis.watershed_area_km2 == 15.5
@@ -109,7 +110,7 @@ class TestDrainageAnalysis:
 
 class TestCapabilityAssessment:
     """تست‌های CapabilityAssessment"""
-    
+
     def test_valid_capability_assessment(self):
         """تست ارزیابی قابلیت معتبر"""
         assessment = CapabilityAssessment(
@@ -123,12 +124,12 @@ class TestCapabilityAssessment:
             confidence_score=0.85,
             assessed_by="automated_system"
         )
-        
+
         assert assessment.capability_class == LandCapabilityClass.CLASS_III
         assert assessment.subclass == "e"
         assert "slope" in assessment.limiting_factors
         assert assessment.confidence_score == 0.85
-    
+
     def test_all_capability_classes(self):
         """تست تمام کلاس‌های قابلیت"""
         for capability_class in LandCapabilityClass:
@@ -146,7 +147,7 @@ class TestCapabilityAssessment:
 
 class TestLandProfile:
     """تست‌های LandProfile"""
-    
+
     def test_valid_land_profile(self):
         """تست پروفایل زمین معتبر"""
         profile = LandProfile(
@@ -159,22 +160,22 @@ class TestLandProfile:
             dem_source="SRTM_30m",
             dem_resolution_m=30.0
         )
-        
+
         assert profile.id == "test-profile"
         assert profile.name == "مزرعه نمونه"
         assert profile.location_lat == 32.65
         assert profile.location_lon == 51.67
-    
+
     def test_location_bounds(self):
         """تست محدوده مختصات"""
         # Valid
         LandProfile(id="test", name="test", location_lat=0, location_lon=0)
         LandProfile(id="test", name="test", location_lat=90, location_lon=180)
         LandProfile(id="test", name="test", location_lat=-90, location_lon=-180)
-        
+
         # Invalid
         with pytest.raises(ValueError):
             LandProfile(id="test", name="test", location_lat=91, location_lon=0)
-        
+
         with pytest.raises(ValueError):
             LandProfile(id="test", name="test", location_lat=0, location_lon=181)

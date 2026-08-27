@@ -49,7 +49,7 @@ class CdseConfig:
     timeout: tuple[float, float] = (10.0, 60.0)
 
     @classmethod
-    def from_env(cls, env: dict[str, str] | None = None) -> "CdseConfig":
+    def from_env(cls, env: dict[str, str] | None = None) -> CdseConfig:
         """Build config from the environment; missing keys raise CdseUnavailable."""
         env = env if env is not None else os.environ
         missing = [

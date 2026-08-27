@@ -4,19 +4,19 @@ Hydroma Nojin - Core Engine Integration Layer
 This module bridges scientific motors with the core engine in engine/hydroma/.
 Ensures no logic duplication and unified scientific computations.
 """
-from typing import Dict, Any, Optional
-from pathlib import Path
 import sys
+from pathlib import Path
+from typing import Any
 
 # Add engine to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "engine"))
 
 try:
-    from hydroma.carbon.calculator import CarbonCalculator
-    from hydroma.simulation.runners.rothc_runner import RothCRunner
     from hydroma.blockchain.carbon_registry import CarbonRegistry
+    from hydroma.carbon.calculator import CarbonCalculator
     from hydroma.mrv.metrics import MRVMetrics
-    
+    from hydroma.simulation.runners.rothc_runner import RothCRunner
+
     CORE_AVAILABLE = True
 except ImportError as e:
     print(f"⚠️  Core engine not available: {e}")
@@ -33,7 +33,7 @@ class CoreEngineWrapper:
     def __init__(self):
         if not CORE_AVAILABLE:
             raise RuntimeError("Core engine not available. Check imports.")
-        
+
         self.carbon_calc = CarbonCalculator()
         self.rothc = RothCRunner()
         self.carbon_registry = CarbonRegistry()
@@ -46,7 +46,7 @@ class CoreEngineWrapper:
         method: str,
         years: int,
         **kwargs
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Calculate carbon sequestration using core engine."""
         return self.carbon_calc.calculate(
             initial_soc=initial_soc,
@@ -63,7 +63,7 @@ class CoreEngineWrapper:
         c_input: float,
         years: int,
         **kwargs
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Run RothC simulation."""
         return self.rothc.run(
             initial_soc=initial_soc,
@@ -79,7 +79,7 @@ class CoreEngineWrapper:
         standard: str,
         project_id: str,
         **kwargs
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Register carbon credits on blockchain."""
         return self.carbon_registry.register(
             credits=credits_tCO2e,
@@ -90,9 +90,9 @@ class CoreEngineWrapper:
 
     def generate_mrv_report(
         self,
-        project_data: Dict[str, Any],
+        project_data: dict[str, Any],
         **kwargs
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Generate MRV report."""
         return self.mrv.generate_report(
             data=project_data,
@@ -101,7 +101,7 @@ class CoreEngineWrapper:
 
 
 # Singleton instance
-core_wrapper: Optional[CoreEngineWrapper] = None
+core_wrapper: CoreEngineWrapper | None = None
 
 def get_core_engine() -> CoreEngineWrapper:
     """Get core engine wrapper (singleton)."""

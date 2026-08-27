@@ -1,7 +1,9 @@
-import numpy as np
-from typing import Dict, Any, Optional
 import logging
-from .dem_processor import DEMProcessor # استفاده از ماژول موجود
+from typing import Any
+
+import numpy as np
+
+from .dem_processor import DEMProcessor  # استفاده از ماژول موجود
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +60,7 @@ class SurfaceWaterAnalyzer:
         logger.info("Flow accumulation identification completed.")
         return flow_acc
 
-    def analyze_surface_water_potential(self, flow_threshold: float = 3.0) -> Dict[str, Any]:
+    def analyze_surface_water_potential(self, flow_threshold: float = 3.0) -> dict[str, Any]:
         """
         Analyzes potential surface water sources based on DEM and flow accumulation.
 

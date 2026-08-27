@@ -13,9 +13,9 @@ from __future__ import annotations
 # =========================================================================
 try:
     from engine.hydroma.cpp_bridge import (
-        simulate_crop_water as _cpp_crop_water,
-        penman_monteith_et0 as _cpp_penman,
         is_cpp_available,
+        penman_monteith_et0 as _cpp_penman,
+        simulate_crop_water as _cpp_crop_water,
     )
     _CPP_AVAILABLE = is_cpp_available()
 except ImportError:
@@ -23,14 +23,19 @@ except ImportError:
 
 
 import time
-import numpy as np
-import xarray as xr
-from typing import Dict, Any, List
 from enum import Enum
+from typing import Any
+
+import numpy as np
 
 from .base import (
-    AbstractScientificMotor, MotorInput, MotorOutput,
-    MotorParameters, MotorResult, MotorStatus, MotorType,
+    AbstractScientificMotor,
+    MotorInput,
+    MotorOutput,
+    MotorParameters,
+    MotorResult,
+    MotorStatus,
+    MotorType,
 )
 
 
@@ -76,7 +81,7 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
     def display_name(self) -> str:
         return "Global Irrigation Scheduler (FAO-56)"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [
             MotorInput("et0_mm_day", "raster", True, "Reference evapotranspiration ET0 (mm/day)"),
             MotorInput("soil_moisture", "raster", True, "Soil moisture (fraction)"),
@@ -85,7 +90,7 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
             MotorInput("root_depth_m", "scalar", False, "Root zone depth (m)"),
         ]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("etc_mm_day", "raster", "mm/day", "Crop water requirement"),
             MotorOutput("irrigation_schedule", "json", "days", "Irrigation events"),
@@ -94,7 +99,7 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
             MotorOutput("cost_estimate", "json", "USD", "Water and energy costs"),
         ]
 
-    async def execute(self, inputs: Dict[str, Any], parameters: MotorParameters) -> MotorResult:
+    async def execute(self, inputs: dict[str, Any], parameters: MotorParameters) -> MotorResult:
         start_time = time.time()
         run_id = f"IRRIG_{int(time.time())}"
 
@@ -104,7 +109,7 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
             field_capacity = float(parameters.custom_params.get("field_capacity", 0.30))
             wilting_point = float(parameters.custom_params.get("wilting_point", 0.15))
             root_depth = float(parameters.custom_params.get("root_depth_m", 0.8))
-            
+
             crop_id = parameters.custom_params.get("crop", "wheat")
             season_days = int(parameters.custom_params.get("season_days", 120))
             water_cost_m3 = float(parameters.custom_params.get("water_cost_per_m3", 0.05))
@@ -125,9 +130,9 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
             # 2. Soil water balance
             awc = field_capacity - wilting_point  # Available Water Capacity
             mad = awc * 0.5  # Management Allowed Depletion (50%)
-            
+
             mean_moisture = float(np.mean(soil_moisture.values)) if soil_moisture is not None else field_capacity
-            
+
             # 3. Generate irrigation schedule
             schedule = self._generate_schedule(
                 kc_series, et0_mean=float(np.mean(et0.values)),
@@ -139,11 +144,11 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
             # 4. Total water requirement
             total_irrigation_mm = sum(e["amount_mm"] for e in schedule)
             gross_season_water = etc_season  # ETc total
-            
+
             # 5. Recommend irrigation system based on water scarcity
             water_balance = gross_season_water - (season_days * float(np.mean(et0.values)) * 0.3)
             system = self._recommend_system(
-                etc_season=etc_season, 
+                etc_season=etc_season,
                 available_water=water_balance,
                 crop_id=crop_id,
             )
@@ -199,7 +204,7 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
     def _simulate_season(self, et0, kc_stages, season_days):
         """Simulate daily Kc and calculate ETc."""
         et0_mean = float(np.mean(et0.values))
-        
+
         # Stage durations (FAO-56 typical proportions)
         stages = [
             ("initial", 0.15),
@@ -207,22 +212,22 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
             ("mid_season", 0.40),
             ("late_season", 0.20),
         ]
-        
+
         kc_series = []
         etc_total = 0.0
-        
+
         for stage_name, proportion in stages:
             days = int(season_days * proportion)
             kc = kc_stages.get(stage_name, 1.0)
             for _ in range(days):
                 kc_series.append(kc)
                 etc_total += et0_mean * kc
-        
+
         # Fill remaining days
         while len(kc_series) < season_days:
             kc_series.append(kc_stages.get("late_season", 0.6))
             etc_total += et0_mean * kc_stages.get("late_season", 0.6)
-        
+
         return etc_total, kc_series
 
     def _generate_schedule(self, kc_series, et0_mean, soil_moisture,
@@ -231,18 +236,18 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
         awc = field_capacity - wilting_point
         mad = awc * 0.5
         root_mm = root_depth * 1000  # Convert m to mm
-        
+
         schedule = []
         current_moisture = soil_moisture
         cumulative_etc = 0
-        
+
         for day, kc in enumerate(kc_series[:season_days], 1):
             etc_day = et0_mean * kc
             cumulative_etc += etc_day
-            
+
             # Deplete soil moisture
             current_moisture -= etc_day / root_mm
-            
+
             # Irrigate when below MAD threshold
             if current_moisture <= (field_capacity - mad):
                 # Refill to field capacity
@@ -255,7 +260,7 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
                     "cumulative_mm": round(cumulative_etc, 1),
                 })
                 current_moisture = field_capacity
-        
+
         return schedule
 
     def _get_stage(self, day, season_days):
@@ -269,7 +274,7 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
         """Recommend optimal irrigation system."""
         # Row crops prefer drip, field crops can use sprinkler
         row_crops = {"tomato", "potato", "onion", "cotton", "date_palm", "olive", "apple"}
-        
+
         if etc_season > 800:  # High water need
             if crop_id in row_crops:
                 sys_type = IrrigationSystem.DRIP
@@ -282,7 +287,7 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
                 sys_type = IrrigationSystem.SPRINKLER
         else:
             sys_type = IrrigationSystem.SPRINKLER
-        
+
         name, efficiency, cost = sys_type.value
         return {
             "id": sys_type.name,

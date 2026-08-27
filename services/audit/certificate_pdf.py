@@ -6,7 +6,7 @@ arabic_reshaper + python-bidi. Every field comes from real Supabase rows
 """
 
 import os
-from typing import Any, Dict
+from typing import Any
 
 try:
     import arabic_reshaper
@@ -39,7 +39,7 @@ def _find_font() -> str:
     return r"C:\Windows\Fonts\arial.ttf"
 
 
-def build_certificate_pdf(data: Dict[str, Any]) -> bytes:
+def build_certificate_pdf(data: dict[str, Any]) -> bytes:
     """Render a carbon-credit certificate as PDF bytes (one A4 landscape page)."""
     from fpdf import FPDF
 

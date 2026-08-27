@@ -11,7 +11,6 @@ import subprocess
 import sys
 import threading
 import time
-from typing import Dict, List, Optional
 
 logger = logging.getLogger("econojin.watchdog")
 
@@ -23,8 +22,8 @@ class CircuitBreaker:
         self.threshold = threshold
         self.cooldown = cooldown
         self._lock = threading.Lock()
-        self._hits: Dict[str, List[float]] = {}
-        self._blocked: Dict[str, float] = {}
+        self._hits: dict[str, list[float]] = {}
+        self._blocked: dict[str, float] = {}
 
     def report_block(self, ip: str) -> bool:
         """Returns True if the IP just crossed the circuit-breaker threshold."""
@@ -57,10 +56,10 @@ circuit_breaker = CircuitBreaker()
 class HealthWatchdog:
     """Supervises the API process (production mode)."""
 
-    def __init__(self, cmd: List[str], health_url: str = "http://127.0.0.1:8011/health") -> None:
+    def __init__(self, cmd: list[str], health_url: str = "http://127.0.0.1:8011/health") -> None:
         self.cmd = cmd
         self.health_url = health_url
-        self.proc: Optional[subprocess.Popen] = None
+        self.proc: subprocess.Popen | None = None
         self.restarts = 0
         self._stop = False
 
@@ -76,7 +75,7 @@ class HealthWatchdog:
             except subprocess.TimeoutExpired:
                 self.proc.kill()
 
-    def status(self) -> Dict:
+    def status(self) -> dict:
         import urllib.request
 
         alive = self.proc is not None and self.proc.poll() is None

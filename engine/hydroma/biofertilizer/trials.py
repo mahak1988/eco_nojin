@@ -4,15 +4,12 @@ Field Trial Manager for Nojin Biofertilizers.
 Handles the design, execution, and analysis of field trials
 to evaluate biofertilizer performance.
 """
-from typing import Dict, Any, List, Optional
-import numpy as np
-import pandas as pd
 from datetime import date
+from typing import Any
 
-from database.models import NojinFieldTrialDB, NojinApplicationPlanDB
 from database.config import SessionLocal
+from database.models import NojinFieldTrialDB
 from engine.hydroma.soil.health import calculate_soil_health_index
-from engine.hydroma.crop.yield_prediction import predict_yield # hypothetical function
 
 
 def design_trial(
@@ -22,7 +19,7 @@ def design_trial(
     replication_factor: int,
     control_plots: bool = True,
     duration_months: int = 12
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Designs a field trial layout based on an application plan.
 
@@ -67,7 +64,7 @@ def design_trial(
     }
 
 
-def execute_trial(trial_design: Dict[str, Any], baseline_data: Dict[str, Any]):
+def execute_trial(trial_design: dict[str, Any], baseline_data: dict[str, Any]):
     """
     Executes a designed trial and records baseline data.
 
@@ -97,7 +94,7 @@ def execute_trial(trial_design: Dict[str, Any], baseline_data: Dict[str, Any]):
         db.close()
 
 
-def analyze_trial_results(trial_id: str, post_app_data: Dict[str, Any]) -> Dict[str, Any]:
+def analyze_trial_results(trial_id: str, post_app_data: dict[str, Any]) -> dict[str, Any]:
     """
     Analyzes trial results comparing pre and post application data.
 

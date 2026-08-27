@@ -7,7 +7,7 @@ plus optional KoboToolbox field data — no fabricated numbers.
 """
 
 import os
-from typing import Any, Dict
+from typing import Any
 
 try:
     import arabic_reshaper
@@ -40,7 +40,7 @@ def _find_font() -> str:
     return r"C:\Windows\Fonts\arial.ttf"
 
 
-def build_mrv_pdf(data: Dict[str, Any]) -> bytes:
+def build_mrv_pdf(data: dict[str, Any]) -> bytes:
     """Render the MRV carbon-budget report as PDF bytes (single page)."""
     from fpdf import FPDF
 

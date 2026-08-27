@@ -10,8 +10,6 @@ References:
     [2] Mualem, Y., "A new model for predicting the hydraulic conductivity 
         of unsaturated porous media", Water Resources Research, 12:513-522, 1976
 """
-from typing import Dict, Optional
-import math
 import logging
 
 logger = logging.getLogger(__name__)
@@ -34,7 +32,7 @@ VG_PARAMETERS = {
 }
 
 
-def van_genuchten_retention(theta_r: float, theta_s: float, 
+def van_genuchten_retention(theta_r: float, theta_s: float,
                               alpha: float, n: float, h: float) -> float:
     """Calculate water content using van Genuchten model.
     
@@ -68,25 +66,25 @@ def van_genuchten_retention(theta_r: float, theta_s: float,
         raise ValueError("Invalid water content parameters")
     if alpha <= 0 or n <= 1:
         raise ValueError("Invalid van Genuchten parameters")
-    
+
     # m parameter
     m = 1 - 1/n
-    
+
     # For saturated conditions (h >= 0)
     if h >= 0:
         return theta_s
-    
+
     # Calculate effective saturation
     abs_h = abs(h)
     denominator = (1 + (alpha * abs_h) ** n) ** m
-    
+
     theta = theta_r + (theta_s - theta_r) / denominator
-    
+
     return theta
 
 
 def van_genuchten_conductivity(theta_r: float, theta_s: float,
-                                alpha: float, n: float, 
+                                alpha: float, n: float,
                                 k_s: float, h: float) -> float:
     """Calculate hydraulic conductivity using van Genuchten-Mualem model.
     
@@ -106,27 +104,27 @@ def van_genuchten_conductivity(theta_r: float, theta_s: float,
     """
     # Get water content
     theta = van_genuchten_retention(theta_r, theta_s, alpha, n, h)
-    
+
     # Effective saturation
     se = (theta - theta_r) / (theta_s - theta_r)
-    
+
     # For saturated conditions
     if se >= 1:
         return k_s
-    
+
     # m parameter
     m = 1 - 1/n
-    
+
     # Calculate conductivity
     term1 = se ** 0.5
     term2 = (1 - (1 - se ** (1/m)) ** m) ** 2
-    
+
     k = k_s * term1 * term2
-    
+
     return max(0, k)
 
 
-def get_vg_parameters(texture: str) -> Dict:
+def get_vg_parameters(texture: str) -> dict:
     """Get van Genuchten parameters for a soil texture.
     
     Args:
@@ -139,9 +137,9 @@ def get_vg_parameters(texture: str) -> Dict:
         # Default to loam
         texture = 'loam'
         logger.warning(f"Unknown texture, using {texture}")
-    
+
     theta_r, theta_s, alpha, n = VG_PARAMETERS[texture]
-    
+
     return {
         'texture': texture,
         'theta_r': theta_r,
@@ -153,8 +151,8 @@ def get_vg_parameters(texture: str) -> Dict:
     }
 
 
-def calculate_water_retention_curve(texture: str, 
-                                      h_values: Optional[list] = None) -> Dict:
+def calculate_water_retention_curve(texture: str,
+                                      h_values: list | None = None) -> dict:
     """Calculate complete water retention curve.
     
     Args:
@@ -167,9 +165,9 @@ def calculate_water_retention_curve(texture: str,
     if h_values is None:
         # Default pressure heads (cm)
         h_values = [0, -10, -33, -100, -300, -1000, -15000]
-    
+
     params = get_vg_parameters(texture)
-    
+
     curve_data = []
     for h in h_values:
         theta = van_genuchten_retention(
@@ -181,7 +179,7 @@ def calculate_water_retention_curve(texture: str,
             'water_content': round(theta, 4),
             'unit': 'cm³/cm³'
         })
-    
+
     return {
         'texture': texture,
         'parameters': params,
@@ -191,7 +189,7 @@ def calculate_water_retention_curve(texture: str,
     }
 
 
-def _find_field_capacity(curve_data: list) -> Optional[Dict]:
+def _find_field_capacity(curve_data: list) -> dict | None:
     """Find field capacity (at -33 cm pressure head)."""
     for point in curve_data:
         if point['pressure_head'] == -33:
@@ -199,7 +197,7 @@ def _find_field_capacity(curve_data: list) -> Optional[Dict]:
     return None
 
 
-def _find_wilting_point(curve_data: list) -> Optional[Dict]:
+def _find_wilting_point(curve_data: list) -> dict | None:
     """Find permanent wilting point (at -15000 cm pressure head)."""
     for point in curve_data:
         if point['pressure_head'] == -15000:
@@ -207,8 +205,8 @@ def _find_wilting_point(curve_data: list) -> Optional[Dict]:
     return None
 
 
-def calculate_available_water(theta_fc: float, theta_wp: float, 
-                                root_depth: float) -> Dict:
+def calculate_available_water(theta_fc: float, theta_wp: float,
+                                root_depth: float) -> dict:
     """Calculate plant available water capacity.
     
     Args:
@@ -221,16 +219,16 @@ def calculate_available_water(theta_fc: float, theta_wp: float,
     """
     if theta_fc <= theta_wp:
         raise ValueError("Field capacity must be greater than wilting point")
-    
+
     # Available water capacity (cm water / cm soil)
     awc = theta_fc - theta_wp
-    
+
     # Total available water in root zone (cm)
     total_aw = awc * root_depth
-    
+
     # Convert to mm
     total_aw_mm = total_aw * 10
-    
+
     return {
         'available_water_capacity': round(awc, 4),
         'awc_unit': 'cm/cm',
@@ -242,7 +240,7 @@ def calculate_available_water(theta_fc: float, theta_wp: float,
     }
 
 
-def _interpret_awc(awc: float) -> Dict:
+def _interpret_awc(awc: float) -> dict:
     """Interpret available water capacity."""
     if awc < 0.10:
         return {'rating': 'low', 'description': 'Low water holding capacity'}

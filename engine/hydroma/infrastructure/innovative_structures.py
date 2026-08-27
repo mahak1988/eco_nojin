@@ -3,16 +3,15 @@ Innovative Structure Design Engine.
 
 Develops concepts for advanced, sustainable, and resilient infrastructure solutions.
 """
-import math
-from typing import Dict, Any
 from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass
 class InnovationCriteria:
     """Criteria for innovative structure design."""
     primary_function: str # e.g., "flood_control", "groundwater_recharge", "erosion_control"
-    environmental_goals: Dict[str, float] # e.g., {"co2_reduction_tonnes": 100, "habitat_created_hectares": 0.5}
+    environmental_goals: dict[str, float] # e.g., {"co2_reduction_tonnes": 100, "habitat_created_hectares": 0.5}
     resilience_target: str # e.g., "50-year storm", "climate change adaptation"
     cost_constraint: float # Maximum budget in USD
     material_preference: str # e.g., "recycled", "local", "bio_based"
@@ -22,7 +21,7 @@ def design_bioengineered_channel(
     criteria: InnovationCriteria,
     channel_length: float,
     design_discharge: float
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Designs a bio-engineered channel incorporating vegetation and natural materials.
 
@@ -107,7 +106,7 @@ def design_permeable_checkdam(
     criteria: InnovationCriteria,
     dam_height: float,
     catchment_area_ha: float
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Designs a permeable checkdam for sediment trapping and groundwater recharge.
 

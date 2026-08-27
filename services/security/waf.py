@@ -6,10 +6,9 @@ score crosses the threshold is blocked (403) and recorded as a security event.
 """
 import re
 import time
-from typing import Dict, List, Tuple
 
 # rule name -> (compiled regex, weight, block_when_hit)
-_RULES: List[Tuple[str, "re.Pattern[str]", int, bool]] = [
+_RULES: list[tuple[str, "re.Pattern[str]", int, bool]] = [
     # SQL injection
     ("sqli-union", re.compile(r"(?i)\bunion\s+(all\s+)?select\b"), 40, True),
     ("sqli-select-from", re.compile(r"(?i)\bselect\b.{0,60}\bfrom\b"), 30, True),
@@ -44,13 +43,13 @@ class WafEngine:
     """In-memory WAF. `check` returns (allowed, score, hits, reason)."""
 
     def __init__(self) -> None:
-        self.events: List[Dict] = []
+        self.events: list[dict] = []
 
-    def check(self, method: str, path: str, query: str, body: str, user_agent: str) -> Tuple[bool, int, List[str], str]:
+    def check(self, method: str, path: str, query: str, body: str, user_agent: str) -> tuple[bool, int, list[str], str]:
         """Evaluate one request. Returns (allowed, score, matched_rules, reason)."""
         payload = f"{path} {query} {body}"
         score = 0
-        hits: List[str] = []
+        hits: list[str] = []
         for name, pattern, weight, block_when_hit in _RULES:
             if pattern.search(payload) or pattern.search(user_agent):
                 score += weight

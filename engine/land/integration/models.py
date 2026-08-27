@@ -4,10 +4,10 @@ Soil Integration Models
 Deep soil profile models for 6 layers (0-200cm).
 """
 
-from pydantic import BaseModel, Field, ConfigDict
-from typing import Optional, List, Dict, Any
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class SoilTexture(str, Enum):
@@ -69,40 +69,40 @@ class SoilLayer(BaseModel):
             }
         }
     )
-    
+
     depth_min_cm: int = Field(..., ge=0, description="Upper depth (cm)")
     depth_max_cm: int = Field(..., gt=0, description="Lower depth (cm)")
-    
+
     # Texture (must sum to 100)
     sand_pct: float = Field(..., ge=0, le=100)
     silt_pct: float = Field(..., ge=0, le=100)
     clay_pct: float = Field(..., ge=0, le=100)
     texture: SoilTexture
-    
+
     # Chemistry
-    ph: Optional[float] = Field(None, ge=0, le=14)
-    ec_dsm: Optional[float] = Field(None, ge=0, description="Electrical conductivity (dS/m)")
-    cec_mmolc_kg: Optional[float] = Field(None, ge=0, description="Cation Exchange Capacity")
-    esp_pct: Optional[float] = Field(None, ge=0, le=100, description="Exchangeable Sodium Percentage")
-    organic_carbon_g_kg: Optional[float] = Field(None, ge=0, description="Soil Organic Carbon")
-    
+    ph: float | None = Field(None, ge=0, le=14)
+    ec_dsm: float | None = Field(None, ge=0, description="Electrical conductivity (dS/m)")
+    cec_mmolc_kg: float | None = Field(None, ge=0, description="Cation Exchange Capacity")
+    esp_pct: float | None = Field(None, ge=0, le=100, description="Exchangeable Sodium Percentage")
+    organic_carbon_g_kg: float | None = Field(None, ge=0, description="Soil Organic Carbon")
+
     # Physical properties
-    bulk_density_g_cm3: Optional[float] = Field(None, gt=0, le=2.0)
-    
+    bulk_density_g_cm3: float | None = Field(None, gt=0, le=2.0)
+
     # van Genuchten parameters (for water retention)
-    theta_r: Optional[float] = Field(None, ge=0, le=1, description="Residual water content")
-    theta_s: Optional[float] = Field(None, ge=0, le=1, description="Saturated water content")
-    alpha: Optional[float] = Field(None, gt=0, description="VG alpha parameter")
-    n: Optional[float] = Field(None, gt=1, description="VG n parameter")
-    
+    theta_r: float | None = Field(None, ge=0, le=1, description="Residual water content")
+    theta_s: float | None = Field(None, ge=0, le=1, description="Saturated water content")
+    alpha: float | None = Field(None, gt=0, description="VG alpha parameter")
+    n: float | None = Field(None, gt=1, description="VG n parameter")
+
     # Data quality
-    data_source: Optional[str] = None  # "soilgrids", "user", "estimated"
-    uncertainty: Optional[float] = Field(None, ge=0, le=1)
-    
+    data_source: str | None = None  # "soilgrids", "user", "estimated"
+    uncertainty: float | None = Field(None, ge=0, le=1)
+
     def depth_thickness_cm(self) -> int:
         """Return layer thickness in cm."""
         return self.depth_max_cm - self.depth_min_cm
-    
+
     def validate_texture_sum(self) -> bool:
         """Check that sand+silt+clay sums to ~100."""
         total = self.sand_pct + self.silt_pct + self.clay_pct
@@ -128,20 +128,20 @@ class DeepSoilProfile(BaseModel):
             }
         }
     )
-    
-    layers: List[SoilLayer] = Field(..., min_length=1, max_length=10)
+
+    layers: list[SoilLayer] = Field(..., min_length=1, max_length=10)
     total_depth_cm: int = Field(..., gt=0)
-    dominant_texture: Optional[SoilTexture] = None
-    rooting_depth_cm: Optional[int] = Field(None, gt=0, description="Effective rooting depth")
-    
+    dominant_texture: SoilTexture | None = None
+    rooting_depth_cm: int | None = Field(None, gt=0, description="Effective rooting depth")
+
     # Derived properties
-    awc_mm: Optional[float] = Field(None, ge=0, description="Available Water Capacity")
-    salinity_class: Optional[SalinityClass] = None
-    drainage_class: Optional[DrainageClass] = None
-    
+    awc_mm: float | None = Field(None, ge=0, description="Available Water Capacity")
+    salinity_class: SalinityClass | None = None
+    drainage_class: DrainageClass | None = None
+
     # Metadata
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    data_source: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    data_source: str | None = None
 
 
 class SoilIntegrationResult(BaseModel):
@@ -157,20 +157,20 @@ class SoilIntegrationResult(BaseModel):
             }
         }
     )
-    
+
     profile_id: str
     success: bool = True
-    error_message: Optional[str] = None
-    
-    soil_profile: Optional[DeepSoilProfile] = None
-    soil_health_score: Optional[float] = Field(None, ge=0, le=100)
-    
+    error_message: str | None = None
+
+    soil_profile: DeepSoilProfile | None = None
+    soil_health_score: float | None = Field(None, ge=0, le=100)
+
     # Capabilities derived from soil
-    suitable_crops: List[str] = Field(default_factory=list)
-    limitations: List[str] = Field(default_factory=list)
-    recommendations: List[str] = Field(default_factory=list)
-    
+    suitable_crops: list[str] = Field(default_factory=list)
+    limitations: list[str] = Field(default_factory=list)
+    recommendations: list[str] = Field(default_factory=list)
+
     # Integration metadata
-    integrated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    integration_time_ms: Optional[float] = None
-    data_quality_level: Optional[str] = None  # L0-L5
+    integrated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    integration_time_ms: float | None = None
+    data_quality_level: str | None = None  # L0-L5

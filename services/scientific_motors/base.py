@@ -6,8 +6,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
-from uuid import UUID, uuid4
+from typing import Any
 
 
 class MotorType(str, Enum):
@@ -53,7 +52,7 @@ class MotorParameters:
     end_date: str
     time_step: str = "daily"
     scenario_name: str = "baseline"
-    custom_params: Dict[str, Any] = field(default_factory=dict)
+    custom_params: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -62,13 +61,13 @@ class MotorResult:
     run_id: str
     motor_type: MotorType
     status: MotorStatus
-    outputs: Dict[str, Any] = field(default_factory=dict)
-    summary: Dict[str, Any] = field(default_factory=dict)
+    outputs: dict[str, Any] = field(default_factory=dict)
+    summary: dict[str, Any] = field(default_factory=dict)
     execution_time_seconds: float = 0.0
-    error_message: Optional[str] = None
+    error_message: str | None = None
     created_at: datetime = field(default_factory=datetime.utcnow)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage."""
         return {
             "run_id": self.run_id,
@@ -85,7 +84,7 @@ class MotorResult:
 class AbstractScientificMotor(ABC):
     """Abstract base class for scientific motors."""
 
-    def __init__(self, cache_dir: Optional[Path] = None):
+    def __init__(self, cache_dir: Path | None = None):
         self.cache_dir = cache_dir or Path("data/motors/cache")
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
@@ -102,25 +101,25 @@ class AbstractScientificMotor(ABC):
         pass
 
     @abstractmethod
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         """Return list of required inputs."""
         pass
 
     @abstractmethod
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         """Return list of outputs."""
         pass
 
     @abstractmethod
     async def execute(
         self,
-        inputs: Dict[str, Any],
+        inputs: dict[str, Any],
         parameters: MotorParameters,
     ) -> MotorResult:
         """Execute the motor with given inputs and parameters."""
         pass
 
-    def validate_inputs(self, inputs: Dict[str, Any]) -> bool:
+    def validate_inputs(self, inputs: dict[str, Any]) -> bool:
         """Validate that all required inputs are present."""
         requirements = self.get_input_requirements()
         for req in requirements:

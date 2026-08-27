@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Dict, Tuple
 
 import numpy as np
 import xarray as xr
@@ -33,7 +32,7 @@ class SlopeAspectPipeline(MapPipeline):
 
     async def execute(
         self,
-        base_layers: Dict[str, xr.DataArray],
+        base_layers: dict[str, xr.DataArray],
         request: MapRequest,
     ) -> MapResult:
         """Generate slope & aspect map."""
@@ -139,7 +138,7 @@ class SlopeAspectPipeline(MapPipeline):
     # Private helpers - NumPy 2.x compatible
     # ================================================================
 
-    def _get_resolution(self, dem: xr.DataArray) -> Tuple[float, float]:
+    def _get_resolution(self, dem: xr.DataArray) -> tuple[float, float]:
         """Get pixel resolution in meters."""
         y_vals = dem.y.values
         x_vals = dem.x.values
@@ -166,7 +165,7 @@ class SlopeAspectPipeline(MapPipeline):
         data: np.ndarray,
         dy: float,
         dx: float,
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray]:
         """Compute gradients - NumPy 2.x compatible."""
         # Explicit axis specification required in NumPy 2.x
         grad_y, grad_x = np.gradient(data, dy, dx, axis=(0, 1))

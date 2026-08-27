@@ -24,7 +24,7 @@ import math
 import shutil
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from .base import (
     AbstractScientificMotor,
@@ -43,7 +43,7 @@ HEC_RAS_CANDIDATE_PATHS = [
 ]
 
 
-def _find_hecras() -> Optional[Path]:
+def _find_hecras() -> Path | None:
     """Return the HEC-RAS executable path if installed."""
     for base in HEC_RAS_CANDIDATE_PATHS:
         if base.exists():
@@ -88,21 +88,21 @@ class HECRASFloodMotor(AbstractScientificMotor):
     def display_name(self) -> str:
         return "HEC-RAS flood (HEC-Commander automation)"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [
             MotorInput("peak_flow_m3s", "scalar", description="Design peak flow"),
             MotorInput("slope", "scalar", description="Channel slope (m/m)"),
             MotorInput("channel_width_m", "scalar", description="Channel width"),
         ]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("water_surface_elevation_m", "scalar", "m", "WSE above thalweg"),
             MotorOutput("engine", "scalar", "str", "hecras | manning_approximation"),
         ]
 
     async def execute(
-        self, inputs: Dict[str, Any], parameters: MotorParameters
+        self, inputs: dict[str, Any], parameters: MotorParameters
     ) -> MotorResult:
         start_time = time.time()
         run_id = f"HECRAS_{int(time.time())}"

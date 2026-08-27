@@ -21,20 +21,19 @@ Scientific References:
 from __future__ import annotations
 
 import warnings
+
 # Suppress noisy warnings from odc-stac and rasterio
 warnings.filterwarnings('ignore', category=UserWarning, module='odc')
 warnings.filterwarnings('ignore', category=UserWarning, module='rasterio')
 warnings.filterwarnings('ignore', message='.*non-nanosecond precision.*')
 warnings.filterwarnings('ignore', message='.*no geotransform.*')
 
-import os
-import time
 import hashlib
-from pathlib import Path
-from typing import Dict, Any, List, Optional, Tuple
-from datetime import datetime, timedelta
+import time
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 from enum import Enum
+from pathlib import Path
 
 import numpy as np
 
@@ -44,7 +43,7 @@ import numpy as np
 
 class SafeUnpickler(pickle.Unpickler):
     """Unpickler محدودشده که فقط کلاس‌های امن را بارگذاری می‌کند."""
-    
+
     ALLOWED_MODULES = {
         'builtins', 'collections', 'datetime',
         'numpy', 'numpy.core', 'numpy.core.multiarray',
@@ -53,7 +52,7 @@ class SafeUnpickler(pickle.Unpickler):
         'xarray.core.dataset', 'xarray.core.variable',
         'pandas', 'pandas.core', 'pandas.core.frame',
     }
-    
+
     def find_class(self, module, name):
         if module in self.ALLOWED_MODULES:
             return super().find_class(module, name)
@@ -69,8 +68,8 @@ def safe_pickle_load(file_obj):
 
 
 try:
-    import xarray as xr
     import rasterio
+    import xarray as xr
     HAS_RASTERIO = True
 except ImportError:
     HAS_RASTERIO = False
@@ -118,10 +117,10 @@ class SatelliteScene:
     scene_id: str
     datetime: datetime
     cloud_cover_pct: float
-    bounds: Tuple[float, float, float, float]  # min_lon, min_lat, max_lon, max_lat
+    bounds: tuple[float, float, float, float]  # min_lon, min_lat, max_lon, max_lat
     crs: str
     resolution_m: float
-    bands_available: List[str]
+    bands_available: list[str]
     source: str  # "planetary_computer", "local_cache", "synthetic"
 
 
@@ -153,11 +152,11 @@ class Sentinel2Provider:
         self.default_resolution = default_resolution
         self._pc_client = None
         # Session-level band cache
-        self._band_cache: Dict[str, Dict[str, "xr.DataArray"]] = {}
+        self._band_cache: dict[str, dict[str, xr.DataArray]] = {}
         # Always load these essential bands (covers all indices)
         # B02=Blue, B03=Green, B04=Red, B8A=Narrow NIR, B08=Broad NIR, B11=SWIR1, B12=SWIR2
         self._essential_bands = ["B02", "B03", "B04", "B8A", "B08", "B11", "B12", "SCL"]
-        
+
         # Band requirements per index (for selective loading in batch mode)
         self._index_band_map = {
             SpectralIndex.NDVI: ["B04", "B08"],
@@ -173,12 +172,12 @@ class Sentinel2Provider:
 
     def get_scene(
         self,
-        bbox: Tuple[float, float, float, float],
+        bbox: tuple[float, float, float, float],
         date_from: datetime,
         date_to: datetime,
         max_cloud_pct: float = 20.0,
         product: SentinelProduct = SentinelProduct.L2A,
-    ) -> Optional[SatelliteScene]:
+    ) -> SatelliteScene | None:
         """
         Find and retrieve best scene for bbox/date range.
         
@@ -218,9 +217,9 @@ class Sentinel2Provider:
         self,
         scene: SatelliteScene,
         index: SpectralIndex,
-        bbox: Optional[Tuple[float, float, float, float]] = None,
+        bbox: tuple[float, float, float, float] | None = None,
         apply_cloud_mask: bool = True,
-    ) -> Optional["xr.DataArray"]:
+    ) -> xr.DataArray | None:
         """Compute a spectral index from scene data with caching and cloud masking."""
         if not HAS_RASTERIO or xr is None:
             print("  [SENTINEL] xarray/rasterio not available, returning None")
@@ -252,7 +251,7 @@ class Sentinel2Provider:
 
     def _check_cache(
         self, bbox, date_from, date_to, max_cloud_pct
-    ) -> Optional[SatelliteScene]:
+    ) -> SatelliteScene | None:
         """Check local cache for matching scene."""
         cache_key = self._bbox_date_key(bbox, date_from, date_to)
         cache_file = self.cache_dir / f"{cache_key}.json"
@@ -262,7 +261,7 @@ class Sentinel2Provider:
 
         try:
             import json
-            with open(cache_file, 'r', encoding='utf-8') as f:
+            with open(cache_file, encoding='utf-8') as f:
                 data = json.load(f)
             return SatelliteScene(**data)
         except Exception:
@@ -297,7 +296,7 @@ class Sentinel2Provider:
 
     def _fetch_planetary_computer(
         self, bbox, date_from, date_to, max_cloud_pct, product
-    ) -> Optional[SatelliteScene]:
+    ) -> SatelliteScene | None:
         """Fetch scene from Microsoft Planetary Computer."""
         try:
             import planetary_computer as pc
@@ -365,8 +364,8 @@ class Sentinel2Provider:
     def _load_bands(
         self,
         scene: SatelliteScene,
-        bbox: Optional[Tuple[float, float, float, float]] = None,
-    ) -> Optional[Dict[str, "xr.DataArray"]]:
+        bbox: tuple[float, float, float, float] | None = None,
+    ) -> dict[str, xr.DataArray] | None:
         """Load bands as xarray DataArrays."""
         if scene.source == "synthetic":
             return self._generate_synthetic_bands(scene, bbox)
@@ -376,17 +375,17 @@ class Sentinel2Provider:
             return self._load_real_data_odc(scene, bbox)
         except Exception as e:
             print(f"  [SENTINEL] Real data load failed: {e}")
-            print(f"  [SENTINEL] Falling back to synthetic")
+            print("  [SENTINEL] Falling back to synthetic")
             return self._generate_synthetic_bands(scene, bbox)
 
 
-    def _disk_cache_key(self, scene_id: str, bands: List[str], resolution: int, bbox) -> str:
+    def _disk_cache_key(self, scene_id: str, bands: list[str], resolution: int, bbox) -> str:
         """Generate disk cache key."""
         import hashlib
         key_str = f"{scene_id}_{'_'.join(sorted(bands))}_{resolution}_{bbox}"
         return hashlib.sha256(key_str.encode()).hexdigest()
 
-    def _save_to_disk_cache(self, key: str, data: Dict[str, "xr.DataArray"]):
+    def _save_to_disk_cache(self, key: str, data: dict[str, xr.DataArray]):
         """Save band data to disk cache."""
         try:
             import pickle
@@ -405,10 +404,9 @@ class Sentinel2Provider:
         except Exception as e:
             print(f"  [SENTINEL] Disk cache save error: {e}")
 
-    def _load_from_disk_cache(self, key: str) -> Optional[Dict[str, "xr.DataArray"]]:
+    def _load_from_disk_cache(self, key: str) -> dict[str, xr.DataArray] | None:
         """Load band data from disk cache."""
         try:
-            import pickle
             cache_file = self.disk_cache_dir / f"{key}.pkl"
             if not cache_file.exists():
                 return None
@@ -430,10 +428,10 @@ class Sentinel2Provider:
     def _load_bands_selective(
         self,
         scene: SatelliteScene,
-        bbox: Optional[Tuple[float, float, float, float]] = None,
-        required_bands: Optional[List[str]] = None,
-        resolution: Optional[int] = None,
-    ) -> Optional[Dict[str, "xr.DataArray"]]:
+        bbox: tuple[float, float, float, float] | None = None,
+        required_bands: list[str] | None = None,
+        resolution: int | None = None,
+    ) -> dict[str, xr.DataArray] | None:
         """Load only the required bands with adaptive resolution."""
         if scene.source == "synthetic":
             return self._generate_synthetic_bands(scene, bbox)
@@ -447,10 +445,10 @@ class Sentinel2Provider:
     def _load_real_data_odc(
         self,
         scene: SatelliteScene,
-        bbox: Optional[Tuple[float, float, float, float]] = None,
-        required_bands: Optional[List[str]] = None,
-        resolution: Optional[int] = None,
-    ) -> Dict[str, "xr.DataArray"]:
+        bbox: tuple[float, float, float, float] | None = None,
+        required_bands: list[str] | None = None,
+        resolution: int | None = None,
+    ) -> dict[str, xr.DataArray]:
         """
         Load real Sentinel-2 L2A data using odc-stac (optimized).
         
@@ -463,22 +461,22 @@ class Sentinel2Provider:
         # Select bands
         bands_to_load = required_bands if required_bands else list(S2_BANDS.keys())
         bands_to_load = [b for b in bands_to_load if b in S2_BANDS]
-        
+
         # Determine resolution
         target_res = resolution if resolution else self.default_resolution
         bbox_to_use = bbox if bbox else scene.bounds
-        
+
         # === Check disk cache ===
         cache_key = self._disk_cache_key(scene.scene_id, bands_to_load, target_res, bbox_to_use)
         if self.use_disk_cache:
             cached = self._load_from_disk_cache(cache_key)
             if cached is not None:
                 return cached
-        
+
         # === Not cached, load from PC ===
+        import odc.stac
         import planetary_computer as pc
         import pystac_client
-        import odc.stac
 
         catalog = pystac_client.Client.open(
             "https://planetarycomputer.microsoft.com/api/stac/v1",
@@ -506,7 +504,7 @@ class Sentinel2Provider:
                     time.sleep(wait)
                 else:
                     raise
-        
+
         if not items:
             raise ValueError(f"Scene {scene.scene_id} not found after {max_retries} attempts")
 
@@ -538,7 +536,7 @@ class Sentinel2Provider:
         if dask_arrays:
             import dask
             values_list = [da.values for da, _ in dask_arrays.values()]  # already computed by isel
-            
+
             # Force compute if dask arrays
             try:
                 computed = dask.compute(*[da for da in data.data_vars.values()], scheduler='synchronous')
@@ -578,16 +576,16 @@ class Sentinel2Provider:
 
         print(f"  [SENTINEL] Loaded {len(bands)} bands @ {target_res}m "
               f"(shape: {next(iter(bands.values())).shape})")
-        
+
         # Save to disk cache
         if self.use_disk_cache and bands:
             self._save_to_disk_cache(cache_key, bands)
-        
+
         return bands
 
     def _apply_cloud_mask(
-        self, bands: Dict[str, "xr.DataArray"]
-    ) -> Dict[str, "xr.DataArray"]:
+        self, bands: dict[str, xr.DataArray]
+    ) -> dict[str, xr.DataArray]:
         """
         Apply cloud/shadow masking using SCL (Scene Classification Layer).
 
@@ -609,7 +607,7 @@ class Sentinel2Provider:
             return bands
 
         scl = bands["SCL"].values
-        
+
         # More permissive: keep unclassified (7) as well
         # This avoids over-masking in complex scenes
         valid_classes = [4, 5, 6, 7, 11]
@@ -632,17 +630,17 @@ class Sentinel2Provider:
         # Report masking stats with breakdown
         total = scl.size
         valid = valid_mask.sum()
-        
+
         # Count each class
         class_counts = {}
         for cls in [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]:
             count = np.sum(scl == cls)
             if count > 0:
                 class_counts[cls] = count
-        
+
         print(f"  [SENTINEL] Cloud mask: {valid}/{total} pixels valid "
               f"({100*valid/total:.1f}%)")
-        
+
         # Show breakdown if significant masking occurred
         if valid / total < 0.95:
             class_names = {
@@ -651,7 +649,7 @@ class Sentinel2Provider:
                 8: "cloud_med", 9: "cloud_high", 10: "cirrus", 11: "snow"
             }
             breakdown = ", ".join(
-                f"{class_names.get(c, c)}={n}" 
+                f"{class_names.get(c, c)}={n}"
                 for c, n in sorted(class_counts.items())
             )
             print(f"  [SENTINEL] SCL breakdown: {breakdown}")
@@ -660,7 +658,7 @@ class Sentinel2Provider:
 
     def _generate_synthetic_bands(
         self, scene, bbox
-    ) -> Dict[str, "xr.DataArray"]:
+    ) -> dict[str, xr.DataArray]:
         """Generate realistic synthetic bands."""
         shape = (100, 100)
         if bbox:
@@ -713,11 +711,11 @@ class Sentinel2Provider:
     def compute_indices_batch(
         self,
         scene: SatelliteScene,
-        indices: List[SpectralIndex],
-        bbox: Optional[Tuple[float, float, float, float]] = None,
+        indices: list[SpectralIndex],
+        bbox: tuple[float, float, float, float] | None = None,
         apply_cloud_mask: bool = True,
         resolution: int = 10,
-    ) -> Dict[SpectralIndex, "xr.DataArray"]:
+    ) -> dict[SpectralIndex, xr.DataArray]:
         """
         Compute multiple indices in a single optimized pass.
         
@@ -728,7 +726,7 @@ class Sentinel2Provider:
         """
         # Use simple cache key
         cache_key = f"{scene.scene_id}_{bbox}_{resolution}_{apply_cloud_mask}"
-        
+
         if cache_key not in self._band_cache:
             # Always load all essential bands (covers all possible indices)
             bands = self._load_bands_selective(
@@ -742,7 +740,7 @@ class Sentinel2Provider:
             print(f"  [SENTINEL] Cached {len(bands)} essential bands for {scene.scene_id[:20]}...")
         else:
             bands = self._band_cache[cache_key]
-        
+
         # Pre-extract numpy arrays ONCE (avoid repeated .values calls)
         band_arrays = {}
         for band_name in self._essential_bands:
@@ -752,13 +750,13 @@ class Sentinel2Provider:
                     # Force dask computation
                     arr = arr.compute()
                 band_arrays[band_name] = arr
-        
+
         # Get coordinates for output DataArrays
         # Use dict.get with default to avoid __bool__ on xarray DataArray
         ref_band = bands.get("B08", next(iter(bands.values())))
         ref_coords = ref_band.coords
         ref_dims = ref_band.dims
-        
+
         # Compute all indices using pre-extracted numpy arrays (fast!)
         results = {}
         for idx in indices:
@@ -773,29 +771,29 @@ class Sentinel2Provider:
                     )
             except Exception as e:
                 print(f"  [SENTINEL] Failed to compute {idx.name}: {e}")
-        
+
         return results
 
     def _calculate_index_fast(
         self,
-        band_arrays: Dict[str, np.ndarray],
+        band_arrays: dict[str, np.ndarray],
         index: SpectralIndex,
-    ) -> Optional[np.ndarray]:
+    ) -> np.ndarray | None:
         """
         Fast index calculation using pre-extracted numpy arrays.
         
         No xarray overhead, no repeated .values calls.
         """
         eps = 1e-10
-        
+
         # Check required bands
-        def get_band(name: str) -> Optional[np.ndarray]:
+        def get_band(name: str) -> np.ndarray | None:
             arr = band_arrays.get(name)
             if arr is None:
                 print(f"  [SENTINEL] Warning: Band {name} not in loaded bands")
                 return None
             return arr.astype(np.float32, copy=False)
-        
+
         if index == SpectralIndex.NDVI:
             nir = get_band("B08")
             red = get_band("B04")
@@ -803,23 +801,15 @@ class Sentinel2Provider:
                 return None
             result = (nir - red) / (nir + red + eps)
             result = np.clip(result, -1.0, 1.0)
-            
-        elif index == SpectralIndex.NDWI:
+
+        elif index == SpectralIndex.NDWI or index == SpectralIndex.NDMI:
             nir = get_band("B08")
             swir = get_band("B11")
             if nir is None or swir is None:
                 return None
             result = (nir - swir) / (nir + swir + eps)
             result = np.clip(result, -1.0, 1.0)
-            
-        elif index == SpectralIndex.NDMI:
-            nir = get_band("B08")
-            swir = get_band("B11")
-            if nir is None or swir is None:
-                return None
-            result = (nir - swir) / (nir + swir + eps)
-            result = np.clip(result, -1.0, 1.0)
-            
+
         elif index == SpectralIndex.SAVI:
             nir = get_band("B08")
             red = get_band("B04")
@@ -828,7 +818,7 @@ class Sentinel2Provider:
             L = 0.5
             result = ((nir - red) / (nir + red + L + eps)) * (1 + L)
             result = np.clip(result, -1.0, 1.0)
-            
+
         elif index == SpectralIndex.EVI:
             nir = get_band("B08")
             red = get_band("B04")
@@ -838,7 +828,7 @@ class Sentinel2Provider:
             G, C1, C2, L_evi = 2.5, 6.0, 7.5, 1.0
             result = G * (nir - red) / (nir + C1 * red - C2 * blue + L_evi + eps)
             result = np.clip(result, -1.0, 1.0)
-            
+
         elif index == SpectralIndex.NBR:
             nir = get_band("B08")
             swir2 = get_band("B12")
@@ -846,7 +836,7 @@ class Sentinel2Provider:
                 return None
             result = (nir - swir2) / (nir + swir2 + eps)
             result = np.clip(result, -1.0, 1.0)
-            
+
         elif index == SpectralIndex.GNDVI:
             nir = get_band("B08")
             green = get_band("B03")
@@ -854,7 +844,7 @@ class Sentinel2Provider:
                 return None
             result = (nir - green) / (nir + green + eps)
             result = np.clip(result, -1.0, 1.0)
-            
+
         elif index == SpectralIndex.MSAVI2:
             nir = get_band("B08")
             red = get_band("B04")
@@ -864,7 +854,7 @@ class Sentinel2Provider:
             term2 = np.sqrt(np.maximum(term1**2 - 8 * (nir - red), 0))
             result = (term1 - term2) / 2
             result = np.clip(result, -1.0, 1.0)
-            
+
         elif index == SpectralIndex.COMPOSITE:
             nir = get_band("B08")
             red = get_band("B04")
@@ -872,7 +862,7 @@ class Sentinel2Provider:
             swir = get_band("B11")
             if nir is None or red is None or blue is None or swir is None:
                 return None
-            
+
             # Compute all component indices
             ndvi = (nir - red) / (nir + red + eps)
             evi = 2.5 * (nir - red) / (nir + 6 * red - 7.5 * blue + 1 + eps)
@@ -880,23 +870,23 @@ class Sentinel2Provider:
             term1 = 2 * nir + 1
             term2 = np.sqrt(np.maximum(term1**2 - 8 * (nir - red), 0))
             msavi2 = (term1 - term2) / 2
-            
+
             # Adaptive composite
             result = np.where(ndvi > 0.5, evi,
                      np.where(ndvi > 0.2, savi, msavi2))
             result = np.clip(result, -1.0, 1.0)
-            
+
         else:
             raise ValueError(f"Unknown index: {index}")
-        
+
         return result
 
 
     def _calculate_index(
         self,
-        bands: Dict[str, "xr.DataArray"],
+        bands: dict[str, xr.DataArray],
         index: SpectralIndex,
-    ) -> "xr.DataArray":
+    ) -> xr.DataArray:
         """Calculate a spectral index from bands."""
         eps = 1e-10  # Avoid division by zero
 

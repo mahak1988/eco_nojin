@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
@@ -23,10 +22,10 @@ class ClimateData:
     """داده‌های هواشناسی روزانه برای محاسبات FAO-56"""
     tmin: float                            # °C
     tmax: float                            # °C
-    rh_min: Optional[float] = None         # %
-    rh_max: Optional[float] = None         # %
-    wind_speed: Optional[float] = None     # m/s at 2m
-    solar_radiation: Optional[float] = None  # MJ/m2/day
+    rh_min: float | None = None         # %
+    rh_max: float | None = None         # %
+    wind_speed: float | None = None     # m/s at 2m
+    solar_radiation: float | None = None  # MJ/m2/day
     elevation: float = 0.0                 # m
     latitude: float = 0.0                  # degrees (+ = North)
     doy: int = 1                           # day of year
@@ -91,12 +90,12 @@ def _hargreaves_core(t_min: float, t_max: float, t_mean: float, ra_mj: float) ->
 
 
 def calc_et0_hargreaves(
-    t_min: Optional[float] = None,
-    t_max: Optional[float] = None,
-    t_mean: Optional[float] = None,
-    ra_mj: Optional[float] = None,
+    t_min: float | None = None,
+    t_max: float | None = None,
+    t_mean: float | None = None,
+    ra_mj: float | None = None,
     *,
-    data: Optional[ClimateData] = None,
+    data: ClimateData | None = None,
 ) -> float:
     """
     محاسبه ET0 با روش Hargreaves-Samani.

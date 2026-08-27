@@ -18,18 +18,18 @@ from __future__ import annotations
 import json
 import logging
 import os
-from datetime import datetime, UTC
-from typing import List, Optional
+from datetime import UTC, datetime
 
 import httpx
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
 
-from database.config import get_db
 from database import models
+from database.config import get_db
 from services.api_gateway.auth import get_current_user, require_roles
 from services.content.rag_sync import snapshot_version, sync_content_to_rag
+
 # TODO: Refactor to use service layer instead of direct database access
 
 logger = logging.getLogger(__name__)
@@ -76,7 +76,7 @@ class ChannelStatus(BaseModel):
 
 class HealthResponse(BaseModel):
     status: str
-    channels: List[ChannelStatus]
+    channels: list[ChannelStatus]
     checked_at: str
 
 
@@ -87,8 +87,8 @@ class AdminUserOut(BaseModel):
     role: str
     is_active: bool
     is_email_verified: bool
-    language: Optional[str] = None
-    created_at: Optional[datetime] = None
+    language: str | None = None
+    created_at: datetime | None = None
     model_config = ConfigDict(from_attributes=True)
 
 class AuditOut(BaseModel):
@@ -97,7 +97,7 @@ class AuditOut(BaseModel):
     action: str
     target: str
     detail: str
-    created_at: Optional[datetime] = None
+    created_at: datetime | None = None
     model_config = ConfigDict(from_attributes=True)
 
 class ActionResponse(BaseModel):
@@ -115,7 +115,7 @@ async def admin_health(
     db: Session = Depends(get_db),
 ):
     """Live health of all platform channels (real checks, honest results)."""
-    channels: List[ChannelStatus] = []
+    channels: list[ChannelStatus] = []
 
     # 1. Database
     try:
@@ -176,7 +176,7 @@ async def admin_health(
     )
 
 
-@router.get("/users", response_model=List[AdminUserOut])
+@router.get("/users", response_model=list[AdminUserOut])
 def list_users(
     _: models.User = Depends(require_admin),
     db: Session = Depends(get_db),
@@ -221,7 +221,7 @@ def unblock_user(
     return ActionResponse(success=True, message=f"کاربر {user.email} فعال شد")
 
 
-@router.get("/audit", response_model=List[AuditOut])
+@router.get("/audit", response_model=list[AuditOut])
 def list_audit(
     _: models.User = Depends(require_admin),
     db: Session = Depends(get_db),
@@ -257,16 +257,16 @@ class ContentCreate(BaseModel):
     body: str
     category: str = "general"
     language: str = "fa"
-    source: Optional[str] = None
+    source: str | None = None
     generated_by_ai: bool = False
 
 
 class ContentUpdate(BaseModel):
-    title: Optional[str] = None
-    body: Optional[str] = None
-    category: Optional[str] = None
-    language: Optional[str] = None
-    source: Optional[str] = None
+    title: str | None = None
+    body: str | None = None
+    category: str | None = None
+    language: str | None = None
+    source: str | None = None
 
 
 class ContentOut(BaseModel):
@@ -276,12 +276,12 @@ class ContentOut(BaseModel):
     category: str
     language: str
     status: str
-    source: Optional[str] = None
-    updated_at: Optional[datetime] = None
+    source: str | None = None
+    updated_at: datetime | None = None
     generated_by_ai: bool = False
     rag_synced: bool = False
-    published_at: Optional[datetime] = None
-    scheduled_at: Optional[datetime] = None
+    published_at: datetime | None = None
+    scheduled_at: datetime | None = None
     model_config = ConfigDict(from_attributes=True)
 
 class BotOut(BaseModel):
@@ -298,16 +298,16 @@ class ErrorOut(BaseModel):
     path: str
     method: str
     status: int
-    message: Optional[str] = None
+    message: str | None = None
     acked: bool
-    created_at: Optional[datetime] = None
+    created_at: datetime | None = None
     model_config = ConfigDict(from_attributes=True)
 
 class SettingOut(BaseModel):
     key: str
     value: str
-    description: Optional[str] = None
-    updated_at: Optional[datetime] = None
+    description: str | None = None
+    updated_at: datetime | None = None
     model_config = ConfigDict(from_attributes=True)
 
 class SettingUpdate(BaseModel):
@@ -331,7 +331,7 @@ def _validate_category(category: str) -> None:
         )
 
 
-@router.get("/content", response_model=List[ContentOut])
+@router.get("/content", response_model=list[ContentOut])
 def list_content(
     _: models.User = Depends(require_admin),
     db: Session = Depends(get_db),
@@ -418,7 +418,7 @@ def publish_content(
     item = db.get(models.ContentItem, item_id)
     if item is None:
         raise HTTPException(status_code=404, detail="content not found")
-    from datetime import datetime, UTC as _utc
+    from datetime import UTC as _utc, datetime
 
     item.status = "published"
     if item.published_at is None:
@@ -465,7 +465,7 @@ def delete_content(
 # ----------------------------------------------------------------------------
 
 
-@router.get("/content/{item_id}/versions", response_model=List[dict])
+@router.get("/content/{item_id}/versions", response_model=list[dict])
 def content_versions(
     item_id: int,
     _: models.User = Depends(require_admin),
@@ -489,7 +489,7 @@ def content_versions(
     ]
 
 
-@router.get("/content/{item_id}/translations", response_model=List[dict])
+@router.get("/content/{item_id}/translations", response_model=list[dict])
 def content_translations_list(
     item_id: int,
     _: models.User = Depends(require_admin),
@@ -551,7 +551,7 @@ def translate_content(
     config = BotConfig()
     client = OllamaClient(config)
 
-    async def _run() -> "Optional[str]":
+    async def _run() -> str | None:
         if not await client.available():
             return None
         system = (
@@ -567,7 +567,7 @@ def translate_content(
 
     try:
         text = asyncio.run(_run())
-    except Exception:  # noqa: BLE001
+    except Exception:
         text = None
     if not text:
         log_audit(
@@ -621,7 +621,7 @@ def generate_ai_draft(
 
     client = OllamaClient(BotConfig())
 
-    async def _run() -> "Optional[str]":
+    async def _run() -> str | None:
         if not await client.available():
             return None
         system = (
@@ -642,7 +642,7 @@ def generate_ai_draft(
 
     try:
         text = asyncio.run(_run())
-    except Exception:  # noqa: BLE001
+    except Exception:
         text = None
     if not text:
         raise HTTPException(
@@ -685,7 +685,6 @@ def schedule_content(
 ):
     """Schedule a draft for automatic publishing (UTC ISO-8601)."""
     from datetime import datetime
-    from datetime import timezone as _tz
 
     item = db.get(models.ContentItem, item_id)
     if item is None:
@@ -693,7 +692,7 @@ def schedule_content(
     try:
         scheduled = datetime.fromisoformat(at.replace("Z", "+00:00"))
         if scheduled.tzinfo is None:
-            scheduled = scheduled.replace(tzinfo=_tz.utc)
+            scheduled = scheduled.replace(tzinfo=UTC)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=f"bad datetime: {exc}") from exc
     item.scheduled_at = scheduled
@@ -727,7 +726,7 @@ def cancel_schedule_content(
 # Bots
 # ============================================================================
 
-@router.get("/bots", response_model=List[BotOut])
+@router.get("/bots", response_model=list[BotOut])
 def list_bots(
     _: models.User = Depends(require_admin),
     db: Session = Depends(get_db),
@@ -736,7 +735,7 @@ def list_bots(
     from services.bots.platforms import PLATFORM_SPECS
 
     settings_map = {s.key: s.value for s in db.query(models.Setting).all()}
-    out: List[BotOut] = []
+    out: list[BotOut] = []
     for spec in PLATFORM_SPECS.values():
         configured = bool(os.environ.get(spec.token_env))
         persisted = settings_map.get(f"bot_enabled_{spec.key}")
@@ -787,7 +786,7 @@ def toggle_bot(
 # Errors
 # ============================================================================
 
-@router.get("/errors", response_model=List[ErrorOut])
+@router.get("/errors", response_model=list[ErrorOut])
 def list_errors(
     _: models.User = Depends(require_admin),
     db: Session = Depends(get_db),
@@ -822,7 +821,7 @@ def ack_error(
 # Settings
 # ============================================================================
 
-@router.get("/settings", response_model=List[SettingOut])
+@router.get("/settings", response_model=list[SettingOut])
 def list_settings(
     _: models.User = Depends(require_admin),
     db: Session = Depends(get_db),
@@ -888,7 +887,7 @@ def list_models(
         with httpx.Client(timeout=_ollama_timeout()) as client:
             tags = client.get(f"{base}/api/tags").json().get("models", [])
             ps = client.get(f"{base}/api/ps").json().get("models", [])
-    except Exception as exc:  # noqa: BLE001 — honest degradation
+    except Exception as exc:
         return {
             "configured": False,
             "error": str(exc)[:200],
@@ -936,7 +935,7 @@ def stop_model(
                 json={"model": model_name, "keep_alive": 0},
             )
             resp.raise_for_status()
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         log_audit(db, admin, "models.stop", json.dumps({"model": model_name, "ok": False, "error": str(exc)[:200]}))
         raise HTTPException(status_code=503, detail=f"Ollama unreachable: {str(exc)[:200]}")
     log_audit(db, admin, "models.stop", json.dumps({"model": model_name, "ok": True}))

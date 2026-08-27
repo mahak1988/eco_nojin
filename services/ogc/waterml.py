@@ -8,7 +8,6 @@ Honesty: this is a subset (no SamplingFeatures / ComplexFeatures); the XML
 declares the namespaces and structure so standard clients can parse it.
 """
 import xml.etree.ElementTree as ET
-from typing import List
 
 WML_NS = "http://www.opengis.net/waterml/2.0"
 OM_NS = "http://www.opengis.net/om/2.0"
@@ -27,7 +26,7 @@ def _timestamp(month: str) -> str:
     return f"{month[:4]}-{month[5:7]}-01T00:00:00Z"
 
 
-def build_timeseries(series: List[dict], index: str = "spi", title: str = "SPI") -> str:
+def build_timeseries(series: list[dict], index: str = "spi", title: str = "SPI") -> str:
     """Build a WaterML 2.0 MeasurementTimeseries XML string from the motor series."""
     _register_ns()
     wml2 = "{%s}" % WML_NS

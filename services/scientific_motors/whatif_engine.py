@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import time
-from typing import Any, Dict, List
+from typing import Any
 
 import numpy as np
 import xarray as xr
@@ -40,14 +40,14 @@ class WhatIfMotor(AbstractScientificMotor):
     def display_name(self) -> str:
         return f"What-If Engine (n={self.n_iterations})"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [
             MotorInput("baseline_yield", "raster", True, "Baseline yield"),
             MotorInput("baseline_water", "raster", True, "Baseline water use"),
             MotorInput("baseline_carbon", "raster", True, "Baseline carbon"),
         ]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("scenario_comparison", "table", "dict", "Scenario results"),
             MotorOutput("uncertainty_range", "raster", "min-max", "Monte Carlo range"),
@@ -56,7 +56,7 @@ class WhatIfMotor(AbstractScientificMotor):
 
     async def execute(
         self,
-        inputs: Dict[str, Any],
+        inputs: dict[str, Any],
         parameters: MotorParameters,
     ) -> MotorResult:
         """Execute what-if analysis."""
@@ -103,7 +103,7 @@ class WhatIfMotor(AbstractScientificMotor):
                 execution_time_seconds=time.time() - start_time,
             )
 
-    def _define_scenarios(self) -> Dict[str, Dict[str, float]]:
+    def _define_scenarios(self) -> dict[str, dict[str, float]]:
         """Define analysis scenarios."""
         return {
             "baseline": {
@@ -135,9 +135,9 @@ class WhatIfMotor(AbstractScientificMotor):
     async def _monte_carlo(
         self,
         baseline_yield: xr.DataArray,
-        scenarios: Dict[str, Dict],
+        scenarios: dict[str, dict],
         parameters: MotorParameters,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Run Monte Carlo simulation for each scenario."""
         results = {}
 
@@ -170,7 +170,7 @@ class WhatIfMotor(AbstractScientificMotor):
 
         return results
 
-    def _select_best_scenario(self, mc_results: Dict[str, Any]) -> str:
+    def _select_best_scenario(self, mc_results: dict[str, Any]) -> str:
         """Select best scenario based on multi-criteria."""
         scores = {}
         for name, stats in mc_results.items():
@@ -184,7 +184,7 @@ class WhatIfMotor(AbstractScientificMotor):
 
         return max(scores, key=scores.get)
 
-    def _compute_summary(self, mc_results: Dict[str, Any]) -> Dict[str, Any]:
+    def _compute_summary(self, mc_results: dict[str, Any]) -> dict[str, Any]:
         """Compute summary statistics."""
         return {
             name: {

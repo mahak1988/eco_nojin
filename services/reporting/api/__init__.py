@@ -1,10 +1,12 @@
 """Reporting FastAPI router"""
 from typing import List, Optional
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from database.config import get_db
-from services.reporting.service import ReportingService
 from services.reporting.schemas import ReportCreate, ReportRead
+from services.reporting.service import ReportingService
 
 router = APIRouter(prefix="/reports", tags=["Reports"])
 
@@ -26,10 +28,9 @@ async def get_report(report_id: str, db: AsyncSession = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-@router.get("/", response_model=List[ReportRead])
+@router.get("/", response_model=list[ReportRead])
 async def list_reports(
-    report_type: Optional[str] = None, limit: int = 50,
+    report_type: str | None = None, limit: int = 50,
     db: AsyncSession = Depends(get_db),
 ):
     return await ReportingService(db).list_reports(report_type=report_type, limit=limit)
-    

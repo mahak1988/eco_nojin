@@ -1,19 +1,24 @@
 """Analytics FastAPI router"""
 from typing import Optional
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from database.config import get_db
-from services.analytics.service import AnalyticsService
 from services.analytics.schemas import (
-    AnalyticsDashboard, PeriodType, SalesSummary,
-    TourismMetrics, LandscapeMetrics,
+    AnalyticsDashboard,
+    LandscapeMetrics,
+    PeriodType,
+    SalesSummary,
+    TourismMetrics,
 )
+from services.analytics.service import AnalyticsService
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
 @router.get("/dashboard", response_model=AnalyticsDashboard)
 async def get_dashboard(
-    village_id: Optional[str] = None,
+    village_id: str | None = None,
     period: PeriodType = PeriodType.MONTH,
     db: AsyncSession = Depends(get_db),
 ):
@@ -22,7 +27,7 @@ async def get_dashboard(
 
 @router.get("/sales-summary", response_model=SalesSummary)
 async def get_sales(
-    village_id: Optional[str] = None,
+    village_id: str | None = None,
     period: PeriodType = PeriodType.MONTH,
     db: AsyncSession = Depends(get_db),
 ):
@@ -30,7 +35,7 @@ async def get_sales(
 
 @router.get("/tourism-metrics", response_model=TourismMetrics)
 async def get_tourism(
-    village_id: Optional[str] = None,
+    village_id: str | None = None,
     period: PeriodType = PeriodType.MONTH,
     db: AsyncSession = Depends(get_db),
 ):
@@ -39,4 +44,3 @@ async def get_tourism(
 @router.get("/landscape-metrics", response_model=LandscapeMetrics)
 async def get_landscape(db: AsyncSession = Depends(get_db)):
     return await AnalyticsService(db).aggregate_landscape()
-    

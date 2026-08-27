@@ -9,56 +9,57 @@
 - اتصال به بلاکچین
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Optional, List
-import uuid
 
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from services.landscape.models import (
-    LandscapeVillage, LandscapeGovernanceMember, LandscapeFund, LandscapeFundDistribution
+    LandscapeFund,
+    LandscapeFundDistribution,
+    LandscapeGovernanceMember,
+    LandscapeVillage,
 )
 
 
 class LandscapeService:
     """سرویس مدیریت یکپارچه منظر."""
-    
+
     # کارمزد پیش‌فرض صندوق (1%)
     DEFAULT_FEE_BPS = 100
-    
+
     def __init__(self, db: AsyncSession):
         self.db = db
-    
+
     # ═══════════════════════════════════════════════════════════
     # مدیریت روستاها
     # ═══════════════════════════════════════════════════════════
-    
+
     async def register_village(
         self,
         village_id: str,
         name: str,
         region: str,
         country: str = "IR",
-        coordinates: Optional[dict] = None,
-        geo_boundary: Optional[dict] = None,
-        brand_name: Optional[str] = None,
+        coordinates: dict | None = None,
+        geo_boundary: dict | None = None,
+        brand_name: str | None = None,
     ) -> LandscapeVillage:
         """ثبت روستای جدید."""
         if not name or len(name.strip()) == 0:
             raise ValueError("نام روستا نمی‌تواند خالی باشد")
-        
+
         if not region or len(region.strip()) == 0:
             raise ValueError("منطقه نمی‌تواند خالی باشد")
-        
+
         # بررسی وجود روستا
         existing = await self.db.execute(
             select(LandscapeVillage).where(LandscapeVillage.village_id == village_id)
         )
         if existing.scalar_one_or_none():
             raise ValueError(f"روستا قبلاً ثبت شده است: {village_id}")
-        
+
         village = LandscapeVillage(
             village_id=village_id,
             name=name,
@@ -70,73 +71,73 @@ class LandscapeService:
             is_active=True,
             active_modules=["marketplace", "tourism"],
         )
-        
+
         self.db.add(village)
         await self.db.commit()
         await self.db.refresh(village)
-        
+
         # ایجاد صندوق مدیریت منظر
         await self._create_landscape_fund(village_id)
-        
+
         return village
-    
+
     async def update_village(
         self,
         village_id: str,
-        name: Optional[str] = None,
-        brand_name: Optional[str] = None,
-        active_modules: Optional[List[str]] = None,
+        name: str | None = None,
+        brand_name: str | None = None,
+        active_modules: list[str] | None = None,
     ) -> LandscapeVillage:
         """به‌روزرسانی اطلاعات روستا."""
         result = await self.db.execute(
             select(LandscapeVillage).where(LandscapeVillage.village_id == village_id)
         )
         village = result.scalar_one_or_none()
-        
+
         if not village:
             raise ValueError(f"روستا یافت نشد: {village_id}")
-        
+
         if name:
             village.name = name
         if brand_name:
             village.brand_name = brand_name
         if active_modules is not None:
             village.active_modules = active_modules
-        
-        village.updated_at = datetime.now(timezone.utc)
-        
+
+        village.updated_at = datetime.now(UTC)
+
         await self.db.commit()
         await self.db.refresh(village)
-        
+
         return village
-    
+
     async def deactivate_village(self, village_id: str) -> LandscapeVillage:
         """غیرفعال‌سازی روستا."""
         result = await self.db.execute(
             select(LandscapeVillage).where(LandscapeVillage.village_id == village_id)
         )
         village = result.scalar_one_or_none()
-        
+
         if not village:
             raise ValueError(f"روستا یافت نشد: {village_id}")
-        
+
         village.is_active = False
         await self.db.commit()
         await self.db.refresh(village)
-        
+
         return village
-    
+
     # ═══════════════════════════════════════════════════════════
     # مدیریت حکمرانی
     # ═══════════════════════════════════════════════════════════
-    
+
     async def add_governance_member(
         self,
         village_id: str,
         user_id: str,
         role: str,
-        term_start: Optional[datetime] = None,
-        term_end: Optional[datetime] = None,
+        term_start: datetime | None = None,
+        term_end: datetime | None = None,
     ) -> LandscapeGovernanceMember:
         """افزودن عضو به ساختار حکمرانی."""
         valid_roles = [
@@ -147,10 +148,10 @@ class LandscapeService:
             "agriculture_rep",
             "knowledge_rep",
         ]
-        
+
         if role not in valid_roles:
             raise ValueError(f"نقش نامعتبر: {role}. نقش‌های معتبر: {valid_roles}")
-        
+
         member = LandscapeGovernanceMember(
             village_id=village_id,
             user_id=user_id,
@@ -158,35 +159,35 @@ class LandscapeService:
             is_active=True,
             term_start=term_start,
             term_end=term_end,
-            elected_at=datetime.now(timezone.utc),
+            elected_at=datetime.now(UTC),
         )
-        
+
         self.db.add(member)
         await self.db.commit()
         await self.db.refresh(member)
-        
+
         return member
-    
+
     async def remove_governance_member(self, member_id: str) -> LandscapeGovernanceMember:
         """حذف عضو از ساختار حکمرانی."""
         result = await self.db.execute(
             select(LandscapeGovernanceMember).where(LandscapeGovernanceMember.id == member_id)
         )
         member = result.scalar_one_or_none()
-        
+
         if not member:
             raise ValueError(f"عضو یافت نشد: {member_id}")
-        
+
         member.is_active = False
         await self.db.commit()
         await self.db.refresh(member)
-        
+
         return member
-    
+
     # ═══════════════════════════════════════════════════════════
     # مدیریت صندوق توسعه
     # ═══════════════════════════════════════════════════════════
-    
+
     async def _create_landscape_fund(self, village_id: str) -> LandscapeFund:
         """ایجاد صندوق مدیریت منظر برای روستا."""
         fund = LandscapeFund(
@@ -198,23 +199,23 @@ class LandscapeService:
             currency="IRR",
             is_active=True,
         )
-        
+
         self.db.add(fund)
         await self.db.commit()
         await self.db.refresh(fund)
-        
+
         return fund
-    
+
     async def get_fund_balance(self, village_id: str) -> dict:
         """دریافت موجودی صندوق روستا."""
         result = await self.db.execute(
             select(LandscapeFund).where(LandscapeFund.village_id == village_id)
         )
         fund = result.scalar_one_or_none()
-        
+
         if not fund:
             raise ValueError(f"صندوق یافت نشد: {village_id}")
-        
+
         return {
             "village_id": village_id,
             "total_collected": float(fund.total_collected),
@@ -223,36 +224,36 @@ class LandscapeService:
             "currency": fund.currency,
             "fee_bps": fund.fee_bps,
         }
-    
+
     async def create_fund_distribution(
         self,
         village_id: str,
         amount: Decimal,
         purpose: str,
         proposed_by: str,
-        recipient_user_id: Optional[str] = None,
-        recipient_organization: Optional[str] = None,
-        description: Optional[str] = None,
+        recipient_user_id: str | None = None,
+        recipient_organization: str | None = None,
+        description: str | None = None,
     ) -> LandscapeFundDistribution:
         """ایجاد درخواست توزیع وجوه."""
         if amount <= 0:
             raise ValueError("مبلغ باید مثبت باشد")
-        
+
         # دریافت صندوق
         result = await self.db.execute(
             select(LandscapeFund).where(LandscapeFund.village_id == village_id)
         )
         fund = result.scalar_one_or_none()
-        
+
         if not fund:
             raise ValueError(f"صندوق یافت نشد: {village_id}")
-        
+
         # بررسی موجودی
         if amount > fund.pending_balance:
             raise ValueError(
                 f"موجودی کافی نیست. موجودی: {fund.pending_balance}, درخواست: {amount}"
             )
-        
+
         distribution = LandscapeFundDistribution(
             fund_id=fund.id,
             village_id=village_id,
@@ -264,13 +265,13 @@ class LandscapeService:
             proposed_by=proposed_by,
             status="pending",
         )
-        
+
         self.db.add(distribution)
         await self.db.commit()
         await self.db.refresh(distribution)
-        
+
         return distribution
-    
+
     async def approve_distribution(
         self,
         distribution_id: str,
@@ -281,32 +282,32 @@ class LandscapeService:
             select(LandscapeFundDistribution).where(LandscapeFundDistribution.id == distribution_id)
         )
         distribution = result.scalar_one_or_none()
-        
+
         if not distribution:
             raise ValueError(f"درخواست یافت نشد: {distribution_id}")
-        
+
         if distribution.status != "pending":
             raise ValueError(f"درخواست در وضعیت {distribution.status} است")
-        
+
         distribution.status = "approved"
         distribution.approved_by = approved_by
-        distribution.approved_at = datetime.now(timezone.utc)
-        
+        distribution.approved_at = datetime.now(UTC)
+
         # کاهش موجودی صندوق
         result = await self.db.execute(
             select(LandscapeFund).where(LandscapeFund.id == distribution.fund_id)
         )
         fund = result.scalar_one_or_none()
-        
+
         if fund:
             fund.pending_balance -= distribution.amount
             fund.total_distributed += distribution.amount
-        
+
         await self.db.commit()
         await self.db.refresh(distribution)
-        
+
         return distribution
-    
+
     async def execute_distribution(
         self,
         distribution_id: str,
@@ -317,36 +318,36 @@ class LandscapeService:
             select(LandscapeFundDistribution).where(LandscapeFundDistribution.id == distribution_id)
         )
         distribution = result.scalar_one_or_none()
-        
+
         if not distribution:
             raise ValueError(f"درخواست یافت نشد: {distribution_id}")
-        
+
         if distribution.status != "approved":
-            raise ValueError(f"درخواست هنوز تأیید نشده است")
-        
+            raise ValueError("درخواست هنوز تأیید نشده است")
+
         distribution.status = "executed"
         distribution.blockchain_tx_hash = blockchain_tx_hash
-        distribution.executed_at = datetime.now(timezone.utc)
-        
+        distribution.executed_at = datetime.now(UTC)
+
         await self.db.commit()
         await self.db.refresh(distribution)
-        
+
         return distribution
-    
+
     # ═══════════════════════════════════════════════════════════
     # آمار و گزارش‌ها
     # ═══════════════════════════════════════════════════════════
-    
+
     async def get_village_stats(self, village_id: str) -> dict:
         """دریافت آمار روستا."""
         result = await self.db.execute(
             select(LandscapeVillage).where(LandscapeVillage.village_id == village_id)
         )
         village = result.scalar_one_or_none()
-        
+
         if not village:
             raise ValueError(f"روستا یافت نشد: {village_id}")
-        
+
         # شمارش اعضای حکمرانی
         governance_result = await self.db.execute(
             select(LandscapeGovernanceMember).where(
@@ -355,7 +356,7 @@ class LandscapeService:
             )
         )
         governance_members = governance_result.scalars().all()
-        
+
         return {
             "village_id": village_id,
             "name": village.name,

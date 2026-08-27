@@ -9,7 +9,7 @@ arrive with their tokens via the same settings keys).
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import httpx
 from sqlalchemy.orm import Session
@@ -27,8 +27,8 @@ def _setting(db: Session, key: str, default: str = "") -> str:
 
 
 def dispatch_to_bots(
-    db: Session, title: str, body: str, channel: Optional[str] = None
-) -> Dict[str, Any]:
+    db: Session, title: str, body: str, channel: str | None = None
+) -> dict[str, Any]:
     """Best-effort dispatch of a published article to messenger channels.
 
     Returns a dict with ``dispatched`` and ``reason``; never raises.
@@ -52,15 +52,15 @@ def dispatch_to_bots(
             timeout=10.0,
         )
         resp.raise_for_status()
-    except Exception as exc:  # noqa: BLE001 — best-effort dispatch
+    except Exception as exc:
         logger.warning("bot dispatch failed: %s", exc)
         return {"dispatched": 0, "reason": f"telegram API error: {str(exc)[:120]}"}
     return {"dispatched": 1, "reason": "sent to telegram"}
 
 
-def run_due_publishes(db: Session) -> List[int]:
+def run_due_publishes(db: Session) -> list[int]:
     """Publish items whose scheduled_at is due (used by the periodic loop)."""
-    from datetime import datetime, UTC
+    from datetime import UTC, datetime
 
     now = datetime.now(UTC)
     due = (
@@ -72,7 +72,7 @@ def run_due_publishes(db: Session) -> List[int]:
         )
         .all()
     )
-    ids: List[int] = []
+    ids: list[int] = []
     for item in due:
         item.status = "published"
         if item.published_at is None:

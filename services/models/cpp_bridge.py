@@ -30,7 +30,7 @@ import ctypes
 import logging
 import os
 import pathlib
-from typing import Any, Dict, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ class CppBridgeUnavailable(RuntimeError):
     """Raised when hydroma_core.dll cannot be loaded."""
 
 
-def _discover_dll() -> Optional[pathlib.Path]:
+def _discover_dll() -> pathlib.Path | None:
     env = os.environ.get("HYDROMA_CORE_DLL")
     if env:
         p = pathlib.Path(env)
@@ -74,7 +74,7 @@ def _load() -> Any:
 try:
     _LIB: Any = _load()
     AVAILABLE = True
-except Exception as exc:  # noqa: BLE001
+except Exception as exc:
     logger.info("cpp bridge unavailable: %s", exc)
     _LIB = None
     AVAILABLE = False
@@ -105,7 +105,7 @@ def vg_theta_cpp(h: float, theta_r: float, theta_s: float, alpha: float, n: floa
     return float(_require().vg_theta(h, theta_r, theta_s, alpha, n))
 
 
-def status() -> Dict[str, Any]:
+def status() -> dict[str, Any]:
     """Honest capability report: available + which kernels are bridged."""
     return {
         "available": AVAILABLE,

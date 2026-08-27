@@ -6,14 +6,14 @@ Replaces the old in-memory ``_wallets`` dict: balances now persist in the
 """
 from __future__ import annotations
 
-from typing import Any, Dict, Tuple
+from typing import Any
 
 from sqlalchemy.orm import Session
 
 from database.models import EcoWallet
 
 # earning rates: category -> {eco, label} (kept in sync with the router)
-EARNING_RATES: Dict[str, Dict[str, Any]] = {
+EARNING_RATES: dict[str, dict[str, Any]] = {
     "tree_planting": {"eco": 50.0, "label": "کاشت درخت"},
     "soil_health": {"eco": 30.0, "label": "سلامت خاک"},
     "water_saving": {"eco": 25.0, "label": "صرفه‌جویی آب"},
@@ -33,7 +33,7 @@ def get_or_create_wallet(db: Session, user_id: int) -> EcoWallet:
     return wallet
 
 
-def earn(db: Session, user_id: int, category: str, quantity: float = 1.0) -> Tuple[float, float]:
+def earn(db: Session, user_id: int, category: str, quantity: float = 1.0) -> tuple[float, float]:
     """Credit ECO tokens; returns (amount_earned, new_balance)."""
     if category not in EARNING_RATES:
         raise ValueError(f"unknown earning category: {category}")
@@ -49,7 +49,7 @@ def earn(db: Session, user_id: int, category: str, quantity: float = 1.0) -> Tup
     return amount, wallet.balance
 
 
-def redeem(db: Session, user_id: int, amount: float) -> Tuple[float, float]:
+def redeem(db: Session, user_id: int, amount: float) -> tuple[float, float]:
     """Redeem ECO tokens; raises ValueError when balance is insufficient."""
     if amount <= 0:
         raise ValueError("amount must be positive")
@@ -63,7 +63,7 @@ def redeem(db: Session, user_id: int, amount: float) -> Tuple[float, float]:
     return amount, wallet.balance
 
 
-def wallet_state(db: Session, user_id: int) -> Dict[str, Any]:
+def wallet_state(db: Session, user_id: int) -> dict[str, Any]:
     wallet = get_or_create_wallet(db, user_id)
     return {
         "user_id": user_id,

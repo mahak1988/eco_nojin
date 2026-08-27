@@ -6,7 +6,6 @@ is auto-blocked for 15 minutes and the event is recorded.
 """
 import threading
 import time
-from typing import Dict
 
 TRAP_PATHS = [
     "/admin.php",
@@ -22,7 +21,7 @@ TRAP_PATHS = [
 class Honeypot:
     def __init__(self) -> None:
         self._lock = threading.Lock()
-        self._blocked: Dict[str, float] = {}
+        self._blocked: dict[str, float] = {}
         self.hits: list = []
 
     def is_trap(self, path: str) -> bool:

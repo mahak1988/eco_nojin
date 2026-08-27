@@ -28,13 +28,12 @@ References
 """
 from __future__ import annotations
 
-import io
 import logging
 import os
 import time
 from dataclasses import dataclass
 from datetime import date
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import httpx
 import numpy as np
@@ -166,7 +165,7 @@ def scl_is_clear(value: float) -> bool:
     return int(value) in SCL_CLEAR_CLASSES
 
 
-def clear_ratio_from_scl(window: "np.ndarray") -> "Optional[float]":
+def clear_ratio_from_scl(window: np.ndarray) -> float | None:
     """Fraction of valid SCL pixels that are clear (None when all no-data)."""
     if window.size == 0:
         return None
@@ -189,7 +188,7 @@ class Scene:
     id: str
     datetime: str
     cloud_cover: float
-    assets: Dict[str, str]  # band name -> href
+    assets: dict[str, str]  # band name -> href
 
     @property
     def is_usable(self) -> bool:
@@ -215,12 +214,12 @@ class CopernicusClient:
 
     def __init__(
         self,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        identity_url: Optional[str] = None,
-        stac_url: Optional[str] = None,
+        client_id: str | None = None,
+        client_secret: str | None = None,
+        username: str | None = None,
+        password: str | None = None,
+        identity_url: str | None = None,
+        stac_url: str | None = None,
         timeout: float = 30.0,
     ) -> None:
         # Read env at construction time so tests/settings apply live.
@@ -242,7 +241,7 @@ class CopernicusClient:
             )
         ).rstrip("/")
         self._timeout = timeout
-        self._token: Optional[str] = None
+        self._token: str | None = None
         self._token_expires_at: float = 0.0
 
     # -- availability ------------------------------------------------------
@@ -302,12 +301,12 @@ class CopernicusClient:
         self,
         latitude: float,
         longitude: float,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
+        start_date: date | None = None,
+        end_date: date | None = None,
         max_cloud_cover: float = 20.0,
         max_records: int = 5,
         collection: str = "sentinel-2-l2a",
-    ) -> List[Scene]:
+    ) -> list[Scene]:
         """Search STAC items covering a point (newest first).
 
         Args:
@@ -337,7 +336,7 @@ class CopernicusClient:
             raise CopernicusFetchError(f"CDSE STAC search failed: {exc}") from exc
 
         items = resp.json().get("features", [])
-        scenes: List[Scene] = []
+        scenes: list[Scene] = []
         for item in items:
             props = item.get("properties", {})
             assets = {
@@ -369,46 +368,44 @@ class CopernicusClient:
     def _sample_cog(self, data: bytes, band_name: str, lon: float, lat: float) -> BandSample:
         """Read a COG from memory and sample the pixel nearest (lon, lat)."""
         try:
-            with MemoryFile(data) as mem:
-                with mem.open() as src:
-                    if src.crs is None:
-                        raise CopernicusBandError(f"{band_name} COG has no CRS")
-                    # Transform WGS84 -> raster CRS
-                    try:
-                        xs_arr, ys_arr = transform("EPSG:4326", src.crs, [lon], [lat])
-                        xs, ys = float(xs_arr[0]), float(ys_arr[0])
-                    except Exception as exc:
-                        raise CopernicusBandError(f"CRS transform failed: {exc}") from exc
-                    row, col = src.index(xs, ys)
-                    if not (0 <= row < src.height and 0 <= col < src.width):
-                        raise CopernicusBandError("sample point outside scene")
-                    window = rasterio.windows.Window(col, row, 1, 1)
-                    arr = src.read(1, window=window)
-                    raw = float(arr[0, 0])
-                    return BandSample(
-                        band=band_name,
-                        reflectance=_reflectance(raw),
-                        crs=str(src.crs),
-                        x=xs,
-                        y=ys,
-                    )
+            with MemoryFile(data) as mem, mem.open() as src:
+                if src.crs is None:
+                    raise CopernicusBandError(f"{band_name} COG has no CRS")
+                # Transform WGS84 -> raster CRS
+                try:
+                    xs_arr, ys_arr = transform("EPSG:4326", src.crs, [lon], [lat])
+                    xs, ys = float(xs_arr[0]), float(ys_arr[0])
+                except Exception as exc:
+                    raise CopernicusBandError(f"CRS transform failed: {exc}") from exc
+                row, col = src.index(xs, ys)
+                if not (0 <= row < src.height and 0 <= col < src.width):
+                    raise CopernicusBandError("sample point outside scene")
+                window = rasterio.windows.Window(col, row, 1, 1)
+                arr = src.read(1, window=window)
+                raw = float(arr[0, 0])
+                return BandSample(
+                    band=band_name,
+                    reflectance=_reflectance(raw),
+                    crs=str(src.crs),
+                    x=xs,
+                    y=ys,
+                )
         except rasterio.errors.RasterioIOError as exc:
             raise CopernicusBandError(f"cannot read {band_name} COG: {exc}") from exc
 
     def _sample_raw(self, data: bytes, band_name: str, lon: float, lat: float) -> float:
         """Read a COG from memory and return the raw pixel value at (lon, lat)."""
         try:
-            with MemoryFile(data) as mem:
-                with mem.open() as src:
-                    if src.crs is None:
-                        raise CopernicusBandError(f"{band_name} COG has no CRS")
-                    xs_arr, ys_arr = transform("EPSG:4326", src.crs, [lon], [lat])
-                    xs, ys = float(xs_arr[0]), float(ys_arr[0])
-                    row, col = src.index(xs, ys)
-                    if not (0 <= row < src.height and 0 <= col < src.width):
-                        raise CopernicusBandError("sample point outside scene")
-                    arr = src.read(1, window=rasterio.windows.Window(col, row, 1, 1))
-                    return float(arr[0, 0])
+            with MemoryFile(data) as mem, mem.open() as src:
+                if src.crs is None:
+                    raise CopernicusBandError(f"{band_name} COG has no CRS")
+                xs_arr, ys_arr = transform("EPSG:4326", src.crs, [lon], [lat])
+                xs, ys = float(xs_arr[0]), float(ys_arr[0])
+                row, col = src.index(xs, ys)
+                if not (0 <= row < src.height and 0 <= col < src.width):
+                    raise CopernicusBandError("sample point outside scene")
+                arr = src.read(1, window=rasterio.windows.Window(col, row, 1, 1))
+                return float(arr[0, 0])
         except rasterio.errors.RasterioIOError as exc:
             raise CopernicusBandError(f"cannot read {band_name} COG: {exc}") from exc
 
@@ -420,13 +417,13 @@ class CopernicusClient:
         lat: float,
         n: int = 7,
         spacing_m: float = 120.0,
-    ) -> List[Dict[str, float]]:
+    ) -> list[dict[str, float]]:
         """Compute a small NDVI map grid around (lon, lat) from two COGs.
 
         Reads an (n*step) x (n*step) window around the point and returns
         [{lon, lat, ndvi}, ...] for valid pixels (cloud/NoData skipped).
         """
-        out: List[Dict[str, float]] = []
+        out: list[dict[str, float]] = []
         try:
             with MemoryFile(red_data) as mem_r, MemoryFile(nir_data) as mem_n:
                 with mem_r.open() as src_r, mem_n.open() as src_n:
@@ -469,28 +466,27 @@ class CopernicusClient:
 
     def _sample_scl_window(
         self, data: bytes, lon: float, lat: float, size: int = 5
-    ) -> "np.ndarray":
+    ) -> np.ndarray:
         """Read an SCL COG and return a size x size window around (lon, lat)."""
         try:
-            with MemoryFile(data) as mem:
-                with mem.open() as src:
-                    if src.crs is None:
-                        raise CopernicusBandError("SCL COG has no CRS")
-                    xs_arr, ys_arr = transform("EPSG:4326", src.crs, [lon], [lat])
-                    xs, ys = float(xs_arr[0]), float(ys_arr[0])
-                    row, col = src.index(xs, ys)
-                    half = size // 2
-                    window = rasterio.windows.Window(
-                        col - half, row - half, size, size
-                    )
-                    arr = src.read(1, window=window)
-                    return np.asarray(arr, dtype=np.uint8)
+            with MemoryFile(data) as mem, mem.open() as src:
+                if src.crs is None:
+                    raise CopernicusBandError("SCL COG has no CRS")
+                xs_arr, ys_arr = transform("EPSG:4326", src.crs, [lon], [lat])
+                xs, ys = float(xs_arr[0]), float(ys_arr[0])
+                row, col = src.index(xs, ys)
+                half = size // 2
+                window = rasterio.windows.Window(
+                    col - half, row - half, size, size
+                )
+                arr = src.read(1, window=window)
+                return np.asarray(arr, dtype=np.uint8)
         except rasterio.errors.RasterioIOError as exc:
             raise CopernicusBandError(f"cannot read SCL COG: {exc}") from exc
 
     async def sample_bands(
         self, scene: Scene, latitude: float, longitude: float, return_data: bool = False
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Download B04/B08/B02 (+SCL) COGs and sample real reflectances.
 
         Returns:
@@ -516,7 +512,7 @@ class CopernicusClient:
                 blue = self._sample_cog(blue_data, "B02", longitude, latitude)
             except CopernicusError:
                 blue = None
-        scl_clear_ratio: Optional[float] = None
+        scl_clear_ratio: float | None = None
         if scl_href:
             try:
                 scl_data = await self._download_band(scl_href, token)
@@ -524,7 +520,7 @@ class CopernicusClient:
                 scl_clear_ratio = clear_ratio_from_scl(window)
             except CopernicusError:
                 scl_clear_ratio = None
-        out: Dict[str, Any] = {
+        out: dict[str, Any] = {
             "red": red.reflectance,
             "nir": nir.reflectance,
             "blue": blue.reflectance if blue is not None else None,
@@ -536,8 +532,8 @@ class CopernicusClient:
         return out
 
     async def sample_landsat_lst(
-        self, latitude: float, longitude: float, analysis_date: Optional[str] = None
-    ) -> Dict[str, Any]:
+        self, latitude: float, longitude: float, analysis_date: str | None = None
+    ) -> dict[str, Any]:
         """Sample Landsat 8/9 Collection 2 Level-2 surface temperature (LST).
 
         Reads the ST_B10 band: LST_K = raw * 0.00341802 + 149.0 (C2 L2
@@ -580,8 +576,8 @@ class CopernicusClient:
         }
 
     async def sample_sentinel1(
-        self, latitude: float, longitude: float, analysis_date: Optional[str] = None
-    ) -> Dict[str, Any]:
+        self, latitude: float, longitude: float, analysis_date: str | None = None
+    ) -> dict[str, Any]:
         """Sample Sentinel-1 GRD VV/VH backscatter (raw-DN soil-moisture proxy).
 
         Honesty note: GRD COGs are 16-bit DN. The VH/VV ratio is a
@@ -629,9 +625,9 @@ class CopernicusClient:
     # -- end-to-end analysis -----------------------------------------------
 
     async def analyze_location(
-        self, latitude: float, longitude: float, analysis_date: Optional[str] = None,
+        self, latitude: float, longitude: float, analysis_date: str | None = None,
         with_grid: bool = False,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Real scene-based analysis for a point (Phase 4 core path).
 
         Returns a dict with ``status``:
@@ -687,7 +683,7 @@ class CopernicusClient:
             bands["nir"], bands["red"], bands.get("blue") or 0.1
         )
         savi = savi_from_bands(bands["nir"], bands["red"])
-        result: Dict[str, Any] = {
+        result: dict[str, Any] = {
             "status": "ok",
             "scene_id": scene.id,
             "scene_name": scene.id,

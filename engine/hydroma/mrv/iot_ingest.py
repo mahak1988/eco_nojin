@@ -11,7 +11,8 @@ from __future__ import annotations
 import hmac
 import json
 import logging
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from database.models import MRVObservation
 from engine.hydroma.mrv.qa import validate_reading
@@ -127,7 +128,7 @@ class MqttIotConsumer:
         self._store = store or (lambda _reading: None)
         self._client: Any = None
 
-    def start(self) -> "MqttIotConsumer":
+    def start(self) -> MqttIotConsumer:
         """Connect and subscribe; raises RuntimeError when paho-mqtt is absent."""
         try:
             import paho.mqtt.client as mqtt  # type: ignore[import-not-found]
@@ -163,5 +164,5 @@ class MqttIotConsumer:
             return
         try:
             self._store(reading)
-        except Exception:  # noqa: BLE001 - ingestion must not kill the loop
+        except Exception:
             logger.exception("failed to persist MQTT reading")

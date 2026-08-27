@@ -23,7 +23,7 @@ from __future__ import annotations
 import logging
 import math
 from datetime import date
-from typing import Any, Dict
+from typing import Any
 
 import httpx
 
@@ -118,7 +118,7 @@ def _valid_or_none(value: Any) -> Optional[float]:
 
 async def fetch_nasa_power_data(
     lat: float, lon: float, start_date: str, end_date: str
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Fetch daily temperature/precipitation/solar data from NASA POWER.
 
     Args:
@@ -167,7 +167,7 @@ async def fetch_nasa_power_data(
 
 async def get_daily_climate(
     lat: float, lon: float, start: date, end: date
-) -> Dict[str, Dict[str, float]]:
+) -> dict[str, dict[str, float]]:
     """Fetch daily climate + ET0 keyed by YYYYMMDD.
 
     Missing values use conservative defaults (tmean=15, tmax=tmean+3,
@@ -185,7 +185,7 @@ async def get_daily_climate(
     maxs = raw.get("temp_c_max", {}) or {}
     mins = raw.get("temp_c_min", {}) or {}
     precs = raw.get("precip_mm", {}) or {}
-    out: Dict[str, Dict[str, float]] = {}
+    out: dict[str, dict[str, float]] = {}
     for dk in set(list(means.keys()) + list(maxs.keys()) + list(mins.keys())):
         tmean = _valid_or_none(means.get(dk))
         if tmean is None:
@@ -212,7 +212,7 @@ async def get_daily_climate(
 
 async def fetch_climate_with_et0(
     lat: float, lon: float, start: date, end: date
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Complete real climate fetch with ET0 summary (recommended entry point).
 
     Returns status/data or an honest error dict; never synthetic values.

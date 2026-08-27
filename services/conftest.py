@@ -1,13 +1,15 @@
 import pytest
 import pytest_asyncio
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
+
 from database.base import Base
 
 # Import service modules to register their models
 from services.landscape.service import LandscapeService
 from services.marketplace.service import MarketplaceService
 from services.tourism.service import TourismService
+
 
 @pytest_asyncio.fixture
 async def db_session():

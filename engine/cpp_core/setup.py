@@ -1,7 +1,6 @@
-from setuptools import setup, Extension
-from pybind11.setup_helpers import Pybind11Extension, build_ext
 from pybind11 import get_cmake_dir
-import os
+from pybind11.setup_helpers import Pybind11Extension, build_ext
+from setuptools import setup
 
 # Define the extension module
 ext_modules = [

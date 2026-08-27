@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 """Telegram bot command handlers."""
 from __future__ import annotations
 
 import logging
-import re
+
 from telegram import Update
 from telegram.ext import ContextTypes
 
@@ -12,9 +11,9 @@ from .formatters import (
     format_analysis_response,
     format_error,
     format_help,
-    format_welcome,
     format_landscapes_list,
     format_stats,
+    format_welcome,
 )
 
 logger = logging.getLogger("econojin.bot.handlers")
@@ -41,9 +40,9 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 async def health_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle /health command."""
     await update.message.reply_text("⏳ بررسی وضعیت API...")
-    
+
     is_healthy = await api_client.health_check()
-    
+
     if is_healthy:
         await update.message.reply_text(
             "✅ *API فعال و در دسترس است!*\n\n"
@@ -61,9 +60,9 @@ async def health_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle /stats command."""
     await update.message.reply_text("⏳ دریافت آمار...")
-    
+
     stats = await api_client.get_stats()
-    
+
     if stats:
         await update.message.reply_text(
             format_stats(stats),
@@ -79,9 +78,9 @@ async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 async def landscapes_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle /landscapes command."""
     await update.message.reply_text("⏳ دریافت لیست زمین‌ها...")
-    
+
     landscapes = await api_client.list_landscapes()
-    
+
     if landscapes is not None:
         await update.message.reply_text(
             format_landscapes_list(landscapes),
@@ -102,7 +101,7 @@ async def analyze_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     Example: /analyze 35.6892 51.389 50 Tehran Farm
     """
     args = context.args
-    
+
     if not args or len(args) < 3:
         await update.message.reply_text(
             "❌ *فرمت نادرست*\n\n"
@@ -114,13 +113,13 @@ async def analyze_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             parse_mode="Markdown",
         )
         return
-    
+
     try:
         latitude = float(args[0])
         longitude = float(args[1])
         area_ha = float(args[2])
         name = " ".join(args[3:]) if len(args) > 3 else f"Farm-{int(latitude*1000)}"
-        
+
         # Validate ranges
         if not (-90 <= latitude <= 90):
             raise ValueError("عرض جغرافیایی باید بین -90 و 90 باشد")
@@ -128,14 +127,14 @@ async def analyze_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             raise ValueError("طول جغرافیایی باید بین -180 و 180 باشد")
         if not (0 < area_ha <= 100000):
             raise ValueError("مساحت باید بین 0 و 100,000 هکتار باشد")
-        
+
     except ValueError as e:
         await update.message.reply_text(
             format_error(str(e)),
             parse_mode="Markdown",
         )
         return
-    
+
     # Send typing indicator
     await update.message.reply_text(
         f"🔍 *در حال تحلیل زمین {name}...*\n\n"
@@ -144,7 +143,7 @@ async def analyze_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         f"⏳ این فرآیند حدود ۳-۵ ثانیه طول می‌کشد...",
         parse_mode="Markdown",
     )
-    
+
     # Call API
     result = await api_client.analyze_land(
         name=name,
@@ -152,11 +151,11 @@ async def analyze_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         longitude=longitude,
         area_ha=area_ha,
     )
-    
+
     if result:
         # Format and send response
         formatted = format_analysis_response(result)
-        
+
         # Telegram has 4096 char limit, split if needed
         if len(formatted) > 4000:
             # Send in chunks
@@ -186,7 +185,7 @@ async def analyze_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle errors."""
     logger.error(f"Exception: {context.error}")
-    
+
     if isinstance(update, Update) and update.message:
         await update.message.reply_text(
             format_error("خطای غیرمنتظره. لطفاً دوباره تلاش کنید."),

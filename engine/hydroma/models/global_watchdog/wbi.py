@@ -25,7 +25,8 @@ Classification:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict, Optional
+from typing import Any
+
 import numpy as np
 
 
@@ -141,7 +142,7 @@ class WBIv3:
         return 100 * (1 - np.clip(gov, 0, 1))
 
     @classmethod
-    def compute(cls, inputs: WBIInputs) -> Dict[str, Any]:
+    def compute(cls, inputs: WBIInputs) -> dict[str, Any]:
         """
         Compute WBI from inputs.
 
@@ -205,7 +206,7 @@ class WBIv3:
         }
 
     @classmethod
-    def validate_against_wri(cls, wbi: float, wri_level: float) -> Dict[str, Any]:
+    def validate_against_wri(cls, wbi: float, wri_level: float) -> dict[str, Any]:
         """
         Validate against WRI Aqueduct level (0-5).
         """

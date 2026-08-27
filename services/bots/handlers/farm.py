@@ -10,7 +10,7 @@ from __future__ import annotations
 import asyncio
 import re
 import secrets
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
@@ -140,8 +140,7 @@ async def farm_soil(message: Message, state: FSMContext) -> None:
 
 def _save_farm(draft: FarmDraft, tg_user_id: int, tg_name: str) -> bool:
     """Create-or-reuse a user (keyed by tg id) and insert the farm row."""
-    from database.models import Farm
-    from database.models import User
+    from database.models import Farm, User
 
     session = _session()
     try:

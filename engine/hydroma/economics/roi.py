@@ -3,19 +3,18 @@ Economic Engine - Return on Investment (ROI) Module.
 
 Calculates financial performance indicators like NPV, IRR, ROI, Payback Period.
 """
-from typing import Dict, Any, List
-import numpy as np
+from typing import Any
+
 from scipy.optimize import newton
-from datetime import date
 
 
 def calculate_financial_metrics(
     initial_investment: float,
-    cash_flows: List[float], # Cash flows for years 1, 2, ..., n
+    cash_flows: list[float], # Cash flows for years 1, 2, ..., n
     discount_rate: float,
     project_lifetime_years: int,
     salvage_value: float = 0.0
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Calculates NPV, IRR, ROI, and Payback Period.
 
@@ -102,7 +101,7 @@ def calculate_agricultural_roi(
     years_operation: int,
     initial_land_prep_cost_irr: float = 0.0,
     annual_operating_cost_multiplier: float = 1.0 # To account for cost changes over time
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Calculates ROI specifically for an agricultural venture.
 

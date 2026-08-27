@@ -11,7 +11,7 @@ Data source: live Supabase `geo_points` (public select policy added in
 migration 0007). If Supabase env is missing the API honestly returns 503.
 """
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import httpx
 
@@ -54,7 +54,7 @@ _COLLECTIONS = {
 }
 
 
-def _items_from_supabase(limit: int = 100) -> List[Dict[str, Any]]:
+def _items_from_supabase(limit: int = 100) -> list[dict[str, Any]]:
     """Fetch real landscape points from Supabase (anon, public read via
     the ogc_landscape_points view created in migration 0007)."""
     url = f"{SUPABASE_URL}/rest/v1/ogc_landscape_points?select=id,name,lon,lat&limit={limit}"
@@ -71,7 +71,7 @@ def _items_from_supabase(limit: int = 100) -> List[Dict[str, Any]]:
     return features
 
 
-def items(limit: int = 100, bbox: Optional[str] = None) -> Dict[str, Any]:
+def items(limit: int = 100, bbox: str | None = None) -> dict[str, Any]:
     """GeoJSON FeatureCollection. 503 with honest detail when DB unreachable."""
     try:
         features = _items_from_supabase(limit)

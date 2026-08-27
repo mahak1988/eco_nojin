@@ -24,14 +24,14 @@ from __future__ import annotations
 import logging
 import os
 import time
-from typing import Any, Dict, Optional
+from typing import Any
 
 import httpx
 
 logger = logging.getLogger(__name__)
 
 # store -> env var names + where to get the free key
-DATA_STORES: Dict[str, Dict[str, str]] = {
+DATA_STORES: dict[str, dict[str, str]] = {
     "cds": {
         "url_env": "CDS_API_URL",
         "url_default": "https://cds.climate.copernicus.eu/api",
@@ -91,9 +91,9 @@ class DataStoreClient:
     def __init__(
         self,
         store: str = "cds",
-        base_url: Optional[str] = None,
-        uid: Optional[str] = None,
-        api_key: Optional[str] = None,
+        base_url: str | None = None,
+        uid: str | None = None,
+        api_key: str | None = None,
         timeout: float = CDS_TIMEOUT,
     ) -> None:
         if store not in DATA_STORES:
@@ -120,7 +120,7 @@ class DataStoreClient:
         # "key:<token>" new format) is the whole credential.
         return bool(self._raw_key)
 
-    def _auth_headers(self) -> Dict[str, str]:
+    def _auth_headers(self) -> dict[str, str]:
         if not self.configured:
             raise DataStoreNotConfigured(
                 f"{self.store}: set {DATA_STORES[self.store]['key_env']} in .env "
@@ -142,7 +142,7 @@ class DataStoreClient:
         token = self._raw_key if self._raw_key.startswith("key:") else "key:" + self._raw_key
         return {"Authorization": f"Bearer {token}"}
 
-    def status(self) -> Dict[str, Any]:
+    def status(self) -> dict[str, Any]:
         """Honest status: configured flag + URL + where to get the key."""
         return {
             "store": self.store,
@@ -156,7 +156,7 @@ class DataStoreClient:
 
     def submit_request(
         self,
-        params: Dict[str, Any],
+        params: dict[str, Any],
         dataset: str = "reanalysis-era5-single-levels",
     ) -> str:
         """Submit a retrieval job; returns the task URL."""
@@ -210,7 +210,7 @@ class DataStoreClient:
         # new CDS: completed task JSON points to the real file URL
         try:
             payload = resp.json()
-        except Exception:  # noqa: BLE001
+        except Exception:
             payload = None
         if isinstance(payload, dict) and payload.get("url"):
             file_url = payload["url"]
@@ -236,7 +236,7 @@ class CdsClient(DataStoreClient):
         super().__init__(*args, **kwargs)
 
 
-def all_stores_status() -> Dict[str, Any]:
+def all_stores_status() -> dict[str, Any]:
     """Status of every data store (CDS/EWDS/ADS) + SEPAL guidance."""
     stores = {}
     for name in DATA_STORES:

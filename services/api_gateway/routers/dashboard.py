@@ -1,16 +1,15 @@
-from datetime import timezone
+
 """
 Dashboard API Router
 """
 import os
-from datetime import datetime, timezone
-from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException
+from datetime import UTC, datetime
+
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
-from ..auth import get_current_user
-from ..dependencies import get_db
 from ...models.user import User
+from ..auth import get_current_user
 
 router = APIRouter(
     prefix="/dashboard",
@@ -46,7 +45,7 @@ class SatelliteData(BaseModel):
 class PredictionData(BaseModel):
     yield_prediction: float  # tons/hectare
     risk_level: str  # low, medium, high
-    recommendations: List[str]
+    recommendations: list[str]
 
 
 class DashboardData(BaseModel):
@@ -103,7 +102,7 @@ async def get_dashboard_data(current_user: User = Depends(get_current_user)):
     # 2. External weather API
     # 3. Satellite data service
     # 4. AI prediction models
-    
+
     # For now, return mock data
     return DashboardData(
         farm=MOCK_FARM_DATA,
@@ -122,12 +121,12 @@ async def refresh_dashboard_data(current_user: User = Depends(get_current_user))
     """
     # In a real implementation, this would trigger background tasks
     # to update data sources
-    
+
     # For now, just return a success message
     return {
         "status": "success",
         "message": "Data refresh initiated",
-        "timestamp": datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
+        "timestamp": datetime.now(UTC).replace(tzinfo=None).isoformat()
     }
 
 
@@ -138,7 +137,7 @@ async def get_recommendations(farm_id: str, current_user: User = Depends(get_cur
     """
     # In a real implementation, this would run AI models
     # with farm-specific data to generate recommendations
-    
+
     # For now, return mock recommendations
     return {
         "farm_id": farm_id,
@@ -147,5 +146,5 @@ async def get_recommendations(farm_id: str, current_user: User = Depends(get_cur
             "Adjust irrigation schedule based on forecasted rain",
             "Consider harvesting in 2 weeks for optimal yield"
         ],
-        "updated_at": datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
+        "updated_at": datetime.now(UTC).replace(tzinfo=None).isoformat()
     }

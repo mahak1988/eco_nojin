@@ -1,6 +1,6 @@
 """Phase 5 router — economy / livelihood cost-benefit analysis."""
 
-from typing import Any, Dict, Optional
+from typing import Any
 
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
@@ -18,11 +18,11 @@ class EconomyRequest(BaseModel):
     slope_pct: float = Field(default=10.0, gt=0)
     discount_rate: float = Field(default=0.10, ge=0, le=0.5)
     horizon_years: int = Field(default=20, ge=1, le=50)
-    prices: Optional[Dict[str, float]] = None
+    prices: dict[str, float] | None = None
 
 
 @router.post("/")
-async def run_economy(req: EconomyRequest) -> Dict[str, Any]:
+async def run_economy(req: EconomyRequest) -> dict[str, Any]:
     """Cost-benefit + livelihood index from the REAL chain (2 runs: baseline vs intervention)."""
     result = await EconomyMotor().arun(
         lat=req.lat,

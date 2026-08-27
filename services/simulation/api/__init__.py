@@ -1,15 +1,22 @@
 """Simulation FastAPI router"""
 from typing import Dict, List
+
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.config import get_db
-from services.simulation.service import SimulationService
 from services.simulation.schemas import (
-    SimulationContext, SimulationResult, SimulationType,
-    SoilProfile, WeatherData, CropParameters, WindbreakConfig, MultiLayerConfig,
+    CropParameters,
+    MultiLayerConfig,
+    SimulationContext,
+    SimulationResult,
+    SimulationType,
+    SoilProfile,
+    WeatherData,
+    WindbreakConfig,
 )
+from services.simulation.service import SimulationService
 
 router = APIRouter(prefix="/simulation", tags=["Simulation"])
 
@@ -17,7 +24,7 @@ class RunSimulationRequest(BaseModel):
     simulation_type: SimulationType
     context: SimulationContext
 
-@router.get("/simulators", response_model=List[Dict])
+@router.get("/simulators", response_model=list[dict])
 async def list_simulators():
     """لیست تمام شبیه‌سازهای موجود"""
     service = SimulationService()
@@ -29,7 +36,7 @@ async def run_simulation(req: RunSimulationRequest):
     service = SimulationService()
     return await service.run_simulation(req.simulation_type, req.context)
 
-@router.post("/comprehensive", response_model=Dict[str, SimulationResult])
+@router.post("/comprehensive", response_model=dict[str, SimulationResult])
 async def run_comprehensive(ctx: SimulationContext):
     """اجرای تمام شبیه‌سازی‌های مرتبط"""
     service = SimulationService()
@@ -63,4 +70,3 @@ async def water_budget(ctx: SimulationContext):
     infiltration = await service.run_simulation(SimulationType.INFILTRATION, ctx)
     watershed = await service.run_simulation(SimulationType.WATERSHED, ctx)
     return {"infiltration": infiltration, "watershed": watershed}
-    

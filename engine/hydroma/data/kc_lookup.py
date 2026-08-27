@@ -1,6 +1,7 @@
 """Simple Kc lookup table."""
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
 
 Kc_DATA_PATH = Path(__file__).parent / "kc_data.csv"
 

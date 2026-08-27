@@ -26,26 +26,26 @@ __version__ = "1.0.0"
 __author__ = "Eco Nojin Team"
 
 # Import main components
-from .taxonomy import classify_usda_texture, get_soil_taxonomy
-from .chemistry import calculate_cec, calculate_esp, calculate_sar, calculate_ph_buffer
-from .water_retention import van_genuchten_retention, van_genuchten_conductivity
-from .health import calculate_soil_health_index, assess_soil_quality
-from .salinity import classify_salinity, calculate_leaching_requirement
+from .chemistry import calculate_cec, calculate_esp, calculate_ph_buffer, calculate_sar
+from .health import assess_soil_quality, calculate_soil_health_index
 from .recommendations import generate_recommendations
+from .salinity import calculate_leaching_requirement, classify_salinity
+from .taxonomy import classify_usda_texture, get_soil_taxonomy
+from .water_retention import van_genuchten_conductivity, van_genuchten_retention
 
 # Module exports
 __all__ = [
-    'classify_usda_texture',
-    'get_soil_taxonomy',
+    'assess_soil_quality',
     'calculate_cec',
     'calculate_esp',
-    'calculate_sar',
-    'calculate_ph_buffer',
-    'van_genuchten_retention',
-    'van_genuchten_conductivity',
-    'calculate_soil_health_index',
-    'assess_soil_quality',
-    'classify_salinity',
     'calculate_leaching_requirement',
+    'calculate_ph_buffer',
+    'calculate_sar',
+    'calculate_soil_health_index',
+    'classify_salinity',
+    'classify_usda_texture',
     'generate_recommendations',
+    'get_soil_taxonomy',
+    'van_genuchten_conductivity',
+    'van_genuchten_retention',
 ]

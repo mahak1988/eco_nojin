@@ -7,7 +7,7 @@ try:
 
     _cpp = cpp_bindings.get_module()
     _available = _cpp is not None
-except Exception as e:
+except Exception:
     _cpp = None
     _available = False
 

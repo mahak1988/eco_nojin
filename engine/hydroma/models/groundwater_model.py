@@ -2,10 +2,9 @@
 from __future__ import annotations
 
 import logging
-from typing import Literal, Any # Added 'Any'
+from typing import Any, Literal  # Added 'Any'
 
 import numpy as np
-import xarray as xr
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
@@ -31,16 +30,15 @@ class GroundwaterOutput(BaseModel):
 
 class GroundwaterModel:
     """Provides basic groundwater analysis tools."""
-    
+
     def __init__(self):
         pass
 
     def _theis_solution(self, input_data: GroundwaterInput) -> float:
         """Calculates drawdown using Theis non-equilibrium solution."""
         logger.info("Calculating drawdown using Theis solution...")
-        from scipy.special import expi # Import here to avoid hard dependency
-        import numpy as np
-        
+        from scipy.special import expi  # Import here to avoid hard dependency
+
         T = input_data.transmissivity_m2day
         S = input_data.storativity
         Q = input_data.pumping_rate_m3day

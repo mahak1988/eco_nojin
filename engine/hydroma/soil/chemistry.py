@@ -12,14 +12,14 @@ References:
         15th Edition, Pearson, 2017
     [2] USDA, "Soil Quality Indicators", 2023
 """
-from typing import Dict, Optional, Any
-import math
 import logging
+import math
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-def calculate_cec(clay: float, organic_matter: float, ph: float) -> Dict:
+def calculate_cec(clay: float, organic_matter: float, ph: float) -> dict:
     """Calculate Cation Exchange Capacity (CEC).
     
     CEC is the total capacity of soil to hold exchangeable cations.
@@ -54,25 +54,25 @@ def calculate_cec(clay: float, organic_matter: float, ph: float) -> Dict:
         raise ValueError("Organic matter must be between 0 and 100")
     if not 0 <= ph <= 14:
         raise ValueError("pH must be between 0 and 14")
-    
+
     # CEC contribution from clay (meq/100g)
     # Average clay CEC: 0.5 meq/100g per % clay
     clay_cec = clay * 0.5
-    
+
     # CEC contribution from organic matter
     # OM has very high CEC: ~200 meq/100g, but only 2% of soil
     # So approximately 2.0 meq/100g per % OM
     om_cec = organic_matter * 2.0
-    
+
     # pH factor (higher pH = more negative charges)
     ph_factor = max(0, (ph - 5.0) * 0.5)
-    
+
     # Total CEC
     cec = clay_cec + om_cec + ph_factor
-    
+
     # Interpretation
     interpretation = _interpret_cec(cec)
-    
+
     return {
         'cec': round(cec, 2),
         'unit': 'meq/100g',
@@ -85,7 +85,7 @@ def calculate_cec(clay: float, organic_matter: float, ph: float) -> Dict:
     }
 
 
-def _interpret_cec(cec: float) -> Dict:
+def _interpret_cec(cec: float) -> dict:
     """Interpret CEC value."""
     if cec < 5:
         return {
@@ -124,7 +124,7 @@ def _interpret_cec(cec: float) -> Dict:
         }
 
 
-def calculate_esp(exchangeable_na: float, cec: float) -> Dict:
+def calculate_esp(exchangeable_na: float, cec: float) -> dict:
     """Calculate Exchangeable Sodium Percentage (ESP).
     
     ESP indicates the proportion of sodium on the exchange complex.
@@ -147,9 +147,9 @@ def calculate_esp(exchangeable_na: float, cec: float) -> Dict:
         raise ValueError("CEC must be positive")
     if exchangeable_na < 0:
         raise ValueError("Exchangeable sodium cannot be negative")
-    
+
     esp = (exchangeable_na / cec) * 100
-    
+
     # Classification
     if esp < 5:
         classification = 'normal'
@@ -163,7 +163,7 @@ def calculate_esp(exchangeable_na: float, cec: float) -> Dict:
     else:
         classification = 'sodic'
         impact = 'Severe structural problems, poor infiltration'
-    
+
     return {
         'esp': round(esp, 2),
         'unit': '%',
@@ -174,7 +174,7 @@ def calculate_esp(exchangeable_na: float, cec: float) -> Dict:
     }
 
 
-def calculate_sar(na: float, ca: float, mg: float) -> Dict:
+def calculate_sar(na: float, ca: float, mg: float) -> dict:
     """Calculate Sodium Adsorption Ratio (SAR).
     
     SAR is used to assess sodium hazard in irrigation water.
@@ -195,14 +195,14 @@ def calculate_sar(na: float, ca: float, mg: float) -> Dict:
     """
     if na < 0 or ca < 0 or mg < 0:
         raise ValueError("Ion concentrations cannot be negative")
-    
+
     denominator = math.sqrt((ca + mg) / 2)
-    
+
     if denominator == 0:
         raise ValueError("Calcium + Magnesium cannot be zero")
-    
+
     sar = na / denominator
-    
+
     # Classification
     if sar < 3:
         classification = 'low_sodium'
@@ -216,7 +216,7 @@ def calculate_sar(na: float, ca: float, mg: float) -> Dict:
     else:
         classification = 'very_high_sodium'
         hazard = 'Severe sodium hazard'
-    
+
     return {
         'sar': round(sar, 2),
         'unit': '(meq/L)^0.5',
@@ -226,7 +226,7 @@ def calculate_sar(na: float, ca: float, mg: float) -> Dict:
     }
 
 
-def calculate_ph_buffer(ph: float, buffer_capacity: float = 0.5) -> Dict[str, Any]:
+def calculate_ph_buffer(ph: float, buffer_capacity: float = 0.5) -> dict[str, Any]:
     """
     Calculate pH buffer requirements for soil.
     
@@ -240,15 +240,15 @@ def calculate_ph_buffer(ph: float, buffer_capacity: float = 0.5) -> Dict[str, An
     # This is a universally accepted agronomic constant, not a configuration value
     OPTIMAL_SOIL_PH = 6.5
     target_ph = OPTIMAL_SOIL_PH
-    
+
     if ph < target_ph:
         # Lime needed
         ph_deficit = target_ph - ph
-        
+
         # Estimate lime requirement (tons/ha)
         # Rule of thumb: 1 ton lime raises pH by 0.5-1.0
         lime_requirement = ph_deficit * 2  # Conservative estimate
-        
+
         return {
             'current_ph': ph,
             'target_ph': target_ph,
@@ -260,10 +260,10 @@ def calculate_ph_buffer(ph: float, buffer_capacity: float = 0.5) -> Dict[str, An
     elif ph > 7.5:
         # Sulfur needed
         ph_excess = ph - 7.0
-        
+
         # Estimate sulfur requirement (kg/ha)
         sulfur_requirement = ph_excess * 100
-        
+
         return {
             'current_ph': ph,
             'target_ph': 7.0,

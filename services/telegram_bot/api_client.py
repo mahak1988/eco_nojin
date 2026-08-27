@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 """HTTP client for Eco Nojin Platform API."""
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 import httpx
 
@@ -14,18 +13,18 @@ logger = logging.getLogger("econojin.bot.api")
 
 class PlatformAPIClient:
     """Async client for platform API."""
-    
+
     def __init__(self):
         self.base_url = config.API_BASE_URL
         self.timeout = config.REQUEST_TIMEOUT
-    
+
     async def analyze_land(
         self,
         name: str,
         latitude: float,
         longitude: float,
         area_ha: float,
-    ) -> Optional[Dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         """Call /api/v1/platform/analyze endpoint."""
         url = f"{self.base_url}/api/v1/platform/analyze"
         payload = {
@@ -34,7 +33,7 @@ class PlatformAPIClient:
             "longitude": longitude,
             "area_ha": area_ha,
         }
-        
+
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 response = await client.post(url, json=payload)
@@ -49,7 +48,7 @@ class PlatformAPIClient:
         except Exception as e:
             logger.error(f"API request failed: {e}")
             return None
-    
+
     async def health_check(self) -> bool:
         """Check if API is healthy."""
         url = f"{self.base_url}/api/v1/platform/health"
@@ -59,8 +58,8 @@ class PlatformAPIClient:
                 return response.status_code == 200
         except Exception:
             return False
-    
-    async def list_landscapes(self) -> Optional[Dict[str, Any]]:
+
+    async def list_landscapes(self) -> dict[str, Any] | None:
         """List all landscapes."""
         url = f"{self.base_url}/api/v1/platform/landscapes"
         try:
@@ -71,8 +70,8 @@ class PlatformAPIClient:
         except Exception as e:
             logger.error(f"List landscapes failed: {e}")
             return None
-    
-    async def get_stats(self) -> Optional[Dict[str, Any]]:
+
+    async def get_stats(self) -> dict[str, Any] | None:
         """Get platform statistics."""
         url = f"{self.base_url}/api/v1/platform/stats"
         try:

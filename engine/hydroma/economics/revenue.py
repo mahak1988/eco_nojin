@@ -4,8 +4,7 @@ Economic Engine - Revenue Module.
 Calculates various types of revenue streams including agricultural yield,
 carbon credits, and other ecosystem services.
 """
-from typing import Dict, Any, List
-from datetime import date
+from typing import Any
 
 
 def calculate_agricultural_revenue(
@@ -14,7 +13,7 @@ def calculate_agricultural_revenue(
     market_price_per_ton: float,
     quality_factor: float = 1.0, # Premium for high quality produce
     market_access_factor: float = 1.0 # Discount for poor access
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Calculates revenue from agricultural produce sales.
 
@@ -49,7 +48,7 @@ def calculate_carbon_credit_revenue(
     carbon_sequestered_tonnes: float,
     carbon_price_per_tonne: float,
     verification_factor: float = 1.0 # Reduction due to verification/crediting rules
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Calculates revenue from selling carbon credits.
 
@@ -80,7 +79,7 @@ def calculate_ecosystem_service_revenue(
     service_value_per_unit: float,
     service_units_provided: float,
     sustainability_premium: float = 0.0 # Additional value for certified sustainable practices
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Calculates revenue from other ecosystem services (e.g., pollination, water filtration).
 
@@ -107,7 +106,7 @@ def calculate_ecosystem_service_revenue(
     }
 
 
-def aggregate_revenue_streams(revenue_streams: List[Dict[str, Any]]) -> Dict[str, Any]:
+def aggregate_revenue_streams(revenue_streams: list[dict[str, Any]]) -> dict[str, Any]:
     """
     Aggregates multiple revenue streams into a total.
 

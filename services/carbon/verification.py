@@ -16,12 +16,12 @@ checks are returned verbatim (no silent approval).
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 MIN_COMMITMENT_YEARS = 20
 
 
-def check_baseline(baseline_activity: str) -> Dict[str, Any]:
+def check_baseline(baseline_activity: str) -> dict[str, Any]:
     """Baseline: a real pre-project activity must be declared."""
     ok = bool(baseline_activity and baseline_activity.strip())
     return {
@@ -35,7 +35,7 @@ def check_baseline(baseline_activity: str) -> Dict[str, Any]:
     }
 
 
-def check_additionality(has_financing: bool, would_happen_without_project: bool) -> Dict[str, Any]:
+def check_additionality(has_financing: bool, would_happen_without_project: bool) -> dict[str, Any]:
     """Additionality: project must not be business-as-usual."""
     ok = (not has_financing) and (not would_happen_without_project)
     return {
@@ -49,7 +49,7 @@ def check_additionality(has_financing: bool, would_happen_without_project: bool)
     }
 
 
-def check_leakage(activity_displacement: bool, market_leakage: bool) -> Dict[str, Any]:
+def check_leakage(activity_displacement: bool, market_leakage: bool) -> dict[str, Any]:
     """Leakage: no significant displacement of emissions."""
     ok = (not activity_displacement) and (not market_leakage)
     return {
@@ -63,7 +63,7 @@ def check_leakage(activity_displacement: bool, market_leakage: bool) -> Dict[str
     }
 
 
-def check_permanence(commitment_years: int, risk_flag: bool) -> Dict[str, Any]:
+def check_permanence(commitment_years: int, risk_flag: bool) -> dict[str, Any]:
     """Permanence: commitment period >= MIN + risk flag."""
     ok = commitment_years >= MIN_COMMITMENT_YEARS and not risk_flag
     return {
@@ -87,9 +87,9 @@ def run_verification(
     market_leakage: bool = False,
     commitment_years: int = 30,
     risk_flag: bool = False,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Run all four methodology checks; honest pass/fail with details."""
-    checks: List[Dict[str, Any]] = [
+    checks: list[dict[str, Any]] = [
         check_baseline(baseline_activity),
         check_additionality(has_financing, would_happen_without_project),
         check_leakage(activity_displacement, market_leakage),

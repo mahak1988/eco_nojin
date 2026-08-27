@@ -10,9 +10,9 @@ real optimisation, no fabricated results.
 from __future__ import annotations
 
 import math
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-PARAM_BOUNDS: Dict[str, Dict[str, float]] = {
+PARAM_BOUNDS: dict[str, dict[str, float]] = {
     "cn": {"min": 35.0, "max": 98.0, "default": 72.0},       # curve number
     "ks": {"min": 0.5, "max": 60.0, "default": 10.0},        # saturated hydraulic conductivity mm/h
     "awc": {"min": 0.05, "max": 0.45, "default": 0.2},       # available water capacity (vol/vol)
@@ -21,7 +21,7 @@ PARAM_BOUNDS: Dict[str, Dict[str, float]] = {
 }
 
 
-def _rmse(observed: List[float], modelled: List[float]) -> float:
+def _rmse(observed: list[float], modelled: list[float]) -> float:
     if not observed or len(observed) != len(modelled):
         return float("inf")
     n = len(observed)
@@ -31,7 +31,7 @@ def _rmse(observed: List[float], modelled: List[float]) -> float:
     return math.sqrt(s / n)
 
 
-def _model(params: Dict[str, float], keys: List[str], modelled: List[float]) -> List[float]:
+def _model(params: dict[str, float], keys: list[str], modelled: list[float]) -> list[float]:
     """Multiplicative sensitivity surrogate over the MODELLED series: each
     chain output is scaled by the ratio of the current parameter to its
     default. The real chain re-runs with the fitted parameters afterwards."""
@@ -42,11 +42,11 @@ def _model(params: Dict[str, float], keys: List[str], modelled: List[float]) -> 
 
 
 def run_calibration(
-    observed: Optional[List[float]] = None,
-    modelled: Optional[List[float]] = None,
-    calibrate: Optional[List[str]] = None,
+    observed: list[float] | None = None,
+    modelled: list[float] | None = None,
+    calibrate: list[str] | None = None,
     iterations: int = 40,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     keys = [k for k in (calibrate or ["cn", "ks", "awc", "c_factor", "p_factor"]) if k in PARAM_BOUNDS]
     if not observed or len(observed) < 3:
         return {

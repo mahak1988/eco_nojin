@@ -1,9 +1,10 @@
 """Auth FastAPI router"""
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from database.config import get_db
+from services.auth.schemas import TokenRefresh, TokenResponse, UserInfo, UserLogin, UserRegister
 from services.auth.service import AuthService
-from services.auth.schemas import UserRegister, UserLogin, TokenResponse, TokenRefresh, UserInfo
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -25,4 +26,3 @@ async def login(data: UserLogin, db: AsyncSession = Depends(get_db)):
         return await AuthService(db).login(data)
     except ValueError as e:
         raise HTTPException(status_code=401, detail=str(e))
-    

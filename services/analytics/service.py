@@ -1,21 +1,25 @@
 """AnalyticsService"""
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
-from typing import Optional
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
 
-from services.analytics.schemas import (
-    SalesSummary, TourismMetrics, LandscapeMetrics,
-    AnalyticsDashboard, PeriodType,
-)
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from services.analytics.repository import AnalyticsRepository
+from services.analytics.schemas import (
+    AnalyticsDashboard,
+    LandscapeMetrics,
+    PeriodType,
+    SalesSummary,
+    TourismMetrics,
+)
+
 
 class AnalyticsService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.repo = AnalyticsRepository(db)
-    
+
     def _period_delta(self, period: PeriodType) -> timedelta:
         return {
             PeriodType.DAY: timedelta(days=1),
@@ -24,13 +28,13 @@ class AnalyticsService:
             PeriodType.QUARTER: timedelta(days=90),
             PeriodType.YEAR: timedelta(days=365),
         }[period]
-    
+
     async def aggregate_sales(
-        self, village_id: Optional[str] = None, period: PeriodType = PeriodType.MONTH,
+        self, village_id: str | None = None, period: PeriodType = PeriodType.MONTH,
     ) -> SalesSummary:
         try:
             from services.marketplace.models import MarketplaceOrder
-            since = datetime.now(timezone.utc) - self._period_delta(period)
+            since = datetime.now(UTC) - self._period_delta(period)
             stmt = select(
                 func.count(MarketplaceOrder.id).label("total_orders"),
                 func.coalesce(func.sum(MarketplaceOrder.total), 0).label("total_revenue"),
@@ -48,13 +52,13 @@ class AnalyticsService:
             )
         except ImportError:
             return SalesSummary(period=period)
-    
+
     async def aggregate_tourism(
-        self, village_id: Optional[str] = None, period: PeriodType = PeriodType.MONTH,
+        self, village_id: str | None = None, period: PeriodType = PeriodType.MONTH,
     ) -> TourismMetrics:
         try:
             from services.tourism.models import TourismBooking
-            since = datetime.now(timezone.utc) - self._period_delta(period)
+            since = datetime.now(UTC) - self._period_delta(period)
             stmt = select(
                 func.count(TourismBooking.id).label("total_bookings"),
                 func.coalesce(func.sum(TourismBooking.participants_count), 0).label("total_guests"),
@@ -71,11 +75,13 @@ class AnalyticsService:
             )
         except ImportError:
             return TourismMetrics()
-    
+
     async def aggregate_landscape(self) -> LandscapeMetrics:
         try:
             from services.landscape.models import (
-                LandscapeVillage, LandscapeGovernanceMember, LandscapeFund
+                LandscapeFund,
+                LandscapeGovernanceMember,
+                LandscapeVillage,
             )
             v = await self.db.execute(select(func.count(LandscapeVillage.id)).where(LandscapeVillage.is_active == True))
             m = await self.db.execute(select(func.count(LandscapeGovernanceMember.id)))
@@ -87,9 +93,9 @@ class AnalyticsService:
             )
         except ImportError:
             return LandscapeMetrics()
-    
+
     async def get_dashboard(
-        self, village_id: Optional[str] = None, period: PeriodType = PeriodType.MONTH,
+        self, village_id: str | None = None, period: PeriodType = PeriodType.MONTH,
     ) -> AnalyticsDashboard:
         sales = await self.aggregate_sales(village_id, period)
         tourism = await self.aggregate_tourism(village_id, period)
@@ -97,14 +103,13 @@ class AnalyticsService:
         dashboard = AnalyticsDashboard(
             village_id=village_id, period=period,
             sales=sales, tourism=tourism, landscape=landscape,
-            generated_at=datetime.now(timezone.utc),
+            generated_at=datetime.now(UTC),
         )
         await self.repo.save_snapshot(
             snapshot_type="dashboard",
-            period_start=datetime.now(timezone.utc) - self._period_delta(period),
-            period_end=datetime.now(timezone.utc),
+            period_start=datetime.now(UTC) - self._period_delta(period),
+            period_end=datetime.now(UTC),
             data=dashboard.model_dump(mode="json"),
             village_id=village_id,
         )
         return dashboard
-    

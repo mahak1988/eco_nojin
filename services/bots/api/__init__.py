@@ -1,12 +1,16 @@
 """Bots FastAPI router"""
-from typing import Optional, List
+from typing import List, Optional
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.config import get_db
 from services.bots.unified_service import (
-    UnifiedBotService, BotMessage, BotPlatform, MessageType,
+    BotMessage,
+    BotPlatform,
+    MessageType,
+    UnifiedBotService,
 )
 
 router = APIRouter(prefix="/bots", tags=["Bots"])
@@ -20,11 +24,11 @@ class SendMessageRequest(BaseModel):
 class BroadcastRequest(BaseModel):
     chat_id: str
     content: str
-    platforms: Optional[List[str]] = None
+    platforms: list[str] | None = None
 
 class AdviceRequest(BaseModel):
     question: str
-    village_id: Optional[str] = None
+    village_id: str | None = None
 
 @router.post("/send")
 async def send_message(req: SendMessageRequest, db: AsyncSession = Depends(get_db)):
@@ -59,4 +63,3 @@ async def get_advice(req: AdviceRequest, db: AsyncSession = Depends(get_db)):
     service = UnifiedBotService(db)
     advice = await service.get_advice(req.question, req.village_id)
     return {"advice": advice}
-    

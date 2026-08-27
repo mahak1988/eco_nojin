@@ -1,14 +1,14 @@
 """Phase 8-B routers — drought (SPI/SPEI), CMIP6 climate scenarios,
 auto-calibration. All free, no registration (Open-Meteo / scipy)."""
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
-from services.scientific_motors.drought_motor import run_drought
-from services.scientific_motors.climate_motor import run_climate
 from services.scientific_motors.calibration import run_calibration
+from services.scientific_motors.climate_motor import run_climate
+from services.scientific_motors.drought_motor import run_drought
 
 router = APIRouter(prefix="/api/v1/motors", tags=["phase8b"])
 
@@ -26,14 +26,14 @@ class ClimateRequest(BaseModel):
 
 
 class CalibrateRequest(BaseModel):
-    observed: Optional[List[float]] = None
-    modelled: Optional[List[float]] = None
-    calibrate: Optional[List[str]] = None
+    observed: list[float] | None = None
+    modelled: list[float] | None = None
+    calibrate: list[str] | None = None
     iterations: int = Field(default=40, ge=5, le=200)
 
 
 @router.post("/drought")
-async def drought(req: DroughtRequest) -> Dict[str, Any]:
+async def drought(req: DroughtRequest) -> dict[str, Any]:
     """SPI/SPEI from real ERA5 data (Open-Meteo)."""
     try:
         return run_drought(req.lat, req.lon, req.timescale_months)
@@ -42,7 +42,7 @@ async def drought(req: DroughtRequest) -> Dict[str, Any]:
 
 
 @router.post("/climate")
-async def climate(req: ClimateRequest) -> Dict[str, Any]:
+async def climate(req: ClimateRequest) -> dict[str, Any]:
     """CMIP6 (SSP) 30-year scenario vs ERA5 baseline (Open-Meteo Climate API)."""
     try:
         return run_climate(req.lat, req.lon, req.scenario)
@@ -51,7 +51,7 @@ async def climate(req: ClimateRequest) -> Dict[str, Any]:
 
 
 @router.post("/calibrate")
-async def calibrate(req: CalibrateRequest) -> Dict[str, Any]:
+async def calibrate(req: CalibrateRequest) -> dict[str, Any]:
     """Auto-calibration of CN/Ks/AWC/C-P factors from observed feedback."""
     try:
         return run_calibration(req.observed, req.modelled, req.calibrate, req.iterations)

@@ -1,8 +1,10 @@
 """تحلیل توپوگرافی ساده (محاسبه شیب و جهت) با NumPy."""
-import numpy as np
-from typing import Any, Dict
+from typing import Any
 
-def calculate_terrain_metrics(dem_array: Any) -> Dict[str, Any]:
+import numpy as np
+
+
+def calculate_terrain_metrics(dem_array: Any) -> dict[str, Any]:
     """محاسبه معیارهای توپوگرافی از DEM."""
     dem = np.asarray(dem_array, dtype=float)
     if dem.size == 0:
@@ -29,5 +31,5 @@ class TerrainAnalyzer:
     def __init__(self):
         pass
 
-    def analyze(self, dem_array: Any) -> Dict[str, Any]:
+    def analyze(self, dem_array: Any) -> dict[str, Any]:
         return calculate_terrain_metrics(dem_array)

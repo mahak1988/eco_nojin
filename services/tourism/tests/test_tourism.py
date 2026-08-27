@@ -1,6 +1,5 @@
 """تست‌های اولیه برای ماژول tourism"""
 
-import pytest
 
 
 class TestTourismModels:

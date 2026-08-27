@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import hashlib
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 import rioxarray  # CRITICAL: Must be at module level to register .rio accessor

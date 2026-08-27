@@ -7,7 +7,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Dict, Optional
 
 
 class KoppenClimate(Enum):
@@ -92,7 +91,7 @@ class SoilRequirement:
     ph_opt_min: float
     ph_opt_max: float
     ph_max: float
-    preferred_texture: List[int]  # USDA 1-12
+    preferred_texture: list[int]  # USDA 1-12
     salinity_tolerance: SalinityTolerance
     min_depth_cm: float
 
@@ -123,28 +122,28 @@ class CropProfile:
     scientific_name: str
     family: CropFamily
     growing_days: int
-    planting_months: List[int]  # 1-12 (ماه‌های کاشت جهانی)
-    
+    planting_months: list[int]  # 1-12 (ماه‌های کاشت جهانی)
+
     water: WaterRequirement
     soil: SoilRequirement
     temperature: TemperatureRequirement
-    
+
     # سازگاری با Köppen
-    suitable_climates: List[KoppenClimate]
+    suitable_climates: list[KoppenClimate]
     max_slope_percent: float
-    suitable_lcc_classes: List[int]
+    suitable_lcc_classes: list[int]
     altitude_range_m: tuple  # (min, max)
-    
+
     economics: EconomicData
-    rotation_compatible: List[str]
-    
+    rotation_compatible: list[str]
+
     # توزیع جهانی (به جای استان)
-    major_producers: List[str]  # کشورهای تولیدکننده اصلی
-    
+    major_producers: list[str]  # کشورهای تولیدکننده اصلی
+
     # کاربردها
-    uses: List[str]  # human_food, animal_feed, industrial, medicinal
+    uses: list[str]  # human_food, animal_feed, industrial, medicinal
     shelf_life_days: int
-    
+
     notes: str = ""
 
 
@@ -152,7 +151,7 @@ class CropProfile:
 # Global Crop Database (30 representative crops)
 # ============================================================
 
-CROP_DATABASE: Dict[str, CropProfile] = {
+CROP_DATABASE: dict[str, CropProfile] = {
     # ===== CEREALS =====
     "wheat": CropProfile(
         id="wheat", name_fa="گندم", name_en="Wheat",
@@ -741,33 +740,33 @@ CROP_DATABASE: Dict[str, CropProfile] = {
 # Query Functions
 # ============================================================
 
-def get_crop_by_id(crop_id: str) -> Optional[CropProfile]:
+def get_crop_by_id(crop_id: str) -> CropProfile | None:
     return CROP_DATABASE.get(crop_id)
 
 
-def get_all_crops() -> List[CropProfile]:
+def get_all_crops() -> list[CropProfile]:
     return list(CROP_DATABASE.values())
 
 
-def filter_by_climate(climate: KoppenClimate) -> List[CropProfile]:
+def filter_by_climate(climate: KoppenClimate) -> list[CropProfile]:
     return [c for c in CROP_DATABASE.values() if climate in c.suitable_climates]
 
 
-def filter_by_family(family: CropFamily) -> List[CropProfile]:
+def filter_by_family(family: CropFamily) -> list[CropProfile]:
     return [c for c in CROP_DATABASE.values() if c.family == family]
 
 
-def filter_drought_tolerant() -> List[CropProfile]:
+def filter_drought_tolerant() -> list[CropProfile]:
     return [c for c in CROP_DATABASE.values()
             if c.water.drought_tolerance in (WaterTolerance.HIGH, WaterTolerance.VERY_HIGH)]
 
 
-def filter_salinity_tolerant() -> List[CropProfile]:
+def filter_salinity_tolerant() -> list[CropProfile]:
     return [c for c in CROP_DATABASE.values()
             if c.soil.salinity_tolerance in (SalinityTolerance.TOLERANT, SalinityTolerance.HIGHLY_TOLERANT)]
 
 
-def get_crop_statistics() -> Dict:
+def get_crop_statistics() -> dict:
     crops = list(CROP_DATABASE.values())
     return {
         "total_crops": len(crops),

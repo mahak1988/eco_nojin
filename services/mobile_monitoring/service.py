@@ -4,18 +4,15 @@ Mobile Monitoring Service.
 Handles data ingestion from mobile apps, including photos, GPS locations,
 and user-submitted observations.
 """
-import logging
-from datetime import datetime
-from typing import Dict, Any, List
-from dataclasses import dataclass
-from enum import Enum
 import hashlib
+import logging
+from dataclasses import dataclass
+from datetime import datetime
+from enum import Enum
+from typing import Any
 
-from database.models import MonitoringDataDB
 from database.config import SessionLocal
-from engine.hydroma.soil.health import calculate_soil_health_index
-from engine.hydroma.soil.moisture import estimate_soil_moisture
-from engine.hydroma.water.quality import assess_water_quality
+from database.models import MonitoringDataDB
 
 logger = logging.getLogger(__name__)
 
@@ -33,15 +30,15 @@ class MobileReportType(Enum):
 class MobileMonitoringReport:
     """Represents a single mobile monitoring submission."""
     project_id: str
-    location: Dict[str, float]  # {"lat": float, "lon": float}
+    location: dict[str, float]  # {"lat": float, "lon": float}
     report_timestamp: datetime
     report_type: MobileReportType
     user_id: str
-    photo_urls: List[str]  # List of image URLs
+    photo_urls: list[str]  # List of image URLs
     text_description: str
     geo_verification_confirmed: bool  # e.g., via GPS lock, photo metadata
     quality_flag: str = "ok"  # "ok", "suspect", "unverified"
-    additional_data: Dict[str, Any] = None  # Any structured data submitted alongside
+    additional_data: dict[str, Any] = None  # Any structured data submitted alongside
 
 
 class MobileMonitoringService:
@@ -106,7 +103,7 @@ class MobileMonitoringService:
             return False
         return True
 
-    def _process_data(self, report: MobileMonitoringReport) -> Dict[str, Any]:
+    def _process_data(self, report: MobileMonitoringReport) -> dict[str, Any]:
         """Processes raw mobile data, e.g., generating hashes for images."""
         processed = {
             "report_type": report.report_type.value,

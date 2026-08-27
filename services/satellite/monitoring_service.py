@@ -1,9 +1,11 @@
 """SatelliteMonitoringService - unified satellite data access"""
-from datetime import datetime, timezone, timedelta
-from typing import Optional, Dict, Any, List
 from dataclasses import dataclass, field
+from datetime import UTC, datetime, timedelta
 from enum import Enum
+from typing import Any
+
 from sqlalchemy.ext.asyncio import AsyncSession
+
 
 class SatelliteSource(str, Enum):
     SENTINEL_2 = "sentinel_2"
@@ -23,8 +25,8 @@ class SatelliteScene:
     source: SatelliteSource
     capture_date: datetime
     cloud_cover: float
-    bands: Dict[str, Any] = field(default_factory=dict)
-    bbox: Optional[Dict[str, float]] = None
+    bands: dict[str, Any] = field(default_factory=dict)
+    bbox: dict[str, float] | None = None
 
 @dataclass
 class VegetationIndex:
@@ -45,36 +47,36 @@ class SatelliteMonitoringService:
     - تشخیص تغییرات زمانی
     - یکپارچه‌سازی با Hydroma Engine
     """
-    
+
     def __init__(self, db: AsyncSession):
         self.db = db
-    
+
     async def get_latest_scene(
-        self, bbox: Dict[str, float], source: SatelliteSource = SatelliteSource.SENTINEL_2,
+        self, bbox: dict[str, float], source: SatelliteSource = SatelliteSource.SENTINEL_2,
         max_cloud_cover: float = 20.0,
-    ) -> Optional[SatelliteScene]:
+    ) -> SatelliteScene | None:
         """دریافت آخرین تصویر ماهواره‌ای برای منطقه مشخص"""
         try:
             from services.satellite.copernicus import CdsClient
             client = CdsClient()
             # شبیه‌سازی - در production باید به CDS API متصل شود
             return SatelliteScene(
-                scene_id=f"scene_{datetime.now(timezone.utc).timestamp():.0f}",
+                scene_id=f"scene_{datetime.now(UTC).timestamp():.0f}",
                 source=source,
-                capture_date=datetime.now(timezone.utc) - timedelta(days=1),
+                capture_date=datetime.now(UTC) - timedelta(days=1),
                 cloud_cover=5.0,
                 bbox=bbox,
             )
         except Exception:
             return None
-    
+
     async def calculate_vegetation_index(
         self, scene: SatelliteScene, index_type: BandType,
-    ) -> Optional[VegetationIndex]:
+    ) -> VegetationIndex | None:
         """محاسبه شاخص گیاهی از تصویر"""
         try:
             from engine.hydroma.crop.ndvi_analysis import calculate_ndvi
-            
+
             if index_type == BandType.NDVI:
                 # شبیه‌سازی
                 value = 0.65  # NDVI معمولی برای گیاهان سالم
@@ -95,18 +97,18 @@ class SatelliteMonitoringService:
                 scene_id=scene.scene_id,
                 captured_at=scene.capture_date,
             )
-    
+
     async def monitor_field(
-        self, village_id: str, field_bbox: Dict[str, float], days_back: int = 30,
-    ) -> Dict[str, Any]:
+        self, village_id: str, field_bbox: dict[str, float], days_back: int = 30,
+    ) -> dict[str, Any]:
         """پایش کامل یک زمین کشاورزی"""
         scene = await self.get_latest_scene(field_bbox)
         if not scene:
             return {"status": "no_data", "message": "No recent satellite data"}
-        
+
         ndvi = await self.calculate_vegetation_index(scene, BandType.NDVI)
         ndwi = await self.calculate_vegetation_index(scene, BandType.NDWI)
-        
+
         return {
             "status": "ok",
             "village_id": village_id,
@@ -119,7 +121,7 @@ class SatelliteMonitoringService:
             },
             "health_status": self._assess_health(ndvi.value if ndvi else 0),
         }
-    
+
     def _assess_health(self, ndvi: float) -> str:
         """ارزیابی سلامت گیاه بر اساس NDVI"""
         if ndvi < 0.2:
@@ -130,10 +132,10 @@ class SatelliteMonitoringService:
             return "good"
         else:
             return "excellent"
-    
+
     async def detect_changes(
-        self, field_bbox: Dict[str, float], days_back: int = 90,
-    ) -> Dict[str, Any]:
+        self, field_bbox: dict[str, float], days_back: int = 90,
+    ) -> dict[str, Any]:
         """تشخیص تغییرات در طول زمان"""
         # شبیه‌سازی تشخیص تغییرات
         return {
@@ -143,4 +145,3 @@ class SatelliteMonitoringService:
             "magnitude": 0.15,
             "confidence": 0.85,
         }
-    

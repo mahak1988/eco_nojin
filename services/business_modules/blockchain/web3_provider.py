@@ -29,7 +29,7 @@ class Web3Provider:
         try:
             from eth_tester import EthereumTester, PyEVMBackend
             from web3.providers.eth_tester import EthereumTesterProvider
-        except ImportError as exc:  # noqa: BLE001 - optional dependency
+        except ImportError as exc:
             raise ImportError(
                 "eth-tester[py-evm] is required for the simulated blockchain. "
                 "Install it with: pip install 'eth-tester[py-evm]'"

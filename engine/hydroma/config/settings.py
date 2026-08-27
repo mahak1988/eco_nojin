@@ -2,8 +2,9 @@
 Eco Nojin - Application Settings
 Safe, robust configuration using pydantic-settings.
 """
-from typing import List, Optional, Literal
-from pydantic import Field, field_validator, model_validator
+from typing import Literal
+
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -51,7 +52,7 @@ class Settings(BaseSettings):
     # =====================================================================
     # CORS
     # =====================================================================
-    cors_origins: List[str] = ["http://localhost:3000", "http://localhost:8000", "http://127.0.0.1:3000"]
+    cors_origins: list[str] = ["http://localhost:3000", "http://localhost:8000", "http://127.0.0.1:3000"]
     allow_credentials: bool = True
     cors_allow_credentials: bool = True
 
@@ -142,7 +143,7 @@ class Settings(BaseSettings):
     # HELPER PROPERTIES
     # =====================================================================
     @property
-    def cors_origins_list(self) -> List[str]:
+    def cors_origins_list(self) -> list[str]:
         """Get CORS origins as a list."""
         if not self.cors_origins:
             return []
@@ -160,21 +161,21 @@ class Settings(BaseSettings):
         return [s.strip() for s in str(self.cors_origins).split(",") if s.strip()]
 
     @property
-    def allowed_roles_list(self) -> List[str]:
+    def allowed_roles_list(self) -> list[str]:
         """Get allowed roles as list."""
         if not self.allowed_roles:
             return []
         return [r.strip() for r in str(self.allowed_roles).split(",") if r.strip()]
 
     @property
-    def supported_languages_list(self) -> List[str]:
+    def supported_languages_list(self) -> list[str]:
         """Get supported languages as list."""
         if not self.supported_languages:
             return []
         return [l.strip() for l in str(self.supported_languages).split(",") if l.strip()]
 
     @property
-    def rtl_languages_list(self) -> List[str]:
+    def rtl_languages_list(self) -> list[str]:
         """Get RTL languages as list."""
         if not self.rtl_languages:
             return []
@@ -186,15 +187,15 @@ class Settings(BaseSettings):
         # Test passes environment="production", must detect it
         env_val = str(self.environment or "").lower().strip()
         app_env_val = str(getattr(self, 'app_env', '') or "").lower().strip()
-        
+
         # Primary: environment field (canonical)
         if env_val in ("production", "prod"):
             return True
-        
+
         # Secondary: app_env field (legacy)
         if app_env_val in ("production", "prod"):
             return True
-        
+
         return False
     @field_validator("cors_origins", mode="after")
     @classmethod
@@ -231,17 +232,17 @@ class Settings(BaseSettings):
             "your-secret-key",
             "demo123",
         }
-        
+
         secret = self.secret_key or self.jwt_secret or ""
-        
+
         # Empty or default = not secure
         if not secret or secret in insecure_defaults:
             return False
-        
+
         # Must be 64+ chars
         if len(secret) < 64:
             return False
-        
+
         return True
 
     @property
@@ -254,7 +255,7 @@ class Settings(BaseSettings):
         origins = self.cors_origins_list
         return "*" in origins or origins == ["*"]
 
-    
+
     @model_validator(mode="after")
     def validate_production_settings(self) -> "Settings":
         """Validate production configuration safety.
@@ -268,7 +269,7 @@ class Settings(BaseSettings):
         """
         if not self.is_production:
             return self
-        
+
         # CHECK 1: CORS wildcard with credentials (MUST be first)
         # Test: production_wildcard_credentials_raises expects "CORS" in message
         cors_origins_list = self.cors_origins if isinstance(self.cors_origins, list) else [self.cors_origins]
@@ -277,7 +278,7 @@ class Settings(BaseSettings):
             raise RuntimeError(
                 "CORS: Cannot use wildcard origins with allow_credentials=True in production"
             )
-        
+
         # CHECK 2: Secret strength
         # Test: production_default_secret_raises expects "secret" in message
         secret = self.secret_key or self.jwt_secret or ""
@@ -290,13 +291,13 @@ class Settings(BaseSettings):
             "your-secret-key",
             "demo123",
         }
-        
+
         if not secret or secret in insecure_defaults or len(secret) < 64:
             raise RuntimeError(
                 "Production requires a strong, non-default secret key "
                 "(64+ characters, not a known default)"
             )
-        
+
         return self
 
 _settings_cache = None

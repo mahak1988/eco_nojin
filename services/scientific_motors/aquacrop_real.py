@@ -19,9 +19,8 @@ error message — no fabricated yield.
 from __future__ import annotations
 
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-import numpy as np
 import pandas as pd
 
 from .base import (
@@ -35,7 +34,7 @@ from .base import (
 )
 
 
-def _first_number(row: Any, column: str) -> Optional[float]:
+def _first_number(row: Any, column: str) -> float | None:
     """Extract a numeric value from a DataFrame row column (defensive)."""
     if column not in row:
         return None
@@ -108,7 +107,7 @@ class RealAquaCropMotor(AbstractScientificMotor):
     def display_name(self) -> str:
         return "AquaCrop 7 (AquaCrop-OSPy)"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [
             MotorInput("weather_df", "timeseries", description="Daily tmin/tmax/precip/reference_et"),
             MotorInput("soil_texture", "scalar", description="SoilGrids texture class"),
@@ -116,7 +115,7 @@ class RealAquaCropMotor(AbstractScientificMotor):
             MotorInput("planting_date", "scalar", description="YYYY-MM-DD"),
         ]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("yield_ton_ha", "scalar", "t/ha", "Dry yield"),
             MotorOutput("biomass_ton_ha", "scalar", "t/ha", "Total above-ground biomass"),
@@ -133,8 +132,8 @@ class RealAquaCropMotor(AbstractScientificMotor):
         planting_date: str,
         sim_start: str,
         sim_end: str,
-        irrigation_threshold_mm: Optional[float],
-    ) -> Dict[str, Any]:
+        irrigation_threshold_mm: float | None,
+    ) -> dict[str, Any]:
         """Blocking AquaCrop run (called inside a worker thread)."""
         aqua_soil = AQUACROP_SOIL_TYPES.get(soil_texture, soil_texture)
         if aqua_soil not in AQUACROP_VALID_SOILS:
@@ -158,7 +157,7 @@ class RealAquaCropMotor(AbstractScientificMotor):
             planting_md = _dt.strptime(planting_date, "%Y-%m-%d").strftime("%m/%d")
         except ValueError:
             planting_md = planting_date  # already MM/DD
-        kwargs: Dict[str, Any] = {"c_name": aqua_crop, "planting_date": planting_md}
+        kwargs: dict[str, Any] = {"c_name": aqua_crop, "planting_date": planting_md}
         crop = Crop(**kwargs)
 
         if irrigation_threshold_mm and irrigation_threshold_mm > 0:
@@ -180,7 +179,7 @@ class RealAquaCropMotor(AbstractScientificMotor):
         )
         model.run_model(till_termination=True, process_outputs=True)
 
-        out: Dict[str, Any] = {"engine": "AquaCrop-OSPy 3.x"}
+        out: dict[str, Any] = {"engine": "AquaCrop-OSPy 3.x"}
         results = model.get_simulation_results()
         if isinstance(results, pd.DataFrame) and len(results):
             row = results.iloc[-1]
@@ -207,7 +206,7 @@ class RealAquaCropMotor(AbstractScientificMotor):
         return out
 
     async def execute(
-        self, inputs: Dict[str, Any], parameters: MotorParameters
+        self, inputs: dict[str, Any], parameters: MotorParameters
     ) -> MotorResult:
         start_time = time.time()
         run_id = f"AQUACROP_REAL_{int(time.time())}"

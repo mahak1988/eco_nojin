@@ -17,7 +17,8 @@ Known Limitations:
 """
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
+
 import numpy as np
 
 
@@ -64,7 +65,7 @@ class KGCv5:
     }
 
     @staticmethod
-    def classify(t_min: np.ndarray, t_max: np.ndarray, p: np.ndarray) -> Dict[str, Any]:
+    def classify(t_min: np.ndarray, t_max: np.ndarray, p: np.ndarray) -> dict[str, Any]:
         """
         Classify climate from monthly temperature and precipitation.
 
@@ -203,7 +204,7 @@ class KGCv5:
 
     @staticmethod
     def _result(code: str, desc: str, t_ann: float, t_hot: float,
-                t_cold: float, p_ann: float) -> Dict[str, Any]:
+                t_cold: float, p_ann: float) -> dict[str, Any]:
         return {
             "code": code,
             "description": desc,
@@ -216,7 +217,7 @@ class KGCv5:
         }
 
     @classmethod
-    def validate(cls, predicted: str, reference: str, country: str = "") -> Dict[str, Any]:
+    def validate(cls, predicted: str, reference: str, country: str = "") -> dict[str, Any]:
         """
         Validate prediction against reference with near-match acceptance.
         """

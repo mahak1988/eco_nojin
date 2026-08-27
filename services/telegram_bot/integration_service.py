@@ -1,9 +1,11 @@
 """TelegramIntegrationService - advanced telegram bot features"""
-from datetime import datetime, timezone
-from typing import Optional, Dict, Any, List
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from enum import Enum
+from typing import Any
+
 from sqlalchemy.ext.asyncio import AsyncSession
+
 
 class CommandType(str, Enum):
     START = "/start"
@@ -17,8 +19,8 @@ class CommandType(str, Enum):
 @dataclass
 class TelegramUser:
     user_id: int
-    username: Optional[str] = None
-    village_id: Optional[str] = None
+    username: str | None = None
+    village_id: str | None = None
     language: str = "fa"
     is_premium: bool = False
     registered_at: datetime = None
@@ -28,8 +30,8 @@ class TelegramMessage:
     message_id: int
     user: TelegramUser
     text: str
-    command: Optional[CommandType] = None
-    reply_to: Optional[int] = None
+    command: CommandType | None = None
+    reply_to: int | None = None
 
 class TelegramIntegrationService:
     """
@@ -42,12 +44,12 @@ class TelegramIntegrationService:
     - مدیریت کاربران
     - گزارش‌گیری از تعاملات
     """
-    
+
     def __init__(self, db: AsyncSession):
         self.db = db
         self._handlers = {}
         self._register_default_handlers()
-    
+
     def _register_default_handlers(self):
         """ثبت handler های پیش‌فرض"""
         self._handlers[CommandType.START] = self._handle_start
@@ -56,7 +58,7 @@ class TelegramIntegrationService:
         self._handlers[CommandType.WEATHER] = self._handle_weather
         self._handlers[CommandType.CROP] = self._handle_crop
         self._handlers[CommandType.MARKET] = self._handle_market
-    
+
     async def process_message(self, message: TelegramMessage) -> str:
         """پردازش پیام ورودی"""
         # تشخیص دستور
@@ -69,10 +71,10 @@ class TelegramIntegrationService:
                     return await handler(message)
             except ValueError:
                 pass
-        
+
         # پیام عادی - استفاده از AI advisor
         return await self._handle_free_text(message)
-    
+
     async def _handle_start(self, message: TelegramMessage) -> str:
         return (
             f"سلام {message.user.username or 'کاربر'}! 👋\n\n"
@@ -84,7 +86,7 @@ class TelegramIntegrationService:
             "/market - قیمت بازار\n"
             "/help - راهنما"
         )
-    
+
     async def _handle_help(self, message: TelegramMessage) -> str:
         return (
             "📚 راهنمای ربات Eco Nojin\n\n"
@@ -95,7 +97,7 @@ class TelegramIntegrationService:
             "• توصیه‌های کاشت و داشت\n"
             "• اطلاعات بازار محلی"
         )
-    
+
     async def _handle_advisor(self, message: TelegramMessage) -> str:
         """مشاوره کشاورزی"""
         try:
@@ -106,11 +108,10 @@ class TelegramIntegrationService:
             return f"🌾 مشاوره کشاورزی:\n\n{advice}"
         except Exception as e:
             return f"⚠️  خطا در دریافت مشاوره: {e}"
-    
+
     async def _handle_weather(self, message: TelegramMessage) -> str:
         """وضعیت آب و هوا"""
         try:
-            from engine.hydroma.climate import et_calculator
             # شبیه‌سازی
             return (
                 "🌤 وضعیت آب و هوای منطقه:\n\n"
@@ -121,7 +122,7 @@ class TelegramIntegrationService:
             )
         except Exception:
             return "⚠️  سرویس آب و هوا در دسترس نیست"
-    
+
     async def _handle_crop(self, message: TelegramMessage) -> str:
         """توصیه کشت"""
         return (
@@ -132,11 +133,10 @@ class TelegramIntegrationService:
             "• سبزیجات بهاره\n\n"
             "برای توصیه دقیق‌تر، اطلاعات زمین خود را ثبت کنید."
         )
-    
+
     async def _handle_market(self, message: TelegramMessage) -> str:
         """قیمت بازار"""
         try:
-            from services.marketplace.service import MarketplaceService
             # شبیه‌سازی
             return (
                 "💰 قیمت محصولات در بازار محلی:\n\n"
@@ -147,7 +147,7 @@ class TelegramIntegrationService:
             )
         except Exception:
             return "⚠️  اطلاعات بازار در دسترس نیست"
-    
+
     async def _handle_free_text(self, message: TelegramMessage) -> str:
         """پردازش متن آزاد با AI"""
         try:
@@ -157,7 +157,7 @@ class TelegramIntegrationService:
             return advice
         except Exception:
             return "متوجه نشدم. لطفاً از /help برای دیدن دستورات استفاده کنید."
-    
+
     async def send_notification(
         self, user_id: int, message: str, priority: str = "normal",
     ) -> bool:
@@ -165,13 +165,12 @@ class TelegramIntegrationService:
         # در production: استفاده از Telegram Bot API
         print(f"[Telegram] To {user_id}: {message[:50]}...")
         return True
-    
-    async def get_user_stats(self, user_id: int) -> Dict[str, Any]:
+
+    async def get_user_stats(self, user_id: int) -> dict[str, Any]:
         """آمار تعاملات کاربر"""
         return {
             "user_id": user_id,
             "total_messages": 42,
             "commands_used": 15,
-            "last_active": datetime.now(timezone.utc).isoformat(),
+            "last_active": datetime.now(UTC).isoformat(),
         }
-    

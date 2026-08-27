@@ -1,4 +1,3 @@
-from sqlalchemy import Integer
 """Post-quantum cryptography wrappers (Phase 10, star 14).
 
 Uses NIST-standard ML-DSA (FIPS 204) for signatures and ML-KEM (FIPS 203)
@@ -12,8 +11,6 @@ Design decisions:
 """
 
 from __future__ import annotations
-
-from typing import Optional, Tuple
 
 try:  # pragma: no cover - import guard
     from cryptography.hazmat.primitives import Integerization
@@ -91,7 +88,7 @@ def pq_public_key(private_key_pem: bytes) -> bytes:
     )
 
 
-def generate_ml_kem_keys() -> Tuple[bytes, bytes]:
+def generate_ml_kem_keys() -> tuple[bytes, bytes]:
     """Generate ML-KEM-768 keypair -> (private_pem, public_pem)."""
     if not _HAS_MLKEM:
         raise PQUnavailableError("ML-KEM not available in this cryptography build")
@@ -106,7 +103,7 @@ def generate_ml_kem_keys() -> Tuple[bytes, bytes]:
     return priv, pub
 
 
-def pq_encapsulate(public_key_pem: bytes) -> Tuple[bytes, bytes]:
+def pq_encapsulate(public_key_pem: bytes) -> tuple[bytes, bytes]:
     """ML-KEM-768 encapsulation -> (ciphertext, shared_secret)."""
     if not _HAS_MLKEM:
         raise PQUnavailableError("ML-KEM not available in this cryptography build")

@@ -10,8 +10,9 @@ All scientific models must inherit from ScientificModel and implement:
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from dataclasses import dataclass
+from typing import Any
+
 import numpy as np
 
 
@@ -26,7 +27,7 @@ class ValidationResult:
     relative_error: float
     reference_source: str
     notes: str = ""
-    
+
     @property
     def is_within_tolerance(self) -> bool:
         return self.relative_error <= self.tolerance
@@ -42,46 +43,46 @@ class ScientificModel(ABC):
     - باید validation against published data داشته باشند
     - باید uncertainty quantification ارائه دهند
     """
-    
+
     name: str = "BaseModel"
     version: str = "1.0.0"
     description: str = "Base scientific model"
-    
+
     # Reference literature for validation
-    REFERENCES: Dict[str, str] = {}
-    
+    REFERENCES: dict[str, str] = {}
+
     def __init__(self, **config):
         self.config = config
-        self._last_computation_time: Optional[float] = None
-        self._uncertainty_estimate: Optional[Dict[str, Any]] = None
-    
+        self._last_computation_time: float | None = None
+        self._uncertainty_estimate: dict[str, Any] | None = None
+
     @abstractmethod
-    def validate_inputs(self, **inputs) -> Tuple[bool, List[str]]:
+    def validate_inputs(self, **inputs) -> tuple[bool, list[str]]:
         """اعتبارسنجی ورودی‌ها قبل از محاسبه"""
         pass
-    
+
     @abstractmethod
     def compute(self, **inputs) -> Any:
         """محاسبه اصلی مدل"""
         pass
-    
+
     @abstractmethod
     def validate_against_reference(
         self,
-        inputs: Dict[str, Any],
+        inputs: dict[str, Any],
         reference_output: float,
         reference_source: str,
         tolerance: float = 0.1,
     ) -> ValidationResult:
         """مقایسه با داده مرجع علمی"""
         pass
-    
+
     def uncertainty_quantification(
         self,
-        base_inputs: Dict[str, Any],
+        base_inputs: dict[str, Any],
         perturbation_percent: float = 10.0,
         n_samples: int = 100,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         تحلیل حساسیت و عدم قطعیت با Monte Carlo
         
@@ -89,10 +90,10 @@ class ScientificModel(ABC):
         توزیع خروجی را گزارش می‌دهد.
         """
         import time
-        
+
         outputs = []
         rng = np.random.default_rng(42)
-        
+
         t0 = time.time()
         for _ in range(n_samples):
             perturbed = {}
@@ -105,7 +106,7 @@ class ScientificModel(ABC):
                     perturbed[key] = rng.normal(value, np.maximum(sigma, 1e-6))
                 else:
                     perturbed[key] = value
-            
+
             try:
                 result = self.compute(**perturbed)
                 if isinstance(result, np.ndarray):
@@ -114,16 +115,16 @@ class ScientificModel(ABC):
                     outputs.append(float(result))
             except Exception:
                 continue
-        
+
         elapsed = time.time() - t0
-        
+
         if not outputs:
             return {"error": "All Monte Carlo samples failed"}
-        
+
         outputs_arr = np.array(outputs)
         base_result = self.compute(**base_inputs)
         base_value = float(np.mean(base_result)) if isinstance(base_result, np.ndarray) else float(base_result)
-        
+
         self._uncertainty_estimate = {
             "mean": float(np.mean(outputs_arr)),
             "std": float(np.std(outputs_arr)),
@@ -137,15 +138,15 @@ class ScientificModel(ABC):
             "computation_time_seconds": elapsed,
             "base_value": base_value,
         }
-        
+
         return self._uncertainty_estimate
-    
+
     def sensitivity_analysis(
         self,
-        base_inputs: Dict[str, Any],
-        parameters_to_test: Optional[List[str]] = None,
+        base_inputs: dict[str, Any],
+        parameters_to_test: list[str] | None = None,
         perturbation_percent: float = 10.0,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """
         Local sensitivity analysis: اثر تغییر هر پارامتر روی خروجی
         
@@ -153,17 +154,17 @@ class ScientificModel(ABC):
         """
         base_result = self.compute(**base_inputs)
         base_value = float(np.mean(base_result)) if isinstance(base_result, np.ndarray) else float(base_result)
-        
+
         params = parameters_to_test or [
             k for k, v in base_inputs.items() if isinstance(v, (int, float))
         ]
-        
+
         sensitivities = {}
         for param in params:
             perturbed = base_inputs.copy()
             original = perturbed[param]
             perturbed[param] = original * (1 + perturbation_percent / 100)
-            
+
             try:
                 new_result = self.compute(**perturbed)
                 new_value = float(np.mean(new_result)) if isinstance(new_result, np.ndarray) else float(new_result)
@@ -174,8 +175,8 @@ class ScientificModel(ABC):
                 sensitivities[param] = float(sensitivity)
             except Exception:
                 sensitivities[param] = 0.0
-        
+
         return sensitivities
-    
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(version={self.version})"

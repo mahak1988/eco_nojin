@@ -1,8 +1,8 @@
+import logging
+
 import numpy as np
 import rasterio
 from rasterio.windows import Window
-from typing import Tuple, Optional
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ class DEMProcessor:
             logger.error(f"Error loading DEM from {self.dem_file_path}: {e}")
             raise
 
-    def get_elevation_stats(self) -> Tuple[Optional[float], Optional[float], Optional[float]]:
+    def get_elevation_stats(self) -> tuple[float | None, float | None, float | None]:
         """
         Calculates basic statistics (min, max, mean) of the elevation data.
 
@@ -50,11 +50,11 @@ class DEMProcessor:
 
         # Mask out nodata values if present
         masked_data = np.ma.masked_equal(self._data, self._dataset.nodata)
-        
+
         min_val = float(masked_data.min()) if masked_data.min() is not np.ma.masked else None
         max_val = float(masked_data.max()) if masked_data.max() is not np.ma.masked else None
         mean_val = float(masked_data.mean()) if masked_data.mean() is not np.ma.masked else None
-        
+
         return min_val, max_val, mean_val
 
     def get_window_data(self, row_start: int, col_start: int, height: int, width: int) -> np.ndarray:
@@ -73,14 +73,14 @@ class DEMProcessor:
         if self._data is None:
             logger.warning("DEM data not loaded. Call load_dem() first.")
             return np.array([])
-            
+
         window = Window(col_start, row_start, width, height)
         with rasterio.open(self.dem_file_path) as dataset:
             window_data = dataset.read(1, window=window)
         return window_data
 
     @property
-    def shape(self) -> Tuple[int, int]:
+    def shape(self) -> tuple[int, int]:
         """Returns the shape of the loaded DEM data."""
         if self._data is None:
             return (0, 0)

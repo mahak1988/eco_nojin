@@ -7,8 +7,8 @@ Stricter scoring with proper weight distribution.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Any
 from enum import Enum
+from typing import Any
 
 
 class LandUseCategory(str, Enum):
@@ -69,20 +69,20 @@ class CropSuitability:
     crop: CropType
     score: float  # 0-100
     suitability_class: str
-    limiting_factors: List[str] = field(default_factory=list)
-    recommendations: List[str] = field(default_factory=list)
+    limiting_factors: list[str] = field(default_factory=list)
+    recommendations: list[str] = field(default_factory=list)
 
 
 @dataclass
 class ComprehensiveLandAnalysis:
     """Complete comprehensive land analysis result"""
     suitability_score: float  # 0-100
-    land_use_recommendations: List[LandUseCategory] = field(default_factory=list)
-    crop_suitabilities: List[CropSuitability] = field(default_factory=list)
-    limiting_factors: List[str] = field(default_factory=list)
-    improvement_recommendations: List[str] = field(default_factory=list)
+    land_use_recommendations: list[LandUseCategory] = field(default_factory=list)
+    crop_suitabilities: list[CropSuitability] = field(default_factory=list)
+    limiting_factors: list[str] = field(default_factory=list)
+    improvement_recommendations: list[str] = field(default_factory=list)
     confidence: float = 0.8
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 class ComprehensiveLandAnalyzer:
@@ -190,13 +190,13 @@ class ComprehensiveLandAnalyzer:
                 suitability_score=0.0,
                 land_use_recommendations=[LandUseCategory.CONSERVATION],
                 crop_suitabilities=[],
-                limiting_factors=[f"Analysis error: {str(e)}"],
+                limiting_factors=[f"Analysis error: {e!s}"],
                 improvement_recommendations=["Re-collect data"],
                 confidence=0.0,
                 metadata={"error": str(e)},
             )
 
-    def _evaluate_soil(self, soil: SoilSummary) -> tuple[float, List[str]]:
+    def _evaluate_soil(self, soil: SoilSummary) -> tuple[float, list[str]]:
         """Evaluate soil with STRICT penalties."""
         score = 100.0
         issues = []
@@ -257,7 +257,7 @@ class ComprehensiveLandAnalyzer:
 
         return max(0.0, score), issues
 
-    def _evaluate_climate(self, climate: ClimateSummary) -> tuple[float, List[str]]:
+    def _evaluate_climate(self, climate: ClimateSummary) -> tuple[float, list[str]]:
         """Evaluate climate with STRICT penalties."""
         score = 100.0
         issues = []
@@ -296,7 +296,7 @@ class ComprehensiveLandAnalyzer:
 
         return max(0.0, score), issues
 
-    def _evaluate_terrain(self, terrain: TerrainSummary) -> tuple[float, List[str]]:
+    def _evaluate_terrain(self, terrain: TerrainSummary) -> tuple[float, list[str]]:
         """Evaluate terrain with STRICT penalties."""
         score = self.CAPABILITY_SCORES.get(terrain.capability_class, 50)
         issues = []
@@ -314,8 +314,8 @@ class ComprehensiveLandAnalyzer:
         self,
         suitability_score: float,
         capability_class: str,
-        issues: List[str],
-    ) -> List[LandUseCategory]:
+        issues: list[str],
+    ) -> list[LandUseCategory]:
         """Generate land use recommendations."""
         recommendations = []
 
@@ -337,7 +337,7 @@ class ComprehensiveLandAnalyzer:
         soil: SoilSummary,
         climate: ClimateSummary,
         terrain: TerrainSummary,
-    ) -> List[CropSuitability]:
+    ) -> list[CropSuitability]:
         """Score crops with STRICT penalties."""
         results = []
 
@@ -404,7 +404,7 @@ class ComprehensiveLandAnalyzer:
         results.sort(key=lambda x: x.score, reverse=True)
         return results
 
-    def _generate_improvements(self, issues: List[str]) -> List[str]:
+    def _generate_improvements(self, issues: list[str]) -> list[str]:
         """Generate improvement recommendations."""
         improvements = []
         issue_set = set(issues)

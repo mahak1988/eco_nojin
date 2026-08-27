@@ -5,14 +5,14 @@ Finds optimal solutions for multi-objective problems like maximizing yield,
 profit, and sustainability while minimizing cost and risk.
 """
 import logging
-from typing import Dict, Any, List, Tuple, Callable
+from collections.abc import Callable
+from typing import Any
+
 import numpy as np
 from scipy.optimize import differential_evolution, minimize
-from datetime import datetime
 
-from database.models import OptimizationResultDB
 from database.config import SessionLocal
-from engine.hydroma.scenarios.scenario_manager import ScenarioManager
+from database.models import OptimizationResultDB
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class MultiObjectiveOptimizer:
     """Generic optimizer for multi-objective problems."""
 
-    def __init__(self, objectives: List[Tuple[Callable, bool]], constraints: List[Callable], bounds: List[Tuple[float, float]]):
+    def __init__(self, objectives: list[tuple[Callable, bool]], constraints: list[Callable], bounds: list[tuple[float, float]]):
         """
         Args:
             objectives: List of tuples (objective_function, maximize_flag).
@@ -32,7 +32,7 @@ class MultiObjectiveOptimizer:
         self.bounds = bounds
         self.num_vars = len(bounds)
 
-    def _scalarize_objectives(self, params: np.ndarray, weights: List[float]) -> float:
+    def _scalarize_objectives(self, params: np.ndarray, weights: list[float]) -> float:
         """Combines multiple objectives into a single scalar value using weights."""
         if len(weights) != len(self.objectives):
             raise ValueError("Number of weights must match number of objectives.")
@@ -44,7 +44,7 @@ class MultiObjectiveOptimizer:
             total += weights[i] * (multiplier * val)
         return total
 
-    def optimize_weighted_sum(self, weights: List[float], method: str = 'differential_evolution') -> Dict[str, Any]:
+    def optimize_weighted_sum(self, weights: list[float], method: str = 'differential_evolution') -> dict[str, Any]:
         """
         Solves the optimization problem using a weighted sum approach.
 
@@ -87,7 +87,7 @@ class MultiObjectiveOptimizer:
             "optimization_details": result
         }
 
-    def find_pareto_front(self, num_points: int = 20) -> List[Dict[str, Any]]:
+    def find_pareto_front(self, num_points: int = 20) -> list[dict[str, Any]]:
         """
         Attempts to find an approximation of the Pareto front by solving
         the problem with different weight vectors.
@@ -132,7 +132,7 @@ class MultiObjectiveOptimizer:
         return front
 
 
-def run_land_use_optimization(scenario_id: str, objective_weights: Dict[str, float]) -> str:
+def run_land_use_optimization(scenario_id: str, objective_weights: dict[str, float]) -> str:
     """
     Runs a specific optimization for land use, e.g., optimal crop mix or fertilizer application rate.
 

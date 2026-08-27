@@ -18,7 +18,7 @@ Honesty contract
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from services.satellite.cds import DataStoreClient, DataStoreError
 
@@ -32,7 +32,7 @@ class Era5Error(Exception):
     """ERA5 fetch/parse error."""
 
 
-def _chunk(parts: List[str]) -> List[str]:
+def _chunk(parts: list[str]) -> list[str]:
     """Split 'YYYY-MM-DD' into ERA5 year/month/day lists."""
     years, months, days = [], [], []
     for p in parts:
@@ -48,10 +48,10 @@ def fetch_era5_point(
     lon: float,
     start: str,
     end: str,
-    variables: Optional[List[str]] = None,
+    variables: list[str] | None = None,
     store: str = "cds",
     max_seconds: float = 600.0,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Real ERA5 daily series for the nearest grid point.
 
     Args:
@@ -72,7 +72,7 @@ def fetch_era5_point(
 
     years, months, days = _chunk([start, end])
     client = DataStoreClient(store=store)
-    params: Dict[str, Any] = {
+    params: dict[str, Any] = {
         "product_type": "reanalysis",
         "variable": [VARIABLES[v] for v in vars_],
         "year": years,
@@ -101,7 +101,7 @@ def fetch_era5_point(
     return _parse_netcdf(data, lat, lon, vars_)
 
 
-def _parse_netcdf(data: bytes, lat: float, lon: float, vars_: List[str]) -> Dict[str, Any]:
+def _parse_netcdf(data: bytes, lat: float, lon: float, vars_: list[str]) -> dict[str, Any]:
     """Parse ERA5 NetCDF bytes -> daily series at the nearest grid point."""
     import io
 
@@ -110,7 +110,7 @@ def _parse_netcdf(data: bytes, lat: float, lon: float, vars_: List[str]) -> Dict
     # h5netcdf reads from memory (no temp files, no Windows file locks)
     try:
         ds = xr.open_dataset(io.BytesIO(data), engine="h5netcdf")
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         raise Era5Error(f"NetCDF parse failed: {exc}") from exc
 
     # nearest grid cell; load arrays BEFORE closing the file (Windows lock)
@@ -121,9 +121,9 @@ def _parse_netcdf(data: bytes, lat: float, lon: float, vars_: List[str]) -> Dict
     tp_vals = point["tp"].values if ("tp" in vars_ and "tp" in point) else None
     ds.close()
 
-    series: List[Dict[str, Any]] = []
+    series: list[dict[str, Any]] = []
     for i in range(len(times)):
-        row: Dict[str, Any] = {"datetime": str(times[i])[:19]}
+        row: dict[str, Any] = {"datetime": str(times[i])[:19]}
         if t2m_vals is not None:
             row["t2m_c"] = round(float(t2m_vals[i]) - 273.15, 2)
         if tp_vals is not None:
@@ -131,7 +131,7 @@ def _parse_netcdf(data: bytes, lat: float, lon: float, vars_: List[str]) -> Dict
         series.append(row)
 
     # daily aggregation: t2m mean, tp sum
-    daily: Dict[str, Dict[str, Any]] = {}
+    daily: dict[str, dict[str, Any]] = {}
     for row in series:
         date = row["datetime"][:10]
         slot = daily.setdefault(date, {"date": date, "t2m_c_mean": None, "tp_mm_sum": 0.0, "samples": 0})
@@ -147,7 +147,7 @@ def _parse_netcdf(data: bytes, lat: float, lon: float, vars_: List[str]) -> Dict
     result = []
     for date in sorted(daily):
         slot = daily[date]
-        entry: Dict[str, Any] = {"date": date}
+        entry: dict[str, Any] = {"date": date}
         if "t2m" in vars_:
             entry["t2m_c"] = round(slot["t2m_c_mean"], 2) if slot["t2m_c_mean"] is not None else None
         if "tp" in vars_:

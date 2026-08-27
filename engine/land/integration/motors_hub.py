@@ -6,10 +6,10 @@ Unified interface to all scientific motors with graceful degradation.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Any
-from enum import Enum
 import logging
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -27,21 +27,21 @@ class MotorResult:
     motor_name: str
     status: MotorStatus
     success: bool = False
-    data: Dict[str, Any] = field(default_factory=dict)
-    recommendations: List[str] = field(default_factory=list)
+    data: dict[str, Any] = field(default_factory=dict)
+    recommendations: list[str] = field(default_factory=list)
     confidence: float = 0.0
-    error_message: Optional[str] = None
+    error_message: str | None = None
 
 
 @dataclass
 class UnifiedLandAnalysis:
     """Complete unified analysis from all motors"""
-    soil_analysis: Optional[MotorResult] = None
-    climate_analysis: Optional[MotorResult] = None
-    crop_recommendations: Optional[MotorResult] = None
-    irrigation_plan: Optional[MotorResult] = None
-    erosion_risk: Optional[MotorResult] = None
-    carbon_sequestration: Optional[MotorResult] = None
+    soil_analysis: MotorResult | None = None
+    climate_analysis: MotorResult | None = None
+    crop_recommendations: MotorResult | None = None
+    irrigation_plan: MotorResult | None = None
+    erosion_risk: MotorResult | None = None
+    carbon_sequestration: MotorResult | None = None
     overall_confidence: float = 0.0
     motors_available: int = 0
     motors_total: int = 7
@@ -59,8 +59,8 @@ class ScientificMotorsHub:
 
     def __init__(self):
         """Initialize motors hub with lazy loading"""
-        self._motors: Dict[str, Any] = {}
-        self._motor_status: Dict[str, MotorStatus] = {}
+        self._motors: dict[str, Any] = {}
+        self._motor_status: dict[str, MotorStatus] = {}
         self._load_motors()
 
     def _load_motors(self):
@@ -79,20 +79,20 @@ class ScientificMotorsHub:
                 motor_class = getattr(module, class_name)
                 self._motors[name] = motor_class()
                 self._motor_status[name] = MotorStatus.AVAILABLE
-            except Exception as e:
+            except Exception:
                 self._motors[name] = None
                 self._motor_status[name] = MotorStatus.UNAVAILABLE
 
-    def get_motor_status(self) -> Dict[str, MotorStatus]:
+    def get_motor_status(self) -> dict[str, MotorStatus]:
         """Get status of all motors"""
         return self._motor_status.copy()
 
-    def get_available_motors(self) -> List[str]:
+    def get_available_motors(self) -> list[str]:
         """Get list of available motor names"""
         return [name for name, status in self._motor_status.items()
                 if status == MotorStatus.AVAILABLE]
 
-    def analyze_land(self, inputs: Dict[str, Any]) -> UnifiedLandAnalysis:
+    def analyze_land(self, inputs: dict[str, Any]) -> UnifiedLandAnalysis:
         """Perform unified land analysis using all available motors."""
         result = UnifiedLandAnalysis()
         results_list = []
@@ -123,7 +123,7 @@ class ScientificMotorsHub:
 
         return result
 
-    def _run_crop_advisor(self, inputs: Dict[str, Any]) -> MotorResult:
+    def _run_crop_advisor(self, inputs: dict[str, Any]) -> MotorResult:
         """Run CropAdvisor motor"""
         try:
             motor = self._motors.get("crop_advisor")
@@ -159,7 +159,7 @@ class ScientificMotorsHub:
                 error_message=str(e),
             )
 
-    def _run_irrigation_scheduler(self, inputs: Dict[str, Any]) -> MotorResult:
+    def _run_irrigation_scheduler(self, inputs: dict[str, Any]) -> MotorResult:
         """Run IrrigationScheduler motor"""
         try:
             motor = self._motors.get("irrigation_scheduler")
@@ -194,7 +194,7 @@ class ScientificMotorsHub:
                 error_message=str(e),
             )
 
-    def _run_erosion_rusle(self, inputs: Dict[str, Any]) -> MotorResult:
+    def _run_erosion_rusle(self, inputs: dict[str, Any]) -> MotorResult:
         """Run RUSLE erosion motor"""
         try:
             motor = self._motors.get("erosion_rusle")
@@ -229,7 +229,7 @@ class ScientificMotorsHub:
                 error_message=str(e),
             )
 
-    def _run_rothc(self, inputs: Dict[str, Any]) -> MotorResult:
+    def _run_rothc(self, inputs: dict[str, Any]) -> MotorResult:
         """Run RothC carbon sequestration motor"""
         try:
             motor = self._motors.get("rothc")

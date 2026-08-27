@@ -10,7 +10,6 @@ no fake embeddings are claimed.
 from __future__ import annotations
 
 import logging
-from typing import List, Optional
 
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
@@ -40,7 +39,7 @@ def sync_content_to_rag(db: Session) -> int:
 
 def search_published_content(
     db: Session, q: str, limit: int = 10
-) -> List[models.ContentItem]:
+) -> list[models.ContentItem]:
     """Keyword search over published content (title + body)."""
     query = db.query(models.ContentItem).filter(
         models.ContentItem.status == "published"

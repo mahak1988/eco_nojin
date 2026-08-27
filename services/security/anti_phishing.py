@@ -12,10 +12,9 @@ import hashlib
 import os
 import re
 import urllib.request
-from typing import Dict, List
 
 # قابل تنظیم از محیط (TRUSTED_DOMAINS=econojin.ir,econojin.com)
-TRUSTED_DOMAINS: List[str] = [
+TRUSTED_DOMAINS: list[str] = [
     d.strip()
     for d in os.getenv("TRUSTED_DOMAINS", "econojin.ir,econojin.com,econojin.land").split(",")
     if d.strip()
@@ -36,7 +35,7 @@ def _levenshtein(a: str, b: str) -> int:
     return prev[-1]
 
 
-def domain_squatting(host: str) -> Dict:
+def domain_squatting(host: str) -> dict:
     host = host.lower().strip().rstrip(".")
     results = []
     for trusted in TRUSTED_DOMAINS:
@@ -50,7 +49,7 @@ def domain_squatting(host: str) -> Dict:
         "verdict": "suspicious" if results else "ok",
     }
 
-def check_email_auth(domain: str) -> Dict:
+def check_email_auth(domain: str) -> dict:
     """Live DNS checks. Requires dnspython; network failures are honest."""
     domain = domain.lower().strip()
     try:
@@ -60,9 +59,9 @@ def check_email_auth(domain: str) -> Dict:
         resolver.timeout = 3.0
         resolver.lifetime = 3.0
 
-        spf: List[str] = []
-        dmarc: List[str] = []
-        dkim: List[str] = []
+        spf: list[str] = []
+        dmarc: list[str] = []
+        dkim: list[str] = []
         try:
             spf = [str(r) for r in resolver.resolve(domain, "TXT") if "v=spf1" in str(r)]
         except Exception:
@@ -89,7 +88,7 @@ def check_email_auth(domain: str) -> Dict:
         return {"domain": domain, "status": "error", "error": str(exc)}
 
 
-def page_clone_signature(url: str) -> Dict:
+def page_clone_signature(url: str) -> dict:
     """Structural fingerprint of a public page; flag near-identical copies."""
     try:
         req = urllib.request.Request(url, headers=_UA)

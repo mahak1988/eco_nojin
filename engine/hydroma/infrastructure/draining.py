@@ -5,8 +5,8 @@ Calculates and designs draining systems based on land topography,
 soil permeability, and rainfall intensity to prevent waterlogging.
 """
 import math
-from typing import Dict, Any, List
 from dataclasses import dataclass
+from typing import Any
 
 # Constants
 GRAVITY = 9.81  # m/s^2
@@ -108,7 +108,7 @@ def design_rectangular_drain(criteria: DrainDesignCriteria, channel_slope: float
     )
 
 
-def design_pipe_drain(max_flow_rate: float, slope: float, material_roughness: float) -> Dict[str, Any]:
+def design_pipe_drain(max_flow_rate: float, slope: float, material_roughness: float) -> dict[str, Any]:
     """
     Designs a circular pipe drain.
 

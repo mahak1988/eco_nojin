@@ -1,4 +1,3 @@
-import pytest
 from services.land.land_profile import LandProfileCreateRequest, calculate_land_profile
 
 

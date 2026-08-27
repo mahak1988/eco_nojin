@@ -17,16 +17,17 @@ DuckDB reference: https://duckdb.org/docs/
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Sequence
+from collections.abc import Sequence
+from typing import Any
 
 import duckdb
 
 _REQUIRED_KEYS = ("ndvi", "evi", "savi", "data_source")
 
 
-def _rows_to_dicts(rows: Sequence[Any]) -> List[Dict[str, Any]]:
+def _rows_to_dicts(rows: Sequence[Any]) -> list[dict[str, Any]]:
     """Convert SQLAlchemy ORM rows (or dicts) to plain dicts."""
-    out: List[Dict[str, Any]] = []
+    out: list[dict[str, Any]] = []
     for row in rows:
         if isinstance(row, dict):
             out.append(row)
@@ -42,7 +43,7 @@ def _rows_to_dicts(rows: Sequence[Any]) -> List[Dict[str, Any]]:
     return out
 
 
-def summarize_satellite_rows(rows: Sequence[Any]) -> Dict[str, Any]:
+def summarize_satellite_rows(rows: Sequence[Any]) -> dict[str, Any]:
     """NDVI/EVI/SAVI summary over stored satellite rows via DuckDB.
 
     Args:

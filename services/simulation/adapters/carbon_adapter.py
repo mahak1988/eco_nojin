@@ -1,31 +1,34 @@
 """RothC Adapter - Soil organic carbon turnover"""
-from typing import List
+from datetime import UTC, datetime
+
 from services.simulation.base import BaseSimulator, SimulatorRegistry
 from services.simulation.schemas import (
-    SimulationContext, SimulationResult, SimulationStatus, SimulationType,
+    SimulationContext,
+    SimulationResult,
+    SimulationStatus,
+    SimulationType,
 )
-from datetime import datetime, timezone
+
 
 @SimulatorRegistry.register
 class RothCAdapter(BaseSimulator):
     simulator_type = SimulationType.SOIL_CARBON
     name = "RothC-26.3"
     version = "26.3"
-    
-    async def validate_context(self, ctx: SimulationContext) -> List[str]:
+
+    async def validate_context(self, ctx: SimulationContext) -> list[str]:
         errors = []
         if ctx.soil.organic_carbon_pct <= 0:
             errors.append("Initial SOC must be positive")
         return errors
-    
+
     async def run(self, ctx: SimulationContext) -> SimulationResult:
         """پیش‌بینی ترشح کربن خاک برای ۲۰ سال"""
         try:
-            import pyRothC
             # محاسبه ساده‌شده بر اساس RothC
             initial_soc = ctx.soil.organic_carbon_pct
             years = 20
-            
+
             # سناریوی بهبود خاک با residue management
             yearly_soc = []
             soc = initial_soc
@@ -34,15 +37,15 @@ class RothCAdapter(BaseSimulator):
                 growth_rate = 0.025 if year < 10 else 0.015
                 soc = soc * (1 + growth_rate)
                 yearly_soc.append({"year": year + 1, "soc_t_ha": round(soc, 3)})
-            
+
             total_sequestered = soc - initial_soc
             co2e = total_sequestered * 44 / 12  # C to CO2
-            
+
             return SimulationResult(
                 simulation_id=ctx.simulation_id,
                 simulation_type=self.simulator_type,
                 status=SimulationStatus.COMPLETED,
-                started_at=datetime.now(timezone.utc),
+                started_at=datetime.now(UTC),
                 summary={
                     "initial_soc_t_ha": initial_soc,
                     "final_soc_t_ha": round(soc, 3),
@@ -58,7 +61,6 @@ class RothCAdapter(BaseSimulator):
                 simulation_id=ctx.simulation_id,
                 simulation_type=self.simulator_type,
                 status=SimulationStatus.FAILED,
-                started_at=datetime.now(timezone.utc),
+                started_at=datetime.now(UTC),
                 error=str(e),
             )
-    

@@ -1,5 +1,6 @@
+
 import numpy as np
-from typing import Dict, List, Optional
+
 """Watershed structure calculator for soil and water conservation.
 
 Implements design calculations for:
@@ -168,7 +169,7 @@ def design_watershed_structure(
 # STRAHLER STREAM ORDERING
 # ═══════════════════════════════════════════════════════════════════
 
-def calculate_strahler_order(stream_network: Dict) -> Dict:
+def calculate_strahler_order(stream_network: dict) -> dict:
     """
     Calculate Strahler stream order for a drainage network.
     
@@ -188,14 +189,14 @@ def calculate_strahler_order(stream_network: Dict) -> Dict:
     """
     nodes = stream_network.get("nodes", [])
     edges = stream_network.get("edges", [])
-    
+
     # Handle empty network
     if not edges:
         return {"orders": {}, "max_order": 0, "stream_count": 0}
-    
+
     # Initialize all edges as order 1 (headwaters)
     orders = {edge["id"]: 1 for edge in edges}
-    
+
     # Build adjacency: node -> list of incoming edge IDs
     incoming_to_node = {}
     for edge in edges:
@@ -203,41 +204,41 @@ def calculate_strahler_order(stream_network: Dict) -> Dict:
         if to_node not in incoming_to_node:
             incoming_to_node[to_node] = []
         incoming_to_node[to_node].append(edge["id"])
-    
+
     # Iterate to convergence
     for iteration in range(10):
         changed = False
-        
+
         for node, incoming_edges in incoming_to_node.items():
             if len(incoming_edges) >= 2:
                 # Get orders of all incoming edges
                 incoming_orders = [orders[e] for e in incoming_edges if e in orders]
                 if not incoming_orders:
                     continue
-                
+
                 max_order = max(incoming_orders)
                 count_max = incoming_orders.count(max_order)
-                
+
                 # Find outgoing edge (from this node)
                 for edge in edges:
                     if edge.get("from_node") == node:
                         old_order = orders.get(edge["id"], 0)
-                        
+
                         # Strahler rule
                         if count_max >= 2:
                             new_order = max_order + 1
                         else:
                             new_order = max_order
-                        
+
                         if new_order != old_order:
                             orders[edge["id"]] = new_order
                             changed = True
-        
+
         if not changed:
             break
-    
+
     max_order = max(orders.values()) if orders else 0
-    
+
     return {
         "orders": orders,
         "max_order": max_order,
@@ -249,7 +250,7 @@ def calculate_strahler_order(stream_network: Dict) -> Dict:
 # HORTON RATIOS
 # ═══════════════════════════════════════════════════════════════════
 
-def calculate_horton_ratios(strahler_result: Dict, stream_lengths: Dict) -> Dict:
+def calculate_horton_ratios(strahler_result: dict, stream_lengths: dict) -> dict:
     """
     Calculate Horton's ratios for stream network analysis.
     
@@ -267,36 +268,36 @@ def calculate_horton_ratios(strahler_result: Dict, stream_lengths: Dict) -> Dict
     """
     orders = strahler_result.get("orders", {})
     max_order = strahler_result.get("max_order", 0)
-    
+
     if max_order < 2:
         return {"Rb": 0, "Rl": 0, "Ra": 0}
-    
+
     # Count streams per order
     order_counts = {}
     for edge_id, order in orders.items():
         order_counts[order] = order_counts.get(order, 0) + 1
-    
+
     # Calculate total length per order
     order_lengths = {}
     for edge_id, order in orders.items():
         length = stream_lengths.get(edge_id, 0)
         order_lengths[order] = order_lengths.get(order, 0) + length
-    
+
     # Calculate ratios
     Rb_values = []
     Rl_values = []
-    
+
     for w in range(1, max_order):
         if w in order_counts and (w + 1) in order_counts:
             if order_counts[w + 1] > 0:
                 Rb = order_counts[w] / order_counts[w + 1]
                 Rb_values.append(Rb)
-        
+
         if w in order_lengths and (w + 1) in order_lengths:
             if order_lengths[w] > 0:
                 Rl = order_lengths[w + 1] / order_lengths[w]
                 Rl_values.append(Rl)
-    
+
     return {
         "Rb": np.mean(Rb_values) if Rb_values else 0,
         "Rl": np.mean(Rl_values) if Rl_values else 0,
@@ -330,7 +331,7 @@ def calculate_kirpich_tc(length_m: float, slope_m_m: float) -> float:
     """
     if length_m <= 0 or slope_m_m <= 0:
         return 0.0
-    
+
     tc_minutes = 0.0195 * (length_m ** 0.77) * (slope_m_m ** -0.385)
     return float(tc_minutes)
 
@@ -367,28 +368,28 @@ def muskingum_route(
     """
     if K <= 0 or dt <= 0:
         return inflow.copy()
-    
+
     # Ensure x is in valid range
     x = max(0.0, min(0.5, x))
-    
+
     # Calculate coefficients
     denom = K - K * x + 0.5 * dt
     if denom <= 0:
         return inflow.copy()
-    
+
     C0 = (-K * x + 0.5 * dt) / denom
     C1 = (K * x + 0.5 * dt) / denom
     C2 = (K - K * x - 0.5 * dt) / denom
-    
+
     # Check stability
     if C0 + C1 + C2 < 0.99 or C0 + C1 + C2 > 1.01:
         logger.warning(f"Muskingum coefficients sum to {C0 + C1 + C2}, should be ~1.0")
-    
+
     # Route
     outflow = np.zeros_like(inflow)
     outflow[0] = inflow[0]  # Initial condition
-    
+
     for t in range(1, len(inflow)):
         outflow[t] = C0 * inflow[t] + C1 * inflow[t-1] + C2 * outflow[t-1]
-    
+
     return outflow

@@ -1,14 +1,15 @@
 """ارزیابی قابلیت اراضی ساده."""
-from typing import Any, Dict, Optional
+from typing import Any
+
 
 def assess_land_capability(
     slope_degrees: float,
-    soil_depth_m: Optional[float] = None,
+    soil_depth_m: float | None = None,
     erosion_risk: str = "low",
     drainage_class: str = "well_drained",
     climate_zone: str = "temperate",
     soil_texture: str = "loam"
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """کلاس بندی ساده قابلیت اراضی بر اساس شیب."""
     if slope_degrees < 5:
         cap_class = "I"
@@ -34,5 +35,5 @@ class CapabilityAssessor:
     def __init__(self):
         pass
 
-    def assess(self, **kwargs) -> Dict[str, Any]:
+    def assess(self, **kwargs) -> dict[str, Any]:
         return assess_land_capability(**kwargs)

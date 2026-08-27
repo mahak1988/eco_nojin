@@ -4,13 +4,12 @@ from __future__ import annotations
 import json
 import logging
 from datetime import date
-from typing import Literal, List
+from typing import Literal
 from uuid import uuid4
 
 import geopandas as gpd
-import pandas as pd
 from pydantic import BaseModel, Field
-from shapely.geometry import Point, LineString
+from shapely.geometry import LineString, Point
 
 logger = logging.getLogger(__name__)
 
@@ -41,13 +40,13 @@ class IrrigationDesignOutput(BaseModel):
     design_id: str = Field(..., description="Unique identifier for this design")
     layout_geojson: dict = Field(..., description="GeoJSON representation of pipes and emitters/sprinklers")
     equipment_list: dict[str, int | float] = Field(..., description="List of required equipment (e.g., {'drippers': 500, 'valves': 10})")
-    irrigation_schedule: List[IrrigationScheduleItem] = Field(..., description="Recommended irrigation schedule")
+    irrigation_schedule: list[IrrigationScheduleItem] = Field(..., description="Recommended irrigation schedule")
     design_summary: dict = Field(..., description="Key design parameters (e.g., pipe lengths, emitter specs)")
 
 
 class IrrigationDesigner:
     """Designs irrigation systems."""
-    
+
     def __init__(self):
         # Load equipment specs, hydraulic properties, crop Kc tables, etc.
         self.emitter_specs = {"drip": {"flow_lhr": 2.0}} # Example
@@ -56,7 +55,7 @@ class IrrigationDesigner:
 
     def _design_drip_system(self, input_data: IrrigationDesignInput) -> IrrigationDesignOutput:
         logger.info("Designing a drip irrigation system...")
-        
+
         # Calculate number of plants and emitters
         area_m2 = input_data.area_ha * 10000
         plant_count = int(area_m2 / (input_data.plant_spacing_m * input_data.row_spacing_m))

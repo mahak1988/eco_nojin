@@ -13,11 +13,12 @@ Principle: C++ for hot-path kernels, Python for everything else.
 All C++ functions have Python fallbacks.
 """
 
-import logging
-from pathlib import Path
-import time
 import functools
-from typing import Any, Callable, Optional
+import logging
+import time
+from collections.abc import Callable
+from pathlib import Path
+from typing import Any, Optional
 
 logger = logging.getLogger("econojin.cpp_bridge")
 
@@ -37,6 +38,7 @@ _hydroma_core = None
 
 # Ensure bridge directory is in sys.path for hydroma_core.pyd
 import sys
+
 _bridge_dir = str(Path(__file__).parent.absolute())
 if _bridge_dir not in sys.path:
     sys.path.insert(0, _bridge_dir)
@@ -74,7 +76,7 @@ def reset_telemetry() -> None:
 # =============================================================================
 # Telemetry-aware wrapper
 # =============================================================================
-def _with_telemetry(func_name: str, cpp_func: Optional[Callable], py_func: Callable) -> Callable:
+def _with_telemetry(func_name: str, cpp_func: Callable | None, py_func: Callable) -> Callable:
     """Wrap a function pair with telemetry and automatic fallback."""
     @functools.wraps(py_func)
     def wrapper(*args, **kwargs):

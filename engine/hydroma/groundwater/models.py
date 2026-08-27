@@ -1,11 +1,12 @@
 """Module for basic groundwater models and estimations."""
-from typing import Dict, Any, Optional
 import math
+from typing import Any
 
-def estimate_aquifer_properties(hydraulic_conductivity_m_s: float, 
-                               specific_yield: float, 
-                               area_m2: float, 
-                               water_level_drop_m: float) -> Dict[str, Any]:
+
+def estimate_aquifer_properties(hydraulic_conductivity_m_s: float,
+                               specific_yield: float,
+                               area_m2: float,
+                               water_level_drop_m: float) -> dict[str, Any]:
     """
     Estimates basic aquifer properties and available volume.
 
@@ -39,11 +40,11 @@ def estimate_aquifer_properties(hydraulic_conductivity_m_s: float,
     }
     return estimates
 
-def calculate_theis_drawdown(transmissivity_m2day: float, 
-                             storativity: float, 
-                             pumping_rate_m3day: float, 
-                             distance_from_well_m: float, 
-                             time_since_pumping_start_days: float) -> Optional[float]:
+def calculate_theis_drawdown(transmissivity_m2day: float,
+                             storativity: float,
+                             pumping_rate_m3day: float,
+                             distance_from_well_m: float,
+                             time_since_pumping_start_days: float) -> float | None:
     """
     Calculates drawdown using the Theis equation for a confined aquifer.
     """
@@ -51,8 +52,7 @@ def calculate_theis_drawdown(transmissivity_m2day: float,
         print("Invalid parameters for Theis equation.")
         return None
 
-    import numpy as np
-    from scipy.special import expi # Import here to avoid hard dependency
+    from scipy.special import expi  # Import here to avoid hard dependency
 
     # Convert units to m2/s, m3/s, m, s if needed internally
     # For simplicity, using days and m3/day here directly

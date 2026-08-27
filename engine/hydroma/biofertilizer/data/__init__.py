@@ -10,6 +10,6 @@ Phase 1 seed data (STRAINS, FORMULATIONS) loaded via populate script.
 """
 
 # Phase 2 materials (primary data source)
-from .materials_data import MATERIALS, SOIL_TYPES, FORMULATIONS
+from .materials_data import FORMULATIONS, MATERIALS, SOIL_TYPES
 
-__all__ = ["MATERIALS", "SOIL_TYPES", "FORMULATIONS"]
+__all__ = ["FORMULATIONS", "MATERIALS", "SOIL_TYPES"]

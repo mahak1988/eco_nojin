@@ -3,14 +3,13 @@
 ═══════════════════════════════════════════════════════════════════════
 """
 
+
 import pytest
-from decimal import Decimal
-from datetime import datetime, timezone
 
 
 class TestLandscapeIntegration:
     """تست‌های یکپارچگی مدیریت منظر."""
-    
+
     @pytest.mark.asyncio
     async def test_complete_village_flow(self, landscape_service):
         """تست جریان کامل روستا."""
@@ -24,7 +23,7 @@ class TestLandscapeIntegration:
         )
         assert village is not None
         assert village.is_active
-        
+
         # 2. افزودن اعضای حکمرانی
         manager = await landscape_service.add_governance_member(
             village_id="hejij",
@@ -32,19 +31,19 @@ class TestLandscapeIntegration:
             role="landscape_manager",
         )
         assert manager is not None
-        
+
         council = await landscape_service.add_governance_member(
             village_id="hejij",
             user_id="council_123",
             role="council_member",
         )
         assert council is not None
-        
+
         # 3. بررسی موجودی صندوق
         balance = await landscape_service.get_fund_balance("hejij")
         assert balance is not None
         assert balance["village_id"] == "hejij"
-        
+
         # 4. دریافت آمار روستا
         stats = await landscape_service.get_village_stats("hejij")
         assert stats is not None

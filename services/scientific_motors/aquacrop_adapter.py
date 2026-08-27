@@ -1,6 +1,7 @@
 # services/scientific_motors/aquacrop_adapter.py
-from aquacrop import AquaCropModel, Crop, Soil, IrrigationManagement
+from aquacrop import AquaCropModel, Crop, IrrigationManagement, Soil
 from sqlalchemy.ext.asyncio import AsyncSession
+
 
 class AquaCropAdapter:
     """
@@ -9,10 +10,10 @@ class AquaCropAdapter:
     ورودی: Land Profile از services/land
     خروجی: پیش‌بینی عملکرد، نیاز آبی، تاریخ کاشت
     """
-    
+
     def __init__(self, db: AsyncSession):
         self.db = db
-    
+
     async def simulate_crop(
         self,
         crop_type: str,
@@ -22,20 +23,20 @@ class AquaCropAdapter:
     ) -> dict:
         # تنظیم خاک از Land Profile
         soil = Soil(soil_type=soil_profile["texture"])
-        
+
         # تنظیم گیاه از crop_database
         crop = Crop(crop_type, planting_date=planting_date)
-        
+
         # استراتژی آبیاری
         irrigation = IrrigationManagement(irrigation_method=3)
-        
+
         # اجرای شبیه‌سازی
         model = AquaCropModel(
             soil=soil, crop=crop, weather=weather_data,
             irrigation=irrigation
         )
         model.run_model()
-        
+
         # استخراج نتایج
         return {
             "yield_kg_ha": model.get_yield(),

@@ -1,5 +1,4 @@
 """AI advice endpoint (RAG → NLG/LLM) — Phase 8-C."""
-from typing import Optional
 
 from fastapi import APIRouter
 from pydantic import BaseModel
@@ -11,8 +10,8 @@ router = APIRouter(prefix="/api/v1/ai", tags=["ai"])
 
 class AdviceRequest(BaseModel):
     question: str
-    lat: Optional[float] = None
-    lon: Optional[float] = None
+    lat: float | None = None
+    lon: float | None = None
 
 
 @router.post("/advise")

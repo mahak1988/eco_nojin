@@ -4,24 +4,22 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
-import time
 from pathlib import Path
-from typing import Dict, List, Optional
 
 import xarray as xr
 from shapely.geometry import Polygon
 
 from .base import MapPipeline, MapRequest, MapResult, MapType
 from .fetchers.dem_fetcher import DEMFetcher
-from .pipelines.topographic import TopographicPipeline
-from .fetchers.rainfall_fetcher import RainfallFetcher
-from .fetchers.soil_fetcher import SoilErodibilityFetcher
-from .pipelines.rusle import RUSLEPipeline
-from .fetchers.vegetation_fetcher import VegetationFetcher
 from .fetchers.landcover_fetcher import LandCoverFetcher
-from .pipelines.vegetation import VegetationPipeline
+from .fetchers.rainfall_fetcher import RainfallFetcher
 from .fetchers.runoff_fetcher import RunoffFetcher
+from .fetchers.soil_fetcher import SoilErodibilityFetcher
+from .fetchers.vegetation_fetcher import VegetationFetcher
 from .pipelines.runoff import RunoffPipeline
+from .pipelines.rusle import RUSLEPipeline
+from .pipelines.topographic import TopographicPipeline
+from .pipelines.vegetation import VegetationPipeline
 
 
 class MapOrchestrator:
@@ -49,7 +47,7 @@ class MapOrchestrator:
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
         # Initialize fetchers registry
-        self.fetchers: Dict[str, object] = {
+        self.fetchers: dict[str, object] = {
             "dem": DEMFetcher(cache_dir=self.cache_dir / "dem"),
             "rainfall": RainfallFetcher(cache_dir=self.cache_dir / "rainfall"),
             "soil": SoilErodibilityFetcher(cache_dir=self.cache_dir / "soil"),
@@ -59,7 +57,7 @@ class MapOrchestrator:
         }
 
         # Initialize pipelines registry
-        self.pipelines: Dict[MapType, MapPipeline] = {
+        self.pipelines: dict[MapType, MapPipeline] = {
             MapType.M_TOP: TopographicPipeline(cache_dir=self.cache_dir),
             MapType.M_ERS: RUSLEPipeline(cache_dir=self.cache_dir),
             MapType.M_VEG: VegetationPipeline(cache_dir=self.cache_dir),
@@ -126,9 +124,9 @@ class MapOrchestrator:
 
     async def generate_batch(
         self,
-        requests: List[MapRequest],
+        requests: list[MapRequest],
         max_concurrent: int = 3,
-    ) -> List[MapResult]:
+    ) -> list[MapResult]:
         """Generate multiple maps concurrently."""
         semaphore = asyncio.Semaphore(max_concurrent)
 
@@ -144,7 +142,7 @@ class MapOrchestrator:
         results = await asyncio.gather(*tasks)
         return [r for r in results if r is not None]
 
-    async def _check_cache(self, request: MapRequest) -> Optional[MapResult]:
+    async def _check_cache(self, request: MapRequest) -> MapResult | None:
         """Check if result is cached. Returns result with near-zero time on hit."""
         cache_key = self._cache_key(request)
         cache_file = self.cache_dir / f"{cache_key}.json"
@@ -188,10 +186,10 @@ class MapOrchestrator:
 
     async def _fetch_layers(
         self,
-        layers: List[str],
+        layers: list[str],
         region: Polygon,
         **kwargs,
-    ) -> Dict[str, xr.DataArray]:
+    ) -> dict[str, xr.DataArray]:
         """Fetch required base layers concurrently."""
         result = {}
 
@@ -263,15 +261,15 @@ class MapOrchestrator:
         self.fetchers[fetcher.layer_name] = fetcher
         print(f"[OK] Registered fetcher: {fetcher.layer_name}")
 
-    def list_pipelines(self) -> List[str]:
+    def list_pipelines(self) -> list[str]:
         """List available pipeline types."""
         return [m.value for m in self.pipelines.keys()]
 
-    def list_fetchers(self) -> List[str]:
+    def list_fetchers(self) -> list[str]:
         """List available fetchers."""
         return list(self.fetchers.keys())
 
-    async def clear_cache(self, map_type: Optional[MapType] = None) -> int:
+    async def clear_cache(self, map_type: MapType | None = None) -> int:
         """Clear cache. If map_type specified, clear only that type."""
         count = 0
         for cache_file in self.cache_dir.glob("*.json"):

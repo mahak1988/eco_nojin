@@ -4,8 +4,8 @@ Hydraulic Design Engine - Water Structures.
 Calculates and designs basic water structures like weirs, spillways, culverts.
 """
 import math
-from typing import Dict, Any
 from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass
@@ -18,7 +18,7 @@ class WeirDesignCriteria:
     upstream_water_level: float = 2.0 # m above weir crest
 
 
-def design_broad_crested_weir(criteria: WeirDesignCriteria) -> Dict[str, Any]:
+def design_broad_crested_weir(criteria: WeirDesignCriteria) -> dict[str, Any]:
     """
     Designs a broad-crested weir for flow measurement or control.
 
@@ -72,7 +72,7 @@ class CulvertDesignCriteria:
     max_headwater_depth: float = 2.0 # m above invert at inlet
 
 
-def design_circular_culvert(criteria: CulvertDesignCriteria) -> Dict[str, Any]:
+def design_circular_culvert(criteria: CulvertDesignCriteria) -> dict[str, Any]:
     """
     Designs a circular culvert.
 

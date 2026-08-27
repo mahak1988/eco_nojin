@@ -1,7 +1,7 @@
-from datetime import timezone
+
 """Product catalog management for the marketplace."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from .models import CertificationType, Producer, Product, ProductCategory
 
@@ -75,7 +75,7 @@ class ProductCatalog:
                 organic_certified=True,
                 carbon_footprint_kg_co2=0.8,
                 water_footprint_liters=1200,
-                harvest_date=datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=30),
+                harvest_date=datetime.now(UTC).replace(tzinfo=None) - timedelta(days=30),
                 batch_number="GLS-2025-001",
             ),
             Product(
@@ -91,7 +91,7 @@ class ProductCatalog:
                 organic_certified=True,
                 carbon_footprint_kg_co2=2.5,
                 water_footprint_liters=800,
-                harvest_date=datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=2),
+                harvest_date=datetime.now(UTC).replace(tzinfo=None) - timedelta(days=2),
                 batch_number="QSH-2025-042",
             ),
             Product(
@@ -107,7 +107,7 @@ class ProductCatalog:
                 organic_certified=True,
                 carbon_footprint_kg_co2=0.1,
                 water_footprint_liters=50,
-                harvest_date=datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=60),
+                harvest_date=datetime.now(UTC).replace(tzinfo=None) - timedelta(days=60),
                 batch_number="KHS-2025-007",
             ),
             Product(
@@ -123,7 +123,7 @@ class ProductCatalog:
                 organic_certified=True,
                 carbon_footprint_kg_co2=0.2,
                 water_footprint_liters=100,
-                harvest_date=datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=15),
+                harvest_date=datetime.now(UTC).replace(tzinfo=None) - timedelta(days=15),
                 batch_number="ZGR-2025-023",
             ),
             Product(
@@ -139,7 +139,7 @@ class ProductCatalog:
                 organic_certified=True,
                 carbon_footprint_kg_co2=0.6,
                 water_footprint_liters=900,
-                harvest_date=datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=45),
+                harvest_date=datetime.now(UTC).replace(tzinfo=None) - timedelta(days=45),
                 batch_number="GLS-2025-002",
             ),
         ]

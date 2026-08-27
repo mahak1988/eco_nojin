@@ -2,7 +2,6 @@
 Multilingual support for Telegram Bot.
 Languages: Persian (fa), English (en), Arabic (ar), Spanish (es)
 """
-from typing import Dict
 
 TRANSLATIONS = {
     "fa": {
@@ -99,9 +98,9 @@ def detect_language(text: str) -> str:
         if any(c in persian_chars for c in text):
             return "fa"
         return "ar"
-    
+
     # Spanish characters
     if any(c in text for c in 'áéíóúñ¿¡'):
         return "es"
-    
+
     return "en"

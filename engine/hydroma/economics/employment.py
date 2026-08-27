@@ -3,7 +3,7 @@ Economic Engine - Employment Generation Module.
 
 Estimates direct, indirect, and induced employment effects of projects.
 """
-from typing import Dict, Any, List
+from typing import Any
 
 
 def estimate_direct_employment(
@@ -12,7 +12,7 @@ def estimate_direct_employment(
     employment_intensity_per_unit: float, # Jobs per unit of activity (e.g., jobs per hectare, jobs per MLD water)
     job_type: str = "full_time_equivalent", # e.g., "full_time", "part_time", "seasonal"
     duration_months: float = 12.0 # Average duration of employment
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Estimates direct employment created by a specific activity.
 
@@ -44,7 +44,7 @@ def estimate_induced_employment(
     household_size: float,
     income_spent_locally_fraction: float,
     local_multiplier: float # Jobs created per unit of spending in the local economy
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Estimates induced employment (jobs created in local economy due to spending by direct employees).
 
@@ -71,10 +71,10 @@ def estimate_induced_employment(
 
 
 def calculate_total_employment_impact(
-    direct_employment_data: List[Dict[str, Any]],
-    indirect_employment_data: List[Dict[str, Any]], # e.g., from supply chain models
-    induced_employment_data: Dict[str, Any] # Calculated from direct employment
-) -> Dict[str, Any]:
+    direct_employment_data: list[dict[str, Any]],
+    indirect_employment_data: list[dict[str, Any]], # e.g., from supply chain models
+    induced_employment_data: dict[str, Any] # Calculated from direct employment
+) -> dict[str, Any]:
     """
     Aggregates direct, indirect, and induced employment impacts.
 

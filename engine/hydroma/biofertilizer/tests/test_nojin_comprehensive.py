@@ -2,22 +2,22 @@
 Comprehensive Test Suite for Nojin Biofertilizer
 50+ tests covering all system components
 """
-import pytest
 import json
-from datetime import date
 import sys
 from pathlib import Path
+
+import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
 class TestNojinCalculator:
     """Tests for basic calculator."""
-    
+
     def test_calculator_instantiation(self):
         from engine.hydroma.biofertilizer import NojinCalculator
         calc = NojinCalculator()
         assert calc is not None
-    
+
     def test_basic_calculation(self):
         from engine.hydroma.biofertilizer import NojinCalculator, NojinInput, SoilCondition
         calc = NojinCalculator()
@@ -29,7 +29,7 @@ class TestNojinCalculator:
         result = calc.calculate(input_data)
         assert result is not None
         assert result.recommended_dosage_kg_ha > 0
-    
+
     def test_ph_extremes(self):
         from engine.hydroma.biofertilizer import NojinCalculator, NojinInput, SoilCondition
         calc = NojinCalculator()
@@ -44,24 +44,27 @@ class TestNojinCalculator:
 
 class TestFormulationOptimizer:
     """Tests for LP-based optimizer."""
-    
+
     def test_optimizer_initialization(self):
         from engine.hydroma.biofertilizer.advanced_calculator import FormulationOptimizer
-        from engine.hydroma.biofertilizer.data import MATERIALS, FORMULATIONS
+        from engine.hydroma.biofertilizer.data import FORMULATIONS, MATERIALS
         opt = FormulationOptimizer(MATERIALS, FORMULATIONS)
         assert len(opt.materials) == 43
-    
+
     def test_get_recipe_for_soil(self):
         from engine.hydroma.biofertilizer.advanced_calculator import FormulationOptimizer
-        from engine.hydroma.biofertilizer.data import MATERIALS, FORMULATIONS
+        from engine.hydroma.biofertilizer.data import FORMULATIONS, MATERIALS
         opt = FormulationOptimizer(MATERIALS, FORMULATIONS)
         recipe = opt.get_recipe_for_soil("SOIL-01")
         assert recipe is not None
         assert recipe["recipe_code"] == "NOJIN-ARID-1"
-    
+
     def test_optimize_arid_soil(self):
-        from engine.hydroma.biofertilizer.advanced_calculator import FormulationOptimizer, FormulationRequest
-        from engine.hydroma.biofertilizer.data import MATERIALS, FORMULATIONS
+        from engine.hydroma.biofertilizer.advanced_calculator import (
+            FormulationOptimizer,
+            FormulationRequest,
+        )
+        from engine.hydroma.biofertilizer.data import FORMULATIONS, MATERIALS
         opt = FormulationOptimizer(MATERIALS, FORMULATIONS)
         req = FormulationRequest(soil_code="SOIL-01", area_ha=10.0, target_om_increase_pct=3.0)
         solution = opt.optimize(req)
@@ -71,7 +74,7 @@ class TestFormulationOptimizer:
 
 class TestCostBenefitCalculator:
     """Tests for economic analysis."""
-    
+
     def test_roi_calculation_positive(self):
         from engine.hydroma.biofertilizer.advanced_calculator import CostBenefitCalculator
         from engine.hydroma.biofertilizer.data import MATERIALS
@@ -80,7 +83,7 @@ class TestCostBenefitCalculator:
         result = calc.analyze(materials, area_ha=10.0)
         assert result.roi_annual_percent > 0
         assert result.is_economically_viable
-    
+
     def test_persistence_based_reinvestment(self):
         from engine.hydroma.biofertilizer.advanced_calculator import CostBenefitCalculator
         from engine.hydroma.biofertilizer.data import MATERIALS
@@ -91,7 +94,7 @@ class TestCostBenefitCalculator:
         manure_only = {"ANM-027": 6000}
         reinvest = calc._calculate_annual_reinvestment(manure_only, analysis_years=10)
         assert reinvest > 200
-    
+
     def test_npv_positive_for_viable_project(self):
         from engine.hydroma.biofertilizer.advanced_calculator import CostBenefitCalculator
         from engine.hydroma.biofertilizer.data import MATERIALS
@@ -100,7 +103,7 @@ class TestCostBenefitCalculator:
         result = calc.analyze(materials, area_ha=10.0)
         assert result.npv_10year_usd > 0
         assert result.benefit_cost_ratio > 1.5
-    
+
     def test_irr_calculation(self):
         from engine.hydroma.biofertilizer.advanced_calculator import CostBenefitCalculator
         from engine.hydroma.biofertilizer.data import MATERIALS
@@ -111,7 +114,7 @@ class TestCostBenefitCalculator:
 
 class TestWaterSavingsCalculator:
     """Tests for water savings."""
-    
+
     def test_water_savings_arid(self):
         from engine.hydroma.biofertilizer.advanced_calculator import WaterSavingsCalculator
         from engine.hydroma.biofertilizer.data import MATERIALS
@@ -120,7 +123,7 @@ class TestWaterSavingsCalculator:
         result = calc.calculate(materials, area_ha=10.0, baseline_irrigation_m3_ha=8000)
         assert result.water_saved_percent >= 40
         assert result.drought_resistance_days >= 10
-    
+
     def test_mulch_evaporation_reduction(self):
         from engine.hydroma.biofertilizer.advanced_calculator import WaterSavingsCalculator
         from engine.hydroma.biofertilizer.data import MATERIALS
@@ -132,7 +135,7 @@ class TestWaterSavingsCalculator:
 
 class TestScaleCalculator:
     """Tests for scaling."""
-    
+
     def test_economies_of_scale(self):
         from engine.hydroma.biofertilizer.advanced_calculator import ScaleCalculator
         from engine.hydroma.biofertilizer.data import MATERIALS
@@ -141,7 +144,7 @@ class TestScaleCalculator:
         small = calc.scale(materials, area_ha=5.0)
         large = calc.scale(materials, area_ha=500.0)
         assert large.economies_of_scale_pct > small.economies_of_scale_pct
-    
+
     def test_scale_categories(self):
         from engine.hydroma.biofertilizer.advanced_calculator import ScaleCalculator
         from engine.hydroma.biofertilizer.data import MATERIALS
@@ -157,7 +160,7 @@ class TestScaleCalculator:
 
 class TestMaterialRepository:
     """Tests for material repository."""
-    
+
     def test_count_materials(self):
         from database import SessionLocal
         from engine.hydroma.biofertilizer import NojinMaterialRepository
@@ -166,7 +169,7 @@ class TestMaterialRepository:
         count = repo.count()
         assert count == 43
         session.close()
-    
+
     def test_get_arid_priority(self):
         from database import SessionLocal
         from engine.hydroma.biofertilizer import NojinMaterialRepository
@@ -178,7 +181,7 @@ class TestMaterialRepository:
             assert mat.is_suitable_for_arid
             assert mat.arid_priority_score >= 9
         session.close()
-    
+
     def test_search_materials(self):
         from database import SessionLocal
         from engine.hydroma.biofertilizer import NojinMaterialRepository
@@ -191,7 +194,7 @@ class TestMaterialRepository:
 
 class TestSoilTypeRepository:
     """Tests for soil type repository."""
-    
+
     def test_classify_sandy_soil(self):
         from database import SessionLocal
         from engine.hydroma.biofertilizer import NojinSoilTypeRepository
@@ -201,7 +204,7 @@ class TestSoilTypeRepository:
         assert soil is not None
         assert soil.soil_code == "SOIL-01"
         session.close()
-    
+
     def test_classify_saline_soil(self):
         from database import SessionLocal
         from engine.hydroma.biofertilizer import NojinSoilTypeRepository
@@ -215,10 +218,10 @@ class TestSoilTypeRepository:
 
 class TestScientificCorrectness:
     """Tests for scientific correctness."""
-    
+
     def test_cn_ratio_balanced(self):
         from engine.hydroma.biofertilizer.advanced_calculator import FormulationOptimizer
-        from engine.hydroma.biofertilizer.data import MATERIALS, FORMULATIONS
+        from engine.hydroma.biofertilizer.data import FORMULATIONS, MATERIALS
         opt = FormulationOptimizer(MATERIALS, FORMULATIONS)
         recipe = opt.get_recipe_for_soil("SOIL-01")
         composition = recipe["material_composition"]
@@ -235,7 +238,7 @@ class TestScientificCorrectness:
         if total_n > 0:
             cn_ratio = total_c / total_n
             assert 15 <= cn_ratio <= 40
-    
+
     def test_water_savings_realistic(self):
         from engine.hydroma.biofertilizer.advanced_calculator import WaterSavingsCalculator
         from engine.hydroma.biofertilizer.data import MATERIALS
@@ -243,7 +246,7 @@ class TestScientificCorrectness:
         materials = {"MIN-011": 8000, "CAR-021": 4000, "PLM-003": 3000}
         result = calc.calculate(materials, area_ha=10.0)
         assert 30 <= result.water_saved_percent <= 60
-    
+
     def test_co2_sequestration_positive(self):
         from engine.hydroma.biofertilizer.advanced_calculator import CostBenefitCalculator
         from engine.hydroma.biofertilizer.data import MATERIALS
@@ -255,13 +258,15 @@ class TestScientificCorrectness:
 
 class TestFullAnalysisIntegration:
     """End-to-end integration tests."""
-    
+
     def test_full_analysis_desert_sandy(self):
         from engine.hydroma.biofertilizer.advanced_calculator import (
-            FormulationOptimizer, CostBenefitCalculator,
-            WaterSavingsCalculator, ScaleCalculator
+            CostBenefitCalculator,
+            FormulationOptimizer,
+            ScaleCalculator,
+            WaterSavingsCalculator,
         )
-        from engine.hydroma.biofertilizer.data import MATERIALS, FORMULATIONS
+        from engine.hydroma.biofertilizer.data import FORMULATIONS, MATERIALS
         opt = FormulationOptimizer(MATERIALS, FORMULATIONS)
         recipe = opt.get_recipe_for_soil("SOIL-01")
         composition = recipe["material_composition"]
@@ -277,12 +282,13 @@ class TestFullAnalysisIntegration:
         assert cb.is_economically_viable
         assert ws.water_saved_percent > 40
         assert sc.scale_category == "medium"
-    
+
     def test_full_analysis_saline(self):
         from engine.hydroma.biofertilizer.advanced_calculator import (
-            FormulationOptimizer, CostBenefitCalculator
+            CostBenefitCalculator,
+            FormulationOptimizer,
         )
-        from engine.hydroma.biofertilizer.data import MATERIALS, FORMULATIONS
+        from engine.hydroma.biofertilizer.data import FORMULATIONS, MATERIALS
         opt = FormulationOptimizer(MATERIALS, FORMULATIONS)
         recipe = opt.get_recipe_for_soil("SOIL-02")
         composition = recipe["material_composition"]
@@ -297,7 +303,7 @@ class TestFullAnalysisIntegration:
 
 class TestEdgeCases:
     """Tests for edge cases."""
-    
+
     def test_empty_formulation(self):
         from engine.hydroma.biofertilizer.advanced_calculator import CostBenefitCalculator
         from engine.hydroma.biofertilizer.data import MATERIALS
@@ -307,7 +313,7 @@ class TestEdgeCases:
         # Calculator includes fixed costs (labor, equipment) even with empty formulation
         # Accept any non-negative value
         assert result.total_investment_usd >= 0
-    
+
     def test_zero_area(self):
         from engine.hydroma.biofertilizer.advanced_calculator import ScaleCalculator
         from engine.hydroma.biofertilizer.data import MATERIALS
@@ -318,7 +324,7 @@ class TestEdgeCases:
             assert result.total_tons == 0
         except Exception:
             pass
-    
+
     def test_very_large_area(self):
         from engine.hydroma.biofertilizer.advanced_calculator import ScaleCalculator
         from engine.hydroma.biofertilizer.data import MATERIALS
@@ -331,13 +337,13 @@ class TestEdgeCases:
 
 class TestDataIntegrity:
     """Tests for data consistency."""
-    
+
     def test_all_materials_have_cost(self):
         from engine.hydroma.biofertilizer.data import MATERIALS
         for mat in MATERIALS:
             assert "cost_per_ton_usd" in mat
             assert mat["cost_per_ton_usd"] >= 0
-    
+
     def test_all_recipes_have_composition(self):
         from engine.hydroma.biofertilizer.data import FORMULATIONS
         for rec in FORMULATIONS:
@@ -347,7 +353,7 @@ class TestDataIntegrity:
 
 class TestAPIEndpoints:
     """Tests for API endpoints."""
-    
+
     def test_health_endpoint(self):
         try:
             import requests
@@ -356,7 +362,7 @@ class TestAPIEndpoints:
                 assert r.json()["status"] == "healthy"
         except Exception:
             pytest.skip("Server not accessible")
-    
+
     def test_materials_endpoint(self):
         try:
             import requests

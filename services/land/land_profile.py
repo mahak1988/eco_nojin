@@ -1,9 +1,8 @@
-from typing import List, Optional, Dict, Any
-from pydantic import BaseModel, ConfigDict
 import uuid
-from datetime import datetime
-from pydantic import BaseModel, Field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+from typing import Any, Optional
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class LandProfileCreateRequest(BaseModel):
@@ -11,30 +10,30 @@ class LandProfileCreateRequest(BaseModel):
     project_id: str
     latitude: float
     longitude: float
-    boundary_geojson: Optional[Dict[str, Any]] = None
-    area_hectares: Optional[float] = None
+    boundary_geojson: dict[str, Any] | None = None
+    area_hectares: float | None = None
 
 
 class LandProfileResponse(BaseModel):
     """Response model for a land profile."""
     id: str
     project_id: str
-    location: Dict[str, float]  # {"lat": lat, "lng": lng}
-    boundary: Optional[Dict[str, Any]]
-    area_hectares: Optional[float]
-    elevation_min: Optional[float]
-    elevation_max: Optional[float]
-    elevation_mean: Optional[float]
-    slope_mean_degrees: Optional[float]
-    aspect_dominant: Optional[str]
-    terrain_type: Optional[str]
-    drainage_pattern: Optional[str]
-    erosion_risk_level: Optional[str]
-    accessibility_score: Optional[float]
-    land_capability_class: Optional[str]
-    development_constraints: Optional[Dict[str, Any]]
-    dem_source: Optional[str]
-    dem_resolution: Optional[float]
+    location: dict[str, float]  # {"lat": lat, "lng": lng}
+    boundary: dict[str, Any] | None
+    area_hectares: float | None
+    elevation_min: float | None
+    elevation_max: float | None
+    elevation_mean: float | None
+    slope_mean_degrees: float | None
+    aspect_dominant: str | None
+    terrain_type: str | None
+    drainage_pattern: str | None
+    erosion_risk_level: str | None
+    accessibility_score: float | None
+    land_capability_class: str | None
+    development_constraints: dict[str, Any] | None
+    dem_source: str | None
+    dem_resolution: float | None
     created_at: datetime
     updated_at: datetime
     model_config = ConfigDict(from_attributes=True)
@@ -49,7 +48,7 @@ def calculate_land_profile(request: LandProfileCreateRequest) -> LandProfileResp
     """
     # Placeholder calculation - this should eventually call engine.land modules
     print(f"Calculating profile for project {request.project_id} at ({request.latitude}, {request.longitude})")
-    
+
     # Mock data for now
     profile_data = {
         "id": str(uuid.uuid4()),
@@ -90,43 +89,43 @@ class LandProfile(BaseModel):
     name: str
     location_lat: float = 0.0
     location_lon: float = 0.0
-    area_ha: Optional[float] = None
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    area_ha: float | None = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 class TerrainAnalysis(BaseModel):
     """تحلیل توپوگرافی"""
     profile_id: str
-    terrain_type: Optional[str]= None
-    elevation_min: Optional[float] = None
-    elevation_max: Optional[float] = None
-    elevation_mean: Optional[float] = None
-    slope_mean: Optional[float] = None
-    slope_max: Optional[float] = None
-    aspect_dominant: Optional[float]= None
+    terrain_type: str | None= None
+    elevation_min: float | None = None
+    elevation_max: float | None = None
+    elevation_mean: float | None = None
+    slope_mean: float | None = None
+    slope_max: float | None = None
+    aspect_dominant: float | None= None
     mean_slope_degrees: float = 0.0
     dominant_aspect_degrees: float = 0.0
     analysis_data: dict = {}
-    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 class DrainageAnalysis(BaseModel):
     """تحلیل زهکشی"""
     profile_id: str
-    drainage_pattern: Optional[str] = None
-    drainage_density: Optional[float] = None
-    density_class: Optional[str] = None
-    stream_orders: Optional[List[int]]= None
-    stream_order_max: Optional[int] = None
-    bifurcation_ratio: Optional[float] = None
-    flow_accumulation: Optional[Any] = None
-    watershed_area_km2: Optional[float] = None
-    time_of_concentration_hours: Optional[float] = None
-    main_channel_length_km: Optional[float] = None
-    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    drainage_pattern: str | None = None
+    drainage_density: float | None = None
+    density_class: str | None = None
+    stream_orders: list[int] | None= None
+    stream_order_max: int | None = None
+    bifurcation_ratio: float | None = None
+    flow_accumulation: Any | None = None
+    watershed_area_km2: float | None = None
+    time_of_concentration_hours: float | None = None
+    main_channel_length_km: float | None = None
+    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 class CapabilityAssessment(BaseModel):
     """ارزیابی قابلیت اراضی"""
     profile_id: str
-    capability_class: Optional[str] = None
-    confidence_score: Optional[float] = None
-    limitations: Optional[list] = None
+    capability_class: str | None = None
+    confidence_score: float | None = None
+    limitations: list | None = None
     analysis_data: dict = {}
-    assessed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    assessed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

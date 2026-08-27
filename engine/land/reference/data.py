@@ -11,17 +11,13 @@ Data sources:
 - GeoNames for city coordinates
 """
 
-from typing import Dict, List
-from .models import (
-    Country, Region, City, Continent,
-    TerrainClassification, DrainageStandard
-)
 
+from .models import City, Continent, Country, DrainageStandard, Region, TerrainClassification
 
 # ======================================================================
 # Countries (Top 25 + key countries)
 # ======================================================================
-COUNTRIES: List[Country] = [
+COUNTRIES: list[Country] = [
     Country(
         code="IR", name="Iran", name_fa="ایران",
         continent=Continent.ASIA,
@@ -210,7 +206,7 @@ COUNTRIES: List[Country] = [
 # ======================================================================
 # Regions (Iran provinces + international samples)
 # ======================================================================
-REGIONS: List[Region] = [
+REGIONS: list[Region] = [
     # Iran provinces
     Region(code="IR-04", name="Isfahan", name_fa="اصفهان",
            country_code="IR", center_lat=32.65, center_lon=51.67,
@@ -244,7 +240,7 @@ REGIONS: List[Region] = [
 # ======================================================================
 # Cities (major cities for quick access)
 # ======================================================================
-CITIES: List[City] = [
+CITIES: list[City] = [
     # Iran
     City(name="Isfahan", name_fa="اصفهان", country_code="IR",
          region_code="IR-04", lat=32.65, lon=51.67,
@@ -326,7 +322,7 @@ CITIES: List[City] = [
 # ======================================================================
 # Terrain Classification Standards
 # ======================================================================
-TERRAIN_CLASSIFICATIONS: List[TerrainClassification] = [
+TERRAIN_CLASSIFICATIONS: list[TerrainClassification] = [
     TerrainClassification(
         code="flat", name="Flat",
         slope_min_deg=0, slope_max_deg=2,
@@ -375,7 +371,7 @@ TERRAIN_CLASSIFICATIONS: List[TerrainClassification] = [
 # ======================================================================
 # Drainage Density Standards
 # ======================================================================
-DRAINAGE_STANDARDS: List[DrainageStandard] = [
+DRAINAGE_STANDARDS: list[DrainageStandard] = [
     DrainageStandard(
         code="very_low", name="Very Low Density",
         density_min_km_km2=0, density_max_km_km2=2,
@@ -439,14 +435,14 @@ def get_city(name: str) -> City:
     raise ValueError(f"City not found: {name}")
 
 
-def list_countries(continent: str = None) -> List[Country]:
+def list_countries(continent: str = None) -> list[Country]:
     """List countries, optionally filtered by continent."""
     if continent is None:
         return COUNTRIES
     return [c for c in COUNTRIES if c.continent.value == continent]
 
 
-def list_regions(country_code: str = None) -> List[Region]:
+def list_regions(country_code: str = None) -> list[Region]:
     """List regions, optionally filtered by country."""
     if country_code is None:
         return REGIONS
@@ -455,7 +451,7 @@ def list_regions(country_code: str = None) -> List[Region]:
 
 
 def list_cities(country_code: str = None,
-                region_code: str = None) -> List[City]:
+                region_code: str = None) -> list[City]:
     """List cities, optionally filtered."""
     result = CITIES
     if country_code:
@@ -491,7 +487,7 @@ def find_nearest_city(lat: float, lon: float) -> City:
     return nearest
 
 
-def get_all_reference_summary() -> Dict[str, int]:
+def get_all_reference_summary() -> dict[str, int]:
     """Get summary of available reference data."""
     return {
         "countries": len(COUNTRIES),

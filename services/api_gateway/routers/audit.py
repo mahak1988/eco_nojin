@@ -3,7 +3,7 @@ and Persian RTL credit certificates. All writes go through SECURITY DEFINER
 RPCs (auditor_vote / admin_issue_credits) that check roles server-side;
 reads are RLS-filtered by the user's JWT. Honest errors, real rows only."""
 
-from typing import Any, Dict, Optional
+from typing import Any
 
 import httpx
 from fastapi import APIRouter, HTTPException, Query
@@ -20,7 +20,7 @@ def _env(key: str) -> str:
     return ""
 
 
-def _cfg() -> Dict[str, str]:
+def _cfg() -> dict[str, str]:
     url = _env("SUPABASE_URL")
     anon = _env("SUPABASE_ANON_KEY")
     if not url or not anon:
@@ -28,7 +28,7 @@ def _cfg() -> Dict[str, str]:
     return {"url": url.rstrip("/"), "anon": anon}
 
 
-async def _user_from_token(token: str) -> Dict[str, Any]:
+async def _user_from_token(token: str) -> dict[str, Any]:
     cfg = _cfg()
     async with httpx.AsyncClient(timeout=20) as s:
         r = await s.get(
@@ -40,7 +40,7 @@ async def _user_from_token(token: str) -> Dict[str, Any]:
         return r.json()
 
 
-async def _get(table: str, select: str, extra: str = "", token: Optional[str] = None) -> Any:
+async def _get(table: str, select: str, extra: str = "", token: str | None = None) -> Any:
     cfg = _cfg()
     bearer = token or cfg["anon"]
     async with httpx.AsyncClient(timeout=20) as s:
@@ -53,7 +53,7 @@ async def _get(table: str, select: str, extra: str = "", token: Optional[str] = 
         return r.json()
 
 
-async def _rpc(fn: str, body: Dict[str, Any], token: str) -> Any:
+async def _rpc(fn: str, body: dict[str, Any], token: str) -> Any:
     cfg = _cfg()
     async with httpx.AsyncClient(timeout=20) as s:
         r = await s.post(
@@ -67,7 +67,7 @@ async def _rpc(fn: str, body: Dict[str, Any], token: str) -> Any:
 
 
 @router.get("/queue")
-async def queue(token: str, limit: int = Query(default=50, ge=1, le=200)) -> Dict[str, Any]:
+async def queue(token: str, limit: int = Query(default=50, ge=1, le=200)) -> dict[str, Any]:
     """Verification queue — RLS decides (auditor/admin see rows via base tables)."""
     try:
         await _user_from_token(token)
@@ -80,7 +80,7 @@ async def queue(token: str, limit: int = Query(default=50, ge=1, le=200)) -> Dic
 
 
 @router.post("/vote")
-async def vote(token: str, verification_id: str, vote_value: str, confidence: int = 70, comment: Optional[str] = None) -> Dict[str, Any]:
+async def vote(token: str, verification_id: str, vote_value: str, confidence: int = 70, comment: str | None = None) -> dict[str, Any]:
     """Auditor vote (validator_id = auth.uid via auditor_vote RPC)."""
     try:
         await _user_from_token(token)
@@ -93,7 +93,7 @@ async def vote(token: str, verification_id: str, vote_value: str, confidence: in
 
 
 @router.post("/credits")
-async def issue_credits(token: str, project_id: str, amount: float) -> Dict[str, Any]:
+async def issue_credits(token: str, project_id: str, amount: float) -> dict[str, Any]:
     """Admin issues carbon credits (admin_issue_credits RPC -> credit + tx)."""
     try:
         await _user_from_token(token)
@@ -106,7 +106,7 @@ async def issue_credits(token: str, project_id: str, amount: float) -> Dict[str,
 
 
 @router.get("/credits")
-async def credits(token: str) -> Dict[str, Any]:
+async def credits(token: str) -> dict[str, Any]:
     """Own credits (admin sees all via RLS)."""
     try:
         u = await _user_from_token(token)

@@ -4,12 +4,14 @@ Validation Engine.
 Validates model performance against independent datasets after calibration.
 """
 import logging
-from typing import Dict, Any, List, Callable
-import numpy as np
+from collections.abc import Callable
 from datetime import date
+from typing import Any
 
-from database.models import CalibrationRecordDB, ModelVersionDB
+import numpy as np
+
 from database.config import SessionLocal
+from database.models import CalibrationRecordDB
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +26,7 @@ class ModelValidator:
         """
         self.model_function = model_function
 
-    def validate(self, calibrated_params: Dict[str, float], validation_data: List[Dict[str, Any]], input_conditions: Dict[str, Any]) -> Dict[str, float]:
+    def validate(self, calibrated_params: dict[str, float], validation_data: list[dict[str, Any]], input_conditions: dict[str, Any]) -> dict[str, float]:
         """
         Validates the model.
 
@@ -82,7 +84,7 @@ class ModelValidator:
         return 1 - (ss_res / ss_tot)
 
 
-def run_validation_for_calibration(calibration_record_id: str, validation_data: List[Dict[str, Any]], input_conditions: Dict[str, Any]):
+def run_validation_for_calibration(calibration_record_id: str, validation_data: list[dict[str, Any]], input_conditions: dict[str, Any]):
     """
     Performs validation for a specific calibration record.
 
@@ -108,7 +110,7 @@ def run_validation_for_calibration(calibration_record_id: str, validation_data: 
         # Define the model function based on the model name
         # This is a simplified dispatch. A factory pattern would be better for many models.
         if model_name == "soil_nutrient_model":
-            from engine.hydroma.soil.nutrient_dynamic import run_nutrient_model # hypothetical
+            from engine.hydroma.soil.nutrient_dynamic import run_nutrient_model  # hypothetical
             model_func = run_nutrient_model
         else:
             logger.error(f"Model {model_name} not recognized for validation.")

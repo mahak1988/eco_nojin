@@ -1,17 +1,19 @@
 """ReportingService"""
 import json
-from typing import Optional, List
 from pathlib import Path
+
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from services.reporting.models import Report
-from services.reporting.schemas import ReportCreate, ReportRead, ReportStatus, ReportType
 from services.reporting.repository import ReportingRepository
+from services.reporting.schemas import ReportCreate, ReportRead, ReportStatus, ReportType
+
 
 class ReportingService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.repo = ReportingRepository(db)
-    
+
     async def create_report(self, data: ReportCreate) -> ReportRead:
         report = Report(
             report_type=data.report_type.value,
@@ -22,7 +24,7 @@ class ReportingService:
         )
         report = await self.repo.create_report(report)
         return self._to_read(report)
-    
+
     async def generate_report(self, report_id: str) -> ReportRead:
         report = await self.repo.get_report(report_id)
         if not report:
@@ -42,11 +44,11 @@ class ReportingService:
             )
         report = await self.repo.get_report(report_id)
         return self._to_read(report)
-    
-    async def _generate_data(self, report_type: str, parameters: Optional[dict]) -> dict:
+
+    async def _generate_data(self, report_type: str, parameters: dict | None) -> dict:
         try:
-            from services.analytics.service import AnalyticsService
             from services.analytics.schemas import PeriodType
+            from services.analytics.service import AnalyticsService
             analytics = AnalyticsService(self.db)
             if report_type == ReportType.SALES.value:
                 return (await analytics.aggregate_sales(period=PeriodType.MONTH)).model_dump(mode="json")
@@ -59,24 +61,24 @@ class ReportingService:
             return {"report_type": report_type}
         except ImportError:
             return {"report_type": report_type, "message": "Analytics unavailable"}
-    
+
     async def _save_to_file(self, report_id: str, data: dict) -> str:
         reports_dir = Path("data/reports")
         reports_dir.mkdir(parents=True, exist_ok=True)
         file_path = reports_dir / f"report_{report_id}.json"
         file_path.write_text(json.dumps(data, default=str, indent=2), encoding='utf-8')
         return str(file_path)
-    
+
     async def get_report(self, report_id: str) -> ReportRead:
         report = await self.repo.get_report(report_id)
         if not report:
             raise ValueError(f"Report not found: {report_id}")
         return self._to_read(report)
-    
-    async def list_reports(self, report_type: Optional[str] = None, limit: int = 50) -> List[ReportRead]:
+
+    async def list_reports(self, report_type: str | None = None, limit: int = 50) -> list[ReportRead]:
         reports = await self.repo.list_reports(report_type=report_type, limit=limit)
         return [self._to_read(r) for r in reports]
-    
+
     def _to_read(self, report: Report) -> ReportRead:
         return ReportRead(
             id=report.id,
@@ -89,4 +91,3 @@ class ReportingService:
             created_at=report.created_at,
             completed_at=report.completed_at,
         )
-    

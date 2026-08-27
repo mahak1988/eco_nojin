@@ -1,15 +1,22 @@
-from datetime import timezone
+
 """Analytics router - cross-module historical analysis."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from database.config import get_db
-from database.models import CarbonProject, EcoTransaction, Farm, SatelliteAnalysis, ScenarioRun, SoilAnalysis
-from database.models import User
+from database.models import (
+    CarbonProject,
+    EcoTransaction,
+    Farm,
+    SatelliteAnalysis,
+    ScenarioRun,
+    SoilAnalysis,
+    User,
+)
 from services.api_gateway.auth import require_user
 
 router = APIRouter(prefix="/api/v1/analytics", tags=["analytics"])
@@ -81,7 +88,7 @@ def get_soil_trends(
     if farm_id:
         query = query.filter(SoilAnalysis.farm_id == farm_id)
 
-    cutoff = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=days)
+    cutoff = datetime.now(UTC).replace(tzinfo=None) - timedelta(days=days)
     analyses = (
         query.filter(SoilAnalysis.analyzed_at >= cutoff).order_by(SoilAnalysis.analyzed_at).all()
     )
@@ -138,7 +145,7 @@ def get_ndvi_trends(
     if farm_id:
         query = query.filter(SatelliteAnalysis.farm_id == farm_id)
 
-    cutoff = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=days)
+    cutoff = datetime.now(UTC).replace(tzinfo=None) - timedelta(days=days)
     analyses = (
         query.filter(SatelliteAnalysis.analyzed_at >= cutoff)
         .order_by(SatelliteAnalysis.analyzed_at)

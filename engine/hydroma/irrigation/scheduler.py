@@ -3,8 +3,9 @@ Irrigation Scheduler
 منبع: FAO-56 + Keller & Bliesner (1990)
 """
 from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import Optional
+
 
 @dataclass
 class IrrigationEvent:

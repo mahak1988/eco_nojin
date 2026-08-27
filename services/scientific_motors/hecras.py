@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import time
-from typing import Any, Dict, Optional
+from typing import Any
 
 import numpy as np
 import xarray as xr
@@ -47,7 +47,7 @@ class HECRASMOTOR(AbstractScientificMotor):
 
     async def execute(
         self,
-        inputs: Dict[str, Any],
+        inputs: dict[str, Any],
         parameters: MotorParameters,
     ) -> MotorResult:
         """Execute HEC-RAS simulation."""
@@ -103,11 +103,11 @@ class HECRASMOTOR(AbstractScientificMotor):
         self,
         dem: xr.DataArray,
         runoff_mm: xr.DataArray,
-        slope: Optional[xr.DataArray] = None,
-        landcover: Optional[xr.DataArray] = None,
+        slope: xr.DataArray | None = None,
+        landcover: xr.DataArray | None = None,
         return_period: int = 100,
         **kwargs,
-    ) -> Dict[str, xr.DataArray]:
+    ) -> dict[str, xr.DataArray]:
         """Simplified flood simulation using DEM and runoff."""
         # Compute slope from DEM if not provided
         if slope is None:
@@ -233,7 +233,7 @@ class HECRASMOTOR(AbstractScientificMotor):
             attrs=source.attrs,
         ).rio.write_crs(target.rio.crs)
 
-    def _compute_summary(self, results: Dict[str, Any]) -> Dict[str, Any]:
+    def _compute_summary(self, results: dict[str, Any]) -> dict[str, Any]:
         """Compute summary statistics."""
         summary = {}
         for key, data in results.items():

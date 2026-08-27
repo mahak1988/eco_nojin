@@ -7,12 +7,13 @@ Integrates 6-layer soil profiles (0-200cm) with land analysis.
 
 import logging
 import time
-from typing import Optional, List, Dict, Any
-from datetime import datetime, timezone
 
 from .models import (
-    SoilLayer, DeepSoilProfile, SoilIntegrationResult,
-    SoilTexture, SalinityClass, DrainageClass
+    DeepSoilProfile,
+    SalinityClass,
+    SoilIntegrationResult,
+    SoilLayer,
+    SoilTexture,
 )
 
 logger = logging.getLogger(__name__)
@@ -52,16 +53,23 @@ class SoilIntegrator:
     - health: Soil Health Index
     - pedotransfer: PTF functions
     """
-    
+
     def __init__(self):
         """Initialize integrator with hydroma soil modules."""
         self._soil_modules = None
         self._load_soil_modules()
-    
+
     def _load_soil_modules(self):
         """Load hydroma soil modules (lazy loading)."""
         try:
-            from engine.hydroma.soil import taxonomy, chemistry, salinity, water_retention, health, pedotransfer
+            from engine.hydroma.soil import (
+                chemistry,
+                health,
+                pedotransfer,
+                salinity,
+                taxonomy,
+                water_retention,
+            )
             self._soil_modules = {
                 "taxonomy": taxonomy,
                 "chemistry": chemistry,
@@ -74,7 +82,7 @@ class SoilIntegrator:
         except ImportError as e:
             logger.warning(f"Could not load soil modules: {e}")
             self._soil_modules = None
-    
+
     def classify_texture(self, sand_pct: float, silt_pct: float, clay_pct: float) -> SoilTexture:
         """
         Classify soil texture using USDA triangle.
@@ -112,10 +120,10 @@ class SoilIntegrator:
                             return value
             except Exception as e:
                 logger.warning(f"Texture classification failed: {e}")
-        
+
         # Fallback: simple classification
         return self._simple_texture_classification(sand_pct, silt_pct, clay_pct)
-    
+
     def _simple_texture_classification(self, sand: float, silt: float, clay: float) -> SoilTexture:
         """Simple USDA texture classification fallback."""
         if clay >= 40:
@@ -138,8 +146,8 @@ class SoilIntegrator:
             return SoilTexture.SANDY_LOAM
         else:
             return SoilTexture.LOAM
-    
-    def estimate_van_genuchten(self, texture: SoilTexture) -> Dict[str, float]:
+
+    def estimate_van_genuchten(self, texture: SoilTexture) -> dict[str, float]:
         """
         Estimate van Genuchten parameters from texture.
         
@@ -152,7 +160,7 @@ class SoilIntegrator:
                 pass  # Module-specific implementation
             except Exception:
                 pass
-        
+
         # Fallback: typical values per texture (from literature)
         vg_params = {
             SoilTexture.SAND: {"theta_r": 0.045, "theta_s": 0.437, "alpha": 0.145, "n": 2.68},
@@ -168,9 +176,9 @@ class SoilIntegrator:
             SoilTexture.SILTY_CLAY: {"theta_r": 0.070, "theta_s": 0.479, "alpha": 0.005, "n": 1.09},
             SoilTexture.CLAY: {"theta_r": 0.090, "theta_s": 0.468, "alpha": 0.008, "n": 1.09},
         }
-        
+
         return vg_params.get(texture, vg_params[SoilTexture.LOAM])
-    
+
     def build_default_profile(self, lat: float, lon: float) -> DeepSoilProfile:
         """
         Build a default soil profile using global mean values.
@@ -186,18 +194,18 @@ class SoilIntegrator:
             DeepSoilProfile with 6 layers
         """
         layers = []
-        
+
         for depth_min, depth_max in SOILGRIDS_LAYERS:
             # Use global mean values with slight depth variation
             depth_factor = 1.0 - (depth_max / 200.0) * 0.3  # Decrease properties with depth
-            
+
             sand = GLOBAL_MEAN_SOIL["sand_pct"]
             silt = GLOBAL_MEAN_SOIL["silt_pct"]
             clay = GLOBAL_MEAN_SOIL["clay_pct"]
-            
+
             texture = self.classify_texture(sand, silt, clay)
             vg_params = self.estimate_van_genuchten(texture)
-            
+
             layer = SoilLayer(
                 depth_min_cm=depth_min,
                 depth_max_cm=depth_max,
@@ -218,7 +226,7 @@ class SoilIntegrator:
                 uncertainty=0.5,  # High uncertainty for global mean
             )
             layers.append(layer)
-        
+
         profile = DeepSoilProfile(
             layers=layers,
             total_depth_cm=200,
@@ -226,9 +234,9 @@ class SoilIntegrator:
             rooting_depth_cm=120,
             data_source="global_mean",
         )
-        
+
         return profile
-    
+
     def calculate_awc(self, profile: DeepSoilProfile) -> float:
         """
         Calculate Available Water Capacity (mm) for the profile.
@@ -240,11 +248,11 @@ class SoilIntegrator:
             AWC in mm
         """
         total_awc_mm = 0.0
-        
+
         for layer in profile.layers:
             if layer.theta_r is None or layer.theta_s is None:
                 continue
-            
+
             # Field capacity: water content at -33 kPa (pF 2.5)
             # Wilting point: water content at -1500 kPa (pF 4.2)
             # Using simplified van Genuchten
@@ -252,23 +260,23 @@ class SoilIntegrator:
             n = layer.n or 1.5
             theta_r = layer.theta_r
             theta_s = layer.theta_s
-            
+
             # van Genuchten equation: theta = theta_r + (theta_s - theta_r) / (1 + (alpha*h)^n)^(1-1/n)
             # Field capacity at h = 33 kPa (330 cm)
             h_fc = 330
             theta_fc = theta_r + (theta_s - theta_r) / (1 + (alpha * h_fc) ** n) ** (1 - 1/n)
-            
+
             # Wilting point at h = 1500 kPa (15000 cm)
             h_wp = 15000
             theta_wp = theta_r + (theta_s - theta_r) / (1 + (alpha * h_wp) ** n) ** (1 - 1/n)
-            
+
             # AWC for this layer (mm)
             thickness_mm = layer.depth_thickness_cm() * 10
             awc_layer = (theta_fc - theta_wp) * thickness_mm
             total_awc_mm += max(0, awc_layer)
-        
+
         return round(total_awc_mm, 1)
-    
+
     def classify_salinity(self, ec_dsm: float) -> SalinityClass:
         """Classify soil salinity based on ECe."""
         if ec_dsm < 2:
@@ -281,7 +289,7 @@ class SoilIntegrator:
             return SalinityClass.STRONGLY_SALINE
         else:
             return SalinityClass.VERY_STRONGLY_SALINE
-    
+
     def calculate_soil_health(self, profile: DeepSoilProfile) -> float:
         """
         Calculate soil health score (0-100).
@@ -302,11 +310,11 @@ class SoilIntegrator:
                 pass  # Module-specific implementation
             except Exception:
                 pass
-        
+
         # Fallback: simple scoring
         top_layer = profile.layers[0]
         score = 100.0
-        
+
         # pH penalty (optimal 6.0-7.5)
         if top_layer.ph:
             if top_layer.ph < 5.5:
@@ -317,7 +325,7 @@ class SoilIntegrator:
                 score -= 20
             elif top_layer.ph > 7.5:
                 score -= 10
-        
+
         # Organic carbon penalty (optimal > 15 g/kg)
         if top_layer.organic_carbon_g_kg:
             if top_layer.organic_carbon_g_kg < 5:
@@ -326,7 +334,7 @@ class SoilIntegrator:
                 score -= 15
             elif top_layer.organic_carbon_g_kg < 15:
                 score -= 5
-        
+
         # Salinity penalty
         if top_layer.ec_dsm:
             salinity = self.classify_salinity(top_layer.ec_dsm)
@@ -336,16 +344,16 @@ class SoilIntegrator:
                 score -= 30
             elif salinity == SalinityClass.VERY_STRONGLY_SALINE:
                 score -= 50
-        
+
         return max(0, min(100, score))
-    
+
     def integrate_with_land(
         self,
         profile_id: str,
         lat: float,
         lon: float,
-        terrain_slope_deg: Optional[float] = None,
-        climate_zone: Optional[str] = None,
+        terrain_slope_deg: float | None = None,
+        climate_zone: str | None = None,
     ) -> SoilIntegrationResult:
         """
         Integrate soil data with land profile.
@@ -361,32 +369,32 @@ class SoilIntegrator:
             SoilIntegrationResult
         """
         start_time = time.time()
-        
+
         try:
             # Build soil profile
             soil_profile = self.build_default_profile(lat, lon)
-            
+
             # Calculate derived properties
             soil_profile.awc_mm = self.calculate_awc(soil_profile)
-            
+
             top_layer = soil_profile.layers[0]
             if top_layer.ec_dsm:
                 soil_profile.salinity_class = self.classify_salinity(top_layer.ec_dsm)
-            
+
             # Calculate soil health
             health_score = self.calculate_soil_health(soil_profile)
-            
+
             # Determine suitable crops based on soil properties
             suitable_crops = self._determine_suitable_crops(soil_profile, climate_zone)
-            
+
             # Identify limitations
             limitations = self._identify_limitations(soil_profile, terrain_slope_deg)
-            
+
             # Generate recommendations
             recommendations = self._generate_recommendations(soil_profile, limitations)
-            
+
             integration_time_ms = (time.time() - start_time) * 1000
-            
+
             return SoilIntegrationResult(
                 profile_id=profile_id,
                 success=True,
@@ -398,7 +406,7 @@ class SoilIntegrator:
                 integration_time_ms=integration_time_ms,
                 data_quality_level="L0",  # Global model
             )
-        
+
         except Exception as e:
             logger.error(f"Soil integration failed: {e}")
             integration_time_ms = (time.time() - start_time) * 1000
@@ -408,16 +416,16 @@ class SoilIntegrator:
                 error_message=str(e),
                 integration_time_ms=integration_time_ms,
             )
-    
+
     def _determine_suitable_crops(
-        self, profile: DeepSoilProfile, climate_zone: Optional[str]
-    ) -> List[str]:
+        self, profile: DeepSoilProfile, climate_zone: str | None
+    ) -> list[str]:
         """Determine suitable crops based on soil properties."""
         crops = []
-        
+
         top_layer = profile.layers[0]
         texture = top_layer.texture
-        
+
         # Texture-based suitability
         if texture in [SoilTexture.LOAM, SoilTexture.SILT_LOAM, SoilTexture.SANDY_LOAM]:
             crops.extend(["wheat", "barley", "corn", "vegetables"])
@@ -427,14 +435,14 @@ class SoilIntegrator:
             crops.extend(["peanuts", "watermelon", "root_vegetables"])
         elif texture in [SoilTexture.CLAY, SoilTexture.SILTY_CLAY]:
             crops.extend(["rice", "sugarcane"])
-        
+
         # Salinity adjustment
         if profile.salinity_class == SalinityClass.MODERATELY_SALINE:
             crops = [c for c in crops if c in ["barley", "cotton", "dates"]]
             crops.append("salt_tolerant_crops")
         elif profile.salinity_class in [SalinityClass.STRONGLY_SALINE, SalinityClass.VERY_STRONGLY_SALINE]:
             crops = ["halophytes", "salt_tolerant_crops"]
-        
+
         # Climate adjustment
         if climate_zone:
             if climate_zone.startswith("B"):  # Arid
@@ -443,52 +451,52 @@ class SoilIntegrator:
                 pass  # Most crops suitable
             elif climate_zone.startswith("A"):  # Tropical
                 crops.extend(["rice", "sugarcane", "tropical_fruits"])
-        
+
         return list(set(crops)) if crops else ["unknown"]
-    
+
     def _identify_limitations(
-        self, profile: DeepSoilProfile, terrain_slope_deg: Optional[float]
-    ) -> List[str]:
+        self, profile: DeepSoilProfile, terrain_slope_deg: float | None
+    ) -> list[str]:
         """Identify soil-related limitations."""
         limitations = []
-        
+
         top_layer = profile.layers[0]
-        
+
         # pH limitations
         if top_layer.ph:
             if top_layer.ph < 5.5:
                 limitations.append("acidic_soil")
             elif top_layer.ph > 8.0:
                 limitations.append("alkaline_soil")
-        
+
         # Salinity limitations
         if profile.salinity_class == SalinityClass.MODERATELY_SALINE:
             limitations.append("moderate_salinity")
         elif profile.salinity_class in [SalinityClass.STRONGLY_SALINE, SalinityClass.VERY_STRONGLY_SALINE]:
             limitations.append("high_salinity")
-        
+
         # Organic carbon limitation
         if top_layer.organic_carbon_g_kg and top_layer.organic_carbon_g_kg < 10:
             limitations.append("low_organic_carbon")
-        
+
         # Texture limitations
         if top_layer.texture == SoilTexture.SAND:
             limitations.append("low_water_retention")
         elif top_layer.texture == SoilTexture.CLAY:
             limitations.append("poor_drainage")
-        
+
         # Slope limitation (from terrain)
         if terrain_slope_deg and terrain_slope_deg > 15:
             limitations.append("erosion_risk")
-        
+
         return limitations
-    
+
     def _generate_recommendations(
-        self, profile: DeepSoilProfile, limitations: List[str]
-    ) -> List[str]:
+        self, profile: DeepSoilProfile, limitations: list[str]
+    ) -> list[str]:
         """Generate soil management recommendations."""
         recommendations = []
-        
+
         if "acidic_soil" in limitations:
             recommendations.append("Apply lime to raise pH")
         if "alkaline_soil" in limitations:
@@ -505,8 +513,8 @@ class SoilIntegrator:
             recommendations.append("Install subsurface drainage")
         if "erosion_risk" in limitations:
             recommendations.append("Implement contour farming and terracing")
-        
+
         if not recommendations:
             recommendations.append("Soil conditions are good - maintain current practices")
-        
+
         return recommendations

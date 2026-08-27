@@ -7,13 +7,13 @@ advice and not a carbon certification.
 """
 
 import time
-from typing import Any, Dict, Optional
+from typing import Any
 
 from services.scientific_motors.base import MotorResult, MotorStatus
 from services.scientific_motors.chain_runner import run_scientific_chain
 
 C_TO_CO2E = 3.667  # IPCC t C -> tCO2e
-DEFAULT_PRICES: Dict[str, float] = {
+DEFAULT_PRICES: dict[str, float] = {
     "wheat_usd_t": 320.0,      # crop price ($/t)
     "water_usd_m3": 0.25,      # water value ($/m3)
     "carbon_usd_tco2e": 12.0,  # voluntary carbon price ($/tCO2e) — NOT certified
@@ -21,7 +21,7 @@ DEFAULT_PRICES: Dict[str, float] = {
 DEFAULT_DISCOUNT = 0.10
 DEFAULT_HORIZON = 20
 
-INTERVENTIONS: Dict[str, Dict[str, Any]] = {
+INTERVENTIONS: dict[str, dict[str, Any]] = {
     "conservation_ag": {
         "label": "کشاورزی حفاظتی",
         "practice": "conservation_ag",
@@ -67,7 +67,7 @@ class EconomyMotor:
         slope_pct: float = 10.0,
         discount_rate: float = DEFAULT_DISCOUNT,
         horizon_years: int = DEFAULT_HORIZON,
-        prices: Optional[Dict[str, float]] = None,
+        prices: dict[str, float] | None = None,
     ) -> MotorResult:
         start_time = time.time()
         run_id = f"economy-{int(start_time)}"
@@ -117,7 +117,7 @@ class EconomyMotor:
                 cashflows.append(cf / (1 + discount) ** t)
             npv = sum(cashflows)
             cum = 0.0
-            payback_year: Optional[int] = None
+            payback_year: int | None = None
             for t in range(1, horizon + 1):
                 cum += crop_benefit_yr + water_benefit_yr - maint_cost_yr + (carbon_benefit_once if t == 1 else 0.0)
                 if cum > 0 and payback_year is None:
@@ -189,7 +189,7 @@ class EconomyMotor:
             )
 
 
-async def _run_chain(lat: float, lon: float, slope: float, practice: str) -> Dict[str, Any]:
+async def _run_chain(lat: float, lon: float, slope: float, practice: str) -> dict[str, Any]:
     """Run the real scientific chain and extract key outputs."""
     res = await run_scientific_chain(
         lat=lat, lon=lon, crop="wheat", planting_date="2024-11-15",

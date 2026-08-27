@@ -1,8 +1,8 @@
 """Module for watershed structure design calculations."""
-from typing import Dict, Any, Optional
-import math
+from typing import Any
 
-def design_check_dam(slope_pct: float, area_m2: float, rainfall_mm: float) -> Dict[str, Any]:
+
+def design_check_dam(slope_pct: float, area_m2: float, rainfall_mm: float) -> dict[str, Any]:
     """
     Designs a basic check dam based on slope, area, and rainfall.
 

@@ -18,26 +18,26 @@ Author: EcoNojin Scientific Council
 License: Proprietary
 """
 from .base import ScientificModel, ValidationResult
-from .ewsi import EWSI
-from .hyrue import HYRUE
 from .ecsi import ECSI
-from .hdvi import HDVI
 from .epia import EPIA
-from .hpheno import HPheno
 from .esri import ESRI
+from .ewsi import EWSI
+from .hdvi import HDVI
 from .hlhs import HLHS
+from .hpheno import HPheno
+from .hyrue import HYRUE
 
 __all__ = [
+    "ECSI",
+    "EPIA",
+    "ESRI",
+    "EWSI",
+    "HDVI",
+    "HLHS",
+    "HYRUE",
+    "HPheno",
     "ScientificModel",
     "ValidationResult",
-    "EWSI",
-    "HYRUE",
-    "ECSI",
-    "HDVI",
-    "EPIA",
-    "HPheno",
-    "ESRI",
-    "HLHS",
 ]
 
 __version__ = "1.0.0"

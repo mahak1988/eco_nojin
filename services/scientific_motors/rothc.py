@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import time
-from typing import Any, Dict, List
+from typing import Any
 
 import numpy as np
 import xarray as xr
@@ -16,7 +16,6 @@ from .base import (
     MotorStatus,
     MotorType,
 )
-
 
 # RothC pool decomposition rates (yr^-1)
 # Reduced rates for numerical stability
@@ -61,7 +60,7 @@ class RothCMotor(AbstractScientificMotor):
     def display_name(self) -> str:
         return f"RothC (Soil Carbon, {self.years}yr)"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [
             MotorInput("soil_water_mm", "raster", True, "Soil moisture (from SWAT+)"),
             MotorInput("biomass_ton_ha", "raster", True, "Plant biomass (from AquaCrop)"),
@@ -69,7 +68,7 @@ class RothCMotor(AbstractScientificMotor):
             MotorInput("clay_percent", "scalar", False, "Clay content (default 25%)"),
         ]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("final_soc_t_ha", "raster", "t C/ha", "Final soil carbon"),
             MotorOutput("soc_change_t_ha_yr", "raster", "t C/ha/yr", "Annual SOC change"),
@@ -79,7 +78,7 @@ class RothCMotor(AbstractScientificMotor):
 
     async def execute(
         self,
-        inputs: Dict[str, Any],
+        inputs: dict[str, Any],
         parameters: MotorParameters,
     ) -> MotorResult:
         """Execute RothC simulation."""
@@ -138,7 +137,7 @@ class RothCMotor(AbstractScientificMotor):
         clay_percent: float,
         land_use: str,
         parameters: MotorParameters,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Simulate SOC dynamics over years (stable version)."""
         # Convert initial SOC% to t/ha
         # SOC_t_ha = SOC% * BD * depth * 10000 / 100
@@ -224,7 +223,7 @@ class RothCMotor(AbstractScientificMotor):
             "sequestration_potential": sequestration,
         }
 
-    def _compute_summary(self, results: Dict[str, Any]) -> Dict[str, Any]:
+    def _compute_summary(self, results: dict[str, Any]) -> dict[str, Any]:
         """Compute summary statistics."""
         summary = {}
         for key, data in results.items():

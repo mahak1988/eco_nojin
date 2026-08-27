@@ -5,19 +5,26 @@ Climate-centric recommendations using Köppen-Geiger classification.
 from __future__ import annotations
 
 import time
-from typing import Dict, Any, List
 from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
-import xarray as xr
 
 from .base import (
-    AbstractScientificMotor, MotorInput, MotorOutput,
-    MotorParameters, MotorResult, MotorStatus, MotorType,
+    AbstractScientificMotor,
+    MotorInput,
+    MotorOutput,
+    MotorParameters,
+    MotorResult,
+    MotorStatus,
+    MotorType,
 )
 from .crop_database import (
-    CropProfile, CROP_DATABASE, KoppenClimate, CropFamily,
-    WaterTolerance, climate_description,
+    CROP_DATABASE,
+    CropFamily,
+    CropProfile,
+    KoppenClimate,
+    climate_description,
 )
 
 
@@ -25,7 +32,7 @@ from .crop_database import (
 class CropMatch:
     crop: CropProfile
     suitability_score: float  # 0-100
-    limiting_factors: List[str]
+    limiting_factors: list[str]
     expected_yield: float
     expected_profit_usd: float
     water_balance_mm: float
@@ -43,7 +50,7 @@ class CropAdvisorMotor(AbstractScientificMotor):
     def display_name(self) -> str:
         return "Global Intelligent Crop Advisor (Köppen)"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [
             MotorInput("soil_ph", "raster", True, "Soil pH"),
             MotorInput("soil_texture", "raster", True, "USDA texture 1-12"),
@@ -52,7 +59,7 @@ class CropAdvisorMotor(AbstractScientificMotor):
             MotorInput("altitude_m", "scalar", False, "Altitude meters"),
         ]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("top_recommendations", "json", "list", "Top crops"),
             MotorOutput("rotation_plan", "json", "years", "Crop rotation"),
@@ -61,7 +68,7 @@ class CropAdvisorMotor(AbstractScientificMotor):
             MotorOutput("climate_info", "json", "info", "Köppen climate details"),
         ]
 
-    async def execute(self, inputs: Dict[str, Any], parameters: MotorParameters) -> MotorResult:
+    async def execute(self, inputs: dict[str, Any], parameters: MotorParameters) -> MotorResult:
         start_time = time.time()
         run_id = f"CROP_{int(time.time())}"
 
@@ -91,7 +98,7 @@ class CropAdvisorMotor(AbstractScientificMotor):
             matches = self._match_all_crops(
                 climate, soil_ph, soil_texture, slope, lcc_class, altitude, total_water_mm
             )
-            
+
             # Apply higher threshold for extreme climates (ET, EF)
             extreme_climates = {"ET", "EF"}
             if climate.name in extreme_climates:
@@ -100,7 +107,7 @@ class CropAdvisorMotor(AbstractScientificMotor):
             else:
                 min_score = 25
                 note = "Standard filtering applied"
-            
+
             matches = [m for m in matches if m.suitability_score >= min_score]
             matches = sorted(matches, key=lambda m: m.suitability_score, reverse=True)
             top = matches[:15]
@@ -235,7 +242,7 @@ class CropAdvisorMotor(AbstractScientificMotor):
         final = sum(s * weights[n] for n, s in scores)
         return final, limits
 
-    def _suggest_varieties(self, top_matches: List[CropMatch], climate: KoppenClimate, soil_ph: float) -> List[VarietyRecommendation]:
+    def _suggest_varieties(self, top_matches: list[CropMatch], climate: KoppenClimate, soil_ph: float) -> list[VarietyRecommendation]:
         """Suggest specific varieties based on top crop matches."""
         varieties = []
         for match in top_matches[:5]:  # Focus on top 5 crops
@@ -262,7 +269,7 @@ class CropAdvisorMotor(AbstractScientificMotor):
             # Add more logic for other crops and climates
         return varieties
 
-    def _build_rotation(self, matches: List[CropMatch], soil_ph: float, water_mm: float) -> List[RotationPlan]:
+    def _build_rotation(self, matches: list[CropMatch], soil_ph: float, water_mm: float) -> list[RotationPlan]:
         """Build a crop rotation plan considering soil health and biofertilizers."""
         if not matches: return []
         rotation = []

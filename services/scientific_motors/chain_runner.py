@@ -30,16 +30,16 @@ import logging
 import math
 from datetime import date, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
+from services.scientific_motors.aquacrop_real import RealAquaCropMotor
 from services.scientific_motors.base import MotorParameters, MotorStatus
 from services.scientific_motors.erosion_rusle import C_FACTORS, P_FACTORS, RUSLEMotor
-from services.scientific_motors.rothc_real import RealRothCMotor
-from services.scientific_motors.aquacrop_real import RealAquaCropMotor
-from services.scientific_motors.swat_real import SWATPrepMotor
-from services.scientific_motors.pywr_real import PywrWaterAllocationMotor
 from services.scientific_motors.hecras_real import HECRASFloodMotor
 from services.scientific_motors.optimize_chain import MultiObjectiveOptimizer
+from services.scientific_motors.pywr_real import PywrWaterAllocationMotor
+from services.scientific_motors.rothc_real import RealRothCMotor
+from services.scientific_motors.swat_real import SWATPrepMotor
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +57,7 @@ RUSLE_CALIBRATION = 0.10
 
 def _cache_key(lat: float, lon: float, crop: str, planting_date: str,
                years: int, slope_pct: float, practice: str,
-               irrigation_threshold_mm: Optional[float],
+               irrigation_threshold_mm: float | None,
                optimize: bool = False, catchment_km2: float = 10.0) -> str:
     raw = json.dumps({
         "lat": round(lat, 5), "lon": round(lon, 5), "crop": crop,
@@ -69,7 +69,7 @@ def _cache_key(lat: float, lon: float, crop: str, planting_date: str,
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:24]
 
 
-def _load_cache(key: str) -> Optional[Dict[str, Any]]:
+def _load_cache(key: str) -> dict[str, Any] | None:
     path = CACHE_DIR / f"chain_{key}.json"
     try:
         if path.exists():
@@ -79,7 +79,7 @@ def _load_cache(key: str) -> Optional[Dict[str, Any]]:
     return None
 
 
-def _save_cache(key: str, payload: Dict[str, Any]) -> None:
+def _save_cache(key: str, payload: dict[str, Any]) -> None:
     path = CACHE_DIR / f"chain_{key}.json"
     try:
         path.write_text(json.dumps(payload, ensure_ascii=False, default=str),
@@ -99,7 +99,7 @@ def rusle_point(
     crop: str = "wheat",
     practice: str = "none",
     slope_length_m: float = 100.0,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """RUSLE soil loss (t/ha/yr) for a point, RUSLEMotor formula set.
 
     A = R * K * LS * C * P * calibration
@@ -143,7 +143,7 @@ def rusle_point(
 # KGE calibration metric (Kling–Gupta Efficiency)
 # ---------------------------------------------------------------------------
 
-def kge(observed: List[float], simulated: List[float]) -> Dict[str, float]:
+def kge(observed: list[float], simulated: list[float]) -> dict[str, float]:
     """Kling–Gupta Efficiency = 1 - sqrt((r-1)^2 + (alpha-1)^2 + (beta-1)^2).
 
     r: Pearson correlation; alpha: ratio of std devs; beta: ratio of means.
@@ -183,12 +183,12 @@ async def run_scientific_chain(
     years: int = 20,
     slope_pct: float = 10.0,
     practice: str = "none",
-    irrigation_threshold_mm: Optional[float] = None,
-    observed: Optional[Dict[str, Any]] = None,
+    irrigation_threshold_mm: float | None = None,
+    observed: dict[str, Any] | None = None,
     use_cache: bool = True,
     optimize: bool = False,
     catchment_km2: float = 10.0,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Run the real scientific chain for a point (all free data sources)."""
     key = _cache_key(lat, lon, crop, planting_date, years, slope_pct, practice,
                      irrigation_threshold_mm, optimize, catchment_km2)
@@ -198,7 +198,6 @@ async def run_scientific_chain(
             cached["cache_hit"] = True
             return cached
 
-    import asyncio
 
     from services.satellite.open_meteo import fetch_era5_daily
     from services.satellite.soilgrids import fetch_soil_profile
@@ -213,7 +212,7 @@ async def run_scientific_chain(
             "error": f"climate unavailable: {weather.get('message')}",
         }
     daily = weather["daily"]
-    rows: List[Dict[str, Any]] = []
+    rows: list[dict[str, Any]] = []
     for i, d in enumerate(daily.get("time", [])):
         rows.append({
             "datetime": d,
@@ -224,7 +223,7 @@ async def run_scientific_chain(
         })
 
     # monthly aggregation (for RothC, SWAT prep, Pywr)
-    monthly: Dict[int, Dict[str, float]] = {}
+    monthly: dict[int, dict[str, float]] = {}
     for r in rows:
         m = int(r["datetime"][5:7])
         bucket = monthly.setdefault(m, {"t": 0.0, "p": 0.0, "e": 0.0, "n": 0})
@@ -371,7 +370,7 @@ async def run_scientific_chain(
     )
 
     # ---- 9. NSGA-II optimization (surrogate anchored to real outputs) ------
-    optimization: Dict[str, Any] = {"status": "skipped"}
+    optimization: dict[str, Any] = {"status": "skipped"}
     if optimize:
         opt_motor = MultiObjectiveOptimizer()
         opt_params = MotorParameters(
@@ -406,7 +405,7 @@ async def run_scientific_chain(
         }
 
     # ---- 10. KGE calibration (only when observed data provided) -------------
-    calibration: Dict[str, Any] = {"status": "no_observed_data"}
+    calibration: dict[str, Any] = {"status": "no_observed_data"}
     if observed:
         try:
             if "yield_ton_ha" in observed and aquacrop.status == MotorStatus.COMPLETED:
@@ -422,7 +421,7 @@ async def run_scientific_chain(
         except (ValueError, KeyError) as exc:
             calibration = {"status": "error", "error": str(exc)}
 
-    payload: Dict[str, Any] = {
+    payload: dict[str, Any] = {
         "chain_id": key,
         "cache_hit": False,
         "status": "ok" if aquacrop.status == MotorStatus.COMPLETED else "partial",

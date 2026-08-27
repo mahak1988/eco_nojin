@@ -3,16 +3,12 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime
-from pathlib import Path
-from typing import Literal, Union
+from typing import Literal
 from uuid import uuid4
 
 import geopandas as gpd
-import numpy as np
-import pandas as pd
 from pydantic import BaseModel, Field
-from shapely.geometry import Point, Polygon
+from shapely.geometry import Point
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +36,7 @@ class StructureDesignOutput(BaseModel):
 
 class StructureDesigner:
     """Designs water conservation structures."""
-    
+
     def __init__(self):
         # Load cost databases, material densities, standard designs, etc.
         self.cost_database = {

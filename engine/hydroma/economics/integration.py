@@ -4,24 +4,29 @@ Economic Engine - Integration Module.
 Connects economic calculations with outputs from other modules like agriculture,
 infrastructure, and carbon.
 """
-from typing import Dict, Any, List
 from datetime import date
-from .costing import calculate_agricultural_cost, calculate_infrastructure_cost, calculate_biofertilizer_cost
-from .revenue import calculate_agricultural_revenue, calculate_carbon_credit_revenue, aggregate_revenue_streams
-from .roi import calculate_agricultural_roi
-from .risk import assess_market_price_risk, assess_yield_risk
+from typing import Any
+
+from .costing import (
+    calculate_agricultural_cost,
+    calculate_biofertilizer_cost,
+    calculate_infrastructure_cost,
+)
 from .employment import estimate_direct_employment
+from .revenue import aggregate_revenue_streams, calculate_agricultural_revenue
+from .risk import assess_market_price_risk, assess_yield_risk
+from .roi import calculate_agricultural_roi
 
 
 def calculate_agricultural_project_economics(
-    land_profile_data: Dict[str, Any],
-    crop_advisor_output: Dict[str, Any],
-    biofertilizer_output: Dict[str, Any],
-    market_data: Dict[str, Any],
-    costing_params: Dict[str, Any],
-    roi_params: Dict[str, Any],
-    risk_params: Dict[str, Any]
-) -> Dict[str, Any]:
+    land_profile_data: dict[str, Any],
+    crop_advisor_output: dict[str, Any],
+    biofertilizer_output: dict[str, Any],
+    market_data: dict[str, Any],
+    costing_params: dict[str, Any],
+    roi_params: dict[str, Any],
+    risk_params: dict[str, Any]
+) -> dict[str, Any]:
     """
     Calculates comprehensive economics for an agricultural project based on inputs from
     land profile, crop advisor, biofertilizer recommender, and market data.
@@ -166,10 +171,10 @@ def calculate_agricultural_project_economics(
 
 
 def calculate_infrastructure_project_economics(
-    structure_design_output: Dict[str, Any],
-    costing_params: Dict[str, Any],
-    roi_params: Dict[str, Any]
-) -> Dict[str, Any]:
+    structure_design_output: dict[str, Any],
+    costing_params: dict[str, Any],
+    roi_params: dict[str, Any]
+) -> dict[str, Any]:
     """
     Calculates economics for an engineering structure project.
 

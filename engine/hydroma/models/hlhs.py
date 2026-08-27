@@ -9,8 +9,7 @@ Reference: Shannon (1948), Nagendra (2002)
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, List, Tuple, Any, Optional
-import numpy as np
+from typing import Any
 
 from .base import ScientificModel, ValidationResult
 
@@ -25,8 +24,8 @@ class LandscapeMetrics:
     ecsı_t_co2_ha_yr: float = 0.0
     slope_stability: float = 0.0  # 0 to 1
     connectivity: float = 0.0  # 0 to 1
-    
-    def to_dict(self) -> Dict[str, float]:
+
+    def to_dict(self) -> dict[str, float]:
         return {
             "ndvi_mean": self.ndvi_mean,
             "ewsı_mean": self.ewsı_mean,
@@ -40,16 +39,16 @@ class LandscapeMetrics:
 
 class HLHS(ScientificModel):
     """Hydroma Landscape Health Score"""
-    
+
     name = "HLHS"
     version = "1.0.0"
     description = "Composite Landscape Health Score for fund management"
-    
+
     REFERENCES = {
         "Shannon1948": "Shannon, C.E. (1948). A Mathematical Theory of Communication.",
         "Nagendra2002": "Nagendra, H. (2002). Opposite trends in response for the Shannon and Simpson indices.",
     }
-    
+
     WEIGHTS = {
         "vegetation": 0.20,
         "water": 0.20,
@@ -59,7 +58,7 @@ class HLHS(ScientificModel):
         "topography": 0.10,
         "connectivity": 0.05,
     }
-    
+
     BOUNDS = {
         "vegetation": (0.0, 0.8),
         "water": (0.0, 1.0),
@@ -69,8 +68,8 @@ class HLHS(ScientificModel):
         "topography": (0, 1),
         "connectivity": (0, 1),
     }
-    
-    def validate_inputs(self, metrics: LandscapeMetrics) -> Tuple[bool, List[str]]:
+
+    def validate_inputs(self, metrics: LandscapeMetrics) -> tuple[bool, list[str]]:
         errors = []
         if not (0 <= metrics.ndvi_mean <= 1):
             errors.append("NDVI mean out of range")
@@ -81,23 +80,23 @@ class HLHS(ScientificModel):
         if metrics.shdi < 0:
             errors.append("SHDI must be non-negative")
         return len(errors) == 0, errors
-    
+
     @staticmethod
     def normalize(value: float, vmin: float, vmax: float) -> float:
         """Min-max normalization to [0, 1]"""
         if vmax <= vmin:
             return 0.5
         return max(0.0, min(1.0, (value - vmin) / (vmax - vmin)))
-    
+
     def compute(
         self,
         metrics: LandscapeMetrics,
-        weights: Optional[Dict[str, float]] = None,
-    ) -> Dict[str, Any]:
+        weights: dict[str, float] | None = None,
+    ) -> dict[str, Any]:
         """Compute HLHS"""
         w = weights or self.WEIGHTS
         b = self.BOUNDS
-        
+
         components = {
             "vegetation": self.normalize(metrics.ndvi_mean, b["vegetation"][0], b["vegetation"][1]),
             "water": self.normalize(1 - metrics.ewsı_mean, 0, 1),
@@ -107,9 +106,9 @@ class HLHS(ScientificModel):
             "topography": self.normalize(metrics.slope_stability, 0, 1),
             "connectivity": self.normalize(metrics.connectivity, 0, 1),
         }
-        
+
         hlhs = sum(w[k] * v for k, v in components.items()) * 100
-        
+
         if hlhs >= 80:
             classification = "excellent"
         elif hlhs >= 60:
@@ -120,24 +119,24 @@ class HLHS(ScientificModel):
             classification = "poor"
         else:
             classification = "critical"
-        
+
         return {
             "hlhs": hlhs,
             "components": components,
             "classification": classification,
             "weights_used": w,
         }
-    
+
     def validate_against_reference(
-        self, inputs: Dict[str, Any], reference_output: float,
+        self, inputs: dict[str, Any], reference_output: float,
         reference_source: str, tolerance: float = 10.0,
     ) -> ValidationResult:
         """tolerance in HLHS points (0-100)"""
         result = self.compute(**inputs)
         computed_value = result["hlhs"]
-        
+
         absolute_error = abs(computed_value - reference_output)
-        
+
         return ValidationResult(
             passed=absolute_error <= tolerance,
             metric_name="HLHS",

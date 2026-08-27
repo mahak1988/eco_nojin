@@ -1,10 +1,14 @@
 """Multi-Layer Cropping (Agroforestry) Adapter"""
-from typing import List
+from datetime import UTC, datetime
+
 from services.simulation.base import BaseSimulator, SimulatorRegistry
 from services.simulation.schemas import (
-    SimulationContext, SimulationResult, SimulationStatus, SimulationType,
+    SimulationContext,
+    SimulationResult,
+    SimulationStatus,
+    SimulationType,
 )
-from datetime import datetime, timezone
+
 
 @SimulatorRegistry.register
 class MultiLayerAdapter(BaseSimulator):
@@ -12,7 +16,7 @@ class MultiLayerAdapter(BaseSimulator):
     simulator_type = SimulationType.MULTI_LAYER
     name = "AgroforestryEngine"
     version = "1.0.0"
-    
+
     # الگوهای کشت چندلایه
     SYSTEMS = {
         "silvopasture": {"trees": True, "crops": False, "livestock": True},
@@ -20,16 +24,16 @@ class MultiLayerAdapter(BaseSimulator):
         "forest_garden": {"trees": True, "crops": True, "livestock": False},
         "home_garden": {"trees": True, "crops": True, "livestock": True},
     }
-    
-    async def validate_context(self, ctx: SimulationContext) -> List[str]:
+
+    async def validate_context(self, ctx: SimulationContext) -> list[str]:
         if not ctx.multi_layer:
             return ["Multi-layer configuration required"]
         return []
-    
+
     async def run(self, ctx: SimulationContext) -> SimulationResult:
         ml = ctx.multi_layer
         layers = []
-        
+
         # لایه بالایی (canopy - درختان)
         if ml.canopy_layer:
             canopy_yield = self._estimate_yield(ml.canopy_layer, shade_provider=True)
@@ -40,7 +44,7 @@ class MultiLayerAdapter(BaseSimulator):
                 "shade_provided_pct": 40,
                 "height_m": 8.0,
             })
-        
+
         # لایه میانی
         if ml.sub_canopy_layer:
             sub_yield = self._estimate_yield(
@@ -54,7 +58,7 @@ class MultiLayerAdapter(BaseSimulator):
                 "shade_tolerance": ml.shade_tolerance,
                 "height_m": 2.5,
             })
-        
+
         # لایه زمینی
         if ml.ground_layer:
             ground_yield = self._estimate_yield(
@@ -67,21 +71,21 @@ class MultiLayerAdapter(BaseSimulator):
                 "yield_estimate": ground_yield,
                 "height_m": 0.5,
             })
-        
+
         # مجموع عملکرد و مقایسه با monoculture
         total_yield = sum(l["yield_estimate"] for l in layers)
         mono_equivalent = total_yield * 1.25  # Land Equivalent Ratio
-        
+
         # مزایای اکولوژیک
         biodiversity_score = len(layers) * 25
         water_use_efficiency = 1.3  # ۳۰٪ بهتر از monoculture
         pest_reduction = 40  # کاهش آفت بدون سم
-        
+
         return SimulationResult(
             simulation_id=ctx.simulation_id,
             simulation_type=self.simulator_type,
             status=SimulationStatus.COMPLETED,
-            started_at=datetime.now(timezone.utc),
+            started_at=datetime.now(UTC),
             summary={
                 "layers": layers,
                 "total_layers": len(layers),
@@ -95,7 +99,7 @@ class MultiLayerAdapter(BaseSimulator):
                 "microclimate_benefit": "improved",
             },
         )
-    
+
     def _estimate_yield(self, crop, shade_provider=False, shade_tolerance=1.0) -> float:
         base_yields = {
             "wheat": 4.5, "barley": 4.0, "maize": 8.0, "rice": 6.0,
@@ -107,4 +111,3 @@ class MultiLayerAdapter(BaseSimulator):
         if shade_provider:
             return base
         return base * shade_tolerance
-    

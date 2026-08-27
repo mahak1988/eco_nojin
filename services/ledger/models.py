@@ -4,15 +4,15 @@ Data models for ledger module.
 This module contains Pydantic models and dataclasses
 for Transaction ledger service
 """
-from typing import Optional, List, Dict, Any
 from datetime import datetime
-from pydantic import BaseModel, Field, ConfigDict
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class BaseLedger(BaseModel):
     """Base model for ledger."""
-    
-    id: Optional[int] = None
+
+    id: int | None = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     model_config = ConfigDict()

@@ -9,9 +9,20 @@ Total: 12 SQLAlchemy models
 """
 
 import logging
-from sqlalchemy import Column, Integer, String, Float, Boolean, Date, DateTime, Text, ForeignKey, JSON
+
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    Column,
+    Date,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+)
 from sqlalchemy.sql import func
-from sqlalchemy.orm import relationship
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +47,7 @@ class NojinStrain(Base):
     """Repository of bacterial strains (Phase 1)."""
     __tablename__ = "nojin_strains"
     __table_args__ = {"extend_existing": True}
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     strain_code = Column(String(50), unique=True, nullable=False)
     species_name = Column(String(200), nullable=False)
@@ -54,7 +65,7 @@ class NojinStrain(Base):
     patent_number = Column(String(100))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-    
+
     def __repr__(self):
         return f"<NojinStrain(code={self.strain_code}, species={self.species_name})>"
 
@@ -63,7 +74,7 @@ class NojinFormulation(Base):
     """Product formulations (Phase 1)."""
     __tablename__ = "nojin_formulations"
     __table_args__ = {"extend_existing": True}
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     formulation_code = Column(String(50), unique=True, nullable=False)
     commercial_name = Column(String(200), nullable=False)
@@ -81,7 +92,7 @@ class NojinFormulation(Base):
     is_proprietary = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-    
+
     def __repr__(self):
         return f"<NojinFormulation(code={self.formulation_code}, name={self.commercial_name})>"
 
@@ -90,7 +101,7 @@ class NojinApplicationPlan(Base):
     """Application plans (Phase 1)."""
     __tablename__ = "nojin_application_plans"
     __table_args__ = {"extend_existing": True}
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     formulation_id = Column(Integer, ForeignKey("nojin_formulations.id"), nullable=False)
     land_profile_id = Column(Integer, ForeignKey("land_profiles.id"))
@@ -103,7 +114,7 @@ class NojinApplicationPlan(Base):
     risk_assessment = Column(Text)
     created_by = Column(String(100))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
+
     def __repr__(self):
         return f"<NojinApplicationPlan(id={self.id}, crop={self.crop_type})>"
 
@@ -112,7 +123,7 @@ class NojinFieldTrial(Base):
     """Field trial records (Phase 1)."""
     __tablename__ = "nojin_field_trials"
     __table_args__ = {"extend_existing": True}
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     application_plan_id = Column(Integer, ForeignKey("nojin_application_plans.id"))
     trial_location = Column(Text, nullable=False)
@@ -127,7 +138,7 @@ class NojinFieldTrial(Base):
     observations = Column(Text)
     statistical_analysis = Column(Text)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
+
     def __repr__(self):
         return f"<NojinFieldTrial(id={self.id}, location={self.trial_location})>"
 
@@ -136,7 +147,7 @@ class NojinCalibrationRecord(Base):
     """Calibration history (Phase 1)."""
     __tablename__ = "nojin_calibration_records"
     __table_args__ = {"extend_existing": True}
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     formulation_id = Column(Integer, ForeignKey("nojin_formulations.id"), nullable=False)
     calibration_date = Column(Date, nullable=False)
@@ -147,7 +158,7 @@ class NojinCalibrationRecord(Base):
     calibration_quality_score = Column(Float)
     calibrated_by = Column(String(100))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
+
     def __repr__(self):
         return f"<NojinCalibrationRecord(id={self.id}, formulation={self.formulation_id})>"
 
@@ -160,13 +171,13 @@ class NojinMaterial(Base):
     """Comprehensive material profile with 30+ scientific parameters (Phase 2)."""
     __tablename__ = "nojin_materials"
     __table_args__ = {"extend_existing": True}
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     material_code = Column(String(50), unique=True, nullable=False, index=True)
     common_name = Column(String(200), nullable=False)
     scientific_name = Column(String(200))
     category = Column(String(50), nullable=False)
-    
+
     # Nutritional composition
     nitrogen_pct = Column(Float, default=0)
     phosphorus_pct = Column(Float, default=0)
@@ -176,7 +187,7 @@ class NojinMaterial(Base):
     sulfur_pct = Column(Float, default=0)
     carbon_pct = Column(Float, default=0)
     organic_matter_pct = Column(Float, default=0)
-    
+
     # Physical properties
     cn_ratio = Column(Float)
     ph = Column(Float)
@@ -186,39 +197,39 @@ class NojinMaterial(Base):
     water_retention_pct = Column(Float)
     porosity_pct = Column(Float)
     surface_area_m2_g = Column(Float)
-    
+
     # Application properties
     release_rate = Column(String(20))
     persistence_years = Column(Float)
     application_rate_kg_ha_min = Column(Float)
     application_rate_kg_ha_max = Column(Float)
     optimal_application_method = Column(String(100))
-    
+
     # Economic
     cost_per_ton_usd = Column(Float)
     availability = Column(String(50))
     source_regions = Column(Text)
-    
+
     # Risk
     overuse_risks = Column(Text)
     incompatibilities = Column(Text)
     safety_notes = Column(Text)
-    
+
     # Scientific metadata
     historical_use = Column(Text)
     modern_research = Column(Text)
     benefits = Column(Text)
     limitations = Column(Text)
-    
+
     # Classification
     is_proprietary = Column(Boolean, default=False)
     is_locally_available = Column(Boolean, default=True)
     is_suitable_for_arid = Column(Boolean, default=False)
     arid_priority_score = Column(Integer)
-    
+
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-    
+
     def __repr__(self):
         return f"<NojinMaterial(code={self.material_code}, name={self.common_name})>"
 
@@ -227,7 +238,7 @@ class NojinSoilType(Base):
     """Soil type classification (Phase 2)."""
     __tablename__ = "nojin_soil_types"
     __table_args__ = {"extend_existing": True}
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     soil_code = Column(String(50), unique=True, nullable=False, index=True)
     soil_name = Column(String(200), nullable=False)
@@ -243,7 +254,7 @@ class NojinSoilType(Base):
     nutrient_deficiencies = Column(Text)
     common_regions = Column(Text)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
+
     def __repr__(self):
         return f"<NojinSoilType(code={self.soil_code}, name={self.soil_name})>"
 
@@ -252,7 +263,7 @@ class NojinFormulationRecipe(Base):
     """Specific formulation for each soil type (Phase 2)."""
     __tablename__ = "nojin_formulation_recipes"
     __table_args__ = {"extend_existing": True}
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     recipe_code = Column(String(50), unique=True, nullable=False, index=True)
     recipe_name = Column(String(200), nullable=False)
@@ -273,7 +284,7 @@ class NojinFormulationRecipe(Base):
     traditional_technique = Column(String(100))
     integration_notes = Column(Text)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
+
     def __repr__(self):
         return f"<NojinFormulationRecipe(code={self.recipe_code})>"
 
@@ -282,7 +293,7 @@ class NojinMaterialComposition(Base):
     """Detailed chemical composition (Phase 2)."""
     __tablename__ = "nojin_material_composition"
     __table_args__ = {"extend_existing": True}
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     material_id = Column(Integer, ForeignKey("nojin_materials.id"), nullable=False)
     n_total_pct = Column(Float)
@@ -316,7 +327,7 @@ class NojinApplicationGuide(Base):
     """Application guidance (Phase 2)."""
     __tablename__ = "nojin_application_guides"
     __table_args__ = {"extend_existing": True}
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     material_id = Column(Integer, ForeignKey("nojin_materials.id"), nullable=False)
     season_recommended = Column(String(50))
@@ -340,7 +351,7 @@ class NojinCostBenefit(Base):
     """Cost-benefit analysis (Phase 2)."""
     __tablename__ = "nojin_cost_benefit"
     __table_args__ = {"extend_existing": True}
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     entity_type = Column(String(50))
     entity_id = Column(Integer)
@@ -368,7 +379,7 @@ class NojinWaterSaving(Base):
     """Water-saving calculations (Phase 2)."""
     __tablename__ = "nojin_water_saving"
     __table_args__ = {"extend_existing": True}
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     entity_type = Column(String(50))
     entity_id = Column(Integer)

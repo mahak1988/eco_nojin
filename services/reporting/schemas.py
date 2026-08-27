@@ -1,8 +1,10 @@
 """Pydantic schemas for Reporting"""
 from datetime import datetime
-from typing import Optional, Dict, Any
-from pydantic import BaseModel, Field
 from enum import Enum
+from typing import Any
+
+from pydantic import BaseModel, Field
+
 
 class ReportType(str, Enum):
     SALES = "sales"
@@ -20,17 +22,16 @@ class ReportStatus(str, Enum):
 class ReportCreate(BaseModel):
     report_type: ReportType
     title: str = Field(min_length=3, max_length=255)
-    parameters: Optional[Dict[str, Any]] = None
-    generated_by: Optional[str] = None
+    parameters: dict[str, Any] | None = None
+    generated_by: str | None = None
 
 class ReportRead(BaseModel):
     id: str
     report_type: ReportType
     title: str
     status: ReportStatus
-    parameters: Optional[Dict[str, Any]]
-    result_data: Optional[Dict[str, Any]]
-    file_path: Optional[str]
+    parameters: dict[str, Any] | None
+    result_data: dict[str, Any] | None
+    file_path: str | None
     created_at: datetime
-    completed_at: Optional[datetime]
-    
+    completed_at: datetime | None

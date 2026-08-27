@@ -4,17 +4,17 @@ Groundwater Module - Phase 3 Water Intelligence
 """
 
 from .service import (
-    GroundwaterService,
+    AquiferType,
     GroundwaterInput,
     GroundwaterResult,
-    AquiferType,
+    GroundwaterService,
     WaterQualityClass,
 )
 
 __all__ = [
-    "GroundwaterService",
+    "AquiferType",
     "GroundwaterInput",
     "GroundwaterResult",
-    "AquiferType",
+    "GroundwaterService",
     "WaterQualityClass",
 ]

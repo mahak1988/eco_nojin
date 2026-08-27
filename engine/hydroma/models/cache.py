@@ -16,9 +16,9 @@ from __future__ import annotations
 import json
 import sqlite3
 import threading
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class SQLiteCache:
@@ -31,7 +31,7 @@ class SQLiteCache:
         result = cache.get("Iran_Isfahan", "wheat")
         cache.clear_expired()
     """
-    
+
     SCHEMA = """
     CREATE TABLE IF NOT EXISTS analysis_cache (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,10 +60,10 @@ class SQLiteCache:
     CREATE INDEX IF NOT EXISTS idx_region ON analysis_cache(region_name, crop_type);
     CREATE INDEX IF NOT EXISTS idx_expires ON analysis_cache(expires_at);
     """
-    
+
     def __init__(
         self,
-        db_path: Optional[Path] = None,
+        db_path: Path | None = None,
         model_version: str = "1.0.0",
     ):
         if db_path is None:
@@ -73,12 +73,12 @@ class SQLiteCache:
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self.model_version = model_version
         self._lock = threading.Lock()
-        
+
         # Initialize schema
         with self._connect() as conn:
             conn.executescript(self.SCHEMA)
             conn.commit()
-    
+
     def _connect(self) -> sqlite3.Connection:
         """Create a connection with WAL mode for better concurrency."""
         conn = sqlite3.connect(
@@ -90,7 +90,7 @@ class SQLiteCache:
         conn.execute("PRAGMA synchronous=NORMAL")
         conn.row_factory = sqlite3.Row
         return conn
-    
+
     def _Integerize(self, obj: Any) -> str:
         """Serialize Python object to JSON string."""
         if obj is None:
@@ -99,7 +99,7 @@ class SQLiteCache:
             return json.dumps(obj, ensure_ascii=False)
         except (TypeError, ValueError):
             return json.dumps(str(obj))
-    
+
     def _deIntegerize(self, s: str) -> Any:
         """DeIntegerize JSON string to Python object."""
         if s is None:
@@ -108,21 +108,21 @@ class SQLiteCache:
             return json.loads(s)
         except (json.JSONDecodeError, TypeError):
             return None
-    
+
     def store(
         self,
         region_name: str,
         crop_type: str,
-        result: Dict[str, Any],
+        result: dict[str, Any],
         lat: float = 0.0,
         lon: float = 0.0,
         ttl_hours: int = 24,
     ) -> None:
         """Store analysis result in cache."""
         with self._lock:
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
             expires = now + timedelta(hours=ttl_hours)
-            
+
             with self._connect() as conn:
                 sql = """
                     INSERT OR REPLACE INTO analysis_cache
@@ -152,22 +152,22 @@ class SQLiteCache:
                     self._Integerize(result.get("warnings", [])),
                 ))
                 conn.commit()
-    
-    def get(self, region_name: str, crop_type: str) -> Optional[Dict[str, Any]]:
+
+    def get(self, region_name: str, crop_type: str) -> dict[str, Any] | None:
         """Retrieve analysis result from cache."""
-        now = datetime.now(timezone.utc)
-        
+        now = datetime.now(UTC)
+
         with self._connect() as conn:
             cur = conn.execute("""
                 SELECT * FROM analysis_cache
                 WHERE region_name = ? AND crop_type = ? AND model_version = ?
                 LIMIT 1
             """, (region_name, crop_type, self.model_version))
-            
+
             row = cur.fetchone()
             if not row:
                 return None
-            
+
             # Check expiration
             expires_at = datetime.fromisoformat(row["expires_at"])
             if expires_at < now:
@@ -177,7 +177,7 @@ class SQLiteCache:
                 )
                 conn.commit()
                 return None
-            
+
             return {
                 "region_name": row["region_name"],
                 "crop_type": row["crop_type"],
@@ -198,10 +198,10 @@ class SQLiteCache:
                 "cached": True,
                 "cached_at": row["created_at"],
             }
-    
+
     def clear_expired(self) -> int:
         """Remove expired cache entries."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         with self._lock, self._connect() as conn:
             cur = conn.execute(
                 "DELETE FROM analysis_cache WHERE expires_at < ?",
@@ -209,17 +209,17 @@ class SQLiteCache:
             )
             conn.commit()
             return cur.rowcount
-    
+
     def clear_all(self) -> int:
         """Clear all cache entries."""
         with self._lock, self._connect() as conn:
             cur = conn.execute("DELETE FROM analysis_cache")
             conn.commit()
             return cur.rowcount
-    
-    def stats(self) -> Dict[str, Any]:
+
+    def stats(self) -> dict[str, Any]:
         """Get cache statistics."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         with self._connect() as conn:
             cur = conn.execute("""
                 SELECT
@@ -228,7 +228,7 @@ class SQLiteCache:
                 FROM analysis_cache
             """, (now.isoformat(),))
             row = cur.fetchone()
-            
+
             return {
                 "backend": "sqlite",
                 "db_path": str(self.db_path),
@@ -238,8 +238,8 @@ class SQLiteCache:
                 "active_entries": row["total"] - row["expired"],
                 "model_version": self.model_version,
             }
-    
-    def list_entries(self, limit: int = 100) -> List[Dict[str, Any]]:
+
+    def list_entries(self, limit: int = 100) -> list[dict[str, Any]]:
         """List all cache entries."""
         with self._connect() as conn:
             cur = conn.execute("""
@@ -256,10 +256,10 @@ def test_cache():
     print("=" * 80)
     print("🧪 SQLite Cache Test")
     print("=" * 80)
-    
+
     cache = SQLiteCache()
     print(f"✅ Database: {cache.db_path}")
-    
+
     # Store test
     test_result = {
         "koppen": {"code": "Csa", "description": "Mediterranean"},
@@ -275,25 +275,25 @@ def test_cache():
         "execution_time_ms": 100.0,
         "warnings": [],
     }
-    
+
     cache.store("Test_Region", "wheat", test_result, lat=32.65, lon=51.67)
     print("✅ Stored test result")
-    
+
     # Retrieve test
     cached = cache.get("Test_Region", "wheat")
     if cached:
         print(f"✅ Retrieved: WBI={cached['wbi']['wbi']}")
     else:
         print("❌ Retrieve failed")
-    
+
     # Stats
     stats = cache.stats()
     print(f"📊 Stats: {stats}")
-    
+
     # Cleanup
     cache.clear_all()
     print("✅ Cleared cache")
-    
+
     return cache
 
 

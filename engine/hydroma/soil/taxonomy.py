@@ -7,7 +7,6 @@ References:
     [1] USDA, "Keys to Soil Taxonomy", 13th Edition, 2017
     [2] USDA NRCS, "Soil Texture Calculator", 2023
 """
-from typing import Dict, Tuple, Optional
 import logging
 
 logger = logging.getLogger(__name__)
@@ -62,13 +61,13 @@ def validate_percentages(clay: float, silt: float, sand: float) -> None:
     """
     if any(v < 0 or v > 100 for v in [clay, silt, sand]):
         raise ValueError("Soil percentages must be between 0 and 100")
-    
+
     total = clay + silt + sand
     if abs(total - 100) > 1:  # Allow 1% tolerance
         raise ValueError(f"Soil percentages must sum to 100 (got {total})")
 
 
-def classify_usda_texture(clay: float, silt: float, sand: float) -> Dict:
+def classify_usda_texture(clay: float, silt: float, sand: float) -> dict:
     """Classify soil texture according to USDA system.
     
     Args:
@@ -96,13 +95,13 @@ def classify_usda_texture(clay: float, silt: float, sand: float) -> Dict:
         [1] USDA, "Keys to Soil Taxonomy", 13th Edition, 2017
     """
     validate_percentages(clay, silt, sand)
-    
+
     # Determine texture class
     texture = _determine_texture_class(clay, silt, sand)
-    
+
     # Calculate derived properties
     properties = _calculate_texture_properties(texture, clay, silt, sand)
-    
+
     result = {
         'texture': texture,
         'texture_details': {
@@ -112,7 +111,7 @@ def classify_usda_texture(clay: float, silt: float, sand: float) -> Dict:
         },
         **properties
     }
-    
+
     logger.info(f"Soil classified as {texture}")
     return result
 
@@ -135,18 +134,18 @@ def _determine_texture_class(clay: float, silt: float, sand: float) -> str:
         clay_range = ranges['clay']
         silt_range = ranges['silt']
         sand_range = ranges['sand']
-        
+
         if (clay_range[0] <= clay <= clay_range[1] and
             silt_range[0] <= silt <= silt_range[1] and
             sand_range[0] <= sand <= sand_range[1]):
             return texture
-    
+
     # Default to loam if no match (shouldn't happen with valid input)
     return 'loam'
 
 
-def _calculate_texture_properties(texture: str, clay: float, 
-                                    silt: float, sand: float) -> Dict:
+def _calculate_texture_properties(texture: str, clay: float,
+                                    silt: float, sand: float) -> dict:
     """Calculate soil properties based on texture.
     
     Args:
@@ -166,7 +165,7 @@ def _calculate_texture_properties(texture: str, clay: float,
         'silty_clay_loam': 210, 'sandy_clay': 180,
         'silty_clay': 220, 'clay': 230
     }
-    
+
     # Permeability class
     permeability_values = {
         'sand': 'very_high', 'loamy_sand': 'high', 'sandy_loam': 'moderate_high',
@@ -175,7 +174,7 @@ def _calculate_texture_properties(texture: str, clay: float,
         'silty_clay_loam': 'very_low', 'sandy_clay': 'low',
         'silty_clay': 'very_low', 'clay': 'very_low'
     }
-    
+
     # Erodibility factor (K) - typical values
     erodibility_values = {
         'sand': 0.05, 'loamy_sand': 0.07, 'sandy_loam': 0.10,
@@ -184,7 +183,7 @@ def _calculate_texture_properties(texture: str, clay: float,
         'silty_clay_loam': 0.32, 'sandy_clay': 0.28,
         'silty_clay': 0.35, 'clay': 0.38
     }
-    
+
     return {
         'water_holding_capacity': {
             'value': whc_values.get(texture, 150),
@@ -226,7 +225,7 @@ def _estimate_workability(texture: str) -> str:
 
 def get_soil_taxonomy(clay: float, silt: float, sand: float,
                        organic_matter: float, ph: float,
-                       cec: Optional[float] = None) -> Dict:
+                       cec: float | None = None) -> dict:
     """Get complete soil taxonomy classification.
     
     Args:
@@ -242,10 +241,10 @@ def get_soil_taxonomy(clay: float, silt: float, sand: float,
     """
     # Get texture classification
     texture_result = classify_usda_texture(clay, silt, sand)
-    
+
     # Determine soil order based on properties
     soil_order = _determine_soil_order(organic_matter, ph, cec)
-    
+
     return {
         'texture': texture_result,
         'taxonomy': {
@@ -261,8 +260,8 @@ def get_soil_taxonomy(clay: float, silt: float, sand: float,
     }
 
 
-def _determine_soil_order(organic_matter: float, ph: float, 
-                           cec: Optional[float] = None) -> str:
+def _determine_soil_order(organic_matter: float, ph: float,
+                           cec: float | None = None) -> str:
     """Determine soil order based on chemical properties.
     
     This is a simplified classification. Full taxonomy requires
@@ -271,27 +270,27 @@ def _determine_soil_order(organic_matter: float, ph: float,
     # Histosol: high organic matter
     if organic_matter > 20:
         return 'Histosol'
-    
+
     # Vertisol: high clay content (would need clay % here)
     # For now, use chemical properties
-    
+
     # Acidic soils
     if ph < 5.5:
         return 'Ultisol'
-    
+
     # Alkaline soils
     if ph > 8.0:
         return 'Aridisol'
-    
+
     # Neutral, fertile soils
     if 6.0 <= ph <= 7.5 and organic_matter > 2:
         return 'Mollisol'
-    
+
     # Default
     return 'Inceptisol'
 
 
-def _interpret_taxonomy(soil_order: str, texture: str) -> Dict:
+def _interpret_taxonomy(soil_order: str, texture: str) -> dict:
     """Provide interpretation of taxonomy results."""
     interpretations = {
         'Histosol': 'Organic soil, high water retention, requires drainage',
@@ -303,7 +302,7 @@ def _interpret_taxonomy(soil_order: str, texture: str) -> Dict:
         'Alfisol': 'Fertile, clay accumulation in subsoil',
         'Entisol': 'Very young soil, little development'
     }
-    
+
     return {
         'soil_order': soil_order,
         'texture': texture,
@@ -312,7 +311,7 @@ def _interpret_taxonomy(soil_order: str, texture: str) -> Dict:
     }
 
 
-def _assess_agricultural_suitability(soil_order: str, texture: str) -> Dict:
+def _assess_agricultural_suitability(soil_order: str, texture: str) -> dict:
     """Assess agricultural suitability."""
     # Base score on soil order
     order_scores = {
@@ -320,18 +319,18 @@ def _assess_agricultural_suitability(soil_order: str, texture: str) -> Dict:
         'Entisol': 60, 'Ultisol': 50, 'Aridisol': 40,
         'Vertisol': 65, 'Histosol': 55
     }
-    
+
     base_score = order_scores.get(soil_order, 60)
-    
+
     # Adjust based on texture
     texture_modifiers = {
         'loam': 10, 'silt_loam': 10, 'clay_loam': 5,
         'sandy_loam': 5, 'sand': -10, 'clay': -10
     }
-    
+
     modifier = texture_modifiers.get(texture, 0)
     final_score = min(100, max(0, base_score + modifier))
-    
+
     return {
         'score': final_score,
         'rating': 'excellent' if final_score >= 80 else 'good' if final_score >= 60 else 'moderate' if final_score >= 40 else 'poor',
@@ -342,7 +341,7 @@ def _assess_agricultural_suitability(soil_order: str, texture: str) -> Dict:
 def _get_limitations(soil_order: str, texture: str) -> list:
     """Get limitations for agricultural use."""
     limitations = []
-    
+
     if soil_order == 'Aridisol':
         limitations.append('Low water availability')
     if soil_order == 'Histosol':
@@ -353,5 +352,5 @@ def _get_limitations(soil_order: str, texture: str) -> list:
         limitations.append('Poor drainage')
     if texture == 'clay':
         limitations.append('Difficult tillage')
-    
+
     return limitations

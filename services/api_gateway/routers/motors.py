@@ -1,26 +1,25 @@
 """Scientific Motors API - Real Execution Endpoints."""
 from __future__ import annotations
 
-import asyncio
-from typing import Any, Dict, List, Optional
 import time
+from typing import Any
 
-from fastapi import APIRouter, HTTPException, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 from pydantic import BaseModel, Field
 from shapely.geometry import Polygon
 
 from services.map_engine.orchestrator import MapOrchestrator
-from services.scientific_motors.swat_plus import SWATPlusMotor
 from services.scientific_motors.aquacrop import AquaCropMotor
-from services.scientific_motors.rothc import RothCMotor
-from services.scientific_motors.hecras import HECRASMOTOR
-from services.scientific_motors.whatif_engine import WhatIfMotor
 from services.scientific_motors.base import MotorParameters
+from services.scientific_motors.hecras import HECRASMOTOR
+from services.scientific_motors.rothc import RothCMotor
+from services.scientific_motors.swat_plus import SWATPlusMotor
+from services.scientific_motors.whatif_engine import WhatIfMotor
 
 router = APIRouter(prefix="/api/motors", tags=["scientific-motors"])
 
 # In-memory storage for results (in production, use Redis/DB)
-_motor_results: Dict[str, Dict[str, Any]] = {}
+_motor_results: dict[str, dict[str, Any]] = {}
 
 
 # ============ Pydantic Models ============
@@ -31,18 +30,18 @@ class MotorRunRequest(BaseModel):
     start_date: str = Field(default="2026-01-01")
     end_date: str = Field(default="2026-12-31")
     time_step: str = Field(default="daily")
-    region_bounds: List[float] = Field(
+    region_bounds: list[float] = Field(
         default=[51.00, 35.00, 51.05, 35.05],
         description="[minx, miny, maxx, maxy]",
     )
-    parameters: Dict[str, Any] = Field(default_factory=dict)
+    parameters: dict[str, Any] = Field(default_factory=dict)
 
 
 class MotorStatusResponse(BaseModel):
     run_id: str
     status: str
-    summary: Optional[Dict[str, Any]] = None
-    error_message: Optional[str] = None
+    summary: dict[str, Any] | None = None
+    error_message: str | None = None
 
 
 class ScientificChainRequest(BaseModel):
@@ -54,8 +53,8 @@ class ScientificChainRequest(BaseModel):
     years: int = Field(default=20, ge=1, le=100, description="RothC simulation years")
     slope_pct: float = Field(default=10.0, ge=0, le=90)
     practice: str = Field(default="none", description="RUSLE P factor: none/contour/terrace")
-    irrigation_threshold_mm: Optional[float] = Field(default=None, ge=0, le=200)
-    observed: Optional[Dict[str, Any]] = Field(default=None, description="Observed values for KGE (e.g. yield_ton_ha)")
+    irrigation_threshold_mm: float | None = Field(default=None, ge=0, le=200)
+    observed: dict[str, Any] | None = Field(default=None, description="Observed values for KGE (e.g. yield_ton_ha)")
     use_cache: bool = Field(default=True)
     optimize: bool = Field(default=False, description="Run pymoo NSGA-II (surrogate)")
     catchment_km2: float = Field(default=10.0, ge=0.1, le=10000, description="Catchment area for Pywr/HEC-RAS")
@@ -65,18 +64,18 @@ class ScientificChainResponse(BaseModel):
     chain_id: str
     cache_hit: bool
     status: str
-    location: Dict[str, float]
-    inputs: Dict[str, Any]
-    erosion: Dict[str, Any]
-    swat: Dict[str, Any]
-    water: Dict[str, Any]
-    flood: Dict[str, Any]
-    optimization: Dict[str, Any]
-    rothc: Dict[str, Any]
-    aquacrop: Dict[str, Any]
-    calibration: Dict[str, Any]
-    data_sources: Dict[str, str]
-    error: Optional[str] = None
+    location: dict[str, float]
+    inputs: dict[str, Any]
+    erosion: dict[str, Any]
+    swat: dict[str, Any]
+    water: dict[str, Any]
+    flood: dict[str, Any]
+    optimization: dict[str, Any]
+    rothc: dict[str, Any]
+    aquacrop: dict[str, Any]
+    calibration: dict[str, Any]
+    data_sources: dict[str, str]
+    error: str | None = None
 
 
 # ============ Helper Functions ============
@@ -86,7 +85,7 @@ async def _run_motor_background(
     motor_type: str,
     region: Polygon,
     params: MotorParameters,
-    custom_params: Dict[str, Any],
+    custom_params: dict[str, Any],
 ):
     """Background task to run motor and store results."""
     map_orch = MapOrchestrator()

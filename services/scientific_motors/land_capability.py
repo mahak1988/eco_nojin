@@ -5,9 +5,10 @@ USDA-based land capability classification for sustainable land use planning.
 from __future__ import annotations
 
 import time
+from typing import Any
+
 import numpy as np
 import xarray as xr
-from typing import Dict, Any, List
 
 from .base import (
     AbstractScientificMotor,
@@ -51,7 +52,7 @@ class LandCapabilityMotor(AbstractScientificMotor):
     def display_name(self) -> str:
         return "Land Capability Classification (USDA)"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [
             MotorInput("dem", "raster", True, "Digital Elevation Model"),
             MotorInput("slope", "raster", False, "Slope % (computed from DEM if missing)"),
@@ -61,7 +62,7 @@ class LandCapabilityMotor(AbstractScientificMotor):
             MotorInput("drainage", "raster", False, "Drainage class (1-7)"),
         ]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("lcc_class", "raster", "class", "LCC class (1-8)"),
             MotorOutput("lcc_description", "json", "map", "LCC class descriptions"),
@@ -71,7 +72,7 @@ class LandCapabilityMotor(AbstractScientificMotor):
 
     async def execute(
         self,
-        inputs: Dict[str, Any],
+        inputs: dict[str, Any],
         parameters: MotorParameters,
     ) -> MotorResult:
         """Execute land capability classification."""
@@ -309,7 +310,7 @@ class LandCapabilityMotor(AbstractScientificMotor):
 
         return lcc, limiting
 
-    def _get_suitable_crops(self) -> Dict[int, List[str]]:
+    def _get_suitable_crops(self) -> dict[int, list[str]]:
         """Recommended crops per LCC class."""
         return {
             1: ["گندم", "جو", "ذرت", "سبزیجات", "حبوبات"],

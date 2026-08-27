@@ -8,21 +8,20 @@ Every security/authz decision is recorded. Writes go to the Supabase
 import json
 import os
 import time
-import uuid
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 _AUDIT_DIR = Path("data/security")
 _AUDIT_DIR.mkdir(parents=True, exist_ok=True)
 _LOCAL_FILE = _AUDIT_DIR / "audit.jsonl"
 
 
-def _local_write(kind: str, record: Dict[str, Any]) -> None:
+def _local_write(kind: str, record: dict[str, Any]) -> None:
     with open(_LOCAL_FILE, "a", encoding="utf-8") as fh:
         fh.write(json.dumps({"kind": kind, **record}, ensure_ascii=False) + "\n")
 
 
-def _supabase_write(table: str, row: Dict[str, Any]) -> bool:
+def _supabase_write(table: str, row: dict[str, Any]) -> bool:
     """Best-effort insert via Supabase Management API (parameterized, no DB password)."""
     try:
         import httpx
@@ -59,8 +58,8 @@ def log_event(
     ip: str,
     action: str,
     decision: str,
-    detail: Dict[str, Any],
-    actor: Optional[str] = None,
+    detail: dict[str, Any],
+    actor: str | None = None,
     severity: str = "info",
 ) -> None:
     """Record a security event. `kind` in {waf, rate, anomaly, honeypot, authz, phishing}."""
@@ -83,7 +82,7 @@ def recent_events(limit: int = 20) -> list:
     """Read recent events from the local store (works offline, deterministic)."""
     events = []
     if _LOCAL_FILE.exists():
-        with open(_LOCAL_FILE, "r", encoding="utf-8") as fh:
+        with open(_LOCAL_FILE, encoding="utf-8") as fh:
             for line in fh:
                 line = line.strip()
                 if line:

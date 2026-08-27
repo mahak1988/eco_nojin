@@ -23,17 +23,19 @@ Outputs:
 from __future__ import annotations
 
 import time
-import numpy as np
-import xarray as xr
-from typing import Dict, Any, List, Tuple, Optional
-from enum import Enum
 from dataclasses import dataclass
+from enum import Enum
+from typing import Any
 
 from .base import (
-    AbstractScientificMotor, MotorInput, MotorOutput,
-    MotorParameters, MotorResult, MotorStatus, MotorType,
+    AbstractScientificMotor,
+    MotorInput,
+    MotorOutput,
+    MotorParameters,
+    MotorResult,
+    MotorStatus,
+    MotorType,
 )
-
 
 # =====================================================================
 # Constants & Enums
@@ -226,9 +228,9 @@ class PlantingWindow:
     crop_id: str
     crop_name: str
     hemisphere: Hemisphere
-    planting_months_nh: List[int]  # Northern Hemisphere months
-    planting_months_local: List[int]  # Adjusted for local hemisphere
-    harvest_months_local: List[int]
+    planting_months_nh: list[int]  # Northern Hemisphere months
+    planting_months_local: list[int]  # Adjusted for local hemisphere
+    harvest_months_local: list[int]
     growing_days: int
     gdd_required: int
     frost_sensitive: bool
@@ -255,7 +257,7 @@ class PlantingCalendarMotor(AbstractScientificMotor):
     def display_name(self) -> str:
         return "Global Planting Calendar (Hemisphere-aware)"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [
             MotorInput("latitude", "scalar", True, "Latitude (-90 to 90)"),
             MotorInput("koppen_climate", "scalar", True, "Köppen climate code"),
@@ -263,7 +265,7 @@ class PlantingCalendarMotor(AbstractScientificMotor):
             MotorInput("frost_free_days", "scalar", False, "Frost-free days per year"),
         ]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("planting_calendar", "json", "calendar", "Full planting calendar"),
             MotorOutput("growth_stages", "json", "stages", "Phenological timeline"),
@@ -272,7 +274,7 @@ class PlantingCalendarMotor(AbstractScientificMotor):
             MotorOutput("annual_schedule", "json", "months", "Month-by-month guide"),
         ]
 
-    async def execute(self, inputs: Dict[str, Any], parameters: MotorParameters) -> MotorResult:
+    async def execute(self, inputs: dict[str, Any], parameters: MotorParameters) -> MotorResult:
         start_time = time.time()
         run_id = f"CALENDAR_{int(time.time())}"
 
@@ -372,7 +374,7 @@ class PlantingCalendarMotor(AbstractScientificMotor):
                 run_id=run_id,
                 motor_type=self.motor_type,
                 status=MotorStatus.FAILED,
-                error_message=f"{str(e)}\n{traceback.format_exc()}",
+                error_message=f"{e!s}\n{traceback.format_exc()}",
             )
 
     # =================================================================
@@ -403,7 +405,7 @@ class PlantingCalendarMotor(AbstractScientificMotor):
             "ET": 50, "EF": 0,  # Polar
         }
         base = koppen_frost_free.get(koppen, 200)
-        
+
         # Latitude adjustment
         lat_adj = max(0, (abs(latitude) - 30) * 2)
         return max(0, int(base - lat_adj))
@@ -411,12 +413,12 @@ class PlantingCalendarMotor(AbstractScientificMotor):
     def _build_planting_window(
         self, crop_id: str, koppen: str, hemisphere: Hemisphere,
         frost_free_days: int,
-    ) -> Optional[PlantingWindow]:
+    ) -> PlantingWindow | None:
         """Build a planting window for a specific crop."""
         # Get rules for this crop
         crop_rules = KOPPEN_PLANTING_RULES.get(crop_id, KOPPEN_PLANTING_RULES["default"])
         rule = crop_rules.get(koppen, crop_rules.get("default"))
-        
+
         if rule is None:
             return None
 
@@ -465,7 +467,7 @@ class PlantingCalendarMotor(AbstractScientificMotor):
             season_name=season.value,
         )
 
-    def _compute_growth_stages(self, window: PlantingWindow) -> List[Dict]:
+    def _compute_growth_stages(self, window: PlantingWindow) -> list[dict]:
         """Compute phenological growth stages for a crop."""
         crop_stages = GROWTH_STAGES.get(window.crop_id, GROWTH_STAGES["default"])
         total_days = window.growing_days
@@ -477,7 +479,7 @@ class PlantingCalendarMotor(AbstractScientificMotor):
             stage_gdd = int(window.gdd_required * fraction)
             stage_days = int(total_days * fraction)
             cumulative_gdd = stage_gdd
-            
+
             # Estimate calendar month
             days_from_start = stage_days
             month_offset = days_from_start // 30
@@ -510,9 +512,9 @@ class PlantingCalendarMotor(AbstractScientificMotor):
         return descriptions.get(stage_name, "Growth stage")
 
     def _generate_risk_alerts(
-        self, windows: List[PlantingWindow], latitude: float,
+        self, windows: list[PlantingWindow], latitude: float,
         koppen: str, frost_free_days: int,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Generate risk alerts based on conditions."""
         alerts = []
 
@@ -553,8 +555,8 @@ class PlantingCalendarMotor(AbstractScientificMotor):
         return alerts
 
     def _recommend_companions(
-        self, windows: List[PlantingWindow], koppen: str,
-    ) -> List[Dict]:
+        self, windows: list[PlantingWindow], koppen: str,
+    ) -> list[dict]:
         """Recommend companion crops based on current selection."""
         # Companion planting rules
         companion_rules = {
@@ -595,8 +597,8 @@ class PlantingCalendarMotor(AbstractScientificMotor):
         return benefits.get((main, companion), "Mutual benefit")
 
     def _build_annual_schedule(
-        self, windows: List[PlantingWindow]
-    ) -> Dict[int, List[Dict]]:
+        self, windows: list[PlantingWindow]
+    ) -> dict[int, list[dict]]:
         """Build month-by-month activity schedule."""
         schedule = {m: [] for m in range(1, 13)}
 
@@ -619,7 +621,7 @@ class PlantingCalendarMotor(AbstractScientificMotor):
 
         return {str(k): v for k, v in schedule.items() if v}
 
-    def _window_to_dict(self, w: PlantingWindow) -> Dict:
+    def _window_to_dict(self, w: PlantingWindow) -> dict:
         """Convert PlantingWindow to Integerizable dict."""
         month_names = [
             "Jan", "Feb", "Mar", "Apr", "May", "Jun",

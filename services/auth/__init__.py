@@ -1,7 +1,10 @@
 """Auth Module - Authentication, JWT"""
-from services.auth.service import AuthService
 from services.auth.schemas import (
-    UserRegister, UserLogin, TokenResponse, TokenRefresh,
+    TokenRefresh,
+    TokenResponse,
+    UserLogin,
+    UserRegister,
 )
-__all__ = ["AuthService", "UserRegister", "UserLogin", "TokenResponse", "TokenRefresh"]
-    
+from services.auth.service import AuthService
+
+__all__ = ["AuthService", "TokenRefresh", "TokenResponse", "UserLogin", "UserRegister"]

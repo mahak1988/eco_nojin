@@ -8,14 +8,14 @@ outputs are real calculations on real data, labeled with the method used.
 from __future__ import annotations
 
 import math
-from typing import Any, Dict, List
+from typing import Any
 
 import httpx
 
 ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/era5"
 
 
-def _fetch_series(lat: float, lon: float, start: str, end: str) -> Dict[str, List[Any]]:
+def _fetch_series(lat: float, lon: float, start: str, end: str) -> dict[str, list[Any]]:
     r = httpx.get(
         ARCHIVE_URL,
         params={
@@ -37,9 +37,9 @@ def _fetch_series(lat: float, lon: float, start: str, end: str) -> Dict[str, Lis
     }
 
 
-def _monthly(data: Dict[str, List[Any]]) -> List[Dict[str, Any]]:
+def _monthly(data: dict[str, list[Any]]) -> list[dict[str, Any]]:
     """Aggregate daily series into calendar months."""
-    months: Dict[str, Dict[str, float]] = {}
+    months: dict[str, dict[str, float]] = {}
     for i, day in enumerate(data["time"]):
         key = day[:7]
         m = months.setdefault(key, {"precip": 0.0, "tmean": 0.0, "n": 0})
@@ -64,8 +64,8 @@ def _thornthwaite_pet(tmean_c: float, lat_deg: float) -> float:
     return 16.0 * ((10.0 * t / i) ** a) * (1.0 + 0.0 * math.sin(math.radians(lat_deg)))
 
 
-def _rolling(values: List[float], window: int) -> List[float]:
-    out: List[float] = []
+def _rolling(values: list[float], window: int) -> list[float]:
+    out: list[float] = []
     for i in range(len(values)):
         if i + 1 < window:
             out.append(float("nan"))
@@ -74,12 +74,12 @@ def _rolling(values: List[float], window: int) -> List[float]:
     return out
 
 
-def _gamma_spi(series: List[float]) -> List[float]:
+def _gamma_spi(series: list[float]) -> list[float]:
     """Gamma CDF -> standard normal quantile (SPI)."""
     from scipy import stats
 
     vals = [v for v in series if v is not None and not math.isnan(v)]
-    out: List[float] = []
+    out: list[float] = []
     if len(vals) < 12:
         return [float("nan")] * len(series)
     a, loc, scale = stats.gamma.fit(vals, floc=0)
@@ -93,12 +93,12 @@ def _gamma_spi(series: List[float]) -> List[float]:
     return out
 
 
-def _normal_std(series: List[float]) -> List[float]:
+def _normal_std(series: list[float]) -> list[float]:
     """Normal z-score (SPEI approximation on water balance)."""
     import statistics
 
     vals = [v for v in series if v is not None and not math.isnan(v)]
-    out: List[float] = []
+    out: list[float] = []
     if len(vals) < 12:
         return [float("nan")] * len(series)
     mu, sd = statistics.mean(vals), statistics.pstdev(vals)
@@ -110,7 +110,7 @@ def _normal_std(series: List[float]) -> List[float]:
     return out
 
 
-def classify(value: float) -> Dict[str, Any]:
+def classify(value: float) -> dict[str, Any]:
     if value != value:  # nan
         return {"label": "نامشخص", "level": "unknown"}
     if value >= -0.5:
@@ -124,7 +124,7 @@ def classify(value: float) -> Dict[str, Any]:
     return {"label": "خشکسالی فوق‌العاده", "level": "extreme"}
 
 
-def run_drought(lat: float, lon: float, timescale_months: int = 3, start: str = "2015-01-01", end: str = "2024-12-31") -> Dict[str, Any]:
+def run_drought(lat: float, lon: float, timescale_months: int = 3, start: str = "2015-01-01", end: str = "2024-12-31") -> dict[str, Any]:
     data = _fetch_series(lat, lon, start, end)
     months = _monthly(data)
     precip = [m["precip"] for m in months]

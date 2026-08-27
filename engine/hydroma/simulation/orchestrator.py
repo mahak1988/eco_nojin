@@ -8,24 +8,26 @@ it is unit-testable; the API layer wires persistence later.
 from __future__ import annotations
 
 import logging
-from typing import Dict, Any
 from datetime import date, timedelta
+from typing import Any
 
 from engine.hydroma.simulation.contracts import (
-    ChainInputs, ChainResult, MonthClimate,
-    SWATInput, SWATOutput,
-    RUSLEInput, RUSLEOutput,
-    RothCInput, RothCOutput,
-    AquaCropInput, AquaCropOutput,
-    WEAPInput, WEAPOutput,
-    HECRASInput, HECRASOutput
+    AquaCropInput,
+    ChainInputs,
+    ChainResult,
+    HECRASInput,
+    HECRASOutput,
+    MonthClimate,
+    RothCInput,
+    RUSLEInput,
+    SWATInput,
+    SWATOutput,
+    WEAPInput,
+    WEAPOutput,
 )
-from engine.hydroma.soil.pedotransfer import estimate_soil_parameters
-from engine.hydroma.wrapper import compute_erosion
-from engine.hydroma.carbon.calculator import calculate_carbon_sequestration, CarbonProjectType
-from engine.hydroma.simulation.weap import simulate_weap
 from engine.hydroma.simulation.hecras import simulate_hecras
 from engine.hydroma.simulation.runners.aquacrop_runner import AquaCropRunner
+from engine.hydroma.simulation.weap import simulate_weap
 from engine.hydroma.simulation.weather_source import fetch_daily_weather, growing_season_window
 
 logger = logging.getLogger(__name__)
@@ -42,7 +44,7 @@ def _rusle(r_factor: float, k_factor: float, ls_factor: float, c_factor: float, 
         from engine.hydroma.cpp_bindings import rusle_annual_soil_loss
 
         value = float(rusle_annual_soil_loss(r_factor, k_factor, ls_factor, c_factor, p_factor))
-    except Exception as exc:  # noqa: BLE001 - binding may be missing on some setups
+    except Exception as exc:
         logger.warning("C++ RUSLE binding failed (%s); using analytic product", exc)
         value = r_factor * k_factor * ls_factor * c_factor * p_factor
     return value
@@ -101,7 +103,7 @@ def _run_hecras(input_data: SWATOutput) -> HECRASOutput:
 
 def run_chain(inputs: ChainInputs) -> ChainResult:
     """Execute the full simulation chain: SWAT+ -> RUSLE -> RothC -> AquaCrop -> WEAP -> HEC-RAS."""
-    outputs: Dict[str, Any] = {}
+    outputs: dict[str, Any] = {}
     status = "ok"
     message = ""
 

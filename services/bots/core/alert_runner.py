@@ -13,7 +13,7 @@ documented in docs/en/14_telegram_bot.md.
 from __future__ import annotations
 
 import logging
-from typing import List, Optional, Sequence
+from collections.abc import Sequence
 
 from sqlalchemy.orm import Session
 
@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 def latest_real_satellite_row(
     db: Session, farm_id: int
-) -> Optional[models.SatelliteAnalysis]:
+) -> models.SatelliteAnalysis | None:
     """Newest REAL (copernicus) satellite analysis row for a farm."""
     return (
         db.query(models.SatelliteAnalysis)
@@ -45,8 +45,8 @@ def latest_real_satellite_row(
 
 
 def evaluate_farm_alerts(
-    db: Session, farm_id: int, rules: Optional[Sequence[AlertRule]] = None
-) -> List[str]:
+    db: Session, farm_id: int, rules: Sequence[AlertRule] | None = None
+) -> list[str]:
     """Evaluate real NDVI alerts for a farm and return formatted messages.
 
     Args:
@@ -70,18 +70,18 @@ def evaluate_farm_alerts(
     return [format_alert(rule, metrics, farm_name) for rule in fired]
 
 
-def run_all_farm_alerts(db: Session) -> List[str]:
+def run_all_farm_alerts(db: Session) -> list[str]:
     """Evaluate real NDVI alerts for every farm; return all fired messages.
 
     Runs inside the API's periodic alert loop. Dispatch to farmers (the
     farm → chat mapping) lands with bot integration (docs 14).
     """
-    fired_all: List[str] = []
+    fired_all: list[str] = []
     farms = db.query(models.Farm).all()
     for farm in farms:
         try:
             fired = evaluate_farm_alerts(db, farm.id)
-        except Exception:  # noqa: BLE001 — one broken farm must not stop the loop
+        except Exception:
             logger.exception("alert evaluation failed for farm %s", farm.id)
             continue
         for msg in fired:

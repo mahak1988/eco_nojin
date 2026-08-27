@@ -5,19 +5,18 @@ Land Intelligence API Router
 REST API endpoints for land analysis.
 """
 
-from fastapi import APIRouter, HTTPException, Depends, status
-from pydantic import BaseModel, Field
-from typing import Optional, List, Dict, Any
-from datetime import datetime
 import logging
 
-from services.land.service import LandService
+from fastapi import APIRouter, HTTPException, status
+from pydantic import BaseModel, Field
+
 from engine.land.models import (
+    CapabilityAssessment,
+    DrainageAnalysis,
     LandProfile,
     TerrainAnalysis,
-    DrainageAnalysis,
-    CapabilityAssessment,
 )
+from services.land.service import LandService
 
 logger = logging.getLogger(__name__)
 
@@ -63,29 +62,29 @@ class CreateProfileRequest(BaseModel):
     name: str = Field(..., description="نام زمین")
     location_lat: float = Field(..., ge=-90, le=90, description="عرض جغرافیایی")
     location_lon: float = Field(..., ge=-180, le=180, description="طول جغرافیایی")
-    description: Optional[str] = Field(None, description="توضیحات")
-    area_hectares: Optional[float] = Field(None, ge=0, description="مساحت (هکتار)")
-    dem_source: Optional[str] = Field(None, description="منبع DEM")
-    dem_resolution_m: Optional[float] = Field(None, ge=0, description="وضوح DEM (متر)")
+    description: str | None = Field(None, description="توضیحات")
+    area_hectares: float | None = Field(None, ge=0, description="مساحت (هکتار)")
+    dem_source: str | None = Field(None, description="منبع DEM")
+    dem_resolution_m: float | None = Field(None, ge=0, description="وضوح DEM (متر)")
 
 
 class AnalyzeTerrainRequest(BaseModel):
     """درخواست تحلیل توپوگرافی"""
-    dem_array: List[List[float]] = Field(..., description="آرایه DEM")
+    dem_array: list[list[float]] = Field(..., description="آرایه DEM")
     resolution: float = Field(..., gt=0, description="وضوح (متر)")
 
 
 class AnalyzeDrainageRequest(BaseModel):
     """درخواست تحلیل زهکشی"""
-    dem_array: List[List[float]] = Field(..., description="آرایه DEM")
+    dem_array: list[list[float]] = Field(..., description="آرایه DEM")
     resolution: float = Field(..., gt=0, description="وضوح (متر)")
-    area_km2: Optional[float] = Field(None, gt=0, description="مساحت (km²)")
+    area_km2: float | None = Field(None, gt=0, description="مساحت (km²)")
 
 
 class AssessCapabilityRequest(BaseModel):
     """درخواست ارزیابی قابلیت"""
     slope_degrees: float = Field(..., ge=0, le=90, description="شیب (درجه)")
-    soil_depth_m: Optional[float] = Field(None, ge=0, description="عمق خاک (متر)")
+    soil_depth_m: float | None = Field(None, ge=0, description="عمق خاک (متر)")
     erosion_risk: str = Field("low", description="ریسک فرسایش")
     drainage_class: str = Field("well_drained", description="کلاس زهکشی")
     climate_zone: str = Field("temperate", description="منطقه اقلیمی")
@@ -113,10 +112,10 @@ async def create_profile(request: CreateProfileRequest):
             dem_source=request.dem_source,
             dem_resolution_m=request.dem_resolution_m
         )
-        
+
         logger.info(f"Created profile via API: {profile.id}")
         return profile
-        
+
     except Exception as e:
         logger.error(f"Error creating profile: {e}")
         raise HTTPException(
@@ -125,7 +124,7 @@ async def create_profile(request: CreateProfileRequest):
         )
 
 
-@router.get("/profiles", operation_id="list_land_profiles", response_model=List[LandProfile])
+@router.get("/profiles", operation_id="list_land_profiles", response_model=list[LandProfile])
 async def list_profiles():
     """
     لیست تمام پروفایل‌های زمین
@@ -151,13 +150,13 @@ async def get_profile(profile_id: str):
     Returns a specific land profile by ID.
     """
     profile = land_service.get_profile(profile_id)
-    
+
     if profile is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Profile not found: {profile_id}"
         )
-    
+
     return profile
 
 
@@ -169,13 +168,13 @@ async def delete_profile(profile_id: str):
     Deletes a land profile by ID.
     """
     deleted = land_service.delete_profile(profile_id)
-    
+
     if not deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Profile not found: {profile_id}"
         )
-    
+
     return None
 
 
@@ -187,26 +186,26 @@ async def analyze_terrain(profile_id: str, request: AnalyzeTerrainRequest):
     Performs comprehensive terrain analysis on DEM data.
     """
     import numpy as np
-    
+
     profile = land_service.get_profile(profile_id)
     if profile is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Profile not found: {profile_id}"
         )
-    
+
     try:
         dem_array = np.array(request.dem_array)
-        
+
         analysis = land_service.analyze_terrain(
             profile_id=profile_id,
             dem_array=dem_array,
             resolution=request.resolution
         )
-        
+
         logger.info(f"Terrain analysis via API: {profile_id}")
         return analysis
-        
+
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -228,27 +227,27 @@ async def analyze_drainage(profile_id: str, request: AnalyzeDrainageRequest):
     Performs drainage pattern and flow accumulation analysis.
     """
     import numpy as np
-    
+
     profile = land_service.get_profile(profile_id)
     if profile is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Profile not found: {profile_id}"
         )
-    
+
     try:
         dem_array = np.array(request.dem_array)
-        
+
         analysis = land_service.analyze_drainage(
             profile_id=profile_id,
             dem_array=dem_array,
             resolution=request.resolution,
             area_km2=request.area_km2
         )
-        
+
         logger.info(f"Drainage analysis via API: {profile_id}")
         return analysis
-        
+
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -275,7 +274,7 @@ async def assess_capability(profile_id: str, request: AssessCapabilityRequest):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Profile not found: {profile_id}"
         )
-    
+
     try:
         assessment = land_service.assess_capability(
             profile_id=profile_id,
@@ -286,10 +285,10 @@ async def assess_capability(profile_id: str, request: AssessCapabilityRequest):
             climate_zone=request.climate_zone,
             soil_texture=request.soil_texture
         )
-        
+
         logger.info(f"Capability assessment via API: {profile_id}")
         return assessment
-        
+
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

@@ -8,13 +8,12 @@ Usage:
     data = client.table('platform_landscapes').select('*').execute()
 """
 import os
-from typing import Optional
 from pathlib import Path
 
 # Load .env file automatically
 try:
     from dotenv import load_dotenv
-    
+
     # Find .env in project root
     env_file = Path(__file__).parent.parent.parent / '.env'
     if env_file.exists():
@@ -27,14 +26,14 @@ except ImportError:
     pass
 
 try:
-    from supabase import create_client, Client
+    from supabase import Client, create_client
 except ImportError:
     raise ImportError(
         "supabase is required. Install with: pip install supabase python-dotenv"
     )
 
 
-_client: Optional[Client] = None
+_client: Client | None = None
 
 
 def get_supabase_client() -> Client:
@@ -43,7 +42,7 @@ def get_supabase_client() -> Client:
     if _client is None:
         url = os.getenv("SUPABASE_URL")
         key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_ANON_KEY")
-        
+
         if not url:
             raise ValueError(
                 "SUPABASE_URL not set. Check your .env file or environment variables."
@@ -52,9 +51,9 @@ def get_supabase_client() -> Client:
             raise ValueError(
                 "SUPABASE_ANON_KEY or SUPABASE_SERVICE_ROLE_KEY not set. Check your .env file."
             )
-        
+
         _client = create_client(url, key)
-    
+
     return _client
 
 
@@ -62,8 +61,8 @@ def get_anon_client() -> Client:
     """Get Supabase client with anon key (for client-side operations)."""
     url = os.getenv("SUPABASE_URL")
     key = os.getenv("SUPABASE_ANON_KEY")
-    
+
     if not url or not key:
         raise ValueError("SUPABASE_URL and SUPABASE_ANON_KEY must be set")
-    
+
     return create_client(url, key)

@@ -1,15 +1,15 @@
 """MRV / Carbon budget router — فاز ۴ (رایگان)."""
 
-from typing import Any, Dict, Optional
+from typing import Any
 
 from fastapi import APIRouter
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
 
-from services.scientific_motors.carbon_mrv import CarbonMrvMotor
-from services.scientific_motors.chain_runner import run_scientific_chain
 from services.mrv.kobo import average_measured_soc, fetch_kobo_submissions
 from services.mrv.mrv_pdf import build_mrv_pdf
+from services.scientific_motors.carbon_mrv import CarbonMrvMotor
+from services.scientific_motors.chain_runner import run_scientific_chain
 
 router = APIRouter(prefix="/api/mrv", tags=["mrv"])
 
@@ -21,14 +21,14 @@ class CarbonBudgetRequest(BaseModel):
     practice: str = "none"
     crop: str = "wheat"
     slope_pct: float = 10.0
-    measured_soc_t_ha: Optional[float] = None
+    measured_soc_t_ha: float | None = None
     use_kobo: bool = False
     methodology: str = "vm0032"  # vm0032 | gold_standard
     measurements: list[dict] = Field(default_factory=list)  # [{year, soc_t_ha}] t0..tn
 
 
 @router.post("/carbon-budget")
-async def carbon_budget(req: CarbonBudgetRequest) -> Dict[str, Any]:
+async def carbon_budget(req: CarbonBudgetRequest) -> dict[str, Any]:
     """Carbon budget: real RothC chain baseline + optional KoboToolbox field data.
 
     Honest statuses:

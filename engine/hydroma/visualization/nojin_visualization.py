@@ -2,24 +2,24 @@
 Nojin Visualization Layer - Maps and Charts
 """
 from dataclasses import dataclass, field
-from typing import List, Dict, Any, Optional
-from datetime import date
+from typing import Any
+
 
 @dataclass
 class GeoJSONFeature:
     type: str = "Feature"
-    geometry: Dict[str, Any] = field(default_factory=dict)
-    properties: Dict[str, Any] = field(default_factory=dict)
+    geometry: dict[str, Any] = field(default_factory=dict)
+    properties: dict[str, Any] = field(default_factory=dict)
 
 @dataclass
 class GeoJSONCollection:
     type: str = "FeatureCollection"
-    features: List[GeoJSONFeature] = field(default_factory=list)
+    features: list[GeoJSONFeature] = field(default_factory=list)
 
 @dataclass
 class ChartDataset:
     label: str
-    data: List[float]
+    data: list[float]
     borderColor: str = "#3b82f6"
     backgroundColor: str = "rgba(59, 130, 246, 0.1)"
     fill: bool = True
@@ -27,8 +27,8 @@ class ChartDataset:
 @dataclass
 class ChartConfig:
     type: str
-    labels: List[str]
-    datasets: List[ChartDataset]
+    labels: list[str]
+    datasets: list[ChartDataset]
     title: str = ""
     x_label: str = ""
     y_label: str = ""
@@ -36,8 +36,8 @@ class ChartConfig:
 class ProjectMapper:
     def __init__(self):
         pass
-    
-    def create_project_geojson(self, projects: List[Dict]) -> GeoJSONCollection:
+
+    def create_project_geojson(self, projects: list[dict]) -> GeoJSONCollection:
         features = []
         for proj in projects:
             feature = GeoJSONFeature(
@@ -51,8 +51,8 @@ class ProjectMapper:
             )
             features.append(feature)
         return GeoJSONCollection(features=features)
-    
-    def create_heatmap_data(self, projects: List[Dict], weight_field: str = "carbon_sequestered_t") -> Dict:
+
+    def create_heatmap_data(self, projects: list[dict], weight_field: str = "carbon_sequestered_t") -> dict:
         points = []
         for proj in projects:
             points.append({
@@ -63,7 +63,7 @@ class ProjectMapper:
         return {"type": "FeatureCollection", "features": points}
 
 class TimeSeriesChartBuilder:
-    def create_ndvi_chart(self, observations: List[Dict]) -> ChartConfig:
+    def create_ndvi_chart(self, observations: list[dict]) -> ChartConfig:
         labels = [obs["date"].isoformat() for obs in observations]
         values = [obs.get("ndvi", 0) for obs in observations]
         dataset = ChartDataset(
@@ -74,8 +74,8 @@ class TimeSeriesChartBuilder:
             type="line", labels=labels, datasets=[dataset],
             title="NDVI Over Time", x_label="Date", y_label="NDVI"
         )
-    
-    def create_carbon_chart(self, yearly_data: List[Dict]) -> ChartConfig:
+
+    def create_carbon_chart(self, yearly_data: list[dict]) -> ChartConfig:
         labels = [str(d["year"]) for d in yearly_data]
         values = [d["co2_tons"] for d in yearly_data]
         dataset = ChartDataset(
@@ -88,7 +88,7 @@ class TimeSeriesChartBuilder:
         )
 
 class EconomicChartBuilder:
-    def create_roi_comparison(self, scenarios: List[Dict]) -> ChartConfig:
+    def create_roi_comparison(self, scenarios: list[dict]) -> ChartConfig:
         labels = [s["name"] for s in scenarios]
         roi_values = [s["roi_percent"] for s in scenarios]
         dataset = ChartDataset(
@@ -99,8 +99,8 @@ class EconomicChartBuilder:
             type="bar", labels=labels, datasets=[dataset],
             title="ROI Comparison Across Scenarios", x_label="Scenario", y_label="ROI %"
         )
-    
-    def create_cost_benefit_breakdown(self, breakdown: Dict) -> ChartConfig:
+
+    def create_cost_benefit_breakdown(self, breakdown: dict) -> ChartConfig:
         labels = list(breakdown.keys())
         values = list(breakdown.values())
         dataset = ChartDataset(
@@ -111,7 +111,7 @@ class EconomicChartBuilder:
                           title="Cost vs Benefit Breakdown")
 
 class WaterVisualization:
-    def create_water_savings_chart(self, monthly_data: List[Dict]) -> ChartConfig:
+    def create_water_savings_chart(self, monthly_data: list[dict]) -> ChartConfig:
         labels = [d["month"] for d in monthly_data]
         baseline = [d["baseline_m3"] for d in monthly_data]
         optimized = [d["optimized_m3"] for d in monthly_data]
@@ -129,6 +129,10 @@ class WaterVisualization:
         )
 
 __all__ = [
-    "ProjectMapper", "TimeSeriesChartBuilder", "EconomicChartBuilder",
-    "WaterVisualization", "GeoJSONCollection", "ChartConfig"
+    "ChartConfig",
+    "EconomicChartBuilder",
+    "GeoJSONCollection",
+    "ProjectMapper",
+    "TimeSeriesChartBuilder",
+    "WaterVisualization"
 ]

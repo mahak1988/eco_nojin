@@ -5,16 +5,12 @@ Synthesizes results from scenarios, optimization, and risk analysis
 to provide actionable recommendations.
 """
 import logging
-from typing import Dict, Any, List
 from dataclasses import dataclass
 from enum import Enum
-import uuid
+from typing import Any
 
-from database.models import DecisionRecommendationDB
 from database.config import SessionLocal
-from engine.hydroma.optimization.optimizer import run_land_use_optimization # hypothetical call
-from engine.hydroma.risk.assessment import perform_comprehensive_risk_analysis # hypothetical
-from engine.hydroma.economics.integration import calculate_agricultural_project_economics # hypothetical
+from database.models import DecisionRecommendationDB
 
 logger = logging.getLogger(__name__)
 
@@ -34,14 +30,14 @@ class Recommendation:
     recommendation_type: RecommendationType
     title: str
     description: str
-    data: Dict[str, Any]
+    data: dict[str, Any]
     confidence_level: float
     risk_level: str  # "low", "medium", "high"
-    economic_impact: Dict[str, float]  # e.g., {"NPV_irr": 5000000, "IRR_fraction": 0.12}
-    environmental_impact: Dict[str, float] # e.g., {"co2_reduction_tonnes": 100, "water_saved_m3": 5000}
-    social_impact: Dict[str, float]       # e.g., {"jobs_created": 2.5, "income_increase_fraction": 0.15}
-    implementation_timeline: Dict[str, str] # e.g., {"start_date": "2024-06-01", "end_date": "2024-10-30"}
-    monitoring_plan: Dict[str, Any]       # e.g., {"checkpoints": [...], "kpis": [...]}
+    economic_impact: dict[str, float]  # e.g., {"NPV_irr": 5000000, "IRR_fraction": 0.12}
+    environmental_impact: dict[str, float] # e.g., {"co2_reduction_tonnes": 100, "water_saved_m3": 5000}
+    social_impact: dict[str, float]       # e.g., {"jobs_created": 2.5, "income_increase_fraction": 0.15}
+    implementation_timeline: dict[str, str] # e.g., {"start_date": "2024-06-01", "end_date": "2024-10-30"}
+    monitoring_plan: dict[str, Any]       # e.g., {"checkpoints": [...], "kpis": [...]}
 
 
 class DecisionSupportSystem:
@@ -50,7 +46,7 @@ class DecisionSupportSystem:
     def __init__(self):
         pass
 
-    def generate_recommendations(self, project_id: str, scenario_comparison: Dict[str, Any], optimization_results: List[Dict[str, Any]]) -> List[Recommendation]:
+    def generate_recommendations(self, project_id: str, scenario_comparison: dict[str, Any], optimization_results: list[dict[str, Any]]) -> list[Recommendation]:
         """
         Generates recommendations based on scenario comparison and optimization results.
 
@@ -121,7 +117,7 @@ class DecisionSupportSystem:
 
         return recommendations
 
-    def _find_best_scenario(self, comparison: Dict[str, Any]) -> str:
+    def _find_best_scenario(self, comparison: dict[str, Any]) -> str:
         """Simple logic to find the 'best' scenario (e.g., highest NPV, acceptable risk)."""
         best_id = None
         best_score = float('-inf')
@@ -144,7 +140,7 @@ class DecisionSupportSystem:
         else:
             return "high"
 
-    def persist_recommendations(self, recommendations: List[Recommendation]) -> List[str]:
+    def persist_recommendations(self, recommendations: list[Recommendation]) -> list[str]:
         """Saves recommendations to the database."""
         ids = []
         db = SessionLocal()
@@ -183,7 +179,7 @@ class DecisionSupportSystem:
 
 
 # Example usage
-def example_recommendation_generation(project_id: str, scenario_comparison_data: Dict[str, Any]):
+def example_recommendation_generation(project_id: str, scenario_comparison_data: dict[str, Any]):
     dss = DecisionSupportSystem()
 
     # Simulate an optimization result

@@ -8,7 +8,7 @@ Outputs are honest computed deltas + a transparent drought-risk projection.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 import httpx
 
@@ -18,7 +18,7 @@ CLIMATE_URL = "https://climate-api.open-meteo.com/v1/climate"
 SCENARIOS = ["SSP126", "SSP245", "SSP370", "SSP585"]
 
 
-def _daily_series(url: str, params: Dict[str, Any]) -> Dict[str, List[Any]]:
+def _daily_series(url: str, params: dict[str, Any]) -> dict[str, list[Any]]:
     r = httpx.get(url, params=params, timeout=90)
     r.raise_for_status()
     d = r.json()["daily"]
@@ -29,23 +29,23 @@ def _daily_series(url: str, params: Dict[str, Any]) -> Dict[str, List[Any]]:
     }
 
 
-def _monthly_mean(values: List[float]) -> List[float]:
-    out: List[float] = []
+def _monthly_mean(values: list[float]) -> list[float]:
+    out: list[float] = []
     for i in range(0, len(values) - 27, 30):
         chunk = values[i : i + 30]
         out.append(sum(chunk) / len(chunk))
     return out
 
 
-def _monthly_sum(values: List[float]) -> List[float]:
-    out: List[float] = []
+def _monthly_sum(values: list[float]) -> list[float]:
+    out: list[float] = []
     for i in range(0, len(values) - 27, 30):
         chunk = values[i : i + 30]
         out.append(sum(chunk))
     return out
 
 
-def _stats(values: List[float]) -> Dict[str, float]:
+def _stats(values: list[float]) -> dict[str, float]:
     n = len(values)
     if n == 0:
         return {"mean": 0.0, "min": 0.0, "max": 0.0}
@@ -64,7 +64,7 @@ def run_climate(
     baseline_end: str = "2024-12-31",
     future_start: str = "2040-01-01",
     future_end: str = "2049-12-31",
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     if scenario not in SCENARIOS:
         return {"status": "error", "error": f"scenario must be one of {SCENARIOS}"}
 

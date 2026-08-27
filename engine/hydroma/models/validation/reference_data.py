@@ -6,12 +6,12 @@ Used for model validation and quality assurance.
 """
 from __future__ import annotations
 
-from typing import Dict, Any
+from typing import Any
 
 # ============================================================================
 # EWSI validation (Gao 1996, field measurements)
 # ============================================================================
-EWSI_VALIDATION: Dict[str, Any] = {
+EWSI_VALIDATION: dict[str, Any] = {
     "healthy_vegetation": {
         "nir": 0.5, "swir": 0.2, "vpd": 1.5,
         "soil_moisture": 0.30, "soil_field_capacity": 0.35,
@@ -29,7 +29,7 @@ EWSI_VALIDATION: Dict[str, Any] = {
 # ============================================================================
 # HY-RUE validation (Monteith 1977, FAO AquaCrop benchmarks)
 # ============================================================================
-HYRUE_VALIDATION: Dict[str, Any] = {
+HYRUE_VALIDATION: dict[str, Any] = {
     "wheat_iran_average": {
         "par": 15.0,  # MJ/m²/day average during growing season
         "lai": 4.0,
@@ -53,7 +53,7 @@ HYRUE_VALIDATION: Dict[str, Any] = {
 # ============================================================================
 # ECSI validation (RothC benchmarks)
 # ============================================================================
-ECSI_VALIDATION: Dict[str, Any] = {
+ECSI_VALIDATION: dict[str, Any] = {
     "rothamsted_broadbalk": {
         "initial_soc_t_ha": 40.0,
         "carbon_input_t_ha": 2.0,
@@ -70,7 +70,7 @@ ECSI_VALIDATION: Dict[str, Any] = {
 # ============================================================================
 # HLHS validation (landscape assessment literature)
 # ============================================================================
-HLHS_VALIDATION: Dict[str, Any] = {
+HLHS_VALIDATION: dict[str, Any] = {
     "healthy_landscape": {
         "ndvi_mean": 0.6,
         "ewsı_mean": 0.2,

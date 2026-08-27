@@ -1,8 +1,11 @@
 """Admin SQLAlchemy models"""
-from datetime import datetime, timezone
-from sqlalchemy import Column, String, DateTime, JSON
-from database.models import Base
 import uuid
+from datetime import UTC, datetime
+
+from sqlalchemy import JSON, Column, DateTime, String
+
+from database.models import Base
+
 
 class AuditLog(Base):
     __tablename__ = "admin_audit_logs"
@@ -13,5 +16,4 @@ class AuditLog(Base):
     resource_id = Column(String(100), nullable=True)
     details = Column(JSON, nullable=True)
     ip_address = Column(String(45), nullable=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
-    
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)

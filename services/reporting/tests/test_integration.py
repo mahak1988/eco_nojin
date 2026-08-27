@@ -1,6 +1,8 @@
 """Integration tests for Reporting"""
 import pytest
-from services.reporting.schemas import ReportCreate, ReportType, ReportStatus
+
+from services.reporting.schemas import ReportCreate, ReportStatus, ReportType
+
 
 @pytest.mark.asyncio
 class TestReportingIntegration:
@@ -12,4 +14,3 @@ class TestReportingIntegration:
         assert report.status == ReportStatus.PENDING
         generated = await reporting_service.generate_report(report.id)
         assert generated.status in (ReportStatus.COMPLETED, ReportStatus.FAILED)
-    

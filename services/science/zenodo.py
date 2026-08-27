@@ -8,9 +8,8 @@ DOI. Publishing is an explicit, user-confirmed action (write path).
 
 from __future__ import annotations
 
-import json
 import os
-from typing import Any, Dict, Optional
+from typing import Any
 
 ZENODO_API = "https://zenodo.org/api"
 SANDBOX_API = "https://sandbox.zenodo.org/api"
@@ -19,7 +18,7 @@ SANDBOX_API = "https://sandbox.zenodo.org/api"
 class ZenodoClient:
     """Minimal Zenodo deposition client (metadata-only by default)."""
 
-    def __init__(self, token: Optional[str] = None, sandbox: bool = False) -> None:
+    def __init__(self, token: str | None = None, sandbox: bool = False) -> None:
         self.token = token or os.getenv("ZENODO_TOKEN", "")
         self.base = SANDBOX_API if (sandbox or os.getenv("ZENODO_SANDBOX") == "1") else ZENODO_API
 
@@ -27,10 +26,10 @@ class ZenodoClient:
     def configured(self) -> bool:
         return bool(self.token)
 
-    def _headers(self) -> Dict[str, str]:
+    def _headers(self) -> dict[str, str]:
         return {"Authorization": f"Bearer {self.token}", "Content-Type": "application/json"}
 
-    def status(self) -> Dict[str, Any]:
+    def status(self) -> dict[str, Any]:
         """Honest capability status."""
         if not self.configured:
             return {
@@ -46,7 +45,7 @@ class ZenodoClient:
             "sandbox": self.base == SANDBOX_API,
         }
 
-    def create_deposition(self, metadata: Dict[str, Any]) -> Dict[str, Any]:
+    def create_deposition(self, metadata: dict[str, Any]) -> dict[str, Any]:
         """Create an empty deposition. Raises ZenodoError on failure."""
         import httpx
 
@@ -55,7 +54,7 @@ class ZenodoClient:
             raise ZenodoError(f"Zenodo API {resp.status_code}: {resp.text[:200]}")
         return resp.json()
 
-    def publish(self, deposition_id: str) -> Dict[str, Any]:
+    def publish(self, deposition_id: str) -> dict[str, Any]:
         """Publish a deposition (irreversible in Zenodo)."""
         import httpx
 
@@ -73,7 +72,7 @@ class ZenodoError(RuntimeError):
     """Raised when the Zenodo API rejects a request."""
 
 
-def dataset_zenodo_metadata(slug: str, title: str, description: str, creators: list[str]) -> Dict[str, Any]:
+def dataset_zenodo_metadata(slug: str, title: str, description: str, creators: list[str]) -> dict[str, Any]:
     """Build Zenodo metadata payload from dataset fields."""
     return {
         "metadata": {

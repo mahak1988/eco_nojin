@@ -1,15 +1,16 @@
 """Pydantic schemas for Auth"""
-from datetime import datetime
-from typing import Optional
-from pydantic import BaseModel, EmailStr, Field
 import re
+from datetime import datetime
+
+from pydantic import BaseModel, EmailStr, Field
+
 
 class UserRegister(BaseModel):
     email: EmailStr
     username: str = Field(min_length=3, max_length=100)
     password: str = Field(min_length=8)
-    full_name: Optional[str] = None
-    
+    full_name: str | None = None
+
     def validate_password_strength(self) -> bool:
         return (
             len(self.password) >= 8
@@ -37,4 +38,3 @@ class UserInfo(BaseModel):
     is_active: bool
     is_verified: bool
     created_at: datetime
-    

@@ -1,6 +1,5 @@
 """تست‌های اولیه برای ماژول marketplace"""
 
-import pytest
 
 
 class TestMarketplaceModels:

@@ -4,15 +4,15 @@ Data models for notification module.
 This module contains Pydantic models and dataclasses
 for Notification service
 """
-from typing import Optional, List, Dict, Any
 from datetime import datetime
-from pydantic import BaseModel, Field, ConfigDict
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class BaseNotification(BaseModel):
     """Base model for notification."""
-    
-    id: Optional[int] = None
+
+    id: int | None = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     model_config = ConfigDict()

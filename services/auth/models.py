@@ -1,8 +1,11 @@
 """Auth SQLAlchemy models"""
-from datetime import datetime, timezone
-from sqlalchemy import Column, String, DateTime, Boolean, Integer
-from database.models import Base
 import uuid
+from datetime import UTC, datetime
+
+from sqlalchemy import Boolean, Column, DateTime, Integer, String
+
+from database.models import Base
+
 
 class AuthUser(Base):
     __tablename__ = "auth_users"
@@ -14,9 +17,9 @@ class AuthUser(Base):
     is_verified = Column(Boolean, default=False)
     failed_login_attempts = Column(Integer, default=0)
     last_login_at = Column(DateTime, nullable=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc),
-                       onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC),
+                       onupdate=lambda: datetime.now(UTC))
 
 class RefreshToken(Base):
     __tablename__ = "auth_refresh_tokens"
@@ -25,5 +28,4 @@ class RefreshToken(Base):
     token_hash = Column(String(255), unique=True, nullable=False)
     expires_at = Column(DateTime, nullable=False)
     revoked = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))

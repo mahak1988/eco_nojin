@@ -10,23 +10,22 @@ deployments swap the store for Redis / Upstash (paid) or a Postgres table.
 import threading
 import time
 from collections import defaultdict, deque
-from typing import Deque, Dict, Tuple
 
 
 class RateLimiter:
     def __init__(self) -> None:
         self._lock = threading.Lock()
-        self._ip: Dict[str, Deque[float]] = defaultdict(deque)
-        self._user: Dict[str, Deque[float]] = defaultdict(deque)
-        self._auth_ip: Dict[str, Deque[float]] = defaultdict(deque)
+        self._ip: dict[str, deque[float]] = defaultdict(deque)
+        self._user: dict[str, deque[float]] = defaultdict(deque)
+        self._auth_ip: dict[str, deque[float]] = defaultdict(deque)
 
-    def _sweep(self, bucket: Dict[str, Deque[float]], key: str, window: float) -> None:
+    def _sweep(self, bucket: dict[str, deque[float]], key: str, window: float) -> None:
         now = time.time()
         dq = bucket[key]
         while dq and now - dq[0] > window:
             dq.popleft()
 
-    def check(self, ip: str, path: str, user_id: str | None = None) -> Tuple[bool, int]:
+    def check(self, ip: str, path: str, user_id: str | None = None) -> tuple[bool, int]:
         """Return (allowed, retry_after_seconds)."""
         with self._lock:
             now = time.time()

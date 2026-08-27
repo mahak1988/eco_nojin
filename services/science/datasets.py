@@ -8,15 +8,15 @@ No fake "available" claims: offline datasets are marked clearly.
 from __future__ import annotations
 
 import os
-from typing import Any, Dict, List
+from typing import Any
 
 
-def dataset_catalog() -> Dict[str, Any]:
+def dataset_catalog() -> dict[str, Any]:
     cds_configured = bool(os.environ.get("CDS_API_KEY"))
     cdse_configured = bool(
         os.environ.get("CDSE_CLIENT_ID") or os.environ.get("CDSE_USERNAME")
     )
-    datasets: List[Dict[str, Any]] = [
+    datasets: list[dict[str, Any]] = [
         {
             "id": "era5-cds",
             "name": "ERA5 Reanalysis (CDS)",

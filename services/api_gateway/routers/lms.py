@@ -4,7 +4,7 @@ unreachable. Progress endpoints require a valid user JWT (token query param)."""
 
 import json
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import httpx
 from fastapi import APIRouter
@@ -22,7 +22,7 @@ def _env(key: str) -> str:
     return ""
 
 
-def _cfg() -> Dict[str, str]:
+def _cfg() -> dict[str, str]:
     url = _env("SUPABASE_URL")
     anon = _env("SUPABASE_ANON_KEY")
     if not url or not anon:
@@ -30,12 +30,12 @@ def _cfg() -> Dict[str, str]:
     return {"url": url.rstrip("/"), "anon": anon}
 
 
-def _load_local() -> Dict[str, Any]:
+def _load_local() -> dict[str, Any]:
     with open(COURSES_PATH, encoding="utf-8") as fh:
         return json.load(fh)
 
 
-async def _get(table: str, select: str, extra: str = "", auth: Optional[str] = None) -> List[Dict[str, Any]]:
+async def _get(table: str, select: str, extra: str = "", auth: str | None = None) -> list[dict[str, Any]]:
     cfg = _cfg()
     bearer = auth or cfg["anon"]
     async with httpx.AsyncClient(timeout=20) as s:
@@ -48,7 +48,7 @@ async def _get(table: str, select: str, extra: str = "", auth: Optional[str] = N
         return r.json()
 
 
-async def _write(method: str, table: str, body: Dict[str, Any], token: str, extra: str = "") -> Dict[str, Any]:
+async def _write(method: str, table: str, body: dict[str, Any], token: str, extra: str = "") -> dict[str, Any]:
     cfg = _cfg()
     async with httpx.AsyncClient(timeout=20) as s:
         r = await s.request(
@@ -65,7 +65,7 @@ async def _write(method: str, table: str, body: Dict[str, Any], token: str, extr
         return {"http": r.status_code, "body": r.json() if r.headers.get("content-type", "").startswith("application/json") else {"raw": r.text[:200]}}
 
 
-async def _user_from_token(token: str) -> Dict[str, Any]:
+async def _user_from_token(token: str) -> dict[str, Any]:
     cfg = _cfg()
     async with httpx.AsyncClient(timeout=20) as s:
         r = await s.get(
@@ -77,7 +77,7 @@ async def _user_from_token(token: str) -> Dict[str, Any]:
         return r.json()
 
 
-def _shape(c: Dict[str, Any]) -> Dict[str, Any]:
+def _shape(c: dict[str, Any]) -> dict[str, Any]:
     return {
         "id": c["id"],
         "slug": c.get("slug"),
@@ -90,7 +90,7 @@ def _shape(c: Dict[str, Any]) -> Dict[str, Any]:
 
 
 @router.get("/courses")
-async def courses() -> Dict[str, Any]:
+async def courses() -> dict[str, Any]:
     """Course catalog — cloud first, local JSON fallback."""
     try:
         rows = await _get("lms_courses", "id,slug,title,level,duration_min,description,lesson_count", "&order=created_at")
@@ -118,7 +118,7 @@ async def courses() -> Dict[str, Any]:
 
 
 @router.get("/courses/{course_id}")
-async def course(course_id: str) -> Dict[str, Any]:
+async def course(course_id: str) -> dict[str, Any]:
     """Full course content (lessons with body text) — cloud first."""
     try:
         rows = await _get("lms_courses", "id,slug,title,level,duration_min,description", f"&id=eq.{course_id}&limit=1")
@@ -141,7 +141,7 @@ async def course(course_id: str) -> Dict[str, Any]:
 
 
 @router.get("/progress")
-async def progress(token: str) -> Dict[str, Any]:
+async def progress(token: str) -> dict[str, Any]:
     """Own lesson progress (completed lesson ids) — RLS: auth.uid() = user_id."""
     try:
         u = await _user_from_token(token)
@@ -152,7 +152,7 @@ async def progress(token: str) -> Dict[str, Any]:
 
 
 @router.post("/progress")
-async def mark_progress(token: str, lesson_id: str) -> Dict[str, Any]:
+async def mark_progress(token: str, lesson_id: str) -> dict[str, Any]:
     """Mark a lesson complete (owner-only insert, RLS WITH CHECK)."""
     try:
         u = await _user_from_token(token)
@@ -165,7 +165,7 @@ async def mark_progress(token: str, lesson_id: str) -> Dict[str, Any]:
 
 
 @router.delete("/progress")
-async def unmark_progress(token: str, lesson_id: str) -> Dict[str, Any]:
+async def unmark_progress(token: str, lesson_id: str) -> dict[str, Any]:
     """Unmark a lesson (owner-only delete)."""
     try:
         u = await _user_from_token(token)

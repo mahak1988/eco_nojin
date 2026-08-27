@@ -4,10 +4,11 @@ Land Intelligence Models (Pydantic V2)
 Complete data structures for land analysis.
 """
 
-from pydantic import BaseModel, Field, ConfigDict
-from typing import Optional, List, Dict, Any, Literal
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
+from typing import Any, Literal
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class TerrainType(str, Enum):
@@ -98,7 +99,7 @@ class SlopeAspectResult(BaseModel):
     )
     slope_degrees: float = Field(..., ge=0, le=90)
     slope_percent: float = Field(..., ge=0)
-    slope_class: Optional[SlopeClass] = None
+    slope_class: SlopeClass | None = None
     aspect_degrees: float = Field(..., ge=0, le=360)
     aspect_cardinal: str
 
@@ -116,7 +117,7 @@ class CurvatureResult(BaseModel):
     profile_curvature: float
     plan_curvature: float
     total_curvature: float
-    convergence_index: Optional[float] = None
+    convergence_index: float | None = None
 
 
 class TerrainIndices(BaseModel):
@@ -130,11 +131,11 @@ class TerrainIndices(BaseModel):
             }
         }
     )
-    twi: Optional[float] = None
-    tpi: Optional[float] = None
-    roughness_index: Optional[float] = Field(None, ge=0)
-    landform: Optional[LandformType] = None
-    wetness_class: Optional[Literal["dry", "moderate", "wet", "very_wet"]] = None
+    twi: float | None = None
+    tpi: float | None = None
+    roughness_index: float | None = Field(None, ge=0)
+    landform: LandformType | None = None
+    wetness_class: Literal["dry", "moderate", "wet", "very_wet"] | None = None
 
 
 class TerrainAnalysis(BaseModel):
@@ -150,21 +151,21 @@ class TerrainAnalysis(BaseModel):
         }
     )
     profile_id: str
-    terrain_type: Optional[str] = None
+    terrain_type: str | None = None
     elevation_min: float
     elevation_max: float
     elevation_mean: float
-    elevation_range: Optional[float] = None
+    elevation_range: float | None = None
     slope_mean: float = Field(..., ge=0, le=90)
     slope_max: float = Field(..., ge=0, le=90)
-    slope_class_dominant: Optional[SlopeClass] = None
-    slope_distribution: Optional[Dict[str, float]] = None
-    aspect_dominant: Optional[float] = None
-    aspect_distribution: Optional[Dict[str, float]] = None
-    curvature: Optional[CurvatureResult] = None
-    indices: Optional[TerrainIndices] = None
+    slope_class_dominant: SlopeClass | None = None
+    slope_distribution: dict[str, float] | None = None
+    aspect_dominant: float | None = None
+    aspect_distribution: dict[str, float] | None = None
+    curvature: CurvatureResult | None = None
+    indices: TerrainIndices | None = None
     roughness_index: float = Field(0, ge=0)
-    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class StreamOrder(BaseModel):
@@ -186,17 +187,17 @@ class DrainageAnalysis(BaseModel):
         }
     )
     profile_id: str
-    drainage_pattern: Optional[DrainagePattern] = None
-    drainage_density: Optional[float] = Field(None, ge=0)
-    density_class: Optional[DrainageDensityClass] = None
-    stream_orders: Optional[List[int]] = None
-    stream_order_max: Optional[int] = Field(None, ge=1)
-    bifurcation_ratio: Optional[float] = None
-    flow_accumulation: Optional[Any] = None
-    watershed_area_km2: Optional[float] = Field(None, ge=0)
-    time_of_concentration_hours: Optional[float] = Field(None, ge=0)
-    main_channel_length_km: Optional[float] = Field(None, ge=0)
-    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    drainage_pattern: DrainagePattern | None = None
+    drainage_density: float | None = Field(None, ge=0)
+    density_class: DrainageDensityClass | None = None
+    stream_orders: list[int] | None = None
+    stream_order_max: int | None = Field(None, ge=1)
+    bifurcation_ratio: float | None = None
+    flow_accumulation: Any | None = None
+    watershed_area_km2: float | None = Field(None, ge=0)
+    time_of_concentration_hours: float | None = Field(None, ge=0)
+    main_channel_length_km: float | None = Field(None, ge=0)
+    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 class CapabilityAssessment(BaseModel):
     model_config = ConfigDict(
@@ -211,14 +212,14 @@ class CapabilityAssessment(BaseModel):
     )
     profile_id: str
     capability_class: LandCapabilityClass
-    subclass: Optional[str] = None
-    limiting_factors: List[str] = Field(default_factory=list)
-    suitable_uses: List[str] = Field(default_factory=list)
-    constraints: Dict[str, Any] = Field(default_factory=dict)
-    recommendations: List[str] = Field(default_factory=list)
+    subclass: str | None = None
+    limiting_factors: list[str] = Field(default_factory=list)
+    suitable_uses: list[str] = Field(default_factory=list)
+    constraints: dict[str, Any] = Field(default_factory=dict)
+    recommendations: list[str] = Field(default_factory=list)
     confidence_score: float = Field(..., ge=0, le=1)
-    assessed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    assessed_by: Optional[str] = None
+    assessed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    assessed_by: str | None = None
 
 
 class LandProfile(BaseModel):
@@ -236,19 +237,19 @@ class LandProfile(BaseModel):
     )
     id: str
     name: str
-    description: Optional[str] = None
-    country: Optional[str] = None
-    region: Optional[str] = None
-    city: Optional[str] = None
+    description: str | None = None
+    country: str | None = None
+    region: str | None = None
+    city: str | None = None
     location_lat: float = Field(..., ge=-90, le=90)
     location_lon: float = Field(..., ge=-180, le=180)
-    area_hectares: Optional[float] = Field(None, ge=0)
-    boundary_geojson: Optional[Dict[str, Any]] = None
-    dem_source: Optional[str] = None
-    dem_resolution_m: Optional[float] = Field(None, ge=0)
-    terrain_analysis: Optional[TerrainAnalysis] = None
-    drainage_analysis: Optional[DrainageAnalysis] = None
-    capability_assessment: Optional[CapabilityAssessment] = None
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    created_by: Optional[str] = None
+    area_hectares: float | None = Field(None, ge=0)
+    boundary_geojson: dict[str, Any] | None = None
+    dem_source: str | None = None
+    dem_resolution_m: float | None = Field(None, ge=0)
+    terrain_analysis: TerrainAnalysis | None = None
+    drainage_analysis: DrainageAnalysis | None = None
+    capability_assessment: CapabilityAssessment | None = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created_by: str | None = None

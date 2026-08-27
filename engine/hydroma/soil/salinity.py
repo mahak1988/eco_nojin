@@ -9,7 +9,6 @@ References:
     [2] Rhoades, J.D., et al., "Using Soil Salinity to Improve Crop Production",
         2000
 """
-from typing import Dict, Optional
 import logging
 
 logger = logging.getLogger(__name__)
@@ -24,7 +23,7 @@ SALINITY_CLASSES = {
 }
 
 
-def classify_salinity(ec: float) -> Dict:
+def classify_salinity(ec: float) -> dict:
     """Classify soil salinity based on electrical conductivity.
     
     Args:
@@ -43,20 +42,20 @@ def classify_salinity(ec: float) -> Dict:
     """
     if ec < 0:
         raise ValueError("EC cannot be negative")
-    
+
     # Determine classification
     for class_name, thresholds in SALINITY_CLASSES.items():
         if ec < thresholds['max_ec']:
             classification = class_name
             description = thresholds['description']
             break
-    
+
     # Crop tolerance recommendations
     crop_recommendations = _get_crop_recommendations(classification)
-    
+
     # Management recommendations
     management = _get_management_recommendations(classification, ec)
-    
+
     return {
         'ec': ec,
         'unit': 'dS/m',
@@ -67,7 +66,7 @@ def classify_salinity(ec: float) -> Dict:
     }
 
 
-def _get_crop_recommendations(classification: str) -> Dict:
+def _get_crop_recommendations(classification: str) -> dict:
     """Get crop recommendations based on salinity."""
     recommendations = {
         'non_saline': {
@@ -95,11 +94,11 @@ def _get_crop_recommendations(classification: str) -> Dict:
             'limitation': 'Extreme limitation'
         }
     }
-    
+
     return recommendations.get(classification, recommendations['non_saline'])
 
 
-def _get_management_recommendations(classification: str, ec: float) -> Dict:
+def _get_management_recommendations(classification: str, ec: float) -> dict:
     """Get management recommendations based on salinity."""
     if classification == 'non_saline':
         return {
@@ -107,7 +106,7 @@ def _get_management_recommendations(classification: str, ec: float) -> Dict:
             'description': 'Maintain current practices',
             'monitoring': 'Regular EC monitoring'
         }
-    
+
     elif classification == 'slightly_saline':
         return {
             'action': 'monitor_and_manage',
@@ -118,7 +117,7 @@ def _get_management_recommendations(classification: str, ec: float) -> Dict:
                 'Avoid over-irrigation'
             ]
         }
-    
+
     elif classification == 'moderately_saline':
         return {
             'action': 'leaching_required',
@@ -129,7 +128,7 @@ def _get_management_recommendations(classification: str, ec: float) -> Dict:
                 'Consider gypsum application if sodic'
             ]
         }
-    
+
     else:
         return {
             'action': 'major_remediation',
@@ -144,7 +143,7 @@ def _get_management_recommendations(classification: str, ec: float) -> Dict:
 
 
 def calculate_leaching_requirement(ec_soil: float, ec_water: float,
-                                      target_ec: Optional[float] = None) -> Dict:
+                                      target_ec: float | None = None) -> dict:
     """Calculate leaching requirement to reduce soil salinity.
     
     Formula (simplified):
@@ -163,24 +162,24 @@ def calculate_leaching_requirement(ec_soil: float, ec_water: float,
             'leaching_required': False,
             'reason': 'Soil EC is not higher than water EC'
         }
-    
+
     if target_ec is None:
         target_ec = 4.0  # Target for most crops
-    
+
     # Simplified leaching requirement
     if ec_soil <= target_ec:
         return {
             'leaching_required': False,
             'reason': f'Soil EC ({ec_soil}) is already below target ({target_ec})'
         }
-    
+
     # Calculate leaching fraction
     # LR = ECw / (ECe - ECw) where ECe is target
     lr = ec_water / (target_ec - ec_water)
-    
+
     # Limit to reasonable range
     lr = min(0.5, max(0.1, lr))
-    
+
     return {
         'leaching_required': True,
         'leaching_fraction': round(lr, 3),
@@ -193,7 +192,7 @@ def calculate_leaching_requirement(ec_soil: float, ec_water: float,
 
 
 def calculate_sodic_soil_amendment(esp: float, soil_depth: float,
-                                      bulk_density: float) -> Dict:
+                                      bulk_density: float) -> dict:
     """Calculate gypsum requirement for sodic soil amendment.
     
     Args:
@@ -209,20 +208,20 @@ def calculate_sodic_soil_amendment(esp: float, soil_depth: float,
             'gypsum_required': False,
             'reason': f'ESP ({esp}) is below amendment threshold (10)'
         }
-    
+
     # Calculate gypsum requirement
     # Rule of thumb: 1 ton gypsum per 1000 m² per 5 ESP points above 10
-    
+
     esp_excess = esp - 10
     gypsum_rate = esp_excess * 0.1  # tons per 100 m²
-    
+
     # Scale for depth
     depth_factor = soil_depth / 15  # Reference depth 15 cm
     gypsum_rate *= depth_factor
-    
+
     # Convert to kg/ha
     gypsum_kg_ha = gypsum_rate * 10000  # tons/100m² * 10000 = kg/ha
-    
+
     return {
         'gypsum_required': True,
         'gypsum_rate': round(gypsum_rate, 2),

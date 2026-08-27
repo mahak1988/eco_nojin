@@ -1,18 +1,32 @@
 import uuid
+
 """
 مدل‌های داده گردشگری روستایی و عشایری
 """
 
-from datetime import datetime, date, timezone
+from datetime import UTC, date, datetime, timezone
 from decimal import Decimal
 from enum import Enum
 
 from sqlalchemy import (
-    Boolean, Column, DateTime, Enum as SQLEnum, ForeignKey,
-    Index, Integer, Numeric, String, Text, JSON, Date
+    JSON,
+    Boolean,
+    Column,
+    Date,
+    DateTime,
+    Enum as SQLEnum,
+    ForeignKey,
+    Index,
+    Integer,
+    Numeric,
+    String,
+    Text,
 )
 from sqlalchemy.dialects.postgresql import UUID
+
 from database.models import Base
+
+
 class TourismTourType(str, Enum):
     ECOTOURISM = "ecotourism"
     NOMADIC = "nomadic"
@@ -47,8 +61,8 @@ class TourismGuide(Base):
     insurance_expiry = Column(Date, nullable=True)
     total_tours = Column(Integer, default=0)
     rating = Column(Numeric(3, 2), default=Decimal("0.00"))
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
 
 
 class TourismTour(Base):
@@ -86,8 +100,8 @@ class TourismTour(Base):
     approved_at = Column(DateTime, nullable=True)
     total_bookings = Column(Integer, default=0)
     rating = Column(Numeric(3, 2), default=Decimal("0.00"))
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
 
 
 class TourismBooking(Base):
@@ -119,5 +133,5 @@ class TourismBooking(Base):
     settlement_status = Column(String(20), default="pending")
     regenerative_commitment = Column(Text)
     regenerative_completed = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))

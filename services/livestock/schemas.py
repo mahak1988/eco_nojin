@@ -1,9 +1,10 @@
 """Pydantic schemas for Livestock"""
-from datetime import date, datetime
-from typing import Optional, List, Dict, Any
-from pydantic import BaseModel, Field
+from datetime import datetime
 from enum import Enum
-from decimal import Decimal
+from typing import Any
+
+from pydantic import BaseModel, Field
+
 
 class AnimalType(str, Enum):
     CATTLE = "cattle"
@@ -30,7 +31,7 @@ class ForageQuality(BaseModel):
 class HerdProfile(BaseModel):
     animal_type: AnimalType
     head_count: int = 10
-    breed: Optional[str] = None
+    breed: str | None = None
     production_system: ProductionSystem = ProductionSystem.MIXED
     average_age_months: int = 36
     female_ratio_pct: float = 70.0
@@ -42,8 +43,8 @@ class LivestockSimulationRequest(BaseModel):
     land_area_ha: float = 10.0
     water_availability_m3_day: float = 100.0
     simulation_days: int = 365
-    market_prices: Optional[Dict[str, float]] = None
-    parameters: Dict[str, Any] = Field(default_factory=dict)
+    market_prices: dict[str, float] | None = None
+    parameters: dict[str, Any] = Field(default_factory=dict)
 
 class AnimalProduction(BaseModel):
     milk_kg_day: float = 0.0
@@ -106,6 +107,5 @@ class LivestockSimulationResult(BaseModel):
     manure: ManureContribution = Field(default_factory=ManureContribution)
     environmental: EnvironmentalImpact = Field(default_factory=EnvironmentalImpact)
     economics: EconomicAnalysis = Field(default_factory=EconomicAnalysis)
-    recommendations: List[str] = Field(default_factory=list)
-    warnings: List[str] = Field(default_factory=list)
-    
+    recommendations: list[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)

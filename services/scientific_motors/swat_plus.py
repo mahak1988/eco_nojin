@@ -2,8 +2,7 @@
 from __future__ import annotations
 
 import time
-from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 import numpy as np
 import xarray as xr
@@ -39,7 +38,7 @@ class SWATPlusMotor(AbstractScientificMotor):
     def display_name(self) -> str:
         return "SWAT+ (Simplified Water Balance)"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [
             MotorInput("dem", "raster", True, "Digital Elevation Model"),
             MotorInput("soil", "raster", True, "Soil properties (K-factor)"),
@@ -48,7 +47,7 @@ class SWATPlusMotor(AbstractScientificMotor):
             MotorInput("temperature", "timeseries", False, "Daily temperature"),
         ]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("runoff_mm", "raster", "mm", "Surface runoff"),
             MotorOutput("et_mm", "raster", "mm", "Evapotranspiration"),
@@ -59,7 +58,7 @@ class SWATPlusMotor(AbstractScientificMotor):
 
     async def execute(
         self,
-        inputs: Dict[str, Any],
+        inputs: dict[str, Any],
         parameters: MotorParameters,
     ) -> MotorResult:
         """Execute SWAT+ water balance simulation."""
@@ -119,7 +118,7 @@ class SWATPlusMotor(AbstractScientificMotor):
         landcover: xr.DataArray,
         rainfall: xr.DataArray,
         parameters: MotorParameters,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Simulate daily water balance."""
         # Align all rasters to DEM grid
         soil_aligned = self._align_raster(soil, dem)
@@ -214,7 +213,7 @@ class SWATPlusMotor(AbstractScientificMotor):
             dims=landcover.dims,
         ).rio.write_crs(landcover.rio.crs)
 
-    def _compute_summary(self, results: Dict[str, Any]) -> Dict[str, Any]:
+    def _compute_summary(self, results: dict[str, Any]) -> dict[str, Any]:
         """Compute summary statistics."""
         summary = {}
         for key, data in results.items():

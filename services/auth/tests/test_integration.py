@@ -1,6 +1,8 @@
 """Integration tests for Auth"""
 import pytest
-from services.auth.schemas import UserRegister, UserLogin
+
+from services.auth.schemas import UserLogin, UserRegister
+
 
 @pytest.mark.asyncio
 class TestAuthIntegration:
@@ -14,10 +16,9 @@ class TestAuthIntegration:
         ))
         assert tokens.access_token
         assert tokens.refresh_token
-    
+
     async def test_duplicate_email(self, auth_service):
         data = UserRegister(email="dup@example.com", username="dupuser", password="StrongPass1")
         await auth_service.register(data)
         with pytest.raises(ValueError, match="already registered"):
             await auth_service.register(data)
-    

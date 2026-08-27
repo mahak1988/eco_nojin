@@ -8,20 +8,20 @@ never fabricated; it can be rendered as a PDF certificate later.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any
 
 from database import models
 
 
-def build_oracle_report(project: "models.CarbonProject") -> Dict[str, Any]:
+def build_oracle_report(project: models.CarbonProject) -> dict[str, Any]:
     """Assemble an oracle certificate from a stored carbon project."""
     import json
 
-    detail: Optional[Dict[str, Any]] = None
+    detail: dict[str, Any] | None = None
     if project.verification_detail:
         try:
             detail = json.loads(project.verification_detail)
-        except Exception:  # noqa: BLE001
+        except Exception:
             detail = None
 
     checks = (detail or {}).get("checks", []) if detail else []

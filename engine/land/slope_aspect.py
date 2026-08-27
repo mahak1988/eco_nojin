@@ -1,12 +1,13 @@
-import numpy as np
-from typing import Tuple, Optional
 import logging
+
+import numpy as np
+
 from .dem_processor import DEMProcessor
 
 logger = logging.getLogger(__name__)
 
 
-def calculate_slope_aspect(dem_data: np.ndarray, cell_size_x: float, cell_size_y: float) -> Tuple[np.ndarray, np.ndarray]:
+def calculate_slope_aspect(dem_data: np.ndarray, cell_size_x: float, cell_size_y: float) -> tuple[np.ndarray, np.ndarray]:
     """
     Calculates slope and aspect from DEM data using a 3x3 neighborhood method.
 
@@ -68,7 +69,7 @@ class SlopeAspectAnalyzer:
         if self.dem_proc._data is None:
             raise ValueError("DEMProcessor must have loaded data before initializing SlopeAspectAnalyzer.")
 
-    def analyze(self, cell_size_meters: float = 30.0) -> Tuple[np.ndarray, np.ndarray, float, float]:
+    def analyze(self, cell_size_meters: float = 30.0) -> tuple[np.ndarray, np.ndarray, float, float]:
         """
         Performs the slope and aspect analysis on the loaded DEM.
 

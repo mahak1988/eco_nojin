@@ -7,7 +7,7 @@ where a number came from.
 """
 
 from datetime import datetime
-from typing import Any, Literal, List, Dict
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -141,15 +141,15 @@ class GroundwaterOutput(BaseModel):
     water_quality_class: str
     overexploitation_risk: str
     contamination_risk: str
-    recommendations: List[str]
+    recommendations: list[str]
     status: str
 
 
 class WatershedInput(BaseModel):
     """Input contract for watershed analysis."""
     land_profile_id: str
-    stream_network: Dict
-    stream_lengths: Dict[str, float]
+    stream_network: dict
+    stream_lengths: dict[str, float]
     catchment_area_km2: float
     main_channel_length_m: float
     average_slope_m_m: float
@@ -163,7 +163,7 @@ class WatershedOutput(BaseModel):
     horton_Rb: float
     horton_Rl: float
     kirpich_tc_minutes: float
-    order_counts: Dict[int, int]
+    order_counts: dict[int, int]
     flood_risk: str
 
 
@@ -186,7 +186,7 @@ class WaterQualityOutput(BaseModel):
     sample_date: str
     quality_class: str
     wqi_score: float  # Water Quality Index (0-100)
-    suitable_for: List[str]
+    suitable_for: list[str]
     health_risk: str
     treatment_needed: bool
 

@@ -1,6 +1,6 @@
-import numpy as np
-from typing import Tuple
 import logging
+
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ def calculate_ls_factor(slope_degrees: np.ndarray, cell_size_m: float = 30.0) ->
     # Convert slope to rise/run (tan)
     slope_radians = np.radians(slope_degrees)
     tan_slope = np.tan(slope_radians)
-    
+
     # Simplified LS calculation (often involves slope length L and steepness S)
     # L = (cell_length / 22.13)^0.4
     # S = 10.8 * sin(slope) + 0.03 (for slope in degrees)
@@ -41,13 +41,13 @@ def calculate_ls_factor(slope_degrees: np.ndarray, cell_size_m: float = 30.0) ->
     # For a more robust calculation, a flow accumulation algorithm is needed.
     # Here, we use a proxy based on slope^2 for demonstration.
     ls_factor = np.power(tan_slope, 0.4) * np.power((10.8 * np.sin(slope_radians) + 0.03), 1.0)
-    
+
     # Ensure no NaN values are introduced, replace with a small positive number
     ls_factor = np.nan_to_num(ls_factor, nan=0.001, posinf=1e6, neginf=-1e6)
-    
+
     # Clamp extreme values to prevent unrealistic outputs
     ls_factor = np.clip(ls_factor, 0.0, 100.0)
-    
+
     return ls_factor
 
 
@@ -58,7 +58,7 @@ def estimate_erosion_risk(
     k_factor: float = DEFAULT_K_FACTOR,
     c_factor: float = DEFAULT_C_FACTOR,
     p_factor: float = DEFAULT_P_FACTOR,
-) -> Tuple[np.ndarray, str]:
+) -> tuple[np.ndarray, str]:
     """
     Estimates erosion risk using a simplified RUSLE-like model.
 
@@ -75,13 +75,13 @@ def estimate_erosion_risk(
         and a qualitative risk level string ('Low', 'Moderate', 'High', 'Very High').
     """
     logger.info("Estimating erosion risk using simplified RUSLE model.")
-    
+
     ls_factor = calculate_ls_factor(slope_degrees, cell_size_m)
-    
+
     # RUSLE: A = R * K * LS * C * P
     # A is the predicted soil loss (t/ha/yr)
     predicted_loss_t_per_ha_per_yr = r_factor * k_factor * ls_factor * c_factor * p_factor
-    
+
     # Determine qualitative risk level based on mean predicted loss
     mean_loss = float(np.nanmean(predicted_loss_t_per_ha_per_yr))
     if mean_loss < 5:

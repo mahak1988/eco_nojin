@@ -6,7 +6,7 @@ pass the USER's JWT through (so RLS ownership policies apply once migration
 the frontend). Honest contract: real rows, real errors, no fabrication.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import httpx
 from fastapi import APIRouter, Query
@@ -22,7 +22,7 @@ def _env(key: str) -> str:
     return ""
 
 
-def _cfg() -> Dict[str, str]:
+def _cfg() -> dict[str, str]:
     url = _env("SUPABASE_URL")
     anon = _env("SUPABASE_ANON_KEY")
     svc = _env("SUPABASE_SERVICE_ROLE_KEY")
@@ -32,8 +32,8 @@ def _cfg() -> Dict[str, str]:
 
 
 async def _select(
-    table: str, select: str = "*", extra: str = "", key: Optional[str] = None, auth: Optional[str] = None
-) -> List[Dict[str, Any]]:
+    table: str, select: str = "*", extra: str = "", key: str | None = None, auth: str | None = None
+) -> list[dict[str, Any]]:
     cfg = _cfg()
     apikey = key or cfg["anon"]
     bearer = auth or apikey
@@ -47,7 +47,7 @@ async def _select(
         return r.json()
 
 
-async def _write(method: str, table: str, body: Dict[str, Any], key: str, extra: str = "") -> Dict[str, Any]:
+async def _write(method: str, table: str, body: dict[str, Any], key: str, extra: str = "") -> dict[str, Any]:
     """Write with apikey=anon (project identification) and Bearer=user JWT
     (RLS ownership). Service role is never used here."""
     cfg = _cfg()
@@ -66,7 +66,7 @@ async def _write(method: str, table: str, body: Dict[str, Any], key: str, extra:
         return {"http": r.status_code, "body": r.json() if r.headers.get("content-type", "").startswith("application/json") else {"raw": r.text[:200]}}
 
 
-async def _user_from_token(token: str) -> Dict[str, Any]:
+async def _user_from_token(token: str) -> dict[str, Any]:
     """Verify a user JWT against GoTrue (real user id + email)."""
     cfg = _cfg()
     async with httpx.AsyncClient(timeout=20) as s:
@@ -83,7 +83,7 @@ async def _user_from_token(token: str) -> Dict[str, Any]:
 
 
 @router.get("/landscapes")
-async def landscapes() -> Dict[str, Any]:
+async def landscapes() -> dict[str, Any]:
     """Real platform_landscapes rows (21) with GeoJSON geo_boundary."""
     try:
         rows = await _select("platform_landscapes", "id,name,slug,country,province,geo_boundary,created_at")
@@ -93,7 +93,7 @@ async def landscapes() -> Dict[str, Any]:
 
 
 @router.get("/standards")
-async def standards() -> Dict[str, Any]:
+async def standards() -> dict[str, Any]:
     try:
         rows = await _select("standards", "id,name,organization,description,link,category,is_active", "&is_active=eq.true")
         return {"status": "ok", "count": len(rows), "rows": rows}
@@ -102,7 +102,7 @@ async def standards() -> Dict[str, Any]:
 
 
 @router.get("/marketplace")
-async def marketplace() -> Dict[str, Any]:
+async def marketplace() -> dict[str, Any]:
     try:
         standards_rows = await _select("standards", "id,name,organization,description,link,category,is_active", "&is_active=eq.true")
         projects = await _select("platform_carbon_projects", "*", "&limit=50")
@@ -117,7 +117,7 @@ async def marketplace() -> Dict[str, Any]:
 
 
 @router.get("/geo/nearest")
-async def geo_nearest(lat: float, lon: float, limit: int = Query(default=5, ge=1, le=20)) -> Dict[str, Any]:
+async def geo_nearest(lat: float, lon: float, limit: int = Query(default=5, ge=1, le=20)) -> dict[str, Any]:
     """Nearest landscapes to a point — REAL PostGIS (RPC nearest_landscapes,
     ST_DWithin/<-> on geography), falls back to Haversine if the RPC is missing."""
     try:
@@ -167,7 +167,7 @@ async def geo_nearest(lat: float, lon: float, limit: int = Query(default=5, ge=1
 
 
 @router.get("/profile")
-async def profile(token: str) -> Dict[str, Any]:
+async def profile(token: str) -> dict[str, Any]:
     """Own profile from platform_profiles (real schema: id = auth.users.id)
     plus wallet/eco balances from the users row (RLS: own row only)."""
     try:
@@ -191,7 +191,7 @@ async def profile(token: str) -> Dict[str, Any]:
 
 
 @router.put("/profile")
-async def put_profile(token: str, display_name: Optional[str] = None, phone: Optional[str] = None, bio: Optional[str] = None) -> Dict[str, Any]:
+async def put_profile(token: str, display_name: str | None = None, phone: str | None = None, bio: str | None = None) -> dict[str, Any]:
     """Upsert own profile (writes carry the USER JWT -> RLS ownership applies)."""
     try:
         u = await _user_from_token(token)
@@ -215,8 +215,8 @@ async def create_carbon_project(
     project_type: str = "soil_carbon",
     area_ha: float = 100.0,
     duration_years: int = 20,
-    landscape_id: Optional[str] = None,
-) -> Dict[str, Any]:
+    landscape_id: str | None = None,
+) -> dict[str, Any]:
     """Create a real carbon project with owner_id = auth.uid() (RLS-ready)."""
     try:
         u = await _user_from_token(token)
@@ -238,7 +238,7 @@ async def create_carbon_project(
 
 
 @router.get("/carbon-projects")
-async def list_carbon_projects(token: str) -> Dict[str, Any]:
+async def list_carbon_projects(token: str) -> dict[str, Any]:
     """Own carbon projects (RLS: owner_id = auth.uid())."""
     try:
         u = await _user_from_token(token)
@@ -252,7 +252,7 @@ async def list_carbon_projects(token: str) -> Dict[str, Any]:
 
 
 @router.get("/admin/users")
-async def admin_users(token: str) -> Dict[str, Any]:
+async def admin_users(token: str) -> dict[str, Any]:
     """All users — RLS decides: only admins see more than their own row."""
     try:
         await _user_from_token(token)
@@ -263,7 +263,7 @@ async def admin_users(token: str) -> Dict[str, Any]:
 
 
 @router.post("/admin/role")
-async def admin_role(token: str, user_id: str, role: str) -> Dict[str, Any]:
+async def admin_role(token: str, user_id: str, role: str) -> dict[str, Any]:
     """Set a user's role — calls admin_set_role RPC (function checks the caller
     is admin before writing; non-admins get not_admin)."""
     try:

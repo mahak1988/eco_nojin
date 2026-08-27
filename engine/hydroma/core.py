@@ -18,9 +18,7 @@ Scientific Standards:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, Any, List, Optional, Tuple
 from enum import Enum
-import numpy as np
 
 
 class EngineVersion(Enum):
@@ -59,7 +57,7 @@ class HydromaCore:
 
     VERSION = EngineVersion.V1_0.value
 
-    def __init__(self, context: Optional[EngineContext] = None):
+    def __init__(self, context: EngineContext | None = None):
         self.context = context or EngineContext()
 
     # ==================== Soil Module ====================
@@ -98,7 +96,7 @@ class HydromaCore:
         else:
             clay_score = 60
 
-        return (ph_score * 0.25 + om_score * 0.30 + 
+        return (ph_score * 0.25 + om_score * 0.30 +
                 tex_score * 0.25 + clay_score * 0.20)
 
     @staticmethod
@@ -145,7 +143,7 @@ class HydromaCore:
         et0_mm_day: float,
         kc: float,
         area_ha: float = 1.0,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """FAO-56 crop water requirement."""
         etc_mm_day = et0_mm_day * kc
         etc_mm_season = etc_mm_day * 30  # Monthly estimate
@@ -187,7 +185,7 @@ class HydromaCore:
         method: str,
         climate: str,
         soil_texture: int,
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """Estimate carbon sequestration potential range (tCO2e/ha/yr)."""
         method_potentials = {
             "no_till": (0.3, 0.8),

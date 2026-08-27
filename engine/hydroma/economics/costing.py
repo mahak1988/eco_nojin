@@ -4,9 +4,8 @@ Economic Engine - Costing Module.
 Calculates various types of costs associated with land management,
 agriculture, infrastructure, and biofertilizer application.
 """
-from typing import Dict, Any, List
 from dataclasses import dataclass
-import math
+from typing import Any
 
 
 @dataclass
@@ -31,7 +30,7 @@ def calculate_agricultural_cost(
     machinery_cost_per_hectare: float,
     land_rent_per_hectare: float = 0.0,
     other_variable_costs_per_hectare: float = 0.0,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Calculates total agricultural production costs.
 
@@ -80,10 +79,10 @@ def calculate_agricultural_cost(
 
 def calculate_infrastructure_cost(
     structure_type: str,
-    design_calculation_output: Dict[str, Any], # Output from e.g., draining.py, channels.py
-    material_specifications: Dict[str, Any], # Material types, densities, costs
+    design_calculation_output: dict[str, Any], # Output from e.g., draining.py, channels.py
+    material_specifications: dict[str, Any], # Material types, densities, costs
     labor_complexity_factor: float = 1.0, # Multiplier for complex structures
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Calculates cost for engineering structures.
 
@@ -144,7 +143,7 @@ def calculate_biofertilizer_cost(
     dosage_kg_per_ha: float,
     unit_cost_per_kg: float,
     application_method: str = "broadcast"
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Calculates cost for biofertilizer application.
 

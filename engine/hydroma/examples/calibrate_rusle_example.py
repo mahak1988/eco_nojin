@@ -1,7 +1,11 @@
 """Example of calibrating RUSLE model parameters."""
-from engine.hydroma.calibration.model_calibrator import Calibrator, CalibrationInput
-from engine.hydroma.simulation.contracts import ChainInputs, RUSLEInput # Assuming RUSLEInput exists or is similar to ChainInputs
-from engine.hydroma.simulation.orchestrator import _run_rusle # Assuming the internal runner exists
+from engine.hydroma.calibration.model_calibrator import CalibrationInput, Calibrator
+from engine.hydroma.simulation.contracts import (  # Assuming RUSLEInput exists or is similar to ChainInputs
+    ChainInputs,
+    RUSLEInput,
+)
+from engine.hydroma.simulation.orchestrator import _run_rusle  # Assuming the internal runner exists
+
 
 # Define a wrapper for the RUSLE model to fit the ModelRunner protocol
 class RUSLERunnerAdapter:
@@ -34,9 +38,9 @@ def run_example():
     )
     observed_erosion = [5.0, 7.2, 4.8] # Example observed rates
     # Assuming the model runs for 3 periods and returns 3 simulated rates
-    
+
     model_adapter = RUSLERunnerAdapter(base_inputs)
-    
+
     cal_input = CalibrationInput(
         model_runner=model_adapter,
         observed_data=observed_erosion,
@@ -50,7 +54,7 @@ def run_example():
 
     calibrator = Calibrator()
     result = calibrator.execute(cal_input)
-    
+
     print(f"Calibrated Parameters: {result.calibrated_parameters}")
     print(f"Best Objective Value (RMSE): {result.best_objective_value}")
 

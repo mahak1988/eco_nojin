@@ -60,7 +60,7 @@ class RunoffCalculator:
 
 class SpatialRunoffCalculator:
     """Calculates spatially distributed surface runoff."""
-    
+
     def __init__(self):
         pass
 
@@ -83,7 +83,7 @@ class SpatialRunoffCalculator:
         # Align layers (e.g., resample LU and Soil to match DEM grid)
         lu_aligned = lu.rio.reproject_match(dem, nodata=lu.rio.nodata)
         soil_aligned = soil.rio.reproject_match(dem, nodata=soil.rio.nodata)
-        
+
         return dem, lu_aligned, soil_aligned, target_crs
 
     def _create_cn_map_from_lu_soil(self, lu: xr.DataArray, soil: xr.DataArray) -> xr.DataArray:
@@ -101,11 +101,11 @@ class SpatialRunoffCalculator:
     def execute(self, input_data: SpatialRunoffInput) -> SpatialRunoffOutput:
         """Main execution function for spatial calculation."""
         logger.info(f"Starting spatial runoff calculation using {input_data.method} method.")
-        
+
         dem, lu, soil, target_crs = self._load_and_align_layers(
             input_data.dem_path, input_data.land_use_path, input_data.soil_path, input_data.target_crs
         )
-        
+
         cn_map = self._create_cn_map_from_lu_soil(lu, soil)
 
         # --- SCS-CN Spatial Calculation ---
@@ -118,7 +118,7 @@ class SpatialRunoffCalculator:
 
             runoff_depth = xr.where(precip_da <= initial_abstraction, 0.0,
                                     ((precip_da - initial_abstraction) ** 2) / (precip_da - initial_abstraction + s))
-            
+
             # Clip negative values
             runoff_depth = xr.where(runoff_depth < 0, 0.0, runoff_depth)
 
@@ -126,10 +126,10 @@ class SpatialRunoffCalculator:
             output_dir = Path("data/spatial_runoff")
             output_dir.mkdir(parents=True, exist_ok=True)
             runoff_map_path = str(output_dir / f"runoff_cn_{input_data.method}_site_{hash(input_data.dem_path)}.tif")
-            
+
             runoff_depth.rio.write_crs(target_crs, inplace=True)
             runoff_depth.rio.to_raster(runoff_map_path)
-            
+
             logger.info(f"Spatial runoff map saved to {runoff_map_path}")
             return SpatialRunoffOutput(runoff_volume_map_path=runoff_map_path)
 

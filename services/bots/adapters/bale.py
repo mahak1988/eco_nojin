@@ -29,7 +29,7 @@ class BaleGateway:
         if self._client is not None:
             return self._client
         try:
-            import balebot  # noqa: F401  (import name used by python-bale-bot)
+            import balebot
 
             self._client = balebot
             return self._client

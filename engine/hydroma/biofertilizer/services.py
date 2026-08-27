@@ -11,37 +11,37 @@ Integrates with:
 
 from __future__ import annotations
 
-import logging
 import json
-from datetime import datetime, date
-from typing import Optional, List, Dict, Any
+import logging
+from datetime import date, datetime
+from typing import Any
+
 from sqlalchemy.orm import Session
 
 from database import SessionLocal
 
 from .calculator import (
+    ApplicationMethod,
+    FormulationType,
     NojinCalculator,
     NojinInput,
     NojinResult,
     SoilCondition,
     StrainProfile,
     StrainType,
-    FormulationType,
-    ApplicationMethod,
-)
-from .repositories import (
-    NojinStrainRepository,
-    NojinFormulationRepository,
-    NojinApplicationPlanRepository,
-    NojinFieldTrialRepository,
-    NojinCalibrationRecordRepository,
 )
 from .models import (
-    NojinStrain,
-    NojinFormulation,
     NojinApplicationPlan,
-    NojinFieldTrial,
     NojinCalibrationRecord,
+    NojinFieldTrial,
+    NojinFormulation,
+)
+from .repositories import (
+    NojinApplicationPlanRepository,
+    NojinCalibrationRecordRepository,
+    NojinFieldTrialRepository,
+    NojinFormulationRepository,
+    NojinStrainRepository,
 )
 
 logger = logging.getLogger(__name__)
@@ -56,23 +56,23 @@ class NojinService:
     - Repositories (data access)
     - External services (Phase 3, Phase 8, CropAdvisor)
     """
-    
-    def __init__(self, session: Optional[Session] = None):
+
+    def __init__(self, session: Session | None = None):
         self.session = session or SessionLocal()
         self._owns_session = session is None
-        
+
         # Initialize calculator with latest calibration
         self.calculator = NojinCalculator()
-        
+
         # Initialize repositories
         self.strains = NojinStrainRepository(self.session)
         self.formulations = NojinFormulationRepository(self.session)
         self.application_plans = NojinApplicationPlanRepository(self.session)
         self.field_trials = NojinFieldTrialRepository(self.session)
         self.calibration_records = NojinCalibrationRecordRepository(self.session)
-        
+
         logger.info("NojinService initialized")
-    
+
     def close(self):
         if self._owns_session:
             self.session.close()
@@ -81,26 +81,26 @@ class NojinService:
             self.application_plans.close()
             self.field_trials.close()
             self.calibration_records.close()
-    
+
     def __enter__(self):
         return self
-    
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
-    
+
     # ═══════════════════════════════════════════════════════════════
     # CORE OPERATIONS
     # ═══════════════════════════════════════════════════════════════
-    
+
     def get_recommendation(
         self,
         land_profile_id: str,
         crop_type: str,
         soil: SoilCondition,
         target_yield_t_ha: float,
-        formulation_code: Optional[str] = None,
+        formulation_code: str | None = None,
         application_method: ApplicationMethod = ApplicationMethod.SOIL_APPLICATION,
-        season: Optional[str] = None,
+        season: str | None = None,
         irrigation_available: bool = False,
     ) -> NojinResult:
         """
@@ -120,7 +120,7 @@ class NojinService:
             NojinResult with comprehensive recommendation
         """
         logger.info(f"Getting recommendation for {crop_type} on {land_profile_id}")
-        
+
         # Find appropriate formulation
         formulation = None
         if formulation_code:
@@ -132,12 +132,12 @@ class NojinService:
             suitable = self.formulations.get_for_crop(crop_type)
             if suitable:
                 formulation = suitable[0]
-        
+
         # Build strain profiles from formulation
         strain_profiles = None
         if formulation:
             strain_profiles = self._build_strain_profiles_from_formulation(formulation)
-        
+
         # Build input
         input_data = NojinInput(
             land_profile_id=land_profile_id,
@@ -150,27 +150,27 @@ class NojinService:
             season=season,
             irrigation_available=irrigation_available,
         )
-        
+
         # Calculate
         result = self.calculator.calculate(input_data)
-        
+
         logger.info(f"Recommendation generated: dosage={result.recommended_dosage_kg_ha} kg/ha, "
                    f"suitability={result.suitability_score}")
-        
+
         return result
-    
+
     def create_application_plan(
         self,
         formulation_id: int,
-        land_profile_id: Optional[int],
+        land_profile_id: int | None,
         crop_type: str,
         application_date: date,
         application_method: str,
         dosage_kg_ha: float,
-        expected_yield_response: Optional[float] = None,
-        expected_soil_improvement: Optional[str] = None,
-        risk_assessment: Optional[str] = None,
-        created_by: Optional[str] = None,
+        expected_yield_response: float | None = None,
+        expected_soil_improvement: str | None = None,
+        risk_assessment: str | None = None,
+        created_by: str | None = None,
     ) -> NojinApplicationPlan:
         """Create a new application plan."""
         plan = self.application_plans.create(
@@ -187,21 +187,21 @@ class NojinService:
         )
         logger.info(f"Created application plan {plan.id} for {crop_type}")
         return plan
-    
+
     def record_field_trial(
         self,
-        application_plan_id: Optional[int],
+        application_plan_id: int | None,
         trial_location: str,
         trial_date: date,
         crop_type: str,
-        plot_area_ha: Optional[float] = None,
-        treatment_design: Optional[str] = None,
-        baseline_data: Optional[str] = None,
-        post_application_data: Optional[str] = None,
-        yield_response: Optional[float] = None,
-        soil_improvement: Optional[str] = None,
-        observations: Optional[str] = None,
-        statistical_analysis: Optional[str] = None,
+        plot_area_ha: float | None = None,
+        treatment_design: str | None = None,
+        baseline_data: str | None = None,
+        post_application_data: str | None = None,
+        yield_response: float | None = None,
+        soil_improvement: str | None = None,
+        observations: str | None = None,
+        statistical_analysis: str | None = None,
     ) -> NojinFieldTrial:
         """Record a field trial result."""
         trial = self.field_trials.create(
@@ -220,16 +220,16 @@ class NojinService:
         )
         logger.info(f"Recorded field trial {trial.id} at {trial_location}")
         return trial
-    
+
     # ═══════════════════════════════════════════════════════════════
     # CALIBRATION
     # ═══════════════════════════════════════════════════════════════
-    
+
     def calibrate_from_trials(
         self,
         formulation_id: int,
         model_version: str = "1.0",
-        calibrated_by: Optional[str] = None,
+        calibrated_by: str | None = None,
     ) -> NojinCalibrationRecord:
         """
         Calibrate model for a formulation based on field trials.
@@ -243,13 +243,13 @@ class NojinService:
             Created calibration record
         """
         logger.info(f"Calibrating formulation {formulation_id}")
-        
+
         # Get all trials for this formulation
         trials = self.field_trials.get_for_formulation(formulation_id)
-        
+
         if not trials:
             raise ValueError(f"No field trials found for formulation {formulation_id}")
-        
+
         # Prepare trial data for calculator
         trial_results = []
         for trial in trials:
@@ -261,20 +261,20 @@ class NojinService:
                     "plot_area_ha": trial.plot_area_ha,
                     "trial_date": trial.trial_date.isoformat() if trial.trial_date else None,
                 })
-        
+
         if not trial_results:
             raise ValueError(f"No trials with yield_response for formulation {formulation_id}")
-        
+
         # Calibrate calculator
         calibration_data = self.calculator.calibrate_from_trials(trial_results)
-        
+
         # Calculate quality score based on trial count and variance
         yield_responses = [t["yield_response"] for t in trial_results]
         import numpy as np
         variance = np.var(yield_responses)
         quality_score = max(0, 100 - variance)  # Lower variance = higher quality
         quality_score = min(100, quality_score + len(trial_results) * 5)  # Bonus for more trials
-        
+
         # Create record
         record = self.calibration_records.create(
             formulation_id=formulation_id,
@@ -290,35 +290,35 @@ class NojinService:
             calibration_quality_score=quality_score,
             calibrated_by=calibrated_by,
         )
-        
+
         logger.info(f"Calibrated formulation {formulation_id} with {len(trial_results)} trials, "
                    f"quality={quality_score:.1f}")
-        
+
         return record
-    
+
     # ═══════════════════════════════════════════════════════════════
     # CROSS-PHASE INTEGRATION
     # ═══════════════════════════════════════════════════════════════
-    
+
     def get_water_efficiency_impact(
         self,
         land_profile_id: str,
         formulation_id: int,
         soil: SoilCondition,
-    ) -> Optional[Dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         """
         Integration with Phase 3 (Water Intelligence).
         
         Calculates water efficiency improvement from Nojin application.
         """
         logger.info(f"Calculating water efficiency impact for {land_profile_id}")
-        
+
         try:
             # Get formulation
             formulation = self.formulations.get_by_id(formulation_id)
             if not formulation:
                 return None
-            
+
             # Use calculator to estimate
             input_data = NojinInput(
                 land_profile_id=land_profile_id,
@@ -327,9 +327,9 @@ class NojinService:
                 target_yield_t_ha=5.0,
                 irrigation_available=True,  # Assume irrigation for water impact
             )
-            
+
             result = self.calculator.calculate(input_data)
-            
+
             return {
                 "land_profile_id": land_profile_id,
                 "formulation_id": formulation_id,
@@ -343,21 +343,21 @@ class NojinService:
         except Exception as e:
             logger.error(f"Water efficiency calculation failed: {e}")
             return None
-    
+
     def get_carbon_sequestration_potential(
         self,
         land_profile_id: str,
         formulation_id: int,
         soil: SoilCondition,
         area_ha: float = 1.0,
-    ) -> Optional[Dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         """
         Integration with Phase 8 (MRV - Monitoring, Reporting, Verification).
         
         Estimates carbon sequestration potential from Nojin application.
         """
         logger.info(f"Estimating carbon sequestration for {land_profile_id}")
-        
+
         try:
             # Use calculator to estimate
             input_data = NojinInput(
@@ -366,12 +366,12 @@ class NojinService:
                 soil=soil,
                 target_yield_t_ha=5.0,
             )
-            
+
             result = self.calculator.calculate(input_data)
-            
+
             annual_sequestration = (result.carbon_sequestration_potential or 0) * area_ha
             ten_year_sequestration = annual_sequestration * 10
-            
+
             return {
                 "land_profile_id": land_profile_id,
                 "formulation_id": formulation_id,
@@ -386,20 +386,20 @@ class NojinService:
         except Exception as e:
             logger.error(f"Carbon sequestration calculation failed: {e}")
             return None
-    
+
     def integrate_with_crop_advisor(
         self,
         land_profile_id: str,
         crop_type: str,
         soil: SoilCondition,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Integration with CropAdvisor for combined recommendations.
         
         Returns combined fertilizer + biofertilizer recommendation.
         """
         logger.info(f"Integrating with CropAdvisor for {crop_type}")
-        
+
         # Get Nojin recommendation
         nojin_rec = self.get_recommendation(
             land_profile_id=land_profile_id,
@@ -407,14 +407,14 @@ class NojinService:
             soil=soil,
             target_yield_t_ha=5.0,
         )
-        
+
         # Calculate fertilizer reduction due to Nojin
         # N fixation reduces N fertilizer need
         n_reduction_kg_ha = nojin_rec.expected_nitrogen_fixation_kg_ha
-        
+
         # P solubilization reduces P fertilizer need
         p_reduction_kg_ha = 20.0  # Typical reduction
-        
+
         return {
             "land_profile_id": land_profile_id,
             "crop_type": crop_type,
@@ -435,19 +435,19 @@ class NojinService:
             },
             "calculated_at": datetime.now().isoformat(),
         }
-    
+
     # ═══════════════════════════════════════════════════════════════
     # HELPER METHODS
     # ═══════════════════════════════════════════════════════════════
-    
+
     def _build_strain_profiles_from_formulation(
         self,
         formulation: NojinFormulation,
-    ) -> Optional[List[StrainProfile]]:
+    ) -> list[StrainProfile] | None:
         """Build StrainProfile list from formulation."""
         if not formulation:
             return None
-        
+
         # For now, use default profiles based on formulation type
         # In production, this would query actual strains linked to formulation
         default_profiles = [
@@ -464,14 +464,14 @@ class NojinService:
                 compatibility_score=85.0,
             ),
         ]
-        
+
         return default_profiles
-    
+
     # ═══════════════════════════════════════════════════════════════
     # STATISTICS & REPORTING
     # ═══════════════════════════════════════════════════════════════
-    
-    def get_statistics(self) -> Dict[str, Any]:
+
+    def get_statistics(self) -> dict[str, Any]:
         """Get overall Nojin system statistics."""
         return {
             "strains_count": self.strains.count(),

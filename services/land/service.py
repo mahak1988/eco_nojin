@@ -3,20 +3,22 @@
 نسخه استاندارد با استفاده از موتور واقعی
 """
 
-from datetime import datetime, timezone
-from typing import Any, Optional, List
+from datetime import UTC, datetime
+from typing import Any
+
 from adapters.engine_adapter import EngineAdapter
 from services.land.land_profile import (
+    CapabilityAssessment,
+    DrainageAnalysis,
     LandProfile,
     TerrainAnalysis,
-    DrainageAnalysis,
-    CapabilityAssessment,
 )
+
 
 class LandService:
     """سرویس مدیریت زمین با استفاده از آداپتور موتور"""
 
-    def __init__(self, engine: Optional[EngineAdapter] = None, db=None, session=None):
+    def __init__(self, engine: EngineAdapter | None = None, db=None, session=None):
         self.engine = engine or EngineAdapter()
         self.db = db
         self.session = session
@@ -27,7 +29,7 @@ class LandService:
         name: str,
         location_lat: float = 0,
         location_lon: float = 0,
-        area_ha: Optional[float] = None,
+        area_ha: float | None = None,
         **kwargs
     ) -> LandProfile:
         """ایجاد پروفایل جدید"""
@@ -41,11 +43,11 @@ class LandService:
         self._profiles[profile.id] = profile
         return profile
 
-    def get_profile(self, profile_id: str) -> Optional[LandProfile]:
+    def get_profile(self, profile_id: str) -> LandProfile | None:
         """دریافت پروفایل با شناسه"""
         return self._profiles.get(profile_id)
 
-    def list_profiles(self) -> List[LandProfile]:
+    def list_profiles(self) -> list[LandProfile]:
         """فهرست پروفایل‌ها"""
         return list(self._profiles.values())
 
@@ -85,7 +87,7 @@ class LandService:
             mean_slope_degrees=engine_results.get('slope_mean', 0.0),
             dominant_aspect_degrees=engine_results.get('aspect_dominant', 0.0),
             analysis_data=engine_results,
-            analyzed_at=datetime.now(timezone.utc)
+            analyzed_at=datetime.now(UTC)
         )
         self._profiles[profile_id].terrain_analysis = analysis
         return analysis
@@ -95,7 +97,7 @@ class LandService:
         profile_id: str,
         dem_array: Any,
         resolution: float,
-        area_km2: Optional[float] = None
+        area_km2: float | None = None
     ) -> DrainageAnalysis:
         """تحلیل زهکشی با استفاده از موتور"""
         if not self._profile_exists(profile_id):
@@ -118,7 +120,7 @@ class LandService:
             watershed_area_km2=area_km2 or 1.0,
             time_of_concentration_hours=engine_results.get('time_of_concentration_hours', 0.0),
             main_channel_length_km=engine_results.get('main_channel_length_km', 0.0),
-            analyzed_at=datetime.now(timezone.utc)
+            analyzed_at=datetime.now(UTC)
         )
         self._profiles[profile_id].drainage_analysis = analysis
         return analysis
@@ -127,7 +129,7 @@ class LandService:
         self,
         profile_id: str,
         slope_degrees: float,
-        soil_depth_m: Optional[float] = None,
+        soil_depth_m: float | None = None,
         erosion_risk: str = "low",
         drainage_class: str = "well_drained",
         climate_zone: str = "temperate",
@@ -154,7 +156,7 @@ class LandService:
             confidence_score=engine_results.get('confidence_score', 0.8),
             limitations=engine_results.get('limitations', []),
             analysis_data=engine_results,
-            assessed_at=datetime.now(timezone.utc)
+            assessed_at=datetime.now(UTC)
         )
         self._profiles[profile_id].capability_assessment = assessment
         return assessment

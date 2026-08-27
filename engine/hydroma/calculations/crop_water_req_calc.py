@@ -3,9 +3,7 @@ from __future__ import annotations
 
 import logging
 from datetime import date
-from typing import List
 
-import pandas as pd
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
@@ -24,21 +22,21 @@ class CropWaterReqInput(BaseModel):
     crop_type: str = Field(..., description="Type of crop (e.g., wheat, corn)")
     planting_date: date = Field(..., description="Planting date")
     harvest_date: date = Field(..., description="Harvest date")
-    daily_weather_data: List[DailyWeather] = Field(..., description="List of daily weather data")
-    kc_coefficients: List[float] = Field(..., description="List of daily Kc coefficients matching weather data")
+    daily_weather_data: list[DailyWeather] = Field(..., description="List of daily weather data")
+    kc_coefficients: list[float] = Field(..., description="List of daily Kc coefficients matching weather data")
     # Could also accept a path to a weather file or integrate with existing weather fetching
 
 
 class CropWaterReqOutput(BaseModel):
     """Output results of crop water requirement calculation."""
-    daily_et_crop: List[float] = Field(..., description="Daily crop evapotranspiration (mm/day)")
+    daily_et_crop: list[float] = Field(..., description="Daily crop evapotranspiration (mm/day)")
     seasonal_water_requirement: float = Field(..., description="Total seasonal water requirement (mm)")
     # Could include irrigation schedule
 
 
 class CropWaterRequirementCalculator:
     """Calculates crop water requirements based on FAO 56 methodology."""
-    
+
     def __init__(self):
         # In a full implementation, we might load Kc tables here
         pass

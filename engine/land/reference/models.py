@@ -10,9 +10,9 @@ Base models for geographic reference data:
 - Drainage Standard (استاندارد زهکشی)
 """
 
-from pydantic import BaseModel, Field, ConfigDict
-from typing import Optional, List, Dict, Any
 from enum import Enum
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Continent(str, Enum):
@@ -43,14 +43,14 @@ class Country(BaseModel):
 
     code: str = Field(..., min_length=2, max_length=3, description="ISO 3166-1 alpha-2/3")
     name: str = Field(..., description="Country name (English)")
-    name_fa: Optional[str] = Field(None, description="Country name (Persian)")
+    name_fa: str | None = Field(None, description="Country name (Persian)")
     continent: Continent
-    capital_lat: Optional[float] = Field(None, ge=-90, le=90)
-    capital_lon: Optional[float] = Field(None, ge=-180, le=180)
-    area_km2: Optional[float] = Field(None, ge=0)
-    population: Optional[int] = Field(None, ge=0)
-    dominant_climate: Optional[str] = Field(None, description="Köppen class")
-    currency: Optional[str] = Field(None, max_length=3)
+    capital_lat: float | None = Field(None, ge=-90, le=90)
+    capital_lon: float | None = Field(None, ge=-180, le=180)
+    area_km2: float | None = Field(None, ge=0)
+    population: int | None = Field(None, ge=0)
+    dominant_climate: str | None = Field(None, description="Köppen class")
+    currency: str | None = Field(None, max_length=3)
 
 
 class Region(BaseModel):
@@ -70,13 +70,13 @@ class Region(BaseModel):
 
     code: str = Field(..., description="ISO 3166-2 code or internal code")
     name: str = Field(..., description="Region name (English)")
-    name_fa: Optional[str] = Field(None, description="Region name (Persian)")
+    name_fa: str | None = Field(None, description="Region name (Persian)")
     country_code: str = Field(..., min_length=2, max_length=3)
-    center_lat: Optional[float] = Field(None, ge=-90, le=90)
-    center_lon: Optional[float] = Field(None, ge=-180, le=180)
-    area_km2: Optional[float] = Field(None, ge=0)
-    population: Optional[int] = Field(None, ge=0)
-    elevation_mean_m: Optional[float] = None
+    center_lat: float | None = Field(None, ge=-90, le=90)
+    center_lon: float | None = Field(None, ge=-180, le=180)
+    area_km2: float | None = Field(None, ge=0)
+    population: int | None = Field(None, ge=0)
+    elevation_mean_m: float | None = None
 
 
 class City(BaseModel):
@@ -95,13 +95,13 @@ class City(BaseModel):
     )
 
     name: str = Field(..., description="City name (English)")
-    name_fa: Optional[str] = Field(None, description="City name (Persian)")
+    name_fa: str | None = Field(None, description="City name (Persian)")
     country_code: str = Field(..., min_length=2, max_length=3)
-    region_code: Optional[str] = None
+    region_code: str | None = None
     lat: float = Field(..., ge=-90, le=90)
     lon: float = Field(..., ge=-180, le=180)
-    population: Optional[int] = Field(None, ge=0)
-    elevation_m: Optional[float] = None
+    population: int | None = Field(None, ge=0)
+    elevation_m: float | None = None
 
 
 class TerrainClassification(BaseModel):
@@ -122,7 +122,7 @@ class TerrainClassification(BaseModel):
     slope_min_deg: float = Field(..., ge=0, le=90)
     slope_max_deg: float = Field(..., ge=0, le=90)
     description: str
-    source: Optional[str] = Field(None, description="Reference standard")
+    source: str | None = Field(None, description="Reference standard")
 
 
 class DrainageStandard(BaseModel):
@@ -132,4 +132,4 @@ class DrainageStandard(BaseModel):
     density_min_km_km2: float = Field(..., ge=0)
     density_max_km_km2: float = Field(..., ge=0)
     description: str
-    typical_geology: Optional[str] = None
+    typical_geology: str | None = None

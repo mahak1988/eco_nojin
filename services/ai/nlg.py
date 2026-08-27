@@ -7,7 +7,7 @@ adapter is used instead. Honesty: the default is NOT an LLM; it is labeled
 `provider: local-nlg` so nobody mistakes it for model output.
 """
 import os
-from typing import Any, Dict, List
+from typing import Any
 
 from services.ai.rag import index as rag_index
 
@@ -23,7 +23,7 @@ _TOPICS = {
 _DEFAULT = "بر اساس دانش محلی و مستندات پروژه، اجرای زنجیره علمی (خاک، آب، اقلیم، کربن) برای زمین شما توصیه می‌شود تا پاسخ دقیق و عددی بگیرید."
 
 
-def _llm_advice(question: str, evidence: List[Dict]) -> Dict[str, Any]:
+def _llm_advice(question: str, evidence: list[dict]) -> dict[str, Any]:
     """OpenAI-compatible adapter (BYO key). Defaults are tuned for Groq's
     free tier (llama-3.3-70b); any OpenAI-compatible endpoint works."""
     import httpx
@@ -49,7 +49,7 @@ def _llm_advice(question: str, evidence: List[Dict]) -> Dict[str, Any]:
     return {"provider": "llm:" + model, "answer": resp.json()["choices"][0]["message"]["content"]}
 
 
-def advise(question: str, metrics: Dict[str, Any] | None = None) -> Dict[str, Any]:
+def advise(question: str, metrics: dict[str, Any] | None = None) -> dict[str, Any]:
     """Answer with evidence. Uses BYO LLM when configured, local NLG otherwise."""
     evidence = rag_index.search(question, k=3)
     metrics = metrics or {}
@@ -66,7 +66,7 @@ def advise(question: str, metrics: Dict[str, Any] | None = None) -> Dict[str, An
                     "llm_error": str(exc), "note": "کلید LLM پیکربندی شده بود ولی پاسخ نداد؛ از موتور محلی استفاده شد."}
 
     # --- deterministic Persian NLG -------------------------------------------
-    answer_parts: List[str] = []
+    answer_parts: list[str] = []
     for keyword, sentence in _TOPICS.items():
         if keyword in question:
             answer_parts.append(sentence)

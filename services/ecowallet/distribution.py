@@ -12,7 +12,7 @@ share is credited (wallet earn calls), so no fake accounting here.
 """
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 SHARES = {
     "producer": 0.70,
@@ -22,7 +22,7 @@ SHARES = {
 }
 
 
-def distribute(total: float) -> Dict[str, Any]:
+def distribute(total: float) -> dict[str, Any]:
     """Split ``total`` ECO by the 70/15/10/5 rule (sum == total, exact)."""
     if total <= 0:
         raise ValueError("total must be positive")

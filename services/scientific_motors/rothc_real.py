@@ -19,7 +19,7 @@ fabricated carbon trajectories.
 from __future__ import annotations
 
 import time
-from typing import Any, Dict, List
+from typing import Any
 
 import numpy as np
 
@@ -65,7 +65,7 @@ class RealRothCMotor(AbstractScientificMotor):
     def display_name(self) -> str:
         return "RothC-26.3 (pyRothC)"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [
             MotorInput("monthly_temperature_c", "timeseries", description="12 monthly mean temps (°C)"),
             MotorInput("monthly_precipitation_mm", "timeseries", description="12 monthly precipitation sums (mm)"),
@@ -75,7 +75,7 @@ class RealRothCMotor(AbstractScientificMotor):
             MotorInput("land_use", "scalar", required=False, description="cropland/grassland/forest/..."),
         ]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("final_soc_t_ha", "scalar", "t C/ha", "Total SOC at the end of the run"),
             MotorOutput("soc_change_t_ha_yr", "scalar", "t C/ha/yr", "Mean annual SOC change"),
@@ -84,7 +84,7 @@ class RealRothCMotor(AbstractScientificMotor):
         ]
 
     async def execute(
-        self, inputs: Dict[str, Any], parameters: MotorParameters
+        self, inputs: dict[str, Any], parameters: MotorParameters
     ) -> MotorResult:
         start_time = time.time()
         run_id = f"ROTHC_REAL_{int(time.time())}"

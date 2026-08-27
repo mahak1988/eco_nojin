@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import time
-from typing import Any, Dict, List
+from typing import Any
 
 import numpy as np
 import xarray as xr
@@ -16,7 +16,6 @@ from .base import (
     MotorStatus,
     MotorType,
 )
-
 
 # Crop parameters database (FAO AquaCrop)
 # Reference: Raes et al. (2009), Steduto et al. (2009)
@@ -97,13 +96,13 @@ class AquaCropMotor(AbstractScientificMotor):
     def display_name(self) -> str:
         return f"AquaCrop ({self.crop_type})"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [
             MotorInput("soil_water_mm", "raster", True, "Initial soil water (from SWAT+)"),
             MotorInput("et_mm", "raster", True, "Reference ET (from SWAT+)"),
         ]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("yield_ton_ha", "raster", "t/ha", "Crop yield"),
             MotorOutput("biomass_ton_ha", "raster", "t/ha", "Above-ground biomass"),
@@ -114,7 +113,7 @@ class AquaCropMotor(AbstractScientificMotor):
 
     async def execute(
         self,
-        inputs: Dict[str, Any],
+        inputs: dict[str, Any],
         parameters: MotorParameters,
     ) -> MotorResult:
         """Execute AquaCrop simulation."""
@@ -167,7 +166,7 @@ class AquaCropMotor(AbstractScientificMotor):
         et_ref: xr.DataArray,
         irrigation_mm: float,
         parameters: MotorParameters,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Simulate crop growth with daily water balance."""
         p = self.crop_params
         kc_max = p["kc_max"]
@@ -268,7 +267,7 @@ class AquaCropMotor(AbstractScientificMotor):
 
         return kc
 
-    def _compute_summary(self, results: Dict[str, Any]) -> Dict[str, Any]:
+    def _compute_summary(self, results: dict[str, Any]) -> dict[str, Any]:
         """Compute summary statistics."""
         summary = {}
         for key, data in results.items():

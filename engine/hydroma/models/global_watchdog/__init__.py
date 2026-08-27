@@ -16,19 +16,19 @@ Usage:
         GlobalWatchdog, KGCv5, WBIv3, WBIInputs
     )
 """
-from .koppen import KGCv5
-from .wbi import WBIInputs, WBIv3
-from .watchdog import GlobalWatchdog, RegionAnalysis
-from .climate_fetcher import ClimateFetcher
 from . import reference_data
+from .climate_fetcher import ClimateFetcher
+from .koppen import KGCv5
+from .watchdog import GlobalWatchdog, RegionAnalysis
+from .wbi import WBIInputs, WBIv3
 
 __all__ = [
+    "ClimateFetcher",
+    "GlobalWatchdog",
     "KGCv5",
+    "RegionAnalysis",
     "WBIInputs",
     "WBIv3",
-    "GlobalWatchdog",
-    "RegionAnalysis",
-    "ClimateFetcher",
     "reference_data",
 ]
 

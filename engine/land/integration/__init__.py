@@ -21,16 +21,16 @@ __all__ = []
 # ============================================================
 try:
     from .soil_integrator import (
-        SoilProfile,
-        SoilLayer,
         DeepSoilProfile,
         SoilIntegrator,
+        SoilLayer,
+        SoilProfile,
     )
     __all__.extend([
-        "SoilProfile",
-        "SoilLayer",
         "DeepSoilProfile",
         "SoilIntegrator",
+        "SoilLayer",
+        "SoilProfile",
     ])
 except ImportError:
     pass  # Soil modules not available
@@ -39,23 +39,23 @@ except ImportError:
 # Phase 2B: Climate Integration
 # ============================================================
 try:
-    from .climate_models import (
-        ClimateProfile,
-        ClimateIntegrationResult,
-        MonthlyClimate,
-        KoppenClimate,
-        AridityClass,
-        KOPPEN_DESCRIPTIONS,
-    )
     from .climate_integrator import ClimateIntegrator
+    from .climate_models import (
+        KOPPEN_DESCRIPTIONS,
+        AridityClass,
+        ClimateIntegrationResult,
+        ClimateProfile,
+        KoppenClimate,
+        MonthlyClimate,
+    )
     __all__.extend([
-        "ClimateProfile",
-        "ClimateIntegrationResult",
-        "MonthlyClimate",
-        "KoppenClimate",
-        "AridityClass",
         "KOPPEN_DESCRIPTIONS",
+        "AridityClass",
+        "ClimateIntegrationResult",
         "ClimateIntegrator",
+        "ClimateProfile",
+        "KoppenClimate",
+        "MonthlyClimate",
     ])
 except ImportError:
     pass  # Climate modules not available
@@ -65,24 +65,24 @@ except ImportError:
 # ============================================================
 try:
     from .comprehensive_analyzer import (
-        SoilSummary,
         ClimateSummary,
-        TerrainSummary,
-        CropSuitability,
         ComprehensiveLandAnalysis,
-        LandUseCategory,
-        CropType,
         ComprehensiveLandAnalyzer,
+        CropSuitability,
+        CropType,
+        LandUseCategory,
+        SoilSummary,
+        TerrainSummary,
     )
     __all__.extend([
-        "SoilSummary",
         "ClimateSummary",
-        "TerrainSummary",
-        "CropSuitability",
         "ComprehensiveLandAnalysis",
-        "LandUseCategory",
-        "CropType",
         "ComprehensiveLandAnalyzer",
+        "CropSuitability",
+        "CropType",
+        "LandUseCategory",
+        "SoilSummary",
+        "TerrainSummary",
     ])
 except ImportError:
     pass  # Comprehensive modules not available
@@ -92,16 +92,16 @@ except ImportError:
 # ============================================================
 try:
     from .motors_hub import (
-        MotorStatus,
         MotorResult,
-        UnifiedLandAnalysis,
+        MotorStatus,
         ScientificMotorsHub,
+        UnifiedLandAnalysis,
     )
     __all__.extend([
-        "MotorStatus",
         "MotorResult",
-        "UnifiedLandAnalysis",
+        "MotorStatus",
         "ScientificMotorsHub",
+        "UnifiedLandAnalysis",
     ])
 except ImportError:
     pass  # Motors hub not available
@@ -111,30 +111,30 @@ except ImportError:
 # ============================================================
 try:
     from .water_adapter import (
-        WaterBalanceInput,
-        WaterBalanceResult,
+        GroundwaterInput,
+        GroundwaterIntegrator,
+        GroundwaterResult,
         RunoffInput,
         RunoffResult,
-        GroundwaterInput,
-        GroundwaterResult,
         UnifiedWaterAnalysis,
-        WaterBalanceIntegrator,
-        WatershedIntegrator,
-        GroundwaterIntegrator,
         UnifiedWaterAnalyzer,
+        WaterBalanceInput,
+        WaterBalanceIntegrator,
+        WaterBalanceResult,
+        WatershedIntegrator,
     )
     __all__.extend([
-        "WaterBalanceInput",
-        "WaterBalanceResult",
+        "GroundwaterInput",
+        "GroundwaterIntegrator",
+        "GroundwaterResult",
         "RunoffInput",
         "RunoffResult",
-        "GroundwaterInput",
-        "GroundwaterResult",
         "UnifiedWaterAnalysis",
-        "WaterBalanceIntegrator",
-        "WatershedIntegrator",
-        "GroundwaterIntegrator",
         "UnifiedWaterAnalyzer",
+        "WaterBalanceInput",
+        "WaterBalanceIntegrator",
+        "WaterBalanceResult",
+        "WatershedIntegrator",
     ])
 except ImportError:
     pass  # Water modules not available

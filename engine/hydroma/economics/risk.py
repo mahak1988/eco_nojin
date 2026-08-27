@@ -3,7 +3,8 @@ Economic Engine - Financial Risk Assessment Module.
 
 Evaluates potential financial risks associated with projects.
 """
-from typing import Dict, Any, List
+from typing import Any
+
 import numpy as np
 from scipy.stats import norm
 
@@ -13,7 +14,7 @@ def assess_market_price_risk(
     volatility: float, # Standard deviation of price changes (e.g., 0.15 for 15%)
     time_horizon_years: int,
     confidence_level: float = 0.05 # e.g., 0.05 for 5% VaR (95% confidence)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Assesses risk due to market price fluctuations using Value at Risk (VaR).
 
@@ -57,7 +58,7 @@ def assess_yield_risk(
     area_hectares: float,
     price_per_unit: float,
     confidence_level: float = 0.05
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Assesses risk due to yield variability.
 
@@ -96,10 +97,10 @@ def assess_yield_risk(
 
 
 def assess_combined_project_risk(
-    revenue_streams_with_risks: List[Dict[str, Any]],
-    cost_streams_with_risks: List[Dict[str, Any]],
+    revenue_streams_with_risks: list[dict[str, Any]],
+    cost_streams_with_risks: list[dict[str, Any]],
     correlation_matrix: np.ndarray = None # Correlation between different risks
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Performs a basic aggregation of different risks to estimate overall project risk.
 

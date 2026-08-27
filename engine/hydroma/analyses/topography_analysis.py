@@ -5,12 +5,12 @@ import logging
 from pathlib import Path
 from typing import Literal
 
-import numpy as np
 import rioxarray
 import xarray as xr
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.orm import Session
-from database.models import TopographyAnalysisResult # Import the DB model
+
+from database.models import TopographyAnalysisResult  # Import the DB model
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ class TopographyOutput(BaseModel):
 
 class TopographyAnalyzer:
     """Analyzes DEM to extract topographic parameters."""
-    
+
     def __init__(self, db_session: Session):
         self.db_session = db_session
         # Initialize any necessary libraries or configurations here

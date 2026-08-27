@@ -3,12 +3,11 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Dict
 
 import geopandas as gpd
 import matplotlib
+
 matplotlib.use('Agg')  # Non-interactive backend for headless
-import matplotlib.pyplot as plt
 import numpy as np
 import xarray as xr
 from shapely.geometry import LineString
@@ -35,7 +34,7 @@ class TopographicPipeline(MapPipeline):
 
     async def execute(
         self,
-        base_layers: Dict[str, xr.DataArray],
+        base_layers: dict[str, xr.DataArray],
         request: MapRequest,
     ) -> MapResult:
         """Generate topographic map."""

@@ -11,7 +11,7 @@ a specific model (e.g. crop yield vs AquaCrop) is the next work item.
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ try:  # pragma: no cover - environment dependent
     import torch.nn as nn
 
     TORCH_AVAILABLE = True
-except Exception:  # noqa: BLE001
+except Exception:
     torch = None  # type: ignore
     nn = None  # type: ignore
     TORCH_AVAILABLE = False
@@ -40,12 +40,12 @@ class PINNSurrogate:
         hidden: hidden layer sizes.
     """
 
-    def __init__(self, n_inputs: int, n_outputs: int = 1, hidden: List[int] | None = None) -> None:
+    def __init__(self, n_inputs: int, n_outputs: int = 1, hidden: list[int] | None = None) -> None:
         if not TORCH_AVAILABLE:
             raise RuntimeError(
                 "PyTorch is not installed — pip install torch to use PINNSurrogate"
             )
-        layers: List[nn.Module] = []
+        layers: list[nn.Module] = []
         sizes = [n_inputs, *(hidden or [32, 32]), n_outputs]
         for i in range(len(sizes) - 1):
             layers.append(nn.Linear(sizes[i], sizes[i + 1]))
@@ -69,7 +69,7 @@ class PINNSurrogate:
         y_train: Any,
         epochs: int = 200,
         lr: float = 1e-3,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """Train on (x, y); returns final loss. Physics term can be added."""
         if not TORCH_AVAILABLE:
             raise RuntimeError("PyTorch is not installed")
@@ -88,7 +88,7 @@ class PINNSurrogate:
         return {"final_loss": final_loss, "epochs": epochs}
 
 
-def status() -> Dict[str, Any]:
+def status() -> dict[str, Any]:
     """Honest capability report for the API/UI."""
     return {
         "available": TORCH_AVAILABLE,

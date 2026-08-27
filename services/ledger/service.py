@@ -1,5 +1,4 @@
 """سرویس LedgerService (Placeholder برای production)"""
-from typing import Optional
 
 
 class LedgerService:

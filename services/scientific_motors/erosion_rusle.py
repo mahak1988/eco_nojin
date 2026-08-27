@@ -15,11 +15,11 @@ from __future__ import annotations
 # =========================================================================
 try:
     from engine.hydroma.cpp_bridge import (
-        rusle_annual_soil_loss as _cpp_rusle,
-        ls_factor as _cpp_ls_factor,
-        soil_erodibility_k as _cpp_soil_k,
         estimate_rainfall_erosivity as _cpp_rainfall_r,
         is_cpp_available,
+        ls_factor as _cpp_ls_factor,
+        rusle_annual_soil_loss as _cpp_rusle,
+        soil_erodibility_k as _cpp_soil_k,
     )
     _CPP_AVAILABLE = is_cpp_available()
 except ImportError:
@@ -27,14 +27,20 @@ except ImportError:
 
 
 import time
+from enum import Enum
+from typing import Any
+
 import numpy as np
 import xarray as xr
-from typing import Dict, Any, List
-from enum import Enum
 
 from .base import (
-    AbstractScientificMotor, MotorInput, MotorOutput,
-    MotorParameters, MotorResult, MotorStatus, MotorType,
+    AbstractScientificMotor,
+    MotorInput,
+    MotorOutput,
+    MotorParameters,
+    MotorResult,
+    MotorStatus,
+    MotorType,
 )
 
 
@@ -110,7 +116,7 @@ class RUSLEMotor(AbstractScientificMotor):
     def display_name(self) -> str:
         return "RUSLE Soil Erosion Assessment"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [
             MotorInput("dem", "raster", True, "Digital Elevation Model"),
             MotorInput("slope", "raster", False, "Slope % (computed from DEM)"),
@@ -120,7 +126,7 @@ class RUSLEMotor(AbstractScientificMotor):
             MotorInput("crop", "scalar", False, "Crop ID for C-factor"),
         ]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("soil_loss_t_ha_yr", "raster", "t/ha/yr", "Annual soil loss"),
             MotorOutput("erosion_risk_class", "raster", "class", "Risk category"),
@@ -129,7 +135,7 @@ class RUSLEMotor(AbstractScientificMotor):
             MotorOutput("economic_impact", "json", "USD", "Cost of soil loss"),
         ]
 
-    async def execute(self, inputs: Dict[str, Any], parameters: MotorParameters) -> MotorResult:
+    async def execute(self, inputs: dict[str, Any], parameters: MotorParameters) -> MotorResult:
         start_time = time.time()
         run_id = f"RUSLE_{int(time.time())}"
 
@@ -137,7 +143,7 @@ class RUSLEMotor(AbstractScientificMotor):
             dem = inputs.get("dem")
             soil_texture = inputs.get("soil_texture")
             soil_om = inputs.get("soil_organic_matter")
-            
+
             if any(v is None for v in [dem, soil_texture, soil_om]):
                 return MotorResult(run_id=run_id, motor_type=self.motor_type,
                                    status=MotorStatus.FAILED,
@@ -158,7 +164,7 @@ class RUSLEMotor(AbstractScientificMotor):
             slope_length_m = float(parameters.custom_params.get("slope_length_m", 100))
 
             # === Compute RUSLE factors ===
-            
+
             # 1. R - Rainfall Erosivity (Wischmeier & Smith formula)
             R = self._compute_R_factor(annual_rainfall)
 
@@ -183,7 +189,7 @@ class RUSLEMotor(AbstractScientificMotor):
             # We apply a conservative calibration factor
             calibration_factor = 0.10  # Empirical adjustment (Morgan 2005)
             soil_loss = R * K * LS * C * P * calibration_factor  # ton/ha/year
-            
+
             # Apply realistic upper bound (global observations)
             soil_loss = self._realistic_bound(soil_loss)
 
@@ -331,28 +337,28 @@ class RUSLEMotor(AbstractScientificMotor):
         Source: Morgan (2005) "Soil Erosion & Conservation"
         """
         P = annual_rainfall_mm
-        
+
         # Reference points (P, R)
         points = [
             (100, 100), (400, 400), (800, 1200),
             (1200, 2800), (1800, 5500), (2500, 8500), (3000, 11000),
         ]
-        
+
         # Linear interpolation
-        if P <= points[0][0]:
+        if points[0][0] >= P:
             return points[0][1] * (P / points[0][0])
-        if P >= points[-1][0]:
+        if points[-1][0] <= P:
             # Extrapolate conservatively
             last = points[-1]
             slope = (last[1] - points[-2][1]) / (last[0] - points[-2][0])
             return last[1] + slope * (P - last[0])
-        
+
         for i in range(len(points) - 1):
             p1, r1 = points[i]
             p2, r2 = points[i + 1]
             if p1 <= P <= p2:
                 return r1 + (r2 - r1) * (P - p1) / (p2 - p1)
-        
+
         return 3000  # fallback
 
     def _compute_K_factor(self, texture: np.ndarray, om: np.ndarray) -> np.ndarray:
@@ -370,15 +376,15 @@ class RUSLEMotor(AbstractScientificMotor):
             9: 0.30, 10: 0.20,  # Clay - moderate
             11: 0.15, 12: 0.10,
         }
-        
+
         K = np.ones_like(texture, dtype=np.float32) * 0.30
         for tex_val, k_val in texture_factors.items():
             K[texture == tex_val] = k_val
-        
+
         # OM reduces K (more stable aggregates)
         # Each 1% OM reduces K by ~10%
         K = K * (1.0 - 0.10 * np.clip(om, 0, 5))
-        
+
         return np.clip(K, 0.01, 0.70)
 
     def _compute_LS_factor(self, slope: np.ndarray, length_m: float) -> np.ndarray:
@@ -391,21 +397,21 @@ class RUSLEMotor(AbstractScientificMotor):
         """
         slope_rad = np.arctan(slope / 100)
         sin_slope = np.sin(slope_rad)
-        
+
         # S factor (two-part formula from USDA)
         S_factor = np.where(
             slope < 9,
             10.8 * sin_slope + 0.03,
             16.8 * sin_slope - 0.50
         )
-        
+
         # Length factor exponent m (varies with slope)
         m = np.where(slope < 1, 0.2,
             np.where(slope < 3, 0.3,
             np.where(slope < 5, 0.4, 0.5)))
-        
+
         L_factor = (length_m / 22.13) ** m
-        
+
         LS = L_factor * np.maximum(S_factor, 0.01)
         return np.clip(LS, 0.05, 15)
 
@@ -415,19 +421,19 @@ class RUSLEMotor(AbstractScientificMotor):
         Deeper, higher-OM soils have higher T.
         """
         T = np.ones_like(texture, dtype=np.float32) * 7.0
-        
+
         # Coarse soils (sandy) - lower tolerance
         T[(texture >= 1) & (texture <= 3)] = 5.0
-        
+
         # Loamy soils - higher tolerance
         T[(texture >= 4) & (texture <= 7)] = 11.0
-        
+
         # Clayey - moderate
         T[(texture >= 8) & (texture <= 12)] = 7.0
-        
+
         # OM bonus: +1 t/ha/yr per 1% OM above 2%
         T = T + np.clip(om - 2, 0, 3)
-        
+
         return np.clip(T, 3, 14)
 
     def _realistic_bound(self, soil_loss: np.ndarray) -> np.ndarray:
@@ -467,7 +473,7 @@ class RUSLEMotor(AbstractScientificMotor):
                     "P_factor": 0.50,
                     "expected_reduction_percent": 50,
                 })
-            
+
             if mean_slope > 8:
                 advice.append({
                     "priority": "HIGH",

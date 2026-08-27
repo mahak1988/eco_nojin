@@ -6,12 +6,9 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
-from uuid import UUID, uuid4
+from typing import Any
+from uuid import uuid4
 
-import geopandas as gpd
-import numpy as np
-import rasterio
 import xarray as xr
 from shapely.geometry import Polygon
 
@@ -41,7 +38,7 @@ class MapRequest:
     region: Polygon  # Bounding polygon in WGS84 (EPSG:4326)
     target_crs: str = "auto"  # "auto" = UTM zone based on centroid
     resolution: float = 10.0  # meters
-    parameters: Dict[str, Any] = field(default_factory=dict)
+    parameters: dict[str, Any] = field(default_factory=dict)
     request_id: str = field(default_factory=lambda: str(uuid4()))
 
 
@@ -51,16 +48,16 @@ class MapResult:
     map_id: str
     map_type: MapType
     cog_path: Path
-    vector_tiles_path: Optional[Path] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    vector_tiles_path: Path | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
     processing_time_seconds: float = 0.0
-    data_sources: List[str] = field(default_factory=list)
+    data_sources: list[str] = field(default_factory=list)
     crs: str = ""
     bounds: tuple = ()
     resolution: float = 0.0
     created_at: datetime = field(default_factory=datetime.utcnow)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage."""
         return {
             "map_id": self.map_id,
@@ -79,7 +76,7 @@ class MapResult:
 class MapPipeline(ABC):
     """Abstract base class for map generation pipelines."""
 
-    def __init__(self, cache_dir: Optional[Path] = None):
+    def __init__(self, cache_dir: Path | None = None):
         self.cache_dir = cache_dir or Path("data/maps/cache")
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
@@ -90,14 +87,14 @@ class MapPipeline(ABC):
         pass
 
     @abstractmethod
-    def get_required_layers(self) -> List[str]:
+    def get_required_layers(self) -> list[str]:
         """Return list of required base layers (e.g., 'dem', 'sentinel2')."""
         pass
 
     @abstractmethod
     async def execute(
         self,
-        base_layers: Dict[str, xr.DataArray],
+        base_layers: dict[str, xr.DataArray],
         request: MapRequest,
     ) -> MapResult:
         """Execute the pipeline and return a MapResult."""

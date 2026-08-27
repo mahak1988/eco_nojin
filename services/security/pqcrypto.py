@@ -9,7 +9,6 @@ Honesty contract: if liboqs is not importable the module reports
 `status: unavailable` and the app degrades gracefully (classic crypto only).
 """
 import os
-from typing import Dict, Optional, Tuple
 
 try:
     # real liboqs binding: package `oqs` (open-quantum-safe) on Linux/macOS;
@@ -33,7 +32,7 @@ def available() -> bool:
     return _OQS_AVAILABLE
 
 
-def status() -> Dict:
+def status() -> dict:
     return {
         "available": _OQS_AVAILABLE,
         "kem": "CRYSTALS-Kyber-512 (hybrid X25519)" if _OQS_AVAILABLE else "not_installed",
@@ -48,7 +47,7 @@ def status() -> Dict:
     }
 
 
-def hybrid_kem() -> Dict:
+def hybrid_kem() -> dict:
     """Hybrid KEM: returns (ciphertext, shared_secret_hex, public_metadata)."""
     if not _OQS_AVAILABLE:
         return {"status": "unavailable", "note": "پساکوانتوم نصب نیست؛ از رمزنگاری کلاسیک استفاده کنید."}
@@ -72,7 +71,7 @@ def hybrid_kem() -> Dict:
         return {"status": "error", "error": str(exc)}
 
 
-def hybrid_sign(message: bytes) -> Dict:
+def hybrid_sign(message: bytes) -> dict:
     """Hybrid signature: Dilithium2 || Ed25519 (concatenated, both verified)."""
     if not _OQS_AVAILABLE:
         return {"status": "unavailable", "note": "پساکوانتوم نصب نیست."}
@@ -103,7 +102,6 @@ def _x25519_pub(priv: bytes) -> bytes:
 
 def _x25519_shared(priv: bytes, pub: bytes) -> bytes:
     from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey, X25519PublicKey
-    from cryptography.hazmat.primitives import serialization
 
     priv_key = X25519PrivateKey.from_private_bytes(priv)
     pub_key = X25519PublicKey.from_public_bytes(pub)

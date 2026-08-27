@@ -14,8 +14,9 @@ silent fallbacks.
 from __future__ import annotations
 
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any
 
 from engine.hydroma.carbon.calculator import (
     CarbonProjectType,
@@ -24,8 +25,8 @@ from engine.hydroma.carbon.calculator import (
 from engine.hydroma.climate.et_calculator import calc_et0_hargreaves
 from engine.hydroma.scenarios.climate_scenarios import (
     apply_climate_change as _apply_climate_change,
+    get_climate_projection,
 )
-from engine.hydroma.scenarios.climate_scenarios import get_climate_projection
 from engine.hydroma.scenarios.crop_scenarios import compare_crops, simulate_crop_yield
 from engine.hydroma.soil.health import calculate_soil_health_index
 from engine.hydroma.soil.pedotransfer import estimate_soil_parameters
@@ -62,7 +63,7 @@ class ParamSpec:
     name: str
     label: str
     unit: str = ""
-    default: Optional[float] = None
+    default: float | None = None
     kind: str = "float"  # float | int | str | select
 
 
@@ -76,10 +77,10 @@ class ModelSpec:
     reference: str
     description: str
     run: Callable[..., Any]
-    params: List[ParamSpec] = field(default_factory=list)
+    params: list[ParamSpec] = field(default_factory=list)
 
     @property
-    def param_names(self) -> List[str]:
+    def param_names(self) -> list[str]:
         return [p.name for p in self.params]
 
 
@@ -94,14 +95,14 @@ def _apply_climate_wrapper(
     baseline_temp: float = 18.0,
     baseline_precip: float = 300.0,
     baseline_et0: float = 1500.0,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     proj = get_climate_projection(
         scenario, time_horizon, baseline_temp, baseline_precip, baseline_et0
     )
     return _apply_climate_change(baseline_temp, baseline_precip, baseline_et0, proj)
 
 
-def _carbon_seq_wrapper(project_type: str, area_ha: float, duration_years: int = 10, region: str = "temperate") -> Dict[str, Any]:
+def _carbon_seq_wrapper(project_type: str, area_ha: float, duration_years: int = 10, region: str = "temperate") -> dict[str, Any]:
     try:
         ptype = CarbonProjectType(project_type)
     except ValueError as exc:
@@ -116,7 +117,7 @@ def _carbon_seq_wrapper(project_type: str, area_ha: float, duration_years: int =
 # The 22 models
 # ---------------------------------------------------------------------------
 
-REGISTRY: List[ModelSpec] = [
+REGISTRY: list[ModelSpec] = [
     ModelSpec(
         "et0_hargreaves", "تبخیر و تعرق مرجع (هارگریوز)", "Reference ET0 (Hargreaves)",
         "climate", "simplified", "FAO-56 Hargreaves",
@@ -367,7 +368,7 @@ REGISTRY: List[ModelSpec] = [
 # Model cards (Phase 7): validity domain + limitations (honest science)
 # ---------------------------------------------------------------------------
 
-MODEL_CARDS: Dict[str, Dict[str, str]] = {
+MODEL_CARDS: dict[str, dict[str, str]] = {
     "et0_hargreaves": {
         "validity": "روزانه، مناطق نیمه‌خشک؛ Ra از جدول FAO-56",
         "limitations": "برآورد تقریبی ET0؛ در شرایط باد شدید و رطوبت بالا خطای بیشتر",
@@ -459,11 +460,11 @@ MODEL_CARDS: Dict[str, Dict[str, str]] = {
 }
 
 
-def model_card(slug: str) -> Dict[str, str]:
+def model_card(slug: str) -> dict[str, str]:
     return MODEL_CARDS.get(slug, {"validity": "", "limitations": ""})
 
 
-def list_models() -> List[Dict[str, Any]]:
+def list_models() -> list[dict[str, Any]]:
     """Registry metadata for the API (no execution)."""
     return [
         {
@@ -491,19 +492,19 @@ def list_models() -> List[Dict[str, Any]]:
     ]
 
 
-def get_model(slug: str) -> Optional[ModelSpec]:
+def get_model(slug: str) -> ModelSpec | None:
     for m in REGISTRY:
         if m.slug == slug:
             return m
     return None
 
 
-def run_model(slug: str, params: Dict[str, Any]) -> Dict[str, Any]:
+def run_model(slug: str, params: dict[str, Any]) -> dict[str, Any]:
     """Validate and execute a model. Raises ValueError on bad input."""
     model = get_model(slug)
     if model is None:
         raise ValueError(f"unknown model slug: {slug}")
-    kwargs: Dict[str, Any] = {}
+    kwargs: dict[str, Any] = {}
     for spec in model.params:
         if spec.name in params and params[spec.name] is not None:
             raw = params[spec.name]

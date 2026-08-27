@@ -1,9 +1,9 @@
 """Phase 7: models API router (public — scientific models are open knowledge)."""
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException
 
 from services.models.registry import get_model, list_models, model_card, run_model
 
@@ -70,7 +70,7 @@ def models_detail(slug: str):
 
 
 @router.post("/{slug}/run", response_model=dict)
-def models_run(slug: str, params: Dict[str, Any] = ...):
+def models_run(slug: str, params: dict[str, Any] = ...):
     """Run a model with validated parameters (honest errors, no fallbacks)."""
     if not isinstance(params, dict):
         raise HTTPException(status_code=400, detail="params must be an object")

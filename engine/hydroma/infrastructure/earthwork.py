@@ -4,23 +4,24 @@ Earthwork Calculation Engine.
 Calculates volumes of cut and fill for civil engineering projects
 like roads, canals, dams, and land grading based on terrain analysis.
 """
-import numpy as np
-from typing import Dict, Any, List, Tuple
 from dataclasses import dataclass
+from typing import Any
+
+import numpy as np
 
 
 @dataclass
 class CrossSection:
     """Represents a single cross-section along a route."""
     station: float  # Distance along the route (m)
-    ground_levels: List[float]  # Elevations at sample points (m)
+    ground_levels: list[float]  # Elevations at sample points (m)
     formation_width: float  # Width of the structure at this point (m)
     side_slope_cut: float  # Side slope for cutting (H:V)
     side_slope_fill: float  # Side slope for filling (H:V)
     formation_level: float  # Desired finished ground level (m)
 
 
-def calculate_area_cut_fill(ground_levels: np.ndarray, formation_level: float, width: float, side_slope: float) -> Tuple[float, float]:
+def calculate_area_cut_fill(ground_levels: np.ndarray, formation_level: float, width: float, side_slope: float) -> tuple[float, float]:
     """
     Calculates cut and fill area for a single cross-section.
 
@@ -57,7 +58,7 @@ def calculate_area_cut_fill(ground_levels: np.ndarray, formation_level: float, w
     return cut_area, fill_area
 
 
-def calculate_earthwork_volumes(cross_sections: List[CrossSection]) -> Dict[str, Any]:
+def calculate_earthwork_volumes(cross_sections: list[CrossSection]) -> dict[str, Any]:
     """
     Calculates cumulative cut and fill volumes along a route using the Average End Area Method.
 

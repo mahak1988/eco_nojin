@@ -26,7 +26,7 @@ Python", IEEE Access.
 from __future__ import annotations
 
 import time
-from typing import Any, Dict, List
+from typing import Any
 
 import numpy as np
 
@@ -52,7 +52,7 @@ except Exception:  # pragma: no cover - import guard
 class _SurrogateProblem(ElementwiseProblem):
     """Surrogate anchored to real chain outputs (documented in module)."""
 
-    def __init__(self, anchor: Dict[str, float], **kwargs):
+    def __init__(self, anchor: dict[str, float], **kwargs):
         self.a = anchor  # real chain outputs at baseline
         super().__init__(
             n_var=3,
@@ -91,17 +91,17 @@ class MultiObjectiveOptimizer(AbstractScientificMotor):
     def display_name(self) -> str:
         return "pymoo NSGA-II (surrogate of real chain)"
 
-    def get_input_requirements(self) -> List[MotorInput]:
+    def get_input_requirements(self) -> list[MotorInput]:
         return [MotorInput("anchor", "scalar", description="Real chain outputs at baseline")]
 
-    def get_outputs(self) -> List[MotorOutput]:
+    def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("pareto_front", "scalar", "list", "Non-dominated solutions"),
             MotorOutput("mode", "scalar", "str", "surrogate_based"),
         ]
 
     async def execute(
-        self, inputs: Dict[str, Any], parameters: MotorParameters
+        self, inputs: dict[str, Any], parameters: MotorParameters
     ) -> MotorResult:
         start_time = time.time()
         run_id = f"NSGA2_{int(time.time())}"
@@ -127,7 +127,7 @@ class MultiObjectiveOptimizer(AbstractScientificMotor):
             algorithm = NSGA2(pop_size=pop_size)
             res = minimize(problem, algorithm, ("n_gen", n_gen), seed=1, verbose=False)
 
-            front: List[Dict[str, Any]] = []
+            front: list[dict[str, Any]] = []
             for x, f in zip(res.X, res.F):
                 front.append({
                     "practice": round(float(x[0]), 3),
