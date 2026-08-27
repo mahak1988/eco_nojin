@@ -12,74 +12,119 @@ license = { text = "Proprietary" }
 authors = [{ name = "Eco Nojin Team" }]
 keywords = ["agriculture", "digital-twin", "gis", "hydrology", "sustainability"]
 
-# === CORE DEPENDENCIES ===
-# Synced with requirements.txt (2026-08-18)
+# === CORE DEPENDENCIES (Lean Core) ===
 dependencies = [
-    # Core API
-    "fastapi>=0.141,<1.0",
-    "uvicorn[standard]>=0.52,<1.0",
-    "pydantic>=2.13,<3.0",
+    # Core API & Server
+    "fastapi>=0.110,<1.0",
+    "uvicorn[standard]>=0.29,<1.0",
+    "pydantic>=2.6,<3.0",
     "pydantic-settings>=2.2,<3.0",
-    "python-dotenv>=1.2,<2.0",
-    "python-multipart>=0.0.32,<1.0",
+    "python-dotenv>=1.0,<2.0",
+    "python-multipart>=0.0.7,<1.0",
+    
+    # Auth & Security
     "python-jose[cryptography]>=3.3,<4.0",
     "passlib[bcrypt]>=1.7,<2.0",
-
-    # Database
+    
+    # Database (Psycopg3 for SQLAlchemy 2.0 Async compatibility)
     "sqlalchemy>=2.0,<3.0",
     "alembic>=1.13,<2.0",
     "asyncpg>=0.29,<1.0",
-    "psycopg2-binary>=2.9,<3.0",
+    "psycopg[binary]>=3.1,<4.0", 
+    
+    # Core Data & HTTP
+    "numpy>=2.3,<2.4",  # 🚨 PINNED: نقطه تعادل برای سازگاری همزمان Numba و Tifffile
+    "pandas>=2.2,<3.0",
+    "httpx>=0.27,<1.0",
+    "requests>=2.31,<3.0",
+    
+    # Bots
+    "aiogram>=3.4,<4.0",
+]
 
-    # Scientific stack
-    "numpy>=2.4,<3.0",
-    "numba>=0.67,<1.0",
-    "pandas>=3.0,<4.0",
-    "scipy>=1.17,<2.0",
-    "scikit-learn>=1.5,<2.0",
-
-    # GIS & Remote Sensing
-    "geopandas>=1.0,<2.0",
-    "rasterio>=1.3.10,<1.4",
+[project.optional-dependencies]
+# لایه مکانی و سنجش از دور (Geospatial & Remote Sensing)
+geo = [
+    "geopandas>=0.14,<2.0",
+    "rasterio>=1.3,<2.0",
     "rioxarray>=0.15,<1.0",
-    "xarray>=2024.7,<2025.0",
+    "xarray>=2024.3,<2025.0",
     "shapely>=2.0,<3.0",
     "pyproj>=3.6,<4.0",
     "fiona>=1.9,<2.0",
     "pystac-client>=0.8,<1.0",
     "planetary-computer>=1.0,<2.0",
     "osmnx>=1.9,<2.0",
-
-    # Big Data
-    "dask[complete]>=2024.8,<2025.0",
-    "zarr>=2.18,<3.0",
-    "netCDF4>=1.7,<2.0",
-    "h5py>=3.11,<4.0",
-    "duckdb>=1.0,<2.0",
-
-    # HTTP
-    "requests>=2.34,<3.0",
-    "httpx>=0.28,<1.0",
-
-    # Bots
-    "aiogram>=3.30,<4",
-    "aiohttp==3.14.3",
+    "netCDF4>=1.6,<2.0",
+    "h5py>=3.10,<4.0",
+    "zarr>=2.17,<3.0",
+    "tifffile>=2026.8.23,<2027.0", # اضافه شده برای پردازش تصاویر ماهواره‌ای
 ]
 
-[project.optional-dependencies]
+# لایه مدل‌سازی هیدرولوژی (Hydrological Modeling)
+hydro = [
+    "aquacrop>=3.1,<4.0",
+    "pyfao56>=1.4,<2.0",
+    "landlab>=2.11,<3.0",
+    "pywr>=1.31,<2.0",
+]
+
+# لایه هوش مصنوعی و یادگیری ماشین (Machine Learning)
+ml = [
+    "scikit-learn>=1.5,<2.0", # ارتقا یافته برای سازگاری با NumPy 2.x
+    "scipy>=1.14,<2.0",       # ارتقا یافته برای سازگاری با NumPy 2.x
+    "numba>=0.62,<1.0",       # ارتقا یافته برای پشتیبانی از NumPy 2.3
+    "transformers>=4.40,<5.0",
+    "sentence-transformers>=2.7,<4.0",
+    "joblib>=1.3,<2.0",
+]
+
+# لایه بهینه‌سازی و تحقیق در عملیات (Optimization & OR)
+optimize = [
+    "cvxpy>=1.4,<2.0",
+    "pyomo>=6.7,<7.0",
+    "PuLP>=2.8,<3.0",
+    "highspy>=1.5,<2.0",
+    "sparsediffpy>=0.6.1,<1.0", # اضافه شده برای مشتق‌گیری خودکار در بهینه‌سازی
+]
+
+# لایه بلاکچین (Web3 & Smart Contracts)
+web3 = [
+    "web3>=6.15,<8.0",
+    "eth-account>=0.11,<1.0",
+]
+
+# لایه بصری‌سازی (Visualization - Heavy, Dev Only)
+viz = [
+    "matplotlib>=3.8,<4.0",
+    "seaborn>=0.13,<1.0",
+    "pyvista>=0.43,<1.0",
+    "vtk>=9.3,<10.0",
+]
+
+# لایه کلان‌داده (Big Data Processing)
+bigdata = [
+    "polars>=0.20,<2.0",
+    "dask[complete]>=2024.3,<2025.0",
+    "duckdb>=0.10,<2.0",
+]
+
+# ابزارهای توسعه و تست (Development & Testing Tools)
 dev = [
-    "pytest>=9.0,<10.0",
+    "pytest>=8.0,<10.0",
     "pytest-asyncio>=0.23,<1.0",
-    "pytest-cov>=4.1,<5.0",
-    "pytest-timeout>=2.4,<3.0",
-    "ruff>=0.2,<1.0",
+    "pytest-cov>=4.1,<6.0",
+    "ruff>=0.3,<1.0",
     "mypy>=1.8,<2.0",
-    "radon>=6.0,<7.0",
     "bandit>=1.7,<2.0",
     "pip-audit>=2.7,<3.0",
+    "vulture>=2.11,<3.0",
 ]
 
-all = ["econojin[dev]"]
+# نصب کامل برای محیط توسعه محلی (Local Dev Environment)
+all = [
+    "econojin[geo,hydro,ml,optimize,web3,viz,bigdata,dev]"
+]
 
 [project.urls]
 Homepage = "https://econojin.io"
@@ -96,7 +141,7 @@ exclude = ["tests*", "docs*", "backups*", "build*"]
 [tool.setuptools.package-data]
 "*" = ["*.yaml", "*.yml", "*.json", "*.sql", "*.md"]
 
-# === RUFF ===
+# === RUFF CONFIGURATION ===
 [tool.ruff]
 line-length = 100
 target-version = "py311"
@@ -118,7 +163,7 @@ ignore = ["E501", "B008", "C901", "PLR0913", "PLR0912"]
 known-first-party = ["engine", "database", "services", "contracts", "shared"]
 combine-as-imports = true
 
-# === MYPY ===
+# === MYPY CONFIGURATION ===
 [tool.mypy]
 python_version = "3.11"
 warn_return_any = true
@@ -127,7 +172,7 @@ check_untyped_defs = true
 namespace_packages = true
 explicit_package_bases = true
 mypy_path = "."
-plugins = ["pydantic.mypy", "sqlmypy"]
+plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
 module = [
@@ -135,11 +180,12 @@ module = [
     "rasterio.*", "fiona.*", "osgeo.*", "geopandas.*", "xarray.*",
     "pyproj.*", "shapely.*", "pystac.*", "planetary_computer.*",
     "dask.*", "zarr.*", "netCDF4.*", "h5py.*", "numba.*", "duckdb.*",
-    "aiogram.*", "aiohttp.*",
+    "aiogram.*", "aiohttp.*", "web3.*", "eth_account.*",
+    "tifffile.*", "sparsediffpy.*", # اضافه شده برای جلوگیری از خطاهای Mypy
 ]
 ignore_missing_imports = true
 
-# === PYTEST ===
+# === PYTEST & COVERAGE CONFIGURATION ===
 [tool.coverage.run]
 source = ["services", "engine", "contracts"]
 omit = ["tests/*", "*/migrations/*", "*/__pycache__/*"]
