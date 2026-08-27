@@ -1,1 +1,1 @@
-// این فایل را با کدهای TypeScript پر کنید
+/// <reference types="vite/client" />
