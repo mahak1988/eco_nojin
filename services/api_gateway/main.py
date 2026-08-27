@@ -31,7 +31,7 @@ from engine.hydroma.config.settings import get_settings
 from .routers import platform, admin, auth, analyses # Import the new router
 
 # Import individual routers that are used later with app.include_router
-from .routers import land, soil, satellite, carbon, watershed, scenarios, ai, ai_chat, ecowallet, marketplace, farms, analytics, materials, blockchain
+from .routers import land, soil, satellite, carbon, watershed, scenarios, ai, ai_chat, ecowallet, marketplace, farms, analytics, materials, blockchain, insurance
 from .routers import motors
 from .routers import mrv
 from .routers import lab
@@ -50,6 +50,7 @@ from services.api_gateway.routers import climate
 from services.api_gateway.routers import security_router
 from services.api_gateway.routers import ogc_router
 from services.api_gateway.routers import ai_advice_router
+from services.api_gateway.routers import tourism_router
 
 from services.security.headers import SecurityHeadersMiddleware
 from services.security.middleware import SpiderFirewallMiddleware
@@ -252,6 +253,7 @@ app.include_router(farms.router)
 app.include_router(analytics.router)
 app.include_router(materials.router)
 app.include_router(blockchain.router)
+app.include_router(insurance.router)
 app.include_router(ussd.router)
 app.include_router(voice.router)
 app.include_router(sync.router)
