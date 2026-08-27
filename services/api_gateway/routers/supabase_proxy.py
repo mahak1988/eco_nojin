@@ -31,13 +31,16 @@ def _cfg() -> Dict[str, str]:
     return {"url": url.rstrip("/"), "anon": anon, "svc": svc}
 
 
-async def _select(table: str, select: str = "*", extra: str = "", key: Optional[str] = None) -> List[Dict[str, Any]]:
+async def _select(
+    table: str, select: str = "*", extra: str = "", key: Optional[str] = None, auth: Optional[str] = None
+) -> List[Dict[str, Any]]:
     cfg = _cfg()
-    auth_key = key or cfg["anon"]
+    apikey = key or cfg["anon"]
+    bearer = auth or apikey
     async with httpx.AsyncClient(timeout=20) as s:
         r = await s.get(
             f"{cfg['url']}/rest/v1/{table}?select={select}{extra}",
-            headers={"apikey": auth_key, "Authorization": f"Bearer {auth_key}", "Accept": "application/json"},
+            headers={"apikey": apikey, "Authorization": f"Bearer {bearer}", "Accept": "application/json"},
         )
         if r.status_code != 200:
             raise RuntimeError(f"Supabase {table}: HTTP {r.status_code} {r.text[:150]}")
@@ -45,6 +48,8 @@ async def _select(table: str, select: str = "*", extra: str = "", key: Optional[
 
 
 async def _write(method: str, table: str, body: Dict[str, Any], key: str, extra: str = "") -> Dict[str, Any]:
+    """Write with apikey=anon (project identification) and Bearer=user JWT
+    (RLS ownership). Service role is never used here."""
     cfg = _cfg()
     async with httpx.AsyncClient(timeout=20) as s:
         r = await s.request(
@@ -52,7 +57,7 @@ async def _write(method: str, table: str, body: Dict[str, Any], key: str, extra:
             f"{cfg['url']}/rest/v1/{table}{extra}",
             json=body,
             headers={
-                "apikey": key,
+                "apikey": cfg["anon"],
                 "Authorization": f"Bearer {key}",
                 "Content-Type": "application/json",
                 "Prefer": "return=representation",
@@ -113,9 +118,19 @@ async def marketplace() -> Dict[str, Any]:
 
 @router.get("/geo/nearest")
 async def geo_nearest(lat: float, lon: float, limit: int = Query(default=5, ge=1, le=20)) -> Dict[str, Any]:
-    """Nearest landscapes to a point — Haversine over REAL GeoJSON coordinates.
-    PostGIS-ready: same semantics as ST_DWithin once migration 0001 is applied."""
+    """Nearest landscapes to a point — REAL PostGIS (RPC nearest_landscapes,
+    ST_DWithin/<-> on geography), falls back to Haversine if the RPC is missing."""
     try:
+        cfg = _cfg()
+        async with httpx.AsyncClient(timeout=20) as s:
+            r = await s.post(
+                f"{cfg['url']}/rest/v1/rpc/nearest_landscapes",
+                json={"lat": lat, "lon": lon, "lim": limit},
+                headers={"apikey": cfg["anon"], "Authorization": f"Bearer {cfg['anon']}", "Content-Type": "application/json"},
+            )
+        if r.status_code == 200:
+            hits = r.json()
+            return {"status": "ok", "count": len(hits), "nearest": hits, "engine": "postgis"}
         rows = await _select("platform_landscapes", "id,name,province,geo_boundary")
         import math
 
@@ -128,22 +143,22 @@ async def geo_nearest(lat: float, lon: float, limit: int = Query(default=5, ge=1
             return 2 * r * math.asin(math.sqrt(h))
 
         hits = []
-        for r in rows:
-            gb = r.get("geo_boundary") or {}
+        for row in rows:
+            gb = row.get("geo_boundary") or {}
             if gb.get("type") == "Point" and gb.get("coordinates"):
                 c = gb["coordinates"]
                 hits.append(
                     {
-                        "id": r.get("id"),
-                        "name": r.get("name"),
-                        "province": r.get("province"),
+                        "id": row.get("id"),
+                        "name": row.get("name"),
+                        "province": row.get("province"),
                         "lat": c[1],
                         "lon": c[0],
                         "distance_km": round(hav(lat, lon, c[1], c[0]), 2),
                     }
                 )
         hits.sort(key=lambda h: h["distance_km"])
-        return {"status": "ok", "count": len(hits), "nearest": hits[:limit], "engine": "haversine (PostGIS-ready)"}
+        return {"status": "ok", "count": len(hits), "nearest": hits[:limit], "engine": "haversine (fallback)"}
     except Exception as exc:
         return {"status": "error", "error": str(exc)}
 
@@ -153,10 +168,10 @@ async def geo_nearest(lat: float, lon: float, limit: int = Query(default=5, ge=1
 
 @router.get("/profile")
 async def profile(token: str) -> Dict[str, Any]:
-    """Own profile from platform_profiles (RLS: auth.uid() = user_id)."""
+    """Own profile from platform_profiles (real schema: id = auth.users.id)."""
     try:
         u = await _user_from_token(token)
-        rows = await _select("platform_profiles", "*", f"&user_id=eq.{u['id']}&limit=1", key=token)
+        rows = await _select("platform_profiles", "*", f"&id=eq.{u['id']}&limit=1", auth=token)
         return {"status": "ok", "user": {"id": u["id"], "email": u.get("email")}, "profile": rows[0] if rows else None}
     except Exception as exc:
         return {"status": "error", "error": str(exc)}
@@ -169,10 +184,10 @@ async def put_profile(token: str, display_name: Optional[str] = None, phone: Opt
         u = await _user_from_token(token)
         patch = {"display_name": display_name, "phone": phone, "bio": bio}
         patch = {k: v for k, v in patch.items() if v is not None}
-        upd = await _write("PATCH", "platform_profiles", patch, token, f"?user_id=eq.{u['id']}")
+        upd = await _write("PATCH", "platform_profiles", patch, token, f"?id=eq.{u['id']}")
         if upd["http"] == 200 and upd["body"]:
             return {"status": "ok", "profile": upd["body"][0], "mode": "updated"}
-        ins = await _write("POST", "platform_profiles", {**patch, "user_id": u["id"]}, token)
+        ins = await _write("POST", "platform_profiles", {**patch, "id": u["id"]}, token)
         if ins["http"] in (200, 201):
             return {"status": "ok", "profile": (ins["body"] or [{}])[0], "mode": "created"}
         return {"status": "error", "error": f"upsert failed: {upd['http']} / {ins['http']}"}
@@ -214,7 +229,7 @@ async def list_carbon_projects(token: str) -> Dict[str, Any]:
     """Own carbon projects (RLS: owner_id = auth.uid())."""
     try:
         u = await _user_from_token(token)
-        rows = await _select("platform_carbon_projects", "*", f"&owner_id=eq.{u['id']}&order=created_at.desc", key=token)
+        rows = await _select("platform_carbon_projects", "*", f"&owner_id=eq.{u['id']}&order=created_at.desc", auth=token)
         return {"status": "ok", "count": len(rows), "projects": rows}
     except Exception as exc:
         return {"status": "error", "error": str(exc)}

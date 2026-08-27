@@ -31,7 +31,7 @@ alter table public.platform_landscapes
 alter table public.platform_landscapes
     add column if not exists geo_boundary_geom geography(MultiPolygon, 4326);
 
--- 4) RLS: enable on ALL exposed tables (audit found anon could read everything)
+-- 4) RLS: enable on ALL real tables (views are skipped; audit found anon could read everything)
 do $$
 declare t text;
 begin
@@ -41,7 +41,12 @@ begin
         'users','standards','projects','validators','verification_queue',
         'verifications','validation_votes','token_transactions','dashboard_stats'
     ] loop
-        execute format('alter table public.%I enable row level security', t);
+        if exists (
+            select 1 from pg_class c join pg_namespace n on n.oid = c.relnamespace
+            where n.nspname = 'public' and c.relname = t and c.relkind = 'r'
+        ) then
+            execute format('alter table public.%I enable row level security', t);
+        end if;
     end loop;
 end $$;
 
