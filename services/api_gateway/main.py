@@ -36,6 +36,7 @@ from .routers import motors
 from .routers import mrv
 from .routers import lab
 from .routers import economy
+from .routers import auth_supabase
 from .routers import benchmark
 from .routers import nojin
 from .routers import sync
@@ -206,6 +207,7 @@ app.include_router(motors.router)
 app.include_router(mrv.router)
 app.include_router(lab.router)
 app.include_router(economy.router)
+app.include_router(auth_supabase.router)
 app.include_router(carbon.router)
 app.include_router(watershed.router)
 app.include_router(scenarios.router)
