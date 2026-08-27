@@ -19,6 +19,9 @@ import { LmsCard } from '../components/hydroma/LmsCard';
 import { AuditCard } from '../components/hydroma/AuditCard';
 import { ProfileCard } from '../components/hydroma/ProfileCard';
 import { AdminCard } from '../components/hydroma/AdminCard';
+import { LightSimCard } from '../components/hydroma/LightSimCard';
+import { DroughtCard } from '../components/hydroma/DroughtCard';
+import { ClimateCard } from '../components/hydroma/ClimateCard';
 import type { SceneMode } from '../components/hydroma/DashboardScene3D';
 import type { RealLandResult, ScientificChainResult } from '../types/vll';
 
@@ -110,7 +113,7 @@ export const HydromaDashboard: React.FC = () => {
         <LabCompareCard lat={coords.lat} lon={coords.lon} />
 
         {/* Economy / livelihood (Phase 5) */}
-        <EconomyCard lat={coords.lat} lon={coords.lon} />`r`n`r`n        {/* Real Supabase landscapes (Phase 6-B) */}`r`n        <SupabaseMapCard lat={coords.lat} lon={coords.lon} />`r`n`r`n        {/* Marketplace catalog on Supabase (Phase 6-B) */}`r`n        <MarketplaceCard />`r`n`r`n        {/* LMS (Phase 6-C) */}`r`n        <LmsCard />`r`n`r`n        {/* Audit & credits (Phase 7) */}`r`n        <AuditCard />`r`n`r`n        {/* Profile & Admin (Phase 8-A) */}`r`n        <ProfileCard />`r`n        <AdminCard />
+        <EconomyCard lat={coords.lat} lon={coords.lon} />`r`n`r`n        {/* Real Supabase landscapes (Phase 6-B) */}`r`n        <SupabaseMapCard lat={coords.lat} lon={coords.lon} />`r`n`r`n        {/* Marketplace catalog on Supabase (Phase 6-B) */}`r`n        <MarketplaceCard />`r`n`r`n        {/* LMS (Phase 6-C) */}`r`n        <LmsCard />`r`n`r`n        {/* Audit & credits (Phase 7) */}`r`n        <AuditCard />`r`n`r`n        {/* Profile & Admin (Phase 8-A) */}`r`n        <ProfileCard />`r`n        <AdminCard />`r`n`r`n        {/* Phase 8-B: pro simulators */}`r`n        <LightSimCard />`r`n        <DroughtCard />`r`n        <ClimateCard />
 
         {/* Quick actions */}
         <div className="card" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', marginTop: '1.5rem' }}>
