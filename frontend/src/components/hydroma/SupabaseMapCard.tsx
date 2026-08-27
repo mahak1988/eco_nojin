@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { MapPin } from 'lucide-react';
+import { MapPin, Navigation } from 'lucide-react';
 import { Deck } from '@deck.gl/core';
 import { ScatterplotLayer } from '@deck.gl/layers';
 
@@ -11,14 +11,22 @@ interface LandscapeRow {
   geo_boundary?: { type?: string; coordinates?: [number, number] } | null;
 }
 
+interface NearestRow {
+  name?: string;
+  province?: string | null;
+  lat?: number;
+  lon?: number;
+  distance_km?: number;
+}
+
 interface SupabaseMapCardProps {
   lat: number;
   lon: number;
 }
 
 /**
- * فاز ۶-ب — مناطق واقعی از دیتابیس Supabase (platform_landscapes، ۲۱ ردیف)
- * با مختصات GeoJSON Point روی deck.gl. بدون داده -> حالت صادقانه.
+ * فاز ۶-ب/ج — مناطق واقعی از Supabase با مختصات GeoJSON روی deck.gl +
+ * query مکانی «نزدیک‌ترین» (Haversine واقعی؛ PostGIS-ready).
  */
 export const SupabaseMapCard: React.FC<SupabaseMapCardProps> = ({ lat, lon }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -26,6 +34,8 @@ export const SupabaseMapCard: React.FC<SupabaseMapCardProps> = ({ lat, lon }) =>
   const [rows, setRows] = useState<LandscapeRow[]>([]);
   const [status, setStatus] = useState<'loading' | 'ok' | 'error'>('loading');
   const [error, setError] = useState<string | null>(null);
+  const [nearest, setNearest] = useState<NearestRow[] | null>(null);
+  const [nearestBusy, setNearestBusy] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -86,6 +96,20 @@ export const SupabaseMapCard: React.FC<SupabaseMapCardProps> = ({ lat, lon }) =>
     };
   }, [status, pts.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const findNearest = async () => {
+    setNearestBusy(true);
+    try {
+      const res = await fetch(`/api/v1/supabase/geo/nearest?lat=${lat}&lon=${lon}&limit=5`);
+      const d = (await res.json()) as { status?: string; nearest?: NearestRow[]; error?: string };
+      setNearest(d.status === 'ok' ? (d.nearest ?? []) : []);
+      if (d.status !== 'ok') setError(String(d.error ?? 'خطا'));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'خطا');
+    } finally {
+      setNearestBusy(false);
+    }
+  };
+
   return (
     <div className="card" style={{ padding: '1.1rem', marginTop: '1.5rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.7rem' }}>
@@ -102,14 +126,36 @@ export const SupabaseMapCard: React.FC<SupabaseMapCardProps> = ({ lat, lon }) =>
 
       {status === 'ok' && (
         <>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+            <button
+              onClick={() => void findNearest()}
+              disabled={nearestBusy}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '0.4rem 0.9rem', borderRadius: 8, border: '1px solid var(--color-border)', background: 'var(--color-surface)', cursor: 'pointer', fontSize: '0.76rem', fontWeight: 700, color: 'var(--color-text)' }}
+            >
+              <Navigation size={13} /> {nearestBusy ? 'در حال جستجو…' : `نزدیک‌ترین به ${lat}, ${lon}`}
+            </button>
+          </div>
+          {nearest && nearest.length > 0 && (
+            <div style={{ marginBottom: '0.6rem', fontSize: '0.74rem' }}>
+              {nearest.map((n, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.25rem 0.1rem', borderBottom: '1px dashed var(--color-border)' }}>
+                  <span style={{ fontWeight: 600 }}>{n.name}</span>
+                  <span style={{ color: 'var(--color-text-secondary)' }}>{n.distance_km} km</span>
+                </div>
+              ))}
+              <p style={{ fontSize: '0.66rem', color: 'var(--color-text-secondary)', margin: '0.3rem 0 0' }}>
+                محاسبه واقعی روی مختصات GeoJSON (Haversine) — پس از migration 0001 با PostGIS (ST_DWithin) انجام می‌شود.
+              </p>
+            </div>
+          )}
           {pts.length > 0 ? (
             <div ref={containerRef} style={{ width: '100%', height: 240, borderRadius: 12, overflow: 'hidden', background: '#0f172a' }} />
           ) : (
             <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', padding: '1rem 0' }}>
-              هیچ ردیفی مختصات GeoJSON ندارد — پس از افزودن geo_boundary نقشه فعال میشود.
+              هیچ ردیفی مختصات GeoJSON ندارد.
             </p>
           )}
-          <div style={{ maxHeight: 160, overflowY: 'auto', marginTop: '0.6rem', fontSize: '0.76rem' }}>
+          <div style={{ maxHeight: 150, overflowY: 'auto', marginTop: '0.6rem', fontSize: '0.76rem' }}>
             {rows.map((r) => (
               <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem', padding: '0.28rem 0.1rem', borderBottom: '1px dashed var(--color-border)' }}>
                 <span style={{ fontWeight: 600 }}>{r.name}</span>
@@ -119,9 +165,6 @@ export const SupabaseMapCard: React.FC<SupabaseMapCardProps> = ({ lat, lon }) =>
               </div>
             ))}
           </div>
-          <p style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', margin: '0.5rem 0 0' }}>
-            داده واقعی از جدول platform_landscapes (پروژه Supabase شما) — ستون geo_boundary GeoJSON آماده PostGIS است.
-          </p>
         </>
       )}
     </div>

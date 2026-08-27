@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Store, ExternalLink, BadgeCheck } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Store, ExternalLink, BadgeCheck, Plus, FolderKanban } from 'lucide-react';
 
 interface StandardRow {
   id?: string;
@@ -10,9 +10,20 @@ interface StandardRow {
   category?: string | null;
 }
 
+interface ProjectRow {
+  id?: string;
+  name?: string;
+  project_type?: string;
+  area_ha?: number;
+  duration_years?: number;
+  status?: string;
+  created_at?: string;
+}
+
 interface MarketplaceData {
   status?: string;
   standards?: StandardRow[];
+  projects?: ProjectRow[];
   projects_count?: number;
   error?: string;
 }
@@ -25,54 +36,155 @@ const CATEGORY_LABEL: Record<string, string> = {
   soil: 'خاک',
 };
 
+const TYPE_LABEL: Record<string, string> = {
+  soil_carbon: 'کربن خاک',
+  agroforestry: 'آگروفارستری',
+  biochar: 'بیوچار',
+};
+
 /**
- * فاز ۶-ب — کاتالوگ بازارچه روی همان دیتابیس Supabase: استانداردهای واقعی
- * (IPCC 2019، ISO 17025، NASA EOSDIS و…) + شمارنده پروژهها.
+ * فاز ۶-ب/ج — بازارچه روی همان دیتابیس Supabase: کاتالوگ استانداردهای واقعی +
+ * ایجاد واقعی پروژه کربن با مالکیت auth.uid() (RLS-ready).
  */
 export const MarketplaceCard: React.FC = () => {
   const [data, setData] = useState<MarketplaceData | null>(null);
   const [status, setStatus] = useState<'loading' | 'ok' | 'error'>('loading');
+  const [token] = useState<string | null>(() => localStorage.getItem('eco_token'));
+  const [form, setForm] = useState({ name: '', type: 'soil_carbon', area: '100', years: '20' });
+  const [own, setOwn] = useState<ProjectRow[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    try {
+      const res = await fetch('/api/v1/supabase/marketplace');
+      const d = (await res.json()) as MarketplaceData;
+      if (d.status === 'ok') {
+        setData(d);
+        setStatus('ok');
+      } else {
+        setStatus('error');
+        setData({ status: 'error', error: String(d.error ?? 'خطا') });
+      }
+    } catch (e) {
+      setStatus('error');
+      setData({ status: 'error', error: e instanceof Error ? e.message : 'خطا' });
+    }
+  }, []);
 
   useEffect(() => {
-    let alive = true;
-    (async () => {
-      try {
-        const res = await fetch('/api/v1/supabase/marketplace');
-        const d = (await res.json()) as MarketplaceData;
-        if (!alive) return;
-        if (d.status === 'ok') {
-          setData(d);
-          setStatus('ok');
-        } else {
-          setStatus('error');
-          setData({ status: 'error', error: String(d.error ?? 'خطا') });
-        }
-      } catch (err) {
-        if (!alive) return;
-        setStatus('error');
-        setData({ status: 'error', error: err instanceof Error ? err.message : 'خطا' });
-      }
-    })();
-    return () => {
-      alive = false;
-    };
+    void load();
+  }, [load]);
+
+  const loadOwn = useCallback(async (t: string) => {
+    try {
+      const res = await fetch(`/api/v1/supabase/carbon-projects?token=${encodeURIComponent(t)}`);
+      const d = (await res.json()) as { status?: string; projects?: ProjectRow[]; error?: string };
+      if (d.status === 'ok') setOwn(d.projects ?? []);
+    } catch {
+      /* ignore — shown via create errors */
+    }
   }, []);
+
+  useEffect(() => {
+    if (token) void loadOwn(token);
+  }, [token, loadOwn]);
+
+  const createProject = async () => {
+    if (!token) {
+      setErr('برای ساخت پروژه ابتدا وارد شوید (ورود واقعی Supabase).');
+      return;
+    }
+    setBusy(true);
+    setErr(null);
+    setMsg(null);
+    try {
+      const q = new URLSearchParams({
+        token,
+        name: form.name,
+        project_type: form.type,
+        area_ha: form.area,
+        duration_years: form.years,
+      });
+      const res = await fetch(`/api/v1/supabase/carbon-projects?${q.toString()}`, { method: 'POST' });
+      const d = (await res.json()) as { status?: string; project?: ProjectRow; error?: string };
+      if (d.status === 'ok') {
+        setMsg(`پروژه «${d.project?.name}» با مالکیت شما ساخته شد (${d.project?.status}).`);
+        setForm({ ...form, name: '' });
+        void loadOwn(token);
+      } else {
+        setErr(String(d.error ?? 'خطا'));
+      }
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'خطا');
+    } finally {
+      setBusy(false);
+    }
+  };
 
   return (
     <div className="card" style={{ padding: '1.1rem', marginTop: '1.5rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.7rem' }}>
         <h3 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#0d9488' }}>
-          <Store size={17} /> بازارچه — کاتالوگ استانداردها
+          <Store size={17} /> بازارچه — پروژه‌ها و استانداردها
         </h3>
         {status === 'ok' && data && (
           <span style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)' }}>
-            {data.standards?.length ?? 0} استاندارد فعال · {data.projects_count ?? 0} پروژه
+            {data.standards?.length ?? 0} استاندارد · {data.projects_count ?? 0} پروژه
           </span>
         )}
       </div>
 
       {status === 'loading' && <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>در حال دریافت…</p>}
       {status === 'error' && <p style={{ fontSize: '0.82rem', color: '#ef4444' }}>⚠️ {data?.error}</p>}
+
+      {/* ساخت پروژه کربن */}
+      <div style={{ marginBottom: '0.9rem', padding: '0.7rem 0.8rem', borderRadius: 10, border: '1px solid var(--color-border)', background: 'var(--color-bg)' }}>
+        <div style={{ fontSize: '0.78rem', fontWeight: 700, marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+          <Plus size={13} /> ایجاد پروژه کربن (مالکیت شما — auth.uid)
+        </div>
+        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <input
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            placeholder="نام پروژه"
+            style={{ padding: '0.35rem 0.5rem', borderRadius: 8, border: '1px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text)', width: 170 }}
+          />
+          <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} style={{ padding: '0.35rem 0.5rem', borderRadius: 8, border: '1px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text)' }}>
+            {Object.entries(TYPE_LABEL).map(([v, l]) => (
+              <option key={v} value={v}>{l}</option>
+            ))}
+          </select>
+          <input type="number" min="1" value={form.area} onChange={(e) => setForm({ ...form, area: e.target.value })} title="مساحت (ha)" style={{ padding: '0.35rem 0.5rem', borderRadius: 8, border: '1px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text)', width: 74 }} />
+          <input type="number" min="1" max="50" value={form.years} onChange={(e) => setForm({ ...form, years: e.target.value })} title="مدت (سال)" style={{ padding: '0.35rem 0.5rem', borderRadius: 8, border: '1px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text)', width: 74 }} />
+          <button onClick={() => void createProject()} disabled={busy || !form.name.trim()} style={{ padding: '0.4rem 0.9rem', borderRadius: 8, border: 'none', cursor: 'pointer', background: 'var(--color-primary)', color: '#fff', fontWeight: 700, fontSize: '0.78rem' }}>
+            {busy ? 'در حال ساخت…' : 'ساخت پروژه'}
+          </button>
+        </div>
+        {msg && <p style={{ fontSize: '0.76rem', color: '#10b981', margin: '0.4rem 0 0' }}>✅ {msg}</p>}
+        {err && <p style={{ fontSize: '0.76rem', color: '#ef4444', margin: '0.4rem 0 0' }}>⚠️ {err}</p>}
+        {!token && <p style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', margin: '0.4rem 0 0' }}>وارد نشده‌اید — پس از ورود واقعی، مالکیت پروژه با auth.uid ثبت می‌شود.</p>}
+      </div>
+
+      {/* پروژه‌های من */}
+      {own.length > 0 && (
+        <div style={{ marginBottom: '0.9rem' }}>
+          <div style={{ fontSize: '0.78rem', fontWeight: 700, marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            <FolderKanban size={13} /> پروژه‌های من ({own.length})
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.4rem' }}>
+            {own.map((p) => (
+              <div key={p.id} style={{ padding: '0.5rem 0.6rem', borderRadius: 9, border: '1px solid var(--color-border)', background: 'var(--color-surface)' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700 }}>{p.name}</div>
+                <div style={{ fontSize: '0.68rem', color: 'var(--color-text-secondary)' }}>
+                  {TYPE_LABEL[p.project_type ?? ''] ?? p.project_type} · {p.area_ha} ha · {p.duration_years} سال · {p.status}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {status === 'ok' && data?.standards && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: '0.5rem' }}>
@@ -100,7 +212,7 @@ export const MarketplaceCard: React.FC = () => {
 
       {status === 'ok' && (
         <p style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', margin: '0.6rem 0 0' }}>
-          داده واقعی از جدول standards (Supabase) — بازارچه/LMS روی همین دیتابیس ساخته میشود.
+          داده واقعی از دیتابیس Supabase — پس از اجرای migration 0001، RLS مالکیت را الزامی می‌کند.
         </p>
       )}
     </div>
