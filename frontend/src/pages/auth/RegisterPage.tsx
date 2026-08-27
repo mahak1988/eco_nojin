@@ -29,7 +29,7 @@ export const RegisterPage: React.FC = () => {
     if (!terms) { setError('لطفاً قوانین و حریم خصوصی را بپذیرید'); return; }
     setError(''); setBusy(true);
     try {
-      await register({ name: form.name, email: form.email, role: form.role });
+      await register({ name: form.name, email: form.email, role: form.role, password: form.pass });
       navigate('/hydroma');
     } catch (err: any) { setError(err.message); } finally { setBusy(false); }
   };

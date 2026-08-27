@@ -1,0 +1,31 @@
+# =====================================================
+# Development tools for code quality (Python 3.12+)
+# Install: python -m pip install -r requirements-dev.txt
+# =====================================================
+
+# --- Formatting & Linting ---
+black==24.10.0            # کدفرمتر خودکار (PEP 8)
+ruff==0.11.2              # لینتر و فرمت‌دهنده سریع (جایگزین flake8, isort, ...)
+isort==5.13.2             # مرتب‌سازی ایمپورت‌ها (اختیاری؛ ruff هم انجام می‌دهد)
+
+# --- Type checking ---
+mypy==1.13.0              # بررسی استاتیک تایپ‌ها
+
+# --- Testing & Coverage ---
+pytest==8.3.3             # فریم‌ورک تست (نسخه اصلی در requirements.txt موجود است)
+pytest-cov==6.0.0         # گزارش پوشش تست
+hypothesis==6.122.0       # تست مبتنی بر property
+
+# --- Static analysis / Dead code ---
+vulture==2.11.0           # پیدا کردن کدهای استفاده‌نشده
+pyupgrade==3.19.0         # به‌روزرسانی سینتکس به نسخه‌های جدیدتر پایتون
+
+# --- Security ---
+bandit==1.8.0             # بررسی امنیتی کد
+pip-audit==2.7.3          # بررسی آسیب‌پذیری وابستگی‌ها
+
+# --- Automation / Hooks ---
+pre-commit==4.0.1         # اجرای خودکار لینترها قبل از commit
+
+# --- Documentation (optional) ---
+pydocstyle==6.3.0         # بررسی استایل docstring
