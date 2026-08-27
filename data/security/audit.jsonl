@@ -16,3 +16,4 @@
 {"kind": "waf", "ts": 1787803996.172964, "ip": "127.0.0.1", "actor": "anonymous", "action": "POST /api/v1/ai/advise", "decision": "block", "severity": "high", "detail": {"rules": ["sqli-union"], "score": 40}, "store": "local-jsonl"}
 {"kind": "waf", "ts": 1787803999.3249702, "ip": "127.0.0.1", "actor": "anonymous", "action": "POST /api/v1/ai/advise", "decision": "block", "severity": "high", "detail": {"rules": ["sqli-union"], "score": 40}, "store": "local-jsonl"}
 {"kind": "waf", "ts": 1787804002.2739754, "ip": "127.0.0.1", "actor": "anonymous", "action": "POST /api/v1/ai/advise", "decision": "block", "severity": "high", "detail": {"rules": ["xss-script"], "score": 40}, "store": "local-jsonl"}
+{"kind": "waf", "ts": 1787807893.9798193, "ip": "127.0.0.1", "actor": "anonymous", "action": "POST /api/v1/ai/advise", "decision": "block", "severity": "high", "detail": {"rules": ["sqli-union"], "score": 40}, "store": "local-jsonl"}
