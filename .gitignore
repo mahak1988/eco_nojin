@@ -176,3 +176,6 @@ contracts/cache/
 *.exp
 *.pyd
 
+
+# Ghost/Orphaned Virtual Environments
+.venv_ghost/
