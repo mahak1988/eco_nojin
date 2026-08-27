@@ -99,15 +99,19 @@ def diagnose(ref: str, token: str) -> None:
 
 
 def migrate(ref: str, token: str) -> None:
-    sql_path = ROOT / "supabase" / "migrations" / "0001_phase6_harden.sql"
-    if not sql_path.exists():
-        sys.exit(f"ERROR: migration file not found: {sql_path}")
-    sql = sql_path.read_text(encoding="utf-8")
-    res = _run_sql(ref, token, sql)
-    if res["ok"]:
-        print(f"MIGRATION OK ({res['status']}) — {sql_path.name} executed.")
-    else:
-        print(f"MIGRATION FAILED ({res['status']}): {res['body']}")
+    """Run all supabase/migrations/*.sql in filename order (idempotent)."""
+    mig_dir = ROOT / "supabase" / "migrations"
+    files = sorted(mig_dir.glob("*.sql")) if mig_dir.exists() else []
+    if not files:
+        sys.exit(f"ERROR: no migrations found in {mig_dir}")
+    for sql_path in files:
+        sql = sql_path.read_text(encoding="utf-8")
+        res = _run_sql(ref, token, sql)
+        if res["ok"]:
+            print(f"MIGRATION OK ({res['status']}) — {sql_path.name}")
+        else:
+            print(f"MIGRATION FAILED ({res['status']}) — {sql_path.name}: {res['body']}")
+            sys.exit(1)
 
 
 def verify(ref: str, token: str) -> None:
