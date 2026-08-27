@@ -50,6 +50,7 @@ export const MarketplaceCard: React.FC = () => {
   const [data, setData] = useState<MarketplaceData | null>(null);
   const [status, setStatus] = useState<'loading' | 'ok' | 'error'>('loading');
   const [token] = useState<string | null>(() => localStorage.getItem('eco_token'));
+  const [role, setRole] = useState<string | null>(null);
   const [form, setForm] = useState({ name: '', type: 'soil_carbon', area: '100', years: '20' });
   const [own, setOwn] = useState<ProjectRow[]>([]);
   const [busy, setBusy] = useState(false);
@@ -90,6 +91,23 @@ export const MarketplaceCard: React.FC = () => {
   useEffect(() => {
     if (token) void loadOwn(token);
   }, [token, loadOwn]);
+
+  useEffect(() => {
+    if (!token) return;
+    let alive = true;
+    (async () => {
+      try {
+        const res = await fetch(`/api/v1/supabase/profile?token=${encodeURIComponent(token)}`);
+        const d = (await res.json()) as { status?: string; profile?: { role?: string } | null };
+        if (alive && d.status === 'ok') setRole(d.profile?.role ?? null);
+      } catch {
+        /* keep unknown */
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [token]);
 
   const createProject = async () => {
     if (!token) {
@@ -132,6 +150,11 @@ export const MarketplaceCard: React.FC = () => {
         {status === 'ok' && data && (
           <span style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)' }}>
             {data.standards?.length ?? 0} استاندارد · {data.projects_count ?? 0} پروژه
+          </span>
+        )}
+        {role && (
+          <span style={{ fontSize: '0.72rem', fontWeight: 800, padding: '0.2rem 0.55rem', borderRadius: 999, background: role === 'admin' ? '#fef3c7' : '#ecfdf5', color: role === 'admin' ? '#92400e' : '#065f46', border: '1px solid var(--color-border)' }}>
+            نقش: {role === 'admin' ? 'مدیر' : role === 'auditor' ? 'ممیزی' : 'کشاورز'}
           </span>
         )}
       </div>

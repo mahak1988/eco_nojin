@@ -233,3 +233,37 @@ async def list_carbon_projects(token: str) -> Dict[str, Any]:
         return {"status": "ok", "count": len(rows), "projects": rows}
     except Exception as exc:
         return {"status": "error", "error": str(exc)}
+
+
+# ---------------------------------------------------------------- admin / roles
+
+
+@router.get("/admin/users")
+async def admin_users(token: str) -> Dict[str, Any]:
+    """All users — RLS decides: only admins see more than their own row."""
+    try:
+        await _user_from_token(token)
+        rows = await _select("users", "id,email,username,level,eco_balance,cct_balance", "&order=created_at.desc", auth=token)
+        return {"status": "ok", "count": len(rows), "users": rows}
+    except Exception as exc:
+        return {"status": "error", "error": str(exc)}
+
+
+@router.post("/admin/role")
+async def admin_role(token: str, user_id: str, role: str) -> Dict[str, Any]:
+    """Set a user's role — calls admin_set_role RPC (function checks the caller
+    is admin before writing; non-admins get not_admin)."""
+    try:
+        await _user_from_token(token)
+        cfg = _cfg()
+        async with httpx.AsyncClient(timeout=20) as s:
+            r = await s.post(
+                f"{cfg['url']}/rest/v1/rpc/admin_set_role",
+                json={"target": user_id, "new_role": role},
+                headers={"apikey": cfg["anon"], "Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+            )
+        if r.status_code == 200:
+            return {"status": "ok", "changed": r.json(), "target": user_id, "role": role}
+        return {"status": "error", "error": f"HTTP {r.status_code} {r.text[:200]}"}
+    except Exception as exc:
+        return {"status": "error", "error": str(exc)}
