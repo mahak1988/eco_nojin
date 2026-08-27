@@ -168,11 +168,24 @@ async def geo_nearest(lat: float, lon: float, limit: int = Query(default=5, ge=1
 
 @router.get("/profile")
 async def profile(token: str) -> Dict[str, Any]:
-    """Own profile from platform_profiles (real schema: id = auth.users.id)."""
+    """Own profile from platform_profiles (real schema: id = auth.users.id)
+    plus wallet/eco balances from the users row (RLS: own row only)."""
     try:
         u = await _user_from_token(token)
         rows = await _select("platform_profiles", "*", f"&id=eq.{u['id']}&limit=1", auth=token)
-        return {"status": "ok", "user": {"id": u["id"], "email": u.get("email")}, "profile": rows[0] if rows else None}
+        wallet = {}
+        try:
+            urows = await _select("users", "eco_balance,cct_balance,level,rank", f"&id=eq.{u['id']}&limit=1", auth=token)
+            if urows:
+                wallet = urows[0]
+        except Exception:
+            wallet = {}
+        return {
+            "status": "ok",
+            "user": {"id": u["id"], "email": u.get("email")},
+            "profile": rows[0] if rows else None,
+            "wallet": wallet,
+        }
     except Exception as exc:
         return {"status": "error", "error": str(exc)}
 
