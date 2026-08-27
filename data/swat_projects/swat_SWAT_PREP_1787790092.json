@@ -1,0 +1,55 @@
+{
+  "schema": "swat_plus_project_v1",
+  "prepared_by": "Eco Nojin HyDroMa (Phase 2)",
+  "prepared_at": "2026-08-27T03:51:32Z",
+  "basin": {
+    "lat": 35.5,
+    "lon": 51.5
+  },
+  "weather": {
+    "source": "Open-Meteo ERA5 (free)",
+    "monthly_precipitation_mm": [
+      27.7,
+      76.2,
+      126.0,
+      35.9,
+      13.6,
+      0.9,
+      0.1,
+      0.2,
+      14.7,
+      3.7,
+      16.9,
+      43.6
+    ],
+    "monthly_temperature_c": [
+      4.84,
+      7.98,
+      11.29,
+      18.21,
+      25.15,
+      28.69,
+      32.35,
+      31.58,
+      25.73,
+      19.91,
+      12.85,
+      5.73
+    ]
+  },
+  "soil": {
+    "source": "SoilGrids ISRIC (free)",
+    "texture": "clay_loam"
+  },
+  "land_use": "cropland",
+  "tools": {
+    "pyswatplus_version": "unknown",
+    "reader": "TxtinoutReader",
+    "data_manager": "DataManager"
+  },
+  "run": {
+    "requires_executable": true,
+    "executable_download": "https://swat.tamu.edu/software/plus/",
+    "note": "pySWATPlus reads/edits/calibrates an existing SWAT+ project; the full simulation needs the free SWAT+ rev60 executable from swat.tamu.edu."
+  }
+}

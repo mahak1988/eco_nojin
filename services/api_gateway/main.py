@@ -34,6 +34,8 @@ from .routers import platform, admin, auth, analyses # Import the new router
 from .routers import land, soil, satellite, carbon, watershed, scenarios, ai, ai_chat, ecowallet, marketplace, farms, analytics, materials, blockchain
 from .routers import motors
 from .routers import mrv
+from .routers import lab
+from .routers import economy
 from .routers import benchmark
 from .routers import nojin
 from .routers import sync
@@ -202,6 +204,8 @@ app.include_router(soil.router)
 app.include_router(satellite.router)
 app.include_router(motors.router)
 app.include_router(mrv.router)
+app.include_router(lab.router)
+app.include_router(economy.router)
 app.include_router(carbon.router)
 app.include_router(watershed.router)
 app.include_router(scenarios.router)

@@ -11,6 +11,8 @@ import { ScientificChainPanel } from '../components/hydroma/ScientificChainPanel
 import { LiveMetricStrip } from '../components/hydroma/LiveMetricStrip';
 import { HydromaModules } from '../components/hydroma/HydromaModules';
 import { MrvCard } from '../components/hydroma/MrvCard';
+import { LabCompareCard } from '../components/hydroma/LabCompareCard';
+import { EconomyCard } from '../components/hydroma/EconomyCard';
 import type { SceneMode } from '../components/hydroma/DashboardScene3D';
 import type { RealLandResult, ScientificChainResult } from '../types/vll';
 
@@ -97,6 +99,12 @@ export const HydromaDashboard: React.FC = () => {
 
         {/* MRV carbon budget (Phase 4) */}
         <MrvCard lat={coords.lat} lon={coords.lon} />
+
+        {/* Lab data vs model (Phase 4-D) */}
+        <LabCompareCard lat={coords.lat} lon={coords.lon} />
+
+        {/* Economy / livelihood (Phase 5) */}
+        <EconomyCard lat={coords.lat} lon={coords.lon} />
 
         {/* Quick actions */}
         <div className="card" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', marginTop: '1.5rem' }}>
