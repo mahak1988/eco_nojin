@@ -38,4 +38,5 @@
 - `security_events` / `audit_log` / `blocked_ips` (RLS: مالک + ادمین) + ویو `ogc_landscape_points` + خواندن عمومی `platform_landscapes`.
 
 ## قدم بعدی
-- پاک‌سازی نقاط تستی (Test Landscape) از دیتابیس زنده، اتصال دامنه واقعی + تنظیم SPF/DKIM/DMARC، و ارتقای AI به LLM رایگان (مثلاً Groq free tier با AI_LLM_KEY).
+- ✅ پاک‌سازی داده تستی انجام شد (۳۱ رکورد: ۲۱ نقطه منظره + ۱۰ پروژه کربن تستی حذف، فقط حساب ادمین باقی ماند).
+- اتصال دامنه واقعی + تنظیم SPF/DKIM/DMARC، و ارتقای AI به LLM رایگان (مثلاً Groq free tier با AI_LLM_KEY) — نیازمند اقدام کاربر.
