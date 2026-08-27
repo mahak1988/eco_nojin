@@ -45,6 +45,7 @@ from .routers import sync
 from .routers import ussd
 from .routers import voice
 from services.api_gateway.routers import nojin
+from services.api_gateway.routers import audit
 
 app = FastAPI(title="Eco Nojin API Gateway")
 
@@ -212,6 +213,7 @@ app.include_router(economy.router)
 app.include_router(auth_supabase.router)
 app.include_router(supabase_proxy.router)
 app.include_router(lms.router)
+app.include_router(audit.router)
 app.include_router(carbon.router)
 app.include_router(watershed.router)
 app.include_router(scenarios.router)
