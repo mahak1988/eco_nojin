@@ -9,11 +9,17 @@
   Unreachable pages report `requires_network` honestly.
 """
 import hashlib
+import os
 import re
 import urllib.request
 from typing import Dict, List
 
-TRUSTED_DOMAINS = ["econojin.ir", "econojin.com", "econojin.land"]
+# قابل تنظیم از محیط (TRUSTED_DOMAINS=econojin.ir,econojin.com)
+TRUSTED_DOMAINS: List[str] = [
+    d.strip()
+    for d in os.getenv("TRUSTED_DOMAINS", "econojin.ir,econojin.com,econojin.land").split(",")
+    if d.strip()
+]
 
 _UA = {"User-Agent": "Mozilla/5.0 (compatible; EcoNojin-PhishGuard/1.0)"}
 
@@ -43,7 +49,6 @@ def domain_squatting(host: str) -> Dict:
         "squatting": results,
         "verdict": "suspicious" if results else "ok",
     }
-
 
 def check_email_auth(domain: str) -> Dict:
     """Live DNS checks. Requires dnspython; network failures are honest."""

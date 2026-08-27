@@ -24,17 +24,19 @@ _DEFAULT = "بر اساس دانش محلی و مستندات پروژه، اج�
 
 
 def _llm_advice(question: str, evidence: List[Dict]) -> Dict[str, Any]:
-    """OpenAI-compatible adapter (BYO key). Provider name stays honest."""
+    """OpenAI-compatible adapter (BYO key). Defaults are tuned for Groq's
+    free tier (llama-3.3-70b); any OpenAI-compatible endpoint works."""
     import httpx
 
     key = os.getenv("AI_LLM_KEY", "")
-    url = os.getenv("AI_LLM_URL", "https://api.openai.com/v1/chat/completions")
+    url = os.getenv("AI_LLM_URL", "https://api.groq.com/openai/v1/chat/completions")
+    model = os.getenv("AI_LLM_MODEL", "llama-3.3-70b-versatile")
     ctx = "\n".join(f"- [{e['file']}] {e['text']}" for e in evidence)
     resp = httpx.post(
         url,
         headers={"Authorization": f"Bearer {key}"},
         json={
-            "model": os.getenv("AI_LLM_MODEL", "gpt-4o-mini"),
+            "model": model,
             "messages": [
                 {"role": "system", "content": "تو دستیار علمی پلتفرم اکو نوژین (احیای زمین/کشاورزی) هستی. پاسخ کوتاه و کاربردی به فارسی بده و به شواهد استناد کن."},
                 {"role": "user", "content": f"زمینه:\n{ctx}\n\nسوال: {question}"},
@@ -44,7 +46,7 @@ def _llm_advice(question: str, evidence: List[Dict]) -> Dict[str, Any]:
         timeout=30,
     )
     resp.raise_for_status()
-    return {"provider": "llm:" + os.getenv("AI_LLM_MODEL", "gpt-4o-mini"), "answer": resp.json()["choices"][0]["message"]["content"]}
+    return {"provider": "llm:" + model, "answer": resp.json()["choices"][0]["message"]["content"]}
 
 
 def advise(question: str, metrics: Dict[str, Any] | None = None) -> Dict[str, Any]:
