@@ -47,6 +47,12 @@ from .routers import voice
 from services.api_gateway.routers import nojin
 from services.api_gateway.routers import audit
 from services.api_gateway.routers import climate
+from services.api_gateway.routers import security_router
+from services.api_gateway.routers import ogc_router
+from services.api_gateway.routers import ai_advice_router
+
+from services.security.headers import SecurityHeadersMiddleware
+from services.security.middleware import SpiderFirewallMiddleware
 
 app = FastAPI(title="Eco Nojin API Gateway")
 
@@ -161,6 +167,13 @@ app.add_middleware(
 
 
 # ============================================================================
+# PHASE 8-C SPIDER FIREWALL (10+ layers) - outermost middleware stack
+# ============================================================================
+app.add_middleware(SpiderFirewallMiddleware)
+app.add_middleware(SecurityHeadersMiddleware)
+
+
+# ============================================================================
 # GLOBAL EXCEPTION HANDLERS
 # ============================================================================
 @app.exception_handler(Exception)
@@ -216,6 +229,9 @@ app.include_router(supabase_proxy.router)
 app.include_router(lms.router)
 app.include_router(audit.router)
 app.include_router(climate.router)
+app.include_router(security_router.router)
+app.include_router(ogc_router.router)
+app.include_router(ai_advice_router.router)
 app.include_router(carbon.router)
 app.include_router(watershed.router)
 app.include_router(scenarios.router)

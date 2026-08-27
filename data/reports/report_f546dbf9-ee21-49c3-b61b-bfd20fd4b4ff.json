@@ -1,0 +1,23 @@
+{
+  "village_id": null,
+  "period": "month",
+  "sales": {
+    "total_orders": 0,
+    "total_revenue": "0",
+    "average_order_value": "0",
+    "top_products": [],
+    "period": "month"
+  },
+  "tourism": {
+    "total_bookings": 0,
+    "total_guests": 0,
+    "revenue": "0",
+    "regenerative_activities": 0
+  },
+  "landscape": {
+    "active_villages": 0,
+    "governance_members": 0,
+    "fund_balance": "0"
+  },
+  "generated_at": "2026-08-27T04:16:02.930546Z"
+}
