@@ -1,10 +1,6 @@
 import pytest
-import importlib
 
 # پچ کردن توابع احراز هویت برای تست‌ها
-auth_mod = importlib.import_module("services.api_gateway.auth")
-auth_mod.verify_password = lambda plain, hashed: True
-auth_mod.hash_password = lambda password: "dummyhash"
 
 # import دیتابیس تست
 from tests.test_db import SessionLocal, engine, TEST_SESSION_FACTORY

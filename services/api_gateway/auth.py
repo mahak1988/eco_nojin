@@ -13,7 +13,7 @@ from datetime import UTC, datetime, timedelta
 from fastapi import Depends, Header, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+import bcrypt
 from sqlalchemy.orm import Session
 
 from database.config import get_db
@@ -22,7 +22,6 @@ from engine.hydroma.config.settings import get_settings
 
 _settings = get_settings()
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
 
 # Well-known roles
@@ -33,11 +32,14 @@ ALL_ROLES = {ROLE_FARMER, ROLE_ADVISOR, ROLE_ADMIN}
 
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    try:
+        return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
+    except ValueError:
+        return False
 
 
 def create_access_token(
@@ -98,11 +100,8 @@ def _user_from_payload(payload: dict, db: Session) -> User | None:
     sub = payload.get("sub")
     if sub is None:
         return None
-    try:
-        user_id = int(sub)
-    except (TypeError, ValueError):
-        return None
-    return db.query(User).filter(User.id == user_id).first()
+    # Handle both UUID strings and integer IDs
+    return db.query(User).filter(User.id == sub).first()
 
 
 async def get_current_user_optional(

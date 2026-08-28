@@ -1,5 +1,5 @@
 """مدل‌های اصلی دیتابیس - نسخه کامل"""
-from sqlalchemy import Column, String, Boolean, DateTime, Float, Integer
+from sqlalchemy import Text, JSON, Column, String, Boolean, DateTime, Float, Integer
 from database.base import Base
 from datetime import datetime, timezone
 import uuid
@@ -47,6 +47,11 @@ class AuditLog(Base):
     actor_id = Column(String)
     actor_email = Column(String)
     action = Column(String)
+    user_agent = Column(String(500))
+    ip_address = Column(String(45))
+    details = Column(JSON)
+    resource_id = Column(String(100))
+    resource_type = Column(String(50))
     target = Column(String)
     user_id = Column(String)
     amount = Column(Float)
@@ -115,3 +120,14 @@ for _name in [
         "id": Column(Integer, primary_key=True),
         "created_at": Column(DateTime, default=lambda: datetime.now(timezone.utc)),
     })
+
+
+class ErrorLog(Base):
+    __tablename__ = "errorlog"
+    id = Column(Integer, primary_key=True)
+    path = Column(String(500))
+    method = Column(String(10))
+    status = Column(Integer)
+    message = Column(Text)
+    acked = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
