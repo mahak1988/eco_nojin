@@ -182,3 +182,5 @@ contracts/cache/
 
 # local backup snapshots (keep on disk, out of git)
 _backup_*/
+
+*.bak.*
