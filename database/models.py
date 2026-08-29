@@ -7,6 +7,13 @@ import uuid
 def _uuid():
     return str(uuid.uuid4())
 
+
+
+def generate_uuid():
+    """Generate a UUID string for primary keys"""
+    return str(uuid.uuid4())
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -131,3 +138,21 @@ class ErrorLog(Base):
     message = Column(Text)
     acked = Column(Boolean, default=False)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+
+
+class Setting(Base):
+    """System-wide settings storage (key-value pairs)"""
+    __tablename__ = "settings"
+    
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    key = Column(String, unique=True, nullable=False, index=True)
+    value = Column(Text, nullable=True)
+    description = Column(String, nullable=True)
+    category = Column(String, default='general')  # general, security, ai, telegram, etc.
+    is_secret = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    def __repr__(self):
+        return f"<Setting key='{self.key}'>"

@@ -342,3 +342,114 @@ async def motor_health():
         "motors_available": 5,
         "active_runs": sum(1 for r in _motor_results.values() if r["status"] == "running"),
     }
+
+
+# ============================================================================
+# Admin: run scientific motors on manual-dataset sites (one click from panel)
+# ============================================================================
+
+from datetime import date as _date  # noqa: E402
+from fastapi import Depends as _Depends  # noqa: E402
+from services.api_gateway.auth import get_current_user as _get_current_user  # noqa: E402
+from services.api_gateway.auth import require_roles as _require_roles  # noqa: E402
+from services.data_manual import manual as _manual  # noqa: E402
+from services.data_manual import motor_feed as _motor_feed  # noqa: E402
+from services.scientific_motors.aquacrop_real import RealAquaCropMotor as _RealAquaCropMotor  # noqa: E402
+from services.scientific_motors.crop_advisor import CropAdvisorMotor as _CropAdvisorMotor  # noqa: E402
+from services.scientific_motors.irrigation_scheduler import IrrigationSchedulerMotor as _IrrigationSchedulerMotor  # noqa: E402
+from services.scientific_motors.planting_calendar import PlantingCalendarMotor as _PlantingCalendarMotor  # noqa: E402
+
+try:
+    _require_admin = _require_roles("admin")
+except Exception:
+    _require_admin = _get_current_user
+
+
+class ManualSiteRunRequest(BaseModel):
+    site_id: str
+    crop_name: str = Field(default="wheat")
+    planting_date: str = Field(default="2022-11-05")
+    sim_start: str = Field(default="2022-11-01")
+    sim_end: str = Field(default="2023-06-30")
+    season_days: int = Field(default=120)
+    crops: list[str] = Field(default=["wheat"])
+    species_id: str | None = None
+    irrigation_threshold_mm: float | None = None
+    soil_province: str | None = None
+
+
+def _motor_result_to_dict(result) -> dict[str, Any]:
+    return {
+        "run_id": result.run_id,
+        "status": result.status.value,
+        "summary": result.summary,
+        "outputs": result.outputs,
+        "error_message": result.error_message,
+        "execution_time_seconds": round(result.execution_time_seconds, 2),
+    }
+
+
+@router.get("/manual-sites")
+async def list_manual_sites(
+    admin=Depends(_get_current_user),
+    _: None = Depends(_require_admin),
+) -> dict:
+    """Sites available in the manual reference dataset (for the panel picker)."""
+    sites = _manual.sites()
+    cols = [c for c in ("site_id", "country", "admin1_city", "province", "lat", "lon", "koppen", "elevation_m") if c in sites.columns]
+    return {"count": len(sites), "sites": sites[cols].to_dict("records")}
+
+
+@router.post("/site-run/{motor}")
+async def run_motor_for_site(
+    motor: str,
+    payload: ManualSiteRunRequest,
+    admin=Depends(_get_current_user),
+    _: None = Depends(_require_admin),
+) -> dict:
+    """One-click motor execution for a manual-dataset site (admin only).
+
+    Supported motors: aquacrop | irrigation | planting | crop_advisor | rusle
+    """
+    try:
+        if motor == "aquacrop":
+            bundle = _motor_feed.aquacrop_bundle(
+                payload.site_id,
+                crop_name=payload.crop_name,
+                planting_date=payload.planting_date,
+                sim_start=payload.sim_start,
+                sim_end=payload.sim_end,
+                irrigation_threshold_mm=payload.irrigation_threshold_mm,
+                soil_province=payload.soil_province,
+            )
+            runner = _RealAquaCropMotor()
+        elif motor == "irrigation":
+            bundle = _motor_feed.irrigation_bundle(
+                payload.site_id,
+                crop=payload.crop_name,
+                species_id=payload.species_id,
+                season_days=payload.season_days,
+                soil_province=payload.soil_province,
+            )
+            runner = _IrrigationSchedulerMotor()
+        elif motor == "planting":
+            bundle = _motor_feed.planting_bundle(payload.site_id, payload.crops)
+            runner = _PlantingCalendarMotor()
+        elif motor == "crop_advisor":
+            bundle = _motor_feed.crop_advisor_bundle(payload.site_id, soil_province=payload.soil_province)
+            runner = _CropAdvisorMotor()
+        elif motor == "rusle":
+            return _motor_feed.rusle_bundle(payload.site_id, soil_province=payload.soil_province)
+        else:
+            raise HTTPException(status_code=400, detail=f"unknown motor '{motor}'")
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+    result = await runner.execute(bundle["inputs"], bundle["parameters"])
+    return {
+        "motor": motor,
+        "site": bundle.get("site"),
+        "provenance": bundle.get("provenance"),
+        "result": _motor_result_to_dict(result),
+    }
+

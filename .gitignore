@@ -184,3 +184,57 @@ contracts/cache/
 _backup_*/
 
 *.bak.*
+# ═══ افزوده‌شده توسط fix_critical.py (2026-08-29) ═══
+
+# --- کش‌ها و داده‌های سنگین (~۳۴۰MB) ---
+.satellite_cache/
+data/maps/
+data/copernicus_cache/
+data/motors/cache/
+data/**/cache/
+*.pkl
+htmlcov/
+.coverage
+.coverage.*
+
+# --- بیلد C++ و artifacts ویژوال استودیو ---
+engine/cpp_core/build*/
+*.iobj
+*.obj
+*.pdb
+*.ilk
+*.exp
+*.tlog
+*.lastbuildstate
+*.recipe
+*.vcxproj
+*.vcxproj.filters
+
+# --- پایتون ---
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Node / فرانت‌اند ---
+node_modules/
+frontend/dist/
+
+# --- اسرار ---
+.env
+.env.*
+!**/.env.example
+!**/.env.template
+
+# --- بکاپ‌ها و رسوب‌ها ---
+_project_history/
+*.bak*
+*.bak_old_test
+*.bak_session_import
+_quarantine/
+
+# --- پوشه مشکوک (پوشه‌ای با پسوند json!) ---
+analysis.json/

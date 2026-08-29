@@ -130,9 +130,28 @@ app.add_middleware(
 )
 
 
-# ============================================================================
-# GLOBAL EXCEPTION HANDLERS
-# ============================================================================
+# OPTIONS request bypass middleware (for CORS preflight)
+@app.middleware("http")
+async def bypass_options_requests(request: Request, call_next):
+    """Bypass OPTIONS requests with complete CORS headers."""
+    if request.method == "OPTIONS":
+        from fastapi.responses import Response
+        return Response(
+            status_code=200,
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+                "Access-Control-Allow-Headers": "*",
+                "Access-Control-Max-Age": "3600",
+                "Access-Control-Allow-Credentials": "true",
+            }
+        )
+    response = await call_next(request)
+    # Add CORS headers to all responses
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
+
+
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     """Catch-all exception handler - log and return safe response."""
@@ -284,6 +303,20 @@ if _settings.app_env == "development":
 # ============================================================================
 # STARTUP MESSAGE (when run directly)
 # ============================================================================
+
+
+# ============================================================================
+# Health Check Endpoint
+# ============================================================================
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for monitoring."""
+    return {
+        "status": "healthy",
+        "service": "Eco Nojin API Gateway",
+        "timestamp": datetime.now().isoformat() if 'datetime' in dir() else "N/A"
+    }
+
 if __name__ == "__main__":
     import uvicorn
     

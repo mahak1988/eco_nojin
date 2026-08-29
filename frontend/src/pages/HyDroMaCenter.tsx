@@ -1,0 +1,976 @@
+import { useState, useRef, useCallback, useMemo, useEffect, Suspense } from 'react';
+import { Canvas, useThree, useFrame } from '@react-three/fiber';
+import { OrbitControls, Sky, Grid, PerspectiveCamera, Html, Line, useTexture } from '@react-three/drei';
+import * as THREE from 'three';
+import { useTranslation } from 'react-i18next';
+import {
+  Mountain, Play, Pause, GitCompare, FileText, Loader2,
+  Activity, Cpu, Layers, TreePine, Cloud, Sun, Hammer,
+  Tractor, Trash2, Pencil, Square, Plus, FlaskConical} from 'lucide-react';
+import TerrainBuilder from '../components/simulators/TerrainBuilder';
+import { ScientificHub } from '../components/simulators/ScientificHub';
+import { DataPlotView, Crops, Forest, Barn, Silo, samplePlotData } from '../components/farmsim/SceneExtras';
+import type { DataPlot } from '../components/farmsim/SceneExtras';
+import { generateTerrain, terrainColor, moistureColor, rootColor, groundwaterColor } from '../lib/terrainGenerator';
+import type { TerrainData, LayerType } from '../lib/terrainGenerator';
+import '../styles/hydroma.css';
+
+// ===== TERRAIN MESH (clickable) =====
+function TerrainMesh({
+  data, onTerrainClick, visible = true, opacity = 1, layer = 'surface'
+}: {
+  data: TerrainData;
+  onTerrainClick?: (point: THREE.Vector3, normal: THREE.Vector3) => void;
+  visible?: boolean;
+  opacity?: number;
+  layer?: LayerType;
+}) {
+  const geometry = useMemo(() => {
+    const geo = new THREE.PlaneGeometry(20, 20, data.width - 1, data.height - 1);
+    geo.rotateX(-Math.PI / 2);
+    return geo;
+  }, [data.width, data.height]);
+
+  useMemo(() => {
+    const positions = geometry.attributes.position;
+    const colors = new Float32Array(positions.count * 3);
+    const range = data.maxElevation - data.minElevation || 1;
+
+    for (let i = 0; i < positions.count; i++) {
+      const x = i % data.width;
+      const y = Math.floor(i / data.width);
+      if (y >= data.height || x >= data.width) continue;
+
+      const elev = data.elevation[y][x];
+      const norm = (elev - data.minElevation) / range;
+      let r = 0, g = 0, b = 0, yOff = 0;
+
+      switch (layer) {
+        case 'surface':
+          [r, g, b] = terrainColor(data, x, y, norm);
+          yOff = norm * 5;
+          break;
+        case 'soil':
+          r = 0.55; g = 0.4; b = 0.25;
+          yOff = norm * 5 - 0.3;
+          break;
+        case 'bedrock':
+          r = 0.45; g = 0.4; b = 0.4;
+          yOff = norm * 5 - 0.8;
+          break;
+        case 'moisture':
+          [r, g, b] = moistureColor(data.moisture[y]?.[x] ?? 0);
+          yOff = norm * 5 + 0.02;
+          break;
+        case 'roots': {
+          const depth = data.rootDepth?.[y]?.[x] ?? 0;
+          [r, g, b] = rootColor(depth, 100);
+          yOff = norm * 5 - (depth / 100) * 1.5;
+          break;
+        }
+        case 'groundwater': {
+          const gw = data.groundwater?.[y]?.[x] ?? 10;
+          [r, g, b] = groundwaterColor(gw);
+          yOff = norm * 5 - Math.min(3, gw / 10);
+          break;
+        }
+      }
+
+      positions.setY(i, yOff);
+      colors[i * 3] = r;
+      colors[i * 3 + 1] = g;
+      colors[i * 3 + 2] = b;
+    }
+
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    geometry.computeVertexNormals();
+  }, [data, layer, geometry]);
+
+  const handleClick = useCallback((e: any) => {
+    e.stopPropagation();
+    if (onTerrainClick && e.point) {
+      onTerrainClick(e.point, e.face?.normal || new THREE.Vector3(0, 1, 0));
+    }
+  }, [onTerrainClick]);
+
+  return (
+    <mesh
+      geometry={geometry}
+      receiveShadow
+      castShadow
+      onClick={handleClick}
+      visible={visible}
+    >
+      <meshStandardMaterial
+        vertexColors
+        roughness={0.85}
+        metalness={0.05}
+        transparent={opacity < 1}
+        opacity={opacity}
+        side={THREE.DoubleSide}
+      />
+    </mesh>
+  );
+}
+
+// ===== PLACED OPERATIONS (3D pins with labels) =====
+function PlacedOpsMarkers({
+  ops, data, selectedId, onSelect
+}: {
+  ops: Array<{id: string; type: string; x: number; y: number; label: string}>;
+  data: TerrainData;
+  selectedId: string | null;
+  onSelect: (id: string) => void;
+}) {
+  return (
+    <group>
+      {ops.map(op => {
+        // Convert world x,y to grid coords
+        const gridX = Math.max(0, Math.min(data.width - 1, Math.floor((op.x + 10) / 20 * data.width)));
+        const gridY = Math.max(0, Math.min(data.height - 1, Math.floor((op.y + 10) / 20 * data.height)));
+        const elev = data.elevation[gridY]?.[gridX] ?? data.minElevation;
+        const range = data.maxElevation - data.minElevation || 1;
+        const norm = (elev - data.minElevation) / range;
+        const yPos = norm * 5 + 0.5;
+
+        const isSelected = selectedId === op.id;
+
+        return (
+          <group key={op.id} position={[op.x, yPos, op.y]}>
+            {/* Pin stick */}
+            <mesh position={[0, -0.2, 0]}>
+              <cylinderGeometry args={[0.04, 0.04, 0.5, 8]} />
+              <meshStandardMaterial color="#8b5cf6" />
+            </mesh>
+            {/* Pin head */}
+            <mesh
+              position={[0, 0.15, 0]}
+              onClick={(e) => { e.stopPropagation(); onSelect(op.id); }}
+            >
+              <sphereGeometry args={[0.22, 16, 16]} />
+              <meshStandardMaterial
+                color={isSelected ? '#fbbf24' : '#8b5cf6'}
+                emissive={isSelected ? '#fbbf24' : '#8b5cf6'}
+                emissiveIntensity={isSelected ? 0.8 : 0.4}
+              />
+            </mesh>
+            {/* Label */}
+            <Html
+              position={[0, 0.6, 0]}
+              center
+              occlude={false}
+              zIndexRange={[100, 0]}
+              style={{ pointerEvents: 'none' }}
+            >
+              <div style={{
+                background: isSelected ? 'rgba(251, 191, 36, 0.95)' : 'rgba(139, 92, 246, 0.95)',
+                color: 'white',
+                padding: '4px 10px',
+                borderRadius: '6px',
+                fontSize: '11px',
+                whiteSpace: 'nowrap',
+                fontWeight: 700,
+                border: '1px solid rgba(255,255,255,0.3)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+                userSelect: 'none',
+              }}>
+                📍 {op.label}
+              </div>
+            </Html>
+          </group>
+        );
+      })}
+    </group>
+  );
+}
+
+// ===== POLYGON OVERLAY =====
+function PolygonOverlay({
+  polygons, data, currentDrawing
+}: {
+  polygons: Array<{id: string; points: Array<{x: number; y: number}>; name: string; color: string; area?: number}>;
+  data: TerrainData;
+  currentDrawing: Array<{x: number; y: number}>;
+}) {
+  const getPoint3D = (p: {x: number; y: number}) => {
+    const gridX = Math.max(0, Math.min(data.width - 1, Math.floor((p.x + 10) / 20 * data.width)));
+    const gridY = Math.max(0, Math.min(data.height - 1, Math.floor((p.y + 10) / 20 * data.height)));
+    const elev = data.elevation[gridY]?.[gridX] ?? data.minElevation;
+    const range = data.maxElevation - data.minElevation || 1;
+    const norm = (elev - data.minElevation) / range;
+    return new THREE.Vector3(p.x, norm * 5 + 0.15, p.y);
+  };
+
+  return (
+    <group>
+      {polygons.map(poly => {
+        if (poly.points.length < 3) return null;
+        const linePoints = poly.points.map(getPoint3D);
+        linePoints.push(linePoints[0]); // close
+
+        const centroid = {
+          x: poly.points.reduce((s, p) => s + p.x, 0) / poly.points.length,
+          y: poly.points.reduce((s, p) => s + p.y, 0) / poly.points.length,
+        };
+
+        return (
+          <group key={poly.id}>
+            <Line points={linePoints} color={poly.color} lineWidth={3} />
+            {poly.points.map((p, i) => {
+              const pos = getPoint3D(p);
+              return (
+                <mesh key={i} position={pos}>
+                  <sphereGeometry args={[0.12, 16, 16]} />
+                  <meshStandardMaterial color={poly.color} emissive={poly.color} emissiveIntensity={0.6} />
+                </mesh>
+              );
+            })}
+            <Html
+              position={[centroid.x, 5, centroid.y]}
+              center
+              occlude={false}
+              zIndexRange={[100, 0]}
+              style={{ pointerEvents: 'none' }}
+            >
+              <div style={{
+                background: `${poly.color}dd`, color: 'white',
+                padding: '4px 10px', borderRadius: '6px', fontSize: '11px',
+                whiteSpace: 'nowrap', fontWeight: 700,
+              }}>
+                📐 {poly.name} {poly.area ? `(${poly.area.toFixed(0)}m²)` : ''}
+              </div>
+            </Html>
+          </group>
+        );
+      })}
+
+      {/* Live preview of current drawing */}
+      {currentDrawing.length > 0 && (
+        <group>
+          {currentDrawing.map((p, i) => {
+            const pos = getPoint3D(p);
+            return (
+              <mesh key={i} position={pos}>
+                <sphereGeometry args={[0.16, 16, 16]} />
+                <meshStandardMaterial color="#fbbf24" emissive="#fbbf24" emissiveIntensity={0.8} />
+              </mesh>
+            );
+          })}
+          {currentDrawing.length >= 2 && (
+            <Line
+              points={currentDrawing.map(getPoint3D)}
+              color="#fbbf24"
+              lineWidth={3}
+              dashed
+              dashScale={3}
+            />
+          )}
+        </group>
+      )}
+    </group>
+  );
+}
+
+// ===== WIND ARROWS =====
+function WindArrows({ data, direction, speed }: { data: TerrainData; direction: number; speed: number }) {
+  const arrows = useMemo(() => {
+    if (speed < 5) return [];
+    const result = [];
+    const grid = 4;
+    for (let i = 0; i < grid; i++) {
+      for (let j = 0; j < grid; j++) {
+        const x = -7.5 + i * 5;
+        const z = -7.5 + j * 5;
+        const gx = Math.max(0, Math.min(data.width - 1, Math.floor((x + 10) / 20 * data.width)));
+        const gy = Math.max(0, Math.min(data.height - 1, Math.floor((z + 10) / 20 * data.height)));
+        const elev = data.elevation[gy]?.[gx] ?? data.minElevation;
+        const range = data.maxElevation - data.minElevation || 1;
+        const norm = (elev - data.minElevation) / range;
+        result.push({ x, y: norm * 5 + 0.4, z });
+      }
+    }
+    return result;
+  }, [data, speed]);
+
+  if (arrows.length === 0) return null;
+  const len = Math.min(2, speed / 25);
+  const angle = ((direction - 90) * Math.PI) / 180;
+
+  return (
+    <group>
+      {arrows.map((a, i) => (
+        <group key={i} position={[a.x, a.y, a.z]} rotation={[0, angle, 0]}>
+          <mesh position={[0, 0, len / 2]} rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.04, 0.04, len, 6]} />
+            <meshStandardMaterial color="#a855f7" emissive="#a855f7" emissiveIntensity={0.3} />
+          </mesh>
+          <mesh position={[0, 0, len]} rotation={[Math.PI / 2, 0, 0]}>
+            <coneGeometry args={[0.12, 0.3, 8]} />
+            <meshStandardMaterial color="#a855f7" emissive="#a855f7" emissiveIntensity={0.3} />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  );
+}
+
+// ===== CAMERA CONTROLLER =====
+function CameraController({ viewMode }: { viewMode: string }) {
+  const { camera } = useThree();
+  const target = useMemo(() => {
+    switch (viewMode) {
+      case '2d-top': return { pos: [0, 25, 0.1], lookAt: [0, 0, 0] };
+      case '2d-side': return { pos: [25, 4, 0], lookAt: [0, 0, 0] };
+      case 'cross-section': return { pos: [0, 5, 25], lookAt: [0, 0, 0] };
+      default: return null; // 3D - let OrbitControls handle
+    }
+  }, [viewMode]);
+
+  useEffect(() => {
+    if (target) {
+      camera.position.set(target.pos[0], target.pos[1], target.pos[2]);
+      camera.lookAt(target.lookAt[0], target.lookAt[1], target.lookAt[2]);
+    }
+  }, [target, camera]);
+
+  return null;
+}
+
+// ===== ENGINEERING OPS DATABASE =====
+const ENGINEERING_OPS = [
+  { id: 'gabion', name: 'Gabion Wall', fa: 'دیوار گابیونی', emoji: '🧱', cost: 500 },
+  { id: 'checkdam', name: 'Check Dam', fa: 'سد اصلاحی', emoji: '🚧', cost: 800 },
+  { id: 'terrace', name: 'Terrace', fa: 'تراس', emoji: '🏞️', cost: 1200 },
+  { id: 'spillway', name: 'Spillway', fa: 'سرریز', emoji: '🌊', cost: 2000 },
+  { id: 'well', name: 'Well', fa: 'چاه', emoji: '🕳️', cost: 5000 },
+  { id: 'pond', name: 'Pond', fa: 'حوضچه', emoji: '💧', cost: 3000 },
+];
+
+// ===== MAIN COMPONENT =====
+export default function HyDroMaCenter() {
+  const { i18n } = useTranslation();
+  const isFa = i18n.language === 'fa';
+
+  // Core state
+  const [terrain, setTerrain] = useState<TerrainData | null>(null);
+  const [viewMode, setViewMode] = useState<'3d' | '2d-top' | '2d-side' | 'cross-section'>('3d');
+  const [toolMode, setToolMode] = useState<'orbit' | 'draw-polygon' | 'place-op' | 'data-plot'>('orbit');
+  const [selectedOpType, setSelectedOpType] = useState<string | null>(null);
+
+  // Placed items
+  const [placedOps, setPlacedOps] = useState<Array<{id: string; type: string; x: number; y: number; label: string}>>([]);
+  const [polygons, setPolygons] = useState<Array<{id: string; points: Array<{x: number; y: number}>; name: string; color: string; area?: number}>>([]);
+  const [currentDrawing, setCurrentDrawing] = useState<Array<{x: number; y: number}>>([]);
+  const [selectedOp, setSelectedOp] = useState<string | null>(null);
+  const [plots, setPlots] = useState<DataPlot[]>([]);
+  const [growth, setGrowth] = useState(0.6);
+  const [cropVisual, setCropVisual] = useState('corn');
+  const [showDecor, setShowDecor] = useState(true);
+
+  // Layers
+  const [showSoil, setShowSoil] = useState(false);
+  const [showBedrock, setShowBedrock] = useState(false);
+  const [showMoisture, setShowMoisture] = useState(false);
+  const [showRoots, setShowRoots] = useState(false);
+  const [showGroundwater, setShowGroundwater] = useState(false);
+
+  // Climate
+  const [windSpeed, setWindSpeed] = useState(15);
+  const [windDirection, setWindDirection] = useState(180);
+
+  // Debug info
+  const [lastClickInfo, setLastClickInfo] = useState<string>('');
+
+  // ===== TERRAIN CLICK HANDLER =====
+  const handleTerrainClick = useCallback((point: THREE.Vector3) => {
+    const x = point.x;
+    const y = point.z;
+    setLastClickInfo(`Click at (${x.toFixed(2)}, ${y.toFixed(2)})`);
+
+    if (toolMode === 'data-plot') {
+      const data = samplePlotData(terrain, x, y);
+      setPlots(prev => [...prev, { id: 'p' + Date.now(), center: [x, y], size: [6, 5], data }]);
+    } else if (toolMode === 'draw-polygon') {
+      setCurrentDrawing(prev => [...prev, { x, y }]);
+    } else if (toolMode === 'place-op' && selectedOpType) {
+      const op = ENGINEERING_OPS.find(o => o.id === selectedOpType);
+      if (op) {
+        const newOp = {
+          id: `op-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          type: op.id,
+          x, y,
+          label: isFa ? op.fa : op.name,
+        };
+        setPlacedOps(prev => [...prev, newOp]);
+      }
+    }
+  }, [toolMode, selectedOpType, isFa]);
+
+  // ===== FINISH POLYGON =====
+  const handleFinishPolygon = useCallback(() => {
+    if (currentDrawing.length < 3) return;
+    // Shoelace formula
+    let area = 0;
+    const pts = currentDrawing;
+    for (let i = 0; i < pts.length; i++) {
+      const j = (i + 1) % pts.length;
+      area += pts[i].x * pts[j].y - pts[j].x * pts[i].y;
+    }
+    area = Math.abs(area) / 2;
+    // Convert world units to m² (20 units = ~1km → scale)
+    area = area * 2500;
+
+    const colors = ['#10b981', '#f59e0b', '#3b82f6', '#8b5cf6', '#ec4899', '#06b6d4'];
+    setPolygons(prev => [...prev, {
+      id: `poly-${Date.now()}`,
+      points: currentDrawing,
+      name: isFa ? `محدوده ${prev.length + 1}` : `Area ${prev.length + 1}`,
+      color: colors[prev.length % colors.length],
+      area,
+    }]);
+    setCurrentDrawing([]);
+  }, [currentDrawing, isFa]);
+
+  // ===== DELETE =====
+  const handleDeleteOp = useCallback((id: string) => {
+    setPlacedOps(prev => prev.filter(o => o.id !== id));
+  }, []);
+  const handleDeletePolygon = useCallback((id: string) => {
+    setPolygons(prev => prev.filter(p => p.id !== id));
+  }, []);
+
+  // ===== VIEW MODE BUTTONS =====
+  const viewModes: Array<{ id: typeof viewMode; label: string; fa: string }> = [
+    { id: '3d', label: '3D', fa: '۳بُعدی' },
+    { id: '2d-top', label: 'Top', fa: 'بالا' },
+    { id: '2d-side', label: 'Side', fa: 'کنار' },
+    { id: 'cross-section', label: 'Section', fa: 'برش' },
+  ];
+
+  // ===== TOOL MODE BUTTONS =====
+  const toolModes: Array<{ id: typeof toolMode; label: string; fa: string; icon: string; color: string }> = [
+    { id: 'orbit', label: 'Orbit', fa: 'چرخش', icon: '🖱️', color: '#10b981' },
+    { id: 'draw-polygon', label: 'Draw Area', fa: 'ترسیم', icon: '📐', color: '#f59e0b' },
+    { id: 'place-op', label: 'Place Op', fa: 'جانمایی', icon: '📍', color: '#8b5cf6' },
+    { id: 'data-plot', label: 'Data Plot', fa: 'پلات داده', icon: '📊', color: '#39ff5a' },
+  ];
+
+  return (
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: '340px 1fr',
+      gap: '16px',
+      padding: '16px',
+      height: 'calc(100vh - 60px)',
+      minHeight: '600px',
+      fontFamily: 'var(--font-persian, Tahoma, Arial, sans-serif)',
+    }}>
+      {/* ===== LEFT SIDEBAR ===== */}
+      <div style={{
+        display: 'flex', flexDirection: 'column', gap: '12px',
+        overflowY: 'auto', paddingRight: '4px',
+      }}>
+        {/* Terrain Builder */}
+        <TerrainBuilder onGenerate={setTerrain} />
+
+        {/* VIEW MODES */}
+        <div style={{
+          background: 'rgba(15, 23, 42, 0.9)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '12px',
+          padding: '12px',
+          border: '1px solid rgba(255,255,255,0.1)',
+        }}>
+          <div style={{
+            fontSize: '12px', color: 'rgba(255,255,255,0.6)',
+            marginBottom: '8px', fontWeight: 700, textTransform: 'uppercase',
+          }}>
+            {isFa ? 'حالت نمایش' : 'View Mode'}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+            {viewModes.map(v => (
+              <button key={v.id}
+                onClick={() => setViewMode(v.id)}
+                style={{
+                  padding: '8px 4px', borderRadius: '8px',
+                  background: viewMode === v.id ? '#3b82f6' : 'rgba(255,255,255,0.05)',
+                  color: viewMode === v.id ? 'white' : 'rgba(255,255,255,0.6)',
+                  border: viewMode === v.id ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                  cursor: 'pointer', fontSize: '11px', fontWeight: 600,
+                }}>
+                {isFa ? v.fa : v.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* TOOL MODES */}
+        <div style={{
+          background: 'rgba(15, 23, 42, 0.9)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '12px',
+          padding: '12px',
+          border: '1px solid rgba(255,255,255,0.1)',
+        }}>
+          <div style={{
+            fontSize: '12px', color: 'rgba(255,255,255,0.6)',
+            marginBottom: '8px', fontWeight: 700, textTransform: 'uppercase',
+          }}>
+            {isFa ? 'حالت ابزار' : 'Tool Mode'}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {toolModes.map(t => {
+              const active = toolMode === t.id;
+              return (
+                <button key={t.id}
+                  onClick={() => setToolMode(t.id)}
+                  style={{
+                    padding: '10px 12px', borderRadius: '8px',
+                    background: active ? t.color : 'rgba(255,255,255,0.03)',
+                    color: active ? 'white' : 'rgba(255,255,255,0.7)',
+                    border: active ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                    cursor: 'pointer', fontSize: '12px', fontWeight: 600,
+                    display: 'flex', alignItems: 'center', gap: '8px',
+                  }}>
+                  <span style={{ fontSize: '16px' }}>{t.icon}</span>
+                  <span>{isFa ? t.fa : t.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {toolMode === 'draw-polygon' && (
+            <div style={{
+              marginTop: '8px', padding: '8px',
+              background: 'rgba(245, 158, 11, 0.15)',
+              borderRadius: '6px', fontSize: '11px', color: '#fbbf24',
+            }}>
+              💡 {isFa ? 'روی زمین کلیک کنید (نقاط: ' : 'Click terrain ('}
+              {currentDrawing.length})
+              <div style={{ display: 'flex', gap: '6px', marginTop: '6px' }}>
+                <button onClick={handleFinishPolygon}
+                  disabled={currentDrawing.length < 3}
+                  style={{
+                    flex: 1, padding: '6px', borderRadius: '4px',
+                    background: currentDrawing.length >= 3 ? '#f59e0b' : 'rgba(255,255,255,0.1)',
+                    color: 'white', border: 'none', cursor: currentDrawing.length >= 3 ? 'pointer' : 'not-allowed',
+                    fontSize: '11px',
+                  }}>
+                  ✓ {isFa ? 'اتمام' : 'Finish'}
+                </button>
+                <button onClick={() => setCurrentDrawing([])}
+                  style={{
+                    flex: 1, padding: '6px', borderRadius: '4px',
+                    background: 'rgba(239, 68, 68, 0.2)', color: '#fca5a5',
+                    border: 'none', cursor: 'pointer', fontSize: '11px',
+                  }}>
+                  ✕ {isFa ? 'پاک' : 'Clear'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {toolMode === 'place-op' && (
+            <div style={{ marginTop: '8px' }}>
+              <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>
+                {isFa ? 'نوع عملیات:' : 'Operation type:'}
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4px' }}>
+                {ENGINEERING_OPS.map(op => (
+                  <button key={op.id}
+                    onClick={() => setSelectedOpType(op.id)}
+                    style={{
+                      padding: '8px 6px', borderRadius: '6px',
+                      background: selectedOpType === op.id ? '#8b5cf6' : 'rgba(255,255,255,0.03)',
+                      color: selectedOpType === op.id ? 'white' : 'rgba(255,255,255,0.7)',
+                      border: selectedOpType === op.id ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                      cursor: 'pointer', fontSize: '10px', fontWeight: 600,
+                    }}>
+                    <span style={{ fontSize: '14px' }}>{op.emoji}</span>
+                    <div>{isFa ? op.fa : op.name}</div>
+                  </button>
+                ))}
+              </div>
+              {selectedOpType && (
+                <div style={{
+                  marginTop: '6px', padding: '6px',
+                  background: 'rgba(139, 92, 246, 0.15)',
+                  borderRadius: '6px', fontSize: '11px', color: '#c4b5fd', textAlign: 'center',
+                }}>
+                  ✓ {isFa ? 'روی زمین کلیک کنید' : 'Click on terrain to place'}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* WIND CONTROLS */}
+        <div style={{
+          background: 'rgba(15, 23, 42, 0.9)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '12px',
+          padding: '12px',
+          border: '1px solid rgba(255,255,255,0.1)',
+        }}>
+          <div style={{
+            fontSize: '12px', color: 'rgba(255,255,255,0.6)',
+            marginBottom: '8px', fontWeight: 700,
+          }}>
+            💨 {isFa ? 'باد' : 'Wind'}
+          </div>
+          <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', display: 'block', marginBottom: '4px' }}>
+            {isFa ? 'سرعت' : 'Speed'}: {windSpeed} km/h
+          </label>
+          <input type="range" min={0} max={100} value={windSpeed}
+            onChange={(e) => setWindSpeed(parseInt(e.target.value))}
+            style={{ width: '100%', accentColor: '#a855f7' }} />
+          <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', display: 'block', marginTop: '8px', marginBottom: '4px' }}>
+            {isFa ? 'جهت' : 'Direction'}: {windDirection}°
+          </label>
+          <input type="range" min={0} max={360} value={windDirection}
+            onChange={(e) => setWindDirection(parseInt(e.target.value))}
+            style={{ width: '100%', accentColor: '#a855f7' }} />
+        </div>
+
+        {/* VISUAL + DATA PLOTS */}
+        <div style={{ background: 'rgba(15, 23, 42, 0.9)', backdropFilter: 'blur(10px)', borderRadius: '12px', padding: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '8px', fontWeight: 700 }}>{isFa ? 'نمایش و داده' : 'Visual & Data'}</div>
+          <label style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '12px', color: 'white', marginBottom: '6px' }}>
+            <input type='checkbox' checked={showDecor} onChange={e => setShowDecor(e.target.checked)} /> 🏡 {isFa ? 'گرافیک مزرعه' : 'Farm decor'}
+          </label>
+          <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', display: 'block', marginBottom: '4px' }}>{isFa ? 'رشد' : 'Growth'}: {Math.round(growth * 100)}%</label>
+          <input type='range' min={0} max={1} step={0.05} value={growth} onChange={e => setGrowth(parseFloat(e.target.value))} style={{ width: '100%', accentColor: '#2f9e44', marginBottom: '8px' }} />
+          <select value={cropVisual} onChange={e => setCropVisual(e.target.value)} style={{ width: '100%', padding: '6px', borderRadius: 6, background: '#1e293b', color: 'white', border: '1px solid rgba(255,255,255,0.2)', marginBottom: '8px' }}>
+            <option value='corn'>🌽 {isFa ? 'ذرت' : 'Corn'}</option>
+            <option value='wheat'>🌾 {isFa ? 'گندم' : 'Wheat'}</option>
+            <option value='alfalfa'>🌿 {isFa ? 'یونجه' : 'Alfalfa'}</option>
+          </select>
+          <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', marginBottom: '6px' }}>{isFa ? `پلات‌های داده: ${plots.length}` : `Data plots: ${plots.length}`}</div>
+          {plots.slice(-4).reverse().map(p => (
+            <div key={p.id} style={{ background: 'rgba(57,255,90,0.08)', border: '1px solid rgba(57,255,90,0.3)', borderRadius: 8, padding: '6px 8px', marginBottom: 6, fontSize: 10, color: 'white' }}>
+              💧 {Math.round(p.data.moisture * 100)}% • 🌿 {p.data.ndvi.toFixed(2)} • 📐 {Math.round(p.data.elevation)}m
+            </div>
+          ))}
+          <button onClick={() => setPlots([])} style={{ width: '100%', padding: '6px', borderRadius: 6, border: 'none', background: 'rgba(239,68,68,0.2)', color: '#fca5a5', fontSize: 11, cursor: 'pointer' }}>🗑️ {isFa ? 'پاک کردن پلات‌ها' : 'Clear plots'}</button>
+        </div>
+                {/* SCIENTIFIC MODELS */}
+        <div style={{
+          background: 'rgba(6, 182, 212, 0.1)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '12px',
+          padding: '12px',
+          border: '1px solid rgba(6, 182, 212, 0.3)',
+          marginBottom: '12px',
+        }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '8px',
+            marginBottom: '8px',
+          }}>
+            <FlaskConical size={16} color="#06b6d4" />
+            <span style={{
+              fontSize: '12px', color: '#06b6d4',
+              fontWeight: 700, textTransform: 'uppercase',
+            }}>
+              {isFa ? 'مدل‌های علمی واقعی' : 'Real Scientific Models'}
+            </span>
+          </div>
+          <div style={{
+            fontSize: '10px', color: 'rgba(255,255,255,0.6)',
+            marginBottom: '10px', lineHeight: '1.5',
+          }}>
+            {isFa
+              ? 'RUSLE • RothC • AquaCrop • Pywr • HEC-RAS • SWAT+ • NSGA-II'
+              : 'Erosion • Carbon • Crop • Water • Flood • Watershed • Optimization'}
+          </div>
+          <ScientificHub />
+        </div>
+
+{/* LAYERS */}
+        <div style={{
+          background: 'rgba(15, 23, 42, 0.9)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '12px',
+          padding: '12px',
+          border: '1px solid rgba(255,255,255,0.1)',
+        }}>
+          <div style={{
+            fontSize: '12px', color: 'rgba(255,255,255,0.6)',
+            marginBottom: '8px', fontWeight: 700, textTransform: 'uppercase',
+          }}>
+            {isFa ? 'لایه‌ها' : 'Layers'}
+          </div>
+          {[
+            { key: 'soil', label: 'Soil', fa: 'خاک', color: '#f59e0b', setter: setShowSoil, value: showSoil },
+            { key: 'bedrock', label: 'Bedrock', fa: 'بستر', color: '#6b7280', setter: setShowBedrock, value: showBedrock },
+            { key: 'moisture', label: 'Moisture', fa: 'رطوبت', color: '#3b82f6', setter: setShowMoisture, value: showMoisture },
+            { key: 'roots', label: 'Roots', fa: 'ریشه', color: '#8b5cf6', setter: setShowRoots, value: showRoots },
+            { key: 'groundwater', label: 'Groundwater', fa: 'آب زیرزمینی', color: '#0ea5e9', setter: setShowGroundwater, value: showGroundwater },
+          ].map(l => (
+            <label key={l.key} style={{
+              display: 'flex', alignItems: 'center', gap: '8px',
+              padding: '6px 8px', borderRadius: '6px', cursor: 'pointer',
+              background: l.value ? `${l.color}20` : 'transparent',
+              marginBottom: '4px', fontSize: '12px',
+            }}>
+              <input type="checkbox" checked={l.value}
+                onChange={(e) => l.setter(e.target.checked)}
+                style={{ accentColor: l.color }} />
+              <span style={{
+                width: '10px', height: '10px', borderRadius: '50%',
+                background: l.color,
+              }} />
+              <span style={{ color: 'white', fontWeight: l.value ? 700 : 500 }}>
+                {isFa ? l.fa : l.label}
+              </span>
+            </label>
+          ))}
+        </div>
+
+        {/* PLACED OPS LIST */}
+        {placedOps.length > 0 && (
+          <div style={{
+            background: 'rgba(15, 23, 42, 0.9)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '12px',
+            padding: '12px',
+            border: '1px solid rgba(255,255,255,0.1)',
+          }}>
+            <div style={{
+              fontSize: '12px', color: '#c4b5fd',
+              marginBottom: '8px', fontWeight: 700,
+            }}>
+              📍 {isFa ? `جانمایی (${placedOps.length})` : `Placed (${placedOps.length})`}
+            </div>
+            {placedOps.map(op => (
+              <div key={op.id} style={{
+                display: 'flex', alignItems: 'center', gap: '8px',
+                padding: '6px 8px', background: 'rgba(139, 92, 246, 0.1)',
+                borderRadius: '6px', marginBottom: '4px', fontSize: '11px',
+                border: '1px solid rgba(139, 92, 246, 0.2)',
+              }}>
+                <span>{ENGINEERING_OPS.find(o => o.id === op.type)?.emoji}</span>
+                <span style={{ flex: 1, color: 'white' }}>{op.label}</span>
+                <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '9px', fontFamily: 'monospace' }}>
+                  [{op.x.toFixed(1)},{op.y.toFixed(1)}]
+                </span>
+                <button onClick={() => handleDeleteOp(op.id)}
+                  style={{
+                    padding: '4px 6px', borderRadius: '4px',
+                    background: 'rgba(239, 68, 68, 0.3)', color: '#fca5a5',
+                    border: 'none', cursor: 'pointer',
+                  }}>
+                  <Trash2 size={11} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* POLYGONS LIST */}
+        {polygons.length > 0 && (
+          <div style={{
+            background: 'rgba(15, 23, 42, 0.9)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '12px',
+            padding: '12px',
+            border: '1px solid rgba(255,255,255,0.1)',
+          }}>
+            <div style={{
+              fontSize: '12px', color: '#86efac',
+              marginBottom: '8px', fontWeight: 700,
+            }}>
+              📐 {isFa ? `محدوده‌ها (${polygons.length})` : `Polygons (${polygons.length})`}
+            </div>
+            {polygons.map(poly => (
+              <div key={poly.id} style={{
+                display: 'flex', alignItems: 'center', gap: '8px',
+                padding: '6px 8px', background: `${poly.color}15`,
+                borderRadius: '6px', marginBottom: '4px', fontSize: '11px',
+                border: `1px solid ${poly.color}40`,
+              }}>
+                <Square size={12} style={{ color: poly.color }} />
+                <span style={{ flex: 1, color: 'white' }}>{poly.name}</span>
+                <span style={{ color: 'rgba(255,255,255,0.5)' }}>
+                  {poly.points.length} pts • {poly.area?.toFixed(0) || 0}m²
+                </span>
+                <button onClick={() => handleDeletePolygon(poly.id)}
+                  style={{
+                    padding: '4px 6px', borderRadius: '4px',
+                    background: 'rgba(239, 68, 68, 0.3)', color: '#fca5a5',
+                    border: 'none', cursor: 'pointer',
+                  }}>
+                  <Trash2 size={11} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ===== RIGHT: 3D VIEWPORT ===== */}
+      <div style={{
+        position: 'relative',
+        background: '#0f172a',
+        borderRadius: '16px',
+        overflow: 'hidden',
+        border: '1px solid rgba(255,255,255,0.1)',
+        minHeight: '600px',
+        display: 'flex',
+        flexDirection: 'column',
+      }}>
+        {/* Top Info Bar */}
+        <div style={{
+          padding: '10px 16px',
+          background: 'rgba(0,0,0,0.5)',
+          backdropFilter: 'blur(10px)',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          fontSize: '12px', color: 'rgba(255,255,255,0.8)',
+        }}>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <span style={{
+              width: '8px', height: '8px', borderRadius: '50%',
+              background: '#10b981', boxShadow: '0 0 8px #10b981',
+            }} />
+            <strong>{isFa ? 'وضعیت' : 'Status'}:</strong>
+            <span>
+              {toolMode === 'orbit' ? (isFa ? '🖱️ چرخش آزاد' : '🖱️ Free orbit') :
+               toolMode === 'draw-polygon' ? (isFa ? '📐 حالت ترسیم' : '📐 Draw mode') :
+               (isFa ? '📍 حالت جانمایی' : '📍 Place mode')}
+            </span>
+            {lastClickInfo && (
+              <span style={{ color: '#fbbf24', fontSize: '10px' }}>
+                {lastClickInfo}
+              </span>
+            )}
+          </div>
+          <div style={{ display: 'flex', gap: '12px', fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>
+            <span>🖱️ {isFa ? 'چپ+درگ: چرخش' : 'Left+Drag: Rotate'}</span>
+            <span>🔍 {isFa ? 'اسکرول: زوم' : 'Scroll: Zoom'}</span>
+            <span>✋ {isFa ? 'راست+درگ: حرکت' : 'Right+Drag: Pan'}</span>
+          </div>
+        </div>
+
+        {/* Canvas Container */}
+        <div style={{ flex: 1, position: 'relative', minHeight: '500px' }}>
+          {terrain ? (
+            <Canvas
+              shadows
+              camera={{ position: [15, 12, 15], fov: 50 }}
+              style={{ background: 'linear-gradient(180deg, #1e293b 0%, #0f172a 100%)' }}
+            >
+              <Suspense fallback={null}>
+                {/* Lighting */}
+                <ambientLight intensity={0.5} />
+                <directionalLight
+                  position={[15, 25, 15]}
+                  intensity={1.2}
+                  castShadow
+                  shadow-mapSize={[2048, 2048]}
+                />
+                <fog attach="fog" args={['#dfe8d8', 60, 140]} />
+                <Sky distance={450000} sunPosition={[100, 30, 100]} />
+
+                {/* Grid */}
+                <Grid
+                  position={[0, -0.5, 0]}
+                  args={[30, 30]}
+                  cellSize={1}
+                  cellColor="#4b5563"
+                  sectionColor="#374151"
+                  fadeDistance={50}
+                />
+
+                {/* Main terrain (clickable) */}
+                <TerrainMesh
+                  data={terrain}
+                  onTerrainClick={handleTerrainClick}
+                  layer="surface"
+                />
+
+                {/* Additional layers */}
+                {showSoil && <TerrainMesh data={terrain} layer="soil" opacity={0.7} />}
+                {showBedrock && <TerrainMesh data={terrain} layer="bedrock" opacity={0.6} />}
+                {showMoisture && <TerrainMesh data={terrain} layer="moisture" opacity={0.5} />}
+                {showRoots && <TerrainMesh data={terrain} layer="roots" opacity={0.6} />}
+                {showGroundwater && <TerrainMesh data={terrain} layer="groundwater" opacity={0.5} />}
+
+                {/* Beautiful decor (from /sim) */}
+                {showDecor && (<>
+                  <Forest terrain={terrain} />
+                  <Crops terrain={terrain} center={[-6, 2]} size={[10, 8]} growth={growth} color={cropVisual === 'corn' ? '#3f9b3f' : cropVisual === 'wheat' ? '#c9a227' : '#4f8f3f'} />
+                  <Barn terrain={terrain} position={[4, 0, -12]} rotation={0.3} scale={1.2} />
+                  <Silo terrain={terrain} position={[7, 0, -12]} />
+                </>)}
+                {/* Data plots on land */}
+                {plots.map(p => <DataPlotView key={p.id} plot={p} />)}
+                {/* Wind arrows */}
+                <WindArrows data={terrain} direction={windDirection} speed={windSpeed} />
+
+                {/* Placed operations */}
+                <PlacedOpsMarkers
+                  ops={placedOps}
+                  data={terrain}
+                  selectedId={selectedOp}
+                  onSelect={setSelectedOp}
+                />
+
+                {/* Polygons */}
+                <PolygonOverlay
+                  polygons={polygons}
+                  data={terrain}
+                  currentDrawing={currentDrawing}
+                />
+
+                {/* Camera controller */}
+                <CameraController viewMode={viewMode} />
+
+                {/* ORBIT CONTROLS - CRITICAL */}
+                <OrbitControls
+                  makeDefault
+                  enableDamping
+                  dampingFactor={0.08}
+                  enableRotate={viewMode === '3d'}
+                  enableZoom={true}
+                  enablePan={true}
+                  minDistance={3}
+                  maxDistance={60}
+                  maxPolarAngle={Math.PI / 2 - 0.05}
+                  zoomSpeed={1.2}
+                  rotateSpeed={0.8}
+                  panSpeed={0.8}
+                  mouseButtons={{
+                    LEFT: THREE.MOUSE.ROTATE,
+                    MIDDLE: THREE.MOUSE.DOLLY,
+                    RIGHT: THREE.MOUSE.PAN,
+                  }}
+                  touches={{
+                    ONE: THREE.TOUCH.ROTATE,
+                    TWO: THREE.TOUCH.DOLLY_PAN,
+                  }}
+                />
+              </Suspense>
+            </Canvas>
+          ) : (
+            <div style={{
+              position: 'absolute', inset: 0,
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center',
+              color: 'rgba(255,255,255,0.5)', gap: '16px',
+            }}>
+              <Mountain size={80} style={{ opacity: 0.3 }} />
+              <div style={{ fontSize: '18px', fontWeight: 700 }}>
+                {isFa ? 'زمین سه‌بعدی آماده نیست' : 'No 3D Terrain Yet'}
+              </div>
+              <div style={{ fontSize: '13px', maxWidth: '400px', textAlign: 'center' }}>
+                {isFa
+                  ? 'از پنل سمت چپ پارامترها را انتخاب و Generate کنید. سپس می‌توانید با موس زمین را بچرخانید، زوم کنید و روی آن کلیک کنید.'
+                  : 'Select parameters and Generate from the left panel. Then you can rotate, zoom, and click on the terrain.'}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -932,7 +932,10 @@ def list_bots(
     except ImportError:
         return []
 
-    settings_map = {s.key: s.value for s in db.query(models.Setting).all()}
+    try:
+        settings_map = {s.key: s.value for s in db.query(models.Setting).all()}
+    except Exception:
+        settings_map = {}
     out: list[BotOut] = []
 
     for spec in PLATFORM_SPECS.values():
@@ -1283,4 +1286,58 @@ def admin_security(
     return {
         "events": [AuditOut.from_orm_instance(a).model_dump() for a in rows]
     }
+
+
+
+# ============================================================================
+# Admin AI assistant (local Ollama) â€” admin copilot
+# ============================================================================
+
+class AdminAIChatRequest(BaseModel):
+    question: str
+    page: str | None = None
+
+
+@router.get("/ai/status", response_model=dict)
+async def admin_ai_status_endpoint(
+    request: Request,
+    admin: models.User = Depends(get_current_user),
+    _: None = Depends(require_admin),
+) -> dict:
+    """Ollama reachability + configured model availability (panel banner)."""
+    from services.ai.admin_assistant import admin_ai_status
+
+    return await admin_ai_status()
+
+
+@router.post("/ai/chat", response_model=dict)
+async def admin_ai_chat(
+    payload: AdminAIChatRequest,
+    request: Request,
+    admin: models.User = Depends(get_current_user),
+    _: None = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict:
+    """Context-aware Persian admin assistant backed by the local Ollama model.
+
+    Read-only DB context; the answer is advisory only. Every call is audited.
+    """
+    question = (payload.question or "").strip()
+    if not question:
+        raise HTTPException(status_code=422, detail="question is required")
+    if len(question) > 2000:
+        raise HTTPException(status_code=422, detail="question too long (max 2000 chars)")
+    from services.ai.admin_assistant import ask_admin_assistant
+
+    result = await ask_admin_assistant(db, question, payload.page)
+    _write_audit_log(
+        db,
+        action="ai.admin_chat",
+        actor=admin,
+        target=f"page:{payload.page or 'unknown'}",
+        result="ok",
+        ip_address=_extract_client_ip(request),
+        extra={"question": question[:200], "provider": result.get("provider")},
+    )
+    return result
 

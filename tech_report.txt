@@ -1,0 +1,93 @@
+==============================================================
+🔍 بررسی پروژه: D:\eco_nojin
+==============================================================
+
+🧩 فناوری‌های شناسایی‌شده:
+   • FastAPI
+   • Google Fonts
+   • Node.js
+   • Python
+   • React
+   • TypeScript
+
+📂 فایل‌های فرانت‌اند:
+
+   ── CSS (12 فایل) ──
+      frontend/src/App.css
+      frontend/src/components/simulators/MotorSimulator.css
+      frontend/src/components/simulators/scientific.css
+      frontend/src/index.css
+      frontend/src/pages/admin/AdminPanel.css
+      frontend/src/pages/admin/AdminPanelAdvanced.css
+      frontend/src/pages/admin/AdminResponsive.css
+      frontend/src/pages/admin/AdminTheme.css
+      frontend/src/pages/admin/live/LiveComponents.css
+      frontend/src/styles/global.css
+      frontend/src/styles/hydroma.css
+      htmlcov/style_cb_0853b3de.css
+
+   ── HTML (158 فایل) ──
+      frontend/index.html
+      frontend/public/admin-login.html
+      htmlcov/class_index.html
+      htmlcov/function_index.html
+      htmlcov/index.html
+      htmlcov/z_1033b0ecca273094_ivr_engine_py.html
+      htmlcov/z_1033b0ecca273094_stt_provider_py.html
+      htmlcov/z_1033b0ecca273094_tts_provider_py.html
+      htmlcov/z_1033b0ecca273094_voice_assistant_py.html
+      htmlcov/z_1541ab9a5b2b9dff_main_py.html
+      htmlcov/z_1541ab9a5b2b9dff_models_py.html
+      htmlcov/z_1541ab9a5b2b9dff_service_py.html
+      htmlcov/z_165fcb5f55db4fa5_agrovoc_py.html
+      htmlcov/z_165fcb5f55db4fa5_citations_py.html
+      htmlcov/z_165fcb5f55db4fa5_datasets_py.html
+      ... و 143 فایل دیگر
+
+   ── JavaScript (6 فایل) ──
+      contracts/hardhat.config.js
+      contracts/scripts/deploy.js
+      docs/architecture/local_first/04_SERVICE_WORKER.js
+      docs/architecture/local_first/05_INDEXEDDB_CLIENT.js
+      frontend/eslint.config.js
+      htmlcov/coverage_html_cb_188fc9a4.js
+
+   ── React (TSX) (167 فایل) ──
+      frontend/src/App.tsx
+      frontend/src/components/3d/animals/AnimalAnimation.tsx
+      frontend/src/components/3d/crops/CropVisualization.tsx
+      frontend/src/components/3d/terrain/Terrain3D.tsx
+      frontend/src/components/auth/ProtectedRoute.tsx
+      frontend/src/components/backgrounds/LivingBackground.tsx
+      frontend/src/components/branding/AnimatedLogo.tsx
+      frontend/src/components/common/EmptyState.tsx
+      frontend/src/components/common/ErrorBoundary.tsx
+      frontend/src/components/common/LoadingSpinner.tsx
+      frontend/src/components/dashboard/MiniChart.tsx
+      frontend/src/components/dashboard/RecentActivity.tsx
+      frontend/src/components/dashboard/StatCard.tsx
+      frontend/src/components/farmsim/SceneExtras.tsx
+      frontend/src/components/hydroma/AccountingCard.tsx
+      ... و 152 فایل دیگر
+
+   ── TypeScript (29 فایل) ──
+      frontend/src/components/3d/index.ts
+      frontend/src/components/payment/index.ts
+      frontend/src/components/simulators/index.ts
+      frontend/src/components/ui/index.ts
+      frontend/src/components/visualizers/index.ts
+      frontend/src/components/vll/index.ts
+      frontend/src/config.ts
+      frontend/src/config/crypto.ts
+      frontend/src/hooks/useClickDetection.ts
+      frontend/src/hooks/useThemeMode.ts
+      frontend/src/i18n/config.ts
+      frontend/src/lib/RealDEM.ts
+      frontend/src/lib/interventions.ts
+      frontend/src/lib/terrainGenerator.ts
+      frontend/src/pages/admin/index.ts
+      ... و 14 فایل دیگر
+
+==============================================================
+📊 جمع کل فایل‌های فرانت‌اند: 372
+==============================================================

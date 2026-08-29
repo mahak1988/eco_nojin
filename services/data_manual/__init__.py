@@ -1,0 +1,21 @@
+from services.data_manual import loader as manual  # noqa: F401
+from services.data_manual.loader import (  # noqa: F401
+    climate_monthly,
+    climate_normals,
+    climate_projections,
+    crop_calendar,
+    crop_water_params,
+    data_dictionary,
+    disasters,
+    food_security,
+    iran_provincial,
+    production_faostat,
+    site,
+    sites,
+    soil_regions,
+    species_map,
+    status,
+    water_resources,
+    weather_annual,
+    weather_daily,
+)

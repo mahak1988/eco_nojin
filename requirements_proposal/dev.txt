@@ -1,0 +1,28 @@
+# ابزارهای توسعه (فقط لوکال/CI — در پروداکشن نصب نشود)
+# استخراج‌شده از requirements.txt — بازبینی کنید
+
+autoflake==2.4.0
+bandit==1.8.0
+black==26.5.1
+coverage==7.15.4
+eradicate==3.0.1
+Faker==40.37.0
+hypothesis==6.122.0
+isort==5.13.2
+mypy==1.13.0
+mypy_extensions==1.1.0
+nodeenv==1.10.0
+pip_audit==2.7.3
+pre_commit==4.0.1
+pycln==2.6.0
+pydocstyle==6.3.0
+pyflakes==3.4.0
+pylint==4.0.7
+pytest==9.1.1
+pytest-asyncio==1.4.0
+pytest-cov==6.0.0
+pyupgrade==3.19.0
+ruff==0.11.2
+types-requests==2.33.0.20260712
+virtualenv==21.7.5
+vulture==2.11

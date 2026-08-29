@@ -1,0 +1,18 @@
+# یادگیری ماشین / NLP
+# استخراج‌شده از requirements.txt — بازبینی کنید
+
+autograd==1.9.1
+hf-xet==1.6.0
+huggingface_hub==1.28.0
+keybert==0.9.0
+langdetect==1.0.9
+safetensors==0.8.0
+scikit-image==0.26.0
+scikit-learn==1.9.0
+scikit-surprise==1.1.5
+segtok==1.5.11
+sentence-transformers==6.0.0
+tokenizers==0.23.1
+torch==2.13.0
+transformers==5.16.1
+yake==0.7.3

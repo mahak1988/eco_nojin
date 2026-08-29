@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import './AdminTheme.css';
 
 const API_BASE = 'http://localhost:8000/api/v1';
 
@@ -6,15 +7,17 @@ export default function AdminSecurity() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<'all' | 'ok' | 'failed'>('all');
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const token = localStorage.getItem('access_token');
-        const res = await fetch(${API_BASE}/admin/security, {
-          headers: { Authorization: Bearer  },
+        const url = API_BASE + '/admin/security';
+        const res = await fetch(url, {
+          headers: { Authorization: 'Bearer ' + token },
         });
-        if (!res.ok) throw new Error(HTTP );
+        if (!res.ok) throw new Error('HTTP ' + res.status);
         const json = await res.json();
         setEvents(json.events || []);
       } catch (e: any) {
@@ -26,67 +29,126 @@ export default function AdminSecurity() {
     fetchEvents();
   }, []);
 
-  if (loading) return <div style={{ padding: '40px' }}>Loading...</div>;
-  if (error) return <div style={{ padding: '40px', color: '#dc2626' }}>Error: {error}</div>;
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner" />
+        <div style={{ color: 'var(--text-muted)' }}>Loading security events...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="glass-card" style={{ padding: '40px', textAlign: 'center' }}>
+        <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
+        <h3 style={{ color: 'var(--accent-danger)', margin: '0 0 8px 0' }}>Unable to load security events</h3>
+        <p style={{ color: 'var(--text-muted)', margin: 0 }}>{error}</p>
+      </div>
+    );
+  }
 
   const okEvents = events.filter(e => e.detail && e.detail.startsWith('ok'));
   const failedEvents = events.filter(e => e.detail && e.detail.startsWith('failed'));
 
+  const filteredEvents = filter === 'all' ? events :
+    filter === 'ok' ? okEvents : failedEvents;
+
+  const successRate = events.length > 0 ? ((okEvents.length / events.length) * 100).toFixed(1) : '0';
+
   return (
     <div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px', marginBottom: '32px' }}>
-        <div style={{ background: 'white', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-          <p style={{ color: '#6b7280', margin: 0 }}>Total Events</p>
-          <p style={{ fontSize: '32px', fontWeight: 700, margin: '8px 0 0 0' }}>{events.length}</p>
-        </div>
-        <div style={{ background: '#ecfdf5', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-          <p style={{ color: '#047857', margin: 0 }}>Successful Logins</p>
-          <p style={{ fontSize: '32px', fontWeight: 700, margin: '8px 0 0 0', color: '#047857' }}>{okEvents.length}</p>
-        </div>
-        <div style={{ background: '#fef2f2', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-          <p style={{ color: '#dc2626', margin: 0 }}>Failed Attempts</p>
-          <p style={{ fontSize: '32px', fontWeight: 700, margin: '8px 0 0 0', color: '#dc2626' }}>{failedEvents.length}</p>
+      {/* Security Summary */}
+      <div className="info-banner">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h2 style={{ margin: '0 0 8px 0', fontSize: '28px', fontWeight: 800 }}>
+              Security Dashboard
+            </h2>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '14px' }}>
+              Monitor authentication events and security incidents
+            </p>
+          </div>
+          <div style={{
+            padding: '12px 24px',
+            background: 'rgba(16, 185, 129, 0.1)',
+            borderRadius: '16px',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            textAlign: 'center',
+          }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', letterSpacing: '1px' }}>SUCCESS RATE</div>
+            <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--accent-primary)' }}>{successRate}%</div>
+          </div>
         </div>
       </div>
 
-      <div style={{ background: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-        <div style={{ padding: '20px 24px', borderBottom: '1px solid #e5e7eb' }}>
-          <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>Authentication Events</h3>
+      {/* Stats */}
+      <div className="card-grid">
+        <div className="stat-card">
+          <div className="stat-label">Total Events</div>
+          <div className="stat-value">{events.length}</div>
         </div>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead style={{ background: '#f9fafb' }}>
+        <div className="stat-card">
+          <div className="stat-label">Successful</div>
+          <div className="stat-value" style={{ color: 'var(--accent-primary)' }}>{okEvents.length}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Failed Attempts</div>
+          <div className="stat-value" style={{ color: 'var(--accent-danger)' }}>{failedEvents.length}</div>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="filter-bar">
+        <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginRight: '8px' }}>Filter:</div>
+        {(['all', 'ok', 'failed'] as const).map((f) => (
+          <button
+            key={f}
+            className={'filter-chip' + (filter === f ? ' active' : '')}
+            onClick={() => setFilter(f)}
+          >
+            {f === 'all' ? 'All' : f === 'ok' ? 'Success' : 'Failed'} ({f === 'all' ? events.length : f === 'ok' ? okEvents.length : failedEvents.length})
+          </button>
+        ))}
+      </div>
+
+      {/* Events Table */}
+      <div className="glass-card">
+        <div className="section-header" style={{ padding: '24px 24px 0 24px' }}>
+          <div className="section-title">Authentication Events</div>
+        </div>
+        <table className="admin-table">
+          <thead>
             <tr>
-              <th style={{ padding: '12px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Status</th>
-              <th style={{ padding: '12px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Details</th>
-              <th style={{ padding: '12px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>IP</th>
-              <th style={{ padding: '12px 24px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Time</th>
+              <th>Status</th>
+              <th>Details</th>
+              <th>IP Address</th>
+              <th>Timestamp</th>
             </tr>
           </thead>
           <tbody>
-            {events.length === 0 ? (
+            {filteredEvents.length === 0 ? (
               <tr>
-                <td colSpan={4} style={{ padding: '32px', textAlign: 'center', color: '#6b7280' }}>
-                  No authentication events found
+                <td colSpan={4} style={{ textAlign: 'center', padding: '60px 20px' }}>
+                  <div style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.3 }}>🔒</div>
+                  <div style={{ color: 'var(--text-muted)' }}>No authentication events found</div>
                 </td>
               </tr>
             ) : (
-              events.map((event, i) => (
-                <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                  <td style={{ padding: '16px 24px' }}>
-                    <span style={{
-                      padding: '4px 8px',
-                      fontSize: '12px',
-                      borderRadius: '4px',
-                      background: event.detail && event.detail.startsWith('ok') ? '#d1fae5' : '#fee2e2',
-                      color: event.detail && event.detail.startsWith('ok') ? '#047857' : '#dc2626',
-                      fontWeight: 500,
-                    }}>
-                      {event.detail && event.detail.startsWith('ok') ? 'OK Success' : 'X Failed'}
+              filteredEvents.map((event, i) => (
+                <tr key={i}>
+                  <td>
+                    <span className={'status-badge ' + (event.detail && event.detail.startsWith('ok') ? 'success' : 'danger')}>
+                      {event.detail && event.detail.startsWith('ok') ? '✓ Success' : '✗ Failed'}
                     </span>
                   </td>
-                  <td style={{ padding: '16px 24px', fontSize: '14px' }}>{event.detail || '-'}</td>
-                  <td style={{ padding: '16px 24px', fontSize: '14px', color: '#6b7280' }}>{event.ip_address || '-'}</td>
-                  <td style={{ padding: '16px 24px', fontSize: '14px', color: '#9ca3af' }}>
+                  <td style={{ fontWeight: 500, color: 'var(--text-primary)' }}>
+                    {event.detail || '-'}
+                  </td>
+                  <td style={{ fontFamily: 'monospace', fontSize: '13px', color: 'var(--text-muted)' }}>
+                    {event.ip_address || 'N/A'}
+                  </td>
+                  <td style={{ color: 'var(--text-faint)', fontSize: '13px' }}>
                     {event.created_at ? new Date(event.created_at).toLocaleString() : '-'}
                   </td>
                 </tr>

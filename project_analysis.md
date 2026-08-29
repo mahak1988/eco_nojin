@@ -1,13 +1,13 @@
 # 📊 Project Analysis Report: eco_nojin
-**Analysis Date:** 2026-08-27T21:21:56.226206
+**Analysis Date:** 2026-08-29T04:35:50.659387
 **Project Path:** `D:\eco_nojin`
 
 ## 📈 Summary
-- **Total Files:** 2,503
-- **Total Directories:** 762
-- **Total Size:** 501.97 MB
-- **Python Files:** 846
-- **TypeScript Files:** 749
+- **Total Files:** 1,726
+- **Total Directories:** 394
+- **Total Size:** 497.61 MB
+- **Python Files:** 675
+- **TypeScript Files:** 201
 
 ## ✅ Key Features Detected
 - ✅ pyproject.toml
@@ -19,8 +19,8 @@
 ## 🐍 Python Modules
 | Module | Files | Size | Has Tests |
 |--------|-------|------|-----------|
-| services | 363 | 1.56 MB | ✅ |
-| engine | 222 | 1.08 MB | ✅ |
+| services | 363 | 1.55 MB | ✅ |
+| engine | 186 | 1.06 MB | ✅ |
 | tests | 75 | 0.27 MB | ✅ |
 | database | 8 | 0.02 MB | ✅ |
 | interfaces | 3 | 0.00 MB | ❌ |
@@ -28,17 +28,20 @@
 ## ⚛️ Frontend Modules
 | Module | Files | Size |
 |--------|-------|------|
-| components | 94 | 0.45 MB |
-| pages | 35 | 0.15 MB |
+| pages | 71 | 0.53 MB |
+| components | 105 | 0.53 MB |
+| lib | 3 | 0.04 MB |
+| styles | 3 | 0.03 MB |
 | assets | 3 | 0.02 MB |
-| lib | 1 | 0.02 MB |
-| styles | 2 | 0.02 MB |
+| services | 6 | 0.02 MB |
+| i18n | 4 | 0.01 MB |
 | types | 1 | 0.01 MB |
 | config | 1 | 0.01 MB |
+| contexts | 1 | 0.01 MB |
+| data | 1 | 0.01 MB |
 | store | 2 | 0.00 MB |
-| services | 3 | 0.00 MB |
+| hooks | 2 | 0.00 MB |
 | context | 1 | 0.00 MB |
-| hooks | 1 | 0.00 MB |
 | locales | 2 | 0.00 MB |
 
 ## 📦 Python Dependencies

@@ -3,6 +3,7 @@ import {
   Activity, Mountain, Leaf, Sprout, Waves, CloudRain as FloodIcon, Cpu, Database, Play, RefreshCw, Globe2,
 } from 'lucide-react';
 import { Card } from '../ui';
+import './scientific.css';
 import { fetchScientificChain } from '../../services/scientificChainApi';
 import type { ScientificChainResult } from '../../types/vll';
 
@@ -40,7 +41,7 @@ const statusBadge = (status?: string) => {
 const num = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) ? v : null);
 
 const Field: React.FC<{ label: string; value: React.ReactNode }> = ({ label, value }) => (
-  <div style={{ padding: '0.45rem 0.6rem', borderRadius: 8, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+  <div className="sci-field">
     <div style={{ fontSize: '0.68rem', color: 'var(--color-text-secondary)' }}>{label}</div>
     <div style={{ fontSize: '0.85rem', fontWeight: 600 }}>{value}</div>
   </div>
@@ -135,21 +136,21 @@ export const ScientificHub: React.FC = () => {
         icon: <Activity size={15} />,
         content: (
           <div>
-            <div className="grid grid-cols-4" style={{ marginBottom: '1.5rem' }}>
+            <div className="sci-grid">
               <Card title="فرسایش (RUSLE)" icon={<Mountain size={18} />}>
-                <div style={{ fontSize: '1.6rem', fontWeight: 800 }}>{erosion?.soil_loss_ton_ha_yr?.toFixed(2) ?? '—'} <small style={{ fontSize: '0.8rem', fontWeight: 400 }}>t/ha/yr</small></div>
+                <div className="sci-bignum">{erosion?.soil_loss_ton_ha_yr?.toFixed(2) ?? '—'} <small style={{ fontSize: '0.8rem', fontWeight: 400 }}>t/ha/yr</small></div>
                 <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.8rem' }}>ریسک: {erosion?.risk ?? '—'}</div>
               </Card>
               <Card title="کربن خاک (RothC)" icon={<Leaf size={18} />}>
-                <div style={{ fontSize: '1.6rem', fontWeight: 800 }}>{num(rothc?.summary?.soc_final_t_ha)?.toFixed(1) ?? '—'} <small style={{ fontSize: '0.8rem', fontWeight: 400 }}>t/ha</small></div>
+                <div className="sci-bignum">{num(rothc?.summary?.soc_final_t_ha)?.toFixed(1) ?? '—'} <small style={{ fontSize: '0.8rem', fontWeight: 400 }}>t/ha</small></div>
                 <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.8rem' }}>تغییر: {num(rothc?.summary?.soc_change_t_ha_yr)?.toFixed(3) ?? '—'} t/ha/yr</div>
               </Card>
               <Card title="عملکرد گندم (AquaCrop)" icon={<Sprout size={18} />}>
-                <div style={{ fontSize: '1.6rem', fontWeight: 800 }}>{num(aquacrop?.summary?.yield_ton_ha)?.toFixed(2) ?? '—'} <small style={{ fontSize: '0.8rem', fontWeight: 400 }}>t/ha</small></div>
+                <div className="sci-bignum">{num(aquacrop?.summary?.yield_ton_ha)?.toFixed(2) ?? '—'} <small style={{ fontSize: '0.8rem', fontWeight: 400 }}>t/ha</small></div>
                 <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.8rem' }}>آبیاری: {num(aquacrop?.summary?.irrigation_mm)?.toFixed(0) ?? '—'} mm</div>
               </Card>
               <Card title="تخصیص آب (Pywr)" icon={<Waves size={18} />}>
-                <div style={{ fontSize: '1.6rem', fontWeight: 800 }}>{num(water?.summary?.supply_reliability_pct)?.toFixed(1) ?? '—'} <small style={{ fontSize: '0.8rem', fontWeight: 400 }}>٪</small></div>
+                <div className="sci-bignum">{num(water?.summary?.supply_reliability_pct)?.toFixed(1) ?? '—'} <small style={{ fontSize: '0.8rem', fontWeight: 400 }}>٪</small></div>
                 <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.8rem' }}>کسری: {num(water?.summary?.total_deficit_mcm)?.toFixed(2) ?? '—'} MCM</div>
               </Card>
             </div>
@@ -176,7 +177,7 @@ export const ScientificHub: React.FC = () => {
                 ['ضریب C (پوشش)', String(erosion?.c_factor ?? '—')],
                 ['ضریب P (مدیریت)', String(erosion?.p_factor ?? '—')],
               ].map(([k, v]) => (
-                <div key={k} style={{ padding: '0.6rem 0.8rem', borderRadius: 10, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+                <div key={k} className="sci-metric">
                   <div style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)' }}>{k}</div>
                   <div style={{ fontWeight: 700, fontSize: '1rem' }}>{v}</div>
                 </div>
@@ -204,7 +205,7 @@ export const ScientificHub: React.FC = () => {
               {rothcPools && (
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   {Object.entries(rothcPools).map(([pool, v]) => (
-                    <div key={pool} style={{ padding: '0.5rem 0.8rem', borderRadius: 10, background: 'var(--color-bg)', border: '1px solid var(--color-border)', textAlign: 'center' }}>
+                    <div key={pool} className="sci-metric">
                       <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>{pool}</div>
                       <div style={{ fontWeight: 700 }}>{v.toFixed(2)}</div>
                     </div>
@@ -249,7 +250,7 @@ export const ScientificHub: React.FC = () => {
                 ['بهره‌وری آب', `${num(aquacrop?.outputs?.water_productivity_kg_m3)?.toFixed(2) ?? '—'} kg/m³`],
                 ['تاریخ برداشت', String(aquacrop?.outputs?.harvest_date ?? '—')],
               ].map(([k, v]) => (
-                <div key={k} style={{ padding: '0.6rem 0.8rem', borderRadius: 10, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+                <div key={k} className="sci-metric">
                   <div style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)' }}>{k}</div>
                   <div style={{ fontWeight: 700, fontSize: '1rem' }}>{v}</div>
                 </div>
@@ -349,7 +350,7 @@ export const ScientificHub: React.FC = () => {
                 ['بهترین عملکرد', `${num(opt?.summary?.best_yield_t_ha)?.toFixed(2) ?? '—'} t/ha`],
                 ['کمترین فرسایش', `${num(opt?.summary?.min_erosion_t_ha_yr)?.toFixed(2) ?? '—'} t/ha/yr`],
               ].map(([k, v]) => (
-                <div key={k} style={{ padding: '0.6rem 0.8rem', borderRadius: 10, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+                <div key={k} className="sci-metric">
                   <div style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)' }}>{k}</div>
                   <div style={{ fontWeight: 700, fontSize: '1rem' }}>{v}</div>
                 </div>
@@ -460,9 +461,9 @@ export const ScientificHub: React.FC = () => {
   );
 
   return (
-    <div>
+    <div className="sci-root">
       {/* Input bar */}
-      <div className="card" style={{ padding: '1rem', marginBottom: '1.5rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+      <div className="sci-inputbar">
         {(
           [
             ['lat', 'عرض جغرافیایی', state.lat],
@@ -510,7 +511,7 @@ export const ScientificHub: React.FC = () => {
       {error && <p style={{ color: '#ef4444', fontSize: '0.9rem', marginBottom: '1rem' }}>⚠️ {error}</p>}
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+      <div className="sci-tabs">
         {tabs.map((t) => (
           <button
             key={t.id}

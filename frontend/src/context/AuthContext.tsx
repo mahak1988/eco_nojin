@@ -51,7 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const login: AuthCtx['login'] = async (email, password) => {
-    const res = await postJson('/api/v1/auth/supabase/login', { email, password });
+    const res = await postJson('/api/v1/auth/login', { email, password });
     if (res.status !== 'ok' || !res.access_token) {
       throw new Error(String(res.error ?? 'ورود ناموفق — ایمیل یا رمز عبور نادرست است'));
     }
@@ -61,7 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const register: AuthCtx['register'] = async (data) => {
-    const res = await postJson('/api/v1/auth/supabase/signup', { email: data.email, password: data.password });
+    const res = await postJson('/api/v1/auth/register', { email: data.email, password: data.password });
     if (res.status !== 'ok') {
       throw new Error(String(res.error ?? 'ثبت‌نام ناموفق'));
     }
