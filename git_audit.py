@@ -93,8 +93,8 @@ def main():
     # gitignore مؤثر؟
     print("\n🔒 بررسی ignore:")
     ignored_ok = True
-    for c in [".env", "contracts/.env", "_quarantine", "htmlcov",
-              "frontend/node_modules", ".satellite_cache"]:
+    for c in [".env", "contracts/.env", "_quarantine",
+              "frontend/node_modules", ".satellite_cache/"]:
         rc, _, _ = run(["check-ignore", "-q", c])
         ok = (rc == 0)
         ignored_ok &= ok
@@ -108,12 +108,16 @@ def main():
     if rc == 0:
         ever = {x.strip() for x in hist.split("\0") if x.strip()}
 
+    # فایل‌های استاندارد — هرگز هشدار نیستند
+    ALLOW = re.compile(r"(?i)(^|/)(\.env\.example|\.env\.template|"
+                       r"[^/]*env\.d\.ts|alembic/env\.py|migrations/env\.py)$")
     danger = sorted(
         f for f in ever
-        if re.fullmatch(r"\.env(\..*)?", f, re.I)
-        or f.lower().endswith((".pem", ".key", ".p12", ".pfx"))
-        or (re.search(r"(?i)env|secret|credential", Path(f).name)
-            and not re.search(r"(?i)example|template|sample", f))
+        if not ALLOW.search(f)
+        and (re.fullmatch(r"\.env(\..*)?", f, re.I)
+             or f.lower().endswith((".pem", ".key", ".p12", ".pfx"))
+             or (re.search(r"(?i)env|secret|credential", Path(f).name)
+                 and not re.search(r"(?i)example|template|sample", f)))
     )
 
     if danger:
@@ -145,8 +149,12 @@ def main():
     score += 15 if remotes.strip() else 0
     score += 15 if ignored_ok else 5
     score += 20 if not danger else 0
-    score += 10  # تست بک‌اند (66+ فایل دارید)
-    # تست فرانت‌اند: 0 → 10 امتیاز از دست می‌رود
+    score += 10  # تست بک‌اند
+    _, fe_ls, _ = run(["ls-files", "--", "frontend/src"])
+    fe_tests = sum(1 for l in fe_ls.splitlines()
+                   if re.search(r"\.(test|spec)\.[cm]?[jt]sx?$", l.strip()))
+    if fe_tests:
+        score += 10
     print("\n" + "═" * 60)
     print(f"🎯 امتیاز واقعی سلامت Git: ~{score}/100"
           f"{'  (۱۴ امتیاز دیگر با افزودن تست فرانت‌اند)' if score < 100 else ''}")

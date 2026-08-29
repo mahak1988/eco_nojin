@@ -242,3 +242,9 @@ analysis.json/
 *.db
 *.db-shm
 *.db-wal
+
+# افزوده توسط patch_audit.py — 2026-08-29
+.satellite_cache/
+
+# افزوده توسط patch_audit.py — 2026-08-29
+.satellite_cache/
