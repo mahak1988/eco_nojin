@@ -1,4 +1,4 @@
-"""Chain orchestrator (Phase 3, sprint 1): RUSLE -> AquaCrop -> RothC.
+﻿"""Chain orchestrator (Phase 3, sprint 1): RUSLE -> AquaCrop -> RothC.
 
 Executes the available model runners for one site + scenario and assembles
 a ChainResult with provenance labels. The chain is pure (no DB access) so
@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import logging
 from datetime import date, timedelta
-from typing import Any
+from typing import Any, Callable
 
 from engine.hydroma.simulation.contracts import (
     AquaCropInput,
@@ -101,13 +101,15 @@ def _run_hecras(input_data: SWATOutput) -> HECRASOutput:
     ))
 
 
-def run_chain(inputs: ChainInputs) -> ChainResult:
+def run_chain(inputs: ChainInputs, progress_cb: Callable[[str, int], None] | None = None) -> ChainResult:
     """Execute the full simulation chain: SWAT+ -> RUSLE -> RothC -> AquaCrop -> WEAP -> HEC-RAS."""
     outputs: dict[str, Any] = {}
     status = "ok"
     message = ""
 
     try:
+        if progress_cb:
+            progress_cb("swat_plus", 5)
         # 1) SWAT+
         swat_in = SWATInput(
             land_profile_id=inputs.site_id,
@@ -119,6 +121,8 @@ def run_chain(inputs: ChainInputs) -> ChainResult:
         swat_out = _run_swat_plus(swat_in)
         outputs["swat_plus"] = swat_out.model_dump()
 
+        if progress_cb:
+            progress_cb("rusle", 30)
         # 2) RUSLE
         rusle_in = RUSLEInput(
             land_profile_id=inputs.site_id,
@@ -132,6 +136,8 @@ def run_chain(inputs: ChainInputs) -> ChainResult:
         rusle_out = _run_rusle(rusle_in)
         outputs["rusle"] = rusle_out
 
+        if progress_cb:
+            progress_cb("rothc", 55)
         # 3) RothC
         monthly = inputs.monthly_climate or _default_monthly()
         rothc_in = RothCInput(
@@ -147,6 +153,8 @@ def run_chain(inputs: ChainInputs) -> ChainResult:
         rothc_out = _run_rothc(rothc_in)
         outputs["rothc"] = rothc_out
 
+        if progress_cb:
+            progress_cb("aquacrop", 75)
         # 4) AquaCrop
         weather = None
         if inputs.use_real_weather and inputs.lat is not None and inputs.lon is not None:

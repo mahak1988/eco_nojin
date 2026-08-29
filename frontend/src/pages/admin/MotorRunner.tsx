@@ -3,6 +3,7 @@ import { Play, RefreshCw, CheckCircle, XCircle, Cpu } from 'lucide-react';
 import './AdminTheme.css';
 
 const API_BASE = 'http://localhost:8000/api/v1';
+const MOTORS_BASE = 'http://localhost:8000/api/v1/motors';
 
 const MOTOR_LABELS: Record<string, string> = {
   aquacrop: 'AquaCrop — عملکرد محصول (FAO)',
@@ -39,7 +40,7 @@ export default function MotorRunner() {
   const fetchSites = async () => {
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch(API_BASE + '/motors/manual-sites', {
+      const res = await fetch(MOTORS_BASE + '/manual-sites', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -63,7 +64,7 @@ export default function MotorRunner() {
     setResult(null);
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch(API_BASE + `/motors/site-run/${motor}`, {
+      const res = await fetch(MOTORS_BASE + `/site-run/${motor}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({

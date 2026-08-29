@@ -19,7 +19,8 @@ import {
   ContentStudio,
   BotsManagement,
   AIModelsMonitor,
-  MotorRunner
+  MotorRunner,
+  HyDroMa3D
 } from './pages/admin';
 import LiveDashboard from './pages/admin/LiveDashboard';
 import CryptoPaymentWidget from './pages/admin/crypto/CryptoPaymentWidget';
@@ -235,6 +236,16 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
 
         {/* Phase 3: Live Dashboard */}
+                        <Route path="/admin/hydroma-3d" element={
+          <ProtectedRoute requiredRole="admin">
+            <ThemeProvider>
+              <AdminLayout>
+                <HyDroMa3D />
+              </AdminLayout>
+            </ThemeProvider>
+          </ProtectedRoute>
+        } />
+
                 <Route path="/admin/motor-runner" element={
           <ProtectedRoute requiredRole="admin">
             <ThemeProvider>

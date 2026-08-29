@@ -1,4 +1,4 @@
-/**
+﻿/**
  * SimulationPipeline Context
  * Global state for sharing data between simulators
  * Each simulator can publish its results, and Visualization3D consumes them
@@ -81,6 +81,7 @@ export interface PipelineState {
   swat: SWATResult | null;
   rothc: RothCResult | null;
   satellite: SatelliteData | null;
+  apiResults: Record<string, any>;
   history: Array<{
     timestamp: string;
     type: string;
@@ -96,6 +97,8 @@ interface PipelineContextType {
   setSwat: (result: SWATResult) => void;
   setRothC: (result: RothCResult) => void;
   setSatellite: (data: SatelliteData) => void;
+  setApiResult: (type: string, data: any) => void;
+  apiResults: Record<string, any>;
   clearAll: () => void;
   getHistory: () => Array<{ timestamp: string; type: string; data: any }>;
 }
@@ -107,6 +110,7 @@ const initialState: PipelineState = {
   swat: null,
   rothc: null,
   satellite: null,
+  apiResults: {},
   history: [],
 };
 
@@ -155,6 +159,14 @@ export function SimulationPipelineProvider({ children }: { children: ReactNode }
     addToHistory('satellite', data);
   };
 
+  const setApiResult = (type: string, data: any) => {
+    setState(prev => ({
+      ...prev,
+      apiResults: { ...prev.apiResults, [type]: data },
+    }));
+    addToHistory(type, data);
+  };
+
   const clearAll = () => {
     setState(initialState);
   };
@@ -170,6 +182,8 @@ export function SimulationPipelineProvider({ children }: { children: ReactNode }
       setSwat,
       setRothC,
       setSatellite,
+      setApiResult,
+      apiResults: state.apiResults,
       clearAll,
       getHistory,
     }}>
@@ -200,6 +214,8 @@ export function usePipeline() {
       setSwat: () => {},
       setRothC: () => {},
       setSatellite: () => {},
+      setApiResult: () => {},
+      apiResults: {},
       clearAll: () => {},
       getHistory: () => [],
     };

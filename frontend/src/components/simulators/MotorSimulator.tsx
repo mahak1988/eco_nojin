@@ -65,10 +65,21 @@ export default function MotorSimulator({ motor, onClose, onResult }: MotorSimula
       const startTime = Date.now();
       
       // Run the motor
-      const response = await motorsService.runMotor({
+      let response = await motorsService.runMotor({
         motor_key: motor.key,
         parameters,
       });
+
+      // background run: poll status until completion
+      if (response.run_id && !response.result && response.status !== 'completed') {
+        for (let i = 0; i < 90; i++) {
+          await new Promise(r => setTimeout(r, 2000));
+          const st = await motorsService.getRunStatus(response.run_id!);
+          if (st.status === 'completed') { response = { ...st }; break; }
+          if (st.status === 'failed') { response = { ...st }; break; }
+          setProgress(Math.min(95, i * 2));
+        }
+      }
 
       const duration = Date.now() - startTime;
 

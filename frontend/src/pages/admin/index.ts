@@ -14,5 +14,6 @@ export { default as ContentStudio } from './ContentStudio';
 export { default as BotsManagement } from './BotsManagement';
 export { default as AIModelsMonitor } from './AIModelsMonitor';
 export { default as MotorRunner } from './MotorRunner';
+export { default as HyDroMa3D } from './HyDroMa3D';
 export { default as AiChatDrawer } from './AiChatDrawer';
 export { ThemeProvider, useTheme } from './ThemeContext';

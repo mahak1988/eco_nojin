@@ -238,3 +238,7 @@ _quarantine/
 
 # --- پوشه مشکوک (پوشه‌ای با پسوند json!) ---
 analysis.json/
+
+*.db
+*.db-shm
+*.db-wal

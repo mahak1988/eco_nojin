@@ -1,4 +1,4 @@
-import type { ScientificChainResult } from '../types/vll';
+﻿import type { ScientificChainResult } from '../types/vll';
 
 const API_BASE = '/api';
 
@@ -20,6 +20,7 @@ export async function fetchScientificChain(
   lat: number,
   lon: number,
   options: ChainOptions = {},
+  onProgress?: (p: { status: string; stage?: string; progress: number }) => void,
 ): Promise<ScientificChainResult> {
   const body = {
     lat,
@@ -33,7 +34,7 @@ export async function fetchScientificChain(
   };
 
   const controller = new AbortController();
-  const timer = window.setTimeout(() => controller.abort(), 60_000);
+  const timer = window.setTimeout(() => controller.abort(), 300_000);
   try {
     const res = await fetch(`${API_BASE}/motors/chain`, {
       method: 'POST',

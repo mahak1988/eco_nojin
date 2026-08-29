@@ -1,4 +1,4 @@
-"""Scientific Motors API - Real Execution Endpoints."""
+﻿"""Scientific Motors API - Real Execution Endpoints."""
 from __future__ import annotations
 
 import time
@@ -16,7 +16,7 @@ from services.scientific_motors.rothc import RothCMotor
 from services.scientific_motors.swat_plus import SWATPlusMotor
 from services.scientific_motors.whatif_engine import WhatIfMotor
 
-router = APIRouter(prefix="/api/motors", tags=["scientific-motors"])
+router = APIRouter(prefix="/motors", tags=["scientific-motors"])
 
 # In-memory storage for results (in production, use Redis/DB)
 _motor_results: dict[str, dict[str, Any]] = {}
@@ -25,7 +25,8 @@ _motor_results: dict[str, dict[str, Any]] = {}
 # ============ Pydantic Models ============
 
 class MotorRunRequest(BaseModel):
-    motor_type: str = Field(..., description="Motor type: swat_plus, aquacrop, rothc, hecras, what_if")
+    motor_type: str | None = Field(None, description="Motor type: swat_plus, aquacrop, rothc, hecras, what_if")
+    motor_key: str | None = Field(None, description="Alternative: motor key from /motors/list")
     scenario_name: str = Field(default="baseline")
     start_date: str = Field(default="2026-01-01")
     end_date: str = Field(default="2026-12-31")
@@ -250,9 +251,11 @@ async def list_motors():
 @router.post("/run")
 async def run_motor(request: MotorRunRequest, background_tasks: BackgroundTasks):
     """Start motor execution in background."""
-    # Validate motor type
+    # Validate motor type (accept motor_key from generic clients)
     valid_motors = ["swat_plus", "aquacrop", "rothc", "hecras", "what_if"]
-    if request.motor_type not in valid_motors:
+    key_map = {"aquacrop": "aquacrop", "swat_plus": "swat_plus", "rothc": "rothc", "hecras": "hecras", "whatif": "what_if", "what_if": "what_if"}
+    motor_type = request.motor_type or key_map.get((request.motor_key or "").lower())
+    if motor_type not in valid_motors:
         raise HTTPException(400, f"Invalid motor type. Choose from: {valid_motors}")
 
     # Build region
@@ -273,7 +276,7 @@ async def run_motor(request: MotorRunRequest, background_tasks: BackgroundTasks)
     )
 
     # Generate run ID
-    run_id = f"{request.motor_type}_{request.scenario_name}_{int(time.time())}"
+    run_id = f"{motor_type}_{request.scenario_name}_{int(time.time())}"
 
     # Mark as pending
     _motor_results[run_id] = {"status": "running", "summary": None}
@@ -281,7 +284,7 @@ async def run_motor(request: MotorRunRequest, background_tasks: BackgroundTasks)
     # Launch in background
     background_tasks.add_task(
         _run_motor_background,
-        run_id, request.motor_type, region, params, request.parameters,
+        run_id, motor_type, region, params, request.parameters,
     )
 
     return {"run_id": run_id, "status": "running", "message": "Motor started in background"}
@@ -391,8 +394,8 @@ def _motor_result_to_dict(result) -> dict[str, Any]:
 
 @router.get("/manual-sites")
 async def list_manual_sites(
-    admin=Depends(_get_current_user),
-    _: None = Depends(_require_admin),
+    admin=_Depends(_get_current_user),
+    _: None = _Depends(_require_admin),
 ) -> dict:
     """Sites available in the manual reference dataset (for the panel picker)."""
     sites = _manual.sites()
@@ -404,8 +407,8 @@ async def list_manual_sites(
 async def run_motor_for_site(
     motor: str,
     payload: ManualSiteRunRequest,
-    admin=Depends(_get_current_user),
-    _: None = Depends(_require_admin),
+    admin=_Depends(_get_current_user),
+    _: None = _Depends(_require_admin),
 ) -> dict:
     """One-click motor execution for a manual-dataset site (admin only).
 

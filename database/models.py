@@ -1,4 +1,4 @@
-"""مدل‌های اصلی دیتابیس - نسخه کامل"""
+﻿"""مدل‌های اصلی دیتابیس - نسخه کامل"""
 from sqlalchemy import Text, JSON, Column, String, Boolean, DateTime, Float, Integer
 from database.base import Base
 from datetime import datetime, timezone
@@ -115,8 +115,25 @@ class SatelliteAnalysis(Base):
     ndvi = Column(Float)
 
 # سایر کلاس‌های placeholder
+class SimulationRun(Base):
+    """Persisted result of a HyDroMa simulation chain run (RUSLE > AquaCrop > RothC)."""
+    __tablename__ = "simulationrun"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    site_id = Column(String(64), index=True)
+    scenario = Column(String(120), default="baseline")
+    area_ha = Column(Float)
+    status = Column(String(32), default="completed")
+    outputs = Column(JSON)
+    message = Column(Text)
+    executed_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
+
+    def __repr__(self):
+        return f"<SimulationRun id={self.id} site='{self.site_id}' status='{self.status}'>"
+
+
 for _name in [
-    "SimulationRun", "NojinApplicationPlanDB", "NojinCalibrationRecordDB",
+    "NojinApplicationPlanDB", "NojinCalibrationRecordDB",
     "ModelVersionDB", "ScenarioResultDB", "ScenarioRun", "MRVObservation",
     "DecisionRecommendationDB", "OptimizationResultDB", "MonitoringDataDB",
     "NojinFieldTrialDB", "ScenarioDB", "Product", "EcoTransaction",
