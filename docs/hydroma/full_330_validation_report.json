@@ -1,0 +1,206 @@
+{
+  "generated_at": "2026-08-30T20:34:54.971542",
+  "challenge_version": "3.0-full-330",
+  "total_specialties": 330,
+  "academic_institutions": 10,
+  "field_scenarios": 10,
+  "results": {
+    "approved": 8,
+    "review": 2,
+    "rejected": 0,
+    "approval_rate_percent": 80.0
+  },
+  "field_results": [
+    {
+      "scenario_id": "FIELD001",
+      "scenario_name": "شبیه‌سازی یزد - بیابان گرم",
+      "region": "R01_yazd_desert",
+      "algorithm": "H01",
+      "validation": {
+        "decision": "APPROVED",
+        "reason": "تأیید توسط تمام لایه‌های اعتبارسنجی",
+        "opponents_count": 0,
+        "layer1_approved": true,
+        "layer2_approved": true,
+        "layer3_approved": true
+      },
+      "expected_range": {
+        "min": 10,
+        "max": 50
+      },
+      "timestamp": "2026-08-30T20:34:54.968544"
+    },
+    {
+      "scenario_id": "FIELD002",
+      "scenario_name": "شبیه‌سازی خوزستان - شوری",
+      "region": "R03_khuzestan_saline",
+      "algorithm": "H11",
+      "validation": {
+        "decision": "REVIEW",
+        "reason": "نیاز به بررسی بیشتر",
+        "opponents_count": 1,
+        "layer1_approved": true,
+        "layer2_approved": true,
+        "layer3_approved": false
+      },
+      "expected_range": {
+        "min": 12,
+        "max": 15
+      },
+      "timestamp": "2026-08-30T20:34:54.969543"
+    },
+    {
+      "scenario_id": "FIELD003",
+      "scenario_name": "شبیه‌سازی همدان - دیم",
+      "region": "R04_hamedan_rainfed",
+      "algorithm": "H09",
+      "validation": {
+        "decision": "APPROVED",
+        "reason": "تأیید توسط تمام لایه‌های اعتبارسنجی",
+        "opponents_count": 0,
+        "layer1_approved": true,
+        "layer2_approved": true,
+        "layer3_approved": true
+      },
+      "expected_range": {
+        "min": 140,
+        "max": 180
+      },
+      "timestamp": "2026-08-30T20:34:54.969543"
+    },
+    {
+      "scenario_id": "FIELD004",
+      "scenario_name": "شبیه‌سازی آمازون - جنگل بارانی",
+      "region": "R13_amazon_rainforest",
+      "algorithm": "H13",
+      "validation": {
+        "decision": "APPROVED",
+        "reason": "تأیید توسط تمام لایه‌های اعتبارسنجی",
+        "opponents_count": 0,
+        "layer1_approved": true,
+        "layer2_approved": true,
+        "layer3_approved": true
+      },
+      "expected_range": {
+        "min": 0.4,
+        "max": 0.8
+      },
+      "timestamp": "2026-08-30T20:34:54.969543"
+    },
+    {
+      "scenario_id": "FIELD005",
+      "scenario_name": "شبیه‌سازی توندرا - فصل رشد کوتاه",
+      "region": "R14_canada_tundra",
+      "algorithm": "H05",
+      "validation": {
+        "decision": "APPROVED",
+        "reason": "تأیید توسط تمام لایه‌های اعتبارسنجی",
+        "opponents_count": 0,
+        "layer1_approved": true,
+        "layer2_approved": true,
+        "layer3_approved": true
+      },
+      "expected_range": {
+        "min": 30,
+        "max": 60
+      },
+      "timestamp": "2026-08-30T20:34:54.969543"
+    },
+    {
+      "scenario_id": "FIELD006",
+      "scenario_name": "شبیه‌سازی خلیج فارس - شوری شدید",
+      "region": "R16_gulf_coastal",
+      "algorithm": "H11",
+      "validation": {
+        "decision": "REVIEW",
+        "reason": "نیاز به بررسی بیشتر",
+        "opponents_count": 1,
+        "layer1_approved": true,
+        "layer2_approved": true,
+        "layer3_approved": false
+      },
+      "expected_range": {
+        "min": 15,
+        "max": 20
+      },
+      "timestamp": "2026-08-30T20:34:54.970542"
+    },
+    {
+      "scenario_id": "FIELD007",
+      "scenario_name": "شبیه‌سازی راجستان - بارش نامنظم",
+      "region": "R20_rajasthan_erratic",
+      "algorithm": "H01",
+      "validation": {
+        "decision": "APPROVED",
+        "reason": "تأیید توسط تمام لایه‌های اعتبارسنجی",
+        "opponents_count": 0,
+        "layer1_approved": true,
+        "layer2_approved": true,
+        "layer3_approved": true
+      },
+      "expected_range": {
+        "min": 100,
+        "max": 250
+      },
+      "timestamp": "2026-08-30T20:34:54.970542"
+    },
+    {
+      "scenario_id": "FIELD008",
+      "scenario_name": "شبیه‌سازی یمن - شیب زیاد",
+      "region": "R24_yemen_terraced",
+      "algorithm": "H10",
+      "validation": {
+        "decision": "APPROVED",
+        "reason": "تأیید توسط تمام لایه‌های اعتبارسنجی",
+        "opponents_count": 0,
+        "layer1_approved": true,
+        "layer2_approved": true,
+        "layer3_approved": true
+      },
+      "expected_range": {
+        "min": 15,
+        "max": 40
+      },
+      "timestamp": "2026-08-30T20:34:54.970542"
+    },
+    {
+      "scenario_id": "FIELD009",
+      "scenario_name": "شبیه‌سازی مکونگ - سیل",
+      "region": "R19_mekong_delta",
+      "algorithm": "H01",
+      "validation": {
+        "decision": "APPROVED",
+        "reason": "تأیید توسط تمام لایه‌های اعتبارسنجی",
+        "opponents_count": 0,
+        "layer1_approved": true,
+        "layer2_approved": true,
+        "layer3_approved": true
+      },
+      "expected_range": {
+        "min": 800,
+        "max": 1200
+      },
+      "timestamp": "2026-08-30T20:34:54.970542"
+    },
+    {
+      "scenario_id": "FIELD010",
+      "scenario_name": "شبیه‌سازی استرالیا - خاک شنی",
+      "region": "R23_australia_sandy",
+      "algorithm": "H09",
+      "validation": {
+        "decision": "APPROVED",
+        "reason": "تأیید توسط تمام لایه‌های اعتبارسنجی",
+        "opponents_count": 0,
+        "layer1_approved": true,
+        "layer2_approved": true,
+        "layer3_approved": true
+      },
+      "expected_range": {
+        "min": 20,
+        "max": 40
+      },
+      "timestamp": "2026-08-30T20:34:54.971542"
+    }
+  ],
+  "verdict": "APPROVED"
+}
