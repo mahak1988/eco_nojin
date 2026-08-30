@@ -41,16 +41,6 @@ class DynamicStressEngine:
     def __init__(self, params: Optional[CropStressParams] = None):
         self.p = params or CropStressParams()
 
-
-    @property
-    def cfg(self):
-        """ویژگی سازگاری با سایر ماژول‌ها (alias برای self.p)"""
-        return self.p
-
-    @cfg.setter
-    def cfg(self, value):
-        self.p = value
-
     # ------------------------------------------------------------------ H01
     def h01_intensity_discount(self, rain_mm: float) -> float:
         # تلفیک شدت بارش: بارش‌های سنگین -> رواناب بیشتر -> نفوذ کمتر

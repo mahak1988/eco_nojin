@@ -2,7 +2,7 @@
  * Mock Generator Tests
  */
 import { describe, it, expect } from 'vitest';
-import { generateMockTransaction } from '../utils/mock_generator';
+import { generateMockTransaction } from '../utils/mockGenerator';
 
 describe('generateMockTransaction', () => {
   it('should generate valid transaction structure', () => {
