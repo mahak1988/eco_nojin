@@ -120,11 +120,15 @@ class ScientificDataRepository:
 
     @lru_cache(maxsize=128)
     def get_fertilizer_profile(self, fertilizer_query: str) -> Optional[Dict[str, Any]]:
-        """دریافت مشخصات کامل یک کود"""
-        query = f"""
+        """دریافت مشخصات کامل یک کود بر اساس شناسه یا نام"""
+        query = """
             SELECT * FROM ref_fertilizers
+            WHERE fert_id = ? OR material ILIKE ? OR type ILIKE ?
         """
-        df = self._conn.execute(query, [fertilizer_query, f"%{fertilizer_query}%"]).pl()
+        df = self._conn.execute(
+            query, 
+            [fertilizer_query, f"%{fertilizer_query}%", f"%{fertilizer_query}%"]
+        ).pl()
         return df.row(0, named=True) if not df.is_empty() else None
 
     def get_all_fertilizers(self) -> pl.DataFrame:
@@ -273,9 +277,10 @@ class ScientificDataRepository:
 
     def get_decision_engine_matrix(self, site_id: str) -> pl.DataFrame:
         """دریافت ماتریس تصمیم‌گیری برای یک سایت"""
-        query = f"""
+        query = """
             SELECT * FROM ref_decision_engine
             WHERE site_id = ?
+            ORDER BY suitability_0_100 DESC
         """
         return self._conn.execute(query, [site_id]).pl()
 

@@ -61,12 +61,12 @@ def run_full_test():
         ("۷. پروتکل‌های احیای خاک", lambda: repo.get_soil_restoration_protocols()),
         
         # حوزه کود زیستی و شیمیایی
-        ("۸. پروفایل کود (F001)", lambda: repo.get_fertilizer_profile("F001")),
+        ("۸. پروفایل کود (F001)", lambda: repo.get_fertilizer_profile("FRT001")),
         ("۹. ماتریس سازگاری کودها", lambda: repo.get_fertilizer_compatibility_matrix()),
         ("۱۰. توصیه کود زیستی", lambda: repo.get_biofertilizer_recommendations("Calcisol", "زراعی")),
         
         # حوزه آب و دشت‌های بحرانی
-        ("۱۱. تاریخچه اقلیمی سایت", lambda: repo.get_site_climate_history("SITE076")),
+        ("۱۱. تاریخچه اقلیمی سایت", lambda: repo.get_site_climate_history("SITE037")),
         ("۱۲. داده‌های روزانه هواشناسی", lambda: repo.get_weather_daily("SITE076")),
         ("۱۳. قوانین دشت بحرانی", lambda: repo.get_critical_plain_rules()),
         ("۱۴. محاسبه شاخص SPI", lambda: repo.calculate_spi_index("SITE076", 3)),
@@ -75,8 +75,8 @@ def run_full_test():
         ("۱۵. آفات محصول گندم", lambda: repo.get_pests_for_crop("W001")),
         
         # حوزه سایت و تصمیم‌گیری
-        ("۱۶. پروفایل سایت (SITE076)", lambda: repo.get_site_profile("SITE076")),
-        ("۱۷. ماتریس تصمیم‌گیری", lambda: repo.get_decision_engine_matrix("SITE076")),
+        ("۱۶. پروفایل سایت (SITE037)", lambda: repo.get_site_profile("SITE037")),
+        ("۱۷. ماتریس تصمیم‌گیری", lambda: repo.get_decision_engine_matrix("SITE037")),
         ("۱۸. سایت‌های بحرانی", lambda: repo.get_sites_in_critical_plains()),
     ]
     
