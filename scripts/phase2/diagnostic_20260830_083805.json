@@ -1,0 +1,301 @@
+{
+  "timestamp": "20260830_083805",
+  "total_files": 7,
+  "total_lines": 2180,
+  "total_issues": 16,
+  "priority_counts": {
+    "critical": 1,
+    "high": 4,
+    "medium": 2,
+    "low": 0
+  },
+  "not_found": [],
+  "analyses": [
+    {
+      "file": "frontend\\src\\pages\\admin\\crypto\\CryptoPaymentWidget.tsx",
+      "filename": "CryptoPaymentWidget.tsx",
+      "total_lines": 323,
+      "total_chars": 11779,
+      "issues": [
+        {
+          "type": "setState_in_useEffect",
+          "count": 4,
+          "severity": "high",
+          "description": "4 setState call(s) inside useEffect",
+          "solution": "Use React Query (useQuery) for data fetching"
+        },
+        {
+          "type": "Math_random_in_render",
+          "count": 8,
+          "severity": "high",
+          "description": "8 Math.random() call(s) - may cause non-deterministic renders",
+          "solution": "Wrap in useMemo or use seed-based random"
+        },
+        {
+          "type": "excessive_inline_styles",
+          "count": 34,
+          "severity": "low",
+          "description": "34 inline style object(s)",
+          "solution": "Extract to CSS modules or Tailwind classes"
+        }
+      ],
+      "severity_score": 163,
+      "priority": "critical",
+      "hooks": {
+        "useState": 4,
+        "useEffect": 1,
+        "useMemo": 0,
+        "useCallback": 0,
+        "useQuery": 0,
+        "useMutation": 0
+      },
+      "imports_count": 5,
+      "external_deps": [
+        "../AdminTheme.css",
+        "react-i18next",
+        "../live/LiveComponents.css",
+        "react",
+        "framer-motion"
+      ]
+    },
+    {
+      "file": "frontend\\src\\pages\\admin\\EcoWalletDashboard.tsx",
+      "filename": "EcoWalletDashboard.tsx",
+      "total_lines": 368,
+      "total_chars": 14147,
+      "issues": [
+        {
+          "type": "Math_random_in_render",
+          "count": 2,
+          "severity": "high",
+          "description": "2 Math.random() call(s) - may cause non-deterministic renders",
+          "solution": "Wrap in useMemo or use seed-based random"
+        },
+        {
+          "type": "fetch_without_abort",
+          "count": 3,
+          "severity": "medium",
+          "description": "3 fetch/axios call(s) without AbortController",
+          "solution": "Use AbortController or React Query's automatic cancellation"
+        },
+        {
+          "type": "any_types",
+          "count": 2,
+          "severity": "medium",
+          "description": "2 'any' type(s) - weakens type safety",
+          "solution": "Define proper TypeScript interfaces"
+        }
+      ],
+      "severity_score": 49,
+      "priority": "high",
+      "hooks": {
+        "useState": 5,
+        "useEffect": 1,
+        "useMemo": 0,
+        "useCallback": 0,
+        "useQuery": 0,
+        "useMutation": 0
+      },
+      "imports_count": 4,
+      "external_deps": [
+        "react-i18next",
+        "./AdminPanelAdvanced.css",
+        "react",
+        "./AdminTheme.css"
+      ]
+    },
+    {
+      "file": "frontend\\src\\pages\\admin\\live\\LiveFeed.tsx",
+      "filename": "LiveFeed.tsx",
+      "total_lines": 129,
+      "total_chars": 4600,
+      "issues": [
+        {
+          "type": "setState_in_useEffect",
+          "count": 1,
+          "severity": "high",
+          "description": "1 setState call(s) inside useEffect",
+          "solution": "Use React Query (useQuery) for data fetching"
+        },
+        {
+          "type": "Math_random_in_render",
+          "count": 2,
+          "severity": "high",
+          "description": "2 Math.random() call(s) - may cause non-deterministic renders",
+          "solution": "Wrap in useMemo or use seed-based random"
+        }
+      ],
+      "severity_score": 40,
+      "priority": "high",
+      "hooks": {
+        "useState": 2,
+        "useEffect": 1,
+        "useMemo": 0,
+        "useCallback": 0,
+        "useQuery": 0,
+        "useMutation": 0
+      },
+      "imports_count": 4,
+      "external_deps": [
+        "framer-motion",
+        "react",
+        "./LiveComponents.css",
+        "lucide-react"
+      ]
+    },
+    {
+      "file": "frontend\\src\\pages\\admin\\MarketplaceDashboard.tsx",
+      "filename": "MarketplaceDashboard.tsx",
+      "total_lines": 336,
+      "total_chars": 13036,
+      "issues": [
+        {
+          "type": "fetch_without_abort",
+          "count": 4,
+          "severity": "medium",
+          "description": "4 fetch/axios call(s) without AbortController",
+          "solution": "Use AbortController or React Query's automatic cancellation"
+        },
+        {
+          "type": "any_types",
+          "count": 3,
+          "severity": "medium",
+          "description": "3 'any' type(s) - weakens type safety",
+          "solution": "Define proper TypeScript interfaces"
+        }
+      ],
+      "severity_score": 26,
+      "priority": "high",
+      "hooks": {
+        "useState": 5,
+        "useEffect": 1,
+        "useMemo": 0,
+        "useCallback": 0,
+        "useQuery": 0,
+        "useMutation": 0
+      },
+      "imports_count": 3,
+      "external_deps": [
+        "./AdminPanelAdvanced.css",
+        "react",
+        "./AdminTheme.css"
+      ]
+    },
+    {
+      "file": "frontend\\src\\pages\\admin\\ContentStudio.tsx",
+      "filename": "ContentStudio.tsx",
+      "total_lines": 322,
+      "total_chars": 12310,
+      "issues": [
+        {
+          "type": "fetch_without_abort",
+          "count": 5,
+          "severity": "medium",
+          "description": "5 fetch/axios call(s) without AbortController",
+          "solution": "Use AbortController or React Query's automatic cancellation"
+        }
+      ],
+      "severity_score": 25,
+      "priority": "high",
+      "hooks": {
+        "useState": 5,
+        "useEffect": 1,
+        "useMemo": 0,
+        "useCallback": 0,
+        "useQuery": 0,
+        "useMutation": 0
+      },
+      "imports_count": 3,
+      "external_deps": [
+        "./AdminPanelAdvanced.css",
+        "react",
+        "./AdminTheme.css"
+      ]
+    },
+    {
+      "file": "frontend\\src\\pages\\admin\\telegram\\TelegramManager.tsx",
+      "filename": "TelegramManager.tsx",
+      "total_lines": 359,
+      "total_chars": 13863,
+      "issues": [
+        {
+          "type": "setState_in_useEffect",
+          "count": 2,
+          "severity": "high",
+          "description": "2 setState call(s) inside useEffect",
+          "solution": "Use React Query (useQuery) for data fetching"
+        },
+        {
+          "type": "excessive_inline_styles",
+          "count": 43,
+          "severity": "low",
+          "description": "43 inline style object(s)",
+          "solution": "Extract to CSS modules or Tailwind classes"
+        }
+      ],
+      "severity_score": 24,
+      "priority": "medium",
+      "hooks": {
+        "useState": 5,
+        "useEffect": 1,
+        "useMemo": 0,
+        "useCallback": 0,
+        "useQuery": 0,
+        "useMutation": 0
+      },
+      "imports_count": 5,
+      "external_deps": [
+        "../AdminTheme.css",
+        "react-i18next",
+        "../live/LiveComponents.css",
+        "react",
+        "framer-motion"
+      ]
+    },
+    {
+      "file": "frontend\\src\\pages\\admin\\SecurityAdvanced.tsx",
+      "filename": "SecurityAdvanced.tsx",
+      "total_lines": 343,
+      "total_chars": 13411,
+      "issues": [
+        {
+          "type": "setState_in_useEffect",
+          "count": 1,
+          "severity": "high",
+          "description": "1 setState call(s) inside useEffect",
+          "solution": "Use React Query (useQuery) for data fetching"
+        },
+        {
+          "type": "fetch_without_abort",
+          "count": 1,
+          "severity": "medium",
+          "description": "1 fetch/axios call(s) without AbortController",
+          "solution": "Use AbortController or React Query's automatic cancellation"
+        },
+        {
+          "type": "any_types",
+          "count": 2,
+          "severity": "medium",
+          "description": "2 'any' type(s) - weakens type safety",
+          "solution": "Define proper TypeScript interfaces"
+        }
+      ],
+      "severity_score": 19,
+      "priority": "medium",
+      "hooks": {
+        "useState": 5,
+        "useEffect": 2,
+        "useMemo": 0,
+        "useCallback": 0,
+        "useQuery": 0,
+        "useMutation": 0
+      },
+      "imports_count": 3,
+      "external_deps": [
+        "./AdminPanelAdvanced.css",
+        "react",
+        "./AdminTheme.css"
+      ]
+    }
+  ]
+}

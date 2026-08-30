@@ -1,0 +1,70 @@
+{
+  "total_lines": 323,
+  "state_vars": [
+    [
+      "wallets",
+      "Wallets"
+    ],
+    [
+      "transactions",
+      "Transactions"
+    ],
+    [
+      "copiedId",
+      "CopiedId"
+    ],
+    [
+      "lastUpdate",
+      "LastUpdate"
+    ]
+  ],
+  "effects": [
+    {
+      "index": 1,
+      "dependencies": "[]",
+      "setState_calls": [
+        "Wallets",
+        "Interval",
+        "Transactions",
+        "LastUpdate"
+      ],
+      "fetch_calls": 0,
+      "body_preview": "const initialWallets: WalletInfo[] = [\n      {\n        address: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',\n        balance: 0.4523,\n        usdValue: 28450.50,\n        type: 'btc',\n      },\n      {"
+    }
+  ],
+  "random_calls": [
+    {
+      "line": 66,
+      "content": "type: ['btc', 'usdt', 'eth'][Math.floor(Math.random() * 3)] as any,"
+    },
+    {
+      "line": 67,
+      "content": "amount: Math.random() * 1000,"
+    },
+    {
+      "line": 68,
+      "content": "usdValue: Math.random() * 10000,"
+    },
+    {
+      "line": 69,
+      "content": "from: '0x' + Math.random().toString(16).substr(2, 16),"
+    },
+    {
+      "line": 70,
+      "content": "status: Math.random() > 0.3 ? 'confirmed' : Math.random() > 0.5 ? 'pending' : 'failed',"
+    },
+    {
+      "line": 71,
+      "content": "confirmations: Math.floor(Math.random() * 10),"
+    },
+    {
+      "line": 73,
+      "content": "txHash: '0x' + Math.random().toString(16).substr(2, 64),"
+    }
+  ],
+  "imports": [
+    "react",
+    "framer-motion",
+    "react-i18next"
+  ]
+}

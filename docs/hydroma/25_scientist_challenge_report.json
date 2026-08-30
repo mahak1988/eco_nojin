@@ -1,0 +1,174 @@
+{
+  "generated_at": "2026-08-30T19:53:48.531692",
+  "total_tests": 458,
+  "passed": 458,
+  "failed": 0,
+  "critical_failures": 0,
+  "warnings": 20,
+  "pass_rate_percent": 100.0,
+  "verdict": "APPROVED - مدل برای بنچمارک رسمی آماده است",
+  "failures": [],
+  "warnings_detail": [
+    {
+      "region": "R01_yazd_desert",
+      "scientist": "خاک‌شناس",
+      "test": "SOC بسیار پایین",
+      "passed": true,
+      "message": "SOC=0.3% - خاک تخریب‌شده",
+      "severity": "warning"
+    },
+    {
+      "region": "R01_yazd_desert",
+      "scientist": "متخصص فرسایش",
+      "test": "SOC پایین + فرسایش‌پذیری",
+      "passed": true,
+      "message": "SOC=0.3%",
+      "severity": "warning"
+    },
+    {
+      "region": "R02_gobi_cold_desert",
+      "scientist": "زراعت‌کار",
+      "test": "دیم با بارش ناکافی",
+      "passed": true,
+      "message": "بارش=120mm - دیم پرریسک",
+      "severity": "warning"
+    },
+    {
+      "region": "R02_gobi_cold_desert",
+      "scientist": "ژنتیک‌دان",
+      "test": "آسیب‌پذیری ژنتیکی",
+      "passed": true,
+      "message": "آسیب‌پذیری=0.79",
+      "severity": "warning"
+    },
+    {
+      "region": "R03_khuzestan_saline",
+      "scientist": "متخصص شوری",
+      "test": "شوری بالا + خاک رسی",
+      "passed": true,
+      "message": "نیاز به زهکشی قبل از آبشویی",
+      "severity": "warning"
+    },
+    {
+      "region": "R03_khuzestan_saline",
+      "scientist": "متخصص شوری",
+      "test": "پیش‌بینی شوری ۱۰ ساله",
+      "passed": true,
+      "message": "EC فعلی=12.0, پیش‌بینی=13.0",
+      "severity": "warning"
+    },
+    {
+      "region": "R14_canada_tundra",
+      "scientist": "ژنتیک‌دان",
+      "test": "تنوع ژنتیکی پایین",
+      "passed": true,
+      "message": "تعداد=1",
+      "severity": "warning"
+    },
+    {
+      "region": "R14_canada_tundra",
+      "scientist": "ژنتیک‌دان",
+      "test": "آسیب‌پذیری ژنتیکی",
+      "passed": true,
+      "message": "آسیب‌پذیری=1.00",
+      "severity": "warning"
+    },
+    {
+      "region": "R15_andes_highland",
+      "scientist": "متخصص فرسایش",
+      "test": "ریسک فرسایش بالا",
+      "passed": true,
+      "message": "شیب > 30%",
+      "severity": "warning"
+    },
+    {
+      "region": "R16_gulf_coastal",
+      "scientist": "متخصص شوری",
+      "test": "پیش‌بینی شوری ۱۰ ساله",
+      "passed": true,
+      "message": "EC فعلی=15.0, پیش‌بینی=16.0",
+      "severity": "warning"
+    },
+    {
+      "region": "R16_gulf_coastal",
+      "scientist": "ژنتیک‌دان",
+      "test": "آسیب‌پذیری ژنتیکی",
+      "passed": true,
+      "message": "آسیب‌پذیری=0.79",
+      "severity": "warning"
+    },
+    {
+      "region": "R20_rajasthan_erratic",
+      "scientist": "اقلیم‌شناس",
+      "test": "بارش بسیار نامنظم",
+      "passed": true,
+      "message": "CV=0.6",
+      "severity": "warning"
+    },
+    {
+      "region": "R20_rajasthan_erratic",
+      "scientist": "خاک‌شناس",
+      "test": "SOC بسیار پایین",
+      "passed": true,
+      "message": "SOC=0.4% - خاک تخریب‌شده",
+      "severity": "warning"
+    },
+    {
+      "region": "R20_rajasthan_erratic",
+      "scientist": "متخصص فرسایش",
+      "test": "SOC پایین + فرسایش‌پذیری",
+      "passed": true,
+      "message": "SOC=0.4%",
+      "severity": "warning"
+    },
+    {
+      "region": "R21_central_asia_saline",
+      "scientist": "متخصص شوری",
+      "test": "شوری-سدیک احتمالی",
+      "passed": true,
+      "message": "pH=9.2, EC=8.0",
+      "severity": "warning"
+    },
+    {
+      "region": "R21_central_asia_saline",
+      "scientist": "متخصص شوری",
+      "test": "پیش‌بینی شوری ۱۰ ساله",
+      "passed": true,
+      "message": "EC فعلی=8.0, پیش‌بینی=9.0",
+      "severity": "warning"
+    },
+    {
+      "region": "R22_vietnam_waterlogged",
+      "scientist": "هیدرولوژیست",
+      "test": "آب زیرزمینی بسیار سطحی",
+      "passed": true,
+      "message": "عمق=0.5m - احتمال غرقابی",
+      "severity": "warning"
+    },
+    {
+      "region": "R23_australia_sandy",
+      "scientist": "ژنتیک‌دان",
+      "test": "آسیب‌پذیری ژنتیکی",
+      "passed": true,
+      "message": "آسیب‌پذیری=0.79",
+      "severity": "warning"
+    },
+    {
+      "region": "R24_yemen_terraced",
+      "scientist": "اقتصاددان کشاورزی",
+      "test": "راندمان آبیاری پایین",
+      "passed": true,
+      "message": "راندمان=0.25",
+      "severity": "warning"
+    },
+    {
+      "region": "R24_yemen_terraced",
+      "scientist": "متخصص فرسایش",
+      "test": "ریسک فرسایش بالا",
+      "passed": true,
+      "message": "شیب > 30%",
+      "severity": "warning"
+    }
+  ],
+  "regions_tested": 25
+}
