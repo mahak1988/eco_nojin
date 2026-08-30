@@ -1,0 +1,2132 @@
+{
+  "generated_at": "2026-08-30T20:25:21.420367",
+  "total_specialties": 120,
+  "domains": {
+    "agriculture": {
+      "name": "کشاورزی و زراعت",
+      "icon": "🌾",
+      "count": 30,
+      "specialties": [
+        {
+          "id": "AGR001",
+          "name": "زراعت عمومی",
+          "algorithms": [
+            "H01",
+            "H05",
+            "H09",
+            "H18"
+          ]
+        },
+        {
+          "id": "AGR002",
+          "name": "اصلاح نباتات",
+          "algorithms": [
+            "H15",
+            "H17",
+            "H18"
+          ]
+        },
+        {
+          "id": "AGR003",
+          "name": "گیاه‌پزشکی",
+          "algorithms": [
+            "H05",
+            "H19"
+          ]
+        },
+        {
+          "id": "AGR004",
+          "name": "حشره‌شناسی کشاورزی",
+          "algorithms": [
+            "H05",
+            "H19"
+          ]
+        },
+        {
+          "id": "AGR005",
+          "name": "قارچ‌شناسی کشاورزی",
+          "algorithms": [
+            "H05",
+            "H19"
+          ]
+        },
+        {
+          "id": "AGR006",
+          "name": "ویروس‌شناسی گیاهی",
+          "algorithms": [
+            "H05",
+            "H19"
+          ]
+        },
+        {
+          "id": "AGR007",
+          "name": "نماتدشناسی",
+          "algorithms": [
+            "H09",
+            "H19"
+          ]
+        },
+        {
+          "id": "AGR008",
+          "name": "علف‌های هرز",
+          "algorithms": [
+            "H05",
+            "H19"
+          ]
+        },
+        {
+          "id": "AGR009",
+          "name": "فیزیولوژی گیاهی",
+          "algorithms": [
+            "H02",
+            "H04",
+            "H09"
+          ]
+        },
+        {
+          "id": "AGR010",
+          "name": "بیوتکنولوژی کشاورزی",
+          "algorithms": [
+            "H15",
+            "H17",
+            "H21"
+          ]
+        },
+        {
+          "id": "AGR011",
+          "name": "ژنتیک گیاهی",
+          "algorithms": [
+            "H15",
+            "H17",
+            "H19"
+          ]
+        },
+        {
+          "id": "AGR012",
+          "name": "بذرشناسی",
+          "algorithms": [
+            "H15",
+            "H16",
+            "H20"
+          ]
+        },
+        {
+          "id": "AGR013",
+          "name": "تکثیر گیاهان",
+          "algorithms": [
+            "H16",
+            "H21"
+          ]
+        },
+        {
+          "id": "AGR014",
+          "name": "باغبانی",
+          "algorithms": [
+            "H05",
+            "H18",
+            "H21"
+          ]
+        },
+        {
+          "id": "AGR015",
+          "name": "درختان میوه",
+          "algorithms": [
+            "H07",
+            "H15",
+            "H18"
+          ]
+        },
+        {
+          "id": "AGR016",
+          "name": "سبزی‌کاری",
+          "algorithms": [
+            "H05",
+            "H18",
+            "H21"
+          ]
+        },
+        {
+          "id": "AGR017",
+          "name": "گل و گیاهان زینتی",
+          "algorithms": [
+            "H05",
+            "H18"
+          ]
+        },
+        {
+          "id": "AGR018",
+          "name": "گیاهان دارویی",
+          "algorithms": [
+            "H05",
+            "H18",
+            "H21"
+          ]
+        },
+        {
+          "id": "AGR019",
+          "name": "گیاهان صنعتی",
+          "algorithms": [
+            "H05",
+            "H18"
+          ]
+        },
+        {
+          "id": "AGR020",
+          "name": "غلات",
+          "algorithms": [
+            "H01",
+            "H02",
+            "H04",
+            "H18"
+          ]
+        },
+        {
+          "id": "AGR021",
+          "name": "حبوبات",
+          "algorithms": [
+            "H01",
+            "H09",
+            "H18",
+            "H21"
+          ]
+        },
+        {
+          "id": "AGR022",
+          "name": "دانه‌های روغنی",
+          "algorithms": [
+            "H01",
+            "H09",
+            "H18"
+          ]
+        },
+        {
+          "id": "AGR023",
+          "name": "کشاورزی ارگانیک",
+          "algorithms": [
+            "H09",
+            "H13",
+            "H21"
+          ]
+        },
+        {
+          "id": "AGR024",
+          "name": "کشاورزی حفاظتی",
+          "algorithms": [
+            "H09",
+            "H10",
+            "H13"
+          ]
+        },
+        {
+          "id": "AGR025",
+          "name": "کشاورزی دقیق",
+          "algorithms": [
+            "H05",
+            "H22",
+            "H23"
+          ]
+        },
+        {
+          "id": "AGR026",
+          "name": "کشاورزی هوشمند",
+          "algorithms": [
+            "H22",
+            "H23",
+            "H24"
+          ]
+        },
+        {
+          "id": "AGR027",
+          "name": "کشاورزی عمودی",
+          "algorithms": [
+            "H05",
+            "H18"
+          ]
+        },
+        {
+          "id": "AGR028",
+          "name": "هیدروپونیک",
+          "algorithms": [
+            "H05",
+            "H18"
+          ]
+        },
+        {
+          "id": "AGR029",
+          "name": "آکواپونیک",
+          "algorithms": [
+            "H05",
+            "H18"
+          ]
+        },
+        {
+          "id": "AGR030",
+          "name": "کشت گلخانه‌ای",
+          "algorithms": [
+            "H05",
+            "H18"
+          ]
+        }
+      ]
+    },
+    "climate": {
+      "name": "اقلیم و هواشناسی",
+      "icon": "🌤️",
+      "count": 30,
+      "specialties": [
+        {
+          "id": "CLI001",
+          "name": "اقلیم‌شناسی عمومی",
+          "algorithms": [
+            "H01",
+            "H02",
+            "H04"
+          ]
+        },
+        {
+          "id": "CLI002",
+          "name": "اقلیم‌شناسی کاربردی",
+          "algorithms": [
+            "H01",
+            "H02",
+            "H04",
+            "H05"
+          ]
+        },
+        {
+          "id": "CLI003",
+          "name": "هواشناسی کشاورزی",
+          "algorithms": [
+            "H01",
+            "H02",
+            "H04",
+            "H05",
+            "H06"
+          ]
+        },
+        {
+          "id": "CLI004",
+          "name": "هواشناسی دینامیک",
+          "algorithms": [
+            "H02",
+            "H04"
+          ]
+        },
+        {
+          "id": "CLI005",
+          "name": "هواشناسی سینوپتیک",
+          "algorithms": [
+            "H01",
+            "H06"
+          ]
+        },
+        {
+          "id": "CLI006",
+          "name": "هواشناسی ماهواره‌ای",
+          "algorithms": [
+            "H23",
+            "H24"
+          ]
+        },
+        {
+          "id": "CLI007",
+          "name": "اقلیم‌شناسی تغییر اقلیم",
+          "algorithms": [
+            "H02",
+            "H04",
+            "H06"
+          ]
+        },
+        {
+          "id": "CLI008",
+          "name": "اقلیم‌شناسی آماری",
+          "algorithms": [
+            "H22",
+            "H23"
+          ]
+        },
+        {
+          "id": "CLI009",
+          "name": "میکرواقلیم‌شناسی",
+          "algorithms": [
+            "H02",
+            "H04"
+          ]
+        },
+        {
+          "id": "CLI010",
+          "name": "اقلیم‌شناسی شهری",
+          "algorithms": [
+            "H02",
+            "H04"
+          ]
+        },
+        {
+          "id": "CLI011",
+          "name": "اقلیم‌شناسی کوهستانی",
+          "algorithms": [
+            "H02",
+            "H04"
+          ]
+        },
+        {
+          "id": "CLI012",
+          "name": "اقلیم‌شناسی بیابان",
+          "algorithms": [
+            "H01",
+            "H02",
+            "H04",
+            "H06"
+          ]
+        },
+        {
+          "id": "CLI013",
+          "name": "اقلیم‌شناسی حاره‌ای",
+          "algorithms": [
+            "H01",
+            "H02",
+            "H04"
+          ]
+        },
+        {
+          "id": "CLI014",
+          "name": "اقلیم‌شناسی قطبی",
+          "algorithms": [
+            "H02",
+            "H04"
+          ]
+        },
+        {
+          "id": "CLI015",
+          "name": "بیوم هواشناسی",
+          "algorithms": [
+            "H02",
+            "H04"
+          ]
+        },
+        {
+          "id": "CLI016",
+          "name": "هواشناسی هوانوردی",
+          "algorithms": []
+        },
+        {
+          "id": "CLI017",
+          "name": "هواشناسی دریایی",
+          "algorithms": [
+            "H01",
+            "H02"
+          ]
+        },
+        {
+          "id": "CLI018",
+          "name": "پیش‌بینی عددی هوا",
+          "algorithms": [
+            "H22"
+          ]
+        },
+        {
+          "id": "CLI019",
+          "name": "رادار هواشناسی",
+          "algorithms": [
+            "H01",
+            "H06"
+          ]
+        },
+        {
+          "id": "CLI020",
+          "name": "لیدار هواشناسی",
+          "algorithms": [
+            "H23"
+          ]
+        },
+        {
+          "id": "CLI021",
+          "name": "اقلیم‌شناسی دیرینه",
+          "algorithms": []
+        },
+        {
+          "id": "CLI022",
+          "name": "اقلیم‌شناسی آینده‌نگر",
+          "algorithms": [
+            "H22"
+          ]
+        },
+        {
+          "id": "CLI023",
+          "name": "هواشناسی حوادث شدید",
+          "algorithms": [
+            "H06"
+          ]
+        },
+        {
+          "id": "CLI024",
+          "name": "اقلیم‌شناسی خشکسالی",
+          "algorithms": [
+            "H01",
+            "H06"
+          ]
+        },
+        {
+          "id": "CLI025",
+          "name": "اقلیم‌شناسی یخبندان",
+          "algorithms": [
+            "H02",
+            "H04"
+          ]
+        },
+        {
+          "id": "CLI026",
+          "name": "اقلیم‌شناسی موج گرما",
+          "algorithms": [
+            "H02",
+            "H04"
+          ]
+        },
+        {
+          "id": "CLI027",
+          "name": "هواشناسی تشعشع",
+          "algorithms": [
+            "H04"
+          ]
+        },
+        {
+          "id": "CLI028",
+          "name": "اقلیم‌شناسی باد",
+          "algorithms": [
+            "H10"
+          ]
+        },
+        {
+          "id": "CLI029",
+          "name": "اقلیم‌شناسی رطوبت",
+          "algorithms": [
+            "H02",
+            "H03"
+          ]
+        },
+        {
+          "id": "CLI030",
+          "name": "اقلیم‌شناسی ابر و بارش",
+          "algorithms": [
+            "H01",
+            "H06"
+          ]
+        }
+      ]
+    },
+    "water_soil": {
+      "name": "آب و خاک",
+      "icon": "💧",
+      "count": 30,
+      "specialties": [
+        {
+          "id": "WAS001",
+          "name": "هیدرولوژی عمومی",
+          "algorithms": [
+            "H01",
+            "H09",
+            "H14"
+          ]
+        },
+        {
+          "id": "WAS002",
+          "name": "هیدرولوژی سطحی",
+          "algorithms": [
+            "H01",
+            "H10"
+          ]
+        },
+        {
+          "id": "WAS003",
+          "name": "هیدرولوژی زیرزمینی",
+          "algorithms": [
+            "H09",
+            "H14"
+          ]
+        },
+        {
+          "id": "WAS004",
+          "name": "هیدروژئولوژی",
+          "algorithms": [
+            "H09",
+            "H14"
+          ]
+        },
+        {
+          "id": "WAS005",
+          "name": "هیدرولیک",
+          "algorithms": [
+            "H01"
+          ]
+        },
+        {
+          "id": "WAS006",
+          "name": "مدیریت منابع آب",
+          "algorithms": [
+            "H09",
+            "H14"
+          ]
+        },
+        {
+          "id": "WAS007",
+          "name": "مهندسی آب",
+          "algorithms": [
+            "H01",
+            "H09"
+          ]
+        },
+        {
+          "id": "WAS008",
+          "name": "آبیاری و زهکشی",
+          "algorithms": [
+            "H09",
+            "H11"
+          ]
+        },
+        {
+          "id": "WAS009",
+          "name": "آبیاری تحت فشار",
+          "algorithms": [
+            "H09"
+          ]
+        },
+        {
+          "id": "WAS010",
+          "name": "آبیاری سطحی",
+          "algorithms": [
+            "H01",
+            "H09"
+          ]
+        },
+        {
+          "id": "WAS011",
+          "name": "فیزیک خاک",
+          "algorithms": [
+            "H09",
+            "H10",
+            "H12"
+          ]
+        },
+        {
+          "id": "WAS012",
+          "name": "شیمی خاک",
+          "algorithms": [
+            "H09",
+            "H11",
+            "H13"
+          ]
+        },
+        {
+          "id": "WAS013",
+          "name": "بیولوژی خاک",
+          "algorithms": [
+            "H09",
+            "H13",
+            "H21"
+          ]
+        },
+        {
+          "id": "WAS014",
+          "name": "حاصلخیزی خاک",
+          "algorithms": [
+            "H09",
+            "H13",
+            "H21"
+          ]
+        },
+        {
+          "id": "WAS015",
+          "name": "ژنتیک خاک",
+          "algorithms": [
+            "H09",
+            "H13"
+          ]
+        },
+        {
+          "id": "WAS016",
+          "name": "فرسایش خاک",
+          "algorithms": [
+            "H10"
+          ]
+        },
+        {
+          "id": "WAS017",
+          "name": "حفاظت خاک",
+          "algorithms": [
+            "H10",
+            "H13"
+          ]
+        },
+        {
+          "id": "WAS018",
+          "name": "شوری خاک",
+          "algorithms": [
+            "H11"
+          ]
+        },
+        {
+          "id": "WAS019",
+          "name": "اصلاح خاک‌های شور",
+          "algorithms": [
+            "H11"
+          ]
+        },
+        {
+          "id": "WAS020",
+          "name": "خاک‌های قلیایی",
+          "algorithms": [
+            "H11"
+          ]
+        },
+        {
+          "id": "WAS021",
+          "name": "خاک‌های اسیدی",
+          "algorithms": [
+            "H13"
+          ]
+        },
+        {
+          "id": "WAS022",
+          "name": "مدیریت مواد آلی خاک",
+          "algorithms": [
+            "H09",
+            "H13"
+          ]
+        },
+        {
+          "id": "WAS023",
+          "name": "کشاورزی حفاظتی خاک",
+          "algorithms": [
+            "H09",
+            "H10"
+          ]
+        },
+        {
+          "id": "WAS024",
+          "name": "خاک‌شناسی محیطی",
+          "algorithms": [
+            "H13"
+          ]
+        },
+        {
+          "id": "WAS025",
+          "name": "بازسازی خاک",
+          "algorithms": [
+            "H09",
+            "H13",
+            "H21"
+          ]
+        },
+        {
+          "id": "WAS026",
+          "name": "خاک‌شناسی شهری",
+          "algorithms": [
+            "H13"
+          ]
+        },
+        {
+          "id": "WAS027",
+          "name": "خاک‌شناسی جنگلی",
+          "algorithms": [
+            "H09",
+            "H13"
+          ]
+        },
+        {
+          "id": "WAS028",
+          "name": "خاک‌شناسی مرتعی",
+          "algorithms": [
+            "H09",
+            "H13"
+          ]
+        },
+        {
+          "id": "WAS029",
+          "name": "خاک‌شناسی بیابان",
+          "algorithms": [
+            "H09",
+            "H10",
+            "H13"
+          ]
+        },
+        {
+          "id": "WAS030",
+          "name": "خاک‌شناسی کشاورزی دقیق",
+          "algorithms": [
+            "H09",
+            "H23"
+          ]
+        }
+      ]
+    },
+    "economics": {
+      "name": "اقتصاد و توسعه روستایی",
+      "icon": "💰",
+      "count": 30,
+      "specialties": [
+        {
+          "id": "ECO001",
+          "name": "اقتصاد کشاورزی",
+          "algorithms": [
+            "H18",
+            "H22"
+          ]
+        },
+        {
+          "id": "ECO002",
+          "name": "اقتصاد منابع طبیعی",
+          "algorithms": [
+            "H09",
+            "H14"
+          ]
+        },
+        {
+          "id": "ECO003",
+          "name": "اقتصاد محیط زیست",
+          "algorithms": [
+            "H09",
+            "H13"
+          ]
+        },
+        {
+          "id": "ECO004",
+          "name": "اقتصاد روستایی",
+          "algorithms": [
+            "H25"
+          ]
+        },
+        {
+          "id": "ECO005",
+          "name": "توسعه روستایی",
+          "algorithms": [
+            "H25"
+          ]
+        },
+        {
+          "id": "ECO006",
+          "name": "توسعه پایدار",
+          "algorithms": [
+            "H09",
+            "H13",
+            "H25"
+          ]
+        },
+        {
+          "id": "ECO007",
+          "name": "اقتصاد غذا",
+          "algorithms": [
+            "H18"
+          ]
+        },
+        {
+          "id": "ECO008",
+          "name": "بازاریابی کشاورزی",
+          "algorithms": []
+        },
+        {
+          "id": "ECO009",
+          "name": "مدیریت مزرعه",
+          "algorithms": [
+            "H18",
+            "H22"
+          ]
+        },
+        {
+          "id": "ECO010",
+          "name": "اقتصاد آب",
+          "algorithms": [
+            "H09",
+            "H14"
+          ]
+        },
+        {
+          "id": "ECO011",
+          "name": "اقتصاد خاک",
+          "algorithms": [
+            "H09",
+            "H13"
+          ]
+        },
+        {
+          "id": "ECO012",
+          "name": "اقتصاد انرژی کشاورزی",
+          "algorithms": []
+        },
+        {
+          "id": "ECO013",
+          "name": "اقتصاد تغییر اقلیم",
+          "algorithms": [
+            "H02",
+            "H04"
+          ]
+        },
+        {
+          "id": "ECO014",
+          "name": "بیمه کشاورزی",
+          "algorithms": [
+            "H22"
+          ]
+        },
+        {
+          "id": "ECO015",
+          "name": "اعتبارات خرد روستایی",
+          "algorithms": []
+        },
+        {
+          "id": "ECO016",
+          "name": "تعاونی‌های روستایی",
+          "algorithms": [
+            "H25"
+          ]
+        },
+        {
+          "id": "ECO017",
+          "name": "زنجیره تأمین کشاورزی",
+          "algorithms": []
+        },
+        {
+          "id": "ECO018",
+          "name": "صنایع تبدیلی کشاورزی",
+          "algorithms": []
+        },
+        {
+          "id": "ECO019",
+          "name": "صادرات کشاورزی",
+          "algorithms": []
+        },
+        {
+          "id": "ECO020",
+          "name": "سیاست‌گذاری کشاورزی",
+          "algorithms": [
+            "H25"
+          ]
+        },
+        {
+          "id": "ECO021",
+          "name": "یارانه‌های کشاورزی",
+          "algorithms": []
+        },
+        {
+          "id": "ECO022",
+          "name": "اقتصاد کشاورزی دقیق",
+          "algorithms": [
+            "H22",
+            "H23"
+          ]
+        },
+        {
+          "id": "ECO023",
+          "name": "اقتصاد کشاورزی ارگانیک",
+          "algorithms": [
+            "H13"
+          ]
+        },
+        {
+          "id": "ECO024",
+          "name": "اقتصاد کشاورزی شهری",
+          "algorithms": []
+        },
+        {
+          "id": "ECO025",
+          "name": "اقتصاد گلخانه",
+          "algorithms": []
+        },
+        {
+          "id": "ECO026",
+          "name": "اقتصاد آبزی‌پروری",
+          "algorithms": []
+        },
+        {
+          "id": "ECO027",
+          "name": "اقتصاد دامپروری",
+          "algorithms": []
+        },
+        {
+          "id": "ECO028",
+          "name": "اقتصاد طیور",
+          "algorithms": []
+        },
+        {
+          "id": "ECO029",
+          "name": "اقتصاد زنبورداری",
+          "algorithms": []
+        },
+        {
+          "id": "ECO030",
+          "name": "اقتصاد گیاهان دارویی",
+          "algorithms": []
+        }
+      ]
+    }
+  },
+  "algorithm_mapping": {
+    "H01": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR001",
+        "specialty_name": "زراعت عمومی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR020",
+        "specialty_name": "غلات"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR021",
+        "specialty_name": "حبوبات"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR022",
+        "specialty_name": "دانه‌های روغنی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI001",
+        "specialty_name": "اقلیم‌شناسی عمومی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI002",
+        "specialty_name": "اقلیم‌شناسی کاربردی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI003",
+        "specialty_name": "هواشناسی کشاورزی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI005",
+        "specialty_name": "هواشناسی سینوپتیک"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI012",
+        "specialty_name": "اقلیم‌شناسی بیابان"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI013",
+        "specialty_name": "اقلیم‌شناسی حاره‌ای"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI017",
+        "specialty_name": "هواشناسی دریایی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI019",
+        "specialty_name": "رادار هواشناسی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI024",
+        "specialty_name": "اقلیم‌شناسی خشکسالی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI030",
+        "specialty_name": "اقلیم‌شناسی ابر و بارش"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS001",
+        "specialty_name": "هیدرولوژی عمومی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS002",
+        "specialty_name": "هیدرولوژی سطحی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS005",
+        "specialty_name": "هیدرولیک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS007",
+        "specialty_name": "مهندسی آب"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS010",
+        "specialty_name": "آبیاری سطحی"
+      }
+    ],
+    "H05": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR001",
+        "specialty_name": "زراعت عمومی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR003",
+        "specialty_name": "گیاه‌پزشکی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR004",
+        "specialty_name": "حشره‌شناسی کشاورزی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR005",
+        "specialty_name": "قارچ‌شناسی کشاورزی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR006",
+        "specialty_name": "ویروس‌شناسی گیاهی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR008",
+        "specialty_name": "علف‌های هرز"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR014",
+        "specialty_name": "باغبانی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR016",
+        "specialty_name": "سبزی‌کاری"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR017",
+        "specialty_name": "گل و گیاهان زینتی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR018",
+        "specialty_name": "گیاهان دارویی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR019",
+        "specialty_name": "گیاهان صنعتی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR025",
+        "specialty_name": "کشاورزی دقیق"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR027",
+        "specialty_name": "کشاورزی عمودی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR028",
+        "specialty_name": "هیدروپونیک"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR029",
+        "specialty_name": "آکواپونیک"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR030",
+        "specialty_name": "کشت گلخانه‌ای"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI002",
+        "specialty_name": "اقلیم‌شناسی کاربردی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI003",
+        "specialty_name": "هواشناسی کشاورزی"
+      }
+    ],
+    "H09": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR001",
+        "specialty_name": "زراعت عمومی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR007",
+        "specialty_name": "نماتدشناسی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR009",
+        "specialty_name": "فیزیولوژی گیاهی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR021",
+        "specialty_name": "حبوبات"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR022",
+        "specialty_name": "دانه‌های روغنی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR023",
+        "specialty_name": "کشاورزی ارگانیک"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR024",
+        "specialty_name": "کشاورزی حفاظتی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS001",
+        "specialty_name": "هیدرولوژی عمومی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS003",
+        "specialty_name": "هیدرولوژی زیرزمینی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS004",
+        "specialty_name": "هیدروژئولوژی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS006",
+        "specialty_name": "مدیریت منابع آب"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS007",
+        "specialty_name": "مهندسی آب"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS008",
+        "specialty_name": "آبیاری و زهکشی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS009",
+        "specialty_name": "آبیاری تحت فشار"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS010",
+        "specialty_name": "آبیاری سطحی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS011",
+        "specialty_name": "فیزیک خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS012",
+        "specialty_name": "شیمی خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS013",
+        "specialty_name": "بیولوژی خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS014",
+        "specialty_name": "حاصلخیزی خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS015",
+        "specialty_name": "ژنتیک خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS022",
+        "specialty_name": "مدیریت مواد آلی خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS023",
+        "specialty_name": "کشاورزی حفاظتی خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS025",
+        "specialty_name": "بازسازی خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS027",
+        "specialty_name": "خاک‌شناسی جنگلی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS028",
+        "specialty_name": "خاک‌شناسی مرتعی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS029",
+        "specialty_name": "خاک‌شناسی بیابان"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS030",
+        "specialty_name": "خاک‌شناسی کشاورزی دقیق"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO002",
+        "specialty_name": "اقتصاد منابع طبیعی"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO003",
+        "specialty_name": "اقتصاد محیط زیست"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO006",
+        "specialty_name": "توسعه پایدار"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO010",
+        "specialty_name": "اقتصاد آب"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO011",
+        "specialty_name": "اقتصاد خاک"
+      }
+    ],
+    "H18": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR001",
+        "specialty_name": "زراعت عمومی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR002",
+        "specialty_name": "اصلاح نباتات"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR014",
+        "specialty_name": "باغبانی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR015",
+        "specialty_name": "درختان میوه"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR016",
+        "specialty_name": "سبزی‌کاری"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR017",
+        "specialty_name": "گل و گیاهان زینتی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR018",
+        "specialty_name": "گیاهان دارویی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR019",
+        "specialty_name": "گیاهان صنعتی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR020",
+        "specialty_name": "غلات"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR021",
+        "specialty_name": "حبوبات"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR022",
+        "specialty_name": "دانه‌های روغنی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR027",
+        "specialty_name": "کشاورزی عمودی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR028",
+        "specialty_name": "هیدروپونیک"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR029",
+        "specialty_name": "آکواپونیک"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR030",
+        "specialty_name": "کشت گلخانه‌ای"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO001",
+        "specialty_name": "اقتصاد کشاورزی"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO007",
+        "specialty_name": "اقتصاد غذا"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO009",
+        "specialty_name": "مدیریت مزرعه"
+      }
+    ],
+    "H15": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR002",
+        "specialty_name": "اصلاح نباتات"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR010",
+        "specialty_name": "بیوتکنولوژی کشاورزی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR011",
+        "specialty_name": "ژنتیک گیاهی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR012",
+        "specialty_name": "بذرشناسی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR015",
+        "specialty_name": "درختان میوه"
+      }
+    ],
+    "H17": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR002",
+        "specialty_name": "اصلاح نباتات"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR010",
+        "specialty_name": "بیوتکنولوژی کشاورزی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR011",
+        "specialty_name": "ژنتیک گیاهی"
+      }
+    ],
+    "H19": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR003",
+        "specialty_name": "گیاه‌پزشکی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR004",
+        "specialty_name": "حشره‌شناسی کشاورزی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR005",
+        "specialty_name": "قارچ‌شناسی کشاورزی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR006",
+        "specialty_name": "ویروس‌شناسی گیاهی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR007",
+        "specialty_name": "نماتدشناسی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR008",
+        "specialty_name": "علف‌های هرز"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR011",
+        "specialty_name": "ژنتیک گیاهی"
+      }
+    ],
+    "H02": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR009",
+        "specialty_name": "فیزیولوژی گیاهی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR020",
+        "specialty_name": "غلات"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI001",
+        "specialty_name": "اقلیم‌شناسی عمومی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI002",
+        "specialty_name": "اقلیم‌شناسی کاربردی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI003",
+        "specialty_name": "هواشناسی کشاورزی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI004",
+        "specialty_name": "هواشناسی دینامیک"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI007",
+        "specialty_name": "اقلیم‌شناسی تغییر اقلیم"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI009",
+        "specialty_name": "میکرواقلیم‌شناسی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI010",
+        "specialty_name": "اقلیم‌شناسی شهری"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI011",
+        "specialty_name": "اقلیم‌شناسی کوهستانی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI012",
+        "specialty_name": "اقلیم‌شناسی بیابان"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI013",
+        "specialty_name": "اقلیم‌شناسی حاره‌ای"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI014",
+        "specialty_name": "اقلیم‌شناسی قطبی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI015",
+        "specialty_name": "بیوم هواشناسی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI017",
+        "specialty_name": "هواشناسی دریایی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI025",
+        "specialty_name": "اقلیم‌شناسی یخبندان"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI026",
+        "specialty_name": "اقلیم‌شناسی موج گرما"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI029",
+        "specialty_name": "اقلیم‌شناسی رطوبت"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO013",
+        "specialty_name": "اقتصاد تغییر اقلیم"
+      }
+    ],
+    "H04": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR009",
+        "specialty_name": "فیزیولوژی گیاهی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR020",
+        "specialty_name": "غلات"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI001",
+        "specialty_name": "اقلیم‌شناسی عمومی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI002",
+        "specialty_name": "اقلیم‌شناسی کاربردی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI003",
+        "specialty_name": "هواشناسی کشاورزی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI004",
+        "specialty_name": "هواشناسی دینامیک"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI007",
+        "specialty_name": "اقلیم‌شناسی تغییر اقلیم"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI009",
+        "specialty_name": "میکرواقلیم‌شناسی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI010",
+        "specialty_name": "اقلیم‌شناسی شهری"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI011",
+        "specialty_name": "اقلیم‌شناسی کوهستانی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI012",
+        "specialty_name": "اقلیم‌شناسی بیابان"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI013",
+        "specialty_name": "اقلیم‌شناسی حاره‌ای"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI014",
+        "specialty_name": "اقلیم‌شناسی قطبی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI015",
+        "specialty_name": "بیوم هواشناسی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI025",
+        "specialty_name": "اقلیم‌شناسی یخبندان"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI026",
+        "specialty_name": "اقلیم‌شناسی موج گرما"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI027",
+        "specialty_name": "هواشناسی تشعشع"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO013",
+        "specialty_name": "اقتصاد تغییر اقلیم"
+      }
+    ],
+    "H21": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR010",
+        "specialty_name": "بیوتکنولوژی کشاورزی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR013",
+        "specialty_name": "تکثیر گیاهان"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR014",
+        "specialty_name": "باغبانی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR016",
+        "specialty_name": "سبزی‌کاری"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR018",
+        "specialty_name": "گیاهان دارویی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR021",
+        "specialty_name": "حبوبات"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR023",
+        "specialty_name": "کشاورزی ارگانیک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS013",
+        "specialty_name": "بیولوژی خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS014",
+        "specialty_name": "حاصلخیزی خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS025",
+        "specialty_name": "بازسازی خاک"
+      }
+    ],
+    "H16": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR012",
+        "specialty_name": "بذرشناسی"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR013",
+        "specialty_name": "تکثیر گیاهان"
+      }
+    ],
+    "H20": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR012",
+        "specialty_name": "بذرشناسی"
+      }
+    ],
+    "H07": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR015",
+        "specialty_name": "درختان میوه"
+      }
+    ],
+    "H13": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR023",
+        "specialty_name": "کشاورزی ارگانیک"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR024",
+        "specialty_name": "کشاورزی حفاظتی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS012",
+        "specialty_name": "شیمی خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS013",
+        "specialty_name": "بیولوژی خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS014",
+        "specialty_name": "حاصلخیزی خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS015",
+        "specialty_name": "ژنتیک خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS017",
+        "specialty_name": "حفاظت خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS021",
+        "specialty_name": "خاک‌های اسیدی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS022",
+        "specialty_name": "مدیریت مواد آلی خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS024",
+        "specialty_name": "خاک‌شناسی محیطی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS025",
+        "specialty_name": "بازسازی خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS026",
+        "specialty_name": "خاک‌شناسی شهری"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS027",
+        "specialty_name": "خاک‌شناسی جنگلی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS028",
+        "specialty_name": "خاک‌شناسی مرتعی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS029",
+        "specialty_name": "خاک‌شناسی بیابان"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO003",
+        "specialty_name": "اقتصاد محیط زیست"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO006",
+        "specialty_name": "توسعه پایدار"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO011",
+        "specialty_name": "اقتصاد خاک"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO023",
+        "specialty_name": "اقتصاد کشاورزی ارگانیک"
+      }
+    ],
+    "H10": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR024",
+        "specialty_name": "کشاورزی حفاظتی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI028",
+        "specialty_name": "اقلیم‌شناسی باد"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS002",
+        "specialty_name": "هیدرولوژی سطحی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS011",
+        "specialty_name": "فیزیک خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS016",
+        "specialty_name": "فرسایش خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS017",
+        "specialty_name": "حفاظت خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS023",
+        "specialty_name": "کشاورزی حفاظتی خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS029",
+        "specialty_name": "خاک‌شناسی بیابان"
+      }
+    ],
+    "H22": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR025",
+        "specialty_name": "کشاورزی دقیق"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR026",
+        "specialty_name": "کشاورزی هوشمند"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI008",
+        "specialty_name": "اقلیم‌شناسی آماری"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI018",
+        "specialty_name": "پیش‌بینی عددی هوا"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI022",
+        "specialty_name": "اقلیم‌شناسی آینده‌نگر"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO001",
+        "specialty_name": "اقتصاد کشاورزی"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO009",
+        "specialty_name": "مدیریت مزرعه"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO014",
+        "specialty_name": "بیمه کشاورزی"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO022",
+        "specialty_name": "اقتصاد کشاورزی دقیق"
+      }
+    ],
+    "H23": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR025",
+        "specialty_name": "کشاورزی دقیق"
+      },
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR026",
+        "specialty_name": "کشاورزی هوشمند"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI006",
+        "specialty_name": "هواشناسی ماهواره‌ای"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI008",
+        "specialty_name": "اقلیم‌شناسی آماری"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI020",
+        "specialty_name": "لیدار هواشناسی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS030",
+        "specialty_name": "خاک‌شناسی کشاورزی دقیق"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO022",
+        "specialty_name": "اقتصاد کشاورزی دقیق"
+      }
+    ],
+    "H24": [
+      {
+        "domain": "agriculture",
+        "specialty_id": "AGR026",
+        "specialty_name": "کشاورزی هوشمند"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI006",
+        "specialty_name": "هواشناسی ماهواره‌ای"
+      }
+    ],
+    "H06": [
+      {
+        "domain": "climate",
+        "specialty_id": "CLI003",
+        "specialty_name": "هواشناسی کشاورزی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI005",
+        "specialty_name": "هواشناسی سینوپتیک"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI007",
+        "specialty_name": "اقلیم‌شناسی تغییر اقلیم"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI012",
+        "specialty_name": "اقلیم‌شناسی بیابان"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI019",
+        "specialty_name": "رادار هواشناسی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI023",
+        "specialty_name": "هواشناسی حوادث شدید"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI024",
+        "specialty_name": "اقلیم‌شناسی خشکسالی"
+      },
+      {
+        "domain": "climate",
+        "specialty_id": "CLI030",
+        "specialty_name": "اقلیم‌شناسی ابر و بارش"
+      }
+    ],
+    "H03": [
+      {
+        "domain": "climate",
+        "specialty_id": "CLI029",
+        "specialty_name": "اقلیم‌شناسی رطوبت"
+      }
+    ],
+    "H14": [
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS001",
+        "specialty_name": "هیدرولوژی عمومی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS003",
+        "specialty_name": "هیدرولوژی زیرزمینی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS004",
+        "specialty_name": "هیدروژئولوژی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS006",
+        "specialty_name": "مدیریت منابع آب"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO002",
+        "specialty_name": "اقتصاد منابع طبیعی"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO010",
+        "specialty_name": "اقتصاد آب"
+      }
+    ],
+    "H11": [
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS008",
+        "specialty_name": "آبیاری و زهکشی"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS012",
+        "specialty_name": "شیمی خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS018",
+        "specialty_name": "شوری خاک"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS019",
+        "specialty_name": "اصلاح خاک‌های شور"
+      },
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS020",
+        "specialty_name": "خاک‌های قلیایی"
+      }
+    ],
+    "H12": [
+      {
+        "domain": "water_soil",
+        "specialty_id": "WAS011",
+        "specialty_name": "فیزیک خاک"
+      }
+    ],
+    "H25": [
+      {
+        "domain": "economics",
+        "specialty_id": "ECO004",
+        "specialty_name": "اقتصاد روستایی"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO005",
+        "specialty_name": "توسعه روستایی"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO006",
+        "specialty_name": "توسعه پایدار"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO016",
+        "specialty_name": "تعاونی‌های روستایی"
+      },
+      {
+        "domain": "economics",
+        "specialty_id": "ECO020",
+        "specialty_name": "سیاست‌گذاری کشاورزی"
+      }
+    ]
+  }
+}
