@@ -32,7 +32,7 @@ import {
   moistureColor,
   rootColor,
   groundwaterColor,
-} from '../../../lib/terrainGenerator';
+} from '../../../../lib/terrainGenerator';
 
 // ─────────────────────────────────────────────────────────────────────
 // Props
