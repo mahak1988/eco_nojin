@@ -1,18 +1,11 @@
+# pnpm workspace configuration
 packages:
   - 'frontend'
-allowBuilds:
-  '@prisma/engines': false
-  '@vaadin/vaadin-usage-statistics': set this to true or false
-  es5-ext: set this to true or false
-  prisma: false
-  sharp: false
-  uglifyjs-webpack-plugin: set this to true or false
-  unrs-resolver: false
+  - 'services/*'
 
-# Optional engine strictness
-# engine-strict=true
+# این تنظیمات باید در workspace level باشد نه global
+autoInstallPeers: true
+strictPeerDependencies: false
 
-# Only if needed:
-# catalog:
-#   react: ^19.0.0
-#   next: ^16.0.0
+# تنظیمات performance
+preferFrozenLockfile: true

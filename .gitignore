@@ -1,19 +1,24 @@
-# ═══════════════════════════════════════════════════════════
-# Eco Nojin .gitignore
-# ═══════════════════════════════════════════════════════════
+# ==============================================================================
+# eco_nojin .gitignore
+# ==============================================================================
 
-# ── Environment & Secrets ─────────────────────────────
+# ------------------------------------------------------------------------------
+# Environment & Secrets (هرگز commit نشود)
+# ------------------------------------------------------------------------------
 .env
-.env.*
+.env.local
+.env.*.local
 !.env.example
-*.pem
+!.env.template
+secrets/
 *.key
+*.pem
 *.p12
 *.pfx
-secrets/
-credentials/
 
-# ── Python ────────────────────────────────────────────
+# ------------------------------------------------------------------------------
+# Python
+# ------------------------------------------------------------------------------
 __pycache__/
 *.py[cod]
 *$py.class
@@ -34,217 +39,141 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
-
-# ── Virtual Environment ───────────────────────────────
-venv/
 .venv/
-env/
+venv/
 ENV/
+env/
+.venv
 
-# ── IDE / Editors ─────────────────────────────────────
-.idea/
+# ------------------------------------------------------------------------------
+# Node.js / pnpm
+# ------------------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# ------------------------------------------------------------------------------
+# Build Outputs
+# ------------------------------------------------------------------------------
+frontend/dist/
+frontend/build/
+frontend/.vite/
+
+# ------------------------------------------------------------------------------
+# IDE & Editors
+# ------------------------------------------------------------------------------
 .vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
 *.swp
 *.swo
 *~
-*.sublime-workspace
+.project
+.classpath
+.settings/
 *.sublime-project
+*.sublime-workspace
 
-# ── Testing / Coverage ────────────────────────────────
-.pytest_cache/
-.coverage
-.coverage.*
-htmlcov/
-.tox/
-.nox/
-coverage.xml
-*.cover
-
-# ── Type checking ─────────────────────────────────────
-.mypy_cache/
-.dmypy.json
-dmypy.json
-.pyre/
-.pytype/
-
-# ── Jupyter ───────────────────────────────────────────
-.ipynb_checkpoints
-*.ipynb_checkpoints
-
-# ── Data & Cache ──────────────────────────────────────
-*.db
-*.sqlite
-*.sqlite3
-*.duckdb
-*.pkl
-*.pickle
-*.tif
-*.tiff
-*.gpkg
-*.nc
-*.h5
-*.hdf5
-data/cache/
-.satellite_cache/
-.cache/
-
-# ── Logs ──────────────────────────────────────────────
-logs/
-*.log
-
-# ── OS files ──────────────────────────────────────────
+# ------------------------------------------------------------------------------
+# OS Files
+# ------------------------------------------------------------------------------
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 Desktop.ini
 
-# ── Backup files (پشتیبان‌ها) ─────────────────────────
-*.bak
-*.backup
-*.old
-*.orig
-*.broken
-*.before_nojin
-*.before_nojin_integration
-*.safe-backup
-*.backup_phase1
-*.bak2
+# ------------------------------------------------------------------------------
+# Quarantine & Cache (بسیار حجیم)
+# ------------------------------------------------------------------------------
+_quarantine/
+*.bundle
+*.pkl
 
-# ── Backup folders (پوشه‌های پشتیبان) ────────────────
-_backups_fix/
-_backup_*/
-_trash/
-security_backup/
+# Satellite cache
+data/copernicus_cache/
+data/maps/cache/
+.satellite_cache/
 
-# ── Build artifacts (خروجی‌های کامپایل) ──────────────
-# Python extensions
-*.pyd
-*.dll
-*.dylib
+# ------------------------------------------------------------------------------
+# Data Files (برای commit خیلی حجیم‌اند)
+# ------------------------------------------------------------------------------
+data/raw/
+data/processed/
+*.tif
+*.tiff
+*.nc
+*.h5
+*.hdf
 
-# C/C++ / Visual Studio generated
+# ------------------------------------------------------------------------------
+# C++ Build Outputs
+# ------------------------------------------------------------------------------
+engine/cpp_core/build2/
 *.obj
 *.o
+*.a
 *.lib
-*.exp
-*.tlog
-*.lastbuildstate
-*.recipe
-*.check_cache
-*.stamp
-*.depend
-*.list
-*.pdb
-*.idb
-*.ipdb
-*.iobj
-*.ilk
-*.user
-*.suo
-*.sdf
-*.opensdf
-*.pch
-*.res
-*.aps
-
-# توجه: فایل‌های پروژه Visual Studio مانند *.vcxproj ، *.sln و *.filters
-# اگر سورس هستند نباید ایگنور شوند؛ اینجا فقط خروجی‌های build ایگنور می‌شوند.
-
-# ── Frontend / Node ───────────────────────────────────
-node_modules/
-frontend/node_modules/
-frontend/.next/
-frontend/out/
-frontend/dist/
-frontend/build/
-
-# ── Blockchain ────────────────────────────────────────
-contracts/artifacts/
-contracts/cache/
-
-# ── Temporary / Misc ──────────────────────────────────
-*.tmp
-*.temp
-*.swp
-*.swo
-
-# ===== Binary Files (Auto-added by cleanup script) =====
 *.exe
 *.dll
-*.obj
-*.lib
-*.exp
-*.pyd
-
-
-# Ghost/Orphaned Virtual Environments
-.venv_ghost/
-
-# local backup snapshots (keep on disk, out of git)
-_backup_*/
-
-*.bak.*
-# ═══ افزوده‌شده توسط fix_critical.py (2026-08-29) ═══
-
-# --- کش‌ها و داده‌های سنگین (~۳۴۰MB) ---
-.satellite_cache/
-data/maps/
-data/copernicus_cache/
-data/motors/cache/
-data/**/cache/
-*.pkl
-htmlcov/
-.coverage
-.coverage.*
-
-# --- بیلد C++ و artifacts ویژوال استودیو ---
-engine/cpp_core/build*/
+*.so
+*.dylib
 *.iobj
-*.obj
+*.ipdb
 *.pdb
-*.ilk
-*.exp
-*.tlog
-*.lastbuildstate
-*.recipe
-*.vcxproj
-*.vcxproj.filters
 
-# --- پایتون ---
-__pycache__/
-*.py[cod]
-.venv/
-*.egg-info/
+# ------------------------------------------------------------------------------
+# Logs
+# ------------------------------------------------------------------------------
+*.log
+logs/
+reports/
+*.log.*
+
+# ------------------------------------------------------------------------------
+# Testing & Coverage
+# ------------------------------------------------------------------------------
+coverage/
+.coverage
+htmlcov/
 .pytest_cache/
-.mypy_cache/
-.ruff_cache/
+.tox/
+.nox/
 
-# --- Node / فرانت‌اند ---
-node_modules/
-frontend/dist/
+# ------------------------------------------------------------------------------
+# Blockchain (secrets)
+# ------------------------------------------------------------------------------
+contracts/artifacts/
+contracts/cache/
+contracts/typechain-types/
+contracts/.env
 
-# --- اسرار ---
-.env
-.env.*
-!**/.env.example
-!**/.env.template
-
-# --- بکاپ‌ها و رسوب‌ها ---
-_project_history/
-*.bak*
-*.bak_old_test
-*.bak_session_import
-_quarantine/
-
-# --- پوشه مشکوک (پوشه‌ای با پسوند json!) ---
-analysis.json/
-
+# ------------------------------------------------------------------------------
+# Database
+# ------------------------------------------------------------------------------
 *.db
-*.db-shm
-*.db-wal
+*.sqlite
+*.sqlite3
 
-# افزوده توسط patch_audit.py — 2026-08-29
-.satellite_cache/
+# ------------------------------------------------------------------------------
+# Documentation Build
+# ------------------------------------------------------------------------------
+docs/_build/
+docs/.doctrees/
 
-# افزوده توسط patch_audit.py — 2026-08-29
-.satellite_cache/
+# ------------------------------------------------------------------------------
+# Misc
+# ------------------------------------------------------------------------------
+*.bak
+*.tmp
+*.temp
+.cache/
+.parcel-cache/
+.turbo/

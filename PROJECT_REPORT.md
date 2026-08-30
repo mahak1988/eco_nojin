@@ -1,22 +1,22 @@
 # 📊 گزارش جامع پروژه — eco_nojin
 
-- **تاریخ تولید:** 2026-08-29 05:42:58
+- **تاریخ تولید:** 2026-08-30 03:29:03
 - **مسیر:** `D:\eco_nojin`
 - **محیط:** Python 3.12.10 | Windows 10
-- **مدت اسکن:** 1.4 ثانیه
+- **مدت اسکن:** 2.1 ثانیه
 
 ## ۱) خلاصه اجرایی
 
 | مورد | مقدار |
 |---|---|
-| کل فایل‌ها | 1,579 |
-| حجم کل | 497.5 MB |
-| خطوط کد واقعی | 99,648 |
-| اندپوینت‌های API | 288 |
-| کامپوننت‌های React (tsx) | 168 |
-| تست بک‌اند / فرانت‌اند | 66 / 0 فایل |
+| کل فایل‌ها | 1,632 |
+| حجم کل | 578.6 MB |
+| خطوط کد واقعی | 103,293 |
+| اندپوینت‌های API | 301 |
+| کامپوننت‌های React (tsx) | 171 |
+| تست بک‌اند / فرانت‌اند | 66 / 2 فایل |
 
-**استک:** Ant Design · D3.js · Deck.gl · ECharts · ESLint · Ethers.js · FastAPI · Framer Motion · GSAP · Google Fonts · MUI · MapLibre GL · Node.js · Python · React · React Three Fiber · Recharts · Starlette · TanStack Query · Three.js · TypeScript · Viem · Vite · Wagmi · Web3Modal · Zod · Zustand · i18next
+**استک:** Ant Design · Deck.gl · ECharts · ESLint · FastAPI · Framer Motion · Google Fonts · MapLibre GL · Node.js · Python · React · React Three Fiber · Recharts · Starlette · Three.js · TypeScript · Vite · Vitest · Zustand · i18next
 
 **ابزارها:** Dockerfile · Alembic (مهاجرت DB) · README.md · نمونه .env · Hardhat (قرارداد هوشمند) · GitHub Actions (1 workflow)
 
@@ -27,13 +27,33 @@
 ## ۳) ساختار پوشه‌ها (تا عمق ۳)
 
 ```text
-eco_nojin/  (51 فایل در ریشه)
+eco_nojin/  (74 فایل در ریشه)
 ├── .github/ (1 فایل)
 │   └── workflows/ (1 فایل)
-├── .satellite_cache/ (37 فایل)
-│   └── disk_cache/ (23 فایل)
-├── _project_history/ (4 فایل)
-│   └── 20260826_030717_phase3_wave2/ (4 فایل)
+├── _quarantine/ (81 فایل)
+│   ├── branches/ (3 فایل)
+│   ├── history_purge/ (42 فایل)
+│   │   ├── .satellite_cache/ (37 فایل)
+│   │   │   └── disk_cache/ (23 فایل)
+│   │   └── _project_history/ (4 فایل)
+│   │       └── 20260826_030717_phase3_wave2/ (4 فایل)
+│   ├── legacy_bak/ (19 فایل)
+│   │   └── tests/ (19 فایل)
+│   │       ├── integration/ (12 فایل)
+│   │       └── unit/ (1 فایل)
+│   ├── p1/ (12 فایل)
+│   │   ├── analysis_json_dir/ (1 فایل)
+│   │   │   └── analysis.json/ (1 فایل)
+│   │   ├── code_baks/ (4 فایل)
+│   │   │   ├── database/ (1 فایل)
+│   │   │   ├── services/ (1 فایل)
+│   │   │   └── tests/ (2 فایل)
+│   │   ├── legacy_models/ (5 فایل)
+│   │   │   └── frontend/ (5 فایل)
+│   │   └── old_root_src/ (0 فایل)
+│   │       └── src/ (0 فایل)
+│   ├── p2/ (3 فایل)
+│   └── secrets/ (1 فایل)
 ├── adapters/ (2 فایل)
 ├── alembic/ (18 فایل)
 │   └── versions/ (15 فایل)
@@ -47,7 +67,7 @@ eco_nojin/  (51 فایل در ریشه)
 ├── contracts/ (11 فایل)
 │   ├── scripts/ (1 فایل)
 │   └── src/ (2 فایل)
-├── data/ (133 فایل)
+├── data/ (135 فایل)
 │   ├── analyses/ (0 فایل)
 │   │   └── topography/ (0 فایل)
 │   │       └── test_site/ (0 فایل)
@@ -65,7 +85,8 @@ eco_nojin/  (51 فایل در ریشه)
 │   ├── external/ (1 فایل)
 │   ├── lab/ (1 فایل)
 │   ├── lms/ (1 فایل)
-│   ├── manual/ (1 فایل)
+│   ├── manual/ (4 فایل)
+│   │   └── elevation_cache/ (3 فایل)
 │   ├── maps/ (74 فایل)
 │   │   ├── cache/ (17 فایل)
 │   │   │   ├── dem/ (1 فایل)
@@ -101,14 +122,14 @@ eco_nojin/  (51 فایل در ریشه)
 │   ├── reports/ (15 فایل)
 │   ├── security/ (1 فایل)
 │   └── swat_projects/ (17 فایل)
-├── database/ (24 فایل)
+├── database/ (23 فایل)
 │   └── models/ (1 فایل)
 ├── DELIVERY/ (1 فایل)
 ├── deploy/ (3 فایل)
 │   ├── ci/ (1 فایل)
 │   ├── docker/ (1 فایل)
 │   └── k8s/ (1 فایل)
-├── docs/ (122 فایل)
+├── docs/ (123 فایل)
 │   ├── architecture/ (9 فایل)
 │   │   └── local_first/ (9 فایل)
 │   ├── backlog/ (1 فایل)
@@ -190,20 +211,20 @@ eco_nojin/  (51 فایل در ریشه)
 │       │   └── tests/ (6 فایل)
 │       ├── reference/ (3 فایل)
 │       └── tests/ (6 فایل)
-├── frontend/ (229 فایل)
+├── frontend/ (231 فایل)
 │   ├── public/ (3 فایل)
 │   │   └── models/ (0 فایل)
 │   │       ├── animals/ (0 فایل)
 │   │       ├── crops/ (0 فایل)
 │   │       └── terrain/ (0 فایل)
-│   └── src/ (214 فایل)
+│   └── src/ (215 فایل)
 │       ├── assets/ (3 فایل)
-│       ├── components/ (105 فایل)
+│       ├── components/ (107 فایل)
 │       │   ├── 3d/ (4 فایل)
 │       │   ├── auth/ (1 فایل)
 │       │   ├── backgrounds/ (1 فایل)
 │       │   ├── branding/ (1 فایل)
-│       │   ├── common/ (3 فایل)
+│       │   ├── common/ (4 فایل)
 │       │   ├── dashboard/ (3 فایل)
 │       │   ├── farmsim/ (1 فایل)
 │       │   ├── hydroma/ (25 فایل)
@@ -211,7 +232,7 @@ eco_nojin/  (51 فایل در ریشه)
 │       │   ├── maps/ (1 فایل)
 │       │   ├── payment/ (2 فایل)
 │       │   ├── satellite/ (1 فایل)
-│       │   ├── simulators/ (18 فایل)
+│       │   ├── simulators/ (19 فایل)
 │       │   ├── ui/ (16 فایل)
 │       │   ├── visualization/ (3 فایل)
 │       │   ├── visualizers/ (7 فایل)
@@ -223,15 +244,16 @@ eco_nojin/  (51 فایل در ریشه)
 │       ├── hooks/ (2 فایل)
 │       ├── i18n/ (4 فایل)
 │       │   └── locales/ (2 فایل)
-│       ├── lib/ (3 فایل)
+│       ├── lib/ (4 فایل)
 │       ├── locales/ (2 فایل)
-│       ├── pages/ (73 فایل)
-│       │   ├── _legacy_models/ (5 فایل)
-│       │   ├── admin/ (36 فایل)
+│       ├── pages/ (69 فایل)
+│       │   ├── _legacy_models/ (0 فایل)
+│       │   ├── admin/ (37 فایل)
 │       │   └── auth/ (4 فایل)
 │       ├── services/ (6 فایل)
 │       ├── store/ (2 فایل)
 │       ├── styles/ (3 فایل)
+│       ├── test/ (2 فایل)
 │       └── types/ (1 فایل)
 ├── interfaces/ (3 فایل)
 ├── migrations/ (3 فایل)
@@ -242,9 +264,10 @@ eco_nojin/  (51 فایل در ریشه)
 │   ├── notebooks/ (1 فایل)
 │   └── registry/ (1 فایل)
 ├── reports/ (3 فایل)
+├── requirements_proposal/ (6 فایل)
 ├── scripts/ (13 فایل)
 │   └── setup/ (2 فایل)
-├── services/ (390 فایل)
+├── services/ (391 فایل)
 │   ├── admin/ (10 فایل)
 │   │   ├── api/ (1 فایل)
 │   │   └── tests/ (3 فایل)
@@ -252,10 +275,10 @@ eco_nojin/  (51 فایل در ریشه)
 │   ├── analytics/ (10 فایل)
 │   │   ├── api/ (1 فایل)
 │   │   └── tests/ (3 فایل)
-│   ├── api_gateway/ (52 فایل)
-│   │   └── routers/ (45 فایل)
+│   ├── api_gateway/ (54 فایل)
+│   │   └── routers/ (47 فایل)
 │   ├── audit/ (2 فایل)
-│   ├── auth/ (22 فایل)
+│   ├── auth/ (21 فایل)
 │   │   ├── api/ (1 فایل)
 │   │   └── tests/ (3 فایل)
 │   ├── bots/ (24 فایل)
@@ -347,10 +370,8 @@ eco_nojin/  (51 فایل در ریشه)
 │   │   └── tests/ (3 فایل)
 │   └── workflow/ (5 فایل)
 │       └── tests/ (1 فایل)
-├── src/ (1 فایل)
-│   └── pages/ (1 فایل)
-├── supabase/ (8 فایل)
-│   └── migrations/ (8 فایل)
+├── supabase/ (9 فایل)
+│   └── migrations/ (9 فایل)
 │       └── legacy/ (1 فایل)
 ├── testing_lab/ (5 فایل)
 │   ├── benchmarks/ (1 فایل)
@@ -360,37 +381,37 @@ eco_nojin/  (51 فایل در ریشه)
 │   ├── integration_tests/ (1 فایل)
 │   ├── reports/ (0 فایل)
 │   └── scientific_tests/ (1 فایل)
-├── tests/ (118 فایل)
+├── tests/ (97 فایل)
 │   ├── benchmarks/ (2 فایل)
 │   ├── e2e/ (1 فایل)
 │   ├── fixtures/ (1 فایل)
-│   ├── integration/ (33 فایل)
+│   ├── integration/ (21 فایل)
 │   │   └── land/ (2 فایل)
-│   └── unit/ (32 فایل)
+│   └── unit/ (31 فایل)
 │       └── land/ (2 فایل)
 └── دیتا دستی اکسل/ (17 فایل)
-… و 12 زیرپوشه در عمق بیشتر
+… و 14 زیرپوشه در عمق بیشتر
 ```
 
 ## ۴) آمار فایل‌ها بر اساس نوع
 
 | پسوند | تعداد | حجم |
 |---|---:|---:|
-| `.py` | 682 | 3.1 MB |
-| `.tsx` | 168 | 1.0 MB |
-| `.md` | 145 | 999.1 KB |
-| `.json` | 107 | 1023.7 KB |
+| `.py` | 698 | 3.3 MB |
+| `.tsx` | 171 | 1.1 MB |
+| `.md` | 151 | 1.0 MB |
+| `.json` | 116 | 1.5 MB |
 | `.tlog` | 50 | 310.3 KB |
 | `.tif` | 44 | 53.3 MB |
 | `.cpp` | 39 | 188.4 KB |
-| `(بدون پسوند)` | 33 | 511.7 KB |
-| `.ts` | 29 | 90.2 KB |
+| `(بدون پسوند)` | 34 | 539.8 KB |
+| `.ts` | 32 | 95.1 KB |
+| `.txt` | 27 | 160.0 KB |
 | `.pkl` | 23 | 339.8 MB |
-| `.txt` | 19 | 148.0 KB |
-| `.sql` | 12 | 38.5 KB |
+| `.sql` | 13 | 42.4 KB |
 | `.bak_old_test` | 12 | 60.0 KB |
 | `.csv` | 11 | 5.1 MB |
-| `.css` | 11 | 106.8 KB |
+| `.css` | 11 | 106.9 KB |
 | `.hpp` | 10 | 28.7 KB |
 | `.vcxproj` | 9 | 226.7 KB |
 | `.recipe` | 9 | 3.8 KB |
@@ -398,7 +419,7 @@ eco_nojin/  (51 فایل در ریشه)
 | `.filters` | 7 | 4.7 KB |
 | `.bak_session_import` | 7 | 27.0 KB |
 | `.xlsx` | 7 | 15.9 MB |
-| `.yaml` | 6 | 958.3 KB |
+| `.yaml` | 6 | 689.6 KB |
 | `.js` | 5 | 13.0 KB |
 | `.cmake` | 5 | 12.2 KB |
 
@@ -406,21 +427,21 @@ eco_nojin/  (51 فایل در ریشه)
 
 | حجم | فایل |
 |---:|---|
-| 34.5 MB | `.satellite_cache/disk_cache/f2e23b9af5661baff0c2ffa7d0846a3e.pkl` ⚠️ |
-| 34.5 MB | `.satellite_cache/disk_cache/b22f6d60f781905456c44836f193c6d9.pkl` ⚠️ |
-| 33.8 MB | `.satellite_cache/disk_cache/19315cb2a85f91b28ee6f9c7fc5f08d0.pkl` ⚠️ |
-| 33.4 MB | `.satellite_cache/disk_cache/7f7ccca61bd23b20e0c080d7ea4065b8.pkl` ⚠️ |
-| 28.2 MB | `.satellite_cache/disk_cache/a5aadc0a3efdfe6ed5249b7f2322e7be.pkl` ⚠️ |
-| 28.2 MB | `.satellite_cache/disk_cache/2d4e7083a55ae2bc0d7f7232a4a1bd93.pkl` ⚠️ |
-| 26.2 MB | `.satellite_cache/disk_cache/4e1e84f9fc4c4ca729d8b281c1832ef3.pkl` ⚠️ |
-| 26.1 MB | `.satellite_cache/disk_cache/95e35534b64eb9ad550b3315f486a93c.pkl` ⚠️ |
-| 20.3 MB | `.satellite_cache/disk_cache/e572127654479aee1bdf72a79b669639.pkl` ⚠️ |
-| 20.2 MB | `.satellite_cache/disk_cache/ed788d0df177e5cf77d5d5bc4ca0dcf8.pkl` ⚠️ |
-| 19.6 MB | `.satellite_cache/disk_cache/621127f558e6255d16f2cd33de27f8be.pkl` ⚠️ |
-| 16.5 MB | `.satellite_cache/disk_cache/7b1667c1d26a1a065a705c0a68fd4051.pkl` ⚠️ |
-| 11.9 MB | `.satellite_cache/disk_cache/35e9660564c8f99e16e22bffe50528e1.pkl` ⚠️ |
+| 63.1 MB | `_quarantine/branches/branch_code-restoration-in-the-main-branch-76761.bundle` ⚠️ |
+| 34.5 MB | `_quarantine/history_purge/.satellite_cache/disk_cache/f2e23b9af5661baff0c2ffa7d0846a3e.pkl` ⚠️ |
+| 34.5 MB | `_quarantine/history_purge/.satellite_cache/disk_cache/b22f6d60f781905456c44836f193c6d9.pkl` ⚠️ |
+| 33.8 MB | `_quarantine/history_purge/.satellite_cache/disk_cache/19315cb2a85f91b28ee6f9c7fc5f08d0.pkl` ⚠️ |
+| 33.4 MB | `_quarantine/history_purge/.satellite_cache/disk_cache/7f7ccca61bd23b20e0c080d7ea4065b8.pkl` ⚠️ |
+| 28.2 MB | `_quarantine/history_purge/.satellite_cache/disk_cache/a5aadc0a3efdfe6ed5249b7f2322e7be.pkl` ⚠️ |
+| 28.2 MB | `_quarantine/history_purge/.satellite_cache/disk_cache/2d4e7083a55ae2bc0d7f7232a4a1bd93.pkl` ⚠️ |
+| 26.2 MB | `_quarantine/history_purge/.satellite_cache/disk_cache/4e1e84f9fc4c4ca729d8b281c1832ef3.pkl` ⚠️ |
+| 26.1 MB | `_quarantine/history_purge/.satellite_cache/disk_cache/95e35534b64eb9ad550b3315f486a93c.pkl` ⚠️ |
+| 20.3 MB | `_quarantine/history_purge/.satellite_cache/disk_cache/e572127654479aee1bdf72a79b669639.pkl` ⚠️ |
+| 20.2 MB | `_quarantine/history_purge/.satellite_cache/disk_cache/ed788d0df177e5cf77d5d5bc4ca0dcf8.pkl` ⚠️ |
+| 19.6 MB | `_quarantine/history_purge/.satellite_cache/disk_cache/621127f558e6255d16f2cd33de27f8be.pkl` ⚠️ |
+| 16.5 MB | `_quarantine/history_purge/.satellite_cache/disk_cache/7b1667c1d26a1a065a705c0a68fd4051.pkl` ⚠️ |
+| 11.9 MB | `_quarantine/history_purge/.satellite_cache/disk_cache/35e9660564c8f99e16e22bffe50528e1.pkl` ⚠️ |
 | 11.2 MB | `engine/cpp_core/build2/hydroma_core_py.dir/Release/hydroma_core.cp311-win_amd64.iobj` ⚠️ |
-| 11.2 MB | `engine/cpp_core/build2/hydroma_core_py.dir/Release/hydroma_core.cp312-win_amd64.iobj` ⚠️ |
 
 ## ۶) وابستگی‌ها
 
@@ -428,78 +449,57 @@ eco_nojin/  (51 فایل در ریشه)
 
 | پکیج | نسخه | نوع |
 |---|---|---|
-| @ant-design/icons | ^6.3.2 | runtime |
 | @deck.gl/aggregation-layers | ^9.3.10 | runtime |
 | @deck.gl/core | ^9.3.10 | runtime |
-| @deck.gl/geo-layers | ^9.3.10 | runtime |
 | @deck.gl/layers | ^9.3.10 | runtime |
-| @deck.gl/mesh-layers | ^9.3.10 | runtime |
 | @deck.gl/react | ^9.3.10 | runtime |
-| @dimforge/rapier3d-compat | ^0.20.0 | runtime |
-| @emotion/react | ^11.14.0 | runtime |
-| @emotion/styled | ^11.14.1 | runtime |
-| @hookform/resolvers | ^5.9.1 | runtime |
-| @mui/material | ^9.3.1 | runtime |
 | @react-three/drei | ^10.7.8 | runtime |
 | @react-three/fiber | ^9.7.0 | runtime |
-| @react-three/postprocessing | ^3.1.0 | runtime |
-| @tanstack/react-query | ^5.102.4 | runtime |
-| @turf/turf | ^7.4.0 | runtime |
-| @types/d3 | ^7.4.3 | runtime |
-| @types/mapbox-gl | ^3.5.0 | runtime |
-| @web3modal/wagmi | ^5.1.11 | runtime |
 | antd | ^6.6.1 | runtime |
 | axios | ^1.19.0 | runtime |
-| d3 | ^7.9.0 | runtime |
-| deck.gl | ^9.3.10 | runtime |
 | echarts | ^6.1.0 | runtime |
 | echarts-for-react | ^3.0.6 | runtime |
-| ethers | ^6.17.0 | runtime |
 | framer-motion | ^13.1.1 | runtime |
-| georaster-layer-for-leaflet | ^4.1.2 | runtime |
-| geotiff | ^3.0.5 | runtime |
-| gsap | ^3.15.0 | runtime |
 | i18next | ^26.4.0 | runtime |
-| immer | ^11.1.18 | runtime |
 | lucide-react | ^1.33.0 | runtime |
 | maplibre-gl | ^6.6.0 | runtime |
-| qrcode.react | ^4.2.0 | runtime |
 | react | ^19.2.8 | runtime |
 | react-dom | ^19.2.8 | runtime |
-| react-hook-form | ^7.86.0 | runtime |
 | react-i18next | ^17.0.12 | runtime |
 | react-router-dom | ^7.18.2 | runtime |
 | recharts | ^3.10.1 | runtime |
-| terraformer | ^1.0.12 | runtime |
 | three | ^0.185.1 | runtime |
-| viem | ^2.55.19 | runtime |
-| wagmi | ^3.7.6 | runtime |
-| zod | ^4.4.3 | runtime |
 | zustand | ^5.0.15 | runtime |
 | @eslint/js | ^10.0.1 | dev |
+| @testing-library/jest-dom | ^7.0.1 | dev |
+| @testing-library/react | ^16.3.3 | dev |
 | @types/geojson | ^7946.0.16 | dev |
-| @types/maplibre-gl | ^1.14.0 | dev |
 | @types/node | ^24.13.3 | dev |
 | @types/react | ^19.2.17 | dev |
 | @types/react-dom | ^19.2.3 | dev |
 | @types/three | ^0.185.4 | dev |
 | @vitejs/plugin-react | ^6.0.4 | dev |
-| eslint | ^10.8.0 | dev |
+| eslint | ^10.8.1 | dev |
 | eslint-plugin-react-hooks | ^7.1.1 | dev |
 | eslint-plugin-react-refresh | ^0.5.3 | dev |
 | globals | ^17.7.0 | dev |
+| jsdom | ^30.0.1 | dev |
 | typescript | ~6.0.2 | dev |
 | typescript-eslint | ^8.65.0 | dev |
 | vite | ^8.2.0 | dev |
+| vitest | ^4.1.11 | dev |
 
 ### اسکریپت‌های npm
 
 | دستور | اسکریپت |
 |---|---|
 | `dev` | `vite` |
-| `build` | `tsc -b && vite build` |
+| `build` | `vite build` |
 | `lint` | `eslint .` |
 | `preview` | `vite preview` |
+| `test` | `vitest run` |
+| `test:watch` | `vitest` |
+| `typecheck` | `tsc -b` |
 
 ### بک‌اند — requirements.txt
 
@@ -875,7 +875,7 @@ eco_nojin/  (51 فایل در ریشه)
 
 ## ۷) بک‌اند (API)
 
-- تعداد اندپوینت‌ها: **288** — DELETE×4 · GET×155 · POST×125 · PUT×4
+- تعداد اندپوینت‌ها: **301** — DELETE×4 · GET×166 · POST×127 · PUT×4
 - WebSocket: 1 اندپوینت — `/ws/chat`
 
 | متد | مسیر | فایل |
@@ -920,20 +920,19 @@ eco_nojin/  (51 فایل در ریشه)
 | POST | `/content/{item_id}/translate` | `services/api_gateway/routers/admin.py` |
 | POST | `/content/generate-draft` | `services/api_gateway/routers/admin.py` |
 | POST | `/content/{item_id}/schedule` | `services/api_gateway/routers/admin.py` |
-| … | … | و 248 مورد دیگر |
+| … | … | و 261 مورد دیگر |
 
 ## ۸) فرانت‌اند (React)
 
-- کامپوننت‌های TSX: 168
-- صفحات (src/pages): 68
-- lazy(): 30 | Suspense: 2 | Route: 53
-- فایل‌های تست فرانت‌اند: 0
+- کامپوننت‌های TSX: 171
+- صفحات (src/pages): 64
+- lazy(): 30 | Suspense: 2 | Route: 54
+- فایل‌های تست فرانت‌اند: 2
 
 ## ۹) سلامت پروژه و هشدارها
 
 - ✅ `.gitignore` کامل است.
-- 📁 فایل‌های env (محتوا خوانده نشد): `.env`, `.env.bak-20260829`, `.env.example`, `.env.template`, `contracts/.env`, `contracts/.env.example`, `frontend/.env.example`
-- ⚠️ پوشه `htmlcov` (خروجی coverage) موجود است؛ پاک/ignore شود.
+- 📁 فایل‌های env (محتوا خوانده نشد): `.env`, `.env.example`, `.env.template`, `_quarantine/secrets/.env.bak-20260829`, `contracts/.env`, `contracts/.env.example`, `frontend/.env.example`
 - 📝 TODO/FIXME: **8** مورد
   - `analyze_project.py:227` — TODO / FIXME ---
   - `analyze_project.py:229` — TODO/FIXME/HACK/XXX)\b[^\n]*", text):
@@ -942,18 +941,15 @@ eco_nojin/  (51 فایل در ریشه)
   - `engine/land/integration/water_adapter.py:207` — TODO: Remove circular dependency - services.map_engine.pipelines.runoff
   - `frontend/src/pages/PricingPage.tsx:235` — TODO: اینجا می‌توان به backend اطلاع داد
 - 🖥️ console.log در فرانت: 37 مورد — بیشترین: `contracts/scripts/deploy.js` (31), `frontend/src/lib/RealDEM.ts` (3), `docs/architecture/local_first/04_SERVICE_WORKER.js` (1)
-- 🐍 print() در پایتون: 421 مورد (در پروداکشن از logging استفاده شود)
-- 🔗 localhost هاردکد در 40 فایل: `engine/hydroma/config/settings.py` (3), `engine/hydroma/biofertilizer/tests/test_nojin_comprehensive.py` (2), `frontend/vite.config.ts` (2), `scripts/load_test.py` (2), `scripts/watchdog.py` (2)
-- ❌ تستی برای فرانت‌اند وجود ندارد (پیشنهاد: Vitest + Testing Library).
-- 📦 فایل حجیم: `.satellite_cache/disk_cache/f2e23b9af5661baff0c2ffa7d0846a3e.pkl` (34.5 MB)
-- 📦 فایل حجیم: `.satellite_cache/disk_cache/b22f6d60f781905456c44836f193c6d9.pkl` (34.5 MB)
-- 📦 فایل حجیم: `.satellite_cache/disk_cache/19315cb2a85f91b28ee6f9c7fc5f08d0.pkl` (33.8 MB)
-- 📦 فایل حجیم: `.satellite_cache/disk_cache/7f7ccca61bd23b20e0c080d7ea4065b8.pkl` (33.4 MB)
-- 📦 فایل حجیم: `.satellite_cache/disk_cache/a5aadc0a3efdfe6ed5249b7f2322e7be.pkl` (28.2 MB)
+- 🐍 print() در پایتون: 694 مورد (در پروداکشن از logging استفاده شود)
+- 🔗 localhost هاردکد در 43 فایل: `engine/hydroma/config/settings.py` (3), `fix_critical.py` (2), `engine/hydroma/biofertilizer/tests/test_nojin_comprehensive.py` (2), `frontend/vite.config.ts` (2), `frontend/src/pages/admin/MotorRunner.tsx` (2)
+- 📦 فایل حجیم: `_quarantine/branches/branch_code-restoration-in-the-main-branch-76761.bundle` (63.1 MB)
+- 📦 فایل حجیم: `_quarantine/history_purge/.satellite_cache/disk_cache/f2e23b9af5661baff0c2ffa7d0846a3e.pkl` (34.5 MB)
+- 📦 فایل حجیم: `_quarantine/history_purge/.satellite_cache/disk_cache/b22f6d60f781905456c44836f193c6d9.pkl` (34.5 MB)
+- 📦 فایل حجیم: `_quarantine/history_purge/.satellite_cache/disk_cache/19315cb2a85f91b28ee6f9c7fc5f08d0.pkl` (33.8 MB)
+- 📦 فایل حجیم: `_quarantine/history_purge/.satellite_cache/disk_cache/7f7ccca61bd23b20e0c080d7ea4065b8.pkl` (33.4 MB)
 
 ## ۱۰) اقدامات پیشنهادی
 
-1. افزودن Vitest و Testing Library برای تست فرانت‌اند
-2. حذف و ignore کردن پوشه `htmlcov`
-3. اجرای `npx depcheck` برای یافتن وابستگی‌های بلااستفاده
-4. اجرای `npx vite-bundle-visualizer` برای تحلیل حجم باندل
+1. اجرای `npx depcheck` برای یافتن وابستگی‌های بلااستفاده
+2. اجرای `npx vite-bundle-visualizer` برای تحلیل حجم باندل

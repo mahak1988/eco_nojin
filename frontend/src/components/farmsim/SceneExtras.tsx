@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
+﻿import { useMemo } from 'react';
 import { Instances, Instance, Line, Html } from '@react-three/drei';
 import * as THREE from 'three';
+import { worldToGrid } from '../../lib/terrainGenerator';
 import type { TerrainData } from '../../lib/terrainGenerator';
 
 // ===== Seeded RNG =====
@@ -15,8 +16,8 @@ export function mulberry32(a: number) {
 
 // ===== Elevation at world (x,z) =====
 export function elevAt(t: TerrainData, x: number, z: number): number {
-  const gx = Math.max(0, Math.min(t.width - 1, Math.floor((x + 10) / 20 * t.width)));
-  const gz = Math.max(0, Math.min(t.height - 1, Math.floor((z + 10) / 20 * t.height)));
+  const gx = Math.max(0, Math.min(t.width - 1, Math.floor(worldToGrid(x, t.width))));
+  const gz = Math.max(0, Math.min(t.height - 1, Math.floor(worldToGrid(z, t.height))));
   return t.elevation[gz]?.[gx] ?? t.minElevation;
 }
 
@@ -25,8 +26,8 @@ export interface PlotData {
   moisture: number; ndvi: number; erosion: number; slope: number; elevation: number;
 }
 export function samplePlotData(t: TerrainData, x: number, z: number): PlotData {
-  const gx = Math.max(0, Math.min(t.width - 1, Math.floor((x + 10) / 20 * t.width)));
-  const gz = Math.max(0, Math.min(t.height - 1, Math.floor((z + 10) / 20 * t.height)));
+  const gx = Math.max(0, Math.min(t.width - 1, Math.floor(worldToGrid(x, t.width))));
+  const gz = Math.max(0, Math.min(t.height - 1, Math.floor(worldToGrid(z, t.height))));
   const range = t.maxElevation - t.minElevation || 1;
   const elev = t.elevation[gz]?.[gx] ?? t.minElevation;
   const zL = t.elevation[gz]?.[Math.max(0, gx - 1)] ?? elev;

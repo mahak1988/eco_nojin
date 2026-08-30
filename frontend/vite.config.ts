@@ -1,52 +1,42 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { fileURLToPath, URL } from 'node:url'
+import { defineConfig, loadEnv } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "node:path";
 
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
 
-  // فقط اگر از ایمپورت‌های «@/...» استفاده می‌کنید نگه دارید
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-    },
-  },
-
-  server: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:8000',
-        changeOrigin: true,
-        // ws: true,  // ← اگر وب‌سوکت دارید (پنل live؟) فعال کنید
+  return {
+    plugins: [react()],
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
       },
     },
-  },
-
-  // پراکسی برای تست بیلد پروداکشن (npm run preview)
-  preview: {
-    proxy: {
-      '/api': { target: 'http://localhost:8000', changeOrigin: true },
+    server: {
+      port: Number(env.VITE_PORT ?? 5173),
+      proxy: env.VITE_DEV_PROXY
+        ? {
+            "/api": {
+              target: env.VITE_DEV_PROXY,
+              changeOrigin: true,
+            },
+          }
+        : undefined,
     },
-  },
-
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (!id.includes('node_modules')) return
-          const groups: Record<string, string[]> = {
-            three:  ['three', '@react-three', 'rapier3d'],
-            maps:   ['maplibre-gl', 'deck.gl', '@deck.gl', '@turf', 'geotiff'],
-            charts: ['echarts', 'recharts', 'd3'],
-            web3:   ['ethers', 'viem', 'wagmi', '@web3modal'],
-            ui:     ['@mui', '@emotion', 'antd', '@ant-design'],
-          }
-          for (const [chunk, pkgs] of Object.entries(groups)) {
-            if (pkgs.some(p => id.includes(`node_modules/${p}`))) return chunk
-          }
+    build: {
+      sourcemap: false,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            react: ["react", "react-dom"],
+            antd: ["antd"],
+            three: ["three", "@react-three/fiber", "@react-three/drei"],
+            deck: ["@deck.gl/core", "@deck.gl/layers", "@deck.gl/react"],
+            maplibre: ["maplibre-gl"],
+            charts: ["echarts"],
+          },
         },
       },
     },
-  },
-})
+  };
+});

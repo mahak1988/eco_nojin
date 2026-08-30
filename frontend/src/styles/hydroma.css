@@ -1,4 +1,4 @@
-/* ===== Persian Font: Vazirmatn ===== */
+﻿/* ===== Persian Font: Vazirmatn ===== */
 /* Modern Persian/Arabic font with excellent readability */
 
 /* Persian fonts: Vazirmatn from Google Fonts + Tahoma fallback */
@@ -453,3 +453,8 @@ canvas {
   position: absolute;
   inset: 0;
 }
+
+
+/* Phase 1-2 loaders */
+.spin { animation: hydroma-spin 1s linear infinite; }
+@keyframes hydroma-spin { to { transform: rotate(360deg); } }

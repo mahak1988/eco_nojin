@@ -1,0 +1,6288 @@
+{
+  "data_climate_disasters": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "country_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "year",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "flood_events",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "drought_events",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "storm_events",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "extreme_temp_events",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "earthquake_events",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "total_events",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "deaths_total",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "affected_M",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "source",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "country_fa",
+      "year",
+      "flood_events",
+      "drought_events",
+      "storm_events",
+      "extreme_temp_events",
+      "earthquake_events",
+      "total_events",
+      "deaths_total",
+      "affected_M",
+      "source",
+      "confidence"
+    ]
+  },
+  "data_climate_normals_monthly": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "site_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "month",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmax_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmin_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tavg_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "precip_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "et0_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "dtr_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rh_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "sunshine_h_day",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "wind_ms",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "site_id",
+      "month",
+      "tmax_c",
+      "tmin_c",
+      "tavg_c",
+      "precip_mm",
+      "et0_mm",
+      "dtr_c",
+      "rh_pct",
+      "sunshine_h_day",
+      "wind_ms"
+    ]
+  },
+  "data_climate_normals_monthly_1": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "site_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "month",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmax_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmin_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tavg_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "precip_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "et0_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "dtr_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rh_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "sunshine_h_day",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "wind_ms",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "site_id",
+      "month",
+      "tmax_c",
+      "tmin_c",
+      "tavg_c",
+      "precip_mm",
+      "et0_mm",
+      "dtr_c",
+      "rh_pct",
+      "sunshine_h_day",
+      "wind_ms"
+    ]
+  },
+  "data_climate_projections": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "region_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "scenario",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "period",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "delta_t_deg_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "delta_precip_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "delta_t_extreme_deg",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "source",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "region_fa",
+      "scenario",
+      "period",
+      "delta_t_deg_c",
+      "delta_precip_pct",
+      "delta_t_extreme_deg",
+      "source",
+      "confidence"
+    ]
+  },
+  "data_crop_calendar_iran": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "calendar_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "province",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "climate_zone",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "crop_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "sow_start_m-d",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "sow_end_m-d",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "harvest_start_m-d",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "harvest_end_m-d",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "cycle_days",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "note_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "calendar_id",
+      "province",
+      "climate_zone",
+      "crop_fa",
+      "sow_start_m-d",
+      "sow_end_m-d",
+      "harvest_start_m-d",
+      "harvest_end_m-d",
+      "cycle_days",
+      "note_fa",
+      "confidence"
+    ]
+  },
+  "data_crop_water_parameters": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "species_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "scientific_name",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "crop_note_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "kc_ini",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "kc_mid",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "kc_end",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "len_ini_d",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "len_dev_d",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "len_mid_d",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "len_late_d",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "base_temp_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "root_depth_m",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "harvest_index",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "ky_yield_response",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "p_depletion",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "cycle_days",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "param_source",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "species_id",
+      "scientific_name",
+      "crop_note_fa",
+      "kc_ini",
+      "kc_mid",
+      "kc_end",
+      "len_ini_d",
+      "len_dev_d",
+      "len_mid_d",
+      "len_late_d",
+      "base_temp_c",
+      "root_depth_m",
+      "harvest_index",
+      "ky_yield_response",
+      "p_depletion",
+      "cycle_days",
+      "param_source",
+      "confidence"
+    ]
+  },
+  "data_eco_nojin_platform_history_v1_0_climate_disasters": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "country_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "year",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "flood_events",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "drought_events",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "storm_events",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "extreme_temp_events",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "earthquake_events",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "total_events",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "deaths_total",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "affected_M",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "source",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "country_fa",
+      "year",
+      "flood_events",
+      "drought_events",
+      "storm_events",
+      "extreme_temp_events",
+      "earthquake_events",
+      "total_events",
+      "deaths_total",
+      "affected_M",
+      "source",
+      "confidence"
+    ]
+  },
+  "data_eco_nojin_platform_history_v1_0_climate_normals_monthly": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "site_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "month",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmax_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmin_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tavg_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "precip_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "et0_mm",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "dtr_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rh_pct",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "sunshine_h_day",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "wind_ms",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "site_id",
+      "month",
+      "tmax_c",
+      "tmin_c",
+      "tavg_c",
+      "precip_mm",
+      "et0_mm",
+      "dtr_c",
+      "rh_pct",
+      "sunshine_h_day",
+      "wind_ms"
+    ]
+  },
+  "data_eco_nojin_platform_history_v1_0_climate_projections": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "region_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "scenario",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "period",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "delta_t_deg_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "delta_precip_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "delta_t_extreme_deg",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "source",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "region_fa",
+      "scenario",
+      "period",
+      "delta_t_deg_c",
+      "delta_precip_pct",
+      "delta_t_extreme_deg",
+      "source",
+      "confidence"
+    ]
+  },
+  "data_eco_nojin_platform_history_v1_0_crop_calendar_iran": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "calendar_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "province",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "climate_zone",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "crop_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "sow_start_m-d",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "sow_end_m-d",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "harvest_start_m-d",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "harvest_end_m-d",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "cycle_days",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "note_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "calendar_id",
+      "province",
+      "climate_zone",
+      "crop_fa",
+      "sow_start_m-d",
+      "sow_end_m-d",
+      "harvest_start_m-d",
+      "harvest_end_m-d",
+      "cycle_days",
+      "note_fa",
+      "confidence"
+    ]
+  },
+  "data_eco_nojin_platform_history_v1_0_crop_water_parameters": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "species_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "scientific_name",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "crop_note_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "kc_ini",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "kc_mid",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "kc_end",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "len_ini_d",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "len_dev_d",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "len_mid_d",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "len_late_d",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "base_temp_c",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "root_depth_m",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "harvest_index",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "ky_yield_response",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "p_depletion",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "cycle_days",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "param_source",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "species_id",
+      "scientific_name",
+      "crop_note_fa",
+      "kc_ini",
+      "kc_mid",
+      "kc_end",
+      "len_ini_d",
+      "len_dev_d",
+      "len_mid_d",
+      "len_late_d",
+      "base_temp_c",
+      "root_depth_m",
+      "harvest_index",
+      "ky_yield_response",
+      "p_depletion",
+      "cycle_days",
+      "param_source",
+      "confidence"
+    ]
+  },
+  "data_eco_nojin_platform_history_v1_0_data_dictionary": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "sheet",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "column",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "unit",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "description_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "sheet",
+      "column",
+      "unit",
+      "description_fa"
+    ]
+  },
+  "data_eco_nojin_platform_history_v1_0_food_security_indicators": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "country_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "year",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "pou_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "des_kcal_cap_day",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "protein_g_cap_day",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "cereal_import_dependency_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "food_imports_pct_merch",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "stunting_u5_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "anemia_women_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "undernourished_M",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "food_prod_variability_idx",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "food_supply_variability_kcal",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "country_fa",
+      "year",
+      "pou_pct",
+      "des_kcal_cap_day",
+      "protein_g_cap_day",
+      "cereal_import_dependency_pct",
+      "food_imports_pct_merch",
+      "stunting_u5_pct",
+      "anemia_women_pct",
+      "undernourished_M",
+      "food_prod_variability_idx",
+      "food_supply_variability_kcal"
+    ]
+  },
+  "data_eco_nojin_platform_history_v1_0_iran_provincial_agriculture": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "province",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "year",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "crop_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "production_t",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "area_ha",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "yield_t_ha",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "source",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "province",
+      "year",
+      "crop_fa",
+      "production_t",
+      "area_ha",
+      "yield_t_ha",
+      "source",
+      "confidence"
+    ]
+  },
+  "data_eco_nojin_platform_history_v1_0_production_faostat": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "item_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "country_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "year",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "production_t",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "area_ha",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "yield_t_ha",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "source",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "item_fa",
+      "country_fa",
+      "year",
+      "production_t",
+      "area_ha",
+      "yield_t_ha",
+      "source",
+      "confidence"
+    ]
+  },
+  "data_eco_nojin_platform_history_v1_0_readme": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "بخش",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "توضیح",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "بخش",
+      "توضیح"
+    ]
+  },
+  "data_eco_nojin_platform_history_v1_0_sites_master": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "site_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "country",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "admin1_city",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "province",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "lat",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "lon",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "elevation_m",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "koppen",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "annual_rain_normal_mm",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rain_cv_pct",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmin_abs_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmax_abs_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "is_daily_station",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "daily_period",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "history_period",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "method_flag",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "site_id",
+      "country",
+      "admin1_city",
+      "province",
+      "lat",
+      "lon",
+      "elevation_m",
+      "koppen",
+      "annual_rain_normal_mm",
+      "rain_cv_pct",
+      "tmin_abs_c",
+      "tmax_abs_c",
+      "is_daily_station",
+      "daily_period",
+      "history_period",
+      "method_flag"
+    ]
+  },
+  "data_eco_nojin_platform_history_v1_0_soil_hydraulic_regions": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "soil_region_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "province",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "sand_pct",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "silt_pct",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "clay_pct",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "texture_class_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "theta_fc_cm3cm3",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "theta_wp_cm3cm3",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "awc_cm3cm3",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "ksat_mm_hr",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "bulk_density_gcm3",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "organic_carbon_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "ph",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "ec_dsm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "effective_depth_cm",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "method",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "soil_region_id",
+      "province",
+      "sand_pct",
+      "silt_pct",
+      "clay_pct",
+      "texture_class_fa",
+      "theta_fc_cm3cm3",
+      "theta_wp_cm3cm3",
+      "awc_cm3cm3",
+      "ksat_mm_hr",
+      "bulk_density_gcm3",
+      "organic_carbon_pct",
+      "ph",
+      "ec_dsm",
+      "effective_depth_cm",
+      "method",
+      "confidence"
+    ]
+  },
+  "data_eco_nojin_platform_history_v1_0_sources_notes": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "sheet",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "method",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "upgrade_path",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "sheet",
+      "method",
+      "confidence",
+      "upgrade_path"
+    ]
+  },
+  "data_eco_nojin_platform_history_v1_0_water_resources_aquastat": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "country_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "year",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "renewable_total_km3",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "internal_km3",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "external_km3",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "withdrawal_km3",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "agri_share_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "industry_share_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "municipal_share_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "irrigated_area_Mha",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "water_per_capita_m3",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "dam_capacity_km3",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "source",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "country_fa",
+      "year",
+      "renewable_total_km3",
+      "internal_km3",
+      "external_km3",
+      "withdrawal_km3",
+      "agri_share_pct",
+      "industry_share_pct",
+      "municipal_share_pct",
+      "irrigated_area_Mha",
+      "water_per_capita_m3",
+      "dam_capacity_km3",
+      "source",
+      "confidence"
+    ]
+  },
+  "data_eco_nojin_platform_history_v1_0_weather_daily": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "site_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "date",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "year",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmax_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmin_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tavg_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "precip_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "et0_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rad_mj_m2",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "wind_ms",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rh_pct",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "gdd_base10",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "site_id",
+      "date",
+      "year",
+      "tmax_c",
+      "tmin_c",
+      "tavg_c",
+      "precip_mm",
+      "et0_mm",
+      "rad_mj_m2",
+      "wind_ms",
+      "rh_pct",
+      "gdd_base10"
+    ]
+  },
+  "data_eco_nojin_platform_history_v1_0_weather_history_annual": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "site_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "year",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmax_avg_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmin_avg_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tavg_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "precip_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "et0_mm",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "gdd_base10",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "frost_days",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "heat_days_gt35",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rh_mean_pct",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "wind_ms",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "sunshine_h_day",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "precip_anom_pct",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "temp_anom_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "site_id",
+      "year",
+      "tmax_avg_c",
+      "tmin_avg_c",
+      "tavg_c",
+      "precip_mm",
+      "et0_mm",
+      "gdd_base10",
+      "frost_days",
+      "heat_days_gt35",
+      "rh_mean_pct",
+      "wind_ms",
+      "sunshine_h_day",
+      "precip_anom_pct",
+      "temp_anom_c"
+    ]
+  },
+  "data_global_agri_simulator_database_v1_1_1_change_log": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "change_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "date",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "version",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "sheet",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "change_type",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "description_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "author",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "change_id",
+      "date",
+      "version",
+      "sheet",
+      "change_type",
+      "description_fa",
+      "author"
+    ]
+  },
+  "data_global_agri_simulator_database_v1_1_1_climate": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "code",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "english",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "persian",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "subtypes",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "description",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "code",
+      "english",
+      "persian",
+      "subtypes",
+      "description"
+    ]
+  },
+  "data_global_agri_simulator_database_v1_1_1_crop_calendar": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "calendar_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "species_or_group",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "climate_zone",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "sowing_or_start",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "harvest_or_end",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "cycle_days",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "calendar_id",
+      "species_or_group",
+      "climate_zone",
+      "sowing_or_start",
+      "harvest_or_end",
+      "cycle_days",
+      "notes_fa",
+      "confidence"
+    ]
+  },
+  "data_global_agri_simulator_database_v1_1_1_data_dictionary": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "sheet_name",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "field",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "data_type",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "unit",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "allowed_values",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "required",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "desc_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "desc_en",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "basis",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "sheet_name",
+      "field",
+      "data_type",
+      "unit",
+      "allowed_values",
+      "required",
+      "desc_fa",
+      "desc_en",
+      "basis"
+    ]
+  },
+  "data_global_agri_simulator_database_v1_1_1_economics": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "econ_id",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "species_or_system",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "product",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "unit",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "farmgate_price",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "price_currency",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "price_year",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "yield_t_ha",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "gross_revenue",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "variable_cost",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "labor_cost",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "water_cost",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "fertilizer_cost",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "pesticide_cost",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "net_margin",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "market_risk_1_5",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "price_volatility_1_5",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "value_chain",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "storage_life_days",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "gross_revenue_calc",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "total_cost_calc",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "net_margin_calc",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "econ_id",
+      "species_or_system",
+      "product",
+      "unit",
+      "farmgate_price",
+      "price_currency",
+      "price_year",
+      "yield_t_ha",
+      "gross_revenue",
+      "variable_cost",
+      "labor_cost",
+      "water_cost",
+      "fertilizer_cost",
+      "pesticide_cost",
+      "net_margin",
+      "market_risk_1_5",
+      "price_volatility_1_5",
+      "value_chain",
+      "storage_life_days",
+      "notes",
+      "gross_revenue_calc",
+      "total_cost_calc",
+      "net_margin_calc"
+    ]
+  },
+  "data_global_agri_simulator_database_v1_1_1_import_map": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "external_source",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "external_field",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "target_sheet",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "target_field",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "transform",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "priority",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "validation",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "external_source",
+      "external_field",
+      "target_sheet",
+      "target_field",
+      "transform",
+      "priority",
+      "validation"
+    ]
+  },
+  "data_global_agri_simulator_database_v1_1_1_livestock": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "animal_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "species",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "type",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "climate_fit",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "feed_sources",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "water_need",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "stocking_unit",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "recommended_density_per_ha",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "manure_N_kg_per_head_y",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "manure_P2O5_kg_per_head_y",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "manure_K2O_kg_per_head_y",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "grazing_behavior",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "integration_benefit",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "risk",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "animal_id",
+      "species",
+      "type",
+      "climate_fit",
+      "feed_sources",
+      "water_need",
+      "stocking_unit",
+      "recommended_density_per_ha",
+      "manure_N_kg_per_head_y",
+      "manure_P2O5_kg_per_head_y",
+      "manure_K2O_kg_per_head_y",
+      "grazing_behavior",
+      "integration_benefit",
+      "risk",
+      "notes"
+    ]
+  },
+  "data_global_agri_simulator_database_v1_1_1_lookup_lists": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "list_name",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "value_code",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "label_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "label_en",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "description",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "list_name",
+      "value_code",
+      "label_fa",
+      "label_en",
+      "description"
+    ]
+  },
+  "data_global_agri_simulator_database_v1_1_1_metadata": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "key",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "value_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "value_en",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "key",
+      "value_fa",
+      "value_en",
+      "notes"
+    ]
+  },
+  "data_global_agri_simulator_database_v1_1_1_models": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "model_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "model_name",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "output_scale",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "inputs",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "logic_note",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "model_id",
+      "model_name",
+      "output_scale",
+      "inputs",
+      "logic_note"
+    ]
+  },
+  "data_global_agri_simulator_database_v1_1_1_qa_report": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "check_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "sheet",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "check_description_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "method",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "result",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "severity",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "action",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "check_id",
+      "sheet",
+      "check_description_fa",
+      "method",
+      "result",
+      "severity",
+      "action"
+    ]
+  },
+  "data_global_agri_simulator_database_v1_1_1_readme": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "هدف",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "پایگاه داده جهانی برای موتور تصمیم‌یار شبیه‌ساز کشاورزی",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "هدف",
+      "پایگاه داده جهانی برای موتور تصمیم‌یار شبیه‌ساز کشاورزی"
+    ]
+  },
+  "data_global_agri_simulator_database_v1_1_1_scales": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "field",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "scale",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "meaning",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "field",
+      "scale",
+      "meaning"
+    ]
+  },
+  "data_global_agri_simulator_database_v1_1_1_sources": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "source_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "organization",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "dataset_or_document",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "url",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "coverage",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "update_or_year",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "use_in_model",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "license_or_terms",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "source_id",
+      "organization",
+      "dataset_or_document",
+      "url",
+      "coverage",
+      "update_or_year",
+      "use_in_model",
+      "license_or_terms",
+      "notes"
+    ]
+  },
+  "data_global_agri_simulator_database_v1_1_1_species": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "name_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "scientific_name",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "category",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "primary_climate",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "dryland_class",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "note",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "id",
+      "name_fa",
+      "scientific_name",
+      "category",
+      "primary_climate",
+      "dryland_class",
+      "note"
+    ]
+  },
+  "data_global_agri_simulator_database_v1_1_1_units_reference": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "unit_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "quantity",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "unit_code",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "unit_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "conversion_to_SI",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "unit_id",
+      "quantity",
+      "unit_code",
+      "unit_fa",
+      "conversion_to_SI",
+      "notes"
+    ]
+  },
+  "data_global_agri_simulator_database_v1_1_1_validation_rules": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "rule_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "scope",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rule_type",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "severity",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rule_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "check_method",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "status_current",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "rule_id",
+      "scope",
+      "rule_type",
+      "severity",
+      "rule_fa",
+      "check_method",
+      "status_current"
+    ]
+  },
+  "data_weather_daily": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "site_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "date",
+        "type": "DATE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "year",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmax_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmin_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tavg_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "precip_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "et0_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rad_mj_m2",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "wind_ms",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rh_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "gdd_base10",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "site_id",
+      "date",
+      "year",
+      "tmax_c",
+      "tmin_c",
+      "tavg_c",
+      "precip_mm",
+      "et0_mm",
+      "rad_mj_m2",
+      "wind_ms",
+      "rh_pct",
+      "gdd_base10"
+    ]
+  },
+  "data_weather_history_annual": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "site_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "year",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmax_avg_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmin_avg_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tavg_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "precip_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "et0_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "gdd_base10",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "frost_days",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "heat_days_gt35",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rh_mean_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "wind_ms",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "sunshine_h_day",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "precip_anom_pct",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "temp_anom_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "site_id",
+      "year",
+      "tmax_avg_c",
+      "tmin_avg_c",
+      "tavg_c",
+      "precip_mm",
+      "et0_mm",
+      "gdd_base10",
+      "frost_days",
+      "heat_days_gt35",
+      "rh_mean_pct",
+      "wind_ms",
+      "sunshine_h_day",
+      "precip_anom_pct",
+      "temp_anom_c"
+    ]
+  },
+  "data_xlsx_01_03_climate_history_2000_2024_annual_2000_2024": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "site_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "country",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "admin1",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "year",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmax_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmin_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmean_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "precip_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "et0_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "aridity_index_p_et0",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "gdd10",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "site_id",
+      "country",
+      "admin1",
+      "year",
+      "tmax_c",
+      "tmin_c",
+      "tmean_c",
+      "precip_mm",
+      "et0_mm",
+      "aridity_index_p_et0",
+      "gdd10"
+    ]
+  },
+  "data_xlsx_01_03_climate_history_2000_2024_monthly_2000_2024": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "site_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "country",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "admin1",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "lat",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "lon",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "year",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "month",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmax_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmin_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmean_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "precip_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "et0_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "days",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "site_id",
+      "country",
+      "admin1",
+      "lat",
+      "lon",
+      "year",
+      "month",
+      "tmax_c",
+      "tmin_c",
+      "tmean_c",
+      "precip_mm",
+      "et0_mm",
+      "days"
+    ]
+  },
+  "data_xlsx_01_03_climate_history_2000_2024_normals_2005_2024": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "site_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "country",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "admin1",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "month",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmax_normal_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmin_normal_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmean_normal_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "precip_normal_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "et0_normal_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "years_count",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "site_id",
+      "country",
+      "admin1",
+      "month",
+      "tmax_normal_c",
+      "tmin_normal_c",
+      "tmean_normal_c",
+      "precip_normal_mm",
+      "et0_normal_mm",
+      "years_count"
+    ]
+  },
+  "data_xlsx_01_03_climate_history_2000_2024_readme": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "تاریخچهٔ اقلیمی واقعی سایت‌ها (NASA POWER + ET0 فائو-۵۶)",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "Unnamed: 1",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "تاریخچهٔ اقلیمی واقعی سایت‌ها (NASA POWER + ET0 فائو-۵۶)",
+      "Unnamed: 1"
+    ]
+  },
+  "data_xlsx_04_food_security_worldbank_readme": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "شاخص‌های واقعی کشاورزی و امنیت غذایی (بانک جهانی)",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "Unnamed: 1",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "شاخص‌های واقعی کشاورزی و امنیت غذایی (بانک جهانی)",
+      "Unnamed: 1"
+    ]
+  },
+  "data_xlsx_04_food_security_worldbank_wdi_1990_2024": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "iso2",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "iso3",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "country_en",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "indicator_code",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "indicator_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "unit",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "year",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "value",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "iso2",
+      "iso3",
+      "country_en",
+      "indicator_code",
+      "indicator_fa",
+      "unit",
+      "year",
+      "value"
+    ]
+  },
+  "data_xlsx_05_crop_water_params_fao56_cropwaterparams": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "group_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "group_en",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "kc_ini",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "kc_mid",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "kc_end",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "L_ini_d",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "L_dev_d",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "L_mid_d",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "L_late_d",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "cycle_days",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "root_depth_m_min",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "root_depth_m_max",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "p_depletion",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "ky_yield_response",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tbase_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "harvest_index",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "water_need_mm",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "genus_examples",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "source",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "Unnamed: 19",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "group_fa",
+      "group_en",
+      "kc_ini",
+      "kc_mid",
+      "kc_end",
+      "L_ini_d",
+      "L_dev_d",
+      "L_mid_d",
+      "L_late_d",
+      "cycle_days",
+      "root_depth_m_min",
+      "root_depth_m_max",
+      "p_depletion",
+      "ky_yield_response",
+      "tbase_c",
+      "harvest_index",
+      "water_need_mm",
+      "genus_examples",
+      "source",
+      "Unnamed: 19"
+    ]
+  },
+  "data_xlsx_05_crop_water_params_fao56_readme": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "پارامترهای آب محصول (FAO-56) برای ۵۱ گروه",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "Unnamed: 1",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "پارامترهای آب محصول (FAO-56) برای ۵۱ گروه",
+      "Unnamed: 1"
+    ]
+  },
+  "data_xlsx_06_species_crop_group_map_readme": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "نگاشت گونه → گروه محصول",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "Unnamed: 1",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "نگاشت گونه → گروه محصول",
+      "Unnamed: 1"
+    ]
+  },
+  "data_xlsx_06_species_crop_group_map_speciesmap": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "species_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "scientific_name",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "category_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "genus",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "group_id",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "group_en",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "match_method",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "species_id",
+      "scientific_name",
+      "category_fa",
+      "genus",
+      "group_id",
+      "group_en",
+      "match_method"
+    ]
+  },
+  "ref_agroforestry": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "system_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "system_type",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "climate_fit",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "water_fit",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "soil_fit",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "upper_layer",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "middle_layer",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "lower_layer",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "ground_layer",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "animal_layer",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "windbreak",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "spacing_rule",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "orientation",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "competition_risk",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "benefit",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "market_strategy",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "system_id",
+      "system_type",
+      "climate_fit",
+      "water_fit",
+      "soil_fit",
+      "upper_layer",
+      "middle_layer",
+      "lower_layer",
+      "ground_layer",
+      "animal_layer",
+      "windbreak",
+      "spacing_rule",
+      "orientation",
+      "competition_risk",
+      "benefit",
+      "market_strategy",
+      "notes"
+    ]
+  },
+  "ref_change_log": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "change_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "date",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "version",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "sheet",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "change_type",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "description_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "author",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "change_id",
+      "date",
+      "version",
+      "sheet",
+      "change_type",
+      "description_fa",
+      "author"
+    ]
+  },
+  "ref_climate": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "code",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "english",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "persian",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "subtypes",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "description",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "code",
+      "english",
+      "persian",
+      "subtypes",
+      "description"
+    ]
+  },
+  "ref_climate_requirements": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "species_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "min_temp_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "opt_temp_min_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "opt_temp_max_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "max_temp_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rain_min_mm_y",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rain_opt_min_mm_y",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rain_opt_max_mm_y",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rain_max_mm_y",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "soil_depth_cm",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "ph_min",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "ph_max",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "salinity_class",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "drainage",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "light",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "growth_days_min",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "growth_days_max",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "frost_tolerance_1_5",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "drought_tolerance_1_5",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "heat_tolerance_1_5",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rainfed_suitability_1_5",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "water_need_1_5",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "id",
+      "species_id",
+      "min_temp_c",
+      "opt_temp_min_c",
+      "opt_temp_max_c",
+      "max_temp_c",
+      "rain_min_mm_y",
+      "rain_opt_min_mm_y",
+      "rain_opt_max_mm_y",
+      "rain_max_mm_y",
+      "soil_depth_cm",
+      "ph_min",
+      "ph_max",
+      "salinity_class",
+      "drainage",
+      "light",
+      "growth_days_min",
+      "growth_days_max",
+      "frost_tolerance_1_5",
+      "drought_tolerance_1_5",
+      "heat_tolerance_1_5",
+      "rainfed_suitability_1_5",
+      "water_need_1_5"
+    ]
+  },
+  "ref_crop_calendar": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "calendar_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "species_or_group",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "climate_zone",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "sowing_or_start",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "harvest_or_end",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "cycle_days",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "calendar_id",
+      "species_or_group",
+      "climate_zone",
+      "sowing_or_start",
+      "harvest_or_end",
+      "cycle_days",
+      "notes_fa",
+      "confidence"
+    ]
+  },
+  "ref_data_dictionary": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "sheet_name",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "field",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "data_type",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "unit",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "allowed_values",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "required",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "desc_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "desc_en",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "basis",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "sheet_name",
+      "field",
+      "data_type",
+      "unit",
+      "allowed_values",
+      "required",
+      "desc_fa",
+      "desc_en",
+      "basis"
+    ]
+  },
+  "ref_decision_engine": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "decision_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "site_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "species_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "suitability_0_100",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rainfed_0_100",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "water_security_0_100",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "soil_fit_0_100",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "climate_fit_0_100",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "economic_0_100",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "resilience_0_100",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "agroforestry_0_100",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "pest_risk_0_100",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "final_score_0_100",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "recommended_system",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "management_intensity",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "explanation",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "decision_id",
+      "site_id",
+      "species_id",
+      "suitability_0_100",
+      "rainfed_0_100",
+      "water_security_0_100",
+      "soil_fit_0_100",
+      "climate_fit_0_100",
+      "economic_0_100",
+      "resilience_0_100",
+      "agroforestry_0_100",
+      "pest_risk_0_100",
+      "final_score_0_100",
+      "recommended_system",
+      "management_intensity",
+      "confidence",
+      "explanation"
+    ]
+  },
+  "ref_economics": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "econ_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "species_or_system",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "product",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "unit",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "farmgate_price",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "price_currency",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "price_year",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "yield_t_ha",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "gross_revenue",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "variable_cost",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "labor_cost",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "water_cost",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "fertilizer_cost",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "pesticide_cost",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "net_margin",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "market_risk_1_5",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "price_volatility_1_5",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "value_chain",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "storage_life_days",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "gross_revenue_calc",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "total_cost_calc",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "net_margin_calc",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "econ_id",
+      "species_or_system",
+      "product",
+      "unit",
+      "farmgate_price",
+      "price_currency",
+      "price_year",
+      "yield_t_ha",
+      "gross_revenue",
+      "variable_cost",
+      "labor_cost",
+      "water_cost",
+      "fertilizer_cost",
+      "pesticide_cost",
+      "net_margin",
+      "market_risk_1_5",
+      "price_volatility_1_5",
+      "value_chain",
+      "storage_life_days",
+      "notes",
+      "gross_revenue_calc",
+      "total_cost_calc",
+      "net_margin_calc"
+    ]
+  },
+  "ref_fertilizers": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "fert_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "material",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "type",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "N_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "P2O5_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "K2O_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "S_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "Ca_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "Mg_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "organic_C_pct",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "release_speed",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "salinity_risk",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "acidification_risk",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "leaching_risk",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "compatibility",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "fert_id",
+      "material",
+      "type",
+      "N_pct",
+      "P2O5_pct",
+      "K2O_pct",
+      "S_pct",
+      "Ca_pct",
+      "Mg_pct",
+      "organic_C_pct",
+      "release_speed",
+      "salinity_risk",
+      "acidification_risk",
+      "leaching_risk",
+      "compatibility",
+      "notes"
+    ]
+  },
+  "ref_growth_stages": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "growth_stage_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "species_or_group",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "stage_code",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "stage_name_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "gdd_cumulative",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "duration_days",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "water_need_1_5",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "nutrient_uptake_1_5",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "stress_sensitivity_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "growth_stage_id",
+      "species_or_group",
+      "stage_code",
+      "stage_name_fa",
+      "gdd_cumulative",
+      "duration_days",
+      "water_need_1_5",
+      "nutrient_uptake_1_5",
+      "stress_sensitivity_fa",
+      "notes_fa",
+      "confidence"
+    ]
+  },
+  "ref_import_map": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "external_source",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "external_field",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "target_sheet",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "target_field",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "transform",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "priority",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "validation",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "external_source",
+      "external_field",
+      "target_sheet",
+      "target_field",
+      "transform",
+      "priority",
+      "validation"
+    ]
+  },
+  "ref_ipm_pests": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "ipm_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "crop_or_group",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "pest_or_disease",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "host_stage",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "risk_factors",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "monitoring_method",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "economic_threshold",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "prevention",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "biological_control",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "botanical_control",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "mechanical_control",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "chemical_active_ingredient",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "IRAC_FRAC_group",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "application_constraints",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "resistance_management",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "human_env_risk",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "ipm_id",
+      "crop_or_group",
+      "pest_or_disease",
+      "host_stage",
+      "risk_factors",
+      "monitoring_method",
+      "economic_threshold",
+      "prevention",
+      "biological_control",
+      "botanical_control",
+      "mechanical_control",
+      "chemical_active_ingredient",
+      "IRAC_FRAC_group",
+      "application_constraints",
+      "resistance_management",
+      "human_env_risk",
+      "notes"
+    ]
+  },
+  "ref_livestock": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "animal_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "species",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "type",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "climate_fit",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "feed_sources",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "water_need",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "stocking_unit",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "recommended_density_per_ha",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "manure_N_kg_per_head_y",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "manure_P2O5_kg_per_head_y",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "manure_K2O_kg_per_head_y",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "grazing_behavior",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "integration_benefit",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "risk",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "animal_id",
+      "species",
+      "type",
+      "climate_fit",
+      "feed_sources",
+      "water_need",
+      "stocking_unit",
+      "recommended_density_per_ha",
+      "manure_N_kg_per_head_y",
+      "manure_P2O5_kg_per_head_y",
+      "manure_K2O_kg_per_head_y",
+      "grazing_behavior",
+      "integration_benefit",
+      "risk",
+      "notes"
+    ]
+  },
+  "ref_lookup_lists": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "list_name",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "value_code",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "label_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "label_en",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "description",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "list_name",
+      "value_code",
+      "label_fa",
+      "label_en",
+      "description"
+    ]
+  },
+  "ref_metadata": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "key",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "value_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "value_en",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "key",
+      "value_fa",
+      "value_en",
+      "notes"
+    ]
+  },
+  "ref_models": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "model_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "model_name",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "output_scale",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "inputs",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "logic_note",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "model_id",
+      "model_name",
+      "output_scale",
+      "inputs",
+      "logic_note"
+    ]
+  },
+  "ref_pests_database": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "pest_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "scientific_name",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "kind_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "host_families",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "severity_1_5",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "quarantine_flag",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "default_control_group",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "biocontrol_agents",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "climate_fit",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "pest_id",
+      "scientific_name",
+      "kind_fa",
+      "host_families",
+      "severity_1_5",
+      "quarantine_flag",
+      "default_control_group",
+      "biocontrol_agents",
+      "climate_fit",
+      "notes_fa"
+    ]
+  },
+  "ref_propagation": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "prop_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "species_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "method",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "season",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "material",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rootstock",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "substrate",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "humidity",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "temperature",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rooting_time_days",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "nursery_time_days",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "success_rate_pct",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "labor_level",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "prop_id",
+      "species_id",
+      "method",
+      "season",
+      "material",
+      "rootstock",
+      "substrate",
+      "humidity",
+      "temperature",
+      "rooting_time_days",
+      "nursery_time_days",
+      "success_rate_pct",
+      "labor_level",
+      "notes"
+    ]
+  },
+  "ref_qa_report": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "check_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "sheet",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "check_description_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "method",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "result",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "severity",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "action",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "check_id",
+      "sheet",
+      "check_description_fa",
+      "method",
+      "result",
+      "severity",
+      "action"
+    ]
+  },
+  "ref_readme": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "هدف",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "پایگاه داده جهانی برای موتور تصمیم‌یار شبیه‌ساز کشاورزی",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "هدف",
+      "پایگاه داده جهانی برای موتور تصمیم‌یار شبیه‌ساز کشاورزی"
+    ]
+  },
+  "ref_rules": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "rule_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "priority",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "condition",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "recommendation",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "requires_validation",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "source_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "rule_id",
+      "priority",
+      "condition",
+      "recommendation",
+      "confidence",
+      "requires_validation",
+      "source_id"
+    ]
+  },
+  "ref_scales": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "field",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "scale",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "meaning",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "field",
+      "scale",
+      "meaning"
+    ]
+  },
+  "ref_sites": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "site_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "country",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "admin1",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "lat",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "lon",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "elevation_m",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "koppen",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "annual_rain_mm",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rain_cv_pct",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmin_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "tmax_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "growing_degree_days",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "frost_days",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "solar_radiation",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "wind_speed",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "soil_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "water_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "market_access",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "road_access",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "electricity",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "labor_availability",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "land_tenure",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "local_knowledge",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "food_culture",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "policy_constraints",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "site_id",
+      "country",
+      "admin1",
+      "lat",
+      "lon",
+      "elevation_m",
+      "koppen",
+      "annual_rain_mm",
+      "rain_cv_pct",
+      "tmin_c",
+      "tmax_c",
+      "growing_degree_days",
+      "frost_days",
+      "solar_radiation",
+      "wind_speed",
+      "soil_id",
+      "water_id",
+      "market_access",
+      "road_access",
+      "electricity",
+      "labor_availability",
+      "land_tenure",
+      "local_knowledge",
+      "food_culture",
+      "policy_constraints"
+    ]
+  },
+  "ref_soils": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "soil_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "WRB_group",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "USDA_texture",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "depth_cm",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "organic_carbon_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "CEC",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "AWC_mm_m",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "bulk_density",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "salinity_dS_m",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "sodicity",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "drainage",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "erosion_risk",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "pH",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "soil_id",
+      "WRB_group",
+      "USDA_texture",
+      "depth_cm",
+      "organic_carbon_pct",
+      "CEC",
+      "AWC_mm_m",
+      "bulk_density",
+      "salinity_dS_m",
+      "sodicity",
+      "drainage",
+      "erosion_risk",
+      "pH"
+    ]
+  },
+  "ref_sources": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "source_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "organization",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "dataset_or_document",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "url",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "coverage",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "update_or_year",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "use_in_model",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "license_or_terms",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "source_id",
+      "organization",
+      "dataset_or_document",
+      "url",
+      "coverage",
+      "update_or_year",
+      "use_in_model",
+      "license_or_terms",
+      "notes"
+    ]
+  },
+  "ref_species": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "name_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "scientific_name",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "category",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "primary_climate",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "dryland_class",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "note",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "id",
+      "name_fa",
+      "scientific_name",
+      "category",
+      "primary_climate",
+      "dryland_class",
+      "note"
+    ]
+  },
+  "ref_units_reference": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "unit_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "quantity",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "unit_code",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "unit_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "conversion_to_SI",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "unit_id",
+      "quantity",
+      "unit_code",
+      "unit_fa",
+      "conversion_to_SI",
+      "notes"
+    ]
+  },
+  "ref_validation_rules": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "rule_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "scope",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rule_type",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "severity",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rule_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "check_method",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "status_current",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "rule_id",
+      "scope",
+      "rule_type",
+      "severity",
+      "rule_fa",
+      "check_method",
+      "status_current"
+    ]
+  },
+  "ref_water": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "water_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "source_type",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "annual_availability_mm",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "seasonality",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "EC_dS_m",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "SAR",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "pH",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "nitrate",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "water_stress_index",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "irrigation_method",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "efficiency_pct",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "legal_constraint",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "notes",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "water_id",
+      "source_type",
+      "annual_availability_mm",
+      "seasonality",
+      "EC_dS_m",
+      "SAR",
+      "pH",
+      "nitrate",
+      "water_stress_index",
+      "irrigation_method",
+      "efficiency_pct",
+      "legal_constraint",
+      "notes"
+    ]
+  },
+  "ref_yield_benchmarks": {
+    "type": "BASE TABLE",
+    "columns": [
+      {
+        "name": "yield_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "species_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "scientific_name",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "unit",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "typical_yield",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "good_yield",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "record_yield",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rainfed_share_pct",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "yield_gap_pct",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "harvest_index",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "moisture_pct",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "source_note",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "confidence",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "yield_id",
+      "species_id",
+      "scientific_name",
+      "unit",
+      "typical_yield",
+      "good_yield",
+      "record_yield",
+      "rainfed_share_pct",
+      "yield_gap_pct",
+      "harvest_index",
+      "moisture_pct",
+      "source_note",
+      "confidence"
+    ]
+  },
+  "v_crop_climate_matrix": {
+    "type": "VIEW",
+    "columns": [
+      {
+        "name": "species_id",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "name_fa",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "scientific_name",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "category",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "primary_climate",
+        "type": "VARCHAR",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "min_temp_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "opt_temp_min_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "opt_temp_max_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "max_temp_c",
+        "type": "DOUBLE",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rain_min_mm_y",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rain_opt_min_mm_y",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "rain_max_mm_y",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "soil_depth_cm",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "drought_tolerance_1_5",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      },
+      {
+        "name": "water_need_1_5",
+        "type": "BIGINT",
+        "notnull": false,
+        "pk": false
+      }
+    ],
+    "column_names": [
+      "species_id",
+      "name_fa",
+      "scientific_name",
+      "category",
+      "primary_climate",
+      "min_temp_c",
+      "opt_temp_min_c",
+      "opt_temp_max_c",
+      "max_temp_c",
+      "rain_min_mm_y",
+      "rain_opt_min_mm_y",
+      "rain_max_mm_y",
+      "soil_depth_cm",
+      "drought_tolerance_1_5",
+      "water_need_1_5"
+    ]
+  }
+}

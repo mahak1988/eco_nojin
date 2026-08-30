@@ -1,22 +1,18 @@
 {
   "meta": {
     "path": "D:\\eco_nojin",
-    "generated": "2026-08-29 05:42:58",
+    "generated": "2026-08-30 03:29:03",
     "python": "3.12.10",
     "os": "Windows 10"
   },
   "techs": [
     "Ant Design",
-    "D3.js",
     "Deck.gl",
     "ECharts",
     "ESLint",
-    "Ethers.js",
     "FastAPI",
     "Framer Motion",
-    "GSAP",
     "Google Fonts",
-    "MUI",
     "MapLibre GL",
     "Node.js",
     "Python",
@@ -24,25 +20,21 @@
     "React Three Fiber",
     "Recharts",
     "Starlette",
-    "TanStack Query",
     "Three.js",
     "TypeScript",
-    "Viem",
     "Vite",
-    "Wagmi",
-    "Web3Modal",
-    "Zod",
+    "Vitest",
     "Zustand",
     "i18next"
   ],
   "git": {},
   "stats": {
-    "total_files": 1579,
-    "total_size": 521626231,
-    "loc_code": 99648,
-    "endpoints": 288,
+    "total_files": 1632,
+    "total_size": 606684504,
+    "loc_code": 103293,
+    "endpoints": 301,
     "tests_backend": 66,
-    "tests_frontend": 0
+    "tests_frontend": 2
   },
   "endpoints": [
     [
@@ -727,6 +719,16 @@
     ],
     [
       "GET",
+      "/grid/{site_id}",
+      "services/api_gateway/routers/elevation.py"
+    ],
+    [
+      "POST",
+      "/erosion-effect/{site_id}",
+      "services/api_gateway/routers/elevation.py"
+    ],
+    [
+      "GET",
       "/",
       "services/api_gateway/routers/farms.py"
     ],
@@ -834,6 +836,46 @@
       "DELETE",
       "/progress",
       "services/api_gateway/routers/lms.py"
+    ],
+    [
+      "GET",
+      "/status",
+      "services/api_gateway/routers/manual_data.py"
+    ],
+    [
+      "GET",
+      "/sites",
+      "services/api_gateway/routers/manual_data.py"
+    ],
+    [
+      "GET",
+      "/sites/{site_id}",
+      "services/api_gateway/routers/manual_data.py"
+    ],
+    [
+      "GET",
+      "/weather-daily/{site_id}",
+      "services/api_gateway/routers/manual_data.py"
+    ],
+    [
+      "GET",
+      "/climate-normals/{site_id}",
+      "services/api_gateway/routers/manual_data.py"
+    ],
+    [
+      "GET",
+      "/crop-params",
+      "services/api_gateway/routers/manual_data.py"
+    ],
+    [
+      "GET",
+      "/soil-regions",
+      "services/api_gateway/routers/manual_data.py"
+    ],
+    [
+      "GET",
+      "/crop-calendar",
+      "services/api_gateway/routers/manual_data.py"
     ],
     [
       "GET",
@@ -1212,6 +1254,21 @@
     ],
     [
       "POST",
+      "/run-async",
+      "services/api_gateway/routers/simulation.py"
+    ],
+    [
+      "GET",
+      "/progress/{run_id}",
+      "services/api_gateway/routers/simulation.py"
+    ],
+    [
+      "GET",
+      "/progress/{run_id}/stream",
+      "services/api_gateway/routers/simulation.py"
+    ],
+    [
+      "POST",
       "/analyze",
       "services/api_gateway/routers/soil.py"
     ],
@@ -1496,78 +1553,57 @@
     "npm": {
       "name": "frontend",
       "dependencies": {
-        "@ant-design/icons": "^6.3.2",
         "@deck.gl/aggregation-layers": "^9.3.10",
         "@deck.gl/core": "^9.3.10",
-        "@deck.gl/geo-layers": "^9.3.10",
         "@deck.gl/layers": "^9.3.10",
-        "@deck.gl/mesh-layers": "^9.3.10",
         "@deck.gl/react": "^9.3.10",
-        "@dimforge/rapier3d-compat": "^0.20.0",
-        "@emotion/react": "^11.14.0",
-        "@emotion/styled": "^11.14.1",
-        "@hookform/resolvers": "^5.9.1",
-        "@mui/material": "^9.3.1",
         "@react-three/drei": "^10.7.8",
         "@react-three/fiber": "^9.7.0",
-        "@react-three/postprocessing": "^3.1.0",
-        "@tanstack/react-query": "^5.102.4",
-        "@turf/turf": "^7.4.0",
-        "@types/d3": "^7.4.3",
-        "@types/mapbox-gl": "^3.5.0",
-        "@web3modal/wagmi": "^5.1.11",
         "antd": "^6.6.1",
         "axios": "^1.19.0",
-        "d3": "^7.9.0",
-        "deck.gl": "^9.3.10",
         "echarts": "^6.1.0",
         "echarts-for-react": "^3.0.6",
-        "ethers": "^6.17.0",
         "framer-motion": "^13.1.1",
-        "georaster-layer-for-leaflet": "^4.1.2",
-        "geotiff": "^3.0.5",
-        "gsap": "^3.15.0",
         "i18next": "^26.4.0",
-        "immer": "^11.1.18",
         "lucide-react": "^1.33.0",
         "maplibre-gl": "^6.6.0",
-        "qrcode.react": "^4.2.0",
         "react": "^19.2.8",
         "react-dom": "^19.2.8",
-        "react-hook-form": "^7.86.0",
         "react-i18next": "^17.0.12",
         "react-router-dom": "^7.18.2",
         "recharts": "^3.10.1",
-        "terraformer": "^1.0.12",
         "three": "^0.185.1",
-        "viem": "^2.55.19",
-        "wagmi": "^3.7.6",
-        "zod": "^4.4.3",
         "zustand": "^5.0.15"
       },
       "devDependencies": {
         "@eslint/js": "^10.0.1",
+        "@testing-library/jest-dom": "^7.0.1",
+        "@testing-library/react": "^16.3.3",
         "@types/geojson": "^7946.0.16",
-        "@types/maplibre-gl": "^1.14.0",
         "@types/node": "^24.13.3",
         "@types/react": "^19.2.17",
         "@types/react-dom": "^19.2.3",
         "@types/three": "^0.185.4",
         "@vitejs/plugin-react": "^6.0.4",
-        "eslint": "^10.8.0",
+        "eslint": "^10.8.1",
         "eslint-plugin-react-hooks": "^7.1.1",
         "eslint-plugin-react-refresh": "^0.5.3",
         "globals": "^17.7.0",
+        "jsdom": "^30.0.1",
         "typescript": "~6.0.2",
         "typescript-eslint": "^8.65.0",
-        "vite": "^8.2.0"
+        "vite": "^8.2.0",
+        "vitest": "^4.1.11"
       }
     },
     "scripts": {
       "dev": "vite",
-      "build": "tsc -b && vite build",
+      "build": "vite build",
       "lint": "eslint .",
-      "preview": "vite preview"
+      "preview": "vite preview",
+      "test": "vitest run",
+      "test:watch": "vitest",
+      "typecheck": "tsc -b"
     },
     "requirements": [
       "﻿# ============================================================",
@@ -1951,20 +1987,20 @@
   ],
   "env_files": [
     ".env",
-    ".env.bak-20260829",
     ".env.example",
     ".env.template",
+    "_quarantine/secrets/.env.bak-20260829",
     "contracts/.env",
     "contracts/.env.example",
     "frontend/.env.example"
   ],
   "langs": {
     ".py": {
-      "files": 668,
-      "lines": 87972,
-      "code": 69459,
-      "comment": 3820,
-      "blank": 14693
+      "files": 684,
+      "lines": 91133,
+      "code": 72045,
+      "comment": 3982,
+      "blank": 15106
     },
     ".js": {
       "files": 5,
@@ -1981,25 +2017,25 @@
       "blank": 39
     },
     ".ts": {
-      "files": 29,
-      "lines": 2788,
-      "code": 2281,
-      "comment": 254,
-      "blank": 253
+      "files": 32,
+      "lines": 2934,
+      "code": 2400,
+      "comment": 268,
+      "blank": 266
     },
     ".css": {
       "files": 11,
-      "lines": 5014,
-      "code": 4100,
+      "lines": 5019,
+      "code": 4103,
       "comment": 212,
-      "blank": 702
+      "blank": 704
     },
     ".tsx": {
-      "files": 168,
-      "lines": 25634,
-      "code": 23296,
-      "comment": 504,
-      "blank": 1834
+      "files": 171,
+      "lines": 34277,
+      "code": 24233,
+      "comment": 533,
+      "blank": 9511
     }
   },
   "health": {
@@ -2007,6 +2043,6 @@
     "tracked_build_dirs": {},
     "todo_total": 8,
     "console_log_total": 37,
-    "print_total": 421
+    "print_total": 694
   }
 }
