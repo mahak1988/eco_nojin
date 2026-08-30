@@ -1,0 +1,90 @@
+{
+  "total_lines": 8804,
+  "total_chars": 57838,
+  "imports": [
+    "@react-three/fiber",
+    "@react-three/drei",
+    "three",
+    "react-i18next",
+    "../components/simulators/TerrainBuilder",
+    "../components/simulators/RealSiteLoader",
+    "../lib/demApi",
+    "../lib/demApi",
+    "../components/simulators/ScientificHub",
+    "../components/farmsim/SceneExtras",
+    "../components/farmsim/SceneExtras",
+    "../lib/terrainGenerator",
+    "../lib/terrainGenerator",
+    "../styles/hydroma.css"
+  ],
+  "hooks_used": [
+    [
+      "useState",
+      15
+    ],
+    [
+      "useEffect",
+      3
+    ],
+    [
+      "useMemo",
+      5
+    ],
+    [
+      "useCallback",
+      6
+    ],
+    [
+      "useRef",
+      1
+    ]
+  ],
+  "components_defined": [],
+  "state_variables": [
+    "terrain",
+    "viewMode",
+    "toolMode",
+    "selectedOpType",
+    "placedOps",
+    "polygons",
+    "currentDrawing",
+    "selectedOp",
+    "plots",
+    "growth",
+    "cropVisual",
+    "showDecor",
+    "showSoil",
+    "showBedrock",
+    "showMoisture",
+    "showRoots",
+    "showGroundwater",
+    "windSpeed",
+    "windDirection",
+    "lastClickInfo",
+    "demLoading",
+    "demError",
+    "siteMeta",
+    "esriTexture",
+    "showNdvi",
+    "erosionEffect",
+    "rainOn",
+    "tourOn"
+  ],
+  "effects": 3,
+  "functions": [
+    "getPoint3D"
+  ],
+  "any_types": 1,
+  "console_logs": 0,
+  "jsx_depth_max": 9,
+  "dependencies": [
+    "react-i18next",
+    "@react-three/drei",
+    "@react-three/fiber",
+    "three"
+  ],
+  "errors": [
+    "⚠️ God Component: 8804 lines",
+    "⚠️ 28 state variable - نیاز به store"
+  ]
+}

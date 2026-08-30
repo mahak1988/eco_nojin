@@ -1,0 +1,504 @@
+======================================================================
+SEGMENT 3/18 | Lines 1001-1500
+FILE: HyDroMaCenter.tsx
+======================================================================
+
+}) {
+
+
+
+
+
+
+
+  return (
+
+
+
+
+
+
+
+    <group>
+
+
+
+
+
+
+
+      {ops.map(op => {
+
+
+
+
+
+
+
+        // Convert world x,y to grid coords
+
+
+
+
+
+
+
+        const gridX = Math.max(0, Math.min(data.width - 1, worldToGrid(op.x, data.width)));
+
+
+
+
+
+
+
+        const gridY = Math.max(0, Math.min(data.height - 1, worldToGrid(op.y, data.height)));
+
+
+
+
+
+
+
+        const elev = data.elevation[gridY]?.[gridX] ?? data.minElevation;
+
+
+
+
+
+
+
+        const range = data.maxElevation - data.minElevation || 1;
+
+
+
+
+
+
+
+        const norm = (elev - data.minElevation) / range;
+
+
+
+
+
+
+
+        const yPos = norm * HEIGHT_SCALE + 0.5;
+
+
+
+
+
+
+
+        const isSelected = selectedId === op.id;
+
+
+
+
+
+
+
+        return (
+
+
+
+
+
+
+
+          <group key={op.id} position={[op.x, yPos, op.y]}>
+
+
+
+
+
+
+
+            {/* Pin stick */}
+
+
+
+
+
+
+
+            <mesh position={[0, -0.2, 0]}>
+
+
+
+
+
+
+
+              <cylinderGeometry args={[0.04, 0.04, 0.5, 8]} />
+
+
+
+
+
+
+
+              <meshStandardMaterial color="#8b5cf6" />
+
+
+
+
+
+
+
+            </mesh>
+
+
+
+
+
+
+
+            {/* Pin head */}
+
+
+
+
+
+
+
+            <mesh
+
+
+
+
+
+
+
+              position={[0, 0.15, 0]}
+
+
+
+
+
+
+
+              onClick={(e) => { e.stopPropagation(); onSelect(op.id); }}
+
+
+
+
+
+
+
+            >
+
+
+
+
+
+
+
+              <sphereGeometry args={[0.22, 16, 16]} />
+
+
+
+
+
+
+
+              <meshStandardMaterial
+
+
+
+
+
+
+
+                color={isSelected ? '#fbbf24' : '#8b5cf6'}
+
+
+
+
+
+
+
+                emissive={isSelected ? '#fbbf24' : '#8b5cf6'}
+
+
+
+
+
+
+
+                emissiveIntensity={isSelected ? 0.8 : 0.4}
+
+
+
+
+
+
+
+              />
+
+
+
+
+
+
+
+            </mesh>
+
+
+
+
+
+
+
+            {/* Label */}
+
+
+
+
+
+
+
+            <Html
+
+
+
+
+
+
+
+              position={[0, 0.6, 0]}
+
+
+
+
+
+
+
+              center
+
+
+
+
+
+
+
+              occlude={false}
+
+
+
+
+
+
+
+              zIndexRange={[100, 0]}
+
+
+
+
+
+
+
+              style={{ pointerEvents: 'none' }}
+
+
+
+
+
+
+
+            >
+
+
+
+
+
+
+
+              <div style={{
+
+
+
+
+
+
+
+                background: isSelected ? 'rgba(251, 191, 36, 0.95)' : 'rgba(139, 92, 246, 0.95)',
+
+
+
+
+
+
+
+                color: 'white',
+
+
+
+
+
+
+
+                padding: '4px 10px',
+
+
+
+
+
+
+
+                borderRadius: '6px',
+
+
+
+
+
+
+
+                fontSize: '11px',
+
+
+
+
+
+
+
+                whiteSpace: 'nowrap',
+
+
+
+
+
+
+
+                fontWeight: 700,
+
+
+
+
+
+
+
+                border: '1px solid rgba(255,255,255,0.3)',
+
+
+
+
+
+
+
+                boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+
+
+
+
+
+
+
+                userSelect: 'none',
+
+
+
+
+
+
+
+              }}>
+
+
+
+
+
+
+
+                📍 {op.label}
+
+
+
+
+
+
+
+              </div>
+
+
+
+
+
+
+
+            </Html>
+
+
+
+
+
+
+
+          </group>
+
+
+
+
+
+
+
+        );
+
+
+
+
+
+
+
+      })}
+
+
+
+
+
+
+
+    </group>
+
+
+
+
+
+
+
+  );
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+// ===== POLYGON OVERLAY =====
+
+
+
+
+
+
+
+function PolygonOverlay({
+
+
+
+
+
+
+
+  polygons, data, currentDrawing
+
+

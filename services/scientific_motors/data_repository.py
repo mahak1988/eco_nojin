@@ -88,6 +88,11 @@ class ScientificDataRepository:
         query = "SELECT * FROM ref_yield_benchmarks WHERE species_id = ?"
         return self._conn.execute(query, [species_id]).pl()
 
+
+    def get_yield_benchmark(self, species_id: str) -> pl.DataFrame:
+        """دریافت بنچمارک عملکرد (نام جایگزین برای سازگاری)"""
+        return self.get_yield_benchmarks(species_id)
+
     # ========================================================================
     # ۲. حوزه خاک و احیای خاک
     # ========================================================================

@@ -20,6 +20,7 @@
     "@hookform/resolvers": "^5.9.1",
     "@react-three/drei": "^10.7.8",
     "@react-three/fiber": "^9.7.0",
+    "@react-three/postprocessing": "^3.1.1",
     "antd": "^6.6.1",
     "axios": "^1.19.0",
     "echarts": "^6.1.0",
@@ -61,45 +62,6 @@
     "typescript-eslint": "^8.65.0",
     "vite": "^8.2.0",
     "vitest": "^4.1.11"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "msw",
-      "esbuild",
-      "sharp",
-      "@swc/core",
-      "@parcel/watcher",
-      "core-js",
-      "unrs-resolver",
-      "prisma",
-      "@prisma/client",
-      "@prisma/engines",
-      "@prisma/engines-version",
-      "bcrypt",
-      "canvas",
-      "node-gyp",
-      "sqlite3",
-      "better-sqlite3",
-      "keccak",
-      "secp256k1",
-      "@playwright/test",
-      "playwright",
-      "playwright-core",
-      "protobufjs",
-      "msgpackr-extract",
-      "lmdb",
-      "classic-level"
-    ],
-    "allowedDeprecatedVersions": {
-      "glob": "*",
-      "inflight": "*",
-      "rimraf": "*",
-      "uuid": "*",
-      "are-we-there-yet": "*",
-      "gauge": "*",
-      "npmlog": "*"
-    },
-    "neverBuiltDependencies": []
   },
   "msw": {
     "workerDirectory": [

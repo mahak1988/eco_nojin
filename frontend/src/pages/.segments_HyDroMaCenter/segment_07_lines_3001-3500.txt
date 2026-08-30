@@ -1,0 +1,504 @@
+======================================================================
+SEGMENT 7/18 | Lines 3001-3500
+FILE: HyDroMaCenter.tsx
+======================================================================
+
+    <points ref={ref}>
+
+
+
+
+
+
+
+      <bufferGeometry>
+
+
+
+
+
+
+
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+
+
+
+
+
+
+
+      </bufferGeometry>
+
+
+
+
+
+
+
+      <pointsMaterial size={2.2} color="#a5c8e8" transparent opacity={0.55} sizeAttenuation />
+
+
+
+
+
+
+
+    </points>
+
+
+
+
+
+
+
+  );
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+function CameraTour({ active }: { active: boolean }) {
+
+
+
+
+
+
+
+  const { camera } = useThree();
+
+
+
+
+
+
+
+  const t = useRef(0);
+
+
+
+
+
+
+
+  useFrame((_, dt) => {
+
+
+
+
+
+
+
+    if (!active) return;
+
+
+
+
+
+
+
+    t.current += dt;
+
+
+
+
+
+
+
+    const ang = t.current * 0.18;
+
+
+
+
+
+
+
+    const radius = 1150 - 350 * (0.5 + 0.5 * Math.sin(t.current * 0.1));
+
+
+
+
+
+
+
+    const height = 520 - 240 * (0.5 + 0.5 * Math.cos(t.current * 0.13));
+
+
+
+
+
+
+
+    camera.position.set(Math.cos(ang) * radius, height, Math.sin(ang) * radius);
+
+
+
+
+
+
+
+    camera.lookAt(0, 30, 0);
+
+
+
+
+
+
+
+  });
+
+
+
+
+
+
+
+  return null;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+export default function HyDroMaCenter() {
+
+
+
+
+
+
+
+  const { i18n } = useTranslation();
+
+
+
+
+
+
+
+  const isFa = i18n.language === 'fa';
+
+
+
+
+
+
+
+  // Core state
+
+
+
+
+
+
+
+  const [terrain, setTerrain] = useState<TerrainData | null>(null);
+
+
+
+
+
+
+
+  const [viewMode, setViewMode] = useState<'3d' | '2d-top' | '2d-side' | 'cross-section'>('3d');
+
+
+
+
+
+
+
+  const [toolMode, setToolMode] = useState<'orbit' | 'draw-polygon' | 'place-op' | 'data-plot'>('orbit');
+
+
+
+
+
+
+
+  const [selectedOpType, setSelectedOpType] = useState<string | null>(null);
+
+
+
+
+
+
+
+  // Placed items
+
+
+
+
+
+
+
+  const [placedOps, setPlacedOps] = useState<Array<{id: string; type: string; x: number; y: number; label: string}>>([]);
+
+
+
+
+
+
+
+  const [polygons, setPolygons] = useState<Array<{id: string; points: Array<{x: number; y: number}>; name: string; color: string; area?: number}>>([]);
+
+
+
+
+
+
+
+  const [currentDrawing, setCurrentDrawing] = useState<Array<{x: number; y: number}>>([]);
+
+
+
+
+
+
+
+  const [selectedOp, setSelectedOp] = useState<string | null>(null);
+
+
+
+
+
+
+
+  const [plots, setPlots] = useState<DataPlot[]>([]);
+
+
+
+
+
+
+
+  const [growth, setGrowth] = useState(0.6);
+
+
+
+
+
+
+
+  const [cropVisual, setCropVisual] = useState('corn');
+
+
+
+
+
+
+
+  const [showDecor, setShowDecor] = useState(true);
+
+
+
+
+
+
+
+  // Layers
+
+
+
+
+
+
+
+  const [showSoil, setShowSoil] = useState(false);
+
+
+
+
+
+
+
+  const [showBedrock, setShowBedrock] = useState(false);
+
+
+
+
+
+
+
+  const [showMoisture, setShowMoisture] = useState(false);
+
+
+
+
+
+
+
+  const [showRoots, setShowRoots] = useState(false);
+
+
+
+
+
+
+
+  const [showGroundwater, setShowGroundwater] = useState(false);
+
+
+
+
+
+
+
+  // Climate
+
+
+
+
+
+
+
+  const [windSpeed, setWindSpeed] = useState(15);
+
+
+
+
+
+
+
+  const [windDirection, setWindDirection] = useState(180);
+
+
+
+
+
+
+
+  // Debug info
+
+
+
+
+
+
+
+  const [lastClickInfo, setLastClickInfo] = useState<string>('');
+
+
+
+
+
+
+
+  // Phase 1: real-site DEM
+
+
+
+
+
+
+
+  const [demLoading, setDemLoading] = useState(false);
+
+
+
+
+
+
+
+  const [demError, setDemError] = useState('');
+
+
+
+
+
+
+
+  const [siteMeta, setSiteMeta] = useState<{ lat: number; lon: number } | null>(null);
+
+
+
+
+
+
+
+  const [esriTexture, setEsriTexture] = useState<THREE.Texture | null>(null);
+
+
+
+
+
+
+
+  const [showNdvi, setShowNdvi] = useState(false);
+
+
+
+
+
+
+
+  const [erosionEffect, setErosionEffect] = useState<Record<string, any> | null>(null);
+
+
+
+
+
+
+
+  const [rainOn, setRainOn] = useState(false);
+
+
+
+
+
+
+
+  const [tourOn, setTourOn] = useState(false);
+
+
+
+
+
+
+
+  // ===== PHASE 1: real-site DEM loader =====
+
+
+
+
+
+
+
+  const loadRealSite = useCallback(async (siteId: string) => {
+
+
+
+
+
+
+
+    setDemLoading(true);
+
+
+
+
+
+
+
+    setDemError('');
+
+

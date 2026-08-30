@@ -1,0 +1,308 @@
+======================================================================
+SEGMENT 18/18 | Lines 8501-8804
+FILE: HyDroMaCenter.tsx
+======================================================================
+
+
+
+
+
+
+
+              <WaterSurface levelNorm={0.015} />
+
+
+
+
+
+
+
+              {rainOn && <RainParticles count={1400} />}
+
+
+
+
+
+
+
+              <CameraTour active={tourOn} />
+
+
+
+
+
+
+
+              <EffectComposer multisampling={0}>
+
+
+
+
+
+
+
+                <Bloom intensity={0.38} luminanceThreshold={0.74} mipmapBlur />
+
+
+
+
+
+
+
+                <Vignette offset={0.22} darkness={0.72} />
+
+
+
+
+
+
+
+              </EffectComposer>
+
+
+
+
+
+
+
+            </Canvas>
+
+
+
+
+
+
+
+            </>
+
+
+
+
+
+
+
+          ) : demLoading ? (
+
+
+
+
+
+
+
+            <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "14px", color: "rgba(255,255,255,0.75)" }}>
+
+
+
+
+
+
+
+              <Loader2 size={46} className="spin" />
+
+
+
+
+
+
+
+              <div style={{ fontSize: 15, fontWeight: 600 }}>در حال بارگذاری زمین واقعی از DEM…</div>
+
+
+
+
+
+
+
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>Open-Meteo • Copernicus DEM 90m • سایت {siteId}</div>
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+          ) : (
+
+
+
+
+
+
+
+            <div style={{
+
+
+
+
+
+
+
+              position: 'absolute', inset: 0,
+
+
+
+
+
+
+
+              display: 'flex', flexDirection: 'column',
+
+
+
+
+
+
+
+              alignItems: 'center', justifyContent: 'center',
+
+
+
+
+
+
+
+              color: 'rgba(255,255,255,0.5)', gap: '16px',
+
+
+
+
+
+
+
+            }}>
+
+
+
+
+
+
+
+              <Mountain size={80} style={{ opacity: 0.3 }} />
+
+
+
+
+
+
+
+              <div style={{ fontSize: '18px', fontWeight: 700 }}>
+
+
+
+
+
+
+
+                {isFa ? 'زمین سه‌بعدی آماده نیست' : 'No 3D Terrain Yet'}
+
+
+
+
+
+
+
+              </div>
+
+
+
+
+
+
+
+              <div style={{ fontSize: '13px', maxWidth: '400px', textAlign: 'center' }}>
+
+
+
+
+
+
+
+                {isFa
+
+
+
+
+
+
+
+                  ? 'از پنل سمت چپ پارامترها را انتخاب و Generate کنید. سپس می‌توانید با موس زمین را بچرخانید، زوم کنید و روی آن کلیک کنید.'
+
+
+
+
+
+
+
+                  : 'Select parameters and Generate from the left panel. Then you can rotate, zoom, and click on the terrain.'}
+
+
+
+
+
+
+
+              </div>
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+          )}
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+      </div>
+
+
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+  );
+
+
+
+
+
+
+
+}

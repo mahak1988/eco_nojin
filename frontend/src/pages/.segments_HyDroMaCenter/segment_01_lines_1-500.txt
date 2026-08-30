@@ -1,0 +1,504 @@
+======================================================================
+SEGMENT 1/18 | Lines 1-500
+FILE: HyDroMaCenter.tsx
+======================================================================
+
+﻿import { useState, useRef, useCallback, useMemo, useEffect, Suspense } from 'react';
+
+
+
+
+
+
+
+import { Canvas, useThree, useFrame } from '@react-three/fiber';
+
+
+
+
+
+
+
+import { OrbitControls, Sky, Grid, PerspectiveCamera, Html, Line, useTexture } from '@react-three/drei';
+
+
+
+
+
+
+
+import * as THREE from 'three';
+
+
+
+
+
+
+
+import { useTranslation } from 'react-i18next';
+
+
+
+
+
+
+
+import {
+
+
+
+
+
+
+
+  Mountain, Play, Pause, GitCompare, FileText, Loader2,
+
+
+
+
+
+
+
+  Activity, Cpu, Layers, TreePine, Cloud, Sun, Hammer,
+
+
+
+
+
+
+
+  Tractor, Trash2, Pencil, Square, Plus, FlaskConical} from 'lucide-react';
+
+
+
+
+
+
+
+import TerrainBuilder from '../components/simulators/TerrainBuilder';
+
+
+
+
+
+
+
+import RealSiteLoader from '../components/simulators/RealSiteLoader';
+
+
+
+
+
+
+
+import { fetchDemGrid, buildRealTerrain, esriTileUrl } from '../lib/demApi';
+
+
+
+
+
+
+
+import type { DemGrid } from '../lib/demApi';
+
+
+
+
+
+
+
+import { ScientificHub } from '../components/simulators/ScientificHub';
+
+
+
+
+
+
+
+import { DataPlotView, Crops, Forest, Barn, Silo, samplePlotData } from '../components/farmsim/SceneExtras';
+
+
+
+
+
+
+
+import type { DataPlot } from '../components/farmsim/SceneExtras';
+
+
+
+
+
+
+
+import { generateTerrain, terrainColor, moistureColor, rootColor, groundwaterColor, WORLD_SIZE, HEIGHT_SCALE, worldToGrid } from '../lib/terrainGenerator';
+
+
+
+
+
+
+
+import type { TerrainData, LayerType } from '../lib/terrainGenerator';
+
+
+
+
+
+
+
+import '../styles/hydroma.css';
+
+
+
+
+
+
+
+// ===== TERRAIN MESH (clickable) =====
+
+
+
+
+
+
+
+function TerrainMesh({
+
+
+
+
+
+
+
+  data, onTerrainClick, visible = true, opacity = 1, layer = 'surface', map = null
+
+
+
+
+
+
+
+}: {
+
+
+
+
+
+
+
+  data: TerrainData;
+
+
+
+
+
+
+
+  onTerrainClick?: (point: THREE.Vector3, normal: THREE.Vector3) => void;
+
+
+
+
+
+
+
+  visible?: boolean;
+
+
+
+
+
+
+
+  opacity?: number;
+
+
+
+
+
+
+
+  layer?: LayerType;
+
+
+
+
+
+
+
+  map?: THREE.Texture | null;
+
+
+
+
+
+
+
+}) {
+
+
+
+
+
+
+
+  const geometry = useMemo(() => {
+
+
+
+
+
+
+
+    const geo = new THREE.PlaneGeometry(WORLD_SIZE, WORLD_SIZE, data.width - 1, data.height - 1);
+
+
+
+
+
+
+
+    geo.rotateX(-Math.PI / 2);
+
+
+
+
+
+
+
+    return geo;
+
+
+
+
+
+
+
+  }, [data.width, data.height]);
+
+
+
+
+
+
+
+  useMemo(() => {
+
+
+
+
+
+
+
+    const positions = geometry.attributes.position;
+
+
+
+
+
+
+
+    const colors = new Float32Array(positions.count * 3);
+
+
+
+
+
+
+
+    const range = data.maxElevation - data.minElevation || 1;
+
+
+
+
+
+
+
+    for (let i = 0; i < positions.count; i++) {
+
+
+
+
+
+
+
+      const x = i % data.width;
+
+
+
+
+
+
+
+      const y = Math.floor(i / data.width);
+
+
+
+
+
+
+
+      if (y >= data.height || x >= data.width) continue;
+
+
+
+
+
+
+
+      const elev = data.elevation[y][x];
+
+
+
+
+
+
+
+      const norm = (elev - data.minElevation) / range;
+
+
+
+
+
+
+
+      let r = 0, g = 0, b = 0, yOff = 0;
+
+
+
+
+
+
+
+      switch (layer) {
+
+
+
+
+
+
+
+        case 'surface':
+
+
+
+
+
+
+
+          [r, g, b] = terrainColor(data, x, y, norm);
+
+
+
+
+
+
+
+          yOff = norm * HEIGHT_SCALE;
+
+
+
+
+
+
+
+          break;
+
+
+
+
+
+
+
+        case 'soil':
+
+
+
+
+
+
+
+          r = 0.55; g = 0.4; b = 0.25;
+
+
+
+
+
+
+
+          yOff = norm * HEIGHT_SCALE - 0.3;
+
+
+
+
+
+
+
+          break;
+
+
+
+
+
+
+
+        case 'bedrock':
+
+
+
+
+
+
+
+          r = 0.45; g = 0.4; b = 0.4;
+
+
+
+
+
+
+
+          yOff = norm * HEIGHT_SCALE - 0.8;
+
+
+
+
+
+
+
+          break;
+
+
+
+
+
+
+
+        case 'ndvi':
+
+
+
+
+
+
+
+          {
+
+
+
+
+
+
+
+            const gv = 0.2 + 0.6 * data.moisture[y][x];
+
+
+
+
+
+
+
+            r = 0.12; g = gv; b = 0.18;
+
+

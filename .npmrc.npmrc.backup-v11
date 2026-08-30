@@ -1,0 +1,4 @@
+# Root pnpm configuration
+registry=https://registry.npmjs.org/
+strict-ssl=true
+auto-install-peers=true

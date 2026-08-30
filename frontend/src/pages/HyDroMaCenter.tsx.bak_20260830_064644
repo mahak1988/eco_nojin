@@ -1,7 +1,6 @@
 ﻿import { useState, useRef, useCallback, useMemo, useEffect, Suspense } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { OrbitControls, Sky, Grid, PerspectiveCamera, Html, Line, useTexture } from '@react-three/drei';
-import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { useTranslation } from 'react-i18next';
 import {
@@ -7479,7 +7478,7 @@ export default function HyDroMaCenter() {
 
 
 
-              camera={{ position: [25, 22, 25], fov: 50, near: 0.1, far: 5000 }}
+              camera={{ position: [1250, 850, 1250], fov: 42 }}
 
 
 
@@ -7575,7 +7574,7 @@ export default function HyDroMaCenter() {
 
 
 
-                <fog attach="fog" args={['#dfe8d8', 50, 400]} />
+                <fog attach="fog" args={['#dfe8d8', 500, 4200]} />
 
 
 
@@ -7583,7 +7582,7 @@ export default function HyDroMaCenter() {
 
 
 
-                <Sky distance={45000} sunPosition={[100, 30, 100]} />
+                <Sky distance={450000} sunPosition={[100, 30, 100]} />
 
 
 
@@ -7647,7 +7646,7 @@ export default function HyDroMaCenter() {
 
 
 
-                  fadeDistance={200}
+                  fadeDistance={2600}
 
 
 
@@ -8047,7 +8046,7 @@ export default function HyDroMaCenter() {
 
 
 
-                  minDistance={5}
+                  minDistance={60}
 
 
 
@@ -8055,7 +8054,7 @@ export default function HyDroMaCenter() {
 
 
 
-                  maxDistance={150}
+                  maxDistance={4500}
 
 
 
@@ -8079,7 +8078,7 @@ export default function HyDroMaCenter() {
 
 
 
-                  zoomSpeed={0.8}
+                  zoomSpeed={1.2}
 
 
 
@@ -8175,8 +8174,6 @@ export default function HyDroMaCenter() {
 
 
 
-                
-                  target={[0, 0, 0]}
                 />
 
 

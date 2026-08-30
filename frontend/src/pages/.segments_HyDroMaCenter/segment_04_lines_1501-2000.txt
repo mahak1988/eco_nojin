@@ -1,0 +1,504 @@
+======================================================================
+SEGMENT 4/18 | Lines 1501-2000
+FILE: HyDroMaCenter.tsx
+======================================================================
+
+
+
+
+
+}: {
+
+
+
+
+
+
+
+  polygons: Array<{id: string; points: Array<{x: number; y: number}>; name: string; color: string; area?: number}>;
+
+
+
+
+
+
+
+  data: TerrainData;
+
+
+
+
+
+
+
+  currentDrawing: Array<{x: number; y: number}>;
+
+
+
+
+
+
+
+}) {
+
+
+
+
+
+
+
+  const getPoint3D = (p: {x: number; y: number}) => {
+
+
+
+
+
+
+
+    const gridX = Math.max(0, Math.min(data.width - 1, worldToGrid(p.x, data.width)));
+
+
+
+
+
+
+
+    const gridY = Math.max(0, Math.min(data.height - 1, worldToGrid(p.y, data.height)));
+
+
+
+
+
+
+
+    const elev = data.elevation[gridY]?.[gridX] ?? data.minElevation;
+
+
+
+
+
+
+
+    const range = data.maxElevation - data.minElevation || 1;
+
+
+
+
+
+
+
+    const norm = (elev - data.minElevation) / range;
+
+
+
+
+
+
+
+    return new THREE.Vector3(p.x, norm * HEIGHT_SCALE + 0.15, p.y);
+
+
+
+
+
+
+
+  };
+
+
+
+
+
+
+
+  return (
+
+
+
+
+
+
+
+    <group>
+
+
+
+
+
+
+
+      {polygons.map(poly => {
+
+
+
+
+
+
+
+        if (poly.points.length < 3) return null;
+
+
+
+
+
+
+
+        const linePoints = poly.points.map(getPoint3D);
+
+
+
+
+
+
+
+        linePoints.push(linePoints[0]); // close
+
+
+
+
+
+
+
+        const centroid = {
+
+
+
+
+
+
+
+          x: poly.points.reduce((s, p) => s + p.x, 0) / poly.points.length,
+
+
+
+
+
+
+
+          y: poly.points.reduce((s, p) => s + p.y, 0) / poly.points.length,
+
+
+
+
+
+
+
+        };
+
+
+
+
+
+
+
+        return (
+
+
+
+
+
+
+
+          <group key={poly.id}>
+
+
+
+
+
+
+
+            <Line points={linePoints} color={poly.color} lineWidth={3} />
+
+
+
+
+
+
+
+            {poly.points.map((p, i) => {
+
+
+
+
+
+
+
+              const pos = getPoint3D(p);
+
+
+
+
+
+
+
+              return (
+
+
+
+
+
+
+
+                <mesh key={i} position={pos}>
+
+
+
+
+
+
+
+                  <sphereGeometry args={[0.12, 16, 16]} />
+
+
+
+
+
+
+
+                  <meshStandardMaterial color={poly.color} emissive={poly.color} emissiveIntensity={0.6} />
+
+
+
+
+
+
+
+                </mesh>
+
+
+
+
+
+
+
+              );
+
+
+
+
+
+
+
+            })}
+
+
+
+
+
+
+
+            <Html
+
+
+
+
+
+
+
+              position={[centroid.x, 5, centroid.y]}
+
+
+
+
+
+
+
+              center
+
+
+
+
+
+
+
+              occlude={false}
+
+
+
+
+
+
+
+              zIndexRange={[100, 0]}
+
+
+
+
+
+
+
+              style={{ pointerEvents: 'none' }}
+
+
+
+
+
+
+
+            >
+
+
+
+
+
+
+
+              <div style={{
+
+
+
+
+
+
+
+                background: `${poly.color}dd`, color: 'white',
+
+
+
+
+
+
+
+                padding: '4px 10px', borderRadius: '6px', fontSize: '11px',
+
+
+
+
+
+
+
+                whiteSpace: 'nowrap', fontWeight: 700,
+
+
+
+
+
+
+
+              }}>
+
+
+
+
+
+
+
+                📐 {poly.name} {poly.area ? `(${poly.area.toFixed(0)}m²)` : ''}
+
+
+
+
+
+
+
+              </div>
+
+
+
+
+
+
+
+            </Html>
+
+
+
+
+
+
+
+          </group>
+
+
+
+
+
+
+
+        );
+
+
+
+
+
+
+
+      })}
+
+
+
+
+
+
+
+      {/* Live preview of current drawing */}
+
+
+
+
+
+
+
+      {currentDrawing.length > 0 && (
+
+
+
+
+
+
+
+        <group>
+
+
+
+
+
+
+
+          {currentDrawing.map((p, i) => {
+
+
+
+
+
+
+
+            const pos = getPoint3D(p);
+
+
+
+
+
+
+
+            return (
+
+
+
+
+
+
+
+              <mesh key={i} position={pos}>
+
+
+
+
+
+
+
+                <sphereGeometry args={[0.16, 16, 16]} />
+
+
+
+
+
+
+
+                <meshStandardMaterial color="#fbbf24" emissive="#fbbf24" emissiveIntensity={0.8} />
+
+
+
+
+
+

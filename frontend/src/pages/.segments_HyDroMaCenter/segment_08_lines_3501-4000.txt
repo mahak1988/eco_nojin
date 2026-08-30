@@ -1,0 +1,504 @@
+======================================================================
+SEGMENT 8/18 | Lines 3501-4000
+FILE: HyDroMaCenter.tsx
+======================================================================
+
+
+
+
+
+    try {
+
+
+
+
+
+
+
+      const dem: DemGrid = await fetchDemGrid(siteId);
+
+
+
+
+
+
+
+      const built = buildRealTerrain(dem);
+
+
+
+
+
+
+
+      setTerrain(built);
+
+
+
+
+
+
+
+      setSiteMeta({ lat: dem.lat, lon: dem.lon, siteId: dem.site_id });
+
+
+
+
+
+
+
+      setLastClickInfo(`Real DEM loaded: ${dem.site_id} relief=${(dem.max_elev - dem.min_elev).toFixed(0)}m`);
+
+
+
+
+
+
+
+    } catch (err) {
+
+
+
+
+
+
+
+      setDemError(err instanceof Error ? err.message : String(err));
+
+
+
+
+
+
+
+    } finally {
+
+
+
+
+
+
+
+      setDemLoading(false);
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+  }, []);
+
+
+
+
+
+
+
+  // Esri World Imagery texture for the selected site
+
+
+
+
+
+
+
+  useEffect(() => {
+
+
+
+
+
+
+
+    if (!siteMeta) { setEsriTexture(null); return; }
+
+
+
+
+
+
+
+    const loader = new THREE.TextureLoader();
+
+
+
+
+
+
+
+    loader.setCrossOrigin('anonymous');
+
+
+
+
+
+
+
+    loader.load(esriTileUrl(siteMeta.lat, siteMeta.lon, 14), tex => setEsriTexture(tex), undefined, () => setEsriTexture(null));
+
+
+
+
+
+
+
+  }, [siteMeta]);
+
+
+
+
+
+
+
+  // AUTO-INIT: real DEM terrain on first load (SITE265 — 357m relief, cached)
+
+
+
+
+
+
+
+  useEffect(() => {
+
+
+
+
+
+
+
+    if (!terrain && !demLoading && !demError) {
+
+
+
+
+
+
+
+      void loadRealSite('SITE265');
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+  }, [terrain, demLoading, demError, loadRealSite]);
+
+
+
+
+
+
+
+  // ===== TERRAIN CLICK HANDLER =====
+
+
+
+
+
+
+
+  const handleTerrainClick = useCallback((point: THREE.Vector3) => {
+
+
+
+
+
+
+
+    const x = point.x;
+
+
+
+
+
+
+
+    const y = point.z;
+
+
+
+
+
+
+
+    setLastClickInfo(`Click at (${x.toFixed(2)}, ${y.toFixed(2)})`);
+
+
+
+
+
+
+
+    if (toolMode === 'data-plot') {
+
+
+
+
+
+
+
+      const data = samplePlotData(terrain, x, y);
+
+
+
+
+
+
+
+      setPlots(prev => [...prev, { id: 'p' + Date.now(), center: [x, y], size: [6, 5], data }]);
+
+
+
+
+
+
+
+    } else if (toolMode === 'draw-polygon') {
+
+
+
+
+
+
+
+      setCurrentDrawing(prev => [...prev, { x, y }]);
+
+
+
+
+
+
+
+    } else if (toolMode === 'place-op' && selectedOpType) {
+
+
+
+
+
+
+
+      const op = ENGINEERING_OPS.find(o => o.id === selectedOpType);
+
+
+
+
+
+
+
+      if (op) {
+
+
+
+
+
+
+
+        const newOp = {
+
+
+
+
+
+
+
+          id: `op-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+
+
+
+
+
+
+
+          type: op.id,
+
+
+
+
+
+
+
+          x, y,
+
+
+
+
+
+
+
+          label: isFa ? op.fa : op.name,
+
+
+
+
+
+
+
+        };
+
+
+
+
+
+
+
+  // PHASE 3: real erosion effect for erosion-reducing ops (RUSLE on real data)
+
+
+
+
+
+
+
+  if (["terrace", "checkdam", "gabion"].includes(selectedOpType)) {
+
+
+
+
+
+
+
+    const siteIdForOp = siteMeta?.siteId;
+
+
+
+
+
+
+
+    if (siteIdForOp) {
+
+
+
+
+
+
+
+      void (async () => {
+
+
+
+
+
+
+
+        try {
+
+
+
+
+
+
+
+          const res = await fetch(`/api/v1/elevation/erosion-effect/${siteIdForOp}?op_type=${selectedOpType}`);
+
+
+
+
+
+
+
+          if (!res.ok) return;
+
+
+
+
+
+
+
+          const d = await res.json();
+
+
+
+
+
+
+
+          setErosionEffect(d);
+
+
+
+
+
+
+
+          const ratio = d.A_before_t_ha_yr > 0 ? d.A_after_t_ha_yr / d.A_before_t_ha_yr : 1;
+
+
+
+
+
+
+
+          setTerrain(prev => prev ? {
+
+
+
+
+
+
+
+            ...prev,
+
+
+
+
+
+
+
+            erosion: prev.erosion.map(row => row.map(v => +(v * ratio).toFixed(3))),
+
+
+
+
+
+
+
+          } : prev);
+
+
+
+
+
+
+
+        } catch { /* sidebar shows demError for real failures */ }
+
+
+
+
+
+
+
+      })();
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+

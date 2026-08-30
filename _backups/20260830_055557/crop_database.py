@@ -1,153 +1,12 @@
 """
-from __future__ import annotations
 Hydroma Nojin - Global Crop Database (Hybrid Architecture)
 ===========================================================
 لایه ۱: ۳۰ گونه کارشناسی‌شده با جزئیات کامل (CropProfile)
 لایه ۲: ۵۰۰۰ گونه مرجع از پایگاه داده مرکزی (DuckDB)
 
-نسخه ۲.۰ - بازنویسی خودکار توسط اسکریپت جامع
-سازگاری کامل با نسخه قبلی حفظ شده است.
+این ماژول سازگاری کامل با نسخه قبلی دارد و قابلیت‌های جدید اضافه می‌کند.
 """
-
-import logging
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import Dict, Any, Optional, List
-
-logger = logging.getLogger(__name__)
-
-
-# ============================================================
-# Enums & Data Classes (بدون تغییر - سازگاری کامل)
-# ============================================================
-
-class KoppenClimate(Enum):
-    Af = "Tropical rainforest"
-    Am = "Tropical monsoon"
-    Aw = "Tropical savanna"
-    BWh = "Hot desert"
-    BWk = "Cold desert"
-    BSh = "Hot semi-arid (steppe)"
-    BSk = "Cold semi-arid (steppe)"
-    Csa = "Hot-summer Mediterranean"
-    Csb = "Warm-summer Mediterranean"
-    Csc = "Cold-summer Mediterranean"
-    Cfa = "Humid subtropical"
-    Cfb = "Oceanic (temperate)"
-    Cfc = "Subpolar oceanic"
-    Cwa = "Dry-winter humid subtropical"
-    Cwb = "Dry-winter subtropical highland"
-    Cwc = "Dry-winter cold subtropical"
-    Dsa = "Hot-summer Mediterranean continental"
-    Dsb = "Warm-summer Mediterranean continental"
-    Dsc = "Dry cold-summer continental"
-    Dsd = "Very cold dry-winter continental"
-    Dfa = "Hot-summer humid continental"
-    Dfb = "Warm-summer humid continental"
-    Dfc = "Subarctic"
-    Dfd = "Extremely cold subarctic"
-    Dwa = "Dry-winter hot continental"
-    Dwb = "Dry-winter warm continental"
-    Dwc = "Dry-winter subarctic"
-    Dwd = "Dry-winter extremely cold"
-    ET = "Tundra"
-    EF = "Ice cap"
-
-
-class CropFamily(Enum):
-    CEREAL = "Cereals / غلات"
-    LEGUME = "Legumes / حبوبات"
-    VEGETABLE = "Vegetables / سبزیجات"
-    FRUIT = "Fruits / میوه‌ها"
-    INDUSTRIAL = "Industrial / صنعتی"
-    OILSEED = "Oilseeds / دانه‌های روغنی"
-    MEDICINAL = "Medicinal & Aromatic / دارویی"
-    FORAGE = "Forage / علوفه"
-    NUT = "Tree nuts / آجیل"
-    TUBER = "Tubers / غده‌ای"
-    FLOWER = "Ornamental / زینتی"
-    BEVERAGE = "Beverage / نوشیدنی"
-
-
-class WaterTolerance(Enum):
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-    VERY_HIGH = "very_high"
-
-
-class SalinityTolerance(Enum):
-    SENSITIVE = "sensitive"
-    MODERATE = "moderate"
-    TOLERANT = "tolerant"
-    HIGHLY_TOLERANT = "highly_tolerant"
-
-
-@dataclass
-class WaterRequirement:
-    min_mm: float
-    opt_mm: float
-    max_mm: float
-    drought_tolerance: WaterTolerance
-
-
-@dataclass
-class SoilRequirement:
-    ph_min: float
-    ph_opt_min: float
-    ph_opt_max: float
-    ph_max: float
-    preferred_texture: list[int]
-    salinity_tolerance: SalinityTolerance
-    min_depth_cm: float
-
-
-@dataclass
-class TemperatureRequirement:
-    min_c: float
-    opt_min_c: float
-    opt_max_c: float
-    max_c: float
-    chilling_hours: int
-    frost_tolerance: bool
-
-
-@dataclass
-class EconomicData:
-    yield_ton_ha: float
-    market_price_per_kg_usd: float
-    production_cost_per_ha_usd: float
-    labor_days_per_ha: float
-
-
-@dataclass
-class CropProfile:
-    id: str
-    name_fa: str
-    name_en: str
-    scientific_name: str
-    family: CropFamily
-    growing_days: int
-    planting_months: list[int]
-    water: WaterRequirement
-    soil: SoilRequirement
-    temperature: TemperatureRequirement
-    suitable_climates: list[KoppenClimate]
-    max_slope_percent: float
-    suitable_lcc_classes: list[int]
-    altitude_range_m: tuple
-    economics: EconomicData
-    rotation_compatible: list[str]
-    major_producers: list[str]
-    uses: list[str]
-    shelf_life_days: int
-    notes: str = ""
-
-
-# ============================================================
-# لایه ۱: پایگاه داده ۳۰ گونه کارشناسی‌شده
-# ============================================================
-
+from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
@@ -315,13 +174,9 @@ CROP_DATABASE: dict[str, CropProfile] = {
 }
 
 
-
-
 # ============================================================
 # لایه ۲: سرویس یکپارچه (DuckDB + Curated)
 # ============================================================
-
-
 
 class CropDatabaseService:
     """
@@ -332,10 +187,10 @@ class CropDatabaseService:
         2. پایگاه داده مرکزی DuckDB (۵۰۰۰ گونه)
     """
     
-    _instance: Optional["CropDatabaseService"] = None
+    _instance: Optional[CropDatabaseService] = None
     _repo = None
     
-    def __new__(cls) -> "CropDatabaseService":
+    def __new__(cls) -> CropDatabaseService:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             try:
@@ -506,221 +361,9 @@ class CropDatabaseService:
 # توابع سازگار با نسخه قبلی (Backward Compatibility)
 # ============================================================
 
-_service: Optional["CropDatabaseService"] = None
+_service: Optional[CropDatabaseService] = None
 
-def get_service() -> "CropDatabaseService":
-    global _service
-    if _service is None:
-        _service = CropDatabaseService()
-    return _service
-
-
-
-# ============================================================
-# لایه ۲: سرویس یکپارچه (DuckDB + Curated)
-# ============================================================
-
-class CropDatabaseService:
-    """
-    سرویس یکپارچه دسترسی به داده‌های زراعی
-    
-    اولویت جستجو:
-        1. پایگاه داده کارشناسی (۳۰ گونه با جزئیات کامل)
-        2. پایگاه داده مرکزی DuckDB (۵۰۰۰ گونه)
-    
-    مثال استفاده:
-        >>> svc = CropDatabaseService()
-        >>> wheat = svc.get_crop("wheat")        # لایه کارشناسی
-        >>> durum = svc.get_species_data("W001") # لایه دیتابیس
-        >>> results = svc.search_species("گندم") # جستجوی هر دو
-    """
-    
-    _instance: Optional["CropDatabaseService"] = None
-    _repo = None
-    
-    def __new__(cls) -> "CropDatabaseService":
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-            try:
-                from services.scientific_motors.data_repository import ScientificDataRepository
-                cls._instance._repo = ScientificDataRepository()
-                logger.info("✅ CropDatabaseService: DuckDB connected.")
-            except Exception as e:
-                logger.warning(f"⚠️ DuckDB unavailable, curated-only mode: {e}")
-        return cls._instance
-    
-    # ----------------------------------------------------------
-    # API اصلی: دسترسی به داده‌های گونه
-    # ----------------------------------------------------------
-    
-    def get_crop(self, crop_id: str) -> Optional[CropProfile]:
-        """دریافت پروفایل کامل از لایه کارشناسی"""
-        return CROP_DATABASE.get(crop_id)
-    
-    def get_species_data(self, species_id: str) -> Optional[Dict[str, Any]]:
-        """دریافت داده‌های هر گونه از هر دو لایه"""
-        # اولویت ۱: لایه کارشناسی
-        if species_id in CROP_DATABASE:
-            return self._profile_to_dict(CROP_DATABASE[species_id])
-        
-        # اولویت ۲: لایه DuckDB
-        if self._repo:
-            data = self._repo.get_crop_parameters(species_id)
-            if data:
-                return data
-        
-        return None
-    
-    def get_climate_requirements(self, species_id: str) -> Optional[Dict[str, Any]]:
-        """دریافت نیازمندی‌های اقلیمی"""
-        if self._repo:
-            df = self._repo.get_crop_climate_matrix(species_id)
-            if not df.is_empty():
-                return df.row(0, named=True)
-        return None
-    
-    def get_growth_stages(self, species_id: str):
-        """دریافت مراحل رشد بر اساس درجه-روز"""
-        if self._repo:
-            return self._repo.get_growth_stages(species_id)
-        return None
-    
-    def get_yield_benchmark(self, species_id: str):
-        """دریافت بنچمارک عملکرد"""
-        if self._repo:
-            return self._repo.get_yield_benchmarks(species_id)
-        return None
-    
-    def get_crop_calendar(self, species_id: str, site_id: str):
-        """دریافت تقویم زراعی"""
-        if self._repo:
-            return self._repo.get_crop_calendar(species_id, site_id)
-        return None
-    
-    def get_economic_data(self, species_id: str) -> Optional[Dict[str, Any]]:
-        """دریافت داده‌های اقتصادی"""
-        if self._repo:
-            return self._repo.get_economic_parameters(species_id)
-        return None
-    
-    # ----------------------------------------------------------
-    # جستجو و فیلتر
-    # ----------------------------------------------------------
-    
-    def search_species(self, query: str) -> List[Dict[str, Any]]:
-        """جستجوی گونه در هر دو لایه"""
-        results = []
-        q = query.lower()
-        
-        # جستجو در لایه کارشناسی
-        for cid, profile in CROP_DATABASE.items():
-            if (q in profile.name_fa.lower() or 
-                q in profile.name_en.lower() or 
-                q in profile.scientific_name.lower()):
-                results.append({
-                    "source": "curated", "id": cid,
-                    "name_fa": profile.name_fa,
-                    "scientific_name": profile.scientific_name,
-                    "data": profile
-                })
-        
-        # جستجو در لایه دیتابیس
-        if self._repo:
-            try:
-                df = self._repo._conn.execute("""
-                    SELECT id, name_fa, scientific_name, category 
-                    FROM ref_species 
-                    WHERE name_fa ILIKE ? OR scientific_name ILIKE ? OR id = ?
-                    LIMIT 50
-                """, [f"%{query}%", f"%{query}%", query.upper()]).pl()
-                
-                for row in df.iter_rows(named=True):
-                    results.append({
-                        "source": "database",
-                        "id": row["id"],
-                        "name_fa": row.get("name_fa", ""),
-                        "scientific_name": row.get("scientific_name", ""),
-                        "data": row
-                    })
-            except Exception as e:
-                logger.warning(f"Search failed: {e}")
-        
-        return results
-    
-    def get_all_species_ids(self) -> List[str]:
-        """دریافت لیست تمام شناسه‌های گونه"""
-        ids = set(CROP_DATABASE.keys())
-        if self._repo:
-            try:
-                df = self._repo._conn.execute("SELECT id FROM ref_species").pl()
-                ids.update(df["id"].to_list())
-            except Exception:
-                pass
-        return sorted(ids)
-    
-    def get_statistics(self) -> Dict[str, Any]:
-        """آمار جامع پایگاه داده"""
-        stats = get_crop_statistics()
-        if self._repo:
-            try:
-                total = self._repo._conn.execute(
-                    "SELECT COUNT(*) FROM ref_species"
-                ).fetchone()[0]
-                stats["database_total"] = total
-                stats["curated_total"] = len(CROP_DATABASE)
-            except Exception:
-                pass
-        return stats
-    
-    # ----------------------------------------------------------
-    # تبدیل و سازگاری
-    # ----------------------------------------------------------
-    
-    def _profile_to_dict(self, p: CropProfile) -> Dict[str, Any]:
-        """تبدیل CropProfile به دیکشنری سازگار با خروجی دیتابیس"""
-        return {
-            "species_id": p.id,
-            "name_fa": p.name_fa,
-            "scientific_name": p.scientific_name,
-            "category": p.family.value,
-            "min_temp_c": p.temperature.min_c,
-            "opt_temp_min_c": p.temperature.opt_min_c,
-            "opt_temp_max_c": p.temperature.opt_max_c,
-            "max_temp_c": p.temperature.max_c,
-            "rain_min_mm_y": p.water.min_mm,
-            "rain_opt_min_mm_y": p.water.opt_mm,
-            "rain_max_mm_y": p.water.max_mm,
-            "soil_depth_cm": p.soil.min_depth_cm,
-            "ph_min": p.soil.ph_min,
-            "ph_max": p.soil.ph_max,
-            "drought_tolerance_1_5": self._tolerance_scale(p.water.drought_tolerance),
-            "water_need_1_5": self._water_scale(p.water),
-            "growing_days": p.growing_days,
-            "planting_months": p.planting_months,
-            "source": "curated",
-        }
-    
-    @staticmethod
-    def _tolerance_scale(t: WaterTolerance) -> int:
-        return {WaterTolerance.LOW: 1, WaterTolerance.MEDIUM: 3,
-                WaterTolerance.HIGH: 4, WaterTolerance.VERY_HIGH: 5}[t]
-    
-    @staticmethod
-    def _water_scale(w: WaterRequirement) -> int:
-        if w.opt_mm < 350: return 2
-        if w.opt_mm < 600: return 3
-        if w.opt_mm < 900: return 4
-        return 5
-
-
-# ============================================================
-# توابع سازگار با نسخه قبلی (Backward Compatibility)
-# ============================================================
-
-_service: Optional["CropDatabaseService"] = None
-
-def get_service() -> "CropDatabaseService":
-    """دریافت نمونه سرویس یکپارچه"""
+def get_service() -> CropDatabaseService:
     global _service
     if _service is None:
         _service = CropDatabaseService()
@@ -775,6 +418,8 @@ def climate_description(code: KoppenClimate) -> str:
         KoppenClimate.Dfa: "Humid continental. Hot summer. Great Plains USA.",
         KoppenClimate.Dfb: "Humid continental. Warm summer. N Europe.",
         KoppenClimate.Dfc: "Subarctic. Short cool summer. Boreal forest.",
+        KoppenClimate.Dwa: "Monsoon continental. Hot summer. NE China.",
+        KoppenClimate.Dwb: "Monsoon continental. Warm summer. Manchuria.",
         KoppenClimate.ET: "Tundra. No month >10°C. Permafrost.",
         KoppenClimate.EF: "Ice cap. All months <0°C. Antarctica.",
     }

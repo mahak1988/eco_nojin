@@ -1,7 +1,6 @@
 ﻿import { useState, useRef, useCallback, useMemo, useEffect, Suspense } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { OrbitControls, Sky, Grid, PerspectiveCamera, Html, Line, useTexture } from '@react-three/drei';
-import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { useTranslation } from 'react-i18next';
 import {
@@ -4230,9 +4229,13 @@ export default function HyDroMaCenter() {
         )}
 
         {demError && (
+
           <div style={{ fontSize: "11px", color: "#fca5a5" }}>{demError}</div>
-        )}
+
+        
+
         {erosionEffect && (
+
           <div style={{ background: "rgba(76,175,80,0.12)", borderRadius: "12px", padding: "12px", border: "1px solid rgba(76,175,80,0.3)", fontSize: "11.5px", color: "#dcefe0" }}>
 
             <div style={{ fontWeight: 700, marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
@@ -4263,7 +4266,9 @@ export default function HyDroMaCenter() {
 
           </div>
 
-                )}
+        )}
+
+        )}
 
 
 
@@ -7479,7 +7484,7 @@ export default function HyDroMaCenter() {
 
 
 
-              camera={{ position: [25, 22, 25], fov: 50, near: 0.1, far: 5000 }}
+              camera={{ position: [1250, 850, 1250], fov: 42 }}
 
 
 
@@ -7575,7 +7580,7 @@ export default function HyDroMaCenter() {
 
 
 
-                <fog attach="fog" args={['#dfe8d8', 50, 400]} />
+                <fog attach="fog" args={['#dfe8d8', 500, 4200]} />
 
 
 
@@ -7583,7 +7588,7 @@ export default function HyDroMaCenter() {
 
 
 
-                <Sky distance={45000} sunPosition={[100, 30, 100]} />
+                <Sky distance={450000} sunPosition={[100, 30, 100]} />
 
 
 
@@ -7647,7 +7652,7 @@ export default function HyDroMaCenter() {
 
 
 
-                  fadeDistance={200}
+                  fadeDistance={2600}
 
 
 
@@ -7703,7 +7708,7 @@ export default function HyDroMaCenter() {
 
 
 
-                  map={esriTexture}
+                  map={{esriTexture}}
 
 
 
@@ -8047,7 +8052,7 @@ export default function HyDroMaCenter() {
 
 
 
-                  minDistance={5}
+                  minDistance={60}
 
 
 
@@ -8055,7 +8060,7 @@ export default function HyDroMaCenter() {
 
 
 
-                  maxDistance={150}
+                  maxDistance={4500}
 
 
 
@@ -8079,7 +8084,7 @@ export default function HyDroMaCenter() {
 
 
 
-                  zoomSpeed={0.8}
+                  zoomSpeed={1.2}
 
 
 
@@ -8175,8 +8180,6 @@ export default function HyDroMaCenter() {
 
 
 
-                
-                  target={[0, 0, 0]}
                 />
 
 
@@ -8297,7 +8300,7 @@ export default function HyDroMaCenter() {
 
 
 
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>Open-Meteo • Copernicus DEM 90m • سایت {siteMeta?.siteId || '---'}</div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>Open-Meteo • Copernicus DEM 90m • سایت {siteId}</div>
 
 
 
