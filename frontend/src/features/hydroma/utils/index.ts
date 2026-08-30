@@ -1,1 +1,6 @@
-// Barrel exports for utils
+/**
+ * HyDroMa Utilities - Barrel Exports
+ * ===================================
+ */
+
+export * from './worldToTerrainY';

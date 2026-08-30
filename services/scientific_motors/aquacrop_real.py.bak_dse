@@ -23,14 +23,6 @@ from datetime import datetime, timedelta
 import polars as pl
 
 logger = logging.getLogger(__name__)
-# --- Hydroma Dynamic Stress Engine (auto-installed, Phase 1) ---
-try:
-    from engine.hydroma.climate_adaptation.dynamic_stress_engine import (
-        DynamicStressEngine as _DSE_cls)
-    _HYDROMA_DSE = _DSE_cls()
-except Exception:
-    _HYDROMA_DSE = None
-
 
 
 # ============================================================
@@ -420,12 +412,7 @@ class AquaCropSimulator:
         if total_water > 0:
             result.water_productivity_kg_m3 = (result.yield_t_ha * 1000) / total_water
         
-                # --- تصحیح اقلیمی هیدروما DSE (H02/H04) ---
-        if _HYDROMA_DSE is not None:
-            result = _HYDROMA_DSE.apply_seasonal_correction(
-                result, config.tmin_daily, config.tmax_daily)
-
-# تعیین سطح اطمینان
+        # تعیین سطح اطمینان
         if result.water_stress_days > growing_days * 0.5:
             result.confidence = "C"
             result.warnings.append("تنش آبی شدید؛ نتیجه با عدم قطعیت بالا")

@@ -1,0 +1,527 @@
+{
+  "platform": "eco_nojin / Hydroma",
+  "generated_at": "2026-08-30T07:27:52.693375",
+  "version": "1.0",
+  "failures": [
+    {
+      "id": "F01",
+      "category": "اقلیم",
+      "title": "افزایش شدت و کاهش فراوانی بارش",
+      "evidence": "IPCC AR6: رویدادهای >50mm/day سی‌درصد درصد افزایش؛ CV بارش ایران 25->38%",
+      "impact": "شکست دیم‌کاری با بارش سالانه کافی",
+      "algorithm": "H01"
+    },
+    {
+      "id": "F02",
+      "category": "اقلیم",
+      "title": "افزایش دمای شبانه",
+      "evidence": "Zhang et al. 2020: گرم‌شدن شبانه سریع‌تر از روز؛ 10- کاهش عملکرد به ازای هر 1C",
+      "impact": "اختلال در پر شدن دانه غلات",
+      "algorithm": "H02"
+    },
+    {
+      "id": "F03",
+      "category": "اقلیم",
+      "title": "افزایش VPD",
+      "evidence": "Yuan et al. 2019: VPD جهانی 4-8% افزایش؛ تعراق 10-15% بیش از برآورد فائو",
+      "impact": "تنش آبی زودتر از پیش‌بینی مدل",
+      "algorithm": "H03"
+    },
+    {
+      "id": "F04",
+      "category": "اقلیم",
+      "title": "موج‌های گرمایی مکرر",
+      "evidence": "CMIP6: فراوانی موج گرما در خاورمیانه سه‌برابر؛ نابودی گرده‌افشانی >45C",
+      "impact": "شکست ناگهانی باردهی بدون هشدار",
+      "algorithm": "H04"
+    },
+    {
+      "id": "F05",
+      "category": "اقلیم",
+      "title": "جابه‌جایی فصل‌ها و تقویم کشت",
+      "evidence": "شروع فصل رشد 7-12 روز زودتر؛ خسارت سرمای بهاره به شکوفه پسته/بادام",
+      "impact": "سرمازدگی و ناهماهنگی فنولوژی",
+      "algorithm": "H05"
+    },
+    {
+      "id": "F06",
+      "category": "اقلیم",
+      "title": "خشکسالی ناگهانی (Flash Drought)",
+      "evidence": "Yuan et al. 2023: سرعت توسعه خشکسالی 50% افزایش",
+      "impact": "نابودی محصول در 15 روز بدون هشدار",
+      "algorithm": "H06"
+    },
+    {
+      "id": "F07",
+      "category": "اقلیم",
+      "title": "کاهش ساعات سرمایی درختان",
+      "evidence": "Luedeling et al. 2011: کاهش 15-30% ساعات سرمایی",
+      "impact": "کاهش باردهی و خزان‌شکنی ناقص",
+      "algorithm": "H07"
+    },
+    {
+      "id": "F08",
+      "category": "اقلیم",
+      "title": "رویدادهای ترکیبی (Compound Events)",
+      "evidence": "Zscheischler et al. 2018: خسارت 2-4 برابر مجموع تک‌تنش‌ها",
+      "impact": "دست‌کم‌گرفتن خسارت توسط مدل خطی",
+      "algorithm": "H08"
+    },
+    {
+      "id": "F09",
+      "category": "خاک",
+      "title": "کاهش ماده آلی و ظرفیت نگهداری آب",
+      "evidence": "SOC خاک‌های ایران 40-60% کاهش؛ هر 1% SOC = 170k L/ha آب",
+      "impact": "عملکرد دیم 30-50% کمتر از پیش‌بینی",
+      "algorithm": "H09"
+    },
+    {
+      "id": "F10",
+      "category": "خاک",
+      "title": "فرسایش و کاهش عمق مؤثر ریشه",
+      "evidence": "فرسایش ایران 15-20 t/ha/yr (سه‌برابر میانگین جهانی)",
+      "impact": "تنش آبی زودرس و افت بلندمدت عملکرد",
+      "algorithm": "H10"
+    },
+    {
+      "id": "F11",
+      "category": "خاک",
+      "title": "شوری ثانویه افزایشی",
+      "evidence": "شوری ثانویه در 30% اراضی آبی ایران؛ EC +0.5-1 dS/m در دهه",
+      "impact": "افت تدریجی بدون پیش‌بینی مدل",
+      "algorithm": "H11"
+    },
+    {
+      "id": "F12",
+      "category": "خاک",
+      "title": "تراکم خاک و کاهش نفوذپذیری",
+      "evidence": "کاهش 20-40% Ksat بر اثر ماشین‌آلات سنگین",
+      "impact": "رواناب بیشتر و تغذیه آبخوان کمتر",
+      "algorithm": "H12"
+    },
+    {
+      "id": "F13",
+      "category": "خاک",
+      "title": "فروپاشی بیولوژی خاک",
+      "evidence": "کاهش 50-70% میکروارگانیسم‌ها در خاک‌های شخم‌زده",
+      "impact": "اختلال چرخه مواد مغذی",
+      "algorithm": "H13"
+    },
+    {
+      "id": "F14",
+      "category": "خاک",
+      "title": "فرونشست و خشکی تالاب‌ها",
+      "evidence": "فرونشست دشت‌های ایران 10-30 cm/yr (رکورد جهانی)",
+      "impact": "تغییر رژیم هیدرولوژیک و غیرقابل‌کشت شدن",
+      "algorithm": "H14"
+    },
+    {
+      "id": "F15",
+      "category": "بذر",
+      "title": "هیبریدهای بهینه‌پرورده برای شرایط ایده‌آل",
+      "evidence": "95% بذرهای تجاری انتخاب‌شده در آبیاری کامل و کود بهینه",
+      "impact": "شکست 40-60% عملکرد تحت تنش",
+      "algorithm": "H15"
+    },
+    {
+      "id": "F16",
+      "category": "بذر",
+      "title": "نهال‌های کشت بافت بدون مقاومت میدانی",
+      "evidence": "Rani et al. 2019: فقدان مکانیزم‌های دفاعی در گیاهان آزمایشگاهی",
+      "impact": "مرگ‌ومیر 30-70% در انتقال به مزرعه",
+      "algorithm": "H16"
+    },
+    {
+      "id": "F17",
+      "category": "بذر",
+      "title": "جایگزینی اشتباه ارقام بومی",
+      "evidence": "60-70% ارقام بومی گندم/جو ایران جایگزین شده؛ برتری بومی‌ها در خشکسالی",
+      "impact": "از دست رفتن تنوع ژنتیکی و امنیت غذایی",
+      "algorithm": "H17"
+    },
+    {
+      "id": "F18",
+      "category": "بذر",
+      "title": "عدم تطابق دوره رشد با الگوی بارش جدید",
+      "evidence": "نیاز به ارقام 120-150 روزه به جای 180-220 روزه",
+      "impact": "ناتکمیلی چرخه پیش از تنش",
+      "algorithm": "H18"
+    },
+    {
+      "id": "F19",
+      "category": "بذر",
+      "title": "یکنواختی ژنتیکی و آسیب‌پذیری اپیدمیک",
+      "evidence": "یکنواختی 80-90% مزارع تجاری؛ شیوع زنگ گندم (Altieri 2018)",
+      "impact": "خسارت گسترده و وابستگی به سموم",
+      "algorithm": "H19"
+    },
+    {
+      "id": "F20",
+      "category": "بذر",
+      "title": "بذر وارداتی بدون ارزیابی بوم‌شناختی",
+      "evidence": "40-50% بذرهای وارداتی بدون تست محلی توزیع شده",
+      "impact": "شکست کشت و هدررفت سرمایه",
+      "algorithm": "H20"
+    },
+    {
+      "id": "F21",
+      "category": "بذر",
+      "title": "نادیده‌گرفتن تعامل گیاه-میکروبیوم",
+      "evidence": "Philippot et al. 2019: وابستگی هیبریدها به کود شیمیایی",
+      "impact": "افزایش هزینه و آلودگی در خاک‌های تخریب‌شده",
+      "algorithm": "H21"
+    },
+    {
+      "id": "F22",
+      "category": "مدل‌سازی",
+      "title": "خروجی قطعی بدون عدم قطعیت",
+      "evidence": "خطای پیش‌بینی 30-50% در اقلیم متغیر بدون بازه اطمینان",
+      "impact": "تصمیم‌گیری پرریسک و بی‌اعتمادی کشاورز",
+      "algorithm": "H22"
+    },
+    {
+      "id": "F23",
+      "category": "مدل‌سازی",
+      "title": "مقیاس زمانی-مکانی نامناسب",
+      "evidence": "فاصله ایستگاه‌ها 50-200km در برابر تفکیک 30m ماهواره",
+      "impact": "خطای مکانی 20-40% در مناطق ناهموار",
+      "algorithm": "H23"
+    },
+    {
+      "id": "F24",
+      "category": "مدل‌سازی",
+      "title": "فقدان پایش و تصحیح بلادرنگ فصلی",
+      "evidence": "بدون تصحیح با NDVI واقعی؛ انحراف تا 50% در انتهای فصل",
+      "impact": "پیش‌بینی غیرقابل اتکا",
+      "algorithm": "H24"
+    },
+    {
+      "id": "F25",
+      "category": "مدل‌سازی",
+      "title": "نادیده‌گرفتن دانش بومی و مدیریت محلی",
+      "evidence": "مدل‌ها فقط پارامتر بیوفیزیکی می‌بینند",
+      "impact": "توصیه‌های غیرقابل اجرا در مزرعه",
+      "algorithm": "H25"
+    }
+  ],
+  "algorithms": [
+    {
+      "code": "H01",
+      "name_fa": "بارش مؤثر فصل رشد",
+      "name_en": "Effective Rainfall Index",
+      "formula": "Eff_Rain = Rain x Infil x Stage x 1/(1+(Rain/50)^1.5)",
+      "fao_gap": "بارش سالانه بدون توزیع",
+      "advantage": "دقت +25% در دیم"
+    },
+    {
+      "code": "H02",
+      "name_fa": "تنش دمای شبانه",
+      "name_en": "Night Temperature Stress",
+      "formula": "Penalty = min(0.30, 0.10 x max(0, Tn - Topt))",
+      "fao_gap": "دمای میانگین بدون تفکیک شب",
+      "advantage": "پیش‌بینی پر شدن دانه"
+    },
+    {
+      "code": "H03",
+      "name_fa": "تصحیح تبخیر با VPD",
+      "name_en": "VPD-corrected ET",
+      "formula": "ETc_adj = ETc x min(1.30, 1+0.05 x max(0, VPD-1.5))",
+      "fao_gap": "تبخیر مرجع چمن FAO-56",
+      "advantage": "دقت +15% مناطق خشک"
+    },
+    {
+      "code": "H04",
+      "name_fa": "تنش حرارتی غیرخطی",
+      "name_en": "Non-linear Heat Stress",
+      "formula": "Ks = 1/(1+exp(k(T - Tthr)))",
+      "fao_gap": "کاهش خطی Ks فائو",
+      "advantage": "پیش‌بینی موج گرما"
+    },
+    {
+      "code": "H05",
+      "name_fa": "فنولوژی پویا",
+      "name_en": "Dynamic Phenology",
+      "formula": "Plant = f(Frost_P10, Soil_T, Rain_Onset)",
+      "fao_gap": "تقویم ثابت تاریخی",
+      "advantage": "کاهش 40% ریسک سرمازدگی"
+    },
+    {
+      "code": "H06",
+      "name_fa": "هشدار خشکسالی ناگهانی",
+      "name_en": "Flash Drought Early Warning",
+      "formula": "Risk = f(VPD_7d, SM_trend, Forecast)",
+      "fao_gap": "بدون هشدار",
+      "advantage": "هشدار 7-14 روز زودتر"
+    },
+    {
+      "code": "H07",
+      "name_fa": "ساعات سرمایی پویا",
+      "name_en": "Dynamic Chilling Hours",
+      "formula": "CH_eff = Sum(f(T)) + compensation",
+      "fao_gap": "سرمایی ثابت",
+      "advantage": "پیش‌بینی باردهی درختان"
+    },
+    {
+      "code": "H08",
+      "name_fa": "تعامل تنش‌ها",
+      "name_en": "Stress Interaction Matrix",
+      "formula": "Ks_tot = Ks_w x Ks_t x Ks_s x 0.85(compound)",
+      "fao_gap": "تنش‌های جداگانه",
+      "advantage": "دقت +30%"
+    },
+    {
+      "code": "H09",
+      "name_fa": "ظرفیت آب پویای خاک",
+      "name_en": "SOC-dynamic AWC",
+      "formula": "AWC(t) = AWC0 x (1 + 0.5 x dSOC/1%)",
+      "fao_gap": "AWC ثابت",
+      "advantage": "پیش‌بینی دقیق تنش"
+    },
+    {
+      "code": "H10",
+      "name_fa": "عمق ریشه فرسایشی",
+      "name_en": "Erosion-decayed Root Depth",
+      "formula": "RD(t) = RD0 x exp(-erosion x t)",
+      "fao_gap": "عمق ثابت",
+      "advantage": "مدل‌سازی بلندمدت"
+    },
+    {
+      "code": "H11",
+      "name_fa": "روند شوری ثانویه",
+      "name_en": "Salinity Trend Module",
+      "formula": "EC(t) = EC0 + trend x yr + irr_quality",
+      "fao_gap": "شوری ایستا",
+      "advantage": "پایداری بلندمدت"
+    },
+    {
+      "code": "H12",
+      "name_fa": "تراکم خاک",
+      "name_en": "Compaction Factor",
+      "formula": "Ksat_adj = Ksat x (1 - compaction)",
+      "fao_gap": "بدون تراکم",
+      "advantage": "بالانس آب دقیق"
+    },
+    {
+      "code": "H13",
+      "name_fa": "شاخص بیولوژی خاک",
+      "name_en": "Soil Biology Index",
+      "formula": "Fertility = f(SOC,N,P,K,pH,Bio)",
+      "fao_gap": "فقط فیزیک خاک",
+      "advantage": "ارزیابی جامع حاصلخیزی"
+    },
+    {
+      "code": "H14",
+      "name_fa": "ریسک فرونشست",
+      "name_en": "Land Subsidence Risk",
+      "formula": "Risk = f(Extraction, Aquifer, Soil)",
+      "fao_gap": "بدون فرونشست",
+      "advantage": "پایداری منابع"
+    },
+    {
+      "code": "H15",
+      "name_fa": "تطبیق ژنوتیپ-محیط",
+      "name_en": "GxE Seed Matching",
+      "formula": "Score = f(Variety_Tolerance, Site_Stress)",
+      "fao_gap": "بذر پربازده یکسان",
+      "advantage": "انتخاب بذر بهینه"
+    },
+    {
+      "code": "H16",
+      "name_fa": "امتیاز سازگاری میدانی",
+      "name_en": "Field Hardiness Score",
+      "formula": "H = f(Acclimation, Roots, Defense)",
+      "fao_gap": "بدون سازگاری",
+      "advantage": "کاهش مرگ‌ومیر نهال"
+    },
+    {
+      "code": "H17",
+      "name_fa": "شاخص مقاومت ارقام بومی",
+      "name_en": "Native Resilience Index",
+      "formula": "R = f(Local_Adapt, Drought_Hist, Pest_Res)",
+      "fao_gap": "نادیده‌گرفتن بومی‌ها",
+      "advantage": "حفاظت تنوع ژنتیکی"
+    },
+    {
+      "code": "H18",
+      "name_fa": "بهینه‌ساز دوره رشد",
+      "name_en": "Growth Duration Optimizer",
+      "formula": "D = f(Rain_Window, Temp_Window, Stress_Onset)",
+      "fao_gap": "دوره ثابت",
+      "advantage": "تطبیق با اقلیم"
+    },
+    {
+      "code": "H19",
+      "name_fa": "ارزیابی آسیب‌پذیری ژنتیکی",
+      "name_en": "Genetic Vulnerability",
+      "formula": "V = 1 - Diversity_Index",
+      "fao_gap": "بدون ارزیابی",
+      "advantage": "کاهش ریسک اپیدمی"
+    },
+    {
+      "code": "H20",
+      "name_fa": "تطبیق بذر با منطقه اکولوژیک",
+      "name_en": "Ecozone Seed Matching",
+      "formula": "M = f(Koppen, Soil, Alt, Native)",
+      "fao_gap": "بدون تطبیق",
+      "advantage": "کاهش شکست کشت"
+    },
+    {
+      "code": "H21",
+      "name_fa": "سازگاری میکروبیوم",
+      "name_en": "Microbiome Compatibility",
+      "formula": "S = f(SOC, pH, Bio, Organic)",
+      "fao_gap": "بدون میکروبیوم",
+      "advantage": "کشاورزی پایدار"
+    },
+    {
+      "code": "H22",
+      "name_fa": "عدم قطعیت مونت‌کارلو",
+      "name_en": "Monte Carlo Uncertainty",
+      "formula": "Yield = P10/P50/P90 (500 runs)",
+      "fao_gap": "خروجی قطعی",
+      "advantage": "شفافیت ریسک"
+    },
+    {
+      "code": "H23",
+      "name_fa": "تلفیق داده چندمقیاسی",
+      "name_en": "Multi-scale Data Fusion",
+      "formula": "D = f(Sentinel2, ERA5, Station, SoilGrids)",
+      "fao_gap": "فقط ایستگاهی",
+      "advantage": "دقت مکانی 10x"
+    },
+    {
+      "code": "H24",
+      "name_fa": "تصحیح بلادرنگ فصلی",
+      "name_en": "Real-time Correction",
+      "formula": "Corr = f(NDVI_act - NDVI_pred)",
+      "fao_gap": "بدون تصحیح",
+      "advantage": "کاهش خطای انتهای فصل"
+    },
+    {
+      "code": "H25",
+      "name_fa": "ادغام دانش بومی",
+      "name_en": "Local Knowledge Integration",
+      "formula": "L = f(Experience, Trad_Calendar)",
+      "fao_gap": "بدون دانش بومی",
+      "advantage": "پذیرش اجتماعی"
+    }
+  ],
+  "phases": [
+    {
+      "phase": "فاز 1",
+      "algorithms": "H01,H02,H03,H04,H08",
+      "module": "DynamicStressEngine",
+      "status": "نصب شد"
+    },
+    {
+      "phase": "فاز 2",
+      "algorithms": "H05,H06,H07,H24",
+      "module": "ClimateAdaptivePhenology",
+      "status": "در صف"
+    },
+    {
+      "phase": "فاز 3",
+      "algorithms": "H09,H10,H11,H12,H13,H14",
+      "module": "SoilDegradationModel",
+      "status": "در صف"
+    },
+    {
+      "phase": "فاز 4",
+      "algorithms": "H15,H16,H17,H18,H19,H20,H21",
+      "module": "SeedOptimizationEngine",
+      "status": "در صف"
+    },
+    {
+      "phase": "فاز 5",
+      "algorithms": "H22,H23,H25",
+      "module": "UncertaintyAndLocalKnowledge",
+      "status": "در صف"
+    }
+  ],
+  "references": [
+    "Milly et al. 2008, Science - Stationarity is dead",
+    "IPCC AR6 WG1/WG2, 2021-2022",
+    "Yuan et al. 2019, Nature Reviews Earth & Environment - VPD rise",
+    "Zhang et al. 2020, Global Change Biology - Nighttime warming",
+    "Zscheischler et al. 2018, Nature Climate Change - Compound events",
+    "Luedeling et al. 2011, Agric. Forest Meteorology - Chilling hours",
+    "Steduto et al. 2012, FAO Irrigation Paper 66 - AquaCrop limits",
+    "Philippot et al. 2019, Nature Reviews Microbiology - Soil microbiome",
+    "Altieri 2018, Agroecology - Genetic uniformity",
+    "Rani et al. 2019 - Tissue culture hardiness",
+    "وزارت جهاد کشاورزی، آمارنامه 1402",
+    "سازمان هواشناسی ایران، روندهای 1401"
+  ],
+  "benchmark": {
+    "live": true,
+    "temps_c": [
+      25.0,
+      26.0,
+      27.0,
+      28.0,
+      29.0,
+      30.0,
+      31.0,
+      32.0,
+      33.0,
+      34.0,
+      35.0,
+      36.0,
+      37.0,
+      38.0,
+      39.0,
+      40.0,
+      41.0,
+      42.0,
+      43.0,
+      44.0,
+      45.0
+    ],
+    "fao_linear_ks": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5,
+      0.4,
+      0.30000000000000004,
+      0.19999999999999996,
+      0.09999999999999998,
+      0.0
+    ],
+    "hydroma_sigmoid_ks": [
+      0.9933071490757153,
+      0.9890130573694068,
+      0.9820137900379085,
+      0.9706877692486436,
+      0.9525741268224334,
+      0.9241418199787566,
+      0.8807970779778823,
+      0.8175744761936437,
+      0.7310585786300049,
+      0.6224593312018546,
+      0.5,
+      0.3775406687981454,
+      0.2689414213699951,
+      0.18242552380635635,
+      0.11920292202211755,
+      0.07585818002124355,
+      0.04742587317756678,
+      0.02931223075135632,
+      0.01798620996209156,
+      0.01098694263059318,
+      0.0066928509242848554
+    ]
+  }
+}
