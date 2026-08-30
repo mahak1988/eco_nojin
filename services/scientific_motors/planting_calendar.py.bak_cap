@@ -21,14 +21,6 @@ Outputs:
 - Best companion crops per season
 """
 from __future__ import annotations
-# --- Hydroma Climate Adaptive Phenology (auto-installed, Phase 2) ---
-try:
-    from engine.hydroma.climate_adaptation.climate_adaptive_phenology import (
-        ClimateAdaptivePhenology as _CAP_cls)
-    _HYDROMA_CAP = _CAP_cls()
-except Exception:
-    _HYDROMA_CAP = None
-
 
 import time
 from dataclasses import dataclass

@@ -417,7 +417,7 @@
       "phase": "فاز 2",
       "algorithms": "H05,H06,H07,H24",
       "module": "ClimateAdaptivePhenology",
-      "status": "در صف"
+      "status": "نصب شد"
     },
     {
       "phase": "فاز 3",
@@ -523,5 +523,6 @@
       0.01098694263059318,
       0.0066928509242848554
     ]
-  }
+  },
+  "phase2_installed_at": "2026-08-30T07:36:42.901539"
 }
