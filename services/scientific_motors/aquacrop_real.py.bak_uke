@@ -22,15 +22,6 @@ from datetime import datetime, timedelta
 
 import polars as pl
 
-# --- Hydroma Uncertainty & Knowledge Engine (auto-installed, Phase 5) ---
-try:
-    from engine.hydroma.climate_adaptation.uncertainty_knowledge_engine import (
-        UncertaintyAndKnowledgeEngine as _UKE_cls)
-    _HYDROMA_UKE = _UKE_cls()
-except Exception:
-    _HYDROMA_UKE = None
-
-
 logger = logging.getLogger(__name__)
 # --- Hydroma Dynamic Stress Engine (auto-installed, Phase 1) ---
 try:

@@ -154,15 +154,6 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, Any, Optional, List
 
-# --- Hydroma Seed Optimization Engine (auto-installed, Phase 4) ---
-try:
-    from engine.hydroma.climate_adaptation.seed_optimization_engine import (
-        SeedOptimizationEngine as _SOE_cls)
-    _HYDROMA_SOE = _SOE_cls()
-except Exception:
-    _HYDROMA_SOE = None
-
-
 logger = logging.getLogger(__name__)
 
 

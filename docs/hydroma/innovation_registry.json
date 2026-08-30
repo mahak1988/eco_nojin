@@ -429,13 +429,13 @@
       "phase": "فاز 4",
       "algorithms": "H15,H16,H17,H18,H19,H20,H21",
       "module": "SeedOptimizationEngine",
-      "status": "در صف"
+      "status": "نصب شد"
     },
     {
       "phase": "فاز 5",
       "algorithms": "H22,H23,H25",
       "module": "UncertaintyAndLocalKnowledge",
-      "status": "در صف"
+      "status": "نصب شد"
     }
   ],
   "references": [
@@ -525,5 +525,8 @@
     ]
   },
   "phase2_installed_at": "2026-08-30T07:36:42.901539",
-  "phase3_installed_at": "2026-08-30T08:07:39.831421"
+  "phase3_installed_at": "2026-08-30T08:07:39.831421",
+  "phase4_installed_at": "2026-08-30T08:23:09.352599",
+  "phase5_installed_at": "2026-08-30T08:26:48.304093",
+  "all_phases_complete": true
 }

@@ -20,15 +20,6 @@ from .base import (
     MotorType,
 )
 
-# --- Hydroma Soil Degradation Model (auto-installed, Phase 3) ---
-try:
-    from engine.hydroma.climate_adaptation.soil_degradation_model import (
-        SoilDegradationModel as _SDM_cls)
-    _HYDROMA_SDM = _SDM_cls()
-except Exception:
-    _HYDROMA_SDM = None
-
-
 
 class LandCapabilityMotor(AbstractScientificMotor):
     """
