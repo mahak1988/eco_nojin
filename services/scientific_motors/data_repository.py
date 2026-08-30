@@ -318,6 +318,113 @@ class ScientificDataRepository:
         return self.get_all_sites()
 
 
+
+
+    # ========================================================================
+    # بخش جدید: مدل‌ها و شاخص‌های جامع
+    # ========================================================================
+
+    def get_all_models(self) -> pl.DataFrame:
+        """دریافت تمام مدل‌های تصمیم‌گیری (M001-M008)"""
+        return self._conn.execute("SELECT * FROM ref_models_registry ORDER BY model_id").pl()
+
+    def get_model(self, model_id: str) -> Optional[Dict[str, Any]]:
+        """دریافت یک مدل خاص"""
+        df = self._conn.execute(
+            "SELECT * FROM ref_models_registry WHERE model_id = ?", [model_id]
+        ).pl()
+        return df.row(0, named=True) if not df.is_empty() else None
+
+    def get_all_indices(self) -> pl.DataFrame:
+        """دریافت تمام شاخص‌های علمی"""
+        return self._conn.execute("SELECT * FROM v_all_indices").pl()
+
+    def get_indices_by_category(self, category: str) -> pl.DataFrame:
+        """دریافت شاخص‌ها بر اساس دسته"""
+        return self._conn.execute(
+            "SELECT * FROM ref_indices_registry WHERE category = ? ORDER BY index_id",
+            [category]
+        ).pl()
+
+    def get_drought_indices(self) -> pl.DataFrame:
+        """دریافت شاخص‌های خشکسالی"""
+        return self._conn.execute("SELECT * FROM v_drought_indices").pl()
+
+    def get_vegetation_indices(self) -> pl.DataFrame:
+        """دریافت شاخص‌های پوشش گیاهی"""
+        return self.get_indices_by_category("vegetation_indices")
+
+    def get_soil_indices(self) -> pl.DataFrame:
+        """دریافت شاخص‌های خاک"""
+        return self.get_indices_by_category("soil_indices")
+
+    def get_water_indices(self) -> pl.DataFrame:
+        """دریافت شاخص‌های آب"""
+        return self.get_indices_by_category("water_indices")
+
+    def get_economic_indices(self) -> pl.DataFrame:
+        """دریافت شاخص‌های اقتصادی"""
+        return self.get_indices_by_category("economic_indices")
+
+    def get_sustainability_indices(self) -> pl.DataFrame:
+        """دریافت شاخص‌های پایداری"""
+        return self.get_indices_by_category("sustainability_indices")
+
+    def get_food_security_indices(self) -> pl.DataFrame:
+        """دریافت شاخص‌های امنیت غذایی"""
+        return self.get_indices_by_category("food_security_indices")
+
+    def calculate_spi(self, site_id: str, window_months: int = 3) -> pl.DataFrame:
+        """محاسبه شاخص خشکسالی SPI"""
+        return self.calculate_spi_index(site_id, window_months)
+
+    def calculate_ndvi(self, red_band: float, nir_band: float) -> float:
+        """محاسبه شاخص پوشش گیاهی NDVI"""
+        if (nir_band + red_band) == 0:
+            return 0.0
+        return (nir_band - red_band) / (nir_band + red_band)
+
+    def calculate_wue(self, yield_kg: float, water_m3: float) -> float:
+        """محاسبه بهره‌وری مصرف آب"""
+        if water_m3 == 0:
+            return 0.0
+        return yield_kg / water_m3
+
+    def calculate_roi(self, net_profit: float, investment: float) -> float:
+        """محاسبه بازگشت سرمایه"""
+        if investment == 0:
+            return 0.0
+        return (net_profit / investment) * 100
+
+    def calculate_yield_gap(self, potential: float, actual: float) -> float:
+        """محاسبه شکاف عملکرد"""
+        if potential == 0:
+            return 0.0
+        return ((potential - actual) / potential) * 100
+
+    def get_index_definition(self, index_id: str) -> Optional[Dict[str, Any]]:
+        """دریافت تعریف کامل یک شاخص"""
+        df = self._conn.execute(
+            "SELECT * FROM ref_indices_registry WHERE index_id = ?", [index_id]
+        ).pl()
+        return df.row(0, named=True) if not df.is_empty() else None
+
+    def get_models_and_indices_summary(self) -> Dict[str, Any]:
+        """دریافت خلاصه جامع مدل‌ها و شاخص‌ها"""
+        models = self._conn.execute("SELECT COUNT(*) FROM ref_models_registry").fetchone()[0]
+        indices = self._conn.execute("SELECT COUNT(*) FROM ref_indices_registry").fetchone()[0]
+        categories = self._conn.execute(
+            "SELECT category, COUNT(*) as cnt FROM ref_indices_registry GROUP BY category"
+        ).pl()
+        
+        return {
+            "total_models": models,
+            "total_indices": indices,
+            "by_category": {row["category"]: row["cnt"] for row in categories.iter_rows(named=True)}
+        }
+
+
+
 def create_repository() -> ScientificDataRepository:
     """تابع کارخانه برای ایجاد نمونه ریپازیتوری"""
     return ScientificDataRepository()

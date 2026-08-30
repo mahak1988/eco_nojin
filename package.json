@@ -38,5 +38,44 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwind-merge": "^3.6.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "@swc/core",
+      "@parcel/watcher",
+      "core-js",
+      "unrs-resolver",
+      "msw",
+      "prisma",
+      "@prisma/client",
+      "@prisma/engines",
+      "@prisma/engines-version",
+      "sharp",
+      "bcrypt",
+      "canvas",
+      "node-gyp",
+      "sqlite3",
+      "better-sqlite3",
+      "keccak",
+      "secp256k1",
+      "@playwright/test",
+      "playwright",
+      "playwright-core",
+      "protobufjs",
+      "msgpackr-extract",
+      "lmdb",
+      "classic-level"
+    ],
+    "allowedDeprecatedVersions": {
+      "glob": "*",
+      "inflight": "*",
+      "rimraf": "*",
+      "uuid": "*",
+      "are-we-there-yet": "*",
+      "gauge": "*",
+      "npmlog": "*"
+    },
+    "neverBuiltDependencies": []
   }
 }
