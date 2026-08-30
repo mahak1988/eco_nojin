@@ -1,1 +1,6 @@
-// Barrel exports for store
+/**
+ * HyDroMa Store - Barrel Exports
+ * ================================
+ */
+
+export * from './hydromaStore';
