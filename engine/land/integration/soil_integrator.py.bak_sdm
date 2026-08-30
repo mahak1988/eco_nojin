@@ -17,14 +17,6 @@ from .models import (
 )
 
 logger = logging.getLogger(__name__)
-# --- Hydroma Soil Degradation Model (auto-installed, Phase 3) ---
-try:
-    from engine.hydroma.climate_adaptation.soil_degradation_model import (
-        SoilDegradationModel as _SDM_cls)
-    _HYDROMA_SDM = _SDM_cls()
-except Exception:
-    _HYDROMA_SDM = None
-
 
 # Standard SoilGrids v2 depth layers (cm)
 SOILGRIDS_LAYERS = [

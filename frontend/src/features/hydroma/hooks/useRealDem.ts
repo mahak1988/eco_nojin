@@ -1,100 +1,83 @@
 /**
- * useRealDem Hook
- * ===============
- * Loads real Digital Elevation Model (DEM) data from backend API.
+ * useRealDem Hook (Store-Based)
+ * =============================
+ * Loads real DEM data from API and syncs with Zustand store.
  *
- * Features:
- * - Async DEM loading with error handling
- * - Automatic initialization with default site (SITE265)
- * - Returns terrain data and site metadata
- * - Manages loading/error states
+ * This version uses the global store as source of truth,
+ * ensuring all components see the same terrain/siteMeta state.
  *
  * @module features/hydroma/hooks/useRealDem
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { fetchDemGrid, buildRealTerrain } from '../../../lib/demApi';
 import type { DemGrid } from '../../../lib/demApi';
-import type { TerrainData, SiteMeta } from '../types';
+import { useHydromaStore } from '../store';
 
-// ─────────────────────────────────────────────────────────────────────
-// Types
-// ─────────────────────────────────────────────────────────────────────
+const DEFAULT_SITE_ID = 'SITE265';
+const AUTO_INIT = true;
 
 export interface UseRealDemResult {
-  /** Current terrain data (null if not loaded) */
-  terrain: TerrainData | null;
-  /** Site metadata (lat, lon, siteId) */
-  siteMeta: SiteMeta | null;
-  /** Loading state */
+  terrain: ReturnType<typeof useHydromaStore.getState>['terrain'];
+  siteMeta: ReturnType<typeof useHydromaStore.getState>['siteMeta'];
   loading: boolean;
-  /** Error message (empty string if no error) */
   error: string;
-  /** Function to load a specific site */
   loadSite: (siteId: string) => Promise<void>;
-  /** Last click info string */
   lastClickInfo: string;
 }
 
-// ─────────────────────────────────────────────────────────────────────
-// Default Configuration
-// ─────────────────────────────────────────────────────────────────────
-
-/** Default site ID for auto-initialization */
-const DEFAULT_SITE_ID = 'SITE265';
-
-/** Whether to auto-load default site on mount */
-const AUTO_INIT = true;
-
-// ─────────────────────────────────────────────────────────────────────
-// Hook
-// ─────────────────────────────────────────────────────────────────────
-
 export function useRealDem(): UseRealDemResult {
-  const [terrain, setTerrain] = useState<TerrainData | null>(null);
-  const [siteMeta, setSiteMeta] = useState<SiteMeta | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [lastClickInfo, setLastClickInfo] = useState('');
+  const terrain = useHydromaStore((s) => s.terrain);
+  const siteMeta = useHydromaStore((s) => s.siteMeta);
+  const demLoading = useHydromaStore((s) => s.demLoading);
+  const demError = useHydromaStore((s) => s.demError);
+  const lastClickInfo = useHydromaStore((s) => s.lastClickInfo);
 
-  const loadSite = useCallback(async (siteId: string) => {
-    setLoading(true);
-    setError('');
+  const setTerrain = useHydromaStore((s) => s.setTerrain);
+  const setSiteMeta = useHydromaStore((s) => s.setSiteMeta);
+  const setDemLoading = useHydromaStore((s) => s.setDemLoading);
+  const setDemError = useHydromaStore((s) => s.setDemError);
+  const setLastClickInfo = useHydromaStore((s) => s.setLastClickInfo);
 
-    try {
-      const dem: DemGrid = await fetchDemGrid(siteId);
-      const built = buildRealTerrain(dem);
+  const loadSite = useCallback(
+    async (siteId: string) => {
+      setDemLoading(true);
+      setDemError('');
 
-      setTerrain(built);
-      setSiteMeta({
-        lat: dem.lat,
-        lon: dem.lon,
-        siteId: dem.site_id,
-      });
+      try {
+        const dem: DemGrid = await fetchDemGrid(siteId);
+        const built = buildRealTerrain(dem);
 
-      const relief = (dem.max_elev - dem.min_elev).toFixed(0);
-      setLastClickInfo(`Real DEM loaded: ${dem.site_id} relief=${relief}m`);
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : String(err);
-      setError(errorMsg);
-      setLastClickInfo(`Error loading DEM: ${errorMsg}`);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        setTerrain(built);
+        setSiteMeta({
+          lat: dem.lat,
+          lon: dem.lon,
+          siteId: dem.site_id,
+        });
 
-  // Auto-initialize with default site on mount
+        const relief = (dem.max_elev - dem.min_elev).toFixed(0);
+        setLastClickInfo(`Real DEM loaded: ${dem.site_id} relief=${relief}m`);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        setDemError(msg);
+      } finally {
+        setDemLoading(false);
+      }
+    },
+    [setDemLoading, setDemError, setTerrain, setSiteMeta, setLastClickInfo]
+  );
+
   useEffect(() => {
-    if (AUTO_INIT && !terrain && !loading && !error) {
+    if (AUTO_INIT && !terrain && !demLoading && !demError) {
       void loadSite(DEFAULT_SITE_ID);
     }
-  }, [terrain, loading, error, loadSite]);
+  }, [terrain, demLoading, demError, loadSite]);
 
   return {
     terrain,
     siteMeta,
-    loading,
-    error,
+    loading: demLoading,
+    error: demError,
     loadSite,
     lastClickInfo,
   };

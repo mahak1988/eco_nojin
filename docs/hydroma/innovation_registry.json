@@ -423,7 +423,7 @@
       "phase": "فاز 3",
       "algorithms": "H09,H10,H11,H12,H13,H14",
       "module": "SoilDegradationModel",
-      "status": "در صف"
+      "status": "نصب شد"
     },
     {
       "phase": "فاز 4",
@@ -524,5 +524,6 @@
       0.0066928509242848554
     ]
   },
-  "phase2_installed_at": "2026-08-30T07:36:42.901539"
+  "phase2_installed_at": "2026-08-30T07:36:42.901539",
+  "phase3_installed_at": "2026-08-30T08:07:39.831421"
 }
