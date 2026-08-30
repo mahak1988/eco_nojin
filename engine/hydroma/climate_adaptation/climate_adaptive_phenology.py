@@ -24,8 +24,8 @@ class PhenologyConfig:
     soil_temp_window_days: int = 7       # بازه پایش دمای خاک
     rain_onset_threshold_mm: float = 10.0  # حداقل بارش برای شروع دیم
     rain_window_days: int = 30           # بازه جستجوی شروع بارش
-    flash_drought_vpd_trend: float = 0.5  # آستانه روند فشار بخار
-    flash_drought_sm_trend: float = -0.3  # آستانه روند رطوبت خاک
+    flash_drought_vpd_trend: float = 0.1  # kPa/day - استاندارد جهانی  # آستانه روند فشار بخار
+    flash_drought_sm_trend: float = -0.02  # fraction/day - استاندارد جهانی  # آستانه روند رطوبت خاک
     flash_drought_horizon_days: int = 14  # افق هشدار
     chilling_model: str = "utah"         # مدل ساعات سرمایی
 
