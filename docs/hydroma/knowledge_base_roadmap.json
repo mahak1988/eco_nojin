@@ -1,0 +1,37 @@
+{
+  "phase1": {
+    "name": "گرایش‌های کلیدی (۳۰ گرایش)",
+    "status": "COMPLETE",
+    "count": 7
+  },
+  "phase2": {
+    "name": "گرایش‌های حوزه کشاورزی (۳۰ گرایش)",
+    "status": "PENDING",
+    "count": 30
+  },
+  "phase3": {
+    "name": "گرایش‌های حوزه اقلیم و آب (۶۰ گرایش)",
+    "status": "PENDING",
+    "count": 60
+  },
+  "phase4": {
+    "name": "گرایش‌های حوزه محیط زیست و جنگل (۶۰ گرایش)",
+    "status": "PENDING",
+    "count": 60
+  },
+  "phase5": {
+    "name": "گرایش‌های حوزه اقتصاد و حکمرانی (۹۰ گرایش)",
+    "status": "PENDING",
+    "count": 90
+  },
+  "phase6": {
+    "name": "گرایش‌های حوزه فناوری (۳۰ گرایش)",
+    "status": "PENDING",
+    "count": 30
+  },
+  "phase7": {
+    "name": "گرایش‌های باقی‌مانده (۳۰ گرایش)",
+    "status": "PENDING",
+    "count": 30
+  }
+}

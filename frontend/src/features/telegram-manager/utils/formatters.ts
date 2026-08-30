@@ -1,6 +1,8 @@
 /**
- * Telegram Formatters
- * ====================
+ * Telegram Formatters (Fixed)
+ * ============================
+ * Fixed: formatDateTime now properly handles invalid dates
+ *
  * @module features/telegram-manager/utils
  */
 
@@ -12,22 +14,24 @@ export function formatNumber(
   return value.toLocaleString(locale);
 }
 
-/** Format date for display */
+/**
+ * Format date for display.
+ *
+ * Fixed: Uses isNaN() to detect invalid dates (new Date('invalid')
+ * doesn't throw, it returns Invalid Date).
+ */
 export function formatDateTime(
   dateString: string,
   locale: string = 'en-US'
 ): string {
-  try {
-    return new Date(dateString).toLocaleString(locale);
-  } catch {
-    return dateString;
-  }
+  if (!dateString) return dateString;
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return dateString; // Invalid date → return as-is
+  return date.toLocaleString(locale);
 }
 
 /** Format time only */
-export function formatTime(
-  date: Date,
-  locale: string = 'en-US'
-): string {
+export function formatTime(date: Date, locale: string = 'en-US'): string {
+  if (isNaN(date.getTime())) return '';
   return date.toLocaleTimeString(locale);
 }
