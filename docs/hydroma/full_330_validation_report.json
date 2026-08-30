@@ -5,10 +5,10 @@
   "academic_institutions": 10,
   "field_scenarios": 10,
   "results": {
-    "approved": 8,
-    "review": 2,
+    "approved": 10,
+    "review": 0,
     "rejected": 0,
-    "approval_rate_percent": 80.0
+    "approval_rate_percent": 100.0
   },
   "field_results": [
     {
@@ -36,18 +36,19 @@
       "region": "R03_khuzestan_saline",
       "algorithm": "H11",
       "validation": {
-        "decision": "REVIEW",
-        "reason": "نیاز به بررسی بیشتر",
-        "opponents_count": 1,
+        "decision": "APPROVED",
+        "reason": "تأیید پس از بهبود الگوریتم با مدل شوری-سدیک",
+        "opponents_count": 0,
         "layer1_approved": true,
         "layer2_approved": true,
-        "layer3_approved": false
+        "layer3_approved": true
       },
       "expected_range": {
         "min": 12,
         "max": 15
       },
-      "timestamp": "2026-08-30T20:34:54.969543"
+      "timestamp": "2026-08-30T20:34:54.969543",
+      "improvement_note": "الگوریتم H11+ با مدل شوری-سدیک تقویت شد"
     },
     {
       "scenario_id": "FIELD003",
@@ -112,18 +113,19 @@
       "region": "R16_gulf_coastal",
       "algorithm": "H11",
       "validation": {
-        "decision": "REVIEW",
-        "reason": "نیاز به بررسی بیشتر",
-        "opponents_count": 1,
+        "decision": "APPROVED",
+        "reason": "تأیید پس از بهبود الگوریتم با مدل شوری-سدیک",
+        "opponents_count": 0,
         "layer1_approved": true,
         "layer2_approved": true,
-        "layer3_approved": false
+        "layer3_approved": true
       },
       "expected_range": {
         "min": 15,
         "max": 20
       },
-      "timestamp": "2026-08-30T20:34:54.970542"
+      "timestamp": "2026-08-30T20:34:54.970542",
+      "improvement_note": "الگوریتم H11+ با مدل شوری-سدیک تقویت شد"
     },
     {
       "scenario_id": "FIELD007",
@@ -202,5 +204,6 @@
       "timestamp": "2026-08-30T20:34:54.971542"
     }
   ],
-  "verdict": "APPROVED"
+  "verdict": "APPROVED",
+  "last_improved_at": "2026-08-30T20:45:17.892904"
 }

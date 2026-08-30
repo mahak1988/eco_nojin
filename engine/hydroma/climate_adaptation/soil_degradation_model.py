@@ -320,6 +320,73 @@ class SoilDegradationModel:
             "aquifer_thickness_m": aquifer_thickness_m
         }
 
+
+    # ------------------------------------------------------------------ H11+
+    def h11_salinity_sodicity_trend(self, ec_initial: float, 
+                                     sar_initial: float,
+                                     irrigation_water_quality: float,
+                                     leaching_fraction: float,
+                                     years: int) -> Dict:
+        """
+        پیش‌بینی روند شوری-سدیک با در نظر گرفتن کیفیت آب آبیاری
+        
+        پارامترها:
+        - ec_initial: شوری اولیه خاک (dS/m)
+        - sar_initial: نسبت جذب سدیم اولیه
+        - irrigation_water_quality: کیفیت آب آبیاری (EC)
+        - leaching_fraction: کسر آبشویی
+        - years: تعداد سال‌های پیش‌بینی
+        """
+        # مدل ساده‌شده روند شوری با آبشویی
+        ec_rate = (irrigation_water_quality * 0.1) - (leaching_fraction * ec_initial * 0.05)
+        ec_projected = max(0, ec_initial + ec_rate * years)
+        
+        # روند SAR
+        sar_projected = sar_initial * (1 + irrigation_water_quality * 0.02 * years)
+        
+        # طبقه‌بندی
+        if ec_projected < 2:
+            ec_class = "غیرشور"
+        elif ec_projected < 4:
+            ec_class = "شوری ملایم"
+        elif ec_projected < 8:
+            ec_class = "شوری متوسط"
+        elif ec_projected < 16:
+            ec_class = "شوری شدید"
+        else:
+            ec_class = "شوری بسیار شدید"
+        
+        if sar_projected < 13:
+            sar_class = "غیرسدیک"
+        else:
+            sar_class = "سدیک"
+        
+        return {
+            "ec_initial_ds_m": round(ec_initial, 2),
+            "ec_projected_ds_m": round(ec_projected, 2),
+            "sar_initial": round(sar_initial, 2),
+            "sar_projected": round(sar_projected, 2),
+            "ec_classification": ec_class,
+            "sar_classification": sar_class,
+            "combined_risk": f"{ec_class} + {sar_class}",
+            "years_projected": years,
+            "leaching_effective": leaching_fraction > 0.15,
+            "recommendation": self._salinity_sodicity_recommendation(ec_projected, sar_projected)
+        }
+    
+    def _salinity_sodicity_recommendation(self, ec: float, sar: float) -> str:
+        """توصیه‌های مدیریتی بر اساس شوری و سدیمی بودن"""
+        if ec > 16 and sar > 13:
+            return "شرایط بحرانی: نیاز به اصلاح اساسی با گچ + آبشویی سنگین + زهکشی زیرزمینی"
+        elif ec > 8 and sar > 13:
+            return "شوری-سدیک شدید: گچ‌پاشی + آبشویی + انتخاب گیاهان شورپسند"
+        elif ec > 8:
+            return "شوری شدید: آبشویی منظم + بهبود زهکشی + ارقام متحمل"
+        elif ec > 4:
+            return "شوری متوسط: پایش منظم + مدیریت آبیاری"
+        else:
+            return "وضعیت قابل قبول: پایش روتین"
+
     # ------------------------------------------------- گزارش یکپارچه تخریب
     def generate_degradation_report(self,
                                     soc_pct: float,
