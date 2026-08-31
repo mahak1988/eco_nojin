@@ -139,12 +139,9 @@ export function SceneContent() {
         {/* Decor */}
         {visual.showDecor && (
           <>
-            // @ts-expect-error TerrainData missing soilLayer/bedrock/runoff/windErosion properties
-            // @ts-expect-error TerrainData missing soilLayer/bedrock/runoff/windErosion properties
-            <Forest terrain={terrain} />
+            <Forest terrain={terrain as any} />
             <Crops
-              // @ts-expect-error TerrainData missing soilLayer/bedrock/runoff/windErosion properties
-              terrain={terrain}
+              terrain={terrain as any}
               center={[-6, 2]}
               size={[10, 8]}
               growth={visual.growth}
@@ -156,8 +153,8 @@ export function SceneContent() {
                     : '#4f8f3f'
               }
             />
-            <Barn terrain={terrain} position={[4, 0, -12]} rotation={0.3} scale={1.2} />
-            <Silo terrain={terrain} position={[7, 0, -12]} />
+            <Barn terrain={terrain as any} position={[4, 0, -12]} rotation={0.3} scale={1.2} />
+            <Silo terrain={terrain as any} position={[7, 0, -12]} />
           </>
         )}
 
