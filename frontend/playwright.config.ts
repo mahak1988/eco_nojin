@@ -15,11 +15,20 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
+    // Use system Chrome instead of bundled Chromium
+    // This bypasses the 403 CDN download error
+    launchOptions: {
+      channel: 'chrome',
+    },
   },
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        // Use installed Chrome on system
+        channel: 'chrome',
+        ...devices['Desktop Chrome'],
+      },
     },
   ],
   webServer: {
