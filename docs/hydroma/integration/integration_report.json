@@ -1,0 +1,5111 @@
+{
+  "generated_at": "2026-08-31T04:39:06.073096",
+  "summary": {
+    "total_tests": 20,
+    "passed": 13,
+    "failed": 7,
+    "critical": 7,
+    "average_confidence": 0.8,
+    "pass_rate_percent": 65.0,
+    "tests": [
+      {
+        "test": "ادغام H01",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 3,
+        "valid_calculations": 3,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H02",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 3,
+        "valid_calculations": 3,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H04",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 2,
+        "valid_calculations": 2,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H05",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 3,
+        "valid_calculations": 3,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H06",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 2,
+        "valid_calculations": 2,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H07",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 1,
+        "valid_calculations": 1,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H09",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 3,
+        "valid_calculations": 3,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H10",
+        "passed": false,
+        "confidence": 0.6666666666666666,
+        "specialties_count": 3,
+        "valid_calculations": 2,
+        "severity": "critical"
+      },
+      {
+        "test": "ادغام H11",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 1,
+        "valid_calculations": 1,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H12",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 1,
+        "valid_calculations": 1,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H13",
+        "passed": false,
+        "confidence": 0.6666666666666666,
+        "specialties_count": 3,
+        "valid_calculations": 2,
+        "severity": "critical"
+      },
+      {
+        "test": "ادغام H14",
+        "passed": false,
+        "confidence": 0.0,
+        "specialties_count": 3,
+        "valid_calculations": 0,
+        "severity": "critical"
+      },
+      {
+        "test": "ادغام H15",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 2,
+        "valid_calculations": 2,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H17",
+        "passed": false,
+        "confidence": 0.5,
+        "specialties_count": 2,
+        "valid_calculations": 1,
+        "severity": "critical"
+      },
+      {
+        "test": "ادغام H18",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 3,
+        "valid_calculations": 3,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H19",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 2,
+        "valid_calculations": 2,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H21",
+        "passed": false,
+        "confidence": 0.6666666666666666,
+        "specialties_count": 3,
+        "valid_calculations": 2,
+        "severity": "critical"
+      },
+      {
+        "test": "ادغام H22",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 2,
+        "valid_calculations": 2,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H23",
+        "passed": false,
+        "confidence": 0.0,
+        "specialties_count": 2,
+        "valid_calculations": 0,
+        "severity": "critical"
+      },
+      {
+        "test": "ادغام H25",
+        "passed": false,
+        "confidence": 0.5,
+        "specialties_count": 2,
+        "valid_calculations": 1,
+        "severity": "critical"
+      }
+    ]
+  },
+  "algorithm_specialty_map": {
+    "H01": [
+      "CLI001",
+      "WAS001",
+      "AGR020"
+    ],
+    "H02": [
+      "CLI007",
+      "AGR009",
+      "AGR020"
+    ],
+    "H04": [
+      "CLI012",
+      "AGR009"
+    ],
+    "H05": [
+      "AGR020",
+      "AGR015",
+      "CLI001"
+    ],
+    "H06": [
+      "CLI024",
+      "CLI007"
+    ],
+    "H07": [
+      "AGR015"
+    ],
+    "H09": [
+      "WAS011",
+      "WAS006",
+      "AGR024"
+    ],
+    "H10": [
+      "GEO003",
+      "GOV010",
+      "AGR024"
+    ],
+    "H11": [
+      "WAS018"
+    ],
+    "H12": [
+      "WAS011"
+    ],
+    "H13": [
+      "FOR001",
+      "FOR013",
+      "ENV023"
+    ],
+    "H14": [
+      "GEO017",
+      "GOV016",
+      "GOV021"
+    ],
+    "H15": [
+      "AGR010",
+      "AGR020"
+    ],
+    "H17": [
+      "AGR010",
+      "ENV017"
+    ],
+    "H18": [
+      "AGR020",
+      "ECO001",
+      "LIV001"
+    ],
+    "H19": [
+      "AGR003",
+      "AGR004"
+    ],
+    "H21": [
+      "AGR021",
+      "ENV023",
+      "FOR027"
+    ],
+    "H22": [
+      "TEC001",
+      "ECO001"
+    ],
+    "H23": [
+      "TEC009",
+      "TEC012"
+    ],
+    "H25": [
+      "ECO006",
+      "TOU002"
+    ]
+  },
+  "trace_log": [
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "CLI001",
+      "indicator_id": "CLI001_IND01",
+      "result": {
+        "specialty": "اقلیم‌شناسی عمومی",
+        "indicator": "میانگین دمای سالانه",
+        "symbol": "T_mean",
+        "unit": "°C",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "T_mean = Σ(T_monthly) / 12",
+        "threshold": {
+          "min": -30,
+          "optimal": 15,
+          "max": 40
+        },
+        "inputs_used": {
+          "T": 18.5,
+          "T_mean": 18.5
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.066100"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "CLI001",
+      "indicator_id": "CLI001_IND02",
+      "result": {
+        "specialty": "اقلیم‌شناسی عمومی",
+        "indicator": "بارش سالانه",
+        "symbol": "P_annual",
+        "unit": "mm",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "P_annual = Σ(P_monthly)",
+        "threshold": {
+          "min": 50,
+          "optimal": 600,
+          "max": 3000
+        },
+        "inputs_used": {
+          "P": 60,
+          "P_annual": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.066100"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS001",
+      "indicator_id": "WAS001_IND01",
+      "result": {
+        "specialty": "هیدرولوژی عمومی",
+        "indicator": "رواناب سطحی",
+        "symbol": "Q",
+        "unit": "m³/s",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "Q = C × I × A",
+        "threshold": {
+          "min": 0,
+          "optimal": 10,
+          "max": 1000
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.066100"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS001",
+      "indicator_id": "WAS001_IND02",
+      "result": {
+        "specialty": "هیدرولوژی عمومی",
+        "indicator": "تغذیه آبخوان",
+        "symbol": "R",
+        "unit": "mm/yr",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "R = P - ET - Q_surface",
+        "threshold": {
+          "min": 10,
+          "optimal": 100,
+          "max": 500
+        },
+        "inputs_used": {
+          "T": 18.5,
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.067100"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR020",
+      "indicator_id": "AGR020_IND01",
+      "result": {
+        "specialty": "غلات",
+        "indicator": "شاخص برداشت",
+        "symbol": "HI",
+        "unit": "بدون بعد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "HI = Y_grain / B_total",
+        "threshold": {
+          "min": 0.3,
+          "optimal": 0.45,
+          "max": 0.6
+        },
+        "inputs_used": {
+          "rain": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.067100"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR020",
+      "indicator_id": "AGR020_IND02",
+      "result": {
+        "specialty": "غلات",
+        "indicator": "تعداد دانه در خوشه",
+        "symbol": "GN",
+        "unit": "عدد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "GN = Y_grain / (GW × N_spikes)",
+        "threshold": {
+          "min": 20,
+          "optimal": 40,
+          "max": 80
+        },
+        "inputs_used": {
+          "rain": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.067100"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "CLI007",
+      "indicator_id": "CLI007_IND01",
+      "result": {
+        "specialty": "اقلیم‌شناسی تغییر اقلیم",
+        "indicator": "گرمایش جهانی",
+        "symbol": "ΔT",
+        "unit": "°C",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "ΔT = T_current - T_baseline",
+        "threshold": {
+          "min": 0,
+          "optimal": 1.0,
+          "max": 4.0
+        },
+        "inputs_used": {
+          "T": 18.5
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.069099"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "CLI007",
+      "indicator_id": "CLI007_IND02",
+      "result": {
+        "specialty": "اقلیم‌شناسی تغییر اقلیم",
+        "indicator": "افزایش سطح دریا",
+        "symbol": "ΔSL",
+        "unit": "mm/yr",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "ΔSL = f(ice_melt, thermal_expansion)",
+        "threshold": {
+          "min": 1,
+          "optimal": 3,
+          "max": 10
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.069099"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR009",
+      "indicator_id": "AGR009_IND01",
+      "result": {
+        "specialty": "فیزیولوژی گیاهی",
+        "indicator": "نرخ فتوسنتز خالص",
+        "symbol": "Pn",
+        "unit": "μmol CO₂/m²/s",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "Pn = GPP - R_leaf",
+        "threshold": {
+          "min": 5,
+          "optimal": 25,
+          "max": 40
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.069099"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR009",
+      "indicator_id": "AGR009_IND02",
+      "result": {
+        "specialty": "فیزیولوژی گیاهی",
+        "indicator": "تعرق",
+        "symbol": "Tr",
+        "unit": "mm/day",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "Tr = ETc × (CC/CC_max)",
+        "threshold": {
+          "min": 0.5,
+          "optimal": 5.0,
+          "max": 10.0
+        },
+        "inputs_used": {
+          "T": 18.5
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.069099"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR009",
+      "indicator_id": "AGR009_IND03",
+      "result": {
+        "specialty": "فیزیولوژی گیاهی",
+        "indicator": "هدایت روزنه‌ای",
+        "symbol": "gs",
+        "unit": "mol H₂O/m²/s",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "gs = f(VPD, CO₂, Light, Soil_Water)",
+        "threshold": {
+          "min": 0.05,
+          "optimal": 0.3,
+          "max": 0.8
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.069099"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR009",
+      "indicator_id": "AGR009_IND04",
+      "result": {
+        "specialty": "فیزیولوژی گیاهی",
+        "indicator": "پتانسیل آب برگ",
+        "symbol": "Ψ_leaf",
+        "unit": "MPa",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "Ψ_leaf = Ψ_soil - Ψ_resistance",
+        "threshold": {
+          "min": -3.0,
+          "optimal": -0.5,
+          "max": 0
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.069099"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR009",
+      "indicator_id": "AGR009_IND05",
+      "result": {
+        "specialty": "فیزیولوژی گیاهی",
+        "indicator": "کارایی مصرف نور",
+        "symbol": "LUE",
+        "unit": "g C/MJ PAR",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "LUE = GPP / APAR",
+        "threshold": {
+          "min": 0.5,
+          "optimal": 1.5,
+          "max": 3.0
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.069099"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR020",
+      "indicator_id": "AGR020_IND01",
+      "result": {
+        "specialty": "غلات",
+        "indicator": "شاخص برداشت",
+        "symbol": "HI",
+        "unit": "بدون بعد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "HI = Y_grain / B_total",
+        "threshold": {
+          "min": 0.3,
+          "optimal": 0.45,
+          "max": 0.6
+        },
+        "inputs_used": {
+          "rain": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.069099"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR020",
+      "indicator_id": "AGR020_IND02",
+      "result": {
+        "specialty": "غلات",
+        "indicator": "تعداد دانه در خوشه",
+        "symbol": "GN",
+        "unit": "عدد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "GN = Y_grain / (GW × N_spikes)",
+        "threshold": {
+          "min": 20,
+          "optimal": 40,
+          "max": 80
+        },
+        "inputs_used": {
+          "rain": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.069099"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "CLI012",
+      "indicator_id": "CLI012_IND01",
+      "result": {
+        "specialty": "اقلیم‌شناسی بیابان",
+        "indicator": "شاخص خشکی",
+        "symbol": "AI",
+        "unit": "بدون بعد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "AI = P / PET",
+        "threshold": {
+          "min": 0.05,
+          "optimal": 0.2,
+          "max": 0.65
+        },
+        "inputs_used": {
+          "T": 18.5,
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "CLI012",
+      "indicator_id": "CLI012_IND02",
+      "result": {
+        "specialty": "اقلیم‌شناسی بیابان",
+        "indicator": "تبخیر و تعرق پتانسیل",
+        "symbol": "PET",
+        "unit": "mm/year",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "PET = f(T, RH, Wind, Radiation)",
+        "threshold": {
+          "min": 1000,
+          "optimal": 2000,
+          "max": 4000
+        },
+        "inputs_used": {
+          "T": 18.5,
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "CLI012",
+      "indicator_id": "CLI012_IND03",
+      "result": {
+        "specialty": "اقلیم‌شناسی بیابان",
+        "indicator": "ضریب تغییرات بارش",
+        "symbol": "CV_rain",
+        "unit": "بدون بعد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "CV = σ_rain / μ_rain",
+        "threshold": {
+          "min": 0.1,
+          "optimal": 0.3,
+          "max": 0.7
+        },
+        "inputs_used": {
+          "rain": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "CLI012",
+      "indicator_id": "CLI012_IND04",
+      "result": {
+        "specialty": "اقلیم‌شناسی بیابان",
+        "indicator": "دمای سطح زمین",
+        "symbol": "LST",
+        "unit": "°C",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "LST = f(Albedo, NDVI, T_air)",
+        "threshold": {
+          "min": 10,
+          "optimal": 30,
+          "max": 60
+        },
+        "inputs_used": {
+          "T": 18.5
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "CLI012",
+      "indicator_id": "CLI012_IND05",
+      "result": {
+        "specialty": "اقلیم‌شناسی بیابان",
+        "indicator": "باد فرساینده",
+        "symbol": "Wind_Erosion_Risk",
+        "unit": "درصد روزها",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "Risk = Days(Wind > Threshold) / 365",
+        "threshold": {
+          "min": 0,
+          "optimal": 10,
+          "max": 50
+        },
+        "inputs_used": {
+          "T": 18.5
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR009",
+      "indicator_id": "AGR009_IND01",
+      "result": {
+        "specialty": "فیزیولوژی گیاهی",
+        "indicator": "نرخ فتوسنتز خالص",
+        "symbol": "Pn",
+        "unit": "μmol CO₂/m²/s",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "Pn = GPP - R_leaf",
+        "threshold": {
+          "min": 5,
+          "optimal": 25,
+          "max": 40
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR009",
+      "indicator_id": "AGR009_IND02",
+      "result": {
+        "specialty": "فیزیولوژی گیاهی",
+        "indicator": "تعرق",
+        "symbol": "Tr",
+        "unit": "mm/day",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "Tr = ETc × (CC/CC_max)",
+        "threshold": {
+          "min": 0.5,
+          "optimal": 5.0,
+          "max": 10.0
+        },
+        "inputs_used": {
+          "T": 18.5
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR009",
+      "indicator_id": "AGR009_IND03",
+      "result": {
+        "specialty": "فیزیولوژی گیاهی",
+        "indicator": "هدایت روزنه‌ای",
+        "symbol": "gs",
+        "unit": "mol H₂O/m²/s",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "gs = f(VPD, CO₂, Light, Soil_Water)",
+        "threshold": {
+          "min": 0.05,
+          "optimal": 0.3,
+          "max": 0.8
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR009",
+      "indicator_id": "AGR009_IND04",
+      "result": {
+        "specialty": "فیزیولوژی گیاهی",
+        "indicator": "پتانسیل آب برگ",
+        "symbol": "Ψ_leaf",
+        "unit": "MPa",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "Ψ_leaf = Ψ_soil - Ψ_resistance",
+        "threshold": {
+          "min": -3.0,
+          "optimal": -0.5,
+          "max": 0
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR009",
+      "indicator_id": "AGR009_IND05",
+      "result": {
+        "specialty": "فیزیولوژی گیاهی",
+        "indicator": "کارایی مصرف نور",
+        "symbol": "LUE",
+        "unit": "g C/MJ PAR",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "LUE = GPP / APAR",
+        "threshold": {
+          "min": 0.5,
+          "optimal": 1.5,
+          "max": 3.0
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR020",
+      "indicator_id": "AGR020_IND01",
+      "result": {
+        "specialty": "غلات",
+        "indicator": "شاخص برداشت",
+        "symbol": "HI",
+        "unit": "بدون بعد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "HI = Y_grain / B_total",
+        "threshold": {
+          "min": 0.3,
+          "optimal": 0.45,
+          "max": 0.6
+        },
+        "inputs_used": {
+          "rain": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR020",
+      "indicator_id": "AGR020_IND02",
+      "result": {
+        "specialty": "غلات",
+        "indicator": "تعداد دانه در خوشه",
+        "symbol": "GN",
+        "unit": "عدد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "GN = Y_grain / (GW × N_spikes)",
+        "threshold": {
+          "min": 20,
+          "optimal": 40,
+          "max": 80
+        },
+        "inputs_used": {
+          "rain": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR015",
+      "indicator_id": "AGR015_IND01",
+      "result": {
+        "specialty": "درختان میوه",
+        "indicator": "ساعات سرمایی",
+        "symbol": "CH",
+        "unit": "ساعت",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "CH = Σ hours(T between 0-7°C)",
+        "threshold": {
+          "min": 200,
+          "optimal": 800,
+          "max": 1500
+        },
+        "inputs_used": {
+          "T": 18.5
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR015",
+      "indicator_id": "AGR015_IND02",
+      "result": {
+        "specialty": "درختان میوه",
+        "indicator": "عملکرد درخت",
+        "symbol": "Y_tree",
+        "unit": "kg/درخت",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "Y_tree = Y_orchard / N_trees",
+        "threshold": {
+          "min": 10,
+          "optimal": 50,
+          "max": 200
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "CLI001",
+      "indicator_id": "CLI001_IND01",
+      "result": {
+        "specialty": "اقلیم‌شناسی عمومی",
+        "indicator": "میانگین دمای سالانه",
+        "symbol": "T_mean",
+        "unit": "°C",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "T_mean = Σ(T_monthly) / 12",
+        "threshold": {
+          "min": -30,
+          "optimal": 15,
+          "max": 40
+        },
+        "inputs_used": {
+          "T": 18.5,
+          "T_mean": 18.5
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "CLI001",
+      "indicator_id": "CLI001_IND02",
+      "result": {
+        "specialty": "اقلیم‌شناسی عمومی",
+        "indicator": "بارش سالانه",
+        "symbol": "P_annual",
+        "unit": "mm",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "P_annual = Σ(P_monthly)",
+        "threshold": {
+          "min": 50,
+          "optimal": 600,
+          "max": 3000
+        },
+        "inputs_used": {
+          "P": 60,
+          "P_annual": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "CLI024",
+      "indicator_id": "CLI024_IND01",
+      "result": {
+        "specialty": "اقلیم‌شناسی خشکسالی",
+        "indicator": "شاخص بارش استاندارد",
+        "symbol": "SPI",
+        "unit": "بدون بعد",
+        "value": 0.0,
+        "status": "بهینه",
+        "formula": "SPI = (P - μ_P) / σ_P",
+        "threshold": {
+          "min": -3,
+          "optimal": 0,
+          "max": 3
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "CLI024",
+      "indicator_id": "CLI024_IND02",
+      "result": {
+        "specialty": "اقلیم‌شناسی خشکسالی",
+        "indicator": "شاخص خشکی",
+        "symbol": "AI",
+        "unit": "بدون بعد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "AI = P / PET",
+        "threshold": {
+          "min": 0.05,
+          "optimal": 0.5,
+          "max": 1.0
+        },
+        "inputs_used": {
+          "T": 18.5,
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "CLI007",
+      "indicator_id": "CLI007_IND01",
+      "result": {
+        "specialty": "اقلیم‌شناسی تغییر اقلیم",
+        "indicator": "گرمایش جهانی",
+        "symbol": "ΔT",
+        "unit": "°C",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "ΔT = T_current - T_baseline",
+        "threshold": {
+          "min": 0,
+          "optimal": 1.0,
+          "max": 4.0
+        },
+        "inputs_used": {
+          "T": 18.5
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "CLI007",
+      "indicator_id": "CLI007_IND02",
+      "result": {
+        "specialty": "اقلیم‌شناسی تغییر اقلیم",
+        "indicator": "افزایش سطح دریا",
+        "symbol": "ΔSL",
+        "unit": "mm/yr",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "ΔSL = f(ice_melt, thermal_expansion)",
+        "threshold": {
+          "min": 1,
+          "optimal": 3,
+          "max": 10
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR015",
+      "indicator_id": "AGR015_IND01",
+      "result": {
+        "specialty": "درختان میوه",
+        "indicator": "ساعات سرمایی",
+        "symbol": "CH",
+        "unit": "ساعت",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "CH = Σ hours(T between 0-7°C)",
+        "threshold": {
+          "min": 200,
+          "optimal": 800,
+          "max": 1500
+        },
+        "inputs_used": {
+          "T": 18.5
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR015",
+      "indicator_id": "AGR015_IND02",
+      "result": {
+        "specialty": "درختان میوه",
+        "indicator": "عملکرد درخت",
+        "symbol": "Y_tree",
+        "unit": "kg/درخت",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "Y_tree = Y_orchard / N_trees",
+        "threshold": {
+          "min": 10,
+          "optimal": 50,
+          "max": 200
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.070098"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS011",
+      "indicator_id": "WAS011_IND01",
+      "result": {
+        "specialty": "فیزیک خاک",
+        "indicator": "ظرفیت نگهداری آب قابل دسترس",
+        "symbol": "AWC",
+        "unit": "mm/m",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "AWC = (θ_fc - θ_wilt) × Depth",
+        "threshold": {
+          "min": 50,
+          "optimal": 150,
+          "max": 250
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS011",
+      "indicator_id": "WAS011_IND02",
+      "result": {
+        "specialty": "فیزیک خاک",
+        "indicator": "هدایت هیدرولیکی اشباع",
+        "symbol": "Ksat",
+        "unit": "mm/h",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "Ksat = f(texture, structure, porosity)",
+        "threshold": {
+          "min": 1,
+          "optimal": 20,
+          "max": 100
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS011",
+      "indicator_id": "WAS011_IND03",
+      "result": {
+        "specialty": "فیزیک خاک",
+        "indicator": "چگالی ظاهری",
+        "symbol": "BD",
+        "unit": "g/cm³",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "BD = Mass_Dry / Volume_Total",
+        "threshold": {
+          "min": 1.0,
+          "optimal": 1.3,
+          "max": 1.8
+        },
+        "inputs_used": {
+          "T": 18.5
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS011",
+      "indicator_id": "WAS011_IND04",
+      "result": {
+        "specialty": "فیزیک خاک",
+        "indicator": "تخلخل کل",
+        "symbol": "φ",
+        "unit": "درصد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "φ = (1 - BD/ρ_particle) × 100",
+        "threshold": {
+          "min": 30,
+          "optimal": 50,
+          "max": 65
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS011",
+      "indicator_id": "WAS011_IND05",
+      "result": {
+        "specialty": "فیزیک خاک",
+        "indicator": "منحنی مشخصه رطوبت خاک",
+        "symbol": "SWRC",
+        "unit": "-",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "θ(Ψ) = θ_r + (θ_s - θ_r) / [1 + (α|Ψ|)^n]^m",
+        "threshold": {
+          "min": 0,
+          "optimal": 0.3,
+          "max": 0.6
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS006",
+      "indicator_id": "WAS006_IND01",
+      "result": {
+        "specialty": "مدیریت منابع آب",
+        "indicator": "بیلان آبی",
+        "symbol": "WB",
+        "unit": "mm",
+        "value": 0.0,
+        "status": "بهینه",
+        "formula": "WB = P - ET - Q - ΔS",
+        "threshold": {
+          "min": -500,
+          "optimal": 0,
+          "max": 500
+        },
+        "inputs_used": {
+          "T": 18.5,
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS006",
+      "indicator_id": "WAS006_IND02",
+      "result": {
+        "specialty": "مدیریت منابع آب",
+        "indicator": "راندمان آبیاری",
+        "symbol": "IE",
+        "unit": "%",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "IE = (Water_used_by_crop / Water_applied) × 100",
+        "threshold": {
+          "min": 30,
+          "optimal": 70,
+          "max": 95
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR024",
+      "indicator_id": "AGR024_IND01",
+      "result": {
+        "specialty": "کشاورزی حفاظتی",
+        "indicator": "پوشش سطح خاک",
+        "symbol": "SC",
+        "unit": "%",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "SC = (Area_covered / Area_total) × 100",
+        "threshold": {
+          "min": 30,
+          "optimal": 70,
+          "max": 100
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR024",
+      "indicator_id": "AGR024_IND02",
+      "result": {
+        "specialty": "کشاورزی حفاظتی",
+        "indicator": "فرسایش خاک",
+        "symbol": "E",
+        "unit": "t/ha/yr",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "E = R × K × LS × C × P",
+        "threshold": {
+          "min": 0,
+          "optimal": 5,
+          "max": 50
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "GOV010",
+      "indicator_id": "GOV010_IND01",
+      "result": {
+        "specialty": "بیابان‌زدایی",
+        "indicator": "شاخص تخریب زمین",
+        "symbol": "LDI",
+        "unit": "بدون بعد (۰-۱)",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "LDI = w₁×Vegetation + w₂×Soil + w₃×Water + w₄×Climate",
+        "threshold": {
+          "min": 0,
+          "optimal": 0.2,
+          "max": 1.0
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "GOV010",
+      "indicator_id": "GOV010_IND02",
+      "result": {
+        "specialty": "بیابان‌زدایی",
+        "indicator": "پوشش گیاهی (تغییرات)",
+        "symbol": "ΔNDVI",
+        "unit": "درصد تغییر",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "ΔNDVI = (NDVI_t - NDVI_base) / NDVI_base × 100",
+        "threshold": {
+          "min": -50,
+          "optimal": 10,
+          "max": 100
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "GOV010",
+      "indicator_id": "GOV010_IND03",
+      "result": {
+        "specialty": "بیابان‌زدایی",
+        "indicator": "فرسایش خاک",
+        "symbol": "E",
+        "unit": "تن/هکتار/سال",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "E = R × K × LS × C × P",
+        "threshold": {
+          "min": 0,
+          "optimal": 5,
+          "max": 50
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "GOV010",
+      "indicator_id": "GOV010_IND04",
+      "result": {
+        "specialty": "بیابان‌زدایی",
+        "indicator": "پیشروی ماسه",
+        "symbol": "Dune_Advance",
+        "unit": "متر/سال",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "Advance = f(Wind_Speed, Vegetation, Moisture)",
+        "threshold": {
+          "min": 0,
+          "optimal": 0.5,
+          "max": 10
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "GOV010",
+      "indicator_id": "GOV010_IND05",
+      "result": {
+        "specialty": "بیابان‌زدایی",
+        "indicator": "خارج شدن زمین از کشت",
+        "symbol": "Abandoned_Land",
+        "unit": "درصد",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "Abandoned = (Area_Abandoned / Area_Total) × 100",
+        "threshold": {
+          "min": 0,
+          "optimal": 5,
+          "max": 30
+        },
+        "inputs_used": {
+          "T": 18.5
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR024",
+      "indicator_id": "AGR024_IND01",
+      "result": {
+        "specialty": "کشاورزی حفاظتی",
+        "indicator": "پوشش سطح خاک",
+        "symbol": "SC",
+        "unit": "%",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "SC = (Area_covered / Area_total) × 100",
+        "threshold": {
+          "min": 30,
+          "optimal": 70,
+          "max": 100
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR024",
+      "indicator_id": "AGR024_IND02",
+      "result": {
+        "specialty": "کشاورزی حفاظتی",
+        "indicator": "فرسایش خاک",
+        "symbol": "E",
+        "unit": "t/ha/yr",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "E = R × K × LS × C × P",
+        "threshold": {
+          "min": 0,
+          "optimal": 5,
+          "max": 50
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS018",
+      "indicator_id": "WAS018_IND01",
+      "result": {
+        "specialty": "شوری خاک",
+        "indicator": "هدایت الکتریکی",
+        "symbol": "EC",
+        "unit": "dS/m",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "EC = f(salt_concentration)",
+        "threshold": {
+          "min": 0,
+          "optimal": 1.0,
+          "max": 16.0
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS018",
+      "indicator_id": "WAS018_IND02",
+      "result": {
+        "specialty": "شوری خاک",
+        "indicator": "نسبت جذب سدیم",
+        "symbol": "SAR",
+        "unit": "بدون بعد",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "SAR = Na⁺ / √((Ca²⁺ + Mg²⁺)/2)",
+        "threshold": {
+          "min": 0,
+          "optimal": 5,
+          "max": 30
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS018",
+      "indicator_id": "WAS018_IND03",
+      "result": {
+        "specialty": "شوری خاک",
+        "indicator": "درصد سدیم تبادلی",
+        "symbol": "ESP",
+        "unit": "درصد",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "ESP = (Exch_Na / CEC) × 100",
+        "threshold": {
+          "min": 0,
+          "optimal": 5,
+          "max": 15
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS018",
+      "indicator_id": "WAS018_IND04",
+      "result": {
+        "specialty": "شوری خاک",
+        "indicator": "پتانسیل اسمزی",
+        "symbol": "Ψ_osmotic",
+        "unit": "MPa",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "Ψ_osmotic = -0.036 × EC",
+        "threshold": {
+          "min": -0.6,
+          "optimal": -0.03,
+          "max": 0
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS018",
+      "indicator_id": "WAS018_IND05",
+      "result": {
+        "specialty": "شوری خاک",
+        "indicator": "کسر آبشویی مورد نیاز",
+        "symbol": "LR",
+        "unit": "درصد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "LR = EC_iw / (5 × EC_e - EC_iw)",
+        "threshold": {
+          "min": 5,
+          "optimal": 15,
+          "max": 40
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS011",
+      "indicator_id": "WAS011_IND01",
+      "result": {
+        "specialty": "فیزیک خاک",
+        "indicator": "ظرفیت نگهداری آب قابل دسترس",
+        "symbol": "AWC",
+        "unit": "mm/m",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "AWC = (θ_fc - θ_wilt) × Depth",
+        "threshold": {
+          "min": 50,
+          "optimal": 150,
+          "max": 250
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS011",
+      "indicator_id": "WAS011_IND02",
+      "result": {
+        "specialty": "فیزیک خاک",
+        "indicator": "هدایت هیدرولیکی اشباع",
+        "symbol": "Ksat",
+        "unit": "mm/h",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "Ksat = f(texture, structure, porosity)",
+        "threshold": {
+          "min": 1,
+          "optimal": 20,
+          "max": 100
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS011",
+      "indicator_id": "WAS011_IND03",
+      "result": {
+        "specialty": "فیزیک خاک",
+        "indicator": "چگالی ظاهری",
+        "symbol": "BD",
+        "unit": "g/cm³",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "BD = Mass_Dry / Volume_Total",
+        "threshold": {
+          "min": 1.0,
+          "optimal": 1.3,
+          "max": 1.8
+        },
+        "inputs_used": {
+          "T": 18.5
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS011",
+      "indicator_id": "WAS011_IND04",
+      "result": {
+        "specialty": "فیزیک خاک",
+        "indicator": "تخلخل کل",
+        "symbol": "φ",
+        "unit": "درصد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "φ = (1 - BD/ρ_particle) × 100",
+        "threshold": {
+          "min": 30,
+          "optimal": 50,
+          "max": 65
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "WAS011",
+      "indicator_id": "WAS011_IND05",
+      "result": {
+        "specialty": "فیزیک خاک",
+        "indicator": "منحنی مشخصه رطوبت خاک",
+        "symbol": "SWRC",
+        "unit": "-",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "θ(Ψ) = θ_r + (θ_s - θ_r) / [1 + (α|Ψ|)^n]^m",
+        "threshold": {
+          "min": 0,
+          "optimal": 0.3,
+          "max": 0.6
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "FOR001",
+      "indicator_id": "FOR001_IND1",
+      "result": {
+        "specialty": "جنگلداری",
+        "indicator": "حجم چوب",
+        "symbol": "V",
+        "unit": "m³/ha",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "V = Σ(DBH² × H × F)",
+        "threshold": {
+          "min": 50,
+          "optimal": 200,
+          "max": 500
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "ENV023",
+      "indicator_id": "ENV023_IND01",
+      "result": {
+        "specialty": "اکولوژی کشاورزی",
+        "indicator": "تنوع زیستی کشاورزی",
+        "symbol": "Agro_BD",
+        "unit": "شاخص شانون",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+        "threshold": {
+          "min": 0.5,
+          "optimal": 2.5,
+          "max": 4.0
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "ENV023",
+      "indicator_id": "ENV023_IND02",
+      "result": {
+        "specialty": "اکولوژی کشاورزی",
+        "indicator": "خدمات اکوسیستم",
+        "symbol": "ES",
+        "unit": "شاخص ترکیبی",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "ES = Σ(wᵢ × Serviceᵢ)",
+        "threshold": {
+          "min": 0.2,
+          "optimal": 0.7,
+          "max": 1.0
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "ENV023",
+      "indicator_id": "ENV023_IND03",
+      "result": {
+        "specialty": "اکولوژی کشاورزی",
+        "indicator": "ترسیب کربن",
+        "symbol": "C_seq",
+        "unit": "تن کربن/هکتار/سال",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "C_seq = Input - Output",
+        "threshold": {
+          "min": 0,
+          "optimal": 1.5,
+          "max": 5.0
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.071096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "ENV023",
+      "indicator_id": "ENV023_IND04",
+      "result": {
+        "specialty": "اکولوژی کشاورزی",
+        "indicator": "چرخه مواد مغذی",
+        "symbol": "N_cycling",
+        "unit": "درصد بازیافت",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "N_cycling = (N_recycled / N_input) × 100",
+        "threshold": {
+          "min": 20,
+          "optimal": 60,
+          "max": 90
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "ENV023",
+      "indicator_id": "ENV023_IND05",
+      "result": {
+        "specialty": "اکولوژی کشاورزی",
+        "indicator": "کنترل بیولوژیک آفات",
+        "symbol": "Biocontrol",
+        "unit": "درصد کاهش آفت",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "Biocontrol = (Pest_natural - Pest_actual) / Pest_natural × 100",
+        "threshold": {
+          "min": 10,
+          "optimal": 60,
+          "max": 95
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR010",
+      "indicator_id": "AGR010_IND01",
+      "result": {
+        "specialty": "بیوتکنولوژی کشاورزی",
+        "indicator": "تنوع ژنتیکی",
+        "symbol": "H'",
+        "unit": "شاخص شانون",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+        "threshold": {
+          "min": 0.5,
+          "optimal": 2.5,
+          "max": 4.0
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR010",
+      "indicator_id": "AGR010_IND02",
+      "result": {
+        "specialty": "بیوتکنولوژی کشاورزی",
+        "indicator": "مقاومت به تنش",
+        "symbol": "STI",
+        "unit": "بدون بعد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "STI = (Y_stress × Y_normal) / (Y_normal)²",
+        "threshold": {
+          "min": 0.3,
+          "optimal": 0.8,
+          "max": 1.2
+        },
+        "inputs_used": {
+          "T": 18.5
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR020",
+      "indicator_id": "AGR020_IND01",
+      "result": {
+        "specialty": "غلات",
+        "indicator": "شاخص برداشت",
+        "symbol": "HI",
+        "unit": "بدون بعد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "HI = Y_grain / B_total",
+        "threshold": {
+          "min": 0.3,
+          "optimal": 0.45,
+          "max": 0.6
+        },
+        "inputs_used": {
+          "rain": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR020",
+      "indicator_id": "AGR020_IND02",
+      "result": {
+        "specialty": "غلات",
+        "indicator": "تعداد دانه در خوشه",
+        "symbol": "GN",
+        "unit": "عدد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "GN = Y_grain / (GW × N_spikes)",
+        "threshold": {
+          "min": 20,
+          "optimal": 40,
+          "max": 80
+        },
+        "inputs_used": {
+          "rain": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR010",
+      "indicator_id": "AGR010_IND01",
+      "result": {
+        "specialty": "بیوتکنولوژی کشاورزی",
+        "indicator": "تنوع ژنتیکی",
+        "symbol": "H'",
+        "unit": "شاخص شانون",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+        "threshold": {
+          "min": 0.5,
+          "optimal": 2.5,
+          "max": 4.0
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR010",
+      "indicator_id": "AGR010_IND02",
+      "result": {
+        "specialty": "بیوتکنولوژی کشاورزی",
+        "indicator": "مقاومت به تنش",
+        "symbol": "STI",
+        "unit": "بدون بعد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "STI = (Y_stress × Y_normal) / (Y_normal)²",
+        "threshold": {
+          "min": 0.3,
+          "optimal": 0.8,
+          "max": 1.2
+        },
+        "inputs_used": {
+          "T": 18.5
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR020",
+      "indicator_id": "AGR020_IND01",
+      "result": {
+        "specialty": "غلات",
+        "indicator": "شاخص برداشت",
+        "symbol": "HI",
+        "unit": "بدون بعد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "HI = Y_grain / B_total",
+        "threshold": {
+          "min": 0.3,
+          "optimal": 0.45,
+          "max": 0.6
+        },
+        "inputs_used": {
+          "rain": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR020",
+      "indicator_id": "AGR020_IND02",
+      "result": {
+        "specialty": "غلات",
+        "indicator": "تعداد دانه در خوشه",
+        "symbol": "GN",
+        "unit": "عدد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "GN = Y_grain / (GW × N_spikes)",
+        "threshold": {
+          "min": 20,
+          "optimal": 40,
+          "max": 80
+        },
+        "inputs_used": {
+          "rain": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "ECO001",
+      "indicator_id": "ECO001_IND1",
+      "result": {
+        "specialty": "اقتصاد کشاورزی",
+        "indicator": "درآمد ناخالص مزرعه",
+        "symbol": "GFI",
+        "unit": "ریال/هکتار",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "GFI = Σ(Price × Yield)",
+        "threshold": {
+          "min": 10,
+          "optimal": 100,
+          "max": 1000
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "ECO001",
+      "indicator_id": "ECO001_IND2",
+      "result": {
+        "specialty": "اقتصاد کشاورزی",
+        "indicator": "هزینه تولید",
+        "symbol": "PC",
+        "unit": "ریال/هکتار",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "PC = Σ(Input_Costs)",
+        "threshold": {
+          "min": 5,
+          "optimal": 50,
+          "max": 500
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "LIV001",
+      "indicator_id": "LIV001_IND1",
+      "result": {
+        "specialty": "دامپروری عمومی",
+        "indicator": "تولید شیر",
+        "symbol": "MY",
+        "unit": "kg/روز",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "MY = f(Breed, Feed, Management)",
+        "threshold": {
+          "min": 5,
+          "optimal": 20,
+          "max": 40
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR003",
+      "indicator_id": "AGR003_IND01",
+      "result": {
+        "specialty": "گیاه‌پزشکی",
+        "indicator": "شدت بیماری",
+        "symbol": "DS",
+        "unit": "%",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "DS = (n_affected / n_total) × 100",
+        "threshold": {
+          "min": 0,
+          "optimal": 5,
+          "max": 100
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR003",
+      "indicator_id": "AGR003_IND02",
+      "result": {
+        "specialty": "گیاه‌پزشکی",
+        "indicator": "شیوع آفت",
+        "symbol": "PI",
+        "unit": "%",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "PI = (fields_infested / fields_total) × 100",
+        "threshold": {
+          "min": 0,
+          "optimal": 10,
+          "max": 100
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR003",
+      "indicator_id": "AGR003_IND03",
+      "result": {
+        "specialty": "گیاه‌پزشکی",
+        "indicator": "خسارت اقتصادی",
+        "symbol": "EL",
+        "unit": "تن/هکتار",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "EL = Y_potential × DS × Loss_Factor",
+        "threshold": {
+          "min": 0,
+          "optimal": 0.5,
+          "max": 5
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR004",
+      "indicator_id": "AGR004_IND01",
+      "result": {
+        "specialty": "حشره‌شناسی کشاورزی",
+        "indicator": "جمعیت آفت",
+        "symbol": "P",
+        "unit": "عدد/m²",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "P = Σ(count_i) / Area",
+        "threshold": {
+          "min": 0,
+          "optimal": 5,
+          "max": 100
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR004",
+      "indicator_id": "AGR004_IND02",
+      "result": {
+        "specialty": "حشره‌شناسی کشاورزی",
+        "indicator": "نرخ رشد جمعیت",
+        "symbol": "r",
+        "unit": "روز⁻¹",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "r = ln(N_t/N_0) / t",
+        "threshold": {
+          "min": 0,
+          "optimal": 0.1,
+          "max": 0.5
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR021",
+      "indicator_id": "AGR021_IND01",
+      "result": {
+        "specialty": "حبوبات",
+        "indicator": "تثبیت نیتروژن",
+        "symbol": "N_fix",
+        "unit": "kg N/ha",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "N_fix = B_total × N_content × %Ndfa",
+        "threshold": {
+          "min": 20,
+          "optimal": 100,
+          "max": 300
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "AGR021",
+      "indicator_id": "AGR021_IND02",
+      "result": {
+        "specialty": "حبوبات",
+        "indicator": "گره‌های ریشه",
+        "symbol": "NN",
+        "unit": "عدد/گیاه",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "NN = Σ nodules / N_plants",
+        "threshold": {
+          "min": 10,
+          "optimal": 50,
+          "max": 150
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "ENV023",
+      "indicator_id": "ENV023_IND01",
+      "result": {
+        "specialty": "اکولوژی کشاورزی",
+        "indicator": "تنوع زیستی کشاورزی",
+        "symbol": "Agro_BD",
+        "unit": "شاخص شانون",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+        "threshold": {
+          "min": 0.5,
+          "optimal": 2.5,
+          "max": 4.0
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "ENV023",
+      "indicator_id": "ENV023_IND02",
+      "result": {
+        "specialty": "اکولوژی کشاورزی",
+        "indicator": "خدمات اکوسیستم",
+        "symbol": "ES",
+        "unit": "شاخص ترکیبی",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "ES = Σ(wᵢ × Serviceᵢ)",
+        "threshold": {
+          "min": 0.2,
+          "optimal": 0.7,
+          "max": 1.0
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "ENV023",
+      "indicator_id": "ENV023_IND03",
+      "result": {
+        "specialty": "اکولوژی کشاورزی",
+        "indicator": "ترسیب کربن",
+        "symbol": "C_seq",
+        "unit": "تن کربن/هکتار/سال",
+        "value": 0.0,
+        "status": "قابل قبول",
+        "formula": "C_seq = Input - Output",
+        "threshold": {
+          "min": 0,
+          "optimal": 1.5,
+          "max": 5.0
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "ENV023",
+      "indicator_id": "ENV023_IND04",
+      "result": {
+        "specialty": "اکولوژی کشاورزی",
+        "indicator": "چرخه مواد مغذی",
+        "symbol": "N_cycling",
+        "unit": "درصد بازیافت",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "N_cycling = (N_recycled / N_input) × 100",
+        "threshold": {
+          "min": 20,
+          "optimal": 60,
+          "max": 90
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "ENV023",
+      "indicator_id": "ENV023_IND05",
+      "result": {
+        "specialty": "اکولوژی کشاورزی",
+        "indicator": "کنترل بیولوژیک آفات",
+        "symbol": "Biocontrol",
+        "unit": "درصد کاهش آفت",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "Biocontrol = (Pest_natural - Pest_actual) / Pest_natural × 100",
+        "threshold": {
+          "min": 10,
+          "optimal": 60,
+          "max": 95
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "TEC001",
+      "indicator_id": "TEC001_IND1",
+      "result": {
+        "specialty": "هوش مصنوعی",
+        "indicator": "دقت پیش‌بینی",
+        "symbol": "Acc",
+        "unit": "%",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "Acc = (TP + TN) / (TP + TN + FP + FN)",
+        "threshold": {
+          "min": 60,
+          "optimal": 85,
+          "max": 99
+        },
+        "inputs_used": {
+          "T": 18.5,
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "ECO001",
+      "indicator_id": "ECO001_IND1",
+      "result": {
+        "specialty": "اقتصاد کشاورزی",
+        "indicator": "درآمد ناخالص مزرعه",
+        "symbol": "GFI",
+        "unit": "ریال/هکتار",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "GFI = Σ(Price × Yield)",
+        "threshold": {
+          "min": 10,
+          "optimal": 100,
+          "max": 1000
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "ECO001",
+      "indicator_id": "ECO001_IND2",
+      "result": {
+        "specialty": "اقتصاد کشاورزی",
+        "indicator": "هزینه تولید",
+        "symbol": "PC",
+        "unit": "ریال/هکتار",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "PC = Σ(Input_Costs)",
+        "threshold": {
+          "min": 5,
+          "optimal": 50,
+          "max": 500
+        },
+        "inputs_used": {
+          "P": 60
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    },
+    {
+      "operation": "calculate_indicator",
+      "specialty_id": "TOU002",
+      "indicator_id": "TOU002_IND1",
+      "result": {
+        "specialty": "گردشگری بیابان",
+        "indicator": "جذابیت منظر",
+        "symbol": "LA",
+        "unit": "بدون بعد",
+        "value": 0.0,
+        "status": "زیر حد",
+        "formula": "LA = f(Landscape, Uniqueness, Accessibility)",
+        "threshold": {
+          "min": 0.3,
+          "optimal": 0.7,
+          "max": 1.0
+        },
+        "inputs_used": {
+          "temp": 15,
+          "rain": 300
+        },
+        "source": "knowledge_base",
+        "timestamp": "2026-08-31T04:39:06.072096"
+      }
+    }
+  ],
+  "integration_results": [
+    {
+      "algorithm": "H01",
+      "specialties_used": [
+        "CLI001",
+        "WAS001",
+        "AGR020"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "CLI001": {
+          "region": "yazd",
+          "specialty": "CLI001",
+          "indicators": {
+            "CLI001_IND01": {
+              "specialty": "اقلیم‌شناسی عمومی",
+              "indicator": "میانگین دمای سالانه",
+              "symbol": "T_mean",
+              "unit": "°C",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "T_mean = Σ(T_monthly) / 12",
+              "threshold": {
+                "min": -30,
+                "optimal": 15,
+                "max": 40
+              },
+              "inputs_used": {
+                "T": 18.5,
+                "T_mean": 18.5
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.066100"
+            },
+            "CLI001_IND02": {
+              "specialty": "اقلیم‌شناسی عمومی",
+              "indicator": "بارش سالانه",
+              "symbol": "P_annual",
+              "unit": "mm",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "P_annual = Σ(P_monthly)",
+              "threshold": {
+                "min": 50,
+                "optimal": 600,
+                "max": 3000
+              },
+              "inputs_used": {
+                "P": 60,
+                "P_annual": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.066100"
+            }
+          }
+        },
+        "WAS001": {
+          "region": "yazd",
+          "specialty": "WAS001",
+          "indicators": {
+            "WAS001_IND01": {
+              "specialty": "هیدرولوژی عمومی",
+              "indicator": "رواناب سطحی",
+              "symbol": "Q",
+              "unit": "m³/s",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "Q = C × I × A",
+              "threshold": {
+                "min": 0,
+                "optimal": 10,
+                "max": 1000
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.066100"
+            },
+            "WAS001_IND02": {
+              "specialty": "هیدرولوژی عمومی",
+              "indicator": "تغذیه آبخوان",
+              "symbol": "R",
+              "unit": "mm/yr",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "R = P - ET - Q_surface",
+              "threshold": {
+                "min": 10,
+                "optimal": 100,
+                "max": 500
+              },
+              "inputs_used": {
+                "T": 18.5,
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.067100"
+            }
+          }
+        },
+        "AGR020": {
+          "region": "yazd",
+          "specialty": "AGR020",
+          "indicators": {
+            "AGR020_IND01": {
+              "specialty": "غلات",
+              "indicator": "شاخص برداشت",
+              "symbol": "HI",
+              "unit": "بدون بعد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "HI = Y_grain / B_total",
+              "threshold": {
+                "min": 0.3,
+                "optimal": 0.45,
+                "max": 0.6
+              },
+              "inputs_used": {
+                "rain": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.067100"
+            },
+            "AGR020_IND02": {
+              "specialty": "غلات",
+              "indicator": "تعداد دانه در خوشه",
+              "symbol": "GN",
+              "unit": "عدد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "GN = Y_grain / (GW × N_spikes)",
+              "threshold": {
+                "min": 20,
+                "optimal": 40,
+                "max": 80
+              },
+              "inputs_used": {
+                "rain": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.067100"
+            }
+          }
+        }
+      },
+      "integrated_output": {},
+      "confidence": 1.0,
+      "timestamp": "2026-08-31T04:39:06.066100"
+    },
+    {
+      "algorithm": "H02",
+      "specialties_used": [
+        "CLI007",
+        "AGR009",
+        "AGR020"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "CLI007": {
+          "region": "yazd",
+          "specialty": "CLI007",
+          "indicators": {
+            "CLI007_IND01": {
+              "specialty": "اقلیم‌شناسی تغییر اقلیم",
+              "indicator": "گرمایش جهانی",
+              "symbol": "ΔT",
+              "unit": "°C",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "ΔT = T_current - T_baseline",
+              "threshold": {
+                "min": 0,
+                "optimal": 1.0,
+                "max": 4.0
+              },
+              "inputs_used": {
+                "T": 18.5
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.069099"
+            },
+            "CLI007_IND02": {
+              "specialty": "اقلیم‌شناسی تغییر اقلیم",
+              "indicator": "افزایش سطح دریا",
+              "symbol": "ΔSL",
+              "unit": "mm/yr",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "ΔSL = f(ice_melt, thermal_expansion)",
+              "threshold": {
+                "min": 1,
+                "optimal": 3,
+                "max": 10
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.069099"
+            }
+          }
+        },
+        "AGR009": {
+          "region": "yazd",
+          "specialty": "AGR009",
+          "indicators": {
+            "AGR009_IND01": {
+              "specialty": "فیزیولوژی گیاهی",
+              "indicator": "نرخ فتوسنتز خالص",
+              "symbol": "Pn",
+              "unit": "μmol CO₂/m²/s",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "Pn = GPP - R_leaf",
+              "threshold": {
+                "min": 5,
+                "optimal": 25,
+                "max": 40
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.069099"
+            },
+            "AGR009_IND02": {
+              "specialty": "فیزیولوژی گیاهی",
+              "indicator": "تعرق",
+              "symbol": "Tr",
+              "unit": "mm/day",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "Tr = ETc × (CC/CC_max)",
+              "threshold": {
+                "min": 0.5,
+                "optimal": 5.0,
+                "max": 10.0
+              },
+              "inputs_used": {
+                "T": 18.5
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.069099"
+            },
+            "AGR009_IND03": {
+              "specialty": "فیزیولوژی گیاهی",
+              "indicator": "هدایت روزنه‌ای",
+              "symbol": "gs",
+              "unit": "mol H₂O/m²/s",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "gs = f(VPD, CO₂, Light, Soil_Water)",
+              "threshold": {
+                "min": 0.05,
+                "optimal": 0.3,
+                "max": 0.8
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.069099"
+            },
+            "AGR009_IND04": {
+              "specialty": "فیزیولوژی گیاهی",
+              "indicator": "پتانسیل آب برگ",
+              "symbol": "Ψ_leaf",
+              "unit": "MPa",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "Ψ_leaf = Ψ_soil - Ψ_resistance",
+              "threshold": {
+                "min": -3.0,
+                "optimal": -0.5,
+                "max": 0
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.069099"
+            },
+            "AGR009_IND05": {
+              "specialty": "فیزیولوژی گیاهی",
+              "indicator": "کارایی مصرف نور",
+              "symbol": "LUE",
+              "unit": "g C/MJ PAR",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "LUE = GPP / APAR",
+              "threshold": {
+                "min": 0.5,
+                "optimal": 1.5,
+                "max": 3.0
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.069099"
+            }
+          }
+        },
+        "AGR020": {
+          "region": "yazd",
+          "specialty": "AGR020",
+          "indicators": {
+            "AGR020_IND01": {
+              "specialty": "غلات",
+              "indicator": "شاخص برداشت",
+              "symbol": "HI",
+              "unit": "بدون بعد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "HI = Y_grain / B_total",
+              "threshold": {
+                "min": 0.3,
+                "optimal": 0.45,
+                "max": 0.6
+              },
+              "inputs_used": {
+                "rain": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.069099"
+            },
+            "AGR020_IND02": {
+              "specialty": "غلات",
+              "indicator": "تعداد دانه در خوشه",
+              "symbol": "GN",
+              "unit": "عدد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "GN = Y_grain / (GW × N_spikes)",
+              "threshold": {
+                "min": 20,
+                "optimal": 40,
+                "max": 80
+              },
+              "inputs_used": {
+                "rain": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.069099"
+            }
+          }
+        }
+      },
+      "integrated_output": {},
+      "confidence": 1.0,
+      "timestamp": "2026-08-31T04:39:06.067100"
+    },
+    {
+      "algorithm": "H04",
+      "specialties_used": [
+        "CLI012",
+        "AGR009"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "CLI012": {
+          "region": "yazd",
+          "specialty": "CLI012",
+          "indicators": {
+            "CLI012_IND01": {
+              "specialty": "اقلیم‌شناسی بیابان",
+              "indicator": "شاخص خشکی",
+              "symbol": "AI",
+              "unit": "بدون بعد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "AI = P / PET",
+              "threshold": {
+                "min": 0.05,
+                "optimal": 0.2,
+                "max": 0.65
+              },
+              "inputs_used": {
+                "T": 18.5,
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            },
+            "CLI012_IND02": {
+              "specialty": "اقلیم‌شناسی بیابان",
+              "indicator": "تبخیر و تعرق پتانسیل",
+              "symbol": "PET",
+              "unit": "mm/year",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "PET = f(T, RH, Wind, Radiation)",
+              "threshold": {
+                "min": 1000,
+                "optimal": 2000,
+                "max": 4000
+              },
+              "inputs_used": {
+                "T": 18.5,
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            },
+            "CLI012_IND03": {
+              "specialty": "اقلیم‌شناسی بیابان",
+              "indicator": "ضریب تغییرات بارش",
+              "symbol": "CV_rain",
+              "unit": "بدون بعد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "CV = σ_rain / μ_rain",
+              "threshold": {
+                "min": 0.1,
+                "optimal": 0.3,
+                "max": 0.7
+              },
+              "inputs_used": {
+                "rain": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            },
+            "CLI012_IND04": {
+              "specialty": "اقلیم‌شناسی بیابان",
+              "indicator": "دمای سطح زمین",
+              "symbol": "LST",
+              "unit": "°C",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "LST = f(Albedo, NDVI, T_air)",
+              "threshold": {
+                "min": 10,
+                "optimal": 30,
+                "max": 60
+              },
+              "inputs_used": {
+                "T": 18.5
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            },
+            "CLI012_IND05": {
+              "specialty": "اقلیم‌شناسی بیابان",
+              "indicator": "باد فرساینده",
+              "symbol": "Wind_Erosion_Risk",
+              "unit": "درصد روزها",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "Risk = Days(Wind > Threshold) / 365",
+              "threshold": {
+                "min": 0,
+                "optimal": 10,
+                "max": 50
+              },
+              "inputs_used": {
+                "T": 18.5
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            }
+          }
+        },
+        "AGR009": {
+          "region": "yazd",
+          "specialty": "AGR009",
+          "indicators": {
+            "AGR009_IND01": {
+              "specialty": "فیزیولوژی گیاهی",
+              "indicator": "نرخ فتوسنتز خالص",
+              "symbol": "Pn",
+              "unit": "μmol CO₂/m²/s",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "Pn = GPP - R_leaf",
+              "threshold": {
+                "min": 5,
+                "optimal": 25,
+                "max": 40
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            },
+            "AGR009_IND02": {
+              "specialty": "فیزیولوژی گیاهی",
+              "indicator": "تعرق",
+              "symbol": "Tr",
+              "unit": "mm/day",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "Tr = ETc × (CC/CC_max)",
+              "threshold": {
+                "min": 0.5,
+                "optimal": 5.0,
+                "max": 10.0
+              },
+              "inputs_used": {
+                "T": 18.5
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            },
+            "AGR009_IND03": {
+              "specialty": "فیزیولوژی گیاهی",
+              "indicator": "هدایت روزنه‌ای",
+              "symbol": "gs",
+              "unit": "mol H₂O/m²/s",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "gs = f(VPD, CO₂, Light, Soil_Water)",
+              "threshold": {
+                "min": 0.05,
+                "optimal": 0.3,
+                "max": 0.8
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            },
+            "AGR009_IND04": {
+              "specialty": "فیزیولوژی گیاهی",
+              "indicator": "پتانسیل آب برگ",
+              "symbol": "Ψ_leaf",
+              "unit": "MPa",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "Ψ_leaf = Ψ_soil - Ψ_resistance",
+              "threshold": {
+                "min": -3.0,
+                "optimal": -0.5,
+                "max": 0
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            },
+            "AGR009_IND05": {
+              "specialty": "فیزیولوژی گیاهی",
+              "indicator": "کارایی مصرف نور",
+              "symbol": "LUE",
+              "unit": "g C/MJ PAR",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "LUE = GPP / APAR",
+              "threshold": {
+                "min": 0.5,
+                "optimal": 1.5,
+                "max": 3.0
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            }
+          }
+        }
+      },
+      "integrated_output": {},
+      "confidence": 1.0,
+      "timestamp": "2026-08-31T04:39:06.069099"
+    },
+    {
+      "algorithm": "H05",
+      "specialties_used": [
+        "AGR020",
+        "AGR015",
+        "CLI001"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "AGR020": {
+          "region": "yazd",
+          "specialty": "AGR020",
+          "indicators": {
+            "AGR020_IND01": {
+              "specialty": "غلات",
+              "indicator": "شاخص برداشت",
+              "symbol": "HI",
+              "unit": "بدون بعد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "HI = Y_grain / B_total",
+              "threshold": {
+                "min": 0.3,
+                "optimal": 0.45,
+                "max": 0.6
+              },
+              "inputs_used": {
+                "rain": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            },
+            "AGR020_IND02": {
+              "specialty": "غلات",
+              "indicator": "تعداد دانه در خوشه",
+              "symbol": "GN",
+              "unit": "عدد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "GN = Y_grain / (GW × N_spikes)",
+              "threshold": {
+                "min": 20,
+                "optimal": 40,
+                "max": 80
+              },
+              "inputs_used": {
+                "rain": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            }
+          }
+        },
+        "AGR015": {
+          "region": "yazd",
+          "specialty": "AGR015",
+          "indicators": {
+            "AGR015_IND01": {
+              "specialty": "درختان میوه",
+              "indicator": "ساعات سرمایی",
+              "symbol": "CH",
+              "unit": "ساعت",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "CH = Σ hours(T between 0-7°C)",
+              "threshold": {
+                "min": 200,
+                "optimal": 800,
+                "max": 1500
+              },
+              "inputs_used": {
+                "T": 18.5
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            },
+            "AGR015_IND02": {
+              "specialty": "درختان میوه",
+              "indicator": "عملکرد درخت",
+              "symbol": "Y_tree",
+              "unit": "kg/درخت",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "Y_tree = Y_orchard / N_trees",
+              "threshold": {
+                "min": 10,
+                "optimal": 50,
+                "max": 200
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            }
+          }
+        },
+        "CLI001": {
+          "region": "yazd",
+          "specialty": "CLI001",
+          "indicators": {
+            "CLI001_IND01": {
+              "specialty": "اقلیم‌شناسی عمومی",
+              "indicator": "میانگین دمای سالانه",
+              "symbol": "T_mean",
+              "unit": "°C",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "T_mean = Σ(T_monthly) / 12",
+              "threshold": {
+                "min": -30,
+                "optimal": 15,
+                "max": 40
+              },
+              "inputs_used": {
+                "T": 18.5,
+                "T_mean": 18.5
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            },
+            "CLI001_IND02": {
+              "specialty": "اقلیم‌شناسی عمومی",
+              "indicator": "بارش سالانه",
+              "symbol": "P_annual",
+              "unit": "mm",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "P_annual = Σ(P_monthly)",
+              "threshold": {
+                "min": 50,
+                "optimal": 600,
+                "max": 3000
+              },
+              "inputs_used": {
+                "P": 60,
+                "P_annual": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            }
+          }
+        }
+      },
+      "integrated_output": {},
+      "confidence": 1.0,
+      "timestamp": "2026-08-31T04:39:06.070098"
+    },
+    {
+      "algorithm": "H06",
+      "specialties_used": [
+        "CLI024",
+        "CLI007"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "CLI024": {
+          "region": "yazd",
+          "specialty": "CLI024",
+          "indicators": {
+            "CLI024_IND01": {
+              "specialty": "اقلیم‌شناسی خشکسالی",
+              "indicator": "شاخص بارش استاندارد",
+              "symbol": "SPI",
+              "unit": "بدون بعد",
+              "value": 0.0,
+              "status": "بهینه",
+              "formula": "SPI = (P - μ_P) / σ_P",
+              "threshold": {
+                "min": -3,
+                "optimal": 0,
+                "max": 3
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            },
+            "CLI024_IND02": {
+              "specialty": "اقلیم‌شناسی خشکسالی",
+              "indicator": "شاخص خشکی",
+              "symbol": "AI",
+              "unit": "بدون بعد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "AI = P / PET",
+              "threshold": {
+                "min": 0.05,
+                "optimal": 0.5,
+                "max": 1.0
+              },
+              "inputs_used": {
+                "T": 18.5,
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            }
+          }
+        },
+        "CLI007": {
+          "region": "yazd",
+          "specialty": "CLI007",
+          "indicators": {
+            "CLI007_IND01": {
+              "specialty": "اقلیم‌شناسی تغییر اقلیم",
+              "indicator": "گرمایش جهانی",
+              "symbol": "ΔT",
+              "unit": "°C",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "ΔT = T_current - T_baseline",
+              "threshold": {
+                "min": 0,
+                "optimal": 1.0,
+                "max": 4.0
+              },
+              "inputs_used": {
+                "T": 18.5
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            },
+            "CLI007_IND02": {
+              "specialty": "اقلیم‌شناسی تغییر اقلیم",
+              "indicator": "افزایش سطح دریا",
+              "symbol": "ΔSL",
+              "unit": "mm/yr",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "ΔSL = f(ice_melt, thermal_expansion)",
+              "threshold": {
+                "min": 1,
+                "optimal": 3,
+                "max": 10
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            }
+          }
+        }
+      },
+      "integrated_output": {},
+      "confidence": 1.0,
+      "timestamp": "2026-08-31T04:39:06.070098"
+    },
+    {
+      "algorithm": "H07",
+      "specialties_used": [
+        "AGR015"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "AGR015": {
+          "region": "yazd",
+          "specialty": "AGR015",
+          "indicators": {
+            "AGR015_IND01": {
+              "specialty": "درختان میوه",
+              "indicator": "ساعات سرمایی",
+              "symbol": "CH",
+              "unit": "ساعت",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "CH = Σ hours(T between 0-7°C)",
+              "threshold": {
+                "min": 200,
+                "optimal": 800,
+                "max": 1500
+              },
+              "inputs_used": {
+                "T": 18.5
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            },
+            "AGR015_IND02": {
+              "specialty": "درختان میوه",
+              "indicator": "عملکرد درخت",
+              "symbol": "Y_tree",
+              "unit": "kg/درخت",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "Y_tree = Y_orchard / N_trees",
+              "threshold": {
+                "min": 10,
+                "optimal": 50,
+                "max": 200
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.070098"
+            }
+          }
+        }
+      },
+      "integrated_output": {},
+      "confidence": 1.0,
+      "timestamp": "2026-08-31T04:39:06.070098"
+    },
+    {
+      "algorithm": "H09",
+      "specialties_used": [
+        "WAS011",
+        "WAS006",
+        "AGR024"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "WAS011": {
+          "region": "yazd",
+          "specialty": "WAS011",
+          "indicators": {
+            "WAS011_IND01": {
+              "specialty": "فیزیک خاک",
+              "indicator": "ظرفیت نگهداری آب قابل دسترس",
+              "symbol": "AWC",
+              "unit": "mm/m",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "AWC = (θ_fc - θ_wilt) × Depth",
+              "threshold": {
+                "min": 50,
+                "optimal": 150,
+                "max": 250
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "WAS011_IND02": {
+              "specialty": "فیزیک خاک",
+              "indicator": "هدایت هیدرولیکی اشباع",
+              "symbol": "Ksat",
+              "unit": "mm/h",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "Ksat = f(texture, structure, porosity)",
+              "threshold": {
+                "min": 1,
+                "optimal": 20,
+                "max": 100
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "WAS011_IND03": {
+              "specialty": "فیزیک خاک",
+              "indicator": "چگالی ظاهری",
+              "symbol": "BD",
+              "unit": "g/cm³",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "BD = Mass_Dry / Volume_Total",
+              "threshold": {
+                "min": 1.0,
+                "optimal": 1.3,
+                "max": 1.8
+              },
+              "inputs_used": {
+                "T": 18.5
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "WAS011_IND04": {
+              "specialty": "فیزیک خاک",
+              "indicator": "تخلخل کل",
+              "symbol": "φ",
+              "unit": "درصد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "φ = (1 - BD/ρ_particle) × 100",
+              "threshold": {
+                "min": 30,
+                "optimal": 50,
+                "max": 65
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "WAS011_IND05": {
+              "specialty": "فیزیک خاک",
+              "indicator": "منحنی مشخصه رطوبت خاک",
+              "symbol": "SWRC",
+              "unit": "-",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "θ(Ψ) = θ_r + (θ_s - θ_r) / [1 + (α|Ψ|)^n]^m",
+              "threshold": {
+                "min": 0,
+                "optimal": 0.3,
+                "max": 0.6
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            }
+          }
+        },
+        "WAS006": {
+          "region": "yazd",
+          "specialty": "WAS006",
+          "indicators": {
+            "WAS006_IND01": {
+              "specialty": "مدیریت منابع آب",
+              "indicator": "بیلان آبی",
+              "symbol": "WB",
+              "unit": "mm",
+              "value": 0.0,
+              "status": "بهینه",
+              "formula": "WB = P - ET - Q - ΔS",
+              "threshold": {
+                "min": -500,
+                "optimal": 0,
+                "max": 500
+              },
+              "inputs_used": {
+                "T": 18.5,
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "WAS006_IND02": {
+              "specialty": "مدیریت منابع آب",
+              "indicator": "راندمان آبیاری",
+              "symbol": "IE",
+              "unit": "%",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "IE = (Water_used_by_crop / Water_applied) × 100",
+              "threshold": {
+                "min": 30,
+                "optimal": 70,
+                "max": 95
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            }
+          }
+        },
+        "AGR024": {
+          "region": "yazd",
+          "specialty": "AGR024",
+          "indicators": {
+            "AGR024_IND01": {
+              "specialty": "کشاورزی حفاظتی",
+              "indicator": "پوشش سطح خاک",
+              "symbol": "SC",
+              "unit": "%",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "SC = (Area_covered / Area_total) × 100",
+              "threshold": {
+                "min": 30,
+                "optimal": 70,
+                "max": 100
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "AGR024_IND02": {
+              "specialty": "کشاورزی حفاظتی",
+              "indicator": "فرسایش خاک",
+              "symbol": "E",
+              "unit": "t/ha/yr",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "E = R × K × LS × C × P",
+              "threshold": {
+                "min": 0,
+                "optimal": 5,
+                "max": 50
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            }
+          }
+        }
+      },
+      "integrated_output": {},
+      "confidence": 1.0,
+      "timestamp": "2026-08-31T04:39:06.070098"
+    },
+    {
+      "algorithm": "H10",
+      "specialties_used": [
+        "GEO003",
+        "GOV010",
+        "AGR024"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "GEO003": {
+          "error": "گرایش GEO003 یافت نشد"
+        },
+        "GOV010": {
+          "region": "yazd",
+          "specialty": "GOV010",
+          "indicators": {
+            "GOV010_IND01": {
+              "specialty": "بیابان‌زدایی",
+              "indicator": "شاخص تخریب زمین",
+              "symbol": "LDI",
+              "unit": "بدون بعد (۰-۱)",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "LDI = w₁×Vegetation + w₂×Soil + w₃×Water + w₄×Climate",
+              "threshold": {
+                "min": 0,
+                "optimal": 0.2,
+                "max": 1.0
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "GOV010_IND02": {
+              "specialty": "بیابان‌زدایی",
+              "indicator": "پوشش گیاهی (تغییرات)",
+              "symbol": "ΔNDVI",
+              "unit": "درصد تغییر",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "ΔNDVI = (NDVI_t - NDVI_base) / NDVI_base × 100",
+              "threshold": {
+                "min": -50,
+                "optimal": 10,
+                "max": 100
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "GOV010_IND03": {
+              "specialty": "بیابان‌زدایی",
+              "indicator": "فرسایش خاک",
+              "symbol": "E",
+              "unit": "تن/هکتار/سال",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "E = R × K × LS × C × P",
+              "threshold": {
+                "min": 0,
+                "optimal": 5,
+                "max": 50
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "GOV010_IND04": {
+              "specialty": "بیابان‌زدایی",
+              "indicator": "پیشروی ماسه",
+              "symbol": "Dune_Advance",
+              "unit": "متر/سال",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "Advance = f(Wind_Speed, Vegetation, Moisture)",
+              "threshold": {
+                "min": 0,
+                "optimal": 0.5,
+                "max": 10
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "GOV010_IND05": {
+              "specialty": "بیابان‌زدایی",
+              "indicator": "خارج شدن زمین از کشت",
+              "symbol": "Abandoned_Land",
+              "unit": "درصد",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "Abandoned = (Area_Abandoned / Area_Total) × 100",
+              "threshold": {
+                "min": 0,
+                "optimal": 5,
+                "max": 30
+              },
+              "inputs_used": {
+                "T": 18.5
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            }
+          }
+        },
+        "AGR024": {
+          "region": "yazd",
+          "specialty": "AGR024",
+          "indicators": {
+            "AGR024_IND01": {
+              "specialty": "کشاورزی حفاظتی",
+              "indicator": "پوشش سطح خاک",
+              "symbol": "SC",
+              "unit": "%",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "SC = (Area_covered / Area_total) × 100",
+              "threshold": {
+                "min": 30,
+                "optimal": 70,
+                "max": 100
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "AGR024_IND02": {
+              "specialty": "کشاورزی حفاظتی",
+              "indicator": "فرسایش خاک",
+              "symbol": "E",
+              "unit": "t/ha/yr",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "E = R × K × LS × C × P",
+              "threshold": {
+                "min": 0,
+                "optimal": 5,
+                "max": 50
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            }
+          }
+        }
+      },
+      "integrated_output": {},
+      "confidence": 0.6666666666666666,
+      "timestamp": "2026-08-31T04:39:06.071096"
+    },
+    {
+      "algorithm": "H11",
+      "specialties_used": [
+        "WAS018"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "WAS018": {
+          "region": "yazd",
+          "specialty": "WAS018",
+          "indicators": {
+            "WAS018_IND01": {
+              "specialty": "شوری خاک",
+              "indicator": "هدایت الکتریکی",
+              "symbol": "EC",
+              "unit": "dS/m",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "EC = f(salt_concentration)",
+              "threshold": {
+                "min": 0,
+                "optimal": 1.0,
+                "max": 16.0
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "WAS018_IND02": {
+              "specialty": "شوری خاک",
+              "indicator": "نسبت جذب سدیم",
+              "symbol": "SAR",
+              "unit": "بدون بعد",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "SAR = Na⁺ / √((Ca²⁺ + Mg²⁺)/2)",
+              "threshold": {
+                "min": 0,
+                "optimal": 5,
+                "max": 30
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "WAS018_IND03": {
+              "specialty": "شوری خاک",
+              "indicator": "درصد سدیم تبادلی",
+              "symbol": "ESP",
+              "unit": "درصد",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "ESP = (Exch_Na / CEC) × 100",
+              "threshold": {
+                "min": 0,
+                "optimal": 5,
+                "max": 15
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "WAS018_IND04": {
+              "specialty": "شوری خاک",
+              "indicator": "پتانسیل اسمزی",
+              "symbol": "Ψ_osmotic",
+              "unit": "MPa",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "Ψ_osmotic = -0.036 × EC",
+              "threshold": {
+                "min": -0.6,
+                "optimal": -0.03,
+                "max": 0
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "WAS018_IND05": {
+              "specialty": "شوری خاک",
+              "indicator": "کسر آبشویی مورد نیاز",
+              "symbol": "LR",
+              "unit": "درصد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "LR = EC_iw / (5 × EC_e - EC_iw)",
+              "threshold": {
+                "min": 5,
+                "optimal": 15,
+                "max": 40
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            }
+          }
+        }
+      },
+      "integrated_output": {},
+      "confidence": 1.0,
+      "timestamp": "2026-08-31T04:39:06.071096"
+    },
+    {
+      "algorithm": "H12",
+      "specialties_used": [
+        "WAS011"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "WAS011": {
+          "region": "yazd",
+          "specialty": "WAS011",
+          "indicators": {
+            "WAS011_IND01": {
+              "specialty": "فیزیک خاک",
+              "indicator": "ظرفیت نگهداری آب قابل دسترس",
+              "symbol": "AWC",
+              "unit": "mm/m",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "AWC = (θ_fc - θ_wilt) × Depth",
+              "threshold": {
+                "min": 50,
+                "optimal": 150,
+                "max": 250
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "WAS011_IND02": {
+              "specialty": "فیزیک خاک",
+              "indicator": "هدایت هیدرولیکی اشباع",
+              "symbol": "Ksat",
+              "unit": "mm/h",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "Ksat = f(texture, structure, porosity)",
+              "threshold": {
+                "min": 1,
+                "optimal": 20,
+                "max": 100
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "WAS011_IND03": {
+              "specialty": "فیزیک خاک",
+              "indicator": "چگالی ظاهری",
+              "symbol": "BD",
+              "unit": "g/cm³",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "BD = Mass_Dry / Volume_Total",
+              "threshold": {
+                "min": 1.0,
+                "optimal": 1.3,
+                "max": 1.8
+              },
+              "inputs_used": {
+                "T": 18.5
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "WAS011_IND04": {
+              "specialty": "فیزیک خاک",
+              "indicator": "تخلخل کل",
+              "symbol": "φ",
+              "unit": "درصد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "φ = (1 - BD/ρ_particle) × 100",
+              "threshold": {
+                "min": 30,
+                "optimal": 50,
+                "max": 65
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "WAS011_IND05": {
+              "specialty": "فیزیک خاک",
+              "indicator": "منحنی مشخصه رطوبت خاک",
+              "symbol": "SWRC",
+              "unit": "-",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "θ(Ψ) = θ_r + (θ_s - θ_r) / [1 + (α|Ψ|)^n]^m",
+              "threshold": {
+                "min": 0,
+                "optimal": 0.3,
+                "max": 0.6
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            }
+          }
+        }
+      },
+      "integrated_output": {},
+      "confidence": 1.0,
+      "timestamp": "2026-08-31T04:39:06.071096"
+    },
+    {
+      "algorithm": "H13",
+      "specialties_used": [
+        "FOR001",
+        "FOR013",
+        "ENV023"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "FOR001": {
+          "region": "yazd",
+          "specialty": "FOR001",
+          "indicators": {
+            "FOR001_IND1": {
+              "specialty": "جنگلداری",
+              "indicator": "حجم چوب",
+              "symbol": "V",
+              "unit": "m³/ha",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "V = Σ(DBH² × H × F)",
+              "threshold": {
+                "min": 50,
+                "optimal": 200,
+                "max": 500
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            }
+          }
+        },
+        "FOR013": {
+          "error": "گرایش FOR013 یافت نشد"
+        },
+        "ENV023": {
+          "region": "yazd",
+          "specialty": "ENV023",
+          "indicators": {
+            "ENV023_IND01": {
+              "specialty": "اکولوژی کشاورزی",
+              "indicator": "تنوع زیستی کشاورزی",
+              "symbol": "Agro_BD",
+              "unit": "شاخص شانون",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+              "threshold": {
+                "min": 0.5,
+                "optimal": 2.5,
+                "max": 4.0
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "ENV023_IND02": {
+              "specialty": "اکولوژی کشاورزی",
+              "indicator": "خدمات اکوسیستم",
+              "symbol": "ES",
+              "unit": "شاخص ترکیبی",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "ES = Σ(wᵢ × Serviceᵢ)",
+              "threshold": {
+                "min": 0.2,
+                "optimal": 0.7,
+                "max": 1.0
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "ENV023_IND03": {
+              "specialty": "اکولوژی کشاورزی",
+              "indicator": "ترسیب کربن",
+              "symbol": "C_seq",
+              "unit": "تن کربن/هکتار/سال",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "C_seq = Input - Output",
+              "threshold": {
+                "min": 0,
+                "optimal": 1.5,
+                "max": 5.0
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.071096"
+            },
+            "ENV023_IND04": {
+              "specialty": "اکولوژی کشاورزی",
+              "indicator": "چرخه مواد مغذی",
+              "symbol": "N_cycling",
+              "unit": "درصد بازیافت",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "N_cycling = (N_recycled / N_input) × 100",
+              "threshold": {
+                "min": 20,
+                "optimal": 60,
+                "max": 90
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            },
+            "ENV023_IND05": {
+              "specialty": "اکولوژی کشاورزی",
+              "indicator": "کنترل بیولوژیک آفات",
+              "symbol": "Biocontrol",
+              "unit": "درصد کاهش آفت",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "Biocontrol = (Pest_natural - Pest_actual) / Pest_natural × 100",
+              "threshold": {
+                "min": 10,
+                "optimal": 60,
+                "max": 95
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            }
+          }
+        }
+      },
+      "integrated_output": {},
+      "confidence": 0.6666666666666666,
+      "timestamp": "2026-08-31T04:39:06.071096"
+    },
+    {
+      "algorithm": "H14",
+      "specialties_used": [
+        "GEO017",
+        "GOV016",
+        "GOV021"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "GEO017": {
+          "error": "گرایش GEO017 یافت نشد"
+        },
+        "GOV016": {
+          "error": "گرایش GOV016 یافت نشد"
+        },
+        "GOV021": {
+          "error": "گرایش GOV021 یافت نشد"
+        }
+      },
+      "integrated_output": {},
+      "confidence": 0.0,
+      "timestamp": "2026-08-31T04:39:06.072096"
+    },
+    {
+      "algorithm": "H15",
+      "specialties_used": [
+        "AGR010",
+        "AGR020"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "AGR010": {
+          "region": "yazd",
+          "specialty": "AGR010",
+          "indicators": {
+            "AGR010_IND01": {
+              "specialty": "بیوتکنولوژی کشاورزی",
+              "indicator": "تنوع ژنتیکی",
+              "symbol": "H'",
+              "unit": "شاخص شانون",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+              "threshold": {
+                "min": 0.5,
+                "optimal": 2.5,
+                "max": 4.0
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            },
+            "AGR010_IND02": {
+              "specialty": "بیوتکنولوژی کشاورزی",
+              "indicator": "مقاومت به تنش",
+              "symbol": "STI",
+              "unit": "بدون بعد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "STI = (Y_stress × Y_normal) / (Y_normal)²",
+              "threshold": {
+                "min": 0.3,
+                "optimal": 0.8,
+                "max": 1.2
+              },
+              "inputs_used": {
+                "T": 18.5
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            }
+          }
+        },
+        "AGR020": {
+          "region": "yazd",
+          "specialty": "AGR020",
+          "indicators": {
+            "AGR020_IND01": {
+              "specialty": "غلات",
+              "indicator": "شاخص برداشت",
+              "symbol": "HI",
+              "unit": "بدون بعد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "HI = Y_grain / B_total",
+              "threshold": {
+                "min": 0.3,
+                "optimal": 0.45,
+                "max": 0.6
+              },
+              "inputs_used": {
+                "rain": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            },
+            "AGR020_IND02": {
+              "specialty": "غلات",
+              "indicator": "تعداد دانه در خوشه",
+              "symbol": "GN",
+              "unit": "عدد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "GN = Y_grain / (GW × N_spikes)",
+              "threshold": {
+                "min": 20,
+                "optimal": 40,
+                "max": 80
+              },
+              "inputs_used": {
+                "rain": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            }
+          }
+        }
+      },
+      "integrated_output": {},
+      "confidence": 1.0,
+      "timestamp": "2026-08-31T04:39:06.072096"
+    },
+    {
+      "algorithm": "H17",
+      "specialties_used": [
+        "AGR010",
+        "ENV017"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "AGR010": {
+          "region": "yazd",
+          "specialty": "AGR010",
+          "indicators": {
+            "AGR010_IND01": {
+              "specialty": "بیوتکنولوژی کشاورزی",
+              "indicator": "تنوع ژنتیکی",
+              "symbol": "H'",
+              "unit": "شاخص شانون",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+              "threshold": {
+                "min": 0.5,
+                "optimal": 2.5,
+                "max": 4.0
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            },
+            "AGR010_IND02": {
+              "specialty": "بیوتکنولوژی کشاورزی",
+              "indicator": "مقاومت به تنش",
+              "symbol": "STI",
+              "unit": "بدون بعد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "STI = (Y_stress × Y_normal) / (Y_normal)²",
+              "threshold": {
+                "min": 0.3,
+                "optimal": 0.8,
+                "max": 1.2
+              },
+              "inputs_used": {
+                "T": 18.5
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            }
+          }
+        },
+        "ENV017": {
+          "error": "گرایش ENV017 یافت نشد"
+        }
+      },
+      "integrated_output": {},
+      "confidence": 0.5,
+      "timestamp": "2026-08-31T04:39:06.072096"
+    },
+    {
+      "algorithm": "H18",
+      "specialties_used": [
+        "AGR020",
+        "ECO001",
+        "LIV001"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "AGR020": {
+          "region": "yazd",
+          "specialty": "AGR020",
+          "indicators": {
+            "AGR020_IND01": {
+              "specialty": "غلات",
+              "indicator": "شاخص برداشت",
+              "symbol": "HI",
+              "unit": "بدون بعد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "HI = Y_grain / B_total",
+              "threshold": {
+                "min": 0.3,
+                "optimal": 0.45,
+                "max": 0.6
+              },
+              "inputs_used": {
+                "rain": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            },
+            "AGR020_IND02": {
+              "specialty": "غلات",
+              "indicator": "تعداد دانه در خوشه",
+              "symbol": "GN",
+              "unit": "عدد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "GN = Y_grain / (GW × N_spikes)",
+              "threshold": {
+                "min": 20,
+                "optimal": 40,
+                "max": 80
+              },
+              "inputs_used": {
+                "rain": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            }
+          }
+        },
+        "ECO001": {
+          "region": "yazd",
+          "specialty": "ECO001",
+          "indicators": {
+            "ECO001_IND1": {
+              "specialty": "اقتصاد کشاورزی",
+              "indicator": "درآمد ناخالص مزرعه",
+              "symbol": "GFI",
+              "unit": "ریال/هکتار",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "GFI = Σ(Price × Yield)",
+              "threshold": {
+                "min": 10,
+                "optimal": 100,
+                "max": 1000
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            },
+            "ECO001_IND2": {
+              "specialty": "اقتصاد کشاورزی",
+              "indicator": "هزینه تولید",
+              "symbol": "PC",
+              "unit": "ریال/هکتار",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "PC = Σ(Input_Costs)",
+              "threshold": {
+                "min": 5,
+                "optimal": 50,
+                "max": 500
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            }
+          }
+        },
+        "LIV001": {
+          "region": "yazd",
+          "specialty": "LIV001",
+          "indicators": {
+            "LIV001_IND1": {
+              "specialty": "دامپروری عمومی",
+              "indicator": "تولید شیر",
+              "symbol": "MY",
+              "unit": "kg/روز",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "MY = f(Breed, Feed, Management)",
+              "threshold": {
+                "min": 5,
+                "optimal": 20,
+                "max": 40
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            }
+          }
+        }
+      },
+      "integrated_output": {},
+      "confidence": 1.0,
+      "timestamp": "2026-08-31T04:39:06.072096"
+    },
+    {
+      "algorithm": "H19",
+      "specialties_used": [
+        "AGR003",
+        "AGR004"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "AGR003": {
+          "region": "yazd",
+          "specialty": "AGR003",
+          "indicators": {
+            "AGR003_IND01": {
+              "specialty": "گیاه‌پزشکی",
+              "indicator": "شدت بیماری",
+              "symbol": "DS",
+              "unit": "%",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "DS = (n_affected / n_total) × 100",
+              "threshold": {
+                "min": 0,
+                "optimal": 5,
+                "max": 100
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            },
+            "AGR003_IND02": {
+              "specialty": "گیاه‌پزشکی",
+              "indicator": "شیوع آفت",
+              "symbol": "PI",
+              "unit": "%",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "PI = (fields_infested / fields_total) × 100",
+              "threshold": {
+                "min": 0,
+                "optimal": 10,
+                "max": 100
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            },
+            "AGR003_IND03": {
+              "specialty": "گیاه‌پزشکی",
+              "indicator": "خسارت اقتصادی",
+              "symbol": "EL",
+              "unit": "تن/هکتار",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "EL = Y_potential × DS × Loss_Factor",
+              "threshold": {
+                "min": 0,
+                "optimal": 0.5,
+                "max": 5
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            }
+          }
+        },
+        "AGR004": {
+          "region": "yazd",
+          "specialty": "AGR004",
+          "indicators": {
+            "AGR004_IND01": {
+              "specialty": "حشره‌شناسی کشاورزی",
+              "indicator": "جمعیت آفت",
+              "symbol": "P",
+              "unit": "عدد/m²",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "P = Σ(count_i) / Area",
+              "threshold": {
+                "min": 0,
+                "optimal": 5,
+                "max": 100
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            },
+            "AGR004_IND02": {
+              "specialty": "حشره‌شناسی کشاورزی",
+              "indicator": "نرخ رشد جمعیت",
+              "symbol": "r",
+              "unit": "روز⁻¹",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "r = ln(N_t/N_0) / t",
+              "threshold": {
+                "min": 0,
+                "optimal": 0.1,
+                "max": 0.5
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            }
+          }
+        }
+      },
+      "integrated_output": {},
+      "confidence": 1.0,
+      "timestamp": "2026-08-31T04:39:06.072096"
+    },
+    {
+      "algorithm": "H21",
+      "specialties_used": [
+        "AGR021",
+        "ENV023",
+        "FOR027"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "AGR021": {
+          "region": "yazd",
+          "specialty": "AGR021",
+          "indicators": {
+            "AGR021_IND01": {
+              "specialty": "حبوبات",
+              "indicator": "تثبیت نیتروژن",
+              "symbol": "N_fix",
+              "unit": "kg N/ha",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "N_fix = B_total × N_content × %Ndfa",
+              "threshold": {
+                "min": 20,
+                "optimal": 100,
+                "max": 300
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            },
+            "AGR021_IND02": {
+              "specialty": "حبوبات",
+              "indicator": "گره‌های ریشه",
+              "symbol": "NN",
+              "unit": "عدد/گیاه",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "NN = Σ nodules / N_plants",
+              "threshold": {
+                "min": 10,
+                "optimal": 50,
+                "max": 150
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            }
+          }
+        },
+        "ENV023": {
+          "region": "yazd",
+          "specialty": "ENV023",
+          "indicators": {
+            "ENV023_IND01": {
+              "specialty": "اکولوژی کشاورزی",
+              "indicator": "تنوع زیستی کشاورزی",
+              "symbol": "Agro_BD",
+              "unit": "شاخص شانون",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+              "threshold": {
+                "min": 0.5,
+                "optimal": 2.5,
+                "max": 4.0
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            },
+            "ENV023_IND02": {
+              "specialty": "اکولوژی کشاورزی",
+              "indicator": "خدمات اکوسیستم",
+              "symbol": "ES",
+              "unit": "شاخص ترکیبی",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "ES = Σ(wᵢ × Serviceᵢ)",
+              "threshold": {
+                "min": 0.2,
+                "optimal": 0.7,
+                "max": 1.0
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            },
+            "ENV023_IND03": {
+              "specialty": "اکولوژی کشاورزی",
+              "indicator": "ترسیب کربن",
+              "symbol": "C_seq",
+              "unit": "تن کربن/هکتار/سال",
+              "value": 0.0,
+              "status": "قابل قبول",
+              "formula": "C_seq = Input - Output",
+              "threshold": {
+                "min": 0,
+                "optimal": 1.5,
+                "max": 5.0
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            },
+            "ENV023_IND04": {
+              "specialty": "اکولوژی کشاورزی",
+              "indicator": "چرخه مواد مغذی",
+              "symbol": "N_cycling",
+              "unit": "درصد بازیافت",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "N_cycling = (N_recycled / N_input) × 100",
+              "threshold": {
+                "min": 20,
+                "optimal": 60,
+                "max": 90
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            },
+            "ENV023_IND05": {
+              "specialty": "اکولوژی کشاورزی",
+              "indicator": "کنترل بیولوژیک آفات",
+              "symbol": "Biocontrol",
+              "unit": "درصد کاهش آفت",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "Biocontrol = (Pest_natural - Pest_actual) / Pest_natural × 100",
+              "threshold": {
+                "min": 10,
+                "optimal": 60,
+                "max": 95
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            }
+          }
+        },
+        "FOR027": {
+          "error": "گرایش FOR027 یافت نشد"
+        }
+      },
+      "integrated_output": {},
+      "confidence": 0.6666666666666666,
+      "timestamp": "2026-08-31T04:39:06.072096"
+    },
+    {
+      "algorithm": "H22",
+      "specialties_used": [
+        "TEC001",
+        "ECO001"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "TEC001": {
+          "region": "yazd",
+          "specialty": "TEC001",
+          "indicators": {
+            "TEC001_IND1": {
+              "specialty": "هوش مصنوعی",
+              "indicator": "دقت پیش‌بینی",
+              "symbol": "Acc",
+              "unit": "%",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "Acc = (TP + TN) / (TP + TN + FP + FN)",
+              "threshold": {
+                "min": 60,
+                "optimal": 85,
+                "max": 99
+              },
+              "inputs_used": {
+                "T": 18.5,
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            }
+          }
+        },
+        "ECO001": {
+          "region": "yazd",
+          "specialty": "ECO001",
+          "indicators": {
+            "ECO001_IND1": {
+              "specialty": "اقتصاد کشاورزی",
+              "indicator": "درآمد ناخالص مزرعه",
+              "symbol": "GFI",
+              "unit": "ریال/هکتار",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "GFI = Σ(Price × Yield)",
+              "threshold": {
+                "min": 10,
+                "optimal": 100,
+                "max": 1000
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            },
+            "ECO001_IND2": {
+              "specialty": "اقتصاد کشاورزی",
+              "indicator": "هزینه تولید",
+              "symbol": "PC",
+              "unit": "ریال/هکتار",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "PC = Σ(Input_Costs)",
+              "threshold": {
+                "min": 5,
+                "optimal": 50,
+                "max": 500
+              },
+              "inputs_used": {
+                "P": 60
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            }
+          }
+        }
+      },
+      "integrated_output": {},
+      "confidence": 1.0,
+      "timestamp": "2026-08-31T04:39:06.072096"
+    },
+    {
+      "algorithm": "H23",
+      "specialties_used": [
+        "TEC009",
+        "TEC012"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "TEC009": {
+          "error": "گرایش TEC009 یافت نشد"
+        },
+        "TEC012": {
+          "error": "گرایش TEC012 یافت نشد"
+        }
+      },
+      "integrated_output": {},
+      "confidence": 0.0,
+      "timestamp": "2026-08-31T04:39:06.072096"
+    },
+    {
+      "algorithm": "H25",
+      "specialties_used": [
+        "ECO006",
+        "TOU002"
+      ],
+      "region": {
+        "name": "yazd",
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "calculations": {
+        "ECO006": {
+          "error": "گرایش ECO006 یافت نشد"
+        },
+        "TOU002": {
+          "region": "yazd",
+          "specialty": "TOU002",
+          "indicators": {
+            "TOU002_IND1": {
+              "specialty": "گردشگری بیابان",
+              "indicator": "جذابیت منظر",
+              "symbol": "LA",
+              "unit": "بدون بعد",
+              "value": 0.0,
+              "status": "زیر حد",
+              "formula": "LA = f(Landscape, Uniqueness, Accessibility)",
+              "threshold": {
+                "min": 0.3,
+                "optimal": 0.7,
+                "max": 1.0
+              },
+              "inputs_used": {
+                "temp": 15,
+                "rain": 300
+              },
+              "source": "knowledge_base",
+              "timestamp": "2026-08-31T04:39:06.072096"
+            }
+          }
+        }
+      },
+      "integrated_output": {},
+      "confidence": 0.5,
+      "timestamp": "2026-08-31T04:39:06.072096"
+    }
+  ]
+}

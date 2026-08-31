@@ -1,11 +1,11 @@
 /**
- * Vite Configuration - Optimized Chunk Splitting
- * ================================================
- * Splits vendor-other into focused chunks:
- * - vendor-antd: UI components (antd ecosystem)
- * - vendor-echarts: Chart library
- * - vendor-deckgl: Map visualization
- * - vendor-arrow: Data processing
+ * Vite Configuration - ECharts Optimized
+ * ========================================
+ * Splits echarts into sub-chunks for better loading:
+ * - vendor-echarts-core: Core functionality (~200KB)
+ * - vendor-echarts-charts: Chart types (~400KB)
+ * - vendor-echarts-components: UI components (~300KB)
+ * - vendor-echarts-renderers: Canvas/SVG renderers (~200KB)
  */
 
 import { defineConfig } from 'vite';
@@ -57,7 +57,7 @@ export default defineConfig(({ mode }) => ({
             if (id.includes('/lucide-react/')) return 'vendor-icons';
             if (id.includes('/@radix-ui/')) return 'vendor-radix';
 
-            // Ant Design Ecosystem (NEW - split from vendor-other)
+            // Ant Design Ecosystem
             if (id.includes('/antd/') ||
                 id.includes('/@ant-design/') ||
                 id.includes('/@rc-component/') ||
@@ -68,10 +68,33 @@ export default defineConfig(({ mode }) => ({
             // Charts - Recharts
             if (id.includes('/recharts/')) return 'vendor-charts';
 
-            // Charts - ECharts (NEW - split from vendor-other)
-            if (id.includes('/echarts/') ||
-                id.includes('/zrender/')) {
-              return 'vendor-echarts';
+            // Charts - ECharts (SPLIT INTO SUB-CHUNKS)
+            if (id.includes('/echarts/') || id.includes('/zrender/')) {
+              // Core: Essential functionality
+              if (id.includes('/core/') ||
+                  id.includes('/util/') ||
+                  id.includes('/model/') ||
+                  id.includes('/coord/')) {
+                return 'vendor-echarts-core';
+              }
+              // Charts: Different chart types
+              if (id.includes('/chart/')) {
+                return 'vendor-echarts-charts';
+              }
+              // Components: UI components (tooltip, legend, etc.)
+              if (id.includes('/component/') ||
+                  id.includes('/label/') ||
+                  id.includes('/visual/')) {
+                return 'vendor-echarts-components';
+              }
+              // Renderers: Canvas/SVG rendering
+              if (id.includes('/canvas/') ||
+                  id.includes('/svg/') ||
+                  id.includes('/zrender/')) {
+                return 'vendor-echarts-renderers';
+              }
+              // Fallback
+              return 'vendor-echarts-core';
             }
 
             // 3D - Three.js
@@ -80,7 +103,7 @@ export default defineConfig(({ mode }) => ({
               return 'vendor-three';
             }
 
-            // Maps - Deck.gl + Luma.gl (NEW - split from vendor-other)
+            // Maps - Deck.gl + Luma.gl
             if (id.includes('/@deck.gl/') ||
                 id.includes('/@luma.gl/') ||
                 id.includes('/@loaders.gl/') ||
@@ -94,7 +117,7 @@ export default defineConfig(({ mode }) => ({
               return 'vendor-maps';
             }
 
-            // Data Processing (NEW - split from vendor-other)
+            // Data Processing
             if (id.includes('/apache-arrow/') ||
                 id.includes('/flatbuffers/')) {
               return 'vendor-data';
@@ -138,7 +161,7 @@ export default defineConfig(({ mode }) => ({
               return 'vendor-utils';
             }
 
-            // Other vendors (catch-all)
+            // Other vendors
             return 'vendor-other';
           }
           return undefined;
