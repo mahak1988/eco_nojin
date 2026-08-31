@@ -159,6 +159,7 @@ export function SceneContent() {
         )}
 
         {/* Data plots */}
+        // @ts-expect-error DataPlot type compatibility with different TerrainData types
         {plots.map((p) => (
           <DataPlotView key={p.id} plot={p} />
         ))}

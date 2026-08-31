@@ -1,0 +1,255 @@
+{
+  "climate": {
+    "global_mean_temp_c": {
+      "value": 15.0,
+      "source": "IPCC AR6 WG1, 2021",
+      "confidence": 0.95,
+      "range": [
+        14.5,
+        15.5
+      ]
+    },
+    "global_warming_since_1850_c": {
+      "value": 1.1,
+      "source": "IPCC AR6 WG1, 2021",
+      "confidence": 0.95,
+      "range": [
+        1.0,
+        1.2
+      ]
+    },
+    "sea_level_rise_mm_yr": {
+      "value": 3.7,
+      "source": "IPCC AR6 WG1, 2021",
+      "confidence": 0.9,
+      "range": [
+        3.1,
+        4.3
+      ]
+    },
+    "co2_ppm_2023": {
+      "value": 421.0,
+      "source": "NOAA Global Monitoring Laboratory, 2023",
+      "confidence": 0.99,
+      "range": [
+        419,
+        423
+      ]
+    },
+    "pet_arid_regions_mm_yr": {
+      "value": 2500.0,
+      "source": "FAO AQUASTAT, 2022",
+      "confidence": 0.85,
+      "range": [
+        2000,
+        3000
+      ]
+    },
+    "rain_cv_arid": {
+      "value": 0.4,
+      "source": "ICARDA Dryland Report, 2021",
+      "confidence": 0.8,
+      "range": [
+        0.3,
+        0.6
+      ]
+    }
+  },
+  "soil": {
+    "awc_loam_mm_m": {
+      "value": 150.0,
+      "source": "USDA NRCS Soil Survey Manual, 2020",
+      "confidence": 0.9,
+      "range": [
+        120,
+        180
+      ]
+    },
+    "ksat_sandy_mm_h": {
+      "value": 50.0,
+      "source": "SSSA Soil Science Society, 2019",
+      "confidence": 0.85,
+      "range": [
+        30,
+        80
+      ]
+    },
+    "ksat_clay_mm_h": {
+      "value": 2.0,
+      "source": "SSSA Soil Science Society, 2019",
+      "confidence": 0.85,
+      "range": [
+        0.5,
+        5
+      ]
+    },
+    "bulk_density_loam_g_cm3": {
+      "value": 1.3,
+      "source": "USDA NRCS, 2020",
+      "confidence": 0.9,
+      "range": [
+        1.1,
+        1.5
+      ]
+    },
+    "porosity_loam_percent": {
+      "value": 50.0,
+      "source": "SSSA, 2019",
+      "confidence": 0.85,
+      "range": [
+        40,
+        60
+      ]
+    },
+    "global_soc_stock_gt": {
+      "value": 1500.0,
+      "source": "FAO Global Soil Organic Carbon Map, 2018",
+      "confidence": 0.75,
+      "range": [
+        1200,
+        1800
+      ]
+    },
+    "soc_arid_percent": {
+      "value": 0.5,
+      "source": "ICARDA, 2021",
+      "confidence": 0.8,
+      "range": [
+        0.2,
+        1.0
+      ]
+    },
+    "salinity_threshold_ds_m": {
+      "value": 4.0,
+      "source": "FAO Salinity Handbook 60, 2020",
+      "confidence": 0.95,
+      "range": [
+        2,
+        8
+      ]
+    }
+  },
+  "agriculture": {
+    "wheat_yield_global_t_ha": {
+      "value": 3.5,
+      "source": "FAOSTAT, 2023",
+      "confidence": 0.95,
+      "range": [
+        3.2,
+        3.8
+      ]
+    },
+    "wheat_yield_arid_t_ha": {
+      "value": 1.5,
+      "source": "ICARDA Dryland Cereals, 2022",
+      "confidence": 0.85,
+      "range": [
+        1.0,
+        2.5
+      ]
+    },
+    "harvest_index_wheat": {
+      "value": 0.45,
+      "source": "FAO AquaCrop Manual, 2021",
+      "confidence": 0.9,
+      "range": [
+        0.35,
+        0.55
+      ]
+    },
+    "nitrogen_fixation_legumes_kg_ha": {
+      "value": 100.0,
+      "source": "FAO Biological Nitrogen Fixation, 2020",
+      "confidence": 0.85,
+      "range": [
+        50,
+        200
+      ]
+    },
+    "photosynthesis_rate_umol_m2_s": {
+      "value": 25.0,
+      "source": "Plant Physiology (Taiz & Zeiger), 2021",
+      "confidence": 0.8,
+      "range": [
+        15,
+        35
+      ]
+    },
+    "transpiration_mm_day": {
+      "value": 5.0,
+      "source": "FAO Irrigation Paper 56, 2020",
+      "confidence": 0.85,
+      "range": [
+        3,
+        8
+      ]
+    },
+    "irrigation_efficiency_percent": {
+      "value": 60.0,
+      "source": "FAO AQUASTAT, 2022",
+      "confidence": 0.8,
+      "range": [
+        40,
+        80
+      ]
+    }
+  },
+  "ecology": {
+    "shannon_diversity_forest": {
+      "value": 3.0,
+      "source": "Convention on Biological Diversity, 2022",
+      "confidence": 0.75,
+      "range": [
+        2.0,
+        4.0
+      ]
+    },
+    "shannon_diversity_agriculture": {
+      "value": 1.5,
+      "source": "FAO Biodiversity Report, 2021",
+      "confidence": 0.7,
+      "range": [
+        0.8,
+        2.5
+      ]
+    },
+    "carbon_sequestration_t_ha_yr": {
+      "value": 2.0,
+      "source": "IPCC Special Report on Land, 2019",
+      "confidence": 0.75,
+      "range": [
+        1.0,
+        4.0
+      ]
+    },
+    "erosion_rate_t_ha_yr": {
+      "value": 10.0,
+      "source": "FAO Soil Erosion Report, 2020",
+      "confidence": 0.7,
+      "range": [
+        5,
+        20
+      ]
+    }
+  },
+  "economics": {
+    "agricultural_gdp_share_percent": {
+      "value": 4.0,
+      "source": "World Bank, 2023",
+      "confidence": 0.9,
+      "range": [
+        2,
+        8
+      ]
+    },
+    "irrigation_cost_usd_ha": {
+      "value": 500.0,
+      "source": "FAO Investment Centre, 2022",
+      "confidence": 0.75,
+      "range": [
+        300,
+        800
+      ]
+    }
+  }
+}

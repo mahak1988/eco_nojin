@@ -20,3 +20,35 @@ apiClient.interceptors.response.use(
     return Promise.reject(normalizeApiError(error));
   }
 );
+
+
+/**
+ * Get access token from localStorage
+ */
+export function getAccessToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return window.localStorage.getItem('access_token');
+}
+
+
+/**
+ * Normalize API error for consistent handling
+ */
+export function normalizeApiError(error: unknown): {
+  message: string;
+  status?: number;
+  code?: string;
+} {
+  if (error instanceof Error) {
+    return { message: error.message };
+  }
+  if (typeof error === 'object' && error !== null) {
+    const err = error as Record<string, unknown>;
+    return {
+      message: (err.message as string) || 'Unknown error',
+      status: err.status as number | undefined,
+      code: err.code as string | undefined,
+    };
+  }
+  return { message: String(error) };
+}
