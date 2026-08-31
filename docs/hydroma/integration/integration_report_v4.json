@@ -1,0 +1,277 @@
+{
+  "generated_at": "2026-08-31T09:15:36.451608",
+  "version": "4.0-integrated",
+  "summary": {
+    "total_tests": 20,
+    "passed": 20,
+    "failed": 0,
+    "critical": 0,
+    "average_confidence": 1.0,
+    "pass_rate_percent": 100.0,
+    "tests": [
+      {
+        "test": "ادغام H01",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 3,
+        "valid_calculations": 3,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H02",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 3,
+        "valid_calculations": 3,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H04",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 2,
+        "valid_calculations": 2,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H05",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 3,
+        "valid_calculations": 3,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H06",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 2,
+        "valid_calculations": 2,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H07",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 1,
+        "valid_calculations": 1,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H09",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 3,
+        "valid_calculations": 3,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H10",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 3,
+        "valid_calculations": 3,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H11",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 1,
+        "valid_calculations": 1,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H12",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 1,
+        "valid_calculations": 1,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H13",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 3,
+        "valid_calculations": 3,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H14",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 3,
+        "valid_calculations": 3,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H15",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 2,
+        "valid_calculations": 2,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H17",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 2,
+        "valid_calculations": 2,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H18",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 3,
+        "valid_calculations": 3,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H19",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 2,
+        "valid_calculations": 2,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H21",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 3,
+        "valid_calculations": 3,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H22",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 2,
+        "valid_calculations": 2,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H23",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 2,
+        "valid_calculations": 2,
+        "severity": "info"
+      },
+      {
+        "test": "ادغام H25",
+        "passed": true,
+        "confidence": 1.0,
+        "specialties_count": 2,
+        "valid_calculations": 2,
+        "severity": "info"
+      }
+    ]
+  },
+  "algorithm_specialty_map": {
+    "H01": [
+      "CLI001",
+      "WAS001",
+      "AGR020"
+    ],
+    "H02": [
+      "CLI007",
+      "AGR009",
+      "AGR020"
+    ],
+    "H04": [
+      "CLI012",
+      "AGR009"
+    ],
+    "H05": [
+      "AGR020",
+      "AGR015",
+      "CLI001"
+    ],
+    "H06": [
+      "CLI024",
+      "CLI007"
+    ],
+    "H07": [
+      "AGR015"
+    ],
+    "H09": [
+      "WAS011",
+      "WAS006",
+      "AGR024"
+    ],
+    "H10": [
+      "GEO003",
+      "GOV010",
+      "AGR024"
+    ],
+    "H11": [
+      "WAS018"
+    ],
+    "H12": [
+      "WAS011"
+    ],
+    "H13": [
+      "FOR001",
+      "FOR013",
+      "ENV023"
+    ],
+    "H14": [
+      "GEO017",
+      "GOV016",
+      "GOV021"
+    ],
+    "H15": [
+      "AGR010",
+      "AGR020"
+    ],
+    "H17": [
+      "AGR010",
+      "ENV017"
+    ],
+    "H18": [
+      "AGR020",
+      "ECO001",
+      "LIV001"
+    ],
+    "H19": [
+      "AGR003",
+      "AGR004"
+    ],
+    "H21": [
+      "AGR021",
+      "ENV023",
+      "FOR027"
+    ],
+    "H22": [
+      "TEC001",
+      "ECO001"
+    ],
+    "H23": [
+      "TEC009",
+      "TEC012"
+    ],
+    "H25": [
+      "ECO006",
+      "TOU002"
+    ]
+  },
+  "test_region": "semi_arid",
+  "regional_data_used": [
+    "hyper_arid",
+    "arid",
+    "semi_arid",
+    "mediterranean",
+    "tropical_savanna",
+    "tropical_rainforest",
+    "temperate_continental",
+    "boreal",
+    "coastal_saline",
+    "volcanic",
+    "alpine",
+    "oceanic"
+  ]
+}

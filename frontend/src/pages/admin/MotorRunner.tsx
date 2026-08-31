@@ -21,6 +21,7 @@ interface SiteRow {
   lat?: number;
   lon?: number;
   koppen?: string;
+  elevation_m?: number;
 }
 
 export default function MotorRunner() {
