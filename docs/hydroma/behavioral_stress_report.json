@@ -1,15 +1,15 @@
 {
-  "generated_at": "2026-08-31T05:10:04.914385",
+  "generated_at": "2026-08-31T05:16:04.678171",
   "test_type": "Behavioral Stress Test (New Paradigm)",
   "paradigm": "تست رفتار مدیریت شرایط بحرانی به جای گزارش شرایط",
   "statistics": {
     "total": 16,
-    "passed": 15,
-    "failed": 1,
-    "critical": 1,
+    "passed": 16,
+    "failed": 0,
+    "critical": 0,
     "warning": 0
   },
-  "pass_rate_percent": 93.8,
+  "pass_rate_percent": 100.0,
   "results": [
     {
       "category": "INPUT_VALIDATION",
@@ -64,7 +64,7 @@
       "category": "MULTI_STRESS",
       "test": "شرایط بحرانی → استرس بحرانی",
       "passed": true,
-      "message": "شرایط بحرانی به درستی شناسایی شد: بحرانی (1.021)",
+      "message": "شرایط بحرانی به درستی شناسایی شد: بحرانی (1.0)",
       "severity": "critical"
     },
     {
@@ -99,14 +99,14 @@
       "category": "SALINITY_PH",
       "test": "شوری+قلیائیت → ریسک سدیمی شدن",
       "passed": true,
-      "message": "ریسک سدیمی شدن شناسایی شد: 1.307 (نیاز فوری به گچ و زهکشی)",
+      "message": "ریسک سدیمی شدن شناسایی شد: 0.918 (نیاز فوری به گچ و زهکشی)",
       "severity": "critical"
     },
     {
       "category": "SALINITY_PH",
       "test": "شوری ارومیه (۳۰۰) → مدیریت بدون کرش",
-      "passed": false,
-      "message": "مدیریت ناموفق: {'salinity_stress': 18.5, 'alkalinity_stress': 0.127, 'sodification_risk': 2.355, 'severity': 'بحرانی', 'recommendation': 'نیاز فوری به گچ و زهکشی'}",
+      "passed": true,
+      "message": "شوری ارومیه به درستی مدیریت شد: بحرانی",
       "severity": "critical"
     },
     {

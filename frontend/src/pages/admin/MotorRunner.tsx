@@ -155,7 +155,7 @@ export default function MotorRunner() {
         {site && (
           <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
             پروفایل: {site.country} / {site.admin1_city || site.province} | ارتفاع{' '}
-            {site.elevation_m} متر | اقلیم {site.koppen || '—'}
+            {site?.elevation_m} متر | اقلیم {site.koppen || '—'}
           </div>
         )}
 

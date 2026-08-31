@@ -271,7 +271,8 @@ function MeasurementMarkers({
 
         return (
           <group key={`line-${i}`}>
-            <line geometry={lineGeom}>
+            {/* @ts-expect-error Three.js line */}
+              <line geometry={lineGeom}>
               <lineBasicMaterial color="#fbbf24" linewidth={2} />
             </line>
             <Html position={[mid.x, mid.y + 0.5, mid.z]}>

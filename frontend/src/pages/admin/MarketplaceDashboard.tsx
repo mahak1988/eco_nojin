@@ -29,7 +29,7 @@ import { ProductsTable } from '../../features/marketplace/components/ProductsTab
 import { MarketplaceErrorBoundary } from '../../features/marketplace/components/MarketplaceErrorBoundary';
 import { isPendingOrder, isCompletedOrder } from '../../features/marketplace/constants/orderStatus';
 import { getOrderAmount } from '../../features/marketplace/utils/formatters';
-import type { DerivedOrderData, PieDataPoint } from '../../features/marketplace/types';
+import type { DerivedOrderData, PieDataPoint } from '../../features/marketplace/types/marketplace.types';
 
 import './AdminTheme.css';
 import './AdminPanelAdvanced.css';

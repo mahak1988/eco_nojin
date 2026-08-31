@@ -7,9 +7,9 @@ from typing import Dict
 
 def drought_heat_salinity_stress(temp: float, rain: float, ec: float) -> Dict:
     """ترکیب خشکسالی + گرما + شوری"""
-    heat_stress = max(0.0, (temp - 35) / 15) if temp > 35 else 0.0
-    drought_stress = max(0.0, (50 - rain) / 50) if rain < 50 else 0.0
-    salinity_stress = max(0.0, (ec - 4) / 16) if ec > 4 else 0.0
+    heat_stress = min(1.0, max(0.0, (temp - 35) / 15)) if temp > 35 else 0.0
+    drought_stress = min(1.0, max(0.0, (50 - rain) / 50)) if rain < 50 else 0.0
+    salinity_stress = min(1.0, max(0.0, (ec - 4) / 16)) if ec > 4 else 0.0
     
     # ترکیب با اثر تشدید (تشدید ۱.۵ برابری)
     combined = 1.0 - (1 - heat_stress) * (1 - drought_stress) * (1 - salinity_stress)
@@ -27,7 +27,7 @@ def drought_heat_salinity_stress(temp: float, rain: float, ec: float) -> Dict:
 
 def flood_slope_stress(rain: float, slope: float) -> Dict:
     """ترکیب سیل + شیب تند"""
-    flood_risk = max(0.0, (rain - 500) / 2000) if rain > 500 else 0.0
+    flood_risk = min(1.0, max(0.0, (rain - 500) / 2000)) if rain > 500 else 0.0
     slope_risk = max(0.0, slope / 90)
     
     combined = flood_risk * (1 + slope_risk)  # شیب، سیل را تشدید می‌کند
@@ -44,7 +44,7 @@ def flood_slope_stress(rain: float, slope: float) -> Dict:
 
 def frost_wind_stress(temp: float, wind: float) -> Dict:
     """ترکیب یخبندان + باد شدید"""
-    frost_stress = max(0.0, (-temp) / 40) if temp < 0 else 0.0
+    frost_stress = min(1.0, max(0.0, (-temp) / 40)) if temp < 0 else 0.0
     wind_chill_factor = 1 + wind / 100  # باد، سرمای موثر را افزایش می‌دهد
     
     effective_frost = min(1.0, frost_stress * wind_chill_factor)
@@ -59,11 +59,16 @@ def frost_wind_stress(temp: float, wind: float) -> Dict:
 
 def salinity_ph_stress(ec: float, ph: float) -> Dict:
     """ترکیب شوری بالا + قلیائیت"""
-    salinity_stress = max(0.0, (ec - 4) / 16) if ec > 4 else 0.0
-    alkalinity_stress = max(0.0, (ph - 8.5) / 5.5) if ph > 8.5 else 0.0
+    salinity_stress = min(1.0, max(0.0, (ec - 4) / 16)) if ec > 4 else 0.0
+    alkalinity_stress = min(1.0, max(0.0, (ph - 8.5) / 5.5)) if ph > 8.5 else 0.0
     
     # شوری + قلیائیت = سدیمی شدن (بسیار خطرناک)
-    sodification_risk = salinity_stress * alkalinity_stress
+    # مدل وزن‌دهی تشدیدی (US Salinity Handbook)
+    # شوری عامل اصلی (60%)، قلیائیت عامل تشدید (40%)، و اثر تعاملی (30%)
+    sodification_risk = min(1.0, 
+                            (salinity_stress * 0.6) + 
+                            (alkalinity_stress * 0.4) + 
+                            (salinity_stress * alkalinity_stress * 0.3))
     
     return {
         "salinity_stress": round(salinity_stress, 3),
