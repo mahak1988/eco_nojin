@@ -1,0 +1,1876 @@
+{
+  "R01_yazd_iran": {
+    "forecast_id": "HYD-R01_yazd_iran-20260831-v2",
+    "generated_at": "2026-08-31T03:49:40.798518",
+    "version": "2.0-improved",
+    "region": {
+      "id": "R01_yazd_iran",
+      "name_fa": "یزد، ایران",
+      "name_en": "Yazd, Iran",
+      "continent": "آسیا",
+      "country": "ایران",
+      "koppen": "BWh",
+      "coordinates": {
+        "lat": 31.89,
+        "lon": 54.36,
+        "elevation_m": 1237
+      }
+    },
+    "horizon_years": 10,
+    "scenarios": {
+      "optimistic": {
+        "name_fa": "خوشبینانه",
+        "name_en": "Optimistic",
+        "rcp_scenario": "RCP 2.6",
+        "description": "کاهش انتشار گازهای گلخانه‌ای (RCP 2.6)، اقدامات احیای مؤثر",
+        "climate_changes": {
+          "temp_change_c": 1.0,
+          "rain_change_percent": 5.0,
+          "et0_change_percent": 3.0,
+          "co2_ppm_change": 50
+        },
+        "yield_prediction": {
+          "P10": 0.39,
+          "P50": 0.59,
+          "P90": 0.8,
+          "unit": "تن/هکتار",
+          "base_yield": 0.63
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": 0.03,
+          "ec_trend_ds_m_per_year": 0.255,
+          "awc_change_percent": 7.5
+        },
+        "risk_level": "Medium",
+        "management_quality": 0.8,
+        "adaptation_capacity": 0.8
+      },
+      "baseline": {
+        "name_fa": "پایه",
+        "name_en": "Baseline",
+        "rcp_scenario": "RCP 4.5",
+        "description": "ادامه روند فعلی (RCP 4.5)، بدون تغییرات عمده",
+        "climate_changes": {
+          "temp_change_c": 2.0,
+          "rain_change_percent": -5.0,
+          "et0_change_percent": 8.0,
+          "co2_ppm_change": 80
+        },
+        "yield_prediction": {
+          "P10": 0.29,
+          "P50": 0.45,
+          "P90": 0.61,
+          "unit": "تن/هکتار",
+          "base_yield": 0.63
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.11,
+          "ec_trend_ds_m_per_year": 0.3,
+          "awc_change_percent": 0.0
+        },
+        "risk_level": "High",
+        "management_quality": 0.5,
+        "adaptation_capacity": 0.5
+      },
+      "pessimistic": {
+        "name_fa": "بدبینانه",
+        "name_en": "Pessimistic",
+        "rcp_scenario": "RCP 8.5",
+        "description": "انتشار بالا (RCP 8.5)، عدم اقدام مؤثر",
+        "climate_changes": {
+          "temp_change_c": 4.0,
+          "rain_change_percent": -15.0,
+          "et0_change_percent": 15.0,
+          "co2_ppm_change": 150
+        },
+        "yield_prediction": {
+          "P10": 0.16,
+          "P50": 0.24,
+          "P90": 0.33,
+          "unit": "تن/هکتار",
+          "base_yield": 0.63
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.21,
+          "ec_trend_ds_m_per_year": 0.43,
+          "awc_change_percent": -5.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.3,
+        "adaptation_capacity": 0.2
+      },
+      "crisis": {
+        "name_fa": "بحران",
+        "name_en": "Crisis",
+        "rcp_scenario": "RCP 8.5+",
+        "description": "شرایط بحرانی (RCP 8.5+)، بلایای مکرر و شدید",
+        "climate_changes": {
+          "temp_change_c": 6.0,
+          "rain_change_percent": -25.0,
+          "et0_change_percent": 25.0,
+          "co2_ppm_change": 200
+        },
+        "yield_prediction": {
+          "P10": 0.13,
+          "P50": 0.2,
+          "P90": 0.27,
+          "unit": "تن/هکتار",
+          "base_yield": 0.63
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.31,
+          "ec_trend_ds_m_per_year": 0.46,
+          "awc_change_percent": -10.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.1,
+        "adaptation_capacity": 0.1
+      }
+    },
+    "disaster_probabilities": {
+      "خشکسالی": {
+        "annual_probability": 0.25,
+        "last_major_event": 1386,
+        "expected_intensity": "متوسط تا شدید"
+      },
+      "ریزگرد": {
+        "annual_probability": 0.15,
+        "last_major_event": 1401,
+        "expected_intensity": "کم تا متوسط"
+      },
+      "موج گرما": {
+        "annual_probability": 0.2,
+        "last_major_event": 1400,
+        "expected_intensity": "متوسط تا شدید"
+      }
+    },
+    "recommendations": {
+      "optimistic": [
+        "اجرای برنامه آبشویی منظم با محاسبه دقیق LR",
+        "بهبود زهکشی (سطحی و زیرسطحی)",
+        "استفاده از amendments (گچ، گوگرد)",
+        "آمادگی برای خشکسالی (احتمال 25٪/سال)"
+      ],
+      "baseline": [
+        "افزایش فوری مواد آلی خاک (کمپوست، کود سبز، biochar)",
+        "کشاورزی حفاظتی (کم‌خاک‌ورزی، no-till)",
+        "کشت پوششی در فصول غیرکاشت",
+        "اجرای برنامه آبشویی منظم با محاسبه دقیق LR",
+        "بهبود زهکشی (سطحی و زیرسطحی)",
+        "استفاده از amendments (گچ، گوگرد)",
+        "آمادگی برای خشکسالی (احتمال 25٪/سال)"
+      ],
+      "pessimistic": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "بهبود سیستم‌های آبیاری و افزایش راندمان",
+        "جمع‌آوری آب باران"
+      ],
+      "crisis": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "سرمایه‌گذاری در سیستم‌های آبیاری با راندمان بالا (>90%)",
+        "جمع‌آوری و ذخیره آب باران"
+      ]
+    },
+    "confidence_level": "Medium-High",
+    "data_quality": "Good",
+    "model_improvements": [
+      "فرمول‌های تغییرات اقلیمی واقع‌بینانه‌تر (RCP scenarios)",
+      "الگوریتم محاسبه ریسک بهبودیافته",
+      "تخمین عملکرد پایه دقیق‌تر بر اساس نوع محصول",
+      "توصیه‌های متنوع‌تر بر اساس سناریو"
+    ],
+    "local_risk_factors": [
+      "کمبود شدید آب",
+      "شوری",
+      "ریزگرد مکرر"
+    ]
+  },
+  "R02_khuzestan_iran": {
+    "forecast_id": "HYD-R02_khuzestan_iran-20260831-v2",
+    "generated_at": "2026-08-31T03:49:40.798518",
+    "version": "2.0-improved",
+    "region": {
+      "id": "R02_khuzestan_iran",
+      "name_fa": "خوزستان، ایران",
+      "name_en": "Khuzestan, Iran",
+      "continent": "آسیا",
+      "country": "ایران",
+      "koppen": "BSh",
+      "coordinates": {
+        "lat": 31.32,
+        "lon": 48.69,
+        "elevation_m": 20
+      }
+    },
+    "horizon_years": 10,
+    "scenarios": {
+      "optimistic": {
+        "name_fa": "خوشبینانه",
+        "name_en": "Optimistic",
+        "rcp_scenario": "RCP 2.6",
+        "description": "کاهش انتشار گازهای گلخانه‌ای (RCP 2.6)، اقدامات احیای مؤثر",
+        "climate_changes": {
+          "temp_change_c": 1.0,
+          "rain_change_percent": 5.0,
+          "et0_change_percent": 3.0,
+          "co2_ppm_change": 50
+        },
+        "yield_prediction": {
+          "P10": 0.39,
+          "P50": 0.59,
+          "P90": 0.8,
+          "unit": "تن/هکتار",
+          "base_yield": 0.63
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": 0.03,
+          "ec_trend_ds_m_per_year": 0.255,
+          "awc_change_percent": 7.5
+        },
+        "risk_level": "Medium",
+        "management_quality": 0.8,
+        "adaptation_capacity": 0.8
+      },
+      "baseline": {
+        "name_fa": "پایه",
+        "name_en": "Baseline",
+        "rcp_scenario": "RCP 4.5",
+        "description": "ادامه روند فعلی (RCP 4.5)، بدون تغییرات عمده",
+        "climate_changes": {
+          "temp_change_c": 2.0,
+          "rain_change_percent": -5.0,
+          "et0_change_percent": 8.0,
+          "co2_ppm_change": 80
+        },
+        "yield_prediction": {
+          "P10": 0.29,
+          "P50": 0.45,
+          "P90": 0.61,
+          "unit": "تن/هکتار",
+          "base_yield": 0.63
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.11,
+          "ec_trend_ds_m_per_year": 0.3,
+          "awc_change_percent": 0.0
+        },
+        "risk_level": "High",
+        "management_quality": 0.5,
+        "adaptation_capacity": 0.5
+      },
+      "pessimistic": {
+        "name_fa": "بدبینانه",
+        "name_en": "Pessimistic",
+        "rcp_scenario": "RCP 8.5",
+        "description": "انتشار بالا (RCP 8.5)، عدم اقدام مؤثر",
+        "climate_changes": {
+          "temp_change_c": 4.0,
+          "rain_change_percent": -15.0,
+          "et0_change_percent": 15.0,
+          "co2_ppm_change": 150
+        },
+        "yield_prediction": {
+          "P10": 0.16,
+          "P50": 0.24,
+          "P90": 0.33,
+          "unit": "تن/هکتار",
+          "base_yield": 0.63
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.21,
+          "ec_trend_ds_m_per_year": 0.43,
+          "awc_change_percent": -5.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.3,
+        "adaptation_capacity": 0.2
+      },
+      "crisis": {
+        "name_fa": "بحران",
+        "name_en": "Crisis",
+        "rcp_scenario": "RCP 8.5+",
+        "description": "شرایط بحرانی (RCP 8.5+)، بلایای مکرر و شدید",
+        "climate_changes": {
+          "temp_change_c": 6.0,
+          "rain_change_percent": -25.0,
+          "et0_change_percent": 25.0,
+          "co2_ppm_change": 200
+        },
+        "yield_prediction": {
+          "P10": 0.13,
+          "P50": 0.2,
+          "P90": 0.27,
+          "unit": "تن/هکتار",
+          "base_yield": 0.63
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.31,
+          "ec_trend_ds_m_per_year": 0.46,
+          "awc_change_percent": -10.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.1,
+        "adaptation_capacity": 0.1
+      }
+    },
+    "disaster_probabilities": {
+      "خشکسالی": {
+        "annual_probability": 0.2,
+        "last_major_event": 1388,
+        "expected_intensity": "متوسط تا شدید"
+      },
+      "سیل": {
+        "annual_probability": 0.1,
+        "last_major_event": 1398,
+        "expected_intensity": "کم تا متوسط"
+      },
+      "ریزگرد": {
+        "annual_probability": 0.25,
+        "last_major_event": 1401,
+        "expected_intensity": "متوسط تا شدید"
+      }
+    },
+    "recommendations": {
+      "optimistic": [
+        "اجرای برنامه آبشویی منظم با محاسبه دقیق LR",
+        "بهبود زهکشی (سطحی و زیرسطحی)",
+        "استفاده از amendments (گچ، گوگرد)",
+        "آمادگی برای ریزگرد (احتمال 25٪/سال)"
+      ],
+      "baseline": [
+        "افزایش فوری مواد آلی خاک (کمپوست، کود سبز، biochar)",
+        "کشاورزی حفاظتی (کم‌خاک‌ورزی، no-till)",
+        "کشت پوششی در فصول غیرکاشت",
+        "اجرای برنامه آبشویی منظم با محاسبه دقیق LR",
+        "بهبود زهکشی (سطحی و زیرسطحی)",
+        "استفاده از amendments (گچ، گوگرد)",
+        "آمادگی برای ریزگرد (احتمال 25٪/سال)"
+      ],
+      "pessimistic": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "بهبود سیستم‌های آبیاری و افزایش راندمان",
+        "جمع‌آوری آب باران"
+      ],
+      "crisis": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "سرمایه‌گذاری در سیستم‌های آبیاری با راندمان بالا (>90%)",
+        "جمع‌آوری و ذخیره آب باران"
+      ]
+    },
+    "confidence_level": "Medium-High",
+    "data_quality": "Good",
+    "model_improvements": [
+      "فرمول‌های تغییرات اقلیمی واقع‌بینانه‌تر (RCP scenarios)",
+      "الگوریتم محاسبه ریسک بهبودیافته",
+      "تخمین عملکرد پایه دقیق‌تر بر اساس نوع محصول",
+      "توصیه‌های متنوع‌تر بر اساس سناریو"
+    ],
+    "local_risk_factors": [
+      "شوری شدید",
+      "ریزگرد بسیار مکرر",
+      "تنش حرارتی"
+    ]
+  },
+  "R03_hamedan_iran": {
+    "forecast_id": "HYD-R03_hamedan_iran-20260831-v2",
+    "generated_at": "2026-08-31T03:49:40.799517",
+    "version": "2.0-improved",
+    "region": {
+      "id": "R03_hamedan_iran",
+      "name_fa": "همدان، ایران",
+      "name_en": "Hamedan, Iran",
+      "continent": "آسیا",
+      "country": "ایران",
+      "koppen": "BSk",
+      "coordinates": {
+        "lat": 34.8,
+        "lon": 48.51,
+        "elevation_m": 1740
+      }
+    },
+    "horizon_years": 10,
+    "scenarios": {
+      "optimistic": {
+        "name_fa": "خوشبینانه",
+        "name_en": "Optimistic",
+        "rcp_scenario": "RCP 2.6",
+        "description": "کاهش انتشار گازهای گلخانه‌ای (RCP 2.6)، اقدامات احیای مؤثر",
+        "climate_changes": {
+          "temp_change_c": 1.0,
+          "rain_change_percent": 5.0,
+          "et0_change_percent": 3.0,
+          "co2_ppm_change": 50
+        },
+        "yield_prediction": {
+          "P10": 2.1,
+          "P50": 3.23,
+          "P90": 4.35,
+          "unit": "تن/هکتار",
+          "base_yield": 3.4
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": 0.03,
+          "ec_trend_ds_m_per_year": -0.065,
+          "awc_change_percent": 7.5
+        },
+        "risk_level": "Medium",
+        "management_quality": 0.8,
+        "adaptation_capacity": 0.8
+      },
+      "baseline": {
+        "name_fa": "پایه",
+        "name_en": "Baseline",
+        "rcp_scenario": "RCP 4.5",
+        "description": "ادامه روند فعلی (RCP 4.5)، بدون تغییرات عمده",
+        "climate_changes": {
+          "temp_change_c": 2.0,
+          "rain_change_percent": -5.0,
+          "et0_change_percent": 8.0,
+          "co2_ppm_change": 80
+        },
+        "yield_prediction": {
+          "P10": 1.58,
+          "P50": 2.44,
+          "P90": 3.29,
+          "unit": "تن/هکتار",
+          "base_yield": 3.4
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.11,
+          "ec_trend_ds_m_per_year": -0.02,
+          "awc_change_percent": 0.0
+        },
+        "risk_level": "High",
+        "management_quality": 0.5,
+        "adaptation_capacity": 0.5
+      },
+      "pessimistic": {
+        "name_fa": "بدبینانه",
+        "name_en": "Pessimistic",
+        "rcp_scenario": "RCP 8.5",
+        "description": "انتشار بالا (RCP 8.5)، عدم اقدام مؤثر",
+        "climate_changes": {
+          "temp_change_c": 4.0,
+          "rain_change_percent": -15.0,
+          "et0_change_percent": 15.0,
+          "co2_ppm_change": 150
+        },
+        "yield_prediction": {
+          "P10": 0.85,
+          "P50": 1.31,
+          "P90": 1.77,
+          "unit": "تن/هکتار",
+          "base_yield": 3.4
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.21,
+          "ec_trend_ds_m_per_year": 0.11,
+          "awc_change_percent": -5.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.3,
+        "adaptation_capacity": 0.2
+      },
+      "crisis": {
+        "name_fa": "بحران",
+        "name_en": "Crisis",
+        "rcp_scenario": "RCP 8.5+",
+        "description": "شرایط بحرانی (RCP 8.5+)، بلایای مکرر و شدید",
+        "climate_changes": {
+          "temp_change_c": 6.0,
+          "rain_change_percent": -25.0,
+          "et0_change_percent": 25.0,
+          "co2_ppm_change": 200
+        },
+        "yield_prediction": {
+          "P10": 0.7,
+          "P50": 1.07,
+          "P90": 1.45,
+          "unit": "تن/هکتار",
+          "base_yield": 3.4
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.31,
+          "ec_trend_ds_m_per_year": 0.14,
+          "awc_change_percent": -10.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.1,
+        "adaptation_capacity": 0.1
+      }
+    },
+    "disaster_probabilities": {
+      "خشکسالی": {
+        "annual_probability": 0.15,
+        "last_major_event": 1386,
+        "expected_intensity": "کم تا متوسط"
+      },
+      "یخبندان": {
+        "annual_probability": 0.3,
+        "last_major_event": 1399,
+        "expected_intensity": "شدید"
+      },
+      "فرسایش": {
+        "annual_probability": 0.2,
+        "last_major_event": 1395,
+        "expected_intensity": "متوسط تا شدید"
+      }
+    },
+    "recommendations": {
+      "optimistic": [
+        "آمادگی برای یخبندان (احتمال 30٪/سال)"
+      ],
+      "baseline": [
+        "افزایش فوری مواد آلی خاک (کمپوست، کود سبز، biochar)",
+        "کشاورزی حفاظتی (کم‌خاک‌ورزی، no-till)",
+        "کشت پوششی در فصول غیرکاشت",
+        "آمادگی برای یخبندان (احتمال 30٪/سال)"
+      ],
+      "pessimistic": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "بهبود سیستم‌های آبیاری و افزایش راندمان",
+        "جمع‌آوری آب باران"
+      ],
+      "crisis": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "سرمایه‌گذاری در سیستم‌های آبیاری با راندمان بالا (>90%)",
+        "جمع‌آوری و ذخیره آب باران"
+      ]
+    },
+    "confidence_level": "Medium-High",
+    "data_quality": "Good",
+    "model_improvements": [
+      "فرمول‌های تغییرات اقلیمی واقع‌بینانه‌تر (RCP scenarios)",
+      "الگوریتم محاسبه ریسک بهبودیافته",
+      "تخمین عملکرد پایه دقیق‌تر بر اساس نوع محصول",
+      "توصیه‌های متنوع‌تر بر اساس سناریو"
+    ],
+    "local_risk_factors": [
+      "یخبندان مکرر",
+      "فرسایش خاک",
+      "نوسانات بارش"
+    ]
+  },
+  "R04_rajasthan_india": {
+    "forecast_id": "HYD-R04_rajasthan_india-20260831-v2",
+    "generated_at": "2026-08-31T03:49:40.799517",
+    "version": "2.0-improved",
+    "region": {
+      "id": "R04_rajasthan_india",
+      "name_fa": "راجستان، هند",
+      "name_en": "Rajasthan, India",
+      "continent": "آسیا",
+      "country": "هند",
+      "koppen": "BSh",
+      "coordinates": {
+        "lat": 26.91,
+        "lon": 75.79,
+        "elevation_m": 430
+      }
+    },
+    "horizon_years": 10,
+    "scenarios": {
+      "optimistic": {
+        "name_fa": "خوشبینانه",
+        "name_en": "Optimistic",
+        "rcp_scenario": "RCP 2.6",
+        "description": "کاهش انتشار گازهای گلخانه‌ای (RCP 2.6)، اقدامات احیای مؤثر",
+        "climate_changes": {
+          "temp_change_c": 1.0,
+          "rain_change_percent": 5.0,
+          "et0_change_percent": 3.0,
+          "co2_ppm_change": 50
+        },
+        "yield_prediction": {
+          "P10": 1.84,
+          "P50": 2.83,
+          "P90": 3.82,
+          "unit": "تن/هکتار",
+          "base_yield": 2.98
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": 0.03,
+          "ec_trend_ds_m_per_year": -0.065,
+          "awc_change_percent": 7.5
+        },
+        "risk_level": "High",
+        "management_quality": 0.8,
+        "adaptation_capacity": 0.8
+      },
+      "baseline": {
+        "name_fa": "پایه",
+        "name_en": "Baseline",
+        "rcp_scenario": "RCP 4.5",
+        "description": "ادامه روند فعلی (RCP 4.5)، بدون تغییرات عمده",
+        "climate_changes": {
+          "temp_change_c": 2.0,
+          "rain_change_percent": -5.0,
+          "et0_change_percent": 8.0,
+          "co2_ppm_change": 80
+        },
+        "yield_prediction": {
+          "P10": 1.39,
+          "P50": 2.14,
+          "P90": 2.88,
+          "unit": "تن/هکتار",
+          "base_yield": 2.98
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.11,
+          "ec_trend_ds_m_per_year": -0.02,
+          "awc_change_percent": 0.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.5,
+        "adaptation_capacity": 0.5
+      },
+      "pessimistic": {
+        "name_fa": "بدبینانه",
+        "name_en": "Pessimistic",
+        "rcp_scenario": "RCP 8.5",
+        "description": "انتشار بالا (RCP 8.5)، عدم اقدام مؤثر",
+        "climate_changes": {
+          "temp_change_c": 4.0,
+          "rain_change_percent": -15.0,
+          "et0_change_percent": 15.0,
+          "co2_ppm_change": 150
+        },
+        "yield_prediction": {
+          "P10": 0.75,
+          "P50": 1.15,
+          "P90": 1.55,
+          "unit": "تن/هکتار",
+          "base_yield": 2.98
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.21,
+          "ec_trend_ds_m_per_year": 0.11,
+          "awc_change_percent": -5.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.3,
+        "adaptation_capacity": 0.2
+      },
+      "crisis": {
+        "name_fa": "بحران",
+        "name_en": "Crisis",
+        "rcp_scenario": "RCP 8.5+",
+        "description": "شرایط بحرانی (RCP 8.5+)، بلایای مکرر و شدید",
+        "climate_changes": {
+          "temp_change_c": 6.0,
+          "rain_change_percent": -25.0,
+          "et0_change_percent": 25.0,
+          "co2_ppm_change": 200
+        },
+        "yield_prediction": {
+          "P10": 0.61,
+          "P50": 0.94,
+          "P90": 1.27,
+          "unit": "تن/هکتار",
+          "base_yield": 2.98
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.31,
+          "ec_trend_ds_m_per_year": 0.14,
+          "awc_change_percent": -10.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.1,
+        "adaptation_capacity": 0.1
+      }
+    },
+    "disaster_probabilities": {
+      "خشکسالی": {
+        "annual_probability": 0.35,
+        "last_major_event": 2019,
+        "expected_intensity": "شدید"
+      },
+      "موج گرما": {
+        "annual_probability": 0.25,
+        "last_major_event": 2022,
+        "expected_intensity": "متوسط تا شدید"
+      },
+      "سیل": {
+        "annual_probability": 0.1,
+        "last_major_event": 2018,
+        "expected_intensity": "کم تا متوسط"
+      }
+    },
+    "recommendations": {
+      "optimistic": [],
+      "baseline": [
+        "افزایش فوری مواد آلی خاک (کمپوست، کود سبز، biochar)",
+        "کشاورزی حفاظتی (کم‌خاک‌ورزی، no-till)",
+        "کشت پوششی در فصول غیرکاشت"
+      ],
+      "pessimistic": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "بهبود سیستم‌های آبیاری و افزایش راندمان",
+        "جمع‌آوری آب باران"
+      ],
+      "crisis": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "سرمایه‌گذاری در سیستم‌های آبیاری با راندمان بالا (>90%)",
+        "جمع‌آوری و ذخیره آب باران"
+      ]
+    },
+    "confidence_level": "Medium-High",
+    "data_quality": "Good",
+    "model_improvements": [
+      "فرمول‌های تغییرات اقلیمی واقع‌بینانه‌تر (RCP scenarios)",
+      "الگوریتم محاسبه ریسک بهبودیافته",
+      "تخمین عملکرد پایه دقیق‌تر بر اساس نوع محصول",
+      "توصیه‌های متنوع‌تر بر اساس سناریو"
+    ],
+    "local_risk_factors": [
+      "خشکسالی بسیار مکرر",
+      "موج گرما شدید",
+      "بارش نامنظم"
+    ]
+  },
+  "R05_amazon_brazil": {
+    "forecast_id": "HYD-R05_amazon_brazil-20260831-v2",
+    "generated_at": "2026-08-31T03:49:40.799517",
+    "version": "2.0-improved",
+    "region": {
+      "id": "R05_amazon_brazil",
+      "name_fa": "آمازون، برزیل",
+      "name_en": "Amazon, Brazil",
+      "continent": "آمریکای جنوبی",
+      "country": "برزیل",
+      "koppen": "Af",
+      "coordinates": {
+        "lat": -3.47,
+        "lon": -62.21,
+        "elevation_m": 80
+      }
+    },
+    "horizon_years": 10,
+    "scenarios": {
+      "optimistic": {
+        "name_fa": "خوشبینانه",
+        "name_en": "Optimistic",
+        "rcp_scenario": "RCP 2.6",
+        "description": "کاهش انتشار گازهای گلخانه‌ای (RCP 2.6)، اقدامات احیای مؤثر",
+        "climate_changes": {
+          "temp_change_c": 1.0,
+          "rain_change_percent": 5.0,
+          "et0_change_percent": 3.0,
+          "co2_ppm_change": 50
+        },
+        "yield_prediction": {
+          "P10": 3.09,
+          "P50": 4.75,
+          "P90": 6.41,
+          "unit": "تن/هکتار",
+          "base_yield": 5.0
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": 0.03,
+          "ec_trend_ds_m_per_year": -0.065,
+          "awc_change_percent": 7.5
+        },
+        "risk_level": "Low-Medium",
+        "management_quality": 0.8,
+        "adaptation_capacity": 0.8
+      },
+      "baseline": {
+        "name_fa": "پایه",
+        "name_en": "Baseline",
+        "rcp_scenario": "RCP 4.5",
+        "description": "ادامه روند فعلی (RCP 4.5)، بدون تغییرات عمده",
+        "climate_changes": {
+          "temp_change_c": 2.0,
+          "rain_change_percent": -5.0,
+          "et0_change_percent": 8.0,
+          "co2_ppm_change": 80
+        },
+        "yield_prediction": {
+          "P10": 2.33,
+          "P50": 3.59,
+          "P90": 4.85,
+          "unit": "تن/هکتار",
+          "base_yield": 5.0
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.11,
+          "ec_trend_ds_m_per_year": -0.02,
+          "awc_change_percent": 0.0
+        },
+        "risk_level": "Medium",
+        "management_quality": 0.5,
+        "adaptation_capacity": 0.5
+      },
+      "pessimistic": {
+        "name_fa": "بدبینانه",
+        "name_en": "Pessimistic",
+        "rcp_scenario": "RCP 8.5",
+        "description": "انتشار بالا (RCP 8.5)، عدم اقدام مؤثر",
+        "climate_changes": {
+          "temp_change_c": 4.0,
+          "rain_change_percent": -15.0,
+          "et0_change_percent": 15.0,
+          "co2_ppm_change": 150
+        },
+        "yield_prediction": {
+          "P10": 1.25,
+          "P50": 1.93,
+          "P90": 2.6,
+          "unit": "تن/هکتار",
+          "base_yield": 5.0
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.21,
+          "ec_trend_ds_m_per_year": 0.11,
+          "awc_change_percent": -5.0
+        },
+        "risk_level": "High",
+        "management_quality": 0.3,
+        "adaptation_capacity": 0.2
+      },
+      "crisis": {
+        "name_fa": "بحران",
+        "name_en": "Crisis",
+        "rcp_scenario": "RCP 8.5+",
+        "description": "شرایط بحرانی (RCP 8.5+)، بلایای مکرر و شدید",
+        "climate_changes": {
+          "temp_change_c": 6.0,
+          "rain_change_percent": -25.0,
+          "et0_change_percent": 25.0,
+          "co2_ppm_change": 200
+        },
+        "yield_prediction": {
+          "P10": 1.03,
+          "P50": 1.58,
+          "P90": 2.14,
+          "unit": "تن/هکتار",
+          "base_yield": 5.0
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.31,
+          "ec_trend_ds_m_per_year": 0.14,
+          "awc_change_percent": -10.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.1,
+        "adaptation_capacity": 0.1
+      }
+    },
+    "disaster_probabilities": {
+      "سیل": {
+        "annual_probability": 0.2,
+        "last_major_event": 2021,
+        "expected_intensity": "متوسط تا شدید"
+      },
+      "خشکسالی": {
+        "annual_probability": 0.05,
+        "last_major_event": 2010,
+        "expected_intensity": "کم"
+      },
+      "آتش‌سوزی": {
+        "annual_probability": 0.15,
+        "last_major_event": 2019,
+        "expected_intensity": "کم تا متوسط"
+      }
+    },
+    "recommendations": {
+      "optimistic": [],
+      "baseline": [
+        "افزایش فوری مواد آلی خاک (کمپوست، کود سبز، biochar)",
+        "کشاورزی حفاظتی (کم‌خاک‌ورزی، no-till)",
+        "کشت پوششی در فصول غیرکاشت"
+      ],
+      "pessimistic": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "بهبود سیستم‌های آبیاری و افزایش راندمان",
+        "جمع‌آوری آب باران"
+      ],
+      "crisis": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "سرمایه‌گذاری در سیستم‌های آبیاری با راندمان بالا (>90%)",
+        "جمع‌آوری و ذخیره آب باران"
+      ]
+    },
+    "confidence_level": "Medium-High",
+    "data_quality": "Good",
+    "model_improvements": [
+      "فرمول‌های تغییرات اقلیمی واقع‌بینانه‌تر (RCP scenarios)",
+      "الگوریتم محاسبه ریسک بهبودیافته",
+      "تخمین عملکرد پایه دقیق‌تر بر اساس نوع محصول",
+      "توصیه‌های متنوع‌تر بر اساس سناریو"
+    ],
+    "local_risk_factors": [
+      "جنگل‌زدایی",
+      "آتش‌سوزی",
+      "تغییر الگوی بارش"
+    ]
+  },
+  "R06_mekong_vietnam": {
+    "forecast_id": "HYD-R06_mekong_vietnam-20260831-v2",
+    "generated_at": "2026-08-31T03:49:40.800517",
+    "version": "2.0-improved",
+    "region": {
+      "id": "R06_mekong_vietnam",
+      "name_fa": "مکونگ، ویتنام",
+      "name_en": "Mekong, Vietnam",
+      "continent": "آسیا",
+      "country": "ویتنام",
+      "koppen": "Aw",
+      "coordinates": {
+        "lat": 10.03,
+        "lon": 105.78,
+        "elevation_m": 2
+      }
+    },
+    "horizon_years": 10,
+    "scenarios": {
+      "optimistic": {
+        "name_fa": "خوشبینانه",
+        "name_en": "Optimistic",
+        "rcp_scenario": "RCP 2.6",
+        "description": "کاهش انتشار گازهای گلخانه‌ای (RCP 2.6)، اقدامات احیای مؤثر",
+        "climate_changes": {
+          "temp_change_c": 1.0,
+          "rain_change_percent": 5.0,
+          "et0_change_percent": 3.0,
+          "co2_ppm_change": 50
+        },
+        "yield_prediction": {
+          "P10": 2.62,
+          "P50": 4.04,
+          "P90": 5.45,
+          "unit": "تن/هکتار",
+          "base_yield": 4.25
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": 0.03,
+          "ec_trend_ds_m_per_year": -0.065,
+          "awc_change_percent": 7.5
+        },
+        "risk_level": "Medium",
+        "management_quality": 0.8,
+        "adaptation_capacity": 0.8
+      },
+      "baseline": {
+        "name_fa": "پایه",
+        "name_en": "Baseline",
+        "rcp_scenario": "RCP 4.5",
+        "description": "ادامه روند فعلی (RCP 4.5)، بدون تغییرات عمده",
+        "climate_changes": {
+          "temp_change_c": 2.0,
+          "rain_change_percent": -5.0,
+          "et0_change_percent": 8.0,
+          "co2_ppm_change": 80
+        },
+        "yield_prediction": {
+          "P10": 1.98,
+          "P50": 3.05,
+          "P90": 4.12,
+          "unit": "تن/هکتار",
+          "base_yield": 4.25
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.11,
+          "ec_trend_ds_m_per_year": -0.02,
+          "awc_change_percent": 0.0
+        },
+        "risk_level": "High",
+        "management_quality": 0.5,
+        "adaptation_capacity": 0.5
+      },
+      "pessimistic": {
+        "name_fa": "بدبینانه",
+        "name_en": "Pessimistic",
+        "rcp_scenario": "RCP 8.5",
+        "description": "انتشار بالا (RCP 8.5)، عدم اقدام مؤثر",
+        "climate_changes": {
+          "temp_change_c": 4.0,
+          "rain_change_percent": -15.0,
+          "et0_change_percent": 15.0,
+          "co2_ppm_change": 150
+        },
+        "yield_prediction": {
+          "P10": 1.07,
+          "P50": 1.64,
+          "P90": 2.21,
+          "unit": "تن/هکتار",
+          "base_yield": 4.25
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.21,
+          "ec_trend_ds_m_per_year": 0.11,
+          "awc_change_percent": -5.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.3,
+        "adaptation_capacity": 0.2
+      },
+      "crisis": {
+        "name_fa": "بحران",
+        "name_en": "Crisis",
+        "rcp_scenario": "RCP 8.5+",
+        "description": "شرایط بحرانی (RCP 8.5+)، بلایای مکرر و شدید",
+        "climate_changes": {
+          "temp_change_c": 6.0,
+          "rain_change_percent": -25.0,
+          "et0_change_percent": 25.0,
+          "co2_ppm_change": 200
+        },
+        "yield_prediction": {
+          "P10": 0.87,
+          "P50": 1.34,
+          "P90": 1.82,
+          "unit": "تن/هکتار",
+          "base_yield": 4.25
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.31,
+          "ec_trend_ds_m_per_year": 0.14,
+          "awc_change_percent": -10.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.1,
+        "adaptation_capacity": 0.1
+      }
+    },
+    "disaster_probabilities": {
+      "سیل": {
+        "annual_probability": 0.3,
+        "last_major_event": 2022,
+        "expected_intensity": "شدید"
+      },
+      "تایفون": {
+        "annual_probability": 0.15,
+        "last_major_event": 2020,
+        "expected_intensity": "کم تا متوسط"
+      },
+      "خشکسالی": {
+        "annual_probability": 0.1,
+        "last_major_event": 2016,
+        "expected_intensity": "کم تا متوسط"
+      }
+    },
+    "recommendations": {
+      "optimistic": [],
+      "baseline": [
+        "افزایش فوری مواد آلی خاک (کمپوست، کود سبز، biochar)",
+        "کشاورزی حفاظتی (کم‌خاک‌ورزی، no-till)",
+        "کشت پوششی در فصول غیرکاشت"
+      ],
+      "pessimistic": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "بهبود سیستم‌های آبیاری و افزایش راندمان",
+        "جمع‌آوری آب باران"
+      ],
+      "crisis": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "سرمایه‌گذاری در سیستم‌های آبیاری با راندمان بالا (>90%)",
+        "جمع‌آوری و ذخیره آب باران"
+      ]
+    },
+    "confidence_level": "Medium-High",
+    "data_quality": "Good",
+    "model_improvements": [
+      "فرمول‌های تغییرات اقلیمی واقع‌بینانه‌تر (RCP scenarios)",
+      "الگوریتم محاسبه ریسک بهبودیافته",
+      "تخمین عملکرد پایه دقیق‌تر بر اساس نوع محصول",
+      "توصیه‌های متنوع‌تر بر اساس سناریو"
+    ],
+    "local_risk_factors": [
+      "سیل مکرر",
+      "نفوذ شوری",
+      "بالا آمدن سطح دریا"
+    ]
+  },
+  "R07_australia_outback": {
+    "forecast_id": "HYD-R07_australia_outback-20260831-v2",
+    "generated_at": "2026-08-31T03:49:40.800517",
+    "version": "2.0-improved",
+    "region": {
+      "id": "R07_australia_outback",
+      "name_fa": "استرالیا (آوتبک)",
+      "name_en": "Australia Outback",
+      "continent": "اقیانوسیه",
+      "country": "استرالیا",
+      "koppen": "BSh",
+      "coordinates": {
+        "lat": -31.95,
+        "lon": 141.46,
+        "elevation_m": 150
+      }
+    },
+    "horizon_years": 10,
+    "scenarios": {
+      "optimistic": {
+        "name_fa": "خوشبینانه",
+        "name_en": "Optimistic",
+        "rcp_scenario": "RCP 2.6",
+        "description": "کاهش انتشار گازهای گلخانه‌ای (RCP 2.6)، اقدامات احیای مؤثر",
+        "climate_changes": {
+          "temp_change_c": 1.0,
+          "rain_change_percent": 5.0,
+          "et0_change_percent": 3.0,
+          "co2_ppm_change": 50
+        },
+        "yield_prediction": {
+          "P10": 1.84,
+          "P50": 2.83,
+          "P90": 3.82,
+          "unit": "تن/هکتار",
+          "base_yield": 2.98
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": 0.03,
+          "ec_trend_ds_m_per_year": -0.065,
+          "awc_change_percent": 7.5
+        },
+        "risk_level": "Medium",
+        "management_quality": 0.8,
+        "adaptation_capacity": 0.8
+      },
+      "baseline": {
+        "name_fa": "پایه",
+        "name_en": "Baseline",
+        "rcp_scenario": "RCP 4.5",
+        "description": "ادامه روند فعلی (RCP 4.5)، بدون تغییرات عمده",
+        "climate_changes": {
+          "temp_change_c": 2.0,
+          "rain_change_percent": -5.0,
+          "et0_change_percent": 8.0,
+          "co2_ppm_change": 80
+        },
+        "yield_prediction": {
+          "P10": 1.39,
+          "P50": 2.14,
+          "P90": 2.88,
+          "unit": "تن/هکتار",
+          "base_yield": 2.98
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.11,
+          "ec_trend_ds_m_per_year": -0.02,
+          "awc_change_percent": 0.0
+        },
+        "risk_level": "High",
+        "management_quality": 0.5,
+        "adaptation_capacity": 0.5
+      },
+      "pessimistic": {
+        "name_fa": "بدبینانه",
+        "name_en": "Pessimistic",
+        "rcp_scenario": "RCP 8.5",
+        "description": "انتشار بالا (RCP 8.5)، عدم اقدام مؤثر",
+        "climate_changes": {
+          "temp_change_c": 4.0,
+          "rain_change_percent": -15.0,
+          "et0_change_percent": 15.0,
+          "co2_ppm_change": 150
+        },
+        "yield_prediction": {
+          "P10": 0.75,
+          "P50": 1.15,
+          "P90": 1.55,
+          "unit": "تن/هکتار",
+          "base_yield": 2.98
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.21,
+          "ec_trend_ds_m_per_year": 0.11,
+          "awc_change_percent": -5.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.3,
+        "adaptation_capacity": 0.2
+      },
+      "crisis": {
+        "name_fa": "بحران",
+        "name_en": "Crisis",
+        "rcp_scenario": "RCP 8.5+",
+        "description": "شرایط بحرانی (RCP 8.5+)، بلایای مکرر و شدید",
+        "climate_changes": {
+          "temp_change_c": 6.0,
+          "rain_change_percent": -25.0,
+          "et0_change_percent": 25.0,
+          "co2_ppm_change": 200
+        },
+        "yield_prediction": {
+          "P10": 0.61,
+          "P50": 0.94,
+          "P90": 1.27,
+          "unit": "تن/هکتار",
+          "base_yield": 2.98
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.31,
+          "ec_trend_ds_m_per_year": 0.14,
+          "awc_change_percent": -10.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.1,
+        "adaptation_capacity": 0.1
+      }
+    },
+    "disaster_probabilities": {
+      "خشکسالی": {
+        "annual_probability": 0.3,
+        "last_major_event": 2019,
+        "expected_intensity": "شدید"
+      },
+      "موج گرما": {
+        "annual_probability": 0.2,
+        "last_major_event": 2020,
+        "expected_intensity": "متوسط تا شدید"
+      },
+      "آتش‌سوزی": {
+        "annual_probability": 0.25,
+        "last_major_event": 2020,
+        "expected_intensity": "متوسط تا شدید"
+      }
+    },
+    "recommendations": {
+      "optimistic": [],
+      "baseline": [
+        "افزایش فوری مواد آلی خاک (کمپوست، کود سبز، biochar)",
+        "کشاورزی حفاظتی (کم‌خاک‌ورزی، no-till)",
+        "کشت پوششی در فصول غیرکاشت"
+      ],
+      "pessimistic": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "بهبود سیستم‌های آبیاری و افزایش راندمان",
+        "جمع‌آوری آب باران"
+      ],
+      "crisis": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "سرمایه‌گذاری در سیستم‌های آبیاری با راندمان بالا (>90%)",
+        "جمع‌آوری و ذخیره آب باران"
+      ]
+    },
+    "confidence_level": "Medium-High",
+    "data_quality": "Good",
+    "model_improvements": [
+      "فرمول‌های تغییرات اقلیمی واقع‌بینانه‌تر (RCP scenarios)",
+      "الگوریتم محاسبه ریسک بهبودیافته",
+      "تخمین عملکرد پایه دقیق‌تر بر اساس نوع محصول",
+      "توصیه‌های متنوع‌تر بر اساس سناریو"
+    ],
+    "local_risk_factors": [
+      "خشکسالی شدید",
+      "آتش‌سوزی گسترده",
+      "ظرفیت آب پایین"
+    ]
+  },
+  "R08_yemen_highlands": {
+    "forecast_id": "HYD-R08_yemen_highlands-20260831-v2",
+    "generated_at": "2026-08-31T03:49:40.800517",
+    "version": "2.0-improved",
+    "region": {
+      "id": "R08_yemen_highlands",
+      "name_fa": "یمن (ارتفاعات)",
+      "name_en": "Yemen Highlands",
+      "continent": "آسیا",
+      "country": "یمن",
+      "koppen": "BWk",
+      "coordinates": {
+        "lat": 15.35,
+        "lon": 44.2,
+        "elevation_m": 2300
+      }
+    },
+    "horizon_years": 10,
+    "scenarios": {
+      "optimistic": {
+        "name_fa": "خوشبینانه",
+        "name_en": "Optimistic",
+        "rcp_scenario": "RCP 2.6",
+        "description": "کاهش انتشار گازهای گلخانه‌ای (RCP 2.6)، اقدامات احیای مؤثر",
+        "climate_changes": {
+          "temp_change_c": 1.0,
+          "rain_change_percent": 5.0,
+          "et0_change_percent": 3.0,
+          "co2_ppm_change": 50
+        },
+        "yield_prediction": {
+          "P10": 1.84,
+          "P50": 2.83,
+          "P90": 3.82,
+          "unit": "تن/هکتار",
+          "base_yield": 2.98
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": 0.03,
+          "ec_trend_ds_m_per_year": -0.065,
+          "awc_change_percent": 7.5
+        },
+        "risk_level": "High",
+        "management_quality": 0.8,
+        "adaptation_capacity": 0.8
+      },
+      "baseline": {
+        "name_fa": "پایه",
+        "name_en": "Baseline",
+        "rcp_scenario": "RCP 4.5",
+        "description": "ادامه روند فعلی (RCP 4.5)، بدون تغییرات عمده",
+        "climate_changes": {
+          "temp_change_c": 2.0,
+          "rain_change_percent": -5.0,
+          "et0_change_percent": 8.0,
+          "co2_ppm_change": 80
+        },
+        "yield_prediction": {
+          "P10": 1.39,
+          "P50": 2.14,
+          "P90": 2.88,
+          "unit": "تن/هکتار",
+          "base_yield": 2.98
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.11,
+          "ec_trend_ds_m_per_year": -0.02,
+          "awc_change_percent": 0.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.5,
+        "adaptation_capacity": 0.5
+      },
+      "pessimistic": {
+        "name_fa": "بدبینانه",
+        "name_en": "Pessimistic",
+        "rcp_scenario": "RCP 8.5",
+        "description": "انتشار بالا (RCP 8.5)، عدم اقدام مؤثر",
+        "climate_changes": {
+          "temp_change_c": 4.0,
+          "rain_change_percent": -15.0,
+          "et0_change_percent": 15.0,
+          "co2_ppm_change": 150
+        },
+        "yield_prediction": {
+          "P10": 0.75,
+          "P50": 1.15,
+          "P90": 1.55,
+          "unit": "تن/هکتار",
+          "base_yield": 2.98
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.21,
+          "ec_trend_ds_m_per_year": 0.11,
+          "awc_change_percent": -5.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.3,
+        "adaptation_capacity": 0.2
+      },
+      "crisis": {
+        "name_fa": "بحران",
+        "name_en": "Crisis",
+        "rcp_scenario": "RCP 8.5+",
+        "description": "شرایط بحرانی (RCP 8.5+)، بلایای مکرر و شدید",
+        "climate_changes": {
+          "temp_change_c": 6.0,
+          "rain_change_percent": -25.0,
+          "et0_change_percent": 25.0,
+          "co2_ppm_change": 200
+        },
+        "yield_prediction": {
+          "P10": 0.61,
+          "P50": 0.94,
+          "P90": 1.27,
+          "unit": "تن/هکتار",
+          "base_yield": 2.98
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.31,
+          "ec_trend_ds_m_per_year": 0.14,
+          "awc_change_percent": -10.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.1,
+        "adaptation_capacity": 0.1
+      }
+    },
+    "disaster_probabilities": {
+      "خشکسالی": {
+        "annual_probability": 0.3,
+        "last_major_event": 2021,
+        "expected_intensity": "شدید"
+      },
+      "سیل": {
+        "annual_probability": 0.15,
+        "last_major_event": 2020,
+        "expected_intensity": "کم تا متوسط"
+      },
+      "فرسایش": {
+        "annual_probability": 0.35,
+        "last_major_event": 2019,
+        "expected_intensity": "شدید"
+      }
+    },
+    "recommendations": {
+      "optimistic": [],
+      "baseline": [
+        "افزایش فوری مواد آلی خاک (کمپوست، کود سبز، biochar)",
+        "کشاورزی حفاظتی (کم‌خاک‌ورزی، no-till)",
+        "کشت پوششی در فصول غیرکاشت"
+      ],
+      "pessimistic": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "بهبود سیستم‌های آبیاری و افزایش راندمان",
+        "جمع‌آوری آب باران"
+      ],
+      "crisis": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "سرمایه‌گذاری در سیستم‌های آبیاری با راندمان بالا (>90%)",
+        "جمع‌آوری و ذخیره آب باران"
+      ]
+    },
+    "confidence_level": "Medium-High",
+    "data_quality": "Good",
+    "model_improvements": [
+      "فرمول‌های تغییرات اقلیمی واقع‌بینانه‌تر (RCP scenarios)",
+      "الگوریتم محاسبه ریسک بهبودیافته",
+      "تخمین عملکرد پایه دقیق‌تر بر اساس نوع محصول",
+      "توصیه‌های متنوع‌تر بر اساس سناریو"
+    ],
+    "local_risk_factors": [
+      "شیب زیاد",
+      "فرسایش شدید",
+      "جنگ",
+      "کمبود آب"
+    ]
+  },
+  "R09_scandinavia": {
+    "forecast_id": "HYD-R09_scandinavia-20260831-v2",
+    "generated_at": "2026-08-31T03:49:40.801515",
+    "version": "2.0-improved",
+    "region": {
+      "id": "R09_scandinavia",
+      "name_fa": "اسکاندیناوی (سوئد)",
+      "name_en": "Scandinavia (Sweden)",
+      "continent": "اروپا",
+      "country": "سوئد",
+      "koppen": "Dfb",
+      "coordinates": {
+        "lat": 59.33,
+        "lon": 18.07,
+        "elevation_m": 40
+      }
+    },
+    "horizon_years": 10,
+    "scenarios": {
+      "optimistic": {
+        "name_fa": "خوشبینانه",
+        "name_en": "Optimistic",
+        "rcp_scenario": "RCP 2.6",
+        "description": "کاهش انتشار گازهای گلخانه‌ای (RCP 2.6)، اقدامات احیای مؤثر",
+        "climate_changes": {
+          "temp_change_c": 1.0,
+          "rain_change_percent": 5.0,
+          "et0_change_percent": 3.0,
+          "co2_ppm_change": 50
+        },
+        "yield_prediction": {
+          "P10": 3.13,
+          "P50": 4.82,
+          "P90": 6.51,
+          "unit": "تن/هکتار",
+          "base_yield": 5.08
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": 0.03,
+          "ec_trend_ds_m_per_year": -0.065,
+          "awc_change_percent": 7.5
+        },
+        "risk_level": "Low-Medium",
+        "management_quality": 0.8,
+        "adaptation_capacity": 0.8
+      },
+      "baseline": {
+        "name_fa": "پایه",
+        "name_en": "Baseline",
+        "rcp_scenario": "RCP 4.5",
+        "description": "ادامه روند فعلی (RCP 4.5)، بدون تغییرات عمده",
+        "climate_changes": {
+          "temp_change_c": 2.0,
+          "rain_change_percent": -5.0,
+          "et0_change_percent": 8.0,
+          "co2_ppm_change": 80
+        },
+        "yield_prediction": {
+          "P10": 2.37,
+          "P50": 3.64,
+          "P90": 4.92,
+          "unit": "تن/هکتار",
+          "base_yield": 5.08
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.11,
+          "ec_trend_ds_m_per_year": -0.02,
+          "awc_change_percent": 0.0
+        },
+        "risk_level": "Medium",
+        "management_quality": 0.5,
+        "adaptation_capacity": 0.5
+      },
+      "pessimistic": {
+        "name_fa": "بدبینانه",
+        "name_en": "Pessimistic",
+        "rcp_scenario": "RCP 8.5",
+        "description": "انتشار بالا (RCP 8.5)، عدم اقدام مؤثر",
+        "climate_changes": {
+          "temp_change_c": 4.0,
+          "rain_change_percent": -15.0,
+          "et0_change_percent": 15.0,
+          "co2_ppm_change": 150
+        },
+        "yield_prediction": {
+          "P10": 1.27,
+          "P50": 1.96,
+          "P90": 2.64,
+          "unit": "تن/هکتار",
+          "base_yield": 5.08
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.21,
+          "ec_trend_ds_m_per_year": 0.11,
+          "awc_change_percent": -5.0
+        },
+        "risk_level": "High",
+        "management_quality": 0.3,
+        "adaptation_capacity": 0.2
+      },
+      "crisis": {
+        "name_fa": "بحران",
+        "name_en": "Crisis",
+        "rcp_scenario": "RCP 8.5+",
+        "description": "شرایط بحرانی (RCP 8.5+)، بلایای مکرر و شدید",
+        "climate_changes": {
+          "temp_change_c": 6.0,
+          "rain_change_percent": -25.0,
+          "et0_change_percent": 25.0,
+          "co2_ppm_change": 200
+        },
+        "yield_prediction": {
+          "P10": 1.04,
+          "P50": 1.61,
+          "P90": 2.17,
+          "unit": "تن/هکتار",
+          "base_yield": 5.08
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.31,
+          "ec_trend_ds_m_per_year": 0.14,
+          "awc_change_percent": -10.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.1,
+        "adaptation_capacity": 0.1
+      }
+    },
+    "disaster_probabilities": {
+      "یخبندان": {
+        "annual_probability": 0.25,
+        "last_major_event": 2021,
+        "expected_intensity": "متوسط تا شدید"
+      },
+      "خشکسالی": {
+        "annual_probability": 0.05,
+        "last_major_event": 2018,
+        "expected_intensity": "کم"
+      },
+      "بارش شدید": {
+        "annual_probability": 0.1,
+        "last_major_event": 2019,
+        "expected_intensity": "کم تا متوسط"
+      }
+    },
+    "recommendations": {
+      "optimistic": [
+        "آمادگی برای یخبندان (احتمال 25٪/سال)"
+      ],
+      "baseline": [
+        "افزایش فوری مواد آلی خاک (کمپوست، کود سبز، biochar)",
+        "کشاورزی حفاظتی (کم‌خاک‌ورزی، no-till)",
+        "کشت پوششی در فصول غیرکاشت",
+        "آمادگی برای یخبندان (احتمال 25٪/سال)"
+      ],
+      "pessimistic": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "بهبود سیستم‌های آبیاری و افزایش راندمان",
+        "جمع‌آوری آب باران"
+      ],
+      "crisis": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "سرمایه‌گذاری در سیستم‌های آبیاری با راندمان بالا (>90%)",
+        "جمع‌آوری و ذخیره آب باران"
+      ]
+    },
+    "confidence_level": "Medium-High",
+    "data_quality": "Good",
+    "model_improvements": [
+      "فرمول‌های تغییرات اقلیمی واقع‌بینانه‌تر (RCP scenarios)",
+      "الگوریتم محاسبه ریسک بهبودیافته",
+      "تخمین عملکرد پایه دقیق‌تر بر اساس نوع محصول",
+      "توصیه‌های متنوع‌تر بر اساس سناریو"
+    ],
+    "local_risk_factors": [
+      "فصل رشد کوتاه",
+      "یخبندان مکرر"
+    ]
+  },
+  "R10_sahel_africa": {
+    "forecast_id": "HYD-R10_sahel_africa-20260831-v2",
+    "generated_at": "2026-08-31T03:49:40.801515",
+    "version": "2.0-improved",
+    "region": {
+      "id": "R10_sahel_africa",
+      "name_fa": "ساحل آفریقا (نیجر)",
+      "name_en": "Sahel Africa (Niger)",
+      "continent": "آفریقا",
+      "country": "نیجر",
+      "koppen": "BSh",
+      "coordinates": {
+        "lat": 13.5,
+        "lon": 2.1,
+        "elevation_m": 250
+      }
+    },
+    "horizon_years": 10,
+    "scenarios": {
+      "optimistic": {
+        "name_fa": "خوشبینانه",
+        "name_en": "Optimistic",
+        "rcp_scenario": "RCP 2.6",
+        "description": "کاهش انتشار گازهای گلخانه‌ای (RCP 2.6)، اقدامات احیای مؤثر",
+        "climate_changes": {
+          "temp_change_c": 1.0,
+          "rain_change_percent": 5.0,
+          "et0_change_percent": 3.0,
+          "co2_ppm_change": 50
+        },
+        "yield_prediction": {
+          "P10": 1.84,
+          "P50": 2.83,
+          "P90": 3.82,
+          "unit": "تن/هکتار",
+          "base_yield": 2.98
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": 0.03,
+          "ec_trend_ds_m_per_year": -0.065,
+          "awc_change_percent": 7.5
+        },
+        "risk_level": "Medium",
+        "management_quality": 0.8,
+        "adaptation_capacity": 0.8
+      },
+      "baseline": {
+        "name_fa": "پایه",
+        "name_en": "Baseline",
+        "rcp_scenario": "RCP 4.5",
+        "description": "ادامه روند فعلی (RCP 4.5)، بدون تغییرات عمده",
+        "climate_changes": {
+          "temp_change_c": 2.0,
+          "rain_change_percent": -5.0,
+          "et0_change_percent": 8.0,
+          "co2_ppm_change": 80
+        },
+        "yield_prediction": {
+          "P10": 1.39,
+          "P50": 2.14,
+          "P90": 2.88,
+          "unit": "تن/هکتار",
+          "base_yield": 2.98
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.11,
+          "ec_trend_ds_m_per_year": -0.02,
+          "awc_change_percent": 0.0
+        },
+        "risk_level": "High",
+        "management_quality": 0.5,
+        "adaptation_capacity": 0.5
+      },
+      "pessimistic": {
+        "name_fa": "بدبینانه",
+        "name_en": "Pessimistic",
+        "rcp_scenario": "RCP 8.5",
+        "description": "انتشار بالا (RCP 8.5)، عدم اقدام مؤثر",
+        "climate_changes": {
+          "temp_change_c": 4.0,
+          "rain_change_percent": -15.0,
+          "et0_change_percent": 15.0,
+          "co2_ppm_change": 150
+        },
+        "yield_prediction": {
+          "P10": 0.75,
+          "P50": 1.15,
+          "P90": 1.55,
+          "unit": "تن/هکتار",
+          "base_yield": 2.98
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.21,
+          "ec_trend_ds_m_per_year": 0.11,
+          "awc_change_percent": -5.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.3,
+        "adaptation_capacity": 0.2
+      },
+      "crisis": {
+        "name_fa": "بحران",
+        "name_en": "Crisis",
+        "rcp_scenario": "RCP 8.5+",
+        "description": "شرایط بحرانی (RCP 8.5+)، بلایای مکرر و شدید",
+        "climate_changes": {
+          "temp_change_c": 6.0,
+          "rain_change_percent": -25.0,
+          "et0_change_percent": 25.0,
+          "co2_ppm_change": 200
+        },
+        "yield_prediction": {
+          "P10": 0.61,
+          "P50": 0.94,
+          "P90": 1.27,
+          "unit": "تن/هکتار",
+          "base_yield": 2.98
+        },
+        "soil_health": {
+          "soc_trend_percent_per_year": -0.31,
+          "ec_trend_ds_m_per_year": 0.14,
+          "awc_change_percent": -10.0
+        },
+        "risk_level": "Critical",
+        "management_quality": 0.1,
+        "adaptation_capacity": 0.1
+      }
+    },
+    "disaster_probabilities": {
+      "خشکسالی": {
+        "annual_probability": 0.35,
+        "last_major_event": 2021,
+        "expected_intensity": "شدید"
+      },
+      "موج گرما": {
+        "annual_probability": 0.2,
+        "last_major_event": 2022,
+        "expected_intensity": "متوسط تا شدید"
+      },
+      "آفت ملخ": {
+        "annual_probability": 0.15,
+        "last_major_event": 2020,
+        "expected_intensity": "کم تا متوسط"
+      }
+    },
+    "recommendations": {
+      "optimistic": [],
+      "baseline": [
+        "افزایش فوری مواد آلی خاک (کمپوست، کود سبز، biochar)",
+        "کشاورزی حفاظتی (کم‌خاک‌ورزی، no-till)",
+        "کشت پوششی در فصول غیرکاشت"
+      ],
+      "pessimistic": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "بهبود سیستم‌های آبیاری و افزایش راندمان",
+        "جمع‌آوری آب باران"
+      ],
+      "crisis": [
+        "⚠️ اقدام فوری: بازنگری در الگوی کشت",
+        "⚠️ سرمایه‌گذاری در زیرساخت‌های حفاظتی",
+        "انتخاب ارقام بسیار متحمل به گرما",
+        "تنظیم تاریخ کاشت برای فرار از تنش گرمایی",
+        "استفاده از سایبان و mulch برای کاهش دما",
+        "سرمایه‌گذاری در سیستم‌های آبیاری با راندمان بالا (>90%)",
+        "جمع‌آوری و ذخیره آب باران"
+      ]
+    },
+    "confidence_level": "Medium-High",
+    "data_quality": "Good",
+    "model_improvements": [
+      "فرمول‌های تغییرات اقلیمی واقع‌بینانه‌تر (RCP scenarios)",
+      "الگوریتم محاسبه ریسک بهبودیافته",
+      "تخمین عملکرد پایه دقیق‌تر بر اساس نوع محصول",
+      "توصیه‌های متنوع‌تر بر اساس سناریو"
+    ],
+    "local_risk_factors": [
+      "خشکسالی بسیار مکرر",
+      "بیابان‌زایی",
+      "آفات"
+    ]
+  }
+}

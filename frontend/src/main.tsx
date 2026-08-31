@@ -1,9 +1,12 @@
 import './index.css';
+import './styles/design-tokens.css';
+import './styles/smooth-scroll.css';
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { LanguageProvider } from './i18n/LanguageContext';
 import App from './App'
+import { usePerformance } from './hooks/usePerformance'
 import './styles/global.css'
 import './i18n/config'; // Initialize i18n
 

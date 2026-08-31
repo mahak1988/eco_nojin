@@ -39,6 +39,7 @@ from .routers import ussd
 from .routers import simulation, motors, mrv, science
 from .routers import models as models_router
 from .routers import elevation
+from .routers import support
 from .routers import manual_data
 from .routers import voice
 from services.api_gateway.routers import nojin
@@ -237,6 +238,7 @@ app.include_router(mrv.router, tags=["mrv"])
 app.include_router(science.router, tags=["science"])
 app.include_router(models_router.router, tags=["models"])
 app.include_router(elevation.router, tags=["elevation"])
+app.include_router(support.router, tags=["support"])
 app.include_router(manual_data.router, tags=["manual-data"])
 
 
