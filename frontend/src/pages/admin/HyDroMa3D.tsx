@@ -369,7 +369,7 @@ function Scene({
         .map((p) => (
           <group key={`rows-${p.i}`} position={[p.pos[0], 0.05, p.pos[2]]}>
             {[-1.6, -0.8, 0, 0.8, 1.6]
-              .map((off) => (
+              .map((off: any) => (
                 <mesh key={off} rotation={[-Math.PI / 2, 0, 0]}>
                   <planeGeometry args={[plotSize * 0.75, 0.22]} />
                   <meshStandardMaterial color="#3e7a1f" transparent opacity={0.55} />
