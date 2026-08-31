@@ -1,13 +1,7 @@
 /**
- * Vite Configuration - Vite 8 + Rolldown (No esbuild)
- * ====================================================
- * Uses Rolldown's built-in minifier instead of esbuild.
- *
- * Vite 8 Notes:
- * - Rolldown has its own high-performance minifier
- * - No external esbuild dependency needed
- * - manualChunks as function (Rolldown requirement)
- * - import.meta.dirname instead of __dirname
+ * Vite Configuration - Enhanced Chunk Splitting
+ * ================================================
+ * Splits vendor-other into smaller, more specific chunks.
  */
 
 import { defineConfig } from 'vite';
@@ -39,9 +33,6 @@ export default defineConfig(({ mode }) => ({
 
   build: {
     target: 'es2020',
-    // Rolldown's built-in minifier (no esbuild needed)
-    // Setting to 'terser' would require installing terser
-    // Leaving unset uses Rolldown's fast native minifier
     sourcemap: mode === 'development',
     cssCodeSplit: true,
     rollupOptions: {
@@ -50,32 +41,54 @@ export default defineConfig(({ mode }) => ({
           if (typeof id !== 'string') return undefined;
 
           if (id.includes('node_modules')) {
+            // Core React
             if (id.includes('/react-dom/') ||
                 id.includes('/react/') ||
                 id.includes('/react-router')) {
               return 'vendor-react';
             }
-            if (id.includes('/framer-motion/') ||
-                id.includes('/lucide-react/') ||
-                id.includes('/@radix-ui/')) {
-              return 'vendor-ui';
-            }
+
+            // UI Libraries
+            if (id.includes('/framer-motion/')) return 'vendor-motion';
+            if (id.includes('/lucide-react/')) return 'vendor-icons';
+            if (id.includes('/@radix-ui/')) return 'vendor-radix';
+
+            // Charts
             if (id.includes('/recharts/')) return 'vendor-charts';
-            if (id.includes('/three/') ||
-                id.includes('/@react-three/')) {
-              return 'vendor-3d';
-            }
-            if (id.includes('/leaflet/') ||
-                id.includes('/react-leaflet/')) {
-              return 'vendor-maps';
-            }
-            if (id.includes('/i18next/') ||
-                id.includes('/react-i18next/')) {
-              return 'vendor-i18n';
-            }
-            if (id.includes('/@tanstack/react-query/')) {
-              return 'vendor-query';
-            }
+            if (id.includes('/d3-')) return 'vendor-charts';
+
+            // 3D (very heavy)
+            if (id.includes('/three/')) return 'vendor-three';
+            if (id.includes('/@react-three/fiber/')) return 'vendor-three';
+            if (id.includes('/@react-three/drei/')) return 'vendor-three';
+            if (id.includes('/@react-three/postprocessing/')) return 'vendor-three';
+
+            // Maps
+            if (id.includes('/leaflet/')) return 'vendor-maps';
+            if (id.includes('/react-leaflet/')) return 'vendor-maps';
+
+            // i18n
+            if (id.includes('/i18next/')) return 'vendor-i18n';
+            if (id.includes('/react-i18next/')) return 'vendor-i18n';
+
+            // React Query
+            if (id.includes('/@tanstack/react-query/')) return 'vendor-query';
+            if (id.includes('/@tanstack/query-core/')) return 'vendor-query';
+
+            // Forms
+            if (id.includes('/react-hook-form/')) return 'vendor-forms';
+            if (id.includes('/zod/')) return 'vendor-forms';
+            if (id.includes('/@hookform/')) return 'vendor-forms';
+
+            // Date
+            if (id.includes('/date-fns/')) return 'vendor-date';
+            if (id.includes('/moment/')) return 'vendor-date';
+
+            // Utilities
+            if (id.includes('/lodash/')) return 'vendor-utils';
+            if (id.includes('/axios/')) return 'vendor-utils';
+
+            // Other vendors
             return 'vendor-other';
           }
           return undefined;
