@@ -1,0 +1,465 @@
+[
+  {
+    "id": "AMD001",
+    "name_fa": "گچ کشاورزی",
+    "name_en": "Agricultural Gypsum",
+    "category": "mineral_amendment",
+    "mechanism": "جایگزینی سدیم با کلسیم؛ بهبود ساختار",
+    "biomes": [
+      "Semi-arid",
+      "Arid",
+      "Coastal_Saline"
+    ],
+    "application_rate": "5-20 تن/هکتار"
+  },
+  {
+    "id": "AMD002",
+    "name_fa": "بیوچار (زغال زیستی)",
+    "name_en": "Biochar",
+    "category": "organic_amendment",
+    "mechanism": "افزایش ظرفیت آب تا ۵۰٪؛ ترسیب کربن ۵۰۰ سال",
+    "biomes": [
+      "ALL"
+    ],
+    "application_rate": "10-50 تن/هکتار"
+  },
+  {
+    "id": "AMD003",
+    "name_fa": "زئولیت طبیعی",
+    "name_en": "Natural Zeolite",
+    "category": "mineral_amendment",
+    "mechanism": "افزایش CEC؛ نگهداری آب و مواد مغذی",
+    "biomes": [
+      "Semi-arid",
+      "Arid"
+    ],
+    "application_rate": "10-30 تن/هکتار"
+  },
+  {
+    "id": "AMD004",
+    "name_fa": "پودر بازالت",
+    "name_en": "Basalt Rock Dust",
+    "category": "mineral_amendment",
+    "mechanism": "آزادسازی تدریجی مواد معدنی؛ ترسیب کربن",
+    "biomes": [
+      "Tropical_Savanna",
+      "Volcanic"
+    ],
+    "application_rate": "20-50 تن/هکتار"
+  },
+  {
+    "id": "AMD005",
+    "name_fa": "کمپوست و ورمی‌کمپوست",
+    "name_en": "Compost & Vermicompost",
+    "category": "organic_amendment",
+    "mechanism": "افزایش ماده آلی؛ بهبود ساختار",
+    "biomes": [
+      "ALL"
+    ],
+    "application_rate": "20-50 تن/هکتار"
+  },
+  {
+    "id": "AMD006",
+    "name_fa": "کود سبز و گیاهان پوششی",
+    "name_en": "Green Manure",
+    "category": "biological_amendment",
+    "mechanism": "تثبیت نیتروژن؛ افزایش ماده آلی",
+    "biomes": [
+      "ALL"
+    ],
+    "application_rate": "بذر 20-50 کیلوگرم/هکتار"
+  },
+  {
+    "id": "AMD007",
+    "name_fa": "آهک کشاورزی",
+    "name_en": "Agricultural Lime",
+    "category": "mineral_amendment",
+    "mechanism": "افزایش pH خاک‌های اسیدی",
+    "biomes": [
+      "Tropical_Rainforest",
+      "Boreal"
+    ],
+    "application_rate": "2-10 تن/هکتار"
+  },
+  {
+    "id": "AMD008",
+    "name_fa": "عصاره جلبک دریایی",
+    "name_en": "Seaweed Extract",
+    "category": "organic_biostimulant",
+    "mechanism": "تحریک رشد با هورمون‌های طبیعی",
+    "biomes": [
+      "Coastal_Saline",
+      "Arid"
+    ],
+    "application_rate": "2-5 لیتر/هکتار"
+  },
+  {
+    "id": "AMD009",
+    "name_fa": "گوگرد کشاورزی",
+    "name_en": "Agricultural Sulfur",
+    "category": "mineral_amendment",
+    "mechanism": "کاهش شوری خاک‌های قلیایی",
+    "biomes": [
+      "Semi-arid",
+      "Arid"
+    ],
+    "application_rate": "1-5 تن/هکتار"
+  },
+  {
+    "id": "AMD010",
+    "name_fa": "مالچ‌پاشی",
+    "name_en": "Mulching",
+    "category": "physical_amendment",
+    "mechanism": "کاهش تبخیر تا ۷۰٪؛ کنترل علف هرز",
+    "biomes": [
+      "ALL"
+    ],
+    "application_rate": "5-15 تن/هکتار"
+  },
+  {
+    "id": "AMD011",
+    "name_fa": "هیومیک اسید",
+    "name_en": "Humic Acid",
+    "category": "organic_biostimulant",
+    "mechanism": "افزایش جذب مواد مغذی؛ تحریک رشد ریشه",
+    "biomes": [
+      "ALL"
+    ],
+    "application_rate": "2-10 کیلوگرم/هکتار"
+  },
+  {
+    "id": "AMD012",
+    "name_fa": "فولویک اسید",
+    "name_en": "Fulvic Acid",
+    "category": "organic_biostimulant",
+    "mechanism": "انتقال مواد مغذی به گیاه؛ تحریک رشد",
+    "biomes": [
+      "ALL"
+    ],
+    "application_rate": "1-5 کیلوگرم/هکتار"
+  },
+  {
+    "id": "AMD013",
+    "name_fa": "لئوناردیت",
+    "name_en": "Leonardite",
+    "category": "organic_amendment",
+    "mechanism": "منبع غنی هیومیک اسید؛ بهبود ساختار خاک",
+    "biomes": [
+      "ALL"
+    ],
+    "application_rate": "5-20 تن/هکتار"
+  },
+  {
+    "id": "AMD014",
+    "name_fa": "پسماند نخیلات (بیوچار خرما)",
+    "name_en": "Palm Waste Biochar",
+    "category": "organic_amendment",
+    "mechanism": "ترسیب کربن؛ بهبود خاک شنی",
+    "biomes": [
+      "Hyper-arid",
+      "Arid"
+    ],
+    "application_rate": "10-40 تن/هکتار"
+  },
+  {
+    "id": "AMD015",
+    "name_fa": "کاه برنج (بیوچار)",
+    "name_en": "Rice Husk Biochar",
+    "category": "organic_amendment",
+    "mechanism": "افزایش ظرفیت آب؛ کاهش اسیدیته",
+    "biomes": [
+      "Tropical_Savanna",
+      "Tropical_Rainforest"
+    ],
+    "application_rate": "10-30 تن/هکتار"
+  },
+  {
+    "id": "AMD016",
+    "name_fa": "پوست نارگیل (کوکوپیت)",
+    "name_en": "Coconut Coir",
+    "category": "organic_amendment",
+    "mechanism": "نگهداری آب؛ بهبود ساختار خاک",
+    "biomes": [
+      "Tropical_Savanna",
+      "Tropical_Rainforest"
+    ],
+    "application_rate": "10-30 تن/هکتار"
+  },
+  {
+    "id": "AMD017",
+    "name_fa": "خاک اره و تراشه چوب",
+    "name_en": "Sawdust & Wood Chips",
+    "category": "organic_amendment",
+    "mechanism": "افزایش ماده آلی؛ مالچ طبیعی",
+    "biomes": [
+      "Boreal",
+      "Temperate_Continental"
+    ],
+    "application_rate": "10-40 تن/هکتار"
+  },
+  {
+    "id": "AMD018",
+    "name_fa": "کمپوست قهوه",
+    "name_en": "Coffee Pulp Compost",
+    "category": "organic_amendment",
+    "mechanism": "افزایش ماده آلی؛ مناسب خاک‌های اسیدی",
+    "biomes": [
+      "Tropical_Rainforest",
+      "Volcanic"
+    ],
+    "application_rate": "10-30 تن/هکتار"
+  },
+  {
+    "id": "AMD019",
+    "name_fa": "پسماند چغندرقند",
+    "name_en": "Sugar Beet Pulp",
+    "category": "organic_amendment",
+    "mechanism": "افزایش ماده آلی؛ تغذیه میکروبی",
+    "biomes": [
+      "Temperate_Continental",
+      "Mediterranean"
+    ],
+    "application_rate": "10-25 تن/هکتار"
+  },
+  {
+    "id": "AMD020",
+    "name_fa": "پسماند مرکبات",
+    "name_en": "Citrus Waste Compost",
+    "category": "organic_amendment",
+    "mechanism": "افزایش ماده آلی؛ کنترل علف هرز",
+    "biomes": [
+      "Mediterranean",
+      "Tropical_Savanna"
+    ],
+    "application_rate": "10-25 تن/هکتار"
+  },
+  {
+    "id": "AMD021",
+    "name_fa": "دولومیت",
+    "name_en": "Dolomite",
+    "category": "mineral_amendment",
+    "mechanism": "تأمین کلسیم و منیزیم؛ افزایش pH",
+    "biomes": [
+      "Tropical_Rainforest",
+      "Volcanic"
+    ],
+    "application_rate": "2-8 تن/هکتار"
+  },
+  {
+    "id": "AMD022",
+    "name_fa": "فسفات طبیعی",
+    "name_en": "Rock Phosphate",
+    "category": "mineral_amendment",
+    "mechanism": "تأمین تدریجی فسفر؛ مناسب خاک‌های اسیدی",
+    "biomes": [
+      "ALL"
+    ],
+    "application_rate": "2-10 تن/هکتار"
+  },
+  {
+    "id": "AMD023",
+    "name_fa": "پتاس طبیعی (سیلوینیت)",
+    "name_en": "Sylvinite (Rock Potash)",
+    "category": "mineral_amendment",
+    "mechanism": "تأمین تدریجی پتاسیم",
+    "biomes": [
+      "ALL"
+    ],
+    "application_rate": "1-5 تن/هکتار"
+  },
+  {
+    "id": "AMD024",
+    "name_fa": "گرنیت خرد شده",
+    "name_en": "Granite Dust",
+    "category": "mineral_amendment",
+    "mechanism": "آزادسازی تدریجی پتاسیم و عناصر ریزمغذی",
+    "biomes": [
+      "Temperate_Continental",
+      "Boreal"
+    ],
+    "application_rate": "5-20 تن/هکتار"
+  },
+  {
+    "id": "AMD025",
+    "name_fa": "پودر صدف و ماسه دریایی",
+    "name_en": "Shell Sand",
+    "category": "mineral_amendment",
+    "mechanism": "تأمین کلسیم؛ افزایش pH خاک‌های اسیدی",
+    "biomes": [
+      "Coastal_Saline",
+      "Tropical_Savanna"
+    ],
+    "application_rate": "2-10 تن/هکتار"
+  },
+  {
+    "id": "AMD026",
+    "name_fa": "ورمی‌کمپوست چای",
+    "name_en": "Vermicompost Tea",
+    "category": "organic_biostimulant",
+    "mechanism": "محلول غنی از مواد مغذی و میکروارگانیسم",
+    "biomes": [
+      "ALL"
+    ],
+    "application_rate": "10-50 لیتر/هکتار"
+  },
+  {
+    "id": "AMD027",
+    "name_fa": "EM (میکروارگانیسم‌های مؤثر)",
+    "name_en": "Effective Microorganisms (EM)",
+    "category": "biological_amendment",
+    "mechanism": "ترکیب باکتری‌های مفید؛ بهبود تخمیر خاک",
+    "biomes": [
+      "ALL"
+    ],
+    "application_rate": "5-20 لیتر/هکتار"
+  },
+  {
+    "id": "AMD028",
+    "name_fa": "مایه تلقیح مایکوریزا",
+    "name_en": "Mycorrhizal Inoculant",
+    "category": "biological_amendment",
+    "mechanism": "تلقیح خاک با اسپور مایکوریزا",
+    "biomes": [
+      "ALL"
+    ],
+    "application_rate": "2-10 کیلوگرم/هکتار"
+  },
+  {
+    "id": "AMD029",
+    "name_fa": "مایه تلقیح ریزوبیوم",
+    "name_en": "Rhizobium Inoculant",
+    "category": "biological_amendment",
+    "mechanism": "تلقیح بذر حبوبات با ریزوبیوم",
+    "biomes": [
+      "ALL"
+    ],
+    "application_rate": "1-5 کیلوگرم/هکتار"
+  },
+  {
+    "id": "AMD030",
+    "name_fa": "آب مقطر دریا (تصفیه‌شده)",
+    "name_en": "Desalinated Seawater",
+    "category": "water_amendment",
+    "mechanism": "آبیاری در مناطق ساحلی بدون شوری",
+    "biomes": [
+      "Coastal_Saline"
+    ],
+    "application_rate": "بسته به نیاز آبیاری"
+  },
+  {
+    "id": "AMD031",
+    "name_fa": "پساب تصفیه‌شده",
+    "name_en": "Treated Wastewater",
+    "category": "water_amendment",
+    "mechanism": "آبیاری با آب بازیافتی؛ تغذیه گیاه",
+    "biomes": [
+      "Semi-arid",
+      "Arid"
+    ],
+    "application_rate": "بسته به نیاز آبیاری"
+  },
+  {
+    "id": "AMD032",
+    "name_fa": "آب باران جمع‌آوری‌شده",
+    "name_en": "Rainwater Harvesting",
+    "category": "water_amendment",
+    "mechanism": "ذخیره آب باران برای آبیاری",
+    "biomes": [
+      "Semi-arid",
+      "Arid"
+    ],
+    "application_rate": "بسته به ظرفیت مخزن"
+  },
+  {
+    "id": "AMD033",
+    "name_fa": "مالچ سنگی (ریگ و شن)",
+    "name_en": "Stone Mulch (Gravel)",
+    "category": "physical_amendment",
+    "mechanism": "کاهش تبخیر در بیابان؛ تثبیت خاک",
+    "biomes": [
+      "Hyper-arid",
+      "Arid"
+    ],
+    "application_rate": "50-100 تن/هکتار"
+  },
+  {
+    "id": "AMD034",
+    "name_fa": "مالچ پلاستیکی زیست‌تخریب‌پذیر",
+    "name_en": "Biodegradable Plastic Mulch",
+    "category": "physical_amendment",
+    "mechanism": "کاهش تبخیر؛ کنترل علف هرز؛ تجزیه‌پذیر",
+    "biomes": [
+      "ALL"
+    ],
+    "application_rate": "1000-2000 کیلوگرم/هکتار"
+  },
+  {
+    "id": "AMD035",
+    "name_fa": "مالچ کاه و کاهگل",
+    "name_en": "Straw Mulch",
+    "category": "physical_amendment",
+    "mechanism": "کاهش تبخیر؛ افزایش ماده آلی",
+    "biomes": [
+      "ALL"
+    ],
+    "application_rate": "5-15 تن/هکتار"
+  },
+  {
+    "id": "AMD036",
+    "name_fa": "مالچ برگ درختان",
+    "name_en": "Leaf Litter Mulch",
+    "category": "physical_amendment",
+    "mechanism": "افزایش ماده آلی؛ حفظ رطوبت",
+    "biomes": [
+      "Boreal",
+      "Temperate_Continental"
+    ],
+    "application_rate": "10-30 تن/هکتار"
+  },
+  {
+    "id": "AMD037",
+    "name_fa": "ژل‌های نگهدارنده آب",
+    "name_en": "Hydrogels",
+    "category": "synthetic_amendment",
+    "mechanism": "جذب و نگهداری آب؛ کاهش آبیاری",
+    "biomes": [
+      "Arid",
+      "Semi-arid"
+    ],
+    "application_rate": "10-50 کیلوگرم/هکتار"
+  },
+  {
+    "id": "AMD038",
+    "name_fa": "پلیمرهای زیست‌تخریب‌پذیر",
+    "name_en": "Biodegradable Polymers",
+    "category": "synthetic_amendment",
+    "mechanism": "نگهداری آب؛ تجزیه‌پذیر",
+    "biomes": [
+      "ALL"
+    ],
+    "application_rate": "5-20 کیلوگرم/هکتار"
+  },
+  {
+    "id": "AMD039",
+    "name_fa": "نانو ذرات خاک رس",
+    "name_en": "Nano-Clay Particles",
+    "category": "nanotechnology_amendment",
+    "mechanism": "افزایش ظرفیت آب در خاک شنی",
+    "biomes": [
+      "Arid",
+      "Semi-arid"
+    ],
+    "application_rate": "1-10 کیلوگرم/هکتار"
+  },
+  {
+    "id": "AMD040",
+    "name_fa": "نانو ذرات آهن",
+    "name_en": "Nano-Iron Particles",
+    "category": "nanotechnology_amendment",
+    "mechanism": "رفع کمبود آهن؛ تحریک رشد",
+    "biomes": [
+      "ALL"
+    ],
+    "application_rate": "0.5-5 کیلوگرم/هکتار"
+  }
+]

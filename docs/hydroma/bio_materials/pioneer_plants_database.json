@@ -1,0 +1,904 @@
+[
+  {
+    "id": "PP001",
+    "name_fa": "آتریپلکس",
+    "name_en": "Atriplex spp.",
+    "category": "halophyte",
+    "stress_tolerance": {
+      "salinity_ds_m": 40,
+      "drought": "very_high",
+      "frost": "high"
+    },
+    "biomes": [
+      "Hyper-arid",
+      "Arid",
+      "Coastal_Saline"
+    ]
+  },
+  {
+    "id": "PP002",
+    "name_fa": "گز",
+    "name_en": "Tamarix spp.",
+    "category": "halophyte_xerophyte",
+    "stress_tolerance": {
+      "salinity_ds_m": 25,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Hyper-arid",
+      "Arid",
+      "Coastal_Saline"
+    ]
+  },
+  {
+    "id": "PP003",
+    "name_fa": "اسپند",
+    "name_en": "Peganum harmala",
+    "category": "xerophyte_medicinal",
+    "stress_tolerance": {
+      "salinity_ds_m": 8,
+      "drought": "high",
+      "frost": "high"
+    },
+    "biomes": [
+      "Semi-arid",
+      "Arid"
+    ]
+  },
+  {
+    "id": "PP004",
+    "name_fa": "سالیکورنیا",
+    "name_en": "Salicornia spp.",
+    "category": "halophyte_edible",
+    "stress_tolerance": {
+      "salinity_ds_m": 50,
+      "drought": "moderate",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Coastal_Saline",
+      "Hyper-arid"
+    ]
+  },
+  {
+    "id": "PP016",
+    "name_fa": "سوئدا",
+    "name_en": "Suaeda spp.",
+    "category": "halophyte",
+    "stress_tolerance": {
+      "salinity_ds_m": 30,
+      "drought": "high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Coastal_Saline",
+      "Hyper-arid"
+    ]
+  },
+  {
+    "id": "PP017",
+    "name_fa": "سالسولا",
+    "name_en": "Salsola spp.",
+    "category": "halophyte",
+    "stress_tolerance": {
+      "salinity_ds_m": 25,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Arid",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP018",
+    "name_fa": "لیمونیوم (گل همیشه بهار شورپسند)",
+    "name_en": "Limonium spp.",
+    "category": "halophyte_ornamental",
+    "stress_tolerance": {
+      "salinity_ds_m": 20,
+      "drought": "high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Coastal_Saline",
+      "Mediterranean"
+    ]
+  },
+  {
+    "id": "PP019",
+    "name_fa": "هالوگتون",
+    "name_en": "Halogeton glomeratus",
+    "category": "halophyte",
+    "stress_tolerance": {
+      "salinity_ds_m": 35,
+      "drought": "very_high",
+      "frost": "high"
+    },
+    "biomes": [
+      "Arid",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP020",
+    "name_fa": "کریثموئم (رازیانه دریایی)",
+    "name_en": "Crithmum maritimum",
+    "category": "halophyte_edible",
+    "stress_tolerance": {
+      "salinity_ds_m": 15,
+      "drought": "high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Coastal_Saline",
+      "Mediterranean"
+    ]
+  },
+  {
+    "id": "PP021",
+    "name_fa": "آروئدا (علف شور حاره‌ای)",
+    "name_en": "Arthrocnemum macrostachyum",
+    "category": "halophyte",
+    "stress_tolerance": {
+      "salinity_ds_m": 45,
+      "drought": "high",
+      "frost": "low"
+    },
+    "biomes": [
+      "Coastal_Saline",
+      "Hyper-arid"
+    ]
+  },
+  {
+    "id": "PP022",
+    "name_fa": "اسپارتینا",
+    "name_en": "Spartina alterniflora",
+    "category": "halophyte_grass",
+    "stress_tolerance": {
+      "salinity_ds_m": 30,
+      "drought": "moderate",
+      "frost": "high"
+    },
+    "biomes": [
+      "Coastal_Saline"
+    ]
+  },
+  {
+    "id": "PP023",
+    "name_fa": "دیستیکلیس",
+    "name_en": "Distichlis spicata",
+    "category": "halophyte_grass",
+    "stress_tolerance": {
+      "salinity_ds_m": 25,
+      "drought": "moderate",
+      "frost": "high"
+    },
+    "biomes": [
+      "Coastal_Saline"
+    ]
+  },
+  {
+    "id": "PP024",
+    "name_fa": "سیپراس",
+    "name_en": "Cyperus spp.",
+    "category": "halophyte_sedge",
+    "stress_tolerance": {
+      "salinity_ds_m": 15,
+      "drought": "moderate",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Coastal_Saline",
+      "Tropical_Savanna"
+    ]
+  },
+  {
+    "id": "PP025",
+    "name_fa": "جوماکس",
+    "name_en": "Juncus maritimus",
+    "category": "halophyte_rush",
+    "stress_tolerance": {
+      "salinity_ds_m": 20,
+      "drought": "moderate",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Coastal_Saline",
+      "Mediterranean"
+    ]
+  },
+  {
+    "id": "PP026",
+    "name_fa": "فراگمیتس (نی)",
+    "name_en": "Phragmites australis",
+    "category": "halophyte_reed",
+    "stress_tolerance": {
+      "salinity_ds_m": 15,
+      "drought": "moderate",
+      "frost": "very_high"
+    },
+    "biomes": [
+      "Coastal_Saline",
+      "Temperate_Continental"
+    ]
+  },
+  {
+    "id": "PP005",
+    "name_fa": "سدر/عناب",
+    "name_en": "Ziziphus spp.",
+    "category": "xerophyte_fruit_tree",
+    "stress_tolerance": {
+      "salinity_ds_m": 8,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Semi-arid",
+      "Arid",
+      "Tropical_Savanna"
+    ]
+  },
+  {
+    "id": "PP006",
+    "name_fa": "کبر",
+    "name_en": "Capparis spinosa",
+    "category": "xerophyte_medicinal",
+    "stress_tolerance": {
+      "salinity_ds_m": 10,
+      "drought": "very_high",
+      "frost": "high"
+    },
+    "biomes": [
+      "Semi-arid",
+      "Arid",
+      "Mediterranean"
+    ]
+  },
+  {
+    "id": "PP007",
+    "name_fa": "گوان",
+    "name_en": "Astragalus spp.",
+    "category": "xerophyte_legume",
+    "stress_tolerance": {
+      "salinity_ds_m": 6,
+      "drought": "very_high",
+      "frost": "very_high"
+    },
+    "biomes": [
+      "Semi-arid",
+      "Arid",
+      "Alpine"
+    ]
+  },
+  {
+    "id": "PP008",
+    "name_fa": "درمنه",
+    "name_en": "Artemisia spp.",
+    "category": "xerophyte_medicinal",
+    "stress_tolerance": {
+      "salinity_ds_m": 8,
+      "drought": "very_high",
+      "frost": "very_high"
+    },
+    "biomes": [
+      "Semi-arid",
+      "Arid",
+      "Alpine"
+    ]
+  },
+  {
+    "id": "PP013",
+    "name_fa": "استیپا",
+    "name_en": "Stipa spp.",
+    "category": "xerophyte_grass",
+    "stress_tolerance": {
+      "salinity_ds_m": 6,
+      "drought": "very_high",
+      "frost": "high"
+    },
+    "biomes": [
+      "Semi-arid",
+      "Arid",
+      "Alpine"
+    ]
+  },
+  {
+    "id": "PP014",
+    "name_fa": "پانیکوم تورگیدوم",
+    "name_en": "Panicum turgidum",
+    "category": "xerophyte_grass",
+    "stress_tolerance": {
+      "salinity_ds_m": 12,
+      "drought": "very_high",
+      "frost": "low"
+    },
+    "biomes": [
+      "Hyper-arid",
+      "Arid"
+    ]
+  },
+  {
+    "id": "PP015",
+    "name_fa": "بوفل گرس",
+    "name_en": "Cenchrus ciliaris",
+    "category": "xerophyte_grass",
+    "stress_tolerance": {
+      "salinity_ds_m": 8,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Semi-arid",
+      "Arid"
+    ]
+  },
+  {
+    "id": "PP027",
+    "name_fa": "تبریزی (زیزیفوس)",
+    "name_en": "Ziziphus spina-christi",
+    "category": "xerophyte_fruit_tree",
+    "stress_tolerance": {
+      "salinity_ds_m": 10,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Arid",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP028",
+    "name_fa": "کنار (زیزیفوس مائوریتسیانا)",
+    "name_en": "Ziziphus mauritiana",
+    "category": "xerophyte_fruit_tree",
+    "stress_tolerance": {
+      "salinity_ds_m": 8,
+      "drought": "very_high",
+      "frost": "low"
+    },
+    "biomes": [
+      "Tropical_Savanna",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP029",
+    "name_fa": "اکالیپتوس",
+    "name_en": "Eucalyptus camaldulensis",
+    "category": "xerophyte_tree",
+    "stress_tolerance": {
+      "salinity_ds_m": 12,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Semi-arid",
+      "Mediterranean"
+    ]
+  },
+  {
+    "id": "PP030",
+    "name_fa": "نئودا (اکالیپتوس بیابانی)",
+    "name_en": "Eucalyptus gomphocephala",
+    "category": "xerophyte_tree",
+    "stress_tolerance": {
+      "salinity_ds_m": 10,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Arid",
+      "Mediterranean"
+    ]
+  },
+  {
+    "id": "PP031",
+    "name_fa": "اوکالیپتوس سالینا",
+    "name_en": "Eucalyptus salubris",
+    "category": "xerophyte_tree",
+    "stress_tolerance": {
+      "salinity_ds_m": 15,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Arid",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP032",
+    "name_fa": "آکاسیا تورتیلیس",
+    "name_en": "Acacia tortilis",
+    "category": "nitrogen_fixing_xerophyte",
+    "stress_tolerance": {
+      "salinity_ds_m": 10,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Arid",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP033",
+    "name_fa": "آکاسیا سالینا",
+    "name_en": "Acacia saligna",
+    "category": "nitrogen_fixing_xerophyte",
+    "stress_tolerance": {
+      "salinity_ds_m": 12,
+      "drought": "very_high",
+      "frost": "low"
+    },
+    "biomes": [
+      "Arid",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP034",
+    "name_fa": "پروسوپیس سینرارینا",
+    "name_en": "Prosopis cineraria",
+    "category": "nitrogen_fixing_xerophyte",
+    "stress_tolerance": {
+      "salinity_ds_m": 15,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Arid",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP035",
+    "name_fa": "پروسوپیس جولیفلورا",
+    "name_en": "Prosopis juliflora",
+    "category": "nitrogen_fixing_xerophyte",
+    "stress_tolerance": {
+      "salinity_ds_m": 15,
+      "drought": "very_high",
+      "frost": "low"
+    },
+    "biomes": [
+      "Arid",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP036",
+    "name_fa": "کازوآرینا اکیوستیفولیا",
+    "name_en": "Casuarina equisetifolia",
+    "category": "nitrogen_fixing_actinorhizal",
+    "stress_tolerance": {
+      "salinity_ds_m": 12,
+      "drought": "high",
+      "frost": "low"
+    },
+    "biomes": [
+      "Coastal_Saline",
+      "Arid"
+    ]
+  },
+  {
+    "id": "PP037",
+    "name_fa": "کازوآرینا اوبزا",
+    "name_en": "Casuarina obesa",
+    "category": "nitrogen_fixing_actinorhizal",
+    "stress_tolerance": {
+      "salinity_ds_m": 15,
+      "drought": "high",
+      "frost": "low"
+    },
+    "biomes": [
+      "Arid",
+      "Coastal_Saline"
+    ]
+  },
+  {
+    "id": "PP038",
+    "name_fa": "پارکینسونیا",
+    "name_en": "Parkinsonia aculeata",
+    "category": "nitrogen_fixing_xerophyte",
+    "stress_tolerance": {
+      "salinity_ds_m": 10,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Arid",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP039",
+    "name_fa": "سرو نقره‌ای (آکاسیا)",
+    "name_en": "Acacia salicina",
+    "category": "nitrogen_fixing_xerophyte",
+    "stress_tolerance": {
+      "salinity_ds_m": 12,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Arid",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP040",
+    "name_fa": "سرو بیابانی (کاپاریس)",
+    "name_en": "Capparis decidua",
+    "category": "xerophyte_tree",
+    "stress_tolerance": {
+      "salinity_ds_m": 12,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Arid",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP041",
+    "name_fa": "زیتون بیابانی (اولیا)",
+    "name_en": "Olea europaea var. sylvestris",
+    "category": "xerophyte_fruit_tree",
+    "stress_tolerance": {
+      "salinity_ds_m": 8,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Mediterranean",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP042",
+    "name_fa": "انجیر بیابانی (فیکوس)",
+    "name_en": "Ficus sycomorus",
+    "category": "xerophyte_fruit_tree",
+    "stress_tolerance": {
+      "salinity_ds_m": 6,
+      "drought": "high",
+      "frost": "low"
+    },
+    "biomes": [
+      "Tropical_Savanna",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP043",
+    "name_fa": "نارگیل بیابانی (بالانیتس)",
+    "name_en": "Balanites aegyptiaca",
+    "category": "xerophyte_fruit_tree",
+    "stress_tolerance": {
+      "salinity_ds_m": 8,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Arid",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP044",
+    "name_fa": "خرمای بیابانی (فونیکس)",
+    "name_en": "Phoenix dactylifera",
+    "category": "xerophyte_fruit_tree",
+    "stress_tolerance": {
+      "salinity_ds_m": 12,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Arid",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP009",
+    "name_fa": "کهور",
+    "name_en": "Prosopis spp.",
+    "category": "nitrogen_fixing_xerophyte",
+    "stress_tolerance": {
+      "salinity_ds_m": 15,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Semi-arid",
+      "Arid"
+    ]
+  },
+  {
+    "id": "PP010",
+    "name_fa": "اقاقیا",
+    "name_en": "Acacia spp.",
+    "category": "nitrogen_fixing_pioneer",
+    "stress_tolerance": {
+      "salinity_ds_m": 10,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Semi-arid",
+      "Arid",
+      "Tropical_Savanna"
+    ]
+  },
+  {
+    "id": "PP011",
+    "name_fa": "کازوآرینا",
+    "name_en": "Casuarina equisetifolia",
+    "category": "nitrogen_fixing_actinorhizal",
+    "stress_tolerance": {
+      "salinity_ds_m": 12,
+      "drought": "high",
+      "frost": "low"
+    },
+    "biomes": [
+      "Coastal_Saline",
+      "Arid"
+    ]
+  },
+  {
+    "id": "PP012",
+    "name_fa": "لوسینا",
+    "name_en": "Leucaena leucocephala",
+    "category": "nitrogen_fixing_fast_growing",
+    "stress_tolerance": {
+      "salinity_ds_m": 6,
+      "drought": "high",
+      "frost": "low"
+    },
+    "biomes": [
+      "Tropical_Savanna",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP045",
+    "name_fa": "سینا (کاسیا)",
+    "name_en": "Senna siamea",
+    "category": "nitrogen_fixing_tree",
+    "stress_tolerance": {
+      "salinity_ds_m": 6,
+      "drought": "high",
+      "frost": "low"
+    },
+    "biomes": [
+      "Tropical_Savanna"
+    ]
+  },
+  {
+    "id": "PP046",
+    "name_fa": "گلیسریدیا",
+    "name_en": "Gliricidia sepium",
+    "category": "nitrogen_fixing_tree",
+    "stress_tolerance": {
+      "salinity_ds_m": 6,
+      "drought": "high",
+      "frost": "low"
+    },
+    "biomes": [
+      "Tropical_Savanna"
+    ]
+  },
+  {
+    "id": "PP047",
+    "name_fa": "سبانکا",
+    "name_en": "Sesbania grandiflora",
+    "category": "nitrogen_fixing_fast_growing",
+    "stress_tolerance": {
+      "salinity_ds_m": 8,
+      "drought": "moderate",
+      "frost": "low"
+    },
+    "biomes": [
+      "Tropical_Savanna"
+    ]
+  },
+  {
+    "id": "PP048",
+    "name_fa": "تاگاساست",
+    "name_en": "Chamaecytisus proliferus",
+    "category": "nitrogen_fixing_shrub",
+    "stress_tolerance": {
+      "salinity_ds_m": 4,
+      "drought": "very_high",
+      "frost": "high"
+    },
+    "biomes": [
+      "Mediterranean",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP049",
+    "name_fa": "لوتوس",
+    "name_en": "Lotus corniculatus",
+    "category": "nitrogen_fixing_legume",
+    "stress_tolerance": {
+      "salinity_ds_m": 6,
+      "drought": "high",
+      "frost": "very_high"
+    },
+    "biomes": [
+      "Temperate_Continental",
+      "Mediterranean"
+    ]
+  },
+  {
+    "id": "PP050",
+    "name_fa": "مدیکاگو",
+    "name_en": "Medicago sativa",
+    "category": "nitrogen_fixing_legume",
+    "stress_tolerance": {
+      "salinity_ds_m": 8,
+      "drought": "high",
+      "frost": "high"
+    },
+    "biomes": [
+      "Semi-arid",
+      "Mediterranean"
+    ]
+  },
+  {
+    "id": "PP051",
+    "name_fa": "تریفولیوم",
+    "name_en": "Trifolium subterraneum",
+    "category": "nitrogen_fixing_legume",
+    "stress_tolerance": {
+      "salinity_ds_m": 6,
+      "drought": "high",
+      "frost": "high"
+    },
+    "biomes": [
+      "Mediterranean"
+    ]
+  },
+  {
+    "id": "PP052",
+    "name_fa": "ویسیا",
+    "name_en": "Vicia sativa",
+    "category": "nitrogen_fixing_legume",
+    "stress_tolerance": {
+      "salinity_ds_m": 6,
+      "drought": "moderate",
+      "frost": "high"
+    },
+    "biomes": [
+      "Mediterranean",
+      "Temperate_Continental"
+    ]
+  },
+  {
+    "id": "PP053",
+    "name_fa": "لوپینوس",
+    "name_en": "Lupinus albus",
+    "category": "nitrogen_fixing_legume",
+    "stress_tolerance": {
+      "salinity_ds_m": 4,
+      "drought": "moderate",
+      "frost": "high"
+    },
+    "biomes": [
+      "Mediterranean",
+      "Temperate_Continental"
+    ]
+  },
+  {
+    "id": "PP054",
+    "name_fa": "سیساریا",
+    "name_en": "Cicer arietinum",
+    "category": "nitrogen_fixing_legume",
+    "stress_tolerance": {
+      "salinity_ds_m": 6,
+      "drought": "high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Semi-arid",
+      "Mediterranean"
+    ]
+  },
+  {
+    "id": "PP055",
+    "name_fa": "لنس",
+    "name_en": "Lens culinaris",
+    "category": "nitrogen_fixing_legume",
+    "stress_tolerance": {
+      "salinity_ds_m": 6,
+      "drought": "high",
+      "frost": "high"
+    },
+    "biomes": [
+      "Semi-arid",
+      "Mediterranean"
+    ]
+  },
+  {
+    "id": "PP056",
+    "name_fa": "زعفران",
+    "name_en": "Crocus sativus",
+    "category": "medicinal_economic",
+    "stress_tolerance": {
+      "salinity_ds_m": 6,
+      "drought": "high",
+      "frost": "high"
+    },
+    "biomes": [
+      "Semi-arid",
+      "Mediterranean"
+    ]
+  },
+  {
+    "id": "PP057",
+    "name_fa": "رزماری",
+    "name_en": "Rosmarinus officinalis",
+    "category": "medicinal_aromatic",
+    "stress_tolerance": {
+      "salinity_ds_m": 6,
+      "drought": "very_high",
+      "frost": "moderate"
+    },
+    "biomes": [
+      "Mediterranean",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP058",
+    "name_fa": "آویشن",
+    "name_en": "Thymus vulgaris",
+    "category": "medicinal_aromatic",
+    "stress_tolerance": {
+      "salinity_ds_m": 6,
+      "drought": "very_high",
+      "frost": "high"
+    },
+    "biomes": [
+      "Mediterranean",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP059",
+    "name_fa": "اسطوخودوس",
+    "name_en": "Lavandula angustifolia",
+    "category": "medicinal_aromatic",
+    "stress_tolerance": {
+      "salinity_ds_m": 4,
+      "drought": "high",
+      "frost": "high"
+    },
+    "biomes": [
+      "Mediterranean",
+      "Semi-arid"
+    ]
+  },
+  {
+    "id": "PP060",
+    "name_fa": "آلوئه ورا",
+    "name_en": "Aloe vera",
+    "category": "medicinal_succulent",
+    "stress_tolerance": {
+      "salinity_ds_m": 8,
+      "drought": "very_high",
+      "frost": "low"
+    },
+    "biomes": [
+      "Arid",
+      "Semi-arid"
+    ]
+  }
+]

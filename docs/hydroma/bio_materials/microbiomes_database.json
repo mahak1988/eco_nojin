@@ -1,0 +1,1070 @@
+[
+  {
+    "id": "MIC001",
+    "name_fa": "ریزوبیوم لگومینوزاروم",
+    "name_en": "Rhizobium leguminosarum",
+    "category": "nitrogen_fixing",
+    "mechanism": "همزیستی با حبوبات معتدل؛ تثبیت ۱۰۰-۳۰۰ کیلوگرم نیتروژن",
+    "biomes": [
+      "Mediterranean",
+      "Temperate_Continental",
+      "Semi-arid"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        28
+      ],
+      "ph": [
+        6.0,
+        8.0
+      ],
+      "ec_ds_m_max": 4
+    }
+  },
+  {
+    "id": "MIC002",
+    "name_fa": "برادی‌ریزوبیوم ژاپونیکوم",
+    "name_en": "Bradyrhizobium japonicum",
+    "category": "nitrogen_fixing",
+    "mechanism": "همزیستی با سویا؛ تثبیت ۱۵۰-۴۰۰ کیلوگرم نیتروژن",
+    "biomes": [
+      "Tropical_Savanna",
+      "Temperate_Continental"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        20,
+        35
+      ],
+      "ph": [
+        5.5,
+        7.5
+      ],
+      "ec_ds_m_max": 6
+    }
+  },
+  {
+    "id": "MIC003",
+    "name_fa": "آزوتوباکتر کروکوکوم",
+    "name_en": "Azotobacter chroococcum",
+    "category": "nitrogen_fixing_free_living",
+    "mechanism": "تثبیت آزاد نیتروژن؛ تولید هورمون رشد",
+    "biomes": [
+      "Semi-arid",
+      "Mediterranean"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        20,
+        30
+      ],
+      "ph": [
+        6.5,
+        8.5
+      ],
+      "ec_ds_m_max": 8
+    }
+  },
+  {
+    "id": "MIC004",
+    "name_fa": "آزواسپیریلوم برازیلنس",
+    "name_en": "Azospirillum brasilense",
+    "category": "nitrogen_fixing_associative",
+    "mechanism": "همزیستی با غلات؛ تحریک رشد ریشه",
+    "biomes": [
+      "Tropical_Savanna",
+      "Semi-arid"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        25,
+        37
+      ],
+      "ph": [
+        5.5,
+        7.5
+      ],
+      "ec_ds_m_max": 6
+    }
+  },
+  {
+    "id": "MIC005",
+    "name_fa": "فرنکیا آلنی",
+    "name_en": "Frankia alni",
+    "category": "nitrogen_fixing_actinorhizal",
+    "mechanism": "همزیستی با اکتینوریزال‌ها؛ مناسب احیا",
+    "biomes": [
+      "Temperate_Continental",
+      "Boreal",
+      "Alpine"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        10,
+        30
+      ],
+      "ph": [
+        5.0,
+        7.5
+      ],
+      "ec_ds_m_max": 4
+    }
+  },
+  {
+    "id": "MIC015",
+    "name_fa": "ریزوبیوم فازیولی",
+    "name_en": "Rhizobium phaseoli",
+    "category": "nitrogen_fixing",
+    "mechanism": "همزیستی با لوبیا؛ تثبیت نیتروژن",
+    "biomes": [
+      "Tropical_Savanna",
+      "Semi-arid"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        20,
+        32
+      ],
+      "ph": [
+        5.5,
+        7.5
+      ],
+      "ec_ds_m_max": 5
+    }
+  },
+  {
+    "id": "MIC016",
+    "name_fa": "سینوریزوبیوم ملی‌لو‌تی",
+    "name_en": "Sinorhizobium meliloti",
+    "category": "nitrogen_fixing",
+    "mechanism": "همزیستی با یونجه و شبدر؛ تثبیت ۲۰۰-۵۰۰ کیلوگرم نیتروژن",
+    "biomes": [
+      "Mediterranean",
+      "Temperate_Continental"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        30
+      ],
+      "ph": [
+        6.5,
+        8.5
+      ],
+      "ec_ds_m_max": 8
+    }
+  },
+  {
+    "id": "MIC017",
+    "name_fa": "ریزوبیوم تروپیسی",
+    "name_en": "Rhizobium tropici",
+    "category": "nitrogen_fixing",
+    "mechanism": "همزیستی با لوبیای حاره‌ای؛ تحمل اسیدیته",
+    "biomes": [
+      "Tropical_Savanna",
+      "Tropical_Rainforest"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        25,
+        35
+      ],
+      "ph": [
+        4.5,
+        6.5
+      ],
+      "ec_ds_m_max": 4
+    }
+  },
+  {
+    "id": "MIC018",
+    "name_fa": "آزوتوباکتر وینلاندی",
+    "name_en": "Azotobacter vinelandii",
+    "category": "nitrogen_fixing_free_living",
+    "mechanism": "تثبیت نیتروژن در خاک‌های مرطوب؛ تولید آلژینات",
+    "biomes": [
+      "Temperate_Continental",
+      "Mediterranean"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        20,
+        30
+      ],
+      "ph": [
+        6.0,
+        8.0
+      ],
+      "ec_ds_m_max": 6
+    }
+  },
+  {
+    "id": "MIC019",
+    "name_fa": "کلستریدیوم پاستوریانوم",
+    "name_en": "Clostridium pasteurianum",
+    "category": "nitrogen_fixing_anaerobic",
+    "mechanism": "تثبیت نیتروژن بی‌هوازی در خاک‌های غرقابی",
+    "biomes": [
+      "Tropical_Savanna",
+      "Tropical_Rainforest"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        20,
+        35
+      ],
+      "ph": [
+        5.5,
+        7.5
+      ],
+      "ec_ds_m_max": 5
+    }
+  },
+  {
+    "id": "MIC020",
+    "name_fa": "سیانوباکتریوم نوستوک",
+    "name_en": "Nostoc spp. (Cyanobacteria)",
+    "category": "nitrogen_fixing_cyanobacteria",
+    "mechanism": "تثبیت نیتروژن فتوسنتزی در شالیزارها و خاک‌های مرطوب",
+    "biomes": [
+      "Tropical_Savanna",
+      "Tropical_Rainforest"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        20,
+        35
+      ],
+      "ph": [
+        6.0,
+        8.0
+      ],
+      "ec_ds_m_max": 4
+    }
+  },
+  {
+    "id": "MIC021",
+    "name_fa": "سیانوباکتریوم آنامبنا",
+    "name_en": "Anabaena azollae",
+    "category": "nitrogen_fixing_cyanobacteria",
+    "mechanism": "همزیستی با آزولا در شالیزارها؛ تثبیت ۵۰-۱۰۰ کیلوگرم نیتروژن",
+    "biomes": [
+      "Tropical_Savanna",
+      "Tropical_Rainforest"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        20,
+        35
+      ],
+      "ph": [
+        6.0,
+        8.0
+      ],
+      "ec_ds_m_max": 4
+    }
+  },
+  {
+    "id": "MIC006",
+    "name_fa": "ریزوفاگوس ایرگولاریس",
+    "name_en": "Rhizophagus irregularis",
+    "category": "arbuscular_mycorrhiza",
+    "mechanism": "افزایش جذب فسفر تا ۷۰٪؛ همزیستی با ۸۰٪ گیاهان",
+    "biomes": [
+      "ALL"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        10,
+        35
+      ],
+      "ph": [
+        5.0,
+        8.5
+      ],
+      "ec_ds_m_max": 8
+    }
+  },
+  {
+    "id": "MIC007",
+    "name_fa": "فونلیفورمیس موسه‌آ",
+    "name_en": "Funneliformis mosseae",
+    "category": "arbuscular_mycorrhiza",
+    "mechanism": "مؤثرترین برای خاک‌های آهکی؛ بهبود جذب روی",
+    "biomes": [
+      "Semi-arid",
+      "Mediterranean"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        35
+      ],
+      "ph": [
+        7.0,
+        8.5
+      ],
+      "ec_ds_m_max": 6
+    }
+  },
+  {
+    "id": "MIC008",
+    "name_fa": "گلوموس دزرتیکولا",
+    "name_en": "Glomus deserticola",
+    "category": "arbuscular_mycorrhiza",
+    "mechanism": "مایکوریزای اختصاصی بیابان؛ تحمل شوری تا ۱۲",
+    "biomes": [
+      "Hyper-arid",
+      "Arid"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        20,
+        45
+      ],
+      "ph": [
+        6.5,
+        9.0
+      ],
+      "ec_ds_m_max": 12
+    }
+  },
+  {
+    "id": "MIC022",
+    "name_fa": "کلاروئیدئوگلوموس اتونیکاتوم",
+    "name_en": "Claroideoglomus etunicatum",
+    "category": "arbuscular_mycorrhiza",
+    "mechanism": "تحمل شوری و فلزات سنگین؛ مناسب اراضی آلوده",
+    "biomes": [
+      "Coastal_Saline",
+      "Volcanic"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        35
+      ],
+      "ph": [
+        6.0,
+        8.5
+      ],
+      "ec_ds_m_max": 10
+    }
+  },
+  {
+    "id": "MIC023",
+    "name_fa": "گلوموس اینترادیکس",
+    "name_en": "Rhizophagus intraradices",
+    "category": "arbuscular_mycorrhiza",
+    "mechanism": "افزایش جذب فسفر و روی؛ تحمل خشکی",
+    "biomes": [
+      "ALL"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        10,
+        35
+      ],
+      "ph": [
+        5.0,
+        8.5
+      ],
+      "ec_ds_m_max": 8
+    }
+  },
+  {
+    "id": "MIC024",
+    "name_fa": "گلوموس موسه‌آ",
+    "name_en": "Rhizophagus mosseae",
+    "category": "arbuscular_mycorrhiza",
+    "mechanism": "بهبود جذب آب و مواد مغذی؛ تحمل تنش",
+    "biomes": [
+      "Mediterranean",
+      "Semi-arid"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        35
+      ],
+      "ph": [
+        6.0,
+        8.5
+      ],
+      "ec_ds_m_max": 7
+    }
+  },
+  {
+    "id": "MIC025",
+    "name_fa": "پیزولیتوس تینکتوریوس",
+    "name_en": "Pisolithus tinctorius",
+    "category": "ectomycorrhiza",
+    "mechanism": "اکتومایکوریزای پیشگام برای اراضی تخریب‌شده",
+    "biomes": [
+      "Temperate_Continental",
+      "Boreal",
+      "Volcanic"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        5,
+        35
+      ],
+      "ph": [
+        4.0,
+        7.0
+      ],
+      "ec_ds_m_max": 4
+    }
+  },
+  {
+    "id": "MIC026",
+    "name_fa": "آمانیتا موسکاریا",
+    "name_en": "Amanita muscaria",
+    "category": "ectomycorrhiza",
+    "mechanism": "همزیستی با کاج و بلوط در جنگل‌های سرد",
+    "biomes": [
+      "Boreal",
+      "Temperate_Continental"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        5,
+        25
+      ],
+      "ph": [
+        4.5,
+        7.0
+      ],
+      "ec_ds_m_max": 3
+    }
+  },
+  {
+    "id": "MIC027",
+    "name_fa": "توبر ملانوسپوروم (قارچ دنبلان)",
+    "name_en": "Tuber melanosporum",
+    "category": "ectomycorrhiza",
+    "mechanism": "همزیستی با بلوط و فندق؛ ارزش اقتصادی بالا",
+    "biomes": [
+      "Mediterranean"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        10,
+        25
+      ],
+      "ph": [
+        7.5,
+        8.5
+      ],
+      "ec_ds_m_max": 3
+    }
+  },
+  {
+    "id": "MIC028",
+    "name_fa": "لاکاتریا بیکالر",
+    "name_en": "Laccaria bicolor",
+    "category": "ectomycorrhiza",
+    "mechanism": "همزیستی با کاج و توسکا؛ مناسب جنگل‌کاری",
+    "biomes": [
+      "Boreal",
+      "Temperate_Continental"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        5,
+        30
+      ],
+      "ph": [
+        4.5,
+        7.0
+      ],
+      "ec_ds_m_max": 4
+    }
+  },
+  {
+    "id": "MIC009",
+    "name_fa": "باسیلوس سوبتیلیس",
+    "name_en": "Bacillus subtilis",
+    "category": "pgpr_phosphate_solubilizer",
+    "mechanism": "حل‌کننده فسفات؛ آنتی‌بیوتیک ضد قارچ",
+    "biomes": [
+      "ALL"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        40
+      ],
+      "ph": [
+        5.5,
+        9.0
+      ],
+      "ec_ds_m_max": 10
+    }
+  },
+  {
+    "id": "MIC010",
+    "name_fa": "سودوموناس فلورسنس",
+    "name_en": "Pseudomonas fluorescens",
+    "category": "pgpr_biocontrol",
+    "mechanism": "کنترل بیماری‌های قارچی؛ تولید سیدروفور",
+    "biomes": [
+      "Temperate_Continental",
+      "Mediterranean"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        10,
+        30
+      ],
+      "ph": [
+        6.0,
+        8.0
+      ],
+      "ec_ds_m_max": 6
+    }
+  },
+  {
+    "id": "MIC029",
+    "name_fa": "باسیلوس مگاتریوم",
+    "name_en": "Bacillus megaterium",
+    "category": "pgpr_phosphate_solubilizer",
+    "mechanism": "حل‌کننده قوی فسفات؛ تولید ویتامین",
+    "biomes": [
+      "ALL"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        40
+      ],
+      "ph": [
+        5.5,
+        9.0
+      ],
+      "ec_ds_m_max": 10
+    }
+  },
+  {
+    "id": "MIC030",
+    "name_fa": "باسیلوس پومیلس",
+    "name_en": "Bacillus pumilus",
+    "category": "pgpr_biocontrol",
+    "mechanism": "کنترل بیماری‌های ریشه؛ تحمل شوری",
+    "biomes": [
+      "Semi-arid",
+      "Coastal_Saline"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        37
+      ],
+      "ph": [
+        6.0,
+        8.5
+      ],
+      "ec_ds_m_max": 8
+    }
+  },
+  {
+    "id": "MIC031",
+    "name_fa": "سودوموناس پوتیدا",
+    "name_en": "Pseudomonas putida",
+    "category": "pgpr_biocontrol",
+    "mechanism": "کنترل بیولوژیک؛ تجزیه آلاینده‌ها",
+    "biomes": [
+      "ALL"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        10,
+        30
+      ],
+      "ph": [
+        6.0,
+        8.0
+      ],
+      "ec_ds_m_max": 7
+    }
+  },
+  {
+    "id": "MIC032",
+    "name_fa": "سودوموناس آئروژینوزا",
+    "name_en": "Pseudomonas aeruginosa",
+    "category": "pgpr_biocontrol",
+    "mechanism": "کنترل آفات و بیماری‌ها؛ تولید رامنولیپید",
+    "biomes": [
+      "Tropical_Savanna",
+      "Temperate_Continental"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        37
+      ],
+      "ph": [
+        6.0,
+        8.5
+      ],
+      "ec_ds_m_max": 8
+    }
+  },
+  {
+    "id": "MIC033",
+    "name_fa": "آسپرژیلوس نیجر",
+    "name_en": "Aspergillus niger",
+    "category": "phosphate_solubilizer_fungus",
+    "mechanism": "حل‌کننده قوی فسفات؛ تولید اسیدهای آلی",
+    "biomes": [
+      "ALL"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        20,
+        37
+      ],
+      "ph": [
+        4.0,
+        8.0
+      ],
+      "ec_ds_m_max": 8
+    }
+  },
+  {
+    "id": "MIC034",
+    "name_fa": "پنی‌سیلیوم بیلای",
+    "name_en": "Penicillium bilaii",
+    "category": "phosphate_solubilizer_fungus",
+    "mechanism": "حل‌کننده فسفات؛ مناسب خاک‌های قلیایی",
+    "biomes": [
+      "Semi-arid",
+      "Mediterranean"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        30
+      ],
+      "ph": [
+        5.5,
+        8.5
+      ],
+      "ec_ds_m_max": 7
+    }
+  },
+  {
+    "id": "MIC035",
+    "name_fa": "سرراتیا مارسسنس",
+    "name_en": "Serratia marcescens",
+    "category": "pgpr_biocontrol",
+    "mechanism": "کنترل بیماری‌های قارچی؛ تولید آنتی‌بیوتیک",
+    "biomes": [
+      "ALL"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        37
+      ],
+      "ph": [
+        6.0,
+        8.5
+      ],
+      "ec_ds_m_max": 8
+    }
+  },
+  {
+    "id": "MIC036",
+    "name_fa": "استرپتومایسس گرزیوس",
+    "name_en": "Streptomyces griseus",
+    "category": "biocontrol_actinomycete",
+    "mechanism": "تولید آنتی‌بیوتیک استرپتومایسین؛ کنترل باکتری‌ها",
+    "biomes": [
+      "ALL"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        35
+      ],
+      "ph": [
+        6.0,
+        9.0
+      ],
+      "ec_ds_m_max": 8
+    }
+  },
+  {
+    "id": "MIC037",
+    "name_fa": "بوارینا باسیانا",
+    "name_en": "Beauveria bassiana",
+    "category": "entomopathogenic_fungus",
+    "mechanism": "قارچ حشره‌کش؛ کنترل آفات بدون سم",
+    "biomes": [
+      "ALL"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        30
+      ],
+      "ph": [
+        5.0,
+        8.0
+      ],
+      "ec_ds_m_max": 6
+    }
+  },
+  {
+    "id": "MIC038",
+    "name_fa": "متاریزیوم آنیزوپلیه",
+    "name_en": "Metarhizium anisopliae",
+    "category": "entomopathogenic_fungus",
+    "mechanism": "قارچ حشره‌کش؛ کنترل آفات خاکزی",
+    "biomes": [
+      "ALL"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        30
+      ],
+      "ph": [
+        5.0,
+        8.0
+      ],
+      "ec_ds_m_max": 6
+    }
+  },
+  {
+    "id": "MIC011",
+    "name_fa": "هالوموناس",
+    "name_en": "Halomonas spp.",
+    "category": "halophilic_pgpr",
+    "mechanism": "باکتری اختصاصی خاک‌های شور؛ تحمل تا ۲۰٪ نمک",
+    "biomes": [
+      "Hyper-arid",
+      "Arid",
+      "Coastal_Saline"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        20,
+        40
+      ],
+      "ph": [
+        7.0,
+        9.5
+      ],
+      "ec_ds_m_max": 25
+    }
+  },
+  {
+    "id": "MIC012",
+    "name_fa": "آزوتوباکتر سالینستریس",
+    "name_en": "Azotobacter salinestris",
+    "category": "nitrogen_fixing_halotolerant",
+    "mechanism": "تثبیت نیتروژن در شوری تا ۸",
+    "biomes": [
+      "Arid",
+      "Semi-arid",
+      "Coastal_Saline"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        20,
+        35
+      ],
+      "ph": [
+        7.0,
+        9.0
+      ],
+      "ec_ds_m_max": 8
+    }
+  },
+  {
+    "id": "MIC039",
+    "name_fa": "هالوباکتریوم",
+    "name_en": "Halobacterium salinarum",
+    "category": "halophilic_archaea",
+    "mechanism": "آرکی‌باکتری بسیار شوری‌پسند؛ تولید باکتریورودوپسین",
+    "biomes": [
+      "Hyper-arid",
+      "Coastal_Saline"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        20,
+        40
+      ],
+      "ph": [
+        6.5,
+        8.5
+      ],
+      "ec_ds_m_max": 30
+    }
+  },
+  {
+    "id": "MIC040",
+    "name_fa": "تیوباسیلوس تیواکسیدانس",
+    "name_en": "Thiobacillus thiooxidans",
+    "category": "sulfur_oxidizing_bacteria",
+    "mechanism": "اکسیداسیون گوگرد؛ کاهش شوری خاک‌های قلیایی",
+    "biomes": [
+      "Semi-arid",
+      "Arid"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        35
+      ],
+      "ph": [
+        2.0,
+        7.0
+      ],
+      "ec_ds_m_max": 8
+    }
+  },
+  {
+    "id": "MIC041",
+    "name_fa": "آرکتوباکتر گلوبالیس",
+    "name_en": "Arthrobacter globiformis",
+    "category": "cold_tolerant_pgpr",
+    "mechanism": "تحمل سرما؛ مناسب مناطق سردسیر",
+    "biomes": [
+      "Boreal",
+      "Alpine",
+      "Temperate_Continental"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        0,
+        25
+      ],
+      "ph": [
+        6.0,
+        8.0
+      ],
+      "ec_ds_m_max": 6
+    }
+  },
+  {
+    "id": "MIC042",
+    "name_fa": "سودوموناس سیبریکا",
+    "name_en": "Pseudomonas syringae",
+    "category": "cold_tolerant_biocontrol",
+    "mechanism": "تحمل سرما؛ کنترل آفات در مناطق سرد",
+    "biomes": [
+      "Boreal",
+      "Temperate_Continental"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        0,
+        25
+      ],
+      "ph": [
+        5.5,
+        7.5
+      ],
+      "ec_ds_m_max": 5
+    }
+  },
+  {
+    "id": "MIC043",
+    "name_fa": "باسیلوس توردی",
+    "name_en": "Bacillus thuringiensis",
+    "category": "biocontrol_bacteria",
+    "mechanism": "تولید پروتئین کریستالی؛ کنترل آفات بدون سم",
+    "biomes": [
+      "ALL"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        35
+      ],
+      "ph": [
+        6.0,
+        8.5
+      ],
+      "ec_ds_m_max": 8
+    }
+  },
+  {
+    "id": "MIC044",
+    "name_fa": "مایکروکوسس لوتئوس",
+    "name_en": "Micrococcus luteus",
+    "category": "pgpr_stress_tolerant",
+    "mechanism": "تحمل خشکی و اشعه؛ مناسب مناطق بیابانی",
+    "biomes": [
+      "Hyper-arid",
+      "Arid"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        37
+      ],
+      "ph": [
+        6.5,
+        9.0
+      ],
+      "ec_ds_m_max": 10
+    }
+  },
+  {
+    "id": "MIC013",
+    "name_fa": "تریکودرما هارزیانوم",
+    "name_en": "Trichoderma harzianum",
+    "category": "biocontrol_fungus",
+    "mechanism": "آنتاگونیست پاتوژن‌ها؛ تحریک رشد ریشه",
+    "biomes": [
+      "ALL"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        35
+      ],
+      "ph": [
+        5.0,
+        8.0
+      ],
+      "ec_ds_m_max": 8
+    }
+  },
+  {
+    "id": "MIC045",
+    "name_fa": "تریکودرما ویریده",
+    "name_en": "Trichoderma viride",
+    "category": "biocontrol_fungus",
+    "mechanism": "کنترل قارچ‌های بیمارگر؛ حل‌کننده سلولز",
+    "biomes": [
+      "ALL"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        35
+      ],
+      "ph": [
+        4.5,
+        8.0
+      ],
+      "ec_ds_m_max": 8
+    }
+  },
+  {
+    "id": "MIC046",
+    "name_fa": "تریکودرما آتروویریده",
+    "name_en": "Trichoderma atroviride",
+    "category": "biocontrol_fungus",
+    "mechanism": "کنترل بیماری‌های ریشه؛ تحمل سرما",
+    "biomes": [
+      "Temperate_Continental",
+      "Boreal"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        10,
+        30
+      ],
+      "ph": [
+        5.0,
+        8.0
+      ],
+      "ec_ds_m_max": 7
+    }
+  },
+  {
+    "id": "MIC047",
+    "name_fa": "گلایوکلادیوم ویارنس",
+    "name_en": "Gliocladium virens",
+    "category": "biocontrol_fungus",
+    "mechanism": "کنترل بیماری‌های ریشه؛ مناسب خاک‌های مرطوب",
+    "biomes": [
+      "Tropical_Savanna",
+      "Temperate_Continental"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        35
+      ],
+      "ph": [
+        5.0,
+        7.5
+      ],
+      "ec_ds_m_max": 6
+    }
+  },
+  {
+    "id": "MIC048",
+    "name_fa": "پایسیلومایسس لیلاسینوس",
+    "name_en": "Purpureocillium lilacinum",
+    "category": "nematophagous_fungus",
+    "mechanism": "قارچ نماتدخوار؛ کنترل نماتدهای ریشه",
+    "biomes": [
+      "ALL"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        35
+      ],
+      "ph": [
+        5.0,
+        8.0
+      ],
+      "ec_ds_m_max": 7
+    }
+  },
+  {
+    "id": "MIC049",
+    "name_fa": "آربوتروکس کلاواریفورمیس",
+    "name_en": "Arthrobotrys cladodes",
+    "category": "nematophagous_fungus",
+    "mechanism": "قارچ نماتدخوار؛ شکار نماتدها با تور",
+    "biomes": [
+      "ALL"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        15,
+        30
+      ],
+      "ph": [
+        5.5,
+        8.0
+      ],
+      "ec_ds_m_max": 6
+    }
+  },
+  {
+    "id": "MIC050",
+    "name_fa": "اندوفیت‌های فوندال (فوساریوم غیربیمارگر)",
+    "name_en": "Endophytic Fungi (Epichloë spp.)",
+    "category": "endophyte",
+    "mechanism": "همزیستی درون‌بافتی؛ افزایش تحمل تنش؛ تولید آلکالوئید",
+    "biomes": [
+      "Temperate_Continental",
+      "Mediterranean"
+    ],
+    "optimal_conditions": {
+      "temp_c": [
+        10,
+        30
+      ],
+      "ph": [
+        5.5,
+        8.0
+      ],
+      "ec_ds_m_max": 6
+    }
+  }
+]
