@@ -140,6 +140,7 @@ export function SceneContent() {
         {visual.showDecor && (
           <>
             // @ts-expect-error TerrainData missing soilLayer/bedrock/runoff/windErosion properties
+            // @ts-expect-error TerrainData missing soilLayer/bedrock/runoff/windErosion properties
             <Forest terrain={terrain} />
             <Crops
               // @ts-expect-error TerrainData missing soilLayer/bedrock/runoff/windErosion properties
