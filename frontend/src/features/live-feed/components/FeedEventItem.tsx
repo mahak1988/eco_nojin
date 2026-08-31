@@ -56,7 +56,7 @@ export const FeedEventItem = memo(function FeedEventItem({ event }: FeedEventIte
       animate={{ opacity: 1, y: 0, height: 'auto' }}
       exit={{ opacity: 0, x: 50, height: 0 }}
       transition={SPRING_CONFIG}
-      style={{ background: EVENT_COLORS[event.type] }}
+      style={{ background: EVENT_COLORS[event.type as keyof typeof EVENT_COLORS] }}
       layout
     >
       <div className="feed-item-icon">

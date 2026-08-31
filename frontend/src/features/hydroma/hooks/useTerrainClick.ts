@@ -110,7 +110,7 @@ export function useTerrainClick({
                 prev
                   ? {
                       ...prev,
-                      erosion: prev.erosion.map((row) => row.map((v) => +(v * ratio).toFixed(3))),
+                      erosion: (prev?.erosion ?? []).map((row) => row.map((v) => +(v * ratio).toFixed(3))),
                     }
                   : prev
               );

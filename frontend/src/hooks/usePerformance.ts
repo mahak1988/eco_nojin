@@ -44,9 +44,9 @@ export function usePerformance(): void {
     if (import.meta.env.DEV) {
       // Lazy load web-vitals (small library)
       import('web-vitals')
-        .then(({ onCLS, onFID, onLCP, onFCP, onTTFB }) => {
+        .then(({ onCLS, onINP, onLCP, onFCP, onTTFB }) => {
           onCLS(logMetric as any);
-          onFID(logMetric as any);
+          onINP(logMetric as any);
           onLCP(logMetric as any);
           onFCP(logMetric as any);
           onTTFB(logMetric as any);
