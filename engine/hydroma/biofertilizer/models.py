@@ -19,7 +19,7 @@ from sqlalchemy import (
     Float,
     ForeignKey,
     Integer,
-    String,
+    String, # String اضافه شده
     Text,
 )
 from sqlalchemy.sql import func
@@ -104,7 +104,7 @@ class NojinApplicationPlan(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     formulation_id = Column(Integer, ForeignKey("nojin_formulations.id"), nullable=False)
-    land_profile_id = Column(Integer, ForeignKey("land_profiles.id"))
+    land_profile_id = Column(String, ForeignKey("land_profiles.id")) # تغییر از Integer به String
     crop_type = Column(String(100), nullable=False)
     application_date = Column(Date, nullable=False)
     application_method = Column(String(100), nullable=False)

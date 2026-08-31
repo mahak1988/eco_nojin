@@ -573,3 +573,10 @@ def compare_irrigation(species_id: str, site_id: str) -> Dict[str, Any]:
     """مقایسه سناریوهای آبیاری"""
     sim = get_simulator()
     return sim.compare_irrigation_scenarios(species_id, site_id)
+
+# --- Backward-compat re-export (class removed in commit a946a4f) ---
+# motors.py / motor_feed.py / chain_runner.py import RealAquaCropMotor from
+# this module. The 2026-08 rewrite introduced AquaCropSimulator without
+# keeping the old class; the original implementation lives in
+# aquacrop_real_motor.py and is re-exported here.
+from services.scientific_motors.aquacrop_real_motor import RealAquaCropMotor  # noqa: E402,F401

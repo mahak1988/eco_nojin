@@ -119,8 +119,8 @@ if isinstance(_cors_origins, str):
     except Exception:
         _cors_origins = [o.strip() for o in _cors_origins.split(",") if o.strip()]
 
-if not _cors_origins:
-    _cors_origins = ["*"]
+# Pentest fix H1: no wildcard fallback. If origins resolve to an empty
+# list, CORSMiddleware sends no ACAO headers at all (fail-closed).
 
 logger.info(f"CORS middleware configured with {len(_cors_origins)} origins")
 
@@ -128,33 +128,16 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=_cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],  # All methods including OPTIONS
-    allow_headers=["*"],  # All headers
-    expose_headers=["*"],
-    max_age=86400,  # Cache preflight for 24 hours
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
+    expose_headers=["X-Request-ID"],
+    max_age=600,
 )
 
 
-# OPTIONS request bypass middleware (for CORS preflight)
-@app.middleware("http")
-async def bypass_options_requests(request: Request, call_next):
-    """Bypass OPTIONS requests with complete CORS headers."""
-    if request.method == "OPTIONS":
-        from fastapi.responses import Response
-        return Response(
-            status_code=200,
-            headers={
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
-                "Access-Control-Allow-Headers": "*",
-                "Access-Control-Max-Age": "3600",
-                "Access-Control-Allow-Credentials": "true",
-            }
-        )
-    response = await call_next(request)
-    # Add CORS headers to all responses
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    return response
+# Pentest fix H1: the manual OPTIONS bypass and the per-response wildcard
+# ACAO header were removed. CORS is enforced exclusively by the
+# CORSMiddleware configured below (explicit origin allowlist).
 
 
 @app.exception_handler(Exception)

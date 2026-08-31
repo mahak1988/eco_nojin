@@ -1,10 +1,18 @@
+"""EcoWallet router - ECO token economy system.
 
-"""EcoWallet router - ECO token economy system."""
+Pentest fix C2: every balance-mutating endpoint requires authentication and
+the wallet identity is always taken from the authenticated user, never from
+the request body. Unknown earning/redemption categories are rejected and a
+daily earning cap is enforced.
+"""
 
 from datetime import UTC, datetime
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+
+from database.models import User
+from services.api_gateway.auth import require_user
 
 router = APIRouter(prefix="/api/v1/ecowallet", tags=["ecowallet"])
 
@@ -26,12 +34,16 @@ REDEMPTION_RATES = {
     "marketplace_discount": {"eco": 10.0, "description": "Marketplace discount"},
 }
 
+# Daily earning cap per user (ECO tokens) - prevents unbounded minting.
+DAILY_EARN_CAP = 200.0
+
 
 # ============================================================================
 # Models
 # ============================================================================
 class WalletCreateRequest(BaseModel):
-    user_id: str = Field(..., description="User ID")
+    # Deprecated: ignored. The wallet is always created for the authenticated user.
+    user_id: str | None = Field(None, description="Deprecated and ignored; identity comes from the auth token")
 
 
 class WalletResponse(BaseModel):
@@ -40,9 +52,9 @@ class WalletResponse(BaseModel):
 
 
 class EarnRequest(BaseModel):
-    user_id: str
+    user_id: str | None = Field(None, description="Deprecated and ignored; identity comes from the auth token")
     category: str
-    quantity: float = 1.0
+    quantity: float = Field(default=1.0, gt=0)
     language: str = "en"
 
 
@@ -53,7 +65,7 @@ class EarnResponse(BaseModel):
 
 
 class RedeemRequest(BaseModel):
-    user_id: str
+    user_id: str | None = Field(None, description="Deprecated and ignored; identity comes from the auth token")
     category: str
     language: str = "en"
 
@@ -65,7 +77,7 @@ class RedeemResponse(BaseModel):
 
 
 class UssdRequest(BaseModel):
-    user_id: str
+    user_id: str | None = Field(None, description="Deprecated and ignored; identity comes from the auth token")
     action: str
     language: str = "en"
 
@@ -77,9 +89,21 @@ class UssdResponse(BaseModel):
 
 
 # ============================================================================
-# In-memory wallet storage (for testing)
+# In-memory wallet storage (phase-1 scope; DB persistence tracked separately)
 # ============================================================================
-_wallets = {}
+_wallets: dict[str, dict] = {}
+# user_id -> (ISO date, earned today)
+_daily_earned: dict[str, tuple[str, float]] = {}
+
+
+def _get_or_create_wallet(user_id: str) -> dict:
+    """Return the user's wallet, creating a zero-balance one if missing."""
+    if user_id not in _wallets:
+        _wallets[user_id] = {
+            "balance": 0.0,
+            "created_at": datetime.now(UTC).replace(tzinfo=None),
+        }
+    return _wallets[user_id]
 
 
 # ============================================================================
@@ -87,65 +111,64 @@ _wallets = {}
 # ============================================================================
 
 @router.post("/wallets", status_code=200, response_model=WalletResponse)
-def create_wallet(payload: WalletCreateRequest):
-    """Create a new wallet."""
-    _wallets[payload.user_id] = {"balance": 0.0, "created_at": datetime.now(UTC).replace(tzinfo=None)}
-    return WalletResponse(user_id=payload.user_id, balance=0.0)
+def create_wallet(payload: WalletCreateRequest, user: User = Depends(require_user)):
+    """Create (or return) the wallet of the authenticated user."""
+    wallet = _get_or_create_wallet(user.id)
+    return WalletResponse(user_id=user.id, balance=wallet["balance"])
 
 
 @router.post("/earn", response_model=EarnResponse)
-def earn_tokens(payload: EarnRequest):
-    """Earn ECO tokens."""
-    # Ensure wallet exists
-    if payload.user_id not in _wallets:
-        _wallets[payload.user_id] = {"balance": 0.0, "created_at": datetime.now(UTC).replace(tzinfo=None)}
+def earn_tokens(payload: EarnRequest, user: User = Depends(require_user)):
+    """Earn ECO tokens for the authenticated user (daily cap enforced)."""
+    rate = EARNING_RATES.get(payload.category, {}).get("eco", 0.0)
+    if rate <= 0:
+        raise HTTPException(status_code=422, detail=f"Unknown earning category: {payload.category}")
 
-    # Get earning rate (default to 50.0 for tree_planting as per test)
-    rate = EARNING_RATES.get(payload.category, {}).get("eco", 50.0)
     amount = rate * payload.quantity
+    today = datetime.now(UTC).date().isoformat()
+    earned_date, earned_amount = _daily_earned.get(user.id, ("", 0.0))
+    earned_today = earned_amount if earned_date == today else 0.0
+    if earned_today + amount > DAILY_EARN_CAP:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Daily earning cap of {DAILY_EARN_CAP} ECO exceeded",
+        )
 
-    # Update balance
-    _wallets[payload.user_id]["balance"] += amount
-    new_balance = _wallets[payload.user_id]["balance"]
+    wallet = _get_or_create_wallet(user.id)
+    wallet["balance"] += amount
+    _daily_earned[user.id] = (today, earned_today + amount)
 
     return EarnResponse(
         amount_earned=amount,
-        new_balance=new_balance,
+        new_balance=wallet["balance"],
         category=payload.category,
     )
 
 
 @router.post("/redeem", response_model=RedeemResponse)
-def redeem_tokens(payload: RedeemRequest):
-    """Redeem ECO tokens."""
-    # Ensure wallet exists
-    if payload.user_id not in _wallets:
-        _wallets[payload.user_id] = {"balance": 0.0, "created_at": datetime.now(UTC).replace(tzinfo=None)}
+def redeem_tokens(payload: RedeemRequest, user: User = Depends(require_user)):
+    """Redeem ECO tokens from the authenticated user's wallet."""
+    rate = REDEMPTION_RATES.get(payload.category, {}).get("eco", 0.0)
+    if rate <= 0:
+        raise HTTPException(status_code=422, detail=f"Unknown redemption category: {payload.category}")
 
-    # Get redemption rate (default to 20.0 for consultation as per test)
-    rate = REDEMPTION_RATES.get(payload.category, {}).get("eco", 20.0)
-    amount = rate
+    wallet = _wallets.get(user.id)
+    if wallet is None or wallet["balance"] < rate:
+        raise HTTPException(status_code=400, detail="Insufficient balance")
 
-    # Update balance
-    _wallets[payload.user_id]["balance"] -= amount
-    new_balance = _wallets[payload.user_id]["balance"]
-
+    wallet["balance"] -= rate
     return RedeemResponse(
-        amount_redeemed=amount,
-        new_balance=new_balance,
+        amount_redeemed=rate,
+        new_balance=wallet["balance"],
         category=payload.category,
     )
 
 
 @router.post("/ussd", response_model=UssdResponse)
-def ussd_action(payload: UssdRequest):
-    """Handle USSD actions."""
-    # Ensure wallet exists
-    if payload.user_id not in _wallets:
-        _wallets[payload.user_id] = {"balance": 0.0, "created_at": datetime.now(UTC).replace(tzinfo=None)}
-
-    balance = _wallets[payload.user_id]["balance"]
-
+def ussd_action(payload: UssdRequest, user: User = Depends(require_user)):
+    """USSD-style balance action for the authenticated user."""
+    wallet = _get_or_create_wallet(user.id)
+    balance = wallet["balance"]
     return UssdResponse(
         action=payload.action,
         balance=balance,
@@ -162,8 +185,8 @@ def distribute_tokens(total: float = Query(..., gt=0)):
 
 
 @router.get("/stats")
-def ecowallet_stats():
-    """EcoWallet statistics."""
+def ecowallet_stats(user: User = Depends(require_user)):
+    """EcoWallet statistics (authenticated)."""
     return {
         "total_wallets": len(_wallets),
         "total_users": len(_wallets),

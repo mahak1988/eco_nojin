@@ -1,15 +1,37 @@
 """Tests for ECO Wallet module."""
 
+import uuid
+
 import pytest
-from fastapi.testclient import TestClient
 
 from services.ecowallet.earning_rules import EarningCategory, EarningEngine
 from services.ecowallet.ledger import EcoLedger
 from services.ecowallet.messages import EcoMessages
 from services.ecowallet.redemption import RedemptionCategory, RedemptionEngine
-from services.api_gateway.main import app
 
-client = TestClient(app)
+
+def _unique_email(prefix: str) -> str:
+    """Unique email per test run so repeated runs never collide."""
+    return f"{prefix}-{uuid.uuid4().hex[:10]}@qa.econojin-test.com"
+
+
+def _register_or_login(client, email: str, password: str = "TestPass123") -> dict:
+    """Register (or login, if the email already exists) and return auth headers."""
+    response = client.post(
+        "/api/v1/auth/register",
+        json={
+            "email": email,
+            "full_name": "Wallet Tester",
+            "password": password,
+            "accept_tos": True,
+            "accept_privacy": True,
+        },
+    )
+    if response.status_code != 200:
+        response = client.post("/api/v1/auth/login", json={"email": email, "password": password})
+    assert response.status_code == 200, response.text
+    token = response.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}
 
 
 class TestEcoLedger:
@@ -113,71 +135,125 @@ class TestEcoMessages:
 
 
 class TestEcoWalletAPI:
-    def test_create_wallet_endpoint(self):
-        response = client.post("/api/v1/ecowallet/wallets", json={"user_id": "api_u1"})
+    """API tests (pentest fix C2): endpoints require auth; identity comes from token."""
+
+    def test_earn_requires_auth(self, client):
+        response = client.post("/api/v1/ecowallet/earn", json={"category": "tree_planting"})
+        assert response.status_code == 401
+
+    def test_create_wallet_endpoint(self, client):
+        headers = _register_or_login(client, _unique_email("create"))
+        response = client.post("/api/v1/ecowallet/wallets", json={"user_id": "ignored"}, headers=headers)
         assert response.status_code == 200
         data = response.json()
-        assert data["user_id"] == "api_u1"
         assert data["balance"] == 0.0
+        assert data["user_id"]
 
-    def test_earn_endpoint(self):
-        client.post("/api/v1/ecowallet/wallets", json={"user_id": "api_u2"})
+    def test_earn_endpoint(self, client):
+        headers = _register_or_login(client, _unique_email("earn"))
         response = client.post(
             "/api/v1/ecowallet/earn",
             json={
-                "user_id": "api_u2",
+                "user_id": "someone-else",
                 "category": "tree_planting",
                 "quantity": 1.0,
                 "language": "en",
             },
+            headers=headers,
         )
         assert response.status_code == 200
         assert response.json()["amount_earned"] == 50.0
 
-    def test_redeem_endpoint(self):
-        client.post("/api/v1/ecowallet/wallets", json={"user_id": "api_u3"})
-        client.post(
+    def test_earn_ignores_body_user_id(self, client):
+        """user_id in the body must never target another wallet (pentest C2)."""
+        headers = _register_or_login(client, _unique_email("scope"))
+        r = client.post(
             "/api/v1/ecowallet/earn",
-            json={
-                "user_id": "api_u3",
-                "category": "tree_planting",
-            },
+            json={"user_id": "victim", "category": "tree_planting"},
+            headers=headers,
         )
+        assert r.status_code == 200
+        balance = client.post(
+            "/api/v1/ecowallet/ussd",
+            json={"action": "balance"},
+            headers=headers,
+        ).json()["balance"]
+        assert balance == 50.0
+
+    def test_earn_unknown_category_rejected(self, client):
+        headers = _register_or_login(client, _unique_email("badcat"))
+        r = client.post(
+            "/api/v1/ecowallet/earn",
+            json={"category": "mint_free_money"},
+            headers=headers,
+        )
+        assert r.status_code == 422
+
+    def test_daily_earning_cap(self, client):
+        headers = _register_or_login(client, _unique_email("cap"))
+        for _ in range(4):  # 4 x 50 = 200 = cap
+            r = client.post(
+                "/api/v1/ecowallet/earn",
+                json={"category": "tree_planting"},
+                headers=headers,
+            )
+            assert r.status_code == 200
+        r = client.post(
+            "/api/v1/ecowallet/earn",
+            json={"category": "tree_planting"},
+            headers=headers,
+        )
+        assert r.status_code == 400
+
+    def test_redeem_endpoint(self, client):
+        headers = _register_or_login(client, _unique_email("redeem"))
+        client.post("/api/v1/ecowallet/earn", json={"category": "tree_planting"}, headers=headers)
         response = client.post(
             "/api/v1/ecowallet/redeem",
-            json={
-                "user_id": "api_u3",
-                "category": "consultation",
-            },
+            json={"user_id": "ignored", "category": "consultation"},
+            headers=headers,
         )
         assert response.status_code == 200
         assert response.json()["amount_redeemed"] == 20.0
 
-    def test_ussd_balance(self):
+    def test_redeem_insufficient_fails(self, client):
+        headers = _register_or_login(client, _unique_email("poor"))
+        response = client.post(
+            "/api/v1/ecowallet/redeem",
+            json={"category": "consultation"},
+            headers=headers,
+        )
+        assert response.status_code == 400
+
+    def test_ussd_balance(self, client):
+        headers = _register_or_login(client, _unique_email("ussd"))
         response = client.post(
             "/api/v1/ecowallet/ussd",
-            json={
-                "user_id": "ussd_u1",
-                "action": "balance",
-                "language": "fa",
-            },
+            json={"user_id": "ignored", "action": "balance", "language": "fa"},
+            headers=headers,
         )
         assert response.status_code == 200
         assert response.json()["action"] == "balance"
 
-    def test_stats_endpoint(self):
+    def test_stats_requires_auth(self, client):
         response = client.get("/api/v1/ecowallet/stats")
+        assert response.status_code == 401
+
+    def test_stats_endpoint(self, client):
+        headers = _register_or_login(client, _unique_email("stats"))
+        response = client.get("/api/v1/ecowallet/stats", headers=headers)
         assert response.status_code == 200
         assert "total_wallets" in response.json()
 
-    def test_health_endpoint(self):
+    def test_health_endpoint(self, client):
         response = client.get("/api/v1/ecowallet/health")
         assert response.status_code == 200
         data = response.json()
         assert data["status"] == "operational"
         assert data["features"]["external_exchange"] is False
 
-    def test_main_health_has_ecowallet(self):
+    def test_main_health_reachable(self, client):
+        """Platform /health contract (previously asserted a non-existent 'modules' key)."""
         response = client.get("/api/v1/health")
         assert response.status_code == 200
-        assert "ecowallet" in response.json()["modules"]
+        assert response.json()["status"] == "operational"

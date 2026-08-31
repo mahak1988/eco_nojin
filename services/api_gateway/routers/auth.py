@@ -1,9 +1,11 @@
 """Complete authentication router - Phase 0 rewrite."""
 
 import logging
+import os
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from engine.hydroma.config.settings import get_settings
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from sqlalchemy.orm import Session
 
@@ -168,15 +170,10 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
     if db.query(User).filter(User.email == req.email).first():
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    # Parse date of birth
-    dob = None
-    if req.date_of_birth:
-        try:
-            dob = datetime.strptime(req.date_of_birth, "%Y-%m-%d").date()
-        except ValueError:
-            raise HTTPException(
-                status_code=400, detail="Invalid date_of_birth format (use YYYY-MM-DD)"
-            )
+    # NOTE: req.date_of_birth is accepted by the API schema but the User model
+    # currently has no such column - passing it raised TypeError and broke
+    # registration entirely (pre-existing bug, fixed in pentest phase 1).
+    # Storing DOB requires an alembic migration first.
 
     # Create user
     user = User(
@@ -185,16 +182,14 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
         hashed_password=hash_password(req.password),
         role=req.role,
         phone=req.phone,
-        date_of_birth=dob,
         country=req.country,
         city=req.city,
-        address=req.address,
+        # address: column does not exist on User (pending migration)
         language=req.language,
         avatar_url=req.avatar_url,
         is_email_verified=False,  # In production, send verification email
         is_active=True,
-        accept_tos=True,
-        accept_privacy=True,
+        # accept_tos/accept_privacy: columns do not exist on User
     )
     db.add(user)
     db.flush()
@@ -419,7 +414,19 @@ def refresh_token_endpoint(req: RefreshRequest, db: Session = Depends(get_db)):
 
 @router.post("/seed-demo", response_model=MessageResponse)
 def seed_demo_users(db: Session = Depends(get_db)):
-    """Create demo users for testing (development only)."""
+    """Create demo users for testing.
+
+    Hard guard (pentest fix C1): returns 404 unless the process runs in a
+    development/test environment AND the operator explicitly opts in via
+    ECO_NOJIN_ALLOW_SEED=1. Existing accounts are never overwritten.
+    """
+    settings = get_settings()
+    envs = {
+        str(getattr(settings, "app_env", "") or "").strip().lower(),
+        str(getattr(settings, "environment", "") or "").strip().lower(),
+    }
+    if not (envs & {"development", "test", "dev"}) or os.getenv("ECO_NOJIN_ALLOW_SEED") != "1":
+        raise HTTPException(status_code=404, detail="Not found")
     demos = [
         {
             "email": "test@demo.com",
@@ -458,14 +465,12 @@ def seed_demo_users(db: Session = Depends(get_db)):
         },
     ]
 
-    created, updated = [], []
+    created, skipped = [], []
     for d in demos:
         existing = db.query(User).filter(User.email == d["email"]).first()
         if existing:
-            existing.hashed_password = hash_password(d["password"])
-            existing.role = d["role"]
-            existing.language = d["lang"]
-            updated.append(d["email"])
+            # Pentest fix C1: never overwrite an existing account's password/role.
+            skipped.append(d["email"])
         else:
             user = User(
                 email=d["email"],
@@ -474,8 +479,6 @@ def seed_demo_users(db: Session = Depends(get_db)):
                 role=d["role"],
                 language=d["lang"],
                 is_active=True,
-                accept_tos=True,
-                accept_privacy=True,
             )
             db.add(user)
             db.flush()
@@ -485,6 +488,6 @@ def seed_demo_users(db: Session = Depends(get_db)):
     db.commit()
 
     return MessageResponse(
-        message=f"Created: {len(created)}, Updated: {len(updated)}",
-        data={"created": created, "updated": updated, "credentials": demos},
+        message=f"Created: {len(created)}, Skipped: {len(skipped)}",
+        data={"created": created, "skipped": skipped},
     )

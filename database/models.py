@@ -1,19 +1,20 @@
-﻿"""مدل‌های اصلی دیتابیس - نسخه کامل"""
-from sqlalchemy import Text, JSON, Column, String, Boolean, DateTime, Float, Integer
-from database.base import Base
+from sqlalchemy import Text, JSON, Column, String, Boolean, DateTime, Float, Integer, ForeignKey, CheckConstraint, UniqueConstraint
+from sqlalchemy.orm import relationship, declarative_base # declarative_base را مستقیماً import می‌کنیم
 from datetime import datetime, timezone
 import uuid
 
+# تعریف Base مستقیماً در این فایل
+Base = declarative_base()
+
 def _uuid():
     return str(uuid.uuid4())
-
-
 
 def generate_uuid():
     """Generate a UUID string for primary keys"""
     return str(uuid.uuid4())
 
 
+# --- مدل کاربر ---
 class User(Base):
     __tablename__ = "users"
 
@@ -35,6 +36,11 @@ class User(Base):
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
+    # افزودن رابطه به LandProfile
+    land_profiles = relationship("LandProfile", back_populates="user")
+
+
+# --- مدل پروفایل زمین (اصلاح شده در مراحل قبل) ---
 class LandProfile(Base):
     __tablename__ = "land_profiles"
 
@@ -44,8 +50,20 @@ class LandProfile(Base):
     location_lon = Column(Float, nullable=True)
     area_ha = Column(Float, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    
+    user_id = Column(String, ForeignKey('users.id'), nullable=True)
+    user = relationship("User", back_populates="land_profiles")
+    
+    # تعریف صحیح __table_args__ با چندین محدودیت
+    __table_args__ = (
+        UniqueConstraint('user_id', 'name', name='_user_land_name_uc'),
+        CheckConstraint("name != ''", name='ck_land_profile_name_not_empty')
+    )
 
-# --- Placeholder classes for any missing names ---
+
+# --- مدل‌های دیگر مورد نیاز ---
+# ترتیب این مدل‌ها مهم است. مدل‌هایی که مورد ارجاع قرار می‌گیرند باید اول تعریف شوند.
+
 class AuditLog(Base):
     __tablename__ = "auditlog"
     id = Column(Integer, primary_key=True)
@@ -87,34 +105,35 @@ class TopographyAnalysisResult(Base):
     profile_id = Column(String)
     data = Column(String)
 
-class CarbonProject(Base):
-    __tablename__ = "carbon_projects"
+class MRVObservation(Base):
+    __tablename__ = "mrvobservation"
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    # Add other fields as needed based on usage
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
-class SoilAnalysis(Base):
-    __tablename__ = "soil_analyses"
+class Setting(Base):
+    """System-wide settings storage (key-value pairs)"""
+    __tablename__ = "settings"
+    
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    key = Column(String, unique=True, nullable=False, index=True)
+    value = Column(Text, nullable=True)
+    description = Column(String, nullable=True)
+    category = Column(String, default='general')
+    is_secret = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+class ErrorLog(Base):
+    __tablename__ = "errorlog"
     id = Column(Integer, primary_key=True)
-    farm_id = Column(String)
+    path = Column(String(500))
+    method = Column(String(10))
+    status = Column(Integer)
+    message = Column(Text)
+    acked = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
-class Farm(Base):
-    __tablename__ = "farms"
-    id = Column(Integer, primary_key=True)
-    user_id = Column(String)
-    name = Column(String)
-
-class AIConversation(Base):
-    __tablename__ = "ai_conversations"
-    id = Column(Integer, primary_key=True)
-    user_id = Column(String)
-
-class SatelliteAnalysis(Base):
-    __tablename__ = "satellite_analyses"
-    id = Column(Integer, primary_key=True)
-    farm_id = Column(String)
-    ndvi = Column(Float)
-
-# سایر کلاس‌های placeholder
 class SimulationRun(Base):
     """Persisted result of a HyDroMa simulation chain run (RUSLE > AquaCrop > RothC)."""
     __tablename__ = "simulationrun"
@@ -129,47 +148,122 @@ class SimulationRun(Base):
     executed_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
 
     def __repr__(self):
-        return f"<SimulationRun id={self.id} site='{self.site_id}' status='{self.status}'>"
+        return f"<SimulationRun id={self.id} site='{self.site_id}' status='{self.status}>"
 
-
-for _name in [
-    "NojinApplicationPlanDB", "NojinCalibrationRecordDB",
-    "ModelVersionDB", "ScenarioResultDB", "ScenarioRun", "MRVObservation",
-    "DecisionRecommendationDB", "OptimizationResultDB", "MonitoringDataDB",
-    "NojinFieldTrialDB", "ScenarioDB", "Product", "EcoTransaction",
-    "CalibrationRecordDB",
-]:
-    globals()[_name] = type(_name, (Base,), {
-        "__tablename__": _name.lower(),
-        "id": Column(Integer, primary_key=True),
-        "created_at": Column(DateTime, default=lambda: datetime.now(timezone.utc)),
-    })
-
-
-class ErrorLog(Base):
-    __tablename__ = "errorlog"
+class Farm(Base):
+    __tablename__ = "farms"
     id = Column(Integer, primary_key=True)
-    path = Column(String(500))
-    method = Column(String(10))
-    status = Column(Integer)
-    message = Column(Text)
-    acked = Column(Boolean, default=False)
+    user_id = Column(String)
+    name = Column(String)
+
+class SoilAnalysis(Base):
+    __tablename__ = "soil_analyses"
+    id = Column(Integer, primary_key=True)
+    farm_id = Column(String)
+
+class SatelliteAnalysis(Base):
+    __tablename__ = "satellite_analyses"
+    id = Column(Integer, primary_key=True)
+    farm_id = Column(String)
+    ndvi = Column(Float)
+
+class AIConversation(Base):
+    __tablename__ = "ai_conversations"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String)
+
+class CarbonProject(Base):
+    __tablename__ = "carbon_projects"
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+
+class Product(Base):
+    __tablename__ = "product"
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+
+class EcoTransaction(Base):
+    __tablename__ = "ecotransaction"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String)
+    amount = Column(Float)
+
+class CalibrationRecordDB(Base):
+    __tablename__ = "calibrationrecorddb"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String)
+    # Add other relevant fields
+
+# --- مدل‌های Placeholder با رابطه ---
+# توجه کنید که مدل‌هایی که از land_profiles یا users ارجاع می‌دهند، بعد از آن‌ها تعریف می‌شوند.
+
+class NojinApplicationPlanDB(Base):
+    __tablename__ = "nojin_application_plans" # احتمالاً اسم جدول از خطا تشخیص داده شده
+    id = Column(Integer, primary_key=True)
+    land_profile_id = Column(String, ForeignKey('land_profiles.id')) # اضافه کردن ForeignKey
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    # افزودن رابطه
+    land_profile = relationship("LandProfile")
+
+class NojinCalibrationRecordDB(Base):
+    __tablename__ = "nojincalibrationrecorddb"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String, ForeignKey('users.id')) # اضافه کردن ForeignKey
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    user = relationship("User")
+
+class ModelVersionDB(Base):
+    __tablename__ = "modelversiondb"
+    id = Column(Integer, primary_key=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
+class ScenarioResultDB(Base):
+    __tablename__ = "scenarioresultdb"
+    id = Column(Integer, primary_key=True)
+    scenario_run_id = Column(Integer, ForeignKey('scenariorun.id')) # نیاز به تعریف scenariorun اول
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    scenario_run = relationship("ScenarioRun")
 
+class ScenarioRun(Base):
+    __tablename__ = "scenariorun"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String, ForeignKey('users.id'))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    user = relationship("User")
 
-class Setting(Base):
-    """System-wide settings storage (key-value pairs)"""
-    __tablename__ = "settings"
-    
-    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    key = Column(String, unique=True, nullable=False, index=True)
-    value = Column(Text, nullable=True)
-    description = Column(String, nullable=True)
-    category = Column(String, default='general')  # general, security, ai, telegram, etc.
-    is_secret = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    def __repr__(self):
-        return f"<Setting key='{self.key}'>"
+class DecisionRecommendationDB(Base):
+    __tablename__ = "decisionrecommendationdb"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String, ForeignKey('users.id'))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    user = relationship("User")
+
+class OptimizationResultDB(Base):
+    __tablename__ = "optimizationresultdb"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String, ForeignKey('users.id'))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    user = relationship("User")
+
+class MonitoringDataDB(Base):
+    __tablename__ = "monitoringdatadb"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String, ForeignKey('users.id'))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    user = relationship("User")
+
+class NojinFieldTrialDB(Base):
+    __tablename__ = "nojinfieldtrialdb"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String, ForeignKey('users.id'))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    user = relationship("User")
+
+class ScenarioDB(Base):
+    __tablename__ = "scenariodb"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String, ForeignKey('users.id'))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    user = relationship("User")
+
+# Add other models similarly...
