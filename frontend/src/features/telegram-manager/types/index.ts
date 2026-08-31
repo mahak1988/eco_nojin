@@ -1,7 +1,7 @@
 /**
  * Telegram Manager Types
  * ================================================
- * Central export for all telegram-manager types.
+ * Auto-generated exports from telegram.types.ts
  */
 
-export type { TelegramBot, BotMessage, TelegramStats } from './telegram.types.ts';
+export { BotMessage, TelegramBot, TelegramStats } from './telegram.types.ts';

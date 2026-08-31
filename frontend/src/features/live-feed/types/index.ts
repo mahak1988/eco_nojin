@@ -1,7 +1,7 @@
 /**
  * Live Feed Types
  * ================================================
- * Central export for all live-feed types.
+ * Auto-generated exports from liveFeed.types.ts
  */
 
-export type { FeedEvent, FeedEventType, EventTemplate, LiveFeedProps } from './liveFeed.types.ts';
+export { EventTemplate, FeedEvent, FeedEventType, LiveFeedProps } from './liveFeed.types.ts';

@@ -1,7 +1,7 @@
 /**
  * Crypto Payment Types
  * ================================================
- * Central export for all crypto-payment types.
+ * Auto-generated exports from crypto.types.ts
  */
 
-export type { CryptoTransaction, CryptoWallet, WalletType, TransactionStatus, LiveTransaction, MockGeneratorOptions } from './crypto.types.ts';
+export { CryptoTransaction, CryptoType, TransactionStatus, WalletInfo, WalletMeta } from './crypto.types.ts';

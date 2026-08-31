@@ -1,7 +1,7 @@
 /**
  * Marketplace Types
  * ================================================
- * Central export for all marketplace types.
+ * Auto-generated exports from marketplace.types.ts
  */
 
-export type { Product, Order, OrderStatus, MarketplaceStats, PendingOrder, ProductFilter } from './marketplace.types.ts';
+export { DerivedOrderData, MarketplaceStats, Order, OrderItem, OrderStatus, PieDataPoint, Product } from './marketplace.types.ts';

@@ -1,7 +1,7 @@
 /**
  * Security Types
  * ================================================
- * Central export for all security types.
+ * Auto-generated exports from security.types.ts
  */
 
-export type { SecurityEvent, Severity, EventType, RawSecurityEvent, HourlyData, SecurityStats } from './security.types.ts';
+export { EventType, HourlyData, RawSecurityEvent, SecurityEvent, SecurityStats, Severity } from './security.types.ts';

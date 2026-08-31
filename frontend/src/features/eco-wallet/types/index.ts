@@ -1,7 +1,7 @@
 /**
  * Eco Wallet Types
  * ================================================
- * Central export for all eco-wallet types.
+ * Auto-generated exports from ecoWallet.types.ts
  */
 
-export type { EcoWalletBalance, EarningOption, RedemptionOption, Transaction, TransactionType, EcoWalletStats } from './ecoWallet.types.ts';
+export { ChartConfig, EarningOption, RedemptionOption, TransactionDataPoint, WalletStats } from './ecoWallet.types.ts';

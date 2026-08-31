@@ -1,17 +1,7 @@
 /**
  * Content Studio Types
- * =====================
- * Central export for all content-studio types.
- *
- * @module features/content-studio/types
+ * ================================================
+ * Auto-generated exports from contentStudio.types.ts
  */
 
-export type {
-  ContentItem,
-  ContentStatus,
-  ContentType,
-  ContentFilter,
-  GenerateDraftRequest,
-  TranslateRequest,
-  DerivedContentData,
-} from './contentStudio.types';
+export { ContentFilter, ContentItem, ContentStatus, ContentType, DerivedContentData, GenerateDraftRequest, TranslateRequest } from './contentStudio.types.ts';
