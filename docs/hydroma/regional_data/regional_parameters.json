@@ -1,0 +1,602 @@
+{
+  "hyper_arid": {
+    "name_fa": "بیابان فراخشک",
+    "name_en": "Hyper-arid Desert",
+    "koppen": "BWh/BWk",
+    "examples": [
+      "لوت (ایران)",
+      "صحرا (آفریقا)",
+      "آتاکاما (شیلی)"
+    ],
+    "climate": {
+      "temp_mean_c": 25.0,
+      "temp_max_c": 45.0,
+      "temp_min_c": 5.0,
+      "rain_mm_yr": 50.0,
+      "rain_cv": 0.6,
+      "pet_mm_yr": 3000.0,
+      "humidity_percent": 15.0,
+      "wind_speed_ms": 5.0,
+      "solar_radiation_mj_m2": 22.0
+    },
+    "soil": {
+      "texture": "sandy",
+      "soc_percent": 0.3,
+      "ph": 8.5,
+      "ec_ds_m": 4.0,
+      "bulk_density_g_cm3": 1.6,
+      "porosity_percent": 35.0,
+      "ksat_mm_h": 50.0,
+      "awc_mm_m": 40.0,
+      "depth_cm": 100.0
+    },
+    "agriculture": {
+      "growing_season_days": 200,
+      "irrigation_efficiency_percent": 40.0,
+      "wheat_yield_t_ha": 0.8,
+      "harvest_index": 0.35,
+      "water_use_efficiency_kg_m3": 0.8
+    },
+    "ecology": {
+      "shannon_diversity": 0.8,
+      "carbon_sequestration_t_ha_yr": 0.3,
+      "erosion_t_ha_yr": 15.0,
+      "biodiversity_index": 0.3
+    },
+    "economics": {
+      "farm_income_usd_ha": 200.0,
+      "production_cost_usd_ha": 150.0,
+      "irrigation_cost_usd_ha": 100.0
+    }
+  },
+  "arid": {
+    "name_fa": "بیابان خشک",
+    "name_en": "Arid Desert",
+    "koppen": "BWh/BWk",
+    "examples": [
+      "یزد (ایران)",
+      "قاهره (مصر)",
+      "ریاض (عربستان)"
+    ],
+    "climate": {
+      "temp_mean_c": 22.0,
+      "temp_max_c": 42.0,
+      "temp_min_c": 8.0,
+      "rain_mm_yr": 150.0,
+      "rain_cv": 0.5,
+      "pet_mm_yr": 2500.0,
+      "humidity_percent": 25.0,
+      "wind_speed_ms": 4.0,
+      "solar_radiation_mj_m2": 20.0
+    },
+    "soil": {
+      "texture": "sandy_loam",
+      "soc_percent": 0.5,
+      "ph": 8.2,
+      "ec_ds_m": 3.0,
+      "bulk_density_g_cm3": 1.5,
+      "porosity_percent": 40.0,
+      "ksat_mm_h": 30.0,
+      "awc_mm_m": 60.0,
+      "depth_cm": 120.0
+    },
+    "agriculture": {
+      "growing_season_days": 220,
+      "irrigation_efficiency_percent": 50.0,
+      "wheat_yield_t_ha": 1.5,
+      "harvest_index": 0.4,
+      "water_use_efficiency_kg_m3": 1.0
+    },
+    "ecology": {
+      "shannon_diversity": 1.2,
+      "carbon_sequestration_t_ha_yr": 0.5,
+      "erosion_t_ha_yr": 12.0,
+      "biodiversity_index": 0.4
+    },
+    "economics": {
+      "farm_income_usd_ha": 400.0,
+      "production_cost_usd_ha": 250.0,
+      "irrigation_cost_usd_ha": 150.0
+    }
+  },
+  "semi_arid": {
+    "name_fa": "نیمه‌خشک",
+    "name_en": "Semi-arid",
+    "koppen": "BSh/BSk",
+    "examples": [
+      "همدان (ایران)",
+      "آنکارا (ترکیه)",
+      "نایروبی (کنیا)"
+    ],
+    "climate": {
+      "temp_mean_c": 18.0,
+      "temp_max_c": 35.0,
+      "temp_min_c": 5.0,
+      "rain_mm_yr": 350.0,
+      "rain_cv": 0.4,
+      "pet_mm_yr": 1800.0,
+      "humidity_percent": 40.0,
+      "wind_speed_ms": 3.5,
+      "solar_radiation_mj_m2": 18.0
+    },
+    "soil": {
+      "texture": "loam",
+      "soc_percent": 1.0,
+      "ph": 7.8,
+      "ec_ds_m": 2.0,
+      "bulk_density_g_cm3": 1.4,
+      "porosity_percent": 45.0,
+      "ksat_mm_h": 15.0,
+      "awc_mm_m": 100.0,
+      "depth_cm": 150.0
+    },
+    "agriculture": {
+      "growing_season_days": 240,
+      "irrigation_efficiency_percent": 60.0,
+      "wheat_yield_t_ha": 2.5,
+      "harvest_index": 0.45,
+      "water_use_efficiency_kg_m3": 1.2
+    },
+    "ecology": {
+      "shannon_diversity": 1.8,
+      "carbon_sequestration_t_ha_yr": 0.8,
+      "erosion_t_ha_yr": 10.0,
+      "biodiversity_index": 0.5
+    },
+    "economics": {
+      "farm_income_usd_ha": 600.0,
+      "production_cost_usd_ha": 350.0,
+      "irrigation_cost_usd_ha": 200.0
+    }
+  },
+  "mediterranean": {
+    "name_fa": "مدیترانه‌ای",
+    "name_en": "Mediterranean",
+    "koppen": "Csa/Csb",
+    "examples": [
+      "شیراز (ایران)",
+      "رم (ایتالیا)",
+      "بارسلونا (اسپانیا)"
+    ],
+    "climate": {
+      "temp_mean_c": 16.0,
+      "temp_max_c": 32.0,
+      "temp_min_c": 5.0,
+      "rain_mm_yr": 500.0,
+      "rain_cv": 0.3,
+      "pet_mm_yr": 1400.0,
+      "humidity_percent": 55.0,
+      "wind_speed_ms": 3.0,
+      "solar_radiation_mj_m2": 17.0
+    },
+    "soil": {
+      "texture": "clay_loam",
+      "soc_percent": 1.5,
+      "ph": 7.5,
+      "ec_ds_m": 1.5,
+      "bulk_density_g_cm3": 1.35,
+      "porosity_percent": 48.0,
+      "ksat_mm_h": 10.0,
+      "awc_mm_m": 130.0,
+      "depth_cm": 180.0
+    },
+    "agriculture": {
+      "growing_season_days": 260,
+      "irrigation_efficiency_percent": 65.0,
+      "wheat_yield_t_ha": 3.5,
+      "harvest_index": 0.48,
+      "water_use_efficiency_kg_m3": 1.4
+    },
+    "ecology": {
+      "shannon_diversity": 2.2,
+      "carbon_sequestration_t_ha_yr": 1.2,
+      "erosion_t_ha_yr": 8.0,
+      "biodiversity_index": 0.6
+    },
+    "economics": {
+      "farm_income_usd_ha": 900.0,
+      "production_cost_usd_ha": 450.0,
+      "irrigation_cost_usd_ha": 250.0
+    }
+  },
+  "tropical_savanna": {
+    "name_fa": "ساوانای حاره‌ای",
+    "name_en": "Tropical Savanna",
+    "koppen": "Aw",
+    "examples": [
+      "لاگوس (نیجریه)",
+      "برازیلیا (برزیل)",
+      "بمبئی (هند)"
+    ],
+    "climate": {
+      "temp_mean_c": 26.0,
+      "temp_max_c": 38.0,
+      "temp_min_c": 18.0,
+      "rain_mm_yr": 1000.0,
+      "rain_cv": 0.35,
+      "pet_mm_yr": 1600.0,
+      "humidity_percent": 65.0,
+      "wind_speed_ms": 2.5,
+      "solar_radiation_mj_m2": 19.0
+    },
+    "soil": {
+      "texture": "sandy_loam",
+      "soc_percent": 1.2,
+      "ph": 6.5,
+      "ec_ds_m": 0.8,
+      "bulk_density_g_cm3": 1.4,
+      "porosity_percent": 42.0,
+      "ksat_mm_h": 20.0,
+      "awc_mm_m": 90.0,
+      "depth_cm": 160.0
+    },
+    "agriculture": {
+      "growing_season_days": 280,
+      "irrigation_efficiency_percent": 55.0,
+      "wheat_yield_t_ha": 2.0,
+      "harvest_index": 0.42,
+      "water_use_efficiency_kg_m3": 1.1
+    },
+    "ecology": {
+      "shannon_diversity": 2.5,
+      "carbon_sequestration_t_ha_yr": 1.5,
+      "erosion_t_ha_yr": 9.0,
+      "biodiversity_index": 0.7
+    },
+    "economics": {
+      "farm_income_usd_ha": 500.0,
+      "production_cost_usd_ha": 300.0,
+      "irrigation_cost_usd_ha": 180.0
+    }
+  },
+  "tropical_rainforest": {
+    "name_fa": "جنگل بارانی حاره‌ای",
+    "name_en": "Tropical Rainforest",
+    "koppen": "Af",
+    "examples": [
+      "مانائوس (برزیل)",
+      "کینشاسا (کنگو)",
+      "جاکارتا (اندونزی)"
+    ],
+    "climate": {
+      "temp_mean_c": 27.0,
+      "temp_max_c": 34.0,
+      "temp_min_c": 22.0,
+      "rain_mm_yr": 2500.0,
+      "rain_cv": 0.2,
+      "pet_mm_yr": 1500.0,
+      "humidity_percent": 85.0,
+      "wind_speed_ms": 1.5,
+      "solar_radiation_mj_m2": 16.0
+    },
+    "soil": {
+      "texture": "clay",
+      "soc_percent": 2.5,
+      "ph": 5.5,
+      "ec_ds_m": 0.3,
+      "bulk_density_g_cm3": 1.2,
+      "porosity_percent": 55.0,
+      "ksat_mm_h": 8.0,
+      "awc_mm_m": 160.0,
+      "depth_cm": 200.0
+    },
+    "agriculture": {
+      "growing_season_days": 365,
+      "irrigation_efficiency_percent": 70.0,
+      "wheat_yield_t_ha": 1.5,
+      "harvest_index": 0.4,
+      "water_use_efficiency_kg_m3": 1.0
+    },
+    "ecology": {
+      "shannon_diversity": 3.5,
+      "carbon_sequestration_t_ha_yr": 3.0,
+      "erosion_t_ha_yr": 5.0,
+      "biodiversity_index": 0.9
+    },
+    "economics": {
+      "farm_income_usd_ha": 700.0,
+      "production_cost_usd_ha": 400.0,
+      "irrigation_cost_usd_ha": 150.0
+    }
+  },
+  "temperate_continental": {
+    "name_fa": "قاره‌ای معتدل",
+    "name_en": "Temperate Continental",
+    "koppen": "Dfa/Dfb",
+    "examples": [
+      "شیکاگو (آمریکا)",
+      "مسکو (روسیه)",
+      "برلین (آلمان)"
+    ],
+    "climate": {
+      "temp_mean_c": 10.0,
+      "temp_max_c": 28.0,
+      "temp_min_c": -5.0,
+      "rain_mm_yr": 700.0,
+      "rain_cv": 0.25,
+      "pet_mm_yr": 1000.0,
+      "humidity_percent": 60.0,
+      "wind_speed_ms": 3.5,
+      "solar_radiation_mj_m2": 14.0
+    },
+    "soil": {
+      "texture": "silt_loam",
+      "soc_percent": 2.0,
+      "ph": 6.8,
+      "ec_ds_m": 0.5,
+      "bulk_density_g_cm3": 1.3,
+      "porosity_percent": 50.0,
+      "ksat_mm_h": 12.0,
+      "awc_mm_m": 140.0,
+      "depth_cm": 200.0
+    },
+    "agriculture": {
+      "growing_season_days": 180,
+      "irrigation_efficiency_percent": 75.0,
+      "wheat_yield_t_ha": 4.5,
+      "harvest_index": 0.5,
+      "water_use_efficiency_kg_m3": 1.6
+    },
+    "ecology": {
+      "shannon_diversity": 2.0,
+      "carbon_sequestration_t_ha_yr": 1.8,
+      "erosion_t_ha_yr": 6.0,
+      "biodiversity_index": 0.6
+    },
+    "economics": {
+      "farm_income_usd_ha": 1200.0,
+      "production_cost_usd_ha": 600.0,
+      "irrigation_cost_usd_ha": 200.0
+    }
+  },
+  "boreal": {
+    "name_fa": "بوریال (تایگا)",
+    "name_en": "Boreal (Taiga)",
+    "koppen": "Dfc/Dfd",
+    "examples": [
+      "هلسینکی (فنلاند)",
+      "اوتاوا (کانادا)",
+      "سیبری (روسیه)"
+    ],
+    "climate": {
+      "temp_mean_c": 2.0,
+      "temp_max_c": 20.0,
+      "temp_min_c": -15.0,
+      "rain_mm_yr": 500.0,
+      "rain_cv": 0.3,
+      "pet_mm_yr": 600.0,
+      "humidity_percent": 70.0,
+      "wind_speed_ms": 3.0,
+      "solar_radiation_mj_m2": 10.0
+    },
+    "soil": {
+      "texture": "sandy",
+      "soc_percent": 3.0,
+      "ph": 5.5,
+      "ec_ds_m": 0.2,
+      "bulk_density_g_cm3": 1.2,
+      "porosity_percent": 52.0,
+      "ksat_mm_h": 15.0,
+      "awc_mm_m": 120.0,
+      "depth_cm": 150.0
+    },
+    "agriculture": {
+      "growing_season_days": 120,
+      "irrigation_efficiency_percent": 70.0,
+      "wheat_yield_t_ha": 2.5,
+      "harvest_index": 0.45,
+      "water_use_efficiency_kg_m3": 1.3
+    },
+    "ecology": {
+      "shannon_diversity": 1.5,
+      "carbon_sequestration_t_ha_yr": 2.0,
+      "erosion_t_ha_yr": 4.0,
+      "biodiversity_index": 0.5
+    },
+    "economics": {
+      "farm_income_usd_ha": 800.0,
+      "production_cost_usd_ha": 500.0,
+      "irrigation_cost_usd_ha": 150.0
+    }
+  },
+  "coastal_saline": {
+    "name_fa": "ساحلی شور",
+    "name_en": "Coastal Saline",
+    "koppen": "BWk/Cfa",
+    "examples": [
+      "بوشهر (ایران)",
+      "بصره (عراق)",
+      "کراچی (پاکستان)"
+    ],
+    "climate": {
+      "temp_mean_c": 28.0,
+      "temp_max_c": 40.0,
+      "temp_min_c": 18.0,
+      "rain_mm_yr": 200.0,
+      "rain_cv": 0.4,
+      "pet_mm_yr": 2200.0,
+      "humidity_percent": 70.0,
+      "wind_speed_ms": 4.5,
+      "solar_radiation_mj_m2": 20.0
+    },
+    "soil": {
+      "texture": "silty_clay",
+      "soc_percent": 0.8,
+      "ph": 8.0,
+      "ec_ds_m": 8.0,
+      "bulk_density_g_cm3": 1.45,
+      "porosity_percent": 42.0,
+      "ksat_mm_h": 5.0,
+      "awc_mm_m": 80.0,
+      "depth_cm": 130.0
+    },
+    "agriculture": {
+      "growing_season_days": 250,
+      "irrigation_efficiency_percent": 45.0,
+      "wheat_yield_t_ha": 1.2,
+      "harvest_index": 0.38,
+      "water_use_efficiency_kg_m3": 0.9
+    },
+    "ecology": {
+      "shannon_diversity": 1.0,
+      "carbon_sequestration_t_ha_yr": 0.6,
+      "erosion_t_ha_yr": 7.0,
+      "biodiversity_index": 0.4
+    },
+    "economics": {
+      "farm_income_usd_ha": 350.0,
+      "production_cost_usd_ha": 250.0,
+      "irrigation_cost_usd_ha": 180.0
+    }
+  },
+  "volcanic": {
+    "name_fa": "آتشفشانی",
+    "name_en": "Volcanic",
+    "koppen": "Cfa/Cfb",
+    "examples": [
+      "جاوا (اندونزی)",
+      "هاوایی (آمریکا)",
+      "ریکیاویک (ایسلند)"
+    ],
+    "climate": {
+      "temp_mean_c": 22.0,
+      "temp_max_c": 30.0,
+      "temp_min_c": 15.0,
+      "rain_mm_yr": 1500.0,
+      "rain_cv": 0.25,
+      "pet_mm_yr": 1200.0,
+      "humidity_percent": 75.0,
+      "wind_speed_ms": 2.0,
+      "solar_radiation_mj_m2": 16.0
+    },
+    "soil": {
+      "texture": "volcanic_ash",
+      "soc_percent": 3.5,
+      "ph": 6.0,
+      "ec_ds_m": 0.4,
+      "bulk_density_g_cm3": 1.1,
+      "porosity_percent": 58.0,
+      "ksat_mm_h": 25.0,
+      "awc_mm_m": 180.0,
+      "depth_cm": 250.0
+    },
+    "agriculture": {
+      "growing_season_days": 300,
+      "irrigation_efficiency_percent": 70.0,
+      "wheat_yield_t_ha": 4.0,
+      "harvest_index": 0.48,
+      "water_use_efficiency_kg_m3": 1.5
+    },
+    "ecology": {
+      "shannon_diversity": 2.8,
+      "carbon_sequestration_t_ha_yr": 2.5,
+      "erosion_t_ha_yr": 5.0,
+      "biodiversity_index": 0.8
+    },
+    "economics": {
+      "farm_income_usd_ha": 1000.0,
+      "production_cost_usd_ha": 500.0,
+      "irrigation_cost_usd_ha": 180.0
+    }
+  },
+  "alpine": {
+    "name_fa": "کوهستانی آلپاین",
+    "name_en": "Alpine Mountain",
+    "koppen": "ET/EF",
+    "examples": [
+      "آلپ (سوئیس)",
+      "هیمالیا (نپال)",
+      "آند (پرو)"
+    ],
+    "climate": {
+      "temp_mean_c": 5.0,
+      "temp_max_c": 15.0,
+      "temp_min_c": -10.0,
+      "rain_mm_yr": 800.0,
+      "rain_cv": 0.3,
+      "pet_mm_yr": 500.0,
+      "humidity_percent": 65.0,
+      "wind_speed_ms": 5.0,
+      "solar_radiation_mj_m2": 18.0
+    },
+    "soil": {
+      "texture": "skeletal",
+      "soc_percent": 2.0,
+      "ph": 6.5,
+      "ec_ds_m": 0.3,
+      "bulk_density_g_cm3": 1.3,
+      "porosity_percent": 45.0,
+      "ksat_mm_h": 20.0,
+      "awc_mm_m": 100.0,
+      "depth_cm": 80.0
+    },
+    "agriculture": {
+      "growing_season_days": 100,
+      "irrigation_efficiency_percent": 65.0,
+      "wheat_yield_t_ha": 1.8,
+      "harvest_index": 0.42,
+      "water_use_efficiency_kg_m3": 1.2
+    },
+    "ecology": {
+      "shannon_diversity": 1.8,
+      "carbon_sequestration_t_ha_yr": 1.0,
+      "erosion_t_ha_yr": 12.0,
+      "biodiversity_index": 0.6
+    },
+    "economics": {
+      "farm_income_usd_ha": 500.0,
+      "production_cost_usd_ha": 350.0,
+      "irrigation_cost_usd_ha": 150.0
+    }
+  },
+  "oceanic": {
+    "name_fa": "اقیانوسی",
+    "name_en": "Oceanic",
+    "koppen": "Cfb/Cfc",
+    "examples": [
+      "لندن (انگلستان)",
+      "سیاتل (آمریکا)",
+      "ولینگتون (نیوزیلند)"
+    ],
+    "climate": {
+      "temp_mean_c": 12.0,
+      "temp_max_c": 22.0,
+      "temp_min_c": 3.0,
+      "rain_mm_yr": 900.0,
+      "rain_cv": 0.2,
+      "pet_mm_yr": 800.0,
+      "humidity_percent": 75.0,
+      "wind_speed_ms": 4.0,
+      "solar_radiation_mj_m2": 12.0
+    },
+    "soil": {
+      "texture": "loam",
+      "soc_percent": 2.5,
+      "ph": 6.5,
+      "ec_ds_m": 0.4,
+      "bulk_density_g_cm3": 1.3,
+      "porosity_percent": 50.0,
+      "ksat_mm_h": 15.0,
+      "awc_mm_m": 140.0,
+      "depth_cm": 180.0
+    },
+    "agriculture": {
+      "growing_season_days": 220,
+      "irrigation_efficiency_percent": 75.0,
+      "wheat_yield_t_ha": 5.0,
+      "harvest_index": 0.52,
+      "water_use_efficiency_kg_m3": 1.8
+    },
+    "ecology": {
+      "shannon_diversity": 2.3,
+      "carbon_sequestration_t_ha_yr": 2.0,
+      "erosion_t_ha_yr": 5.0,
+      "biodiversity_index": 0.7
+    },
+    "economics": {
+      "farm_income_usd_ha": 1500.0,
+      "production_cost_usd_ha": 700.0,
+      "irrigation_cost_usd_ha": 180.0
+    }
+  }
+}

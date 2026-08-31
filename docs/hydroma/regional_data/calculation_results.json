@@ -1,0 +1,2198 @@
+{
+  "hyper_arid": {
+    "aridity_index": {
+      "value": 0.0167,
+      "status": "فراخشک",
+      "formula": "AI = P / PET",
+      "inputs": {
+        "P": 50.0,
+        "PET": 3000.0
+      },
+      "unit": "بدون بعد"
+    },
+    "potential_evapotranspiration": {
+      "value": 4999.39,
+      "status": "محاسبه شده",
+      "formula": "PET = 0.0023 × Ra × (T + 17.8) × √(T_range)",
+      "inputs": {
+        "T": 25.0,
+        "T_range": 40.0,
+        "Ra": 8030.0
+      },
+      "unit": "mm/year"
+    },
+    "rainfall_variability": {
+      "value": 0.6,
+      "status": "بارش بسیار متغیر",
+      "formula": "CV = σ_rain / μ_rain",
+      "inputs": {
+        "rain_mean": 50.0,
+        "cv": 0.6
+      },
+      "unit": "بدون بعد"
+    },
+    "surface_temperature": {
+      "value": 32.6,
+      "status": "محاسبه شده",
+      "formula": "LST = T_air + (1 - NDVI) × 10",
+      "inputs": {
+        "T_air": 25.0,
+        "NDVI": 0.24
+      },
+      "unit": "°C"
+    },
+    "available_water_capacity": {
+      "value": 40.0,
+      "status": "محاسبه شده",
+      "formula": "AWC = (θ_fc - θ_wilt) × Depth",
+      "inputs": {
+        "θ_fc": 0.04,
+        "θ_wilt": 0.016,
+        "Depth": 100.0
+      },
+      "unit": "mm/m"
+    },
+    "hydraulic_conductivity": {
+      "value": 50.0,
+      "status": "محاسبه شده",
+      "formula": "Ksat = f(texture, structure, porosity)",
+      "inputs": {
+        "texture": "sandy",
+        "ksat": 50.0
+      },
+      "unit": "mm/h"
+    },
+    "bulk_density": {
+      "value": 1.6,
+      "status": "خاک فشرده",
+      "formula": "BD = Mass_Dry / Volume_Total",
+      "inputs": {
+        "BD": 1.6
+      },
+      "unit": "g/cm³"
+    },
+    "porosity": {
+      "value": 39.62,
+      "status": "محاسبه شده",
+      "formula": "φ = (1 - BD/ρ_particle) × 100",
+      "inputs": {
+        "BD": 1.6,
+        "ρ_particle": 2.65
+      },
+      "unit": "%"
+    },
+    "soil_organic_carbon": {
+      "value": 0.3,
+      "status": "بسیار کم (تخریب‌شده)",
+      "formula": "SOC = Organic_Matter × 0.58",
+      "inputs": {
+        "SOC": 0.3
+      },
+      "unit": "%"
+    },
+    "harvest_index": {
+      "value": 0.35,
+      "status": "محاسبه شده",
+      "formula": "HI = Y_grain / B_total",
+      "inputs": {
+        "HI": 0.35
+      },
+      "unit": "بدون بعد"
+    },
+    "water_use_efficiency": {
+      "value": 0.8,
+      "status": "کارایی متوسط",
+      "formula": "WUE = Y / ET",
+      "inputs": {
+        "WUE": 0.8
+      },
+      "unit": "kg/m³"
+    },
+    "crop_yield": {
+      "value": 0.8,
+      "status": "محاسبه شده",
+      "formula": "Y = Y_max × f(water) × f(temp)",
+      "inputs": {
+        "Y": 0.8
+      },
+      "unit": "t/ha"
+    },
+    "irrigation_efficiency": {
+      "value": 40.0,
+      "status": "پایین",
+      "formula": "IE = (Water_used_by_crop / Water_applied) × 100",
+      "inputs": {
+        "IE": 40.0
+      },
+      "unit": "%"
+    },
+    "shannon_diversity": {
+      "value": 0.8,
+      "status": "تنوع بسیار کم",
+      "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+      "inputs": {
+        "H": 0.8
+      },
+      "unit": "شاخص شانون"
+    },
+    "carbon_sequestration": {
+      "value": 0.3,
+      "status": "محاسبه شده",
+      "formula": "C_seq = Input - Output",
+      "inputs": {
+        "C_seq": 0.3
+      },
+      "unit": "t C/ha/yr"
+    },
+    "erosion_rate": {
+      "value": 15.0,
+      "status": "فرسایش شدید",
+      "formula": "E = R × K × LS × C × P",
+      "inputs": {
+        "E": 15.0
+      },
+      "unit": "t/ha/yr"
+    },
+    "farm_income": {
+      "value": 200.0,
+      "status": "محاسبه شده",
+      "formula": "GFI = Σ(Price × Yield)",
+      "inputs": {
+        "GFI": 200.0
+      },
+      "unit": "USD/ha"
+    },
+    "production_cost": {
+      "value": 150.0,
+      "status": "محاسبه شده",
+      "formula": "PC = Σ(Input_Costs)",
+      "inputs": {
+        "PC": 150.0
+      },
+      "unit": "USD/ha"
+    },
+    "benefit_cost_ratio": {
+      "value": 1.333,
+      "status": "حاشیه‌ای",
+      "formula": "BCR = Benefits / Costs",
+      "inputs": {
+        "Benefits": 200.0,
+        "Costs": 150.0
+      },
+      "unit": "بدون بعد"
+    }
+  },
+  "arid": {
+    "aridity_index": {
+      "value": 0.06,
+      "status": "خشک",
+      "formula": "AI = P / PET",
+      "inputs": {
+        "P": 150.0,
+        "PET": 2500.0
+      },
+      "unit": "بدون بعد"
+    },
+    "potential_evapotranspiration": {
+      "value": 3896.49,
+      "status": "محاسبه شده",
+      "formula": "PET = 0.0023 × Ra × (T + 17.8) × √(T_range)",
+      "inputs": {
+        "T": 22.0,
+        "T_range": 34.0,
+        "Ra": 7300.0
+      },
+      "unit": "mm/year"
+    },
+    "rainfall_variability": {
+      "value": 0.5,
+      "status": "بارش بسیار متغیر",
+      "formula": "CV = σ_rain / μ_rain",
+      "inputs": {
+        "rain_mean": 150.0,
+        "cv": 0.5
+      },
+      "unit": "بدون بعد"
+    },
+    "surface_temperature": {
+      "value": 28.8,
+      "status": "محاسبه شده",
+      "formula": "LST = T_air + (1 - NDVI) × 10",
+      "inputs": {
+        "T_air": 22.0,
+        "NDVI": 0.32
+      },
+      "unit": "°C"
+    },
+    "available_water_capacity": {
+      "value": 60.0,
+      "status": "محاسبه شده",
+      "formula": "AWC = (θ_fc - θ_wilt) × Depth",
+      "inputs": {
+        "θ_fc": 0.05,
+        "θ_wilt": 0.02,
+        "Depth": 120.0
+      },
+      "unit": "mm/m"
+    },
+    "hydraulic_conductivity": {
+      "value": 30.0,
+      "status": "محاسبه شده",
+      "formula": "Ksat = f(texture, structure, porosity)",
+      "inputs": {
+        "texture": "sandy_loam",
+        "ksat": 30.0
+      },
+      "unit": "mm/h"
+    },
+    "bulk_density": {
+      "value": 1.5,
+      "status": "خاک فشرده",
+      "formula": "BD = Mass_Dry / Volume_Total",
+      "inputs": {
+        "BD": 1.5
+      },
+      "unit": "g/cm³"
+    },
+    "porosity": {
+      "value": 43.4,
+      "status": "محاسبه شده",
+      "formula": "φ = (1 - BD/ρ_particle) × 100",
+      "inputs": {
+        "BD": 1.5,
+        "ρ_particle": 2.65
+      },
+      "unit": "%"
+    },
+    "soil_organic_carbon": {
+      "value": 0.5,
+      "status": "کم",
+      "formula": "SOC = Organic_Matter × 0.58",
+      "inputs": {
+        "SOC": 0.5
+      },
+      "unit": "%"
+    },
+    "harvest_index": {
+      "value": 0.4,
+      "status": "محاسبه شده",
+      "formula": "HI = Y_grain / B_total",
+      "inputs": {
+        "HI": 0.4
+      },
+      "unit": "بدون بعد"
+    },
+    "water_use_efficiency": {
+      "value": 1.0,
+      "status": "کارایی متوسط",
+      "formula": "WUE = Y / ET",
+      "inputs": {
+        "WUE": 1.0
+      },
+      "unit": "kg/m³"
+    },
+    "crop_yield": {
+      "value": 1.5,
+      "status": "محاسبه شده",
+      "formula": "Y = Y_max × f(water) × f(temp)",
+      "inputs": {
+        "Y": 1.5
+      },
+      "unit": "t/ha"
+    },
+    "irrigation_efficiency": {
+      "value": 50.0,
+      "status": "پایین",
+      "formula": "IE = (Water_used_by_crop / Water_applied) × 100",
+      "inputs": {
+        "IE": 50.0
+      },
+      "unit": "%"
+    },
+    "shannon_diversity": {
+      "value": 1.2,
+      "status": "تنوع کم",
+      "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+      "inputs": {
+        "H": 1.2
+      },
+      "unit": "شاخص شانون"
+    },
+    "carbon_sequestration": {
+      "value": 0.5,
+      "status": "محاسبه شده",
+      "formula": "C_seq = Input - Output",
+      "inputs": {
+        "C_seq": 0.5
+      },
+      "unit": "t C/ha/yr"
+    },
+    "erosion_rate": {
+      "value": 12.0,
+      "status": "فرسایش متوسط",
+      "formula": "E = R × K × LS × C × P",
+      "inputs": {
+        "E": 12.0
+      },
+      "unit": "t/ha/yr"
+    },
+    "farm_income": {
+      "value": 400.0,
+      "status": "محاسبه شده",
+      "formula": "GFI = Σ(Price × Yield)",
+      "inputs": {
+        "GFI": 400.0
+      },
+      "unit": "USD/ha"
+    },
+    "production_cost": {
+      "value": 250.0,
+      "status": "محاسبه شده",
+      "formula": "PC = Σ(Input_Costs)",
+      "inputs": {
+        "PC": 250.0
+      },
+      "unit": "USD/ha"
+    },
+    "benefit_cost_ratio": {
+      "value": 1.6,
+      "status": "اقتصادی",
+      "formula": "BCR = Benefits / Costs",
+      "inputs": {
+        "Benefits": 400.0,
+        "Costs": 250.0
+      },
+      "unit": "بدون بعد"
+    }
+  },
+  "semi_arid": {
+    "aridity_index": {
+      "value": 0.1944,
+      "status": "خشک",
+      "formula": "AI = P / PET",
+      "inputs": {
+        "P": 350.0,
+        "PET": 1800.0
+      },
+      "unit": "بدون بعد"
+    },
+    "potential_evapotranspiration": {
+      "value": 2963.04,
+      "status": "محاسبه شده",
+      "formula": "PET = 0.0023 × Ra × (T + 17.8) × √(T_range)",
+      "inputs": {
+        "T": 18.0,
+        "T_range": 30.0,
+        "Ra": 6570.0
+      },
+      "unit": "mm/year"
+    },
+    "rainfall_variability": {
+      "value": 0.4,
+      "status": "بارش بسیار متغیر",
+      "formula": "CV = σ_rain / μ_rain",
+      "inputs": {
+        "rain_mean": 350.0,
+        "cv": 0.4
+      },
+      "unit": "بدون بعد"
+    },
+    "surface_temperature": {
+      "value": 24.0,
+      "status": "محاسبه شده",
+      "formula": "LST = T_air + (1 - NDVI) × 10",
+      "inputs": {
+        "T_air": 18.0,
+        "NDVI": 0.4
+      },
+      "unit": "°C"
+    },
+    "available_water_capacity": {
+      "value": 100.0,
+      "status": "محاسبه شده",
+      "formula": "AWC = (θ_fc - θ_wilt) × Depth",
+      "inputs": {
+        "θ_fc": 0.0667,
+        "θ_wilt": 0.0267,
+        "Depth": 150.0
+      },
+      "unit": "mm/m"
+    },
+    "hydraulic_conductivity": {
+      "value": 15.0,
+      "status": "محاسبه شده",
+      "formula": "Ksat = f(texture, structure, porosity)",
+      "inputs": {
+        "texture": "loam",
+        "ksat": 15.0
+      },
+      "unit": "mm/h"
+    },
+    "bulk_density": {
+      "value": 1.4,
+      "status": "خاک مناسب",
+      "formula": "BD = Mass_Dry / Volume_Total",
+      "inputs": {
+        "BD": 1.4
+      },
+      "unit": "g/cm³"
+    },
+    "porosity": {
+      "value": 47.17,
+      "status": "محاسبه شده",
+      "formula": "φ = (1 - BD/ρ_particle) × 100",
+      "inputs": {
+        "BD": 1.4,
+        "ρ_particle": 2.65
+      },
+      "unit": "%"
+    },
+    "soil_organic_carbon": {
+      "value": 1.0,
+      "status": "متوسط",
+      "formula": "SOC = Organic_Matter × 0.58",
+      "inputs": {
+        "SOC": 1.0
+      },
+      "unit": "%"
+    },
+    "harvest_index": {
+      "value": 0.45,
+      "status": "محاسبه شده",
+      "formula": "HI = Y_grain / B_total",
+      "inputs": {
+        "HI": 0.45
+      },
+      "unit": "بدون بعد"
+    },
+    "water_use_efficiency": {
+      "value": 1.2,
+      "status": "کارایی خوب",
+      "formula": "WUE = Y / ET",
+      "inputs": {
+        "WUE": 1.2
+      },
+      "unit": "kg/m³"
+    },
+    "crop_yield": {
+      "value": 2.5,
+      "status": "محاسبه شده",
+      "formula": "Y = Y_max × f(water) × f(temp)",
+      "inputs": {
+        "Y": 2.5
+      },
+      "unit": "t/ha"
+    },
+    "irrigation_efficiency": {
+      "value": 60.0,
+      "status": "متوسط",
+      "formula": "IE = (Water_used_by_crop / Water_applied) × 100",
+      "inputs": {
+        "IE": 60.0
+      },
+      "unit": "%"
+    },
+    "shannon_diversity": {
+      "value": 1.8,
+      "status": "تنوع کم",
+      "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+      "inputs": {
+        "H": 1.8
+      },
+      "unit": "شاخص شانون"
+    },
+    "carbon_sequestration": {
+      "value": 0.8,
+      "status": "محاسبه شده",
+      "formula": "C_seq = Input - Output",
+      "inputs": {
+        "C_seq": 0.8
+      },
+      "unit": "t C/ha/yr"
+    },
+    "erosion_rate": {
+      "value": 10.0,
+      "status": "فرسایش متوسط",
+      "formula": "E = R × K × LS × C × P",
+      "inputs": {
+        "E": 10.0
+      },
+      "unit": "t/ha/yr"
+    },
+    "farm_income": {
+      "value": 600.0,
+      "status": "محاسبه شده",
+      "formula": "GFI = Σ(Price × Yield)",
+      "inputs": {
+        "GFI": 600.0
+      },
+      "unit": "USD/ha"
+    },
+    "production_cost": {
+      "value": 350.0,
+      "status": "محاسبه شده",
+      "formula": "PC = Σ(Input_Costs)",
+      "inputs": {
+        "PC": 350.0
+      },
+      "unit": "USD/ha"
+    },
+    "benefit_cost_ratio": {
+      "value": 1.714,
+      "status": "اقتصادی",
+      "formula": "BCR = Benefits / Costs",
+      "inputs": {
+        "Benefits": 600.0,
+        "Costs": 350.0
+      },
+      "unit": "بدون بعد"
+    }
+  },
+  "mediterranean": {
+    "aridity_index": {
+      "value": 0.3571,
+      "status": "نیمه‌خشک",
+      "formula": "AI = P / PET",
+      "inputs": {
+        "P": 500.0,
+        "PET": 1400.0
+      },
+      "unit": "بدون بعد"
+    },
+    "potential_evapotranspiration": {
+      "value": 2506.5,
+      "status": "محاسبه شده",
+      "formula": "PET = 0.0023 × Ra × (T + 17.8) × √(T_range)",
+      "inputs": {
+        "T": 16.0,
+        "T_range": 27.0,
+        "Ra": 6205.0
+      },
+      "unit": "mm/year"
+    },
+    "rainfall_variability": {
+      "value": 0.3,
+      "status": "بارش نیمه‌متغیر",
+      "formula": "CV = σ_rain / μ_rain",
+      "inputs": {
+        "rain_mean": 500.0,
+        "cv": 0.3
+      },
+      "unit": "بدون بعد"
+    },
+    "surface_temperature": {
+      "value": 21.2,
+      "status": "محاسبه شده",
+      "formula": "LST = T_air + (1 - NDVI) × 10",
+      "inputs": {
+        "T_air": 16.0,
+        "NDVI": 0.48
+      },
+      "unit": "°C"
+    },
+    "available_water_capacity": {
+      "value": 130.0,
+      "status": "محاسبه شده",
+      "formula": "AWC = (θ_fc - θ_wilt) × Depth",
+      "inputs": {
+        "θ_fc": 0.0722,
+        "θ_wilt": 0.0289,
+        "Depth": 180.0
+      },
+      "unit": "mm/m"
+    },
+    "hydraulic_conductivity": {
+      "value": 10.0,
+      "status": "محاسبه شده",
+      "formula": "Ksat = f(texture, structure, porosity)",
+      "inputs": {
+        "texture": "clay_loam",
+        "ksat": 10.0
+      },
+      "unit": "mm/h"
+    },
+    "bulk_density": {
+      "value": 1.35,
+      "status": "خاک مناسب",
+      "formula": "BD = Mass_Dry / Volume_Total",
+      "inputs": {
+        "BD": 1.35
+      },
+      "unit": "g/cm³"
+    },
+    "porosity": {
+      "value": 49.06,
+      "status": "محاسبه شده",
+      "formula": "φ = (1 - BD/ρ_particle) × 100",
+      "inputs": {
+        "BD": 1.35,
+        "ρ_particle": 2.65
+      },
+      "unit": "%"
+    },
+    "soil_organic_carbon": {
+      "value": 1.5,
+      "status": "متوسط",
+      "formula": "SOC = Organic_Matter × 0.58",
+      "inputs": {
+        "SOC": 1.5
+      },
+      "unit": "%"
+    },
+    "harvest_index": {
+      "value": 0.48,
+      "status": "محاسبه شده",
+      "formula": "HI = Y_grain / B_total",
+      "inputs": {
+        "HI": 0.48
+      },
+      "unit": "بدون بعد"
+    },
+    "water_use_efficiency": {
+      "value": 1.4,
+      "status": "کارایی خوب",
+      "formula": "WUE = Y / ET",
+      "inputs": {
+        "WUE": 1.4
+      },
+      "unit": "kg/m³"
+    },
+    "crop_yield": {
+      "value": 3.5,
+      "status": "محاسبه شده",
+      "formula": "Y = Y_max × f(water) × f(temp)",
+      "inputs": {
+        "Y": 3.5
+      },
+      "unit": "t/ha"
+    },
+    "irrigation_efficiency": {
+      "value": 65.0,
+      "status": "متوسط",
+      "formula": "IE = (Water_used_by_crop / Water_applied) × 100",
+      "inputs": {
+        "IE": 65.0
+      },
+      "unit": "%"
+    },
+    "shannon_diversity": {
+      "value": 2.2,
+      "status": "تنوع متوسط",
+      "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+      "inputs": {
+        "H": 2.2
+      },
+      "unit": "شاخص شانون"
+    },
+    "carbon_sequestration": {
+      "value": 1.2,
+      "status": "محاسبه شده",
+      "formula": "C_seq = Input - Output",
+      "inputs": {
+        "C_seq": 1.2
+      },
+      "unit": "t C/ha/yr"
+    },
+    "erosion_rate": {
+      "value": 8.0,
+      "status": "فرسایش متوسط",
+      "formula": "E = R × K × LS × C × P",
+      "inputs": {
+        "E": 8.0
+      },
+      "unit": "t/ha/yr"
+    },
+    "farm_income": {
+      "value": 900.0,
+      "status": "محاسبه شده",
+      "formula": "GFI = Σ(Price × Yield)",
+      "inputs": {
+        "GFI": 900.0
+      },
+      "unit": "USD/ha"
+    },
+    "production_cost": {
+      "value": 450.0,
+      "status": "محاسبه شده",
+      "formula": "PC = Σ(Input_Costs)",
+      "inputs": {
+        "PC": 450.0
+      },
+      "unit": "USD/ha"
+    },
+    "benefit_cost_ratio": {
+      "value": 2.0,
+      "status": "بسیار اقتصادی",
+      "formula": "BCR = Benefits / Costs",
+      "inputs": {
+        "Benefits": 900.0,
+        "Costs": 450.0
+      },
+      "unit": "بدون بعد"
+    }
+  },
+  "tropical_savanna": {
+    "aridity_index": {
+      "value": 0.625,
+      "status": "نیمه‌مرطوب",
+      "formula": "AI = P / PET",
+      "inputs": {
+        "P": 1000.0,
+        "PET": 1600.0
+      },
+      "unit": "بدون بعد"
+    },
+    "potential_evapotranspiration": {
+      "value": 3124.38,
+      "status": "محاسبه شده",
+      "formula": "PET = 0.0023 × Ra × (T + 17.8) × √(T_range)",
+      "inputs": {
+        "T": 26.0,
+        "T_range": 20.0,
+        "Ra": 6935.0
+      },
+      "unit": "mm/year"
+    },
+    "rainfall_variability": {
+      "value": 0.35,
+      "status": "بارش نیمه‌متغیر",
+      "formula": "CV = σ_rain / μ_rain",
+      "inputs": {
+        "rain_mean": 1000.0,
+        "cv": 0.35
+      },
+      "unit": "بدون بعد"
+    },
+    "surface_temperature": {
+      "value": 30.4,
+      "status": "محاسبه شده",
+      "formula": "LST = T_air + (1 - NDVI) × 10",
+      "inputs": {
+        "T_air": 26.0,
+        "NDVI": 0.56
+      },
+      "unit": "°C"
+    },
+    "available_water_capacity": {
+      "value": 90.0,
+      "status": "محاسبه شده",
+      "formula": "AWC = (θ_fc - θ_wilt) × Depth",
+      "inputs": {
+        "θ_fc": 0.0563,
+        "θ_wilt": 0.0225,
+        "Depth": 160.0
+      },
+      "unit": "mm/m"
+    },
+    "hydraulic_conductivity": {
+      "value": 20.0,
+      "status": "محاسبه شده",
+      "formula": "Ksat = f(texture, structure, porosity)",
+      "inputs": {
+        "texture": "sandy_loam",
+        "ksat": 20.0
+      },
+      "unit": "mm/h"
+    },
+    "bulk_density": {
+      "value": 1.4,
+      "status": "خاک مناسب",
+      "formula": "BD = Mass_Dry / Volume_Total",
+      "inputs": {
+        "BD": 1.4
+      },
+      "unit": "g/cm³"
+    },
+    "porosity": {
+      "value": 47.17,
+      "status": "محاسبه شده",
+      "formula": "φ = (1 - BD/ρ_particle) × 100",
+      "inputs": {
+        "BD": 1.4,
+        "ρ_particle": 2.65
+      },
+      "unit": "%"
+    },
+    "soil_organic_carbon": {
+      "value": 1.2,
+      "status": "متوسط",
+      "formula": "SOC = Organic_Matter × 0.58",
+      "inputs": {
+        "SOC": 1.2
+      },
+      "unit": "%"
+    },
+    "harvest_index": {
+      "value": 0.42,
+      "status": "محاسبه شده",
+      "formula": "HI = Y_grain / B_total",
+      "inputs": {
+        "HI": 0.42
+      },
+      "unit": "بدون بعد"
+    },
+    "water_use_efficiency": {
+      "value": 1.1,
+      "status": "کارایی متوسط",
+      "formula": "WUE = Y / ET",
+      "inputs": {
+        "WUE": 1.1
+      },
+      "unit": "kg/m³"
+    },
+    "crop_yield": {
+      "value": 2.0,
+      "status": "محاسبه شده",
+      "formula": "Y = Y_max × f(water) × f(temp)",
+      "inputs": {
+        "Y": 2.0
+      },
+      "unit": "t/ha"
+    },
+    "irrigation_efficiency": {
+      "value": 55.0,
+      "status": "پایین",
+      "formula": "IE = (Water_used_by_crop / Water_applied) × 100",
+      "inputs": {
+        "IE": 55.0
+      },
+      "unit": "%"
+    },
+    "shannon_diversity": {
+      "value": 2.5,
+      "status": "تنوع متوسط",
+      "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+      "inputs": {
+        "H": 2.5
+      },
+      "unit": "شاخص شانون"
+    },
+    "carbon_sequestration": {
+      "value": 1.5,
+      "status": "محاسبه شده",
+      "formula": "C_seq = Input - Output",
+      "inputs": {
+        "C_seq": 1.5
+      },
+      "unit": "t C/ha/yr"
+    },
+    "erosion_rate": {
+      "value": 9.0,
+      "status": "فرسایش متوسط",
+      "formula": "E = R × K × LS × C × P",
+      "inputs": {
+        "E": 9.0
+      },
+      "unit": "t/ha/yr"
+    },
+    "farm_income": {
+      "value": 500.0,
+      "status": "محاسبه شده",
+      "formula": "GFI = Σ(Price × Yield)",
+      "inputs": {
+        "GFI": 500.0
+      },
+      "unit": "USD/ha"
+    },
+    "production_cost": {
+      "value": 300.0,
+      "status": "محاسبه شده",
+      "formula": "PC = Σ(Input_Costs)",
+      "inputs": {
+        "PC": 300.0
+      },
+      "unit": "USD/ha"
+    },
+    "benefit_cost_ratio": {
+      "value": 1.667,
+      "status": "اقتصادی",
+      "formula": "BCR = Benefits / Costs",
+      "inputs": {
+        "Benefits": 500.0,
+        "Costs": 300.0
+      },
+      "unit": "بدون بعد"
+    }
+  },
+  "tropical_rainforest": {
+    "aridity_index": {
+      "value": 1.6667,
+      "status": "مرطوب",
+      "formula": "AI = P / PET",
+      "inputs": {
+        "P": 2500.0,
+        "PET": 1500.0
+      },
+      "unit": "بدون بعد"
+    },
+    "potential_evapotranspiration": {
+      "value": 2084.54,
+      "status": "محاسبه شده",
+      "formula": "PET = 0.0023 × Ra × (T + 17.8) × √(T_range)",
+      "inputs": {
+        "T": 27.0,
+        "T_range": 12.0,
+        "Ra": 5840.0
+      },
+      "unit": "mm/year"
+    },
+    "rainfall_variability": {
+      "value": 0.2,
+      "status": "بارش نیمه‌متغیر",
+      "formula": "CV = σ_rain / μ_rain",
+      "inputs": {
+        "rain_mean": 2500.0,
+        "cv": 0.2
+      },
+      "unit": "بدون بعد"
+    },
+    "surface_temperature": {
+      "value": 29.8,
+      "status": "محاسبه شده",
+      "formula": "LST = T_air + (1 - NDVI) × 10",
+      "inputs": {
+        "T_air": 27.0,
+        "NDVI": 0.72
+      },
+      "unit": "°C"
+    },
+    "available_water_capacity": {
+      "value": 160.0,
+      "status": "محاسبه شده",
+      "formula": "AWC = (θ_fc - θ_wilt) × Depth",
+      "inputs": {
+        "θ_fc": 0.08,
+        "θ_wilt": 0.032,
+        "Depth": 200.0
+      },
+      "unit": "mm/m"
+    },
+    "hydraulic_conductivity": {
+      "value": 8.0,
+      "status": "محاسبه شده",
+      "formula": "Ksat = f(texture, structure, porosity)",
+      "inputs": {
+        "texture": "clay",
+        "ksat": 8.0
+      },
+      "unit": "mm/h"
+    },
+    "bulk_density": {
+      "value": 1.2,
+      "status": "خاک مناسب",
+      "formula": "BD = Mass_Dry / Volume_Total",
+      "inputs": {
+        "BD": 1.2
+      },
+      "unit": "g/cm³"
+    },
+    "porosity": {
+      "value": 54.72,
+      "status": "محاسبه شده",
+      "formula": "φ = (1 - BD/ρ_particle) × 100",
+      "inputs": {
+        "BD": 1.2,
+        "ρ_particle": 2.65
+      },
+      "unit": "%"
+    },
+    "soil_organic_carbon": {
+      "value": 2.5,
+      "status": "خوب",
+      "formula": "SOC = Organic_Matter × 0.58",
+      "inputs": {
+        "SOC": 2.5
+      },
+      "unit": "%"
+    },
+    "harvest_index": {
+      "value": 0.4,
+      "status": "محاسبه شده",
+      "formula": "HI = Y_grain / B_total",
+      "inputs": {
+        "HI": 0.4
+      },
+      "unit": "بدون بعد"
+    },
+    "water_use_efficiency": {
+      "value": 1.0,
+      "status": "کارایی متوسط",
+      "formula": "WUE = Y / ET",
+      "inputs": {
+        "WUE": 1.0
+      },
+      "unit": "kg/m³"
+    },
+    "crop_yield": {
+      "value": 1.5,
+      "status": "محاسبه شده",
+      "formula": "Y = Y_max × f(water) × f(temp)",
+      "inputs": {
+        "Y": 1.5
+      },
+      "unit": "t/ha"
+    },
+    "irrigation_efficiency": {
+      "value": 70.0,
+      "status": "متوسط",
+      "formula": "IE = (Water_used_by_crop / Water_applied) × 100",
+      "inputs": {
+        "IE": 70.0
+      },
+      "unit": "%"
+    },
+    "shannon_diversity": {
+      "value": 3.5,
+      "status": "تنوع بالا",
+      "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+      "inputs": {
+        "H": 3.5
+      },
+      "unit": "شاخص شانون"
+    },
+    "carbon_sequestration": {
+      "value": 3.0,
+      "status": "محاسبه شده",
+      "formula": "C_seq = Input - Output",
+      "inputs": {
+        "C_seq": 3.0
+      },
+      "unit": "t C/ha/yr"
+    },
+    "erosion_rate": {
+      "value": 5.0,
+      "status": "فرسایش متوسط",
+      "formula": "E = R × K × LS × C × P",
+      "inputs": {
+        "E": 5.0
+      },
+      "unit": "t/ha/yr"
+    },
+    "farm_income": {
+      "value": 700.0,
+      "status": "محاسبه شده",
+      "formula": "GFI = Σ(Price × Yield)",
+      "inputs": {
+        "GFI": 700.0
+      },
+      "unit": "USD/ha"
+    },
+    "production_cost": {
+      "value": 400.0,
+      "status": "محاسبه شده",
+      "formula": "PC = Σ(Input_Costs)",
+      "inputs": {
+        "PC": 400.0
+      },
+      "unit": "USD/ha"
+    },
+    "benefit_cost_ratio": {
+      "value": 1.75,
+      "status": "اقتصادی",
+      "formula": "BCR = Benefits / Costs",
+      "inputs": {
+        "Benefits": 700.0,
+        "Costs": 400.0
+      },
+      "unit": "بدون بعد"
+    }
+  },
+  "temperate_continental": {
+    "aridity_index": {
+      "value": 0.7,
+      "status": "مرطوب",
+      "formula": "AI = P / PET",
+      "inputs": {
+        "P": 700.0,
+        "PET": 1000.0
+      },
+      "unit": "بدون بعد"
+    },
+    "potential_evapotranspiration": {
+      "value": 1876.94,
+      "status": "محاسبه شده",
+      "formula": "PET = 0.0023 × Ra × (T + 17.8) × √(T_range)",
+      "inputs": {
+        "T": 10.0,
+        "T_range": 33.0,
+        "Ra": 5110.0
+      },
+      "unit": "mm/year"
+    },
+    "rainfall_variability": {
+      "value": 0.25,
+      "status": "بارش نیمه‌متغیر",
+      "formula": "CV = σ_rain / μ_rain",
+      "inputs": {
+        "rain_mean": 700.0,
+        "cv": 0.25
+      },
+      "unit": "بدون بعد"
+    },
+    "surface_temperature": {
+      "value": 15.2,
+      "status": "محاسبه شده",
+      "formula": "LST = T_air + (1 - NDVI) × 10",
+      "inputs": {
+        "T_air": 10.0,
+        "NDVI": 0.48
+      },
+      "unit": "°C"
+    },
+    "available_water_capacity": {
+      "value": 140.0,
+      "status": "محاسبه شده",
+      "formula": "AWC = (θ_fc - θ_wilt) × Depth",
+      "inputs": {
+        "θ_fc": 0.07,
+        "θ_wilt": 0.028,
+        "Depth": 200.0
+      },
+      "unit": "mm/m"
+    },
+    "hydraulic_conductivity": {
+      "value": 12.0,
+      "status": "محاسبه شده",
+      "formula": "Ksat = f(texture, structure, porosity)",
+      "inputs": {
+        "texture": "silt_loam",
+        "ksat": 12.0
+      },
+      "unit": "mm/h"
+    },
+    "bulk_density": {
+      "value": 1.3,
+      "status": "خاک مناسب",
+      "formula": "BD = Mass_Dry / Volume_Total",
+      "inputs": {
+        "BD": 1.3
+      },
+      "unit": "g/cm³"
+    },
+    "porosity": {
+      "value": 50.94,
+      "status": "محاسبه شده",
+      "formula": "φ = (1 - BD/ρ_particle) × 100",
+      "inputs": {
+        "BD": 1.3,
+        "ρ_particle": 2.65
+      },
+      "unit": "%"
+    },
+    "soil_organic_carbon": {
+      "value": 2.0,
+      "status": "خوب",
+      "formula": "SOC = Organic_Matter × 0.58",
+      "inputs": {
+        "SOC": 2.0
+      },
+      "unit": "%"
+    },
+    "harvest_index": {
+      "value": 0.5,
+      "status": "محاسبه شده",
+      "formula": "HI = Y_grain / B_total",
+      "inputs": {
+        "HI": 0.5
+      },
+      "unit": "بدون بعد"
+    },
+    "water_use_efficiency": {
+      "value": 1.6,
+      "status": "کارایی عالی",
+      "formula": "WUE = Y / ET",
+      "inputs": {
+        "WUE": 1.6
+      },
+      "unit": "kg/m³"
+    },
+    "crop_yield": {
+      "value": 4.5,
+      "status": "محاسبه شده",
+      "formula": "Y = Y_max × f(water) × f(temp)",
+      "inputs": {
+        "Y": 4.5
+      },
+      "unit": "t/ha"
+    },
+    "irrigation_efficiency": {
+      "value": 75.0,
+      "status": "خوب",
+      "formula": "IE = (Water_used_by_crop / Water_applied) × 100",
+      "inputs": {
+        "IE": 75.0
+      },
+      "unit": "%"
+    },
+    "shannon_diversity": {
+      "value": 2.0,
+      "status": "تنوع متوسط",
+      "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+      "inputs": {
+        "H": 2.0
+      },
+      "unit": "شاخص شانون"
+    },
+    "carbon_sequestration": {
+      "value": 1.8,
+      "status": "محاسبه شده",
+      "formula": "C_seq = Input - Output",
+      "inputs": {
+        "C_seq": 1.8
+      },
+      "unit": "t C/ha/yr"
+    },
+    "erosion_rate": {
+      "value": 6.0,
+      "status": "فرسایش متوسط",
+      "formula": "E = R × K × LS × C × P",
+      "inputs": {
+        "E": 6.0
+      },
+      "unit": "t/ha/yr"
+    },
+    "farm_income": {
+      "value": 1200.0,
+      "status": "محاسبه شده",
+      "formula": "GFI = Σ(Price × Yield)",
+      "inputs": {
+        "GFI": 1200.0
+      },
+      "unit": "USD/ha"
+    },
+    "production_cost": {
+      "value": 600.0,
+      "status": "محاسبه شده",
+      "formula": "PC = Σ(Input_Costs)",
+      "inputs": {
+        "PC": 600.0
+      },
+      "unit": "USD/ha"
+    },
+    "benefit_cost_ratio": {
+      "value": 2.0,
+      "status": "بسیار اقتصادی",
+      "formula": "BCR = Benefits / Costs",
+      "inputs": {
+        "Benefits": 1200.0,
+        "Costs": 600.0
+      },
+      "unit": "بدون بعد"
+    }
+  },
+  "boreal": {
+    "aridity_index": {
+      "value": 0.8333,
+      "status": "مرطوب",
+      "formula": "AI = P / PET",
+      "inputs": {
+        "P": 500.0,
+        "PET": 600.0
+      },
+      "unit": "بدون بعد"
+    },
+    "potential_evapotranspiration": {
+      "value": 983.38,
+      "status": "محاسبه شده",
+      "formula": "PET = 0.0023 × Ra × (T + 17.8) × √(T_range)",
+      "inputs": {
+        "T": 2.0,
+        "T_range": 35.0,
+        "Ra": 3650.0
+      },
+      "unit": "mm/year"
+    },
+    "rainfall_variability": {
+      "value": 0.3,
+      "status": "بارش نیمه‌متغیر",
+      "formula": "CV = σ_rain / μ_rain",
+      "inputs": {
+        "rain_mean": 500.0,
+        "cv": 0.3
+      },
+      "unit": "بدون بعد"
+    },
+    "surface_temperature": {
+      "value": 8.0,
+      "status": "محاسبه شده",
+      "formula": "LST = T_air + (1 - NDVI) × 10",
+      "inputs": {
+        "T_air": 2.0,
+        "NDVI": 0.4
+      },
+      "unit": "°C"
+    },
+    "available_water_capacity": {
+      "value": 120.0,
+      "status": "محاسبه شده",
+      "formula": "AWC = (θ_fc - θ_wilt) × Depth",
+      "inputs": {
+        "θ_fc": 0.08,
+        "θ_wilt": 0.032,
+        "Depth": 150.0
+      },
+      "unit": "mm/m"
+    },
+    "hydraulic_conductivity": {
+      "value": 15.0,
+      "status": "محاسبه شده",
+      "formula": "Ksat = f(texture, structure, porosity)",
+      "inputs": {
+        "texture": "sandy",
+        "ksat": 15.0
+      },
+      "unit": "mm/h"
+    },
+    "bulk_density": {
+      "value": 1.2,
+      "status": "خاک مناسب",
+      "formula": "BD = Mass_Dry / Volume_Total",
+      "inputs": {
+        "BD": 1.2
+      },
+      "unit": "g/cm³"
+    },
+    "porosity": {
+      "value": 54.72,
+      "status": "محاسبه شده",
+      "formula": "φ = (1 - BD/ρ_particle) × 100",
+      "inputs": {
+        "BD": 1.2,
+        "ρ_particle": 2.65
+      },
+      "unit": "%"
+    },
+    "soil_organic_carbon": {
+      "value": 3.0,
+      "status": "عالی",
+      "formula": "SOC = Organic_Matter × 0.58",
+      "inputs": {
+        "SOC": 3.0
+      },
+      "unit": "%"
+    },
+    "harvest_index": {
+      "value": 0.45,
+      "status": "محاسبه شده",
+      "formula": "HI = Y_grain / B_total",
+      "inputs": {
+        "HI": 0.45
+      },
+      "unit": "بدون بعد"
+    },
+    "water_use_efficiency": {
+      "value": 1.3,
+      "status": "کارایی خوب",
+      "formula": "WUE = Y / ET",
+      "inputs": {
+        "WUE": 1.3
+      },
+      "unit": "kg/m³"
+    },
+    "crop_yield": {
+      "value": 2.5,
+      "status": "محاسبه شده",
+      "formula": "Y = Y_max × f(water) × f(temp)",
+      "inputs": {
+        "Y": 2.5
+      },
+      "unit": "t/ha"
+    },
+    "irrigation_efficiency": {
+      "value": 70.0,
+      "status": "متوسط",
+      "formula": "IE = (Water_used_by_crop / Water_applied) × 100",
+      "inputs": {
+        "IE": 70.0
+      },
+      "unit": "%"
+    },
+    "shannon_diversity": {
+      "value": 1.5,
+      "status": "تنوع کم",
+      "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+      "inputs": {
+        "H": 1.5
+      },
+      "unit": "شاخص شانون"
+    },
+    "carbon_sequestration": {
+      "value": 2.0,
+      "status": "محاسبه شده",
+      "formula": "C_seq = Input - Output",
+      "inputs": {
+        "C_seq": 2.0
+      },
+      "unit": "t C/ha/yr"
+    },
+    "erosion_rate": {
+      "value": 4.0,
+      "status": "فرسایش کم",
+      "formula": "E = R × K × LS × C × P",
+      "inputs": {
+        "E": 4.0
+      },
+      "unit": "t/ha/yr"
+    },
+    "farm_income": {
+      "value": 800.0,
+      "status": "محاسبه شده",
+      "formula": "GFI = Σ(Price × Yield)",
+      "inputs": {
+        "GFI": 800.0
+      },
+      "unit": "USD/ha"
+    },
+    "production_cost": {
+      "value": 500.0,
+      "status": "محاسبه شده",
+      "formula": "PC = Σ(Input_Costs)",
+      "inputs": {
+        "PC": 500.0
+      },
+      "unit": "USD/ha"
+    },
+    "benefit_cost_ratio": {
+      "value": 1.6,
+      "status": "اقتصادی",
+      "formula": "BCR = Benefits / Costs",
+      "inputs": {
+        "Benefits": 800.0,
+        "Costs": 500.0
+      },
+      "unit": "بدون بعد"
+    }
+  },
+  "coastal_saline": {
+    "aridity_index": {
+      "value": 0.0909,
+      "status": "خشک",
+      "formula": "AI = P / PET",
+      "inputs": {
+        "P": 200.0,
+        "PET": 2200.0
+      },
+      "unit": "بدون بعد"
+    },
+    "potential_evapotranspiration": {
+      "value": 3606.85,
+      "status": "محاسبه شده",
+      "formula": "PET = 0.0023 × Ra × (T + 17.8) × √(T_range)",
+      "inputs": {
+        "T": 28.0,
+        "T_range": 22.0,
+        "Ra": 7300.0
+      },
+      "unit": "mm/year"
+    },
+    "rainfall_variability": {
+      "value": 0.4,
+      "status": "بارش بسیار متغیر",
+      "formula": "CV = σ_rain / μ_rain",
+      "inputs": {
+        "rain_mean": 200.0,
+        "cv": 0.4
+      },
+      "unit": "بدون بعد"
+    },
+    "surface_temperature": {
+      "value": 34.8,
+      "status": "محاسبه شده",
+      "formula": "LST = T_air + (1 - NDVI) × 10",
+      "inputs": {
+        "T_air": 28.0,
+        "NDVI": 0.32
+      },
+      "unit": "°C"
+    },
+    "available_water_capacity": {
+      "value": 80.0,
+      "status": "محاسبه شده",
+      "formula": "AWC = (θ_fc - θ_wilt) × Depth",
+      "inputs": {
+        "θ_fc": 0.0615,
+        "θ_wilt": 0.0246,
+        "Depth": 130.0
+      },
+      "unit": "mm/m"
+    },
+    "hydraulic_conductivity": {
+      "value": 5.0,
+      "status": "محاسبه شده",
+      "formula": "Ksat = f(texture, structure, porosity)",
+      "inputs": {
+        "texture": "silty_clay",
+        "ksat": 5.0
+      },
+      "unit": "mm/h"
+    },
+    "bulk_density": {
+      "value": 1.45,
+      "status": "خاک مناسب",
+      "formula": "BD = Mass_Dry / Volume_Total",
+      "inputs": {
+        "BD": 1.45
+      },
+      "unit": "g/cm³"
+    },
+    "porosity": {
+      "value": 45.28,
+      "status": "محاسبه شده",
+      "formula": "φ = (1 - BD/ρ_particle) × 100",
+      "inputs": {
+        "BD": 1.45,
+        "ρ_particle": 2.65
+      },
+      "unit": "%"
+    },
+    "soil_organic_carbon": {
+      "value": 0.8,
+      "status": "کم",
+      "formula": "SOC = Organic_Matter × 0.58",
+      "inputs": {
+        "SOC": 0.8
+      },
+      "unit": "%"
+    },
+    "harvest_index": {
+      "value": 0.38,
+      "status": "محاسبه شده",
+      "formula": "HI = Y_grain / B_total",
+      "inputs": {
+        "HI": 0.38
+      },
+      "unit": "بدون بعد"
+    },
+    "water_use_efficiency": {
+      "value": 0.9,
+      "status": "کارایی متوسط",
+      "formula": "WUE = Y / ET",
+      "inputs": {
+        "WUE": 0.9
+      },
+      "unit": "kg/m³"
+    },
+    "crop_yield": {
+      "value": 1.2,
+      "status": "محاسبه شده",
+      "formula": "Y = Y_max × f(water) × f(temp)",
+      "inputs": {
+        "Y": 1.2
+      },
+      "unit": "t/ha"
+    },
+    "irrigation_efficiency": {
+      "value": 45.0,
+      "status": "پایین",
+      "formula": "IE = (Water_used_by_crop / Water_applied) × 100",
+      "inputs": {
+        "IE": 45.0
+      },
+      "unit": "%"
+    },
+    "shannon_diversity": {
+      "value": 1.0,
+      "status": "تنوع کم",
+      "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+      "inputs": {
+        "H": 1.0
+      },
+      "unit": "شاخص شانون"
+    },
+    "carbon_sequestration": {
+      "value": 0.6,
+      "status": "محاسبه شده",
+      "formula": "C_seq = Input - Output",
+      "inputs": {
+        "C_seq": 0.6
+      },
+      "unit": "t C/ha/yr"
+    },
+    "erosion_rate": {
+      "value": 7.0,
+      "status": "فرسایش متوسط",
+      "formula": "E = R × K × LS × C × P",
+      "inputs": {
+        "E": 7.0
+      },
+      "unit": "t/ha/yr"
+    },
+    "farm_income": {
+      "value": 350.0,
+      "status": "محاسبه شده",
+      "formula": "GFI = Σ(Price × Yield)",
+      "inputs": {
+        "GFI": 350.0
+      },
+      "unit": "USD/ha"
+    },
+    "production_cost": {
+      "value": 250.0,
+      "status": "محاسبه شده",
+      "formula": "PC = Σ(Input_Costs)",
+      "inputs": {
+        "PC": 250.0
+      },
+      "unit": "USD/ha"
+    },
+    "benefit_cost_ratio": {
+      "value": 1.4,
+      "status": "حاشیه‌ای",
+      "formula": "BCR = Benefits / Costs",
+      "inputs": {
+        "Benefits": 350.0,
+        "Costs": 250.0
+      },
+      "unit": "بدون بعد"
+    }
+  },
+  "volcanic": {
+    "aridity_index": {
+      "value": 1.25,
+      "status": "مرطوب",
+      "formula": "AI = P / PET",
+      "inputs": {
+        "P": 1500.0,
+        "PET": 1200.0
+      },
+      "unit": "بدون بعد"
+    },
+    "potential_evapotranspiration": {
+      "value": 2070.47,
+      "status": "محاسبه شده",
+      "formula": "PET = 0.0023 × Ra × (T + 17.8) × √(T_range)",
+      "inputs": {
+        "T": 22.0,
+        "T_range": 15.0,
+        "Ra": 5840.0
+      },
+      "unit": "mm/year"
+    },
+    "rainfall_variability": {
+      "value": 0.25,
+      "status": "بارش نیمه‌متغیر",
+      "formula": "CV = σ_rain / μ_rain",
+      "inputs": {
+        "rain_mean": 1500.0,
+        "cv": 0.25
+      },
+      "unit": "بدون بعد"
+    },
+    "surface_temperature": {
+      "value": 25.6,
+      "status": "محاسبه شده",
+      "formula": "LST = T_air + (1 - NDVI) × 10",
+      "inputs": {
+        "T_air": 22.0,
+        "NDVI": 0.64
+      },
+      "unit": "°C"
+    },
+    "available_water_capacity": {
+      "value": 180.0,
+      "status": "محاسبه شده",
+      "formula": "AWC = (θ_fc - θ_wilt) × Depth",
+      "inputs": {
+        "θ_fc": 0.072,
+        "θ_wilt": 0.0288,
+        "Depth": 250.0
+      },
+      "unit": "mm/m"
+    },
+    "hydraulic_conductivity": {
+      "value": 25.0,
+      "status": "محاسبه شده",
+      "formula": "Ksat = f(texture, structure, porosity)",
+      "inputs": {
+        "texture": "volcanic_ash",
+        "ksat": 25.0
+      },
+      "unit": "mm/h"
+    },
+    "bulk_density": {
+      "value": 1.1,
+      "status": "خاک سبک (آلی)",
+      "formula": "BD = Mass_Dry / Volume_Total",
+      "inputs": {
+        "BD": 1.1
+      },
+      "unit": "g/cm³"
+    },
+    "porosity": {
+      "value": 58.49,
+      "status": "محاسبه شده",
+      "formula": "φ = (1 - BD/ρ_particle) × 100",
+      "inputs": {
+        "BD": 1.1,
+        "ρ_particle": 2.65
+      },
+      "unit": "%"
+    },
+    "soil_organic_carbon": {
+      "value": 3.5,
+      "status": "عالی",
+      "formula": "SOC = Organic_Matter × 0.58",
+      "inputs": {
+        "SOC": 3.5
+      },
+      "unit": "%"
+    },
+    "harvest_index": {
+      "value": 0.48,
+      "status": "محاسبه شده",
+      "formula": "HI = Y_grain / B_total",
+      "inputs": {
+        "HI": 0.48
+      },
+      "unit": "بدون بعد"
+    },
+    "water_use_efficiency": {
+      "value": 1.5,
+      "status": "کارایی خوب",
+      "formula": "WUE = Y / ET",
+      "inputs": {
+        "WUE": 1.5
+      },
+      "unit": "kg/m³"
+    },
+    "crop_yield": {
+      "value": 4.0,
+      "status": "محاسبه شده",
+      "formula": "Y = Y_max × f(water) × f(temp)",
+      "inputs": {
+        "Y": 4.0
+      },
+      "unit": "t/ha"
+    },
+    "irrigation_efficiency": {
+      "value": 70.0,
+      "status": "متوسط",
+      "formula": "IE = (Water_used_by_crop / Water_applied) × 100",
+      "inputs": {
+        "IE": 70.0
+      },
+      "unit": "%"
+    },
+    "shannon_diversity": {
+      "value": 2.8,
+      "status": "تنوع متوسط",
+      "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+      "inputs": {
+        "H": 2.8
+      },
+      "unit": "شاخص شانون"
+    },
+    "carbon_sequestration": {
+      "value": 2.5,
+      "status": "محاسبه شده",
+      "formula": "C_seq = Input - Output",
+      "inputs": {
+        "C_seq": 2.5
+      },
+      "unit": "t C/ha/yr"
+    },
+    "erosion_rate": {
+      "value": 5.0,
+      "status": "فرسایش متوسط",
+      "formula": "E = R × K × LS × C × P",
+      "inputs": {
+        "E": 5.0
+      },
+      "unit": "t/ha/yr"
+    },
+    "farm_income": {
+      "value": 1000.0,
+      "status": "محاسبه شده",
+      "formula": "GFI = Σ(Price × Yield)",
+      "inputs": {
+        "GFI": 1000.0
+      },
+      "unit": "USD/ha"
+    },
+    "production_cost": {
+      "value": 500.0,
+      "status": "محاسبه شده",
+      "formula": "PC = Σ(Input_Costs)",
+      "inputs": {
+        "PC": 500.0
+      },
+      "unit": "USD/ha"
+    },
+    "benefit_cost_ratio": {
+      "value": 2.0,
+      "status": "بسیار اقتصادی",
+      "formula": "BCR = Benefits / Costs",
+      "inputs": {
+        "Benefits": 1000.0,
+        "Costs": 500.0
+      },
+      "unit": "بدون بعد"
+    }
+  },
+  "alpine": {
+    "aridity_index": {
+      "value": 1.6,
+      "status": "مرطوب",
+      "formula": "AI = P / PET",
+      "inputs": {
+        "P": 800.0,
+        "PET": 500.0
+      },
+      "unit": "بدون بعد"
+    },
+    "potential_evapotranspiration": {
+      "value": 1722.65,
+      "status": "محاسبه شده",
+      "formula": "PET = 0.0023 × Ra × (T + 17.8) × √(T_range)",
+      "inputs": {
+        "T": 5.0,
+        "T_range": 25.0,
+        "Ra": 6570.0
+      },
+      "unit": "mm/year"
+    },
+    "rainfall_variability": {
+      "value": 0.3,
+      "status": "بارش نیمه‌متغیر",
+      "formula": "CV = σ_rain / μ_rain",
+      "inputs": {
+        "rain_mean": 800.0,
+        "cv": 0.3
+      },
+      "unit": "بدون بعد"
+    },
+    "surface_temperature": {
+      "value": 10.2,
+      "status": "محاسبه شده",
+      "formula": "LST = T_air + (1 - NDVI) × 10",
+      "inputs": {
+        "T_air": 5.0,
+        "NDVI": 0.48
+      },
+      "unit": "°C"
+    },
+    "available_water_capacity": {
+      "value": 100.0,
+      "status": "محاسبه شده",
+      "formula": "AWC = (θ_fc - θ_wilt) × Depth",
+      "inputs": {
+        "θ_fc": 0.125,
+        "θ_wilt": 0.05,
+        "Depth": 80.0
+      },
+      "unit": "mm/m"
+    },
+    "hydraulic_conductivity": {
+      "value": 20.0,
+      "status": "محاسبه شده",
+      "formula": "Ksat = f(texture, structure, porosity)",
+      "inputs": {
+        "texture": "skeletal",
+        "ksat": 20.0
+      },
+      "unit": "mm/h"
+    },
+    "bulk_density": {
+      "value": 1.3,
+      "status": "خاک مناسب",
+      "formula": "BD = Mass_Dry / Volume_Total",
+      "inputs": {
+        "BD": 1.3
+      },
+      "unit": "g/cm³"
+    },
+    "porosity": {
+      "value": 50.94,
+      "status": "محاسبه شده",
+      "formula": "φ = (1 - BD/ρ_particle) × 100",
+      "inputs": {
+        "BD": 1.3,
+        "ρ_particle": 2.65
+      },
+      "unit": "%"
+    },
+    "soil_organic_carbon": {
+      "value": 2.0,
+      "status": "خوب",
+      "formula": "SOC = Organic_Matter × 0.58",
+      "inputs": {
+        "SOC": 2.0
+      },
+      "unit": "%"
+    },
+    "harvest_index": {
+      "value": 0.42,
+      "status": "محاسبه شده",
+      "formula": "HI = Y_grain / B_total",
+      "inputs": {
+        "HI": 0.42
+      },
+      "unit": "بدون بعد"
+    },
+    "water_use_efficiency": {
+      "value": 1.2,
+      "status": "کارایی خوب",
+      "formula": "WUE = Y / ET",
+      "inputs": {
+        "WUE": 1.2
+      },
+      "unit": "kg/m³"
+    },
+    "crop_yield": {
+      "value": 1.8,
+      "status": "محاسبه شده",
+      "formula": "Y = Y_max × f(water) × f(temp)",
+      "inputs": {
+        "Y": 1.8
+      },
+      "unit": "t/ha"
+    },
+    "irrigation_efficiency": {
+      "value": 65.0,
+      "status": "متوسط",
+      "formula": "IE = (Water_used_by_crop / Water_applied) × 100",
+      "inputs": {
+        "IE": 65.0
+      },
+      "unit": "%"
+    },
+    "shannon_diversity": {
+      "value": 1.8,
+      "status": "تنوع کم",
+      "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+      "inputs": {
+        "H": 1.8
+      },
+      "unit": "شاخص شانون"
+    },
+    "carbon_sequestration": {
+      "value": 1.0,
+      "status": "محاسبه شده",
+      "formula": "C_seq = Input - Output",
+      "inputs": {
+        "C_seq": 1.0
+      },
+      "unit": "t C/ha/yr"
+    },
+    "erosion_rate": {
+      "value": 12.0,
+      "status": "فرسایش متوسط",
+      "formula": "E = R × K × LS × C × P",
+      "inputs": {
+        "E": 12.0
+      },
+      "unit": "t/ha/yr"
+    },
+    "farm_income": {
+      "value": 500.0,
+      "status": "محاسبه شده",
+      "formula": "GFI = Σ(Price × Yield)",
+      "inputs": {
+        "GFI": 500.0
+      },
+      "unit": "USD/ha"
+    },
+    "production_cost": {
+      "value": 350.0,
+      "status": "محاسبه شده",
+      "formula": "PC = Σ(Input_Costs)",
+      "inputs": {
+        "PC": 350.0
+      },
+      "unit": "USD/ha"
+    },
+    "benefit_cost_ratio": {
+      "value": 1.429,
+      "status": "حاشیه‌ای",
+      "formula": "BCR = Benefits / Costs",
+      "inputs": {
+        "Benefits": 500.0,
+        "Costs": 350.0
+      },
+      "unit": "بدون بعد"
+    }
+  },
+  "oceanic": {
+    "aridity_index": {
+      "value": 1.125,
+      "status": "مرطوب",
+      "formula": "AI = P / PET",
+      "inputs": {
+        "P": 900.0,
+        "PET": 800.0
+      },
+      "unit": "بدون بعد"
+    },
+    "potential_evapotranspiration": {
+      "value": 1308.56,
+      "status": "محاسبه شده",
+      "formula": "PET = 0.0023 × Ra × (T + 17.8) × √(T_range)",
+      "inputs": {
+        "T": 12.0,
+        "T_range": 19.0,
+        "Ra": 4380.0
+      },
+      "unit": "mm/year"
+    },
+    "rainfall_variability": {
+      "value": 0.2,
+      "status": "بارش نیمه‌متغیر",
+      "formula": "CV = σ_rain / μ_rain",
+      "inputs": {
+        "rain_mean": 900.0,
+        "cv": 0.2
+      },
+      "unit": "بدون بعد"
+    },
+    "surface_temperature": {
+      "value": 16.4,
+      "status": "محاسبه شده",
+      "formula": "LST = T_air + (1 - NDVI) × 10",
+      "inputs": {
+        "T_air": 12.0,
+        "NDVI": 0.56
+      },
+      "unit": "°C"
+    },
+    "available_water_capacity": {
+      "value": 140.0,
+      "status": "محاسبه شده",
+      "formula": "AWC = (θ_fc - θ_wilt) × Depth",
+      "inputs": {
+        "θ_fc": 0.0778,
+        "θ_wilt": 0.0311,
+        "Depth": 180.0
+      },
+      "unit": "mm/m"
+    },
+    "hydraulic_conductivity": {
+      "value": 15.0,
+      "status": "محاسبه شده",
+      "formula": "Ksat = f(texture, structure, porosity)",
+      "inputs": {
+        "texture": "loam",
+        "ksat": 15.0
+      },
+      "unit": "mm/h"
+    },
+    "bulk_density": {
+      "value": 1.3,
+      "status": "خاک مناسب",
+      "formula": "BD = Mass_Dry / Volume_Total",
+      "inputs": {
+        "BD": 1.3
+      },
+      "unit": "g/cm³"
+    },
+    "porosity": {
+      "value": 50.94,
+      "status": "محاسبه شده",
+      "formula": "φ = (1 - BD/ρ_particle) × 100",
+      "inputs": {
+        "BD": 1.3,
+        "ρ_particle": 2.65
+      },
+      "unit": "%"
+    },
+    "soil_organic_carbon": {
+      "value": 2.5,
+      "status": "خوب",
+      "formula": "SOC = Organic_Matter × 0.58",
+      "inputs": {
+        "SOC": 2.5
+      },
+      "unit": "%"
+    },
+    "harvest_index": {
+      "value": 0.52,
+      "status": "محاسبه شده",
+      "formula": "HI = Y_grain / B_total",
+      "inputs": {
+        "HI": 0.52
+      },
+      "unit": "بدون بعد"
+    },
+    "water_use_efficiency": {
+      "value": 1.8,
+      "status": "کارایی عالی",
+      "formula": "WUE = Y / ET",
+      "inputs": {
+        "WUE": 1.8
+      },
+      "unit": "kg/m³"
+    },
+    "crop_yield": {
+      "value": 5.0,
+      "status": "محاسبه شده",
+      "formula": "Y = Y_max × f(water) × f(temp)",
+      "inputs": {
+        "Y": 5.0
+      },
+      "unit": "t/ha"
+    },
+    "irrigation_efficiency": {
+      "value": 75.0,
+      "status": "خوب",
+      "formula": "IE = (Water_used_by_crop / Water_applied) × 100",
+      "inputs": {
+        "IE": 75.0
+      },
+      "unit": "%"
+    },
+    "shannon_diversity": {
+      "value": 2.3,
+      "status": "تنوع متوسط",
+      "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+      "inputs": {
+        "H": 2.3
+      },
+      "unit": "شاخص شانون"
+    },
+    "carbon_sequestration": {
+      "value": 2.0,
+      "status": "محاسبه شده",
+      "formula": "C_seq = Input - Output",
+      "inputs": {
+        "C_seq": 2.0
+      },
+      "unit": "t C/ha/yr"
+    },
+    "erosion_rate": {
+      "value": 5.0,
+      "status": "فرسایش متوسط",
+      "formula": "E = R × K × LS × C × P",
+      "inputs": {
+        "E": 5.0
+      },
+      "unit": "t/ha/yr"
+    },
+    "farm_income": {
+      "value": 1500.0,
+      "status": "محاسبه شده",
+      "formula": "GFI = Σ(Price × Yield)",
+      "inputs": {
+        "GFI": 1500.0
+      },
+      "unit": "USD/ha"
+    },
+    "production_cost": {
+      "value": 700.0,
+      "status": "محاسبه شده",
+      "formula": "PC = Σ(Input_Costs)",
+      "inputs": {
+        "PC": 700.0
+      },
+      "unit": "USD/ha"
+    },
+    "benefit_cost_ratio": {
+      "value": 2.143,
+      "status": "بسیار اقتصادی",
+      "formula": "BCR = Benefits / Costs",
+      "inputs": {
+        "Benefits": 1500.0,
+        "Costs": 700.0
+      },
+      "unit": "بدون بعد"
+    }
+  }
+}
