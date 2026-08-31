@@ -974,5 +974,1550 @@
       "calibration": "تنظیم وزن‌دهی بر اساس اکوسیستم محلی",
       "validation": "مقایسه با پایش میدانی"
     }
+  },
+  "AGR003": {
+    "name": "گیاه‌پزشکی",
+    "indicators": [
+      {
+        "id": "AGR003_IND01",
+        "name": "شدت بیماری",
+        "symbol": "DS",
+        "unit": "%",
+        "formula": "DS = (n_affected / n_total) × 100",
+        "threshold": {
+          "min": 0,
+          "optimal": 5,
+          "max": 100
+        }
+      },
+      {
+        "id": "AGR003_IND02",
+        "name": "شیوع آفت",
+        "symbol": "PI",
+        "unit": "%",
+        "formula": "PI = (fields_infested / fields_total) × 100",
+        "threshold": {
+          "min": 0,
+          "optimal": 10,
+          "max": 100
+        }
+      },
+      {
+        "id": "AGR003_IND03",
+        "name": "خسارت اقتصادی",
+        "symbol": "EL",
+        "unit": "تن/هکتار",
+        "formula": "EL = Y_potential × DS × Loss_Factor",
+        "threshold": {
+          "min": 0,
+          "optimal": 0.5,
+          "max": 5
+        }
+      }
+    ],
+    "formulas": {
+      "disease_progress": {
+        "name": "پیشرفت بیماری",
+        "formula": "X(t) = X₀ / [1 + ((1-X₀)/X₀) × exp(-r×t)]",
+        "parameters": {
+          "X₀": "شدت اولیه",
+          "r": "نرخ پیشرفت",
+          "t": "زمان"
+        }
+      },
+      "economic_threshold": {
+        "name": "آستانه اقتصادی",
+        "formula": "ET = C / (V × Y × K)",
+        "parameters": {
+          "C": "هزینه کنترل",
+          "V": "قیمت محصول",
+          "Y": "عملکرد",
+          "K": "ضریب خسارت"
+        }
+      }
+    },
+    "standards": {
+      "IPM_FAO": {
+        "source": "FAO Integrated Pest Management",
+        "year": 2020
+      },
+      "EPPO_Standards": {
+        "source": "EPPO Standards on Plant Protection",
+        "year": 2019
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H05",
+        "H19"
+      ],
+      "inputs": [
+        "شدت بیماری",
+        "شیوع آفت",
+        "شرایط اقلیمی"
+      ],
+      "outputs": [
+        "ریسک آفت",
+        "توصیه‌های کنترل"
+      ]
+    }
+  },
+  "AGR004": {
+    "name": "حشره‌شناسی کشاورزی",
+    "indicators": [
+      {
+        "id": "AGR004_IND01",
+        "name": "جمعیت آفت",
+        "symbol": "P",
+        "unit": "عدد/m²",
+        "formula": "P = Σ(count_i) / Area",
+        "threshold": {
+          "min": 0,
+          "optimal": 5,
+          "max": 100
+        }
+      },
+      {
+        "id": "AGR004_IND02",
+        "name": "نرخ رشد جمعیت",
+        "symbol": "r",
+        "unit": "روز⁻¹",
+        "formula": "r = ln(N_t/N_0) / t",
+        "threshold": {
+          "min": 0,
+          "optimal": 0.1,
+          "max": 0.5
+        }
+      }
+    ],
+    "formulas": {
+      "population_growth": {
+        "name": "رشد جمعیت نمایی",
+        "formula": "N_t = N_0 × exp(r × t)",
+        "parameters": {
+          "N₀": "جمعیت اولیه",
+          "r": "نرخ رشد ذاتی",
+          "t": "زمان"
+        }
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H19"
+      ],
+      "inputs": [
+        "جمعیت آفت",
+        "دما",
+        "رطوبت"
+      ],
+      "outputs": [
+        "پیش‌بینی طغیان",
+        "توصیه کنترل بیولوژیک"
+      ]
+    }
+  },
+  "AGR010": {
+    "name": "بیوتکنولوژی کشاورزی",
+    "indicators": [
+      {
+        "id": "AGR010_IND01",
+        "name": "تنوع ژنتیکی",
+        "symbol": "H'",
+        "unit": "شاخص شانون",
+        "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+        "threshold": {
+          "min": 0.5,
+          "optimal": 2.5,
+          "max": 4.0
+        }
+      },
+      {
+        "id": "AGR010_IND02",
+        "name": "مقاومت به تنش",
+        "symbol": "STI",
+        "unit": "بدون بعد",
+        "formula": "STI = (Y_stress × Y_normal) / (Y_normal)²",
+        "threshold": {
+          "min": 0.3,
+          "optimal": 0.8,
+          "max": 1.2
+        }
+      }
+    ],
+    "formulas": {
+      "stress_tolerance_index": {
+        "name": "شاخص تحمل تنش",
+        "formula": "STI = (Y_s × Y_p) / (Y_p)²",
+        "parameters": {
+          "Y_s": "عملکرد تحت تنش",
+          "Y_p": "عملکرد بدون تنش"
+        }
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H15",
+        "H17",
+        "H21"
+      ],
+      "inputs": [
+        "ژنوتیپ",
+        "تنش‌های محیطی"
+      ],
+      "outputs": [
+        "انتخاب رقم متحمل",
+        "پیش‌بینی عملکرد"
+      ]
+    }
+  },
+  "AGR015": {
+    "name": "درختان میوه",
+    "indicators": [
+      {
+        "id": "AGR015_IND01",
+        "name": "ساعات سرمایی",
+        "symbol": "CH",
+        "unit": "ساعت",
+        "formula": "CH = Σ hours(T between 0-7°C)",
+        "threshold": {
+          "min": 200,
+          "optimal": 800,
+          "max": 1500
+        }
+      },
+      {
+        "id": "AGR015_IND02",
+        "name": "عملکرد درخت",
+        "symbol": "Y_tree",
+        "unit": "kg/درخت",
+        "formula": "Y_tree = Y_orchard / N_trees",
+        "threshold": {
+          "min": 10,
+          "optimal": 50,
+          "max": 200
+        }
+      }
+    ],
+    "formulas": {
+      "chilling_hours": {
+        "name": "مدل یوتا (ساعات سرمایی)",
+        "formula": "CH = Σ f(T) for T in [0, 7]°C",
+        "parameters": {
+          "T": "دمای ساعتی"
+        }
+      },
+      "alternate_bearing": {
+        "name": "تناوب باردهی",
+        "formula": "Y_year2 = Y_max × (1 - k × Y_year1/Y_max)",
+        "parameters": {
+          "k": "ضریب تناوب",
+          "Y_max": "حداکثر عملکرد"
+        }
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H07",
+        "H15",
+        "H18"
+      ],
+      "inputs": [
+        "ساعات سرمایی",
+        "دمای بهار",
+        "مدیریت باغ"
+      ],
+      "outputs": [
+        "پیش‌بینی باردهی",
+        "توصیه هرس و تغذیه"
+      ]
+    }
+  },
+  "AGR020": {
+    "name": "غلات",
+    "indicators": [
+      {
+        "id": "AGR020_IND01",
+        "name": "شاخص برداشت",
+        "symbol": "HI",
+        "unit": "بدون بعد",
+        "formula": "HI = Y_grain / B_total",
+        "threshold": {
+          "min": 0.3,
+          "optimal": 0.45,
+          "max": 0.6
+        }
+      },
+      {
+        "id": "AGR020_IND02",
+        "name": "تعداد دانه در خوشه",
+        "symbol": "GN",
+        "unit": "عدد",
+        "formula": "GN = Y_grain / (GW × N_spikes)",
+        "threshold": {
+          "min": 20,
+          "optimal": 40,
+          "max": 80
+        }
+      }
+    ],
+    "formulas": {
+      "yield_components": {
+        "name": "اجزای عملکرد غلات",
+        "formula": "Y = N_plants × N_spikes × N_grains × GW",
+        "parameters": {
+          "N_plants": "تعداد بوته",
+          "N_spikes": "خوشه/بوته",
+          "N_grains": "دانه/خوشه",
+          "GW": "وزن هزار دانه"
+        }
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H01",
+        "H02",
+        "H04",
+        "H18"
+      ],
+      "inputs": [
+        "بارش",
+        "دما",
+        "نوع رقم"
+      ],
+      "outputs": [
+        "عملکرد پیش‌بینی‌شده",
+        "تاریخ کاشت بهینه"
+      ]
+    }
+  },
+  "AGR021": {
+    "name": "حبوبات",
+    "indicators": [
+      {
+        "id": "AGR021_IND01",
+        "name": "تثبیت نیتروژن",
+        "symbol": "N_fix",
+        "unit": "kg N/ha",
+        "formula": "N_fix = B_total × N_content × %Ndfa",
+        "threshold": {
+          "min": 20,
+          "optimal": 100,
+          "max": 300
+        }
+      },
+      {
+        "id": "AGR021_IND02",
+        "name": "گره‌های ریشه",
+        "symbol": "NN",
+        "unit": "عدد/گیاه",
+        "formula": "NN = Σ nodules / N_plants",
+        "threshold": {
+          "min": 10,
+          "optimal": 50,
+          "max": 150
+        }
+      }
+    ],
+    "formulas": {
+      "nitrogen_fixation": {
+        "name": "تثبیت بیولوژیک نیتروژن",
+        "formula": "N_fix = B × N% × Ndfa%",
+        "parameters": {
+          "B": "بیوماس",
+          "N%": "درصد نیتروژن",
+          "Ndfa%": "درصد نیتروژن تثبیت‌شده"
+        }
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H01",
+        "H09",
+        "H18",
+        "H21"
+      ],
+      "inputs": [
+        "نوع حبوبات",
+        "ماده آلی خاک",
+        "رطوبت"
+      ],
+      "outputs": [
+        "تثبیت نیتروژن",
+        "بهبود حاصلخیزی"
+      ]
+    }
+  },
+  "AGR024": {
+    "name": "کشاورزی حفاظتی",
+    "indicators": [
+      {
+        "id": "AGR024_IND01",
+        "name": "پوشش سطح خاک",
+        "symbol": "SC",
+        "unit": "%",
+        "formula": "SC = (Area_covered / Area_total) × 100",
+        "threshold": {
+          "min": 30,
+          "optimal": 70,
+          "max": 100
+        }
+      },
+      {
+        "id": "AGR024_IND02",
+        "name": "فرسایش خاک",
+        "symbol": "E",
+        "unit": "t/ha/yr",
+        "formula": "E = R × K × LS × C × P",
+        "threshold": {
+          "min": 0,
+          "optimal": 5,
+          "max": 50
+        }
+      }
+    ],
+    "formulas": {
+      "rusle": {
+        "name": "مدل فرسایش خاک (RUSLE)",
+        "formula": "A = R × K × LS × C × P",
+        "parameters": {
+          "R": "فرسایندگی بارش",
+          "K": "فرسایش‌پذیری خاک",
+          "LS": "طول و شیب",
+          "C": "پوشش",
+          "P": "اقدامات حفاظتی"
+        }
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H09",
+        "H10",
+        "H13"
+      ],
+      "inputs": [
+        "پوشش خاک",
+        "شیب",
+        "نوع خاک"
+      ],
+      "outputs": [
+        "کاهش فرسایش",
+        "افزایش ماده آلی"
+      ]
+    }
+  },
+  "AGR025": {
+    "name": "کشاورزی دقیق",
+    "indicators": [
+      {
+        "id": "AGR025_IND01",
+        "name": "تغییرات مکانی عملکرد",
+        "symbol": "CV_Y",
+        "unit": "%",
+        "formula": "CV_Y = (σ_Y / μ_Y) × 100",
+        "threshold": {
+          "min": 5,
+          "optimal": 15,
+          "max": 40
+        }
+      },
+      {
+        "id": "AGR025_IND02",
+        "name": "شاخص NDVI",
+        "symbol": "NDVI",
+        "unit": "بدون بعد",
+        "formula": "NDVI = (NIR - Red) / (NIR + Red)",
+        "threshold": {
+          "min": 0.2,
+          "optimal": 0.7,
+          "max": 0.9
+        }
+      }
+    ],
+    "formulas": {
+      "variable_rate_application": {
+        "name": "کاربرد نرخ متغیر",
+        "formula": "Rate(x,y) = f(NDVI, Soil_Map, Yield_Map)",
+        "parameters": {
+          "NDVI": "شاخص پوشش",
+          "Soil_Map": "نقشه خاک",
+          "Yield_Map": "نقشه عملکرد"
+        }
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H22",
+        "H23",
+        "H24"
+      ],
+      "inputs": [
+        "داده‌های ماهواره‌ای",
+        "نقشه‌های خاک",
+        "عملکرد تاریخی"
+      ],
+      "outputs": [
+        "نقشه‌های تجویز",
+        "بهینه‌سازی نهاده‌ها"
+      ]
+    }
+  },
+  "CLI001": {
+    "name": "اقلیم‌شناسی عمومی",
+    "indicators": [
+      {
+        "id": "CLI001_IND01",
+        "name": "میانگین دمای سالانه",
+        "symbol": "T_mean",
+        "unit": "°C",
+        "formula": "T_mean = Σ(T_monthly) / 12",
+        "threshold": {
+          "min": -30,
+          "optimal": 15,
+          "max": 40
+        }
+      },
+      {
+        "id": "CLI001_IND02",
+        "name": "بارش سالانه",
+        "symbol": "P_annual",
+        "unit": "mm",
+        "formula": "P_annual = Σ(P_monthly)",
+        "threshold": {
+          "min": 50,
+          "optimal": 600,
+          "max": 3000
+        }
+      }
+    ],
+    "formulas": {
+      "koppen_classification": {
+        "name": "طبقه‌بندی کوپن",
+        "formula": "Climate = f(T, P, Seasonality)",
+        "parameters": {
+          "T": "دما",
+          "P": "بارش",
+          "Seasonality": "فصلی بودن"
+        }
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H01",
+        "H02",
+        "H04"
+      ],
+      "inputs": [
+        "دما",
+        "بارش",
+        "رطوبت"
+      ],
+      "outputs": [
+        "طبقه‌بندی اقلیم",
+        "پتانسیل کشاورزی"
+      ]
+    }
+  },
+  "CLI007": {
+    "name": "اقلیم‌شناسی تغییر اقلیم",
+    "indicators": [
+      {
+        "id": "CLI007_IND01",
+        "name": "گرمایش جهانی",
+        "symbol": "ΔT",
+        "unit": "°C",
+        "formula": "ΔT = T_current - T_baseline",
+        "threshold": {
+          "min": 0,
+          "optimal": 1.0,
+          "max": 4.0
+        }
+      },
+      {
+        "id": "CLI007_IND02",
+        "name": "افزایش سطح دریا",
+        "symbol": "ΔSL",
+        "unit": "mm/yr",
+        "formula": "ΔSL = f(ice_melt, thermal_expansion)",
+        "threshold": {
+          "min": 1,
+          "optimal": 3,
+          "max": 10
+        }
+      }
+    ],
+    "formulas": {
+      "climate_sensitivity": {
+        "name": "حساسیت اقلیمی",
+        "formula": "ΔT = λ × ΔF",
+        "parameters": {
+          "λ": "پارامتر حساسیت",
+          "ΔF": "فورسینگ تابشی"
+        }
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H02",
+        "H04",
+        "H06"
+      ],
+      "inputs": [
+        "سناریوهای انتشار",
+        "مدل‌های اقلیمی"
+      ],
+      "outputs": [
+        "پیش‌بینی دما و بارش",
+        "ریسک خشکسالی"
+      ]
+    }
+  },
+  "CLI024": {
+    "name": "اقلیم‌شناسی خشکسالی",
+    "indicators": [
+      {
+        "id": "CLI024_IND01",
+        "name": "شاخص بارش استاندارد",
+        "symbol": "SPI",
+        "unit": "بدون بعد",
+        "formula": "SPI = (P - μ_P) / σ_P",
+        "threshold": {
+          "min": -3,
+          "optimal": 0,
+          "max": 3
+        }
+      },
+      {
+        "id": "CLI024_IND02",
+        "name": "شاخص خشکی",
+        "symbol": "AI",
+        "unit": "بدون بعد",
+        "formula": "AI = P / PET",
+        "threshold": {
+          "min": 0.05,
+          "optimal": 0.5,
+          "max": 1.0
+        }
+      }
+    ],
+    "formulas": {
+      "spi_calculation": {
+        "name": "محاسبه شاخص بارش استاندارد",
+        "formula": "SPI = Φ⁻¹(F(P))",
+        "parameters": {
+          "Φ⁻¹": "معکوس توزیع نرمال",
+          "F(P)": "تابع توزیع تجمعی بارش"
+        }
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H01",
+        "H06"
+      ],
+      "inputs": [
+        "بارش تاریخی",
+        "بارش جاری"
+      ],
+      "outputs": [
+        "وضعیت خشکسالی",
+        "هشدار زودهنگام"
+      ]
+    }
+  },
+  "WAS001": {
+    "name": "هیدرولوژی عمومی",
+    "indicators": [
+      {
+        "id": "WAS001_IND01",
+        "name": "رواناب سطحی",
+        "symbol": "Q",
+        "unit": "m³/s",
+        "formula": "Q = C × I × A",
+        "threshold": {
+          "min": 0,
+          "optimal": 10,
+          "max": 1000
+        }
+      },
+      {
+        "id": "WAS001_IND02",
+        "name": "تغذیه آبخوان",
+        "symbol": "R",
+        "unit": "mm/yr",
+        "formula": "R = P - ET - Q_surface",
+        "threshold": {
+          "min": 10,
+          "optimal": 100,
+          "max": 500
+        }
+      }
+    ],
+    "formulas": {
+      "rational_method": {
+        "name": "روش عقلایی رواناب",
+        "formula": "Q = C × I × A / 360",
+        "parameters": {
+          "C": "ضریب رواناب",
+          "I": "شدت بارش",
+          "A": "مساحت"
+        }
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H01",
+        "H09",
+        "H14"
+      ],
+      "inputs": [
+        "بارش",
+        "نفوذپذیری",
+        "شیب"
+      ],
+      "outputs": [
+        "رواناب",
+        "تغذیه آبخوان"
+      ]
+    }
+  },
+  "WAS006": {
+    "name": "مدیریت منابع آب",
+    "indicators": [
+      {
+        "id": "WAS006_IND01",
+        "name": "بیلان آبی",
+        "symbol": "WB",
+        "unit": "mm",
+        "formula": "WB = P - ET - Q - ΔS",
+        "threshold": {
+          "min": -500,
+          "optimal": 0,
+          "max": 500
+        }
+      },
+      {
+        "id": "WAS006_IND02",
+        "name": "راندمان آبیاری",
+        "symbol": "IE",
+        "unit": "%",
+        "formula": "IE = (Water_used_by_crop / Water_applied) × 100",
+        "threshold": {
+          "min": 30,
+          "optimal": 70,
+          "max": 95
+        }
+      }
+    ],
+    "formulas": {
+      "water_balance": {
+        "name": "معادله بیلان آبی",
+        "formula": "ΔS = P + I - ET - Q - D",
+        "parameters": {
+          "P": "بارش",
+          "I": "آبیاری",
+          "ET": "تبخیر و تعرق",
+          "Q": "رواناب",
+          "D": "زهکشی"
+        }
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H09",
+        "H14"
+      ],
+      "inputs": [
+        "بارش",
+        "آبیاری",
+        "تبخیر"
+      ],
+      "outputs": [
+        "بیلان آبی",
+        "نیاز آبیاری"
+      ]
+    }
+  },
+  "ECO001": {
+    "name": "اقتصاد کشاورزی",
+    "indicators": [
+      {
+        "id": "ECO001_IND1",
+        "name": "درآمد ناخالص مزرعه",
+        "symbol": "GFI",
+        "unit": "ریال/هکتار",
+        "formula": "GFI = Σ(Price × Yield)",
+        "threshold": {
+          "min": 10,
+          "optimal": 100,
+          "max": 1000
+        }
+      },
+      {
+        "id": "ECO001_IND2",
+        "name": "هزینه تولید",
+        "symbol": "PC",
+        "unit": "ریال/هکتار",
+        "formula": "PC = Σ(Input_Costs)",
+        "threshold": {
+          "min": 5,
+          "optimal": 50,
+          "max": 500
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "تحلیل هزینه-فایده",
+        "formula": "BCR = Benefits / Costs",
+        "parameters": {
+          "Benefits": "منافع",
+          "Costs": "هزینه‌ها"
+        }
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H18",
+        "H22"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "ECO002": {
+    "name": "اقتصاد منابع طبیعی",
+    "indicators": [
+      {
+        "id": "ECO002_IND1",
+        "name": "ارزش اقتصادی آب",
+        "symbol": "VW",
+        "unit": "ریال/m³",
+        "formula": "VW = Marginal_Product × Price",
+        "threshold": {
+          "min": 1,
+          "optimal": 10,
+          "max": 100
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "ارزش‌گذاری منابع",
+        "formula": "TEV = UV + NUV",
+        "parameters": {
+          "UV": "ارزش کاربری",
+          "NUV": "ارزش غیرکاربری"
+        }
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H09",
+        "H14"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "ECO003": {
+    "name": "توسعه پایدار",
+    "indicators": [
+      {
+        "id": "ECO003_IND1",
+        "name": "شاخص پایداری",
+        "symbol": "SI",
+        "unit": "بدون بعد",
+        "formula": "SI = (E + S + E) / 3",
+        "threshold": {
+          "min": 0.3,
+          "optimal": 0.7,
+          "max": 1.0
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "مدل توسعه پایدار",
+        "formula": "SD = f(Economic, Social, Environmental)",
+        "parameters": {}
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H13",
+        "H25"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "TOU001": {
+    "name": "اکوتوریسم",
+    "indicators": [
+      {
+        "id": "TOU001_IND1",
+        "name": "ظرفیت برد گردشگری",
+        "symbol": "CC",
+        "unit": "نفر/روز",
+        "formula": "CC = Area × Density × Rotation",
+        "threshold": {
+          "min": 10,
+          "optimal": 100,
+          "max": 1000
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "اثرات زیست‌محیطی",
+        "formula": "EI = f(Visitors, Sensitivity)",
+        "parameters": {}
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H13",
+        "H25"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "TOU002": {
+    "name": "گردشگری بیابان",
+    "indicators": [
+      {
+        "id": "TOU002_IND1",
+        "name": "جذابیت منظر",
+        "symbol": "LA",
+        "unit": "بدون بعد",
+        "formula": "LA = f(Landscape, Uniqueness, Accessibility)",
+        "threshold": {
+          "min": 0.3,
+          "optimal": 0.7,
+          "max": 1.0
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "مدیریت پایدار",
+        "formula": "SM = f(Carrying_Capacity, Impact)",
+        "parameters": {}
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H10",
+        "H13"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "GOV001": {
+    "name": "احیای مناطق خشک",
+    "indicators": [
+      {
+        "id": "GOV001_IND1",
+        "name": "شاخص تخریب زمین",
+        "symbol": "LDI",
+        "unit": "بدون بعد",
+        "formula": "LDI = w₁×Veg + w₂×Soil + w₃×Water",
+        "threshold": {
+          "min": 0,
+          "optimal": 0.3,
+          "max": 1.0
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "پتانسیل احیا",
+        "formula": "RP = f(Degradation, Water, Cost)",
+        "parameters": {}
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H01",
+        "H10",
+        "H13"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "GOV002": {
+    "name": "بیابان‌زدایی",
+    "indicators": [
+      {
+        "id": "GOV002_IND1",
+        "name": "پیشروی ماسه",
+        "symbol": "DA",
+        "unit": "m/yr",
+        "formula": "DA = f(Wind, Vegetation, Moisture)",
+        "threshold": {
+          "min": 0,
+          "optimal": 0.5,
+          "max": 10
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "مدل بیابان‌زدایی",
+        "formula": "DM = f(Climate, Soil, Vegetation, Management)",
+        "parameters": {}
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H01",
+        "H10",
+        "H13"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "GOV003": {
+    "name": "احیای آبخوان",
+    "indicators": [
+      {
+        "id": "GOV003_IND1",
+        "name": "نرخ تغذیه",
+        "symbol": "R",
+        "unit": "mm/yr",
+        "formula": "R = P - ET - Q",
+        "threshold": {
+          "min": 10,
+          "optimal": 100,
+          "max": 500
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "بیلان آبخوان",
+        "formula": "ΔS = R - W",
+        "parameters": {
+          "R": "تغذیه",
+          "W": "برداشت"
+        }
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H09",
+        "H14"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "GOV004": {
+    "name": "مدیریت فرونشست",
+    "indicators": [
+      {
+        "id": "GOV004_IND1",
+        "name": "نرخ فرونشست",
+        "symbol": "SR",
+        "unit": "mm/yr",
+        "formula": "SR = f(Extraction, Aquifer, Soil)",
+        "threshold": {
+          "min": 0,
+          "optimal": 5,
+          "max": 50
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "مدل فرونشست",
+        "formula": "Sub = f(Δh, Compressibility, Thickness)",
+        "parameters": {}
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H14"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "GEO001": {
+    "name": "ژئومورفولوژی",
+    "indicators": [
+      {
+        "id": "GEO001_IND1",
+        "name": "شیب زمین",
+        "symbol": "S",
+        "unit": "درصد",
+        "formula": "S = (Δh / L) × 100",
+        "threshold": {
+          "min": 0,
+          "optimal": 5,
+          "max": 60
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "مدل شیب",
+        "formula": "Slope = arctan(Δh / Δx)",
+        "parameters": {}
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H10",
+        "H14"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "GEO002": {
+    "name": "زمین‌شناسی آب",
+    "indicators": [
+      {
+        "id": "GEO002_IND1",
+        "name": "عمق آبخوان",
+        "symbol": "D",
+        "unit": "m",
+        "formula": "D = f(Geology, Recharge)",
+        "threshold": {
+          "min": 5,
+          "optimal": 50,
+          "max": 200
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "ظرفیت آبخوان",
+        "formula": "S = A × Sy × D",
+        "parameters": {
+          "A": "مساحت",
+          "Sy": "بازده ویژه",
+          "D": "عمق"
+        }
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H09",
+        "H14"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "FOR001": {
+    "name": "جنگلداری",
+    "indicators": [
+      {
+        "id": "FOR001_IND1",
+        "name": "حجم چوب",
+        "symbol": "V",
+        "unit": "m³/ha",
+        "formula": "V = Σ(DBH² × H × F)",
+        "threshold": {
+          "min": 50,
+          "optimal": 200,
+          "max": 500
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "رشد جنگل",
+        "formula": "G = f(Site_Index, Age, Density)",
+        "parameters": {}
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H13"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "FOR002": {
+    "name": "اصلاح مرتع",
+    "indicators": [
+      {
+        "id": "FOR002_IND1",
+        "name": "ظرفیت چرای",
+        "symbol": "SC",
+        "unit": "واحد دامی/هکتار",
+        "formula": "SC = Forage_Production / Animal_Requirement",
+        "threshold": {
+          "min": 0.5,
+          "optimal": 2,
+          "max": 5
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "بهره‌وری مرتع",
+        "formula": "RP = f(Rain, Soil, Management)",
+        "parameters": {}
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H09",
+        "H13"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "FOR003": {
+    "name": "آگروفارستری",
+    "indicators": [
+      {
+        "id": "FOR003_IND1",
+        "name": "پوشش درختی",
+        "symbol": "TC",
+        "unit": "%",
+        "formula": "TC = (Tree_Area / Total_Area) × 100",
+        "threshold": {
+          "min": 10,
+          "optimal": 30,
+          "max": 60
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "همزیستی",
+        "formula": "Synergy = f(Tree, Crop, Interaction)",
+        "parameters": {}
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H05",
+        "H13",
+        "H21"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "LIV001": {
+    "name": "دامپروری عمومی",
+    "indicators": [
+      {
+        "id": "LIV001_IND1",
+        "name": "تولید شیر",
+        "symbol": "MY",
+        "unit": "kg/روز",
+        "formula": "MY = f(Breed, Feed, Management)",
+        "threshold": {
+          "min": 5,
+          "optimal": 20,
+          "max": 40
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "بهره‌وری تغذیه",
+        "formula": "FE = Output / Input",
+        "parameters": {}
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H18"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "LIV002": {
+    "name": "دامپروری مرتعی",
+    "indicators": [
+      {
+        "id": "LIV002_IND1",
+        "name": "ظرفیت چرای",
+        "symbol": "SC",
+        "unit": "واحد دامی/هکتار",
+        "formula": "SC = Forage / Requirement",
+        "threshold": {
+          "min": 0.5,
+          "optimal": 2,
+          "max": 5
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "مدیریت چرای",
+        "formula": "GM = f(Season, Intensity, Rest)",
+        "parameters": {}
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H13",
+        "H18"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "ENV001": {
+    "name": "تنوع زیستی",
+    "indicators": [
+      {
+        "id": "ENV001_IND1",
+        "name": "شاخص شانون",
+        "symbol": "H'",
+        "unit": "بدون بعد",
+        "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+        "threshold": {
+          "min": 0.5,
+          "optimal": 2.5,
+          "max": 4.0
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "تنوع گونه‌ای",
+        "formula": "S = Σ species",
+        "parameters": {}
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H13",
+        "H17"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "ENV002": {
+    "name": "اکولوژی کشاورزی",
+    "indicators": [
+      {
+        "id": "ENV002_IND1",
+        "name": "خدمات اکوسیستم",
+        "symbol": "ES",
+        "unit": "شاخص ترکیبی",
+        "formula": "ES = Σ(wᵢ × Serviceᵢ)",
+        "threshold": {
+          "min": 0.2,
+          "optimal": 0.7,
+          "max": 1.0
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "ترسیب کربن",
+        "formula": "C_seq = Input - Output",
+        "parameters": {}
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H09",
+        "H13",
+        "H21"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "TEC001": {
+    "name": "هوش مصنوعی",
+    "indicators": [
+      {
+        "id": "TEC001_IND1",
+        "name": "دقت پیش‌بینی",
+        "symbol": "Acc",
+        "unit": "%",
+        "formula": "Acc = (TP + TN) / (TP + TN + FP + FN)",
+        "threshold": {
+          "min": 60,
+          "optimal": 85,
+          "max": 99
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "یادگیری ماشین",
+        "formula": "Model = f(Features, Labels)",
+        "parameters": {}
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H22",
+        "H23",
+        "H24"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "TEC002": {
+    "name": "اینترنت اشیا",
+    "indicators": [
+      {
+        "id": "TEC002_IND1",
+        "name": "تعداد سنسورها",
+        "symbol": "N_s",
+        "unit": "عدد",
+        "formula": "N_s = Σ sensors",
+        "threshold": {
+          "min": 10,
+          "optimal": 100,
+          "max": 1000
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "تحلیل بلادرنگ",
+        "formula": "RT = f(Stream, Processing)",
+        "parameters": {}
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H23",
+        "H24"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
+  },
+  "TEC003": {
+    "name": "پهپاد",
+    "indicators": [
+      {
+        "id": "TEC003_IND1",
+        "name": "پوشش تصویربرداری",
+        "symbol": "CA",
+        "unit": "هکتار/پرواز",
+        "formula": "CA = Flight_Time × Speed × Swath",
+        "threshold": {
+          "min": 10,
+          "optimal": 100,
+          "max": 500
+        }
+      }
+    ],
+    "formulas": {
+      "formula_1": {
+        "name": "پردازش تصویر",
+        "formula": "NDVI = (NIR - Red) / (NIR + Red)",
+        "parameters": {}
+      }
+    },
+    "hydroma_role": {
+      "algorithms": [
+        "H23",
+        "H24"
+      ],
+      "inputs": [
+        "داده‌های ورودی"
+      ],
+      "outputs": [
+        "خروجی‌های محاسباتی"
+      ]
+    }
   }
 }

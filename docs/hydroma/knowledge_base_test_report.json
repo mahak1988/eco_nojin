@@ -1,0 +1,40 @@
+{
+  "generated_at": "2026-08-31T04:32:15.998189",
+  "total_tests": 5,
+  "passed": 5,
+  "failed": 0,
+  "critical": 0,
+  "warnings": 0,
+  "results": [
+    {
+      "test": "کامل بودن ساختار",
+      "passed": true,
+      "message": "41/41 گرایش کامل (100.0%)",
+      "severity": "info"
+    },
+    {
+      "test": "معتبر بودن محدوده‌ها",
+      "passed": true,
+      "message": "0 محدوده نامعتبر از 84",
+      "severity": "info"
+    },
+    {
+      "test": "معتبر بودن فرمول‌ها",
+      "passed": true,
+      "message": "0 فرمول نامعتبر از 55",
+      "severity": "info"
+    },
+    {
+      "test": "سازگاری داده‌های اقلیمی",
+      "passed": true,
+      "message": "5 منطقه بررسی شد",
+      "severity": "info"
+    },
+    {
+      "test": "منطقی بودن داده‌های عملکرد",
+      "passed": true,
+      "message": "6 محصول بررسی شد",
+      "severity": "info"
+    }
+  ]
+}

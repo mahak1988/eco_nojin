@@ -1,7 +1,11 @@
 /**
- * Vite Configuration - Enhanced Chunk Splitting
+ * Vite Configuration - Optimized Chunk Splitting
  * ================================================
- * Splits vendor-other into smaller, more specific chunks.
+ * Splits vendor-other into focused chunks:
+ * - vendor-antd: UI components (antd ecosystem)
+ * - vendor-echarts: Chart library
+ * - vendor-deckgl: Map visualization
+ * - vendor-arrow: Data processing
  */
 
 import { defineConfig } from 'vite';
@@ -53,42 +57,88 @@ export default defineConfig(({ mode }) => ({
             if (id.includes('/lucide-react/')) return 'vendor-icons';
             if (id.includes('/@radix-ui/')) return 'vendor-radix';
 
-            // Charts
+            // Ant Design Ecosystem (NEW - split from vendor-other)
+            if (id.includes('/antd/') ||
+                id.includes('/@ant-design/') ||
+                id.includes('/@rc-component/') ||
+                id.includes('/rc-')) {
+              return 'vendor-antd';
+            }
+
+            // Charts - Recharts
             if (id.includes('/recharts/')) return 'vendor-charts';
-            if (id.includes('/d3-')) return 'vendor-charts';
 
-            // 3D (very heavy)
-            if (id.includes('/three/')) return 'vendor-three';
-            if (id.includes('/@react-three/fiber/')) return 'vendor-three';
-            if (id.includes('/@react-three/drei/')) return 'vendor-three';
-            if (id.includes('/@react-three/postprocessing/')) return 'vendor-three';
+            // Charts - ECharts (NEW - split from vendor-other)
+            if (id.includes('/echarts/') ||
+                id.includes('/zrender/')) {
+              return 'vendor-echarts';
+            }
 
-            // Maps
-            if (id.includes('/leaflet/')) return 'vendor-maps';
-            if (id.includes('/react-leaflet/')) return 'vendor-maps';
+            // 3D - Three.js
+            if (id.includes('/three/') ||
+                id.includes('/@react-three/')) {
+              return 'vendor-three';
+            }
+
+            // Maps - Deck.gl + Luma.gl (NEW - split from vendor-other)
+            if (id.includes('/@deck.gl/') ||
+                id.includes('/@luma.gl/') ||
+                id.includes('/@loaders.gl/') ||
+                id.includes('/@math.gl/')) {
+              return 'vendor-deckgl';
+            }
+
+            // Maps - Leaflet
+            if (id.includes('/leaflet/') ||
+                id.includes('/react-leaflet/')) {
+              return 'vendor-maps';
+            }
+
+            // Data Processing (NEW - split from vendor-other)
+            if (id.includes('/apache-arrow/') ||
+                id.includes('/flatbuffers/')) {
+              return 'vendor-data';
+            }
 
             // i18n
-            if (id.includes('/i18next/')) return 'vendor-i18n';
-            if (id.includes('/react-i18next/')) return 'vendor-i18n';
+            if (id.includes('/i18next/') ||
+                id.includes('/react-i18next/')) {
+              return 'vendor-i18n';
+            }
 
             // React Query
-            if (id.includes('/@tanstack/react-query/')) return 'vendor-query';
-            if (id.includes('/@tanstack/query-core/')) return 'vendor-query';
+            if (id.includes('/@tanstack/react-query/') ||
+                id.includes('/@tanstack/query-core/')) {
+              return 'vendor-query';
+            }
 
             // Forms
-            if (id.includes('/react-hook-form/')) return 'vendor-forms';
-            if (id.includes('/zod/')) return 'vendor-forms';
-            if (id.includes('/@hookform/')) return 'vendor-forms';
+            if (id.includes('/react-hook-form/') ||
+                id.includes('/zod/') ||
+                id.includes('/@hookform/')) {
+              return 'vendor-forms';
+            }
 
             // Date
-            if (id.includes('/date-fns/')) return 'vendor-date';
-            if (id.includes('/moment/')) return 'vendor-date';
+            if (id.includes('/date-fns/') ||
+                id.includes('/moment/')) {
+              return 'vendor-date';
+            }
+
+            // State Management
+            if (id.includes('/zustand/') ||
+                id.includes('/immer/')) {
+              return 'vendor-state';
+            }
 
             // Utilities
-            if (id.includes('/lodash/')) return 'vendor-utils';
-            if (id.includes('/axios/')) return 'vendor-utils';
+            if (id.includes('/lodash/') ||
+                id.includes('/axios/') ||
+                id.includes('/es-toolkit/')) {
+              return 'vendor-utils';
+            }
 
-            // Other vendors
+            // Other vendors (catch-all)
             return 'vendor-other';
           }
           return undefined;

@@ -1,0 +1,13 @@
+{
+  "generated_at": "2026-08-31T04:16:16.113307",
+  "total_specialties_with_content": 20,
+  "total_indicators": 62,
+  "total_formulas": 34,
+  "domains": {
+    "AGR": 10,
+    "WAS": 4,
+    "CLI": 4,
+    "GOV": 1,
+    "ENV": 1
+  }
+}

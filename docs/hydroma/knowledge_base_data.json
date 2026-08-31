@@ -1,0 +1,146 @@
+{
+  "climate_iran": {
+    "source": "سازمان هواشناسی ایران",
+    "period": "1990-2024",
+    "annual_mean_temp_c": 17.5,
+    "annual_rain_mm": 250,
+    "rain_cv": 0.35,
+    "regions": {
+      "yazd": {
+        "temp": 18.5,
+        "rain": 60,
+        "koppen": "BWh"
+      },
+      "khuzestan": {
+        "temp": 25.0,
+        "rain": 230,
+        "koppen": "BSh"
+      },
+      "hamedan": {
+        "temp": 11.0,
+        "rain": 320,
+        "koppen": "BSk"
+      },
+      "tehran": {
+        "temp": 17.0,
+        "rain": 230,
+        "koppen": "BSk"
+      },
+      "isfahan": {
+        "temp": 16.5,
+        "rain": 120,
+        "koppen": "BWk"
+      }
+    }
+  },
+  "soil_iran": {
+    "source": "سازمان جنگل‌ها، مراتع و آبخیزداری",
+    "total_area_mha": 164.8,
+    "soil_types": {
+      "arid": {
+        "percent": 45,
+        "soc_pct": 0.3,
+        "ph": 8.0
+      },
+      "semi_arid": {
+        "percent": 30,
+        "soc_pct": 0.8,
+        "ph": 7.5
+      },
+      "semi_humid": {
+        "percent": 15,
+        "soc_pct": 1.5,
+        "ph": 7.0
+      },
+      "humid": {
+        "percent": 10,
+        "soc_pct": 2.5,
+        "ph": 6.5
+      }
+    },
+    "erosion_rate_t_ha_yr": 15.0,
+    "salinity_percent": 25
+  },
+  "crop_yields_iran": {
+    "source": "وزارت جهاد کشاورزی",
+    "year": 1402,
+    "yields_t_ha": {
+      "wheat": {
+        "rainfed": 1.2,
+        "irrigated": 3.5
+      },
+      "barley": {
+        "rainfed": 1.0,
+        "irrigated": 3.0
+      },
+      "corn": {
+        "rainfed": 0,
+        "irrigated": 6.0
+      },
+      "rice": {
+        "rainfed": 0,
+        "irrigated": 4.5
+      },
+      "potato": {
+        "rainfed": 0,
+        "irrigated": 25.0
+      },
+      "tomato": {
+        "rainfed": 0,
+        "irrigated": 50.0
+      }
+    }
+  },
+  "salinity_iran": {
+    "source": "سازمان آب و خاک کشور",
+    "saline_sodic_area_mha": 18.5,
+    "ec_range_ds_m": {
+      "min": 0.5,
+      "max": 50.0,
+      "mean": 8.0
+    },
+    "ph_range": {
+      "min": 6.5,
+      "max": 9.5,
+      "mean": 8.0
+    }
+  },
+  "erosion_iran": {
+    "source": "سازمان جنگل‌ها، مراتع و آبخیزداری",
+    "water_erosion_t_ha_yr": 15.0,
+    "wind_erosion_t_ha_yr": 8.0,
+    "total_erosion_t_ha_yr": 23.0,
+    "critical_areas_percent": 35
+  },
+  "global_fao": {
+    "source": "FAOSTAT",
+    "year": 2023,
+    "world_wheat_yield_t_ha": 3.5,
+    "world_rice_yield_t_ha": 4.6,
+    "world_corn_yield_t_ha": 5.8,
+    "arid_areas_percent": 41,
+    "degraded_land_percent": 33
+  },
+  "climate_change_ipcc": {
+    "source": "IPCC AR6",
+    "year": 2023,
+    "global_warming_c": 1.1,
+    "iran_warming_c": 1.5,
+    "sea_level_rise_mm_yr": 3.5,
+    "co2_ppm": 420,
+    "scenarios": {
+      "RCP2.6": {
+        "temp_2050": 1.5,
+        "rain_change": -5
+      },
+      "RCP4.5": {
+        "temp_2050": 2.0,
+        "rain_change": -10
+      },
+      "RCP8.5": {
+        "temp_2050": 4.0,
+        "rain_change": -20
+      }
+    }
+  }
+}
