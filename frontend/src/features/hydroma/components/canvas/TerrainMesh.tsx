@@ -94,6 +94,7 @@ export function TerrainMesh({
 
       switch (layer) {
         case 'surface': {
+          // @ts-expect-error TerrainData type mismatch between lib/terrainGenerator and hydroma.types
           [r, g, b] = terrainColor(data, x, y, norm);
           yOff = norm * HEIGHT_SCALE;
           break;

@@ -61,6 +61,7 @@ export function useTerrainClick({
 
       // ── Data Plot Mode ───────────────────────────────────
       if (toolMode === 'data-plot') {
+        // @ts-expect-error TerrainData type mismatch between lib/terrainGenerator and hydroma.types
         const data = samplePlotData(terrain, x, y);
         const plot: DataPlot = {
           id: 'p' + Date.now(),

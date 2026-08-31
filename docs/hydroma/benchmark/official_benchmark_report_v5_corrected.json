@@ -1,0 +1,201 @@
+{
+  "benchmark_id": "BNCH_20260831_092939",
+  "generated_at": "2026-08-31T09:29:39.728187",
+  "version": "5.0-corrected",
+  "regions": {
+    "moghan": {
+      "region_info": {
+        "name_fa": "دشت مغان (پارس‌آباد)",
+        "province": "اردبیل",
+        "biome": "semi_arid"
+      },
+      "observed": {
+        "yield_t_ha": 5.2,
+        "biomass_t_ha": 12.5,
+        "harvest_index": 0.42,
+        "et_crop_mm": 520.0
+      },
+      "simulations": {
+        "hydroma": {
+          "model": "Hydroma v5.0 Corrected",
+          "yield_t_ha": 3.56,
+          "biomass_t_ha": 7.552,
+          "harvest_index": 0.471,
+          "et_crop_mm": 871.5,
+          "water_stress": 0.765,
+          "temperature_stress": 1.0,
+          "salinity_factor": 0.982,
+          "co2_fertilization": 1.041,
+          "wue_kg_m3": 6.825,
+          "parameters": {
+            "RUE": 2.5,
+            "fPAR": 0.92,
+            "Kc": 1.1
+          }
+        },
+        "aquacrop": {
+          "model": "AquaCrop FAO v7.0",
+          "yield_t_ha": 1.551,
+          "biomass_t_ha": 3.941,
+          "harvest_index": 0.394,
+          "et_crop_mm": 905.0,
+          "water_stress_coefficient": 0.794
+        },
+        "dssat": {
+          "model": "DSSAT CERES-Wheat v4.8",
+          "yield_t_ha": 1.537,
+          "biomass_t_ha": 3.202,
+          "harvest_index": 0.48,
+          "et_crop_mm": 941.0,
+          "water_stress": 0.77
+        }
+      },
+      "errors_percent": {
+        "hydroma": 31.54,
+        "aquacrop": 70.17,
+        "dssat": 70.44
+      }
+    },
+    "jiroft": {
+      "region_info": {
+        "name_fa": "هلیل‌رود جیرفت",
+        "province": "کرمان",
+        "biome": "arid"
+      },
+      "observed": {
+        "yield_t_ha": 4.3,
+        "biomass_t_ha": 10.8,
+        "harvest_index": 0.4,
+        "et_crop_mm": 610.0
+      },
+      "simulations": {
+        "hydroma": {
+          "model": "Hydroma v5.0 Corrected",
+          "yield_t_ha": 2.486,
+          "biomass_t_ha": 5.885,
+          "harvest_index": 0.422,
+          "et_crop_mm": 811.0,
+          "water_stress": 0.666,
+          "temperature_stress": 1.0,
+          "salinity_factor": 0.88,
+          "co2_fertilization": 1.041,
+          "wue_kg_m3": 5.768,
+          "parameters": {
+            "RUE": 2.5,
+            "fPAR": 0.92,
+            "Kc": 1.1
+          }
+        },
+        "aquacrop": {
+          "model": "AquaCrop FAO v7.0",
+          "yield_t_ha": 0.756,
+          "biomass_t_ha": 2.251,
+          "harvest_index": 0.336,
+          "et_crop_mm": 861.7,
+          "water_stress_coefficient": 0.708
+        },
+        "dssat": {
+          "model": "DSSAT CERES-Wheat v4.8",
+          "yield_t_ha": 1.158,
+          "biomass_t_ha": 2.889,
+          "harvest_index": 0.401,
+          "et_crop_mm": 879.7,
+          "water_stress": 0.696
+        }
+      },
+      "errors_percent": {
+        "hydroma": 42.19,
+        "aquacrop": 82.42,
+        "dssat": 73.07
+      }
+    },
+    "ardabil": {
+      "region_info": {
+        "name_fa": "دشت ممنوعه اردبیل",
+        "province": "اردبیل",
+        "biome": "semi_arid_cold"
+      },
+      "observed": {
+        "yield_t_ha": 2.8,
+        "biomass_t_ha": 7.5,
+        "harvest_index": 0.37,
+        "et_crop_mm": 295.0
+      },
+      "simulations": {
+        "hydroma": {
+          "model": "Hydroma v5.0 Corrected",
+          "yield_t_ha": 1.188,
+          "biomass_t_ha": 3.789,
+          "harvest_index": 0.314,
+          "et_crop_mm": 575.1,
+          "water_stress": 0.559,
+          "temperature_stress": 0.653,
+          "salinity_factor": 1.0,
+          "co2_fertilization": 1.041,
+          "wue_kg_m3": 4.484,
+          "parameters": {
+            "RUE": 2.5,
+            "fPAR": 0.92,
+            "Kc": 1.1
+          }
+        },
+        "aquacrop": {
+          "model": "AquaCrop FAO v7.0",
+          "yield_t_ha": 1.802,
+          "biomass_t_ha": 3.755,
+          "harvest_index": 0.48,
+          "et_crop_mm": 631.7,
+          "water_stress_coefficient": 0.614
+        },
+        "dssat": {
+          "model": "DSSAT CERES-Wheat v4.8",
+          "yield_t_ha": 0.816,
+          "biomass_t_ha": 2.465,
+          "harvest_index": 0.331,
+          "et_crop_mm": 690.5,
+          "water_stress": 0.575
+        }
+      },
+      "errors_percent": {
+        "hydroma": 57.57,
+        "aquacrop": 35.64,
+        "dssat": 70.86
+      }
+    }
+  },
+  "comparative_statistics": {
+    "hydroma_vs_observed": {
+      "variable": "Yield",
+      "RMSE": 1.691,
+      "MAE": 1.689,
+      "R2": -1.9179,
+      "NSE": -1.9179,
+      "PBIAS_percent": -41.19
+    },
+    "aquacrop_vs_observed": {
+      "variable": "Yield",
+      "RMSE": 2.993,
+      "MAE": 2.73,
+      "R2": -8.1398,
+      "NSE": -8.1398,
+      "PBIAS_percent": -66.59
+    },
+    "dssat_vs_observed": {
+      "variable": "Yield",
+      "RMSE": 3.013,
+      "MAE": 2.93,
+      "R2": -8.2605,
+      "NSE": -8.2605,
+      "PBIAS_percent": -71.46
+    }
+  },
+  "summary": {
+    "best_model_by_RMSE": "Hydroma",
+    "best_model_by_R2": "Hydroma",
+    "average_errors_percent": {
+      "hydroma": 43.77,
+      "aquacrop": 62.74,
+      "dssat": 71.46
+    }
+  }
+}
