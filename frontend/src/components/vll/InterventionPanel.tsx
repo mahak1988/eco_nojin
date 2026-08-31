@@ -31,12 +31,14 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
   const [tempParams, setTempParams] = useState<Record<string, any>>({});
   const [tempCoverage, setTempCoverage] = useState(100);
 
-  const categoryInterventions = INTERVENTIONS_LIBRARY.filter(i => i.category === selectedCategory);
+  const categoryInterventions = INTERVENTIONS_LIBRARY.filter(
+    (i) => i.category === selectedCategory
+  );
 
   const startConfigure = (intervention: Intervention) => {
     setConfiguringId(intervention.id);
     const defaults: Record<string, any> = {};
-    intervention.parameters.forEach(p => {
+    intervention.parameters.forEach((p) => {
       defaults[p.key] = p.defaultValue;
     });
     setTempParams(defaults);
@@ -56,19 +58,32 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
   };
 
   const totalCost = appliedInterventions.reduce((sum, applied) => {
-    const intervention = INTERVENTIONS_LIBRARY.find(i => i.id === applied.interventionId);
+    const intervention = INTERVENTIONS_LIBRARY.find((i) => i.id === applied.interventionId);
     return sum + (intervention?.estimatedCostUsd || 0) * (applied.coveragePct / 100);
   }, 0);
 
   return (
-    <Card title="کتابخانه مداخلات" icon={<Settings size={20} />} subtitle={`${appliedInterventions.length} مداخله فعال - هزینه کل: $${totalCost.toLocaleString()}`}>
+    <Card
+      title="کتابخانه مداخلات"
+      icon={<Settings size={20} />}
+      subtitle={`${appliedInterventions.length} مداخله فعال - هزینه کل: $${totalCost.toLocaleString()}`}
+    >
       {/* Applied Interventions List */}
       {appliedInterventions.length > 0 && (
-        <div style={{ marginBottom: '1.5rem', padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-lg)' }}>
+        <div
+          style={{
+            marginBottom: '1.5rem',
+            padding: '1rem',
+            background: 'var(--color-surface)',
+            borderRadius: 'var(--radius-lg)',
+          }}
+        >
           <h4 style={{ marginBottom: '0.75rem', fontSize: '0.875rem' }}>✅ مداخلات انتخاب‌شده:</h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {appliedInterventions.map((applied, index) => {
-              const intervention = INTERVENTIONS_LIBRARY.find(i => i.id === applied.interventionId);
+              const intervention = INTERVENTIONS_LIBRARY.find(
+                (i) => i.id === applied.interventionId
+              );
               if (!intervention) return null;
               return (
                 <motion.div
@@ -88,9 +103,12 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span style={{ fontSize: '1.25rem' }}>{intervention.icon}</span>
                     <div>
-                      <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>{intervention.nameFa}</div>
+                      <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>
+                        {intervention.nameFa}
+                      </div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}>
-                        پوشش {applied.coveragePct}٪ - ${Math.round(intervention.estimatedCostUsd * applied.coveragePct / 100)}
+                        پوشش {applied.coveragePct}٪ - $
+                        {Math.round((intervention.estimatedCostUsd * applied.coveragePct) / 100)}
                       </div>
                     </div>
                   </div>
@@ -109,7 +127,15 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
       )}
 
       {/* Category Tabs */}
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: '0.5rem',
+          marginBottom: '1rem',
+          overflowX: 'auto',
+          paddingBottom: '0.5rem',
+        }}
+      >
         {(Object.keys(CATEGORY_NAMES) as InterventionCategory[]).map((cat) => (
           <button
             key={cat}
@@ -123,9 +149,15 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
       </div>
 
       {/* Interventions Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.75rem' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+          gap: '0.75rem',
+        }}
+      >
         {categoryInterventions.map((intervention) => {
-          const isApplied = appliedInterventions.some(a => a.interventionId === intervention.id);
+          const isApplied = appliedInterventions.some((a) => a.interventionId === intervention.id);
           return (
             <motion.div
               key={intervention.id}
@@ -142,12 +174,21 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               }}
             >
               {isApplied && (
-                <div style={{
-                  position: 'absolute', top: 8, left: 8,
-                  width: 20, height: 20, borderRadius: '50%',
-                  background: 'var(--color-success)', color: 'white',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 8,
+                    left: 8,
+                    width: 20,
+                    height: 20,
+                    borderRadius: '50%',
+                    background: 'var(--color-success)',
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
                   <Check size={12} />
                 </div>
               )}
@@ -155,7 +196,14 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               <div style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.25rem' }}>
                 {intervention.nameFa}
               </div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)', marginBottom: '0.5rem', lineHeight: 1.4 }}>
+              <div
+                style={{
+                  fontSize: '0.75rem',
+                  color: 'var(--color-text-tertiary)',
+                  marginBottom: '0.5rem',
+                  lineHeight: 1.4,
+                }}
+              >
                 {intervention.description.slice(0, 50)}...
               </div>
               <div style={{ fontSize: '0.75rem', color: intervention.color, fontWeight: 600 }}>
@@ -176,8 +224,11 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               exit={{ opacity: 0 }}
               onClick={() => setConfiguringId(null)}
               style={{
-                position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)',
-                backdropFilter: 'blur(4px)', zIndex: 1000,
+                position: 'fixed',
+                inset: 0,
+                background: 'rgba(0,0,0,0.7)',
+                backdropFilter: 'blur(4px)',
+                zIndex: 1000,
               }}
             />
             <motion.div
@@ -185,43 +236,83 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               style={{
-                position: 'fixed', top: '50%', left: '50%',
+                position: 'fixed',
+                top: '50%',
+                left: '50%',
                 transform: 'translate(-50%, -50%)',
-                background: 'var(--color-surface)', borderRadius: 'var(--radius-2xl)',
-                padding: '2rem', maxWidth: 500, width: '90%', zIndex: 1001,
+                background: 'var(--color-surface)',
+                borderRadius: 'var(--radius-2xl)',
+                padding: '2rem',
+                maxWidth: 500,
+                width: '90%',
+                zIndex: 1001,
                 boxShadow: 'var(--shadow-2xl)',
               }}
             >
               {(() => {
-                const intervention = INTERVENTIONS_LIBRARY.find(i => i.id === configuringId);
+                const intervention = INTERVENTIONS_LIBRARY.find((i) => i.id === configuringId);
                 if (!intervention) return null;
                 return (
                   <>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-                      <div style={{
-                        width: 48, height: 48, borderRadius: 'var(--radius-xl)',
-                        background: `${intervention.color}20`, color: intervention.color,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem',
-                      }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.75rem',
+                        marginBottom: '1.5rem',
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 48,
+                          height: 48,
+                          borderRadius: 'var(--radius-xl)',
+                          background: `${intervention.color}20`,
+                          color: intervention.color,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '1.5rem',
+                        }}
+                      >
                         {intervention.icon}
                       </div>
                       <div>
                         <h3 style={{ margin: 0 }}>{intervention.nameFa}</h3>
-                        <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}>
+                        <p
+                          style={{
+                            margin: 0,
+                            fontSize: '0.75rem',
+                            color: 'var(--color-text-tertiary)',
+                          }}
+                        >
                           مدل علمی: {intervention.scientificModel}
                         </p>
                       </div>
                     </div>
 
                     <div style={{ marginBottom: '1rem' }}>
-                      <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
+                      <p
+                        style={{
+                          fontSize: '0.875rem',
+                          color: 'var(--color-text-secondary)',
+                          lineHeight: 1.6,
+                        }}
+                      >
                         {intervention.description}
                       </p>
                     </div>
 
                     {intervention.parameters.map((param) => (
                       <div key={param.key} style={{ marginBottom: '1rem' }}>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 600 }}>
+                        <label
+                          style={{
+                            display: 'block',
+                            marginBottom: '0.5rem',
+                            fontSize: '0.875rem',
+                            fontWeight: 600,
+                          }}
+                        >
                           {param.labelFa} {param.unit && `(${param.unit})`}
                         </label>
                         {param.type === 'number' ? (
@@ -232,10 +323,22 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                               max={param.max}
                               step={param.step}
                               value={tempParams[param.key] || param.defaultValue}
-                              onChange={(e) => setTempParams({ ...tempParams, [param.key]: parseFloat(e.target.value) })}
+                              onChange={(e) =>
+                                setTempParams({
+                                  ...tempParams,
+                                  [param.key]: parseFloat(e.target.value),
+                                })
+                              }
                               style={{ width: '100%' }}
                             />
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}>
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                fontSize: '0.75rem',
+                                color: 'var(--color-text-tertiary)',
+                              }}
+                            >
                               <span>{param.min}</span>
                               <strong>{tempParams[param.key] || param.defaultValue}</strong>
                               <span>{param.max}</span>
@@ -244,11 +347,15 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                         ) : param.type === 'select' ? (
                           <select
                             value={tempParams[param.key] || param.defaultValue}
-                            onChange={(e) => setTempParams({ ...tempParams, [param.key]: e.target.value })}
+                            onChange={(e) =>
+                              setTempParams({ ...tempParams, [param.key]: e.target.value })
+                            }
                             className="input"
                           >
-                            {param.options?.map(opt => (
-                              <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            {param.options?.map((opt) => (
+                              <option key={opt.value} value={opt.value}>
+                                {opt.label}
+                              </option>
                             ))}
                           </select>
                         ) : null}
@@ -256,7 +363,14 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                     ))}
 
                     <div style={{ marginBottom: '1.5rem' }}>
-                      <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 600 }}>
+                      <label
+                        style={{
+                          display: 'block',
+                          marginBottom: '0.5rem',
+                          fontSize: '0.875rem',
+                          fontWeight: 600,
+                        }}
+                      >
                         پوشش کل زمین (٪)
                       </label>
                       <input
@@ -268,13 +382,19 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                         onChange={(e) => setTempCoverage(parseInt(e.target.value))}
                         style={{ width: '100%' }}
                       />
-                      <div style={{ textAlign: 'center', fontWeight: 600, color: intervention.color }}>
+                      <div
+                        style={{ textAlign: 'center', fontWeight: 600, color: intervention.color }}
+                      >
                         {tempCoverage}٪
                       </div>
                     </div>
 
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <Button variant="secondary" onClick={() => setConfiguringId(null)} style={{ flex: 1 }}>
+                      <Button
+                        variant="secondary"
+                        onClick={() => setConfiguringId(null)}
+                        style={{ flex: 1 }}
+                      >
                         انصراف
                       </Button>
                       <Button variant="primary" onClick={confirmAdd} style={{ flex: 1 }}>

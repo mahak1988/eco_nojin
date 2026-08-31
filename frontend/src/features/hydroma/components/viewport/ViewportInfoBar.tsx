@@ -22,16 +22,16 @@ export function ViewportInfoBar() {
         ? '🖱️ چرخش آزاد'
         : '🖱️ Free orbit'
       : toolMode === 'draw-polygon'
-      ? isFa
-        ? '📐 حالت ترسیم'
-        : '📐 Draw mode'
-      : toolMode === 'place-op'
-      ? isFa
-        ? '📍 حالت جانمایی'
-        : '📍 Place mode'
-      : isFa
-      ? '📊 پلات داده'
-      : '📊 Data plot';
+        ? isFa
+          ? '📐 حالت ترسیم'
+          : '📐 Draw mode'
+        : toolMode === 'place-op'
+          ? isFa
+            ? '📍 حالت جانمایی'
+            : '📍 Place mode'
+          : isFa
+            ? '📊 پلات داده'
+            : '📊 Data plot';
 
   return (
     <div
@@ -60,9 +60,7 @@ export function ViewportInfoBar() {
         <strong>{isFa ? 'وضعیت' : 'Status'}:</strong>
         <span>{statusText}</span>
         {lastClickInfo && (
-          <span style={{ color: '#fbbf24', fontSize: '10px' }}>
-            {lastClickInfo}
-          </span>
+          <span style={{ color: '#fbbf24', fontSize: '10px' }}>{lastClickInfo}</span>
         )}
       </div>
 

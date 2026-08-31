@@ -13,7 +13,8 @@
           "min": 0.5,
           "optimal": 4.0,
           "max": 15.0
-        }
+        },
+        "default_value": 4.0
       },
       {
         "id": "AGR001_IND02",
@@ -26,7 +27,8 @@
           "min": 0.2,
           "optimal": 0.45,
           "max": 0.6
-        }
+        },
+        "default_value": 0.45
       },
       {
         "id": "AGR001_IND03",
@@ -39,7 +41,8 @@
           "min": 0.5,
           "optimal": 1.5,
           "max": 3.0
-        }
+        },
+        "default_value": 1.5
       },
       {
         "id": "AGR001_IND04",
@@ -52,7 +55,8 @@
           "min": 0.5,
           "optimal": 4.0,
           "max": 8.0
-        }
+        },
+        "default_value": 4.0
       },
       {
         "id": "AGR001_IND05",
@@ -65,7 +69,8 @@
           "min": 10,
           "optimal": 90,
           "max": 100
-        }
+        },
+        "default_value": 70.0
       }
     ],
     "formulas": {
@@ -152,7 +157,8 @@
           "min": 5,
           "optimal": 25,
           "max": 40
-        }
+        },
+        "default_value": 25.0
       },
       {
         "id": "AGR009_IND02",
@@ -165,20 +171,24 @@
           "min": 0.5,
           "optimal": 5.0,
           "max": 10.0
-        }
+        },
+        "default_value": 5.0
       },
       {
         "id": "AGR009_IND03",
         "name": "هدایت روزنه‌ای",
         "symbol": "gs",
         "unit": "mol H₂O/m²/s",
-        "formula": "gs = f(VPD, CO₂, Light, Soil_Water)",
+        "formula": "gs = g1 * A / (CO2 * sqrt(VPD))",
         "reference": "Ball-Berry Model",
         "threshold": {
           "min": 0.05,
           "optimal": 0.3,
           "max": 0.8
-        }
+        },
+        "default_value": 0.3,
+        "original_formula": "gs = f(VPD, CO₂, Light, Soil_Water)",
+        "formula_name": "مدل مدالین (Medlyn)"
       },
       {
         "id": "AGR009_IND04",
@@ -191,7 +201,8 @@
           "min": -3.0,
           "optimal": -0.5,
           "max": 0
-        }
+        },
+        "default_value": -0.5
       },
       {
         "id": "AGR009_IND05",
@@ -204,7 +215,8 @@
           "min": 0.5,
           "optimal": 1.5,
           "max": 3.0
-        }
+        },
+        "default_value": 1.5
       }
     ],
     "formulas": {
@@ -295,20 +307,24 @@
           "min": 50,
           "optimal": 150,
           "max": 250
-        }
+        },
+        "default_value": 150.0
       },
       {
         "id": "WAS011_IND02",
         "name": "هدایت هیدرولیکی اشباع",
         "symbol": "Ksat",
         "unit": "mm/h",
-        "formula": "Ksat = f(texture, structure, porosity)",
+        "formula": "Ksat = texture_coeff * porosity^2",
         "reference": "Saxton & Rawls 2006",
         "threshold": {
           "min": 1,
           "optimal": 20,
           "max": 100
-        }
+        },
+        "default_value": 20.0,
+        "original_formula": "Ksat = f(texture, structure, porosity)",
+        "formula_name": "تقریب مبتنی بر بافت"
       },
       {
         "id": "WAS011_IND03",
@@ -321,7 +337,8 @@
           "min": 1.0,
           "optimal": 1.3,
           "max": 1.8
-        }
+        },
+        "default_value": 1.3
       },
       {
         "id": "WAS011_IND04",
@@ -334,7 +351,8 @@
           "min": 30,
           "optimal": 50,
           "max": 65
-        }
+        },
+        "default_value": 50.0
       },
       {
         "id": "WAS011_IND05",
@@ -347,7 +365,8 @@
           "min": 0,
           "optimal": 0.3,
           "max": 0.6
-        }
+        },
+        "default_value": 0.3
       }
     ],
     "formulas": {
@@ -433,13 +452,16 @@
         "name": "هدایت الکتریکی",
         "symbol": "EC",
         "unit": "dS/m",
-        "formula": "EC = f(salt_concentration)",
+        "formula": "EC = TDS / 640",
         "reference": "USDA Salinity Handbook 60",
         "threshold": {
           "min": 0,
           "optimal": 1.0,
           "max": 16.0
-        }
+        },
+        "default_value": 1.0,
+        "original_formula": "EC = f(salt_concentration)",
+        "formula_name": "تبدیل TDS به EC"
       },
       {
         "id": "WAS018_IND02",
@@ -452,7 +474,8 @@
           "min": 0,
           "optimal": 5,
           "max": 30
-        }
+        },
+        "default_value": 5.0
       },
       {
         "id": "WAS018_IND03",
@@ -465,7 +488,8 @@
           "min": 0,
           "optimal": 5,
           "max": 15
-        }
+        },
+        "default_value": 5.0
       },
       {
         "id": "WAS018_IND04",
@@ -478,7 +502,8 @@
           "min": -0.6,
           "optimal": -0.03,
           "max": 0
-        }
+        },
+        "default_value": -0.03
       },
       {
         "id": "WAS018_IND05",
@@ -491,7 +516,8 @@
           "min": 5,
           "optimal": 15,
           "max": 40
-        }
+        },
+        "default_value": 15.0
       }
     ],
     "formulas": {
@@ -579,46 +605,56 @@
           "min": 0.05,
           "optimal": 0.2,
           "max": 0.65
-        }
+        },
+        "default_value": 0.3
       },
       {
         "id": "CLI012_IND02",
         "name": "تبخیر و تعرق پتانسیل",
         "symbol": "PET",
         "unit": "mm/year",
-        "formula": "PET = f(T, RH, Wind, Radiation)",
+        "formula": "PET = 0.0023 * Ra * (T + 17.8) * sqrt(T_range)",
         "reference": "FAO Penman-Monteith",
         "threshold": {
           "min": 1000,
           "optimal": 2000,
           "max": 4000
-        }
+        },
+        "default_value": 2000.0,
+        "original_formula": "PET = f(T, RH, Wind, Radiation)",
+        "formula_name": "فرمول هارگریو (Hargreaves)"
       },
       {
         "id": "CLI012_IND03",
         "name": "ضریب تغییرات بارش",
         "symbol": "CV_rain",
         "unit": "بدون بعد",
-        "formula": "CV = σ_rain / μ_rain",
+        "formula": "CV = std(rain) / mean(rain)",
         "reference": "Statistical Hydrology",
         "threshold": {
           "min": 0.1,
           "optimal": 0.3,
           "max": 0.7
-        }
+        },
+        "default_value": 0.3,
+        "original_formula": "CV = σ_rain / μ_rain",
+        "formula_name": "ضریب تغییرات"
       },
       {
         "id": "CLI012_IND04",
         "name": "دمای سطح زمین",
         "symbol": "LST",
         "unit": "°C",
-        "formula": "LST = f(Albedo, NDVI, T_air)",
+        "formula": "LST = T_air + (1 - NDVI) * 10",
         "reference": "Remote Sensing",
         "threshold": {
           "min": 10,
           "optimal": 30,
           "max": 60
-        }
+        },
+        "default_value": 30.0,
+        "original_formula": "LST = f(Albedo, NDVI, T_air)",
+        "formula_name": "تقریب دمای سطح"
       },
       {
         "id": "CLI012_IND05",
@@ -631,7 +667,8 @@
           "min": 0,
           "optimal": 10,
           "max": 50
-        }
+        },
+        "default_value": 10.0
       }
     ],
     "formulas": {
@@ -719,7 +756,8 @@
           "min": 0,
           "optimal": 0.2,
           "max": 1.0
-        }
+        },
+        "default_value": 0.3
       },
       {
         "id": "GOV010_IND02",
@@ -732,7 +770,8 @@
           "min": -50,
           "optimal": 10,
           "max": 100
-        }
+        },
+        "default_value": 5.0
       },
       {
         "id": "GOV010_IND03",
@@ -745,20 +784,24 @@
           "min": 0,
           "optimal": 5,
           "max": 50
-        }
+        },
+        "default_value": 5.0
       },
       {
         "id": "GOV010_IND04",
         "name": "پیشروی ماسه",
         "symbol": "Dune_Advance",
         "unit": "متر/سال",
-        "formula": "Advance = f(Wind_Speed, Vegetation, Moisture)",
+        "formula": "Advance = Wind * 0.1 * (1 - Vegetation)",
         "reference": "Aeolian Processes",
         "threshold": {
           "min": 0,
           "optimal": 0.5,
           "max": 10
-        }
+        },
+        "default_value": 0.5,
+        "original_formula": "Advance = f(Wind_Speed, Vegetation, Moisture)",
+        "formula_name": "پیشروی ماسه"
       },
       {
         "id": "GOV010_IND05",
@@ -771,7 +814,8 @@
           "min": 0,
           "optimal": 5,
           "max": 30
-        }
+        },
+        "default_value": 5.0
       }
     ],
     "formulas": {
@@ -854,26 +898,32 @@
         "name": "تنوع زیستی کشاورزی",
         "symbol": "Agro_BD",
         "unit": "شاخص شانون",
-        "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+        "formula": "H_shannon = -sum(p_i * log(p_i))",
         "reference": "Shannon 1948",
         "threshold": {
           "min": 0.5,
           "optimal": 2.5,
           "max": 4.0
-        }
+        },
+        "default_value": 2.0,
+        "original_formula": "H' = -Σ pᵢ × ln(pᵢ)",
+        "formula_name": "شاخص شانون (محاسبه عددی)"
       },
       {
         "id": "ENV023_IND02",
         "name": "خدمات اکوسیستم",
         "symbol": "ES",
         "unit": "شاخص ترکیبی",
-        "formula": "ES = Σ(wᵢ × Serviceᵢ)",
+        "formula": "ES = sum(w_i * Service_i)",
         "reference": "MEA 2005",
         "threshold": {
           "min": 0.2,
           "optimal": 0.7,
           "max": 1.0
-        }
+        },
+        "default_value": 0.6,
+        "original_formula": "ES = Σ(wᵢ × Serviceᵢ)",
+        "formula_name": "خدمات اکوسیستم (جمع وزنی)"
       },
       {
         "id": "ENV023_IND03",
@@ -886,7 +936,8 @@
           "min": 0,
           "optimal": 1.5,
           "max": 5.0
-        }
+        },
+        "default_value": 1.5
       },
       {
         "id": "ENV023_IND04",
@@ -899,7 +950,8 @@
           "min": 20,
           "optimal": 60,
           "max": 90
-        }
+        },
+        "default_value": 60.0
       },
       {
         "id": "ENV023_IND05",
@@ -912,7 +964,8 @@
           "min": 10,
           "optimal": 60,
           "max": 95
-        }
+        },
+        "default_value": 60.0
       }
     ],
     "formulas": {
@@ -988,7 +1041,8 @@
           "min": 0,
           "optimal": 5,
           "max": 100
-        }
+        },
+        "default_value": 5.0
       },
       {
         "id": "AGR003_IND02",
@@ -1000,7 +1054,8 @@
           "min": 0,
           "optimal": 10,
           "max": 100
-        }
+        },
+        "default_value": 10.0
       },
       {
         "id": "AGR003_IND03",
@@ -1012,7 +1067,8 @@
           "min": 0,
           "optimal": 0.5,
           "max": 5
-        }
+        },
+        "default_value": 0.5
       }
     ],
     "formulas": {
@@ -1070,24 +1126,30 @@
         "name": "جمعیت آفت",
         "symbol": "P",
         "unit": "عدد/m²",
-        "formula": "P = Σ(count_i) / Area",
+        "formula": "P = total_count / area",
         "threshold": {
           "min": 0,
           "optimal": 5,
           "max": 100
-        }
+        },
+        "default_value": 5.0,
+        "original_formula": "P = Σ(count_i) / Area",
+        "formula_name": "جمعیت آفت"
       },
       {
         "id": "AGR004_IND02",
         "name": "نرخ رشد جمعیت",
         "symbol": "r",
         "unit": "روز⁻¹",
-        "formula": "r = ln(N_t/N_0) / t",
+        "formula": "r = log(N_t/N_0) / t",
         "threshold": {
           "min": 0,
           "optimal": 0.1,
           "max": 0.5
-        }
+        },
+        "default_value": 0.1,
+        "original_formula": "r = ln(N_t/N_0) / t",
+        "formula_name": "نرخ رشد جمعیت"
       }
     ],
     "formulas": {
@@ -1124,12 +1186,15 @@
         "name": "تنوع ژنتیکی",
         "symbol": "H'",
         "unit": "شاخص شانون",
-        "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+        "formula": "H_shannon = -sum(p_i * log(p_i))",
         "threshold": {
           "min": 0.5,
           "optimal": 2.5,
           "max": 4.0
-        }
+        },
+        "default_value": 2.0,
+        "original_formula": "H' = -Σ pᵢ × ln(pᵢ)",
+        "formula_name": "شاخص شانون (محاسبه عددی)"
       },
       {
         "id": "AGR010_IND02",
@@ -1141,7 +1206,8 @@
           "min": 0.3,
           "optimal": 0.8,
           "max": 1.2
-        }
+        },
+        "default_value": 0.8
       }
     ],
     "formulas": {
@@ -1183,7 +1249,8 @@
           "min": 200,
           "optimal": 800,
           "max": 1500
-        }
+        },
+        "default_value": 800.0
       },
       {
         "id": "AGR015_IND02",
@@ -1195,7 +1262,8 @@
           "min": 10,
           "optimal": 50,
           "max": 200
-        }
+        },
+        "default_value": 50.0
       }
     ],
     "formulas": {
@@ -1245,7 +1313,8 @@
           "min": 0.3,
           "optimal": 0.45,
           "max": 0.6
-        }
+        },
+        "default_value": 0.45
       },
       {
         "id": "AGR020_IND02",
@@ -1257,7 +1326,8 @@
           "min": 20,
           "optimal": 40,
           "max": 80
-        }
+        },
+        "default_value": 40.0
       }
     ],
     "formulas": {
@@ -1303,7 +1373,8 @@
           "min": 20,
           "optimal": 100,
           "max": 300
-        }
+        },
+        "default_value": 100.0
       },
       {
         "id": "AGR021_IND02",
@@ -1315,7 +1386,8 @@
           "min": 10,
           "optimal": 50,
           "max": 150
-        }
+        },
+        "default_value": 50.0
       }
     ],
     "formulas": {
@@ -1360,7 +1432,8 @@
           "min": 30,
           "optimal": 70,
           "max": 100
-        }
+        },
+        "default_value": 60.0
       },
       {
         "id": "AGR024_IND02",
@@ -1372,7 +1445,8 @@
           "min": 0,
           "optimal": 5,
           "max": 50
-        }
+        },
+        "default_value": 5.0
       }
     ],
     "formulas": {
@@ -1413,12 +1487,15 @@
         "name": "تغییرات مکانی عملکرد",
         "symbol": "CV_Y",
         "unit": "%",
-        "formula": "CV_Y = (σ_Y / μ_Y) × 100",
+        "formula": "CV_Y = (std(Y) / mean(Y)) * 100",
         "threshold": {
           "min": 5,
           "optimal": 15,
           "max": 40
-        }
+        },
+        "default_value": 15.0,
+        "original_formula": "CV_Y = (σ_Y / μ_Y) × 100",
+        "formula_name": "ضریب تغییرات عملکرد"
       },
       {
         "id": "AGR025_IND02",
@@ -1430,7 +1507,8 @@
           "min": 0.2,
           "optimal": 0.7,
           "max": 0.9
-        }
+        },
+        "default_value": 0.6
       }
     ],
     "formulas": {
@@ -1469,24 +1547,30 @@
         "name": "میانگین دمای سالانه",
         "symbol": "T_mean",
         "unit": "°C",
-        "formula": "T_mean = Σ(T_monthly) / 12",
+        "formula": "T_mean = sum(T_monthly) / 12",
         "threshold": {
           "min": -30,
           "optimal": 15,
           "max": 40
-        }
+        },
+        "default_value": 15.0,
+        "original_formula": "T_mean = Σ(T_monthly) / 12",
+        "formula_name": "میانگین دما"
       },
       {
         "id": "CLI001_IND02",
         "name": "بارش سالانه",
         "symbol": "P_annual",
         "unit": "mm",
-        "formula": "P_annual = Σ(P_monthly)",
+        "formula": "P_annual = sum(P_monthly)",
         "threshold": {
           "min": 50,
           "optimal": 600,
           "max": 3000
-        }
+        },
+        "default_value": 300.0,
+        "original_formula": "P_annual = Σ(P_monthly)",
+        "formula_name": "بارش سالانه"
       }
     ],
     "formulas": {
@@ -1530,19 +1614,23 @@
           "min": 0,
           "optimal": 1.0,
           "max": 4.0
-        }
+        },
+        "default_value": 1.0
       },
       {
         "id": "CLI007_IND02",
         "name": "افزایش سطح دریا",
         "symbol": "ΔSL",
         "unit": "mm/yr",
-        "formula": "ΔSL = f(ice_melt, thermal_expansion)",
+        "formula": "dSL = 0.3 * dT * 10",
         "threshold": {
           "min": 1,
           "optimal": 3,
           "max": 10
-        }
+        },
+        "default_value": 3.0,
+        "original_formula": "ΔSL = f(ice_melt, thermal_expansion)",
+        "formula_name": "افزایش سطح دریا"
       }
     ],
     "formulas": {
@@ -1579,12 +1667,15 @@
         "name": "شاخص بارش استاندارد",
         "symbol": "SPI",
         "unit": "بدون بعد",
-        "formula": "SPI = (P - μ_P) / σ_P",
+        "formula": "SPI = (P - mean_P) / std_P",
         "threshold": {
           "min": -3,
           "optimal": 0,
           "max": 3
-        }
+        },
+        "default_value": 0.0,
+        "original_formula": "SPI = (P - μ_P) / σ_P",
+        "formula_name": "شاخص بارش استاندارد"
       },
       {
         "id": "CLI024_IND02",
@@ -1596,7 +1687,8 @@
           "min": 0.05,
           "optimal": 0.5,
           "max": 1.0
-        }
+        },
+        "default_value": 0.3
       }
     ],
     "formulas": {
@@ -1637,7 +1729,8 @@
           "min": 0,
           "optimal": 10,
           "max": 1000
-        }
+        },
+        "default_value": 10.0
       },
       {
         "id": "WAS001_IND02",
@@ -1649,7 +1742,8 @@
           "min": 10,
           "optimal": 100,
           "max": 500
-        }
+        },
+        "default_value": 100.0
       }
     ],
     "formulas": {
@@ -1693,7 +1787,8 @@
           "min": -500,
           "optimal": 0,
           "max": 500
-        }
+        },
+        "default_value": 0.0
       },
       {
         "id": "WAS006_IND02",
@@ -1705,7 +1800,8 @@
           "min": 30,
           "optimal": 70,
           "max": 95
-        }
+        },
+        "default_value": 70.0
       }
     ],
     "formulas": {
@@ -1745,24 +1841,30 @@
         "name": "درآمد ناخالص مزرعه",
         "symbol": "GFI",
         "unit": "ریال/هکتار",
-        "formula": "GFI = Σ(Price × Yield)",
+        "formula": "GFI = sum(Price * Yield)",
         "threshold": {
           "min": 10,
           "optimal": 100,
           "max": 1000
-        }
+        },
+        "default_value": 100.0,
+        "original_formula": "GFI = Σ(Price × Yield)",
+        "formula_name": "درآمد ناخالص"
       },
       {
         "id": "ECO001_IND2",
         "name": "هزینه تولید",
         "symbol": "PC",
         "unit": "ریال/هکتار",
-        "formula": "PC = Σ(Input_Costs)",
+        "formula": "PC = sum(Input_Costs)",
         "threshold": {
           "min": 5,
           "optimal": 50,
           "max": 500
-        }
+        },
+        "default_value": 50.0,
+        "original_formula": "PC = Σ(Input_Costs)",
+        "formula_name": "هزینه تولید"
       }
     ],
     "formulas": {
@@ -1801,7 +1903,8 @@
           "min": 1,
           "optimal": 10,
           "max": 100
-        }
+        },
+        "default_value": 10.0
       }
     ],
     "formulas": {
@@ -1840,7 +1943,8 @@
           "min": 0.3,
           "optimal": 0.7,
           "max": 1.0
-        }
+        },
+        "default_value": 0.6
       }
     ],
     "formulas": {
@@ -1876,7 +1980,8 @@
           "min": 10,
           "optimal": 100,
           "max": 1000
-        }
+        },
+        "default_value": 100.0
       }
     ],
     "formulas": {
@@ -1907,12 +2012,15 @@
         "name": "جذابیت منظر",
         "symbol": "LA",
         "unit": "بدون بعد",
-        "formula": "LA = f(Landscape, Uniqueness, Accessibility)",
+        "formula": "LA = (Landscape + Uniqueness + Accessibility) / 3",
         "threshold": {
           "min": 0.3,
           "optimal": 0.7,
           "max": 1.0
-        }
+        },
+        "default_value": 0.7,
+        "original_formula": "LA = f(Landscape, Uniqueness, Accessibility)",
+        "formula_name": "جذابیت منظر"
       }
     ],
     "formulas": {
@@ -1948,7 +2056,8 @@
           "min": 0,
           "optimal": 0.3,
           "max": 1.0
-        }
+        },
+        "default_value": 0.3
       }
     ],
     "formulas": {
@@ -1980,12 +2089,15 @@
         "name": "پیشروی ماسه",
         "symbol": "DA",
         "unit": "m/yr",
-        "formula": "DA = f(Wind, Vegetation, Moisture)",
+        "formula": "DA = Wind * 0.1 * (1 - Vegetation)",
         "threshold": {
           "min": 0,
           "optimal": 0.5,
           "max": 10
-        }
+        },
+        "default_value": 0.5,
+        "original_formula": "DA = f(Wind, Vegetation, Moisture)",
+        "formula_name": "پیشروی ماسه"
       }
     ],
     "formulas": {
@@ -2022,7 +2134,8 @@
           "min": 10,
           "optimal": 100,
           "max": 500
-        }
+        },
+        "default_value": 50.0
       }
     ],
     "formulas": {
@@ -2056,12 +2169,15 @@
         "name": "نرخ فرونشست",
         "symbol": "SR",
         "unit": "mm/yr",
-        "formula": "SR = f(Extraction, Aquifer, Soil)",
+        "formula": "SR = Extraction * compressibility",
         "threshold": {
           "min": 0,
           "optimal": 5,
           "max": 50
-        }
+        },
+        "default_value": 5.0,
+        "original_formula": "SR = f(Extraction, Aquifer, Soil)",
+        "formula_name": "نرخ فرونشست"
       }
     ],
     "formulas": {
@@ -2096,7 +2212,8 @@
           "min": 0,
           "optimal": 5,
           "max": 60
-        }
+        },
+        "default_value": 5.0
       }
     ],
     "formulas": {
@@ -2127,12 +2244,15 @@
         "name": "عمق آبخوان",
         "symbol": "D",
         "unit": "m",
-        "formula": "D = f(Geology, Recharge)",
+        "formula": "D = Recharge * geology_coeff",
         "threshold": {
           "min": 5,
           "optimal": 50,
           "max": 200
-        }
+        },
+        "default_value": 50.0,
+        "original_formula": "D = f(Geology, Recharge)",
+        "formula_name": "عمق آبخوان"
       }
     ],
     "formulas": {
@@ -2167,12 +2287,15 @@
         "name": "حجم چوب",
         "symbol": "V",
         "unit": "m³/ha",
-        "formula": "V = Σ(DBH² × H × F)",
+        "formula": "V = sum(DBH^2 * H * F)",
         "threshold": {
           "min": 50,
           "optimal": 200,
           "max": 500
-        }
+        },
+        "default_value": 200.0,
+        "original_formula": "V = Σ(DBH² × H × F)",
+        "formula_name": "حجم چوب"
       }
     ],
     "formulas": {
@@ -2207,7 +2330,8 @@
           "min": 0.5,
           "optimal": 2,
           "max": 5
-        }
+        },
+        "default_value": 2.0
       }
     ],
     "formulas": {
@@ -2243,7 +2367,8 @@
           "min": 10,
           "optimal": 30,
           "max": 60
-        }
+        },
+        "default_value": 30.0
       }
     ],
     "formulas": {
@@ -2275,12 +2400,15 @@
         "name": "تولید شیر",
         "symbol": "MY",
         "unit": "kg/روز",
-        "formula": "MY = f(Breed, Feed, Management)",
+        "formula": "MY = breed_factor * feed_factor * 20",
         "threshold": {
           "min": 5,
           "optimal": 20,
           "max": 40
-        }
+        },
+        "default_value": 20.0,
+        "original_formula": "MY = f(Breed, Feed, Management)",
+        "formula_name": "تولید شیر"
       }
     ],
     "formulas": {
@@ -2315,7 +2443,8 @@
           "min": 0.5,
           "optimal": 2,
           "max": 5
-        }
+        },
+        "default_value": 2.0
       }
     ],
     "formulas": {
@@ -2346,12 +2475,15 @@
         "name": "شاخص شانون",
         "symbol": "H'",
         "unit": "بدون بعد",
-        "formula": "H' = -Σ pᵢ × ln(pᵢ)",
+        "formula": "H_shannon = -sum(p_i * log(p_i))",
         "threshold": {
           "min": 0.5,
           "optimal": 2.5,
           "max": 4.0
-        }
+        },
+        "default_value": 2.0,
+        "original_formula": "H' = -Σ pᵢ × ln(pᵢ)",
+        "formula_name": "شاخص شانون (محاسبه عددی)"
       }
     ],
     "formulas": {
@@ -2382,12 +2514,15 @@
         "name": "خدمات اکوسیستم",
         "symbol": "ES",
         "unit": "شاخص ترکیبی",
-        "formula": "ES = Σ(wᵢ × Serviceᵢ)",
+        "formula": "ES = sum(w_i * Service_i)",
         "threshold": {
           "min": 0.2,
           "optimal": 0.7,
           "max": 1.0
-        }
+        },
+        "default_value": 0.6,
+        "original_formula": "ES = Σ(wᵢ × Serviceᵢ)",
+        "formula_name": "خدمات اکوسیستم (جمع وزنی)"
       }
     ],
     "formulas": {
@@ -2424,7 +2559,8 @@
           "min": 60,
           "optimal": 85,
           "max": 99
-        }
+        },
+        "default_value": 85.0
       }
     ],
     "formulas": {
@@ -2461,7 +2597,8 @@
           "min": 10,
           "optimal": 100,
           "max": 1000
-        }
+        },
+        "default_value": 100.0
       }
     ],
     "formulas": {
@@ -2497,7 +2634,8 @@
           "min": 10,
           "optimal": 100,
           "max": 500
-        }
+        },
+        "default_value": 100.0
       }
     ],
     "formulas": {
@@ -2541,13 +2679,15 @@
         "name": "جهت شیب",
         "symbol": "Aspect",
         "unit": "درجه",
-        "formula": "Aspect = arctan(dz/dy, dz/dx)",
+        "formula": "Aspect = atan2(dz_dy, dz_dx)",
         "default_value": 180.0,
         "threshold": {
           "min": 0,
           "optimal": 180,
           "max": 360
-        }
+        },
+        "original_formula": "Aspect = arctan(dz/dy, dz/dx)",
+        "formula_name": "جهت شیب"
       }
     ],
     "formulas": {
@@ -2584,13 +2724,15 @@
         "name": "عمق آبخوان",
         "symbol": "D",
         "unit": "m",
-        "formula": "D = f(Geology, Recharge)",
+        "formula": "D = Recharge * geology_coeff",
         "default_value": 50.0,
         "threshold": {
           "min": 5,
           "optimal": 50,
           "max": 200
-        }
+        },
+        "original_formula": "D = f(Geology, Recharge)",
+        "formula_name": "عمق آبخوان"
       },
       {
         "id": "GEO017_IND02",
@@ -2602,7 +2744,7 @@
         "threshold": {
           "min": 1000,
           "optimal": 100000,
-          "max": 1000000
+          "max": 500000
         }
       }
     ],
@@ -2695,13 +2837,15 @@
         "name": "نرخ فرونشست",
         "symbol": "SR",
         "unit": "mm/yr",
-        "formula": "SR = f(Extraction, Aquifer, Soil)",
+        "formula": "SR = Extraction * compressibility",
         "default_value": 5.0,
         "threshold": {
           "min": 0,
           "optimal": 5,
           "max": 50
-        }
+        },
+        "original_formula": "SR = f(Extraction, Aquifer, Soil)",
+        "formula_name": "نرخ فرونشست"
       },
       {
         "id": "GOV021_IND02",
@@ -2751,13 +2895,15 @@
         "name": "شاخص شانون",
         "symbol": "H'",
         "unit": "بدون بعد",
-        "formula": "H = -sum(p * ln(p))",
+        "formula": "H_shannon = -sum(p_i * log(p_i))",
         "default_value": 1.5,
         "threshold": {
           "min": 0.5,
           "optimal": 2.5,
           "max": 4.0
-        }
+        },
+        "original_formula": "H = -sum(p * ln(p))",
+        "formula_name": "شاخص شانون (محاسبه عددی)"
       },
       {
         "id": "ENV017_IND02",
@@ -2817,13 +2963,15 @@
         "name": "تولید علوفه",
         "symbol": "FP",
         "unit": "kg/ha/yr",
-        "formula": "FP = f(Rain, Soil, Management)",
+        "formula": "FP = Rain * 2.0 * management_factor",
         "default_value": 500.0,
         "threshold": {
           "min": 100,
           "optimal": 1000,
           "max": 5000
-        }
+        },
+        "original_formula": "FP = f(Rain, Soil, Management)",
+        "formula_name": "تولید علوفه"
       }
     ],
     "formulas": {
@@ -2872,13 +3020,15 @@
         "name": "همزیستی",
         "symbol": "SY",
         "unit": "بدون بعد",
-        "formula": "SY = f(Tree, Crop, Interaction)",
+        "formula": "SY = (Y_mixed - Y_mono) / Y_mono",
         "default_value": 0.5,
         "threshold": {
           "min": 0.1,
           "optimal": 0.6,
           "max": 1.0
-        }
+        },
+        "original_formula": "SY = f(Tree, Crop, Interaction)",
+        "formula_name": "ضریب همزیستی"
       }
     ],
     "formulas": {

@@ -59,7 +59,7 @@ export const DocsPage: React.FC = () => {
   const [selectedSection, setSelectedSection] = useState('getting-started');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const activeSection = DOCS_SECTIONS.find(s => s.id === selectedSection);
+  const activeSection = DOCS_SECTIONS.find((s) => s.id === selectedSection);
 
   return (
     <PublicLayout>
@@ -103,15 +103,24 @@ export const DocsPage: React.FC = () => {
         <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '2rem' }}>
           {/* Sidebar */}
           <div>
-            <div style={{
-              position: 'sticky',
-              top: 100,
-              background: 'var(--color-surface)',
-              borderRadius: 'var(--radius-xl)',
-              padding: '1rem',
-              border: '1px solid var(--color-border)',
-            }}>
-              <h3 style={{ fontSize: '0.875rem', fontWeight: 700, marginBottom: '1rem', padding: '0 0.5rem' }}>
+            <div
+              style={{
+                position: 'sticky',
+                top: 100,
+                background: 'var(--color-surface)',
+                borderRadius: 'var(--radius-xl)',
+                padding: '1rem',
+                border: '1px solid var(--color-border)',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '0.875rem',
+                  fontWeight: 700,
+                  marginBottom: '1rem',
+                  padding: '0 0.5rem',
+                }}
+              >
                 بخش‌ها
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
@@ -126,8 +135,10 @@ export const DocsPage: React.FC = () => {
                       padding: '0.75rem',
                       borderRadius: 'var(--radius-lg)',
                       border: 'none',
-                      background: selectedSection === section.id ? 'var(--color-primary)' : 'transparent',
-                      color: selectedSection === section.id ? 'white' : 'var(--color-text-secondary)',
+                      background:
+                        selectedSection === section.id ? 'var(--color-primary)' : 'transparent',
+                      color:
+                        selectedSection === section.id ? 'white' : 'var(--color-text-secondary)',
                       cursor: 'pointer',
                       textAlign: 'right',
                       fontSize: '0.875rem',
@@ -204,7 +215,10 @@ export const DocsPage: React.FC = () => {
                   <p style={{ marginBottom: '1.5rem', opacity: 0.9 }}>
                     تیم پشتیبانی ما ۲۴ ساعته آماده کمک به شماست
                   </p>
-                  <Button variant="secondary" style={{ background: 'white', color: 'var(--color-primary)' }}>
+                  <Button
+                    variant="secondary"
+                    style={{ background: 'white', color: 'var(--color-primary)' }}
+                  >
                     تماس با پشتیبانی
                   </Button>
                 </motion.div>

@@ -4,10 +4,7 @@
  * @module features/security/components
  */
 
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer,
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Zap } from 'lucide-react';
 import type { SecurityStats } from '../types';
 

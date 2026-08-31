@@ -20,7 +20,14 @@ export const VLLWeatherControl: React.FC<VLLWeatherControlProps> = ({ weather, o
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         {/* Rainfall */}
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', marginBottom: '0.25rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: '0.875rem',
+              marginBottom: '0.25rem',
+            }}
+          >
             <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
               <CloudRain size={14} color="#3b82f6" /> بارش
             </span>
@@ -38,7 +45,14 @@ export const VLLWeatherControl: React.FC<VLLWeatherControlProps> = ({ weather, o
 
         {/* Wind */}
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', marginBottom: '0.25rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: '0.875rem',
+              marginBottom: '0.25rem',
+            }}
+          >
             <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
               <Wind size={14} color="#a3a3a3" /> سرعت باد
             </span>
@@ -56,7 +70,14 @@ export const VLLWeatherControl: React.FC<VLLWeatherControlProps> = ({ weather, o
 
         {/* Temperature */}
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', marginBottom: '0.25rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: '0.875rem',
+              marginBottom: '0.25rem',
+            }}
+          >
             <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
               <Thermometer size={14} color="#ef4444" /> دما
             </span>
@@ -74,7 +95,14 @@ export const VLLWeatherControl: React.FC<VLLWeatherControlProps> = ({ weather, o
 
         {/* Sun Intensity */}
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', marginBottom: '0.25rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: '0.875rem',
+              marginBottom: '0.25rem',
+            }}
+          >
             <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
               <Sun size={14} color="#fbbf24" /> تابش خورشید
             </span>

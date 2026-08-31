@@ -109,7 +109,9 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
       {/* Active Interventions */}
       {interventions.length > 0 && (
         <div style={{ marginBottom: '1rem' }}>
-          <h4 style={{ fontSize: '0.875rem', marginBottom: '0.5rem' }}>✅ فعال ({interventions.length})</h4>
+          <h4 style={{ fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+            ✅ فعال ({interventions.length})
+          </h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             {interventions.map((intv) => (
               <motion.div
@@ -131,7 +133,12 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                 <span style={{ flex: 1 }}>{intv.name}</span>
                 <button
                   onClick={() => onRemove(intv.id)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-error)' }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'var(--color-error)',
+                  }}
                 >
                   <Trash2 size={14} />
                 </button>
@@ -203,22 +210,33 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                 boxShadow: 'var(--shadow-2xl)',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-                <div style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: 'var(--radius-xl)',
-                  background: `${configuring.color}20`,
-                  color: configuring.color,
+              <div
+                style={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
+                  gap: '0.75rem',
+                  marginBottom: '1.5rem',
+                }}
+              >
+                <div
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 'var(--radius-xl)',
+                    background: `${configuring.color}20`,
+                    color: configuring.color,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
                   {configuring.icon}
                 </div>
                 <div>
                   <h3 style={{ margin: 0 }}>{configuring.name}</h3>
-                  <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}>
+                  <p
+                    style={{ margin: 0, fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}
+                  >
                     {configuring.description}
                   </p>
                 </div>
@@ -226,7 +244,14 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
 
               {/* Coverage Slider */}
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', marginBottom: '0.25rem' }}>
+                <label
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: '0.875rem',
+                    marginBottom: '0.25rem',
+                  }}
+                >
                   <span>پوشش زمین</span>
                   <strong>{coverage}٪</strong>
                 </label>
@@ -248,7 +273,9 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
                   <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}>X</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}>
+                      X
+                    </div>
                     <input
                       type="number"
                       value={position.x}
@@ -258,7 +285,9 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                     />
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}>Z</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}>
+                      Z
+                    </div>
                     <input
                       type="number"
                       value={position.z}
@@ -273,7 +302,9 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               {/* Intervention-specific parameters */}
               {configuring.id === 'tree_planting' && (
                 <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ fontSize: '0.875rem', display: 'block', marginBottom: '0.5rem' }}>🌳 گونه درخت</label>
+                  <label style={{ fontSize: '0.875rem', display: 'block', marginBottom: '0.5rem' }}>
+                    🌳 گونه درخت
+                  </label>
                   <select
                     value={params.species || 'cypress'}
                     onChange={(e) => setParams({ ...params, species: e.target.value })}
@@ -285,7 +316,14 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                     <option value="almond">بادام (مثمر)</option>
                     <option value="oak">بلوط (بومی)</option>
                   </select>
-                  <label style={{ fontSize: '0.875rem', display: 'block', marginTop: '0.5rem', marginBottom: '0.25rem' }}>
+                  <label
+                    style={{
+                      fontSize: '0.875rem',
+                      display: 'block',
+                      marginTop: '0.5rem',
+                      marginBottom: '0.25rem',
+                    }}
+                  >
                     تعداد درختان: {params.count || 10}
                   </label>
                   <input
@@ -296,7 +334,14 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                     onChange={(e) => setParams({ ...params, count: parseInt(e.target.value) })}
                     style={{ width: '100%' }}
                   />
-                  <label style={{ fontSize: '0.875rem', display: 'block', marginTop: '0.5rem', marginBottom: '0.25rem' }}>
+                  <label
+                    style={{
+                      fontSize: '0.875rem',
+                      display: 'block',
+                      marginTop: '0.5rem',
+                      marginBottom: '0.25rem',
+                    }}
+                  >
                     تعداد ردیف: {params.rows || 3}
                   </label>
                   <input
@@ -312,7 +357,9 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
 
               {configuring.id === 'terrace' && (
                 <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ fontSize: '0.875rem', display: 'block', marginBottom: '0.25rem' }}>
+                  <label
+                    style={{ fontSize: '0.875rem', display: 'block', marginBottom: '0.25rem' }}
+                  >
                     تعداد تراس: {params.count || 5}
                   </label>
                   <input
@@ -323,7 +370,14 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
                     onChange={(e) => setParams({ ...params, count: parseInt(e.target.value) })}
                     style={{ width: '100%' }}
                   />
-                  <label style={{ fontSize: '0.875rem', display: 'block', marginTop: '0.5rem', marginBottom: '0.25rem' }}>
+                  <label
+                    style={{
+                      fontSize: '0.875rem',
+                      display: 'block',
+                      marginTop: '0.5rem',
+                      marginBottom: '0.25rem',
+                    }}
+                  >
                     فاصله (متر): {params.spacing || 8}
                   </label>
                   <input
@@ -339,7 +393,9 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
 
               {configuring.id === 'check_dam' && (
                 <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ fontSize: '0.875rem', display: 'block', marginBottom: '0.25rem' }}>
+                  <label
+                    style={{ fontSize: '0.875rem', display: 'block', marginBottom: '0.25rem' }}
+                  >
                     تعداد بندسار: {params.count || 6}
                   </label>
                   <input
@@ -354,7 +410,11 @@ export const InterventionPanel: React.FC<InterventionPanelProps> = ({
               )}
 
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <Button variant="secondary" onClick={() => setConfiguring(null)} style={{ flex: 1 }}>
+                <Button
+                  variant="secondary"
+                  onClick={() => setConfiguring(null)}
+                  style={{ flex: 1 }}
+                >
                   انصراف
                 </Button>
                 <Button variant="primary" onClick={confirmAdd} style={{ flex: 1 }}>

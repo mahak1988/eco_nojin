@@ -43,34 +43,108 @@ export const MaterialsCard: React.FC = () => {
 
   return (
     <div className="card" style={{ padding: '1.1rem', marginTop: '1.5rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.7rem' }}>
-        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#0d9488' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.5rem',
+          marginBottom: '0.7rem',
+        }}
+      >
+        <h3
+          style={{
+            fontSize: '1.05rem',
+            fontWeight: 800,
+            margin: 0,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            color: '#0d9488',
+          }}
+        >
           <Package size={17} /> انبارداری و مواد — فرمول کمپوست (C/N)
         </h3>
-        <span style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>FAO: نسبت بهینه ۲۵–۳۵</span>
+        <span style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>
+          FAO: نسبت بهینه ۲۵–۳۵
+        </span>
       </div>
 
       {rows.map((r, i) => (
-        <div key={r.name} style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr 1fr', gap: '0.3rem', marginBottom: '0.35rem', alignItems: 'center' }}>
+        <div
+          key={r.name}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1.2fr 1fr 1fr 1fr',
+            gap: '0.3rem',
+            marginBottom: '0.35rem',
+            alignItems: 'center',
+          }}
+        >
           <span style={{ fontSize: '0.74rem', fontWeight: 700 }}>{r.name}</span>
-          <input type="number" value={r.mass_kg} onChange={(e) => setRows(rows.map((x, j) => (j === i ? { ...x, mass_kg: parseFloat(e.target.value) || 0 } : x)))} title="mass kg" style={{ padding: '0.25rem 0.4rem', borderRadius: 6, border: '1px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text)', fontSize: '0.7rem', width: '100%' }} />
-          <span style={{ fontSize: '0.66rem', color: 'var(--color-text-secondary)' }}>C {r.carbon_content}٪</span>
-          <span style={{ fontSize: '0.66rem', color: 'var(--color-text-secondary)' }}>N {r.nitrogen_content}٪</span>
+          <input
+            type="number"
+            value={r.mass_kg}
+            onChange={(e) =>
+              setRows(
+                rows.map((x, j) =>
+                  j === i ? { ...x, mass_kg: parseFloat(e.target.value) || 0 } : x
+                )
+              )
+            }
+            title="mass kg"
+            style={{
+              padding: '0.25rem 0.4rem',
+              borderRadius: 6,
+              border: '1px solid var(--color-border)',
+              background: 'var(--color-surface)',
+              color: 'var(--color-text)',
+              fontSize: '0.7rem',
+              width: '100%',
+            }}
+          />
+          <span style={{ fontSize: '0.66rem', color: 'var(--color-text-secondary)' }}>
+            C {r.carbon_content}٪
+          </span>
+          <span style={{ fontSize: '0.66rem', color: 'var(--color-text-secondary)' }}>
+            N {r.nitrogen_content}٪
+          </span>
         </div>
       ))}
 
       <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center', marginTop: '0.4rem' }}>
-        <button onClick={() => void calc()} style={{ padding: '0.35rem 0.85rem', borderRadius: 8, border: 'none', cursor: 'pointer', background: 'var(--color-primary)', color: '#fff', fontWeight: 700, fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+        <button
+          onClick={() => void calc()}
+          style={{
+            padding: '0.35rem 0.85rem',
+            borderRadius: 8,
+            border: 'none',
+            cursor: 'pointer',
+            background: 'var(--color-primary)',
+            color: '#fff',
+            fontWeight: 700,
+            fontSize: '0.75rem',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.3rem',
+          }}
+        >
           <Calculator size={12} /> محاسبه نسبت C/N
         </button>
         {result && (
           <span style={{ fontSize: '0.78rem', fontWeight: 800, color: ok ? '#0d9488' : '#b45309' }}>
-            <FlaskConical size={12} style={{ verticalAlign: -2 }} /> C/N = {ratio} — {result?.status}
+            <FlaskConical size={12} style={{ verticalAlign: -2 }} /> C/N = {ratio} —{' '}
+            {result?.status}
           </span>
         )}
         {err && <span style={{ fontSize: '0.74rem', color: '#ef4444' }}>⚠️ {err}</span>}
       </div>
-      <p style={{ fontSize: '0.68rem', color: 'var(--color-text-secondary)', margin: '0.5rem 0 0' }}>محاسبه واقعی با فرمول‌ساز کمپوست بک‌اند (مواد ورودی: کاه، کود دامی، بقایای سبز).</p>
+      <p
+        style={{ fontSize: '0.68rem', color: 'var(--color-text-secondary)', margin: '0.5rem 0 0' }}
+      >
+        محاسبه واقعی با فرمول‌ساز کمپوست بک‌اند (مواد ورودی: کاه، کود دامی، بقایای سبز).
+      </p>
     </div>
   );
 };

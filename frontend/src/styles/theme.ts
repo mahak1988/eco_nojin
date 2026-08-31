@@ -19,7 +19,7 @@ export const theme = {
       900: '#14532d',
       950: '#052e16',
     },
-    
+
     // Accent - طلایی
     accent: {
       50: '#fffbeb',
@@ -33,7 +33,7 @@ export const theme = {
       800: '#92400e',
       900: '#78350f',
     },
-    
+
     // Neutral
     neutral: {
       50: '#fafafa',
@@ -48,31 +48,31 @@ export const theme = {
       900: '#171717',
       950: '#0a0a0a',
     },
-    
+
     // Semantic
     success: '#10b981',
     warning: '#f59e0b',
     error: '#ef4444',
     info: '#3b82f6',
-    
+
     // Background
     background: {
       light: '#ffffff',
       dark: '#0a0a0a',
     },
-    
+
     // Surface
     surface: {
       light: '#f5f5f5',
       dark: '#171717',
     },
-    
+
     // Border
     border: {
       light: '#e5e5e5',
       dark: '#262626',
     },
-    
+
     // Text
     text: {
       light: {
@@ -87,7 +87,7 @@ export const theme = {
       },
     },
   },
-  
+
   spacing: {
     0: '0',
     1: '0.25rem',
@@ -103,7 +103,7 @@ export const theme = {
     20: '5rem',
     24: '6rem',
   },
-  
+
   borderRadius: {
     none: '0',
     sm: '0.25rem',
@@ -114,7 +114,7 @@ export const theme = {
     '3xl': '1.5rem',
     full: '9999px',
   },
-  
+
   shadows: {
     sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
     md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
@@ -123,7 +123,7 @@ export const theme = {
     '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
     glow: '0 0 20px rgba(34, 197, 94, 0.3)',
   },
-  
+
   typography: {
     fontFamily: {
       sans: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
@@ -154,13 +154,13 @@ export const theme = {
       relaxed: 1.75,
     },
   },
-  
+
   transitions: {
     fast: '150ms cubic-bezier(0.4, 0, 0.2, 1)',
     normal: '250ms cubic-bezier(0.4, 0, 0.2, 1)',
     slow: '350ms cubic-bezier(0.4, 0, 0.2, 1)',
   },
-  
+
   breakpoints: {
     sm: '640px',
     md: '768px',

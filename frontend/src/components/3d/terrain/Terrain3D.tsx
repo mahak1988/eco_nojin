@@ -19,7 +19,8 @@ const TerrainMesh: React.FC<TerrainProps> = ({
   depth = 100,
   segments = 50,
   heightScale = 5,
-  colorScheme = 'natural' }) => {
+  colorScheme = 'natural',
+}) => {
   const meshRef = useRef<THREE.Mesh>(null);
 
   const geometry = useMemo(() => {
@@ -30,11 +31,10 @@ const TerrainMesh: React.FC<TerrainProps> = ({
       const x = positions.getX(i);
       const y = positions.getY(i);
       // تپه‌های سینوسی (شبیه‌سازی DEM)
-      const z = (
+      const z =
         Math.sin(x / 20) * Math.cos(y / 20) * heightScale +
         Math.sin(x / 8) * 1.5 +
-        Math.cos(y / 12) * 1.2
-      );
+        Math.cos(y / 12) * 1.2;
       positions.setZ(i, z);
     }
 
@@ -52,8 +52,10 @@ const TerrainMesh: React.FC<TerrainProps> = ({
         color.setHSL(0.25 + ndvi * 0.1, 0.6, 0.4);
       } else {
         // طبیعی
-        if (z < 0) color.setHex(0x8b7355); // خاک
-        else if (z < 2) color.setHex(0x90c966); // علف
+        if (z < 0)
+          color.setHex(0x8b7355); // خاک
+        else if (z < 2)
+          color.setHex(0x90c966); // علف
         else color.setHex(0x6b8e4e); // بوته
       }
       colors.push(color.r, color.g, color.b);
@@ -64,7 +66,13 @@ const TerrainMesh: React.FC<TerrainProps> = ({
   }, [width, depth, segments, heightScale, colorScheme]);
 
   return (
-    <mesh ref={meshRef} geometry={geometry} rotation={[-Math.PI / 2, 0, 0]} receiveShadow castShadow>
+    <mesh
+      ref={meshRef}
+      geometry={geometry}
+      rotation={[-Math.PI / 2, 0, 0]}
+      receiveShadow
+      castShadow
+    >
       <meshStandardMaterial vertexColors side={THREE.DoubleSide} roughness={0.8} />
     </mesh>
   );

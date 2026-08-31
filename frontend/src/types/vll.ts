@@ -58,13 +58,8 @@ export interface LandProfile {
 }
 
 // ─── Interventions (مداخلات) ─────────────────────────────
-export type InterventionCategory = 
-  | 'biological'
-  | 'engineering'
-  | 'agronomic'
-  | 'water_management'
-  | 'livestock'
-  | 'integrated';
+export type InterventionCategory =
+  'biological' | 'engineering' | 'agronomic' | 'water_management' | 'livestock' | 'integrated';
 
 export interface Intervention {
   id: string;
@@ -189,7 +184,8 @@ export interface AdvisorMessage {
 }
 
 // ─── Real Land (Phase 1 — داده واقعی) ─────────────────────────────
-export type DataStatus = 'ok' | 'error' | 'no_scene' | 'band_error' | 'credentials_required' | 'not_configured';
+export type DataStatus =
+  'ok' | 'error' | 'no_scene' | 'band_error' | 'credentials_required' | 'not_configured';
 
 export interface NdviGridPoint {
   lon: number;

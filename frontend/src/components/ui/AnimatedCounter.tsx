@@ -30,11 +30,11 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
     const animate = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
+
       // Easing: easeOutCubic
       const eased = 1 - Math.pow(1 - progress, 3);
       const currentValue = startValue + (value - startValue) * eased;
-      
+
       setCurrent(currentValue);
 
       if (progress < 1) {
@@ -46,11 +46,7 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
   }, [value, duration]);
 
   return (
-    <motion.span
-      className={className}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
+    <motion.span className={className} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       {prefix}
       {current.toFixed(decimals)}
       {suffix}

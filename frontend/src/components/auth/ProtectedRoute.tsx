@@ -23,10 +23,10 @@ interface ProtectedRouteProps {
 export function useAuth(): { isAuthenticated: boolean; isAdmin: boolean; user: any } {
   const token = localStorage.getItem('access_token');
   const userStr = localStorage.getItem('user');
-  
+
   let user = null;
   let isAdmin = false;
-  
+
   try {
     if (userStr) {
       user = JSON.parse(userStr);
@@ -35,7 +35,7 @@ export function useAuth(): { isAuthenticated: boolean; isAdmin: boolean; user: a
   } catch (e) {
     console.warn('[Auth] Failed to parse user data');
   }
-  
+
   return {
     isAuthenticated: !!token,
     isAdmin,
@@ -62,11 +62,7 @@ function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
   }
 
   // Render with PipelineProvider
-  return (
-    <SimulationPipelineProvider>
-      {children || <Outlet />}
-    </SimulationPipelineProvider>
-  );
+  return <SimulationPipelineProvider>{children || <Outlet />}</SimulationPipelineProvider>;
 }
 
 // Dual export: both default AND named

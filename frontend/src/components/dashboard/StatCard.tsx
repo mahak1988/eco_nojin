@@ -5,11 +5,7 @@ interface Props {
 }
 
 const StatCard: React.FC<Props> = () => {
-  return (
-    <div>
-      {/* محتوای کامپوننت */}
-    </div>
-  );
+  return <div>{/* محتوای کامپوننت */}</div>;
 };
 
 export default StatCard;

@@ -33,7 +33,7 @@ export default function LiveTicker() {
         description: template.desc,
         user: template.user,
       };
-      setItems(prev => [newItem, ...prev].slice(0, 5));
+      setItems((prev) => [newItem, ...prev].slice(0, 5));
     };
 
     addNewItem();
@@ -65,10 +65,14 @@ export default function LiveTicker() {
                 <ArrowDownRight size={14} style={{ color: 'var(--accent-danger)' }} />
               )}
               <span className="ticker-desc">{item.description}</span>
-              <span className="ticker-amount" style={{
-                color: item.type === 'income' ? 'var(--accent-primary)' : 'var(--accent-danger)'
-              }}>
-                {item.type === 'income' ? '+' : '-'}{item.amount.toLocaleString('fa-IR')} IRR
+              <span
+                className="ticker-amount"
+                style={{
+                  color: item.type === 'income' ? 'var(--accent-primary)' : 'var(--accent-danger)',
+                }}
+              >
+                {item.type === 'income' ? '+' : '-'}
+                {item.amount.toLocaleString('fa-IR')} IRR
               </span>
               <span className="ticker-user">by {item.user}</span>
             </div>

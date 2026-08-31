@@ -6,12 +6,31 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  LineChart, Line, AreaChart, Area, BarChart, Bar,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
 } from 'recharts';
 import {
-  Play, RotateCcw, Loader2, CheckCircle, AlertCircle,
-  Settings, TrendingUp, Database, Zap, Info, X
+  Play,
+  RotateCcw,
+  Loader2,
+  CheckCircle,
+  AlertCircle,
+  Settings,
+  TrendingUp,
+  Database,
+  Zap,
+  Info,
+  X,
 } from 'lucide-react';
 import motorsService, { Motor, MotorParameter } from '../../services/motorsService';
 import './MotorSimulator.css';
@@ -43,7 +62,7 @@ export default function MotorSimulator({ motor, onClose, onResult }: MotorSimula
   useEffect(() => {
     if (motor.parameters) {
       const defaults: Record<string, any> = {};
-      motor.parameters.forEach(param => {
+      motor.parameters.forEach((param) => {
         if (param.default !== undefined) {
           defaults[param.name] = param.default;
         }
@@ -53,7 +72,7 @@ export default function MotorSimulator({ motor, onClose, onResult }: MotorSimula
   }, [motor]);
 
   const handleParameterChange = (name: string, value: any) => {
-    setParameters(prev => ({ ...prev, [name]: value }));
+    setParameters((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleRun = async () => {
@@ -63,7 +82,7 @@ export default function MotorSimulator({ motor, onClose, onResult }: MotorSimula
 
     try {
       const startTime = Date.now();
-      
+
       // Run the motor
       let response = await motorsService.runMotor({
         motor_key: motor.key,
@@ -73,10 +92,16 @@ export default function MotorSimulator({ motor, onClose, onResult }: MotorSimula
       // background run: poll status until completion
       if (response.run_id && !response.result && response.status !== 'completed') {
         for (let i = 0; i < 90; i++) {
-          await new Promise(r => setTimeout(r, 2000));
+          await new Promise((r) => setTimeout(r, 2000));
           const st = await motorsService.getRunStatus(response.run_id!);
-          if (st.status === 'completed') { response = { ...st }; break; }
-          if (st.status === 'failed') { response = { ...st }; break; }
+          if (st.status === 'completed') {
+            response = { ...st };
+            break;
+          }
+          if (st.status === 'failed') {
+            response = { ...st };
+            break;
+          }
           setProgress(Math.min(95, i * 2));
         }
       }
@@ -173,8 +198,10 @@ export default function MotorSimulator({ motor, onClose, onResult }: MotorSimula
             value={value}
             onChange={(e) => handleParameterChange(param.name, e.target.value)}
           >
-            {(param.options || []).map(opt => (
-              <option key={opt} value={opt}>{opt}</option>
+            {(param.options || []).map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
             ))}
           </select>
         );
@@ -216,7 +243,7 @@ export default function MotorSimulator({ motor, onClose, onResult }: MotorSimula
           </div>
 
           <div className="panel-content">
-            {motor.parameters?.map(param => (
+            {motor.parameters?.map((param) => (
               <div key={param.name} className="parameter-group">
                 <label className="parameter-label">
                   {param.name}
@@ -233,11 +260,7 @@ export default function MotorSimulator({ motor, onClose, onResult }: MotorSimula
 
           {/* Actions */}
           <div className="simulator-actions">
-            <button
-              className="btn-primary"
-              onClick={handleRun}
-              disabled={runStatus === 'running'}
-            >
+            <button className="btn-primary" onClick={handleRun} disabled={runStatus === 'running'}>
               {runStatus === 'running' ? (
                 <>
                   <Loader2 size={16} className="spin" />
@@ -312,7 +335,11 @@ export default function MotorSimulator({ motor, onClose, onResult }: MotorSimula
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                        <XAxis dataKey={Object.keys(chartData[0] || {})[0] || 'index'} stroke="var(--text-muted)" fontSize={11} />
+                        <XAxis
+                          dataKey={Object.keys(chartData[0] || {})[0] || 'index'}
+                          stroke="var(--text-muted)"
+                          fontSize={11}
+                        />
                         <YAxis stroke="var(--text-muted)" fontSize={11} />
                         <Tooltip
                           contentStyle={{
@@ -322,7 +349,13 @@ export default function MotorSimulator({ motor, onClose, onResult }: MotorSimula
                             color: 'var(--text-primary)',
                           }}
                         />
-                        <Area type="monotone" dataKey={Object.keys(chartData[0] || {})[1] || 'value'} stroke="#10b981" fillOpacity={1} fill="url(#colorResult)" />
+                        <Area
+                          type="monotone"
+                          dataKey={Object.keys(chartData[0] || {})[1] || 'value'}
+                          stroke="#10b981"
+                          fillOpacity={1}
+                          fill="url(#colorResult)"
+                        />
                       </AreaChart>
                     </ResponsiveContainer>
                   </div>
@@ -330,7 +363,14 @@ export default function MotorSimulator({ motor, onClose, onResult }: MotorSimula
 
                 {/* Data Display */}
                 <div className="data-display">
-                  <pre style={{ fontSize: '12px', color: 'var(--text-muted)', overflow: 'auto', maxHeight: '300px' }}>
+                  <pre
+                    style={{
+                      fontSize: '12px',
+                      color: 'var(--text-muted)',
+                      overflow: 'auto',
+                      maxHeight: '300px',
+                    }}
+                  >
                     {JSON.stringify(result?.data, null, 2)}
                   </pre>
                 </div>

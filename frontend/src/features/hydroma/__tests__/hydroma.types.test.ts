@@ -28,7 +28,13 @@ describe('HyDroMa Types', () => {
 
   it('should accept valid LayerType values', () => {
     const layers: LayerType[] = [
-      'surface', 'soil', 'bedrock', 'ndvi', 'moisture', 'roots', 'groundwater'
+      'surface',
+      'soil',
+      'bedrock',
+      'ndvi',
+      'moisture',
+      'roots',
+      'groundwater',
     ];
     expect(layers).toHaveLength(7);
   });

@@ -11,10 +11,7 @@ interface LiveFeedHeaderProps {
   onTogglePause: () => void;
 }
 
-export function LiveFeedHeader({
-  isPaused,
-  onTogglePause,
-}: LiveFeedHeaderProps) {
+export function LiveFeedHeader({ isPaused, onTogglePause }: LiveFeedHeaderProps) {
   return (
     <div className="live-feed-header">
       <div className="live-feed-title">

@@ -37,9 +37,7 @@ function EventIcon({ type }: { type: FeedEventType }) {
 /**
  * Memoized event item to prevent unnecessary re-renders.
  */
-export const FeedEventItem = memo(function FeedEventItem({
-  event,
-}: FeedEventItemProps) {
+export const FeedEventItem = memo(function FeedEventItem({ event }: FeedEventItemProps) {
   // Memoize timestamp formatting
   const formattedTime = useMemo(
     () =>

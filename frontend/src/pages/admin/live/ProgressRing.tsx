@@ -34,7 +34,7 @@ export default function ProgressRing({
           strokeWidth={strokeWidth}
           fill="none"
         />
-        
+
         {/* Progress circle */}
         <motion.circle
           cx={size / 2}

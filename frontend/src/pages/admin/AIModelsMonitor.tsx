@@ -1,7 +1,16 @@
 ﻿import { useEffect, useState } from 'react';
 import {
-  Brain, Cpu, Zap, Activity, RefreshCw, Power,
-  CheckCircle, XCircle, AlertCircle, TrendingUp, Clock
+  Brain,
+  Cpu,
+  Zap,
+  Activity,
+  RefreshCw,
+  Power,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  TrendingUp,
+  Clock,
 } from 'lucide-react';
 import './AdminTheme.css';
 import './AdminPanelAdvanced.css';
@@ -35,7 +44,9 @@ export default function AIModelsMonitor() {
     }
   };
 
-  useEffect(() => { fetchModels(); }, []);
+  useEffect(() => {
+    fetchModels();
+  }, []);
 
   const stopModel = async (name: string) => {
     try {
@@ -50,20 +61,26 @@ export default function AIModelsMonitor() {
     }
   };
 
-  const runningModels = models.filter(m => m.loaded === true || m.status === 'running' || m.running);
-  const stoppedModels = models.filter(m => !(m.loaded === true || m.status === 'running' || m.running));
+  const runningModels = models.filter(
+    (m) => m.loaded === true || m.status === 'running' || m.running
+  );
+  const stoppedModels = models.filter(
+    (m) => !(m.loaded === true || m.status === 'running' || m.running)
+  );
 
   if (loading) {
     return (
       <div className="admin-page-container">
         <div className="page-header">
           <div>
-            <h1 className="page-title"><Brain size={32} /> AI Models Monitor</h1>
+            <h1 className="page-title">
+              <Brain size={32} /> AI Models Monitor
+            </h1>
             <p className="page-subtitle">Loading models...</p>
           </div>
         </div>
         <div className="grid-3col">
-          {[1, 2, 3].map(i => (
+          {[1, 2, 3].map((i) => (
             <div key={i} className="metric-card">
               <div className="skeleton skeleton-card"></div>
             </div>
@@ -81,9 +98,7 @@ export default function AIModelsMonitor() {
             <Brain size={32} style={{ color: 'var(--accent-primary)' }} />
             AI Models Monitor
           </h1>
-          <p className="page-subtitle">
-            Monitor and manage AI models performance and resources
-          </p>
+          <p className="page-subtitle">Monitor and manage AI models performance and resources</p>
         </div>
         <button className="refresh-btn" onClick={fetchModels}>
           <RefreshCw size={16} /> Refresh
@@ -93,37 +108,60 @@ export default function AIModelsMonitor() {
       {/* Stats */}
       <div className="grid-4col">
         <div className="metric-card">
-          <div className="metric-icon" style={{ background: 'rgba(139, 92, 246, 0.15)', color: 'var(--accent-purple)' }}>
+          <div
+            className="metric-icon"
+            style={{ background: 'rgba(139, 92, 246, 0.15)', color: 'var(--accent-purple)' }}
+          >
             <Brain size={28} />
           </div>
           <div className="metric-label">Total Models</div>
           <div className="metric-value">{models.length}</div>
         </div>
         <div className="metric-card">
-          <div className="metric-icon" style={{ background: 'rgba(16, 185, 129, 0.15)', color: 'var(--accent-primary)' }}>
+          <div
+            className="metric-icon"
+            style={{ background: 'rgba(16, 185, 129, 0.15)', color: 'var(--accent-primary)' }}
+          >
             <Zap size={28} />
           </div>
           <div className="metric-label">Running</div>
-          <div className="metric-value" style={{ color: 'var(--accent-primary)' }}>{runningModels.length}</div>
-          <div className="live-indicator" style={{ marginTop: '8px', fontSize: '11px' }}>ACTIVE</div>
+          <div className="metric-value" style={{ color: 'var(--accent-primary)' }}>
+            {runningModels.length}
+          </div>
+          <div className="live-indicator" style={{ marginTop: '8px', fontSize: '11px' }}>
+            ACTIVE
+          </div>
         </div>
         <div className="metric-card">
-          <div className="metric-icon" style={{ background: 'rgba(239, 68, 68, 0.15)', color: 'var(--accent-danger)' }}>
+          <div
+            className="metric-icon"
+            style={{ background: 'rgba(239, 68, 68, 0.15)', color: 'var(--accent-danger)' }}
+          >
             <XCircle size={28} />
           </div>
           <div className="metric-label">Stopped</div>
-          <div className="metric-value" style={{ color: 'var(--accent-danger)' }}>{stoppedModels.length}</div>
+          <div className="metric-value" style={{ color: 'var(--accent-danger)' }}>
+            {stoppedModels.length}
+          </div>
         </div>
         <div className="metric-card">
-          <div className="metric-icon" style={{ background: 'rgba(245, 158, 11, 0.15)', color: 'var(--accent-secondary)' }}>
+          <div
+            className="metric-icon"
+            style={{ background: 'rgba(245, 158, 11, 0.15)', color: 'var(--accent-secondary)' }}
+          >
             <Activity size={28} />
           </div>
           <div className="metric-label">Default Model</div>
-          <div className="metric-value" style={{ fontSize: '18px' }}>{defaultModel || '—'}</div>
+          <div className="metric-value" style={{ fontSize: '18px' }}>
+            {defaultModel || '—'}
+          </div>
         </div>
       </div>
       {/* Ollama connection status (real) */}
-      <div className="chart-container" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div
+        className="chart-container"
+        style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px' }}
+      >
         {aiError ? (
           <>
             <XCircle size={20} style={{ color: 'var(--accent-danger)' }} />
@@ -138,7 +176,6 @@ export default function AIModelsMonitor() {
           </>
         )}
       </div>
-
 
       {/* Models Grid */}
       <div className="grid-2col">
@@ -155,21 +192,40 @@ export default function AIModelsMonitor() {
             const isRunning = model.status === 'running' || model.running;
             return (
               <div key={model.name || i} className="metric-card">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    marginBottom: '16px',
+                  }}
+                >
                   <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    <div style={{
-                      width: '56px', height: '56px', borderRadius: '14px',
-                      background: isRunning ? 'linear-gradient(135deg, #8b5cf6, #6366f1)' : 'var(--border-color)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: 'white',
-                    }}>
+                    <div
+                      style={{
+                        width: '56px',
+                        height: '56px',
+                        borderRadius: '14px',
+                        background: isRunning
+                          ? 'linear-gradient(135deg, #8b5cf6, #6366f1)'
+                          : 'var(--border-color)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                      }}
+                    >
                       <Brain size={28} />
                     </div>
                     <div>
-                      <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '16px' }}>
+                      <div
+                        style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '16px' }}
+                      >
                         {model.name || 'Model ' + (i + 1)}
                       </div>
-                      <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                      <div
+                        style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}
+                      >
                         {model.type || 'LLM'} â€¢ {model.size || '7B'}
                       </div>
                     </div>
@@ -180,22 +236,80 @@ export default function AIModelsMonitor() {
                 </div>
 
                 {/* Metrics */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginTop: '16px', padding: '12px', background: 'var(--bg-hover)', borderRadius: '10px' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr 1fr',
+                    gap: '12px',
+                    marginTop: '16px',
+                    padding: '12px',
+                    background: 'var(--bg-hover)',
+                    borderRadius: '10px',
+                  }}
+                >
                   <div>
-                    <div style={{ fontSize: '10px', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '1px' }}>CPU</div>
-                    <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--accent-info)', marginTop: '4px' }}>
+                    <div
+                      style={{
+                        fontSize: '10px',
+                        color: 'var(--text-faint)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '1px',
+                      }}
+                    >
+                      CPU
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '16px',
+                        fontWeight: 700,
+                        color: 'var(--accent-info)',
+                        marginTop: '4px',
+                      }}
+                    >
                       {model.cpu_usage || Math.floor(Math.random() * 60 + 20)}%
                     </div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '10px', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '1px' }}>Memory</div>
-                    <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--accent-secondary)', marginTop: '4px' }}>
+                    <div
+                      style={{
+                        fontSize: '10px',
+                        color: 'var(--text-faint)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '1px',
+                      }}
+                    >
+                      Memory
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '16px',
+                        fontWeight: 700,
+                        color: 'var(--accent-secondary)',
+                        marginTop: '4px',
+                      }}
+                    >
                       {model.memory_gb || (Math.random() * 8 + 2).toFixed(1)}GB
                     </div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '10px', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '1px' }}>Latency</div>
-                    <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--accent-primary)', marginTop: '4px' }}>
+                    <div
+                      style={{
+                        fontSize: '10px',
+                        color: 'var(--text-faint)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '1px',
+                      }}
+                    >
+                      Latency
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '16px',
+                        fontWeight: 700,
+                        color: 'var(--accent-primary)',
+                        marginTop: '4px',
+                      }}
+                    >
                       {model.latency_ms || Math.floor(Math.random() * 200 + 80)}ms
                     </div>
                   </div>
@@ -204,15 +318,47 @@ export default function AIModelsMonitor() {
                 {/* Actions */}
                 <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
                   {isRunning ? (
-                    <button className="btn-danger" style={{ flex: 1, padding: '10px', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} onClick={() => stopModel(model.name)}>
+                    <button
+                      className="btn-danger"
+                      style={{
+                        flex: 1,
+                        padding: '10px',
+                        fontSize: '13px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                      }}
+                      onClick={() => stopModel(model.name)}
+                    >
                       <Power size={14} /> Stop Model
                     </button>
                   ) : (
-                    <button className="btn-primary" style={{ flex: 1, padding: '10px', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                    <button
+                      className="btn-primary"
+                      style={{
+                        flex: 1,
+                        padding: '10px',
+                        fontSize: '13px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                      }}
+                    >
                       <Zap size={14} /> Start Model
                     </button>
                   )}
-                  <button className="btn-secondary" style={{ padding: '10px 16px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <button
+                    className="btn-secondary"
+                    style={{
+                      padding: '10px 16px',
+                      fontSize: '13px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                    }}
+                  >
                     <Activity size={14} /> Logs
                   </button>
                 </div>

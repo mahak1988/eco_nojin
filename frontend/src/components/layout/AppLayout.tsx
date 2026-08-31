@@ -37,20 +37,17 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      
+
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Header
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          onToggleSidebar={toggleSidebar}
-        />
-        
+        <Header theme={theme} onToggleTheme={toggleTheme} onToggleSidebar={toggleSidebar} />
+
         <main
           style={{
             flex: 1,
             padding: '2rem',
             overflowY: 'auto',
-            background: 'var(--color-bg)' }}
+            background: 'var(--color-bg)',
+          }}
         >
           {children}
         </main>

@@ -1,8 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
-  Droplets, Leaf, Wind, DollarSign, TrendingUp,
-  Sprout, AlertTriangle, CheckCircle,
+  Droplets,
+  Leaf,
+  Wind,
+  DollarSign,
+  TrendingUp,
+  Sprout,
+  AlertTriangle,
+  CheckCircle,
 } from 'lucide-react';
 import { Card, StatCard, ProgressRing } from '../ui';
 import { CarbonForecastChart } from '../simulators/CarbonForecastChart';
@@ -26,11 +32,12 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ result, base
     );
   }
 
-  const scoreColor = result.sustainabilityScore >= 75
-    ? 'var(--color-success)'
-    : result.sustainabilityScore >= 50
-    ? 'var(--color-warning)'
-    : 'var(--color-error)';
+  const scoreColor =
+    result.sustainabilityScore >= 75
+      ? 'var(--color-success)'
+      : result.sustainabilityScore >= 50
+        ? 'var(--color-warning)'
+        : 'var(--color-error)';
 
   const calculateChange = (current: number, baselineValue: number): number => {
     if (!baselineValue) return 0;
@@ -63,8 +70,11 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ result, base
         />
         <div style={{ flex: 1 }}>
           <h2 style={{ margin: '0 0 0.5rem 0' }}>
-            {result.sustainabilityScore >= 75 ? '✅ سناریو پایدار' :
-             result.sustainabilityScore >= 50 ? '⚠️ نیاز به بهبود' : '❌ سناریو بحرانی'}
+            {result.sustainabilityScore >= 75
+              ? '✅ سناریو پایدار'
+              : result.sustainabilityScore >= 50
+                ? '⚠️ نیاز به بهبود'
+                : '❌ سناریو بحرانی'}
           </h2>
           <p style={{ color: 'var(--color-text-secondary)', marginBottom: '1rem' }}>
             {result.sustainabilityScore >= 75
@@ -72,7 +82,15 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ result, base
               : 'پیشنهاد می‌شود مداخلات بیشتری اعمال کنید.'}
           </p>
           {result.warnings.length > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-warning)', fontSize: '0.875rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                color: 'var(--color-warning)',
+                fontSize: '0.875rem',
+              }}
+            >
               <AlertTriangle size={16} />
               {result.warnings.length} هشدار
             </div>
@@ -85,28 +103,50 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ result, base
         <StatCard
           title="نفوذ آب"
           value={`${result.hydrology.infiltrationMm.toFixed(0)} mm`}
-          change={baseline ? calculateChange(result.hydrology.infiltrationMm, baseline.hydrology.infiltrationMm) : undefined}
+          change={
+            baseline
+              ? calculateChange(result.hydrology.infiltrationMm, baseline.hydrology.infiltrationMm)
+              : undefined
+          }
           icon={<Droplets size={24} />}
           color="info"
         />
         <StatCard
           title="فرسایش خاک"
           value={`${result.erosion.waterErosionTonHaYear.toFixed(1)} t/ha`}
-          change={baseline ? calculateChange(result.erosion.waterErosionTonHaYear, baseline.erosion.waterErosionTonHaYear) : undefined}
+          change={
+            baseline
+              ? calculateChange(
+                  result.erosion.waterErosionTonHaYear,
+                  baseline.erosion.waterErosionTonHaYear
+                )
+              : undefined
+          }
           icon={<Wind size={24} />}
           color="warning"
         />
         <StatCard
           title="کربن ذخیره"
           value={`${result.carbon.totalSequestrationTonCO2Year.toFixed(1)} t`}
-          change={baseline ? calculateChange(result.carbon.totalSequestrationTonCO2Year, baseline.carbon.totalSequestrationTonCO2Year) : undefined}
+          change={
+            baseline
+              ? calculateChange(
+                  result.carbon.totalSequestrationTonCO2Year,
+                  baseline.carbon.totalSequestrationTonCO2Year
+                )
+              : undefined
+          }
           icon={<Leaf size={24} />}
           color="success"
         />
         <StatCard
           title="سود خالص"
           value={`$${result.economics.netProfitUsd.toLocaleString()}`}
-          change={baseline ? calculateChange(result.economics.netProfitUsd, baseline.economics.netProfitUsd) : undefined}
+          change={
+            baseline
+              ? calculateChange(result.economics.netProfitUsd, baseline.economics.netProfitUsd)
+              : undefined
+          }
           icon={<DollarSign size={24} />}
           color="accent"
         />

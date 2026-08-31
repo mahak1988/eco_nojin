@@ -44,7 +44,12 @@ const DEMO_ROWS = [
  */
 export const LabCompareCard: React.FC<LabCardProps> = () => {
   const [rowsText, setRowsText] = useState(JSON.stringify(DEMO_ROWS, null, 2));
-  const [stored, setStored] = useState<{ status?: string; added?: number; total?: number; errors?: string[] } | null>(null);
+  const [stored, setStored] = useState<{
+    status?: string;
+    added?: number;
+    total?: number;
+    errors?: string[];
+  } | null>(null);
   const [cmp, setCmp] = useState<CompareResult | null>(null);
   const [busy, setBusy] = useState<'store' | 'compare' | null>(null);
 
@@ -96,11 +101,32 @@ export const LabCompareCard: React.FC<LabCardProps> = () => {
 
   return (
     <div className="card" style={{ padding: '1.1rem', marginTop: '1.5rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.9rem' }}>
-        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#0d9488' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.5rem',
+          marginBottom: '0.9rem',
+        }}
+      >
+        <h3
+          style={{
+            fontSize: '1.05rem',
+            fontWeight: 800,
+            margin: 0,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            color: '#0d9488',
+          }}
+        >
           <FlaskConical size={17} /> داده آزمایشگاهی و مقایسه با مدل (۴-د)
         </h3>
-        <span style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)' }}>SoilGrids · honesty: KGE نیازمند سری مشاهدهای</span>
+        <span style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)' }}>
+          SoilGrids · honesty: KGE نیازمند سری مشاهدهای
+        </span>
       </div>
 
       <textarea
@@ -108,33 +134,110 @@ export const LabCompareCard: React.FC<LabCardProps> = () => {
         onChange={(e) => setRowsText(e.target.value)}
         rows={7}
         spellCheck={false}
-        style={{ width: '100%', fontFamily: 'monospace', fontSize: '0.72rem', borderRadius: 10, border: '1px solid var(--color-border)', background: 'var(--color-bg)', color: 'var(--color-text)', padding: '0.6rem', boxSizing: 'border-box', direction: 'ltr', textAlign: 'left' }}
+        style={{
+          width: '100%',
+          fontFamily: 'monospace',
+          fontSize: '0.72rem',
+          borderRadius: 10,
+          border: '1px solid var(--color-border)',
+          background: 'var(--color-bg)',
+          color: 'var(--color-text)',
+          padding: '0.6rem',
+          boxSizing: 'border-box',
+          direction: 'ltr',
+          textAlign: 'left',
+        }}
       />
-      <p style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', margin: '0.3rem 0 0.7rem' }}>
+      <p
+        style={{
+          fontSize: '0.7rem',
+          color: 'var(--color-text-secondary)',
+          margin: '0.3rem 0 0.7rem',
+        }}
+      >
         ⚠️ ردیفهای پیشفرض «demo» هستند — با نتایج آزمایشگاه واقعی (lat, lon, soc_t_ha) جایگزین کنید.
       </p>
 
       <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
-        <button onClick={() => void store()} disabled={busy !== null} style={{ padding: '0.5rem 1rem', borderRadius: 10, border: 'none', cursor: 'pointer', background: 'var(--color-primary)', color: '#fff', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.82rem' }}>
+        <button
+          onClick={() => void store()}
+          disabled={busy !== null}
+          style={{
+            padding: '0.5rem 1rem',
+            borderRadius: 10,
+            border: 'none',
+            cursor: 'pointer',
+            background: 'var(--color-primary)',
+            color: '#fff',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.35rem',
+            fontSize: '0.82rem',
+          }}
+        >
           <Play size={13} /> {busy === 'store' ? 'در حال ثبت…' : 'ثبت نمونهها'}
         </button>
-        <button onClick={() => void compare()} disabled={busy !== null} style={{ padding: '0.5rem 1rem', borderRadius: 10, border: '1px solid var(--color-border)', background: 'var(--color-surface)', cursor: 'pointer', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.82rem', color: 'var(--color-text)' }}>
+        <button
+          onClick={() => void compare()}
+          disabled={busy !== null}
+          style={{
+            padding: '0.5rem 1rem',
+            borderRadius: 10,
+            border: '1px solid var(--color-border)',
+            background: 'var(--color-surface)',
+            cursor: 'pointer',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.35rem',
+            fontSize: '0.82rem',
+            color: 'var(--color-text)',
+          }}
+        >
           <RefreshCw size={13} /> {busy === 'compare' ? 'در حال مقایسه…' : 'مقایسه با مدل'}
         </button>
       </div>
 
       {stored && (
-        <p style={{ fontSize: '0.8rem', margin: '0.7rem 0 0', color: stored.errors?.length ? '#ef4444' : '#10b981' }}>
-          {stored.errors?.length ? `⚠️ ${stored.errors.join(' | ')}` : `✅ ${stored.added} نمونه ثبت شد (مجموع: ${stored.total})`}
+        <p
+          style={{
+            fontSize: '0.8rem',
+            margin: '0.7rem 0 0',
+            color: stored.errors?.length ? '#ef4444' : '#10b981',
+          }}
+        >
+          {stored.errors?.length
+            ? `⚠️ ${stored.errors.join(' | ')}`
+            : `✅ ${stored.added} نمونه ثبت شد (مجموع: ${stored.total})`}
         </p>
       )}
 
-      {cmp?.message && <p style={{ fontSize: '0.82rem', color: '#f59e0b', margin: '0.7rem 0 0' }}>⚠️ {cmp.message}</p>}
+      {cmp?.message && (
+        <p style={{ fontSize: '0.82rem', color: '#f59e0b', margin: '0.7rem 0 0' }}>
+          ⚠️ {cmp.message}
+        </p>
+      )}
 
       {stats.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '0.4rem', marginTop: '0.9rem' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))',
+            gap: '0.4rem',
+            marginTop: '0.9rem',
+          }}
+        >
           {stats.map(([k, v]) => (
-            <div key={k} style={{ padding: '0.45rem 0.55rem', borderRadius: 9, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+            <div
+              key={k}
+              style={{
+                padding: '0.45rem 0.55rem',
+                borderRadius: 9,
+                background: 'var(--color-bg)',
+                border: '1px solid var(--color-border)',
+              }}
+            >
               <div style={{ fontSize: '0.66rem', color: 'var(--color-text-secondary)' }}>{k}</div>
               <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>{v}</div>
             </div>
@@ -158,11 +261,20 @@ export const LabCompareCard: React.FC<LabCardProps> = () => {
               {cmp.pairs.map((p) => (
                 <tr key={p.lab_id} style={{ borderTop: '1px solid var(--color-border)' }}>
                   <td style={{ padding: '0.35rem' }}>{p.lab_id}</td>
-                  <td style={{ padding: '0.35rem' }}>{p.lat}, {p.lon}</td>
+                  <td style={{ padding: '0.35rem' }}>
+                    {p.lat}, {p.lon}
+                  </td>
                   <td style={{ padding: '0.35rem' }}>{p.measured_soc_t_ha}</td>
                   <td style={{ padding: '0.35rem' }}>{p.modelled_soc_t_ha}</td>
-                  <td style={{ padding: '0.35rem', color: (p.error_t_ha ?? 0) > 0 ? '#ef4444' : '#10b981', fontWeight: 700 }}>
-                    {(p.error_t_ha ?? 0) > 0 ? '+' : ''}{p.error_t_ha}
+                  <td
+                    style={{
+                      padding: '0.35rem',
+                      color: (p.error_t_ha ?? 0) > 0 ? '#ef4444' : '#10b981',
+                      fontWeight: 700,
+                    }}
+                  >
+                    {(p.error_t_ha ?? 0) > 0 ? '+' : ''}
+                    {p.error_t_ha}
                   </td>
                 </tr>
               ))}
@@ -172,7 +284,13 @@ export const LabCompareCard: React.FC<LabCardProps> = () => {
       )}
 
       {!cmp && !stored && (
-        <p style={{ fontSize: '0.76rem', color: 'var(--color-text-secondary)', margin: '0.8rem 0 0' }}>
+        <p
+          style={{
+            fontSize: '0.76rem',
+            color: 'var(--color-text-secondary)',
+            margin: '0.8rem 0 0',
+          }}
+        >
           اعتبارسنجی (KGE ≥ 0.55) تا فراهمشدن سری زمانی مشاهدهای صادقانه غیرفعال است (W-001).
         </p>
       )}

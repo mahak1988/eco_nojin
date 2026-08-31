@@ -2,12 +2,7 @@
  * Formatters Tests
  */
 import { describe, it, expect } from 'vitest';
-import {
-  truncateId,
-  formatDate,
-  normalizeStatus,
-  getStatusBadgeClass,
-} from '../utils/formatters';
+import { truncateId, formatDate, normalizeStatus, getStatusBadgeClass } from '../utils/formatters';
 
 describe('formatters', () => {
   describe('truncateId', () => {

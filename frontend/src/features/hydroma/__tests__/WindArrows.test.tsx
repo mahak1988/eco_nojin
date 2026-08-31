@@ -8,10 +8,16 @@ import type { TerrainData } from '../types';
 
 describe('WindArrows Component', () => {
   const createTerrain = (): TerrainData => ({
-    width: 10, height: 10,
-    elevation: Array(10).fill(0).map(() => Array(10).fill(50)),
-    moisture: Array(10).fill(0).map(() => Array(10).fill(0.5)),
-    minElevation: 0, maxElevation: 100,
+    width: 10,
+    height: 10,
+    elevation: Array(10)
+      .fill(0)
+      .map(() => Array(10).fill(50)),
+    moisture: Array(10)
+      .fill(0)
+      .map(() => Array(10).fill(0.5)),
+    minElevation: 0,
+    maxElevation: 100,
   });
 
   it('should export WindArrows as function', () => {

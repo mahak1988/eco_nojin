@@ -1,0 +1,328 @@
+{
+  "generated_at": "2026-08-31T05:03:02.049867",
+  "test_type": "Hardcore Stress Test",
+  "statistics": {
+    "total_tests": 13,
+    "passed": 0,
+    "failed": 9,
+    "critical": 9,
+    "warning": 4,
+    "info": 0
+  },
+  "findings_count": 13,
+  "critical_findings": [
+    {
+      "category": "EXTREME_SCENARIO",
+      "test": "دریاچه ارومیه (ایران)",
+      "severity": "CRITICAL",
+      "message": "شوری بحرانی: 300.0 dS/m",
+      "details": {
+        "scenario_id": "URMIA_LAKE_IRAN"
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "EXTREME_SCENARIO",
+      "test": "دریای مرده",
+      "severity": "CRITICAL",
+      "message": "شوری بحرانی: 340.0 dS/m",
+      "details": {
+        "scenario_id": "DEAD_SEA"
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "EDGE_CASE",
+      "test": "مقدار None",
+      "severity": "CRITICAL",
+      "message": "سیستم باید با None مقابله کند",
+      "details": {
+        "key": "temp",
+        "value": "None"
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "EDGE_CASE",
+      "test": "مقدار NaN",
+      "severity": "CRITICAL",
+      "message": "سیستم باید با NaN مقابله کند",
+      "details": {
+        "key": "temp",
+        "value": "NaN"
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "EDGE_CASE",
+      "test": "مقدار Infinity",
+      "severity": "CRITICAL",
+      "message": "سیستم باید با Infinity مقابله کند",
+      "details": {
+        "key": "rain",
+        "value": "Infinity"
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "MULTI_STRESS",
+      "test": "خشکسالی + گرما + شوری",
+      "severity": "CRITICAL",
+      "message": "ترکیب استرس‌های بحرانی: {'temp': 45, 'rain': 5, 'ec': 30}",
+      "details": {
+        "conditions": {
+          "temp": 45,
+          "rain": 5,
+          "ec": 30
+        }
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "MULTI_STRESS",
+      "test": "سیل + شیب تند",
+      "severity": "CRITICAL",
+      "message": "ترکیب استرس‌های بحرانی: {'rain': 5000, 'slope': 60}",
+      "details": {
+        "conditions": {
+          "rain": 5000,
+          "slope": 60
+        }
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "MULTI_STRESS",
+      "test": "یخبندان + باد شدید",
+      "severity": "CRITICAL",
+      "message": "ترکیب استرس‌های بحرانی: {'temp': -40, 'wind': 100}",
+      "details": {
+        "conditions": {
+          "temp": -40,
+          "wind": 100
+        }
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "MULTI_STRESS",
+      "test": "شوری بالا + pH بالا",
+      "severity": "CRITICAL",
+      "message": "ترکیب استرس‌های بحرانی: {'ec': 50, 'ph': 11}",
+      "details": {
+        "conditions": {
+          "ec": 50,
+          "ph": 11
+        }
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    }
+  ],
+  "warnings": [
+    {
+      "category": "RANGE_PHYSICAL",
+      "test": "GEO017.ظرفیت آبخوان",
+      "severity": "WARNING",
+      "message": "مقدار حداکثر غیرمنطقی: 500000",
+      "details": {},
+      "timestamp": "2026-08-31T05:03:02.048868"
+    },
+    {
+      "category": "EDGE_CASE",
+      "test": "بارش منفی",
+      "severity": "WARNING",
+      "message": "مقدار منفی برای فیلد غیرمنفی: -100",
+      "details": {
+        "key": "rain",
+        "value": -100
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "EDGE_CASE",
+      "test": "شوری منفی",
+      "severity": "WARNING",
+      "message": "مقدار منفی برای فیلد غیرمنفی: -5",
+      "details": {
+        "key": "ec",
+        "value": -5
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "EDGE_CASE",
+      "test": "SOC منفی",
+      "severity": "WARNING",
+      "message": "مقدار منفی برای فیلد غیرمنفی: -0.5",
+      "details": {
+        "key": "soc",
+        "value": -0.5
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    }
+  ],
+  "all_findings": [
+    {
+      "category": "RANGE_PHYSICAL",
+      "test": "GEO017.ظرفیت آبخوان",
+      "severity": "WARNING",
+      "message": "مقدار حداکثر غیرمنطقی: 500000",
+      "details": {},
+      "timestamp": "2026-08-31T05:03:02.048868"
+    },
+    {
+      "category": "EXTREME_SCENARIO",
+      "test": "دریاچه ارومیه (ایران)",
+      "severity": "CRITICAL",
+      "message": "شوری بحرانی: 300.0 dS/m",
+      "details": {
+        "scenario_id": "URMIA_LAKE_IRAN"
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "EXTREME_SCENARIO",
+      "test": "دریای مرده",
+      "severity": "CRITICAL",
+      "message": "شوری بحرانی: 340.0 dS/m",
+      "details": {
+        "scenario_id": "DEAD_SEA"
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "EDGE_CASE",
+      "test": "بارش منفی",
+      "severity": "WARNING",
+      "message": "مقدار منفی برای فیلد غیرمنفی: -100",
+      "details": {
+        "key": "rain",
+        "value": -100
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "EDGE_CASE",
+      "test": "شوری منفی",
+      "severity": "WARNING",
+      "message": "مقدار منفی برای فیلد غیرمنفی: -5",
+      "details": {
+        "key": "ec",
+        "value": -5
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "EDGE_CASE",
+      "test": "SOC منفی",
+      "severity": "WARNING",
+      "message": "مقدار منفی برای فیلد غیرمنفی: -0.5",
+      "details": {
+        "key": "soc",
+        "value": -0.5
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "EDGE_CASE",
+      "test": "مقدار None",
+      "severity": "CRITICAL",
+      "message": "سیستم باید با None مقابله کند",
+      "details": {
+        "key": "temp",
+        "value": "None"
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "EDGE_CASE",
+      "test": "مقدار NaN",
+      "severity": "CRITICAL",
+      "message": "سیستم باید با NaN مقابله کند",
+      "details": {
+        "key": "temp",
+        "value": "NaN"
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "EDGE_CASE",
+      "test": "مقدار Infinity",
+      "severity": "CRITICAL",
+      "message": "سیستم باید با Infinity مقابله کند",
+      "details": {
+        "key": "rain",
+        "value": "Infinity"
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "MULTI_STRESS",
+      "test": "خشکسالی + گرما + شوری",
+      "severity": "CRITICAL",
+      "message": "ترکیب استرس‌های بحرانی: {'temp': 45, 'rain': 5, 'ec': 30}",
+      "details": {
+        "conditions": {
+          "temp": 45,
+          "rain": 5,
+          "ec": 30
+        }
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "MULTI_STRESS",
+      "test": "سیل + شیب تند",
+      "severity": "CRITICAL",
+      "message": "ترکیب استرس‌های بحرانی: {'rain': 5000, 'slope': 60}",
+      "details": {
+        "conditions": {
+          "rain": 5000,
+          "slope": 60
+        }
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "MULTI_STRESS",
+      "test": "یخبندان + باد شدید",
+      "severity": "CRITICAL",
+      "message": "ترکیب استرس‌های بحرانی: {'temp': -40, 'wind': 100}",
+      "details": {
+        "conditions": {
+          "temp": -40,
+          "wind": 100
+        }
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    },
+    {
+      "category": "MULTI_STRESS",
+      "test": "شوری بالا + pH بالا",
+      "severity": "CRITICAL",
+      "message": "ترکیب استرس‌های بحرانی: {'ec': 50, 'ph': 11}",
+      "details": {
+        "conditions": {
+          "ec": 50,
+          "ph": 11
+        }
+      },
+      "timestamp": "2026-08-31T05:03:02.049867"
+    }
+  ],
+  "scenarios_tested": [
+    "LUT_DESERT_IRAN",
+    "DEATH_VALLEY_USA",
+    "ANTARCTICA",
+    "SIBERIA_RUSSIA",
+    "CHERRAPUNJI_INDIA",
+    "URMIA_LAKE_IRAN",
+    "DEAD_SEA",
+    "AMAZON_FLOOD",
+    "AFRICA_MEGA_DROUGHT",
+    "AUSTRALIA_FIRES_2020",
+    "KATRINA_HURRICANE",
+    "PAKISTAN_FLOODS_2022",
+    "MULTI_STRESS_HELL"
+  ]
+}

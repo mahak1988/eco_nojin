@@ -159,10 +159,7 @@ export function BroadcastPanel({
                       gap: '8px',
                     }}
                   >
-                    <CheckCircle
-                      size={14}
-                      style={{ color: 'var(--accent-primary)' }}
-                    />
+                    <CheckCircle size={14} style={{ color: 'var(--accent-primary)' }} />
                     <span
                       style={{
                         fontSize: '12px',

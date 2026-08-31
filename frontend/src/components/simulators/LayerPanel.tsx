@@ -20,30 +20,46 @@ interface Props {
   onOpacityChange: (id: LayerType, opacity: number) => void;
 }
 
-export const LayerPanel = memo(function LayerPanel({ layers, onToggleLayer, onOpacityChange }: Props) {
+export const LayerPanel = memo(function LayerPanel({
+  layers,
+  onToggleLayer,
+  onOpacityChange,
+}: Props) {
   const { i18n } = useTranslation();
   const isFa = i18n.language === 'fa';
 
   return (
-    <div style={{
-      position: 'absolute', top: '16px', left: '16px', zIndex: 10,
-      background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(15px)',
-      padding: '14px', borderRadius: '14px',
-      border: '1px solid rgba(255,255,255,0.1)',
-      minWidth: '220px',
-    }}>
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: '8px',
-        marginBottom: '12px', paddingBottom: '8px',
-        borderBottom: '1px solid rgba(255,255,255,0.1)',
-      }}>
+    <div
+      style={{
+        position: 'absolute',
+        top: '16px',
+        left: '16px',
+        zIndex: 10,
+        background: 'rgba(0,0,0,0.7)',
+        backdropFilter: 'blur(15px)',
+        padding: '14px',
+        borderRadius: '14px',
+        border: '1px solid rgba(255,255,255,0.1)',
+        minWidth: '220px',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          marginBottom: '12px',
+          paddingBottom: '8px',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
+        }}
+      >
         <Layers size={16} style={{ color: '#10b981' }} />
         <span style={{ fontSize: '13px', fontWeight: 700, color: 'white' }}>
           {isFa ? 'لایه‌های زمین' : 'Terrain Layers'}
         </span>
       </div>
 
-      {layers.map(layer => {
+      {layers.map((layer) => {
         const Icon = layer.icon;
         return (
           <div
@@ -62,11 +78,18 @@ export const LayerPanel = memo(function LayerPanel({ layers, onToggleLayer, onOp
               onClick={() => onToggleLayer(layer.id)}
               style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
             >
-              <div style={{
-                width: '28px', height: '28px', borderRadius: '8px',
-                background: `${layer.color}25`, color: layer.color,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
+              <div
+                style={{
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '8px',
+                  background: `${layer.color}25`,
+                  color: layer.color,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
                 <Icon size={14} />
               </div>
               <div style={{ flex: 1 }}>
@@ -74,14 +97,20 @@ export const LayerPanel = memo(function LayerPanel({ layers, onToggleLayer, onOp
                   {isFa ? layer.fa : layer.name}
                 </div>
               </div>
-              {layer.visible ? <Eye size={14} color={layer.color} /> : <EyeOff size={14} color="#666" />}
+              {layer.visible ? (
+                <Eye size={14} color={layer.color} />
+              ) : (
+                <EyeOff size={14} color="#666" />
+              )}
             </div>
 
             {layer.visible && (
               <div style={{ marginTop: '8px', paddingLeft: '36px' }}>
                 <input
                   type="range"
-                  min={0} max={1} step={0.05}
+                  min={0}
+                  max={1}
+                  step={0.05}
                   value={layer.opacity}
                   onChange={(e) => onOpacityChange(layer.id, parseFloat(e.target.value))}
                   style={{ width: '100%', accentColor: layer.color }}

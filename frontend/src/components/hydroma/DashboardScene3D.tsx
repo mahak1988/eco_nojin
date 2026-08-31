@@ -4,7 +4,8 @@ import { OrbitControls, Sky } from '@react-three/drei';
 import * as THREE from 'three';
 import type { RealLandResult, ScientificChainResult } from '../../types/vll';
 
-export type SceneMode = 'idle' | 'climate' | 'soil' | 'erosion' | 'carbon' | 'crop' | 'water' | 'flood' | 'optimize';
+export type SceneMode =
+  'idle' | 'climate' | 'soil' | 'erosion' | 'carbon' | 'crop' | 'water' | 'flood' | 'optimize';
 
 interface DashboardScene3DProps {
   mode: SceneMode;
@@ -16,7 +17,10 @@ interface DashboardScene3DProps {
 const num = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) ? v : null);
 
 /* ---------- Terrain (colors per mode) ---------- */
-const Terrain: React.FC<{ mode: SceneMode; chain: ScientificChainResult | null }> = ({ mode, chain }) => {
+const Terrain: React.FC<{ mode: SceneMode; chain: ScientificChainResult | null }> = ({
+  mode,
+  chain,
+}) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const material = useMemo(() => {
     const colors = new Float32Array(81 * 81 * 3);
@@ -30,27 +34,45 @@ const Terrain: React.FC<{ mode: SceneMode; chain: ScientificChainResult | null }
         case 'erosion':
           // heat map: erosion + slope → قرمز/نارنجی
           const heat = Math.min(1, (slope / 2.2) * (0.5 + erosion * 0.4));
-          r = 0.35 + heat * 0.65; g = 0.45 - heat * 0.35; b = 0.3 - heat * 0.25;
+          r = 0.35 + heat * 0.65;
+          g = 0.45 - heat * 0.35;
+          b = 0.3 - heat * 0.25;
           break;
         case 'water':
         case 'flood':
-          r = 0.25; g = 0.45; b = 0.6; // آبی-خاکی
+          r = 0.25;
+          g = 0.45;
+          b = 0.6; // آبی-خاکی
           break;
         case 'soil':
-          r = 0.45 + (x / 81) * 0.15; g = 0.33; b = 0.22; // قهوه‌ای خاک
+          r = 0.45 + (x / 81) * 0.15;
+          g = 0.33;
+          b = 0.22; // قهوه‌ای خاک
           break;
         case 'carbon':
-          r = 0.2; g = 0.5; b = 0.25; // سبز کربن
+          r = 0.2;
+          g = 0.5;
+          b = 0.25; // سبز کربن
           break;
         case 'crop':
-          r = 0.3; g = 0.55; b = 0.2;
+          r = 0.3;
+          g = 0.55;
+          b = 0.2;
           break;
         default:
-          r = 0.32; g = 0.48; b = 0.3;
+          r = 0.32;
+          g = 0.48;
+          b = 0.3;
       }
-      colors[i * 3] = r; colors[i * 3 + 1] = g; colors[i * 3 + 2] = b;
+      colors[i * 3] = r;
+      colors[i * 3 + 1] = g;
+      colors[i * 3 + 2] = b;
     }
-    const mat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.9, metalness: 0 });
+    const mat = new THREE.MeshStandardMaterial({
+      vertexColors: true,
+      roughness: 0.9,
+      metalness: 0,
+    });
     mat.userData.colors = colors;
     return mat;
   }, [mode, chain]);
@@ -68,13 +90,19 @@ const Terrain: React.FC<{ mode: SceneMode; chain: ScientificChainResult | null }
       pos.setZ(i, z);
     }
     geo.computeVertexNormals();
-    const colorAttr = new THREE.BufferAttribute((material.userData.colors as Float32Array), 3);
+    const colorAttr = new THREE.BufferAttribute(material.userData.colors as Float32Array, 3);
     geo.setAttribute('color', colorAttr);
     return geo;
   }, [material]);
 
   return (
-    <mesh ref={meshRef} rotation={[-Math.PI / 2, 0, 0]} geometry={geometry} material={material} receiveShadow />
+    <mesh
+      ref={meshRef}
+      rotation={[-Math.PI / 2, 0, 0]}
+      geometry={geometry}
+      material={material}
+      receiveShadow
+    />
   );
 };
 
@@ -118,9 +146,13 @@ const CarbonColumns: React.FC<{ chain: ScientificChainResult | null }> = ({ chai
   return (
     <group position={[-15, 0, -10]}>
       {values.map((v, i) => (
-        <mesh key={names[i]} position={[i * 7, (v / max) * 7 / 2, 0]}>
+        <mesh key={names[i]} position={[i * 7, ((v / max) * 7) / 2, 0]}>
           <boxGeometry args={[4, (v / max) * 7, 4]} />
-          <meshStandardMaterial color={colors[i % colors.length]} emissive={colors[i % colors.length]} emissiveIntensity={0.25} />
+          <meshStandardMaterial
+            color={colors[i % colors.length]}
+            emissive={colors[i % colors.length]}
+            emissiveIntensity={0.25}
+          />
         </mesh>
       ))}
     </group>
@@ -130,7 +162,8 @@ const CarbonColumns: React.FC<{ chain: ScientificChainResult | null }> = ({ chai
 const CropRows: React.FC<{ chain: ScientificChainResult | null }> = ({ chain }) => {
   const refs = useRef<THREE.Mesh[]>([]);
   const yieldT = num(chain?.aquacrop?.summary?.yield_ton_ha) ?? 4;
-  const rows = 6, cols = 6;
+  const rows = 6,
+    cols = 6;
   useFrame((state) => {
     const t = state.clock.elapsedTime;
     refs.current.forEach((m, i) => {
@@ -149,7 +182,9 @@ const CropRows: React.FC<{ chain: ScientificChainResult | null }> = ({ chain }) 
           <mesh
             key={i}
             position={[x, 0.6, z]}
-            ref={(el) => { if (el) refs.current[i] = el; }}
+            ref={(el) => {
+              if (el) refs.current[i] = el;
+            }}
           >
             <coneGeometry args={[1.1, 1, 6]} />
             <meshStandardMaterial color="#4ade80" />
@@ -210,7 +245,11 @@ const FloodPlane: React.FC<{ chain: ScientificChainResult | null }> = ({ chain }
 
 const ParetoScatter: React.FC<{ chain: ScientificChainResult | null }> = ({ chain }) => {
   const front = (chain?.optimization?.outputs?.pareto_front as unknown[] | undefined) ?? [];
-  const points = useMemo((): Array<{ erosion_t_ha_yr: number; yield_ton_ha: number; deficit_mcm: number }> => {
+  const points = useMemo((): Array<{
+    erosion_t_ha_yr: number;
+    yield_ton_ha: number;
+    deficit_mcm: number;
+  }> => {
     if (!front.length) return [{ erosion_t_ha_yr: 0.23, yield_ton_ha: 8.27, deficit_mcm: 0.84 }];
     return front as Array<{ erosion_t_ha_yr: number; yield_ton_ha: number; deficit_mcm: number }>;
   }, [front]);
@@ -226,7 +265,9 @@ const ParetoScatter: React.FC<{ chain: ScientificChainResult | null }> = ({ chai
         <mesh
           key={i}
           position={[p.erosion_t_ha_yr * 22 - 6, p.yield_ton_ha * 1.2, p.deficit_mcm * 4 - 4]}
-          ref={(el) => { if (el) refs.current[i] = el; }}
+          ref={(el) => {
+            if (el) refs.current[i] = el;
+          }}
         >
           <sphereGeometry args={[0.45, 12, 12]} />
           <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={0.4} />
@@ -236,15 +277,25 @@ const ParetoScatter: React.FC<{ chain: ScientificChainResult | null }> = ({ chai
   );
 };
 
-const ModeOverlay: React.FC<{ mode: SceneMode; chain: ScientificChainResult | null }> = ({ mode, chain }) => {
+const ModeOverlay: React.FC<{ mode: SceneMode; chain: ScientificChainResult | null }> = ({
+  mode,
+  chain,
+}) => {
   switch (mode) {
-    case 'climate': return <Rain />;
-    case 'carbon': return <CarbonColumns chain={chain} />;
-    case 'crop': return <CropRows chain={chain} />;
-    case 'water': return <WaterFlow />;
-    case 'flood': return <FloodPlane chain={chain} />;
-    case 'optimize': return <ParetoScatter chain={chain} />;
-    default: return null;
+    case 'climate':
+      return <Rain />;
+    case 'carbon':
+      return <CarbonColumns chain={chain} />;
+    case 'crop':
+      return <CropRows chain={chain} />;
+    case 'water':
+      return <WaterFlow />;
+    case 'flood':
+      return <FloodPlane chain={chain} />;
+    case 'optimize':
+      return <ParetoScatter chain={chain} />;
+    default:
+      return null;
   }
 };
 
@@ -253,19 +304,51 @@ const ModeOverlay: React.FC<{ mode: SceneMode; chain: ScientificChainResult | nu
  * مقادیر واقعی زنجیره (پارتو، عمق سیلاب، عملکرد، استخرهای کربن) روی صحنه اعمال می‌شوند؛
  * زمین و انیمیشن‌ها صرفاً برای تجسم هستند و هرگز به‌عنوان خروجی داده ارائه نمی‌شوند.
  */
-export const DashboardScene3D: React.FC<DashboardScene3DProps> = ({ mode, realLand, chain, height = 420 }) => {
+export const DashboardScene3D: React.FC<DashboardScene3DProps> = ({
+  mode,
+  realLand,
+  chain,
+  height = 420,
+}) => {
   return (
-    <div style={{ height, borderRadius: 'var(--radius-lg)', overflow: 'hidden', background: '#0f172a', position: 'relative' }}>
+    <div
+      style={{
+        height,
+        borderRadius: 'var(--radius-lg)',
+        overflow: 'hidden',
+        background: '#0f172a',
+        position: 'relative',
+      }}
+    >
       <Canvas camera={{ position: [0, 16, 26], fov: 50 }} dpr={[1, 1.5]}>
         <Sky sunPosition={[80, 40, 20]} turbidity={6} />
         <ambientLight intensity={0.55} />
         <directionalLight position={[30, 40, 20]} intensity={1.1} castShadow />
         <Terrain mode={mode} chain={chain} />
         <ModeOverlay mode={mode} chain={chain} />
-        <OrbitControls enablePan={false} minDistance={12} maxDistance={60} maxPolarAngle={Math.PI / 2.2} />
+        <OrbitControls
+          enablePan={false}
+          minDistance={12}
+          maxDistance={60}
+          maxPolarAngle={Math.PI / 2.2}
+        />
       </Canvas>
-      <div style={{ position: 'absolute', bottom: 10, left: 10, background: 'rgba(15,23,42,0.8)', color: '#cbd5e1', padding: '0.35rem 0.7rem', borderRadius: 8, fontSize: '0.72rem', pointerEvents: 'none' }}>
-        تجسم {mode} — {realLand ? `${realLand.lat.toFixed(2)}°N, ${realLand.lon.toFixed(2)}°E` : '35.5°N, 51.5°E'} · مقادیر از زنجیره علمی واقعی
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 10,
+          left: 10,
+          background: 'rgba(15,23,42,0.8)',
+          color: '#cbd5e1',
+          padding: '0.35rem 0.7rem',
+          borderRadius: 8,
+          fontSize: '0.72rem',
+          pointerEvents: 'none',
+        }}
+      >
+        تجسم {mode} —{' '}
+        {realLand ? `${realLand.lat.toFixed(2)}°N, ${realLand.lon.toFixed(2)}°E` : '35.5°N, 51.5°E'}{' '}
+        · مقادیر از زنجیره علمی واقعی
       </div>
     </div>
   );

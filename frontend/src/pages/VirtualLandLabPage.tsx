@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import {
-  Wind, Sparkles, Play, Pause,
-  RotateCcw, MapPin, Sun, CloudRain,
-  Zap, Info,
+  Wind,
+  Sparkles,
+  Play,
+  Pause,
+  RotateCcw,
+  MapPin,
+  Sun,
+  CloudRain,
+  Zap,
+  Info,
 } from 'lucide-react';
 import { AppLayout } from '../components/layout/AppLayout';
 import { Card, Button } from '../components/ui';
@@ -23,8 +30,8 @@ export const VirtualLandLabPage: React.FC = () => {
   // State مدیریت
   const [interventions, setInterventions] = useState<any[]>([]);
   const [weather, setWeather] = useState({
-    rainfall: 50,  // mm/hr
-    wind: 12,       // m/s
+    rainfall: 50, // mm/hr
+    wind: 12, // m/s
     temperature: 25,
     sunIntensity: 0.8,
   });
@@ -53,8 +60,7 @@ export const VirtualLandLabPage: React.FC = () => {
     if (cli?.status === 'ok') {
       setWeather((prev) => ({
         ...prev,
-        temperature:
-          cli.latest?.tmax_c ?? cli.avg_temp_c ?? prev.temperature,
+        temperature: cli.latest?.tmax_c ?? cli.avg_temp_c ?? prev.temperature,
         rainfall: Math.max(0, Math.min(150, cli.latest?.precipitation_mm ?? prev.rainfall)),
       }));
     }
@@ -65,7 +71,7 @@ export const VirtualLandLabPage: React.FC = () => {
     setInterventions([...interventions, { ...intv, id: Date.now() }]);
   };
   const removeIntervention = (id: number) => {
-    setInterventions(interventions.filter(i => i.id !== id));
+    setInterventions(interventions.filter((i) => i.id !== id));
   };
 
   // شبیه‌سازی
@@ -89,7 +95,7 @@ export const VirtualLandLabPage: React.FC = () => {
               ? { texture: realLand.soil.texture, organic_carbon_pct: realLand.soil.soc_pct ?? 1.2 }
               : { texture: 'loam', organic_carbon_pct: 1.2 },
             topography: { slope_pct: 10 },
-            interventions: interventions.map(i => ({
+            interventions: interventions.map((i) => ({
               intervention_id: i.id,
               coverage_pct: i.coverage || 100,
               parameters: i.parameters || {},
@@ -123,15 +129,17 @@ export const VirtualLandLabPage: React.FC = () => {
     <AppLayout>
       <div style={{ height: 'calc(100vh - 64px)', display: 'flex', flexDirection: 'column' }}>
         {/* Header Bar */}
-        <div style={{
-          padding: '1rem 2rem',
-          background: 'linear-gradient(90deg, var(--color-primary), var(--color-info))',
-          color: 'white',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          boxShadow: 'var(--shadow-md)',
-        }}>
+        <div
+          style={{
+            padding: '1rem 2rem',
+            background: 'linear-gradient(90deg, var(--color-primary), var(--color-info))',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            boxShadow: 'var(--shadow-md)',
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <Sparkles size={28} />
             <div>
@@ -165,21 +173,36 @@ export const VirtualLandLabPage: React.FC = () => {
               disabled={isSimulating}
               style={{ background: 'white', color: 'var(--color-primary)' }}
             >
-              {isSimulating ? '⏳ شبیه‌سازی...' : <><Play size={16} /> اجرای سناریو</>}
+              {isSimulating ? (
+                '⏳ شبیه‌سازی...'
+              ) : (
+                <>
+                  <Play size={16} /> اجرای سناریو
+                </>
+              )}
             </Button>
           </div>
         </div>
 
         {/* Main Content */}
-        <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '320px 1fr 320px', gap: 0, overflow: 'hidden' }}>
-          
+        <div
+          style={{
+            flex: 1,
+            display: 'grid',
+            gridTemplateColumns: '320px 1fr 320px',
+            gap: 0,
+            overflow: 'hidden',
+          }}
+        >
           {/* Left Panel: Controls */}
-          <div style={{
-            background: 'var(--color-surface)',
-            borderLeft: '1px solid var(--color-border)',
-            overflowY: 'auto',
-            padding: '1rem',
-          }}>
+          <div
+            style={{
+              background: 'var(--color-surface)',
+              borderLeft: '1px solid var(--color-border)',
+              overflowY: 'auto',
+              padding: '1rem',
+            }}
+          >
             {/* Real Land Loader (Phase 1) */}
             <RealLandLoader onLoaded={applyRealLand} />
 
@@ -204,19 +227,25 @@ export const VirtualLandLabPage: React.FC = () => {
             {/* Layer Manager */}
             <VLLLayerManager
               activeLayers={activeLayers}
-              onToggleLayer={(key) => setActiveLayers({ ...activeLayers, [key]: !activeLayers[key] })}
+              onToggleLayer={(key) =>
+                setActiveLayers({ ...activeLayers, [key]: !activeLayers[key] })
+              }
             />
 
             {/* Weather Control */}
-            <VLLWeatherControl
-              weather={weather}
-              onChange={setWeather}
-            />
+            <VLLWeatherControl weather={weather} onChange={setWeather} />
 
             {/* Time Control */}
             <Card title="⏱️ کنترل زمان" icon={<Info size={18} />} className="mb-4">
               <div style={{ marginBottom: '0.75rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', marginBottom: '0.25rem' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: '0.875rem',
+                    marginBottom: '0.25rem',
+                  }}
+                >
                   <span>پیشرفت</span>
                   <strong>سال {Math.floor(timeProgress / 12) + 1}</strong>
                 </div>
@@ -237,10 +266,7 @@ export const VirtualLandLabPage: React.FC = () => {
                 >
                   {isPlaying ? <Pause size={14} /> : <Play size={14} />}
                 </button>
-                <button
-                  onClick={() => setTimeProgress(0)}
-                  className="btn btn-ghost"
-                >
+                <button onClick={() => setTimeProgress(0)} className="btn btn-ghost">
                   <RotateCcw size={14} />
                 </button>
               </div>
@@ -258,25 +284,25 @@ export const VirtualLandLabPage: React.FC = () => {
             />
 
             {/* Floating Info */}
-            <div style={{
-              position: 'absolute',
-              top: 20,
-              left: 20,
-              background: 'rgba(0, 0, 0, 0.7)',
-              backdropFilter: 'blur(10px)',
-              padding: '0.75rem 1rem',
-              borderRadius: 'var(--radius-lg)',
-              color: 'white',
-              fontSize: '0.875rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-            }}>
+            <div
+              style={{
+                position: 'absolute',
+                top: 20,
+                left: 20,
+                background: 'rgba(0, 0, 0, 0.7)',
+                backdropFilter: 'blur(10px)',
+                padding: '0.75rem 1rem',
+                borderRadius: 'var(--radius-lg)',
+                color: 'white',
+                fontSize: '0.875rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+              }}
+            >
               <MapPin size={16} color="#22c55e" />
               <div>
-                <div style={{ fontWeight: 600 }}>
-                  {realLand ? 'زمین واقعی' : 'مزرعه نمونه'}
-                </div>
+                <div style={{ fontWeight: 600 }}>{realLand ? 'زمین واقعی' : 'مزرعه نمونه'}</div>
                 <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>
                   {realLand
                     ? `${realLand.lat.toFixed(3)}°N, ${realLand.lon.toFixed(3)}°E | ۵۰ هکتار`
@@ -287,35 +313,41 @@ export const VirtualLandLabPage: React.FC = () => {
 
             {/* Real-data indicator */}
             {realLand && (
-              <div style={{
-                position: 'absolute',
-                top: 20,
-                left: 230,
-                background: realLand.summary.all_real ? 'rgba(34,197,94,0.9)' : 'rgba(245,158,11,0.9)',
-                padding: '0.4rem 0.8rem',
-                borderRadius: 'var(--radius-full)',
-                color: 'white',
-                fontWeight: 700,
-                fontSize: '0.75rem',
-              }}>
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 20,
+                  left: 230,
+                  background: realLand.summary.all_real
+                    ? 'rgba(34,197,94,0.9)'
+                    : 'rgba(245,158,11,0.9)',
+                  padding: '0.4rem 0.8rem',
+                  borderRadius: 'var(--radius-full)',
+                  color: 'white',
+                  fontWeight: 700,
+                  fontSize: '0.75rem',
+                }}
+              >
                 {realLand.summary.all_real ? '✅ ۱۰۰٪ داده واقعی' : '🔶 داده واقعی (اقلیم+خاک)'}
               </div>
             )}
 
             {/* Live Weather Indicator */}
-            <div style={{
-              position: 'absolute',
-              top: 20,
-              right: 20,
-              background: 'rgba(0, 0, 0, 0.7)',
-              backdropFilter: 'blur(10px)',
-              padding: '0.75rem 1rem',
-              borderRadius: 'var(--radius-lg)',
-              color: 'white',
-              fontSize: '0.875rem',
-              display: 'flex',
-              gap: '1rem',
-            }}>
+            <div
+              style={{
+                position: 'absolute',
+                top: 20,
+                right: 20,
+                background: 'rgba(0, 0, 0, 0.7)',
+                backdropFilter: 'blur(10px)',
+                padding: '0.75rem 1rem',
+                borderRadius: 'var(--radius-lg)',
+                color: 'white',
+                fontSize: '0.875rem',
+                display: 'flex',
+                gap: '1rem',
+              }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <CloudRain size={16} color="#3b82f6" />
                 <span>{weather.rainfall} mm</span>
@@ -331,28 +363,32 @@ export const VirtualLandLabPage: React.FC = () => {
             </div>
 
             {/* Intervention Counter */}
-            <div style={{
-              position: 'absolute',
-              bottom: 20,
-              left: 20,
-              background: 'rgba(34, 197, 94, 0.9)',
-              padding: '0.5rem 1rem',
-              borderRadius: 'var(--radius-full)',
-              color: 'white',
-              fontWeight: 600,
-              fontSize: '0.875rem',
-            }}>
+            <div
+              style={{
+                position: 'absolute',
+                bottom: 20,
+                left: 20,
+                background: 'rgba(34, 197, 94, 0.9)',
+                padding: '0.5rem 1rem',
+                borderRadius: 'var(--radius-full)',
+                color: 'white',
+                fontWeight: 600,
+                fontSize: '0.875rem',
+              }}
+            >
               🛠️ {interventions.length} مداخله فعال
             </div>
           </div>
 
           {/* Right Panel: Interventions + AI */}
-          <div style={{
-            background: 'var(--color-surface)',
-            borderRight: '1px solid var(--color-border)',
-            overflowY: 'auto',
-            padding: '1rem',
-          }}>
+          <div
+            style={{
+              background: 'var(--color-surface)',
+              borderRight: '1px solid var(--color-border)',
+              overflowY: 'auto',
+              padding: '1rem',
+            }}
+          >
             {showAdvisor && results && (
               <VLLAIAdvisor
                 recommendations={results.recommendations || []}
@@ -372,7 +408,15 @@ export const VirtualLandLabPage: React.FC = () => {
 
         {/* Results Bar at bottom */}
         {simError && (
-          <div style={{ padding: '0.6rem 2rem', background: 'rgba(239,68,68,0.12)', borderTop: '1px solid #ef4444', color: '#ef4444', fontSize: '0.85rem' }}>
+          <div
+            style={{
+              padding: '0.6rem 2rem',
+              background: 'rgba(239,68,68,0.12)',
+              borderTop: '1px solid #ef4444',
+              color: '#ef4444',
+              fontSize: '0.85rem',
+            }}
+          >
             ⚠️ {simError}
           </div>
         )}

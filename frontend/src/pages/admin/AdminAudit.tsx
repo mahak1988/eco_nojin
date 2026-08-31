@@ -49,7 +49,9 @@ export default function AdminAudit() {
     return (
       <div className="glass-card" style={{ padding: '40px', textAlign: 'center' }}>
         <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
-        <h3 style={{ color: 'var(--accent-danger)', margin: '0 0 8px 0' }}>Unable to load audit logs</h3>
+        <h3 style={{ color: 'var(--accent-danger)', margin: '0 0 8px 0' }}>
+          Unable to load audit logs
+        </h3>
         <p style={{ color: 'var(--text-muted)', margin: 0 }}>{error}</p>
       </div>
     );
@@ -86,13 +88,23 @@ export default function AdminAudit() {
             ) : (
               entries.map((entry) => (
                 <tr key={entry.id}>
-                  <td><span className="status-badge info">{entry.action}</span></td>
-                  <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{entry.actor_email || '-'}</td>
+                  <td>
+                    <span className="status-badge info">{entry.action}</span>
+                  </td>
+                  <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
+                    {entry.actor_email || '-'}
+                  </td>
                   <td style={{ color: 'var(--text-secondary)' }}>{entry.target || '-'}</td>
                   <td style={{ color: 'var(--text-muted)', fontSize: '13px', maxWidth: '300px' }}>
-                    <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{entry.detail || '-'}</div>
+                    <div
+                      style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                    >
+                      {entry.detail || '-'}
+                    </div>
                   </td>
-                  <td style={{ color: 'var(--text-faint)', fontSize: '13px', whiteSpace: 'nowrap' }}>
+                  <td
+                    style={{ color: 'var(--text-faint)', fontSize: '13px', whiteSpace: 'nowrap' }}
+                  >
                     {entry.created_at ? new Date(entry.created_at).toLocaleString() : '-'}
                   </td>
                 </tr>

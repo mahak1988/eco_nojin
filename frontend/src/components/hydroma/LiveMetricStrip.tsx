@@ -21,15 +21,78 @@ export const LiveMetricStrip: React.FC<LiveMetricStripProps> = ({ realLand, chai
   const yieldT = num(chain?.aquacrop?.summary?.yield_ton_ha);
   const reliability = num(chain?.water?.summary?.supply_reliability_pct);
 
-  const metrics: { label: string; value: number | null; suffix: string; decimals: number; color: string; icon: string }[] = [
-    { label: 'بارش سالانه', value: climate?.annual_rainfall_mm ?? null, suffix: 'mm', decimals: 1, color: '#3b82f6', icon: '🌧️' },
-    { label: 'دمای میانگین', value: climate?.avg_temp_c ?? null, suffix: '°C', decimals: 1, color: '#f59e0b', icon: '🌡️' },
-    { label: 'ET0 سالانه', value: climate?.annual_et0_mm ?? null, suffix: 'mm', decimals: 0, color: '#ef4444', icon: '💨' },
-    { label: 'کربن خاک (SOC)', value: socFinal ?? (soil?.soc_pct ?? null), suffix: 't/ha', decimals: 1, color: '#10b981', icon: '🌱' },
-    { label: 'فرسایش', value: erosion ?? null, suffix: 't/ha/yr', decimals: 2, color: '#a16207', icon: '⛰️' },
-    { label: 'عملکرد گندم', value: yieldT ?? null, suffix: 't/ha', decimals: 2, color: '#eab308', icon: '🌾' },
-    { label: 'قابلیت اطمینان آب', value: reliability ?? null, suffix: '٪', decimals: 1, color: '#06b6d4', icon: '💧' },
-    { label: 'pH خاک', value: soil?.ph_h2o ?? null, suffix: '', decimals: 1, color: '#8b5cf6', icon: '🧪' },
+  const metrics: {
+    label: string;
+    value: number | null;
+    suffix: string;
+    decimals: number;
+    color: string;
+    icon: string;
+  }[] = [
+    {
+      label: 'بارش سالانه',
+      value: climate?.annual_rainfall_mm ?? null,
+      suffix: 'mm',
+      decimals: 1,
+      color: '#3b82f6',
+      icon: '🌧️',
+    },
+    {
+      label: 'دمای میانگین',
+      value: climate?.avg_temp_c ?? null,
+      suffix: '°C',
+      decimals: 1,
+      color: '#f59e0b',
+      icon: '🌡️',
+    },
+    {
+      label: 'ET0 سالانه',
+      value: climate?.annual_et0_mm ?? null,
+      suffix: 'mm',
+      decimals: 0,
+      color: '#ef4444',
+      icon: '💨',
+    },
+    {
+      label: 'کربن خاک (SOC)',
+      value: socFinal ?? soil?.soc_pct ?? null,
+      suffix: 't/ha',
+      decimals: 1,
+      color: '#10b981',
+      icon: '🌱',
+    },
+    {
+      label: 'فرسایش',
+      value: erosion ?? null,
+      suffix: 't/ha/yr',
+      decimals: 2,
+      color: '#a16207',
+      icon: '⛰️',
+    },
+    {
+      label: 'عملکرد گندم',
+      value: yieldT ?? null,
+      suffix: 't/ha',
+      decimals: 2,
+      color: '#eab308',
+      icon: '🌾',
+    },
+    {
+      label: 'قابلیت اطمینان آب',
+      value: reliability ?? null,
+      suffix: '٪',
+      decimals: 1,
+      color: '#06b6d4',
+      icon: '💧',
+    },
+    {
+      label: 'pH خاک',
+      value: soil?.ph_h2o ?? null,
+      suffix: '',
+      decimals: 1,
+      color: '#8b5cf6',
+      icon: '🧪',
+    },
   ];
 
   return (
@@ -37,7 +100,9 @@ export const LiveMetricStrip: React.FC<LiveMetricStripProps> = ({ realLand, chai
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.9rem' }}>
         <span
           style={{
-            width: 10, height: 10, borderRadius: '50%',
+            width: 10,
+            height: 10,
+            borderRadius: '50%',
             background: realLand?.climate?.status === 'ok' ? '#22c55e' : '#f59e0b',
             animation: 'livePulse 1.6s ease-in-out infinite',
           }}
@@ -47,15 +112,42 @@ export const LiveMetricStrip: React.FC<LiveMetricStripProps> = ({ realLand, chai
           {realLand?.climate?.data_source ?? ''} · {realLand?.soil?.data_source ?? ''}
         </span>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.6rem' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+          gap: '0.6rem',
+        }}
+      >
         {metrics.map((m) => (
-          <div key={m.label} style={{ padding: '0.6rem 0.8rem', borderRadius: 12, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+          <div
+            key={m.label}
+            style={{
+              padding: '0.6rem 0.8rem',
+              borderRadius: 12,
+              background: 'var(--color-bg)',
+              border: '1px solid var(--color-border)',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '0.72rem',
+                color: 'var(--color-text-secondary)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.3rem',
+              }}
+            >
               <span>{m.icon}</span> {m.label}
             </div>
             <div style={{ fontSize: '1.15rem', fontWeight: 800, color: m.color }}>
               {m.value != null ? (
-                <AnimatedCounter value={m.value} decimals={m.decimals} suffix={` ${m.suffix}`} duration={1200} />
+                <AnimatedCounter
+                  value={m.value}
+                  decimals={m.decimals}
+                  suffix={` ${m.suffix}`}
+                  duration={1200}
+                />
               ) : (
                 '—'
               )}

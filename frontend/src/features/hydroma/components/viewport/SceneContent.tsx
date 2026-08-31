@@ -41,7 +41,13 @@ import {
 import { useHydromaStore } from '../../store';
 import { useEsriTexture } from '../../hooks';
 import { useTerrainClick } from '../../hooks';
-import { DataPlotView, Crops, Forest, Barn, Silo } from '../../../../components/farmsim/SceneExtras';
+import {
+  DataPlotView,
+  Crops,
+  Forest,
+  Barn,
+  Silo,
+} from '../../../../components/farmsim/SceneExtras';
 import { useTranslation } from 'react-i18next';
 
 export function SceneContent() {
@@ -123,24 +129,12 @@ export function SceneContent() {
         />
 
         {/* Optional layers */}
-        {layers.soil && (
-          <TerrainMesh data={terrain} layer="soil" opacity={0.7} />
-        )}
-        {layers.bedrock && (
-          <TerrainMesh data={terrain} layer="bedrock" opacity={0.6} />
-        )}
-        {layers.moisture && (
-          <TerrainMesh data={terrain} layer="moisture" opacity={0.5} />
-        )}
-        {layers.roots && (
-          <TerrainMesh data={terrain} layer="roots" opacity={0.6} />
-        )}
-        {layers.groundwater && (
-          <TerrainMesh data={terrain} layer="groundwater" opacity={0.5} />
-        )}
-        {showNdvi && (
-          <TerrainMesh data={terrain} layer="ndvi" opacity={0.65} />
-        )}
+        {layers.soil && <TerrainMesh data={terrain} layer="soil" opacity={0.7} />}
+        {layers.bedrock && <TerrainMesh data={terrain} layer="bedrock" opacity={0.6} />}
+        {layers.moisture && <TerrainMesh data={terrain} layer="moisture" opacity={0.5} />}
+        {layers.roots && <TerrainMesh data={terrain} layer="roots" opacity={0.6} />}
+        {layers.groundwater && <TerrainMesh data={terrain} layer="groundwater" opacity={0.5} />}
+        {showNdvi && <TerrainMesh data={terrain} layer="ndvi" opacity={0.65} />}
 
         {/* Decor */}
         {visual.showDecor && (
@@ -155,16 +149,11 @@ export function SceneContent() {
                 visual.cropVisual === 'corn'
                   ? '#3f9b3f'
                   : visual.cropVisual === 'wheat'
-                  ? '#c9a227'
-                  : '#4f8f3f'
+                    ? '#c9a227'
+                    : '#4f8f3f'
               }
             />
-            <Barn
-              terrain={terrain}
-              position={[4, 0, -12]}
-              rotation={0.3}
-              scale={1.2}
-            />
+            <Barn terrain={terrain} position={[4, 0, -12]} rotation={0.3} scale={1.2} />
             <Silo terrain={terrain} position={[7, 0, -12]} />
           </>
         )}
@@ -175,11 +164,7 @@ export function SceneContent() {
         ))}
 
         {/* Wind arrows */}
-        <WindArrows
-          data={terrain}
-          direction={climate.windDirection}
-          speed={climate.windSpeed}
-        />
+        <WindArrows data={terrain} direction={climate.windDirection} speed={climate.windSpeed} />
 
         {/* Placed operations */}
         <PlacedOpsMarkers
@@ -190,11 +175,7 @@ export function SceneContent() {
         />
 
         {/* Polygons */}
-        <PolygonOverlay
-          polygons={polygons}
-          data={terrain}
-          currentDrawing={currentDrawing}
-        />
+        <PolygonOverlay polygons={polygons} data={terrain} currentDrawing={currentDrawing} />
 
         {/* Camera controller */}
         <CameraController viewMode={viewMode} />

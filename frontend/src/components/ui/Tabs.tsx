@@ -14,14 +14,10 @@ interface TabsProps {
   variant?: 'pills' | 'underline';
 }
 
-export const Tabs: React.FC<TabsProps> = ({
-  tabs,
-  defaultTab,
-  variant = 'pills',
-}) => {
+export const Tabs: React.FC<TabsProps> = ({ tabs, defaultTab, variant = 'pills' }) => {
   const [activeTab, setActiveTab] = useState(defaultTab || tabs[0]?.id);
 
-  const activeContent = tabs.find(t => t.id === activeTab)?.content;
+  const activeContent = tabs.find((t) => t.id === activeTab)?.content;
 
   return (
     <div>
@@ -50,9 +46,12 @@ export const Tabs: React.FC<TabsProps> = ({
                 padding: variant === 'pills' ? '0.75rem 1.5rem' : '1rem 0',
                 borderRadius: variant === 'pills' ? 'var(--radius-lg)' : 0,
                 border: 'none',
-                background: variant === 'pills'
-                  ? isActive ? 'var(--color-primary)' : 'transparent'
-                  : 'transparent',
+                background:
+                  variant === 'pills'
+                    ? isActive
+                      ? 'var(--color-primary)'
+                      : 'transparent'
+                    : 'transparent',
                 color: isActive ? 'white' : 'var(--color-text-secondary)',
                 cursor: 'pointer',
                 fontSize: '0.875rem',

@@ -8,9 +8,19 @@ import StatusBeacon from './live/StatusBeacon';
 import LiveTicker from './live/LiveTicker';
 import ProgressRing from './live/ProgressRing';
 import {
-  Users, ShoppingCart, DollarSign, Activity,
-  Server, Shield, Zap, TrendingUp, Clock,
-  Cpu, HardDrive, Globe, AlertCircle
+  Users,
+  ShoppingCart,
+  DollarSign,
+  Activity,
+  Server,
+  Shield,
+  Zap,
+  TrendingUp,
+  Clock,
+  Cpu,
+  HardDrive,
+  Globe,
+  AlertCircle,
 } from 'lucide-react';
 import './AdminTheme.css';
 import './AdminPanelAdvanced.css';
@@ -45,9 +55,7 @@ export default function LiveDashboard() {
             <Activity size={32} style={{ color: 'var(--accent-primary)' }} />
             Live Command Center
           </h1>
-          <p className="page-subtitle">
-            Real-time monitoring and live metrics dashboard
-          </p>
+          <p className="page-subtitle">Real-time monitoring and live metrics dashboard</p>
         </div>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <StatusBeacon
@@ -113,16 +121,25 @@ export default function LiveDashboard() {
       </div>
 
       {/* Gauges Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '24px' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: '20px',
+          marginBottom: '24px',
+        }}
+      >
         <div className="metric-card">
           <LiveGauge
             value={metrics.cpu_usage}
             label="CPU Usage"
-            color={metrics.cpu_usage > 80 ? 'danger' : metrics.cpu_usage > 60 ? 'warning' : 'success'}
+            color={
+              metrics.cpu_usage > 80 ? 'danger' : metrics.cpu_usage > 60 ? 'warning' : 'success'
+            }
           />
           <LiveSparkline color="var(--accent-info)" autoUpdate />
         </div>
-        
+
         <div className="metric-card">
           <LiveGauge
             value={metrics.memory_usage}
@@ -136,7 +153,13 @@ export default function LiveDashboard() {
           <LiveGauge
             value={metrics.security_score}
             label="Security Score"
-            color={metrics.security_score > 80 ? 'success' : metrics.security_score > 50 ? 'warning' : 'danger'}
+            color={
+              metrics.security_score > 80
+                ? 'success'
+                : metrics.security_score > 50
+                  ? 'warning'
+                  : 'danger'
+            }
           />
           <LiveSparkline color="var(--accent-primary)" autoUpdate />
         </div>
@@ -162,26 +185,14 @@ export default function LiveDashboard() {
             System Health
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <ProgressRing
-              progress={98}
-              label="Uptime"
-              color="var(--accent-primary)"
-            />
-            <ProgressRing
-              progress={metrics.cpu_usage}
-              label="CPU"
-              color="var(--accent-info)"
-            />
+            <ProgressRing progress={98} label="Uptime" color="var(--accent-primary)" />
+            <ProgressRing progress={metrics.cpu_usage} label="CPU" color="var(--accent-info)" />
             <ProgressRing
               progress={metrics.memory_usage}
               label="Memory"
               color="var(--accent-purple)"
             />
-            <ProgressRing
-              progress={92}
-              label="Network"
-              color="var(--accent-secondary)"
-            />
+            <ProgressRing progress={92} label="Network" color="var(--accent-secondary)" />
           </div>
 
           <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -197,7 +208,18 @@ export default function LiveDashboard() {
       </div>
 
       {/* Footer Info */}
-      <div style={{ marginTop: '24px', padding: '16px 24px', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div
+        style={{
+          marginTop: '24px',
+          padding: '16px 24px',
+          background: 'var(--bg-card)',
+          borderRadius: '12px',
+          border: '1px solid var(--border-color)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Clock size={16} style={{ color: 'var(--text-muted)' }} />
@@ -212,7 +234,14 @@ export default function LiveDashboard() {
             </span>
           </div>
         </div>
-        <div style={{ fontSize: '11px', color: 'var(--text-faint)', letterSpacing: '1px', textTransform: 'uppercase' }}>
+        <div
+          style={{
+            fontSize: '11px',
+            color: 'var(--text-faint)',
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+          }}
+        >
           Real-Time Dashboard • Phase 3
         </div>
       </div>

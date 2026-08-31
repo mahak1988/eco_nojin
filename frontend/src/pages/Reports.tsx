@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Typography, Select, DatePicker } from 'antd';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from 'recharts';
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -40,9 +51,9 @@ const Reports: React.FC = () => {
         // In a real app, this would be an actual API call:
         // const response = await api.get(`/reports/${reportType}`);
         // setChartData(response.data);
-        
+
         // For now, use mock data
-        await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+        await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
         setChartData(generateMockData(reportType));
         setLoading(false);
       } catch (error) {
@@ -84,7 +95,8 @@ const Reports: React.FC = () => {
                 top: 5,
                 right: 30,
                 left: 20,
-                bottom: 5 }}
+                bottom: 5,
+              }}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
@@ -102,7 +114,8 @@ const Reports: React.FC = () => {
                 top: 5,
                 right: 30,
                 left: 20,
-                bottom: 5 }}
+                bottom: 5,
+              }}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />

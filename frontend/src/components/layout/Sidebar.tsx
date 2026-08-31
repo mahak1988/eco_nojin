@@ -11,7 +11,8 @@ import {
   LineChart,
   Map,
   Settings,
-  X } from 'lucide-react';
+  X,
+} from 'lucide-react';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -49,7 +50,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               inset: 0,
               background: 'rgba(0, 0, 0, 0.5)',
               zIndex: 40,
-              display: 'none' }}
+              display: 'none',
+            }}
             className="md:hidden"
           />
         )}
@@ -70,7 +72,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           top: 0,
           left: 0,
           bottom: 0,
-          zIndex: 50 }}
+          zIndex: 50,
+        }}
       >
         {/* Logo */}
         <div
@@ -79,7 +82,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             borderBottom: '1px solid var(--color-border)',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between' }}
+            justifyContent: 'space-between',
+          }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div
@@ -93,14 +97,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 justifyContent: 'center',
                 color: 'white',
                 fontWeight: 700,
-                fontSize: '1.25rem' }}
+                fontSize: '1.25rem',
+              }}
             >
               🌱
             </div>
             <div>
-              <h1 style={{ fontSize: '1.125rem', fontWeight: 700, margin: 0 }}>
-                Eco Nojin
-              </h1>
+              <h1 style={{ fontSize: '1.125rem', fontWeight: 700, margin: 0 }}>Eco Nojin</h1>
               <p style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)', margin: 0 }}>
                 پلتفرم کشاورزی پایدار
               </p>
@@ -145,7 +148,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   marginBottom: '0.5rem',
                   transition: 'all 0.2s',
                   fontSize: '0.875rem',
-                  fontWeight: isActive ? 600 : 400 }}
+                  fontWeight: isActive ? 600 : 400,
+                }}
               >
                 <Icon size={20} />
                 <span>{item.label}</span>
@@ -161,7 +165,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             borderTop: '1px solid var(--color-border)',
             fontSize: '0.75rem',
             color: 'var(--color-text-tertiary)',
-            textAlign: 'center' }}
+            textAlign: 'center',
+          }}
         >
           <p style={{ margin: 0 }}>نسخه 4.0.0</p>
           <p style={{ margin: '0.25rem 0 0 0' }}>© 2026 Eco Nojin</p>

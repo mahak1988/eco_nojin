@@ -26,9 +26,7 @@ export function LoadingView() {
       }}
     >
       <Loader2 size={46} className="spin" />
-      <div style={{ fontSize: 15, fontWeight: 600 }}>
-        در حال بارگذاری زمین واقعی از DEM…
-      </div>
+      <div style={{ fontSize: 15, fontWeight: 600 }}>در حال بارگذاری زمین واقعی از DEM…</div>
       <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>
         Open-Meteo • Copernicus DEM 90m • سایت {siteMeta?.siteId || '---'}
       </div>

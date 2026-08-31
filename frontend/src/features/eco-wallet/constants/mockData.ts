@@ -40,19 +40,13 @@ export function generateTransactionHistory(
   const random = seededRandom(seed);
 
   return Array.from({ length: config.days }, (_, i) => {
-    const earningsRange =
-      config.earningsRange.max - config.earningsRange.min;
-    const redemptionsRange =
-      config.redemptionsRange.max - config.redemptionsRange.min;
+    const earningsRange = config.earningsRange.max - config.earningsRange.min;
+    const redemptionsRange = config.redemptionsRange.max - config.redemptionsRange.min;
 
     return {
       day: `Day ${i + 1}`,
-      earnings: Math.floor(
-        config.earningsRange.min + random() * earningsRange
-      ),
-      redemptions: Math.floor(
-        config.redemptionsRange.min + random() * redemptionsRange
-      ),
+      earnings: Math.floor(config.earningsRange.min + random() * earningsRange),
+      redemptions: Math.floor(config.redemptionsRange.min + random() * redemptionsRange),
     };
   });
 }
@@ -60,5 +54,4 @@ export function generateTransactionHistory(
 /**
  * Default transaction history (pre-generated for consistency).
  */
-export const DEFAULT_TRANSACTION_HISTORY: TransactionDataPoint[] =
-  generateTransactionHistory();
+export const DEFAULT_TRANSACTION_HISTORY: TransactionDataPoint[] = generateTransactionHistory();

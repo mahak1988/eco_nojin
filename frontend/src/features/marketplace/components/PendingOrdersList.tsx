@@ -30,10 +30,7 @@ export function PendingOrdersList({
       </div>
       <div style={{ maxHeight: '280px', overflowY: 'auto' }}>
         {pendingOrders.length === 0 ? (
-          <div
-            className="empty-state-enhanced"
-            style={{ padding: '40px 20px' }}
-          >
+          <div className="empty-state-enhanced" style={{ padding: '40px 20px' }}>
             <div className="icon" style={{ fontSize: '48px' }}>
               ✅
             </div>

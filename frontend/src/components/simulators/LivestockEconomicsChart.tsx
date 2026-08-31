@@ -24,7 +24,7 @@ export const LivestockEconomicsChart: React.FC<LivestockEconomicsProps> = ({ her
       return { title: { text: 'هیچ دامی اضافه نشده' } };
     }
 
-    const labels = herds.map(h => `${h.animalType} (${h.headCount} رأس)`);
+    const labels = herds.map((h) => `${h.animalType} (${h.headCount} رأس)`);
 
     return {
       title: { text: 'اقتصاد گله', left: 'center' },
@@ -34,12 +34,43 @@ export const LivestockEconomicsChart: React.FC<LivestockEconomicsProps> = ({ her
       xAxis: { type: 'category', data: labels },
       yAxis: { type: 'value', name: 'USD/سال' },
       series: [
-        { name: 'درآمد', type: 'bar', stack: 'total', data: herds.map(h => h.revenue), itemStyle: { color: '#52c41a' } },
-        { name: 'خوراک', type: 'bar', stack: 'cost', data: herds.map(h => h.feedCost), itemStyle: { color: '#f5222d' } },
-        { name: 'دامپزشکی', type: 'bar', stack: 'cost', data: herds.map(h => h.vetCost), itemStyle: { color: '#fa541c' } },
-        { name: 'کار', type: 'bar', stack: 'cost', data: herds.map(h => h.laborCost), itemStyle: { color: '#faad14' } },
-        { name: 'سود خالص', type: 'line', data: herds.map(h => h.netProfit), itemStyle: { color: '#722ed1' }, lineStyle: { width: 3 } },
-      ] };
+        {
+          name: 'درآمد',
+          type: 'bar',
+          stack: 'total',
+          data: herds.map((h) => h.revenue),
+          itemStyle: { color: '#52c41a' },
+        },
+        {
+          name: 'خوراک',
+          type: 'bar',
+          stack: 'cost',
+          data: herds.map((h) => h.feedCost),
+          itemStyle: { color: '#f5222d' },
+        },
+        {
+          name: 'دامپزشکی',
+          type: 'bar',
+          stack: 'cost',
+          data: herds.map((h) => h.vetCost),
+          itemStyle: { color: '#fa541c' },
+        },
+        {
+          name: 'کار',
+          type: 'bar',
+          stack: 'cost',
+          data: herds.map((h) => h.laborCost),
+          itemStyle: { color: '#faad14' },
+        },
+        {
+          name: 'سود خالص',
+          type: 'line',
+          data: herds.map((h) => h.netProfit),
+          itemStyle: { color: '#722ed1' },
+          lineStyle: { width: 3 },
+        },
+      ],
+    };
   }, [herds]);
 
   return (

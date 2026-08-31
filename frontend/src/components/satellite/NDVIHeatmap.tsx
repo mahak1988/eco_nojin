@@ -20,9 +20,10 @@ export function NDVIHeatmap({ satellitePoints }: NDVIHeatmapProps) {
       [254, 204, 92],
       [253, 141, 60],
       [227, 74, 51],
-      [179, 0, 0],     // قرمز - پوشش ضعیف
-      [0, 128, 0],     // سبز - پوشش سالم
-    ] });
+      [179, 0, 0], // قرمز - پوشش ضعیف
+      [0, 128, 0], // سبز - پوشش سالم
+    ],
+  });
 
   return <DeckGL layers={[layer]} />;
 }

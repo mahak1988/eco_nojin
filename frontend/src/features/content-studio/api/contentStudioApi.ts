@@ -4,11 +4,7 @@
  * @module features/content-studio/api
  */
 
-import type {
-  ContentItem,
-  GenerateDraftRequest,
-  TranslateRequest,
-} from '../types';
+import type { ContentItem, GenerateDraftRequest, TranslateRequest } from '../types';
 import { ENDPOINTS } from '../constants/config';
 
 function getAuthHeaders(): HeadersInit {
@@ -65,9 +61,7 @@ export async function deleteContentItem(id: string): Promise<void> {
 }
 
 /** Generate AI draft */
-export async function generateDraft(
-  request: GenerateDraftRequest
-): Promise<ContentItem> {
+export async function generateDraft(request: GenerateDraftRequest): Promise<ContentItem> {
   const response = await fetch(ENDPOINTS.generateDraft, {
     method: 'POST',
     headers: getAuthHeaders(),
@@ -80,10 +74,7 @@ export async function generateDraft(
 }
 
 /** Translate content item */
-export async function translateContentItem(
-  id: string,
-  request: TranslateRequest
-): Promise<void> {
+export async function translateContentItem(id: string, request: TranslateRequest): Promise<void> {
   const response = await fetch(ENDPOINTS.translate(id), {
     method: 'POST',
     headers: getAuthHeaders(),

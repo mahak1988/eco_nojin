@@ -60,7 +60,11 @@ class ApiService {
   /**
    * Graceful POST - returns null on error instead of throwing
    */
-  async post<T, B = any>(endpoint: string, body: B, fallback: T | null = null): Promise<ApiResult<T>> {
+  async post<T, B = any>(
+    endpoint: string,
+    body: B,
+    fallback: T | null = null
+  ): Promise<ApiResult<T>> {
     try {
       const response = await fetch(`${API_BASE}${endpoint}`, {
         method: 'POST',
@@ -119,11 +123,15 @@ class ApiService {
    */
   async getDroughtData(params: { lat: number; lon: number }): Promise<ApiResult<any>> {
     // drought uses /climate endpoint
-    return await this.post('/climate', { ...params, check_drought: true }, {
-      drought_index: 0.3,
-      status: 'normal',
-      severity: 'none',
-    });
+    return await this.post(
+      '/climate',
+      { ...params, check_drought: true },
+      {
+        drought_index: 0.3,
+        status: 'normal',
+        severity: 'none',
+      }
+    );
   }
 
   /**

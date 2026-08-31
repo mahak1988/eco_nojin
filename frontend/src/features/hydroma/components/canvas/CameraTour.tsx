@@ -43,11 +43,7 @@ export function CameraTour({ active }: CameraTourProps) {
     const radius = 1150 - 350 * (0.5 + 0.5 * Math.sin(t * 0.1));
     const height = 520 - 240 * (0.5 + 0.5 * Math.cos(t * 0.13));
 
-    camera.position.set(
-      Math.cos(ang) * radius,
-      height,
-      Math.sin(ang) * radius
-    );
+    camera.position.set(Math.cos(ang) * radius, height, Math.sin(ang) * radius);
 
     // Always look at scene center
     camera.lookAt(0, 30, 0);

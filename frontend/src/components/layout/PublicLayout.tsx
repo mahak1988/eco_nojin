@@ -17,9 +17,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <PublicHeader />
-      <main style={{ flex: 1, paddingTop: '80px' }}>
-        {children}
-      </main>
+      <main style={{ flex: 1, paddingTop: '80px' }}>{children}</main>
       <PublicFooter />
     </div>
   );

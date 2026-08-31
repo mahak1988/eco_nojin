@@ -47,7 +47,9 @@ export default function AdminOverview() {
     return (
       <div className="loading-container">
         <div className="loading-spinner" />
-        <div style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Loading dashboard data...</div>
+        <div style={{ color: 'var(--text-muted)', fontSize: '14px' }}>
+          Loading dashboard data...
+        </div>
       </div>
     );
   }
@@ -56,9 +58,15 @@ export default function AdminOverview() {
     return (
       <div className="glass-card" style={{ padding: '40px', textAlign: 'center' }}>
         <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
-        <h3 style={{ color: 'var(--accent-danger)', margin: '0 0 8px 0' }}>Unable to load dashboard</h3>
+        <h3 style={{ color: 'var(--accent-danger)', margin: '0 0 8px 0' }}>
+          Unable to load dashboard
+        </h3>
         <p style={{ color: 'var(--text-muted)', margin: 0 }}>{error}</p>
-        <button className="btn-primary" onClick={() => window.location.reload()} style={{ marginTop: '24px' }}>
+        <button
+          className="btn-primary"
+          onClick={() => window.location.reload()}
+          style={{ marginTop: '24px' }}
+        >
           Retry
         </button>
       </div>
@@ -70,10 +78,34 @@ export default function AdminOverview() {
   const stats = [
     { label: 'Total Users', value: data.counts.users, icon: '👥', color: '#3b82f6', trend: '+12%' },
     { label: 'Active Farms', value: data.counts.farms, icon: '🌾', color: '#10b981', trend: '+8%' },
-    { label: 'Audit Logs', value: data.counts.audit_entries, icon: '📋', color: '#8b5cf6', trend: '+23%' },
-    { label: 'Open Errors', value: data.counts.errors_open, icon: '⚡', color: '#ef4444', trend: '-5%' },
-    { label: 'Total Content', value: data.counts.content_total, icon: '📄', color: '#f59e0b', trend: '+15%' },
-    { label: 'System Uptime', value: (data.uptime_seconds / 3600).toFixed(1) + 'h', icon: '⚙️', color: '#06b6d4', trend: '99.9%' },
+    {
+      label: 'Audit Logs',
+      value: data.counts.audit_entries,
+      icon: '📋',
+      color: '#8b5cf6',
+      trend: '+23%',
+    },
+    {
+      label: 'Open Errors',
+      value: data.counts.errors_open,
+      icon: '⚡',
+      color: '#ef4444',
+      trend: '-5%',
+    },
+    {
+      label: 'Total Content',
+      value: data.counts.content_total,
+      icon: '📄',
+      color: '#f59e0b',
+      trend: '+15%',
+    },
+    {
+      label: 'System Uptime',
+      value: (data.uptime_seconds / 3600).toFixed(1) + 'h',
+      icon: '⚙️',
+      color: '#06b6d4',
+      trend: '99.9%',
+    },
   ];
 
   const quickActions = [
@@ -101,25 +133,34 @@ export default function AdminOverview() {
       <div className="info-banner">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h2 style={{ margin: '0 0 8px 0', fontSize: '28px', fontWeight: 800, letterSpacing: '-0.5px' }}>
+            <h2
+              style={{
+                margin: '0 0 8px 0',
+                fontSize: '28px',
+                fontWeight: 800,
+                letterSpacing: '-0.5px',
+              }}
+            >
               Platform Overview
             </h2>
             <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '14px' }}>
               Real-time insights into your Eco Nojin platform
             </p>
           </div>
-          <div style={{
-            padding: '8px 16px',
-            background: 'rgba(16, 185, 129, 0.1)',
-            borderRadius: '20px',
-            border: '1px solid rgba(16, 185, 129, 0.3)',
-            fontSize: '12px',
-            color: 'var(--accent-primary)',
-            fontWeight: 600,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}>
+          <div
+            style={{
+              padding: '8px 16px',
+              background: 'rgba(16, 185, 129, 0.1)',
+              borderRadius: '20px',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              fontSize: '12px',
+              color: 'var(--accent-primary)',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
             <div className="pulse-dot" />
             Live
           </div>
@@ -130,11 +171,21 @@ export default function AdminOverview() {
       <div className="card-grid">
         {stats.map((stat) => (
           <div key={stat.label} className="stat-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
-              <div style={getIconBg(stat.color)}>
-                {stat.icon}
-              </div>
-              <span className={'trend-badge ' + (stat.trend.startsWith('+') || stat.trend.startsWith('9') ? 'up' : 'down')}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                marginBottom: '20px',
+              }}
+            >
+              <div style={getIconBg(stat.color)}>{stat.icon}</div>
+              <span
+                className={
+                  'trend-badge ' +
+                  (stat.trend.startsWith('+') || stat.trend.startsWith('9') ? 'up' : 'down')
+                }
+              >
                 {stat.trend}
               </span>
             </div>
@@ -145,12 +196,21 @@ export default function AdminOverview() {
       </div>
 
       {/* Recent Activity Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', marginBottom: '32px' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '2fr 1fr',
+          gap: '20px',
+          marginBottom: '32px',
+        }}
+      >
         {/* Recent Audit Logs */}
         <div className="glass-card">
           <div className="section-header" style={{ padding: '24px 24px 0 24px' }}>
             <div className="section-title">Recent Activity</div>
-            <a href="/admin/audit" className="action-link">View All →</a>
+            <a href="/admin/audit" className="action-link">
+              View All →
+            </a>
           </div>
           <div>
             {data.recent_audit.length === 0 ? (
@@ -160,38 +220,64 @@ export default function AdminOverview() {
               </div>
             ) : (
               data.recent_audit.slice(0, 6).map((log: any, i: number) => (
-                <div key={i} style={{
-                  padding: '16px 24px',
-                  borderBottom: '1px solid var(--border-color)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '16px',
-                  transition: 'background 0.2s',
-                  cursor: 'pointer',
-                }}>
-                  <div style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '10px',
-                    background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(245, 158, 11, 0.1))',
+                <div
+                  key={i}
+                  style={{
+                    padding: '16px 24px',
+                    borderBottom: '1px solid var(--border-color)',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '18px',
-                    flexShrink: 0,
-                  }}>
+                    gap: '16px',
+                    transition: 'background 0.2s',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '10px',
+                      background:
+                        'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(245, 158, 11, 0.1))',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                      flexShrink: 0,
+                    }}
+                  >
                     📌
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px' }}>
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        color: 'var(--text-primary)',
+                        marginBottom: '2px',
+                      }}
+                    >
                       {log.action}
                     </div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: 'var(--text-muted)',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
                       {log.detail || JSON.stringify(log.details)}
                     </div>
                   </div>
                   <div style={{ fontSize: '11px', color: 'var(--text-faint)', flexShrink: 0 }}>
-                    {log.created_at ? new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                    {log.created_at
+                      ? new Date(log.created_at).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })
+                      : ''}
                   </div>
                 </div>
               ))
@@ -201,7 +287,9 @@ export default function AdminOverview() {
 
         {/* Quick Actions */}
         <div className="glass-card" style={{ padding: '24px' }}>
-          <div className="section-title" style={{ marginBottom: '20px' }}>Quick Actions</div>
+          <div className="section-title" style={{ marginBottom: '20px' }}>
+            Quick Actions
+          </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {quickActions.map((action) => (
               <a
@@ -216,12 +304,22 @@ export default function AdminOverview() {
                   padding: '14px 16px',
                 }}
               >
-                <div style={getIconBg('#10b981')}>
-                  {action.icon}
-                </div>
+                <div style={getIconBg('#10b981')}>{action.icon}</div>
                 <span style={{ flex: 1 }}>{action.label}</span>
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ opacity: 0.5 }}>
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <svg
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  style={{ opacity: 0.5 }}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </a>
             ))}
@@ -234,9 +332,7 @@ export default function AdminOverview() {
         <div className="glass-card">
           <div className="section-header" style={{ padding: '24px 24px 0 24px' }}>
             <div className="section-title">Recent Errors</div>
-            <span className="status-badge danger">
-              {data.recent_errors.length} Issues
-            </span>
+            <span className="status-badge danger">{data.recent_errors.length} Issues</span>
           </div>
           <table className="admin-table">
             <thead>
@@ -256,7 +352,13 @@ export default function AdminOverview() {
                       {err.status}
                     </span>
                   </td>
-                  <td style={{ fontFamily: 'monospace', fontSize: '12px', color: 'var(--accent-primary)' }}>
+                  <td
+                    style={{
+                      fontFamily: 'monospace',
+                      fontSize: '12px',
+                      color: 'var(--accent-primary)',
+                    }}
+                  >
                     {err.method} {err.path}
                   </td>
                   <td style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{err.message}</td>
@@ -264,7 +366,10 @@ export default function AdminOverview() {
                     {err.created_at ? new Date(err.created_at).toLocaleString() : '-'}
                   </td>
                   <td>
-                    <button className="btn-secondary" style={{ padding: '4px 12px', fontSize: '11px' }}>
+                    <button
+                      className="btn-secondary"
+                      style={{ padding: '4px 12px', fontSize: '11px' }}
+                    >
                       Resolve
                     </button>
                   </td>

@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Leaf, Droplets, Cloud, Database, Coins, Shield,
-  ArrowLeft, ArrowRight, Sparkles,
+  Leaf,
+  Droplets,
+  Cloud,
+  Database,
+  Coins,
+  Shield,
+  ArrowLeft,
+  ArrowRight,
+  Sparkles,
 } from 'lucide-react';
 import { Card, Button } from '../ui';
 
@@ -89,7 +96,8 @@ export const CarbonJourneyAnimation: React.FC = () => {
   const Icon = step.icon;
 
   const next = () => setCurrentStep((prev) => (prev + 1) % JOURNEY_STEPS.length);
-  const prev = () => setCurrentStep((prev) => (prev - 1 + JOURNEY_STEPS.length) % JOURNEY_STEPS.length);
+  const prev = () =>
+    setCurrentStep((prev) => (prev - 1 + JOURNEY_STEPS.length) % JOURNEY_STEPS.length);
 
   return (
     <Card
@@ -117,8 +125,8 @@ export const CarbonJourneyAnimation: React.FC = () => {
                 i === currentStep
                   ? s.color
                   : i < currentStep
-                  ? `${s.color}80`
-                  : 'var(--color-border)',
+                    ? `${s.color}80`
+                    : 'var(--color-border)',
               transition: 'all 0.3s',
             }}
           />
@@ -207,11 +215,7 @@ export const CarbonJourneyAnimation: React.FC = () => {
 
       {/* Navigation */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Button
-          variant="ghost"
-          onClick={prev}
-          icon={<ArrowRight size={16} />}
-        >
+        <Button variant="ghost" onClick={prev} icon={<ArrowRight size={16} />}>
           قبلی
         </Button>
 
@@ -222,17 +226,10 @@ export const CarbonJourneyAnimation: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <Button
-            variant="ghost"
-            onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-          >
+          <Button variant="ghost" onClick={() => setIsAutoPlaying(!isAutoPlaying)}>
             {isAutoPlaying ? '⏸' : '▶'}
           </Button>
-          <Button
-            variant="primary"
-            onClick={next}
-            icon={<ArrowLeft size={16} />}
-          >
+          <Button variant="primary" onClick={next} icon={<ArrowLeft size={16} />}>
             بعدی
           </Button>
         </div>

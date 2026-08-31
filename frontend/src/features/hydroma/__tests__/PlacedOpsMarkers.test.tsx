@@ -21,8 +21,12 @@ describe('PlacedOpsMarkers Component', () => {
       const terrain: TerrainData = {
         width: 10,
         height: 10,
-        elevation: Array(10).fill(0).map(() => Array(10).fill(50)),
-        moisture: Array(10).fill(0).map(() => Array(10).fill(0.5)),
+        elevation: Array(10)
+          .fill(0)
+          .map(() => Array(10).fill(50)),
+        moisture: Array(10)
+          .fill(0)
+          .map(() => Array(10).fill(0.5)),
         minElevation: 0,
         maxElevation: 100,
       };
@@ -43,8 +47,12 @@ describe('PlacedOpsMarkers Component', () => {
       const terrain: TerrainData = {
         width: 10,
         height: 10,
-        elevation: Array(10).fill(0).map(() => Array(10).fill(50)),
-        moisture: Array(10).fill(0).map(() => Array(10).fill(0.5)),
+        elevation: Array(10)
+          .fill(0)
+          .map(() => Array(10).fill(50)),
+        moisture: Array(10)
+          .fill(0)
+          .map(() => Array(10).fill(0.5)),
         minElevation: 0,
         maxElevation: 100,
       };
@@ -71,8 +79,12 @@ describe('PlacedOpsMarkers Component', () => {
       const terrain: TerrainData = {
         width: 10,
         height: 10,
-        elevation: Array(10).fill(0).map(() => Array(10).fill(50)),
-        moisture: Array(10).fill(0).map(() => Array(10).fill(0.5)),
+        elevation: Array(10)
+          .fill(0)
+          .map(() => Array(10).fill(50)),
+        moisture: Array(10)
+          .fill(0)
+          .map(() => Array(10).fill(0.5)),
         minElevation: 0,
         maxElevation: 100,
       };

@@ -21,15 +21,15 @@ export default function LiveSparkline({
   interval = 2000,
   maxPoints = 20,
 }: LiveSparklineProps) {
-  const [data, setData] = useState(() => 
-    initialData || Array.from({ length: maxPoints }, () => Math.random() * 100)
+  const [data, setData] = useState(
+    () => initialData || Array.from({ length: maxPoints }, () => Math.random() * 100)
   );
 
   useEffect(() => {
     if (!autoUpdate) return;
 
     const intervalId = setInterval(() => {
-      setData(prev => {
+      setData((prev) => {
         const newData = [...prev, Math.random() * 100 + Math.random() * 20 - 10];
         return newData.slice(-maxPoints);
       });

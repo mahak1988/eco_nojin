@@ -10,8 +10,14 @@
 
 import { useMemo } from 'react';
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, Legend,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
 } from 'recharts';
 import { TrendingUp } from 'lucide-react';
 import type { TransactionDataPoint } from '../types';
@@ -22,9 +28,7 @@ interface TransactionChartProps {
   data?: TransactionDataPoint[];
 }
 
-export function TransactionChart({
-  data = DEFAULT_TRANSACTION_HISTORY,
-}: TransactionChartProps) {
+export function TransactionChart({ data = DEFAULT_TRANSACTION_HISTORY }: TransactionChartProps) {
   // Memoize to prevent unnecessary re-renders
   const chartData = useMemo(() => data, [data]);
 

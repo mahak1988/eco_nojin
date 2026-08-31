@@ -18,12 +18,23 @@ export const SimulatorDashboard: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           style={{ marginBottom: '1.5rem' }}
         >
-          <h1 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <h1
+            style={{
+              fontSize: '1.8rem',
+              fontWeight: 700,
+              marginBottom: '0.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.6rem',
+            }}
+          >
             <FlaskConical size={26} color="var(--color-primary)" />
             شبیه‌سازهای علمی HyDroMa
           </h1>
           <p style={{ color: 'var(--color-text-secondary)', margin: 0 }}>
-            زنجیره واقعی مدل‌ها: فرسایش (RUSLE) · کربن (RothC-26.3) · محصول (AquaCrop-OSPy) · آب (Pywr) · سیلاب (HEC-RAS) · بهینه‌سازی (NSGA-II) — با اقلیم ERA5 و خاک SoilGrids. هیچ خروجی ساختگی نمایش داده نمی‌شود.
+            زنجیره واقعی مدل‌ها: فرسایش (RUSLE) · کربن (RothC-26.3) · محصول (AquaCrop-OSPy) · آب
+            (Pywr) · سیلاب (HEC-RAS) · بهینه‌سازی (NSGA-II) — با اقلیم ERA5 و خاک SoilGrids. هیچ
+            خروجی ساختگی نمایش داده نمی‌شود.
           </p>
         </motion.div>
 

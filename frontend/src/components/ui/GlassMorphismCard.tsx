@@ -36,52 +36,52 @@ export const GlassMorphismCard: React.FC<GlassMorphismCardProps> = ({
       }}
     >
       {/* Gradient Orb */}
-      <div style={{
-        position: 'absolute',
-        top: -50,
-        right: -50,
-        width: 200,
-        height: 200,
-        borderRadius: '50%',
-        background: gradient,
-        opacity: 0.1,
-        filter: 'blur(40px)',
-      }} />
+      <div
+        style={{
+          position: 'absolute',
+          top: -50,
+          right: -50,
+          width: 200,
+          height: 200,
+          borderRadius: '50%',
+          background: gradient,
+          opacity: 0.1,
+          filter: 'blur(40px)',
+        }}
+      />
 
       {(title || icon) && (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.75rem',
-          marginBottom: '1.5rem',
-          position: 'relative',
-          zIndex: 1,
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            marginBottom: '1.5rem',
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
           {icon && (
-            <div style={{
-              width: 48,
-              height: 48,
-              borderRadius: 'var(--radius-xl)',
-              background: gradient,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-            }}>
+            <div
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: 'var(--radius-xl)',
+                background: gradient,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+              }}
+            >
               {icon}
             </div>
           )}
-          {title && (
-            <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600 }}>
-              {title}
-            </h3>
-          )}
+          {title && <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600 }}>{title}</h3>}
         </div>
       )}
 
-      <div style={{ position: 'relative', zIndex: 1 }}>
-        {children}
-      </div>
+      <div style={{ position: 'relative', zIndex: 1 }}>{children}</div>
     </motion.div>
   );
 };

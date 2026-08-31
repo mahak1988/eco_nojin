@@ -29,9 +29,7 @@ export function DemStatus() {
         </div>
       )}
 
-      {demError && (
-        <div style={{ fontSize: '11px', color: '#fca5a5' }}>{demError}</div>
-      )}
+      {demError && <div style={{ fontSize: '11px', color: '#fca5a5' }}>{demError}</div>}
     </>
   );
 }

@@ -35,12 +35,7 @@ export interface PlacedOpsMarkersProps {
 // Component
 // ─────────────────────────────────────────────────────────────────────
 
-export function PlacedOpsMarkers({
-  ops,
-  data,
-  selectedId,
-  onSelect,
-}: PlacedOpsMarkersProps) {
+export function PlacedOpsMarkers({ ops, data, selectedId, onSelect }: PlacedOpsMarkersProps) {
   return (
     <group>
       {ops.map((op) => {
@@ -81,9 +76,7 @@ export function PlacedOpsMarkers({
             >
               <div
                 style={{
-                  background: isSelected
-                    ? 'rgba(251, 191, 36, 0.95)'
-                    : 'rgba(139, 92, 246, 0.95)',
+                  background: isSelected ? 'rgba(251, 191, 36, 0.95)' : 'rgba(139, 92, 246, 0.95)',
                   color: 'white',
                   padding: '4px 10px',
                   borderRadius: '6px',

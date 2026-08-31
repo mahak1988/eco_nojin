@@ -9,8 +9,7 @@ import type { ContentFilter } from '../types';
 /** API base URL */
 export const API_BASE =
   (typeof import.meta !== 'undefined' &&
-    (import.meta as unknown as { env?: { VITE_API_BASE?: string } }).env
-      ?.VITE_API_BASE) ||
+    (import.meta as unknown as { env?: { VITE_API_BASE?: string } }).env?.VITE_API_BASE) ||
   'http://localhost:8000/api/v1';
 
 /** API endpoints */
@@ -28,12 +27,7 @@ export const QUERY_KEYS = {
 } as const;
 
 /** Filter options */
-export const FILTER_OPTIONS: ContentFilter[] = [
-  'all',
-  'published',
-  'draft',
-  'scheduled',
-];
+export const FILTER_OPTIONS: ContentFilter[] = ['all', 'published', 'draft', 'scheduled'];
 
 /** Default generate draft topic */
 export const DEFAULT_TOPIC = 'Sustainable Farming';

@@ -16,7 +16,10 @@ const LAYERS = [
   { key: 'erosion', label: 'ریسک فرسایش', icon: <AlertTriangle size={16} />, color: '#ef4444' },
 ];
 
-export const VLLLayerManager: React.FC<VLLLayerManagerProps> = ({ activeLayers, onToggleLayer }) => {
+export const VLLLayerManager: React.FC<VLLLayerManagerProps> = ({
+  activeLayers,
+  onToggleLayer,
+}) => {
   return (
     <Card title="🗺️ لایه‌های GIS" icon={<Layers size={18} />} className="mb-4">
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -53,5 +56,3 @@ export const VLLLayerManager: React.FC<VLLLayerManagerProps> = ({ activeLayers, 
     </Card>
   );
 };
-
-

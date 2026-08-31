@@ -22,25 +22,10 @@ interface OptionsListProps {
   emptyMessage: string;
 }
 
-export function OptionsList({
-  type,
-  options,
-  title,
-  icon,
-  emptyMessage,
-}: OptionsListProps) {
-  const iconBg =
-    type === 'earning'
-      ? 'rgba(245, 158, 11, 0.15)'
-      : 'rgba(139, 92, 246, 0.15)';
-  const iconColor =
-    type === 'earning'
-      ? 'var(--accent-secondary)'
-      : 'var(--accent-purple)';
-  const amountColor =
-    type === 'earning'
-      ? 'var(--accent-primary)'
-      : 'var(--accent-purple)';
+export function OptionsList({ type, options, title, icon, emptyMessage }: OptionsListProps) {
+  const iconBg = type === 'earning' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(139, 92, 246, 0.15)';
+  const iconColor = type === 'earning' ? 'var(--accent-secondary)' : 'var(--accent-purple)';
+  const amountColor = type === 'earning' ? 'var(--accent-primary)' : 'var(--accent-purple)';
   const ItemIcon = type === 'earning' ? Leaf : Gift;
   const prefix = type === 'earning' ? '+' : '';
 
@@ -57,9 +42,7 @@ export function OptionsList({
           </div>
         ) : (
           options.map((option, i) => {
-            const uniqueKey = option.category
-              ? `${type}-${option.category}-${i}`
-              : `${type}-${i}`;
+            const uniqueKey = option.category ? `${type}-${option.category}-${i}` : `${type}-${i}`;
 
             return (
               <div
@@ -104,11 +87,10 @@ export function OptionsList({
                       fontSize: '16px',
                     }}
                   >
-                    {prefix}{option.eco_amount ?? 0}
+                    {prefix}
+                    {option.eco_amount ?? 0}
                   </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-faint)' }}>
-                    tokens
-                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-faint)' }}>tokens</div>
                 </div>
               </div>
             );

@@ -22,14 +22,7 @@ import { useHydromaStore } from '../store';
 // ─────────────────────────────────────────────────────────────────────
 
 /** Polygon color palette */
-const POLYGON_COLORS = [
-  '#10b981',
-  '#f59e0b',
-  '#3b82f6',
-  '#8b5cf6',
-  '#ec4899',
-  '#06b6d4',
-];
+const POLYGON_COLORS = ['#10b981', '#f59e0b', '#3b82f6', '#8b5cf6', '#ec4899', '#06b6d4'];
 
 /** Scale factor: world units → m² (20 units ≈ 1km → area factor) */
 const AREA_SCALE_FACTOR = 2500;
@@ -42,9 +35,7 @@ const AREA_SCALE_FACTOR = 2500;
  * Calculate polygon area using Shoelace formula
  * @see https://en.wikipedia.org/wiki/Shoelace_formula
  */
-function calculateShoelaceArea(
-  points: Array<{ x: number; y: number }>
-): number {
+function calculateShoelaceArea(points: Array<{ x: number; y: number }>): number {
   let area = 0;
   const n = points.length;
 
@@ -61,12 +52,7 @@ function calculateShoelaceArea(
 // ─────────────────────────────────────────────────────────────────────
 
 export function usePolygonDrawing(isFa: boolean) {
-  const {
-    currentDrawing,
-    polygons,
-    addPolygon,
-    clearDrawing,
-  } = useHydromaStore();
+  const { currentDrawing, polygons, addPolygon, clearDrawing } = useHydromaStore();
 
   /**
    * Finish current drawing and create polygon
@@ -86,9 +72,7 @@ export function usePolygonDrawing(isFa: boolean) {
     const polygon: Polygon = {
       id: `poly-${Date.now()}`,
       points: currentDrawing,
-      name: isFa
-        ? `محدوده ${polygons.length + 1}`
-        : `Area ${polygons.length + 1}`,
+      name: isFa ? `محدوده ${polygons.length + 1}` : `Area ${polygons.length + 1}`,
       color,
       area,
     };

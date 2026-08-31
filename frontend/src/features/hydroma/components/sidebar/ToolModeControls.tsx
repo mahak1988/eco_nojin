@@ -25,9 +25,7 @@ export function ToolModeControls() {
 
   return (
     <div style={sidebarStyles.section}>
-      <div style={sidebarStyles.label}>
-        {isFa ? 'حالت ابزار' : 'Tool Mode'}
-      </div>
+      <div style={sidebarStyles.label}>{isFa ? 'حالت ابزار' : 'Tool Mode'}</div>
 
       {/* Main tool buttons */}
       <div style={sidebarStyles.column}>

@@ -19,7 +19,7 @@ const REQUEST_TIMEOUT_MS = 60_000;
 export async function fetchRealLand(
   lat: number,
   lon: number,
-  analysisDate?: string,
+  analysisDate?: string
 ): Promise<RealLandResult> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);

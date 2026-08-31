@@ -11,12 +11,7 @@
 // ─────────────────────────────────────────────────────────────────────
 
 /** All possible order statuses */
-export type OrderStatus =
-  | 'pending'
-  | 'confirmed'
-  | 'completed'
-  | 'cancelled'
-  | 'unknown';
+export type OrderStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'unknown';
 
 // ─────────────────────────────────────────────────────────────────────
 // Core Entities

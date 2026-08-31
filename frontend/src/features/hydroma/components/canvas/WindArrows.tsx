@@ -68,21 +68,13 @@ export function WindArrows({ data, direction, speed }: WindArrowsProps) {
           {/* Arrow shaft (cylinder) */}
           <mesh position={[0, 0, len / 2]} rotation={[Math.PI / 2, 0, 0]}>
             <cylinderGeometry args={[0.04, 0.04, len, 6]} />
-            <meshStandardMaterial
-              color="#a855f7"
-              emissive="#a855f7"
-              emissiveIntensity={0.3}
-            />
+            <meshStandardMaterial color="#a855f7" emissive="#a855f7" emissiveIntensity={0.3} />
           </mesh>
 
           {/* Arrow head (cone) */}
           <mesh position={[0, 0, len]} rotation={[Math.PI / 2, 0, 0]}>
             <coneGeometry args={[0.12, 0.3, 8]} />
-            <meshStandardMaterial
-              color="#a855f7"
-              emissive="#a855f7"
-              emissiveIntensity={0.3}
-            />
+            <meshStandardMaterial color="#a855f7" emissive="#a855f7" emissiveIntensity={0.3} />
           </mesh>
         </group>
       ))}

@@ -18,7 +18,8 @@ export const CropVisualization: React.FC<CropVisualizationProps> = ({
   cols = 20,
   growthStage = 0.5,
   cropType = 'wheat',
-  ndvi = 0.7 }) => {
+  ndvi = 0.7,
+}) => {
   const groupRef = useRef<THREE.Group>(null);
   const timeRef = useRef(0);
 
@@ -43,9 +44,12 @@ export const CropVisualization: React.FC<CropVisualizationProps> = ({
         const height = growthStage * variation;
 
         let color = new THREE.Color();
-        if (ndvi < 0.3) color.setHex(0x8b7355); // خشک
-        else if (ndvi < 0.5) color.setHex(0xa0a050); // ضعیف
-        else if (ndvi < 0.7) color.setHex(0x90c966); // متوسط
+        if (ndvi < 0.3)
+          color.setHex(0x8b7355); // خشک
+        else if (ndvi < 0.5)
+          color.setHex(0xa0a050); // ضعیف
+        else if (ndvi < 0.7)
+          color.setHex(0x90c966); // متوسط
         else color.setHex(0x3d8b3d); // سالم
 
         items.push({ x, z, height, color, key: `${r}-${c}` });

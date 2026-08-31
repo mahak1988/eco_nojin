@@ -2,12 +2,7 @@
  * Formatters Tests
  */
 import { describe, it, expect } from 'vitest';
-import {
-  formatUSD,
-  formatCrypto,
-  truncateAddress,
-  truncateHash,
-} from '../utils/formatters';
+import { formatUSD, formatCrypto, truncateAddress, truncateHash } from '../utils/formatters';
 
 describe('formatters', () => {
   describe('formatUSD', () => {

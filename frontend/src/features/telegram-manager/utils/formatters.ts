@@ -7,10 +7,7 @@
  */
 
 /** Format large numbers with locale */
-export function formatNumber(
-  value: number,
-  locale: string = 'en-US'
-): string {
+export function formatNumber(value: number, locale: string = 'en-US'): string {
   return value.toLocaleString(locale);
 }
 
@@ -20,10 +17,7 @@ export function formatNumber(
  * Fixed: Uses isNaN() to detect invalid dates (new Date('invalid')
  * doesn't throw, it returns Invalid Date).
  */
-export function formatDateTime(
-  dateString: string,
-  locale: string = 'en-US'
-): string {
+export function formatDateTime(dateString: string, locale: string = 'en-US'): string {
   if (!dateString) return dateString;
   const date = new Date(dateString);
   if (isNaN(date.getTime())) return dateString; // Invalid date → return as-is

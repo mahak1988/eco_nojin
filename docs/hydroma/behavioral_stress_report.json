@@ -1,0 +1,127 @@
+{
+  "generated_at": "2026-08-31T05:10:04.914385",
+  "test_type": "Behavioral Stress Test (New Paradigm)",
+  "paradigm": "تست رفتار مدیریت شرایط بحرانی به جای گزارش شرایط",
+  "statistics": {
+    "total": 16,
+    "passed": 15,
+    "failed": 1,
+    "critical": 1,
+    "warning": 0
+  },
+  "pass_rate_percent": 93.8,
+  "results": [
+    {
+      "category": "INPUT_VALIDATION",
+      "test": "مدیریت None",
+      "passed": true,
+      "message": "None به مقدار پیش‌فرض تبدیل شد: 15.0",
+      "severity": "critical"
+    },
+    {
+      "category": "INPUT_VALIDATION",
+      "test": "مدیریت NaN",
+      "passed": true,
+      "message": "NaN به مقدار پیش‌فرض تبدیل شد: 20.0",
+      "severity": "critical"
+    },
+    {
+      "category": "INPUT_VALIDATION",
+      "test": "مدیریت Infinity",
+      "passed": true,
+      "message": "Infinity به کران فیزیکی تبدیل شد: 56.7",
+      "severity": "critical"
+    },
+    {
+      "category": "INPUT_VALIDATION",
+      "test": "مدیریت بارش منفی",
+      "passed": true,
+      "message": "بارش منفی به صفر محدود شد: 0.0",
+      "severity": "critical"
+    },
+    {
+      "category": "INPUT_VALIDATION",
+      "test": "مدیریت بارش بسیار بزرگ",
+      "passed": true,
+      "message": "بارش بزرگ به کران محدود شد: 12000.0",
+      "severity": "critical"
+    },
+    {
+      "category": "INPUT_VALIDATION",
+      "test": "پاک‌سازی دیکشنری",
+      "passed": true,
+      "message": "دیکشنری کثیف پاک‌سازی شد: {'temp': 15, 'rain': 300, 'ec': 0.0, 'ph': 14.0}",
+      "severity": "critical"
+    },
+    {
+      "category": "MULTI_STRESS",
+      "test": "شرایط عادی → استرس ملایم",
+      "passed": true,
+      "message": "شرایط عادی به درستی استرس ملایم داد: 0.0",
+      "severity": "critical"
+    },
+    {
+      "category": "MULTI_STRESS",
+      "test": "شرایط بحرانی → استرس بحرانی",
+      "passed": true,
+      "message": "شرایط بحرانی به درستی شناسایی شد: بحرانی (1.021)",
+      "severity": "critical"
+    },
+    {
+      "category": "MULTI_STRESS",
+      "test": "ساختار خروجی کامل",
+      "passed": true,
+      "message": "تمام فیلدهای لازم موجود است",
+      "severity": "critical"
+    },
+    {
+      "category": "FLOOD_SLOPE",
+      "test": "سیل+شیب بحرانی → شناسایی صحیح",
+      "passed": true,
+      "message": "سیل+شیب به درستی شناسایی شد: بحرانی (ریسک فرسایش: 1.0)",
+      "severity": "critical"
+    },
+    {
+      "category": "FLOOD_SLOPE",
+      "test": "شرایط عادی → ریسک پایین",
+      "passed": true,
+      "message": "شرایط عادی به درستی ریسک پایین داد: 0.0",
+      "severity": "critical"
+    },
+    {
+      "category": "FROST_WIND",
+      "test": "یخبندان+باد بحرانی → شناسایی صحیح",
+      "passed": true,
+      "message": "یخبندان+باد به درستی شناسایی شد: بحرانی (سرمای موثر ×2.0)",
+      "severity": "critical"
+    },
+    {
+      "category": "SALINITY_PH",
+      "test": "شوری+قلیائیت → ریسک سدیمی شدن",
+      "passed": true,
+      "message": "ریسک سدیمی شدن شناسایی شد: 1.307 (نیاز فوری به گچ و زهکشی)",
+      "severity": "critical"
+    },
+    {
+      "category": "SALINITY_PH",
+      "test": "شوری ارومیه (۳۰۰) → مدیریت بدون کرش",
+      "passed": false,
+      "message": "مدیریت ناموفق: {'salinity_stress': 18.5, 'alkalinity_stress': 0.127, 'sodification_risk': 2.355, 'severity': 'بحرانی', 'recommendation': 'نیاز فوری به گچ و زهکشی'}",
+      "severity": "critical"
+    },
+    {
+      "category": "KB_DEFAULTS",
+      "test": "پوشش مقادیر پیش‌فرض",
+      "passed": true,
+      "message": "104/104 شاخص مقدار پیش‌فرض دارند (100%)",
+      "severity": "critical"
+    },
+    {
+      "category": "KB_DEFAULTS",
+      "test": "حذف فرمول‌های انتزاعی",
+      "passed": true,
+      "message": "فقط 0 فرمول انتزاعی باقی مانده",
+      "severity": "critical"
+    }
+  ]
+}

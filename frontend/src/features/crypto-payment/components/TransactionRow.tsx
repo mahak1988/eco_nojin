@@ -31,11 +31,7 @@ function CryptoIcon({ type }: { type: CryptoType }) {
 
 function ConfirmationIndicator({ count }: { count: number }) {
   const color =
-    count >= CONFIRMED_THRESHOLD
-      ? '#10b981'
-      : count >= PENDING_THRESHOLD
-      ? '#f59e0b'
-      : '#ef4444';
+    count >= CONFIRMED_THRESHOLD ? '#10b981' : count >= PENDING_THRESHOLD ? '#f59e0b' : '#ef4444';
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -67,12 +63,8 @@ export function TransactionRow({ tx, index }: TransactionRowProps) {
           <span style={{ fontWeight: 600 }}>{tx.type.toUpperCase()}</span>
         </div>
       </td>
-      <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>
-        {tx.amount.toFixed(4)}
-      </td>
-      <td style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>
-        {formatUSD(tx.usdValue)}
-      </td>
+      <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>{tx.amount.toFixed(4)}</td>
+      <td style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>{formatUSD(tx.usdValue)}</td>
       <td
         style={{
           fontFamily: 'monospace',
@@ -88,19 +80,13 @@ export function TransactionRow({ tx, index }: TransactionRowProps) {
       <td>
         <span
           className={`status-badge ${
-            tx.status === 'confirmed'
-              ? 'success'
-              : tx.status === 'pending'
-              ? 'warning'
-              : 'danger'
+            tx.status === 'confirmed' ? 'success' : tx.status === 'pending' ? 'warning' : 'danger'
           }`}
         >
           {t(`crypto.${tx.status}`)}
         </span>
       </td>
-      <td style={{ fontSize: '12px', color: 'var(--text-faint)' }}>
-        {formatTime(tx.timestamp)}
-      </td>
+      <td style={{ fontSize: '12px', color: 'var(--text-faint)' }}>{formatTime(tx.timestamp)}</td>
     </motion.tr>
   );
 }

@@ -15,7 +15,10 @@ const DEFAULT_LON = 51.5;
  * کارت «داده واقعی زمین» — اقلیم (Open-Meteo ERA5) + خاک (SoilGrids) + ماهواره (CDSE).
  * بدون fallback ساختگی: وضعیت ماهواره صادقانه (credentials_required) نمایش داده می‌شود.
  */
-export const RealLandSummaryCard: React.FC<RealLandSummaryCardProps> = ({ onLoaded, onCoordsChange }) => {
+export const RealLandSummaryCard: React.FC<RealLandSummaryCardProps> = ({
+  onLoaded,
+  onCoordsChange,
+}) => {
   const [lat, setLat] = useState(DEFAULT_LAT);
   const [lon, setLon] = useState(DEFAULT_LON);
   const [result, setResult] = useState<RealLandResult | null>(null);
@@ -37,7 +40,7 @@ export const RealLandSummaryCard: React.FC<RealLandSummaryCardProps> = ({ onLoad
         setLoading(false);
       }
     },
-    [onLoaded],
+    [onLoaded]
   );
 
   useEffect(() => {
@@ -50,8 +53,23 @@ export const RealLandSummaryCard: React.FC<RealLandSummaryCardProps> = ({ onLoad
 
   return (
     <div className="card" style={{ padding: '1.5rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '1rem',
+        }}
+      >
+        <h3
+          style={{
+            fontSize: '1.1rem',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+          }}
+        >
           <MapPin size={18} color="var(--color-primary)" /> داده واقعی زمین
         </h3>
         <span className="badge badge-success">۱۰۰٪ واقعی</span>
@@ -65,7 +83,15 @@ export const RealLandSummaryCard: React.FC<RealLandSummaryCardProps> = ({ onLoad
           onChange={(e) => setLat(Number(e.target.value))}
           placeholder="عرض جغرافیایی"
           aria-label="عرض جغرافیایی"
-          style={{ flex: 1, padding: '0.5rem 0.75rem', borderRadius: 10, border: '1px solid var(--color-border)', background: 'var(--color-bg)', color: 'var(--color-text)', fontSize: '0.9rem' }}
+          style={{
+            flex: 1,
+            padding: '0.5rem 0.75rem',
+            borderRadius: 10,
+            border: '1px solid var(--color-border)',
+            background: 'var(--color-bg)',
+            color: 'var(--color-text)',
+            fontSize: '0.9rem',
+          }}
         />
         <input
           type="number"
@@ -74,13 +100,30 @@ export const RealLandSummaryCard: React.FC<RealLandSummaryCardProps> = ({ onLoad
           onChange={(e) => setLon(Number(e.target.value))}
           placeholder="طول جغرافیایی"
           aria-label="طول جغرافیایی"
-          style={{ flex: 1, padding: '0.5rem 0.75rem', borderRadius: 10, border: '1px solid var(--color-border)', background: 'var(--color-bg)', color: 'var(--color-text)', fontSize: '0.9rem' }}
+          style={{
+            flex: 1,
+            padding: '0.5rem 0.75rem',
+            borderRadius: 10,
+            border: '1px solid var(--color-border)',
+            background: 'var(--color-bg)',
+            color: 'var(--color-text)',
+            fontSize: '0.9rem',
+          }}
         />
         <button
           onClick={() => void load(lat, lon)}
           disabled={loading}
           className="btn btn-primary"
-          style={{ padding: '0.5rem 1rem', borderRadius: 10, border: 'none', cursor: 'pointer', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+          style={{
+            padding: '0.5rem 1rem',
+            borderRadius: 10,
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '0.9rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.35rem',
+          }}
         >
           <RefreshCw size={14} className={loading ? 'spin' : ''} /> بارگذاری
         </button>
@@ -89,7 +132,13 @@ export const RealLandSummaryCard: React.FC<RealLandSummaryCardProps> = ({ onLoad
       {error && <p style={{ color: '#ef4444', fontSize: '0.9rem' }}>{error}</p>}
 
       {result && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.75rem' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+            gap: '0.75rem',
+          }}
+        >
           <div className="stat-mini">
             <CloudRain size={16} color="#3b82f6" />
             <span>بارش سالانه</span>
@@ -103,17 +152,30 @@ export const RealLandSummaryCard: React.FC<RealLandSummaryCardProps> = ({ onLoad
           <div className="stat-mini">
             <Droplets size={16} color="#10b981" />
             <span>بافت خاک / SOC</span>
-            <strong>{soil?.texture ?? '—'} · {soil?.soc_g_kg ? `${(soil.soc_g_kg / 10).toFixed(2)}٪` : '—'}</strong>
+            <strong>
+              {soil?.texture ?? '—'} ·{' '}
+              {soil?.soc_g_kg ? `${(soil.soc_g_kg / 10).toFixed(2)}٪` : '—'}
+            </strong>
           </div>
           <div className="stat-mini">
             <Layers size={16} color="#8b5cf6" />
             <span>ماهواره (CDSE)</span>
-            <strong>{satStatus === 'ok' ? '✅ آماده' : satStatus === 'credentials_required' ? '🔑 نیاز به اعتبار' : '—'}</strong>
+            <strong>
+              {satStatus === 'ok'
+                ? '✅ آماده'
+                : satStatus === 'credentials_required'
+                  ? '🔑 نیاز به اعتبار'
+                  : '—'}
+            </strong>
           </div>
         </div>
       )}
 
-      {loading && <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>در حال دریافت از Open-Meteo / SoilGrids / CDSE…</p>}
+      {loading && (
+        <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
+          در حال دریافت از Open-Meteo / SoilGrids / CDSE…
+        </p>
+      )}
 
       <style>{`
         .stat-mini { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.75rem; border-radius: 12px; background: var(--color-bg); border: 1px solid var(--color-border); font-size: 0.8rem; color: var(--color-text-secondary); }

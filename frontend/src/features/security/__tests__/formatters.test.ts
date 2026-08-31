@@ -2,11 +2,7 @@
  * Security Formatters Tests
  */
 import { describe, it, expect } from 'vitest';
-import {
-  getScoreColor,
-  formatEventTime,
-  formatSuccessRate,
-} from '../utils/formatters';
+import { getScoreColor, formatEventTime, formatSuccessRate } from '../utils/formatters';
 
 describe('formatters', () => {
   describe('getScoreColor', () => {

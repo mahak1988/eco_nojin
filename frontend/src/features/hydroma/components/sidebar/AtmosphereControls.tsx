@@ -21,20 +21,12 @@ export function AtmosphereControls() {
 
   return (
     <div style={sidebarStyles.section}>
-      <div style={sidebarStyles.label}>
-        {isFa ? 'اقلیم و دوربین' : 'Atmosphere & Camera'}
-      </div>
+      <div style={sidebarStyles.label}>{isFa ? 'اقلیم و دوربین' : 'Atmosphere & Camera'}</div>
       <div style={sidebarStyles.grid2}>
-        <button
-          onClick={toggleRain}
-          style={sidebarStyles.button(rainOn, '#0284c7')}
-        >
+        <button onClick={toggleRain} style={sidebarStyles.button(rainOn, '#0284c7')}>
           {isFa ? 'باران' : 'Rain'}
         </button>
-        <button
-          onClick={toggleTour}
-          style={sidebarStyles.button(tourOn, '#7c3aed')}
-        >
+        <button onClick={toggleTour} style={sidebarStyles.button(tourOn, '#7c3aed')}>
           {isFa ? 'تور دوربین' : 'Camera Tour'}
         </button>
       </div>

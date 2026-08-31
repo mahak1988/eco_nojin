@@ -7,8 +7,14 @@
  */
 
 import {
-  Wallet, TrendingUp, Coins, Gift, Clock,
-  ArrowUpRight, ArrowDownRight, AlertCircle,
+  Wallet,
+  TrendingUp,
+  Coins,
+  Gift,
+  Clock,
+  ArrowUpRight,
+  ArrowDownRight,
+  AlertCircle,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { WalletStats } from '../types';
@@ -106,15 +112,10 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
     <div className="grid-4col">
       {cards.map((card, i) => (
         <div key={i} className="metric-card">
-          <div
-            className="metric-icon"
-            style={{ background: card.iconBg, color: card.iconColor }}
-          >
+          <div className="metric-icon" style={{ background: card.iconBg, color: card.iconColor }}>
             {card.icon}
           </div>
-          <div className="metric-label">
-            {t(card.labelKey, card.labelFallback)}
-          </div>
+          <div className="metric-label">{t(card.labelKey, card.labelFallback)}</div>
           <div className="metric-value" style={{ fontSize: card.fontSize }}>
             {card.value}
           </div>

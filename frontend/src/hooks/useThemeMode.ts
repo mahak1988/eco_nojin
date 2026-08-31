@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 export type ThemeMode = 'light' | 'dark';
 
 export function useThemeMode(): ThemeMode {
-  const [mode, setMode] = useState<ThemeMode>(() =>
-    (localStorage.getItem('theme') as ThemeMode) || 'light'
+  const [mode, setMode] = useState<ThemeMode>(
+    () => (localStorage.getItem('theme') as ThemeMode) || 'light'
   );
   useEffect(() => {
     const h = (e: Event) => {

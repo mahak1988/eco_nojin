@@ -19,7 +19,8 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ theme, onToggle }) => 
         width: 40,
         height: 40,
         padding: 0,
-        borderRadius: 'var(--radius-full)' }}
+        borderRadius: 'var(--radius-full)',
+      }}
     >
       <motion.div
         initial={false}

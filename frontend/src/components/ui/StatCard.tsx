@@ -15,14 +15,16 @@ export const StatCard: React.FC<StatCardProps> = ({
   value,
   change,
   icon,
-  color = 'primary' }) => {
+  color = 'primary',
+}) => {
   const colorMap = {
     primary: 'var(--color-primary)',
     accent: 'var(--color-accent)',
     success: 'var(--color-success)',
     warning: 'var(--color-warning)',
     error: 'var(--color-error)',
-    info: 'var(--color-info)' };
+    info: 'var(--color-info)',
+  };
 
   const bgColor = colorMap[color];
   const isPositive = change && change > 0;
@@ -40,9 +42,7 @@ export const StatCard: React.FC<StatCardProps> = ({
           <p style={{ fontSize: '0.875rem', color: 'var(--color-text-tertiary)', margin: 0 }}>
             {title}
           </p>
-          <h2 style={{ fontSize: '2rem', fontWeight: 700, margin: '0.5rem 0' }}>
-            {value}
-          </h2>
+          <h2 style={{ fontSize: '2rem', fontWeight: 700, margin: '0.5rem 0' }}>{value}</h2>
           {change !== undefined && (
             <div
               style={{
@@ -50,7 +50,8 @@ export const StatCard: React.FC<StatCardProps> = ({
                 alignItems: 'center',
                 gap: '0.25rem',
                 fontSize: '0.875rem',
-                color: isPositive ? 'var(--color-success)' : 'var(--color-error)' }}
+                color: isPositive ? 'var(--color-success)' : 'var(--color-error)',
+              }}
             >
               {isPositive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
               <span>{Math.abs(change)}%</span>
@@ -67,7 +68,8 @@ export const StatCard: React.FC<StatCardProps> = ({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: bgColor }}
+              color: bgColor,
+            }}
           >
             {icon}
           </div>

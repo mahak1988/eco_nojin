@@ -24,8 +24,7 @@ export function useTranslateItem() {
   });
 
   return {
-    translate: (id: string, request: TranslateRequest) =>
-      mutation.mutate({ id, request }),
+    translate: (id: string, request: TranslateRequest) => mutation.mutate({ id, request }),
     isPending: mutation.isPending,
     isError: mutation.isError,
     error: mutation.error,

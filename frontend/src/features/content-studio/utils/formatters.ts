@@ -15,10 +15,7 @@ export function truncateId(
 }
 
 /** Format date for display */
-export function formatDate(
-  dateString: string | undefined,
-  fallback: string = '-'
-): string {
+export function formatDate(dateString: string | undefined, fallback: string = '-'): string {
   if (!dateString) return fallback;
   try {
     return new Date(dateString).toLocaleDateString();

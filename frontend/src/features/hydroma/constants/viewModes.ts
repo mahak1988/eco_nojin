@@ -21,7 +21,10 @@ export const VIEW_MODES: ViewModeDef[] = [
 /**
  * Camera positions for each view mode
  */
-export const VIEW_MODE_POSITIONS: Record<string, { pos: [number, number, number]; lookAt: [number, number, number] }> = {
+export const VIEW_MODE_POSITIONS: Record<
+  string,
+  { pos: [number, number, number]; lookAt: [number, number, number] }
+> = {
   '3d': { pos: [25, 22, 25], lookAt: [0, 0, 0] },
   '2d-top': { pos: [0, 30, 0.1], lookAt: [0, 0, 0] },
   '2d-side': { pos: [25, 4, 0], lookAt: [0, 0, 0] },

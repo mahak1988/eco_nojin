@@ -55,7 +55,8 @@ function Metric({ label, value, unit }: { label: string; value: React.ReactNode;
     >
       <span style={{ opacity: 0.75 }}>{label}</span>
       <strong>
-        {value ?? '—'} {unit ? <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>{unit}</span> : null}
+        {value ?? '—'}{' '}
+        {unit ? <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>{unit}</span> : null}
       </strong>
     </div>
   );
@@ -83,7 +84,7 @@ export const RealLandLoader: React.FC<RealLandLoaderProps> = ({ onLoaded }) => {
       setError(
         e instanceof Error
           ? `خطا در دریافت داده واقعی: ${e.message} — مطمئن شوید سرور بک‌اند (پورت ۸۰۰۰) روشن است.`
-          : 'خطای ناشناخته در دریافت داده واقعی',
+          : 'خطای ناشناخته در دریافت داده واقعی'
       );
     } finally {
       setLoading(false);
@@ -167,11 +168,21 @@ export const RealLandLoader: React.FC<RealLandLoaderProps> = ({ onLoaded }) => {
       )}
 
       {result && !error && (
-        <div style={{ marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <div
+          style={{ marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}
+        >
           {/* Source badges */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-            <Badge icon={<Satellite size={12} />} label="ماهواره Copernicus (CDSE)" badge={satBadge} />
-            <Badge icon={<CloudRain size={12} />} label="اقلیم ERA5 (Open-Meteo)" badge={cliBadge} />
+            <Badge
+              icon={<Satellite size={12} />}
+              label="ماهواره Copernicus (CDSE)"
+              badge={satBadge}
+            />
+            <Badge
+              icon={<CloudRain size={12} />}
+              label="اقلیم ERA5 (Open-Meteo)"
+              badge={cliBadge}
+            />
             <Badge icon={<Layers size={12} />} label="خاک SoilGrids (ISRIC)" badge={soilBadge} />
           </div>
 
@@ -187,10 +198,16 @@ export const RealLandLoader: React.FC<RealLandLoaderProps> = ({ onLoaded }) => {
               }}
             >
               برای داده واقعی ماهواره، در{' '}
-              <a href="https://dataspace.copernicus.eu" target="_blank" rel="noreferrer" style={{ color: '#b45309', fontWeight: 600 }}>
+              <a
+                href="https://dataspace.copernicus.eu"
+                target="_blank"
+                rel="noreferrer"
+                style={{ color: '#b45309', fontWeight: 600 }}
+              >
                 dataspace.copernicus.eu
               </a>{' '}
-              رایگان ثبت‌نام کنید و CDSE_CLIENT_ID / CDSE_CLIENT_SECRET را در فایل <code>.env</code> بک‌اند قرار دهید. اقلیم و خاک هم‌اکنون واقعی هستند.
+              رایگان ثبت‌نام کنید و CDSE_CLIENT_ID / CDSE_CLIENT_SECRET را در فایل <code>.env</code>{' '}
+              بک‌اند قرار دهید. اقلیم و خاک هم‌اکنون واقعی هستند.
             </div>
           )}
 
@@ -210,7 +227,11 @@ export const RealLandLoader: React.FC<RealLandLoaderProps> = ({ onLoaded }) => {
               <Metric label="بارش سالانه" value={cli?.annual_rainfall_mm?.toFixed(0)} unit="mm" />
               <Metric label="دمای میانگین" value={cli?.avg_temp_c?.toFixed(1)} unit="°C" />
               <Metric label="ET₀ سالانه" value={cli?.annual_et0_mm?.toFixed(0)} unit="mm" />
-              <Metric label="آخرین بارش" value={cli?.latest?.precipitation_mm?.toFixed(1)} unit="mm" />
+              <Metric
+                label="آخرین بارش"
+                value={cli?.latest?.precipitation_mm?.toFixed(1)}
+                unit="mm"
+              />
             </div>
           )}
 
@@ -231,7 +252,8 @@ export const RealLandLoader: React.FC<RealLandLoaderProps> = ({ onLoaded }) => {
           )}
 
           <div style={{ fontSize: '0.7rem', opacity: 0.6, textAlign: 'center' }}>
-            همه منابع رایگان — {result.summary.all_real ? '✅ ۱۰۰٪ داده واقعی' : 'منابع واقعی: اقلیم + خاک'}
+            همه منابع رایگان —{' '}
+            {result.summary.all_real ? '✅ ۱۰۰٪ داده واقعی' : 'منابع واقعی: اقلیم + خاک'}
           </div>
         </div>
       )}

@@ -10,13 +10,7 @@ interface ModalProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
-export const Modal: React.FC<ModalProps> = ({
-  isOpen,
-  onClose,
-  title,
-  children,
-  size = 'md',
-}) => {
+export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, size = 'md' }) => {
   const sizes = {
     sm: 400,
     md: 600,
@@ -76,9 +70,7 @@ export const Modal: React.FC<ModalProps> = ({
                   justifyContent: 'space-between',
                 }}
               >
-                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600 }}>
-                  {title}
-                </h2>
+                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600 }}>{title}</h2>
                 <button
                   onClick={onClose}
                   className="btn btn-ghost"
@@ -90,9 +82,7 @@ export const Modal: React.FC<ModalProps> = ({
             )}
 
             {/* Content */}
-            <div style={{ padding: '1.5rem', overflowY: 'auto', flex: 1 }}>
-              {children}
-            </div>
+            <div style={{ padding: '1.5rem', overflowY: 'auto', flex: 1 }}>{children}</div>
           </motion.div>
         </>
       )}

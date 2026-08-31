@@ -2,11 +2,7 @@
  * Order Status Tests
  */
 import { describe, it, expect } from 'vitest';
-import {
-  isPendingOrder,
-  isCompletedOrder,
-  normalizeOrderStatus,
-} from '../constants/orderStatus';
+import { isPendingOrder, isCompletedOrder, normalizeOrderStatus } from '../constants/orderStatus';
 
 describe('orderStatus', () => {
   describe('isPendingOrder', () => {

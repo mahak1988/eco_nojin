@@ -35,11 +35,7 @@ export function WalletCard({ wallet, copiedId, onCopy }: WalletCardProps) {
   const meta = WALLET_META[wallet.type];
 
   return (
-    <motion.div
-      className="glass-card"
-      style={{ padding: '24px' }}
-      whileHover={{ scale: 1.02 }}
-    >
+    <motion.div className="glass-card" style={{ padding: '24px' }} whileHover={{ scale: 1.02 }}>
       {/* Header */}
       <div
         style={{
@@ -61,9 +57,7 @@ export function WalletCard({ wallet, copiedId, onCopy }: WalletCardProps) {
             >
               {wallet.type.toUpperCase()}
             </div>
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-              {t(meta.i18nKey)}
-            </div>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{t(meta.i18nKey)}</div>
           </div>
         </div>
         <button

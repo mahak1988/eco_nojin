@@ -66,7 +66,7 @@ export const ENGINEERING_OPS: EngineeringOp[] = [
  * Get operation by ID
  */
 export const getEngineeringOp = (id: string): EngineeringOp | undefined =>
-  ENGINEERING_OPS.find(op => op.id === id);
+  ENGINEERING_OPS.find((op) => op.id === id);
 
 /**
  * Operations that reduce erosion (trigger RUSLE calculation)

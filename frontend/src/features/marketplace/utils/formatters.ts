@@ -14,10 +14,7 @@ export function formatCurrency(
 }
 
 /** Get order amount (handles total vs amount field) */
-export function getOrderAmount(order: {
-  total?: number;
-  amount?: number;
-}): number {
+export function getOrderAmount(order: { total?: number; amount?: number }): number {
   return order.total ?? order.amount ?? 0;
 }
 

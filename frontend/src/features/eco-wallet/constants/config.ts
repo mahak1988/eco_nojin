@@ -11,8 +11,7 @@ import type { ChartConfig } from '../types';
 /** API base URL (from env or fallback) */
 export const API_BASE =
   (typeof import.meta !== 'undefined' &&
-    (import.meta as unknown as { env?: { VITE_API_BASE?: string } }).env
-      ?.VITE_API_BASE) ||
+    (import.meta as unknown as { env?: { VITE_API_BASE?: string } }).env?.VITE_API_BASE) ||
   'http://localhost:8000/api/v1';
 
 /** API endpoints */

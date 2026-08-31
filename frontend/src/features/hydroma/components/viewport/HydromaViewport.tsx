@@ -34,13 +34,7 @@ export function HydromaViewport() {
 
       <div style={{ flex: 1, position: 'relative', minHeight: '500px' }}>
         <TerrainMeshErrorBoundary>
-          {terrain ? (
-            <SceneContent />
-          ) : demLoading ? (
-            <LoadingView />
-          ) : (
-            <EmptyView />
-          )}
+          {terrain ? <SceneContent /> : demLoading ? <LoadingView /> : <EmptyView />}
         </TerrainMeshErrorBoundary>
       </div>
     </div>

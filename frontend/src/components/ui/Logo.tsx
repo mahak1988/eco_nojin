@@ -10,7 +10,8 @@ export const Logo: React.FC<LogoProps> = ({ size = 'md', showSubtitle = true }) 
   const sizes = {
     sm: { eco: '1.25rem', hydro: '1.25rem', sub: '0.625rem' },
     md: { eco: '1.5rem', hydro: '1.5rem', sub: '0.75rem' },
-    lg: { eco: '2.5rem', hydro: '2.5rem', sub: '1rem' } };
+    lg: { eco: '2.5rem', hydro: '2.5rem', sub: '1rem' },
+  };
 
   const currentSize = sizes[size];
 
@@ -22,7 +23,8 @@ export const Logo: React.FC<LogoProps> = ({ size = 'md', showSubtitle = true }) 
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: '0.25rem' }}
+        gap: '0.25rem',
+      }}
     >
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem' }}>
         <motion.span
@@ -33,16 +35,17 @@ export const Logo: React.FC<LogoProps> = ({ size = 'md', showSubtitle = true }) 
         >
           Eco Nojin
         </motion.span>
-        
+
         <motion.span
           style={{
             fontSize: currentSize.eco,
             color: 'var(--color-text-tertiary)',
-            fontWeight: 300 }}
+            fontWeight: 300,
+          }}
         >
           ×
         </motion.span>
-        
+
         <motion.span
           className="logo-hydroma"
           style={{ fontSize: currentSize.hydro }}
@@ -52,7 +55,7 @@ export const Logo: React.FC<LogoProps> = ({ size = 'md', showSubtitle = true }) 
           HyDroMa
         </motion.span>
       </div>
-      
+
       {showSubtitle && (
         <motion.p
           initial={{ opacity: 0 }}
@@ -63,7 +66,8 @@ export const Logo: React.FC<LogoProps> = ({ size = 'md', showSubtitle = true }) 
             color: 'var(--color-text-tertiary)',
             margin: 0,
             fontFamily: '"Vazirmatn", sans-serif',
-            fontWeight: 400 }}
+            fontWeight: 400,
+          }}
         >
           پلتفرم یکپارچه کشاورزی پایدار و مدیریت منابع آب
         </motion.p>

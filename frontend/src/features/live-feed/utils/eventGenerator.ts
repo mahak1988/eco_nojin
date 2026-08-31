@@ -63,11 +63,6 @@ export function generateEvent(
 /**
  * Generate multiple events for testing/initialization.
  */
-export function generateMultipleEvents(
-  count: number,
-  startSeed: number = 42
-): FeedEvent[] {
-  return Array.from({ length: count }, (_, i) =>
-    generateEvent(startSeed + i)
-  );
+export function generateMultipleEvents(count: number, startSeed: number = 42): FeedEvent[] {
+  return Array.from({ length: count }, (_, i) => generateEvent(startSeed + i));
 }

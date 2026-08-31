@@ -6,12 +6,7 @@
 
 import { Edit3, Eye, Send, Languages, Trash2 } from 'lucide-react';
 import type { ContentItem } from '../types';
-import {
-  truncateId,
-  formatDate,
-  normalizeStatus,
-  getStatusBadgeClass,
-} from '../utils/formatters';
+import { truncateId, formatDate, normalizeStatus, getStatusBadgeClass } from '../utils/formatters';
 
 interface ContentTableProps {
   items: ContentItem[];
@@ -104,22 +99,14 @@ export function ContentTable({
                   </div>
                 </td>
                 <td>
-                  <span className="status-badge info">
-                    {item.type || 'article'}
-                  </span>
+                  <span className="status-badge info">{item.type || 'article'}</span>
                 </td>
                 <td>
-                  <span
-                    className={`status-badge ${getStatusBadgeClass(
-                      item.status
-                    )}`}
-                  >
+                  <span className={`status-badge ${getStatusBadgeClass(item.status)}`}>
                     {item.status || 'draft'}
                   </span>
                 </td>
-                <td style={{ color: 'var(--text-secondary)' }}>
-                  {item.author || '-'}
-                </td>
+                <td style={{ color: 'var(--text-secondary)' }}>{item.author || '-'}</td>
                 <td
                   style={{
                     color: 'var(--text-muted)',

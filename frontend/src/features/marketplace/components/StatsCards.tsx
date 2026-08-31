@@ -4,10 +4,7 @@
  * @module features/marketplace/components
  */
 
-import {
-  Package, ShoppingBag, DollarSign, Star,
-  TrendingUp, Clock,
-} from 'lucide-react';
+import { Package, ShoppingBag, DollarSign, Star, TrendingUp, Clock } from 'lucide-react';
 import type { Order, MarketplaceStats } from '../types';
 import type { DerivedOrderData } from '../types';
 import { formatCurrency } from '../utils/formatters';
@@ -21,11 +18,7 @@ interface StatsCardsProps {
 // Local re-import for simplicity
 type Product = import('../types').Product;
 
-export function StatsCards({
-  products,
-  derived,
-  isLoading,
-}: StatsCardsProps) {
+export function StatsCards({ products, derived, isLoading }: StatsCardsProps) {
   if (isLoading) {
     return (
       <div className="grid-4col">
@@ -85,10 +78,7 @@ export function StatsCards({
     <div className="grid-4col">
       {cards.map((card, i) => (
         <div key={i} className="metric-card">
-          <div
-            className="metric-icon"
-            style={{ background: card.iconBg, color: card.iconColor }}
-          >
+          <div className="metric-icon" style={{ background: card.iconBg, color: card.iconColor }}>
             {card.icon}
           </div>
           <div className="metric-label">{card.label}</div>

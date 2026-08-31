@@ -12,8 +12,12 @@ describe('worldToTerrainY utilities', () => {
   const createTerrain = (width = 10, height = 10): TerrainData => ({
     width,
     height,
-    elevation: Array(height).fill(0).map(() => Array(width).fill(50)),
-    moisture: Array(height).fill(0).map(() => Array(width).fill(0.5)),
+    elevation: Array(height)
+      .fill(0)
+      .map(() => Array(width).fill(50)),
+    moisture: Array(height)
+      .fill(0)
+      .map(() => Array(width).fill(0.5)),
     minElevation: 0,
     maxElevation: 100,
   });

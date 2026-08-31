@@ -9,11 +9,7 @@
  * @module features/eco-wallet/api
  */
 
-import type {
-  WalletStats,
-  EarningOption,
-  RedemptionOption,
-} from '../types';
+import type { WalletStats, EarningOption, RedemptionOption } from '../types';
 import { ENDPOINTS } from '../constants/config';
 
 /**
@@ -37,9 +33,7 @@ function getAuthHeaders(): HeadersInit {
 /**
  * Normalize API response (handles array/object variations)
  */
-function normalizeOptions<T>(
-  data: unknown
-): T[] {
+function normalizeOptions<T>(data: unknown): T[] {
   if (Array.isArray(data)) return data;
   if (data && typeof data === 'object') {
     const obj = data as { options?: T[]; items?: T[] };
@@ -88,9 +82,7 @@ export async function fetchRedemptionOptions(): Promise<RedemptionOption[]> {
   });
 
   if (!response.ok) {
-    throw new Error(
-      `Failed to fetch redemption options: ${response.statusText}`
-    );
+    throw new Error(`Failed to fetch redemption options: ${response.statusText}`);
   }
 
   const data = await response.json();

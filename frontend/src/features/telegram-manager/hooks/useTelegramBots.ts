@@ -24,11 +24,7 @@ export function useTelegramBots(): UseTelegramBotsReturn {
   const [bots, setBots] = useState<TelegramBot[]>(MOCK_BOTS);
 
   const toggleBot = useCallback((botId: string) => {
-    setBots((prev) =>
-      prev.map((b) =>
-        b.id === botId ? { ...b, active: !b.active } : b
-      )
-    );
+    setBots((prev) => prev.map((b) => (b.id === botId ? { ...b, active: !b.active } : b)));
   }, []);
 
   return {

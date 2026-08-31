@@ -101,7 +101,17 @@ export const FloodZoneMap: React.FC<FloodZoneMapProps> = ({
 
   return (
     <div>
-      <div ref={containerRef} style={{ width: '100%', height, borderRadius: 'var(--radius-lg)', overflow: 'hidden', position: 'relative', background: '#0f172a' }} />
+      <div
+        ref={containerRef}
+        style={{
+          width: '100%',
+          height,
+          borderRadius: 'var(--radius-lg)',
+          overflow: 'hidden',
+          position: 'relative',
+          background: '#0f172a',
+        }}
+      />
       {/* Legend / status overlay */}
       <div style={{ position: 'relative' }}>
         <div
@@ -172,7 +182,8 @@ export const FloodZoneMap: React.FC<FloodZoneMapProps> = ({
               borderRadius: 'var(--radius-lg)',
             }}
           >
-            نقشه پایه — لایه‌ها پس از در دسترس بودن داده واقعی (NDVI: اعتبارنامه CDSE · سیلاب: باینری HEC-RAS) نمایش داده می‌شوند
+            نقشه پایه — لایه‌ها پس از در دسترس بودن داده واقعی (NDVI: اعتبارنامه CDSE · سیلاب:
+            باینری HEC-RAS) نمایش داده می‌شوند
           </div>
         )}
       </div>

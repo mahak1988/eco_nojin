@@ -19,9 +19,7 @@ export function ViewModeControls() {
 
   return (
     <div style={sidebarStyles.section}>
-      <div style={sidebarStyles.label}>
-        {isFa ? 'حالت نمایش' : 'View Mode'}
-      </div>
+      <div style={sidebarStyles.label}>{isFa ? 'حالت نمایش' : 'View Mode'}</div>
       <div style={sidebarStyles.grid4}>
         {VIEW_MODES.map((v) => (
           <button

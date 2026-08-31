@@ -13,7 +13,12 @@ interface AuthCtx {
   /** ورود واقعی از طریق GoTrue (Supabase) — پروکسی بک‌اند */
   login: (email: string, password: string) => Promise<AuthUser>;
   /** ثبت‌نام واقعی — در صورت فعال بودن تأیید ایمیل، پیام تأیید برمی‌گردد */
-  register: (data: { name: string; email: string; role: string; password: string }) => Promise<AuthUser>;
+  register: (data: {
+    name: string;
+    email: string;
+    role: string;
+    password: string;
+  }) => Promise<AuthUser>;
   logout: () => void;
 }
 
@@ -38,7 +43,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const raw = localStorage.getItem(USER_KEY);
     if (raw) {
-      try { setUser(JSON.parse(raw) as AuthUser); } catch { localStorage.removeItem(USER_KEY); }
+      try {
+        setUser(JSON.parse(raw) as AuthUser);
+      } catch {
+        localStorage.removeItem(USER_KEY);
+      }
     }
     setLoading(false);
   }, []);
@@ -55,13 +64,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (res.status !== 'ok' || !res.access_token) {
       throw new Error(String(res.error ?? 'ورود ناموفق — ایمیل یا رمز عبور نادرست است'));
     }
-    const u: AuthUser = { name: String(res.email ?? email.split('@')[0]), email: String(res.email ?? email), role: 'farmer', plan: 'free' };
+    const u: AuthUser = {
+      name: String(res.email ?? email.split('@')[0]),
+      email: String(res.email ?? email),
+      role: 'farmer',
+      plan: 'free',
+    };
     persist(u, String(res.access_token));
     return u;
   };
 
   const register: AuthCtx['register'] = async (data) => {
-    const res = await postJson('/api/v1/auth/register', { email: data.email, password: data.password });
+    const res = await postJson('/api/v1/auth/register', {
+      email: data.email,
+      password: data.password,
+    });
     if (res.status !== 'ok') {
       throw new Error(String(res.error ?? 'ثبت‌نام ناموفق'));
     }

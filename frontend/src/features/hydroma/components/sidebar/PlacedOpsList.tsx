@@ -55,10 +55,7 @@ export function PlacedOpsList() {
             >
               [{op.x.toFixed(1)},{op.y.toFixed(1)}]
             </span>
-            <button
-              onClick={() => removePlacedOp(op.id)}
-              style={sidebarStyles.deleteButton}
-            >
+            <button onClick={() => removePlacedOp(op.id)} style={sidebarStyles.deleteButton}>
               <Trash2 size={11} />
             </button>
           </div>

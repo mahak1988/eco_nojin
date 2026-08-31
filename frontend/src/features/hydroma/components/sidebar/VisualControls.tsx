@@ -24,9 +24,7 @@ export function VisualControls() {
 
   return (
     <div style={sidebarStyles.section}>
-      <div style={sidebarStyles.label}>
-        {isFa ? 'نمایش و داده' : 'Visual & Data'}
-      </div>
+      <div style={sidebarStyles.label}>{isFa ? 'نمایش و داده' : 'Visual & Data'}</div>
 
       {/* Decor toggle */}
       <label
@@ -89,23 +87,26 @@ export function VisualControls() {
         {isFa ? `پلات‌های داده: ${plots.length}` : `Data plots: ${plots.length}`}
       </div>
 
-      {plots.slice(-4).reverse().map((p) => (
-        <div
-          key={p.id}
-          style={{
-            background: 'rgba(57,255,90,0.08)',
-            border: '1px solid rgba(57,255,90,0.3)',
-            borderRadius: 8,
-            padding: '6px 8px',
-            marginBottom: 6,
-            fontSize: 10,
-            color: 'white',
-          }}
-        >
-          💧 {Math.round(p.data.moisture * 100)}% • 🌿{' '}
-          {p.data.ndvi.toFixed(2)} • 📐 {Math.round(p.data.elevation)}m
-        </div>
-      ))}
+      {plots
+        .slice(-4)
+        .reverse()
+        .map((p) => (
+          <div
+            key={p.id}
+            style={{
+              background: 'rgba(57,255,90,0.08)',
+              border: '1px solid rgba(57,255,90,0.3)',
+              borderRadius: 8,
+              padding: '6px 8px',
+              marginBottom: 6,
+              fontSize: 10,
+              color: 'white',
+            }}
+          >
+            💧 {Math.round(p.data.moisture * 100)}% • 🌿 {p.data.ndvi.toFixed(2)} • 📐{' '}
+            {Math.round(p.data.elevation)}m
+          </div>
+        ))}
 
       {plots.length > 0 && (
         <button

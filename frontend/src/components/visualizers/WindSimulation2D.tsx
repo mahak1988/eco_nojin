@@ -145,12 +145,7 @@ export const WindSimulation2D: React.FC<WindSimulation2DProps> = ({
 
         // منطقه محافظت‌شده (visual guide)
         ctx.fillStyle = 'rgba(34, 197, 94, 0.08)';
-        ctx.fillRect(
-          wb.x + wb.width / 2,
-          wb.y - wb.height * 0.5,
-          wb.height * 10,
-          wb.height * 2
-        );
+        ctx.fillRect(wb.x + wb.width / 2, wb.y - wb.height * 0.5, wb.height * 10, wb.height * 2);
       }
 
       // به‌روزرسانی و ترسیم ذرات
@@ -254,7 +249,9 @@ export const WindSimulation2D: React.FC<WindSimulation2DProps> = ({
           {showWindbreak ? 'بادشکن فعال' : 'بدون بادشکن'}
         </Button>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1, minWidth: 200 }}>
+        <div
+          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1, minWidth: 200 }}
+        >
           <label style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
             سرعت باد: {windSpeed.toFixed(1)} m/s
           </label>
@@ -317,9 +314,15 @@ export const WindSimulation2D: React.FC<WindSimulation2DProps> = ({
       >
         <strong>💡 اصول علمی:</strong>
         <ul style={{ margin: '0.5rem 0 0 0', paddingRight: '1.25rem' }}>
-          <li>بادشکن با <strong>porosity ۴۰٪</strong> بهینه‌ترین عملکرد را دارد</li>
-          <li>منطقه محافظت‌شده: <strong>۱۰ برابر ارتفاع</strong> در جهت باد</li>
-          <li>کاهش فرسایش بادی تا <strong>۶۰-۸۰٪</strong> با بادشکن صحیح</li>
+          <li>
+            بادشکن با <strong>porosity ۴۰٪</strong> بهینه‌ترین عملکرد را دارد
+          </li>
+          <li>
+            منطقه محافظت‌شده: <strong>۱۰ برابر ارتفاع</strong> در جهت باد
+          </li>
+          <li>
+            کاهش فرسایش بادی تا <strong>۶۰-۸۰٪</strong> با بادشکن صحیح
+          </li>
         </ul>
       </div>
     </Card>

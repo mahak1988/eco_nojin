@@ -5,8 +5,12 @@
  */
 
 import {
-  Activity, CheckCircle, AlertTriangle, Shield,
-  TrendingUp, TrendingDown,
+  Activity,
+  CheckCircle,
+  AlertTriangle,
+  Shield,
+  TrendingUp,
+  TrendingDown,
 } from 'lucide-react';
 import type { SecurityStats } from '../types';
 import { getScoreColor } from '../utils/formatters';
@@ -79,10 +83,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
     <div className="grid-4col">
       {cards.map((card, i) => (
         <div key={i} className="metric-card">
-          <div
-            className="metric-icon"
-            style={{ background: card.iconBg, color: card.iconColor }}
-          >
+          <div className="metric-icon" style={{ background: card.iconBg, color: card.iconColor }}>
             {card.icon}
           </div>
           <div className="metric-label">{card.label}</div>
@@ -96,10 +97,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
           )}
           {card.showProgress && (
             <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{ width: `${stats.securityScore}%` }}
-              />
+              <div className="progress-fill" style={{ width: `${stats.securityScore}%` }} />
             </div>
           )}
         </div>

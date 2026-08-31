@@ -41,30 +41,27 @@ export function useErosionEffect(): UseErosionEffectResult {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const fetchEffect = useCallback(
-    async (siteId: string, opType: string) => {
-      setLoading(true);
-      setError('');
+  const fetchEffect = useCallback(async (siteId: string, opType: string) => {
+    setLoading(true);
+    setError('');
 
-      try {
-        const url = `/api/v1/elevation/erosion-effect/${siteId}?op_type=${opType}`;
-        const res = await fetch(url);
+    try {
+      const url = `/api/v1/elevation/erosion-effect/${siteId}?op_type=${opType}`;
+      const res = await fetch(url);
 
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-        }
-
-        const data = await res.json();
-        setEffect(data);
-      } catch (err) {
-        const errorMsg = err instanceof Error ? err.message : String(err);
-        setError(errorMsg);
-      } finally {
-        setLoading(false);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
       }
-    },
-    []
-  );
+
+      const data = await res.json();
+      setEffect(data);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      setError(errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const clear = useCallback(() => {
     setEffect(null);

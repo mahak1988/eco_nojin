@@ -53,21 +53,18 @@ export default function MarketplaceDashboard() {
   const derived = useMemo<DerivedOrderData>(() => {
     const pendingOrders = orders.filter((o) => isPendingOrder(o.status));
     const completedOrders = orders.filter((o) => isCompletedOrder(o.status));
-    const totalRevenue = orders.reduce(
-      (sum, o) => sum + getOrderAmount(o),
-      0
-    );
-    const avgOrderValue =
-      orders.length > 0 ? totalRevenue / orders.length : 0;
+    const totalRevenue = orders.reduce((sum, o) => sum + getOrderAmount(o), 0);
+    const avgOrderValue = orders.length > 0 ? totalRevenue / orders.length : 0;
 
     // Group by status for pie chart
     const ordersByStatus = orders.reduce<Record<string, number>>((acc, o) => {
       acc[o.status] = (acc[o.status] || 0) + 1;
       return acc;
     }, {});
-    const pieData: PieDataPoint[] = Object.entries(ordersByStatus).map(
-      ([name, value]) => ({ name, value })
-    );
+    const pieData: PieDataPoint[] = Object.entries(ordersByStatus).map(([name, value]) => ({
+      name,
+      value,
+    }));
 
     return {
       pendingOrders,
@@ -100,9 +97,7 @@ export default function MarketplaceDashboard() {
               <ShoppingBag size={32} style={{ color: 'var(--accent-primary)' }} />
               Marketplace Dashboard
             </h1>
-            <p className="page-subtitle">
-              Monitor products, orders, and marketplace performance
-            </p>
+            <p className="page-subtitle">Monitor products, orders, and marketplace performance</p>
           </div>
           <button className="refresh-btn" onClick={handleRefresh}>
             <RefreshCw size={16} /> Refresh
@@ -110,11 +105,7 @@ export default function MarketplaceDashboard() {
         </div>
 
         {/* Stats Cards */}
-        <StatsCards
-          products={products}
-          derived={derived}
-          isLoading={isLoading}
-        />
+        <StatsCards products={products} derived={derived} isLoading={isLoading} />
 
         {/* Charts Grid */}
         <div className="grid-2col">

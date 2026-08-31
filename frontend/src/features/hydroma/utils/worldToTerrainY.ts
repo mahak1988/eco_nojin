@@ -28,14 +28,8 @@ export function getTerrainYAtPoint(
   worldY: number,
   offset: number = 0
 ): number {
-  const gridX = Math.max(
-    0,
-    Math.min(data.width - 1, worldToGrid(worldX, data.width))
-  );
-  const gridY = Math.max(
-    0,
-    Math.min(data.height - 1, worldToGrid(worldY, data.height))
-  );
+  const gridX = Math.max(0, Math.min(data.width - 1, worldToGrid(worldX, data.width)));
+  const gridY = Math.max(0, Math.min(data.height - 1, worldToGrid(worldY, data.height)));
 
   const elev = data.elevation[gridY]?.[gridX] ?? data.minElevation;
   const range = data.maxElevation - data.minElevation || 1;
@@ -58,13 +52,7 @@ export function worldToGridPoint(
   data: TerrainData
 ): { gridX: number; gridY: number } {
   return {
-    gridX: Math.max(
-      0,
-      Math.min(data.width - 1, worldToGrid(worldX, data.width))
-    ),
-    gridY: Math.max(
-      0,
-      Math.min(data.height - 1, worldToGrid(worldY, data.height))
-    ),
+    gridX: Math.max(0, Math.min(data.width - 1, worldToGrid(worldX, data.width))),
+    gridY: Math.max(0, Math.min(data.height - 1, worldToGrid(worldY, data.height))),
   };
 }

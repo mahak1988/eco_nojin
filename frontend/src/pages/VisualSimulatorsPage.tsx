@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Wind, Droplets, Sprout, Sparkles, Map,
-} from 'lucide-react';
+import { Wind, Droplets, Sprout, Sparkles, Map } from 'lucide-react';
 import { AppLayout } from '../components/layout/AppLayout';
 import { Card, Tabs } from '../components/ui';
 import {
@@ -39,9 +37,7 @@ export const VisualSimulatorsPage: React.FC = () => {
             <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>
               از قطره تا اقیانوس
             </h1>
-            <p style={{ fontSize: '1.5rem', fontWeight: 300, margin: 0 }}>
-              از دانه تا جنگل
-            </p>
+            <p style={{ fontSize: '1.5rem', fontWeight: 300, margin: 0 }}>از دانه تا جنگل</p>
           </motion.div>
           <HyDroMaPhilosophyHub />
           <div style={{ marginTop: '2rem' }}>
@@ -93,7 +89,14 @@ export const VisualSimulatorsPage: React.FC = () => {
           >
             <strong>💡 Green-Ampt Model:</strong> نفوذ آب به خاک با معادله Green-Ampt محاسبه می‌شود:
             <br />
-            <code style={{ fontFamily: 'monospace', direction: 'ltr', display: 'block', marginTop: '0.5rem' }}>
+            <code
+              style={{
+                fontFamily: 'monospace',
+                direction: 'ltr',
+                display: 'block',
+                marginTop: '0.5rem',
+              }}
+            >
               f = Ks × (1 + (ψ × Δθ) / F)
             </code>
           </div>
@@ -119,7 +122,14 @@ export const VisualSimulatorsPage: React.FC = () => {
           >
             <strong>💡 SCS Curve Number:</strong> مدل SCS-CN برای محاسبه رواناب:
             <br />
-            <code style={{ fontFamily: 'monospace', direction: 'ltr', display: 'block', marginTop: '0.5rem' }}>
+            <code
+              style={{
+                fontFamily: 'monospace',
+                direction: 'ltr',
+                display: 'block',
+                marginTop: '0.5rem',
+              }}
+            >
               Q = (P - 0.2S)² / (P + 0.8S) where S = (25400/CN) - 254
             </code>
           </div>
@@ -150,10 +160,18 @@ export const VisualSimulatorsPage: React.FC = () => {
           >
             <strong>🌿 Agroforestry Benefits:</strong>
             <ul style={{ margin: '0.5rem 0 0 0', paddingRight: '1.25rem' }}>
-              <li>افزایش عملکرد کل: <strong>۲۵٪</strong> نسبت به تک‌کشتی</li>
-              <li>کاهش مصرف آب: <strong>۳۰٪</strong> با سایه‌اندازی</li>
-              <li>افزایش تنوع زیستی: <strong>۳ برابر</strong></li>
-              <li>کربن ذخیره‌شده: <strong>۲.۵ تن/هکتار/سال</strong></li>
+              <li>
+                افزایش عملکرد کل: <strong>۲۵٪</strong> نسبت به تک‌کشتی
+              </li>
+              <li>
+                کاهش مصرف آب: <strong>۳۰٪</strong> با سایه‌اندازی
+              </li>
+              <li>
+                افزایش تنوع زیستی: <strong>۳ برابر</strong>
+              </li>
+              <li>
+                کربن ذخیره‌شده: <strong>۲.۵ تن/هکتار/سال</strong>
+              </li>
             </ul>
           </div>
         </Card>

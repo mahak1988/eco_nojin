@@ -43,15 +43,17 @@ export function usePerformance(): void {
     // Only in development or when explicitly enabled
     if (import.meta.env.DEV) {
       // Lazy load web-vitals (small library)
-      import('web-vitals').then(({ onCLS, onFID, onLCP, onFCP, onTTFB }) => {
-        onCLS(logMetric as any);
-        onFID(logMetric as any);
-        onLCP(logMetric as any);
-        onFCP(logMetric as any);
-        onTTFB(logMetric as any);
-      }).catch(() => {
-        // web-vitals not available
-      });
+      import('web-vitals')
+        .then(({ onCLS, onFID, onLCP, onFCP, onTTFB }) => {
+          onCLS(logMetric as any);
+          onFID(logMetric as any);
+          onLCP(logMetric as any);
+          onFCP(logMetric as any);
+          onTTFB(logMetric as any);
+        })
+        .catch(() => {
+          // web-vitals not available
+        });
     }
   }, []);
 }

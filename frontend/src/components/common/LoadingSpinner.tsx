@@ -9,7 +9,11 @@ interface LoadingSpinnerProps {
 /**
  * اسپینر بارگذاری — استفاده به‌عنوان fallback برای Suspense (code-splitting) و حالت‌های async.
  */
-const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ fullScreen = false, size = 40, label }) => {
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
+  fullScreen = false,
+  size = 40,
+  label,
+}) => {
   const spinner = (
     <div
       role="status"

@@ -1,15 +1,31 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Settings as SettingsIcon, Shield, Bell, Link as LinkIcon,
-  Save, Globe, Clock, Lock, Users, Database, Cpu,
-  CheckCircle2, XCircle, AlertCircle, Mail, Key, Palette
+  Settings as SettingsIcon,
+  Shield,
+  Bell,
+  Link as LinkIcon,
+  Save,
+  Globe,
+  Clock,
+  Lock,
+  Users,
+  Database,
+  Cpu,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+  Mail,
+  Key,
+  Palette,
 } from 'lucide-react';
 import './AdminTheme.css';
 
 export default function AdminSettings() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'general' | 'security' | 'notifications' | 'integrations'>('general');
+  const [activeTab, setActiveTab] = useState<
+    'general' | 'security' | 'notifications' | 'integrations'
+  >('general');
   const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
@@ -72,7 +88,12 @@ export default function AdminSettings() {
                   <div className="settings-row-label">Platform Name</div>
                   <p className="settings-row-desc">Display name shown across the platform</p>
                 </div>
-                <input className="form-input" type="text" defaultValue="Eco Nojin" style={{ maxWidth: '300px' }} />
+                <input
+                  className="form-input"
+                  type="text"
+                  defaultValue="Eco Nojin"
+                  style={{ maxWidth: '300px' }}
+                />
               </div>
 
               <div className="settings-row">
@@ -92,7 +113,11 @@ export default function AdminSettings() {
                   <div className="settings-row-label">Timezone</div>
                   <p className="settings-row-desc">System-wide timezone</p>
                 </div>
-                <select className="form-input" defaultValue="Asia/Tehran" style={{ maxWidth: '250px' }}>
+                <select
+                  className="form-input"
+                  defaultValue="Asia/Tehran"
+                  style={{ maxWidth: '250px' }}
+                >
                   <option value="Asia/Tehran">Asia/Tehran (UTC+3:30)</option>
                   <option value="UTC">UTC</option>
                   <option value="Europe/London">Europe/London</option>
@@ -105,7 +130,11 @@ export default function AdminSettings() {
                   <div className="settings-row-label">Date Format</div>
                   <p className="settings-row-desc">How dates are displayed</p>
                 </div>
-                <select className="form-input" defaultValue="YYYY-MM-DD" style={{ maxWidth: '200px' }}>
+                <select
+                  className="form-input"
+                  defaultValue="YYYY-MM-DD"
+                  style={{ maxWidth: '200px' }}
+                >
                   <option value="YYYY-MM-DD">YYYY-MM-DD</option>
                   <option value="DD/MM/YYYY">DD/MM/YYYY</option>
                   <option value="MM/DD/YYYY">MM/DD/YYYY</option>
@@ -145,7 +174,12 @@ export default function AdminSettings() {
                   <div className="settings-row-label">Session Timeout</div>
                   <p className="settings-row-desc">Auto-logout after inactivity (minutes)</p>
                 </div>
-                <input className="form-input" type="number" defaultValue="60" style={{ maxWidth: '150px' }} />
+                <input
+                  className="form-input"
+                  type="number"
+                  defaultValue="60"
+                  style={{ maxWidth: '150px' }}
+                />
               </div>
 
               <div className="settings-row">
@@ -153,7 +187,12 @@ export default function AdminSettings() {
                   <div className="settings-row-label">Max Login Attempts</div>
                   <p className="settings-row-desc">Lock account after failed attempts</p>
                 </div>
-                <input className="form-input" type="number" defaultValue="5" style={{ maxWidth: '150px' }} />
+                <input
+                  className="form-input"
+                  type="number"
+                  defaultValue="5"
+                  style={{ maxWidth: '150px' }}
+                />
               </div>
 
               <div className="settings-row">
@@ -161,7 +200,12 @@ export default function AdminSettings() {
                   <div className="settings-row-label">Password Minimum Length</div>
                   <p className="settings-row-desc">Minimum characters required</p>
                 </div>
-                <input className="form-input" type="number" defaultValue="8" style={{ maxWidth: '150px' }} />
+                <input
+                  className="form-input"
+                  type="number"
+                  defaultValue="8"
+                  style={{ maxWidth: '150px' }}
+                />
               </div>
 
               <div className="settings-row">
@@ -199,14 +243,34 @@ export default function AdminSettings() {
 
             <div className="settings-group">
               {[
-                { title: 'New User Registration', desc: 'Get notified when users sign up', enabled: true },
-                { title: 'Failed Login Attempts', desc: 'Alert on suspicious login activity', enabled: true },
+                {
+                  title: 'New User Registration',
+                  desc: 'Get notified when users sign up',
+                  enabled: true,
+                },
+                {
+                  title: 'Failed Login Attempts',
+                  desc: 'Alert on suspicious login activity',
+                  enabled: true,
+                },
                 { title: 'System Errors', desc: 'Critical error notifications', enabled: true },
-                { title: 'Content Approval Required', desc: 'When content needs review', enabled: true },
+                {
+                  title: 'Content Approval Required',
+                  desc: 'When content needs review',
+                  enabled: true,
+                },
                 { title: 'Security Alerts', desc: 'High-priority security events', enabled: true },
-                { title: 'Financial Transactions', desc: 'Large transaction alerts', enabled: false },
+                {
+                  title: 'Financial Transactions',
+                  desc: 'Large transaction alerts',
+                  enabled: false,
+                },
                 { title: 'Weekly Reports', desc: 'Summary every Monday', enabled: true },
-                { title: 'System Maintenance', desc: 'Scheduled maintenance alerts', enabled: false },
+                {
+                  title: 'System Maintenance',
+                  desc: 'Scheduled maintenance alerts',
+                  enabled: false,
+                },
               ].map((notif, i) => (
                 <div className="settings-row" key={i}>
                   <div className="settings-row-info">
@@ -234,22 +298,60 @@ export default function AdminSettings() {
 
             <div className="settings-group">
               {[
-                { name: 'Supabase', status: 'connected', icon: <Database size={24} />, desc: 'Database & Auth' },
-                { name: 'Ollama (AI)', status: 'connected', icon: <Cpu size={24} />, desc: 'Local AI models' },
-                { name: 'CDSE (Satellite)', status: 'connected', icon: <Globe size={24} />, desc: 'Copernicus satellite data' },
-                { name: 'NASA POWER', status: 'connected', icon: <Globe size={24} />, desc: 'Weather & climate data' },
-                { name: 'Telegram Bot API', status: 'connected', icon: <Mail size={24} />, desc: 'Bot messaging service' },
-                { name: 'Blockchain', status: 'disconnected', icon: <Key size={24} />, desc: 'Not configured yet' },
-                { name: 'Stripe Payments', status: 'disconnected', icon: <Key size={24} />, desc: 'Not configured yet' },
+                {
+                  name: 'Supabase',
+                  status: 'connected',
+                  icon: <Database size={24} />,
+                  desc: 'Database & Auth',
+                },
+                {
+                  name: 'Ollama (AI)',
+                  status: 'connected',
+                  icon: <Cpu size={24} />,
+                  desc: 'Local AI models',
+                },
+                {
+                  name: 'CDSE (Satellite)',
+                  status: 'connected',
+                  icon: <Globe size={24} />,
+                  desc: 'Copernicus satellite data',
+                },
+                {
+                  name: 'NASA POWER',
+                  status: 'connected',
+                  icon: <Globe size={24} />,
+                  desc: 'Weather & climate data',
+                },
+                {
+                  name: 'Telegram Bot API',
+                  status: 'connected',
+                  icon: <Mail size={24} />,
+                  desc: 'Bot messaging service',
+                },
+                {
+                  name: 'Blockchain',
+                  status: 'disconnected',
+                  icon: <Key size={24} />,
+                  desc: 'Not configured yet',
+                },
+                {
+                  name: 'Stripe Payments',
+                  status: 'disconnected',
+                  icon: <Key size={24} />,
+                  desc: 'Not configured yet',
+                },
               ].map((integration, i) => (
                 <div className="integration-card" key={i}>
-                  <div className="integration-icon">
-                    {integration.icon}
-                  </div>
+                  <div className="integration-icon">{integration.icon}</div>
                   <div className="integration-info">
                     <div className="integration-name">{integration.name}</div>
                     <div className={'integration-status ' + integration.status}>
-                      <span className={'integration-status-dot ' + (integration.status === 'connected' ? 'online' : 'offline')}></span>
+                      <span
+                        className={
+                          'integration-status-dot ' +
+                          (integration.status === 'connected' ? 'online' : 'offline')
+                        }
+                      ></span>
                       {integration.desc}
                     </div>
                   </div>

@@ -18,37 +18,37 @@ const Terrain: React.FC<{ activeLayers: any }> = ({ activeLayers }) => {
   const geometry = useMemo(() => {
     const geo = new THREE.PlaneGeometry(100, 100, 80, 80);
     const positions = geo.attributes.position;
-    
+
     // DEM: تپه‌ها و آبراهه
     for (let i = 0; i < positions.count; i++) {
       const x = positions.getX(i);
       const y = positions.getY(i);
-      
+
       // توپوگرافی اصلی
       let z = Math.sin(x / 20) * Math.cos(y / 20) * 4;
       z += Math.sin(x / 8) * 1.5;
       z += Math.cos(y / 12) * 1.2;
-      
+
       // آبراهه مرکزی (فرورفتگی)
       const streamDistance = Math.abs(y - Math.sin(x / 15) * 3);
       if (streamDistance < 3) {
         z -= (3 - streamDistance) * 0.8;
       }
-      
+
       positions.setZ(i, z);
     }
-    
+
     geo.computeVertexNormals();
-    
+
     // رنگ‌بندی بر اساس لایه فعال
     const colors = [];
     for (let i = 0; i < positions.count; i++) {
       const x = positions.getX(i);
       const y = positions.getY(i);
       const z = positions.getZ(i);
-      
+
       const color = new THREE.Color();
-      
+
       if (activeLayers.slope) {
         // نقشه شیب (قرمز = پرشیب)
         const slope = Math.abs(Math.sin(x / 20)) + Math.abs(Math.cos(y / 20));
@@ -67,27 +67,25 @@ const Terrain: React.FC<{ activeLayers: any }> = ({ activeLayers }) => {
         color.setHSL(0.25 + ndvi * 0.05, 0.7, 0.2 + ndvi * 0.3);
       } else {
         // حالت طبیعی
-        if (z < -1) color.setHex(0x3a5f8f); // آبراهه
-        else if (z < 0) color.setHex(0x8b7355); // خاک مرطوب
-        else if (z < 2) color.setHex(0x7da87d); // علف
+        if (z < -1)
+          color.setHex(0x3a5f8f); // آبراهه
+        else if (z < 0)
+          color.setHex(0x8b7355); // خاک مرطوب
+        else if (z < 2)
+          color.setHex(0x7da87d); // علف
         else color.setHex(0x5a7a4a); // بوته
       }
-      
+
       colors.push(color.r, color.g, color.b);
     }
-    
+
     geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
     return geo;
   }, [activeLayers]);
 
   return (
     <mesh ref={meshRef} geometry={geometry} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-      <meshStandardMaterial
-        vertexColors
-        side={THREE.DoubleSide}
-        roughness={0.9}
-        metalness={0.1}
-      />
+      <meshStandardMaterial vertexColors side={THREE.DoubleSide} roughness={0.9} metalness={0.1} />
     </mesh>
   );
 };
@@ -96,7 +94,7 @@ const Terrain: React.FC<{ activeLayers: any }> = ({ activeLayers }) => {
 const WindParticles: React.FC<{ wind: number }> = ({ wind }) => {
   const particlesRef = useRef<THREE.InstancedMesh>(null);
   const count = 500;
-  
+
   const particles = useMemo(() => {
     return Array.from({ length: count }, () => ({
       x: (Math.random() - 0.5) * 100,
@@ -109,21 +107,21 @@ const WindParticles: React.FC<{ wind: number }> = ({ wind }) => {
   useFrame(() => {
     if (!particlesRef.current) return;
     const dummy = new THREE.Object3D();
-    
+
     particles.forEach((p, i) => {
       p.x += p.vx * 0.3;
       p.y += (Math.random() - 0.5) * 0.1;
-      
+
       if (p.x > 50) p.x = -50;
       if (p.y < 2) p.y = 20;
       if (p.y > 25) p.y = 5;
-      
+
       dummy.position.set(p.x, p.y, p.z);
       dummy.scale.setScalar(0.1);
       dummy.updateMatrix();
       particlesRef.current!.setMatrixAt(i, dummy.matrix);
     });
-    
+
     particlesRef.current.instanceMatrix.needsUpdate = true;
   });
 
@@ -141,7 +139,7 @@ const WindParticles: React.FC<{ wind: number }> = ({ wind }) => {
 const RainDrops: React.FC<{ rainfall: number }> = ({ rainfall }) => {
   const rainRef = useRef<THREE.InstancedMesh>(null);
   const count = Math.min(1000, rainfall * 10);
-  
+
   const drops = useMemo(() => {
     return Array.from({ length: count }, () => ({
       x: (Math.random() - 0.5) * 100,
@@ -154,22 +152,22 @@ const RainDrops: React.FC<{ rainfall: number }> = ({ rainfall }) => {
   useFrame(() => {
     if (!rainRef.current) return;
     const dummy = new THREE.Object3D();
-    
+
     drops.forEach((d, i) => {
       d.y += d.vy;
-      
+
       if (d.y < 0) {
         d.y = 30;
         d.x = (Math.random() - 0.5) * 100;
         d.z = (Math.random() - 0.5) * 100;
       }
-      
+
       dummy.position.set(d.x, d.y, d.z);
       dummy.scale.set(0.1, 0.5, 0.1);
       dummy.updateMatrix();
       rainRef.current!.setMatrixAt(i, dummy.matrix);
     });
-    
+
     rainRef.current.instanceMatrix.needsUpdate = true;
   });
 
@@ -190,7 +188,7 @@ const Tree: React.FC<{ position: [number, number, number]; scale?: number; speci
   species = 'cypress',
 }) => {
   const groupRef = useRef<THREE.Group>(null);
-  
+
   useFrame((state) => {
     if (groupRef.current) {
       // انیمیشن باد
@@ -223,16 +221,16 @@ const Tree: React.FC<{ position: [number, number, number]; scale?: number; speci
   );
 };
 
-const TreeWindbreak: React.FC<{ intervention: any; terrainHeight: (x: number, z: number) => number }> = ({
-  intervention,
-  terrainHeight,
-}) => {
+const TreeWindbreak: React.FC<{
+  intervention: any;
+  terrainHeight: (x: number, z: number) => number;
+}> = ({ intervention, terrainHeight }) => {
   const species = intervention.parameters?.species || 'cypress';
   const count = intervention.parameters?.count || 10;
   const rows = intervention.parameters?.rows || 3;
   const startX = intervention.position?.x || 0;
   const startZ = intervention.position?.z || 0;
-  
+
   const trees = [];
   for (let r = 0; r < rows; r++) {
     for (let i = 0; i < count; i++) {
@@ -249,7 +247,7 @@ const TreeWindbreak: React.FC<{ intervention: any; terrainHeight: (x: number, z:
       );
     }
   }
-  
+
   return <>{trees}</>;
 };
 
@@ -259,7 +257,7 @@ const Terrace: React.FC<{ intervention: any }> = ({ intervention }) => {
   const spacing = intervention.parameters?.spacing || 8;
   const startX = intervention.position?.x || -20;
   const startZ = intervention.position?.z || 0;
-  
+
   const terraces = [];
   for (let i = 0; i < count; i++) {
     const z = startZ + i * spacing;
@@ -270,7 +268,7 @@ const Terrace: React.FC<{ intervention: any }> = ({ intervention }) => {
       </mesh>
     );
   }
-  
+
   return <>{terraces}</>;
 };
 
@@ -279,7 +277,7 @@ const CheckDam: React.FC<{ intervention: any }> = ({ intervention }) => {
   const count = intervention.parameters?.count || 6;
   const startX = intervention.position?.x || 0;
   const startZ = intervention.position?.z || -30;
-  
+
   const dams = [];
   for (let i = 0; i < count; i++) {
     dams.push(
@@ -293,18 +291,21 @@ const CheckDam: React.FC<{ intervention: any }> = ({ intervention }) => {
       </mesh>
     );
   }
-  
+
   return <>{dams}</>;
 };
 
 // ─── Crops (کشت) ─────────────────────────────
-const CropField: React.FC<{ intervention: any; timeProgress: number }> = ({ intervention, timeProgress }) => {
+const CropField: React.FC<{ intervention: any; timeProgress: number }> = ({
+  intervention,
+  timeProgress,
+}) => {
   const growthStage = Math.min(1, timeProgress / 60);
   const count = 20;
   const spacing = 4;
   const startX = intervention.position?.x || -30;
   const startZ = intervention.position?.z || 10;
-  
+
   const crops = [];
   for (let i = 0; i < count; i++) {
     for (let j = 0; j < count; j++) {
@@ -312,7 +313,7 @@ const CropField: React.FC<{ intervention: any; timeProgress: number }> = ({ inte
       const z = startZ + j * spacing;
       const height = growthStage * (1 + Math.random() * 0.3);
       const color = growthStage > 0.7 ? '#fbbf24' : '#84cc16';
-      
+
       crops.push(
         <mesh key={`crop-${i}-${j}`} position={[x, height / 2, z]} castShadow>
           <coneGeometry args={[0.15, height, 6]} />
@@ -321,7 +322,7 @@ const CropField: React.FC<{ intervention: any; timeProgress: number }> = ({ inte
       );
     }
   }
-  
+
   return <>{crops}</>;
 };
 
@@ -370,7 +371,7 @@ export const VLLTerrain3D: React.FC<VLLTerrain3DProps> = ({
         turbidity={weather.rainfall > 30 ? 20 : 8}
         rayleigh={weather.rainfall > 30 ? 1 : 3}
       />
-      
+
       {/* نور */}
       <ambientLight intensity={0.4 * weather.sunIntensity} />
       <directionalLight

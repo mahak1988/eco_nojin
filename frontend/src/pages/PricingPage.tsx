@@ -9,7 +9,8 @@ const planIcons: Record<string, React.ReactNode> = {
   starter: <Zap size={24} />,
   farmer: <Sparkles size={24} />,
   enterprise: <Crown size={24} />,
-  lifetime: <Infinity size={24} /> };
+  lifetime: <Infinity size={24} />,
+};
 
 export const PricingPage: React.FC = () => {
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
@@ -26,7 +27,8 @@ export const PricingPage: React.FC = () => {
         style={{
           padding: '6rem 2rem',
           minHeight: '100vh',
-          background: 'linear-gradient(180deg, var(--color-bg) 0%, var(--color-surface) 100%)' }}
+          background: 'linear-gradient(180deg, var(--color-bg) 0%, var(--color-surface) 100%)',
+        }}
       >
         <div style={{ maxWidth: 1400, margin: '0 auto' }}>
           {/* Header */}
@@ -49,15 +51,25 @@ export const PricingPage: React.FC = () => {
                 borderRadius: 'var(--radius-full)',
                 fontSize: '0.875rem',
                 fontWeight: 600,
-                marginBottom: '1.5rem' }}
+                marginBottom: '1.5rem',
+              }}
             >
               <Wallet size={16} />
               پرداخت فقط با رمزارز
             </motion.div>
-            <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 700, marginBottom: '1rem' }}>
+            <h1
+              style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 700, marginBottom: '1rem' }}
+            >
               پلنی را انتخاب کنید که برای شما مناسب است
             </h1>
-            <p style={{ fontSize: '1.125rem', color: 'var(--color-text-secondary)', maxWidth: 600, margin: '0 auto' }}>
+            <p
+              style={{
+                fontSize: '1.125rem',
+                color: 'var(--color-text-secondary)',
+                maxWidth: 600,
+                margin: '0 auto',
+              }}
+            >
               تمام پلن‌ها شامل ۳۰ روز ضمانت بازگشت وجه هستند. بدون قرارداد، بدون هزینه پنهان.
             </p>
           </motion.div>
@@ -68,7 +80,8 @@ export const PricingPage: React.FC = () => {
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
               gap: '2rem',
-              marginBottom: '4rem' }}
+              marginBottom: '4rem',
+            }}
           >
             {SUBSCRIPTION_PLANS.map((plan, index) => (
               <motion.div
@@ -84,7 +97,8 @@ export const PricingPage: React.FC = () => {
                   border: plan.recommended
                     ? `2px solid ${plan.color}`
                     : '1px solid var(--color-border)',
-                  boxShadow: plan.recommended ? `0 20px 40px ${plan.color}30` : 'none' }}
+                  boxShadow: plan.recommended ? `0 20px 40px ${plan.color}30` : 'none',
+                }}
               >
                 {plan.recommended && (
                   <div
@@ -98,7 +112,8 @@ export const PricingPage: React.FC = () => {
                       padding: '0.25rem 1rem',
                       borderRadius: 'var(--radius-full)',
                       fontSize: '0.75rem',
-                      fontWeight: 700 }}
+                      fontWeight: 700,
+                    }}
                   >
                     محبوب‌ترین
                   </div>
@@ -115,7 +130,8 @@ export const PricingPage: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    marginBottom: '1rem' }}
+                    marginBottom: '1rem',
+                  }}
                 >
                   {planIcons[plan.id]}
                 </div>
@@ -124,17 +140,34 @@ export const PricingPage: React.FC = () => {
                 <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.25rem' }}>
                   {plan.nameFa}
                 </h3>
-                <p style={{ color: 'var(--color-text-tertiary)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
+                <p
+                  style={{
+                    color: 'var(--color-text-tertiary)',
+                    fontSize: '0.875rem',
+                    marginBottom: '1.5rem',
+                  }}
+                >
                   {plan.name}
                 </p>
 
                 {/* Price */}
                 <div style={{ marginBottom: '1.5rem' }}>
-                  <span style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--color-text-primary)' }}>
+                  <span
+                    style={{
+                      fontSize: '3rem',
+                      fontWeight: 800,
+                      color: 'var(--color-text-primary)',
+                    }}
+                  >
                     ${plan.priceUsd}
                   </span>
                   <span style={{ color: 'var(--color-text-tertiary)', marginLeft: '0.25rem' }}>
-                    /{plan.period === 'monthly' ? 'ماه' : plan.period === 'yearly' ? 'سال' : 'مادام‌العمر'}
+                    /
+                    {plan.period === 'monthly'
+                      ? 'ماه'
+                      : plan.period === 'yearly'
+                        ? 'سال'
+                        : 'مادام‌العمر'}
                   </span>
                 </div>
 
@@ -149,9 +182,14 @@ export const PricingPage: React.FC = () => {
                         gap: '0.5rem',
                         padding: '0.5rem 0',
                         fontSize: '0.875rem',
-                        color: 'var(--color-text-secondary)' }}
+                        color: 'var(--color-text-secondary)',
+                      }}
                     >
-                      <Check size={16} color={plan.color} style={{ flexShrink: 0, marginTop: '2px' }} />
+                      <Check
+                        size={16}
+                        color={plan.color}
+                        style={{ flexShrink: 0, marginTop: '2px' }}
+                      />
                       <span>{feature}</span>
                     </li>
                   ))}
@@ -169,7 +207,8 @@ export const PricingPage: React.FC = () => {
                     background: plan.recommended ? plan.color : 'var(--color-surface)',
                     color: plan.recommended ? 'white' : 'var(--color-text-primary)',
                     border: plan.recommended ? 'none' : '1px solid var(--color-border)',
-                    fontWeight: 600 }}
+                    fontWeight: 600,
+                  }}
                 >
                   <Wallet size={16} />
                   پرداخت و شروع
@@ -189,31 +228,56 @@ export const PricingPage: React.FC = () => {
               padding: '3rem',
               background: 'var(--color-surface)',
               borderRadius: 'var(--radius-2xl)',
-              border: '1px solid var(--color-border)' }}
+              border: '1px solid var(--color-border)',
+            }}
           >
-            <h3 style={{ textAlign: 'center', fontSize: '1.5rem', fontWeight: 700, marginBottom: '2rem' }}>
+            <h3
+              style={{
+                textAlign: 'center',
+                fontSize: '1.5rem',
+                fontWeight: 700,
+                marginBottom: '2rem',
+              }}
+            >
               سوالات متداول
             </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: '1.5rem',
+              }}
+            >
               {[
                 {
                   q: 'چگونه پرداخت کنم؟',
-                  a: 'روی پلن مورد نظر کلیک کنید، شبکه مورد علاقه خود را انتخاب کنید و آدرس کیف پول را کپی کنید یا مستقیماً با MetaMask پرداخت کنید.' },
+                  a: 'روی پلن مورد نظر کلیک کنید، شبکه مورد علاقه خود را انتخاب کنید و آدرس کیف پول را کپی کنید یا مستقیماً با MetaMask پرداخت کنید.',
+                },
                 {
                   q: 'کدام رمزارزها پذیرفته می‌شوند؟',
-                  a: 'USDT (Tether) در چهار شبکه TRC20، ERC20، BEP20 و Polygon پذیرفته می‌شود.' },
+                  a: 'USDT (Tether) در چهار شبکه TRC20، ERC20، BEP20 و Polygon پذیرفته می‌شود.',
+                },
                 {
                   q: 'اشتراک چقدر طول می‌کشد تا فعال شود؟',
-                  a: 'پس از تأیید تراکنش روی بلاکچین (معمولاً چند دقیقه)، اشتراک شما به‌صورت خودکار فعال می‌شود.' },
+                  a: 'پس از تأیید تراکنش روی بلاکچین (معمولاً چند دقیقه)، اشتراک شما به‌صورت خودکار فعال می‌شود.',
+                },
                 {
                   q: 'آیا ضمانت بازگشت وجه دارید؟',
-                  a: 'بله، تا ۳۰ روز پس از خرید می‌توانید درخواست بازگشت وجه دهید.' },
+                  a: 'بله، تا ۳۰ روز پس از خرید می‌توانید درخواست بازگشت وجه دهید.',
+                },
               ].map((item, i) => (
                 <div key={i}>
                   <h4 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem' }}>
                     {item.q}
                   </h4>
-                  <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', lineHeight: 1.7, margin: 0 }}>
+                  <p
+                    style={{
+                      color: 'var(--color-text-secondary)',
+                      fontSize: '0.875rem',
+                      lineHeight: 1.7,
+                      margin: 0,
+                    }}
+                  >
                     {item.a}
                   </p>
                 </div>

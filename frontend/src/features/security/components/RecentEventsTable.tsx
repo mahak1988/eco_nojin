@@ -32,8 +32,8 @@ export function RecentEventsTable({ events }: RecentEventsTableProps) {
           Recent Security Events
         </div>
         <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-          Showing latest {Math.min(CHART_CONFIG.maxRecentEvents, events.length)} of{' '}
-          {events.length} events
+          Showing latest {Math.min(CHART_CONFIG.maxRecentEvents, events.length)} of {events.length}{' '}
+          events
         </span>
       </div>
 
@@ -62,25 +62,13 @@ export function RecentEventsTable({ events }: RecentEventsTableProps) {
             recentEvents.map((event) => (
               <tr key={event.id} className="transaction-row">
                 <td>
-                  <span
-                    className={`status-badge ${
-                      isSuccessful(event) ? 'success' : 'danger'
-                    }`}
-                  >
-                    {isSuccessful(event) ? (
-                      <CheckCircle size={14} />
-                    ) : (
-                      <XCircle size={14} />
-                    )}
+                  <span className={`status-badge ${isSuccessful(event) ? 'success' : 'danger'}`}>
+                    {isSuccessful(event) ? <CheckCircle size={14} /> : <XCircle size={14} />}
                     {isSuccessful(event) ? 'Success' : 'Failed'}
                   </span>
                 </td>
-                <td style={{ fontWeight: 500, color: 'var(--text-primary)' }}>
-                  {event.type}
-                </td>
-                <td
-                  style={{ color: 'var(--text-secondary)', fontSize: '13px' }}
-                >
+                <td style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{event.type}</td>
+                <td style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
                   {event.detail || '-'}
                 </td>
                 <td

@@ -71,21 +71,14 @@ export default function CryptoPaymentWidget() {
             </div>
           ) : (
             wallets.map((wallet) => (
-              <WalletCard
-                key={wallet.type}
-                wallet={wallet}
-                copiedId={copiedId}
-                onCopy={copy}
-              />
+              <WalletCard key={wallet.type} wallet={wallet} copiedId={copiedId} onCopy={copy} />
             ))
           )}
         </div>
 
         {/* Transactions Table */}
         <div className="chart-container">
-          <div className="chart-title">
-            {t('crypto.recentTransactions')}
-          </div>
+          <div className="chart-title">{t('crypto.recentTransactions')}</div>
           <table className="admin-table">
             <thead>
               <tr>

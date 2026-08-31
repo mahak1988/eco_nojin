@@ -10,11 +10,7 @@
  */
 
 import type { CryptoTransaction, CryptoType, TransactionStatus } from '../types';
-import {
-  TX_AMOUNT_RANGE,
-  TX_USD_RANGE,
-  TX_STATUS_THRESHOLDS,
-} from '../constants/config';
+import { TX_AMOUNT_RANGE, TX_USD_RANGE, TX_STATUS_THRESHOLDS } from '../constants/config';
 
 const CRYPTO_TYPES: CryptoType[] = ['btc', 'usdt', 'eth'];
 
@@ -63,10 +59,7 @@ function determineStatus(rand: number): TransactionStatus {
  * @param id - Unique transaction ID
  * @param seed - Random seed (defaults to Date.now())
  */
-export function generateMockTransaction(
-  id: string,
-  seed: number = Date.now()
-): CryptoTransaction {
+export function generateMockTransaction(id: string, seed: number = Date.now()): CryptoTransaction {
   const rand1 = seededRandom(seed);
   const rand2 = seededRandom(seed + 1);
   const rand3 = seededRandom(seed + 2);

@@ -44,7 +44,7 @@ export default function LiveGauge({
             <stop offset="100%" stopColor={endColor} />
           </linearGradient>
         </defs>
-        
+
         {/* Background circle */}
         <circle
           cx={size / 2}
@@ -54,7 +54,7 @@ export default function LiveGauge({
           strokeWidth="12"
           fill="none"
         />
-        
+
         {/* Progress circle */}
         <motion.circle
           cx={size / 2}

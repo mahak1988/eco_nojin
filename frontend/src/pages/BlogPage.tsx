@@ -69,11 +69,20 @@ const BLOG_POSTS = [
 export const BlogPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = React.useState<string>('همه');
 
-  const categories = ['همه', 'مهندسی آبخیزداری', 'اقتصاد پایدار', 'کشاورزی پایدار', 'مدیریت آب', 'بلاکچین', 'مدل‌سازی'];
+  const categories = [
+    'همه',
+    'مهندسی آبخیزداری',
+    'اقتصاد پایدار',
+    'کشاورزی پایدار',
+    'مدیریت آب',
+    'بلاکچین',
+    'مدل‌سازی',
+  ];
 
-  const filteredPosts = selectedCategory === 'همه'
-    ? BLOG_POSTS
-    : BLOG_POSTS.filter(p => p.category === selectedCategory);
+  const filteredPosts =
+    selectedCategory === 'همه'
+      ? BLOG_POSTS
+      : BLOG_POSTS.filter((p) => p.category === selectedCategory);
 
   return (
     <PublicLayout>
@@ -87,19 +96,28 @@ export const BlogPage: React.FC = () => {
           <h1 style={{ fontSize: '3rem', fontWeight: 700, marginBottom: '1rem' }}>
             وبلاگ <span className="logo-eco-nojin">Eco Nojin</span>
           </h1>
-          <p style={{ fontSize: '1.25rem', color: 'var(--color-text-secondary)', maxWidth: 700, margin: '0 auto' }}>
+          <p
+            style={{
+              fontSize: '1.25rem',
+              color: 'var(--color-text-secondary)',
+              maxWidth: 700,
+              margin: '0 auto',
+            }}
+          >
             آخرین مقالات و تحقیقات در حوزه کشاورزی پایدار، مدیریت منابع آب و فناوری‌های نوین
           </p>
         </motion.div>
 
         {/* Category Filter */}
-        <div style={{
-          display: 'flex',
-          gap: '0.5rem',
-          marginBottom: '3rem',
-          justifyContent: 'center',
-          flexWrap: 'wrap',
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '0.5rem',
+            marginBottom: '3rem',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+          }}
+        >
           {categories.map((cat) => (
             <button
               key={cat}
@@ -113,11 +131,13 @@ export const BlogPage: React.FC = () => {
         </div>
 
         {/* Posts Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-          gap: '2rem',
-        }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+            gap: '2rem',
+          }}
+        >
           {filteredPosts.map((post, index) => (
             <motion.article
               key={post.id}
@@ -129,54 +149,69 @@ export const BlogPage: React.FC = () => {
               style={{ padding: 0, overflow: 'hidden', cursor: 'pointer' }}
             >
               {/* Image Header */}
-              <div style={{
-                height: 200,
-                background: 'linear-gradient(135deg, var(--color-primary), var(--color-info))',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '5rem',
-              }}>
+              <div
+                style={{
+                  height: 200,
+                  background: 'linear-gradient(135deg, var(--color-primary), var(--color-info))',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '5rem',
+                }}
+              >
                 {post.image}
               </div>
 
               {/* Content */}
               <div style={{ padding: '1.5rem' }}>
-                <div style={{
-                  display: 'inline-block',
-                  padding: '0.25rem 0.75rem',
-                  background: 'var(--color-primary)',
-                  color: 'white',
-                  borderRadius: 'var(--radius-full)',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  marginBottom: '1rem',
-                }}>
+                <div
+                  style={{
+                    display: 'inline-block',
+                    padding: '0.25rem 0.75rem',
+                    background: 'var(--color-primary)',
+                    color: 'white',
+                    borderRadius: 'var(--radius-full)',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    marginBottom: '1rem',
+                  }}
+                >
                   {post.category}
                 </div>
 
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.75rem', lineHeight: 1.4 }}>
+                <h3
+                  style={{
+                    fontSize: '1.25rem',
+                    fontWeight: 600,
+                    marginBottom: '0.75rem',
+                    lineHeight: 1.4,
+                  }}
+                >
                   {post.title}
                 </h3>
 
-                <p style={{
-                  color: 'var(--color-text-secondary)',
-                  lineHeight: 1.7,
-                  marginBottom: '1rem',
-                  fontSize: '0.875rem',
-                }}>
+                <p
+                  style={{
+                    color: 'var(--color-text-secondary)',
+                    lineHeight: 1.7,
+                    marginBottom: '1rem',
+                    fontSize: '0.875rem',
+                  }}
+                >
                   {post.excerpt}
                 </p>
 
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '1rem',
-                  fontSize: '0.75rem',
-                  color: 'var(--color-text-tertiary)',
-                  borderTop: '1px solid var(--color-border)',
-                  paddingTop: '1rem',
-                }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    fontSize: '0.75rem',
+                    color: 'var(--color-text-tertiary)',
+                    borderTop: '1px solid var(--color-border)',
+                    paddingTop: '1rem',
+                  }}
+                >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                     <User size={14} />
                     <span>{post.author}</span>
@@ -185,21 +220,30 @@ export const BlogPage: React.FC = () => {
                     <Calendar size={14} />
                     <span>{post.date}</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginRight: 'auto' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.25rem',
+                      marginRight: 'auto',
+                    }}
+                  >
                     <Clock size={14} />
                     <span>{post.readTime}</span>
                   </div>
                 </div>
 
-                <div style={{
-                  marginTop: '1rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  color: 'var(--color-primary)',
-                  fontWeight: 600,
-                  fontSize: '0.875rem',
-                }}>
+                <div
+                  style={{
+                    marginTop: '1rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    color: 'var(--color-primary)',
+                    fontWeight: 600,
+                    fontSize: '0.875rem',
+                  }}
+                >
                   ادامه مطلب
                   <ArrowLeft size={16} />
                 </div>

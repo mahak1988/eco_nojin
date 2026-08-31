@@ -42,7 +42,12 @@ export const SupabaseMapCard: React.FC<SupabaseMapCardProps> = ({ lat, lon }) =>
     (async () => {
       try {
         const res = await fetch('/api/v1/supabase/landscapes');
-        const d = (await res.json()) as { status?: string; count?: number; rows?: LandscapeRow[]; error?: string };
+        const d = (await res.json()) as {
+          status?: string;
+          count?: number;
+          rows?: LandscapeRow[];
+          error?: string;
+        };
         if (!alive) return;
         if (d.status === 'ok') {
           setRows(d.rows ?? []);
@@ -64,7 +69,11 @@ export const SupabaseMapCard: React.FC<SupabaseMapCardProps> = ({ lat, lon }) =>
 
   const pts = rows
     .filter((r) => r.geo_boundary?.type === 'Point' && Array.isArray(r.geo_boundary.coordinates))
-    .map((r) => ({ name: r.name ?? '—', province: r.province ?? '—', pos: r.geo_boundary!.coordinates as [number, number] }));
+    .map((r) => ({
+      name: r.name ?? '—',
+      province: r.province ?? '—',
+      pos: r.geo_boundary!.coordinates as [number, number],
+    }));
 
   useEffect(() => {
     if (!containerRef.current || status !== 'ok') return;
@@ -112,8 +121,27 @@ export const SupabaseMapCard: React.FC<SupabaseMapCardProps> = ({ lat, lon }) =>
 
   return (
     <div className="card" style={{ padding: '1.1rem', marginTop: '1.5rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.7rem' }}>
-        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#0d9488' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.5rem',
+          marginBottom: '0.7rem',
+        }}
+      >
+        <h3
+          style={{
+            fontSize: '1.05rem',
+            fontWeight: 800,
+            margin: 0,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            color: '#0d9488',
+          }}
+        >
           <MapPin size={17} /> مناطق واقعی (Supabase + PostGIS)
         </h3>
         <span style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)' }}>
@@ -121,46 +149,113 @@ export const SupabaseMapCard: React.FC<SupabaseMapCardProps> = ({ lat, lon }) =>
         </span>
       </div>
 
-      {status === 'loading' && <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>در حال دریافت…</p>}
+      {status === 'loading' && (
+        <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>در حال دریافت…</p>
+      )}
       {status === 'error' && <p style={{ fontSize: '0.82rem', color: '#ef4444' }}>⚠️ {error}</p>}
 
       {status === 'ok' && (
         <>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '0.4rem',
+            }}
+          >
             <button
               onClick={() => void findNearest()}
               disabled={nearestBusy}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '0.4rem 0.9rem', borderRadius: 8, border: '1px solid var(--color-border)', background: 'var(--color-surface)', cursor: 'pointer', fontSize: '0.76rem', fontWeight: 700, color: 'var(--color-text)' }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.4rem 0.9rem',
+                borderRadius: 8,
+                border: '1px solid var(--color-border)',
+                background: 'var(--color-surface)',
+                cursor: 'pointer',
+                fontSize: '0.76rem',
+                fontWeight: 700,
+                color: 'var(--color-text)',
+              }}
             >
-              <Navigation size={13} /> {nearestBusy ? 'در حال جستجو…' : `نزدیک‌ترین به ${lat}, ${lon}`}
+              <Navigation size={13} />{' '}
+              {nearestBusy ? 'در حال جستجو…' : `نزدیک‌ترین به ${lat}, ${lon}`}
             </button>
           </div>
           {nearest && nearest.length > 0 && (
             <div style={{ marginBottom: '0.6rem', fontSize: '0.74rem' }}>
               {nearest.map((n, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.25rem 0.1rem', borderBottom: '1px dashed var(--color-border)' }}>
+                <div
+                  key={i}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '0.25rem 0.1rem',
+                    borderBottom: '1px dashed var(--color-border)',
+                  }}
+                >
                   <span style={{ fontWeight: 600 }}>{n.name}</span>
                   <span style={{ color: 'var(--color-text-secondary)' }}>{n.distance_km} km</span>
                 </div>
               ))}
-              <p style={{ fontSize: '0.66rem', color: 'var(--color-text-secondary)', margin: '0.3rem 0 0' }}>
-                محاسبه واقعی روی مختصات GeoJSON (Haversine) — پس از migration 0001 با PostGIS (ST_DWithin) انجام می‌شود.
+              <p
+                style={{
+                  fontSize: '0.66rem',
+                  color: 'var(--color-text-secondary)',
+                  margin: '0.3rem 0 0',
+                }}
+              >
+                محاسبه واقعی روی مختصات GeoJSON (Haversine) — پس از migration 0001 با PostGIS
+                (ST_DWithin) انجام می‌شود.
               </p>
             </div>
           )}
           {pts.length > 0 ? (
-            <div ref={containerRef} style={{ width: '100%', height: 240, borderRadius: 12, overflow: 'hidden', background: '#0f172a' }} />
+            <div
+              ref={containerRef}
+              style={{
+                width: '100%',
+                height: 240,
+                borderRadius: 12,
+                overflow: 'hidden',
+                background: '#0f172a',
+              }}
+            />
           ) : (
-            <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', padding: '1rem 0' }}>
+            <p
+              style={{
+                fontSize: '0.8rem',
+                color: 'var(--color-text-secondary)',
+                padding: '1rem 0',
+              }}
+            >
               هیچ ردیفی مختصات GeoJSON ندارد.
             </p>
           )}
-          <div style={{ maxHeight: 150, overflowY: 'auto', marginTop: '0.6rem', fontSize: '0.76rem' }}>
+          <div
+            style={{ maxHeight: 150, overflowY: 'auto', marginTop: '0.6rem', fontSize: '0.76rem' }}
+          >
             {rows.map((r) => (
-              <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem', padding: '0.28rem 0.1rem', borderBottom: '1px dashed var(--color-border)' }}>
+              <div
+                key={r.id}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  gap: '0.5rem',
+                  padding: '0.28rem 0.1rem',
+                  borderBottom: '1px dashed var(--color-border)',
+                }}
+              >
                 <span style={{ fontWeight: 600 }}>{r.name}</span>
                 <span style={{ color: 'var(--color-text-secondary)' }}>
-                  {r.province ?? '—'} · {r.geo_boundary?.type === 'Point' && r.geo_boundary.coordinates ? `${r.geo_boundary.coordinates[0]}, ${r.geo_boundary.coordinates[1]}` : 'بدون مختصات'}
+                  {r.province ?? '—'} ·{' '}
+                  {r.geo_boundary?.type === 'Point' && r.geo_boundary.coordinates
+                    ? `${r.geo_boundary.coordinates[0]}, ${r.geo_boundary.coordinates[1]}`
+                    : 'بدون مختصات'}
                 </span>
               </div>
             ))}

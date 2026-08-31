@@ -27,7 +27,7 @@ export default function LiveCounter({
   decimals = 0,
 }: LiveCounterProps) {
   const animatedValue = useAnimatedCounter(value, 800);
-  
+
   const colorMap = {
     primary: 'var(--accent-primary)',
     success: 'var(--accent-primary)',
@@ -43,9 +43,10 @@ export default function LiveCounter({
     lg: { value: '48px', label: '14px' },
   };
 
-  const formattedValue = decimals > 0
-    ? animatedValue.toLocaleString('en-US', { maximumFractionDigits: decimals })
-    : animatedValue.toLocaleString('en-US');
+  const formattedValue =
+    decimals > 0
+      ? animatedValue.toLocaleString('en-US', { maximumFractionDigits: decimals })
+      : animatedValue.toLocaleString('en-US');
 
   return (
     <motion.div
@@ -60,13 +61,21 @@ export default function LiveCounter({
         </div>
         <div className="live-counter-label">{label}</div>
         {trend !== undefined && (
-          <div className={`live-counter-trend ${trend > 0 ? 'positive' : trend < 0 ? 'negative' : 'neutral'}`}>
-            {trend > 0 ? <TrendingUp size={12} /> : trend < 0 ? <TrendingDown size={12} /> : <Minus size={12} />}
+          <div
+            className={`live-counter-trend ${trend > 0 ? 'positive' : trend < 0 ? 'negative' : 'neutral'}`}
+          >
+            {trend > 0 ? (
+              <TrendingUp size={12} />
+            ) : trend < 0 ? (
+              <TrendingDown size={12} />
+            ) : (
+              <Minus size={12} />
+            )}
             {Math.abs(trend).toFixed(1)}%
           </div>
         )}
       </div>
-      
+
       <div className="live-counter-value-wrapper">
         {prefix && <span className="live-counter-prefix">{prefix}</span>}
         <motion.span

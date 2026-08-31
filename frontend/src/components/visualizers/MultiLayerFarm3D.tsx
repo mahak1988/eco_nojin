@@ -104,7 +104,7 @@ const GrazingAnimal: React.FC<{ position: [number, number, number]; type: string
 }) => {
   const ref = useRef<THREE.Group>(null);
   const offset = useRef(Math.random() * Math.PI * 2);
-  
+
   useFrame((state) => {
     if (ref.current) {
       const t = state.clock.elapsedTime + offset.current;
@@ -136,13 +136,25 @@ export const MultiLayerFarm3D: React.FC<MultiLayerFarm3DProps> = ({
   showAnimals = true,
 }) => {
   const treePositions: [number, number, number][] = [
-    [-8, 0, -8], [8, 0, -8], [-8, 0, 8], [8, 0, 8],
-    [0, 0, -10], [0, 0, 10], [-10, 0, 0], [10, 0, 0],
+    [-8, 0, -8],
+    [8, 0, -8],
+    [-8, 0, 8],
+    [8, 0, 8],
+    [0, 0, -10],
+    [0, 0, 10],
+    [-10, 0, 0],
+    [10, 0, 0],
   ];
 
   const bushPositions: [number, number, number][] = [
-    [-4, 0, -4], [4, 0, -4], [-4, 0, 4], [4, 0, 4],
-    [0, 0, -6], [0, 0, 6], [-6, 0, 0], [6, 0, 0],
+    [-4, 0, -4],
+    [4, 0, -4],
+    [-4, 0, 4],
+    [4, 0, 4],
+    [0, 0, -6],
+    [0, 0, 6],
+    [-6, 0, 0],
+    [6, 0, 0],
   ];
 
   const groundPositions: [number, number, number][] = [];
@@ -153,7 +165,15 @@ export const MultiLayerFarm3D: React.FC<MultiLayerFarm3DProps> = ({
   }
 
   return (
-    <div style={{ width: '100%', height: 600, borderRadius: 'var(--radius-lg)', overflow: 'hidden', background: 'linear-gradient(to bottom, #87CEEB, #E0F6FF)' }}>
+    <div
+      style={{
+        width: '100%',
+        height: 600,
+        borderRadius: 'var(--radius-lg)',
+        overflow: 'hidden',
+        background: 'linear-gradient(to bottom, #87CEEB, #E0F6FF)',
+      }}
+    >
       <Canvas shadows>
         <Sky sunPosition={[100, 50, 100]} />
         <ambientLight intensity={0.6} />
@@ -171,40 +191,38 @@ export const MultiLayerFarm3D: React.FC<MultiLayerFarm3DProps> = ({
         </mesh>
 
         {/* لایه بالایی: درختان */}
-        {showCanopy && treePositions.map((pos, i) => (
-          <CanopyTree
-            key={`tree-${i}`}
-            position={pos}
-            species={['walnut', 'olive', 'pistachio'][i % 3]}
-          />
-        ))}
+        {showCanopy &&
+          treePositions.map((pos, i) => (
+            <CanopyTree
+              key={`tree-${i}`}
+              position={pos}
+              species={['walnut', 'olive', 'pistachio'][i % 3]}
+            />
+          ))}
 
         {/* لایه میانی: بوته‌ها */}
-        {showSubCanopy && bushPositions.map((pos, i) => (
-          <SubCanopyBush key={`bush-${i}`} position={pos} />
-        ))}
+        {showSubCanopy &&
+          bushPositions.map((pos, i) => <SubCanopyBush key={`bush-${i}`} position={pos} />)}
 
         {/* لایه زمینی: گیاهان پوششی */}
-        {showGround && groundPositions.map((pos, i) => (
-          <GroundCrop
-            key={`ground-${i}`}
-            position={pos}
-            type={['clover', 'alfalfa', 'mint', 'saffron'][i % 4]}
-          />
-        ))}
+        {showGround &&
+          groundPositions.map((pos, i) => (
+            <GroundCrop
+              key={`ground-${i}`}
+              position={pos}
+              type={['clover', 'alfalfa', 'mint', 'saffron'][i % 4]}
+            />
+          ))}
 
         {/* دام‌ها */}
-        {showAnimals && Array.from({ length: 8 }).map((_, i) => (
-          <GrazingAnimal
-            key={`animal-${i}`}
-            position={[
-              (Math.random() - 0.5) * 20,
-              0,
-              (Math.random() - 0.5) * 20,
-            ]}
-            type={i % 2 === 0 ? 'sheep' : 'goat'}
-          />
-        ))}
+        {showAnimals &&
+          Array.from({ length: 8 }).map((_, i) => (
+            <GrazingAnimal
+              key={`animal-${i}`}
+              position={[(Math.random() - 0.5) * 20, 0, (Math.random() - 0.5) * 20]}
+              type={i % 2 === 0 ? 'sheep' : 'goat'}
+            />
+          ))}
 
         <OrbitControls enablePan enableZoom enableRotate />
       </Canvas>

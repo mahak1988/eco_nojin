@@ -52,15 +52,8 @@ export function StatsCards({ stats }: StatsCardsProps) {
   return (
     <div className="grid-4col">
       {cards.map((card, i) => (
-        <motion.div
-          key={i}
-          className="metric-card"
-          whileHover={{ scale: 1.02 }}
-        >
-          <div
-            className="metric-icon"
-            style={{ background: card.iconBg, color: card.iconColor }}
-          >
+        <motion.div key={i} className="metric-card" whileHover={{ scale: 1.02 }}>
+          <div className="metric-icon" style={{ background: card.iconBg, color: card.iconColor }}>
             {card.icon}
           </div>
           <div className="metric-label">{card.label}</div>

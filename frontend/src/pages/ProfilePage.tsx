@@ -1,8 +1,18 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  User, Settings, Leaf, Droplets, Coins, TrendingUp,
-  Award, Calendar, MapPin, Edit2, LogOut, Bell,
+  User,
+  Settings,
+  Leaf,
+  Droplets,
+  Coins,
+  TrendingUp,
+  Award,
+  Calendar,
+  MapPin,
+  Edit2,
+  LogOut,
+  Bell,
 } from 'lucide-react';
 import { AppLayout } from '../components/layout/AppLayout';
 import { Card, Button, StatCard, ProgressRing } from '../components/ui';
@@ -11,17 +21,61 @@ export const ProfilePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
 
   const userStats = [
-    { title: 'کل کربن ذخیره‌شده', value: 45.8, suffix: ' تن CO₂', icon: <Leaf size={24} />, color: 'primary' },
-    { title: 'آب ذخیره‌شده', value: 2850, suffix: ' m³', icon: <Droplets size={24} />, color: 'info' },
-    { title: 'اعتبار کربن', value: 38, suffix: ' USDT', icon: <Coins size={24} />, color: 'accent' },
-    { title: 'امتیاز پایداری', value: 87, suffix: '/۱۰۰', icon: <Award size={24} />, color: 'success' },
+    {
+      title: 'کل کربن ذخیره‌شده',
+      value: 45.8,
+      suffix: ' تن CO₂',
+      icon: <Leaf size={24} />,
+      color: 'primary',
+    },
+    {
+      title: 'آب ذخیره‌شده',
+      value: 2850,
+      suffix: ' m³',
+      icon: <Droplets size={24} />,
+      color: 'info',
+    },
+    {
+      title: 'اعتبار کربن',
+      value: 38,
+      suffix: ' USDT',
+      icon: <Coins size={24} />,
+      color: 'accent',
+    },
+    {
+      title: 'امتیاز پایداری',
+      value: 87,
+      suffix: '/۱۰۰',
+      icon: <Award size={24} />,
+      color: 'success',
+    },
   ];
 
   const recentActivities = [
-    { action: 'اجرای شبیه‌سازی کشت گندم', time: '۲ ساعت پیش', icon: <Leaf size={16} />, color: 'var(--color-success)' },
-    { action: 'ثبت ۳.۲ تن CO₂ در بلاکچین', time: 'دیروز', icon: <Coins size={16} />, color: 'var(--color-accent)' },
-    { action: 'طراحی بادشکن جدید', time: '۳ روز پیش', icon: <TrendingUp size={16} />, color: 'var(--color-info)' },
-    { action: 'به‌روزرسانی مشخصات خاک', time: 'هفته پیش', icon: <Settings size={16} />, color: 'var(--color-warning)' },
+    {
+      action: 'اجرای شبیه‌سازی کشت گندم',
+      time: '۲ ساعت پیش',
+      icon: <Leaf size={16} />,
+      color: 'var(--color-success)',
+    },
+    {
+      action: 'ثبت ۳.۲ تن CO₂ در بلاکچین',
+      time: 'دیروز',
+      icon: <Coins size={16} />,
+      color: 'var(--color-accent)',
+    },
+    {
+      action: 'طراحی بادشکن جدید',
+      time: '۳ روز پیش',
+      icon: <TrendingUp size={16} />,
+      color: 'var(--color-info)',
+    },
+    {
+      action: 'به‌روزرسانی مشخصات خاک',
+      time: 'هفته پیش',
+      icon: <Settings size={16} />,
+      color: 'var(--color-warning)',
+    },
   ];
 
   return (
@@ -41,36 +95,46 @@ export const ProfilePage: React.FC = () => {
             overflow: 'hidden',
           }}
         >
-          <div style={{
-            position: 'absolute',
-            top: -50,
-            right: -50,
-            width: 300,
-            height: 300,
-            borderRadius: '50%',
-            background: 'rgba(255, 255, 255, 0.1)',
-            filter: 'blur(60px)',
-          }} />
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', position: 'relative', zIndex: 1 }}>
-            <div style={{
-              width: 100,
-              height: 100,
+          <div
+            style={{
+              position: 'absolute',
+              top: -50,
+              right: -50,
+              width: 300,
+              height: 300,
               borderRadius: '50%',
-              background: 'white',
+              background: 'rgba(255, 255, 255, 0.1)',
+              filter: 'blur(60px)',
+            }}
+          />
+
+          <div
+            style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--color-primary)',
-              fontSize: '2.5rem',
-              fontWeight: 700,
-            }}>
+              gap: '2rem',
+              position: 'relative',
+              zIndex: 1,
+            }}
+          >
+            <div
+              style={{
+                width: 100,
+                height: 100,
+                borderRadius: '50%',
+                background: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--color-primary)',
+                fontSize: '2.5rem',
+                fontWeight: 700,
+              }}
+            >
               HA
             </div>
             <div style={{ flex: 1 }}>
-              <h1 style={{ margin: 0, fontSize: '2rem', marginBottom: '0.5rem' }}>
-                جناب آقای حسن
-              </h1>
+              <h1 style={{ margin: 0, fontSize: '2rem', marginBottom: '0.5rem' }}>جناب آقای حسن</h1>
               <p style={{ margin: 0, opacity: 0.9, marginBottom: '1rem' }}>
                 دانشمند و کارآفرین برجسته | کشاورزی پایدار
               </p>
@@ -86,11 +150,17 @@ export const ProfilePage: React.FC = () => {
               </div>
             </div>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <Button variant="secondary" style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: 'none' }}>
+              <Button
+                variant="secondary"
+                style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: 'none' }}
+              >
                 <Edit2 size={16} />
                 ویرایش
               </Button>
-              <Button variant="secondary" style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: 'none' }}>
+              <Button
+                variant="secondary"
+                style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: 'none' }}
+              >
                 <Bell size={16} />
               </Button>
             </div>
@@ -139,11 +209,31 @@ export const ProfilePage: React.FC = () => {
           <div className="grid grid-cols-2">
             {/* Sustainability Score */}
             <Card title="امتیاز پایداری کلی" icon={<Award size={20} />}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem', padding: '2rem' }}>
-                <ProgressRing value={87} size={150} strokeWidth={12} color="var(--color-success)" label="عالی" />
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '2rem',
+                  padding: '2rem',
+                }}
+              >
+                <ProgressRing
+                  value={87}
+                  size={150}
+                  strokeWidth={12}
+                  color="var(--color-success)"
+                  label="عالی"
+                />
                 <div style={{ textAlign: 'right' }}>
                   <h3 style={{ marginBottom: '0.5rem' }}>وضعیت: عالی</h3>
-                  <p style={{ color: 'var(--color-text-secondary)', lineHeight: 1.8, marginBottom: '1rem' }}>
+                  <p
+                    style={{
+                      color: 'var(--color-text-secondary)',
+                      lineHeight: 1.8,
+                      marginBottom: '1rem',
+                    }}
+                  >
                     شما در بین ۱۰٪ بالای کاربران از نظر پایداری هستید!
                   </p>
                   <Button variant="primary" size="sm">
@@ -171,22 +261,22 @@ export const ProfilePage: React.FC = () => {
                       borderRadius: 'var(--radius-lg)',
                     }}
                   >
-                    <div style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: '50%',
-                      background: `${activity.color}20`,
-                      color: activity.color,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}>
+                    <div
+                      style={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: '50%',
+                        background: `${activity.color}20`,
+                        color: activity.color,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
                       {activity.icon}
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '0.875rem', fontWeight: 500 }}>
-                        {activity.action}
-                      </div>
+                      <div style={{ fontSize: '0.875rem', fontWeight: 500 }}>{activity.action}</div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}>
                         {activity.time}
                       </div>
@@ -200,10 +290,14 @@ export const ProfilePage: React.FC = () => {
 
         {activeTab === 'farms' && (
           <Card title="مزارع من" icon={<MapPin size={20} />}>
-            <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--color-text-tertiary)' }}>
+            <div
+              style={{ padding: '3rem', textAlign: 'center', color: 'var(--color-text-tertiary)' }}
+            >
               <MapPin size={64} style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
               <h3>هنوز مزرعه‌ای ثبت نکرده‌اید</h3>
-              <p style={{ marginBottom: '1.5rem' }}>اولین مزرعه خود را ثبت کنید تا شبیه‌سازی را شروع کنید</p>
+              <p style={{ marginBottom: '1.5rem' }}>
+                اولین مزرعه خود را ثبت کنید تا شبیه‌سازی را شروع کنید
+              </p>
               <Button variant="primary">ثبت مزرعه جدید</Button>
             </div>
           </Card>
@@ -221,7 +315,10 @@ export const ProfilePage: React.FC = () => {
               <Button variant="secondary" style={{ justifyContent: 'flex-start' }}>
                 <Settings size={16} /> امنیت حساب
               </Button>
-              <Button variant="secondary" style={{ justifyContent: 'flex-start', color: 'var(--color-error)' }}>
+              <Button
+                variant="secondary"
+                style={{ justifyContent: 'flex-start', color: 'var(--color-error)' }}
+              >
                 <LogOut size={16} /> خروج از حساب
               </Button>
             </div>

@@ -17,12 +17,7 @@ interface BotsListProps {
   onToggleBot: (botId: string) => void;
 }
 
-export function BotsList({
-  bots,
-  selectedBot,
-  onSelectBot,
-  onToggleBot,
-}: BotsListProps) {
+export function BotsList({ bots, selectedBot, onSelectBot, onToggleBot }: BotsListProps) {
   const { t } = useTranslation();
 
   return (
@@ -41,9 +36,7 @@ export function BotsList({
               padding: '16px',
               cursor: 'pointer',
               border:
-                selectedBot === bot.id
-                  ? '2px solid var(--accent-info)'
-                  : '2px solid transparent',
+                selectedBot === bot.id ? '2px solid var(--accent-info)' : '2px solid transparent',
             }}
             whileHover={{ scale: 1.01 }}
             onClick={() => onSelectBot(bot.id)}

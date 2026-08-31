@@ -1,8 +1,16 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  X, Copy, Check, Wallet, ExternalLink,
-  AlertCircle, Loader2, Shield, QrCode } from 'lucide-react';
+  X,
+  Copy,
+  Check,
+  Wallet,
+  ExternalLink,
+  AlertCircle,
+  Loader2,
+  Shield,
+  QrCode,
+} from 'lucide-react';
 import { CRYPTO_NETWORKS, type CryptoNetwork } from '../../config/crypto';
 
 interface CryptoPaymentModalProps {
@@ -20,7 +28,8 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
   onClose,
   amountUsd,
   planName,
-  onSuccess }) => {
+  onSuccess,
+}) => {
   const [selectedNetwork, setSelectedNetwork] = useState<CryptoNetwork>(CRYPTO_NETWORKS[0]);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('manual');
   const [copied, setCopied] = useState(false);
@@ -48,7 +57,9 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
       // بررسی وجود MetaMask
       const ethereum = (window as any).ethereum;
       if (!ethereum) {
-        setError('MetaMask نصب نیست. لطفاً از metamask.io نصب کنید یا از روش "کپی لینک" استفاده کنید.');
+        setError(
+          'MetaMask نصب نیست. لطفاً از metamask.io نصب کنید یا از روش "کپی لینک" استفاده کنید.'
+        );
         return;
       }
 
@@ -61,7 +72,8 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
         // دریافت موجودی
         const balance = await ethereum.request({
           method: 'eth_getBalance',
-          params: [accounts[0], 'latest'] });
+          params: [accounts[0], 'latest'],
+        });
         const balanceEth = parseInt(balance, 16) / 1e18;
         setWalletBalance(balanceEth.toFixed(4));
       }
@@ -147,7 +159,8 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '1rem' }}
+          padding: '1rem',
+        }}
       >
         <motion.div
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -161,7 +174,8 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
             maxHeight: '90vh',
             overflowY: 'auto',
             padding: '2rem',
-            position: 'relative' }}
+            position: 'relative',
+          }}
         >
           {/* Close Button */}
           <button
@@ -172,7 +186,8 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
               top: '1rem',
               left: '1rem',
               padding: '0.5rem',
-              borderRadius: '50%' }}
+              borderRadius: '50%',
+            }}
           >
             <X size={20} />
           </button>
@@ -189,7 +204,8 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'white',
-                margin: '0 auto 1rem' }}
+                margin: '0 auto 1rem',
+              }}
             >
               <Wallet size={32} />
             </div>
@@ -216,18 +232,19 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
                   style={{
                     padding: '0.75rem',
                     borderRadius: 'var(--radius-lg)',
-                    border: selectedNetwork.id === network.id
-                      ? `2px solid ${network.color}`
-                      : '2px solid var(--color-border)',
-                    background: selectedNetwork.id === network.id
-                      ? `${network.color}15`
-                      : 'transparent',
+                    border:
+                      selectedNetwork.id === network.id
+                        ? `2px solid ${network.color}`
+                        : '2px solid var(--color-border)',
+                    background:
+                      selectedNetwork.id === network.id ? `${network.color}15` : 'transparent',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.5rem',
                     fontSize: '0.875rem',
-                    transition: 'all 0.2s' }}
+                    transition: 'all 0.2s',
+                  }}
                 >
                   <span style={{ fontSize: '1.25rem' }}>{network.icon}</span>
                   <div style={{ textAlign: 'right', flex: 1 }}>
@@ -250,8 +267,10 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
               className="btn"
               style={{
                 flex: 1,
-                background: paymentMethod === 'wallet' ? 'var(--color-primary)' : 'var(--color-surface)',
-                color: paymentMethod === 'wallet' ? 'white' : 'var(--color-text-secondary)' }}
+                background:
+                  paymentMethod === 'wallet' ? 'var(--color-primary)' : 'var(--color-surface)',
+                color: paymentMethod === 'wallet' ? 'white' : 'var(--color-text-secondary)',
+              }}
             >
               <Wallet size={16} /> اتصال کیف پول
             </button>
@@ -260,8 +279,10 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
               className="btn"
               style={{
                 flex: 1,
-                background: paymentMethod === 'manual' ? 'var(--color-primary)' : 'var(--color-surface)',
-                color: paymentMethod === 'manual' ? 'white' : 'var(--color-text-secondary)' }}
+                background:
+                  paymentMethod === 'manual' ? 'var(--color-primary)' : 'var(--color-surface)',
+                color: paymentMethod === 'manual' ? 'white' : 'var(--color-text-secondary)',
+              }}
             >
               <Copy size={16} /> کپی آدرس
             </button>
@@ -269,13 +290,16 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
 
           {/* Content Based on Method */}
           {paymentMethod === 'manual' ? (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              key="manual"
-            >
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key="manual">
               {/* QR Code + Address */}
-              <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', alignItems: 'center' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '1rem',
+                  marginBottom: '1.5rem',
+                  alignItems: 'center',
+                }}
+              >
                 <div
                   style={{
                     width: 140,
@@ -283,12 +307,20 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
                     background: 'white',
                     borderRadius: 'var(--radius-lg)',
                     padding: '0.5rem',
-                    flexShrink: 0 }}
+                    flexShrink: 0,
+                  }}
                 >
                   <img src={qrDataUrl} alt="QR Code" style={{ width: '100%', height: '100%' }} />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)', display: 'block', marginBottom: '0.25rem' }}>
+                  <label
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--color-text-tertiary)',
+                      display: 'block',
+                      marginBottom: '0.25rem',
+                    }}
+                  >
                     آدرس {selectedNetwork.symbol}:
                   </label>
                   <div
@@ -300,7 +332,8 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
                       fontFamily: 'monospace',
                       fontSize: '0.75rem',
                       wordBreak: 'break-all',
-                      marginBottom: '0.5rem' }}
+                      marginBottom: '0.5rem',
+                    }}
                   >
                     {selectedNetwork.projectAddress}
                   </div>
@@ -310,7 +343,15 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
                       className="btn btn-primary"
                       style={{ flex: 1, padding: '0.5rem', fontSize: '0.75rem' }}
                     >
-                      {copied ? <><Check size={14} /> کپی شد!</> : <><Copy size={14} /> کپی آدرس</>}
+                      {copied ? (
+                        <>
+                          <Check size={14} /> کپی شد!
+                        </>
+                      ) : (
+                        <>
+                          <Copy size={14} /> کپی آدرس
+                        </>
+                      )}
                     </button>
                     <button
                       onClick={copyPaymentLink}
@@ -330,29 +371,45 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
                   borderRadius: 'var(--radius-lg)',
                   padding: '1rem',
                   fontSize: '0.875rem',
-                  lineHeight: 1.8 }}
+                  lineHeight: 1.8,
+                }}
               >
-                <p style={{ fontWeight: 600, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <p
+                  style={{
+                    fontWeight: 600,
+                    marginBottom: '0.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                  }}
+                >
                   <AlertCircle size={16} color="var(--color-warning)" />
                   مراحل پرداخت:
                 </p>
                 <ol style={{ margin: 0, paddingRight: '1.25rem' }}>
                   <li>آدرس بالا را کپی کنید</li>
-                  <li>از کیف پول خود <strong>دقیقاً ${amountUsd} USDT</strong> ارسال کنید</li>
-                  <li>حتماً از شبکه <strong style={{ color: selectedNetwork.color }}>{selectedNetwork.nameFa}</strong> استفاده کنید</li>
+                  <li>
+                    از کیف پول خود <strong>دقیقاً ${amountUsd} USDT</strong> ارسال کنید
+                  </li>
+                  <li>
+                    حتماً از شبکه{' '}
+                    <strong style={{ color: selectedNetwork.color }}>
+                      {selectedNetwork.nameFa}
+                    </strong>{' '}
+                    استفاده کنید
+                  </li>
                   <li>پس از تأیید تراکنش، اشتراک شما فعال می‌شود</li>
                 </ol>
               </div>
             </motion.div>
           ) : (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              key="wallet"
-            >
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key="wallet">
               {!walletConnected ? (
                 <div style={{ textAlign: 'center', padding: '2rem' }}>
-                  <Wallet size={48} style={{ color: 'var(--color-text-tertiary)', marginBottom: '1rem' }} />
+                  <Wallet
+                    size={48}
+                    style={{ color: 'var(--color-text-tertiary)', marginBottom: '1rem' }}
+                  />
                   <p style={{ marginBottom: '1.5rem', color: 'var(--color-text-secondary)' }}>
                     برای پرداخت مستقیم، کیف پول خود را متصل کنید
                   </p>
@@ -363,12 +420,22 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
                     style={{ padding: '0.75rem 2rem' }}
                   >
                     {isProcessing ? (
-                      <><Loader2 size={16} className="animate-spin" /> در حال اتصال...</>
+                      <>
+                        <Loader2 size={16} className="animate-spin" /> در حال اتصال...
+                      </>
                     ) : (
-                      <><Wallet size={16} /> اتصال MetaMask</>
+                      <>
+                        <Wallet size={16} /> اتصال MetaMask
+                      </>
                     )}
                   </button>
-                  <p style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)', marginTop: '1rem' }}>
+                  <p
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--color-text-tertiary)',
+                      marginTop: '1rem',
+                    }}
+                  >
                     یا از روش "کپی آدرس" برای پرداخت دستی استفاده کنید
                   </p>
                 </div>
@@ -379,16 +446,27 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
                       background: 'var(--color-surface)',
                       borderRadius: 'var(--radius-lg)',
                       padding: '1rem',
-                      marginBottom: '1rem' }}
+                      marginBottom: '1rem',
+                    }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <span style={{ color: 'var(--color-text-tertiary)', fontSize: '0.875rem' }}>آدرس کیف پول:</span>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        marginBottom: '0.5rem',
+                      }}
+                    >
+                      <span style={{ color: 'var(--color-text-tertiary)', fontSize: '0.875rem' }}>
+                        آدرس کیف پول:
+                      </span>
                       <span style={{ fontFamily: 'monospace', fontSize: '0.75rem' }}>
                         {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
                       </span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ color: 'var(--color-text-tertiary)', fontSize: '0.875rem' }}>موجودی:</span>
+                      <span style={{ color: 'var(--color-text-tertiary)', fontSize: '0.875rem' }}>
+                        موجودی:
+                      </span>
                       <span style={{ fontWeight: 600 }}>{walletBalance} ETH</span>
                     </div>
                   </div>
@@ -398,9 +476,11 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
                       setIsProcessing(true);
                       // در production: فراخوانی contract.transfer
                       setTimeout(() => {
-                        const mockHash = '0x' + Array.from({ length: 64 }, () =>
-                          Math.floor(Math.random() * 16).toString(16)
-                        ).join('');
+                        const mockHash =
+                          '0x' +
+                          Array.from({ length: 64 }, () =>
+                            Math.floor(Math.random() * 16).toString(16)
+                          ).join('');
                         setTxHash(mockHash);
                         setIsProcessing(false);
                         if (onSuccess) onSuccess(mockHash, selectedNetwork.id);
@@ -411,7 +491,9 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
                     style={{ width: '100%', padding: '1rem' }}
                   >
                     {isProcessing ? (
-                      <><Loader2 size={16} className="animate-spin" /> در حال تأیید تراکنش...</>
+                      <>
+                        <Loader2 size={16} className="animate-spin" /> در حال تأیید تراکنش...
+                      </>
                     ) : (
                       <>پرداخت ${amountUsd} USDT</>
                     )}
@@ -432,11 +514,20 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
                 background: 'rgba(16, 185, 129, 0.1)',
                 border: '1px solid var(--color-success)',
                 borderRadius: 'var(--radius-lg)',
-                textAlign: 'center' }}
+                textAlign: 'center',
+              }}
             >
               <Check size={32} color="var(--color-success)" style={{ margin: '0 auto 0.5rem' }} />
               <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>تراکنش ارسال شد!</p>
-              <p style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)', fontFamily: 'monospace', wordBreak: 'break-all', marginBottom: '0.5rem' }}>
+              <p
+                style={{
+                  fontSize: '0.75rem',
+                  color: 'var(--color-text-tertiary)',
+                  fontFamily: 'monospace',
+                  wordBreak: 'break-all',
+                  marginBottom: '0.5rem',
+                }}
+              >
                 {txHash}
               </p>
               <button
@@ -464,7 +555,8 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
                 fontSize: '0.875rem',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.5rem' }}
+                gap: '0.5rem',
+              }}
             >
               <AlertCircle size={16} />
               {error}
@@ -482,7 +574,8 @@ export const CryptoPaymentModal: React.FC<CryptoPaymentModalProps> = ({
               justifyContent: 'center',
               gap: '0.5rem',
               fontSize: '0.75rem',
-              color: 'var(--color-text-tertiary)' }}
+              color: 'var(--color-text-tertiary)',
+            }}
           >
             <Shield size={14} />
             <span>پرداخت امن و رمزگذاری‌شده</span>

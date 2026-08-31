@@ -9,10 +9,7 @@ interface HeaderProps {
   onToggleSidebar: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({
-  theme,
-  onToggleTheme,
-  onToggleSidebar }) => {
+export const Header: React.FC<HeaderProps> = ({ theme, onToggleTheme, onToggleSidebar }) => {
   return (
     <header
       style={{
@@ -25,7 +22,8 @@ export const Header: React.FC<HeaderProps> = ({
         padding: '0 1.5rem',
         position: 'sticky',
         top: 0,
-        zIndex: 30 }}
+        zIndex: 30,
+      }}
     >
       {/* Left Section */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -48,7 +46,8 @@ export const Header: React.FC<HeaderProps> = ({
               left: '0.75rem',
               top: '50%',
               transform: 'translateY(-50%)',
-              color: 'var(--color-text-tertiary)' }}
+              color: 'var(--color-text-tertiary)',
+            }}
           />
           <input
             type="text"
@@ -56,7 +55,8 @@ export const Header: React.FC<HeaderProps> = ({
             className="input"
             style={{
               paddingLeft: '2.5rem',
-              width: '100%' }}
+              width: '100%',
+            }}
           />
         </div>
       </div>
@@ -80,7 +80,8 @@ export const Header: React.FC<HeaderProps> = ({
               width: 8,
               height: 8,
               borderRadius: '50%',
-              background: 'var(--color-error)' }}
+              background: 'var(--color-error)',
+            }}
           />
         </motion.button>
 
@@ -92,7 +93,8 @@ export const Header: React.FC<HeaderProps> = ({
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            padding: '0.5rem 0.75rem' }}
+            padding: '0.5rem 0.75rem',
+          }}
         >
           <div
             style={{
@@ -103,7 +105,8 @@ export const Header: React.FC<HeaderProps> = ({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'white' }}
+              color: 'white',
+            }}
           >
             <User size={16} />
           </div>

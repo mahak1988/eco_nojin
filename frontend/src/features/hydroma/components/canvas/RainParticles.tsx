@@ -65,18 +65,9 @@ export function RainParticles({ count = 1400 }: RainParticlesProps) {
   return (
     <points ref={pointsRef}>
       <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-        />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
-      <pointsMaterial
-        size={2.2}
-        color="#a5c8e8"
-        transparent
-        opacity={0.55}
-        sizeAttenuation
-      />
+      <pointsMaterial size={2.2} color="#a5c8e8" transparent opacity={0.55} sizeAttenuation />
     </points>
   );
 }

@@ -16,7 +16,8 @@ export const Card: React.FC<CardProps> = ({
   subtitle,
   icon,
   className = '',
-  hover = true }) => {
+  hover = true,
+}) => {
   return (
     <motion.div
       className={`card ${className}`}
@@ -26,7 +27,14 @@ export const Card: React.FC<CardProps> = ({
       transition={{ duration: 0.3 }}
     >
       {(title || icon) && (
-        <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+        <div
+          style={{
+            marginBottom: '1rem',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '0.75rem',
+          }}
+        >
           {icon && (
             <div
               style={{
@@ -38,19 +46,22 @@ export const Card: React.FC<CardProps> = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'white',
-                flexShrink: 0 }}
+                flexShrink: 0,
+              }}
             >
               {icon}
             </div>
           )}
           <div style={{ flex: 1 }}>
-            {title && (
-              <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 600 }}>
-                {title}
-              </h3>
-            )}
+            {title && <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 600 }}>{title}</h3>}
             {subtitle && (
-              <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.875rem', color: 'var(--color-text-tertiary)' }}>
+              <p
+                style={{
+                  margin: '0.25rem 0 0 0',
+                  fontSize: '0.875rem',
+                  color: 'var(--color-text-tertiary)',
+                }}
+              >
                 {subtitle}
               </p>
             )}

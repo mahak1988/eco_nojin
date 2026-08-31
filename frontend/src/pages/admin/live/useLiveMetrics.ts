@@ -23,7 +23,7 @@ export function useLiveMetrics(endpoint: string = '/admin/overview') {
   const connect = useCallback(() => {
     const token = localStorage.getItem('access_token');
     const url = `http://localhost:8000/api/v1${endpoint}`;
-    
+
     // For now, use polling as fallback (SSE endpoint may not exist)
     const fetchData = async () => {
       try {
@@ -80,11 +80,11 @@ export function useAnimatedCounter(target: number, duration: number = 1000) {
     const animate = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
+
       // Ease out cubic for smooth animation
       const eased = 1 - Math.pow(1 - progress, 3);
       const current = Math.floor(startValue + diff * eased);
-      
+
       setCount(current);
 
       if (progress < 1) {

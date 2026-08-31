@@ -67,12 +67,7 @@ export function TerrainMesh({
 }: TerrainMeshProps) {
   // ── Create base geometry (memoized by dimensions) ───────────────
   const geometry = useMemo(() => {
-    const geo = new THREE.PlaneGeometry(
-      WORLD_SIZE,
-      WORLD_SIZE,
-      data.width - 1,
-      data.height - 1
-    );
+    const geo = new THREE.PlaneGeometry(WORLD_SIZE, WORLD_SIZE, data.width - 1, data.height - 1);
     geo.rotateX(-Math.PI / 2);
     return geo;
   }, [data.width, data.height]);
@@ -92,7 +87,10 @@ export function TerrainMesh({
       const elev = data.elevation[y][x];
       const norm = (elev - data.minElevation) / range;
 
-      let r = 0, g = 0, b = 0, yOff = 0;
+      let r = 0,
+        g = 0,
+        b = 0,
+        yOff = 0;
 
       switch (layer) {
         case 'surface': {
@@ -101,18 +99,24 @@ export function TerrainMesh({
           break;
         }
         case 'soil': {
-          r = 0.55; g = 0.4; b = 0.25;
+          r = 0.55;
+          g = 0.4;
+          b = 0.25;
           yOff = norm * HEIGHT_SCALE - 0.3;
           break;
         }
         case 'bedrock': {
-          r = 0.45; g = 0.4; b = 0.4;
+          r = 0.45;
+          g = 0.4;
+          b = 0.4;
           yOff = norm * HEIGHT_SCALE - 0.8;
           break;
         }
         case 'ndvi': {
           const gv = 0.2 + 0.6 * data.moisture[y][x];
-          r = 0.12; g = gv; b = 0.18;
+          r = 0.12;
+          g = gv;
+          b = 0.18;
           yOff = norm * HEIGHT_SCALE + 0.04;
           break;
         }
@@ -157,13 +161,7 @@ export function TerrainMesh({
   );
 
   return (
-    <mesh
-      geometry={geometry}
-      receiveShadow
-      castShadow
-      onClick={handleClick}
-      visible={visible}
-    >
+    <mesh geometry={geometry} receiveShadow castShadow onClick={handleClick} visible={visible}>
       <meshStandardMaterial
         map={map || undefined}
         vertexColors

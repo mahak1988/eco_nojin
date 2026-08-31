@@ -34,9 +34,7 @@ describe('generateMockTransaction', () => {
 
     // Different seeds → at least one difference
     const different =
-      tx1.type !== tx2.type ||
-      tx1.amount !== tx2.amount ||
-      tx1.status !== tx2.status;
+      tx1.type !== tx2.type || tx1.amount !== tx2.amount || tx1.status !== tx2.status;
     expect(different).toBe(true);
   });
 });

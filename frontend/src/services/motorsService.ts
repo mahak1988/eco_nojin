@@ -133,10 +133,25 @@ class MotorsService {
         description: 'Crop growth simulation based on water productivity (FAO)',
         category: 'Crop',
         parameters: [
-          { name: 'crop_type', type: 'select', options: ['wheat', 'corn', 'barley', 'alfalfa'], description: 'Type of crop' },
-          { name: 'planting_date', type: 'string', default: '2024-10-01', description: 'Planting date' },
+          {
+            name: 'crop_type',
+            type: 'select',
+            options: ['wheat', 'corn', 'barley', 'alfalfa'],
+            description: 'Type of crop',
+          },
+          {
+            name: 'planting_date',
+            type: 'string',
+            default: '2024-10-01',
+            description: 'Planting date',
+          },
           { name: 'irrigation', type: 'boolean', default: true, description: 'Enable irrigation' },
-          { name: 'soil_type', type: 'select', options: ['clay', 'loam', 'sand'], description: 'Soil type' },
+          {
+            name: 'soil_type',
+            type: 'select',
+            options: ['clay', 'loam', 'sand'],
+            description: 'Soil type',
+          },
         ],
       },
       {
@@ -145,9 +160,30 @@ class MotorsService {
         description: 'Soil carbon dynamics model',
         category: 'Soil',
         parameters: [
-          { name: 'initial_carbon', type: 'number', default: 20, min: 1, max: 100, description: 'Initial soil carbon (t/ha)' },
-          { name: 'years', type: 'number', default: 10, min: 1, max: 100, description: 'Simulation years' },
-          { name: 'clay_content', type: 'number', default: 25, min: 5, max: 70, description: 'Clay content (%)' },
+          {
+            name: 'initial_carbon',
+            type: 'number',
+            default: 20,
+            min: 1,
+            max: 100,
+            description: 'Initial soil carbon (t/ha)',
+          },
+          {
+            name: 'years',
+            type: 'number',
+            default: 10,
+            min: 1,
+            max: 100,
+            description: 'Simulation years',
+          },
+          {
+            name: 'clay_content',
+            type: 'number',
+            default: 25,
+            min: 5,
+            max: 70,
+            description: 'Clay content (%)',
+          },
         ],
       },
       {
@@ -156,9 +192,28 @@ class MotorsService {
         description: 'Soil and Water Assessment Tool - Hydrology simulation',
         category: 'Hydrology',
         parameters: [
-          { name: 'watershed_area', type: 'number', default: 100, min: 1, max: 10000, description: 'Watershed area (km²)' },
-          { name: 'rainfall', type: 'number', default: 300, min: 50, max: 2000, description: 'Annual rainfall (mm)' },
-          { name: 'land_use', type: 'select', options: ['cropland', 'forest', 'grassland', 'urban'], description: 'Land use' },
+          {
+            name: 'watershed_area',
+            type: 'number',
+            default: 100,
+            min: 1,
+            max: 10000,
+            description: 'Watershed area (km²)',
+          },
+          {
+            name: 'rainfall',
+            type: 'number',
+            default: 300,
+            min: 50,
+            max: 2000,
+            description: 'Annual rainfall (mm)',
+          },
+          {
+            name: 'land_use',
+            type: 'select',
+            options: ['cropland', 'forest', 'grassland', 'urban'],
+            description: 'Land use',
+          },
         ],
       },
       {
@@ -167,9 +222,30 @@ class MotorsService {
         description: 'Flood wave routing and hydraulic analysis',
         category: 'Hydraulics',
         parameters: [
-          { name: 'river_length', type: 'number', default: 10, min: 1, max: 1000, description: 'River length (km)' },
-          { name: 'slope', type: 'number', default: 0.001, min: 0.0001, max: 0.1, description: 'River slope' },
-          { name: 'flow', type: 'number', default: 50, min: 1, max: 10000, description: 'Flow rate (m³/s)' },
+          {
+            name: 'river_length',
+            type: 'number',
+            default: 10,
+            min: 1,
+            max: 1000,
+            description: 'River length (km)',
+          },
+          {
+            name: 'slope',
+            type: 'number',
+            default: 0.001,
+            min: 0.0001,
+            max: 0.1,
+            description: 'River slope',
+          },
+          {
+            name: 'flow',
+            type: 'number',
+            default: 50,
+            min: 1,
+            max: 10000,
+            description: 'Flow rate (m³/s)',
+          },
         ],
       },
       {
@@ -178,9 +254,30 @@ class MotorsService {
         description: 'Soil erosion model (Universal Soil Loss Equation)',
         category: 'Soil',
         parameters: [
-          { name: 'slope_percent', type: 'number', default: 5, min: 0, max: 100, description: 'Slope (%)' },
-          { name: 'slope_length', type: 'number', default: 100, min: 10, max: 1000, description: 'Slope length (m)' },
-          { name: 'rainfall_intensity', type: 'number', default: 100, min: 10, max: 500, description: 'Rainfall intensity' },
+          {
+            name: 'slope_percent',
+            type: 'number',
+            default: 5,
+            min: 0,
+            max: 100,
+            description: 'Slope (%)',
+          },
+          {
+            name: 'slope_length',
+            type: 'number',
+            default: 100,
+            min: 10,
+            max: 1000,
+            description: 'Slope length (m)',
+          },
+          {
+            name: 'rainfall_intensity',
+            type: 'number',
+            default: 100,
+            min: 10,
+            max: 500,
+            description: 'Rainfall intensity',
+          },
         ],
       },
       {
@@ -189,9 +286,28 @@ class MotorsService {
         description: 'Carbon sequestration estimation',
         category: 'Carbon',
         parameters: [
-          { name: 'area', type: 'number', default: 10, min: 1, max: 1000, description: 'Area (ha)' },
-          { name: 'species', type: 'select', options: ['pistachio', 'almond', 'olive', 'pomegranate'], description: 'Tree species' },
-          { name: 'years', type: 'number', default: 20, min: 5, max: 100, description: 'Project years' },
+          {
+            name: 'area',
+            type: 'number',
+            default: 10,
+            min: 1,
+            max: 1000,
+            description: 'Area (ha)',
+          },
+          {
+            name: 'species',
+            type: 'select',
+            options: ['pistachio', 'almond', 'olive', 'pomegranate'],
+            description: 'Tree species',
+          },
+          {
+            name: 'years',
+            type: 'number',
+            default: 20,
+            min: 5,
+            max: 100,
+            description: 'Project years',
+          },
         ],
       },
       {
@@ -200,9 +316,26 @@ class MotorsService {
         description: 'Optimal irrigation scheduling',
         category: 'Irrigation',
         parameters: [
-          { name: 'crop', type: 'select', options: ['wheat', 'corn', 'tomato', 'cucumber'], description: 'Crop type' },
-          { name: 'soil_type', type: 'select', options: ['clay', 'loam', 'sand'], description: 'Soil type' },
-          { name: 'area', type: 'number', default: 1, min: 0.1, max: 100, description: 'Area (ha)' },
+          {
+            name: 'crop',
+            type: 'select',
+            options: ['wheat', 'corn', 'tomato', 'cucumber'],
+            description: 'Crop type',
+          },
+          {
+            name: 'soil_type',
+            type: 'select',
+            options: ['clay', 'loam', 'sand'],
+            description: 'Soil type',
+          },
+          {
+            name: 'area',
+            type: 'number',
+            default: 1,
+            min: 0.1,
+            max: 100,
+            description: 'Area (ha)',
+          },
         ],
       },
       {
@@ -211,8 +344,18 @@ class MotorsService {
         description: 'Optimal planting dates based on climate',
         category: 'Crop',
         parameters: [
-          { name: 'region', type: 'select', options: ['arid', 'semi-arid', 'temperate', 'humid'], description: 'Climate region' },
-          { name: 'crop', type: 'select', options: ['wheat', 'corn', 'barley', 'potato'], description: 'Crop type' },
+          {
+            name: 'region',
+            type: 'select',
+            options: ['arid', 'semi-arid', 'temperate', 'humid'],
+            description: 'Climate region',
+          },
+          {
+            name: 'crop',
+            type: 'select',
+            options: ['wheat', 'corn', 'barley', 'potato'],
+            description: 'Crop type',
+          },
         ],
       },
       {
@@ -222,8 +365,20 @@ class MotorsService {
         category: 'Land',
         parameters: [
           { name: 'slope', type: 'number', default: 3, min: 0, max: 50, description: 'Slope (%)' },
-          { name: 'soil_depth', type: 'number', default: 100, min: 10, max: 500, description: 'Soil depth (cm)' },
-          { name: 'drainage', type: 'select', options: ['excessive', 'well', 'moderate', 'poor', 'very_poor'], description: 'Drainage class' },
+          {
+            name: 'soil_depth',
+            type: 'number',
+            default: 100,
+            min: 10,
+            max: 500,
+            description: 'Soil depth (cm)',
+          },
+          {
+            name: 'drainage',
+            type: 'select',
+            options: ['excessive', 'well', 'moderate', 'poor', 'very_poor'],
+            description: 'Drainage class',
+          },
         ],
       },
       {
@@ -233,8 +388,18 @@ class MotorsService {
         category: 'Crop',
         parameters: [
           { name: 'soil_ph', type: 'number', default: 7.0, min: 4, max: 9, description: 'Soil pH' },
-          { name: 'water_availability', type: 'select', options: ['high', 'medium', 'low'], description: 'Water availability' },
-          { name: 'market_access', type: 'select', options: ['high', 'medium', 'low'], description: 'Market access' },
+          {
+            name: 'water_availability',
+            type: 'select',
+            options: ['high', 'medium', 'low'],
+            description: 'Water availability',
+          },
+          {
+            name: 'market_access',
+            type: 'select',
+            options: ['high', 'medium', 'low'],
+            description: 'Market access',
+          },
         ],
       },
     ];
@@ -244,12 +409,15 @@ class MotorsService {
    * Get motors by category
    */
   getMotorsByCategory(motors: Motor[]): Record<string, Motor[]> {
-    return motors.reduce((acc, motor) => {
-      const category = motor.category || 'Other';
-      if (!acc[category]) acc[category] = [];
-      acc[category].push(motor);
-      return acc;
-    }, {} as Record<string, Motor[]>);
+    return motors.reduce(
+      (acc, motor) => {
+        const category = motor.category || 'Other';
+        if (!acc[category]) acc[category] = [];
+        acc[category].push(motor);
+        return acc;
+      },
+      {} as Record<string, Motor[]>
+    );
   }
 }
 

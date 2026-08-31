@@ -42,19 +42,21 @@ export default function AdminSecurity() {
     return (
       <div className="glass-card" style={{ padding: '40px', textAlign: 'center' }}>
         <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
-        <h3 style={{ color: 'var(--accent-danger)', margin: '0 0 8px 0' }}>Unable to load security events</h3>
+        <h3 style={{ color: 'var(--accent-danger)', margin: '0 0 8px 0' }}>
+          Unable to load security events
+        </h3>
         <p style={{ color: 'var(--text-muted)', margin: 0 }}>{error}</p>
       </div>
     );
   }
 
-  const okEvents = events.filter(e => e.detail && e.detail.startsWith('ok'));
-  const failedEvents = events.filter(e => e.detail && e.detail.startsWith('failed'));
+  const okEvents = events.filter((e) => e.detail && e.detail.startsWith('ok'));
+  const failedEvents = events.filter((e) => e.detail && e.detail.startsWith('failed'));
 
-  const filteredEvents = filter === 'all' ? events :
-    filter === 'ok' ? okEvents : failedEvents;
+  const filteredEvents = filter === 'all' ? events : filter === 'ok' ? okEvents : failedEvents;
 
-  const successRate = events.length > 0 ? ((okEvents.length / events.length) * 100).toFixed(1) : '0';
+  const successRate =
+    events.length > 0 ? ((okEvents.length / events.length) * 100).toFixed(1) : '0';
 
   return (
     <div>
@@ -69,15 +71,28 @@ export default function AdminSecurity() {
               Monitor authentication events and security incidents
             </p>
           </div>
-          <div style={{
-            padding: '12px 24px',
-            background: 'rgba(16, 185, 129, 0.1)',
-            borderRadius: '16px',
-            border: '1px solid rgba(16, 185, 129, 0.3)',
-            textAlign: 'center',
-          }}>
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', letterSpacing: '1px' }}>SUCCESS RATE</div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--accent-primary)' }}>{successRate}%</div>
+          <div
+            style={{
+              padding: '12px 24px',
+              background: 'rgba(16, 185, 129, 0.1)',
+              borderRadius: '16px',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              textAlign: 'center',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '11px',
+                color: 'var(--text-muted)',
+                marginBottom: '4px',
+                letterSpacing: '1px',
+              }}
+            >
+              SUCCESS RATE
+            </div>
+            <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--accent-primary)' }}>
+              {successRate}%
+            </div>
           </div>
         </div>
       </div>
@@ -90,24 +105,31 @@ export default function AdminSecurity() {
         </div>
         <div className="stat-card">
           <div className="stat-label">Successful</div>
-          <div className="stat-value" style={{ color: 'var(--accent-primary)' }}>{okEvents.length}</div>
+          <div className="stat-value" style={{ color: 'var(--accent-primary)' }}>
+            {okEvents.length}
+          </div>
         </div>
         <div className="stat-card">
           <div className="stat-label">Failed Attempts</div>
-          <div className="stat-value" style={{ color: 'var(--accent-danger)' }}>{failedEvents.length}</div>
+          <div className="stat-value" style={{ color: 'var(--accent-danger)' }}>
+            {failedEvents.length}
+          </div>
         </div>
       </div>
 
       {/* Filters */}
       <div className="filter-bar">
-        <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginRight: '8px' }}>Filter:</div>
+        <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginRight: '8px' }}>
+          Filter:
+        </div>
         {(['all', 'ok', 'failed'] as const).map((f) => (
           <button
             key={f}
             className={'filter-chip' + (filter === f ? ' active' : '')}
             onClick={() => setFilter(f)}
           >
-            {f === 'all' ? 'All' : f === 'ok' ? 'Success' : 'Failed'} ({f === 'all' ? events.length : f === 'ok' ? okEvents.length : failedEvents.length})
+            {f === 'all' ? 'All' : f === 'ok' ? 'Success' : 'Failed'} (
+            {f === 'all' ? events.length : f === 'ok' ? okEvents.length : failedEvents.length})
           </button>
         ))}
       </div>
@@ -138,14 +160,25 @@ export default function AdminSecurity() {
               filteredEvents.map((event, i) => (
                 <tr key={i}>
                   <td>
-                    <span className={'status-badge ' + (event.detail && event.detail.startsWith('ok') ? 'success' : 'danger')}>
+                    <span
+                      className={
+                        'status-badge ' +
+                        (event.detail && event.detail.startsWith('ok') ? 'success' : 'danger')
+                      }
+                    >
                       {event.detail && event.detail.startsWith('ok') ? '✓ Success' : '✗ Failed'}
                     </span>
                   </td>
                   <td style={{ fontWeight: 500, color: 'var(--text-primary)' }}>
                     {event.detail || '-'}
                   </td>
-                  <td style={{ fontFamily: 'monospace', fontSize: '13px', color: 'var(--text-muted)' }}>
+                  <td
+                    style={{
+                      fontFamily: 'monospace',
+                      fontSize: '13px',
+                      color: 'var(--text-muted)',
+                    }}
+                  >
                     {event.ip_address || 'N/A'}
                   </td>
                   <td style={{ color: 'var(--text-faint)', fontSize: '13px' }}>

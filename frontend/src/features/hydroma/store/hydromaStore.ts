@@ -183,16 +183,11 @@ export const useHydromaStore = create<HydromaStore>()(
 
       setToolMode: (toolMode) => set({ toolMode }, false, 'setToolMode'),
 
-      setSelectedOpType: (selectedOpType) =>
-        set({ selectedOpType }, false, 'setSelectedOpType'),
+      setSelectedOpType: (selectedOpType) => set({ selectedOpType }, false, 'setSelectedOpType'),
 
       // ── Placed Operations ───────────────────────────────────────
       addPlacedOp: (op) =>
-        set(
-          (state) => ({ placedOps: [...state.placedOps, op] }),
-          false,
-          'addPlacedOp'
-        ),
+        set((state) => ({ placedOps: [...state.placedOps, op] }), false, 'addPlacedOp'),
 
       removePlacedOp: (id) =>
         set(
@@ -203,8 +198,7 @@ export const useHydromaStore = create<HydromaStore>()(
           'removePlacedOp'
         ),
 
-      setSelectedOp: (selectedOp) =>
-        set({ selectedOp }, false, 'setSelectedOp'),
+      setSelectedOp: (selectedOp) => set({ selectedOp }, false, 'setSelectedOp'),
 
       clearPlacedOps: () => set({ placedOps: [] }, false, 'clearPlacedOps'),
 
@@ -242,12 +236,7 @@ export const useHydromaStore = create<HydromaStore>()(
       clearPolygons: () => set({ polygons: [] }, false, 'clearPolygons'),
 
       // ── Plots ───────────────────────────────────────────────────
-      addPlot: (plot) =>
-        set(
-          (state) => ({ plots: [...state.plots, plot] }),
-          false,
-          'addPlot'
-        ),
+      addPlot: (plot) => set((state) => ({ plots: [...state.plots, plot] }), false, 'addPlot'),
 
       clearPlots: () => set({ plots: [] }, false, 'clearPlots'),
 
@@ -304,8 +293,7 @@ export const useHydromaStore = create<HydromaStore>()(
           `setLayerVisibility/${layer}`
         ),
 
-      resetLayers: () =>
-        set({ layers: { ...DEFAULT_LAYER_VISIBILITY } }, false, 'resetLayers'),
+      resetLayers: () => set({ layers: { ...DEFAULT_LAYER_VISIBILITY } }, false, 'resetLayers'),
 
       // ── Climate ─────────────────────────────────────────────────
       setWindSpeed: (windSpeed) =>
@@ -348,8 +336,7 @@ export const useHydromaStore = create<HydromaStore>()(
         ),
 
       // ── DEM ─────────────────────────────────────────────────────
-      setDemLoading: (demLoading) =>
-        set({ demLoading }, false, 'setDemLoading'),
+      setDemLoading: (demLoading) => set({ demLoading }, false, 'setDemLoading'),
 
       setDemError: (demError) => set({ demError }, false, 'setDemError'),
 
@@ -358,17 +345,14 @@ export const useHydromaStore = create<HydromaStore>()(
       setShowNdvi: (showNdvi) => set({ showNdvi }, false, 'setShowNdvi'),
 
       // ── Effects ─────────────────────────────────────────────────
-      setErosionEffect: (erosionEffect) =>
-        set({ erosionEffect }, false, 'setErosionEffect'),
+      setErosionEffect: (erosionEffect) => set({ erosionEffect }, false, 'setErosionEffect'),
 
-      toggleTour: () =>
-        set((state) => ({ tourOn: !state.tourOn }), false, 'toggleTour'),
+      toggleTour: () => set((state) => ({ tourOn: !state.tourOn }), false, 'toggleTour'),
 
       setTourOn: (tourOn) => set({ tourOn }, false, 'setTourOn'),
 
       // ── Debug ───────────────────────────────────────────────────
-      setLastClickInfo: (lastClickInfo) =>
-        set({ lastClickInfo }, false, 'setLastClickInfo'),
+      setLastClickInfo: (lastClickInfo) => set({ lastClickInfo }, false, 'setLastClickInfo'),
 
       // ── Reset ───────────────────────────────────────────────────
       reset: () => set(initialState, false, 'reset'),

@@ -26,8 +26,12 @@
 }
 
 @keyframes shimmer-line {
-  0% { left: -100%; }
-  100% { left: 100%; }
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 .metric-card:hover {
@@ -94,7 +98,7 @@
   margin-bottom: 24px;
 }
 
-[data-theme="light"] .chart-container {
+[data-theme='light'] .chart-container {
   background: var(--bg-card-solid);
   border: 1px solid #e5e7eb;
 }
@@ -284,15 +288,24 @@
 
 /* Skeleton Loader */
 .skeleton {
-  background: linear-gradient(90deg, var(--bg-hover) 25%, var(--border-color) 50%, var(--bg-hover) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--bg-hover) 25%,
+    var(--border-color) 50%,
+    var(--bg-hover) 75%
+  );
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
   border-radius: 8px;
 }
 
 @keyframes skeleton-loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 .skeleton-text {
@@ -366,8 +379,13 @@
 }
 
 @keyframes float {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(-20px, 20px); }
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-20px, 20px);
+  }
 }
 
 .page-title {

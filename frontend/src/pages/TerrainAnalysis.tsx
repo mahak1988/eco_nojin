@@ -28,13 +28,7 @@ const TerrainAnalysis: React.FC = () => {
       <Card style={{ height: '500px' }}>
         <Space direction="vertical" style={{ width: '100%' }}>
           <Text>تنظیم اندازه مکعب: {cubeSize.toFixed(2)}</Text>
-          <Slider
-            min={0.5}
-            max={5}
-            step={0.1}
-            value={cubeSize}
-            onChange={setCubeSize}
-          />
+          <Slider min={0.5} max={5} step={0.1} value={cubeSize} onChange={setCubeSize} />
           <Button onClick={() => setCubeSize(2)}>بازنشانی اندازه</Button>
         </Space>
       </Card>

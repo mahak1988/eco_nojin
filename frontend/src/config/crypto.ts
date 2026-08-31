@@ -147,12 +147,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     nameFa: 'شروع',
     priceUsd: 9,
     period: 'monthly',
-    features: [
-      'دسترسی به ۵ ماژول پایه',
-      '۱ مزرعه',
-      'گزارش‌های ماهانه',
-      'پشتیبانی ایمیلی',
-    ],
+    features: ['دسترسی به ۵ ماژول پایه', '۱ مزرعه', 'گزارش‌های ماهانه', 'پشتیبانی ایمیلی'],
     color: '#10b981',
   },
   {
@@ -177,13 +172,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     nameFa: 'سازمانی',
     priceUsd: 249,
     period: 'monthly',
-    features: [
-      'مزارع نامحدود',
-      'API اختصاصی',
-      'White-label',
-      'پشتیبانی ۲۴/۷',
-      'مشاوره تخصصی',
-    ],
+    features: ['مزارع نامحدود', 'API اختصاصی', 'White-label', 'پشتیبانی ۲۴/۷', 'مشاوره تخصصی'],
     color: '#8b5cf6',
   },
   {

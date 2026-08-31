@@ -61,17 +61,11 @@ export function StatsCards({ wallets, transactions }: StatsCardsProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: card.delay }}
         >
-          <div
-            className="metric-icon"
-            style={{ background: card.bg, color: card.color }}
-          >
+          <div className="metric-icon" style={{ background: card.bg, color: card.color }}>
             {card.icon}
           </div>
           <div className="metric-label">{card.label}</div>
-          <div
-            className="metric-value"
-            style={{ fontSize: '24px', color: card.valueColor }}
-          >
+          <div className="metric-value" style={{ fontSize: '24px', color: card.valueColor }}>
             {card.value}
           </div>
         </motion.div>

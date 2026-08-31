@@ -61,12 +61,11 @@ export const ProgressRing: React.FC<ProgressRingProps> = ({
         }}
       >
         <div style={{ fontSize: size * 0.2, fontWeight: 700, color: 'var(--color-text-primary)' }}>
-          {Math.round(value)}{unit}
+          {Math.round(value)}
+          {unit}
         </div>
         {label && (
-          <div style={{ fontSize: size * 0.1, color: 'var(--color-text-secondary)' }}>
-            {label}
-          </div>
+          <div style={{ fontSize: size * 0.1, color: 'var(--color-text-secondary)' }}>{label}</div>
         )}
       </div>
     </div>

@@ -26,11 +26,30 @@ export const NdviGridCard: React.FC<NdviGridCardProps> = ({ satellite }) => {
   if (!satellite || (status !== 'ok' && status !== 'partial')) {
     return (
       <div className="card" style={{ padding: '1rem 1.25rem' }}>
-        <h4 style={{ fontSize: '0.95rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.45rem', margin: '0 0 0.5rem' }}>
+        <h4
+          style={{
+            fontSize: '0.95rem',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.45rem',
+            margin: '0 0 0.5rem',
+          }}
+        >
           <Grid3X3 size={16} color="var(--color-primary)" /> لایه NDVI ماهواره
         </h4>
-        <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--color-text-secondary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-          <KeyRound size={14} /> نیاز به اعتبارنامه رایگان CDSE (Copernicus) — با افزودن به .env فعال می‌شود.
+        <p
+          style={{
+            margin: 0,
+            fontSize: '0.82rem',
+            color: 'var(--color-text-secondary)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+          }}
+        >
+          <KeyRound size={14} /> نیاز به اعتبارنامه رایگان CDSE (Copernicus) — با افزودن به .env
+          فعال می‌شود.
         </p>
       </div>
     );
@@ -39,10 +58,21 @@ export const NdviGridCard: React.FC<NdviGridCardProps> = ({ satellite }) => {
   if (!grid || grid.length === 0) {
     return (
       <div className="card" style={{ padding: '1rem 1.25rem' }}>
-        <h4 style={{ fontSize: '0.95rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.45rem', margin: '0 0 0.5rem' }}>
+        <h4
+          style={{
+            fontSize: '0.95rem',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.45rem',
+            margin: '0 0 0.5rem',
+          }}
+        >
           <Grid3X3 size={16} color="var(--color-primary)" /> لایه NDVI ماهواره
         </h4>
-        <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--color-text-secondary)' }}>گرید NDVI برای این محدوده موجود نیست.</p>
+        <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--color-text-secondary)' }}>
+          گرید NDVI برای این محدوده موجود نیست.
+        </p>
       </div>
     );
   }
@@ -52,8 +82,24 @@ export const NdviGridCard: React.FC<NdviGridCardProps> = ({ satellite }) => {
 
   return (
     <div className="card" style={{ padding: '1rem 1.25rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
-        <h4 style={{ fontSize: '0.95rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.45rem', margin: 0 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '0.6rem',
+        }}
+      >
+        <h4
+          style={{
+            fontSize: '0.95rem',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.45rem',
+            margin: 0,
+          }}
+        >
           <Grid3X3 size={16} color="var(--color-primary)" /> NDVI واقعی (Sentinel-2)
         </h4>
         <span className="badge badge-success" style={{ fontSize: '0.7rem' }}>
@@ -76,8 +122,12 @@ export const NdviGridCard: React.FC<NdviGridCardProps> = ({ satellite }) => {
           />
         ))}
       </div>
-      <p style={{ margin: '0.5rem 0 0', fontSize: '0.72rem', color: 'var(--color-text-secondary)' }}>
-        سنسور: {satellite.sensor ?? 'S2'} · {satellite.sensed_at ? `تصویر ${satellite.sensed_at.slice(0, 10)}` : ''} · {satellite.cloud_cover != null ? `ابر ${satellite.cloud_cover.toFixed(0)}٪` : ''}
+      <p
+        style={{ margin: '0.5rem 0 0', fontSize: '0.72rem', color: 'var(--color-text-secondary)' }}
+      >
+        سنسور: {satellite.sensor ?? 'S2'} ·{' '}
+        {satellite.sensed_at ? `تصویر ${satellite.sensed_at.slice(0, 10)}` : ''} ·{' '}
+        {satellite.cloud_cover != null ? `ابر ${satellite.cloud_cover.toFixed(0)}٪` : ''}
       </p>
     </div>
   );

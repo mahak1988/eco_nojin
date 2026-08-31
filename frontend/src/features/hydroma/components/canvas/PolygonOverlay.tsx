@@ -34,20 +34,12 @@ export interface PolygonOverlayProps {
 // Component
 // ─────────────────────────────────────────────────────────────────────
 
-export function PolygonOverlay({
-  polygons,
-  data,
-  currentDrawing,
-}: PolygonOverlayProps) {
+export function PolygonOverlay({ polygons, data, currentDrawing }: PolygonOverlayProps) {
   /**
    * Convert 2D world point to 3D terrain position
    */
   const getPoint3D = (p: { x: number; y: number }): THREE.Vector3 => {
-    return new THREE.Vector3(
-      p.x,
-      getTerrainYAtPoint(data, p.x, p.y, 0.15),
-      p.y
-    );
+    return new THREE.Vector3(p.x, getTerrainYAtPoint(data, p.x, p.y, 0.15), p.y);
   };
 
   return (
@@ -103,8 +95,7 @@ export function PolygonOverlay({
                   fontWeight: 700,
                 }}
               >
-                📐 {poly.name}{' '}
-                {poly.area ? `(${poly.area.toFixed(0)}m²)` : ''}
+                📐 {poly.name} {poly.area ? `(${poly.area.toFixed(0)}m²)` : ''}
               </div>
             </Html>
           </group>
@@ -120,11 +111,7 @@ export function PolygonOverlay({
             return (
               <mesh key={i} position={pos}>
                 <sphereGeometry args={[0.16, 16, 16]} />
-                <meshStandardMaterial
-                  color="#fbbf24"
-                  emissive="#fbbf24"
-                  emissiveIntensity={0.8}
-                />
+                <meshStandardMaterial color="#fbbf24" emissive="#fbbf24" emissiveIntensity={0.8} />
               </mesh>
             );
           })}

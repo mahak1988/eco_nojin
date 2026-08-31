@@ -35,7 +35,7 @@ export default function AiChatDrawer() {
     const q = input.trim();
     if (!q || sending) return;
     setInput('');
-    setMessages(m => [...m, { role: 'user', content: q }]);
+    setMessages((m) => [...m, { role: 'user', content: q }]);
     setSending(true);
     try {
       const token = localStorage.getItem('access_token');
@@ -46,12 +46,12 @@ export default function AiChatDrawer() {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      setMessages(m => [
+      setMessages((m) => [
         ...m,
         { role: 'assistant', content: data.answer, provider: data.provider },
       ]);
     } catch {
-      setMessages(m => [
+      setMessages((m) => [
         ...m,
         {
           role: 'assistant',
@@ -176,10 +176,7 @@ export default function AiChatDrawer() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    background:
-                      m.role === 'user'
-                        ? 'rgba(59,130,246,0.2)'
-                        : 'rgba(139,92,246,0.2)',
+                    background: m.role === 'user' ? 'rgba(59,130,246,0.2)' : 'rgba(139,92,246,0.2)',
                     color: m.role === 'user' ? '#3b82f6' : '#8b5cf6',
                   }}
                 >
@@ -193,13 +190,14 @@ export default function AiChatDrawer() {
                     whiteSpace: 'pre-wrap',
                     lineHeight: 1.7,
                     fontSize: '13px',
-                    background:
-                      m.error
-                        ? 'rgba(239,68,68,0.12)'
-                        : m.role === 'user'
+                    background: m.error
+                      ? 'rgba(239,68,68,0.12)'
+                      : m.role === 'user'
                         ? 'rgba(59,130,246,0.15)'
                         : 'var(--bg-hover, rgba(255,255,255,0.04))',
-                    border: m.error ? '1px solid rgba(239,68,68,0.3)' : '1px solid var(--border-color, #2a2d38)',
+                    border: m.error
+                      ? '1px solid rgba(239,68,68,0.3)'
+                      : '1px solid var(--border-color, #2a2d38)',
                   }}
                 >
                   {m.content}
@@ -237,8 +235,8 @@ export default function AiChatDrawer() {
           >
             <input
               value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => {
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
                 if (e.key === 'Enter') send();
               }}
               placeholder="سوال خود را بپرسید…"

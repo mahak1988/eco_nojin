@@ -2,10 +2,7 @@
  * Mock Data Tests
  */
 import { describe, it, expect } from 'vitest';
-import {
-  generateTransactionHistory,
-  DEFAULT_TRANSACTION_HISTORY,
-} from '../constants/mockData';
+import { generateTransactionHistory, DEFAULT_TRANSACTION_HISTORY } from '../constants/mockData';
 import { CHART_CONFIG } from '../constants/config';
 
 describe('mockData', () => {

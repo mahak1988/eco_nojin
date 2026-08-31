@@ -1,32 +1,37 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { PublicLayout } from '../components/layout/PublicLayout';
-import {
-  Leaf, Droplets, Wind, Brain, Satellite,
-  BarChart3, Zap, Users, Globe } from 'lucide-react';
+import { Leaf, Droplets, Wind, Brain, Satellite, BarChart3, Zap, Users, Globe } from 'lucide-react';
 
 const featureCategories = [
   {
     title: 'مدیریت آب و خاک',
     features: [
-      { icon: Droplets, title: 'آبیاری هوشمند', description: 'الگوریتم‌های ET-based برای بهینه‌سازی مصرف آب' },
+      {
+        icon: Droplets,
+        title: 'آبیاری هوشمند',
+        description: 'الگوریتم‌های ET-based برای بهینه‌سازی مصرف آب',
+      },
       { icon: Leaf, title: 'تحلیل خاک', description: 'پایش رطوبت، دما، و مواد مغذی خاک' },
       { icon: Wind, title: 'بادشکن و فرسایش', description: 'طراحی سیستم‌های حفاظتی و کاهش فرسایش' },
-    ] },
+    ],
+  },
   {
     title: 'هوش مصنوعی و شبیه‌سازی',
     features: [
       { icon: Brain, title: 'پیش‌بینی عملکرد', description: 'مدل‌های ML برای تخمین دقیق محصول' },
       { icon: Satellite, title: 'تحلیل ماهواره‌ای', description: 'NDVI و شاخص‌های سلامت گیاه' },
       { icon: Zap, title: 'شبیه‌ساز سه‌بعدی', description: 'نمایش تعاملی مزرعه در فضای ۳D' },
-    ] },
+    ],
+  },
   {
     title: 'اقتصاد و بازار',
     features: [
       { icon: BarChart3, title: 'تحلیل سودآوری', description: 'محاسبه ROI و بهینه‌سازی هزینه‌ها' },
       { icon: Users, title: 'بازار محلی', description: 'اتصال مستقیم به خریداران' },
       { icon: Globe, title: 'اعتبار کربن', description: 'کسب درآمد از طریق Carbon Credits' },
-    ] },
+    ],
+  },
 ];
 
 export const FeaturesPage: React.FC = () => {
@@ -41,7 +46,14 @@ export const FeaturesPage: React.FC = () => {
           <h1 style={{ fontSize: '3rem', fontWeight: 700, marginBottom: '1.5rem' }}>
             ویژگی‌ها و قابلیت‌ها
           </h1>
-          <p style={{ fontSize: '1.25rem', color: 'var(--color-text-secondary)', maxWidth: 700, margin: '0 auto' }}>
+          <p
+            style={{
+              fontSize: '1.25rem',
+              color: 'var(--color-text-secondary)',
+              maxWidth: 700,
+              margin: '0 auto',
+            }}
+          >
             مجموعه کاملی از ابزارها برای مدیریت هوشمند و پایدار مزرعه شما
           </p>
         </motion.div>
@@ -54,14 +66,22 @@ export const FeaturesPage: React.FC = () => {
             viewport={{ once: true }}
             style={{ marginBottom: '4rem' }}
           >
-            <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '2rem', textAlign: 'center' }}>
+            <h2
+              style={{
+                fontSize: '2rem',
+                fontWeight: 700,
+                marginBottom: '2rem',
+                textAlign: 'center',
+              }}
+            >
               {category.title}
             </h2>
             <div
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                gap: '2rem' }}
+                gap: '2rem',
+              }}
             >
               {category.features.map((feature, index) => {
                 const Icon = feature.icon;
@@ -77,12 +97,14 @@ export const FeaturesPage: React.FC = () => {
                         width: 64,
                         height: 64,
                         borderRadius: 'var(--radius-xl)',
-                        background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))',
+                        background:
+                          'linear-gradient(135deg, var(--color-primary), var(--color-accent))',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         color: 'white',
-                        marginBottom: '1.5rem' }}
+                        marginBottom: '1.5rem',
+                      }}
                     >
                       <Icon size={32} />
                     </div>

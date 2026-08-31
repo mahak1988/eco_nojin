@@ -43,7 +43,7 @@ export interface WatershedResult {
 
 export interface SWATResult {
   landProfileId: string;
-  soilMoisture?: number[][];  // 2D grid
+  soilMoisture?: number[][]; // 2D grid
   evapotranspiration: number;
   waterBalance: {
     rainfall: number;
@@ -54,9 +54,9 @@ export interface SWATResult {
 
 export interface RothCResult {
   landProfileId: string;
-  carbonStock: number;        // t/ha
-  carbonMap?: number[][];     // 2D grid
-  carbonChange: number;       // t/ha/year
+  carbonStock: number; // t/ha
+  carbonMap?: number[][]; // 2D grid
+  carbonChange: number; // t/ha/year
   pools: {
     DPM: number;
     RPM: number;
@@ -68,9 +68,9 @@ export interface RothCResult {
 
 export interface SatelliteData {
   landProfileId: string;
-  ndvi?: number[][];          // Normalized Difference Vegetation Index
-  lst?: number[][];           // Land Surface Temperature
-  soilMoisture?: number[][];  // Soil Moisture
+  ndvi?: number[][]; // Normalized Difference Vegetation Index
+  lst?: number[][]; // Land Surface Temperature
+  soilMoisture?: number[][]; // Soil Moisture
   timestamp: string;
 }
 
@@ -120,47 +120,44 @@ export function SimulationPipelineProvider({ children }: { children: ReactNode }
   const [state, setState] = useState<PipelineState>(initialState);
 
   const addToHistory = (type: string, data: any) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      history: [
-        ...prev.history,
-        { timestamp: new Date().toISOString(), type, data }
-      ].slice(-100), // Keep last 100 entries
+      history: [...prev.history, { timestamp: new Date().toISOString(), type, data }].slice(-100), // Keep last 100 entries
     }));
   };
 
   const setProfile = (profile: LandProfile) => {
-    setState(prev => ({ ...prev, currentProfile: profile }));
+    setState((prev) => ({ ...prev, currentProfile: profile }));
     addToHistory('profile', profile);
   };
 
   const setCapability = (result: CapabilityResult) => {
-    setState(prev => ({ ...prev, capability: result }));
+    setState((prev) => ({ ...prev, capability: result }));
     addToHistory('capability', result);
   };
 
   const setWatershed = (result: WatershedResult) => {
-    setState(prev => ({ ...prev, watershed: result }));
+    setState((prev) => ({ ...prev, watershed: result }));
     addToHistory('watershed', result);
   };
 
   const setSwat = (result: SWATResult) => {
-    setState(prev => ({ ...prev, swat: result }));
+    setState((prev) => ({ ...prev, swat: result }));
     addToHistory('swat', result);
   };
 
   const setRothC = (result: RothCResult) => {
-    setState(prev => ({ ...prev, rothc: result }));
+    setState((prev) => ({ ...prev, rothc: result }));
     addToHistory('rothc', result);
   };
 
   const setSatellite = (data: SatelliteData) => {
-    setState(prev => ({ ...prev, satellite: data }));
+    setState((prev) => ({ ...prev, satellite: data }));
     addToHistory('satellite', data);
   };
 
   const setApiResult = (type: string, data: any) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       apiResults: { ...prev.apiResults, [type]: data },
     }));
@@ -174,19 +171,21 @@ export function SimulationPipelineProvider({ children }: { children: ReactNode }
   const getHistory = () => state.history;
 
   return (
-    <PipelineContext.Provider value={{
-      state,
-      setProfile,
-      setCapability,
-      setWatershed,
-      setSwat,
-      setRothC,
-      setSatellite,
-      setApiResult,
-      apiResults: state.apiResults,
-      clearAll,
-      getHistory,
-    }}>
+    <PipelineContext.Provider
+      value={{
+        state,
+        setProfile,
+        setCapability,
+        setWatershed,
+        setSwat,
+        setRothC,
+        setSatellite,
+        setApiResult,
+        apiResults: state.apiResults,
+        clearAll,
+        getHistory,
+      }}
+    >
       {children}
     </PipelineContext.Provider>
   );

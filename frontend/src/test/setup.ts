@@ -30,8 +30,12 @@ vi.mock('../src/lib/terrainGenerator', () => ({
   generateTerrain: () => ({
     width: 10,
     height: 10,
-    elevation: Array(10).fill(0).map(() => Array(10).fill(50)),
-    moisture: Array(10).fill(0).map(() => Array(10).fill(0.5)),
+    elevation: Array(10)
+      .fill(0)
+      .map(() => Array(10).fill(50)),
+    moisture: Array(10)
+      .fill(0)
+      .map(() => Array(10).fill(0.5)),
     minElevation: 0,
     maxElevation: 100,
   }),
@@ -46,7 +50,11 @@ vi.mock('three', () => ({
   default: {
     PlaneGeometry: class {},
     Vector3: class {
-      constructor(public x = 0, public y = 0, public z = 0) {}
+      constructor(
+        public x = 0,
+        public y = 0,
+        public z = 0
+      ) {}
     },
     BufferAttribute: class {},
     DoubleSide: 2,
@@ -60,7 +68,11 @@ vi.mock('three', () => ({
   },
   PlaneGeometry: class {},
   Vector3: class {
-    constructor(public x = 0, public y = 0, public z = 0) {}
+    constructor(
+      public x = 0,
+      public y = 0,
+      public z = 0
+    ) {}
   },
   BufferAttribute: class {},
   DoubleSide: 2,

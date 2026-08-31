@@ -54,7 +54,10 @@ export function calculateSecurityScore(failedCount: number): number {
  */
 export function getUniqueFailedIPs(events: SecurityEvent[]): number {
   const uniqueIPs = new Set(
-    events.filter((e) => e.type === 'Failed Login').map((e) => e.ip_address).filter(Boolean)
+    events
+      .filter((e) => e.type === 'Failed Login')
+      .map((e) => e.ip_address)
+      .filter(Boolean)
   );
   return uniqueIPs.size;
 }

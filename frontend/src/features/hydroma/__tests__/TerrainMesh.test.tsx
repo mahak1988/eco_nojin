@@ -34,8 +34,12 @@ describe('TerrainMesh Component', () => {
       const terrain: TerrainData = {
         width: 10,
         height: 10,
-        elevation: Array(10).fill(0).map(() => Array(10).fill(0)),
-        moisture: Array(10).fill(0).map(() => Array(10).fill(0.5)),
+        elevation: Array(10)
+          .fill(0)
+          .map(() => Array(10).fill(0)),
+        moisture: Array(10)
+          .fill(0)
+          .map(() => Array(10).fill(0.5)),
         minElevation: 0,
         maxElevation: 100,
       };
@@ -49,8 +53,12 @@ describe('TerrainMesh Component', () => {
       const terrain: TerrainData = {
         width: 10,
         height: 10,
-        elevation: Array(10).fill(0).map(() => Array(10).fill(0)),
-        moisture: Array(10).fill(0).map(() => Array(10).fill(0.5)),
+        elevation: Array(10)
+          .fill(0)
+          .map(() => Array(10).fill(0)),
+        moisture: Array(10)
+          .fill(0)
+          .map(() => Array(10).fill(0.5)),
         minElevation: 0,
         maxElevation: 100,
       };
@@ -105,9 +113,7 @@ describe('TerrainMeshErrorBoundary', () => {
   });
 
   it('should have static getDerivedStateFromError', () => {
-    expect(typeof TerrainMeshErrorBoundary.getDerivedStateFromError).toBe(
-      'function'
-    );
+    expect(typeof TerrainMeshErrorBoundary.getDerivedStateFromError).toBe('function');
   });
 
   it('should return error state from getDerivedStateFromError', () => {

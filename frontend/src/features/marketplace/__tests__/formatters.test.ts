@@ -2,12 +2,7 @@
  * Formatters Tests
  */
 import { describe, it, expect } from 'vitest';
-import {
-  formatCurrency,
-  getOrderAmount,
-  truncateId,
-  safeString,
-} from '../utils/formatters';
+import { formatCurrency, getOrderAmount, truncateId, safeString } from '../utils/formatters';
 
 describe('formatters', () => {
   describe('formatCurrency', () => {

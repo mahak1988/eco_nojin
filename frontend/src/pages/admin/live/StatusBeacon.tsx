@@ -8,7 +8,12 @@ interface StatusBeaconProps {
   pulse?: boolean;
 }
 
-export default function StatusBeacon({ status, label, size = 'md', pulse = true }: StatusBeaconProps) {
+export default function StatusBeacon({
+  status,
+  label,
+  size = 'md',
+  pulse = true,
+}: StatusBeaconProps) {
   const colorMap = {
     online: '#10b981',
     offline: '#ef4444',

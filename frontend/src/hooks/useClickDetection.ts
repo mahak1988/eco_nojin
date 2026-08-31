@@ -3,7 +3,7 @@ import { useRef, useCallback } from 'react';
 /**
  * Scientific click-vs-drag detection
  * Uses timing + distance thresholds to distinguish clicks from drags
- * 
+ *
  * Algorithm:
  *   CLICK if: (duration < 200ms) AND (distance < 5px)
  *   DRAG otherwise
@@ -23,35 +23,41 @@ export function useClickDetection(
     isDragging.current = false;
   }, []);
 
-  const onPointerMove = useCallback((e: any) => {
-    if (downTime.current === 0) return;
-    const x = e.clientX ?? e.pointer?.x ?? 0;
-    const y = e.clientY ?? e.pointer?.y ?? 0;
-    const dx = x - downPos.current.x;
-    const dy = y - downPos.current.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist > maxDistance) {
-      isDragging.current = true;
-    }
-  }, [maxDistance]);
+  const onPointerMove = useCallback(
+    (e: any) => {
+      if (downTime.current === 0) return;
+      const x = e.clientX ?? e.pointer?.x ?? 0;
+      const y = e.clientY ?? e.pointer?.y ?? 0;
+      const dx = x - downPos.current.x;
+      const dy = y - downPos.current.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > maxDistance) {
+        isDragging.current = true;
+      }
+    },
+    [maxDistance]
+  );
 
-  const onPointerUp = useCallback((e: any) => {
-    if (downTime.current === 0) return;
-    const duration = Date.now() - downTime.current;
-    const x = e.clientX ?? e.pointer?.x ?? 0;
-    const y = e.clientY ?? e.pointer?.y ?? 0;
-    const dx = x - downPos.current.x;
-    const dy = y - downPos.current.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
+  const onPointerUp = useCallback(
+    (e: any) => {
+      if (downTime.current === 0) return;
+      const duration = Date.now() - downTime.current;
+      const x = e.clientX ?? e.pointer?.x ?? 0;
+      const y = e.clientY ?? e.pointer?.y ?? 0;
+      const dx = x - downPos.current.x;
+      const dy = y - downPos.current.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
 
-    if (duration < maxDuration && distance < maxDistance && !isDragging.current) {
-      // This is a genuine CLICK
-      onClick(e);
-    }
-    // Reset
-    downTime.current = 0;
-    isDragging.current = false;
-  }, [onClick, maxDuration, maxDistance]);
+      if (duration < maxDuration && distance < maxDistance && !isDragging.current) {
+        // This is a genuine CLICK
+        onClick(e);
+      }
+      // Reset
+      downTime.current = 0;
+      isDragging.current = false;
+    },
+    [onClick, maxDuration, maxDistance]
+  );
 
   return { onPointerDown, onPointerMove, onPointerUp };
 }
@@ -59,17 +65,17 @@ export function useClickDetection(
 /**
  * Hook to detect long press (for context menus)
  */
-export function useLongPress(
-  onLongPress: (event: any) => void,
-  duration: number = 500
-) {
+export function useLongPress(onLongPress: (event: any) => void, duration: number = 500) {
   const timerRef = useRef<number | null>(null);
 
-  const onPointerDown = useCallback((e: any) => {
-    timerRef.current = window.setTimeout(() => {
-      onLongPress(e);
-    }, duration);
-  }, [onLongPress, duration]);
+  const onPointerDown = useCallback(
+    (e: any) => {
+      timerRef.current = window.setTimeout(() => {
+        onLongPress(e);
+      }, duration);
+    },
+    [onLongPress, duration]
+  );
 
   const onPointerUp = useCallback(() => {
     if (timerRef.current) {

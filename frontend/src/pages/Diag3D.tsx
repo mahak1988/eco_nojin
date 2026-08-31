@@ -16,16 +16,23 @@ function Box() {
 
 export default function Diag3D() {
   return (
-    <div style={{
-      width: '100vw', height: '100vh',
-      background: '#0f172a', color: 'white',
-      display: 'flex', flexDirection: 'column',
-      fontFamily: 'Tahoma',
-    }}>
+    <div
+      style={{
+        width: '100vw',
+        height: '100vh',
+        background: '#0f172a',
+        color: 'white',
+        display: 'flex',
+        flexDirection: 'column',
+        fontFamily: 'Tahoma',
+      }}
+    >
       <div style={{ padding: '20px', background: '#1e293b' }}>
         <h1>🧪 3D Diagnostic Test</h1>
         <p>If the orange box appears and you can rotate it with mouse drag, 3D works!</p>
-        <p>Controls: <b>Left+drag</b> = rotate, <b>scroll</b> = zoom, <b>right+drag</b> = pan</p>
+        <p>
+          Controls: <b>Left+drag</b> = rotate, <b>scroll</b> = zoom, <b>right+drag</b> = pan
+        </p>
       </div>
       <div style={{ flex: 1, position: 'relative' }}>
         <Canvas camera={{ position: [5, 5, 5], fov: 50 }}>

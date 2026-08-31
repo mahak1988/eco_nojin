@@ -32,14 +32,9 @@ export default function SecurityAdvanced() {
   const [autoRefresh, setAutoRefresh] = useState(true);
 
   // React Query hook (handles auto-refresh internally)
-  const {
-    events,
-    isLoading,
-    isError,
-    error,
-    refetch,
-    dataUpdatedAt,
-  } = useSecurityEvents({ autoRefresh });
+  const { events, isLoading, isError, error, refetch, dataUpdatedAt } = useSecurityEvents({
+    autoRefresh,
+  });
 
   // Derived stats (memoized - computed only when events change)
   const stats = useSecurityStats(events);
@@ -73,11 +68,7 @@ export default function SecurityAdvanced() {
               {error?.message || 'Unknown error'}
             </div>
           </div>
-          <button
-            className="refresh-btn"
-            onClick={() => refetch()}
-            style={{ marginLeft: 'auto' }}
-          >
+          <button className="refresh-btn" onClick={() => refetch()} style={{ marginLeft: 'auto' }}>
             <RefreshCw size={16} /> Retry
           </button>
         </div>

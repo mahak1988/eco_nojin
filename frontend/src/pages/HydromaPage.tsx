@@ -50,7 +50,14 @@ export const HydromaPage: React.FC = () => {
           <h1 style={{ fontSize: '3rem', fontWeight: 700, marginBottom: '1rem' }}>
             <span className="logo-hydroma">HyDroMa</span>
           </h1>
-          <p style={{ fontSize: '1.25rem', color: 'var(--color-text-secondary)', maxWidth: 700, margin: '0 auto' }}>
+          <p
+            style={{
+              fontSize: '1.25rem',
+              color: 'var(--color-text-secondary)',
+              maxWidth: 700,
+              margin: '0 auto',
+            }}
+          >
             Hydrological Dynamic Model - سیستم یکپارچه مدیریت منابع آب و خاک
           </p>
         </motion.div>
@@ -110,12 +117,27 @@ export const HydromaPage: React.FC = () => {
           <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '1.5rem' }}>
             یکپارچه‌سازی با Eco Nojin
           </h2>
-          <p style={{ fontSize: '1.125rem', color: 'var(--color-text-secondary)', maxWidth: 800, margin: '0 auto 2rem' }}>
-            HyDroMa و Eco Nojin با هم کار می‌کنند تا یک اکوسیستم کامل برای کشاورزی پایدار ایجاد کنند.
-            از شبیه‌سازی دقیق تا مدیریت هوشمند و فروش محصول.
+          <p
+            style={{
+              fontSize: '1.125rem',
+              color: 'var(--color-text-secondary)',
+              maxWidth: 800,
+              margin: '0 auto 2rem',
+            }}
+          >
+            HyDroMa و Eco Nojin با هم کار می‌کنند تا یک اکوسیستم کامل برای کشاورزی پایدار ایجاد
+            کنند. از شبیه‌سازی دقیق تا مدیریت هوشمند و فروش محصول.
           </p>
-          
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem', marginBottom: '2rem' }}>
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '2rem',
+              marginBottom: '2rem',
+            }}
+          >
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🌱</div>
               <div className="logo-eco-nojin">Eco Nojin</div>

@@ -11,9 +11,12 @@ interface VLLAIAdvisorProps {
 export const VLLAIAdvisor: React.FC<VLLAIAdvisorProps> = ({ recommendations, onApply }) => {
   const priorityIcon = (p: string) => {
     switch (p) {
-      case 'high': return <AlertCircle size={16} color="#ef4444" />;
-      case 'medium': return <Info size={16} color="#f59e0b" />;
-      default: return <CheckCircle size={16} color="#10b981" />;
+      case 'high':
+        return <AlertCircle size={16} color="#ef4444" />;
+      case 'medium':
+        return <Info size={16} color="#f59e0b" />;
+      default:
+        return <CheckCircle size={16} color="#10b981" />;
     }
   };
 
@@ -22,7 +25,7 @@ export const VLLAIAdvisor: React.FC<VLLAIAdvisorProps> = ({ recommendations, onA
       <p style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)', marginBottom: '1rem' }}>
         پیشنهادات هوشمند بر اساس نتایج شبیه‌سازی
       </p>
-      
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         {recommendations.map((rec, i) => (
           <motion.div
@@ -37,12 +40,28 @@ export const VLLAIAdvisor: React.FC<VLLAIAdvisorProps> = ({ recommendations, onA
               borderRight: `4px solid ${rec.priority === 'high' ? '#ef4444' : rec.priority === 'medium' ? '#f59e0b' : '#10b981'}`,
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                marginBottom: '0.25rem',
+              }}
+            >
               {priorityIcon(rec.priority)}
-              <span style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}>{rec.category}</span>
+              <span style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}>
+                {rec.category}
+              </span>
             </div>
             <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>{rec.title}</div>
-            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', lineHeight: 1.6, margin: '0 0 0.5rem 0' }}>
+            <p
+              style={{
+                fontSize: '0.75rem',
+                color: 'var(--color-text-secondary)',
+                lineHeight: 1.6,
+                margin: '0 0 0.5rem 0',
+              }}
+            >
               {rec.description}
             </p>
             {rec.action && (

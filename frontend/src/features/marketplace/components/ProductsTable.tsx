@@ -15,18 +15,13 @@ interface ProductsTableProps {
   onSearchChange: (query: string) => void;
 }
 
-export function ProductsTable({
-  products,
-  searchQuery,
-  onSearchChange,
-}: ProductsTableProps) {
+export function ProductsTable({ products, searchQuery, onSearchChange }: ProductsTableProps) {
   // Filter based on search query
   const filteredProducts = searchQuery
     ? products.filter((p) => {
         const q = searchQuery.toLowerCase();
         return (
-          (p.name || '').toLowerCase().includes(q) ||
-          (p.producer || '').toLowerCase().includes(q)
+          (p.name || '').toLowerCase().includes(q) || (p.producer || '').toLowerCase().includes(q)
         );
       })
     : products;
@@ -47,9 +42,7 @@ export function ProductsTable({
           <Package size={20} />
           Products Catalog
         </div>
-        <div
-          style={{ display: 'flex', gap: '12px', alignItems: 'center' }}
-        >
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <div style={{ position: 'relative' }}>
             <Search
               size={16}
@@ -91,11 +84,7 @@ export function ProductsTable({
                 <div className="empty-state-enhanced">
                   <div className="icon">📦</div>
                   <div className="title">No products found</div>
-                  <div>
-                    {searchQuery
-                      ? 'Try a different search'
-                      : 'No products in catalog'}
-                  </div>
+                  <div>{searchQuery ? 'Try a different search' : 'No products in catalog'}</div>
                 </div>
               </td>
             </tr>
@@ -146,9 +135,7 @@ export function ProductsTable({
                     </div>
                   </div>
                 </td>
-                <td style={{ color: 'var(--text-secondary)' }}>
-                  {safeString(product.producer)}
-                </td>
+                <td style={{ color: 'var(--text-secondary)' }}>{safeString(product.producer)}</td>
                 <td
                   style={{
                     fontWeight: 600,
@@ -157,9 +144,7 @@ export function ProductsTable({
                 >
                   {formatCurrency(product.price || 0)} IRR
                 </td>
-                <td>
-                  {product.stock !== undefined ? product.stock : '-'}
-                </td>
+                <td>{product.stock !== undefined ? product.stock : '-'}</td>
                 <td>
                   <span className="status-badge success">Active</span>
                 </td>

@@ -62,21 +62,28 @@ export const ContactPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           style={{ textAlign: 'center', marginBottom: '4rem' }}
         >
-          <h1 style={{ fontSize: '3rem', fontWeight: 700, marginBottom: '1rem' }}>
-            تماس با ما
-          </h1>
-          <p style={{ fontSize: '1.25rem', color: 'var(--color-text-secondary)', maxWidth: 600, margin: '0 auto' }}>
+          <h1 style={{ fontSize: '3rem', fontWeight: 700, marginBottom: '1rem' }}>تماس با ما</h1>
+          <p
+            style={{
+              fontSize: '1.25rem',
+              color: 'var(--color-text-secondary)',
+              maxWidth: 600,
+              margin: '0 auto',
+            }}
+          >
             سوالی دارید؟ ما اینجاییم تا کمک کنیم. از هر طریقی که راحت‌ترید با ما در ارتباط باشید.
           </p>
         </motion.div>
 
         {/* Contact Methods */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '1.5rem',
-          marginBottom: '4rem',
-        }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '1.5rem',
+            marginBottom: '4rem',
+          }}
+        >
           {contactMethods.map((method, index) => (
             <motion.div
               key={index}
@@ -93,7 +100,9 @@ export const ContactPage: React.FC = () => {
                 <div style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>
                   {method.value}
                 </div>
-                <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', margin: 0 }}>
+                <p
+                  style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', margin: 0 }}
+                >
                   {method.description}
                 </p>
               </GlassMorphismCard>
@@ -113,7 +122,11 @@ export const ContactPage: React.FC = () => {
                   padding: '3rem 2rem',
                 }}
               >
-                <CheckCircle size={64} color="var(--color-success)" style={{ marginBottom: '1rem' }} />
+                <CheckCircle
+                  size={64}
+                  color="var(--color-success)"
+                  style={{ marginBottom: '1rem' }}
+                />
                 <h3 style={{ marginBottom: '0.5rem' }}>پیام شما با موفقیت ارسال شد!</h3>
                 <p style={{ color: 'var(--color-text-secondary)' }}>
                   در اسرع وقت با شما تماس خواهیم گرفت.
@@ -121,9 +134,23 @@ export const ContactPage: React.FC = () => {
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '1rem',
+                    marginBottom: '1rem',
+                  }}
+                >
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>
+                    <label
+                      style={{
+                        display: 'block',
+                        marginBottom: '0.5rem',
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                      }}
+                    >
                       نام و نام خانوادگی
                     </label>
                     <input
@@ -136,7 +163,14 @@ export const ContactPage: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>
+                    <label
+                      style={{
+                        display: 'block',
+                        marginBottom: '0.5rem',
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                      }}
+                    >
                       ایمیل
                     </label>
                     <input
@@ -152,7 +186,14 @@ export const ContactPage: React.FC = () => {
                 </div>
 
                 <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      marginBottom: '0.5rem',
+                      fontSize: '0.875rem',
+                      fontWeight: 500,
+                    }}
+                  >
                     موضوع
                   </label>
                   <select
@@ -171,7 +212,14 @@ export const ContactPage: React.FC = () => {
                 </div>
 
                 <div style={{ marginBottom: '1.5rem' }}>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem', fontWeight: 500 }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      marginBottom: '0.5rem',
+                      fontSize: '0.875rem',
+                      fontWeight: 500,
+                    }}
+                  >
                     پیام شما
                   </label>
                   <textarea
@@ -227,7 +275,14 @@ export const ContactPage: React.FC = () => {
                   }}
                 >
                   <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.95rem' }}>{faq.q}</h4>
-                  <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: '0.875rem', lineHeight: 1.7 }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: 'var(--color-text-secondary)',
+                      fontSize: '0.875rem',
+                      lineHeight: 1.7,
+                    }}
+                  >
                     {faq.a}
                   </p>
                 </motion.div>
@@ -250,18 +305,32 @@ export const ContactPage: React.FC = () => {
         >
           <Clock size={32} color="var(--color-primary)" style={{ marginBottom: '1rem' }} />
           <h3 style={{ marginBottom: '1rem' }}>ساعات کاری</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem', maxWidth: 600, margin: '0 auto' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '2rem',
+              maxWidth: 600,
+              margin: '0 auto',
+            }}
+          >
             <div>
               <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>شنبه تا چهارشنبه</div>
-              <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem' }}>۹:۰۰ - ۱۷:۰۰</div>
+              <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem' }}>
+                ۹:۰۰ - ۱۷:۰۰
+              </div>
             </div>
             <div>
               <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>پنج‌شنبه</div>
-              <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem' }}>۹:۰۰ - ۱۳:۰۰</div>
+              <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem' }}>
+                ۹:۰۰ - ۱۳:۰۰
+              </div>
             </div>
             <div>
               <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>جمعه</div>
-              <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem' }}>تعطیل</div>
+              <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem' }}>
+                تعطیل
+              </div>
             </div>
           </div>
         </motion.div>

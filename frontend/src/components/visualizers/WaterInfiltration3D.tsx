@@ -9,7 +9,17 @@ interface WaterInfiltration3DProps {
   showLayers?: boolean;
 }
 
-const SoilLayer = ({ y, height, color, opacity = 1 }: { y: number; height: number; color: string; opacity?: number }) => (
+const SoilLayer = ({
+  y,
+  height,
+  color,
+  opacity = 1,
+}: {
+  y: number;
+  height: number;
+  color: string;
+  opacity?: number;
+}) => (
   <mesh position={[0, y, 0]}>
     <boxGeometry args={[4, height, 4]} />
     <meshStandardMaterial color={color} transparent opacity={opacity} roughness={0.9} />
@@ -86,7 +96,13 @@ const InfiltratingWater = ({ soilAbsorption }: { soilAbsorption: number }) => {
   return (
     <instancedMesh ref={particlesRef} args={[undefined, undefined, 100]}>
       <sphereGeometry args={[0.08, 8, 8]} />
-      <meshStandardMaterial color="#1e90ff" transparent opacity={0.7} emissive="#1e90ff" emissiveIntensity={0.3} />
+      <meshStandardMaterial
+        color="#1e90ff"
+        transparent
+        opacity={0.7}
+        emissive="#1e90ff"
+        emissiveIntensity={0.3}
+      />
     </instancedMesh>
   );
 };
@@ -104,7 +120,15 @@ export const WaterInfiltration3D: React.FC<WaterInfiltration3DProps> = ({
   const soil = soilProperties[soilTexture];
 
   return (
-    <div style={{ width: '100%', height: 500, background: '#1a1a2e', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
+    <div
+      style={{
+        width: '100%',
+        height: 500,
+        background: '#1a1a2e',
+        borderRadius: 'var(--radius-lg)',
+        overflow: 'hidden',
+      }}
+    >
       <Canvas camera={{ position: [6, 4, 6], fov: 50 }}>
         <ambientLight intensity={0.5} />
         <directionalLight position={[5, 10, 5]} intensity={1} castShadow />

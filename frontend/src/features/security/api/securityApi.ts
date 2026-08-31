@@ -26,7 +26,11 @@ function transformEvent(raw: RawSecurityEvent, index: number): SecurityEvent {
 
   return {
     id: (raw.id as string) || `evt-${index}`,
-    type: isFailed ? 'Failed Login' : isFailed === false && detail ? 'Successful Login' : 'Successful Login',
+    type: isFailed
+      ? 'Failed Login'
+      : isFailed === false && detail
+        ? 'Successful Login'
+        : 'Successful Login',
     detail,
     ip_address: (raw.ip_address as string) || '',
     created_at: (raw.created_at as string) || '',

@@ -11,22 +11,22 @@
 }
 
 /* RTL Support */
-[dir="rtl"] .admin-panel {
+[dir='rtl'] .admin-panel {
   direction: rtl;
 }
 
-[dir="rtl"] .nav-icon {
+[dir='rtl'] .nav-icon {
   margin-right: 0;
   margin-left: 12px;
 }
 
-[dir="rtl"] .nav-item.active::before {
+[dir='rtl'] .nav-item.active::before {
   left: auto;
   right: -12px;
   border-radius: 4px 0 0 4px;
 }
 
-[dir="rtl"] .live-counter-prefix {
+[dir='rtl'] .live-counter-prefix {
   order: 2;
 }
 
@@ -43,7 +43,7 @@
     width: 260px;
   }
 
-  [dir="rtl"] .admin-sidebar {
+  [dir='rtl'] .admin-sidebar {
     left: auto;
     right: 0;
     transform: translateX(100%);
@@ -406,8 +406,13 @@
 }
 
 @keyframes pulse-critical {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-  50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
 }
 
 /* Print styles */

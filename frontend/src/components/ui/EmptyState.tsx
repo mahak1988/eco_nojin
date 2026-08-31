@@ -54,9 +54,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           {icon}
         </motion.div>
       )}
-      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>
-        {title}
-      </h3>
+      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>{title}</h3>
       <p style={{ color: 'var(--color-text-secondary)', maxWidth: 400, marginBottom: '1.5rem' }}>
         {description}
       </p>

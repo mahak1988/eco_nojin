@@ -33,10 +33,7 @@ export function PolygonsList() {
           <span style={{ color: 'rgba(255,255,255,0.5)' }}>
             {poly.points.length} pts • {poly.area?.toFixed(0) || 0}m²
           </span>
-          <button
-            onClick={() => removePolygon(poly.id)}
-            style={sidebarStyles.deleteButton}
-          >
+          <button onClick={() => removePolygon(poly.id)} style={sidebarStyles.deleteButton}>
             <Trash2 size={11} />
           </button>
         </div>

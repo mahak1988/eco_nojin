@@ -20,7 +20,7 @@ export async function fetchScientificChain(
   lat: number,
   lon: number,
   options: ChainOptions = {},
-  onProgress?: (p: { status: string; stage?: string; progress: number }) => void,
+  onProgress?: (p: { status: string; stage?: string; progress: number }) => void
 ): Promise<ScientificChainResult> {
   const body = {
     lat,
@@ -44,7 +44,9 @@ export async function fetchScientificChain(
     });
     if (!res.ok) {
       const text = await res.text().catch(() => '');
-      throw new Error(`زنجیره علمی خطای HTTP ${res.status}${text ? `: ${text.slice(0, 200)}` : ''}`);
+      throw new Error(
+        `زنجیره علمی خطای HTTP ${res.status}${text ? `: ${text.slice(0, 200)}` : ''}`
+      );
     }
     return (await res.json()) as ScientificChainResult;
   } finally {

@@ -27,13 +27,7 @@ export type ToolMode = 'orbit' | 'draw-polygon' | 'place-op' | 'data-plot';
  * Layer types for terrain visualization
  */
 export type LayerType =
-  | 'surface'
-  | 'soil'
-  | 'bedrock'
-  | 'ndvi'
-  | 'moisture'
-  | 'roots'
-  | 'groundwater';
+  'surface' | 'soil' | 'bedrock' | 'ndvi' | 'moisture' | 'roots' | 'groundwater';
 
 /**
  * Crop types for visualization

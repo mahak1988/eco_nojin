@@ -14,13 +14,7 @@
 
 import { useCallback } from 'react';
 import * as THREE from 'three';
-import type {
-  ToolMode,
-  TerrainData,
-  DataPlot,
-  PlacedOp,
-  SiteMeta,
-} from '../types';
+import type { ToolMode, TerrainData, DataPlot, PlacedOp, SiteMeta } from '../types';
 import { ENGINEERING_OPS, isErosionReducingOp } from '../constants';
 import { samplePlotData } from '../../../components/farmsim/SceneExtras';
 import { useHydromaStore } from '../store';
@@ -53,14 +47,8 @@ export function useTerrainClick({
   onErosionEffect,
   onTerrainUpdate,
 }: UseTerrainClickOptions) {
-  const {
-    toolMode,
-    selectedOpType,
-    addPlot,
-    addDrawingPoint,
-    addPlacedOp,
-    setLastClickInfo,
-  } = useHydromaStore();
+  const { toolMode, selectedOpType, addPlot, addDrawingPoint, addPlacedOp, setLastClickInfo } =
+    useHydromaStore();
 
   const handleTerrainClick = useCallback(
     (point: THREE.Vector3) => {
@@ -116,18 +104,13 @@ export function useTerrainClick({
               onErosionEffect(d);
 
               // Apply erosion reduction to terrain
-              const ratio =
-                d.A_before_t_ha_yr > 0
-                  ? d.A_after_t_ha_yr / d.A_before_t_ha_yr
-                  : 1;
+              const ratio = d.A_before_t_ha_yr > 0 ? d.A_after_t_ha_yr / d.A_before_t_ha_yr : 1;
 
               onTerrainUpdate((prev) =>
                 prev
                   ? {
                       ...prev,
-                      erosion: prev.erosion.map((row) =>
-                        row.map((v) => +(v * ratio).toFixed(3))
-                      ),
+                      erosion: prev.erosion.map((row) => row.map((v) => +(v * ratio).toFixed(3))),
                     }
                   : prev
               );

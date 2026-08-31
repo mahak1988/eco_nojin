@@ -21,10 +21,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { FeedEvent } from '../types';
 import { generateEvent } from '../utils/eventGenerator';
-import {
-  DEFAULT_MAX_ITEMS,
-  DEFAULT_POLL_INTERVAL_MS,
-} from '../constants/eventTemplates';
+import { DEFAULT_MAX_ITEMS, DEFAULT_POLL_INTERVAL_MS } from '../constants/eventTemplates';
 
 interface UseLiveFeedEventsOptions {
   maxItems?: number;
@@ -40,9 +37,7 @@ interface UseLiveFeedEventsReturn {
   clearEvents: () => void;
 }
 
-export function useLiveFeedEvents(
-  options: UseLiveFeedEventsOptions = {}
-): UseLiveFeedEventsReturn {
+export function useLiveFeedEvents(options: UseLiveFeedEventsOptions = {}): UseLiveFeedEventsReturn {
   const {
     maxItems = DEFAULT_MAX_ITEMS,
     pollInterval = DEFAULT_POLL_INTERVAL_MS,

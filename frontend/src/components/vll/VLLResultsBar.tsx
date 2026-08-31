@@ -10,12 +10,14 @@ interface VLLResultsBarProps {
 export const VLLResultsBar: React.FC<VLLResultsBarProps> = ({ results, isSimulating }) => {
   if (isSimulating) {
     return (
-      <div style={{
-        padding: '1.5rem',
-        background: 'linear-gradient(90deg, var(--color-primary), var(--color-info))',
-        color: 'white',
-        textAlign: 'center',
-      }}>
+      <div
+        style={{
+          padding: '1.5rem',
+          background: 'linear-gradient(90deg, var(--color-primary), var(--color-info))',
+          color: 'white',
+          textAlign: 'center',
+        }}
+      >
         <motion.div
           animate={{ opacity: [1, 0.5, 1] }}
           transition={{ duration: 1.5, repeat: Infinity }}
@@ -28,13 +30,15 @@ export const VLLResultsBar: React.FC<VLLResultsBarProps> = ({ results, isSimulat
 
   if (!results) {
     return (
-      <div style={{
-        padding: '1rem',
-        background: 'var(--color-surface)',
-        borderTop: '1px solid var(--color-border)',
-        textAlign: 'center',
-        color: 'var(--color-text-tertiary)',
-      }}>
+      <div
+        style={{
+          padding: '1rem',
+          background: 'var(--color-surface)',
+          borderTop: '1px solid var(--color-border)',
+          textAlign: 'center',
+          color: 'var(--color-text-tertiary)',
+        }}
+      >
         💡 مداخلات را انتخاب و دکمه "اجرای سناریو" را بزنید تا نتایج شبیه‌سازی را ببینید
       </div>
     );
@@ -53,20 +57,29 @@ export const VLLResultsBar: React.FC<VLLResultsBarProps> = ({ results, isSimulat
   ];
 
   return (
-    <div style={{
-      padding: '1rem 2rem',
-      background: 'var(--color-surface)',
-      borderTop: '2px solid var(--color-border)',
-      display: 'flex',
-      gap: '2rem',
-      alignItems: 'center',
-      boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.05)',
-    }}>
+    <div
+      style={{
+        padding: '1rem 2rem',
+        background: 'var(--color-surface)',
+        borderTop: '2px solid var(--color-border)',
+        display: 'flex',
+        gap: '2rem',
+        alignItems: 'center',
+        boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.05)',
+      }}
+    >
       {/* Main Score */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: 200 }}>
         <div style={{ position: 'relative', width: 80, height: 80 }}>
           <svg width="80" height="80" style={{ transform: 'rotate(-90deg)' }}>
-            <circle cx="40" cy="40" r="35" fill="none" stroke="var(--color-border)" strokeWidth="6" />
+            <circle
+              cx="40"
+              cy="40"
+              r="35"
+              fill="none"
+              stroke="var(--color-border)"
+              strokeWidth="6"
+            />
             <motion.circle
               cx="40"
               cy="40"
@@ -81,21 +94,25 @@ export const VLLResultsBar: React.FC<VLLResultsBarProps> = ({ results, isSimulat
               transition={{ duration: 1, ease: 'easeOut' }}
             />
           </svg>
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1.5rem',
-            fontWeight: 700,
-            color: scoreColor,
-          }}>
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1.5rem',
+              fontWeight: 700,
+              color: scoreColor,
+            }}
+          >
             {score}
           </div>
         </div>
         <div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}>نمره پایداری</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}>
+            نمره پایداری
+          </div>
           <div style={{ fontSize: '1rem', fontWeight: 700 }}>
             {score >= 75 ? '✅ عالی' : score >= 50 ? '⚠️ متوسط' : '❌ ضعیف'}
           </div>
@@ -103,7 +120,9 @@ export const VLLResultsBar: React.FC<VLLResultsBarProps> = ({ results, isSimulat
       </div>
 
       {/* Metric Cards */}
-      <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem' }}>
+      <div
+        style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem' }}
+      >
         {metrics.slice(0, 4).map((metric, i) => (
           <motion.div
             key={i}
@@ -122,8 +141,12 @@ export const VLLResultsBar: React.FC<VLLResultsBarProps> = ({ results, isSimulat
           >
             <div style={{ color: metric.color }}>{metric.icon}</div>
             <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}>{metric.label}</div>
-              <div style={{ fontSize: '1.125rem', fontWeight: 700 }}>{Math.round(metric.value)}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--color-text-tertiary)' }}>
+                {metric.label}
+              </div>
+              <div style={{ fontSize: '1.125rem', fontWeight: 700 }}>
+                {Math.round(metric.value)}
+              </div>
             </div>
           </motion.div>
         ))}

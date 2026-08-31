@@ -17,11 +17,7 @@ interface FeatureShowcaseProps {
 /**
  * نمایش ویژگی‌ها با کارت‌های زیبا
  */
-export const FeatureShowcase: React.FC<FeatureShowcaseProps> = ({
-  features,
-  title,
-  subtitle,
-}) => {
+export const FeatureShowcase: React.FC<FeatureShowcaseProps> = ({ features, title, subtitle }) => {
   return (
     <div>
       {(title || subtitle) && (
@@ -32,23 +28,30 @@ export const FeatureShowcase: React.FC<FeatureShowcaseProps> = ({
           style={{ textAlign: 'center', marginBottom: '3rem' }}
         >
           {title && (
-            <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.75rem' }}>
-              {title}
-            </h2>
+            <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.75rem' }}>{title}</h2>
           )}
           {subtitle && (
-            <p style={{ fontSize: '1.125rem', color: 'var(--color-text-secondary)', maxWidth: 600, margin: '0 auto' }}>
+            <p
+              style={{
+                fontSize: '1.125rem',
+                color: 'var(--color-text-secondary)',
+                maxWidth: 600,
+                margin: '0 auto',
+              }}
+            >
               {subtitle}
             </p>
           )}
         </motion.div>
       )}
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: '1.5rem',
-      }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '1.5rem',
+        }}
+      >
         {features.map((feature, index) => (
           <motion.div
             key={index}
@@ -60,17 +63,19 @@ export const FeatureShowcase: React.FC<FeatureShowcaseProps> = ({
             className="card"
             style={{ padding: '2rem', cursor: 'pointer' }}
           >
-            <div style={{
-              width: 56,
-              height: 56,
-              borderRadius: 'var(--radius-xl)',
-              background: `${feature.color}20`,
-              color: feature.color,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: '1.5rem',
-            }}>
+            <div
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: 'var(--radius-xl)',
+                background: `${feature.color}20`,
+                color: feature.color,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: '1.5rem',
+              }}
+            >
               {feature.icon}
             </div>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.75rem' }}>

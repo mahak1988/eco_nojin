@@ -9,25 +9,29 @@ const goals = [
     title: 'بحران آب',
     description: 'کاهش ۴۰٪ مصرف آب در کشاورزی با الگوریتم‌های هوشمند آبیاری',
     stat: '۷۰٪',
-    statLabel: 'مصرف آب کشاورزی' },
+    statLabel: 'مصرف آب کشاورزی',
+  },
   {
     icon: Leaf,
     title: 'فرسایش خاک',
     description: 'حفاظت از ۱ میلیون هکتار زمین کشاورزی در برابر فرسایش',
     stat: '۲۵ میلیارد',
-    statLabel: 'تن خاک از دست رفته سالانه' },
+    statLabel: 'تن خاک از دست رفته سالانه',
+  },
   {
     icon: Globe,
     title: 'تغییرات اقلیمی',
     description: 'کاهش ۳۰٪ انتشار گازهای گلخانه‌ای از بخش کشاورزی',
     stat: '۲۴٪',
-    statLabel: 'از انتشار جهانی' },
+    statLabel: 'از انتشار جهانی',
+  },
   {
     icon: Heart,
     title: 'امنیت غذایی',
     description: 'افزایش ۵۰٪ عملکرد محصول با حفظ پایداری',
     stat: '۸۰۰ میلیون',
-    statLabel: 'نفر گرسنه در جهان' },
+    statLabel: 'نفر گرسنه در جهان',
+  },
 ];
 
 export const MissionPage: React.FC = () => {
@@ -41,8 +45,10 @@ export const MissionPage: React.FC = () => {
           alignItems: 'center',
           justifyContent: 'center',
           padding: '6rem 2rem',
-          background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%)',
-          textAlign: 'center' }}
+          background:
+            'linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%)',
+          textAlign: 'center',
+        }}
       >
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -50,7 +56,13 @@ export const MissionPage: React.FC = () => {
           transition={{ duration: 0.6 }}
           style={{ maxWidth: 900 }}
         >
-          <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4rem)', fontWeight: 700, marginBottom: '1.5rem' }}>
+          <h1
+            style={{
+              fontSize: 'clamp(2.5rem, 6vw, 4rem)',
+              fontWeight: 700,
+              marginBottom: '1.5rem',
+            }}
+          >
             مأموریت ما
           </h1>
           <p
@@ -58,17 +70,20 @@ export const MissionPage: React.FC = () => {
               fontSize: '1.5rem',
               lineHeight: 1.8,
               color: 'var(--color-text-secondary)',
-              marginBottom: '2rem' }}
+              marginBottom: '2rem',
+            }}
           >
             <span className="gradient-text" style={{ fontWeight: 600 }}>
               "نجات زمین، قطره به قطره، دانه به دانه"
             </span>
           </p>
-          <p style={{ fontSize: '1.125rem', lineHeight: 1.8, color: 'var(--color-text-secondary)' }}>
+          <p
+            style={{ fontSize: '1.125rem', lineHeight: 1.8, color: 'var(--color-text-secondary)' }}
+          >
             ما معتقدیم که کشاورزی می‌تواند همزمان مولد و پایدار باشد.
             <br />
-            با ابزارهای هوشمند، می‌توانیم به کشاورزان کمک کنیم تا با منابع کمتر، محصول بیشتری تولید کنند
-            و در عین حال از سیاره زمین محافظت کنند.
+            با ابزارهای هوشمند، می‌توانیم به کشاورزان کمک کنیم تا با منابع کمتر، محصول بیشتری تولید
+            کنند و در عین حال از سیاره زمین محافظت کنند.
           </p>
         </motion.div>
       </section>
@@ -76,14 +91,22 @@ export const MissionPage: React.FC = () => {
       {/* Goals */}
       <section style={{ padding: '6rem 2rem' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <h2 style={{ fontSize: '2.5rem', fontWeight: 700, textAlign: 'center', marginBottom: '4rem' }}>
+          <h2
+            style={{
+              fontSize: '2.5rem',
+              fontWeight: 700,
+              textAlign: 'center',
+              marginBottom: '4rem',
+            }}
+          >
             چالش‌هایی که حل می‌کنیم
           </h2>
           <div
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '2rem' }}
+              gap: '2rem',
+            }}
           >
             {goals.map((goal, index) => {
               const Icon = goal.icon;
@@ -97,7 +120,14 @@ export const MissionPage: React.FC = () => {
                   className="card"
                   style={{ padding: '2rem' }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '1rem',
+                      marginBottom: '1.5rem',
+                    }}
+                  >
                     <div
                       style={{
                         width: 56,
@@ -107,12 +137,15 @@ export const MissionPage: React.FC = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: 'white' }}
+                        color: 'white',
+                      }}
                     >
                       <Icon size={28} />
                     </div>
                     <div>
-                      <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--color-primary)' }}>
+                      <div
+                        style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--color-primary)' }}
+                      >
                         {goal.stat}
                       </div>
                       <div style={{ fontSize: '0.875rem', color: 'var(--color-text-tertiary)' }}>
@@ -136,12 +169,13 @@ export const MissionPage: React.FC = () => {
       {/* Slogans */}
       <section style={{ padding: '6rem 2rem', background: 'var(--color-surface)' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto', textAlign: 'center' }}>
-          <h2 style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '3rem' }}>
-            شعارهای ما
-          </h2>
+          <h2 style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '3rem' }}>شعارهای ما</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             {[
-              { en: 'From Drop to Ocean, From Seed to Forest', fa: 'از قطره تا اقیانوس، از دانه تا جنگل' },
+              {
+                en: 'From Drop to Ocean, From Seed to Forest',
+                fa: 'از قطره تا اقیانوس، از دانه تا جنگل',
+              },
               { en: 'Smart Farming, Sustainable Future', fa: 'کشاورزی هوشمند، آینده پایدار' },
               { en: 'Every Field Tells a Story', fa: 'هر زمین داستانی دارد' },
               { en: 'Technology Meets Tradition', fa: 'فناوری در خدمت سنت' },
@@ -160,7 +194,8 @@ export const MissionPage: React.FC = () => {
                     fontSize: '1.5rem',
                     fontWeight: 600,
                     color: 'var(--color-primary)',
-                    marginBottom: '0.5rem' }}
+                    marginBottom: '0.5rem',
+                  }}
                 >
                   "{slogan.en}"
                 </p>
@@ -169,7 +204,8 @@ export const MissionPage: React.FC = () => {
                   style={{
                     fontSize: '1.25rem',
                     color: 'var(--color-text-secondary)',
-                    margin: 0 }}
+                    margin: 0,
+                  }}
                 >
                   {slogan.fa}
                 </p>

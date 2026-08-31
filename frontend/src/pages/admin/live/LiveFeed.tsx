@@ -29,10 +29,7 @@ interface LiveFeedProps {
   pollInterval?: number;
 }
 
-export default function LiveFeed({
-  maxItems = 10,
-  pollInterval = 3000,
-}: LiveFeedProps) {
+export default function LiveFeed({ maxItems = 10, pollInterval = 3000 }: LiveFeedProps) {
   // Custom hook manages all state and interval logic
   const { events, isPaused, togglePause } = useLiveFeedEvents({
     maxItems,

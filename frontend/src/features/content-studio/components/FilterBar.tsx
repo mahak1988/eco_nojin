@@ -15,12 +15,7 @@ interface FilterBarProps {
   onSearchChange: (query: string) => void;
 }
 
-export function FilterBar({
-  filter,
-  onFilterChange,
-  searchQuery,
-  onSearchChange,
-}: FilterBarProps) {
+export function FilterBar({ filter, onFilterChange, searchQuery, onSearchChange }: FilterBarProps) {
   return (
     <div className="filter-bar">
       <div style={{ position: 'relative', flex: 1, maxWidth: '400px' }}>

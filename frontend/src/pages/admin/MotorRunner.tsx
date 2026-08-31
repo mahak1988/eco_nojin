@@ -86,7 +86,7 @@ export default function MotorRunner() {
     }
   };
 
-  const site = useMemo(() => sites.find(s => s.site_id === siteId), [sites, siteId]);
+  const site = useMemo(() => sites.find((s) => s.site_id === siteId), [sites, siteId]);
 
   return (
     <div className="admin-page-container">
@@ -111,17 +111,20 @@ export default function MotorRunner() {
             سایت (از دیتابیس دستی — {sites.length} سایت)
             <select
               value={siteId}
-              onChange={e => setSiteId(e.target.value)}
+              onChange={(e) => setSiteId(e.target.value)}
               disabled={loadingSites}
               style={{
-                padding: '10px', borderRadius: '8px',
+                padding: '10px',
+                borderRadius: '8px',
                 border: '1px solid var(--border-color)',
-                background: 'var(--bg-hover)', color: 'var(--text-primary)',
+                background: 'var(--bg-hover)',
+                color: 'var(--text-primary)',
               }}
             >
-              {sites.map(s => (
+              {sites.map((s) => (
                 <option key={s.site_id} value={s.site_id}>
-                  {s.site_id} — {s.admin1_city || s.province || s.country} ({s.lat?.toFixed(2)}, {s.lon?.toFixed(2)}) {s.koppen || ''}
+                  {s.site_id} — {s.admin1_city || s.province || s.country} ({s.lat?.toFixed(2)},{' '}
+                  {s.lon?.toFixed(2)}) {s.koppen || ''}
                 </option>
               ))}
             </select>
@@ -131,15 +134,19 @@ export default function MotorRunner() {
             موتور
             <select
               value={motor}
-              onChange={e => setMotor(e.target.value)}
+              onChange={(e) => setMotor(e.target.value)}
               style={{
-                padding: '10px', borderRadius: '8px',
+                padding: '10px',
+                borderRadius: '8px',
                 border: '1px solid var(--border-color)',
-                background: 'var(--bg-hover)', color: 'var(--text-primary)',
+                background: 'var(--bg-hover)',
+                color: 'var(--text-primary)',
               }}
             >
               {Object.entries(MOTOR_LABELS).map(([k, v]) => (
-                <option key={k} value={k}>{v}</option>
+                <option key={k} value={k}>
+                  {v}
+                </option>
               ))}
             </select>
           </label>
@@ -147,40 +154,101 @@ export default function MotorRunner() {
 
         {site && (
           <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-            پروفایل: {site.country} / {site.admin1_city || site.province} | ارتفاع {site.elevation_m} متر | اقلیم {site.koppen || '—'}
+            پروفایل: {site.country} / {site.admin1_city || site.province} | ارتفاع{' '}
+            {site.elevation_m} متر | اقلیم {site.koppen || '—'}
           </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            gap: '14px',
+          }}
+        >
           <label style={{ display: 'grid', gap: '6px', fontSize: '13px' }}>
             نام محصول (FAO)
-            <input value={cropName} onChange={e => setCropName(e.target.value)} className="admin-input"
-              style={{ padding: '9px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-hover)', color: 'var(--text-primary)' }} />
+            <input
+              value={cropName}
+              onChange={(e) => setCropName(e.target.value)}
+              className="admin-input"
+              style={{
+                padding: '9px',
+                borderRadius: '8px',
+                border: '1px solid var(--border-color)',
+                background: 'var(--bg-hover)',
+                color: 'var(--text-primary)',
+              }}
+            />
           </label>
           {motor === 'aquacrop' && (
             <>
               <label style={{ display: 'grid', gap: '6px', fontSize: '13px' }}>
                 تاریخ کاشت
-                <input type="date" value={plantingDate} onChange={e => setPlantingDate(e.target.value)} className="admin-input"
-                  style={{ padding: '9px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-hover)', color: 'var(--text-primary)' }} />
+                <input
+                  type="date"
+                  value={plantingDate}
+                  onChange={(e) => setPlantingDate(e.target.value)}
+                  className="admin-input"
+                  style={{
+                    padding: '9px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)',
+                    background: 'var(--bg-hover)',
+                    color: 'var(--text-primary)',
+                  }}
+                />
               </label>
               <label style={{ display: 'grid', gap: '6px', fontSize: '13px' }}>
                 شروع شبیه‌سازی
-                <input type="date" value={simStart} onChange={e => setSimStart(e.target.value)} className="admin-input"
-                  style={{ padding: '9px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-hover)', color: 'var(--text-primary)' }} />
+                <input
+                  type="date"
+                  value={simStart}
+                  onChange={(e) => setSimStart(e.target.value)}
+                  className="admin-input"
+                  style={{
+                    padding: '9px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)',
+                    background: 'var(--bg-hover)',
+                    color: 'var(--text-primary)',
+                  }}
+                />
               </label>
               <label style={{ display: 'grid', gap: '6px', fontSize: '13px' }}>
                 پایان شبیه‌سازی
-                <input type="date" value={simEnd} onChange={e => setSimEnd(e.target.value)} className="admin-input"
-                  style={{ padding: '9px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-hover)', color: 'var(--text-primary)' }} />
+                <input
+                  type="date"
+                  value={simEnd}
+                  onChange={(e) => setSimEnd(e.target.value)}
+                  className="admin-input"
+                  style={{
+                    padding: '9px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)',
+                    background: 'var(--bg-hover)',
+                    color: 'var(--text-primary)',
+                  }}
+                />
               </label>
             </>
           )}
           {motor === 'irrigation' && (
             <label style={{ display: 'grid', gap: '6px', fontSize: '13px' }}>
               طول فصل (روز)
-              <input type="number" value={seasonDays} onChange={e => setSeasonDays(Number(e.target.value))} className="admin-input"
-                style={{ padding: '9px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-hover)', color: 'var(--text-primary)' }} />
+              <input
+                type="number"
+                value={seasonDays}
+                onChange={(e) => setSeasonDays(Number(e.target.value))}
+                className="admin-input"
+                style={{
+                  padding: '9px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border-color)',
+                  background: 'var(--bg-hover)',
+                  color: 'var(--text-primary)',
+                }}
+              />
             </label>
           )}
         </div>
@@ -190,11 +258,17 @@ export default function MotorRunner() {
           disabled={running || !siteId}
           style={{
             justifySelf: 'start',
-            display: 'flex', alignItems: 'center', gap: '8px',
-            padding: '11px 22px', borderRadius: '10px', border: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '11px 22px',
+            borderRadius: '10px',
+            border: 'none',
             cursor: running ? 'default' : 'pointer',
             background: 'linear-gradient(135deg, #8b5cf6, #6366f1)',
-            color: '#fff', fontWeight: 600, opacity: running ? 0.6 : 1,
+            color: '#fff',
+            fontWeight: 600,
+            opacity: running ? 0.6 : 1,
           }}
         >
           <Play size={16} /> {running ? 'در حال اجرا…' : 'اجرای موتور'}
@@ -202,7 +276,10 @@ export default function MotorRunner() {
       </div>
 
       {error && (
-        <div className="chart-container" style={{ padding: '16px 20px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <div
+          className="chart-container"
+          style={{ padding: '16px 20px', display: 'flex', gap: '10px', alignItems: 'center' }}
+        >
           <XCircle size={18} style={{ color: 'var(--accent-danger)' }} />
           <span>{error}</span>
         </div>
@@ -210,19 +287,35 @@ export default function MotorRunner() {
 
       {result && (
         <div className="chart-container" style={{ padding: '20px' }}>
-          <div className="chart-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+          <div
+            className="chart-title"
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}
+          >
             <CheckCircle size={18} style={{ color: 'var(--accent-primary)' }} />
             نتیجه: {MOTOR_LABELS[result.motor] || result.motor} — سایت {result.site?.site_id}
           </div>
           <pre
             dir="ltr"
             style={{
-              fontSize: '12px', lineHeight: 1.7, whiteSpace: 'pre-wrap',
-              background: 'var(--bg-hover)', padding: '14px', borderRadius: '10px',
-              border: '1px solid var(--border-color)', overflowX: 'auto',
+              fontSize: '12px',
+              lineHeight: 1.7,
+              whiteSpace: 'pre-wrap',
+              background: 'var(--bg-hover)',
+              padding: '14px',
+              borderRadius: '10px',
+              border: '1px solid var(--border-color)',
+              overflowX: 'auto',
             }}
           >
-            {JSON.stringify({ summary: result.result?.summary, outputs: result.result?.outputs, provenance: result.provenance }, null, 2)}
+            {JSON.stringify(
+              {
+                summary: result.result?.summary,
+                outputs: result.result?.outputs,
+                provenance: result.provenance,
+              },
+              null,
+              2
+            )}
           </pre>
         </div>
       )}

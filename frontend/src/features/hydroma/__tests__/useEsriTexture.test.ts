@@ -41,7 +41,11 @@ const mocks = vi.hoisted(() => {
 // ─────────────────────────────────────────────────────────────────────
 vi.mock('three', () => {
   class Vector3 {
-    constructor(public x = 0, public y = 0, public z = 0) {}
+    constructor(
+      public x = 0,
+      public y = 0,
+      public z = 0
+    ) {}
   }
 
   const THREE = {
@@ -63,8 +67,7 @@ vi.mock('three', () => {
 // Mock lib/demApi
 vi.mock('../../../lib/demApi', () => ({
   esriTileUrl: vi.fn(
-    (lat: number, lon: number, z: number) =>
-      `https://tile.example/${z}/${lat}/${lon}`
+    (lat: number, lon: number, z: number) => `https://tile.example/${z}/${lat}/${lon}`
   ),
 }));
 

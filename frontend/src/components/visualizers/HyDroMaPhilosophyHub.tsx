@@ -1,14 +1,22 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
-  Leaf, Droplets, Wind, Beef, Trees, Sprout,
-  Database, Coins, Sparkles, Globe,
+  Leaf,
+  Droplets,
+  Wind,
+  Beef,
+  Trees,
+  Sprout,
+  Database,
+  Coins,
+  Sparkles,
+  Globe,
 } from 'lucide-react';
 import { Card } from '../ui';
 
 /**
  * هاب فلسفی HyDroMa
- * 
+ *
  * این کامپوننت تمام ماژول‌های پروژه را به‌صورت بصری به هم متصل می‌کند
  * و فلسفه "از قطره تا اقیانوس، از دانه تا جنگل" را نمایش می‌دهد.
  */
@@ -122,8 +130,7 @@ export const HyDroMaPhilosophyHub: React.FC = () => {
             node.connections.map((targetId) => {
               const target = ECOSYSTEM_NODES.find((n) => n.id === targetId);
               if (!target) return null;
-              const isHighlighted =
-                selectedNode === node.id || selectedNode === target.id;
+              const isHighlighted = selectedNode === node.id || selectedNode === target.id;
               return (
                 <motion.line
                   key={`${node.id}-${targetId}`}
@@ -211,7 +218,14 @@ export const HyDroMaPhilosophyHub: React.FC = () => {
               zIndex: 20,
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                marginBottom: '0.75rem',
+              }}
+            >
               <div
                 style={{
                   width: 48,

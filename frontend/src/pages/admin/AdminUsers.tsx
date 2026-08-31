@@ -59,11 +59,15 @@ export default function AdminUsers() {
     );
   }
 
-  const activeUsers = users.filter(u => u.is_active);
-  const blockedUsers = users.filter(u => !u.is_active);
+  const activeUsers = users.filter((u) => u.is_active);
+  const blockedUsers = users.filter((u) => !u.is_active);
   const filteredUsers = filter === 'all' ? users : filter === 'active' ? activeUsers : blockedUsers;
   const searchedUsers = searchQuery
-    ? filteredUsers.filter(u => u.email.toLowerCase().includes(searchQuery.toLowerCase()) || (u.full_name && u.full_name.toLowerCase().includes(searchQuery.toLowerCase())))
+    ? filteredUsers.filter(
+        (u) =>
+          u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (u.full_name && u.full_name.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
     : filteredUsers;
 
   return (
@@ -75,11 +79,15 @@ export default function AdminUsers() {
         </div>
         <div className="stat-card">
           <div className="stat-label">Active</div>
-          <div className="stat-value" style={{ color: 'var(--accent-primary)' }}>{activeUsers.length}</div>
+          <div className="stat-value" style={{ color: 'var(--accent-primary)' }}>
+            {activeUsers.length}
+          </div>
         </div>
         <div className="stat-card">
           <div className="stat-label">Blocked</div>
-          <div className="stat-value" style={{ color: 'var(--accent-danger)' }}>{blockedUsers.length}</div>
+          <div className="stat-value" style={{ color: 'var(--accent-danger)' }}>
+            {blockedUsers.length}
+          </div>
         </div>
       </div>
 
@@ -94,8 +102,18 @@ export default function AdminUsers() {
         />
         <div style={{ display: 'flex', gap: '8px', marginLeft: 'auto' }}>
           {(['all', 'active', 'blocked'] as const).map((f) => (
-            <button key={f} className={'filter-chip' + (filter === f ? ' active' : '')} onClick={() => setFilter(f)}>
-              {f.charAt(0).toUpperCase() + f.slice(1)} ({f === 'all' ? users.length : f === 'active' ? activeUsers.length : blockedUsers.length})
+            <button
+              key={f}
+              className={'filter-chip' + (filter === f ? ' active' : '')}
+              onClick={() => setFilter(f)}
+            >
+              {f.charAt(0).toUpperCase() + f.slice(1)} (
+              {f === 'all'
+                ? users.length
+                : f === 'active'
+                  ? activeUsers.length
+                  : blockedUsers.length}
+              )
             </button>
           ))}
         </div>
@@ -125,24 +143,51 @@ export default function AdminUsers() {
                 <tr key={user.id}>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{
-                        width: '36px', height: '36px', borderRadius: '10px',
-                        background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: 'white', fontWeight: 700, fontSize: '13px',
-                      }}>
-                        {user.full_name ? user.full_name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
+                      <div
+                        style={{
+                          width: '36px',
+                          height: '36px',
+                          borderRadius: '10px',
+                          background:
+                            'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'white',
+                          fontWeight: 700,
+                          fontSize: '13px',
+                        }}
+                      >
+                        {user.full_name
+                          ? user.full_name.charAt(0).toUpperCase()
+                          : user.email.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{user.full_name || 'No name'}</div>
-                        <div style={{ fontSize: '12px', color: 'var(--text-faint)' }}>ID: {user.id.substring(0, 8)}</div>
+                        <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                          {user.full_name || 'No name'}
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'var(--text-faint)' }}>
+                          ID: {user.id.substring(0, 8)}
+                        </div>
                       </div>
                     </div>
                   </td>
                   <td style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>{user.email}</td>
-                  <td><span className={'status-badge ' + (user.role === 'admin' ? 'warning' : 'info')}>{user.role}</span></td>
-                  <td><span className={'status-badge ' + (user.is_active ? 'success' : 'danger')}>{user.is_active ? '✓ Active' : '✗ Blocked'}</span></td>
-                  <td style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{user.created_at ? new Date(user.created_at).toLocaleDateString() : '-'}</td>
+                  <td>
+                    <span
+                      className={'status-badge ' + (user.role === 'admin' ? 'warning' : 'info')}
+                    >
+                      {user.role}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={'status-badge ' + (user.is_active ? 'success' : 'danger')}>
+                      {user.is_active ? '✓ Active' : '✗ Blocked'}
+                    </span>
+                  </td>
+                  <td style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
+                    {user.created_at ? new Date(user.created_at).toLocaleDateString() : '-'}
+                  </td>
                 </tr>
               ))
             )}
