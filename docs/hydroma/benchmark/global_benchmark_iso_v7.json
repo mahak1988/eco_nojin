@@ -1,0 +1,888 @@
+{
+  "benchmark_id": "BNCH_20260831_100351",
+  "generated_at": "2026-08-31T10:03:51.022776",
+  "version": "7.0-global-iso",
+  "iso_standards": [
+    "ISO 9001:2015 - Quality Management Systems",
+    "ISO/IEC 17025:2017 - Testing and Calibration Laboratories",
+    "ISO 19115:2014 - Geographic Information Metadata"
+  ],
+  "regions": {
+    "moghan_iran": {
+      "region_info": {
+        "name_fa": "دشت مغان (پارس‌آباد)",
+        "country": "ایران",
+        "biome": "semi_arid",
+        "crop_type": "آبی"
+      },
+      "observed": {
+        "yield_t_ha": 5.2,
+        "biomass_t_ha": 12.5
+      },
+      "simulations": {
+        "hydroma": {
+          "model": "Hydroma v7.0",
+          "yield_t_ha": 4.541,
+          "biomass_t_ha": 10.179,
+          "harvest_index": 0.446,
+          "et_crop_mm": 973.0,
+          "water_stress": 0.807,
+          "heat_stress": 0.935,
+          "cold_stress": 1.0,
+          "salinity_factor": 0.994,
+          "co2_fertilization": 1.041
+        },
+        "aquacrop": {
+          "model": "AquaCrop FAO v7.0",
+          "yield_t_ha": 1.566,
+          "biomass_t_ha": 3.979
+        },
+        "dssat": {
+          "model": "DSSAT CERES-Wheat v4.8",
+          "yield_t_ha": 1.537,
+          "biomass_t_ha": 3.202
+        },
+        "wofost": {
+          "model": "WOFOST v7.2",
+          "yield_t_ha": 0.973,
+          "biomass_t_ha": 1.945
+        },
+        "apsim": {
+          "model": "APSIM v7.10",
+          "yield_t_ha": 0.449,
+          "biomass_t_ha": 1.175
+        }
+      },
+      "errors_percent": {
+        "hydroma": 12.67,
+        "aquacrop": 69.88,
+        "dssat": 70.44,
+        "wofost": 81.29,
+        "apsim": 91.37
+      }
+    },
+    "jiroft_iran": {
+      "region_info": {
+        "name_fa": "هلیل‌رود جیرفت",
+        "country": "ایران",
+        "biome": "arid",
+        "crop_type": "آبی"
+      },
+      "observed": {
+        "yield_t_ha": 4.3,
+        "biomass_t_ha": 10.8
+      },
+      "simulations": {
+        "hydroma": {
+          "model": "Hydroma v7.0",
+          "yield_t_ha": 3.22,
+          "biomass_t_ha": 8.356,
+          "harvest_index": 0.385,
+          "et_crop_mm": 932.1,
+          "water_stress": 0.741,
+          "heat_stress": 0.836,
+          "cold_stress": 1.0,
+          "salinity_factor": 0.96,
+          "co2_fertilization": 1.041
+        },
+        "aquacrop": {
+          "model": "AquaCrop FAO v7.0",
+          "yield_t_ha": 0.756,
+          "biomass_t_ha": 2.251
+        },
+        "dssat": {
+          "model": "DSSAT CERES-Wheat v4.8",
+          "yield_t_ha": 1.158,
+          "biomass_t_ha": 2.889
+        },
+        "wofost": {
+          "model": "WOFOST v7.2",
+          "yield_t_ha": 0.793,
+          "biomass_t_ha": 1.627
+        },
+        "apsim": {
+          "model": "APSIM v7.10",
+          "yield_t_ha": 0.207,
+          "biomass_t_ha": 0.74
+        }
+      },
+      "errors_percent": {
+        "hydroma": 25.12,
+        "aquacrop": 82.42,
+        "dssat": 73.07,
+        "wofost": 81.56,
+        "apsim": 95.19
+      }
+    },
+    "ardabil_iran": {
+      "region_info": {
+        "name_fa": "دشت ممنوعه اردبیل",
+        "country": "ایران",
+        "biome": "semi_arid_cold",
+        "crop_type": "دیم"
+      },
+      "observed": {
+        "yield_t_ha": 2.8,
+        "biomass_t_ha": 7.5
+      },
+      "simulations": {
+        "hydroma": {
+          "model": "Hydroma v7.0",
+          "yield_t_ha": 3.233,
+          "biomass_t_ha": 6.735,
+          "harvest_index": 0.48,
+          "et_crop_mm": 744.6,
+          "water_stress": 0.643,
+          "heat_stress": 1.0,
+          "cold_stress": 0.95,
+          "salinity_factor": 1.0,
+          "co2_fertilization": 1.041
+        },
+        "aquacrop": {
+          "model": "AquaCrop FAO v7.0",
+          "yield_t_ha": 1.838,
+          "biomass_t_ha": 3.828
+        },
+        "dssat": {
+          "model": "DSSAT CERES-Wheat v4.8",
+          "yield_t_ha": 0.816,
+          "biomass_t_ha": 2.465
+        },
+        "wofost": {
+          "model": "WOFOST v7.2",
+          "yield_t_ha": 0.3,
+          "biomass_t_ha": 0.917
+        },
+        "apsim": {
+          "model": "APSIM v7.10",
+          "yield_t_ha": 0.424,
+          "biomass_t_ha": 0.943
+        }
+      },
+      "errors_percent": {
+        "hydroma": 15.46,
+        "aquacrop": 34.36,
+        "dssat": 70.86,
+        "wofost": 89.29,
+        "apsim": 84.86
+      }
+    },
+    "punjab_india": {
+      "region_info": {
+        "name_fa": "پنجاب (لودهیانا)",
+        "country": "هند",
+        "biome": "subtropical",
+        "crop_type": "آبی"
+      },
+      "observed": {
+        "yield_t_ha": 4.8,
+        "biomass_t_ha": 11.5
+      },
+      "simulations": {
+        "hydroma": {
+          "model": "Hydroma v7.0",
+          "yield_t_ha": 2.562,
+          "biomass_t_ha": 6.206,
+          "harvest_index": 0.413,
+          "et_crop_mm": 702.8,
+          "water_stress": 0.77,
+          "heat_stress": 0.86,
+          "cold_stress": 1.0,
+          "salinity_factor": 1.0,
+          "co2_fertilization": 1.041
+        },
+        "aquacrop": {
+          "model": "AquaCrop FAO v7.0",
+          "yield_t_ha": 0.816,
+          "biomass_t_ha": 2.428
+        },
+        "dssat": {
+          "model": "DSSAT CERES-Wheat v4.8",
+          "yield_t_ha": 0.987,
+          "biomass_t_ha": 2.056
+        },
+        "wofost": {
+          "model": "WOFOST v7.2",
+          "yield_t_ha": 0.581,
+          "biomass_t_ha": 1.222
+        },
+        "apsim": {
+          "model": "APSIM v7.10",
+          "yield_t_ha": 0.22,
+          "biomass_t_ha": 0.665
+        }
+      },
+      "errors_percent": {
+        "hydroma": 46.62,
+        "aquacrop": 83.0,
+        "dssat": 79.44,
+        "wofost": 87.9,
+        "apsim": 95.42
+      }
+    },
+    "hebei_china": {
+      "region_info": {
+        "name_fa": "هبئی (شیجیاژوانگ)",
+        "country": "چین",
+        "biome": "temperate_continental",
+        "crop_type": "آبی"
+      },
+      "observed": {
+        "yield_t_ha": 6.2,
+        "biomass_t_ha": 14.8
+      },
+      "simulations": {
+        "hydroma": {
+          "model": "Hydroma v7.0",
+          "yield_t_ha": 4.167,
+          "biomass_t_ha": 8.859,
+          "harvest_index": 0.47,
+          "et_crop_mm": 875.7,
+          "water_stress": 0.756,
+          "heat_stress": 0.98,
+          "cold_stress": 1.0,
+          "salinity_factor": 1.0,
+          "co2_fertilization": 1.041
+        },
+        "aquacrop": {
+          "model": "AquaCrop FAO v7.0",
+          "yield_t_ha": 1.913,
+          "biomass_t_ha": 3.985
+        },
+        "dssat": {
+          "model": "DSSAT CERES-Wheat v4.8",
+          "yield_t_ha": 1.338,
+          "biomass_t_ha": 2.789
+        },
+        "wofost": {
+          "model": "WOFOST v7.2",
+          "yield_t_ha": 0.651,
+          "biomass_t_ha": 1.446
+        },
+        "apsim": {
+          "model": "APSIM v7.10",
+          "yield_t_ha": 0.528,
+          "biomass_t_ha": 1.172
+        }
+      },
+      "errors_percent": {
+        "hydroma": 32.79,
+        "aquacrop": 69.15,
+        "dssat": 78.42,
+        "wofost": 89.5,
+        "apsim": 91.48
+      }
+    },
+    "kansas_usa": {
+      "region_info": {
+        "name_fa": "کانزاس (منهتن)",
+        "country": "آمریکا",
+        "biome": "temperate_continental",
+        "crop_type": "دیم"
+      },
+      "observed": {
+        "yield_t_ha": 3.5,
+        "biomass_t_ha": 8.8
+      },
+      "simulations": {
+        "hydroma": {
+          "model": "Hydroma v7.0",
+          "yield_t_ha": 2.985,
+          "biomass_t_ha": 6.476,
+          "harvest_index": 0.461,
+          "et_crop_mm": 916.1,
+          "water_stress": 0.737,
+          "heat_stress": 0.96,
+          "cold_stress": 1.0,
+          "salinity_factor": 1.0,
+          "co2_fertilization": 1.041
+        },
+        "aquacrop": {
+          "model": "AquaCrop FAO v7.0",
+          "yield_t_ha": 1.705,
+          "biomass_t_ha": 3.862
+        },
+        "dssat": {
+          "model": "DSSAT CERES-Wheat v4.8",
+          "yield_t_ha": 1.354,
+          "biomass_t_ha": 2.821
+        },
+        "wofost": {
+          "model": "WOFOST v7.2",
+          "yield_t_ha": 0.606,
+          "biomass_t_ha": 1.397
+        },
+        "apsim": {
+          "model": "APSIM v7.10",
+          "yield_t_ha": 0.463,
+          "biomass_t_ha": 1.102
+        }
+      },
+      "errors_percent": {
+        "hydroma": 14.71,
+        "aquacrop": 51.29,
+        "dssat": 61.31,
+        "wofost": 82.69,
+        "apsim": 86.77
+      }
+    },
+    "saskatchewan_canada": {
+      "region_info": {
+        "name_fa": "ساسکاچوان (ساسکاتون)",
+        "country": "کانادا",
+        "biome": "boreal",
+        "crop_type": "دیم"
+      },
+      "observed": {
+        "yield_t_ha": 3.2,
+        "biomass_t_ha": 8.0
+      },
+      "simulations": {
+        "hydroma": {
+          "model": "Hydroma v7.0",
+          "yield_t_ha": 1.283,
+          "biomass_t_ha": 2.674,
+          "harvest_index": 0.48,
+          "et_crop_mm": 640.4,
+          "water_stress": 0.717,
+          "heat_stress": 1.0,
+          "cold_stress": 0.75,
+          "salinity_factor": 1.0,
+          "co2_fertilization": 1.041
+        },
+        "aquacrop": {
+          "model": "AquaCrop FAO v7.0",
+          "yield_t_ha": 1.016,
+          "biomass_t_ha": 2.118
+        },
+        "dssat": {
+          "model": "DSSAT CERES-Wheat v4.8",
+          "yield_t_ha": 0.82,
+          "biomass_t_ha": 1.708
+        },
+        "wofost": {
+          "model": "WOFOST v7.2",
+          "yield_t_ha": 0.52,
+          "biomass_t_ha": 1.041
+        },
+        "apsim": {
+          "model": "APSIM v7.10",
+          "yield_t_ha": 0.332,
+          "biomass_t_ha": 0.737
+        }
+      },
+      "errors_percent": {
+        "hydroma": 59.91,
+        "aquacrop": 68.25,
+        "dssat": 74.38,
+        "wofost": 83.75,
+        "apsim": 89.63
+      }
+    },
+    "utrecht_netherlands": {
+      "region_info": {
+        "name_fa": "اوترخت (واخنینگن)",
+        "country": "هلند",
+        "biome": "oceanic",
+        "crop_type": "آبی"
+      },
+      "observed": {
+        "yield_t_ha": 8.5,
+        "biomass_t_ha": 18.0
+      },
+      "simulations": {
+        "hydroma": {
+          "model": "Hydroma v7.0",
+          "yield_t_ha": 4.395,
+          "biomass_t_ha": 9.156,
+          "harvest_index": 0.48,
+          "et_crop_mm": 873.2,
+          "water_stress": 0.908,
+          "heat_stress": 1.0,
+          "cold_stress": 1.0,
+          "salinity_factor": 1.0,
+          "co2_fertilization": 1.041
+        },
+        "aquacrop": {
+          "model": "AquaCrop FAO v7.0",
+          "yield_t_ha": 2.435,
+          "biomass_t_ha": 5.073
+        },
+        "dssat": {
+          "model": "DSSAT CERES-Wheat v4.8",
+          "yield_t_ha": 1.472,
+          "biomass_t_ha": 3.066
+        },
+        "wofost": {
+          "model": "WOFOST v7.2",
+          "yield_t_ha": 0.658,
+          "biomass_t_ha": 1.645
+        },
+        "apsim": {
+          "model": "APSIM v7.10",
+          "yield_t_ha": 0.612,
+          "biomass_t_ha": 1.359
+        }
+      },
+      "errors_percent": {
+        "hydroma": 48.29,
+        "aquacrop": 71.35,
+        "dssat": 82.68,
+        "wofost": 92.26,
+        "apsim": 92.8
+      }
+    },
+    "victoria_australia": {
+      "region_info": {
+        "name_fa": "ویکتوریا (هورشام)",
+        "country": "استرالیا",
+        "biome": "mediterranean",
+        "crop_type": "دیم"
+      },
+      "observed": {
+        "yield_t_ha": 3.0,
+        "biomass_t_ha": 7.8
+      },
+      "simulations": {
+        "hydroma": {
+          "model": "Hydroma v7.0",
+          "yield_t_ha": 2.821,
+          "biomass_t_ha": 6.008,
+          "harvest_index": 0.47,
+          "et_crop_mm": 696.2,
+          "water_stress": 0.738,
+          "heat_stress": 0.978,
+          "cold_stress": 1.0,
+          "salinity_factor": 1.0,
+          "co2_fertilization": 1.041
+        },
+        "aquacrop": {
+          "model": "AquaCrop FAO v7.0",
+          "yield_t_ha": 1.538,
+          "biomass_t_ha": 3.204
+        },
+        "dssat": {
+          "model": "DSSAT CERES-Wheat v4.8",
+          "yield_t_ha": 0.907,
+          "biomass_t_ha": 2.324
+        },
+        "wofost": {
+          "model": "WOFOST v7.2",
+          "yield_t_ha": 0.592,
+          "biomass_t_ha": 1.224
+        },
+        "apsim": {
+          "model": "APSIM v7.10",
+          "yield_t_ha": 0.431,
+          "biomass_t_ha": 0.957
+        }
+      },
+      "errors_percent": {
+        "hydroma": 5.97,
+        "aquacrop": 48.73,
+        "dssat": 69.77,
+        "wofost": 80.27,
+        "apsim": 85.63
+      }
+    },
+    "canterbury_nz": {
+      "region_info": {
+        "name_fa": "کانتربوری (کرایست‌چرچ)",
+        "country": "نیوزیلند",
+        "biome": "oceanic",
+        "crop_type": "آبی"
+      },
+      "observed": {
+        "yield_t_ha": 9.2,
+        "biomass_t_ha": 19.5
+      },
+      "simulations": {
+        "hydroma": {
+          "model": "Hydroma v7.0",
+          "yield_t_ha": 4.484,
+          "biomass_t_ha": 9.342,
+          "harvest_index": 0.48,
+          "et_crop_mm": 902.8,
+          "water_stress": 0.882,
+          "heat_stress": 1.0,
+          "cold_stress": 1.0,
+          "salinity_factor": 1.0,
+          "co2_fertilization": 1.041
+        },
+        "aquacrop": {
+          "model": "AquaCrop FAO v7.0",
+          "yield_t_ha": 2.306,
+          "biomass_t_ha": 4.805
+        },
+        "dssat": {
+          "model": "DSSAT CERES-Wheat v4.8",
+          "yield_t_ha": 1.484,
+          "biomass_t_ha": 3.091
+        },
+        "wofost": {
+          "model": "WOFOST v7.2",
+          "yield_t_ha": 0.704,
+          "biomass_t_ha": 1.69
+        },
+        "apsim": {
+          "model": "APSIM v7.10",
+          "yield_t_ha": 0.613,
+          "biomass_t_ha": 1.362
+        }
+      },
+      "errors_percent": {
+        "hydroma": 51.26,
+        "aquacrop": 74.93,
+        "dssat": 83.87,
+        "wofost": 92.35,
+        "apsim": 93.34
+      }
+    }
+  },
+  "model_statistics": {
+    "hydroma": {
+      "model": "hydroma",
+      "RMSE": 2.324,
+      "MAE": 1.788,
+      "R2": -0.1692,
+      "NSE": -0.1692,
+      "PBIAS_percent": -33.55,
+      "d_index": 0.6119,
+      "CV_RMSE_percent": 45.83,
+      "Skill_Score": 0
+    },
+    "aquacrop": {
+      "model": "aquacrop",
+      "RMSE": 3.942,
+      "MAE": 3.481,
+      "R2": -2.3646,
+      "NSE": -2.3646,
+      "PBIAS_percent": -68.66,
+      "d_index": 0.4515,
+      "CV_RMSE_percent": 77.75,
+      "Skill_Score": 0
+    },
+    "dssat": {
+      "model": "dssat",
+      "RMSE": 4.347,
+      "MAE": 3.883,
+      "R2": -3.0922,
+      "NSE": -3.0922,
+      "PBIAS_percent": -76.58,
+      "d_index": 0.4336,
+      "CV_RMSE_percent": 85.74,
+      "Skill_Score": 0
+    },
+    "wofost": {
+      "model": "wofost",
+      "RMSE": 4.899,
+      "MAE": 4.432,
+      "R2": -4.1979,
+      "NSE": -4.1979,
+      "PBIAS_percent": -87.42,
+      "d_index": 0.4007,
+      "CV_RMSE_percent": 96.64,
+      "Skill_Score": 0
+    },
+    "apsim": {
+      "model": "apsim",
+      "RMSE": 5.081,
+      "MAE": 4.642,
+      "R2": -4.5894,
+      "NSE": -4.5894,
+      "PBIAS_percent": -91.56,
+      "d_index": 0.3902,
+      "CV_RMSE_percent": 100.21,
+      "Skill_Score": 0
+    }
+  },
+  "iso_tests": {
+    "hydroma": {
+      "tests": {
+        "RMSE": {
+          "value": 2.324,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "R2": {
+          "value": -0.1692,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "MAE": {
+          "value": 1.788,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "NSE": {
+          "value": -0.1692,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "d_index": {
+          "value": 0.6119,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "Skill_Score": {
+          "value": 0,
+          "rating": "poor",
+          "icon": "❌"
+        }
+      },
+      "passed": 0,
+      "excellent": 0,
+      "total": 8,
+      "pass_rate": 0.0
+    },
+    "aquacrop": {
+      "tests": {
+        "RMSE": {
+          "value": 3.942,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "R2": {
+          "value": -2.3646,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "MAE": {
+          "value": 3.481,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "NSE": {
+          "value": -2.3646,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "d_index": {
+          "value": 0.4515,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "Skill_Score": {
+          "value": 0,
+          "rating": "poor",
+          "icon": "❌"
+        }
+      },
+      "passed": 0,
+      "excellent": 0,
+      "total": 8,
+      "pass_rate": 0.0
+    },
+    "dssat": {
+      "tests": {
+        "RMSE": {
+          "value": 4.347,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "R2": {
+          "value": -3.0922,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "MAE": {
+          "value": 3.883,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "NSE": {
+          "value": -3.0922,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "d_index": {
+          "value": 0.4336,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "Skill_Score": {
+          "value": 0,
+          "rating": "poor",
+          "icon": "❌"
+        }
+      },
+      "passed": 0,
+      "excellent": 0,
+      "total": 8,
+      "pass_rate": 0.0
+    },
+    "wofost": {
+      "tests": {
+        "RMSE": {
+          "value": 4.899,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "R2": {
+          "value": -4.1979,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "MAE": {
+          "value": 4.432,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "NSE": {
+          "value": -4.1979,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "d_index": {
+          "value": 0.4007,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "Skill_Score": {
+          "value": 0,
+          "rating": "poor",
+          "icon": "❌"
+        }
+      },
+      "passed": 0,
+      "excellent": 0,
+      "total": 8,
+      "pass_rate": 0.0
+    },
+    "apsim": {
+      "tests": {
+        "RMSE": {
+          "value": 5.081,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "R2": {
+          "value": -4.5894,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "MAE": {
+          "value": 4.642,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "NSE": {
+          "value": -4.5894,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "d_index": {
+          "value": 0.3902,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "Skill_Score": {
+          "value": 0,
+          "rating": "poor",
+          "icon": "❌"
+        }
+      },
+      "passed": 0,
+      "excellent": 0,
+      "total": 8,
+      "pass_rate": 0.0
+    }
+  },
+  "summary": {
+    "total_regions": 10,
+    "total_models": 5,
+    "rankings": [
+      {
+        "model": "hydroma",
+        "score": 0.112,
+        "rmse": 2.324,
+        "r2": -0.1692,
+        "passed": 0,
+        "excellent": 0
+      },
+      {
+        "model": "aquacrop",
+        "score": -0.6421,
+        "rmse": 3.942,
+        "r2": -2.3646,
+        "passed": 0,
+        "excellent": 0
+      },
+      {
+        "model": "dssat",
+        "score": -0.8843,
+        "rmse": 4.347,
+        "r2": -3.0922,
+        "passed": 0,
+        "excellent": 0
+      },
+      {
+        "model": "wofost",
+        "score": -1.2486,
+        "rmse": 4.899,
+        "r2": -4.1979,
+        "passed": 0,
+        "excellent": 0
+      },
+      {
+        "model": "apsim",
+        "score": -1.3768,
+        "rmse": 5.081,
+        "r2": -4.5894,
+        "passed": 0,
+        "excellent": 0
+      }
+    ],
+    "best_model": "hydroma",
+    "hydroma_rank": 1,
+    "hydroma_stats": {
+      "model": "hydroma",
+      "RMSE": 2.324,
+      "MAE": 1.788,
+      "R2": -0.1692,
+      "NSE": -0.1692,
+      "PBIAS_percent": -33.55,
+      "d_index": 0.6119,
+      "CV_RMSE_percent": 45.83,
+      "Skill_Score": 0
+    },
+    "hydroma_iso_tests": {
+      "tests": {
+        "RMSE": {
+          "value": 2.324,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "R2": {
+          "value": -0.1692,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "MAE": {
+          "value": 1.788,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "NSE": {
+          "value": -0.1692,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "d_index": {
+          "value": 0.6119,
+          "rating": "poor",
+          "icon": "❌"
+        },
+        "Skill_Score": {
+          "value": 0,
+          "rating": "poor",
+          "icon": "❌"
+        }
+      },
+      "passed": 0,
+      "excellent": 0,
+      "total": 8,
+      "pass_rate": 0.0
+    }
+  }
+}
