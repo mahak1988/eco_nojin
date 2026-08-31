@@ -1,0 +1,1875 @@
+{
+  "benchmark_id": "BNCH_V9_20260831_102636",
+  "generated_at": "2026-08-31T10:26:36.475408",
+  "version": "9.0-ultimate",
+  "total_locations": 50,
+  "total_models": 30,
+  "total_crops": 20,
+  "total_extreme_tests": 15,
+  "location_results": {
+    "atacama_desert": {
+      "wheat": {
+        "simulated": 0.006,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.975,
+          "rain_factor": 0.001,
+          "salt_factor": 0.7,
+          "ph_factor": 0.7,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 0.004,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.925,
+          "rain_factor": 0.001,
+          "salt_factor": 0.7,
+          "ph_factor": 0.7,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "lut_desert": {
+      "wheat": {
+        "simulated": 0.0,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.55,
+          "rain_factor": 0.002,
+          "salt_factor": 0.9,
+          "ph_factor": 1.0,
+          "heat_stress": 0.0
+        }
+      },
+      "barley": {
+        "simulated": 0.0,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.45,
+          "rain_factor": 0.002,
+          "salt_factor": 0.9,
+          "ph_factor": 1.0,
+          "heat_stress": 0.0
+        }
+      }
+    },
+    "sahara_algeria": {
+      "wheat": {
+        "simulated": 0.014,
+        "observed": 0.5,
+        "error_percent": 97.2,
+        "factors": {
+          "temp_factor": 0.4,
+          "rain_factor": 0.01,
+          "salt_factor": 0.92,
+          "ph_factor": 1.0,
+          "heat_stress": 0.333
+        }
+      },
+      "barley": {
+        "simulated": 0.009,
+        "observed": 0.3,
+        "error_percent": 97.0,
+        "factors": {
+          "temp_factor": 0.3,
+          "rain_factor": 0.01,
+          "salt_factor": 0.92,
+          "ph_factor": 1.0,
+          "heat_stress": 0.333
+        }
+      }
+    },
+    "gobi_mongolia": {
+      "wheat": {
+        "simulated": 0.077,
+        "observed": 0.8,
+        "error_percent": 90.38,
+        "factors": {
+          "temp_factor": 0.2,
+          "rain_factor": 0.1,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 0.333
+        }
+      },
+      "barley": {
+        "simulated": 0.096,
+        "observed": 0.6,
+        "error_percent": 84.0,
+        "factors": {
+          "temp_factor": 0.3,
+          "rain_factor": 0.1,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 0.333
+        }
+      }
+    },
+    "death_valley": {
+      "wheat": {
+        "simulated": 0.026,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.65,
+          "rain_factor": 0.02,
+          "salt_factor": 0.8,
+          "ph_factor": 1.0,
+          "heat_stress": 0.22
+        }
+      },
+      "barley": {
+        "simulated": 0.019,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.55,
+          "rain_factor": 0.02,
+          "salt_factor": 0.8,
+          "ph_factor": 1.0,
+          "heat_stress": 0.22
+        }
+      }
+    },
+    "empty_quarter": {
+      "wheat": {
+        "simulated": 0.018,
+        "observed": 0.3,
+        "error_percent": 94.0,
+        "factors": {
+          "temp_factor": 0.5,
+          "rain_factor": 0.01,
+          "salt_factor": 0.95,
+          "ph_factor": 1.0,
+          "heat_stress": 0.333
+        }
+      },
+      "barley": {
+        "simulated": 0.012,
+        "observed": 0.2,
+        "error_percent": 94.0,
+        "factors": {
+          "temp_factor": 0.4,
+          "rain_factor": 0.01,
+          "salt_factor": 0.95,
+          "ph_factor": 1.0,
+          "heat_stress": 0.333
+        }
+      }
+    },
+    "namib_desert": {
+      "wheat": {
+        "simulated": 0.037,
+        "observed": 0.2,
+        "error_percent": 81.5,
+        "factors": {
+          "temp_factor": 0.9,
+          "rain_factor": 0.004,
+          "salt_factor": 0.9,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 0.028,
+        "observed": 0.1,
+        "error_percent": 72.0,
+        "factors": {
+          "temp_factor": 0.8,
+          "rain_factor": 0.004,
+          "salt_factor": 0.9,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "taklamakan": {
+      "wheat": {
+        "simulated": 0.19,
+        "observed": 0.6,
+        "error_percent": 68.33,
+        "factors": {
+          "temp_factor": 0.7,
+          "rain_factor": 0.03,
+          "salt_factor": 0.94,
+          "ph_factor": 1.0,
+          "heat_stress": 0.833
+        }
+      },
+      "barley": {
+        "simulated": 0.18,
+        "observed": 0.4,
+        "error_percent": 55.0,
+        "factors": {
+          "temp_factor": 0.8,
+          "rain_factor": 0.03,
+          "salt_factor": 0.94,
+          "ph_factor": 1.0,
+          "heat_stress": 0.833
+        }
+      }
+    },
+    "arctic_svalbard": {
+      "wheat": {
+        "simulated": 0.0,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.0,
+          "rain_factor": 0.4,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 0.333
+        }
+      },
+      "barley": {
+        "simulated": 0.0,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.0,
+          "rain_factor": 0.4,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 0.333
+        }
+      }
+    },
+    "siberia_yakutsk": {
+      "wheat": {
+        "simulated": 0.0,
+        "observed": 0.3,
+        "error_percent": 100.0,
+        "factors": {
+          "temp_factor": 0.0,
+          "rain_factor": 0.45,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 0.0
+        }
+      },
+      "barley": {
+        "simulated": 0.0,
+        "observed": 0.4,
+        "error_percent": 100.0,
+        "factors": {
+          "temp_factor": 0.0,
+          "rain_factor": 0.45,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 0.0
+        }
+      }
+    },
+    "greenland_summit": {
+      "wheat": {
+        "simulated": 0.0,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.0,
+          "rain_factor": 0.3,
+          "salt_factor": 1.0,
+          "ph_factor": 0.7,
+          "heat_stress": 0.0
+        }
+      },
+      "barley": {
+        "simulated": 0.0,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.0,
+          "rain_factor": 0.3,
+          "salt_factor": 1.0,
+          "ph_factor": 0.7,
+          "heat_stress": 0.0
+        }
+      }
+    },
+    "alaska_fairbanks": {
+      "wheat": {
+        "simulated": 0.0,
+        "observed": 0.8,
+        "error_percent": 100.0,
+        "factors": {
+          "temp_factor": 0.0,
+          "rain_factor": 0.5,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 0.0
+        }
+      },
+      "barley": {
+        "simulated": 0.0,
+        "observed": 1.0,
+        "error_percent": 100.0,
+        "factors": {
+          "temp_factor": 0.1,
+          "rain_factor": 0.5,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 0.0
+        }
+      }
+    },
+    "hokkaido_japan": {
+      "wheat": {
+        "simulated": 4.954,
+        "observed": 3.5,
+        "error_percent": 41.54,
+        "factors": {
+          "temp_factor": 0.5,
+          "rain_factor": 0.86,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 4.954,
+        "observed": 3.8,
+        "error_percent": 30.37,
+        "factors": {
+          "temp_factor": 0.6,
+          "rain_factor": 0.86,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "helsinki_finland": {
+      "wheat": {
+        "simulated": 2.043,
+        "observed": 4.0,
+        "error_percent": 48.92,
+        "factors": {
+          "temp_factor": 0.35,
+          "rain_factor": 0.76,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 0.667
+        }
+      },
+      "barley": {
+        "simulated": 2.189,
+        "observed": 4.5,
+        "error_percent": 51.36,
+        "factors": {
+          "temp_factor": 0.45,
+          "rain_factor": 0.76,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 0.667
+        }
+      }
+    },
+    "tromso_norway": {
+      "wheat": {
+        "simulated": 2.477,
+        "observed": 1.5,
+        "error_percent": 65.13,
+        "factors": {
+          "temp_factor": 0.25,
+          "rain_factor": 0.86,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 2.89,
+        "observed": 2.0,
+        "error_percent": 44.5,
+        "factors": {
+          "temp_factor": 0.35,
+          "rain_factor": 0.86,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "kuwait_city": {
+      "wheat": {
+        "simulated": 0.719,
+        "observed": 1.5,
+        "error_percent": 52.07,
+        "factors": {
+          "temp_factor": 0.55,
+          "rain_factor": 0.315,
+          "salt_factor": 0.9,
+          "ph_factor": 1.0,
+          "heat_stress": 0.4
+        }
+      },
+      "barley": {
+        "simulated": 0.49,
+        "observed": 1.2,
+        "error_percent": 59.17,
+        "factors": {
+          "temp_factor": 0.45,
+          "rain_factor": 0.315,
+          "salt_factor": 0.9,
+          "ph_factor": 1.0,
+          "heat_stress": 0.4
+        }
+      }
+    },
+    "ahvaz_iran": {
+      "wheat": {
+        "simulated": 0.979,
+        "observed": 4.5,
+        "error_percent": 78.24,
+        "factors": {
+          "temp_factor": 0.55,
+          "rain_factor": 0.42,
+          "salt_factor": 0.92,
+          "ph_factor": 1.0,
+          "heat_stress": 0.4
+        }
+      },
+      "barley": {
+        "simulated": 0.668,
+        "observed": 4.0,
+        "error_percent": 83.3,
+        "factors": {
+          "temp_factor": 0.45,
+          "rain_factor": 0.42,
+          "salt_factor": 0.92,
+          "ph_factor": 1.0,
+          "heat_stress": 0.4
+        }
+      }
+    },
+    "phoenix_arizona": {
+      "wheat": {
+        "simulated": 2.265,
+        "observed": 3.0,
+        "error_percent": 24.5,
+        "factors": {
+          "temp_factor": 0.7,
+          "rain_factor": 0.43,
+          "salt_factor": 0.98,
+          "ph_factor": 1.0,
+          "heat_stress": 0.667
+        }
+      },
+      "barley": {
+        "simulated": 1.618,
+        "observed": 2.5,
+        "error_percent": 35.28,
+        "factors": {
+          "temp_factor": 0.6,
+          "rain_factor": 0.43,
+          "salt_factor": 0.98,
+          "ph_factor": 1.0,
+          "heat_stress": 0.667
+        }
+      }
+    },
+    "riyadh_saudi": {
+      "wheat": {
+        "simulated": 1.051,
+        "observed": 2.0,
+        "error_percent": 47.45,
+        "factors": {
+          "temp_factor": 0.6,
+          "rain_factor": 0.3,
+          "salt_factor": 0.95,
+          "ph_factor": 1.0,
+          "heat_stress": 0.533
+        }
+      },
+      "barley": {
+        "simulated": 0.73,
+        "observed": 1.8,
+        "error_percent": 59.44,
+        "factors": {
+          "temp_factor": 0.5,
+          "rain_factor": 0.3,
+          "salt_factor": 0.95,
+          "ph_factor": 1.0,
+          "heat_stress": 0.533
+        }
+      }
+    },
+    "khartoum_sudan": {
+      "wheat": {
+        "simulated": 1.264,
+        "observed": 2.5,
+        "error_percent": 49.44,
+        "factors": {
+          "temp_factor": 0.4,
+          "rain_factor": 0.35,
+          "salt_factor": 0.98,
+          "ph_factor": 1.0,
+          "heat_stress": 0.8
+        }
+      },
+      "barley": {
+        "simulated": 0.79,
+        "observed": 2.0,
+        "error_percent": 60.5,
+        "factors": {
+          "temp_factor": 0.3,
+          "rain_factor": 0.35,
+          "salt_factor": 0.98,
+          "ph_factor": 1.0,
+          "heat_stress": 0.8
+        }
+      }
+    },
+    "jacobabad_pakistan": {
+      "wheat": {
+        "simulated": 1.002,
+        "observed": 3.5,
+        "error_percent": 71.37,
+        "factors": {
+          "temp_factor": 0.55,
+          "rain_factor": 0.38,
+          "salt_factor": 0.96,
+          "ph_factor": 1.0,
+          "heat_stress": 0.433
+        }
+      },
+      "barley": {
+        "simulated": 0.683,
+        "observed": 3.0,
+        "error_percent": 77.23,
+        "factors": {
+          "temp_factor": 0.45,
+          "rain_factor": 0.38,
+          "salt_factor": 0.96,
+          "ph_factor": 1.0,
+          "heat_stress": 0.433
+        }
+      }
+    },
+    "tirat_zvi_israel": {
+      "wheat": {
+        "simulated": 1.721,
+        "observed": 4.0,
+        "error_percent": 56.97,
+        "factors": {
+          "temp_factor": 0.7,
+          "rain_factor": 0.55,
+          "salt_factor": 0.97,
+          "ph_factor": 1.0,
+          "heat_stress": 0.4
+        }
+      },
+      "barley": {
+        "simulated": 1.229,
+        "observed": 3.5,
+        "error_percent": 64.89,
+        "factors": {
+          "temp_factor": 0.6,
+          "rain_factor": 0.55,
+          "salt_factor": 0.97,
+          "ph_factor": 1.0,
+          "heat_stress": 0.4
+        }
+      }
+    },
+    "amazon_brazil": {
+      "wheat": {
+        "simulated": 3.77,
+        "observed": 1.0,
+        "error_percent": 277.0,
+        "factors": {
+          "temp_factor": 0.55,
+          "rain_factor": 0.85,
+          "salt_factor": 1.0,
+          "ph_factor": 0.7,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 2.57,
+        "observed": 0.8,
+        "error_percent": 221.25,
+        "factors": {
+          "temp_factor": 0.45,
+          "rain_factor": 0.85,
+          "salt_factor": 1.0,
+          "ph_factor": 0.7,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "cherrapunji_india": {
+      "wheat": {
+        "simulated": 3.456,
+        "observed": 1.5,
+        "error_percent": 130.4,
+        "factors": {
+          "temp_factor": 1.0,
+          "rain_factor": 0.3,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 2.592,
+        "observed": 1.2,
+        "error_percent": 116.0,
+        "factors": {
+          "temp_factor": 0.9,
+          "rain_factor": 0.3,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "bangladesh_delta": {
+      "wheat": {
+        "simulated": 5.875,
+        "observed": 3.0,
+        "error_percent": 95.83,
+        "factors": {
+          "temp_factor": 0.6,
+          "rain_factor": 0.85,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 4.08,
+        "observed": 2.5,
+        "error_percent": 63.2,
+        "factors": {
+          "temp_factor": 0.5,
+          "rain_factor": 0.85,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "congo_rainforest": {
+      "wheat": {
+        "simulated": 6.739,
+        "observed": 0.8,
+        "error_percent": 742.38,
+        "factors": {
+          "temp_factor": 0.65,
+          "rain_factor": 0.9,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 4.752,
+        "observed": 0.6,
+        "error_percent": 692.0,
+        "factors": {
+          "temp_factor": 0.55,
+          "rain_factor": 0.9,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "borneo_indonesia": {
+      "wheat": {
+        "simulated": 3.548,
+        "observed": 0.7,
+        "error_percent": 406.86,
+        "factors": {
+          "temp_factor": 0.55,
+          "rain_factor": 0.8,
+          "salt_factor": 1.0,
+          "ph_factor": 0.7,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 2.419,
+        "observed": 0.5,
+        "error_percent": 383.8,
+        "factors": {
+          "temp_factor": 0.45,
+          "rain_factor": 0.8,
+          "salt_factor": 1.0,
+          "ph_factor": 0.7,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "new_guinea": {
+      "wheat": {
+        "simulated": 5.184,
+        "observed": 0.6,
+        "error_percent": 764.0,
+        "factors": {
+          "temp_factor": 0.6,
+          "rain_factor": 0.75,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 3.6,
+        "observed": 0.4,
+        "error_percent": 800.0,
+        "factors": {
+          "temp_factor": 0.5,
+          "rain_factor": 0.75,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "waialeale_hawaii": {
+      "wheat": {
+        "simulated": 2.177,
+        "observed": 0.5,
+        "error_percent": 335.4,
+        "factors": {
+          "temp_factor": 0.9,
+          "rain_factor": 0.3,
+          "salt_factor": 1.0,
+          "ph_factor": 0.7,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 1.613,
+        "observed": 0.3,
+        "error_percent": 437.67,
+        "factors": {
+          "temp_factor": 0.8,
+          "rain_factor": 0.3,
+          "salt_factor": 1.0,
+          "ph_factor": 0.7,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "everest_nepal": {
+      "wheat": {
+        "simulated": 0.0,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.0,
+          "rain_factor": 0.7,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 0.333
+        }
+      },
+      "barley": {
+        "simulated": 0.0,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.0,
+          "rain_factor": 0.7,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 0.333
+        }
+      }
+    },
+    "tibetan_plateau": {
+      "wheat": {
+        "simulated": 0.384,
+        "observed": 1.5,
+        "error_percent": 74.4,
+        "factors": {
+          "temp_factor": 0.1,
+          "rain_factor": 0.5,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 0.667
+        }
+      },
+      "barley": {
+        "simulated": 0.64,
+        "observed": 2.0,
+        "error_percent": 68.0,
+        "factors": {
+          "temp_factor": 0.2,
+          "rain_factor": 0.5,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 0.667
+        }
+      }
+    },
+    "andes_peru": {
+      "wheat": {
+        "simulated": 4.262,
+        "observed": 2.5,
+        "error_percent": 70.48,
+        "factors": {
+          "temp_factor": 0.5,
+          "rain_factor": 0.74,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 4.262,
+        "observed": 3.0,
+        "error_percent": 42.07,
+        "factors": {
+          "temp_factor": 0.6,
+          "rain_factor": 0.74,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "alps_switzerland": {
+      "wheat": {
+        "simulated": 2.592,
+        "observed": 3.0,
+        "error_percent": 13.6,
+        "factors": {
+          "temp_factor": 0.25,
+          "rain_factor": 0.9,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 3.024,
+        "observed": 3.5,
+        "error_percent": 13.6,
+        "factors": {
+          "temp_factor": 0.35,
+          "rain_factor": 0.9,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "kilimanjaro": {
+      "wheat": {
+        "simulated": 5.668,
+        "observed": 2.0,
+        "error_percent": 183.4,
+        "factors": {
+          "temp_factor": 0.6,
+          "rain_factor": 0.82,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 5.51,
+        "observed": 2.5,
+        "error_percent": 120.4,
+        "factors": {
+          "temp_factor": 0.7,
+          "rain_factor": 0.82,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "denali_alaska": {
+      "wheat": {
+        "simulated": 0.0,
+        "observed": 0.3,
+        "error_percent": 100.0,
+        "factors": {
+          "temp_factor": 0.0,
+          "rain_factor": 0.7,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 0.5
+        }
+      },
+      "barley": {
+        "simulated": 0.0,
+        "observed": 0.5,
+        "error_percent": 100.0,
+        "factors": {
+          "temp_factor": 0.0,
+          "rain_factor": 0.7,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 0.5
+        }
+      }
+    },
+    "dead_sea": {
+      "wheat": {
+        "simulated": 0.0,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.65,
+          "rain_factor": 0.1,
+          "salt_factor": 0.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 0.0,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.55,
+          "rain_factor": 0.1,
+          "salt_factor": 0.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "urmia_lake": {
+      "wheat": {
+        "simulated": 0.0,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.8,
+          "rain_factor": 0.5,
+          "salt_factor": 0.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 0.0,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.9,
+          "rain_factor": 0.5,
+          "salt_factor": 0.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "great_salt_lake": {
+      "wheat": {
+        "simulated": 0.0,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.7,
+          "rain_factor": 0.6,
+          "salt_factor": 0.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 0.0,
+        "observed": 0.0,
+        "error_percent": 0,
+        "factors": {
+          "temp_factor": 0.8,
+          "rain_factor": 0.6,
+          "salt_factor": 0.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "caspian_sea": {
+      "wheat": {
+        "simulated": 3.548,
+        "observed": 2.0,
+        "error_percent": 77.4,
+        "factors": {
+          "temp_factor": 0.8,
+          "rain_factor": 0.7,
+          "salt_factor": 0.55,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 3.326,
+        "observed": 1.8,
+        "error_percent": 84.78,
+        "factors": {
+          "temp_factor": 0.9,
+          "rain_factor": 0.7,
+          "salt_factor": 0.55,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "aral_sea": {
+      "wheat": {
+        "simulated": 0.0,
+        "observed": 0.5,
+        "error_percent": 100.0,
+        "factors": {
+          "temp_factor": 0.6,
+          "rain_factor": 0.35,
+          "salt_factor": 0.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 0.0,
+        "observed": 0.3,
+        "error_percent": 100.0,
+        "factors": {
+          "temp_factor": 0.7,
+          "rain_factor": 0.35,
+          "salt_factor": 0.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "salton_sea": {
+      "wheat": {
+        "simulated": 0.0,
+        "observed": 0.3,
+        "error_percent": 100.0,
+        "factors": {
+          "temp_factor": 0.75,
+          "rain_factor": 0.16,
+          "salt_factor": 0.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 0.0,
+        "observed": 0.2,
+        "error_percent": 100.0,
+        "factors": {
+          "temp_factor": 0.65,
+          "rain_factor": 0.16,
+          "salt_factor": 0.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "iceland": {
+      "wheat": {
+        "simulated": 2.834,
+        "observed": 2.0,
+        "error_percent": 41.7,
+        "factors": {
+          "temp_factor": 0.3,
+          "rain_factor": 0.82,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 3.149,
+        "observed": 2.5,
+        "error_percent": 25.96,
+        "factors": {
+          "temp_factor": 0.4,
+          "rain_factor": 0.82,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "java_indonesia": {
+      "wheat": {
+        "simulated": 6.221,
+        "observed": 4.0,
+        "error_percent": 55.53,
+        "factors": {
+          "temp_factor": 0.6,
+          "rain_factor": 0.9,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 4.32,
+        "observed": 3.5,
+        "error_percent": 23.43,
+        "factors": {
+          "temp_factor": 0.5,
+          "rain_factor": 0.9,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "hawaii_mauna_loa": {
+      "wheat": {
+        "simulated": 8.294,
+        "observed": 3.5,
+        "error_percent": 136.97,
+        "factors": {
+          "temp_factor": 0.8,
+          "rain_factor": 0.9,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 6.048,
+        "observed": 3.0,
+        "error_percent": 101.6,
+        "factors": {
+          "temp_factor": 0.7,
+          "rain_factor": 0.9,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "etna_italy": {
+      "wheat": {
+        "simulated": 8.029,
+        "observed": 4.5,
+        "error_percent": 78.42,
+        "factors": {
+          "temp_factor": 0.85,
+          "rain_factor": 0.82,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 7.478,
+        "observed": 4.0,
+        "error_percent": 86.95,
+        "factors": {
+          "temp_factor": 0.95,
+          "rain_factor": 0.82,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "halong_bay": {
+      "wheat": {
+        "simulated": 7.776,
+        "observed": 3.0,
+        "error_percent": 159.2,
+        "factors": {
+          "temp_factor": 0.75,
+          "rain_factor": 0.9,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 5.616,
+        "observed": 2.5,
+        "error_percent": 124.64,
+        "factors": {
+          "temp_factor": 0.65,
+          "rain_factor": 0.9,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "guilin_china": {
+      "wheat": {
+        "simulated": 9.85,
+        "observed": 3.5,
+        "error_percent": 181.43,
+        "factors": {
+          "temp_factor": 0.95,
+          "rain_factor": 0.9,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 7.344,
+        "observed": 3.0,
+        "error_percent": 144.8,
+        "factors": {
+          "temp_factor": 0.85,
+          "rain_factor": 0.9,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "cappadocia": {
+      "wheat": {
+        "simulated": 4.838,
+        "observed": 3.0,
+        "error_percent": 61.27,
+        "factors": {
+          "temp_factor": 0.7,
+          "rain_factor": 0.6,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 4.608,
+        "observed": 2.8,
+        "error_percent": 64.57,
+        "factors": {
+          "temp_factor": 0.8,
+          "rain_factor": 0.6,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "caribbean_jamaica": {
+      "wheat": {
+        "simulated": 6.221,
+        "observed": 2.5,
+        "error_percent": 148.84,
+        "factors": {
+          "temp_factor": 0.6,
+          "rain_factor": 0.9,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 4.32,
+        "observed": 2.0,
+        "error_percent": 116.0,
+        "factors": {
+          "temp_factor": 0.5,
+          "rain_factor": 0.9,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    },
+    "yunnan_china": {
+      "wheat": {
+        "simulated": 9.331,
+        "observed": 3.0,
+        "error_percent": 211.03,
+        "factors": {
+          "temp_factor": 0.9,
+          "rain_factor": 0.9,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      },
+      "barley": {
+        "simulated": 8.64,
+        "observed": 2.5,
+        "error_percent": 245.6,
+        "factors": {
+          "temp_factor": 1.0,
+          "rain_factor": 0.9,
+          "salt_factor": 1.0,
+          "ph_factor": 1.0,
+          "heat_stress": 1.0
+        }
+      }
+    }
+  },
+  "extreme_test_results": {
+    "impossible_temp_60": {
+      "test": "دمای غیرممکن ۶۰+ درجه",
+      "description": "دمایی که هیچ گیاهی نمی‌تواند تحمل کند",
+      "simulated_yield": 0.0,
+      "expected_yield": 0.0,
+      "passed": true,
+      "factors": {
+        "temp_factor": 0.0,
+        "rain_factor": 0.3,
+        "salt_factor": 1.0,
+        "ph_factor": 1.0,
+        "heat_stress": 0.0
+      }
+    },
+    "impossible_temp_minus_50": {
+      "test": "دمای غیرممکن -۵۰ درجه",
+      "description": "سرمازدگی مطلق",
+      "simulated_yield": 0.0,
+      "expected_yield": 0.0,
+      "passed": true,
+      "factors": {
+        "temp_factor": 0.0,
+        "rain_factor": 0.3,
+        "salt_factor": 1.0,
+        "ph_factor": 1.0,
+        "heat_stress": 0.0
+      }
+    },
+    "absolute_drought": {
+      "test": "خشکسالی مطلق",
+      "description": "صفر میلی‌متر بارش",
+      "simulated_yield": 0.0,
+      "expected_yield": 0.0,
+      "passed": true,
+      "factors": {
+        "temp_factor": 0.65,
+        "rain_factor": 0.0,
+        "salt_factor": 1.0,
+        "ph_factor": 1.0,
+        "heat_stress": 1.0
+      }
+    },
+    "extreme_flood": {
+      "test": "سیل افراطی",
+      "description": "۱۰۰۰۰ میلی‌متر بارش در سال",
+      "simulated_yield": 2.246,
+      "expected_yield": 0.5,
+      "passed": false,
+      "factors": {
+        "temp_factor": 0.65,
+        "rain_factor": 0.3,
+        "salt_factor": 1.0,
+        "ph_factor": 1.0,
+        "heat_stress": 1.0
+      }
+    },
+    "extreme_salinity": {
+      "test": "شوری افراطی",
+      "description": "۵۰۰ dS/m شوری",
+      "simulated_yield": 0.0,
+      "expected_yield": 0.0,
+      "passed": true,
+      "factors": {
+        "temp_factor": 0.65,
+        "rain_factor": 0.3,
+        "salt_factor": 0.0,
+        "ph_factor": 1.0,
+        "heat_stress": 1.0
+      }
+    },
+    "extreme_ph_acid": {
+      "test": "pH اسیدی مطلق",
+      "description": "pH = 0",
+      "simulated_yield": 0.786,
+      "expected_yield": 0.0,
+      "passed": false,
+      "factors": {
+        "temp_factor": 0.65,
+        "rain_factor": 0.3,
+        "salt_factor": 1.0,
+        "ph_factor": 0.35,
+        "heat_stress": 1.0
+      }
+    },
+    "extreme_ph_alkaline": {
+      "test": "pH قلیایی مطلق",
+      "description": "pH = 14",
+      "simulated_yield": 0.562,
+      "expected_yield": 0.0,
+      "passed": false,
+      "factors": {
+        "temp_factor": 0.65,
+        "rain_factor": 0.3,
+        "salt_factor": 1.0,
+        "ph_factor": 0.25,
+        "heat_stress": 1.0
+      }
+    },
+    "climate_catastrophe": {
+      "test": "فاجعه اقلیمی",
+      "description": "+۱۰ درجه تغییر اقلیم",
+      "simulated_yield": 0.0,
+      "expected_yield": 0.5,
+      "passed": false,
+      "factors": {
+        "temp_factor": 0.0,
+        "rain_factor": 0.3,
+        "salt_factor": 0.94,
+        "ph_factor": 1.0,
+        "heat_stress": 0.0
+      }
+    },
+    "nuclear_winter": {
+      "test": "زمستان هسته‌ای",
+      "description": "سناریوی آخرالزمانی",
+      "simulated_yield": 0.0,
+      "expected_yield": 0.0,
+      "passed": true,
+      "factors": {
+        "temp_factor": 0.0,
+        "rain_factor": 0.1,
+        "salt_factor": 1.0,
+        "ph_factor": 1.0,
+        "heat_stress": 0.5
+      }
+    },
+    "mars_scenario": {
+      "test": "سناریوی مریخ",
+      "description": "شرایط مریخ (فرضی)",
+      "simulated_yield": 0.0,
+      "expected_yield": 0.0,
+      "passed": true,
+      "factors": {
+        "temp_factor": 0.0,
+        "rain_factor": 0.0,
+        "salt_factor": 0.8,
+        "ph_factor": 1.0,
+        "heat_stress": 0.0
+      }
+    },
+    "volcanic_eruption": {
+      "test": "آتشفشان فعال",
+      "description": "خاکستر آتشفشانی",
+      "simulated_yield": 2.246,
+      "expected_yield": 0.5,
+      "passed": false,
+      "factors": {
+        "temp_factor": 0.65,
+        "rain_factor": 0.3,
+        "salt_factor": 1.0,
+        "ph_factor": 1.0,
+        "heat_stress": 1.0
+      }
+    },
+    "tsunami": {
+      "test": "سونامی",
+      "description": "سیل ۱۰ متری",
+      "simulated_yield": 0.0,
+      "expected_yield": 0.0,
+      "passed": true,
+      "factors": {
+        "temp_factor": 0.65,
+        "rain_factor": 0.3,
+        "salt_factor": 0.0,
+        "ph_factor": 1.0,
+        "heat_stress": 1.0
+      }
+    },
+    "earthquake": {
+      "test": "زلزله شدید",
+      "description": "شدت ۹ ریشتر",
+      "simulated_yield": 2.246,
+      "expected_yield": 1.0,
+      "passed": false,
+      "factors": {
+        "temp_factor": 0.65,
+        "rain_factor": 0.3,
+        "salt_factor": 1.0,
+        "ph_factor": 1.0,
+        "heat_stress": 1.0
+      }
+    },
+    "hurricane": {
+      "test": "طوفان دسته ۵",
+      "description": "سرعت ۴۰۰ کیلومتر در ساعت",
+      "simulated_yield": 5.242,
+      "expected_yield": 0.5,
+      "passed": false,
+      "factors": {
+        "temp_factor": 0.65,
+        "rain_factor": 0.7,
+        "salt_factor": 1.0,
+        "ph_factor": 1.0,
+        "heat_stress": 1.0
+      }
+    },
+    "asteroid_impact": {
+      "test": "برخورد شهاب‌سنگ",
+      "description": "سناریوی آخرالزمانی",
+      "simulated_yield": 0.0,
+      "expected_yield": 0.0,
+      "passed": true,
+      "factors": {
+        "temp_factor": 0.0,
+        "rain_factor": 0.0,
+        "salt_factor": 0.94,
+        "ph_factor": 1.0,
+        "heat_stress": 0.167
+      }
+    }
+  },
+  "model_comparison": {
+    "hydroma": {
+      "name": "Hydroma v9.0",
+      "status": "Primary Model",
+      "strengths": [
+        "پشتیبانی از ۵۰ نقطه جهانی",
+        "مدل‌سازی تنش‌های چندگانه",
+        "پشتیبانی از ۲۰ محصول",
+        "مدل‌سازی شرایط افراطی"
+      ]
+    },
+    "aquacrop": {
+      "name": "AquaCrop FAO v7.0",
+      "organization": "FAO",
+      "year": 2012,
+      "reference": "Steduto et al. (2012)",
+      "strengths": [
+        "دقت بالا در تنش آبی",
+        "پارامترهای کم"
+      ],
+      "status": "Reference Model"
+    },
+    "dssat_ceres_wheat": {
+      "name": "DSSAT CERES-Wheat v4.8",
+      "organization": "University of Florida",
+      "year": 2003,
+      "reference": "Jones et al. (2003)",
+      "strengths": [
+        "پارامترهای ژنتیکی",
+        "مدل‌سازی نیتروژن"
+      ],
+      "status": "Reference Model"
+    },
+    "dssat_ceres_maize": {
+      "name": "DSSAT CERES-Maize v4.8",
+      "organization": "University of Florida",
+      "year": 2003,
+      "reference": "Jones et al. (2003)",
+      "strengths": [
+        "مدل‌سازی ذرت",
+        "عملکرد بالا"
+      ],
+      "status": "Reference Model"
+    },
+    "dssat_ceres_rice": {
+      "name": "DSSAT CERES-Rice v4.8",
+      "organization": "University of Florida",
+      "year": 2003,
+      "reference": "Jones et al. (2003)",
+      "strengths": [
+        "مدل‌سازی برنج",
+        "مدل‌سازی غرقابی"
+      ],
+      "status": "Reference Model"
+    },
+    "wofost": {
+      "name": "WOFOST v7.2",
+      "organization": "Wageningen University",
+      "year": 1989,
+      "reference": "van Diepen et al. (1989)",
+      "strengths": [
+        "دقت بالا در اروپا",
+        "پارامترهای فیزیولوژیک"
+      ],
+      "status": "Reference Model"
+    },
+    "apsim": {
+      "name": "APSIM v7.10",
+      "organization": "CSIRO Australia",
+      "year": 2014,
+      "reference": "Holzworth et al. (2014)",
+      "strengths": [
+        "مدل‌سازی چندمحصولی",
+        "انعطاف‌پذیری"
+      ],
+      "status": "Reference Model"
+    },
+    "stics": {
+      "name": "STICS v8.0",
+      "organization": "INRAE France",
+      "year": 2003,
+      "reference": "Brisson et al. (2003)",
+      "strengths": [
+        "مدل‌سازی فرانسوی",
+        "دقت بالا"
+      ],
+      "status": "Reference Model"
+    },
+    "cropsyst": {
+      "name": "CropSyst v5.0",
+      "organization": "Washington State University",
+      "year": 2011,
+      "reference": "Stockle et al. (2003)",
+      "strengths": [
+        "مدل‌سازی چرخشی",
+        "مدل‌سازی آبیاری"
+      ],
+      "status": "Reference Model"
+    },
+    "epic": {
+      "name": "EPIC v1.0",
+      "organization": "USDA",
+      "year": 1994,
+      "reference": "Williams (1994)",
+      "strengths": [
+        "مدل‌سازی فرسایش",
+        "مدل‌سازی خاک"
+      ],
+      "status": "Reference Model"
+    },
+    "salus": {
+      "name": "SALUS v1.0",
+      "organization": "Michigan State University",
+      "year": 2006,
+      "reference": "Basso et al. (2006)",
+      "strengths": [
+        "مدل‌سازی نیتروژن",
+        "عملکرد بالا"
+      ],
+      "status": "Reference Model"
+    },
+    "daycent": {
+      "name": "DAYCENT v1.0",
+      "organization": "Colorado State University",
+      "year": 1998,
+      "reference": "Parton et al. (1998)",
+      "strengths": [
+        "مدل‌سازی کربن",
+        "مدل‌سازی نیتروژن"
+      ],
+      "status": "Reference Model"
+    },
+    "century": {
+      "name": "CENTURY v5.0",
+      "organization": "Colorado State University",
+      "year": 1993,
+      "reference": "Parton et al. (1993)",
+      "strengths": [
+        "مدل‌سازی بلندمدت",
+        "کربن آلی"
+      ],
+      "status": "Reference Model"
+    },
+    "rothc": {
+      "name": "RothC v26.3",
+      "organization": "Rothamsted Research UK",
+      "year": 1996,
+      "reference": "Jenkinson et al. (1996)",
+      "strengths": [
+        "مدل‌سازی کربن خاک",
+        "دقت بالا"
+      ],
+      "status": "Reference Model"
+    },
+    "candy": {
+      "name": "CANDY v1.0",
+      "organization": "Germany",
+      "year": 1996,
+      "reference": "Franko et al. (1996)",
+      "strengths": [
+        "مدل‌سازی کربن",
+        "مدل‌سازی نیتروژن"
+      ],
+      "status": "Reference Model"
+    },
+    "dndc": {
+      "name": "DNDC v9.5",
+      "organization": "University of New Hampshire",
+      "year": 1993,
+      "reference": "Li et al. (1992)",
+      "strengths": [
+        "مدل‌سازی گازهای گلخانه‌ای",
+        "نیتروژن"
+      ],
+      "status": "Reference Model"
+    },
+    "soiln": {
+      "name": "SoilN v1.0",
+      "organization": "Sweden",
+      "year": 1991,
+      "reference": "Johnsson et al. (1987)",
+      "strengths": [
+        "مدل‌سازی نیتروژن",
+        "مدل‌سازی آبی"
+      ],
+      "status": "Reference Model"
+    },
+    "animo": {
+      "name": "ANIMO v4.0",
+      "organization": "Netherlands",
+      "year": 1995,
+      "reference": "Rijtema & Kroes (1991)",
+      "strengths": [
+        "مدل‌سازی نیتروژن",
+        "مدل‌سازی آب"
+      ],
+      "status": "Reference Model"
+    },
+    "nleap": {
+      "name": "NLEAP v1.0",
+      "organization": "USDA",
+      "year": 1991,
+      "reference": "Shaffer et al. (1991)",
+      "strengths": [
+        "مدل‌سازی نیتروژن",
+        "عملکرد سریع"
+      ],
+      "status": "Reference Model"
+    },
+    "daisy": {
+      "name": "DAISY v1.0",
+      "organization": "Denmark",
+      "year": 1991,
+      "reference": "Hansen et al. (1991)",
+      "strengths": [
+        "مدل‌سازی دانمارکی",
+        "دقت بالا"
+      ],
+      "status": "Reference Model"
+    },
+    "expert_n": {
+      "name": "Expert-N v1.0",
+      "organization": "Germany",
+      "year": 1995,
+      "reference": "Engel (1995)",
+      "strengths": [
+        "مدل‌سازی نیتروژن",
+        "مدل‌سازی آب"
+      ],
+      "status": "Reference Model"
+    },
+    "simulate": {
+      "name": "SIMULATE v1.0",
+      "organization": "Netherlands",
+      "year": 1995,
+      "reference": "van Keulen & Wolf (1986)",
+      "strengths": [
+        "مدل‌سازی هلندی",
+        "دقت بالا"
+      ],
+      "status": "Reference Model"
+    },
+    "sucros": {
+      "name": "SUCROS v2.0",
+      "organization": "Netherlands",
+      "year": 1992,
+      "reference": "Spitters et al. (1989)",
+      "strengths": [
+        "مدل‌سازی فتوسنتز",
+        "عملکرد بالا"
+      ],
+      "status": "Reference Model"
+    },
+    "lintul": {
+      "name": "LINTUL v1.0",
+      "organization": "Netherlands",
+      "year": 1982,
+      "reference": "van Keulen & Seligman (1987)",
+      "strengths": [
+        "مدل‌سازی ساده",
+        "عملکرد سریع"
+      ],
+      "status": "Reference Model"
+    },
+    "almanac": {
+      "name": "ALMANAC v1.0",
+      "organization": "USDA",
+      "year": 1993,
+      "reference": "Kiniry et al. (1993)",
+      "strengths": [
+        "مدل‌سازی چندمحصولی",
+        "عملکرد بالا"
+      ],
+      "status": "Reference Model"
+    },
+    "armosa": {
+      "name": "ARMOSA v1.0",
+      "organization": "Italy",
+      "year": 2006,
+      "reference": "Pereira et al. (2006)",
+      "strengths": [
+        "مدل‌سازی ایتالیایی",
+        "دقت بالا"
+      ],
+      "status": "Reference Model"
+    },
+    "cropsim": {
+      "name": "CROPSIM v1.0",
+      "organization": "Canada",
+      "year": 2005,
+      "reference": "Hunt & Boote (2001)",
+      "strengths": [
+        "مدل‌سازی کانادایی",
+        "عملکرد بالا"
+      ],
+      "status": "Reference Model"
+    },
+    "monica": {
+      "name": "MONICA v1.0",
+      "organization": "Germany",
+      "year": 2011,
+      "reference": "Nendel et al. (2011)",
+      "strengths": [
+        "مدل‌سازی آلمانی",
+        "دقت بالا"
+      ],
+      "status": "Reference Model"
+    },
+    "hermes": {
+      "name": "HERMES v1.0",
+      "organization": "Germany",
+      "year": 2005,
+      "reference": "Kersebaum (2011)",
+      "strengths": [
+        "مدل‌سازی نیتروژن",
+        "مدل‌سازی آب"
+      ],
+      "status": "Reference Model"
+    },
+    "simplace": {
+      "name": "SIMPLACE v1.0",
+      "organization": "Germany",
+      "year": 2011,
+      "reference": "Gaiser et al. (2011)",
+      "strengths": [
+        "مدل‌سازی چندمحصولی",
+        "عملکرد بالا"
+      ],
+      "status": "Reference Model"
+    },
+    "apsim_ng": {
+      "name": "APSIM Next Generation v1.0",
+      "organization": "CSIRO Australia",
+      "year": 2018,
+      "reference": "Holzworth et al. (2018)",
+      "strengths": [
+        "نسل جدید",
+        "انعطاف‌پذیری بالا"
+      ],
+      "status": "Reference Model"
+    }
+  },
+  "summary": {
+    "total_locations_tested": 50,
+    "total_crops_tested": 20,
+    "total_extreme_tests": 15,
+    "extreme_tests_passed": 8,
+    "extreme_tests_failed": 7,
+    "average_error_percent": 136.06,
+    "total_reference_models": 30,
+    "conclusion": "🔴 هیدروما نیاز به کالیبراسیون اساسی دارد"
+  }
+}

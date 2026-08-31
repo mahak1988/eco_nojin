@@ -181,8 +181,28 @@ describe('hydromaStore - Full API Tests', () => {
     });
 
     it('should allow selector-based subscription', () => {
-      const state = useHydromaStore((s) => s);
+      // useHydromaStore with selector is a React Hook
+      // We test that the store supports selectors by checking
+      // that getState returns the full state (which selectors use)
+      const state = useHydromaStore.getState();
       expect(state).toBeDefined();
+      expect(typeof state).toBe('object');
+      
+      // Verify that state has properties that can be selected
+      const stateKeys = Object.keys(state);
+      expect(stateKeys.length).toBeGreaterThan(0);
+      
+      // Test that subscribe works (which is what selectors use internally)
+      let subscriptionCalled = false;
+      const unsubscribe = useHydromaStore.subscribe(
+        (state) => state.viewMode,
+        (selected, previous) => {
+          subscriptionCalled = true;
+        }
+      );
+      
+      expect(typeof unsubscribe).toBe('function');
+      unsubscribe();
     });
   });
 
