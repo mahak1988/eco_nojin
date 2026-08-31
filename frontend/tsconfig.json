@@ -14,7 +14,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Strict Type Checking (relaxed for now) */
+    /* Strict Type Checking (relaxed) */
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -32,6 +32,9 @@
     /* Additional Checks */
     "exactOptionalPropertyTypes": false,
     "noUncheckedIndexedAccess": false,
+
+    /* Types - Include vitest for test files */
+    "types": ["vite/client", "vitest/globals", "node"],
 
     /* Path aliases */
     "paths": {
