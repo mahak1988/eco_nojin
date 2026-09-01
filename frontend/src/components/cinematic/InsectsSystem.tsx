@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { getTerrainHeight } from '../../utils/terrainHeight';
