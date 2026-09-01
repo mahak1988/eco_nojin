@@ -16,7 +16,7 @@ class BotConfig:
     """Telegram bot configuration."""
 
     BOT_TOKEN: str = os.getenv("TELEGRAM_BOT_TOKEN", "")
-    API_BASE_URL: str = os.getenv("BOT_API_BASE_URL", "http://127.0.0.1:8000")
+    API_BASE_URL: str = os.getenv("BOT_API_BASE_URL", "http://os.environ.get('HOST', '127.0.0.1'):8000")
 
     # Rate limiting
     MAX_REQUESTS_PER_MINUTE: int = int(os.getenv("BOT_RATE_LIMIT", "10"))

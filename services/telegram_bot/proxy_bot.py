@@ -2,9 +2,9 @@
 Hydroma Telegram Bot - Proxy-aware version for Iran deployment.
 
 This version automatically detects and uses local proxies:
-- v2rayN (socks5://127.0.0.1:10808)
-- Clash (socks5://127.0.0.1:7891)
-- Hiddify (socks5://127.0.0.1:2080)
+- v2rayN (socks5://os.environ.get('HOST', '127.0.0.1'):10808)
+- Clash (socks5://os.environ.get('HOST', '127.0.0.1'):7891)
+- Hiddify (socks5://os.environ.get('HOST', '127.0.0.1'):2080)
 - Any custom proxy via TELEGRAM_PROXY env var
 
 Usage:
@@ -33,14 +33,14 @@ logger = logging.getLogger("proxy_bot")
 
 PROXY_CANDIDATES = [
     # (name, protocol, host, port)
-    ("v2rayN", "socks5", "127.0.0.1", 10808),
-    ("v2rayN-HTTP", "http", "127.0.0.1", 10809),
-    ("Clash", "socks5", "127.0.0.1", 7891),
-    ("Clash-HTTP", "http", "127.0.0.1", 7890),
-    ("Hiddify", "socks5", "127.0.0.1", 2080),
-    ("Oblivion", "socks5", "127.0.0.1", 8086),
-    ("Shadowsocks", "socks5", "127.0.0.1", 1080),
-    ("Tor", "socks5", "127.0.0.1", 9050),
+    ("v2rayN", "socks5", "os.environ.get('HOST', '127.0.0.1')", 10808),
+    ("v2rayN-HTTP", "http", "os.environ.get('HOST', '127.0.0.1')", 10809),
+    ("Clash", "socks5", "os.environ.get('HOST', '127.0.0.1')", 7891),
+    ("Clash-HTTP", "http", "os.environ.get('HOST', '127.0.0.1')", 7890),
+    ("Hiddify", "socks5", "os.environ.get('HOST', '127.0.0.1')", 2080),
+    ("Oblivion", "socks5", "os.environ.get('HOST', '127.0.0.1')", 8086),
+    ("Shadowsocks", "socks5", "os.environ.get('HOST', '127.0.0.1')", 1080),
+    ("Tor", "socks5", "os.environ.get('HOST', '127.0.0.1')", 9050),
 ]
 
 

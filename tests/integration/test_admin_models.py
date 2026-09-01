@@ -1,4 +1,6 @@
 """Tests for the Phase 5 models module (honest Ollama state)."""
+import os
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -27,7 +29,7 @@ def admin_client(monkeypatch):
     db.commit()
     db.close()
     # Force Ollama unreachable -> deterministic honest behavior
-    monkeypatch.setenv("OLLAMA_BASE_URL", "http://127.0.0.1:1")
+    monkeypatch.setenv("OLLAMA_BASE_URL", "http://os.environ.get('HOST', '127.0.0.1'):1")
     monkeypatch.setenv("OLLAMA_TIMEOUT", "0.2")
     client = TestClient(app)
     resp = client.post(

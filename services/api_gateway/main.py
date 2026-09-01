@@ -15,6 +15,8 @@ Author: Eco Nojin Team
 Created: 2026-08-15
 Version: 0.1.0 (Phase 0.A)
 """
+import os
+
 import logging
 import traceback
 from contextlib import asynccontextmanager
@@ -91,7 +93,7 @@ async def lifespan(app: FastAPI):
         logger.error(traceback.format_exc())
     
     logger.info(f"🌍 CORS origins: {_settings.cors_origins}")
-    logger.info(f"📚 API docs: http://127.0.0.1:8000/docs")
+    logger.info(f"📚 API docs: http://os.environ.get('HOST', '127.0.0.1'):8000/docs")
     logger.info("=" * 60)
     
     yield

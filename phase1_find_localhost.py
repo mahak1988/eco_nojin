@@ -1,6 +1,6 @@
 """
 Phase 1.2: Localhost Hunter & Reporter
-خروجی: فایل localhost_report.csv
+خروجی: فایل os.environ.get('HOST', 'localhost')_report.csv
 """
 import os
 import re
@@ -10,7 +10,7 @@ IGNORE_DIRS = {'.git', 'node_modules', '.venv', 'venv', 'env', '__pycache__',
                'engine/cpp_core/build2', 'frontend/test-results', '_quarantine', '_backups', 'scripts'}
 
 LOCALHOST_PATTERN = re.compile(
-    r'(https?://)?(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?'
+    r'(https?://)?(os.environ.get('HOST', 'localhost')|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?'
 )
 
 def should_scan(path):
@@ -25,7 +25,7 @@ def main():
     extensions = ('.py', '.ts', '.tsx', '.js', '.jsx', '.yaml', '.yml')
     report = []
 
-    print("[INFO] Scanning for hardcoded localhost instances...")
+    print("[INFO] Scanning for hardcoded os.environ.get('HOST', 'localhost') instances...")
 
     for root, _, files in os.walk(base_dir):
         if not should_scan(root):
@@ -47,7 +47,7 @@ def main():
                 except Exception:
                     pass
 
-    output_file = os.path.join(base_dir, 'localhost_report.csv')
+    output_file = os.path.join(base_dir, 'os.environ.get('HOST', 'localhost')_report.csv')
     with open(output_file, 'w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=['File', 'Line', 'Content'])
         writer.writeheader()

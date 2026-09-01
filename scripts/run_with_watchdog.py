@@ -6,6 +6,8 @@ Usage (Render/Railway start command):
 The watchdog polls /health and restarts the worker on failure, so a crash
 or hang heals itself without a human.
 """
+import os
+
 import argparse
 import sys
 
@@ -21,7 +23,7 @@ def main() -> None:
     watchdog = HealthWatchdog(
         cmd=[sys.executable, "-m", "uvicorn", "services.api_gateway.main:app",
              "--port", str(args.port), "--host", "0.0.0.0"],
-        health_url=f"http://127.0.0.1:{args.port}/health",
+        health_url=f"http://os.environ.get('HOST', '127.0.0.1'):{args.port}/health",
     )
     try:
         watchdog.run_forever(check_interval=args.interval)

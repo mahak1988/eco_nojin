@@ -38,7 +38,7 @@ def get_web3(network: str = "polygon_amoy") -> Web3:
             "POLYGON_RPC_URL",
             "https://polygon-rpc.com"
         ),
-        "localhost": "http://127.0.0.1:8545",
+        "os.environ.get('HOST', 'localhost')": "http://os.environ.get('HOST', '127.0.0.1'):8545",
     }
 
     rpc_url = rpc_urls.get(network, rpc_urls["polygon_amoy"])

@@ -1,4 +1,6 @@
 """Persian response formatters for Telegram messages."""
+import os
+
 from __future__ import annotations
 
 from typing import Any
@@ -212,7 +214,7 @@ def format_help() -> str:
 
 💡 *نکته:* مختصات جغرافیایی را از Google Maps کپی کنید.
 
-🔗 [مستندات API](http://127.0.0.1:8000/docs)"""
+🔗 [مستندات API](http://os.environ.get('HOST', '127.0.0.1'):8000/docs)"""
 
 
 def format_welcome() -> str:

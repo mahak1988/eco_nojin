@@ -305,7 +305,7 @@ async def admin_health(
         channels.append(ChannelStatus(channel="database", status="down", detail=str(exc)[:200]))
 
     # 2. AI backend (Ollama)
-    ollama_base = os.environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
+    ollama_base = os.environ.get("OLLAMA_BASE_URL", "http://os.environ.get('HOST', '127.0.0.1'):11434")
     try:
         async with httpx.AsyncClient(timeout=4.0) as client:
             resp = await client.get(f"{ollama_base}/api/tags")
@@ -1103,7 +1103,7 @@ def update_setting(
 # ============================================================================
 
 def _ollama_base_url() -> str:
-    return os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    return os.getenv("OLLAMA_BASE_URL", "http://os.environ.get('HOST', 'localhost'):11434")
 
 
 def _ollama_timeout() -> float:

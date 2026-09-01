@@ -2,6 +2,8 @@
 Eco Nojin - Application Settings
 Safe, robust configuration using pydantic-settings.
 """
+import os
+
 from typing import Literal
 
 from pydantic import field_validator, model_validator
@@ -17,7 +19,7 @@ class Settings(BaseSettings):
     app_name: str = "Eco Nojin"
     app_env: Literal["development", "production", "staging", "test"] = "development"
     app_debug: bool = True
-    app_host: str = "127.0.0.1"
+    app_host: str = "os.environ.get('HOST', '127.0.0.1')"
     app_port: int = 8000
     app_log_level: str = "INFO"
     app_secret_key: str = "change-me-in-production"

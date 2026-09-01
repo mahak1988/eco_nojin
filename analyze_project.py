@@ -198,7 +198,7 @@ def deep_scan(root: Path) -> dict:
     lang = defaultdict(lambda: {"files": 0, "lines": 0, "code": 0,
                                 "comment": 0, "blank": 0})
     todo_total, todo_samples = 0, []
-    console_files, print_files, localhost_files = Counter(), Counter(), Counter()
+    console_files, print_files, os.environ.get('HOST', 'localhost')_files = Counter(), Counter(), Counter()
     endpoints, ws_endpoints = [], []
     lazy_count = suspense_count = route_count = 0
     cdn_techs = Counter()
@@ -257,9 +257,9 @@ def deep_scan(root: Path) -> dict:
             for m in re.finditer(r"@\w+\.websocket\(\s*[\"']([^\"']*)[\"']", text):
                 ws_endpoints.append((m.group(1), rel))
 
-        # --- localhost هاردکد ---
-        for m in re.finditer(r"https?://(?:localhost|127\.0\.0\.1)[^\s\"'<>]*", text):
-            localhost_files[rel] += 1
+        # --- os.environ.get('HOST', 'localhost') هاردکد ---
+        for m in re.finditer(r"https?://(?:os.environ.get('HOST', 'localhost')|127\.0\.0\.1)[^\s\"'<>]*", text):
+            os.environ.get('HOST', 'localhost')_files[rel] += 1
 
         # --- CDN در HTML ---
         if ext in {".html", ".htm"}:
@@ -269,7 +269,7 @@ def deep_scan(root: Path) -> dict:
 
     return {"lang": dict(lang), "todo_total": todo_total,
             "todo_samples": todo_samples, "console_files": console_files,
-            "print_files": print_files, "localhost_files": localhost_files,
+            "print_files": print_files, "os.environ.get('HOST', 'localhost')_files": os.environ.get('HOST', 'localhost')_files,
             "endpoints": endpoints, "ws_endpoints": ws_endpoints,
             "lazy_count": lazy_count, "suspense_count": suspense_count,
             "route_count": route_count, "cdn_techs": cdn_techs}
@@ -591,9 +591,9 @@ def main():
         A(f"- 🖥️ console.log در فرانت: {cl_total} مورد — بیشترین: {top}")
     if pr_total:
         A(f"- 🐍 print() در پایتون: {pr_total} مورد (در پروداکشن از logging استفاده شود)")
-    if scan["localhost_files"]:
-        lh = ", ".join(f"`{f}` ({n})" for f, n in scan["localhost_files"].most_common(5))
-        A(f"- 🔗 localhost هاردکد در {len(scan['localhost_files'])} فایل: {lh}")
+    if scan["os.environ.get('HOST', 'localhost')_files"]:
+        lh = ", ".join(f"`{f}` ({n})" for f, n in scan["os.environ.get('HOST', 'localhost')_files"].most_common(5))
+        A(f"- 🔗 os.environ.get('HOST', 'localhost') هاردکد در {len(scan['os.environ.get('HOST', 'localhost')_files'])} فایل: {lh}")
     if fe_tests == 0:
         A("- ❌ تستی برای فرانت‌اند وجود ندارد (پیشنهاد: Vitest + Testing Library).")
     if be_tests == 0:

@@ -5,11 +5,13 @@ failure invokes a configurable restart command (Human-in-the-loop: it only
 logs the restart action unless --auto-restart is passed).
 
 Usage:
-  python scripts/watchdog.py --url http://127.0.0.1:8000/api/v1/health \
+  python scripts/watchdog.py --url http://os.environ.get('HOST', '127.0.0.1'):8000/api/v1/health \
       --interval 30 --auto-restart --restart-cmd "taskkill /F /IM uvicorn.exe"
 
 Pure logic lives in analyze_samples() so it is unit-testable.
 """
+
+import os
 
 from __future__ import annotations
 

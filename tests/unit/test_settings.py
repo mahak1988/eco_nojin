@@ -1,5 +1,7 @@
 """Phase 0 tests: pydantic-settings configuration."""
 
+import os
+
 import pytest
 from pydantic import ValidationError
 
@@ -13,7 +15,7 @@ class TestSettingsDefaults:
         assert s.environment == "development"
         assert s.rate_limit_requests > 0
         assert s.access_token_expire_minutes > 0
-        assert any("localhost:3000" in o for o in s.cors_origins)
+        assert any("os.environ.get('HOST', 'localhost'):3000" in o for o in s.cors_origins)
 
     def test_dev_secret_marked_insecure(self):
         s = Settings(_env_file=None)

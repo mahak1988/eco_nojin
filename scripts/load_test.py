@@ -6,8 +6,10 @@ smoke-scale check that runs anywhere.
 
 Usage:
   python scripts/load_test.py --workers 20 --requests 200 \
-      --base http://127.0.0.1:8000
+      --base http://os.environ.get('HOST', '127.0.0.1'):8000
 """
+
+import os
 
 import structlog
 

@@ -1,5 +1,7 @@
 """Phase 1 security tests - H1: CORS hardening."""
 
+import os
+
 from fastapi.testclient import TestClient
 
 from services.api_gateway.main import app
@@ -17,7 +19,7 @@ def test_preflight_allowed_origin_still_works():
     r = client.options(
         "/api/v1/auth/login",
         headers={
-            "Origin": "http://localhost:3000",
+            "Origin": "http://os.environ.get('HOST', 'localhost'):3000",
             "Access-Control-Request-Method": "POST",
             "Access-Control-Request-Headers": "content-type",
         },

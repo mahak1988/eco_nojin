@@ -56,7 +56,7 @@ circuit_breaker = CircuitBreaker()
 class HealthWatchdog:
     """Supervises the API process (production mode)."""
 
-    def __init__(self, cmd: list[str], health_url: str = "http://127.0.0.1:8011/health") -> None:
+    def __init__(self, cmd: list[str], health_url: str = "http://os.environ.get('HOST', '127.0.0.1'):8011/health") -> None:
         self.cmd = cmd
         self.health_url = health_url
         self.proc: subprocess.Popen | None = None
@@ -116,5 +116,5 @@ class HealthWatchdog:
 
 
 watchdog = HealthWatchdog(
-    cmd=[sys.executable, "-m", "uvicorn", "services.api_gateway.main:app", "--port", "8011", "--host", "127.0.0.1"]
+    cmd=[sys.executable, "-m", "uvicorn", "services.api_gateway.main:app", "--port", "8011", "--host", "os.environ.get('HOST', '127.0.0.1')"]
 )

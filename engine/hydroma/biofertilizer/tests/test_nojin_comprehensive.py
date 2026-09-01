@@ -2,6 +2,8 @@
 Comprehensive Test Suite for Nojin Biofertilizer
 50+ tests covering all system components
 """
+import os
+
 import json
 import sys
 from pathlib import Path
@@ -357,7 +359,7 @@ class TestAPIEndpoints:
     def test_health_endpoint(self):
         try:
             import requests
-            r = requests.get("http://localhost:8000/api/nojin/health", timeout=2)
+            r = requests.get("http://os.environ.get('HOST', 'localhost'):8000/api/nojin/health", timeout=2)
             if r.status_code == 200:
                 assert r.json()["status"] == "healthy"
         except Exception:

@@ -2,7 +2,7 @@
 
 Creates two temp users (p7_admin@econojin.test, p7_farmer@econojin.test),
 bootstraps admin role via SQL, runs the full audit/credit flow against
-localhost:8011, then cleans up all test rows. Requires: server on 8011,
+os.environ.get('HOST', 'localhost'):8011, then cleans up all test rows. Requires: server on 8011,
 SUPABASE_ACCESS_TOKEN in .env, PYTHONPATH=D:\\eco_nojin.
 """
 import structlog
@@ -23,7 +23,7 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / ".env")
 
-BASE = "http://127.0.0.1:8011"
+BASE = "http://os.environ.get('HOST', '127.0.0.1'):8011"
 PASSWORD = "P7TestPass123"  # >= 6 chars
 ADMIN_EMAIL = "p7_admin@econojin.test"
 FARMER_EMAIL = "p7_farmer@econojin.test"

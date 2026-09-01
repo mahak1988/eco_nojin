@@ -13,7 +13,7 @@ class BotConfig:
 
     bot_token: str = field(default_factory=lambda: os.getenv("BOT_TOKEN", ""))
     ollama_base_url: str = field(
-        default_factory=lambda: os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+        default_factory=lambda: os.getenv("OLLAMA_BASE_URL", "http://os.environ.get('HOST', 'localhost'):11434")
     )
     ollama_model: str = field(
         default_factory=lambda: os.getenv("OLLAMA_MODEL", "llama3.1:8b")
