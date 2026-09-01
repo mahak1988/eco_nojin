@@ -14,15 +14,14 @@ import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig(({ mode }) => ({
   plugins: [
+      react(),
       visualizer({
         filename: 'dist/stats.html',
         open: false,
         gzipSize: true,
         brotliSize: true,
-      }),
-      react(),
-    mode === 'analyze' &&
-      ].filter(Boolean),
+      })
+    ],
 
   resolve: {
     alias: {
