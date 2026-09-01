@@ -1,0 +1,63 @@
+{
+  "benchmark_id": "FINAL_20260901_035028",
+  "version": "13.0-golden",
+  "generated_at": "2026-09-01T03:50:28.732849",
+  "summary": {
+    "total_tests": 7,
+    "passed": 6,
+    "failed": 1,
+    "pass_rate_percent": 85.7,
+    "status": "NEEDS_WORK"
+  },
+  "results": [
+    {
+      "test": "جنگل کنگو (گندم)",
+      "simulated": 1.048,
+      "expected": 0.8,
+      "error_percent": 31.0,
+      "passed": true
+    },
+    {
+      "test": "سیبری (گندم بهاره)",
+      "simulated": 0.301,
+      "expected": 0.3,
+      "error_percent": 0.33,
+      "passed": true
+    },
+    {
+      "test": "صحرا (گندم با آبیاری)",
+      "simulated": 0.254,
+      "expected": 0.5,
+      "error_percent": 49.2,
+      "passed": true
+    },
+    {
+      "test": "سیل افراطی (۱۰ متر) - تست کلیدی",
+      "simulated": 0.197,
+      "expected": 0.5,
+      "error_percent": 60.6,
+      "passed": false
+    },
+    {
+      "test": "زلزله ۹ ریشتر",
+      "simulated": 0.899,
+      "expected": 1.0,
+      "error_percent": 10.1,
+      "passed": true
+    },
+    {
+      "test": "طوفان دسته ۵",
+      "simulated": 0.524,
+      "expected": 0.5,
+      "error_percent": 4.8,
+      "passed": true
+    },
+    {
+      "test": "آتشفشان فعال",
+      "simulated": 0.3,
+      "expected": 0.5,
+      "error_percent": 40.0,
+      "passed": true
+    }
+  ]
+}
