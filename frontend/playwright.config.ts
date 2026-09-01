@@ -15,10 +15,10 @@ export default defineConfig({
   ],
   use: {
     baseURL: 'http://localhost:5173',
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
-    // Force system Chrome to avoid CDN downloads
+    // Disable video/trace/screenshot to avoid ffmpeg download requirement
+    trace: 'off',
+    screenshot: 'off',
+    video: 'off',
     launchOptions: {
       channel: 'chrome',
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -37,6 +37,6 @@ export default defineConfig({
     command: 'pnpm dev',
     url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
-    timeout: 120000,
+    timeout: 180000,
   },
 });
