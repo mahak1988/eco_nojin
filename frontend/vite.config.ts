@@ -14,65 +14,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 
 // Affinity-based chunking: heavy stacks isolated, NO catch-all.
 // Affinity-based chunking with Windows path normalization
-function manualChunks(id: string): string | undefined {
-  if (!id.includes('node_modules')) return undefined;
-  
-  // CRITICAL: Normalize Windows backslashes to forward slashes
-  const normalized = id.replace(/\\\\/g, '/');
-  
-  // Core React (must be eager)
-  if (/\/node_modules\/(react|react-dom|scheduler)\//.test(normalized)) return 'vendor-react';
-  
-  // Router (must be eager for routing)
-  if (normalized.includes('react-router')) return 'vendor-router';
-  
-  // Ant Design + all its sub-packages
-  if (/\/node_modules\/(antd|@ant-design|@rc-component|dayjs|stylis|clsx)\//.test(normalized)) {
-    return 'vendor-antd';
-  }
-  
-  // Charts + Redux stack (recharts 3.x depends on Redux internally)
-  if (/\/node_modules\/(recharts|victory-vendor|d3-|@reduxjs|redux|immer|reselect|react-redux)\//.test(normalized)) {
-    return 'vendor-charts';
-  }
-  
-  // Three.js + React Three Fiber + all 3D ecosystem
-  if (/\/node_modules\/(three|three-stdlib|@react-three|postprocessing|n8ao|maath|suspend-react|its-fine|react-use-measure)\//.test(normalized)) {
-    return 'vendor-three';
-  }
-  
-  // Deck.gl + Luma.gl + math.gl + probe.gl + loaders.gl
-  if (/\/node_modules\/(@deck\.gl|@luma\.gl|@loaders\.gl|@math\.gl|@probe\.gl|mjolnir|hammerjs)\//.test(normalized)) {
-    return 'vendor-deckgl';
-  }
-  
-  // Motion
-  if (/\/node_modules\/(framer-motion|motion-dom|motion-utils)\//.test(normalized)) {
-    return 'vendor-motion';
-  }
-  
-  // i18n
-  if (normalized.includes('i18next')) return 'vendor-i18n';
-  
-  // React Query
-  if (normalized.includes('@tanstack')) return 'vendor-query';
-  
-  // State management
-  if (normalized.includes('zustand')) return 'vendor-state';
-  
-  // Icons
-  if (normalized.includes('lucide-react')) return 'vendor-icons';
-  
-  // Small utilities → bundle with their importer (return undefined)
-  // These are typically <5KB and co-locating them preserves laziness
-  if (/\/node_modules\/(use-sync-external-store|tiny-invariant|eventemitter3|react-is|@babel\/runtime|@emotion|internmap|decimal\.js)\//.test(normalized)) {
-    return undefined;
-  }
-  
-  // Catch-all for any other node_modules - BUT only if small
-  // This is the key fix: we do NOT have a big catch-all
-  return 'vendor-other';
-}
+
 
 export default defineConfig(({ mode }) => ({
   plugins: [
@@ -102,29 +44,64 @@ export default defineConfig(({ mode }) => ({
     cssCodeSplit: true,
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (typeof id !== 'string') return undefined;
-
-          if (id.includes('node_modules')) {
-            // Core React
-            if (id.includes('/react-dom/') ||
-                id.includes('/react/') ||
-                id.includes('/react-router')) {
-              return 'vendor-react';
-            }
-
-            // UI Libraries
-            if (id.includes('/framer-motion/')) return 'vendor-motion';
-            if (id.includes('/lucide-react/')) return 'vendor-icons';
-            if (id.includes('/@radix-ui/')) return 'vendor-radix';
-
-            // Ant Design Ecosystem
-            if (id.includes('/antd/') ||
-                id.includes('/@ant-design/') ||
-                id.includes('/@rc-component/') ||
-                id.includes('/rc-')) {
-              return 'vendor-antd';
-            }
+        manualChunks: (id) => {
+          if (!id.includes('node_modules')) return undefined;
+          
+          // Normalize Windows paths
+          const normalized = id.replace(/\/g, '/');
+          
+          // Core React
+          if (/\/node_modules\/(react|react-dom|scheduler)\//.test(normalized)) {
+            return 'vendor-react';
+          }
+          
+          // Router
+          if (normalized.includes('react-router')) {
+            return 'vendor-router';
+          }
+          
+          // Ant Design
+          if (/\/node_modules\/(antd|@ant-design|@rc-component|dayjs|stylis|clsx)\//.test(normalized)) {
+            return 'vendor-antd';
+          }
+          
+          // Charts + Redux
+          if (/\/node_modules\/(recharts|victory-vendor|d3-|@reduxjs|redux|immer|reselect|react-redux)\//.test(normalized)) {
+            return 'vendor-charts';
+          }
+          
+          // Three.js + 3D
+          if (/\/node_modules\/(three|three-stdlib|@react-three|postprocessing|n8ao|maath|suspend-react|its-fine|react-use-measure)\//.test(normalized)) {
+            return 'vendor-three';
+          }
+          
+          // Deck.gl
+          if (/\/node_modules\/(@deck\.gl|@luma\.gl|@loaders\.gl|@math\.gl|@probe\.gl|mjolnir|hammerjs)\//.test(normalized)) {
+            return 'vendor-deckgl';
+          }
+          
+          // Motion
+          if (/\/node_modules\/(framer-motion|motion-dom|motion-utils)\//.test(normalized)) {
+            return 'vendor-motion';
+          }
+          
+          // i18n
+          if (normalized.includes('i18next')) return 'vendor-i18n';
+          
+          // React Query
+          if (normalized.includes('@tanstack')) return 'vendor-query';
+          
+          // State
+          if (normalized.includes('zustand')) return 'vendor-state';
+          
+          // Icons
+          if (normalized.includes('lucide-react')) return 'vendor-icons';
+          
+          // Small utilities - co-locate with importer
+          return undefined;
+        }
+      }
+    },
 
             // Charts - Recharts
             if (id.includes('/recharts/')) return 'vendor-charts';
