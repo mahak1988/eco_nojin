@@ -15,7 +15,6 @@ import { visualizer } from 'rollup-plugin-visualizer';
 // Affinity-based chunking: heavy stacks isolated, NO catch-all.
 // Affinity-based chunking with Windows path normalization
 
-
 export default defineConfig(({ mode }) => ({
   plugins: [
       react(),
@@ -44,164 +43,39 @@ export default defineConfig(({ mode }) => ({
     cssCodeSplit: true,
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          if (!id.includes('node_modules')) return undefined;
+        manualChunks(id) {
+          if (typeof id !== 'string' || !id.includes('node_modules')) return undefined;
           
-          // Normalize Windows paths
-          const normalized = id.replace(/\/g, '/');
+          // Bulletproof Windows path normalization (no regex escape issues)
+          const n = id.split('\\').join('/');
           
-          // Core React
-          if (/\/node_modules\/(react|react-dom|scheduler)\//.test(normalized)) {
-            return 'vendor-react';
-          }
+          // Core React & Router (Eager)
+          if (n.includes('/react-dom/') || n.includes('/react/') || n.includes('/scheduler/') || n.includes('/react-router')) return 'vendor-react';
           
-          // Router
-          if (normalized.includes('react-router')) {
-            return 'vendor-router';
-          }
+          // UI / Motion / Icons
+          if (n.includes('/framer-motion/') || n.includes('/motion-dom/') || n.includes('/motion-utils/')) return 'vendor-motion';
+          if (n.includes('/lucide-react/')) return 'vendor-icons';
           
-          // Ant Design
-          if (/\/node_modules\/(antd|@ant-design|@rc-component|dayjs|stylis|clsx)\//.test(normalized)) {
-            return 'vendor-antd';
-          }
+          // Ant Design Ecosystem
+          if (n.includes('/antd/') || n.includes('/@ant-design/') || n.includes('/@rc-component/') || n.includes('/rc-') || n.includes('/dayjs/') || n.includes('/stylis/')) return 'vendor-antd';
           
-          // Charts + Redux
-          if (/\/node_modules\/(recharts|victory-vendor|d3-|@reduxjs|redux|immer|reselect|react-redux)\//.test(normalized)) {
-            return 'vendor-charts';
-          }
+          // Charts & Redux (Recharts 3.x uses Redux internally)
+          if (n.includes('/recharts/') || n.includes('/d3-') || n.includes('/victory-vendor/') || n.includes('/redux/') || n.includes('/@reduxjs/') || n.includes('/immer/') || n.includes('/reselect/') || n.includes('/react-redux/')) return 'vendor-charts';
           
-          // Three.js + 3D
-          if (/\/node_modules\/(three|three-stdlib|@react-three|postprocessing|n8ao|maath|suspend-react|its-fine|react-use-measure)\//.test(normalized)) {
-            return 'vendor-three';
-          }
+          // 3D / Three.js Ecosystem
+          if (n.includes('/three/') || n.includes('/three-stdlib/') || n.includes('/@react-three/') || n.includes('/postprocessing/') || n.includes('/n8ao/') || n.includes('/maath/') || n.includes('/suspend-react/') || n.includes('/its-fine/') || n.includes('/react-use-measure/')) return 'vendor-three';
           
-          // Deck.gl
-          if (/\/node_modules\/(@deck\.gl|@luma\.gl|@loaders\.gl|@math\.gl|@probe\.gl|mjolnir|hammerjs)\//.test(normalized)) {
-            return 'vendor-deckgl';
-          }
+          // Deck.gl / Map Ecosystem
+          if (n.includes('/@deck.gl/') || n.includes('/@luma.gl/') || n.includes('/@loaders.gl/') || n.includes('/@math.gl/') || n.includes('/@probe.gl/') || n.includes('/mjolnir.js/') || n.includes('/hammerjs/')) return 'vendor-deckgl';
           
-          // Motion
-          if (/\/node_modules\/(framer-motion|motion-dom|motion-utils)\//.test(normalized)) {
-            return 'vendor-motion';
-          }
+          // i18n & Query & State
+          if (n.includes('/i18next/') || n.includes('/react-i18next/')) return 'vendor-i18n';
+          if (n.includes('/@tanstack/')) return 'vendor-query';
+          if (n.includes('/zustand/') || n.includes('/use-sync-external-store/')) return 'vendor-state';
           
-          // i18n
-          if (normalized.includes('i18next')) return 'vendor-i18n';
-          
-          // React Query
-          if (normalized.includes('@tanstack')) return 'vendor-query';
-          
-          // State
-          if (normalized.includes('zustand')) return 'vendor-state';
-          
-          // Icons
-          if (normalized.includes('lucide-react')) return 'vendor-icons';
-          
-          // Small utilities - co-locate with importer
-          return undefined;
-        }
-      }
-    },
-
-            // Charts - Recharts
-            if (id.includes('/recharts/')) return 'vendor-charts';
-
-            // Charts - ECharts (SPLIT INTO SUB-CHUNKS)
-            if (id.includes('/echarts/') || id.includes('/zrender/')) {
-              // Core: Essential functionality
-              if (id.includes('/core/') ||
-                  id.includes('/util/') ||
-                  id.includes('/model/') ||
-                  id.includes('/coord/')) {
-                return 'vendor-echarts-core';
-              }
-              // Charts: Different chart types
-              if (id.includes('/chart/')) {
-                return 'vendor-echarts-charts';
-              }
-              // Components: UI components (tooltip, legend, etc.)
-              if (id.includes('/component/') ||
-                  id.includes('/label/') ||
-                  id.includes('/visual/')) {
-                return 'vendor-echarts-components';
-              }
-              // Renderers: Canvas/SVG rendering
-              if (id.includes('/canvas/') ||
-                  id.includes('/svg/') ||
-                  id.includes('/zrender/')) {
-                return 'vendor-echarts-renderers';
-              }
-              // Fallback
-              return 'vendor-echarts-core';
-            }
-
-            // 3D - Three.js
-            if (id.includes('/three/') ||
-                id.includes('/@react-three/')) {
-              return 'vendor-three';
-            }
-
-            // Maps - Deck.gl + Luma.gl
-            if (id.includes('/@deck.gl/') ||
-                id.includes('/@luma.gl/') ||
-                id.includes('/@loaders.gl/') ||
-                id.includes('/@math.gl/')) {
-              return 'vendor-deckgl';
-            }
-
-            // Maps - Leaflet
-            if (id.includes('/leaflet/') ||
-                id.includes('/react-leaflet/')) {
-              return 'vendor-maps';
-            }
-
-            // Data Processing
-            if (id.includes('/apache-arrow/') ||
-                id.includes('/flatbuffers/')) {
-              return 'vendor-data';
-            }
-
-            // i18n
-            if (id.includes('/i18next/') ||
-                id.includes('/react-i18next/')) {
-              return 'vendor-i18n';
-            }
-
-            // React Query
-            if (id.includes('/@tanstack/react-query/') ||
-                id.includes('/@tanstack/query-core/')) {
-              return 'vendor-query';
-            }
-
-            // Forms
-            if (id.includes('/react-hook-form/') ||
-                id.includes('/zod/') ||
-                id.includes('/@hookform/')) {
-              return 'vendor-forms';
-            }
-
-            // Date
-            if (id.includes('/date-fns/') ||
-                id.includes('/moment/')) {
-              return 'vendor-date';
-            }
-
-            // State Management
-            if (id.includes('/zustand/') ||
-                id.includes('/immer/')) {
-              return 'vendor-state';
-            }
-
-            // Utilities
-            if (id.includes('/lodash/') ||
-                id.includes('/axios/') ||
-                id.includes('/es-toolkit/')) {
-              return 'vendor-utils';
-            }
-
-            // Other vendors
-            return 'vendor-other';
-          }
+          // CRITICAL: Return undefined for unmatched modules.
+          // This forces Rolldown to place them in the chunks of their importers,
+          // preserving laziness and completely eliminating the vendor-other catch-all!
           return undefined;
         },
         assetFileNames: 'assets/[name]-[hash][extname]',
