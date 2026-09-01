@@ -51,9 +51,9 @@ function Scene() {
       {condition === 'storm' && <Lightning />}
       {a.enableRainbow && (condition === 'rain' || condition === 'clear') && timeOfDay === 'day' && <Rainbow />}
       {a.enableFireflies && timeOfDay === 'night' && <Fireflies />}
-      {a.enableBirds && timeOfDay !== 'night' && condition !== 'storm' && <Birds />}
+      {a.enableBirds && timeOfDay !== 'night' && condition !== 'storm' && condition !== 'dust' && <Birds />}
       {a.enableButterflies && timeOfDay === 'day' && condition === 'clear' && <Butterflies />}
-      {a.enableGodRays && timeOfDay !== 'night' && condition !== 'dust' && <GodRays />}
+      {a.enableGodRays && timeOfDay !== 'night' && condition !== 'dust' && condition !== 'storm' && <GodRays />}
 
       {/* Agricultural elements */}
       {a.enableInsects && <InsectsSystem />}
@@ -67,8 +67,19 @@ function Scene() {
       {a.enableWatershed && <WatershedEngineering />}
       {a.enablePlowing && <PlowingTrails />}
 
-      <ContactShadows position={[0, 0.1, 0]} opacity={0.4} scale={200} blur={2} far={30} />
-      <OrbitControls makeDefault enablePan enableZoom enableRotate minDistance={5} maxDistance={200} maxPolarAngle={Math.PI / 2.1} />
+      <ContactShadows position={[0, 0.1, 0]} opacity={0.4} scale={400} blur={3} far={50} />
+      
+      {/* Wider camera controls for larger terrain */}
+      <OrbitControls 
+        makeDefault 
+        enablePan 
+        enableZoom 
+        enableRotate 
+        minDistance={20}
+        maxDistance={500}
+        maxPolarAngle={Math.PI / 2.1}
+        target={[0, 0, 0]}
+      />
     </>
   );
 }
@@ -80,8 +91,17 @@ export function CinematicSimulator() {
     <div style={{ width: '100%', height: '100vh', position: 'relative', background: '#000' }}>
       <Canvas
         shadows
-        camera={{ position: [50, 30, 50], fov: 60, near: 0.1, far: 2000 }}
-        gl={{ antialias: true, toneMapping: 4, toneMappingExposure: timeOfDay === 'night' ? 0.5 : 1.0 }}
+        camera={{ 
+          position: [150, 80, 150],  // Much farther for 800x800 terrain
+          fov: 70,  // Wider FOV
+          near: 0.1, 
+          far: 3000  // Extended far plane
+        }}
+        gl={{ 
+          antialias: true, 
+          toneMapping: 4, 
+          toneMappingExposure: timeOfDay === 'night' ? 0.5 : 1.0 
+        }}
         dpr={[1, 2]}
       >
         <Suspense fallback={null}>
