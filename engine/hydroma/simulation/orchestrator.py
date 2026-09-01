@@ -194,7 +194,7 @@ def run_chain(inputs: ChainInputs, progress_cb: Callable[[str, int], None] | Non
 
     except Exception as exc:
         logger.exception("Chain execution failed")
-        status = "error"
+        status = "failed"
         message = str(exc)
 
     return ChainResult(

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SimulationPipeline Context
  * Global state for sharing data between simulators
  * Each simulator can publish its results, and Visualization3D consumes them

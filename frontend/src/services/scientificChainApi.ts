@@ -1,4 +1,4 @@
-﻿import type { ScientificChainResult } from '../types/vll';
+import type { ScientificChainResult } from '../types/vll';
 
 const API_BASE = '/api';
 

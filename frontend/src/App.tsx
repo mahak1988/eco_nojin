@@ -1,4 +1,4 @@
-ï»؟import Diag3D from './pages/Diag3D';
+import Diag3D from './pages/Diag3D';
 import { SimulationPipelineProvider } from './contexts/SimulationPipeline';
 import { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
@@ -30,10 +30,10 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 import LoadingSpinner from './components/common/LoadingSpinner';
 
-// Entry page أ¢â‚¬â€‌ eager for first paint
+// Entry page â€” eager for first paint
 import { HomePage } from './pages/HomePage';
 
-// Code-splitting (Phase 3): ط·آ¨ط¸â€ڑط؛إ’ط¸â€، ط·آµط¸ظ¾ط·آ­ط·آ§ط·ع¾ lazy أ¢â‚¬â€‌ ط·آ¨ط·آ§ط¸â€ ط·آ¯ط¸â€‍ ط·آ§ط¸ث†ط¸â€‍ط؛إ’ط¸â€، ط¹آ©ط¸ث†ط¹â€ ط¹آ©أ¢â‚¬إ’ط·ع¾ط·آ±
+// Code-splitting (Phase 3): ط¨ظ‚غŒظ‡ طµظپط­ط§طھ lazy â€” ط¨ط§ظ†ط¯ظ„ ط§ظˆظ„غŒظ‡ ع©ظˆع†ع©â€Œطھط±
 const HelpDocs = lazy(() => import('./pages/HelpDocs'));
 const Support = lazy(() => import('./pages/Support'));
 
@@ -145,7 +145,7 @@ function App() {
                 <ProtectedRoute requiredRole="admin">
                   <ThemeProvider>
                     <AdminLayout>
-                      {/* ContentStudio removed - import missing */}
+                      {/* ContentStudio removed */}
                     </AdminLayout>
                   </ThemeProvider>
                 </ProtectedRoute>
@@ -193,7 +193,7 @@ function App() {
                 <ProtectedRoute requiredRole="admin">
                   <ThemeProvider>
                     <AdminLayout>
-                      {/* BotsManagement removed - import missing */}
+                      {/* BotsManagement removed */}
                     </AdminLayout>
                   </ThemeProvider>
                 </ProtectedRoute>
@@ -205,7 +205,7 @@ function App() {
                 <ProtectedRoute requiredRole="admin">
                   <ThemeProvider>
                     <AdminLayout>
-                      {/* AIModelsMonitor removed - import missing */}
+                      {/* AIModelsMonitor removed */}
                     </AdminLayout>
                   </ThemeProvider>
                 </ProtectedRoute>
@@ -214,23 +214,23 @@ function App() {
 
             {/* Public */}
             <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={{/* AboutPage removed - import missing */}} />
-            <Route path="/mission" element={{/* MissionPage removed - import missing */}} />
-            <Route path="/features" element={{/* FeaturesPage removed - import missing */}} />
-            <Route path="/pricing" element={{/* PricingPage removed - import missing */}} />
-            <Route path="/terms" element={{/* TermsPage removed - import missing */}} />
-            <Route path="/privacy" element={{/* PrivacyPage removed - import missing */}} />
-            <Route path="/blog" element={{/* BlogPage removed - import missing */}} />
-            <Route path="/contact" element={{/* ContactPage removed - import missing */}} />
-            <Route path="/docs" element={{/* DocsPage removed - import missing */}} />
-            <Route path="/hydroma-about" element={{/* HydromaPage removed - import missing */}} />
+            <Route path="/about" element={{/* AboutPage removed */}} />
+            <Route path="/mission" element={{/* MissionPage removed */}} />
+            <Route path="/features" element={{/* FeaturesPage removed */}} />
+            <Route path="/pricing" element={{/* PricingPage removed */}} />
+            <Route path="/terms" element={{/* TermsPage removed */}} />
+            <Route path="/privacy" element={{/* PrivacyPage removed */}} />
+            <Route path="/blog" element={{/* BlogPage removed */}} />
+            <Route path="/contact" element={{/* ContactPage removed */}} />
+            <Route path="/docs" element={{/* DocsPage removed */}} />
+            <Route path="/hydroma-about" element={{/* HydromaPage removed */}} />
             <Route path="/help" element={<HelpDocs />} />
             <Route path="/support" element={<Support />} />
 
             {/* Auth */}
-            <Route path="/login" element={{/* LoginPage removed - import missing */}} />
-            <Route path="/register" element={{/* RegisterPage removed - import missing */}} />
-            <Route path="/forgot-password" element={{/* ForgotPasswordPage removed - import missing */}} />
+            <Route path="/login" element={{/* LoginPage removed */}} />
+            <Route path="/register" element={{/* RegisterPage removed */}} />
+            <Route path="/forgot-password" element={{/* ForgotPasswordPage removed */}} />
 
             {/* App (protected) */}
             <Route
@@ -247,7 +247,7 @@ function App() {
               path="/simulators"
               element={
                 <ProtectedRoute>
-                  {/* VisualSimulatorsPage removed - import missing */}
+                  {/* VisualSimulatorsPage removed */}
                 </ProtectedRoute>
               }
             />
@@ -255,7 +255,7 @@ function App() {
               path="/virtual-lab"
               element={
                 <ProtectedRoute>
-                  {/* VirtualLandLabPage removed - import missing */}
+                  {/* VirtualLandLabPage removed */}
                 </ProtectedRoute>
               }
             />
@@ -263,7 +263,7 @@ function App() {
               path="/profile"
               element={
                 <ProtectedRoute>
-                  {/* ProfilePage removed - import missing */}
+                  {/* ProfilePage removed */}
                 </ProtectedRoute>
               }
             />
@@ -357,7 +357,7 @@ function App() {
                 <ProtectedRoute requiredRole="admin">
                   <ThemeProvider>
                     <AdminLayout>
-                      {/* MotorRunner removed - import missing */}
+                      {/* MotorRunner removed */}
                     </AdminLayout>
                   </ThemeProvider>
                 </ProtectedRoute>

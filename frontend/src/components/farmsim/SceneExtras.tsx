@@ -1,4 +1,4 @@
-﻿import { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Instances, Instance, Line, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { worldToGrid } from '../../lib/terrainGenerator';
