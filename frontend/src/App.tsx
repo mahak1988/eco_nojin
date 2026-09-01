@@ -97,11 +97,9 @@ const Settings = lazy(() => import('./pages/Settings'));
 import './styles/global.css';
 
 // Lazy-loaded heavy modules for performance optimization
-import React, { lazy, Suspense } from 'react';
 import { LazyWrapper } from './components/common/LazyWrapper';
 
 // Heavy 3D modules - loaded on demand
-const HydromaDashboard = lazy(() => import('./features/hydroma/HydromaDashboard'));
 const MotorRunner = lazy(() => import('./features/motor-runner/MotorRunner'));
 
 // Admin modules - loaded on demand
@@ -112,7 +110,6 @@ const AIModelsMonitor = lazy(() => import('./features/ai-models/AIModelsMonitor'
 
 // Heavy chart modules
 const AnalyticsDashboard = lazy(() => import('./features/analytics/AnalyticsDashboard'));
-
 
 function App() {
   return (
