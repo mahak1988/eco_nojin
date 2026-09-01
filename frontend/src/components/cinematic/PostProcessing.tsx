@@ -1,52 +1,82 @@
-import { EffectComposer, Bloom, DepthOfField, Vignette, ChromaticAberration, HueSaturation } from '@react-three/postprocessing';
+import { EffectComposer, Bloom, DepthOfField, Vignette, ChromaticAberration, HueSaturation, BrightnessContrast } from '@react-three/postprocessing';
 import { BlendFunction } from 'postprocessing';
 import { N8AO } from '@react-three/postprocessing';
 import { useWeatherStore } from '../../hooks/useWeatherStore';
+import { useArtisticStore } from '../../hooks/useArtisticStore';
 import { Vector2 } from 'three';
 
 export function PostProcessing() {
-  const { enablePostProcessing, condition, timeOfDay } = useWeatherStore();
+  const { enablePostProcessing, condition, timeOfDay } = useArtisticStore();
+  const weather = useWeatherStore();
 
   if (!enablePostProcessing) return null;
 
   // Color grading based on weather
   const hueShift = (() => {
-    if (condition === 'drought') return -0.05;
-    if (condition === 'snow') return 0.05;
+    if (weather.condition === 'drought') return -0.05;
+    if (weather.condition === 'snow') return 0.05;
+    if (weather.condition === 'dust') return -0.08;
     return 0;
   })();
 
   const saturation = (() => {
-    if (condition === 'drought') return -0.3;
-    if (timeOfDay === 'night') return -0.5;
-    if (timeOfDay === 'dawn' || timeOfDay === 'dusk') return 0.2;
-    return 0.1;
+    if (weather.condition === 'drought') return -0.25;
+    if (weather.condition === 'dust') return -0.4;
+    if (weather.condition === 'storm') return -0.3;
+    if (weather.timeOfDay === 'night') return -0.4;
+    if (weather.timeOfDay === 'dawn' || weather.timeOfDay === 'dusk') return 0.15;
+    return 0.08;
+  })();
+
+  const brightness = (() => {
+    if (weather.condition === 'storm' || weather.condition === 'dust') return -0.15;
+    if (weather.timeOfDay === 'night') return -0.2;
+    return 0;
+  })();
+
+  const contrast = (() => {
+    if (weather.timeOfDay === 'dawn' || weather.timeOfDay === 'dusk') return 0.15;
+    if (weather.condition === 'dust') return -0.1;
+    return 0.05;
   })();
 
   return (
-    <EffectComposer multisampling={0}>
-      {/* SSAO for ambient occlusion shadows */}
+    <EffectComposer 
+      multisampling={8}  // 8x MSAA for ultra-smooth edges
+      frameBufferType={THREE.HalfFloatType}  // HDR rendering
+    >
+      {/* Ultra quality SSAO via N8AO */}
       <N8AO
-        aoRadius={1}
-        intensity={2}
-        distanceFalloff={1}
-        color="#000000"
+        aoRadius={0.8}
+        intensity={2.5}
+        distanceFalloff={0.8}
+        color="#1a1a2e"
+        quality="ultra"  // Ultra quality preset
+        halfRes={false}  // Full resolution
       />
 
-      {/* Bloom for bright light glow */}
+      {/* Enhanced Bloom with mipmapped blur */}
       <Bloom
-        intensity={timeOfDay === 'night' ? 0.8 : 0.4}
-        luminanceThreshold={0.8}
-        luminanceSmoothing={0.9}
+        intensity={weather.timeOfDay === 'night' ? 1.2 : 0.5}
+        luminanceThreshold={0.75}
+        luminanceSmoothing={0.85}
         mipmapBlur
+        radius={0.85}
+        levels={8}
       />
 
-      {/* Depth of field for cinematic focus */}
+      {/* Cinematic Depth of Field */}
       <DepthOfField
-        focusDistance={0.01}
-        focalLength={0.05}
-        bokehScale={3}
-        height={480}
+        focusDistance={0.015}
+        focalLength={0.04}
+        bokehScale={2.5}
+        height={720}
+      />
+
+      {/* Brightness & Contrast for cinematic look */}
+      <BrightnessContrast
+        brightness={brightness}
+        contrast={contrast}
       />
 
       {/* Color grading */}
@@ -55,17 +85,17 @@ export function PostProcessing() {
         saturation={saturation}
       />
 
-      {/* Vignette for cinematic frame */}
+      {/* Cinematic Vignette */}
       <Vignette
         eskil={false}
-        offset={0.2}
-        darkness={0.8}
+        offset={0.25}
+        darkness={0.85}
       />
 
-      {/* Chromatic aberration for storm effect */}
-      {(condition === 'storm' || condition === 'dust') && (
+      {/* Chromatic aberration for storm/dust */}
+      {(weather.condition === 'storm' || weather.condition === 'dust') && (
         <ChromaticAberration
-          offset={new Vector2(0.002, 0.002)}
+          offset={new Vector2(0.0015, 0.0015)}
           radialModulation={true}
           modulationOffset={0.5}
         />
