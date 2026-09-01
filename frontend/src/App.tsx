@@ -52,6 +52,7 @@ import './styles/global.css';
 
 // Lazy-loaded heavy modules for performance optimization
 import { LazyWrapper } from './components/common/LazyWrapper';
+import { CinematicMode } from './components/cinematic/CinematicMode';
 
 // Heavy 3D modules - loaded on demand
 
@@ -61,6 +62,7 @@ import { LazyWrapper } from './components/common/LazyWrapper';
 
 function App() {
   return (
+      <CinematicMode />
     <AuthProvider>
       <Suspense fallback={<LoadingSpinner fullScreen />}>
         <SimulationPipelineProvider>
