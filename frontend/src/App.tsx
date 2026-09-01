@@ -48,6 +48,7 @@ const DataManagement = lazy(() => import('./pages/DataManagement'));
 const LandProfiles = lazy(() => import('./pages/LandProfiles'));
 const APIDocumentation = lazy(() => import('./pages/APIDocumentation'));
 const Settings = lazy(() => import('./pages/Settings'));
+const CinematicSimulator = lazy(() => import('./components/cinematic/CinematicSimulator'));
 import './styles/global.css';
 
 // Lazy-loaded heavy modules for performance optimization
@@ -62,7 +63,8 @@ import { CinematicMode } from './components/cinematic/CinematicMode';
 
 function App() {
   return (
-      <CinematicMode />
+      <>
+        <CinematicMode />
     <AuthProvider>
       <Suspense fallback={<LoadingSpinner fullScreen />}>
         <SimulationPipelineProvider>
@@ -216,6 +218,7 @@ function App() {
 
             {/* Public */}
             <Route path="/" element={<HomePage />} />
+            <Route path="/cinematic" element={<Suspense fallback={<div>در حال بارگذاری...</div>}><CinematicSimulator /></Suspense>} />
             <Route path="/about" element={{/* AboutPage removed */}} />
             <Route path="/mission" element={{/* MissionPage removed */}} />
             <Route path="/features" element={{/* FeaturesPage removed */}} />
@@ -235,11 +238,7 @@ function App() {
             <Route path="/forgot-password" element={{/* ForgotPasswordPage removed */}} />
 
             {/* App (protected) */}
-            <Route
-              path="/hydroma"
-              element={
-                <ProtectedRoute>
-                  <HyDroMaCenter />
+            <Route path="/hydroma" element={<Suspense fallback={<div>در حال بارگذاری...</div>}><CinematicSimulator /></Suspense>} />
                 </ProtectedRoute>
               }
             />
@@ -410,6 +409,7 @@ function App() {
         </SimulationPipelineProvider>
       </Suspense>
     </AuthProvider>
+      </>
   );
 }
 

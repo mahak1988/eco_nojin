@@ -15,9 +15,20 @@ export interface ArtisticState {
   enableFilmGrain: boolean;
   enableLensFlare: boolean;
   timeScale: number;
+  // Agricultural toggles
+  enableInsects: boolean;
+  enableDomesticAnimals: boolean;
+  enablePoultry: boolean;
+  enableFlood: boolean;
+  enableIrrigation: boolean;
+  enableWell: boolean;
+  enableRiver: boolean;
+  enableCoastline: boolean;
+  enableWatershed: boolean;
+  enablePlowing: boolean;
 
   setSeason: (s: Season) => void;
-  toggle: (key: keyof Omit<ArtisticState, 'season' | 'timeScale' | 'setSeason' | 'toggle' | 'setTimeScale'>) => void;
+  toggle: (key: string) => void;
   setTimeScale: (t: number) => void;
 }
 
@@ -34,8 +45,19 @@ export const useArtisticStore = create<ArtisticState>((set) => ({
   enableFilmGrain: true,
   enableLensFlare: false,
   timeScale: 1,
+  // Agricultural defaults
+  enableInsects: true,
+  enableDomesticAnimals: true,
+  enablePoultry: true,
+  enableFlood: false,
+  enableIrrigation: true,
+  enableWell: true,
+  enableRiver: true,
+  enableCoastline: true,
+  enableWatershed: true,
+  enablePlowing: true,
 
   setSeason: (season) => set({ season }),
-  toggle: (key) => set((s) => ({ [key]: !s[key] } as any)),
+  toggle: (key) => set((s) => ({ [key]: !(s as any)[key] })),
   setTimeScale: (timeScale) => set({ timeScale }),
 }));
