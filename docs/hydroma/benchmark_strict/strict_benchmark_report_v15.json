@@ -1,0 +1,43 @@
+{
+  "benchmark_id": "STRICT_20260901_040049",
+  "version": "15.0-strict",
+  "generated_at": "2026-09-01T04:00:49.400788",
+  "tests": {
+    "response_time": {
+      "avg_ms": 0.002,
+      "p95_ms": 0.002,
+      "p99_ms": 0.003,
+      "max_ms": 0.039,
+      "min_ms": 0.002,
+      "iterations": 1000,
+      "target_ms": 10.0,
+      "passed": true
+    },
+    "concurrent_load": {
+      "total_time_s": 0.056,
+      "throughput_rps": 17991.0,
+      "errors": 0,
+      "error_rate_percent": 0.0,
+      "target_rps": 1000,
+      "passed": true
+    },
+    "stability": {
+      "iterations": 10000,
+      "errors": 0,
+      "error_rate_percent": 0.0,
+      "target_error_rate": 0.0,
+      "passed": true
+    },
+    "accuracy": {
+      "avg_error_percent": 24.8,
+      "max_error_percent": 49.07,
+      "target_error_percent": 15.0,
+      "passed": false
+    }
+  },
+  "summary": {
+    "total_tests": 4,
+    "passed": 3,
+    "failed": 1
+  }
+}
