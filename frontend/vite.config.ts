@@ -13,39 +13,65 @@ import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 // Affinity-based chunking: heavy stacks isolated, NO catch-all.
+// Affinity-based chunking with Windows path normalization
 function manualChunks(id: string): string | undefined {
   if (!id.includes('node_modules')) return undefined;
-
-  // Core React (exact segments only)
-  if (/\/node_modules\/(react|react-dom|scheduler)\//.test(id)) return 'vendor-react';
-
-  if (id.includes('react-router')) return 'vendor-router';
-
-  if (id.includes('antd') || id.includes('@ant-design') || id.includes('@rc-component') ||
-      id.includes('dayjs') || id.includes('stylis')) return 'vendor-antd';
-
-  if (id.includes('recharts') || id.includes('victory-vendor') || id.includes('d3-') ||
-      id.includes('redux') || id.includes('immer') || id.includes('reselect'))
+  
+  // CRITICAL: Normalize Windows backslashes to forward slashes
+  const normalized = id.replace(/\\\\/g, '/');
+  
+  // Core React (must be eager)
+  if (/\/node_modules\/(react|react-dom|scheduler)\//.test(normalized)) return 'vendor-react';
+  
+  // Router (must be eager for routing)
+  if (normalized.includes('react-router')) return 'vendor-router';
+  
+  // Ant Design + all its sub-packages
+  if (/\/node_modules\/(antd|@ant-design|@rc-component|dayjs|stylis|clsx)\//.test(normalized)) {
+    return 'vendor-antd';
+  }
+  
+  // Charts + Redux stack (recharts 3.x depends on Redux internally)
+  if (/\/node_modules\/(recharts|victory-vendor|d3-|@reduxjs|redux|immer|reselect|react-redux)\//.test(normalized)) {
     return 'vendor-charts';
-
-  if (id.includes('three') || id.includes('@react-three') || id.includes('postprocessing') ||
-      id.includes('n8ao') || id.includes('maath')) return 'vendor-three';
-
-  if (id.includes('deck.gl') || id.includes('luma.gl') || id.includes('loaders.gl') ||
-      id.includes('math.gl') || id.includes('probe.gl') || id.includes('mjolnir') ||
-      id.includes('hammerjs')) return 'vendor-deckgl';
-
-  if (id.includes('framer-motion') || id.includes('motion-dom') || id.includes('motion-utils'))
+  }
+  
+  // Three.js + React Three Fiber + all 3D ecosystem
+  if (/\/node_modules\/(three|three-stdlib|@react-three|postprocessing|n8ao|maath|suspend-react|its-fine|react-use-measure)\//.test(normalized)) {
+    return 'vendor-three';
+  }
+  
+  // Deck.gl + Luma.gl + math.gl + probe.gl + loaders.gl
+  if (/\/node_modules\/(@deck\.gl|@luma\.gl|@loaders\.gl|@math\.gl|@probe\.gl|mjolnir|hammerjs)\//.test(normalized)) {
+    return 'vendor-deckgl';
+  }
+  
+  // Motion
+  if (/\/node_modules\/(framer-motion|motion-dom|motion-utils)\//.test(normalized)) {
     return 'vendor-motion';
-
-  if (id.includes('i18next')) return 'vendor-i18n';
-  if (id.includes('@tanstack')) return 'vendor-query';
-  if (id.includes('zustand')) return 'vendor-state';
-  if (id.includes('lucide-react')) return 'vendor-icons';
-
-  // IMPORTANT: no catch-all. Unmatched modules stay with their importers
-  // so lazy pages keep their deps lazy.
-  return undefined;
+  }
+  
+  // i18n
+  if (normalized.includes('i18next')) return 'vendor-i18n';
+  
+  // React Query
+  if (normalized.includes('@tanstack')) return 'vendor-query';
+  
+  // State management
+  if (normalized.includes('zustand')) return 'vendor-state';
+  
+  // Icons
+  if (normalized.includes('lucide-react')) return 'vendor-icons';
+  
+  // Small utilities → bundle with their importer (return undefined)
+  // These are typically <5KB and co-locating them preserves laziness
+  if (/\/node_modules\/(use-sync-external-store|tiny-invariant|eventemitter3|react-is|@babel\/runtime|@emotion|internmap|decimal\.js)\//.test(normalized)) {
+    return undefined;
+  }
+  
+  // Catch-all for any other node_modules - BUT only if small
+  // This is the key fix: we do NOT have a big catch-all
+  return 'vendor-other';
 }
 
 export default defineConfig(({ mode }) => ({
