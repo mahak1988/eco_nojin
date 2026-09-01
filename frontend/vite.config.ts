@@ -12,6 +12,42 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 
+// Affinity-based chunking: heavy stacks isolated, NO catch-all.
+function manualChunks(id: string): string | undefined {
+  if (!id.includes('node_modules')) return undefined;
+
+  // Core React (exact segments only)
+  if (/\/node_modules\/(react|react-dom|scheduler)\//.test(id)) return 'vendor-react';
+
+  if (id.includes('react-router')) return 'vendor-router';
+
+  if (id.includes('antd') || id.includes('@ant-design') || id.includes('@rc-component') ||
+      id.includes('dayjs') || id.includes('stylis')) return 'vendor-antd';
+
+  if (id.includes('recharts') || id.includes('victory-vendor') || id.includes('d3-') ||
+      id.includes('redux') || id.includes('immer') || id.includes('reselect'))
+    return 'vendor-charts';
+
+  if (id.includes('three') || id.includes('@react-three') || id.includes('postprocessing') ||
+      id.includes('n8ao') || id.includes('maath')) return 'vendor-three';
+
+  if (id.includes('deck.gl') || id.includes('luma.gl') || id.includes('loaders.gl') ||
+      id.includes('math.gl') || id.includes('probe.gl') || id.includes('mjolnir') ||
+      id.includes('hammerjs')) return 'vendor-deckgl';
+
+  if (id.includes('framer-motion') || id.includes('motion-dom') || id.includes('motion-utils'))
+    return 'vendor-motion';
+
+  if (id.includes('i18next')) return 'vendor-i18n';
+  if (id.includes('@tanstack')) return 'vendor-query';
+  if (id.includes('zustand')) return 'vendor-state';
+  if (id.includes('lucide-react')) return 'vendor-icons';
+
+  // IMPORTANT: no catch-all. Unmatched modules stay with their importers
+  // so lazy pages keep their deps lazy.
+  return undefined;
+}
+
 export default defineConfig(({ mode }) => ({
   plugins: [
       react(),
