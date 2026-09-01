@@ -11,6 +11,9 @@ Solution:
 3. Build the project
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import json
@@ -204,32 +207,32 @@ export default defineConfig(({ mode }) => ({
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🔧 Fix pnpm v11 Build Scripts Approval\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[96m  🔧 Fix pnpm v11 Build Scripts Approval\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # ═══ Step 1: Update package.json ═══
-    print("\033[1mStep 1: به‌روزرسانی package.json\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 1: به‌روزرسانی package.json\033[0m")
+    logger.info("-" * 70)
     if not update_package_json():
         return 1
-    print()
+    logger.info()
 
     # ═══ Step 2: Write simplified vite config (no explicit esbuild) ═══
-    print("\033[1mStep 2: ساده‌سازی vite.config.ts\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 2: ساده‌سازی vite.config.ts\033[0m")
+    logger.info("-" * 70)
     info("حذف minify: 'esbuild' (استفاده از default Rolldown minifier)...")
     VITE_CONFIG.write_text(VITE_CONFIG_NO_ESBUILD, encoding="utf-8")
     ok("vite.config.ts اصلاح شد")
-    print()
+    logger.info()
 
     # ═══ Step 3: Reinstall esbuild with approval ═══
-    print("\033[1mStep 3: نصب مجدد esbuild با approval\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 3: نصب مجدد esbuild با approval\033[0m")
+    logger.info("-" * 70)
     info("اجرای pnpm install...")
     result = subprocess.run(
         "pnpm install",
@@ -245,14 +248,14 @@ def main():
     if result.returncode != 0:
         warn("pnpm install با warning:")
         for line in (result.stdout + result.stderr).splitlines()[-15:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
     else:
         ok("esbuild نصب شد")
-    print()
+    logger.info()
 
     # ═══ Step 4: Build ═══
-    print("\033[1mStep 4: اجرای build\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 4: اجرای build\033[0m")
+    logger.info("-" * 70)
     info("Building production bundle...")
     result = subprocess.run(
         "pnpm build",
@@ -270,26 +273,26 @@ def main():
     if result.returncode != 0:
         err("Build شکست خورد")
         for line in output.splitlines()[-35:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
 
     ok("Build موفق!")
-    print()
+    logger.info()
 
     # Show bundle
     info("Bundle chunks:")
     for line in result.stdout.splitlines():
         if "dist/assets/" in line and ("vendor" in line or "index" in line or "HyDroMaCenter" in line):
-            print(f"  {line.strip()}")
-    print()
+            logger.info(f"  {line.strip()}")
+    logger.info()
     for line in result.stdout.splitlines():
         if "built in" in line:
-            print(f"  {line.strip()}")
-    print()
+            logger.info(f"  {line.strip()}")
+    logger.info()
 
     # ═══ Step 5: Tests ═══
-    print("\033[1mStep 5: اجرای تست‌ها\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 5: اجرای تست‌ها\033[0m")
+    logger.info("-" * 70)
     test_result = subprocess.run(
         "pnpm test",
         shell=True,
@@ -302,12 +305,12 @@ def main():
     )
     for line in test_result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 6: Commit ═══
-    print("\033[1mStep 6: commit\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 6: commit\033[0m")
+    logger.info("-" * 70)
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
         subprocess.run(
@@ -319,32 +322,32 @@ def main():
     except Exception as e:
         warn(f"commit: {e}")
 
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 Phase 3 - Performance Setup Complete!\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[92m  🎉 Phase 3 - Performance Setup Complete!\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 دستاوردها:")
-    print("    ✓ pnpm v11 build scripts approved")
-    print("    ✓ Vite 8 + Rolldown compatible config")
-    print("    ✓ Manual chunks for vendor splitting")
-    print("    ✓ Design tokens (colors, spacing, typography)")
-    print("    ✓ Animation utilities (GPU-accelerated)")
-    print("    ✓ Performance monitoring (Core Web Vitals)")
-    print("    ✓ Smooth scroll & accessibility")
-    print()
+    logger.info("  📊 دستاوردها:")
+    logger.info("    ✓ pnpm v11 build scripts approved")
+    logger.info("    ✓ Vite 8 + Rolldown compatible config")
+    logger.info("    ✓ Manual chunks for vendor splitting")
+    logger.info("    ✓ Design tokens (colors, spacing, typography)")
+    logger.info("    ✓ Animation utilities (GPU-accelerated)")
+    logger.info("    ✓ Performance monitoring (Core Web Vitals)")
+    logger.info("    ✓ Smooth scroll & accessibility")
+    logger.info()
 
-    print("  🎯 استفاده از animation utilities:")
-    print("    import { fadeIn, slideUp, buttonEffect } from '@/utils/animations';")
-    print("    <motion.div variants={fadeIn}>...</motion.div>")
-    print()
+    logger.info("  🎯 استفاده از animation utilities:")
+    logger.info("    import { fadeIn, slideUp, buttonEffect } from '@/utils/animations';")
+    logger.info("    <motion.div variants={fadeIn}>...</motion.div>")
+    logger.info()
 
-    print("  🎨 استفاده از design tokens:")
-    print("    .card {")
-    print("      background: var(--bg-card);")
-    print("      border-radius: var(--radius-lg);")
-    print("      box-shadow: var(--shadow-md);")
-    print("    }")
-    print()
+    logger.info("  🎨 استفاده از design tokens:")
+    logger.info("    .card {")
+    logger.info("      background: var(--bg-card);")
+    logger.info("      border-radius: var(--radius-lg);")
+    logger.info("      box-shadow: var(--shadow-md);")
+    logger.info("    }")
+    logger.info()
 
     return 0
 

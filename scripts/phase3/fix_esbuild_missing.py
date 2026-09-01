@@ -8,6 +8,9 @@ We need to install it separately.
 Also: simplify minify config for compatibility.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import subprocess
@@ -166,9 +169,9 @@ export default defineConfig(({ mode }) => ({
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🔧 Fix Vite 8 Build - Install esbuild\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[96m  🔧 Fix Vite 8 Build - Install esbuild\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
@@ -191,13 +194,13 @@ def main():
         ok("esbuild نصب شد")
     else:
         warn(f"esbuild installation: {result.stderr[:200] if result.stderr else 'unknown error'}")
-    print()
+    logger.info()
 
     # ═══ Step 2: Update vite.config.ts ═══
     info("Step 2: به‌روزرسانی vite.config.ts...")
     VITE_CONFIG.write_text(VITE_CONFIG_FIXED, encoding="utf-8")
     ok("vite.config.ts اصلاح شد")
-    print()
+    logger.info()
 
     # ═══ Step 3: Build ═══
     info("Step 3: اجرای build...")
@@ -217,22 +220,22 @@ def main():
     if result.returncode != 0:
         err("Build شکست خورد")
         for line in output.splitlines()[-30:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
 
     ok("Build موفق!")
-    print()
+    logger.info()
 
     # Show bundle info
     info("Bundle chunks:")
     for line in result.stdout.splitlines():
         if "dist/assets/" in line and ("vendor" in line or "index" in line):
-            print(f"  {line.strip()}")
-    print()
+            logger.info(f"  {line.strip()}")
+    logger.info()
     for line in result.stdout.splitlines():
         if "built in" in line:
-            print(f"  {line.strip()}")
-    print()
+            logger.info(f"  {line.strip()}")
+    logger.info()
 
     # ═══ Step 4: Run tests ═══
     info("Step 4: اجرای تست‌ها...")
@@ -248,8 +251,8 @@ def main():
     )
     for line in test_result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 5: Commit ═══
     info("Step 5: commit...")
@@ -264,27 +267,27 @@ def main():
     except Exception as e:
         warn(f"commit: {e}")
 
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 Vite 8 Build Fixed!\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[92m  🎉 Vite 8 Build Fixed!\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  Changes:")
-    print("    ✓ Installed esbuild as dev dependency")
-    print("    ✓ Fixed minify config (no explicit 'esbuild')")
-    print("    ✓ Fixed manualChunks function (Rolldown)")
-    print("    ✓ Fixed import.meta.dirname (Vite 8)")
-    print()
+    logger.info("  Changes:")
+    logger.info("    ✓ Installed esbuild as dev dependency")
+    logger.info("    ✓ Fixed minify config (no explicit 'esbuild')")
+    logger.info("    ✓ Fixed manualChunks function (Rolldown)")
+    logger.info("    ✓ Fixed import.meta.dirname (Vite 8)")
+    logger.info()
 
-    print("  Vendor chunks:")
-    print("    • vendor-react (core React)")
-    print("    • vendor-ui (framer-motion, lucide)")
-    print("    • vendor-charts (recharts)")
-    print("    • vendor-3d (three.js)")
-    print("    • vendor-maps (leaflet)")
-    print("    • vendor-i18n (i18next)")
-    print("    • vendor-query (react-query)")
-    print("    • vendor-other (remaining)")
-    print()
+    logger.info("  Vendor chunks:")
+    logger.info("    • vendor-react (core React)")
+    logger.info("    • vendor-ui (framer-motion, lucide)")
+    logger.info("    • vendor-charts (recharts)")
+    logger.info("    • vendor-3d (three.js)")
+    logger.info("    • vendor-maps (leaflet)")
+    logger.info("    • vendor-i18n (i18next)")
+    logger.info("    • vendor-query (react-query)")
+    logger.info("    • vendor-other (remaining)")
+    logger.info()
 
     return 0
 

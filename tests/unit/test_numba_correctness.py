@@ -1,5 +1,8 @@
 """Tests for Muskingum-Cunge flood routing."""
 
+import structlog
+
+logger = structlog.get_logger()
 import numpy as np
 
 from engine.hydroma.cpp_bridge.hydrology_fast import (
@@ -127,10 +130,10 @@ def test_wave_parameters():
     assert params["normal_depth"] > 0
     assert params["normal_depth"] < 10
 
-    print("\n  Wave parameters:")
-    print(f"    Travel time K: {params['K']:.0f} s")
-    print(f"    Celerity: {params['celerity']:.2f} m/s")
-    print(f"    Normal depth: {params['normal_depth']:.2f} m")
+    logger.info("\n  Wave parameters:")
+    logger.info(f"    Travel time K: {params['K']:.0f} s")
+    logger.info(f"    Celerity: {params['celerity']:.2f} m/s")
+    logger.info(f"    Normal depth: {params['normal_depth']:.2f} m")
 
 
 def test_flood_routing_produces_outflow():
@@ -170,12 +173,12 @@ def test_flood_routing_produces_outflow():
     # Time lag should be positive
     assert result["time_lag"] >= 0, f"Time lag should be non-negative, got {result['time_lag']}"
 
-    print("\n  Flood routing results (Muskingum-Cunge):")
-    print(f"    Peak inflow:  {result['peak_inflow']:.2f} m³/s")
-    print(f"    Peak outflow: {result['peak_outflow']:.2f} m³/s")
-    print(f"    Attenuation:  {result['attenuation_ratio']:.1%}")
-    print(f"    Time lag:     {result['time_lag']:.0f} s")
-    print(f"    Travel time:  {result['travel_time']:.0f} s")
+    logger.info("\n  Flood routing results (Muskingum-Cunge):")
+    logger.info(f"    Peak inflow:  {result['peak_inflow']:.2f} m³/s")
+    logger.info(f"    Peak outflow: {result['peak_outflow']:.2f} m³/s")
+    logger.info(f"    Attenuation:  {result['attenuation_ratio']:.1%}")
+    logger.info(f"    Time lag:     {result['time_lag']:.0f} s")
+    logger.info(f"    Travel time:  {result['travel_time']:.0f} s")
 
 
 def test_flood_routing_attenuation_increases_with_length():

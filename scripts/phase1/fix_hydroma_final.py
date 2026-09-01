@@ -7,6 +7,9 @@ Fix HyDroMaCenter.tsx + vite.config.ts - Final
 2. اصلاح manualChunks در vite.config.ts (Object → Function)
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import re
 import sys
 import shutil
@@ -36,9 +39,9 @@ def success(msg): print(f"{Colors.GREEN}✓{Colors.RESET}  {msg}")
 def warning(msg): print(f"{Colors.YELLOW}⚠{Colors.RESET}  {msg}")
 def error(msg): print(f"{Colors.RED}✗{Colors.RESET}  {msg}")
 def header(msg):
-    print(f"\n{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.CYAN}  {msg}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}\n")
+    logger.info(f"\n{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{Colors.CYAN}  {msg}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}\n")
 
 
 def backup(path: Path) -> Path:
@@ -71,13 +74,13 @@ def fix_hydroma_extra_close() -> bool:
     # نمایش خطوط 4260-4280 برای تشخیص
     target_line = 4268
     info(f"نمایش خطوط {target_line-8} تا {target_line+12}:")
-    print(f"\n{Colors.BOLD}محتوای فعلی:{Colors.RESET}")
+    logger.info(f"\n{Colors.BOLD}محتوای فعلی:{Colors.RESET}")
     for i in range(max(0, target_line - 9), min(len(lines), target_line + 12)):
         marker = ">>> " if i + 1 == target_line else "    "
         line_text = lines[i].rstrip()
         if len(line_text) > 100:
             line_text = line_text[:100] + "..."
-        print(f"  {marker}{i+1:4d} │ {line_text}")
+        logger.info(f"  {marker}{i+1:4d} │ {line_text}")
 
     # استراتژی ۱: الگوی دقیق
     # در کد فعلی، بعد از اصلاح قبلی، احتمالاً این الگو داریم:
@@ -357,14 +360,14 @@ def test_build() -> bool:
         error_lines = [l for l in lines if "error" in l.lower() or "Error" in l or "✗" in l]
 
         if error_lines:
-            print(f"\n{Colors.BOLD}خطاهای یافت شده:{Colors.RESET}")
+            logger.info(f"\n{Colors.BOLD}خطاهای یافت شده:{Colors.RESET}")
             for l in error_lines[:15]:
-                print(f"  {l}")
+                logger.info(f"  {l}")
 
         # نمایش ۲۵ خط آخر
-        print(f"\n{Colors.BOLD}۲۵ خط آخر خروجی:{Colors.RESET}")
+        logger.info(f"\n{Colors.BOLD}۲۵ خط آخر خروجی:{Colors.RESET}")
         for l in lines[-25:]:
-            print(f"  {l}")
+            logger.info(f"  {l}")
 
         return False
 
@@ -416,7 +419,7 @@ def test_dev_server() -> bool:
 
             output_lines.append(line.rstrip())
             if len(output_lines) <= 15:
-                print(f"  {line.rstrip()}")
+                logger.info(f"  {line.rstrip()}")
 
             if "Local:" in line:
                 server_ready = True
@@ -494,9 +497,9 @@ def commit_and_push():
 # ═══════════════════════════════════════════════════════════════════════
 
 def main() -> int:
-    print(f"\n{Colors.BOLD}{'═' * 70}{Colors.RESET}")
-    print(f"{Colors.BOLD}  🔧 Fix HyDroMa + Vite - Final{Colors.RESET}")
-    print(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}")
+    logger.info(f"\n{Colors.BOLD}{'═' * 70}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}  🔧 Fix HyDroMa + Vite - Final{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}")
 
     # گام ۱: اصلاح HyDroMa
     hydroma_ok = fix_hydroma_extra_close()
@@ -532,25 +535,25 @@ def main() -> int:
     for name, ok in checks:
         symbol = "✓" if ok else "✗"
         color = Colors.GREEN if ok else Colors.RED
-        print(f"  {color}{symbol}{Colors.RESET} {name}")
+        logger.info(f"  {color}{symbol}{Colors.RESET} {name}")
         if not ok:
             all_ok = False
 
-    print()
+    logger.info()
     if all_ok:
-        print(f"{Colors.GREEN}{Colors.BOLD}🎉 فاز صفر کاملاً کامل شد!{Colors.RESET}")
-        print(f"\n{Colors.BOLD}┌───────────────────────────────────────────┐{Colors.RESET}")
-        print(f"{Colors.BOLD}│  🚀 آماده فاز ۱: بازنویسی ساختاری      │{Colors.RESET}")
-        print(f"{Colors.BOLD}│     استخراج features/hydroma/            │{Colors.RESET}")
-        print(f"{Colors.BOLD}└───────────────────────────────────────────┘{Colors.RESET}")
+        logger.info(f"{Colors.GREEN}{Colors.BOLD}🎉 فاز صفر کاملاً کامل شد!{Colors.RESET}")
+        logger.info(f"\n{Colors.BOLD}┌───────────────────────────────────────────┐{Colors.RESET}")
+        logger.info(f"{Colors.BOLD}│  🚀 آماده فاز ۱: بازنویسی ساختاری      │{Colors.RESET}")
+        logger.info(f"{Colors.BOLD}│     استخراج features/hydroma/            │{Colors.RESET}")
+        logger.info(f"{Colors.BOLD}└───────────────────────────────────────────┘{Colors.RESET}")
         return 0
     elif build_ok:
-        print(f"{Colors.YELLOW}⚠️ build موفق، dev server ناقص{Colors.RESET}")
-        print(f"  می‌توان به فاز ۱ رفت")
+        logger.info(f"{Colors.YELLOW}⚠️ build موفق، dev server ناقص{Colors.RESET}")
+        logger.info(f"  می‌توان به فاز ۱ رفت")
         return 0
     else:
-        print(f"{Colors.RED}⚠️ build هنوز شکست می‌خورد{Colors.RESET}")
-        print(f"  خطا را بررسی کنید")
+        logger.info(f"{Colors.RED}⚠️ build هنوز شکست می‌خورد{Colors.RESET}")
+        logger.info(f"  خطا را بررسی کنید")
         return 1
 
 

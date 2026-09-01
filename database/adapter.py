@@ -1,4 +1,7 @@
 """Abstract Database Adapter for Eco Nojin (DuckDB-compatible)."""
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import json
@@ -166,7 +169,7 @@ class DuckDBAdapter(DatabaseAdapter):
         migration_files = sorted(migrations_dir.glob("*.sql"))
         
         for migration_file in migration_files:
-            print(f"Running: {migration_file.name}")
+            logger.info(f"Running: {migration_file.name}")
             with open(migration_file, 'r', encoding='utf-8') as f:
                 sql = f.read()
             
@@ -179,4 +182,4 @@ class DuckDBAdapter(DatabaseAdapter):
                     except Exception as e:
                         # Skip errors for idempotent statements
                         if "already exists" not in str(e).lower():
-                            print(f"  ⚠️  {e}")
+                            logger.info(f"  ⚠️  {e}")

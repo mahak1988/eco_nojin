@@ -8,6 +8,9 @@ Fix Final Three Issues
 4. تست build + dev + backend availability
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import re
 import sys
 import shutil
@@ -37,9 +40,9 @@ def ok(m): print(f"{C.GREEN}✓{C.RESET}  {m}")
 def warn(m): print(f"{C.YELLOW}⚠{C.RESET}  {m}")
 def err(m): print(f"{C.RED}✗{C.RESET}  {m}")
 def header(m):
-    print(f"\n{C.BOLD}{C.CYAN}{'═' * 70}{C.RESET}")
-    print(f"{C.BOLD}{C.CYAN}  {m}{C.RESET}")
-    print(f"{C.BOLD}{C.CYAN}{'═' * 70}{C.RESET}\n")
+    logger.info(f"\n{C.BOLD}{C.CYAN}{'═' * 70}{C.RESET}")
+    logger.info(f"{C.BOLD}{C.CYAN}  {m}{C.RESET}")
+    logger.info(f"{C.BOLD}{C.CYAN}{'═' * 70}{C.RESET}\n")
 
 
 def backup(path: Path) -> Path:
@@ -65,7 +68,7 @@ def run(cmd, cwd=None, check=True, timeout=180, silent=False):
                 err(f"exit code {r.returncode}")
                 out = (r.stdout or "") + (r.stderr or "")
                 if out:
-                    print("  " + "\n  ".join(out.splitlines()[:15]))
+                    logger.info("  " + "\n  ".join(out.splitlines()[:15]))
             return r
         return r
     except subprocess.TimeoutExpired:
@@ -313,8 +316,8 @@ def check_backend() -> bool:
 
     info("Backend باید اجرا شود تا صفحه HyDroMaCenter کار کند")
     info("در یک terminal دیگر اجرا کنید:")
-    print(f"\n{C.BOLD}  cd D:\\eco_nojin{C.RESET}")
-    print(f"{C.BOLD}  python -m uvicorn services.api_gateway.main:app --reload --port 8000{C.RESET}\n")
+    logger.info(f"\n{C.BOLD}  cd D:\\eco_nojin{C.RESET}")
+    logger.info(f"{C.BOLD}  python -m uvicorn services.api_gateway.main:app --reload --port 8000{C.RESET}\n")
     return False
 
 
@@ -334,13 +337,13 @@ def test_build() -> bool:
         # نمایش chunk ها
         for line in r.stdout.splitlines():
             if "dist/assets" in line and ".js" in line:
-                print(f"  {line.strip()}")
+                logger.info(f"  {line.strip()}")
         return True
 
     err("build شکست خورد")
     out = (r.stdout or "") + (r.stderr or "")
     for l in out.splitlines()[-20:]:
-        print(f"  {l}")
+        logger.info(f"  {l}")
     return False
 
 
@@ -379,7 +382,7 @@ def test_dev() -> bool:
 
             output.append(line.rstrip())
             if len(output) <= 10:
-                print(f"  {line.rstrip()}")
+                logger.info(f"  {line.rstrip()}")
 
             if "Local:" in line:
                 ready = True
@@ -437,9 +440,9 @@ def commit():
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print(f"\n{C.BOLD}{'═' * 70}{C.RESET}")
-    print(f"{C.BOLD}  🔧 Fix Final Three Issues{C.RESET}")
-    print(f"{C.BOLD}{'═' * 70}{C.RESET}")
+    logger.info(f"\n{C.BOLD}{'═' * 70}{C.RESET}")
+    logger.info(f"{C.BOLD}  🔧 Fix Final Three Issues{C.RESET}")
+    logger.info(f"{C.BOLD}{'═' * 70}{C.RESET}")
 
     install_postprocessing()
     _, balanced = fix_hydroma()
@@ -465,31 +468,31 @@ def main():
     for name, ok_status in checks:
         color = C.GREEN if ok_status else (C.YELLOW if name == "Backend available" else C.RED)
         symbol = "✓" if ok_status else "✗"
-        print(f"  {color}{symbol}{C.RESET} {name}")
+        logger.info(f"  {color}{symbol}{C.RESET} {name}")
         if not ok_status and name != "Backend available":
             all_ok = False
 
-    print()
+    logger.info()
     if all_ok:
-        print(f"{C.GREEN}{C.BOLD}🎉 فاز صفر ۱۰۰٪ کامل شد!{C.RESET}")
-        print(f"\n{C.BOLD}┌──────────────────────────────────────────────┐{C.RESET}")
-        print(f"{C.BOLD}│  🚀 آماده فاز ۱: بازنویسی ساختاری         │{C.RESET}")
-        print(f"{C.BOLD}│                                              │{C.RESET}")
-        print(f"{C.BOLD}│  شروع استخراج HyDroMaCenter.tsx              │{C.RESET}")
-        print(f"{C.BOLD}│  به features/hydroma/                        │{C.RESET}")
-        print(f"{C.BOLD}└──────────────────────────────────────────────┘{C.RESET}")
+        logger.info(f"{C.GREEN}{C.BOLD}🎉 فاز صفر ۱۰۰٪ کامل شد!{C.RESET}")
+        logger.info(f"\n{C.BOLD}┌──────────────────────────────────────────────┐{C.RESET}")
+        logger.info(f"{C.BOLD}│  🚀 آماده فاز ۱: بازنویسی ساختاری         │{C.RESET}")
+        logger.info(f"{C.BOLD}│                                              │{C.RESET}")
+        logger.info(f"{C.BOLD}│  شروع استخراج HyDroMaCenter.tsx              │{C.RESET}")
+        logger.info(f"{C.BOLD}│  به features/hydroma/                        │{C.RESET}")
+        logger.info(f"{C.BOLD}└──────────────────────────────────────────────┘{C.RESET}")
 
-        print(f"\n{C.BOLD}گام اول فاز ۱:{C.RESET}")
-        print(f"  1. ایجاد features/hydroma/types/")
-        print(f"  2. ایجاد features/hydroma/store/")
-        print(f"  3. استخراج TerrainMesh.tsx")
-        print(f"  4. تست و commit")
+        logger.info(f"\n{C.BOLD}گام اول فاز ۱:{C.RESET}")
+        logger.info(f"  1. ایجاد features/hydroma/types/")
+        logger.info(f"  2. ایجاد features/hydroma/store/")
+        logger.info(f"  3. استخراج TerrainMesh.tsx")
+        logger.info(f"  4. تست و commit")
 
         return 0
 
-    print(f"{C.YELLOW}⚠️ برخی موارد باقی مانده{C.RESET}")
+    logger.info(f"{C.YELLOW}⚠️ برخی موارد باقی مانده{C.RESET}")
     if not backend_ok:
-        print(f"\n{C.BOLD}یادآوری:{C.RESET} Backend را در terminal دیگر اجرا کنید")
+        logger.info(f"\n{C.BOLD}یادآوری:{C.RESET} Backend را در terminal دیگر اجرا کنید")
     return 1
 
 

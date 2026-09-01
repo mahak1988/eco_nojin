@@ -1,5 +1,8 @@
 """Complete authentication router - Phase 0 rewrite."""
 
+import structlog
+
+logger = structlog.get_logger()
 import logging
 import os
 from datetime import datetime
@@ -47,7 +50,7 @@ def _write_auth_audit(db, *, email: str, action: str, result: str,
         db.add(log)
         db.commit()
     except Exception as e:
-        print(f"[AUDIT ERROR] {e}")
+        logger.error(f"[AUDIT ERROR] {e}")
         try:
             db.rollback()
         except Exception:

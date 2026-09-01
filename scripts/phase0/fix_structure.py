@@ -5,6 +5,9 @@ Fix Structure
 frontend/frontend/src/ → frontend/src/
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import sys
 import shutil
 from pathlib import Path
@@ -112,7 +115,7 @@ def verify_structure() -> bool:
     items = sorted(frontend.iterdir())
     for item in items:
         icon = "📁" if item.is_dir() else "📄"
-        print(f"  {icon} {item.name}")
+        logger.info(f"  {icon} {item.name}")
     
     # بررسی وجود src
     src = frontend / "src"

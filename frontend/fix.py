@@ -1,3 +1,6 @@
+import structlog
+
+logger = structlog.get_logger()
 import os
 base = "D:/eco_nojin/frontend/src"
 
@@ -68,4 +71,4 @@ import "./styles/global.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(<React.StrictMode><App /></React.StrictMode>);
 """)
 
-print("All files created!")
+logger.info("All files created!")

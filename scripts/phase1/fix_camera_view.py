@@ -12,6 +12,9 @@ Fix HyDroMaCenter Default Camera View
 - target: [0, 0, 0]        → نگاه به مرکز
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import re
 import sys
 import shutil
@@ -41,9 +44,9 @@ def ok(m): print(f"{C.GREEN}✓{C.RESET}  {m}")
 def warn(m): print(f"{C.YELLOW}⚠{C.RESET}  {m}")
 def err(m): print(f"{C.RED}✗{C.RESET}  {m}")
 def header(m):
-    print(f"\n{C.BOLD}{C.CYAN}{'═' * 70}{C.RESET}")
-    print(f"{C.BOLD}{C.CYAN}  {m}{C.RESET}")
-    print(f"{C.BOLD}{C.CYAN}{'═' * 70}{C.RESET}\n")
+    logger.info(f"\n{C.BOLD}{C.CYAN}{'═' * 70}{C.RESET}")
+    logger.info(f"{C.BOLD}{C.CYAN}  {m}{C.RESET}")
+    logger.info(f"{C.BOLD}{C.CYAN}{'═' * 70}{C.RESET}\n")
 
 
 def backup(path: Path) -> Path:
@@ -210,11 +213,11 @@ def test_build() -> bool:
         # نمایش HyDroMaCenter chunk
         for line in r.stdout.splitlines():
             if "HyDroMaCenter" in line:
-                print(f"  {line.strip()}")
+                logger.info(f"  {line.strip()}")
         return True
     err("build شکست خورد")
     for l in (r.stdout + r.stderr).splitlines()[-15:]:
-        print(f"  {l}")
+        logger.info(f"  {l}")
     return False
 
 
@@ -268,9 +271,9 @@ def commit():
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print(f"\n{C.BOLD}{'═' * 70}{C.RESET}")
-    print(f"{C.BOLD}  🔧 Fix HyDroMaCenter Default Camera View{C.RESET}")
-    print(f"{C.BOLD}{'═' * 70}{C.RESET}")
+    logger.info(f"\n{C.BOLD}{'═' * 70}{C.RESET}")
+    logger.info(f"{C.BOLD}  🔧 Fix HyDroMaCenter Default Camera View{C.RESET}")
+    logger.info(f"{C.BOLD}{'═' * 70}{C.RESET}")
 
     if not HYDROMA.exists():
         err(f"فایل یافت نشد: {HYDROMA}")
@@ -313,7 +316,7 @@ def main():
     if all_changes:
         header("خلاصه تغییرات")
         for i, ch in enumerate(all_changes, 1):
-            print(f"  {i}. {ch}")
+            logger.info(f"  {i}. {ch}")
 
     # تست‌ها
     build_ok = test_build()
@@ -323,17 +326,17 @@ def main():
 
     # راهنما
     header("🎬 پس از اجرا")
-    print(f"  1. در مرورگر، صفحه HyDroMa را باز کنید:")
-    print(f"     {C.BOLD}http://localhost:5173/hydroma{C.RESET}")
-    print()
-    print(f"  2. باید زمین را با زاویه ایزومتریک مناسب ببینید")
-    print(f"     - ماوس چپ + drag → چرخش")
-    print(f"     - Scroll → zoom (حالا تا فاصله ۵ نزدیک می‌شود)")
-    print(f"     - ماوس راست + drag → pan")
-    print()
-    print(f"  {C.BOLD}اگر هنوز دید مناسب نیست:{C.RESET}")
-    print(f"    - position را در کد به [35, 30, 35] تغییر دهید")
-    print(f"    - یا fov را به 60 افزایش دهید")
+    logger.info(f"  1. در مرورگر، صفحه HyDroMa را باز کنید:")
+    logger.info(f"     {C.BOLD}http://localhost:5173/hydroma{C.RESET}")
+    logger.info()
+    logger.info(f"  2. باید زمین را با زاویه ایزومتریک مناسب ببینید")
+    logger.info(f"     - ماوس چپ + drag → چرخش")
+    logger.info(f"     - Scroll → zoom (حالا تا فاصله ۵ نزدیک می‌شود)")
+    logger.info(f"     - ماوس راست + drag → pan")
+    logger.info()
+    logger.info(f"  {C.BOLD}اگر هنوز دید مناسب نیست:{C.RESET}")
+    logger.info(f"    - position را در کد به [35, 30, 35] تغییر دهید")
+    logger.info(f"    - یا fov را به 60 افزایش دهید")
 
     return 0 if build_ok else 1
 

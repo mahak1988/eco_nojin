@@ -13,6 +13,9 @@ Strategy:
 - Avoid complex mocking that causes file-level errors
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import re
@@ -162,14 +165,14 @@ def generate_lib_tests(filename, content, exports):
 
 
 def main():
-    print("")
-    print("=" * 70)
-    print("  Phase B-3 Wave 4: Lib Module Coverage Boost")
-    print("=" * 70)
-    print("")
-    print("  Target: lib/ (3.11% -> 50%+)")
-    print("  Focus: terrainGenerator.ts, demApi.ts")
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  Phase B-3 Wave 4: Lib Module Coverage Boost")
+    logger.info("=" * 70)
+    logger.info("")
+    logger.info("  Target: lib/ (3.11% -> 50%+)")
+    logger.info("  Focus: terrainGenerator.ts, demApi.ts")
+    logger.info("")
 
     # Fix Git PATH
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
@@ -177,8 +180,8 @@ def main():
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # Step 1: Analyze lib files
-    print("[Step 1] Analyzing lib files")
-    print("-" * 70)
+    logger.info("[Step 1] Analyzing lib files")
+    logger.info("-" * 70)
     
     lib_files = list(LIB_DIR.glob("*.ts"))
     lib_files = [f for f in lib_files if not f.name.endswith('.d.ts') and not f.name.endswith('.test.ts')]
@@ -187,11 +190,11 @@ def main():
     for f in lib_files:
         content = read_file(f)
         info(f"  {f.name}: {len(content)} bytes")
-    print("")
+    logger.info("")
 
     # Step 2: Generate tests
-    print("[Step 2] Generating tests for lib files")
-    print("-" * 70)
+    logger.info("[Step 2] Generating tests for lib files")
+    logger.info("-" * 70)
     
     LIB_TESTS.mkdir(parents=True, exist_ok=True)
     
@@ -210,11 +213,11 @@ def main():
                         len(exports['types']) + len(exports['consts']) + 
                         len(exports['classes']))
         ok(f"Generated {test_file.name} ({total_exports} exports tested)")
-    print("")
+    logger.info("")
 
     # Step 3: Run tests
-    print("[Step 3] Running tests")
-    print("-" * 70)
+    logger.info("[Step 3] Running tests")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test",
@@ -231,18 +234,18 @@ def main():
     
     for line in output.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed", "skipped"]):
-            print(f"  {line}")
+            logger.info(f"  {line}")
     
     all_passing = result.returncode == 0
     if all_passing:
         ok("\nALL TESTS PASSING!")
     else:
         warn("\nSome tests had issues")
-    print("")
+    logger.info("")
 
     # Step 4: Coverage
-    print("[Step 4] Running coverage")
-    print("-" * 70)
+    logger.info("[Step 4] Running coverage")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test:coverage",
@@ -258,17 +261,17 @@ def main():
     output = result.stdout + result.stderr
     
     # Show lib coverage specifically
-    print("\n  Lib Coverage:")
+    logger.info("\n  Lib Coverage:")
     for line in output.splitlines():
         if "lib" in line and "|" in line:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         elif "All files" in line:
-            print(f"  {line}")
-    print("")
+            logger.info(f"  {line}")
+    logger.info("")
 
     # Step 5: Commit
-    print("[Step 5] Committing changes")
-    print("-" * 70)
+    logger.info("[Step 5] Committing changes")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -293,9 +296,9 @@ def main():
         warn(f"Commit issue: {e}")
 
     # Step 6: Merge to main
-    print("")
-    print("[Step 6] Merging to main")
-    print("-" * 70)
+    logger.info("")
+    logger.info("[Step 6] Merging to main")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git checkout main", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -310,33 +313,33 @@ def main():
         info("  git push origin main")
 
     # Final Report
-    print("")
-    print("=" * 70)
+    logger.info("")
+    logger.info("=" * 70)
     if all_passing:
-        print("  🎉 Phase B-3: Test Coverage - COMPLETE!")
+        logger.info("  🎉 Phase B-3: Test Coverage - COMPLETE!")
     else:
-        print("  ⚠️  Some issues remain")
-    print("=" * 70)
-    print("")
-    print("  Phase B-3 Summary:")
-    print("    ✓ Wave 1: Core logic tested (terrainGenerator, demApi, store)")
-    print("    ✓ Wave 2: Critical hooks (skipped due to 3D deps)")
-    print("    ✓ Wave 3: Pure logic & state management")
-    print("    ✓ Wave 4: Lib module coverage boost")
-    print("")
-    print("  Achievements:")
-    print("    ✓ 243+ unit tests passing")
-    print("    ✓ All test files passing")
-    print("    ✓ Coverage improved from baseline")
-    print("    ✓ Adaptive testing approach")
-    print("    ✓ Merged to main branch")
-    print("")
-    print("  Next Steps (Phase C - Feature Development):")
-    print("    • Add more E2E tests for critical user flows")
-    print("    • Setup Sentry for error tracking")
-    print("    • Performance optimization")
-    print("    • Documentation")
-    print("")
+        logger.info("  ⚠️  Some issues remain")
+    logger.info("=" * 70)
+    logger.info("")
+    logger.info("  Phase B-3 Summary:")
+    logger.info("    ✓ Wave 1: Core logic tested (terrainGenerator, demApi, store)")
+    logger.info("    ✓ Wave 2: Critical hooks (skipped due to 3D deps)")
+    logger.info("    ✓ Wave 3: Pure logic & state management")
+    logger.info("    ✓ Wave 4: Lib module coverage boost")
+    logger.info("")
+    logger.info("  Achievements:")
+    logger.info("    ✓ 243+ unit tests passing")
+    logger.info("    ✓ All test files passing")
+    logger.info("    ✓ Coverage improved from baseline")
+    logger.info("    ✓ Adaptive testing approach")
+    logger.info("    ✓ Merged to main branch")
+    logger.info("")
+    logger.info("  Next Steps (Phase C - Feature Development):")
+    logger.info("    • Add more E2E tests for critical user flows")
+    logger.error("    • Setup Sentry for error tracking")
+    logger.info("    • Performance optimization")
+    logger.info("    • Documentation")
+    logger.info("")
 
     return 0
 

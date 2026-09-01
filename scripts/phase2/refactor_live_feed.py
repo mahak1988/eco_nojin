@@ -11,6 +11,9 @@ Key improvements:
 - Extract magic numbers to constants
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import shutil
@@ -795,7 +798,7 @@ def write_file(path: Path, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
     lines = len(content.splitlines())
-    print(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
+    logger.info(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
 
 
 def backup_old():
@@ -817,65 +820,65 @@ def backup_old():
 
 
 def main():
-    print("\n" + "=" * 70)
-    print("  🚀 Phase 2 - Refactor LiveFeed")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  🚀 Phase 2 - Refactor LiveFeed")
+    logger.info("=" * 70 + "\n")
 
     # گام ۱: پشتیبان
-    print("💾 گام ۱: پشتیبان‌گیری از فایل قدیمی...")
+    logger.info("💾 گام ۱: پشتیبان‌گیری از فایل قدیمی...")
     if not backup_old():
         return 1
-    print()
+    logger.info()
 
     # گام ۲: ساختار
-    print("📁 گام ۲: ایجاد ساختار features/live-feed/...")
+    logger.info("📁 گام ۲: ایجاد ساختار features/live-feed/...")
     LIVE_FEED.mkdir(parents=True, exist_ok=True)
     for folder in ["types", "constants", "utils", "hooks", "components", "__tests__"]:
         (LIVE_FEED / folder).mkdir(exist_ok=True)
     ok("ساختار ایجاد شد")
-    print()
+    logger.info()
 
     # گام ۳: Types
-    print("📦 گام ۳: ایجاد Types...")
+    logger.info("📦 گام ۳: ایجاد Types...")
     write_file(LIVE_FEED / "types" / "liveFeed.types.ts", LIVE_FEED_TYPES)
-    print()
+    logger.info()
 
     # گام ۴: Constants
-    print("📦 گام ۴: ایجاد Constants...")
+    logger.info("📦 گام ۴: ایجاد Constants...")
     write_file(LIVE_FEED / "constants" / "eventTemplates.ts", EVENT_TEMPLATES_CONST)
-    print()
+    logger.info()
 
     # گام ۵: Utils
-    print("📦 گام ۵: ایجاد Utils...")
+    logger.info("📦 گام ۵: ایجاد Utils...")
     write_file(LIVE_FEED / "utils" / "eventGenerator.ts", EVENT_GENERATOR_UTIL)
-    print()
+    logger.info()
 
     # گام ۶: Hooks
-    print("📦 گام ۶: ایجاد Custom Hooks...")
+    logger.info("📦 گام ۶: ایجاد Custom Hooks...")
     write_file(LIVE_FEED / "hooks" / "useLiveFeedEvents.ts", USE_LIVE_FEED_EVENTS_HOOK)
-    print()
+    logger.info()
 
     # گام ۷: Components
-    print("📦 گام ۷: ایجاد Components...")
+    logger.info("📦 گام ۷: ایجاد Components...")
     write_file(LIVE_FEED / "components" / "LiveFeedHeader.tsx", LIVE_FEED_HEADER_COMP)
     write_file(LIVE_FEED / "components" / "FeedEventItem.tsx", FEED_EVENT_ITEM_COMP)
     write_file(LIVE_FEED / "components" / "FeedEmptyState.tsx", FEED_EMPTY_STATE_COMP)
-    print()
+    logger.info()
 
     # گام ۸: Tests
-    print("📦 گام ۸: ایجاد Tests...")
+    logger.info("📦 گام ۸: ایجاد Tests...")
     write_file(LIVE_FEED / "__tests__" / "eventGenerator.test.ts", EVENT_GENERATOR_TEST)
     write_file(LIVE_FEED / "__tests__" / "useLiveFeedEvents.test.ts", USE_LIVE_FEED_EVENTS_TEST)
-    print()
+    logger.info()
 
     # گام ۹: جایگزینی
-    print("🔄 گام ۹: جایگزینی LiveFeed.tsx...")
+    logger.info("🔄 گام ۹: جایگزینی LiveFeed.tsx...")
     OLD_FILE.write_text(LIVE_FEED_NEW, encoding="utf-8")
     ok(f"فایل اصلی جایگزین شد ({len(LIVE_FEED_NEW.splitlines())} lines)")
-    print()
+    logger.info()
 
     # گام ۱۰: Build
-    print("🔨 گام ۱۰: اجرای build...")
+    logger.info("🔨 گام ۱۰: اجرای build...")
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
@@ -892,17 +895,17 @@ def main():
     if build_result.returncode != 0:
         err("Build شکست خورد")
         for line in build_output.splitlines()[-30:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
 
     ok("Build موفق")
     for line in build_output.splitlines():
         if "built in" in line or "LiveFeed" in line:
-            print(f"  {line.strip()}")
-    print()
+            logger.info(f"  {line.strip()}")
+    logger.info()
 
     # گام ۱۱: تست‌ها
-    print("🧪 گام ۱۱: اجرای تست‌های جدید...")
+    logger.info("🧪 گام ۱۱: اجرای تست‌های جدید...")
     test_result = subprocess.run(
         "pnpm test features/live-feed",
         shell=True, cwd=FRONTEND,
@@ -913,11 +916,11 @@ def main():
     test_output = test_result.stdout + test_result.stderr
     for line in test_output.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # گام ۱۲: Commit
-    print("📦 گام ۱۲: commit تغییرات...")
+    logger.info("📦 گام ۱۲: commit تغییرات...")
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
         msg = (
@@ -938,43 +941,43 @@ def main():
         ok("commit و push موفق")
     except Exception as e:
         warn(f"commit: {e}")
-    print()
+    logger.info()
 
     # گزارش نهایی
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 LiveFeed با موفقیت refactor شد! 🎉\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[92m  🎉 LiveFeed با موفقیت refactor شد! 🎉\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 آمار:")
-    print("    ✓ 145 → ~60 lines (59% reduction)")
-    print("    ✓ Build موفق")
-    print("    ✓ معماری feature-based")
-    print("    ✓ Fixed stale closure (ref-based interval)")
-    print("    ✓ Deterministic event generation")
-    print("    ✓ No any types")
-    print("    ✓ Memoized components")
-    print()
+    logger.info("  📊 آمار:")
+    logger.info("    ✓ 145 → ~60 lines (59% reduction)")
+    logger.info("    ✓ Build موفق")
+    logger.info("    ✓ معماری feature-based")
+    logger.info("    ✓ Fixed stale closure (ref-based interval)")
+    logger.info("    ✓ Deterministic event generation")
+    logger.info("    ✓ No any types")
+    logger.info("    ✓ Memoized components")
+    logger.info()
 
-    print("  🏗️ ساختار جدید:")
-    print("    features/live-feed/")
-    print("    ├── types/        (1 file)")
-    print("    ├── constants/    (1 file)")
-    print("    ├── utils/        (1 file)")
-    print("    ├── hooks/        (1 file)")
-    print("    ├── components/   (3 files)")
-    print("    └── __tests__/    (2 files)")
-    print()
+    logger.info("  🏗️ ساختار جدید:")
+    logger.info("    features/live-feed/")
+    logger.info("    ├── types/        (1 file)")
+    logger.info("    ├── constants/    (1 file)")
+    logger.info("    ├── utils/        (1 file)")
+    logger.info("    ├── hooks/        (1 file)")
+    logger.info("    ├── components/   (3 files)")
+    logger.info("    └── __tests__/    (2 files)")
+    logger.info()
 
-    print("  🎯 فایل‌های باقی‌مانده از فاز ۲:")
-    print("    • ContentStudio.tsx (HIGH)")
-    print("    • TelegramManager.tsx (MEDIUM)")
-    print("    • SecurityAdvanced.tsx (MEDIUM)")
-    print()
+    logger.info("  🎯 فایل‌های باقی‌مانده از فاز ۲:")
+    logger.info("    • ContentStudio.tsx (HIGH)")
+    logger.info("    • TelegramManager.tsx (MEDIUM)")
+    logger.info("    • SecurityAdvanced.tsx (MEDIUM)")
+    logger.info()
 
-    print("  📈 پیشرفت فاز ۲:")
-    print("    • 4 از 7 فایل کامل شدند (57%)")
-    print("    • مجموع تست‌ها: ~65+ پاس")
-    print()
+    logger.info("  📈 پیشرفت فاز ۲:")
+    logger.info("    • 4 از 7 فایل کامل شدند (57%)")
+    logger.info("    • مجموع تست‌ها: ~65+ پاس")
+    logger.info()
 
     return 0
 

@@ -4,6 +4,9 @@ Install Git
 نصب خودکار Git روی Windows.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import sys
 import urllib.request
 import tempfile
@@ -35,7 +38,7 @@ def download_installer(dest: Path) -> bool:
                 percent = min(100, downloaded * 100 / total_size)
                 mb = downloaded / (1024 * 1024)
                 total_mb = total_size / (1024 * 1024)
-                print(f"\r  📥 {percent:5.1f}% ({mb:.1f}/{total_mb:.1f} MB)", end="", flush=True)
+                logger.info(f"\r  📥 {percent:5.1f}% ({mb:.1f}/{total_mb:.1f} MB)", end="", flush=True)
         
         urllib.request.urlretrieve(GIT_INSTALLER_URL, dest, reporthook=report_progress)
         print()  # خط جدید

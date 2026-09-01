@@ -9,6 +9,9 @@ Commands:
 /carbon lat lon area - Carbon potential
 /help - Command guide
 """
+import structlog
+
+logger = structlog.get_logger()
 import asyncio
 import logging
 
@@ -19,7 +22,7 @@ try:
     AIogram_AVAILABLE = True
 except ImportError:
     AIogram_AVAILABLE = False
-    print("  [BOT] aiogram not installed. Run: pip install aiogram")
+    logger.info("  [BOT] aiogram not installed. Run: pip install aiogram")
 
 from .i18n import detect_language, t
 from .integration import get_bot_integration
@@ -213,14 +216,14 @@ def main():
     bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
 
     if not bot_token:
-        print("❌ TELEGRAM_BOT_TOKEN not set!")
-        print("\nPlease create a .env file with:")
-        print("  TELEGRAM_BOT_TOKEN=your_bot_token_here")
-        print("\nTo get a token:")
-        print("  1. Message @BotFather on Telegram")
-        print("  2. Send /newbot")
-        print("  3. Follow instructions")
-        print("  4. Copy the token to .env")
+        logger.info("❌ TELEGRAM_BOT_TOKEN not set!")
+        logger.info("\nPlease create a .env file with:")
+        logger.info("  TELEGRAM_BOT_TOKEN=your_bot_token_here")
+        logger.info("\nTo get a token:")
+        logger.info("  1. Message @BotFather on Telegram")
+        logger.info("  2. Send /newbot")
+        logger.info("  3. Follow instructions")
+        logger.info("  4. Copy the token to .env")
         return
 
     bot = HydromaTelegramBot(bot_token)

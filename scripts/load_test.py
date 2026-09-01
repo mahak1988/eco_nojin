@@ -9,6 +9,9 @@ Usage:
       --base http://127.0.0.1:8000
 """
 
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import argparse
@@ -72,11 +75,11 @@ def main() -> int:  # pragma: no cover
     parser.add_argument("--base", default="http://127.0.0.1:8000")
     args = parser.parse_args()
     if args.requests <= 0 or args.workers <= 0:
-        print("requests and workers must be positive")
+        logger.info("requests and workers must be positive")
         return 2
     result = run_load_test(args.base, args.workers, args.requests, args.timeout)
     for k, v in result.items():
-        print(f"{k}: {v}")
+        logger.info(f"{k}: {v}")
     return 0 if result["error_ratio"] < 0.01 else 1
 
 

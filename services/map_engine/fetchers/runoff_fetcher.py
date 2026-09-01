@@ -1,4 +1,7 @@
 """Runoff Fetcher - Computes Curve Number from Land Cover and Soil."""
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import hashlib
@@ -68,15 +71,15 @@ class RunoffFetcher(MapFetcher):
                 da = rioxarray.open_rasterio(str(cache_path), masked=True)
                 if "band" in da.dims and da.sizes["band"] == 1:
                     da = da.isel(band=0, drop=True)
-                print(f"  [RUNOFF] Loaded from cache: {da.shape}")
+                logger.info(f"  [RUNOFF] Loaded from cache: {da.shape}")
                 return da
             except Exception as e:
-                print(f"  [RUNOFF] Cache load failed: {e}")
+                logger.info(f"  [RUNOFF] Cache load failed: {e}")
                 cache_path.unlink(missing_ok=True)
 
         cn = await self._compute_cn(region, resolution, landcover, soil)
         cn.rio.to_raster(str(cache_path), driver="GTiff", compress="lzw")
-        print(f"  [RUNOFF] Generated CN: {cn.shape}")
+        logger.info(f"  [RUNOFF] Generated CN: {cn.shape}")
         return cn
 
     async def _compute_cn(

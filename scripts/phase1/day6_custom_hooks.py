@@ -11,6 +11,9 @@ Phase 1 - Day 6: Create Custom Hooks
 7. Commit & push
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import subprocess
 from pathlib import Path
@@ -899,55 +902,55 @@ def write_file(path: Path, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
     lines = len(content.splitlines())
-    print(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
+    logger.info(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
 
 
 def main():
-    print("\n" + "=" * 70)
-    print("  🚀 Phase 1 - Day 6: Create Custom Hooks")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  🚀 Phase 1 - Day 6: Create Custom Hooks")
+    logger.info("=" * 70 + "\n")
 
     # ── ایجاد hooks ──────────────────────────────────────────
-    print("🎣 ایجاد Custom Hooks...")
+    logger.info("🎣 ایجاد Custom Hooks...")
     write_file(HYDROMA / "hooks" / "useRealDem.ts", USE_REAL_DEM)
     write_file(HYDROMA / "hooks" / "useEsriTexture.ts", USE_ESRI_TEXTURE)
     write_file(HYDROMA / "hooks" / "useTerrainClick.ts", USE_TERRAIN_CLICK)
     write_file(HYDROMA / "hooks" / "usePolygonDrawing.ts", USE_POLYGON_DRAWING)
     write_file(HYDROMA / "hooks" / "useErosionEffect.ts", USE_EROSION_EFFECT)
     write_file(HYDROMA / "hooks" / "index.ts", HOOKS_INDEX)
-    print()
+    logger.info()
 
     # ── ایجاد تست‌ها ─────────────────────────────────────────
-    print("🧪 ایجاد تست‌ها...")
+    logger.info("🧪 ایجاد تست‌ها...")
     write_file(HYDROMA / "__tests__" / "useRealDem.test.ts", USE_REAL_DEM_TEST)
     write_file(HYDROMA / "__tests__" / "useEsriTexture.test.ts", USE_ESRI_TEXTURE_TEST)
     write_file(HYDROMA / "__tests__" / "useTerrainClick.test.ts", USE_TERRAIN_CLICK_TEST)
     write_file(HYDROMA / "__tests__" / "usePolygonDrawing.test.ts", USE_POLYGON_DRAWING_TEST)
     write_file(HYDROMA / "__tests__" / "useErosionEffect.test.ts", USE_EROSION_EFFECT_TEST)
-    print()
+    logger.info()
 
     # ── خلاصه ─────────────────────────────────────────────────
-    print("=" * 70)
-    print("  📊 Summary")
-    print("=" * 70 + "\n")
+    logger.info("=" * 70)
+    logger.info("  📊 Summary")
+    logger.info("=" * 70 + "\n")
 
-    print("  New hooks (5):")
-    print(f"    • useRealDem.ts ({len(USE_REAL_DEM.splitlines())} lines) - DEM loading + auto-init")
-    print(f"    • useEsriTexture.ts ({len(USE_ESRI_TEXTURE.splitlines())} lines) - Satellite imagery")
-    print(f"    • useTerrainClick.ts ({len(USE_TERRAIN_CLICK.splitlines())} lines) - Click logic (3 modes)")
-    print(f"    • usePolygonDrawing.ts ({len(USE_POLYGON_DRAWING.splitlines())} lines) - Shoelace + area")
-    print(f"    • useErosionEffect.ts ({len(USE_EROSION_EFFECT.splitlines())} lines) - RUSLE API")
-    print()
+    logger.info("  New hooks (5):")
+    logger.info(f"    • useRealDem.ts ({len(USE_REAL_DEM.splitlines())} lines) - DEM loading + auto-init")
+    logger.info(f"    • useEsriTexture.ts ({len(USE_ESRI_TEXTURE.splitlines())} lines) - Satellite imagery")
+    logger.info(f"    • useTerrainClick.ts ({len(USE_TERRAIN_CLICK.splitlines())} lines) - Click logic (3 modes)")
+    logger.info(f"    • usePolygonDrawing.ts ({len(USE_POLYGON_DRAWING.splitlines())} lines) - Shoelace + area")
+    logger.info(f"    • useErosionEffect.ts ({len(USE_EROSION_EFFECT.splitlines())} lines) - RUSLE API")
+    logger.info()
 
-    print("  Key features:")
-    print("    ✓ Async DEM loading with error handling")
-    print("    ✓ Auto-initialization with default site")
-    print("    ✓ Esri texture with cleanup")
-    print("    ✓ 3 tool modes: orbit, draw-polygon, place-op, data-plot")
-    print("    ✓ Shoelace formula for polygon area")
-    print("    ✓ RUSLE calculation via backend API")
-    print("    ✓ Proper Zustand integration")
-    print()
+    logger.info("  Key features:")
+    logger.error("    ✓ Async DEM loading with error handling")
+    logger.info("    ✓ Auto-initialization with default site")
+    logger.info("    ✓ Esri texture with cleanup")
+    logger.info("    ✓ 3 tool modes: orbit, draw-polygon, place-op, data-plot")
+    logger.info("    ✓ Shoelace formula for polygon area")
+    logger.info("    ✓ RUSLE calculation via backend API")
+    logger.info("    ✓ Proper Zustand integration")
+    logger.info()
 
     # ── اجرای تست‌ها ─────────────────────────────────────────
     git_paths = [
@@ -958,7 +961,7 @@ def main():
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
-    print("🧪 اجرای همه تست‌های hydroma...")
+    logger.info("🧪 اجرای همه تست‌های hydroma...")
     result = subprocess.run(
         "pnpm test features/hydroma",
         shell=True,
@@ -973,20 +976,20 @@ def main():
     tests_passed = result.returncode == 0
 
     if tests_passed:
-        print("  ✓ همه تست‌ها پاس شدند")
+        logger.info("  ✓ همه تست‌ها پاس شدند")
         for line in result.stdout.splitlines():
             if "Test Files" in line or "Tests" in line:
-                print(f"  {line.strip()}")
+                logger.info(f"  {line.strip()}")
     else:
-        print("  ⚠ برخی تست‌ها شکست خوردند")
-        print()
-        print("  ─── آخرین ۳۰ خط ───")
+        logger.info("  ⚠ برخی تست‌ها شکست خوردند")
+        logger.info()
+        logger.info("  ─── آخرین ۳۰ خط ───")
         for line in result.stdout.splitlines()[-30:]:
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ── commit ────────────────────────────────────────────────
-    print("📦 commit تغییرات...")
+    logger.info("📦 commit تغییرات...")
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
 
@@ -1002,44 +1005,44 @@ def main():
             shell=True, cwd=PROJECT_ROOT, check=True
         )
         subprocess.run("git push origin main", shell=True, cwd=PROJECT_ROOT, check=True)
-        print("  ✓ commit و push موفق\n")
+        logger.info("  ✓ commit و push موفق\n")
     except Exception as e:
-        print(f"  ⚠ commit: {e}\n")
+        logger.info(f"  ⚠ commit: {e}\n")
 
     # ── گزارش نهایی ──────────────────────────────────────────
-    print("=" * 70)
+    logger.info("=" * 70)
     if tests_passed:
-        print("  ✅ Day 6 Complete!")
+        logger.info("  ✅ Day 6 Complete!")
     else:
-        print("  ⚠️ Day 6 Complete (tests pending fix)")
-    print("=" * 70 + "\n")
+        logger.info("  ⚠️ Day 6 Complete (tests pending fix)")
+    logger.info("=" * 70 + "\n")
 
-    print("  Next steps (Day 7 - Final):")
-    print("    • Rewrite HyDroMaCenter.tsx orchestration (~50 lines)")
-    print("    • Use all extracted components + hooks + store")
-    print("    • Delete old 8804-line file")
-    print("    • Full integration test")
-    print()
+    logger.info("  Next steps (Day 7 - Final):")
+    logger.info("    • Rewrite HyDroMaCenter.tsx orchestration (~50 lines)")
+    logger.info("    • Use all extracted components + hooks + store")
+    logger.info("    • Delete old 8804-line file")
+    logger.info("    • Full integration test")
+    logger.info()
 
-    print("  🎯 Progress:")
-    print("    • Day 1: Types (289 lines) ✅")
-    print("    • Day 2: Store + Constants (590+ lines) ✅")
-    print("    • Day 3: TerrainMesh (178 lines) ✅")
-    print("    • Day 4: Markers + Polygons (~250 lines) ✅")
-    print("    • Day 5: Effects + Camera (~375 lines) ✅")
-    print("    • Day 6: Custom hooks (~320 lines) ✅")
-    print("    • Day 7: Orchestration (final) ⏳")
-    print()
+    logger.info("  🎯 Progress:")
+    logger.info("    • Day 1: Types (289 lines) ✅")
+    logger.info("    • Day 2: Store + Constants (590+ lines) ✅")
+    logger.info("    • Day 3: TerrainMesh (178 lines) ✅")
+    logger.info("    • Day 4: Markers + Polygons (~250 lines) ✅")
+    logger.info("    • Day 5: Effects + Camera (~375 lines) ✅")
+    logger.info("    • Day 6: Custom hooks (~320 lines) ✅")
+    logger.info("    • Day 7: Orchestration (final) ⏳")
+    logger.info()
 
-    print("  📉 HyDroMaCenter.tsx: 8804 → ~7700 lines (12.5% extracted)")
-    print("  📈 Test count: 72 → ~90 tests passing")
-    print()
+    logger.info("  📉 HyDroMaCenter.tsx: 8804 → ~7700 lines (12.5% extracted)")
+    logger.info("  📈 Test count: 72 → ~90 tests passing")
+    logger.info()
 
-    print("  🎯 Final Goal (Day 7):")
-    print("    8804 → ~50 lines orchestration")
-    print("    99.4% reduction in main file complexity")
-    print("    Maintainable, testable, feature-based architecture")
-    print()
+    logger.info("  🎯 Final Goal (Day 7):")
+    logger.info("    8804 → ~50 lines orchestration")
+    logger.info("    99.4% reduction in main file complexity")
+    logger.info("    Maintainable, testable, feature-based architecture")
+    logger.info()
 
     return 0 if tests_passed else 1
 

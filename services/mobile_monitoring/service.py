@@ -4,6 +4,9 @@ Mobile Monitoring Service.
 Handles data ingestion from mobile apps, including photos, GPS locations,
 and user-submitted observations.
 """
+import structlog
+
+logger = structlog.get_logger()
 import hashlib
 import logging
 from dataclasses import dataclass
@@ -139,4 +142,4 @@ def example_mobile_ingest():
 
     service = MobileMonitoringService()
     success = service.ingest_report(report)
-    print(f"Mobile report ingestion successful: {success}")
+    logger.info(f"Mobile report ingestion successful: {success}")

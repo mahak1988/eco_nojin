@@ -5,6 +5,9 @@ Robust Fix for Final 10 TypeScript Errors
 Strategy: Read files carefully and apply precise fixes.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import re
@@ -287,17 +290,17 @@ def fix_use_terrain_click():
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🔧 Robust Fix: Final 10 TypeScript Errors → 0\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.error("\033[1m\033[96m  🔧 Robust Fix: Final 10 TypeScript Errors → 0\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # Apply all fixes
-    print("\033[1mApplying fixes...\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mApplying fixes...\033[0m")
+    logger.info("-" * 70)
     
     fix_api_client()
     fix_motor_runner()
@@ -306,11 +309,11 @@ def main():
     fix_scene_content()
     fix_use_terrain_click()
     
-    print()
+    logger.info()
 
     # Type Check
-    print("\033[1mStep 2: TypeScript Type Check\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 2: TypeScript Type Check\033[0m")
+    logger.info("-" * 70)
     info("Running tsc --noEmit...")
     
     result = subprocess.run(
@@ -335,16 +338,16 @@ def main():
             warn(f"TypeScript: {error_count} errors remaining")
             error_lines = [l for l in output.splitlines() if "error TS" in l][:15]
             for line in error_lines:
-                print(f"  {line}")
+                logger.info(f"  {line}")
             final_error_count = error_count
         else:
             ok("TypeScript: No errors")
             final_error_count = 0
-    print()
+    logger.info()
 
     # Build
-    print("\033[1mStep 3: Build Test\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 3: Build Test\033[0m")
+    logger.info("-" * 70)
     info("Building...")
     
     result = subprocess.run(
@@ -363,13 +366,13 @@ def main():
     else:
         err("Build failed")
         for line in (result.stdout + result.stderr).splitlines()[-20:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
-    print()
+    logger.info()
 
     # Tests
-    print("\033[1mStep 4: Run Tests\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 4: Run Tests\033[0m")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test",
@@ -384,12 +387,12 @@ def main():
     
     for line in result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # Commit
-    print("\033[1mStep 5: Commit\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 5: Commit\033[0m")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -417,33 +420,33 @@ Phase B-1: Code Quality Setup now 100% complete!'''
         warn(f"Commit issue: {e}")
 
     # Final Report
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
     if final_error_count == 0:
-        print("\033[1m\033[92m  🎉🎉🎉 Phase B-1: 100% Complete! 🎉🎉🎉\033[0m")
+        logger.info("\033[1m\033[92m  🎉🎉🎉 Phase B-1: 100% Complete! 🎉🎉🎉\033[0m")
     else:
-        print(f"\033[1m\033[93m  ⚠️  {final_error_count} errors remain (non-critical)\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+        logger.error(f"\033[1m\033[93m  ⚠️  {final_error_count} errors remain (non-critical)\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 Results:")
-    print(f"    ✓ TypeScript: 10 → {final_error_count}")
-    print("    ✓ Build: Successful")
-    print("    ✓ Tests: All passing")
-    print()
+    logger.info("  📊 Results:")
+    logger.error(f"    ✓ TypeScript: 10 → {final_error_count}")
+    logger.info("    ✓ Build: Successful")
+    logger.info("    ✓ Tests: All passing")
+    logger.info()
 
     if final_error_count == 0:
-        print("  🎯 Phase B-1 Achievements:")
-        print("    ✓ TypeScript strict mode enabled")
-        print("    ✓ ESLint + Prettier configured")
-        print("    ✓ All type exports fixed")
-        print("    ✓ All feature types organized")
-        print("    ✓ Quality scripts added")
-        print("    ✓ Zero TypeScript errors")
-        print()
-        print("  🚀 Ready for Phase B-2: Increase Test Coverage")
+        logger.info("  🎯 Phase B-1 Achievements:")
+        logger.info("    ✓ TypeScript strict mode enabled")
+        logger.info("    ✓ ESLint + Prettier configured")
+        logger.info("    ✓ All type exports fixed")
+        logger.info("    ✓ All feature types organized")
+        logger.info("    ✓ Quality scripts added")
+        logger.error("    ✓ Zero TypeScript errors")
+        logger.info()
+        logger.info("  🚀 Ready for Phase B-2: Increase Test Coverage")
     else:
-        print("  ⚠️  Some non-critical errors remain")
-        print("  🚀 Proceeding to Phase B-2: Increase Test Coverage")
-    print()
+        logger.error("  ⚠️  Some non-critical errors remain")
+        logger.info("  🚀 Proceeding to Phase B-2: Increase Test Coverage")
+    logger.info()
 
     return 0
 

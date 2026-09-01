@@ -1,0 +1,454 @@
+{
+  "test_time": "2026-09-01T06:30:35.923878",
+  "modules_loaded": [
+    "formula_evaluator",
+    "calculation_engine",
+    "core_integration"
+  ],
+  "modules_failed": [],
+  "tests": {
+    "formula_evaluator_unit": {
+      "test_name": "FormulaEvaluator Unit Tests",
+      "total": 11,
+      "passed": 11,
+      "failed": 0,
+      "pass_rate": 100.0,
+      "details": [
+        {
+          "test_id": 1,
+          "formula": "AI = P / PET",
+          "expected": 0.024,
+          "result": 0.024,
+          "status": "PASS"
+        },
+        {
+          "test_id": 2,
+          "formula": "AI = P / PET",
+          "expected": 0.5,
+          "result": 0.5,
+          "status": "PASS"
+        },
+        {
+          "test_id": 3,
+          "formula": "HI = Y_grain / B_total",
+          "expected": 0.45,
+          "result": 0.45,
+          "status": "PASS"
+        },
+        {
+          "test_id": 4,
+          "formula": "S = (dh / dx) * 100",
+          "expected": 5.0,
+          "result": 5.0,
+          "status": "PASS"
+        },
+        {
+          "test_id": 5,
+          "formula": "S = (dh / dx) * 100",
+          "expected": 10.0,
+          "result": 10.0,
+          "status": "PASS"
+        },
+        {
+          "test_id": 6,
+          "formula": "LER = Y_intercrop/Y_sole_crop + Y_tree/Y_sole_tree",
+          "expected": 2.5,
+          "result": 2.5,
+          "status": "PASS"
+        },
+        {
+          "test_id": 7,
+          "formula": "SD = total_sensors / area_ha",
+          "expected": 10.0,
+          "result": 10.0,
+          "status": "PASS"
+        },
+        {
+          "test_id": 8,
+          "formula": "SI = (E_score + S_score + Env_score) / 3",
+          "expected": 0.6,
+          "result": 0.6,
+          "status": "PASS"
+        },
+        {
+          "test_id": 9,
+          "formula": "AI = P / PET",
+          "expected": null,
+          "result": 0.0,
+          "status": "PASS"
+        },
+        {
+          "test_id": 10,
+          "formula": "",
+          "expected": 0.0,
+          "result": 0.0,
+          "status": "PASS"
+        },
+        {
+          "test_id": 11,
+          "formula": "result = (a + b) * c",
+          "expected": 20.0,
+          "result": 20.0,
+          "status": "PASS"
+        }
+      ]
+    },
+    "edge_cases": {
+      "test_name": "Edge Case Tests",
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "pass_rate": 100.0,
+      "details": [
+        {
+          "test_id": 1,
+          "description": "تقسیم بر صفر",
+          "result": 0.0,
+          "expected": 0.0,
+          "status": "PASS"
+        },
+        {
+          "test_id": 2,
+          "description": "اعداد منفی",
+          "result": -2.0,
+          "expected": -2.0,
+          "status": "PASS"
+        },
+        {
+          "test_id": 3,
+          "description": "اعداد بزرگ",
+          "result": 1e+20,
+          "expected": 1e+20,
+          "status": "PASS"
+        },
+        {
+          "test_id": 4,
+          "description": "اعداد کوچک",
+          "result": 1.0000000000000001e-20,
+          "expected": 1e-20,
+          "status": "PASS"
+        },
+        {
+          "test_id": 5,
+          "description": "فرمول خالی",
+          "result": 0.0,
+          "expected": 0.0,
+          "status": "PASS"
+        },
+        {
+          "test_id": 6,
+          "description": "متغیر ناموجود",
+          "result": 0.0,
+          "expected": 0.0,
+          "status": "PASS"
+        }
+      ]
+    },
+    "calculation_engine": {
+      "test_name": "CalculationEngine Tests",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "pass_rate": 100.0,
+      "details": [
+        {
+          "test_id": 1,
+          "specialty": "CLI001",
+          "indicator": "CLI001_IND01",
+          "result": {
+            "specialty_id": "CLI001",
+            "indicator_id": "CLI001_IND01",
+            "value": 15.0,
+            "formula": "T_mean = sum(T_monthly) / 12",
+            "default_value": 15.0
+          },
+          "status": "PASS"
+        },
+        {
+          "test_id": 2,
+          "specialty": "CLI001",
+          "indicator": "CLI001_IND02",
+          "result": {
+            "specialty_id": "CLI001",
+            "indicator_id": "CLI001_IND02",
+            "value": 300.0,
+            "formula": "P_annual = sum(P_monthly)",
+            "default_value": 300.0
+          },
+          "status": "PASS"
+        },
+        {
+          "test_id": 3,
+          "specialty": "AGR020",
+          "indicator": "AGR020_IND01",
+          "result": {
+            "specialty_id": "AGR020",
+            "indicator_id": "AGR020_IND01",
+            "value": 0.45,
+            "formula": "HI = Y_grain / B_total",
+            "default_value": 0.45
+          },
+          "status": "PASS"
+        },
+        {
+          "test_id": 4,
+          "specialty": "WAS001",
+          "indicator": "WAS001_IND01",
+          "result": {
+            "specialty_id": "WAS001",
+            "indicator_id": "WAS001_IND01",
+            "value": 10.0,
+            "formula": "Q = C × I × A",
+            "default_value": 10.0
+          },
+          "status": "PASS"
+        }
+      ]
+    },
+    "core_integration": {
+      "test_name": "CoreIntegration Tests",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "pass_rate": 100.0,
+      "details": [
+        {
+          "test_id": 1,
+          "algorithm": "H01",
+          "result": {
+            "status": "success",
+            "algorithm": "H01",
+            "results": {
+              "CLI001": {
+                "CLI001_IND01": {
+                  "specialty_id": "CLI001",
+                  "indicator_id": "CLI001_IND01",
+                  "value": 15.0,
+                  "formula": "T_mean = sum(T_monthly) / 12",
+                  "default_value": 15.0
+                },
+                "CLI001_IND02": {
+                  "specialty_id": "CLI001",
+                  "indicator_id": "CLI001_IND02",
+                  "value": 300.0,
+                  "formula": "P_annual = sum(P_monthly)",
+                  "default_value": 300.0
+                }
+              },
+              "WAS001": {
+                "WAS001_IND01": {
+                  "specialty_id": "WAS001",
+                  "indicator_id": "WAS001_IND01",
+                  "value": 10.0,
+                  "formula": "Q = C × I × A",
+                  "default_value": 10.0
+                },
+                "WAS001_IND02": {
+                  "specialty_id": "WAS001",
+                  "indicator_id": "WAS001_IND02",
+                  "value": 100.0,
+                  "formula": "R = P - ET - Q_surface",
+                  "default_value": 100.0
+                }
+              },
+              "AGR020": {
+                "AGR020_IND01": {
+                  "specialty_id": "AGR020",
+                  "indicator_id": "AGR020_IND01",
+                  "value": 0.45,
+                  "formula": "HI = Y_grain / B_total",
+                  "default_value": 0.45
+                },
+                "AGR020_IND02": {
+                  "specialty_id": "AGR020",
+                  "indicator_id": "AGR020_IND02",
+                  "value": 40.0,
+                  "formula": "GN = Y_grain / (GW × N_spikes)",
+                  "default_value": 40.0
+                }
+              }
+            }
+          },
+          "status": "PASS"
+        },
+        {
+          "test_id": 2,
+          "algorithm": "H02",
+          "result": {
+            "status": "success",
+            "algorithm": "H02",
+            "results": {
+              "CLI007": {
+                "CLI007_IND01": {
+                  "specialty_id": "CLI007",
+                  "indicator_id": "CLI007_IND01",
+                  "value": 1.0,
+                  "formula": "ΔT = T_current - T_baseline",
+                  "default_value": 1.0
+                },
+                "CLI007_IND02": {
+                  "specialty_id": "CLI007",
+                  "indicator_id": "CLI007_IND02",
+                  "value": 3.0,
+                  "formula": "dSL = 0.3 * dT * 10",
+                  "default_value": 3.0
+                }
+              },
+              "AGR009": {
+                "AGR009_IND01": {
+                  "specialty_id": "AGR009",
+                  "indicator_id": "AGR009_IND01",
+                  "value": 25.0,
+                  "formula": "Pn = GPP - R_leaf",
+                  "default_value": 25.0
+                },
+                "AGR009_IND02": {
+                  "specialty_id": "AGR009",
+                  "indicator_id": "AGR009_IND02",
+                  "value": 5.0,
+                  "formula": "Tr = ETc × (CC/CC_max)",
+                  "default_value": 5.0
+                },
+                "AGR009_IND03": {
+                  "specialty_id": "AGR009",
+                  "indicator_id": "AGR009_IND03",
+                  "value": 0.3,
+                  "formula": "gs = g1 * A / (CO2 * sqrt(VPD))",
+                  "default_value": 0.3
+                },
+                "AGR009_IND04": {
+                  "specialty_id": "AGR009",
+                  "indicator_id": "AGR009_IND04",
+                  "value": -0.5,
+                  "formula": "Ψ_leaf = Ψ_soil - Ψ_resistance",
+                  "default_value": -0.5
+                },
+                "AGR009_IND05": {
+                  "specialty_id": "AGR009",
+                  "indicator_id": "AGR009_IND05",
+                  "value": 1.5,
+                  "formula": "LUE = GPP / APAR",
+                  "default_value": 1.5
+                }
+              },
+              "AGR020": {
+                "AGR020_IND01": {
+                  "specialty_id": "AGR020",
+                  "indicator_id": "AGR020_IND01",
+                  "value": 0.45,
+                  "formula": "HI = Y_grain / B_total",
+                  "default_value": 0.45
+                },
+                "AGR020_IND02": {
+                  "specialty_id": "AGR020",
+                  "indicator_id": "AGR020_IND02",
+                  "value": 40.0,
+                  "formula": "GN = Y_grain / (GW × N_spikes)",
+                  "default_value": 40.0
+                }
+              }
+            }
+          },
+          "status": "PASS"
+        },
+        {
+          "test_id": 3,
+          "algorithm": "H04",
+          "result": {
+            "status": "success",
+            "algorithm": "H04",
+            "results": {
+              "CLI012": {
+                "CLI012_IND01": {
+                  "specialty_id": "CLI012",
+                  "indicator_id": "CLI012_IND01",
+                  "value": 0.3,
+                  "formula": "AI = P / PET",
+                  "default_value": 0.3
+                },
+                "CLI012_IND02": {
+                  "specialty_id": "CLI012",
+                  "indicator_id": "CLI012_IND02",
+                  "value": 2000.0,
+                  "formula": "PET = 0.0023 * Ra * (T + 17.8) * sqrt(T_range)",
+                  "default_value": 2000.0
+                },
+                "CLI012_IND03": {
+                  "specialty_id": "CLI012",
+                  "indicator_id": "CLI012_IND03",
+                  "value": 0.3,
+                  "formula": "CV = std(rain) / mean(rain)",
+                  "default_value": 0.3
+                },
+                "CLI012_IND04": {
+                  "specialty_id": "CLI012",
+                  "indicator_id": "CLI012_IND04",
+                  "value": 10.0,
+                  "formula": "LST = T_air + (1 - NDVI) * 10",
+                  "default_value": 30.0
+                },
+                "CLI012_IND05": {
+                  "specialty_id": "CLI012",
+                  "indicator_id": "CLI012_IND05",
+                  "value": 10.0,
+                  "formula": "Risk = Days(Wind > Threshold) / 365",
+                  "default_value": 10.0
+                }
+              },
+              "AGR009": {
+                "AGR009_IND01": {
+                  "specialty_id": "AGR009",
+                  "indicator_id": "AGR009_IND01",
+                  "value": 25.0,
+                  "formula": "Pn = GPP - R_leaf",
+                  "default_value": 25.0
+                },
+                "AGR009_IND02": {
+                  "specialty_id": "AGR009",
+                  "indicator_id": "AGR009_IND02",
+                  "value": 5.0,
+                  "formula": "Tr = ETc × (CC/CC_max)",
+                  "default_value": 5.0
+                },
+                "AGR009_IND03": {
+                  "specialty_id": "AGR009",
+                  "indicator_id": "AGR009_IND03",
+                  "value": 0.3,
+                  "formula": "gs = g1 * A / (CO2 * sqrt(VPD))",
+                  "default_value": 0.3
+                },
+                "AGR009_IND04": {
+                  "specialty_id": "AGR009",
+                  "indicator_id": "AGR009_IND04",
+                  "value": -0.5,
+                  "formula": "Ψ_leaf = Ψ_soil - Ψ_resistance",
+                  "default_value": -0.5
+                },
+                "AGR009_IND05": {
+                  "specialty_id": "AGR009",
+                  "indicator_id": "AGR009_IND05",
+                  "value": 1.5,
+                  "formula": "LUE = GPP / APAR",
+                  "default_value": 1.5
+                }
+              }
+            }
+          },
+          "status": "PASS"
+        }
+      ]
+    },
+    "performance": {
+      "test_name": "Performance Tests",
+      "avg_formula_time_ms": 0.0221,
+      "avg_all_formulas_ms": 0.0539,
+      "status": "PASS"
+    }
+  },
+  "summary": {
+    "total_tests": 24,
+    "total_passed": 24,
+    "total_failed": 0,
+    "pass_rate": 100.0
+  }
+}

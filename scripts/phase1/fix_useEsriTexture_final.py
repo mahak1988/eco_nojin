@@ -8,6 +8,9 @@ as a constructor with `this` binding.
 Solution: Use actual class in the mock.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import subprocess
 from pathlib import Path
@@ -229,27 +232,27 @@ export function useEsriTexture(siteMeta: SiteMeta | null): THREE.Texture | null 
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n" + "=" * 70)
-    print("  🔧 Fix useEsriTexture - Class-Based Mock (FINAL)")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  🔧 Fix useEsriTexture - Class-Based Mock (FINAL)")
+    logger.info("=" * 70 + "\n")
 
     info("علت خطا: vi.fn() با new keyword سازگار نیست")
     info("راه‌حل: استفاده از class در mock به‌جای vi.fn()")
-    print()
+    logger.info()
 
     # Write hook (ensure consistent)
     info("نوشتن hook...")
     hook_file = HYDROMA / "hooks" / "useEsriTexture.ts"
     hook_file.write_text(USE_ESRI_TEXTURE_HOOK, encoding="utf-8")
     ok("hook ذخیره شد")
-    print()
+    logger.info()
 
     # Write fixed test
     info("نوشتن تست با class-based mock...")
     test_file = HYDROMA / "__tests__" / "useEsriTexture.test.ts"
     test_file.write_text(USE_ESRI_TEXTURE_TEST, encoding="utf-8")
     ok("تست ذخیره شد")
-    print()
+    logger.info()
 
     # Run tests
     info("اجرای تست‌ها...")
@@ -269,20 +272,20 @@ def main():
     )
 
     output = result.stdout + result.stderr
-    print()
+    logger.info()
     for line in output.splitlines():
         if any(k in line for k in ["✓", "✗", "❯", "Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
+            logger.info(f"  {line}")
 
     if result.returncode != 0:
-        print()
+        logger.info()
         err("تست‌ها هنوز شکست می‌خورند. خروجی کامل:")
         for line in output.splitlines()[-40:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
 
     ok("همه تست‌ها پاس شدند!")
-    print()
+    logger.info()
 
     # Run all hydroma tests to confirm nothing broke
     info("اجرای همه تست‌های hydroma برای تأیید نهایی...")
@@ -297,13 +300,13 @@ def main():
         timeout=180
     )
 
-    print()
+    logger.info()
     for line in full_result.stdout.splitlines():
         if "Test Files" in line or "Tests" in line:
-            print(f"  {line}")
+            logger.info(f"  {line}")
 
     all_passed = full_result.returncode == 0
-    print()
+    logger.info()
 
     # Commit
     info("commit اصلاحات...")
@@ -325,21 +328,21 @@ def main():
     except Exception as e:
         info(f"commit: {e}")
 
-    print()
+    logger.info()
     if all_passed:
-        print("\033[1m\033[92m" + "=" * 70 + "\033[0m")
-        print("\033[1m\033[92m  🎉🎉🎉 فاز ۱ ۱۰۰٪ کامل شد! 🎉🎉🎉\033[0m")
-        print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
-        print("  ✓ 93 تست پاس شدند")
-        print("  ✓ Build موفق")
-        print("  ✓ HyDroMaCenter: 5,651 → 56 lines")
-        print("  ✓ معماری feature-based کامل")
-        print()
-        print("  🚀 آماده ورود به فاز ۲!")
+        logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m")
+        logger.info("\033[1m\033[92m  🎉🎉🎉 فاز ۱ ۱۰۰٪ کامل شد! 🎉🎉🎉\033[0m")
+        logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+        logger.info("  ✓ 93 تست پاس شدند")
+        logger.info("  ✓ Build موفق")
+        logger.info("  ✓ HyDroMaCenter: 5,651 → 56 lines")
+        logger.info("  ✓ معماری feature-based کامل")
+        logger.info()
+        logger.info("  🚀 آماده ورود به فاز ۲!")
     else:
-        print("\033[1m\033[93m" + "=" * 70 + "\033[0m")
-        print("\033[1m\033[93m  ⚠️ فاز ۱ با مشکلاتی ادامه دارد\033[0m")
-        print("\033[1m\033[93m" + "=" * 70 + "\033[0m")
+        logger.info("\033[1m\033[93m" + "=" * 70 + "\033[0m")
+        logger.info("\033[1m\033[93m  ⚠️ فاز ۱ با مشکلاتی ادامه دارد\033[0m")
+        logger.info("\033[1m\033[93m" + "=" * 70 + "\033[0m")
 
     return 0 if all_passed else 1
 

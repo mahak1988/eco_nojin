@@ -11,6 +11,9 @@ Complete refactoring of CryptoPaymentWidget following:
 - Proper error handling
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import shutil
@@ -1209,7 +1212,7 @@ def write_file(path: Path, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
     lines = len(content.splitlines())
-    print(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
+    logger.info(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
 
 
 def backup_old():
@@ -1233,70 +1236,70 @@ def backup_old():
 
 
 def main():
-    print("\n" + "=" * 70)
-    print("  🚀 Phase 2 - Refactor CryptoPaymentWidget")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  🚀 Phase 2 - Refactor CryptoPaymentWidget")
+    logger.info("=" * 70 + "\n")
 
     # ── گام ۱: پشتیبان ─────────────────────────────────────
-    print("💾 گام ۱: پشتیبان‌گیری از فایل قدیمی...")
+    logger.info("💾 گام ۱: پشتیبان‌گیری از فایل قدیمی...")
     if not backup_old():
         return 1
-    print()
+    logger.info()
 
     # ── گام ۲: ساختار ─────────────────────────────────────
-    print("📁 گام ۲: ایجاد ساختار features/crypto-payment/...")
+    logger.info("📁 گام ۲: ایجاد ساختار features/crypto-payment/...")
     CRYPTO.mkdir(parents=True, exist_ok=True)
     for folder in ["types", "constants", "utils", "hooks", "components", "__tests__"]:
         (CRYPTO / folder).mkdir(exist_ok=True)
     ok("ساختار ایجاد شد")
-    print()
+    logger.info()
 
     # ── گام ۳: Types ──────────────────────────────────────
-    print("📦 گام ۳: ایجاد Types...")
+    logger.info("📦 گام ۳: ایجاد Types...")
     write_file(CRYPTO / "types" / "crypto.types.ts", CRYPTO_TYPES)
-    print()
+    logger.info()
 
     # ── گام ۴: Constants ──────────────────────────────────
-    print("📦 گام ۴: ایجاد Constants...")
+    logger.info("📦 گام ۴: ایجاد Constants...")
     write_file(CRYPTO / "constants" / "wallets.ts", WALLETS_CONST)
     write_file(CRYPTO / "constants" / "config.ts", CONFIG_CONST)
-    print()
+    logger.info()
 
     # ── گام ۵: Utils ──────────────────────────────────────
-    print("📦 گام ۵: ایجاد Utils...")
+    logger.info("📦 گام ۵: ایجاد Utils...")
     write_file(CRYPTO / "utils" / "formatters.ts", FORMATTERS_UTIL)
     write_file(CRYPTO / "utils" / "mockGenerator.ts", MOCK_GENERATOR_UTIL)
-    print()
+    logger.info()
 
     # ── گام ۶: Hooks ──────────────────────────────────────
-    print("📦 گام ۶: ایجاد Custom Hooks...")
+    logger.info("📦 گام ۶: ایجاد Custom Hooks...")
     write_file(CRYPTO / "hooks" / "useCryptoWallets.ts", USE_CRYPTO_WALLETS_HOOK)
     write_file(CRYPTO / "hooks" / "useLiveTransactions.ts", USE_LIVE_TRANSACTIONS_HOOK)
     write_file(CRYPTO / "hooks" / "useClipboard.ts", USE_CLIPBOARD_HOOK)
-    print()
+    logger.info()
 
     # ── گام ۷: Components ─────────────────────────────────
-    print("📦 گام ۷: ایجاد Components...")
+    logger.info("📦 گام ۷: ایجاد Components...")
     write_file(CRYPTO / "components" / "StatsCards.tsx", STATS_CARDS_COMP)
     write_file(CRYPTO / "components" / "WalletCard.tsx", WALLET_CARD_COMP)
     write_file(CRYPTO / "components" / "TransactionRow.tsx", TRANSACTION_ROW_COMP)
     write_file(CRYPTO / "components" / "CryptoErrorBoundary.tsx", ERROR_BOUNDARY_COMP)
-    print()
+    logger.info()
 
     # ── گام ۸: Tests ──────────────────────────────────────
-    print("📦 گام ۸: ایجاد Tests...")
+    logger.info("📦 گام ۸: ایجاد Tests...")
     write_file(CRYPTO / "__tests__" / "formatters.test.ts", FORMATTERS_TEST)
     write_file(CRYPTO / "__tests__" / "mockGenerator.test.ts", MOCK_GENERATOR_TEST)
-    print()
+    logger.info()
 
     # ── گام ۹: جایگزینی فایل اصلی ───────────────────────
-    print("🔄 گام ۹: جایگزینی CryptoPaymentWidget.tsx...")
+    logger.info("🔄 گام ۹: جایگزینی CryptoPaymentWidget.tsx...")
     OLD_FILE.write_text(CRYPTO_PAYMENT_WIDGET_NEW, encoding="utf-8")
     ok(f"فایل اصلی جایگزین شد ({len(CRYPTO_PAYMENT_WIDGET_NEW.splitlines())} lines)")
-    print()
+    logger.info()
 
     # ── گام ۱۰: بررسی نصب React Query ──────────────────
-    print("🔍 گام ۱۰: بررسی @tanstack/react-query...")
+    logger.info("🔍 گام ۱۰: بررسی @tanstack/react-query...")
     pkg_json = FRONTEND / "package.json"
     if pkg_json.exists():
         pkg_text = pkg_json.read_text(encoding="utf-8")
@@ -1321,10 +1324,10 @@ def main():
                 err("نصب React Query شکست خورد")
                 err("لطفاً به صورت دستی نصب کنید: pnpm add @tanstack/react-query")
                 return 1
-    print()
+    logger.info()
 
     # ── گام ۱۱: Build ────────────────────────────────────
-    print("🔨 گام ۱۱: اجرای build...")
+    logger.info("🔨 گام ۱۱: اجرای build...")
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
@@ -1342,17 +1345,17 @@ def main():
     if build_result.returncode != 0:
         err("Build شکست خورد")
         for line in build_output.splitlines()[-30:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
 
     ok("Build موفق")
     for line in build_output.splitlines():
         if "CryptoPaymentWidget" in line or "built in" in line:
-            print(f"  {line.strip()}")
-    print()
+            logger.info(f"  {line.strip()}")
+    logger.info()
 
     # ── گام ۱۲: تست‌های جدید ────────────────────────────
-    print("🧪 گام ۱۲: اجرای تست‌های جدید...")
+    logger.info("🧪 گام ۱۲: اجرای تست‌های جدید...")
     test_result = subprocess.run(
         "pnpm test features/crypto-payment",
         shell=True, cwd=FRONTEND,
@@ -1364,11 +1367,11 @@ def main():
     test_output = test_result.stdout + test_result.stderr
     for line in test_output.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ── گام ۱۳: Commit ────────────────────────────────────
-    print("📦 گام ۱۳: commit تغییرات...")
+    logger.info("📦 گام ۱۳: commit تغییرات...")
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
         msg = (
@@ -1390,37 +1393,37 @@ def main():
         ok("commit و push موفق")
     except Exception as e:
         warn(f"commit: {e}")
-    print()
+    logger.info()
 
     # ── گزارش نهایی ───────────────────────────────────────
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 CryptoPaymentWidget با موفقیت refactor شد! 🎉\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[92m  🎉 CryptoPaymentWidget با موفقیت refactor شد! 🎉\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 آمار:")
-    print("    ✓ 323 → ~90 lines (72% reduction)")
-    print("    ✓ Build موفق")
-    print("    ✓ معماری feature-based")
-    print("    ✓ React Query integration")
-    print("    ✓ Error Boundary")
-    print("    ✓ Type safety (no any)")
-    print()
+    logger.info("  📊 آمار:")
+    logger.info("    ✓ 323 → ~90 lines (72% reduction)")
+    logger.info("    ✓ Build موفق")
+    logger.info("    ✓ معماری feature-based")
+    logger.info("    ✓ React Query integration")
+    logger.error("    ✓ Error Boundary")
+    logger.info("    ✓ Type safety (no any)")
+    logger.info()
 
-    print("  🏗️ ساختار جدید:")
-    print("    features/crypto-payment/")
-    print("    ├── types/        (1 file)")
-    print("    ├── constants/    (2 files)")
-    print("    ├── utils/        (2 files)")
-    print("    ├── hooks/        (3 files)")
-    print("    ├── components/   (4 files)")
-    print("    └── __tests__/    (2 files)")
-    print()
+    logger.info("  🏗️ ساختار جدید:")
+    logger.info("    features/crypto-payment/")
+    logger.info("    ├── types/        (1 file)")
+    logger.info("    ├── constants/    (2 files)")
+    logger.info("    ├── utils/        (2 files)")
+    logger.info("    ├── hooks/        (3 files)")
+    logger.info("    ├── components/   (4 files)")
+    logger.info("    └── __tests__/    (2 files)")
+    logger.info()
 
-    print("  🎯 اقدامات بعدی:")
-    print("    • بررسی عملکرد در مرورگر")
-    print("    • انتخاب فایل بعدی از ۶ فایل باقی‌مانده")
-    print("    • ادامه با EcoWalletDashboard.tsx (HIGH)")
-    print()
+    logger.info("  🎯 اقدامات بعدی:")
+    logger.info("    • بررسی عملکرد در مرورگر")
+    logger.info("    • انتخاب فایل بعدی از ۶ فایل باقی‌مانده")
+    logger.info("    • ادامه با EcoWalletDashboard.tsx (HIGH)")
+    logger.info()
 
     return 0
 

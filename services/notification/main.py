@@ -3,7 +3,7 @@
 
 def main() -> None:
     """Run the notification service placeholder."""
-    print("Eco Nojin service placeholder: notification")
+    logger.info("Eco Nojin service placeholder: notification")
 
 
 if __name__ == "__main__":

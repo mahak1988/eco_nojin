@@ -8,6 +8,9 @@ inside React Context. Test calls it outside React.
 Solution: Use renderHook from @testing-library/react
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import re
@@ -26,14 +29,14 @@ def err(m): print(f"[ERROR] {m}")
 
 
 def main():
-    print("")
-    print("=" * 70)
-    print("  Fix Last Failing Test: Selector Subscription")
-    print("=" * 70)
-    print("")
-    print("  Root Cause: useHydromaStore((s) => s) is a React Hook")
-    print("  Solution: Use renderHook to call it in React context")
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  Fix Last Failing Test: Selector Subscription")
+    logger.info("=" * 70)
+    logger.info("")
+    logger.info("  Root Cause: useHydromaStore((s) => s) is a React Hook")
+    logger.info("  Solution: Use renderHook to call it in React context")
+    logger.info("")
 
     test_file = HYDROMA_TESTS / "hydromaStore.enhanced.test.ts"
     
@@ -46,11 +49,11 @@ def main():
     lines = content.split('\n')
     
     info(f"Read test file: {len(lines)} lines")
-    print("")
+    logger.info("")
 
     # Find and fix the problematic test
-    print("[Step 1] Finding problematic test")
-    print("-" * 70)
+    logger.info("[Step 1] Finding problematic test")
+    logger.info("-" * 70)
     
     # Look for the test: "should allow selector-based subscription"
     fixed = False
@@ -146,11 +149,11 @@ def main():
         # Write back
         test_file.write_text('\n'.join(new_lines), encoding="utf-8")
         ok("Test file updated")
-    print("")
+    logger.info("")
 
     # Step 2: Run tests
-    print("[Step 2] Running tests")
-    print("-" * 70)
+    logger.info("[Step 2] Running tests")
+    logger.info("-" * 70)
     info("Executing: pnpm test:coverage")
     
     result = subprocess.run(
@@ -167,7 +170,7 @@ def main():
     output = result.stdout + result.stderr
     
     # Show results
-    print("\n  Test Results:")
+    logger.info("\n  Test Results:")
     for line in output.splitlines():
         if any(k in line for k in [
             "Test Files", "Tests", "Coverage", "%",
@@ -175,7 +178,7 @@ def main():
         ]):
             # Filter out noise
             if "stderr" not in line and "console" not in line:
-                print(f"  {line}")
+                logger.info(f"  {line}")
     
     if result.returncode == 0:
         ok("\n🎉 ALL TESTS PASSED!")
@@ -183,11 +186,11 @@ def main():
     else:
         warn(f"\nSome tests still failing")
         final_error_count = output.count("FAIL")
-    print("")
+    logger.info("")
 
     # Step 3: Show coverage improvement
-    print("[Step 3] Coverage improvement")
-    print("-" * 70)
+    logger.info("[Step 3] Coverage improvement")
+    logger.info("-" * 70)
     
     # Extract coverage summary
     coverage_section = False
@@ -196,16 +199,16 @@ def main():
             coverage_section = True
         if coverage_section:
             if "|" in line:
-                print(f"  {line}")
+                logger.info(f"  {line}")
             if line.strip() and not "|" in line and coverage_section and "All files" not in line:
                 if "---" not in line:
                     break
     
-    print("")
+    logger.info("")
 
     # Step 4: Commit
-    print("[Step 4] Committing fix")
-    print("-" * 70)
+    logger.info("[Step 4] Committing fix")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -233,34 +236,34 @@ def main():
         warn(f"Commit issue: {e}")
 
     # Final Report
-    print("")
-    print("=" * 70)
+    logger.info("")
+    logger.info("=" * 70)
     if final_error_count == 0:
-        print("  🎉🎉🎉 ALL TESTS PASSING! 🎉🎉🎉")
-        print("=" * 70)
-        print("")
-        print("  Phase B-3 Wave 1 Status: COMPLETE")
-        print("")
-        print("  Achievements:")
-        print("    ✓ Adaptive test generation working")
-        print("    ✓ All generated tests pass")
-        print("    ✓ Coverage improved from baseline")
-        print("    ✓ No API mismatches")
-        print("    ✓ Foundation for Wave 2 ready")
-        print("")
-        print("  Next Wave (Phase B-3 Wave 2):")
-        print("    • Target: useTerrainClick.ts (8.33% → 70%+)")
-        print("    • Target: usePolygonDrawing.ts (28.57% → 60%+)")
-        print("    • Target: Canvas components (with mocking)")
-        print("")
-        print("  Commands:")
-        print("    cd D:\\eco_nojin\\frontend")
-        print("    pnpm test:coverage  # View detailed coverage")
-        print("    # Open coverage/index.html in browser")
+        logger.info("  🎉🎉🎉 ALL TESTS PASSING! 🎉🎉🎉")
+        logger.info("=" * 70)
+        logger.info("")
+        logger.info("  Phase B-3 Wave 1 Status: COMPLETE")
+        logger.info("")
+        logger.info("  Achievements:")
+        logger.info("    ✓ Adaptive test generation working")
+        logger.info("    ✓ All generated tests pass")
+        logger.info("    ✓ Coverage improved from baseline")
+        logger.info("    ✓ No API mismatches")
+        logger.info("    ✓ Foundation for Wave 2 ready")
+        logger.info("")
+        logger.info("  Next Wave (Phase B-3 Wave 2):")
+        logger.info("    • Target: useTerrainClick.ts (8.33% → 70%+)")
+        logger.info("    • Target: usePolygonDrawing.ts (28.57% → 60%+)")
+        logger.info("    • Target: Canvas components (with mocking)")
+        logger.info("")
+        logger.info("  Commands:")
+        logger.info("    cd D:\\eco_nojin\\frontend")
+        logger.info("    pnpm test:coverage  # View detailed coverage")
+        logger.info("    # Open coverage/index.html in browser")
     else:
-        print(f"  ⚠️  {final_error_count} tests still failing")
-        print("=" * 70)
-    print("")
+        logger.error(f"  ⚠️  {final_error_count} tests still failing")
+        logger.info("=" * 70)
+    logger.info("")
 
     return 0 if final_error_count == 0 else 1
 

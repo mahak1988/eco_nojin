@@ -20,6 +20,9 @@ Outputs:
 - Priority ranking
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import re
 import json
 import sys
@@ -66,9 +69,9 @@ def info(m): print(f"{C.BLUE}ℹ{C.RESET}  {m}")
 def warn(m): print(f"{C.YELLOW}⚠{C.RESET}  {m}")
 def err(m): print(f"{C.RED}✗{C.RESET}  {m}")
 def header(m):
-    print(f"\n{C.BOLD}{C.CYAN}{'═' * 70}{C.RESET}")
-    print(f"{C.BOLD}{C.CYAN}  {m}{C.RESET}")
-    print(f"{C.BOLD}{C.CYAN}{'═' * 70}{C.RESET}\n")
+    logger.info(f"\n{C.BOLD}{C.CYAN}{'═' * 70}{C.RESET}")
+    logger.info(f"{C.BOLD}{C.CYAN}  {m}{C.RESET}")
+    logger.info(f"{C.BOLD}{C.CYAN}{'═' * 70}{C.RESET}\n")
 
 
 def find_file(rel_path: str) -> Path | None:
@@ -286,10 +289,10 @@ def print_analysis(analysis: dict):
     }
     color = priority_colors.get(analysis["priority"], C.RESET)
 
-    print(f"\n{C.BOLD}📄 {analysis['filename']}{C.RESET}")
-    print(f"   مسیر: {analysis['file']}")
-    print(f"   خطوط: {analysis['total_lines']:,} | کاراکترها: {analysis['total_chars']:,}")
-    print(f"   {C.BOLD}اولویت:{C.RESET} {color}{analysis['priority'].upper()}{C.RESET} (امتیاز: {analysis['severity_score']})")
+    logger.info(f"\n{C.BOLD}📄 {analysis['filename']}{C.RESET}")
+    logger.info(f"   مسیر: {analysis['file']}")
+    logger.info(f"   خطوط: {analysis['total_lines']:,} | کاراکترها: {analysis['total_chars']:,}")
+    logger.info(f"   {C.BOLD}اولویت:{C.RESET} {color}{analysis['priority'].upper()}{C.RESET} (امتیاز: {analysis['severity_score']})")
 
     # hooks
     hooks = analysis["hooks"]
@@ -298,25 +301,25 @@ def print_analysis(analysis: dict):
 
     # issues
     if analysis["issues"]:
-        print(f"   {C.BOLD}مشکلات ({len(analysis['issues'])}):{C.RESET}")
+        logger.info(f"   {C.BOLD}مشکلات ({len(analysis['issues'])}):{C.RESET}")
         for issue in analysis["issues"]:
             sev_color = {
                 "high": C.RED,
                 "medium": C.YELLOW,
                 "low": C.BLUE,
             }.get(issue["severity"], C.RESET)
-            print(f"      {sev_color}●{C.RESET} [{issue['severity']}] {issue['description']}")
-            print(f"        {C.GREEN}→ {issue['solution']}{C.RESET}")
+            logger.info(f"      {sev_color}●{C.RESET} [{issue['severity']}] {issue['description']}")
+            logger.info(f"        {C.GREEN}→ {issue['solution']}{C.RESET}")
     else:
-        print(f"   {C.GREEN}✓ هیچ مشکل مهمی یافت نشد{C.RESET}")
+        logger.info(f"   {C.GREEN}✓ هیچ مشکل مهمی یافت نشد{C.RESET}")
 
 
 def main():
-    print(f"\n{C.BOLD}{'═' * 70}{C.RESET}")
-    print(f"{C.BOLD}  🔬 Phase 2 - Diagnostic Tool{C.RESET}")
-    print(f"{C.BOLD}{'═' * 70}{C.RESET}")
-    print(f"\n{C.BOLD}هدف:{C.RESET} تحلیل عمیق ۷ فایل با الگوهای ضد React")
-    print(f"{C.BOLD}خروجی:{C.RESET} گزارش کنسول + فایل JSON برای اسکریپت‌های بعدی\n")
+    logger.info(f"\n{C.BOLD}{'═' * 70}{C.RESET}")
+    logger.info(f"{C.BOLD}  🔬 Phase 2 - Diagnostic Tool{C.RESET}")
+    logger.info(f"{C.BOLD}{'═' * 70}{C.RESET}")
+    logger.info(f"\n{C.BOLD}هدف:{C.RESET} تحلیل عمیق ۷ فایل با الگوهای ضد React")
+    logger.info(f"{C.BOLD}خروجی:{C.RESET} گزارش کنسول + فایل JSON برای اسکریپت‌های بعدی\n")
 
     analyses = []
     not_found = []
@@ -359,21 +362,21 @@ def main():
         "low": sum(1 for a in analyses if a["priority"] == "low"),
     }
 
-    print(f"  {C.BOLD}تعداد فایل‌های تحلیل شده:{C.RESET} {len(analyses)}")
-    print(f"  {C.BOLD}مجموع خطوط:{C.RESET} {total_lines:,}")
-    print(f"  {C.BOLD}مجموع مشکلات:{C.RESET} {total_issues}")
-    print()
-    print(f"  {C.BOLD}توزیع اولویت:{C.RESET}")
-    print(f"    {C.RED}● Critical:{C.RESET} {priority_counts['critical']}")
-    print(f"    {C.MAGENTA}● High:{C.RESET}     {priority_counts['high']}")
-    print(f"    {C.YELLOW}● Medium:{C.RESET}   {priority_counts['medium']}")
-    print(f"    {C.GREEN}● Low:{C.RESET}      {priority_counts['low']}")
+    logger.info(f"  {C.BOLD}تعداد فایل‌های تحلیل شده:{C.RESET} {len(analyses)}")
+    logger.info(f"  {C.BOLD}مجموع خطوط:{C.RESET} {total_lines:,}")
+    logger.info(f"  {C.BOLD}مجموع مشکلات:{C.RESET} {total_issues}")
+    logger.info()
+    logger.info(f"  {C.BOLD}توزیع اولویت:{C.RESET}")
+    logger.info(f"    {C.RED}● Critical:{C.RESET} {priority_counts['critical']}")
+    logger.info(f"    {C.MAGENTA}● High:{C.RESET}     {priority_counts['high']}")
+    logger.info(f"    {C.YELLOW}● Medium:{C.RESET}   {priority_counts['medium']}")
+    logger.info(f"    {C.GREEN}● Low:{C.RESET}      {priority_counts['low']}")
 
     if not_found:
-        print()
+        logger.info()
         warn(f"فایل‌های یافت نشده ({len(not_found)}):")
         for f in not_found:
-            print(f"    ✗ {f}")
+            logger.info(f"    ✗ {f}")
 
     # ذخیره JSON
     header("💾 ذخیره نتایج")
@@ -411,7 +414,7 @@ def main():
     # پیشنهاد برنامه
     header("🎯 برنامه پیشنهادی فاز ۲")
 
-    print(f"  {C.BOLD}ترتیب پیشنهادی بازنویسی:{C.RESET}\n")
+    logger.info(f"  {C.BOLD}ترتیب پیشنهادی بازنویسی:{C.RESET}\n")
     for i, analysis in enumerate(analyses, 1):
         priority_colors = {
             "critical": C.RED,
@@ -426,27 +429,27 @@ def main():
 
         # نمایش اولین راه‌حل
         if analysis["issues"]:
-            print(f"     {C.GREEN}→ {analysis['issues'][0]['solution']}{C.RESET}")
+            logger.info(f"     {C.GREEN}→ {analysis['issues'][0]['solution']}{C.RESET}")
 
-    print()
-    print(f"  {C.BOLD}تخمین زمان:{C.RESET}")
-    print(f"    • Critical files: 2 days each")
-    print(f"    • High files: 1-2 days each")
-    print(f"    • Medium files: 1 day each")
-    print(f"    • Low files: 0.5 day each")
-    print()
+    logger.info()
+    logger.info(f"  {C.BOLD}تخمین زمان:{C.RESET}")
+    logger.info(f"    • Critical files: 2 days each")
+    logger.info(f"    • High files: 1-2 days each")
+    logger.info(f"    • Medium files: 1 day each")
+    logger.info(f"    • Low files: 0.5 day each")
+    logger.info()
 
     # اقدام بعدی
-    print(f"{C.BOLD}{'═' * 70}{C.RESET}")
-    print(f"{C.GREEN}{C.BOLD}  ✅ Diagnostic کامل شد!{C.RESET}")
-    print(f"{C.BOLD}{'═' * 70}{C.RESET}\n")
+    logger.info(f"{C.BOLD}{'═' * 70}{C.RESET}")
+    logger.info(f"{C.GREEN}{C.BOLD}  ✅ Diagnostic کامل شد!{C.RESET}")
+    logger.info(f"{C.BOLD}{'═' * 70}{C.RESET}\n")
 
-    print(f"  {C.BOLD}اقدام بعدی:{C.RESET}")
-    print(f"  1. نتایج بالا را بررسی کنید")
-    print(f"  2. اگر با اولویت‌بندی موافقید، بفرمایید:")
-    print(f"     {C.CYAN}'شروع بازنویسی [filename].tsx'{C.RESET}")
-    print(f"  3. یا اگر فایل دیگری اولویت دارد، مشخص کنید")
-    print()
+    logger.info(f"  {C.BOLD}اقدام بعدی:{C.RESET}")
+    logger.info(f"  1. نتایج بالا را بررسی کنید")
+    logger.info(f"  2. اگر با اولویت‌بندی موافقید، بفرمایید:")
+    logger.info(f"     {C.CYAN}'شروع بازنویسی [filename].tsx'{C.RESET}")
+    logger.info(f"  3. یا اگر فایل دیگری اولویت دارد، مشخص کنید")
+    logger.info()
 
     return 0
 

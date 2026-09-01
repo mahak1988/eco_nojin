@@ -1,3 +1,6 @@
+import structlog
+
+logger = structlog.get_logger()
 import sys
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
@@ -55,7 +58,7 @@ def main():
     assert "overall_seed_suitability" in advisory
     assert 0.0 <= advisory["overall_seed_suitability"]["overall_score"] <= 1.0
 
-    print("ALL SEED OPTIMIZATION TESTS PASSED (H15-H21)")
+    logger.info("ALL SEED OPTIMIZATION TESTS PASSED (H15-H21)")
 
 if __name__ == "__main__":
     main()

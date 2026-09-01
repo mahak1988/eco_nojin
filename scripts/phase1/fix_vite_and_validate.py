@@ -8,6 +8,9 @@ Fix Vite Config + Validate HyDroMa
 4. تست build
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import re
 import sys
 import shutil
@@ -38,9 +41,9 @@ def success(msg): print(f"{Colors.GREEN}✓{Colors.RESET}  {msg}")
 def warning(msg): print(f"{Colors.YELLOW}⚠{Colors.RESET}  {msg}")
 def error(msg): print(f"{Colors.RED}✗{Colors.RESET}  {msg}")
 def header(msg):
-    print(f"\n{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.CYAN}  {msg}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}\n")
+    logger.info(f"\n{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{Colors.CYAN}  {msg}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}\n")
 
 
 def find_latest_backup(base_path: Path) -> Path | None:
@@ -181,13 +184,13 @@ def rewrite_manual_chunks() -> bool:
     success(f"✓ vite.config.ts ذخیره شد")
 
     # نمایش بخش اصلاح‌شده
-    print(f"\n{Colors.BOLD}بخش manualChunks فعلی:{Colors.RESET}")
+    logger.info(f"\n{Colors.BOLD}بخش manualChunks فعلی:{Colors.RESET}")
     start = max(0, text.find("manualChunks") - 50)
     end = min(len(text), text.find("manualChunks") + 600) if "manualChunks" in text else 0
     if end > 0:
         snippet = text[start:end]
         for line in snippet.splitlines()[:25]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
 
     return True
 
@@ -271,10 +274,10 @@ def validate_hydroma() -> bool:
 
         i += 1
 
-    print(f"\n{Colors.BOLD}آمار پرانتزها:{Colors.RESET}")
-    print(f"  (): {stats['(']} باز / {stats[')']} بسته → اختلاف: {stats['('] - stats[')']}")
-    print(f"  []: {stats['[']} باز / {stats[']']} بسته → اختلاف: {stats['['] - stats[']']}")
-    print(f"  {{}}: {stats['{']} باز / {stats['}']} بسته → اختلاف: {stats['{'] - stats['}']}")
+    logger.info(f"\n{Colors.BOLD}آمار پرانتزها:{Colors.RESET}")
+    logger.info(f"  (): {stats['(']} باز / {stats[')']} بسته → اختلاف: {stats['('] - stats[')']}")
+    logger.info(f"  []: {stats['[']} باز / {stats[']']} بسته → اختلاف: {stats['['] - stats[']']}")
+    logger.info(f"  {{}}: {stats['{']} باز / {stats['}']} بسته → اختلاف: {stats['{'] - stats['}']}")
 
     balanced = (
         stats['('] == stats[')'] and
@@ -306,7 +309,7 @@ def validate_hydroma() -> bool:
             for k, v in running.items():
                 if v < -1:
                     error(f"خط {line_no}: عدم تعادل {k} (balance={v})")
-                    print(f"    {line[:100]}")
+                    logger.info(f"    {line[:100]}")
 
     return balanced
 
@@ -342,7 +345,7 @@ def test_build() -> bool:
             # استخراج اطلاعات bundle
             for line in output.splitlines():
                 if "dist/" in line or "✓ built in" in line:
-                    print(f"  {line}")
+                    logger.info(f"  {line}")
 
             return True
 
@@ -359,11 +362,11 @@ def test_build() -> bool:
                 error_lines.append("---")
 
         if error_lines:
-            print(f"\n{Colors.BOLD}جزئیات خطا:{Colors.RESET}")
+            logger.info(f"\n{Colors.BOLD}جزئیات خطا:{Colors.RESET}")
             seen = set()
             for l in error_lines:
                 if l not in seen:
-                    print(f"  {l}")
+                    logger.info(f"  {l}")
                     seen.add(l)
                 if len(seen) > 30:
                     break
@@ -417,7 +420,7 @@ def test_dev_server() -> bool:
 
             output_lines.append(line.rstrip())
             if len(output_lines) <= 20:
-                print(f"  {line.rstrip()}")
+                logger.info(f"  {line.rstrip()}")
 
             if "Local:" in line:
                 server_ready = True
@@ -448,7 +451,7 @@ def test_dev_server() -> bool:
         if error_found:
             error("✗ خطای بحرانی در dev server")
             for l in output_lines[-10:]:
-                print(f"  {l}")
+                logger.info(f"  {l}")
             return False
 
         warning("dev server آماده نشد (اما خطای بحرانی هم نیست)")
@@ -506,9 +509,9 @@ def commit_and_push():
 # ═══════════════════════════════════════════════════════════════════════
 
 def main() -> int:
-    print(f"\n{Colors.BOLD}{'═' * 70}{Colors.RESET}")
-    print(f"{Colors.BOLD}  🔧 Fix Vite + Validate HyDroMa - Final{Colors.RESET}")
-    print(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}")
+    logger.info(f"\n{Colors.BOLD}{'═' * 70}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}  🔧 Fix Vite + Validate HyDroMa - Final{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}")
 
     # گام ۱: بازیابی vite.config.ts
     restore_vite_config()
@@ -544,28 +547,28 @@ def main() -> int:
     for name, ok in checks:
         symbol = "✓" if ok else "✗"
         color = Colors.GREEN if ok else Colors.RED
-        print(f"  {color}{symbol}{Colors.RESET} {name}")
+        logger.info(f"  {color}{symbol}{Colors.RESET} {name}")
         if not ok:
             all_ok = False
 
-    print()
+    logger.info()
     if all_ok:
-        print(f"{Colors.GREEN}{Colors.BOLD}🎉 فاز صفر کاملاً کامل شد!{Colors.RESET}")
-        print(f"\n{Colors.BOLD}┌───────────────────────────────────────────┐{Colors.RESET}")
-        print(f"{Colors.BOLD}│  🚀 آماده فاز ۱: بازنویسی ساختاری      │{Colors.RESET}")
-        print(f"{Colors.BOLD}│     features/hydroma/ extraction           │{Colors.RESET}")
-        print(f"{Colors.BOLD}└───────────────────────────────────────────┘{Colors.RESET}")
-        print(f"\n{Colors.BOLD}اولین فایل برای استخراج:{Colors.RESET}")
-        print(f"  - types/hydroma.types.ts")
-        print(f"  - store/hydromaStore.ts")
-        print(f"  - components/TerrainMesh.tsx")
+        logger.info(f"{Colors.GREEN}{Colors.BOLD}🎉 فاز صفر کاملاً کامل شد!{Colors.RESET}")
+        logger.info(f"\n{Colors.BOLD}┌───────────────────────────────────────────┐{Colors.RESET}")
+        logger.info(f"{Colors.BOLD}│  🚀 آماده فاز ۱: بازنویسی ساختاری      │{Colors.RESET}")
+        logger.info(f"{Colors.BOLD}│     features/hydroma/ extraction           │{Colors.RESET}")
+        logger.info(f"{Colors.BOLD}└───────────────────────────────────────────┘{Colors.RESET}")
+        logger.info(f"\n{Colors.BOLD}اولین فایل برای استخراج:{Colors.RESET}")
+        logger.info(f"  - types/hydroma.types.ts")
+        logger.info(f"  - store/hydromaStore.ts")
+        logger.info(f"  - components/TerrainMesh.tsx")
         return 0
     elif build_ok:
-        print(f"{Colors.YELLOW}⚠️ build موفق - می‌توان به فاز ۱ رفت{Colors.RESET}")
+        logger.info(f"{Colors.YELLOW}⚠️ build موفق - می‌توان به فاز ۱ رفت{Colors.RESET}")
         return 0
     else:
-        print(f"{Colors.RED}✗ build هنوز شکست می‌خورد{Colors.RESET}")
-        print(f"  لطفاً خروجی بالا را بررسی کنید")
+        logger.info(f"{Colors.RED}✗ build هنوز شکست می‌خورد{Colors.RESET}")
+        logger.info(f"  لطفاً خروجی بالا را بررسی کنید")
         return 1
 
 

@@ -6,6 +6,9 @@ analyze_project.py — تحلیل جامع پروژه و تولید گزارش �
 نیازمندی: فقط پایتون استاندارد (بدون pip install)
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import re
 import sys
@@ -400,10 +403,10 @@ def main():
     t0 = datetime.now()
     root = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else Path.cwd()
     if not root.is_dir():
-        print(f"❌ مسیر پیدا نشد: {root}")
+        logger.info(f"❌ مسیر پیدا نشد: {root}")
         sys.exit(1)
 
-    print(f"🔍 در حال تحلیل: {root} ...")
+    logger.info(f"🔍 در حال تحلیل: {root} ...")
     data = {"meta": {"path": str(root),
                      "generated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                      "python": platform.python_version(),
@@ -625,17 +628,17 @@ def main():
         encoding="utf-8")
 
     dur = (datetime.now() - t0).total_seconds()
-    print()
-    print("=" * 62)
-    print(f"✅ تحلیل کامل شد ({dur:.1f} ثانیه)")
+    logger.info()
+    logger.info("=" * 62)
+    logger.info(f"✅ تحلیل کامل شد ({dur:.1f} ثانیه)")
     print(f"   فناوری‌ها: {len(techs)} | فایل‌ها: {total_files:,} | "
           f"اندپوینت‌ها: {len(scan['endpoints'])}")
     print(f"   خطوط کد: {loc_code:,} | TODO: {scan['todo_total']} | "
           f"console.log: {cl_total}")
-    print("-" * 62)
-    print("📄 گزارش کامل:   PROJECT_REPORT.md")
-    print("🗂️ داده ساختاریافته: project_report.json")
-    print("=" * 62)
+    logger.info("-" * 62)
+    logger.info("📄 گزارش کامل:   PROJECT_REPORT.md")
+    logger.info("🗂️ داده ساختاریافته: project_report.json")
+    logger.info("=" * 62)
 
 
 if __name__ == "__main__":

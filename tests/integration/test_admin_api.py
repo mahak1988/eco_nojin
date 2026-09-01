@@ -1,4 +1,7 @@
 """Integration tests for the Phase 5 admin API (RBAC + audit)."""
+import structlog
+
+logger = structlog.get_logger()
 import pytest
 from fastapi.testclient import TestClient
 
@@ -53,8 +56,8 @@ def _make_user(email, role="regular", is_active=True, db_session=None):
 
 def _login(client, email):
     resp = client.post("/api/v1/auth/login", json={"email": email, "password": "testpass123"})
-    print(f'Login status for {email}: {resp.status_code}')
-    print(f'Login body: {resp.text[:200]}')
+    logger.info(f'Login status for {email}: {resp.status_code}')
+    logger.info(f'Login body: {resp.text[:200]}')
     assert resp.status_code == 200, f"Login failed with status {resp.status_code}: {resp.text}"
     return resp.json()["access_token"]
 
@@ -67,7 +70,7 @@ def test_admin_health_requires_admin_role(client, db_session):
     _make_user("farmer@test.com", role="farmer", db_session=db_session)
     token = _login(client, "farmer@test.com")
     resp = client.get("/api/v1/admin/health", headers=_auth(token))
-    print(f'Admin health (farmer): {resp.status_code} - {resp.text[:100]}')
+    logger.info(f'Admin health (farmer): {resp.status_code} - {resp.text[:100]}')
     assert resp.status_code == 403
 
 
@@ -75,7 +78,7 @@ def test_admin_health_ok_for_admin(client, db_session):
     _make_user("boss@test.com", role="admin", db_session=db_session)
     token = _login(client, "boss@test.com")
     resp = client.get("/api/v1/admin/health", headers=_auth(token))
-    print(f'Admin health (admin): {resp.status_code} - {resp.text[:100]}')
+    logger.info(f'Admin health (admin): {resp.status_code} - {resp.text[:100]}')
     assert resp.status_code == 200
 
 
@@ -86,7 +89,7 @@ def test_admin_users_list_and_block_flow(client, db_session):
 
     # List users
     resp = client.get("/api/v1/admin/users", headers=_auth(token))
-    print(f'List users: {resp.status_code}')
+    logger.info(f'List users: {resp.status_code}')
     assert resp.status_code == 200
 
     # Block

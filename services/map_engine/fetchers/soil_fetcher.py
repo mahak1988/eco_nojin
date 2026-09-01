@@ -1,4 +1,7 @@
 """Soil Erodibility Fetcher - Computes K-factor from soil properties."""
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import hashlib
@@ -37,15 +40,15 @@ class SoilErodibilityFetcher(MapFetcher):
                 da = rioxarray.open_rasterio(str(cache_path), masked=True)
                 if "band" in da.dims and da.sizes["band"] == 1:
                     da = da.isel(band=0, drop=True)
-                print(f"  [SOIL] Loaded from cache: {da.shape}")
+                logger.info(f"  [SOIL] Loaded from cache: {da.shape}")
                 return da
             except Exception as e:
-                print(f"  [SOIL] Cache load failed: {e}")
+                logger.info(f"  [SOIL] Cache load failed: {e}")
                 cache_path.unlink(missing_ok=True)
 
         k_factor = await self._generate_synthetic_k(region, resolution)
         k_factor.rio.to_raster(str(cache_path), driver="GTiff", compress="lzw")
-        print(f"  [SOIL] Generated K-factor: {k_factor.shape}")
+        logger.info(f"  [SOIL] Generated K-factor: {k_factor.shape}")
         return k_factor
 
     async def _generate_synthetic_k(self, region: Polygon, resolution: float) -> xr.DataArray:

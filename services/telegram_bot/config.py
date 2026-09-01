@@ -1,4 +1,7 @@
 """Bot configuration from environment variables."""
+import structlog
+
+logger = structlog.get_logger()
 import os
 from pathlib import Path
 
@@ -28,8 +31,8 @@ class BotConfig:
     def validate(cls) -> bool:
         """Validate required configuration."""
         if not cls.BOT_TOKEN:
-            print("ERROR: TELEGRAM_BOT_TOKEN not set in .env")
-            print("Get one from @BotFather on Telegram")
+            logger.error("ERROR: TELEGRAM_BOT_TOKEN not set in .env")
+            logger.info("Get one from @BotFather on Telegram")
             return False
         return True
 

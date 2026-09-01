@@ -9,6 +9,9 @@ Strategy:
 3. Apply correct fix based on usage
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import re
@@ -28,9 +31,9 @@ def err(m): print(f"\033[91m✗\033[0m  {m}")
 
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🚨 Revert & Fix HyDroMa3D.tsx\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[96m  🚨 Revert & Fix HyDroMa3D.tsx\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
@@ -39,8 +42,8 @@ def main():
     hydroma_file = SRC / "pages" / "admin" / "HyDroMa3D.tsx"
 
     # ═══ Step 1: Revert HyDroMa3D.tsx from git ═══
-    print("\033[1mStep 1: Revert HyDroMa3D.tsx از git\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 1: Revert HyDroMa3D.tsx از git\033[0m")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "git checkout HEAD -- frontend/src/pages/admin/HyDroMa3D.tsx",
@@ -65,11 +68,11 @@ def main():
         else:
             err("Cannot revert HyDroMa3D.tsx")
             return 1
-    print()
+    logger.info()
 
     # ═══ Step 2: Read and analyze the file ═══
-    print("\033[1mStep 2: تحلیل context واقعی\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 2: تحلیل context واقعی\033[0m")
+    logger.info("-" * 70)
     
     text = hydroma_file.read_text(encoding="utf-8")
     lines = text.split('\n')
@@ -77,16 +80,16 @@ def main():
     info(f"File has {len(lines)} lines")
     
     # Show context around line 140 (ref)
-    print("\n  Context around line 140 (ref usage):")
+    logger.info("\n  Context around line 140 (ref usage):")
     for i in range(max(0, 125), min(len(lines), 150)):
         marker = " <<<" if i == 139 else ""
-        print(f"    {i+1:3d}: {lines[i]}{marker}")
+        logger.info(f"    {i+1:3d}: {lines[i]}{marker}")
     
     # Show context around line 379 (off)
-    print("\n  Context around line 379 (off usage):")
+    logger.info("\n  Context around line 379 (off usage):")
     for i in range(max(0, 370), min(len(lines), 390)):
         marker = " <<<" if i == 378 else ""
-        print(f"    {i+1:3d}: {lines[i]}{marker}")
+        logger.info(f"    {i+1:3d}: {lines[i]}{marker}")
     
     # Check if this is a forwardRef component
     is_forward_ref = 'forwardRef' in text
@@ -107,12 +110,12 @@ def main():
     if off_definitions:
         info(f"'off' defined at:")
         for line_num, line_text in off_definitions[:5]:
-            print(f"    Line {line_num}: {line_text}")
-    print()
+            logger.info(f"    Line {line_num}: {line_text}")
+    logger.info()
 
     # ═══ Step 3: Apply correct fixes ═══
-    print("\033[1mStep 3: اعمال fixes صحیح\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 3: اعمال fixes صحیح\033[0m")
+    logger.info("-" * 70)
     
     modified = False
     
@@ -200,11 +203,11 @@ def main():
         ok("HyDroMa3D.tsx fixed")
     else:
         info("No modifications needed for HyDroMa3D.tsx")
-    print()
+    logger.info()
 
     # ═══ Step 4: Type Check ═══
-    print("\033[1mStep 4: TypeScript Type Check\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 4: TypeScript Type Check\033[0m")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm type-check",
@@ -225,16 +228,16 @@ def main():
             warn(f"TypeScript: {error_count} errors remaining")
             error_lines = [l for l in output.splitlines() if "error TS" in l][:20]
             for line in error_lines:
-                print(f"  {line}")
+                logger.info(f"  {line}")
             final_error_count = error_count
         else:
             ok("TypeScript: No errors")
             final_error_count = 0
-    print()
+    logger.info()
 
     # ═══ Step 5: Build ═══
-    print("\033[1mStep 5: Build Test\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 5: Build Test\033[0m")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm build",
@@ -249,13 +252,13 @@ def main():
     else:
         err("Build failed")
         for line in (result.stdout + result.stderr).splitlines()[-25:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
-    print()
+    logger.info()
 
     # ═══ Step 6: Tests ═══
-    print("\033[1mStep 6: Run Tests\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 6: Run Tests\033[0m")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test",
@@ -267,12 +270,12 @@ def main():
     
     for line in result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 7: Commit ═══
-    print("\033[1mStep 7: Commit\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 7: Commit\033[0m")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -297,12 +300,12 @@ Build: Successful | Tests: All passing'''
     except Exception as e:
         warn(f"Commit issue: {e}")
 
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
     if final_error_count == 0:
-        print("\033[1m\033[92m  🎉🎉🎉 PHASE B-1: 100% COMPLETE! 🎉🎉🎉\033[0m")
+        logger.info("\033[1m\033[92m  🎉🎉🎉 PHASE B-1: 100% COMPLETE! 🎉🎉🎉\033[0m")
     else:
-        print(f"\033[1m\033[93m  ⚠️  {final_error_count} errors remain\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+        logger.error(f"\033[1m\033[93m  ⚠️  {final_error_count} errors remain\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
     return 0
 

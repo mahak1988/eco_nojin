@@ -5,6 +5,9 @@ a ChainResult with provenance labels. The chain is pure (no DB access) so
 it is unit-testable; the API layer wires persistence later.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import logging
@@ -60,7 +63,7 @@ def _default_monthly() -> list[MonthClimate]:
 
 def _run_swat_plus(input_data: SWATInput) -> SWATOutput:
     """Placeholder for SWAT+ execution."""
-    print(f"Running SWAT+ for land profile {input_data.land_profile_id}")
+    logger.info(f"Running SWAT+ for land profile {input_data.land_profile_id}")
     num_days = (input_data.end_date - input_data.start_date).days
     return SWATOutput(
         runoff_m3=[1000.0] * num_days,

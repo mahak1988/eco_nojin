@@ -14,6 +14,9 @@ Tests all modules:
 Run: python -m pytest engine/land/tests/ -v
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import numpy as np
 import pytest
 
@@ -370,7 +373,7 @@ class TestIntegration:
         assert hasattr(terrain, 'slope_mean')
         assert hasattr(terrain, 'terrain_type')
 
-        print(f"  ✅ Terrain analysis: slope_mean={terrain.slope_mean:.2f}, type={terrain.terrain_type}")
+        logger.info(f"  ✅ Terrain analysis: slope_mean={terrain.slope_mean:.2f}, type={terrain.terrain_type}")
 
     @pytest.fixture
     def analyzer(self):

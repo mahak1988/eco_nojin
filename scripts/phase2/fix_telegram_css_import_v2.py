@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Fix CSS import path - smart version with regex"""
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import re
 import subprocess
@@ -42,8 +45,8 @@ def main():
     info("خطوط مربوط به LiveComponents در فایل فعلی:")
     for i, line in enumerate(text.splitlines(), 1):
         if "LiveComponents" in line:
-            print(f"  Line {i}: {line}")
-    print()
+            logger.info(f"  Line {i}: {line}")
+    logger.info()
 
     # اصلاح با regex - همه الگوهای ممکن
     # Matches: import ".../live/LiveComponents.css";
@@ -53,7 +56,7 @@ def main():
     matches = re.findall(pattern, text)
     info(f"تعداد match های regex: {len(matches)}")
     for m in matches:
-        print(f"  یافت شد: {m}")
+        logger.info(f"  یافت شد: {m}")
 
     if matches:
         text = re.sub(pattern, replacement, text)
@@ -76,17 +79,17 @@ def main():
         else:
             warn("هیچ خطی پیدا نشد! نمایش ۱۰ خط اول فایل:")
             for i, line in enumerate(lines[:10], 1):
-                print(f"  {i}: {line}")
+                logger.info(f"  {i}: {line}")
 
     # تایید اصلاح
-    print("\n\033[1mمحتوای خطوط ۲۰-۳۰ بعد از اصلاح:\033[0m")
+    logger.info("\n\033[1mمحتوای خطوط ۲۰-۳۰ بعد از اصلاح:\033[0m")
     new_text = TELEGRAM_FILE.read_text(encoding="utf-8")
     for i, line in enumerate(new_text.splitlines()[19:30], 20):
-        print(f"  {i:3d} │ {line}")
-    print()
+        logger.info(f"  {i:3d} │ {line}")
+    logger.info()
 
     # Build
-    print("\033[1m🔨 اجرای build...\033[0m")
+    logger.info("\033[1m🔨 اجرای build...\033[0m")
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
@@ -103,16 +106,16 @@ def main():
         ok("Build موفق!")
         for line in result.stdout.splitlines():
             if "built in" in line or "TelegramManager" in line:
-                print(f"  {line.strip()}")
+                logger.info(f"  {line.strip()}")
     else:
         err("Build هنوز شکست می‌خورد")
         output = result.stdout + result.stderr
         for line in output.splitlines()[-25:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
 
     # تست‌ها
-    print("\n\033[1m🧪 اجرای تست‌ها...\033[0m")
+    logger.info("\n\033[1m🧪 اجرای تست‌ها...\033[0m")
     test_result = subprocess.run(
         "pnpm test features/telegram-manager",
         shell=True, cwd=FRONTEND,
@@ -122,10 +125,10 @@ def main():
     )
     for line in test_result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
+            logger.info(f"  {line}")
 
     # Commit
-    print("\n\033[1m📦 commit...\033[0m")
+    logger.info("\n\033[1m📦 commit...\033[0m")
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
         subprocess.run(
@@ -137,9 +140,9 @@ def main():
     except Exception as e:
         warn(f"commit: {e}")
 
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 TelegramManager آماده! به SecurityAdvanced.tsx می‌رویم\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[92m  🎉 TelegramManager آماده! به SecurityAdvanced.tsx می‌رویم\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m")
     return 0
 
 

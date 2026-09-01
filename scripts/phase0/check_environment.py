@@ -4,6 +4,9 @@ Check Environment
 بررسی همه پیش‌نیازهای فاز صفر.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import sys
 import shutil
 from pathlib import Path
@@ -133,12 +136,12 @@ def main() -> int:
     for name, ok in checks:
         status = "✓" if ok else "✗"
         color = "🟢" if ok else "🔴"
-        print(f"  {color} {name}")
+        logger.info(f"  {color} {name}")
     
     if failed:
         console.error(f"\n{len(failed)} مورد نیاز به رفع دارد:")
         for f in failed:
-            print(f"    - {f}")
+            logger.info(f"    - {f}")
         return 1
     
     console.success("\n✨ همه پیش‌نیازها آماده هستند!")

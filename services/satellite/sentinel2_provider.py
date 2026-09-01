@@ -18,6 +18,9 @@ Scientific References:
 - Planetary Computer STAC API
 - Sentinel-2 L2A ATBD (Atmospheric Correction)
 """
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import warnings
@@ -194,7 +197,7 @@ class Sentinel2Provider:
         # Step 1: Check local cache
         cached = self._check_cache(bbox, date_from, date_to, max_cloud_pct)
         if cached:
-            print(f"  [SENTINEL] Loaded from cache: {cached.scene_id}")
+            logger.info(f"  [SENTINEL] Loaded from cache: {cached.scene_id}")
             return cached
 
         # Step 2: Try Planetary Computer
@@ -207,10 +210,10 @@ class Sentinel2Provider:
                     self._save_to_cache(scene, bbox)
                     return scene
             except Exception as e:
-                print(f"  [SENTINEL] Planetary Computer error: {e}")
+                logger.error(f"  [SENTINEL] Planetary Computer error: {e}")
 
         # Step 3: Fall back to synthetic
-        print("  [SENTINEL] Using synthetic data (development mode)")
+        logger.info("  [SENTINEL] Using synthetic data (development mode)")
         return self._generate_synthetic(bbox, date_from, date_to)
 
     def compute_index(
@@ -222,7 +225,7 @@ class Sentinel2Provider:
     ) -> xr.DataArray | None:
         """Compute a spectral index from scene data with caching and cloud masking."""
         if not HAS_RASTERIO or xr is None:
-            print("  [SENTINEL] xarray/rasterio not available, returning None")
+            logger.info("  [SENTINEL] xarray/rasterio not available, returning None")
             return None
 
         # Use simple cache key (scene + bbox only)
@@ -239,7 +242,7 @@ class Sentinel2Provider:
                 bands = self._apply_cloud_mask(bands)
 
             self._band_cache[cache_key] = bands
-            print(f"  [SENTINEL] Cached {len(bands)} essential bands for {scene.scene_id}")
+            logger.info(f"  [SENTINEL] Cached {len(bands)} essential bands for {scene.scene_id}")
         else:
             bands = self._band_cache[cache_key]
 
@@ -287,7 +290,7 @@ class Sentinel2Provider:
             with open(cache_file, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=2)
         except Exception as e:
-            print(f"  [SENTINEL] Cache save error: {e}")
+            logger.error(f"  [SENTINEL] Cache save error: {e}")
 
     def _bbox_date_key(self, bbox, date_from, date_to) -> str:
         """Generate cache key from bbox and date range."""
@@ -302,7 +305,7 @@ class Sentinel2Provider:
             import planetary_computer as pc
             import pystac_client
         except ImportError:
-            print("  [SENTINEL] planetary_computer/pystac_client not installed")
+            logger.info("  [SENTINEL] planetary_computer/pystac_client not installed")
             return None
 
         if self._pc_client is None:
@@ -312,7 +315,7 @@ class Sentinel2Provider:
                     modifier=pc.sign_inplace,
                 )
             except Exception as e:
-                print(f"  [SENTINEL] PC connection failed: {e}")
+                logger.info(f"  [SENTINEL] PC connection failed: {e}")
                 return None
 
         collection = "sentinel-2-l2a" if product == SentinelProduct.L2A else "sentinel-2-l1c"
@@ -343,7 +346,7 @@ class Sentinel2Provider:
                 source="planetary_computer",
             )
         except Exception as e:
-            print(f"  [SENTINEL] PC search error: {e}")
+            logger.error(f"  [SENTINEL] PC search error: {e}")
             return None
 
     def _generate_synthetic(
@@ -374,8 +377,8 @@ class Sentinel2Provider:
         try:
             return self._load_real_data_odc(scene, bbox)
         except Exception as e:
-            print(f"  [SENTINEL] Real data load failed: {e}")
-            print("  [SENTINEL] Falling back to synthetic")
+            logger.info(f"  [SENTINEL] Real data load failed: {e}")
+            logger.info("  [SENTINEL] Falling back to synthetic")
             return self._generate_synthetic_bands(scene, bbox)
 
 
@@ -402,7 +405,7 @@ class Sentinel2Provider:
             with open(cache_file, 'wb') as f:
                 pickle.dump(Integerizable, f)
         except Exception as e:
-            print(f"  [SENTINEL] Disk cache save error: {e}")
+            logger.error(f"  [SENTINEL] Disk cache save error: {e}")
 
     def _load_from_disk_cache(self, key: str) -> dict[str, xr.DataArray] | None:
         """Load band data from disk cache."""
@@ -420,7 +423,7 @@ class Sentinel2Provider:
                     coords=data["coords"],
                     attrs=data["attrs"],
                 )
-            print(f"  [SENTINEL] Loaded from disk cache: {key[:16]}...")
+            logger.info(f"  [SENTINEL] Loaded from disk cache: {key[:16]}...")
             return result
         except Exception:
             return None
@@ -439,7 +442,7 @@ class Sentinel2Provider:
         try:
             return self._load_real_data_odc(scene, bbox, required_bands, resolution=resolution)
         except Exception as e:
-            print(f"  [SENTINEL] Real data load failed: {e}")
+            logger.info(f"  [SENTINEL] Real data load failed: {e}")
             return self._generate_synthetic_bands(scene, bbox)
 
     def _load_real_data_odc(
@@ -500,7 +503,7 @@ class Sentinel2Provider:
                 if attempt < max_retries - 1:
                     import time
                     wait = 2 ** attempt  # 1s, 2s, 4s
-                    print(f"  [SENTINEL] Search retry {attempt+1}/{max_retries} after {wait}s: {type(e).__name__}")
+                    logger.info(f"  [SENTINEL] Search retry {attempt+1}/{max_retries} after {wait}s: {type(e).__name__}")
                     time.sleep(wait)
                 else:
                     raise
@@ -510,7 +513,7 @@ class Sentinel2Provider:
 
         item = items[0]
 
-        print(f"  [SENTINEL] Loading: {scene.scene_id[:30]}... res={target_res}m bands={len(bands_to_load)}")
+        logger.info(f"  [SENTINEL] Loading: {scene.scene_id[:30]}... res={target_res}m bands={len(bands_to_load)}")
 
         # Load with odc-stac (lazy)
         data = odc.stac.load(
@@ -652,7 +655,7 @@ class Sentinel2Provider:
                 f"{class_names.get(c, c)}={n}"
                 for c, n in sorted(class_counts.items())
             )
-            print(f"  [SENTINEL] SCL breakdown: {breakdown}")
+            logger.info(f"  [SENTINEL] SCL breakdown: {breakdown}")
 
         return bands
 
@@ -737,7 +740,7 @@ class Sentinel2Provider:
             if apply_cloud_mask and "SCL" in bands:
                 bands = self._apply_cloud_mask(bands)
             self._band_cache[cache_key] = bands
-            print(f"  [SENTINEL] Cached {len(bands)} essential bands for {scene.scene_id[:20]}...")
+            logger.info(f"  [SENTINEL] Cached {len(bands)} essential bands for {scene.scene_id[:20]}...")
         else:
             bands = self._band_cache[cache_key]
 
@@ -770,7 +773,7 @@ class Sentinel2Provider:
                         attrs={"index": idx.name},
                     )
             except Exception as e:
-                print(f"  [SENTINEL] Failed to compute {idx.name}: {e}")
+                logger.info(f"  [SENTINEL] Failed to compute {idx.name}: {e}")
 
         return results
 
@@ -790,7 +793,7 @@ class Sentinel2Provider:
         def get_band(name: str) -> np.ndarray | None:
             arr = band_arrays.get(name)
             if arr is None:
-                print(f"  [SENTINEL] Warning: Band {name} not in loaded bands")
+                logger.warning(f"  [SENTINEL] Warning: Band {name} not in loaded bands")
                 return None
             return arr.astype(np.float32, copy=False)
 

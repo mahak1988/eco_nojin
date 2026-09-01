@@ -11,6 +11,9 @@ Phase 1 - Day 7 - Part 2: Viewport + Final Orchestration
 7. Commit & push
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import subprocess
 import shutil
@@ -29,7 +32,7 @@ def write_file(path: Path, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
     lines = len(content.splitlines())
-    print(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
+    logger.info(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
 
 
 def ok(m): print(f"\033[92m✓\033[0m  {m}")
@@ -727,9 +730,9 @@ def backup_old_file():
 
 def run_tests():
     """اجرای همه تست‌ها"""
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🧪 اجرای تست‌ها\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[96m  🧪 اجرای تست‌ها\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
@@ -749,16 +752,16 @@ def run_tests():
     output = result.stdout + result.stderr
     for line in output.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "✓", "✗", "❯", "FAIL", "passed", "failed"]):
-            print(f"  {line}")
+            logger.info(f"  {line}")
 
     return result.returncode == 0
 
 
 def run_build():
     """اجرای build برای validation"""
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🔨 اجرای build\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[96m  🔨 اجرای build\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     result = subprocess.run(
         "pnpm build",
@@ -778,20 +781,20 @@ def run_build():
         # نمایش chunk های مهم
         for line in output.splitlines():
             if "HyDroMaCenter" in line or "vendor" in line or "built in" in line:
-                print(f"  {line.strip()}")
+                logger.info(f"  {line.strip()}")
         return True
     else:
         err("Build شکست خورد")
         for line in output.splitlines()[-30:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return False
 
 
 def commit_and_push(tests_ok, build_ok):
     """commit و push نهایی"""
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  📦 commit نهایی\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[96m  📦 commit نهایی\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -824,102 +827,102 @@ def commit_and_push(tests_ok, build_ok):
 
 
 def main():
-    print("\n" + "=" * 70)
-    print("  🚀 Phase 1 - Day 7 Part 2: Viewport + Final Orchestration")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  🚀 Phase 1 - Day 7 Part 2: Viewport + Final Orchestration")
+    logger.info("=" * 70 + "\n")
 
     # ── گام ۱: پشتیبان ─────────────────────────────────────
-    print("💾 گام ۱: پشتیبان‌گیری از فایل قدیمی...")
+    logger.info("💾 گام ۱: پشتیبان‌گیری از فایل قدیمی...")
     backup = backup_old_file()
-    print()
+    logger.info()
 
     # ── گام ۲: Viewport Components ─────────────────────────
-    print("🎨 گام ۲: ایجاد Viewport Components...")
+    logger.info("🎨 گام ۲: ایجاد Viewport Components...")
     write_file(HYDROMA / "components" / "viewport" / "ViewportInfoBar.tsx", VIEWPORT_INFO_BAR)
     write_file(HYDROMA / "components" / "viewport" / "LoadingView.tsx", LOADING_VIEW)
     write_file(HYDROMA / "components" / "viewport" / "EmptyView.tsx", EMPTY_VIEW)
     write_file(HYDROMA / "components" / "viewport" / "SceneContent.tsx", SCENE_CONTENT)
     write_file(HYDROMA / "components" / "viewport" / "HydromaViewport.tsx", HYDROMA_VIEWPORT)
     write_file(HYDROMA / "components" / "viewport" / "index.ts", VIEWPORT_INDEX)
-    print()
+    logger.info()
 
     # ── گام ۳: جایگزینی HyDroMaCenter.tsx ────────────────
-    print("🔄 گام ۳: جایگزینی HyDroMaCenter.tsx با orchestration جدید...")
+    logger.info("🔄 گام ۳: جایگزینی HyDroMaCenter.tsx با orchestration جدید...")
     old_file = PAGES / "HyDroMaCenter.tsx"
     old_lines = len(old_file.read_text(encoding="utf-8").splitlines()) if old_file.exists() else 0
     write_file(old_file, HYDROMA_CENTER_NEW)
     new_lines = len(HYDROMA_CENTER_NEW.splitlines())
     ok(f"HyDroMaCenter: {old_lines} → {new_lines} lines ({100 - new_lines * 100 // max(old_lines, 1)}% reduction)")
-    print()
+    logger.info()
 
     # ── گام ۴: Fix تست useEsriTexture ────────────────────
-    print("🔧 گام ۴: Fix تست useEsriTexture...")
+    logger.info("🔧 گام ۴: Fix تست useEsriTexture...")
     write_file(
         HYDROMA / "__tests__" / "useEsriTexture.test.ts",
         USE_ESRI_TEXTURE_TEST_FIXED,
     )
-    print()
+    logger.info()
 
     # ── گام ۵: اجرای تست‌ها ───────────────────────────────
     tests_ok = run_tests()
-    print()
+    logger.info()
 
     # ── گام ۶: اجرای build ───────────────────────────────
     build_ok = run_build()
-    print()
+    logger.info()
 
     # ── گام ۷: commit ─────────────────────────────────────
     commit_and_push(tests_ok, build_ok)
-    print()
+    logger.info()
 
     # ── گزارش نهایی ──────────────────────────────────────
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
     if tests_ok and build_ok:
-        print("\033[1m\033[92m  🎉🎉🎉 فاز ۱ کامل شد! 🎉🎉🎉\033[0m")
+        logger.info("\033[1m\033[92m  🎉🎉🎉 فاز ۱ کامل شد! 🎉🎉🎉\033[0m")
     else:
-        print("\033[1m\033[93m  ⚠️ فاز ۱ با مشکلاتی کامل شد\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+        logger.info("\033[1m\033[93m  ⚠️ فاز ۱ با مشکلاتی کامل شد\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 خلاصه دستاوردها:")
-    print(f"    ✓ HyDroMaCenter: {old_lines:,} → {new_lines} lines")
-    print(f"    ✓ کاهش: {100 - new_lines * 100 // max(old_lines, 1)}%")
-    print(f"    ✓ تست‌ها: {'✓ پاس شدند' if tests_ok else '✗ شکست'}")
-    print(f"    ✓ Build: {'✓ موفق' if build_ok else '✗ شکست'}")
-    print()
+    logger.info("  📊 خلاصه دستاوردها:")
+    logger.info(f"    ✓ HyDroMaCenter: {old_lines:,} → {new_lines} lines")
+    logger.info(f"    ✓ کاهش: {100 - new_lines * 100 // max(old_lines, 1)}%")
+    logger.info(f"    ✓ تست‌ها: {'✓ پاس شدند' if tests_ok else '✗ شکست'}")
+    logger.info(f"    ✓ Build: {'✓ موفق' if build_ok else '✗ شکست'}")
+    logger.info()
 
-    print("  🏗️ معماری نهایی:")
-    print("    features/hydroma/")
-    print("    ├── types/             (interfaces)")
-    print("    ├── store/             (Zustand)")
-    print("    ├── hooks/             (custom hooks)")
-    print("    ├── constants/         (config data)")
-    print("    ├── utils/             (helpers)")
-    print("    ├── components/")
-    print("    │   ├── canvas/        (9 3D components)")
-    print("    │   ├── sidebar/       (14 components)")
-    print("    │   └── viewport/      (5 components)")
-    print("    └── __tests__/         (90+ tests)")
-    print()
+    logger.info("  🏗️ معماری نهایی:")
+    logger.info("    features/hydroma/")
+    logger.info("    ├── types/             (interfaces)")
+    logger.info("    ├── store/             (Zustand)")
+    logger.info("    ├── hooks/             (custom hooks)")
+    logger.info("    ├── constants/         (config data)")
+    logger.info("    ├── utils/             (helpers)")
+    logger.info("    ├── components/")
+    logger.info("    │   ├── canvas/        (9 3D components)")
+    logger.info("    │   ├── sidebar/       (14 components)")
+    logger.info("    │   └── viewport/      (5 components)")
+    logger.info("    └── __tests__/         (90+ tests)")
+    logger.info()
 
-    print("  🎯 اصول رعایت شده:")
-    print("    ✓ Single Responsibility Principle")
-    print("    ✓ Feature-based Architecture")
-    print("    ✓ Type Safety (no any)")
-    print("    ✓ React Query pattern (no useEffect for data)")
-    print("    ✓ Atomic State (Zustand)")
-    print("    ✓ Lazy Loading ready")
-    print("    ✓ Testable Hooks")
-    print("    ✓ Error Boundaries")
-    print()
+    logger.info("  🎯 اصول رعایت شده:")
+    logger.info("    ✓ Single Responsibility Principle")
+    logger.info("    ✓ Feature-based Architecture")
+    logger.info("    ✓ Type Safety (no any)")
+    logger.info("    ✓ React Query pattern (no useEffect for data)")
+    logger.info("    ✓ Atomic State (Zustand)")
+    logger.info("    ✓ Lazy Loading ready")
+    logger.info("    ✓ Testable Hooks")
+    logger.error("    ✓ Error Boundaries")
+    logger.info()
 
     if not tests_ok or not build_ok:
-        print("  ⚠️ اقدامات مورد نیاز:")
+        logger.info("  ⚠️ اقدامات مورد نیاز:")
         if not tests_ok:
-            print("    • بررسی تست‌های شکست خورده")
+            logger.info("    • بررسی تست‌های شکست خورده")
         if not build_ok:
-            print("    • بررسی خطاهای build")
-            print("    • پشتیبان موجود در _backups/hydroma_rewrite/")
-        print()
+            logger.info("    • بررسی خطاهای build")
+            logger.info("    • پشتیبان موجود در _backups/hydroma_rewrite/")
+        logger.info()
 
     return 0 if (tests_ok and build_ok) else 1
 

@@ -6,6 +6,9 @@ Bootstrap Script - Phase 0
 این فایل ابتدا utils و سپس ساختار پوشه‌ها را ایجاد می‌کند.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 from pathlib import Path
@@ -19,18 +22,18 @@ PHASE0_DIR = SCRIPTS_DIR / "phase0"
 def create_directory(path: Path) -> None:
     """ایجاد پوشه اگر وجود نداشته باشد"""
     path.mkdir(parents=True, exist_ok=True)
-    print(f"✓ پوشه ایجاد/تأیید شد: {path}")
+    logger.info(f"✓ پوشه ایجاد/تأیید شد: {path}")
 
 def create_file(path: Path, content: str) -> None:
     """ایجاد فایل با محتوای مشخص"""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding='utf-8')
-    print(f"✓ فایل ایجاد شد: {path}")
+    logger.info(f"✓ فایل ایجاد شد: {path}")
 
 def main() -> int:
-    print("=" * 70)
-    print("  eco_nojin Bootstrap - ایجاد ساختار اسکریپت‌ها")
-    print("=" * 70)
+    logger.info("=" * 70)
+    logger.info("  eco_nojin Bootstrap - ایجاد ساختار اسکریپت‌ها")
+    logger.info("=" * 70)
     
     # ایجاد ساختار پوشه‌ها
     create_directory(UTILS_DIR)
@@ -42,9 +45,9 @@ def main() -> int:
         if not init_file.exists():
             create_file(init_file, '"""Script package."""\n')
     
-    print("\n" + "=" * 70)
-    print("  ساختار پایه ایجاد شد. حالا utils را ایجاد می‌کنیم...")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  ساختار پایه ایجاد شد. حالا utils را ایجاد می‌کنیم...")
+    logger.info("=" * 70 + "\n")
     
     return 0
 

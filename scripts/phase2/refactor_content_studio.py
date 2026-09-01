@@ -11,6 +11,9 @@ Key improvements:
 - 322 → ~80 lines orchestration
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import shutil
@@ -1019,7 +1022,7 @@ def write_file(path: Path, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
     lines = len(content.splitlines())
-    print(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
+    logger.info(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
 
 
 def backup_old():
@@ -1041,73 +1044,73 @@ def backup_old():
 
 
 def main():
-    print("\n" + "=" * 70)
-    print("  🚀 Phase 2 - Refactor ContentStudio")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  🚀 Phase 2 - Refactor ContentStudio")
+    logger.info("=" * 70 + "\n")
 
     # گام ۱: پشتیبان
-    print("💾 گام ۱: پشتیبان‌گیری از فایل قدیمی...")
+    logger.info("💾 گام ۱: پشتیبان‌گیری از فایل قدیمی...")
     if not backup_old():
         return 1
-    print()
+    logger.info()
 
     # گام ۲: ساختار
-    print("📁 گام ۲: ایجاد ساختار features/content-studio/...")
+    logger.info("📁 گام ۲: ایجاد ساختار features/content-studio/...")
     CONTENT_STUDIO.mkdir(parents=True, exist_ok=True)
     for folder in ["types", "constants", "utils", "api", "hooks", "components", "__tests__"]:
         (CONTENT_STUDIO / folder).mkdir(exist_ok=True)
     ok("ساختار ایجاد شد")
-    print()
+    logger.info()
 
     # گام ۳: Types
-    print("📦 گام ۳: ایجاد Types...")
+    logger.info("📦 گام ۳: ایجاد Types...")
     write_file(CONTENT_STUDIO / "types" / "contentStudio.types.ts", CONTENT_STUDIO_TYPES)
-    print()
+    logger.info()
 
     # گام ۴: Constants
-    print("📦 گام ۴: ایجاد Constants...")
+    logger.info("📦 گام ۴: ایجاد Constants...")
     write_file(CONTENT_STUDIO / "constants" / "config.ts", CONFIG_CONST)
-    print()
+    logger.info()
 
     # گام ۵: API
-    print("📦 گام ۵: ایجاد API Functions...")
+    logger.info("📦 گام ۵: ایجاد API Functions...")
     write_file(CONTENT_STUDIO / "api" / "contentStudioApi.ts", API_FUNCTIONS)
-    print()
+    logger.info()
 
     # گام ۶: Utils
-    print("📦 گام ۶: ایجاد Utils...")
+    logger.info("📦 گام ۶: ایجاد Utils...")
     write_file(CONTENT_STUDIO / "utils" / "formatters.ts", FORMATTERS_UTIL)
-    print()
+    logger.info()
 
     # گام ۷: Hooks
-    print("📦 گام ۷: ایجاد Custom Hooks (5 hooks)...")
+    logger.info("📦 گام ۷: ایجاد Custom Hooks (5 hooks)...")
     write_file(CONTENT_STUDIO / "hooks" / "useContentItems.ts", USE_CONTENT_ITEMS_HOOK)
     write_file(CONTENT_STUDIO / "hooks" / "usePublishItem.ts", USE_PUBLISH_ITEM_HOOK)
     write_file(CONTENT_STUDIO / "hooks" / "useDeleteItem.ts", USE_DELETE_ITEM_HOOK)
     write_file(CONTENT_STUDIO / "hooks" / "useGenerateDraft.ts", USE_GENERATE_DRAFT_HOOK)
     write_file(CONTENT_STUDIO / "hooks" / "useTranslateItem.ts", USE_TRANSLATE_ITEM_HOOK)
-    print()
+    logger.info()
 
     # گام ۸: Components
-    print("📦 گام ۸: ایجاد Components...")
+    logger.info("📦 گام ۸: ایجاد Components...")
     write_file(CONTENT_STUDIO / "components" / "StatsCards.tsx", STATS_CARDS_COMP)
     write_file(CONTENT_STUDIO / "components" / "FilterBar.tsx", FILTER_BAR_COMP)
     write_file(CONTENT_STUDIO / "components" / "ContentTable.tsx", CONTENT_TABLE_COMP)
-    print()
+    logger.info()
 
     # گام ۹: Tests
-    print("📦 گام ۹: ایجاد Tests...")
+    logger.info("📦 گام ۹: ایجاد Tests...")
     write_file(CONTENT_STUDIO / "__tests__" / "formatters.test.ts", FORMATTERS_TEST)
-    print()
+    logger.info()
 
     # گام ۱۰: جایگزینی
-    print("🔄 گام ۱۰: جایگزینی ContentStudio.tsx...")
+    logger.info("🔄 گام ۱۰: جایگزینی ContentStudio.tsx...")
     OLD_FILE.write_text(CONTENT_STUDIO_NEW, encoding="utf-8")
     ok(f"فایل اصلی جایگزین شد ({len(CONTENT_STUDIO_NEW.splitlines())} lines)")
-    print()
+    logger.info()
 
     # گام ۱۱: Build
-    print("🔨 گام ۱۱: اجرای build...")
+    logger.info("🔨 گام ۱۱: اجرای build...")
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
@@ -1124,17 +1127,17 @@ def main():
     if build_result.returncode != 0:
         err("Build شکست خورد")
         for line in build_output.splitlines()[-30:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
 
     ok("Build موفق")
     for line in build_output.splitlines():
         if "built in" in line or "ContentStudio" in line:
-            print(f"  {line.strip()}")
-    print()
+            logger.info(f"  {line.strip()}")
+    logger.info()
 
     # گام ۱۲: تست‌ها
-    print("🧪 گام ۱۲: اجرای تست‌های جدید...")
+    logger.info("🧪 گام ۱۲: اجرای تست‌های جدید...")
     test_result = subprocess.run(
         "pnpm test features/content-studio",
         shell=True, cwd=FRONTEND,
@@ -1145,11 +1148,11 @@ def main():
     test_output = test_result.stdout + test_result.stderr
     for line in test_output.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # گام ۱۳: Commit
-    print("📦 گام ۱۳: commit تغییرات...")
+    logger.info("📦 گام ۱۳: commit تغییرات...")
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
         msg = (
@@ -1169,43 +1172,43 @@ def main():
         ok("commit و push موفق")
     except Exception as e:
         warn(f"commit: {e}")
-    print()
+    logger.info()
 
     # گزارش نهایی
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 ContentStudio با موفقیت refactor شد! 🎉\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[92m  🎉 ContentStudio با موفقیت refactor شد! 🎉\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 آمار:")
-    print("    ✓ 322 → ~80 lines (75% reduction)")
-    print("    ✓ Build موفق")
-    print("    ✓ معماری feature-based")
-    print("    ✓ 1 useQuery + 4 useMutation hooks")
-    print("    ✓ useMemo برای derived data")
-    print("    ✓ Type safety (no any)")
-    print("    ✓ 3 extracted components")
-    print()
+    logger.info("  📊 آمار:")
+    logger.info("    ✓ 322 → ~80 lines (75% reduction)")
+    logger.info("    ✓ Build موفق")
+    logger.info("    ✓ معماری feature-based")
+    logger.info("    ✓ 1 useQuery + 4 useMutation hooks")
+    logger.info("    ✓ useMemo برای derived data")
+    logger.info("    ✓ Type safety (no any)")
+    logger.info("    ✓ 3 extracted components")
+    logger.info()
 
-    print("  🏗️ ساختار جدید:")
-    print("    features/content-studio/")
-    print("    ├── types/        (1 file)")
-    print("    ├── constants/    (1 file)")
-    print("    ├── api/          (1 file)")
-    print("    ├── utils/        (1 file)")
-    print("    ├── hooks/        (5 files)")
-    print("    ├── components/   (3 files)")
-    print("    └── __tests__/    (1 file)")
-    print()
+    logger.info("  🏗️ ساختار جدید:")
+    logger.info("    features/content-studio/")
+    logger.info("    ├── types/        (1 file)")
+    logger.info("    ├── constants/    (1 file)")
+    logger.info("    ├── api/          (1 file)")
+    logger.info("    ├── utils/        (1 file)")
+    logger.info("    ├── hooks/        (5 files)")
+    logger.info("    ├── components/   (3 files)")
+    logger.info("    └── __tests__/    (1 file)")
+    logger.info()
 
-    print("  🎯 فایل‌های باقی‌مانده از فاز ۲:")
-    print("    • TelegramManager.tsx (MEDIUM)")
-    print("    • SecurityAdvanced.tsx (MEDIUM)")
-    print()
+    logger.info("  🎯 فایل‌های باقی‌مانده از فاز ۲:")
+    logger.info("    • TelegramManager.tsx (MEDIUM)")
+    logger.info("    • SecurityAdvanced.tsx (MEDIUM)")
+    logger.info()
 
-    print("  📈 پیشرفت فاز ۲:")
-    print("    • 5 از 7 فایل کامل شدند (71%)")
-    print("    • مجموع تست‌ها: ~75+ پاس")
-    print()
+    logger.info("  📈 پیشرفت فاز ۲:")
+    logger.info("    • 5 از 7 فایل کامل شدند (71%)")
+    logger.info("    • مجموع تست‌ها: ~75+ پاس")
+    logger.info()
 
     return 0
 

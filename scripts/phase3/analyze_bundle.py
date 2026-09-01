@@ -7,6 +7,9 @@ Analyze Bundle - Find what's in vendor-other
 3. Optimize vendor-other if needed
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import subprocess
@@ -25,17 +28,17 @@ def err(m): print(f"\033[91m✗\033[0m  {m}")
 
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  📊 Bundle Analysis + Final Test Fix\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[96m  📊 Bundle Analysis + Final Test Fix\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # ═══ Step 1: Check failing test error ═══
-    print("\033[1mStep 1: بررسی خطای تست شکست‌خورده\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 1: بررسی خطای تست شکست‌خورده\033[0m")
+    logger.info("-" * 70)
     info("اجرای تست eventGenerator با verbose output...")
     
     test_result = subprocess.run(
@@ -50,15 +53,15 @@ def main():
     )
     
     output = test_result.stdout + test_result.stderr
-    print("\n\033[1mTest Output:\033[0m")
+    logger.info("\n\033[1mTest Output:\033[0m")
     for line in output.splitlines():
         if any(k in line for k in ["FAIL", "Error", "Expected", "Received", "✓", "✗", "assert"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 2: Run bundle analyzer ═══
-    print("\033[1mStep 2: اجرای Bundle Analyzer\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 2: اجرای Bundle Analyzer\033[0m")
+    logger.info("-" * 70)
     info("Building with analyzer (این مرورگر را باز می‌کند)...")
     
     build_result = subprocess.run(
@@ -77,11 +80,11 @@ def main():
         info("مرورگر را چک کنید تا ببینید vendor-other چه چیزی دارد")
     else:
         warn("Bundle analyzer با warning اجرا شد")
-    print()
+    logger.info()
 
     # ═══ Step 3: Manual fix for the test ═══
-    print("\033[1mStep 3: Fix نهایی تست\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 3: Fix نهایی تست\033[0m")
+    logger.info("-" * 70)
     
     test_file = SRC / "features" / "live-feed" / "__tests__" / "eventGenerator.test.ts"
     if test_file.exists():
@@ -128,11 +131,11 @@ describe('eventGenerator', () => {
         
         test_file.write_text(FIXED_TEST, encoding="utf-8")
         ok("تست بازنویسی شد")
-    print()
+    logger.info()
 
     # ═══ Step 4: Run tests again ═══
-    print("\033[1mStep 4: اجرای تست‌ها\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 4: اجرای تست‌ها\033[0m")
+    logger.info("-" * 70)
     test_result = subprocess.run(
         "pnpm test",
         shell=True,
@@ -147,12 +150,12 @@ describe('eventGenerator', () => {
     all_pass = test_result.returncode == 0
     for line in test_result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 5: Commit ═══
-    print("\033[1mStep 5: commit\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 5: commit\033[0m")
+    logger.info("-" * 70)
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
         subprocess.run(
@@ -164,22 +167,22 @@ describe('eventGenerator', () => {
     except Exception as e:
         warn(f"commit: {e}")
 
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
     if all_pass:
-        print("\033[1m\033[92m  🎉🎉🎉 Phase 3 - 100% Complete! 🎉🎉🎉\033[0m")
+        logger.info("\033[1m\033[92m  🎉🎉🎉 Phase 3 - 100% Complete! 🎉🎉🎉\033[0m")
     else:
-        print("\033[1m\033[93m  ⚠️ Phase 3 - 98% Complete\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+        logger.info("\033[1m\033[93m  ⚠️ Phase 3 - 98% Complete\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 Bundle Summary:")
-    print("    ✓ vendor-three: ۱,۲۱۴ → ۱۷۳ KB (-85%)")
-    print("    ✓ vendor-motion: extracted (125 KB)")
-    print("    ✓ vendor-icons: extracted (31 KB)")
-    print("    ⚠️ vendor-other: ۳,۳۵۸ KB (نیاز به بررسی در stats.html)")
-    print()
+    logger.info("  📊 Bundle Summary:")
+    logger.info("    ✓ vendor-three: ۱,۲۱۴ → ۱۷۳ KB (-85%)")
+    logger.info("    ✓ vendor-motion: extracted (125 KB)")
+    logger.info("    ✓ vendor-icons: extracted (31 KB)")
+    logger.info("    ⚠️ vendor-other: ۳,۳۵۸ KB (نیاز به بررسی در stats.html)")
+    logger.info()
 
-    print("  🚀 آماده برای Phase 4: Testing & Quality!")
-    print()
+    logger.info("  🚀 آماده برای Phase 4: Testing & Quality!")
+    logger.info()
 
     return 0 if all_pass else 1
 

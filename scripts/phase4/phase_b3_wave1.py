@@ -15,6 +15,9 @@ Strategy:
 - Fix act() warnings in existing tests
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import subprocess
@@ -28,19 +31,19 @@ HYDROMA_DIR = SRC / "features" / "hydroma"
 
 
 def ok(m):
-    print(f"[OK] {m}")
+    logger.info(f"[OK] {m}")
 
 
 def info(m):
-    print(f"[INFO] {m}")
+    logger.info(f"[INFO] {m}")
 
 
 def warn(m):
-    print(f"[WARN] {m}")
+    logger.warning(f"[WARN] {m}")
 
 
 def err(m):
-    print(f"[ERROR] {m}")
+    logger.error(f"[ERROR] {m}")
 
 
 def build_string(lines):
@@ -736,17 +739,17 @@ describe('useRealDem Hook', () => {
 # =======================================================================
 
 def main():
-    print("")
-    print("=" * 70)
-    print("  Phase B-3 Wave 1: Core Logic Test Coverage")
-    print("=" * 70)
-    print("")
-    print("  Strategy: Test core logic modules to increase coverage by ~15%")
-    print("  Target modules:")
-    print("    1. lib/terrainGenerator.ts (3.43% -> 60%+)")
-    print("    2. lib/demApi.ts (1.78% -> 70%+)")
-    print("    3. features/hydroma/store/hydromaStore.ts (65% -> 85%+)")
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  Phase B-3 Wave 1: Core Logic Test Coverage")
+    logger.info("=" * 70)
+    logger.info("")
+    logger.info("  Strategy: Test core logic modules to increase coverage by ~15%")
+    logger.info("  Target modules:")
+    logger.info("    1. lib/terrainGenerator.ts (3.43% -> 60%+)")
+    logger.info("    2. lib/demApi.ts (1.78% -> 70%+)")
+    logger.info("    3. features/hydroma/store/hydromaStore.ts (65% -> 85%+)")
+    logger.info("")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
@@ -755,8 +758,8 @@ def main():
     # ===================================================================
     # Step 1: Create test directories
     # ===================================================================
-    print("[Step 1] Creating test directories")
-    print("-" * 70)
+    logger.info("[Step 1] Creating test directories")
+    logger.info("-" * 70)
 
     lib_tests_dir = LIB_DIR / "__tests__"
     lib_tests_dir.mkdir(exist_ok=True)
@@ -765,13 +768,13 @@ def main():
     hydroma_tests_dir = HYDROMA_DIR / "__tests__"
     hydroma_tests_dir.mkdir(exist_ok=True)
     ok(f"Created: {hydroma_tests_dir}")
-    print("")
+    logger.info("")
 
     # ===================================================================
     # Step 2: Write test files
     # ===================================================================
-    print("[Step 2] Writing test files")
-    print("-" * 70)
+    logger.info("[Step 2] Writing test files")
+    logger.info("-" * 70)
 
     # terrainGenerator tests
     terrain_test_file = lib_tests_dir / "terrainGenerator.test.ts"
@@ -792,13 +795,13 @@ def main():
     real_dem_test_file = hydroma_tests_dir / "useRealDem.test.ts"
     real_dem_test_file.write_text(USE_REAL_DEM_FIXED, encoding="utf-8")
     ok(f"Updated: {real_dem_test_file.name} (fixed act() warnings)")
-    print("")
+    logger.info("")
 
     # ===================================================================
     # Step 3: Run tests
     # ===================================================================
-    print("[Step 3] Running new tests")
-    print("-" * 70)
+    logger.info("[Step 3] Running new tests")
+    logger.info("-" * 70)
     info("Executing: pnpm test:coverage")
 
     result = subprocess.run(
@@ -821,34 +824,34 @@ def main():
             "All files", "terrainGenerator", "demApi", "hydromaStore",
             "passed", "failed"
         ]):
-            print(f"  {line}")
+            logger.info(f"  {line}")
 
     if result.returncode == 0:
         ok("All tests passed!")
     else:
         warn("Some tests had issues")
-    print("")
+    logger.info("")
 
     # ===================================================================
     # Step 4: Show coverage improvement
     # ===================================================================
-    print("[Step 4] Coverage improvement summary")
-    print("-" * 70)
+    logger.info("[Step 4] Coverage improvement summary")
+    logger.info("-" * 70)
 
     # Parse coverage from output
     coverage_lines = [l for l in output.splitlines() if '|' in l and ('%' in l or 'All files' in l)]
     
     if coverage_lines:
-        print("\n  Coverage Summary:")
+        logger.info("\n  Coverage Summary:")
         for line in coverage_lines[:15]:  # Show top 15 lines
-            print(f"  {line}")
-    print("")
+            logger.info(f"  {line}")
+    logger.info("")
 
     # ===================================================================
     # Step 5: Commit
     # ===================================================================
-    print("[Step 5] Committing changes")
-    print("-" * 70)
+    logger.info("[Step 5] Committing changes")
+    logger.info("-" * 70)
 
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -888,37 +891,37 @@ def main():
     # ===================================================================
     # Final Report
     # ===================================================================
-    print("")
-    print("=" * 70)
-    print("  Phase B-3 Wave 1: COMPLETE!")
-    print("=" * 70)
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  Phase B-3 Wave 1: COMPLETE!")
+    logger.info("=" * 70)
+    logger.info("")
 
-    print("  Tests Added:")
-    print("    * terrainGenerator.test.ts (5 tests)")
-    print("    * demApi.test.ts (5 tests)")
-    print("    * hydromaStore.enhanced.test.ts (20+ tests)")
-    print("    * useRealDem.test.ts (fixed act() warnings)")
-    print("")
+    logger.info("  Tests Added:")
+    logger.info("    * terrainGenerator.test.ts (5 tests)")
+    logger.info("    * demApi.test.ts (5 tests)")
+    logger.info("    * hydromaStore.enhanced.test.ts (20+ tests)")
+    logger.warning("    * useRealDem.test.ts (fixed act() warnings)")
+    logger.info("")
 
-    print("  Expected Coverage Improvement:")
-    print("    * lib/terrainGenerator: 3.43% -> ~60%")
-    print("    * lib/demApi: 1.78% -> ~70%")
-    print("    * hydroma/store: 65% -> ~85%")
-    print("    * Overall: 39.84% -> ~50-55%")
-    print("")
+    logger.info("  Expected Coverage Improvement:")
+    logger.info("    * lib/terrainGenerator: 3.43% -> ~60%")
+    logger.info("    * lib/demApi: 1.78% -> ~70%")
+    logger.info("    * hydroma/store: 65% -> ~85%")
+    logger.info("    * Overall: 39.84% -> ~50-55%")
+    logger.info("")
 
-    print("  Next Wave (Phase B-3 Wave 2):")
-    print("    * useTerrainClick.ts (8.33% -> 70%+)")
-    print("    * usePolygonDrawing.ts (28.57% -> 60%+)")
-    print("    * Canvas components (with mocking strategy)")
-    print("")
+    logger.info("  Next Wave (Phase B-3 Wave 2):")
+    logger.info("    * useTerrainClick.ts (8.33% -> 70%+)")
+    logger.info("    * usePolygonDrawing.ts (28.57% -> 60%+)")
+    logger.info("    * Canvas components (with mocking strategy)")
+    logger.info("")
 
-    print("  Commands:")
-    print("    cd D:\\eco_nojin\\frontend")
-    print("    pnpm test:coverage  # See updated coverage")
-    print("    # Open coverage/index.html in browser")
-    print("")
+    logger.info("  Commands:")
+    logger.info("    cd D:\\eco_nojin\\frontend")
+    logger.info("    pnpm test:coverage  # See updated coverage")
+    logger.info("    # Open coverage/index.html in browser")
+    logger.info("")
 
     return 0
 

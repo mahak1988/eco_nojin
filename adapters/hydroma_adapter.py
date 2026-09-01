@@ -1,5 +1,8 @@
 """Adapter implementing IHydromaEngine interface to wrap engine/hydroma functionality."""
 
+import structlog
+
+logger = structlog.get_logger()
 from typing import Dict, Any # Added import for Dict and Any
 from interfaces.hydroma_engine_interface import IHydromaEngine
 # Import necessary modules from engine.hydroma
@@ -12,7 +15,7 @@ try:
     # Assume a groundwater model exists
     # from engine.hydroma.groundwater.models import estimate_aquifer_properties
 except ImportError as e:
-    print(f"Warning: Could not import from engine.hydroma: {e}")
+    logger.warning(f"Warning: Could not import from engine.hydroma: {e}")
     # Define dummy functions or raise an error during instantiation if required
     hydroma_classify_salinity = lambda x: "unknown"
     calc_et0_hargreaves = lambda t_min, t_max, t_mean, ra_mj: 0.0

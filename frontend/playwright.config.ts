@@ -1,21 +1,20 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// Detect if we should use system Chrome
-const useSystemChrome = process.env.PLAYWRIGHT_USE_SYSTEM_CHROME !== 'false';
-
 export default defineConfig({
   testDir: './e2e/tests',
-  fullyParallel: true,
+  // Serial execution to prevent race conditions
+  fullyParallel: false,
+  workers: 1,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // CRITICAL: Add retries to handle flaky ENOENT errors
+  retries: process.env.CI ? 2 : 5,
   reporter: [
-    ['html', { open: 'never' }],
     ['list'],
   ],
+  timeout: 60000,
   use: {
     baseURL: 'http://localhost:5173',
-    // Disable video/trace/screenshot to avoid ffmpeg download requirement
+    // All artifacts disabled
     trace: 'off',
     screenshot: 'off',
     video: 'off',

@@ -1,4 +1,7 @@
 """Runoff Pipeline (M-RUN) - SCS-CN Method."""
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import time
@@ -149,7 +152,7 @@ class RunoffPipeline(MapPipeline):
                 resampled = resampled.isel(band=0, drop=True)
             return resampled
         except Exception as e:
-            print(f"  [WARN] Reproject failed: {e}")
+            logger.warning(f"  [WARN] Reproject failed: {e}")
             return source
 
     def _adjust_amc(self, cn: xr.DataArray, amc: str) -> xr.DataArray:

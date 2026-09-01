@@ -5,6 +5,9 @@ Revises: 20260824_135612
 Create Date: 2026-08-28
 
 """
+import structlog
+
+logger = structlog.get_logger()
 from alembic import op
 import sqlalchemy as sa
 
@@ -20,7 +23,7 @@ def upgrade():
     inspector = sa.inspect(conn)
     
     if 'auditlog' not in inspector.get_table_names():
-        print('Table auditlog does not exist, creating it...')
+        logger.info('Table auditlog does not exist, creating it...')
         op.create_table(
             'auditlog',
             sa.Column('id', sa.Integer(), nullable=False),

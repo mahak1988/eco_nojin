@@ -1,4 +1,7 @@
 """Test Hydroma Nojin motors."""
+import structlog
+
+logger = structlog.get_logger()
 import sys
 
 sys.path.insert(0, '.')
@@ -15,9 +18,9 @@ from services.scientific_motors.biofertilizer import BiofertilizerMotor
 
 async def test_biofertilizer():
     """Test biofertilizer recommendation engine."""
-    print("=" * 60)
-    print("Testing Biofertilizer Recommender")
-    print("=" * 60)
+    logger.info("=" * 60)
+    logger.info("Testing Biofertilizer Recommender")
+    logger.info("=" * 60)
 
     # Create synthetic soil data
     shape = (10, 10)
@@ -77,30 +80,30 @@ async def test_biofertilizer():
         params,
     )
 
-    print(f"\nStatus: {result.status.value}")
-    print(f"Execution time: {result.execution_time_seconds:.2f}s")
+    logger.info(f"\nStatus: {result.status.value}")
+    logger.info(f"Execution time: {result.execution_time_seconds:.2f}s")
 
     if result.status.value == "completed":
-        print("\nRecommendations:")
+        logger.info("\nRecommendations:")
         for i, rec in enumerate(result.outputs["recommendations"], 1):
-            print(f"\n  {i}. {rec.name}")
-            print(f"     Type: {rec.type.value}")
-            print(f"     Dosage: {rec.dosage_kg_ha} kg/ha")
-            print(f"     Method: {rec.application_method}")
-            print(f"     Timing: {rec.timing}")
-            print(f"     Benefit: {rec.expected_benefit}")
-            print(f"     Confidence: {rec.confidence:.2f}")
+            logger.info(f"\n  {i}. {rec.name}")
+            logger.info(f"     Type: {rec.type.value}")
+            logger.info(f"     Dosage: {rec.dosage_kg_ha} kg/ha")
+            logger.info(f"     Method: {rec.application_method}")
+            logger.info(f"     Timing: {rec.timing}")
+            logger.info(f"     Benefit: {rec.expected_benefit}")
+            logger.info(f"     Confidence: {rec.confidence:.2f}")
 
-        print(f"\nSoil Health Score: {result.outputs['soil_health_score'].mean():.1f}/100")
-        print(f"N Deficit: {result.outputs['nitrogen_deficit'].mean():.1f} kg/ha")
-        print(f"P Deficit: {result.outputs['phosphorus_deficit'].mean():.1f} kg/ha")
+        logger.info(f"\nSoil Health Score: {result.outputs['soil_health_score'].mean():.1f}/100")
+        logger.info(f"N Deficit: {result.outputs['nitrogen_deficit'].mean():.1f} kg/ha")
+        logger.info(f"P Deficit: {result.outputs['phosphorus_deficit'].mean():.1f} kg/ha")
 
 
 def test_smart_mapper():
     """Test smart map generator."""
-    print("\n" + "=" * 60)
-    print("Testing Smart Map Generator")
-    print("=" * 60)
+    logger.info("\n" + "=" * 60)
+    logger.info("Testing Smart Map Generator")
+    logger.info("=" * 60)
 
     # Create synthetic satellite data
     shape = (100, 100)
@@ -124,23 +127,23 @@ def test_smart_mapper():
 
     # Calculate NDVI
     ndvi = SmartMapGenerator.calculate_ndvi(red, nir)
-    print(f"\nNDVI: min={ndvi.min():.2f}, max={ndvi.max():.2f}, mean={ndvi.mean():.2f}")
+    logger.info(f"\nNDVI: min={ndvi.min():.2f}, max={ndvi.max():.2f}, mean={ndvi.mean():.2f}")
 
     # Classify vegetation health
     health = SmartMapGenerator.classify_vegetation_health(ndvi)
-    print("\nVegetation Health Distribution:")
+    logger.info("\nVegetation Health Distribution:")
     for i in range(1, 6):
         count = np.sum(health.values == i)
-        print(f"  Class {i}: {count} pixels ({count / health.size * 100:.1f}%)")
+        logger.info(f"  Class {i}: {count} pixels ({count / health.size * 100:.1f}%)")
 
     # Estimate biomass
     biomass = SmartMapGenerator.estimate_biomass(ndvi, crop_type="wheat")
-    print(f"\nEstimated Biomass: {biomass.mean():.2f} ton/ha")
+    logger.info(f"\nEstimated Biomass: {biomass.mean():.2f} ton/ha")
 
 
 if __name__ == "__main__":
     asyncio.run(test_biofertilizer())
     test_smart_mapper()
-    print("\n" + "=" * 60)
-    print("✅ All Hydroma Nojin motors tested successfully!")
-    print("=" * 60)
+    logger.info("\n" + "=" * 60)
+    logger.info("✅ All Hydroma Nojin motors tested successfully!")
+    logger.info("=" * 60)

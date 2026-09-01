@@ -8,6 +8,9 @@ bale (BALE_ENABLED=true + BALE_TOKEN), rubika (RUBIKA_ENABLED=true +
 RUBIKA_TOKEN). Telegram/Eitaa run concurrently on the same dispatcher.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import asyncio
@@ -65,7 +68,7 @@ async def _run(config: BotConfig) -> None:
             logger.error("Unknown platform kind %s", spec.kind)
 
     if not tasks:
-        print("No runnable platform (see warnings above).", file=sys.stderr)
+        logger.warning("No runnable platform (see warnings above).", file=sys.stderr)
         raise SystemExit(2)
 
     await asyncio.gather(*tasks)

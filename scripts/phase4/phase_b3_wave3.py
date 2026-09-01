@@ -11,6 +11,9 @@ Targets:
 2. hydromaStore.ts remaining actions (75% -> 90%+)
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import re
@@ -148,16 +151,16 @@ def generate_store_advanced_test(content):
 
 
 def main():
-    print("")
-    print("=" * 70)
-    print("  Phase B-3 Wave 3: Pure Logic & State Management (FIXED)")
-    print("=" * 70)
-    print("")
-    print("  Strategy: Test pure logic modules to guarantee coverage increase")
-    print("  Targets:")
-    print("    1. engineeringOps.ts (57% -> 100%)")
-    print("    2. hydromaStore.ts remaining actions (75% -> 90%+)")
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  Phase B-3 Wave 3: Pure Logic & State Management (FIXED)")
+    logger.info("=" * 70)
+    logger.info("")
+    logger.info("  Strategy: Test pure logic modules to guarantee coverage increase")
+    logger.info("  Targets:")
+    logger.info("    1. engineeringOps.ts (57% -> 100%)")
+    logger.info("    2. hydromaStore.ts remaining actions (75% -> 90%+)")
+    logger.info("")
 
     # Fix Git PATH
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
@@ -165,8 +168,8 @@ def main():
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # Step 1: Analyze files
-    print("[Step 1] Analyzing target files")
-    print("-" * 70)
+    logger.info("[Step 1] Analyzing target files")
+    logger.info("-" * 70)
     
     eng_ops_path = HYDROMA_CONSTANTS / "engineeringOps.ts"
     store_path = HYDROMA_STORE_DIR / "hydromaStore.ts"
@@ -178,11 +181,11 @@ def main():
         ok(f"Read engineeringOps.ts ({len(eng_ops_content)} bytes)")
     if store_content:
         ok(f"Read hydromaStore.ts ({len(store_content)} bytes)")
-    print("")
+    logger.info("")
 
     # Step 2: Generate and write tests
-    print("[Step 2] Generating tests")
-    print("-" * 70)
+    logger.info("[Step 2] Generating tests")
+    logger.info("-" * 70)
     
     HYDROMA_TESTS.mkdir(parents=True, exist_ok=True)
     
@@ -197,11 +200,11 @@ def main():
         test2_path = HYDROMA_TESTS / "hydromaStore.advanced.test.ts"
         test2_path.write_text(test2, encoding="utf-8")
         ok(f"Written: {test2_path.name}")
-    print("")
+    logger.info("")
 
     # Step 3: Run tests
-    print("[Step 3] Running tests")
-    print("-" * 70)
+    logger.info("[Step 3] Running tests")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test",
@@ -218,18 +221,18 @@ def main():
     
     for line in output.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed", "skipped"]):
-            print(f"  {line}")
+            logger.info(f"  {line}")
             
     all_passing = result.returncode == 0
     if all_passing:
         ok("\nALL TESTS PASSING!")
     else:
         warn("\nSome tests had issues")
-    print("")
+    logger.info("")
 
     # Step 4: Coverage
-    print("[Step 4] Running coverage")
-    print("-" * 70)
+    logger.info("[Step 4] Running coverage")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test:coverage",
@@ -249,15 +252,15 @@ def main():
         if "Coverage report" in line or "All files" in line:
             coverage_section = True
         if coverage_section and "|" in line:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         if coverage_section and line.strip() and not "|" in line and "---" not in line and "All files" not in line:
             if not any(c in line for c in ["File", "%", "ERROR"]):
                 break
-    print("")
+    logger.info("")
 
     # Step 5: Commit
-    print("[Step 5] Committing changes")
-    print("-" * 70)
+    logger.info("[Step 5] Committing changes")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -279,14 +282,14 @@ def main():
     except Exception as e:
         warn(f"Commit issue: {e}")
 
-    print("")
-    print("=" * 70)
-    print("  Phase B-3 Wave 3: COMPLETE!")
-    print("=" * 70)
-    print("")
-    print("  Note: Git branch is currently active")
-    print("  You can merge it to main when ready.")
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  Phase B-3 Wave 3: COMPLETE!")
+    logger.info("=" * 70)
+    logger.info("")
+    logger.info("  Note: Git branch is currently active")
+    logger.info("  You can merge it to main when ready.")
+    logger.info("")
     return 0
 
 

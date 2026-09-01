@@ -7,6 +7,9 @@ Vite 8 uses Rolldown which has different syntax:
 - manualChunks must be a function
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import subprocess
@@ -161,9 +164,9 @@ export default defineConfig(({ mode }) => ({
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🔧 Fix Vite Config for Vite 8 + Rolldown\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[96m  🔧 Fix Vite Config for Vite 8 + Rolldown\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     if not VITE_CONFIG.exists():
         err(f"فایل یافت نشد: {VITE_CONFIG}")
@@ -173,7 +176,7 @@ def main():
     info("نوشتن vite.config.ts اصلاح شده...")
     VITE_CONFIG.write_text(VITE_CONFIG_FIXED, encoding="utf-8")
     ok("vite.config.ts اصلاح شد")
-    print()
+    logger.info()
 
     # Build
     info("اجرای build...")
@@ -196,18 +199,18 @@ def main():
         err("Build شکست خورد")
         output = result.stdout + result.stderr
         for line in output.splitlines()[-30:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
 
     ok("Build موفق!")
-    print()
+    logger.info()
 
     # Show bundle info
     info("Bundle chunks:")
     for line in result.stdout.splitlines():
         if "dist/assets/" in line or "built in" in line:
-            print(f"  {line.strip()}")
-    print()
+            logger.info(f"  {line.strip()}")
+    logger.info()
 
     # Commit
     info("commit اصلاحات...")
@@ -220,17 +223,17 @@ def main():
         subprocess.run("git push origin main", shell=True, cwd=PROJECT_ROOT, check=True)
         ok("commit و push موفق")
     except Exception as e:
-        print(f"  ⚠ commit: {e}")
+        logger.info(f"  ⚠ commit: {e}")
 
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 Vite Config Fixed!\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[92m  🎉 Vite Config Fixed!\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  Changes:")
-    print("    ✓ import.meta.dirname (instead of __dirname)")
-    print("    ✓ manualChunks as function (Rolldown requirement)")
-    print("    ✓ Vendor chunks: react, ui, charts, 3d, maps, i18n, query")
-    print()
+    logger.info("  Changes:")
+    logger.info("    ✓ import.meta.dirname (instead of __dirname)")
+    logger.info("    ✓ manualChunks as function (Rolldown requirement)")
+    logger.info("    ✓ Vendor chunks: react, ui, charts, 3d, maps, i18n, query")
+    logger.info()
 
     return 0
 

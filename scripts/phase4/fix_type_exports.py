@@ -6,6 +6,9 @@ Read actual *.types.ts files, extract real exports,
 and rewrite index.ts with correct exports.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import re
@@ -98,17 +101,17 @@ export {{ {exports_str} }} from './{types_file.name}';
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🔧 Fix Type Export Errors (38 → 0)\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.error("\033[1m\033[96m  🔧 Fix Type Export Errors (38 → 0)\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # ═══ Step 1: Scan all features ═══
-    print("\033[1mStep 1: اسکن همه features\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 1: اسکن همه features\033[0m")
+    logger.info("-" * 70)
     
     features_dir = SRC / "features"
     if not features_dir.exists():
@@ -117,11 +120,11 @@ def main():
     
     features = [d for d in features_dir.iterdir() if d.is_dir()]
     info(f"{len(features)} features یافت شد")
-    print()
+    logger.info()
 
     # ═══ Step 2: Process each feature ═══
-    print("\033[1mStep 2: پردازش هر feature\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 2: پردازش هر feature\033[0m")
+    logger.info("-" * 70)
     
     processed_count = 0
     
@@ -155,13 +158,13 @@ def main():
         if rewrite_index(feature_name, types_file, exports):
             processed_count += 1
     
-    print()
+    logger.info()
     info(f"{processed_count} features پردازش شدند")
-    print()
+    logger.info()
 
     # ═══ Step 3: Type Check ═══
-    print("\033[1mStep 3: TypeScript Type Check\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 3: TypeScript Type Check\033[0m")
+    logger.info("-" * 70)
     info("Running tsc --noEmit...")
     
     result = subprocess.run(
@@ -187,19 +190,19 @@ def main():
             
             error_lines = [l for l in output.splitlines() if "error TS" in l][:15]
             for line in error_lines:
-                print(f"  {line}")
+                logger.info(f"  {line}")
             
             if error_count > 15:
-                print(f"  ... and {error_count - 15} more errors")
+                logger.error(f"  ... and {error_count - 15} more errors")
             final_error_count = error_count
         else:
             ok("TypeScript: No critical errors")
             final_error_count = 0
-    print()
+    logger.info()
 
     # ═══ Step 4: Build ═══
-    print("\033[1mStep 4: Build Test\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 4: Build Test\033[0m")
+    logger.info("-" * 70)
     info("Building...")
     
     result = subprocess.run(
@@ -218,13 +221,13 @@ def main():
     else:
         err("Build failed")
         for line in (result.stdout + result.stderr).splitlines()[-20:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
-    print()
+    logger.info()
 
     # ═══ Step 5: Tests ═══
-    print("\033[1mStep 5: Run Tests\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 5: Run Tests\033[0m")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test",
@@ -239,12 +242,12 @@ def main():
     
     for line in result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 6: Commit ═══
-    print("\033[1mStep 6: Commit\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 6: Commit\033[0m")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -268,31 +271,31 @@ Result: TypeScript errors reduced from 38 to {final_error_count}'''
         warn(f"Commit issue: {e}")
 
     # ═══ Final Report ═══
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 Type Export Errors Fixed!\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.error("\033[1m\033[92m  🎉 Type Export Errors Fixed!\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 Results:")
-    print(f"    ✓ TypeScript: 38 → {final_error_count}")
-    print("    ✓ Build: Successful")
-    print("    ✓ Tests: All passing")
-    print()
+    logger.info("  📊 Results:")
+    logger.error(f"    ✓ TypeScript: 38 → {final_error_count}")
+    logger.info("    ✓ Build: Successful")
+    logger.info("    ✓ Tests: All passing")
+    logger.info()
 
-    print("  🔧 Fixes Applied:")
-    print(f"    • Processed {processed_count} features")
-    print("    • Extracted real exports from *.types.ts files")
-    print("    • Rewrote index.ts with accurate exports")
-    print("    • Fixed type resolution errors")
-    print()
+    logger.info("  🔧 Fixes Applied:")
+    logger.info(f"    • Processed {processed_count} features")
+    logger.info("    • Extracted real exports from *.types.ts files")
+    logger.info("    • Rewrote index.ts with accurate exports")
+    logger.error("    • Fixed type resolution errors")
+    logger.info()
 
     if final_error_count == 0:
-        print("  🎯 Phase B-1: Code Quality Setup - 100% Complete!")
+        logger.info("  🎯 Phase B-1: Code Quality Setup - 100% Complete!")
     else:
-        print(f"  ⚠️  {final_error_count} non-critical errors remain")
+        logger.error(f"  ⚠️  {final_error_count} non-critical errors remain")
     
-    print()
-    print("  🚀 Ready for Phase B-2: Increase Test Coverage")
-    print()
+    logger.info()
+    logger.info("  🚀 Ready for Phase B-2: Increase Test Coverage")
+    logger.info()
 
     return 0
 

@@ -1,4 +1,7 @@
 """Eco Nojin Database Initialization - Single Script."""
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import json
@@ -266,30 +269,30 @@ def connect_db():
         conn.execute("INSTALL spatial;")
         conn.execute("LOAD spatial;")
     except Exception as e:
-        print(f"Warning: spatial extension issue: {e}")
+        logger.warning(f"Warning: spatial extension issue: {e}")
 
     return conn
 
 
 def create_schema(conn):
     """Create all tables and indexes."""
-    print("\n[1/3] Creating schema...")
+    logger.info("\n[1/3] Creating schema...")
 
     # Create tables
     for table_name, ddl in TABLES.items():
         try:
             conn.execute(ddl)
-            print(f"  [OK] {table_name}")
+            logger.info(f"  [OK] {table_name}")
         except Exception as e:
-            print(f"  [FAIL] {table_name}: {e}")
+            logger.info(f"  [FAIL] {table_name}: {e}")
 
     # Create indexes
-    print("  Creating indexes...")
+    logger.info("  Creating indexes...")
     for idx_sql in INDEXES:
         try:
             conn.execute(idx_sql)
         except Exception as e:
-            print(f"  [WARN] Index: {e}")
+            logger.warning(f"  [WARN] Index: {e}")
 
     # Verify
     result = conn.execute("""
@@ -298,14 +301,14 @@ def create_schema(conn):
         ORDER BY table_name
     """).fetchall()
 
-    print(f"\n  Created {len(result)} tables:")
+    logger.info(f"\n  Created {len(result)} tables:")
     for row in result:
-        print(f"    - {row[0]}")
+        logger.info(f"    - {row[0]}")
 
 
 def insert_test_data(conn):
     """Insert test data."""
-    print("\n[2/3] Inserting test data...")
+    logger.info("\n[2/3] Inserting test data...")
 
     from shapely.geometry import Polygon, Point
 
@@ -315,7 +318,7 @@ def insert_test_data(conn):
         "INSERT INTO users (id, email, password_hash, full_name, role) VALUES (?, ?, ?, ?, ?)",
         [str(user_id), "admin@econojin.io", "hashed_pw", "Admin User", "admin"]
     )
-    print("  [OK] User: admin@econojin.io")
+    logger.info("  [OK] User: admin@econojin.io")
 
     # Create test project
     project_id = uuid4()
@@ -324,7 +327,7 @@ def insert_test_data(conn):
         [str(project_id), "Test Pilot Project", "Development project",
          str(user_id), "Test Region", 1000.0]
     )
-    print(f"  [OK] Project: {project_id}")
+    logger.info(f"  [OK] Project: {project_id}")
 
     # Create land units
     land_units = [
@@ -346,7 +349,7 @@ def insert_test_data(conn):
             str(lu_id), str(project_id), name, geom.wkt, area, use, slope
         ])
         land_unit_ids.append(lu_id)
-        print(f"  [OK] Land Unit: {name}")
+        logger.info(f"  [OK] Land Unit: {name}")
 
     # Create soil profiles
     for lu_id in land_unit_ids:
@@ -362,7 +365,7 @@ def insert_test_data(conn):
             40.0, 35.0, 25.0, "loam", 7.2, 1.5, "2026-01-15"
         ])
 
-    print(f"  [OK] Soil profiles: {len(land_unit_ids)}")
+    logger.info(f"  [OK] Soil profiles: {len(land_unit_ids)}")
 
     # Create test simulation run
     sim_id = uuid4()
@@ -377,23 +380,23 @@ def insert_test_data(conn):
         json.dumps({"time_step": "daily", "start": "2026-01-01"}),
         "pending"
     ])
-    print("  [OK] Simulation run: SWAT+ Baseline_2026")
+    logger.info("  [OK] Simulation run: SWAT+ Baseline_2026")
 
     return project_id, land_unit_ids
 
 
 def verify_data(conn):
     """Verify data and run spatial queries."""
-    print("\n[3/3] Verification...")
+    logger.info("\n[3/3] Verification...")
 
     # Count records
     tables_to_check = ["users", "projects", "land_units", "soil_profiles", "simulation_runs"]
     for table in tables_to_check:
         count = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
-        print(f"  [OK] {table}: {count}")
+        logger.info(f"  [OK] {table}: {count}")
 
     # Spatial query
-    print("\n  Spatial query test:")
+    logger.info("\n  Spatial query test:")
     results = conn.execute("""
         SELECT name, area_ha,
                ST_Area(geom) AS calc_area,
@@ -404,38 +407,38 @@ def verify_data(conn):
     """).fetchall()
 
     for r in results:
-        print(f"    - {r[0]}: {r[1]:.2f} ha (center: {r[3]:.4f}, {r[4]:.4f})")
+        logger.info(f"    - {r[0]}: {r[1]:.2f} ha (center: {r[3]:.4f}, {r[4]:.4f})")
 
 
 def main():
-    print("=" * 60)
-    print(f"{PROJECT_NAME} Database Initialization")
-    print("=" * 60)
+    logger.info("=" * 60)
+    logger.info(f"{PROJECT_NAME} Database Initialization")
+    logger.info("=" * 60)
 
     # Remove old database
     if DB_PATH.exists():
-        print(f"Removing old database: {DB_PATH}")
+        logger.info(f"Removing old database: {DB_PATH}")
         DB_PATH.unlink()
 
     # Connect
     conn = connect_db()
-    print(f"Connected to: {DB_PATH}")
+    logger.info(f"Connected to: {DB_PATH}")
 
     try:
         create_schema(conn)
         project_id, land_unit_ids = insert_test_data(conn)
         verify_data(conn)
 
-        print("\n" + "=" * 60)
-        print("[SUCCESS] Database initialization complete!")
-        print("=" * 60)
-        print(f"Database: {DB_PATH}")
-        print(f"Project ID: {project_id}")
-        print(f"Land Units: {len(land_unit_ids)}")
-        print("\nReady for Phase 1.4: Map Generation Engine")
+        logger.info("\n" + "=" * 60)
+        logger.info("[SUCCESS] Database initialization complete!")
+        logger.info("=" * 60)
+        logger.info(f"Database: {DB_PATH}")
+        logger.info(f"Project ID: {project_id}")
+        logger.info(f"Land Units: {len(land_unit_ids)}")
+        logger.info("\nReady for Phase 1.4: Map Generation Engine")
 
     except Exception as e:
-        print(f"\n[ERROR] {e}")
+        logger.error(f"\n[ERROR] {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)

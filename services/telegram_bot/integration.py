@@ -2,6 +2,9 @@
 Integration layer between Telegram Bot and Hydroma scientific motors.
 Runs all 11 modules in a pipeline and returns structured results.
 """
+import structlog
+
+logger = structlog.get_logger()
 import sys
 from pathlib import Path
 from typing import Any
@@ -41,7 +44,7 @@ class HydromaBotIntegration:
                 "mrv": MRVSystemMotor(),
             }
         except Exception as e:
-            print(f"  [BOT] Import error: {e}")
+            logger.error(f"  [BOT] Import error: {e}")
             self._satellite = None
 
     async def analyze_land(
@@ -72,7 +75,7 @@ class HydromaBotIntegration:
 
         try:
             # Phase 1: Satellite monitoring
-            print("  [BOT] Phase 1: Satellite monitoring")
+            logger.info("  [BOT] Phase 1: Satellite monitoring")
             from services.scientific_motors.satellite_integration import SatelliteContext
             context = SatelliteContext(
                 latitude=latitude,
@@ -94,12 +97,12 @@ class HydromaBotIntegration:
             }
 
         except Exception as e:
-            print(f"  [BOT] Satellite error: {e}")
+            logger.error(f"  [BOT] Satellite error: {e}")
             results["satellite"] = {"error": str(e)}
 
         try:
             # Phase 2: Crop Advisor
-            print("  [BOT] Phase 2: Crop Advisor")
+            logger.info("  [BOT] Phase 2: Crop Advisor")
             from services.scientific_motors.base import MotorParameters
 
             params = MotorParameters(
@@ -125,12 +128,12 @@ class HydromaBotIntegration:
                 results["crops"] = {"error": crop_result.error_message}
 
         except Exception as e:
-            print(f"  [BOT] Crop advisor error: {e}")
+            logger.error(f"  [BOT] Crop advisor error: {e}")
             results["crops"] = {"error": str(e)}
 
         try:
             # Phase 3: MRV System (Carbon)
-            print("  [BOT] Phase 3: MRV System")
+            logger.info("  [BOT] Phase 3: MRV System")
 
             mrv_params = MotorParameters(
                 start_date="2026-01-01",
@@ -164,7 +167,7 @@ class HydromaBotIntegration:
                 results["carbon"] = {"error": mrv_result.error_message}
 
         except Exception as e:
-            print(f"  [BOT] MRV error: {e}")
+            logger.error(f"  [BOT] MRV error: {e}")
             results["carbon"] = {"error": str(e)}
 
         return results

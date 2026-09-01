@@ -3,6 +3,9 @@ Model Version Manager.
 
 Handles the lifecycle of model versions, including creation, promotion, and rollback.
 """
+import structlog
+
+logger = structlog.get_logger()
 import logging
 from datetime import date
 from typing import Any
@@ -158,9 +161,9 @@ def example_version_creation_and_promotion(cal_record_id: str):
     )
 
     if new_version_id:
-        print(f"New model version created and promoted: {new_version_id}")
+        logger.info(f"New model version created and promoted: {new_version_id}")
 
     # Get the current active version
     current = vm.get_current_version("soil_nutrient_model")
     if current:
-        print(f"Current model version is: {current.version_number} (ID: {current.id})")
+        logger.info(f"Current model version is: {current.version_number} (ID: {current.id})")

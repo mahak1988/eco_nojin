@@ -4,6 +4,9 @@ Shell Utilities
 اجرای دستورات shell با مدیریت خطا و لاگ.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import subprocess
 import sys
 from pathlib import Path
@@ -47,7 +50,7 @@ def run(
         if capture and not silent:
             if result.stdout.strip():
                 for line in result.stdout.strip().split('\n')[:20]:
-                    print(f"  {line}")
+                    logger.info(f"  {line}")
             if result.returncode != 0 and result.stderr:
                 console.error(f"stderr: {result.stderr[:500]}")
         

@@ -5,6 +5,9 @@ Segment CryptoPaymentWidget.tsx for Refactoring
 Reads the file and creates structured analysis.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import re
 import sys
 from pathlib import Path
@@ -73,41 +76,41 @@ def analyze_file(path: Path) -> dict:
 
 def print_analysis(analysis: dict):
     """چاپ نتایج"""
-    print("\n" + "=" * 70)
-    print("  📄 ساختار CryptoPaymentWidget.tsx")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  📄 ساختار CryptoPaymentWidget.tsx")
+    logger.info("=" * 70 + "\n")
 
-    print(f"  📏 تعداد خطوط: {analysis['total_lines']}")
-    print()
+    logger.info(f"  📏 تعداد خطوط: {analysis['total_lines']}")
+    logger.info()
 
     # State variables
-    print(f"  🎣 State Variables ({len(analysis['state_vars'])}):")
+    logger.info(f"  🎣 State Variables ({len(analysis['state_vars'])}):")
     for name, setter in analysis['state_vars']:
-        print(f"      • {name} (set{setter})")
-    print()
+        logger.info(f"      • {name} (set{setter})")
+    logger.info()
 
     # Effects
-    print(f"  ⚡ useEffect Hooks ({len(analysis['effects'])}):")
+    logger.info(f"  ⚡ useEffect Hooks ({len(analysis['effects'])}):")
     for effect in analysis['effects']:
-        print(f"      ── Effect {effect['index']} ──")
-        print(f"      Dependencies: {effect['dependencies']}")
-        print(f"      setState calls: {effect['setState_calls']}")
-        print(f"      fetch/axios calls: {effect['fetch_calls']}")
-        print(f"      Preview: {effect['body_preview'][:100]}...")
-        print()
+        logger.info(f"      ── Effect {effect['index']} ──")
+        logger.info(f"      Dependencies: {effect['dependencies']}")
+        logger.info(f"      setState calls: {effect['setState_calls']}")
+        logger.info(f"      fetch/axios calls: {effect['fetch_calls']}")
+        logger.info(f"      Preview: {effect['body_preview'][:100]}...")
+        logger.info()
 
     # Math.random calls
-    print(f"  🎲 Math.random() Calls ({len(analysis['random_calls'])}):")
+    logger.info(f"  🎲 Math.random() Calls ({len(analysis['random_calls'])}):")
     for call in analysis['random_calls']:
-        print(f"      Line {call['line']:4d}: {call['content']}")
-    print()
+        logger.info(f"      Line {call['line']:4d}: {call['content']}")
+    logger.info()
 
     # Imports
-    print(f"  📦 Imports ({len(analysis['imports'])}):")
+    logger.info(f"  📦 Imports ({len(analysis['imports'])}):")
     for imp in analysis['imports'][:20]:
-        print(f"      • {imp}")
+        logger.info(f"      • {imp}")
     if len(analysis['imports']) > 20:
-        print(f"      ... +{len(analysis['imports']) - 20} more")
+        logger.info(f"      ... +{len(analysis['imports']) - 20} more")
 
 
 def save_segments(analysis: dict):
@@ -131,37 +134,37 @@ def save_segments(analysis: dict):
         encoding='utf-8'
     )
 
-    print(f"\n  💾 فایل‌های ذخیره شده:")
-    print(f"      • {full_file.relative_to(PROJECT_ROOT)}")
-    print(f"      • {analysis_file.relative_to(PROJECT_ROOT)}")
+    logger.info(f"\n  💾 فایل‌های ذخیره شده:")
+    logger.info(f"      • {full_file.relative_to(PROJECT_ROOT)}")
+    logger.info(f"      • {analysis_file.relative_to(PROJECT_ROOT)}")
 
 
 def main():
     if not TARGET.exists():
-        print(f"\033[91m✗\033[0m  فایل یافت نشد: {TARGET}")
+        logger.info(f"\033[91m✗\033[0m  فایل یافت نشد: {TARGET}")
         return 1
 
-    print("\n\033[1m🔍 Segmenting CryptoPaymentWidget.tsx...\033[0m\n")
+    logger.info("\n\033[1m🔍 Segmenting CryptoPaymentWidget.tsx...\033[0m\n")
 
     analysis = analyze_file(TARGET)
     print_analysis(analysis)
     save_segments(analysis)
 
     # چاپ محتوای خطوط کلیدی
-    print("\n" + "=" * 70)
-    print("  🎯 اقدام بعدی")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  🎯 اقدام بعدی")
+    logger.info("=" * 70 + "\n")
 
-    print("  لطفاً محتوای کامل فایل را بفرستید:")
-    print(f"  \033[96mGet-Content {TARGET}\033[0m")
-    print()
-    print("  سپس من بازنویسی ساختاری را انجام می‌دهم:")
-    print("    1. ایجاد features/crypto-payment/")
-    print("    2. استخراج types و hooks")
-    print("    3. حذف Math.random از render")
-    print("    4. جایگزینی useState+useEffect با React Query")
-    print("    5. تست‌نویسی")
-    print()
+    logger.info("  لطفاً محتوای کامل فایل را بفرستید:")
+    logger.info(f"  \033[96mGet-Content {TARGET}\033[0m")
+    logger.info()
+    logger.info("  سپس من بازنویسی ساختاری را انجام می‌دهم:")
+    logger.info("    1. ایجاد features/crypto-payment/")
+    logger.info("    2. استخراج types و hooks")
+    logger.info("    3. حذف Math.random از render")
+    logger.info("    4. جایگزینی useState+useEffect با React Query")
+    logger.info("    5. تست‌نویسی")
+    logger.info()
 
     return 0
 

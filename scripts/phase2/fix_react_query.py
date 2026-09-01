@@ -8,6 +8,9 @@ Fix React Query Installation & Configuration
 4. Commit
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import re
 import sys
@@ -62,7 +65,7 @@ def install_react_query():
             ok("React Query نصب شد")
         else:
             err("نصب React Query شکست خورد")
-            print(result.stderr[-500:])
+            logger.info(result.stderr[-500:])
             return False
 
     # بررسی نصب در node_modules
@@ -178,9 +181,9 @@ def configure_query_client_provider():
     ok("main.tsx به‌روزرسانی شد")
 
     # نمایش تغییرات
-    print("\n  ─── Preview main.tsx (۳۰ خط اول) ───")
+    logger.info("\n  ─── Preview main.tsx (۳۰ خط اول) ───")
     for i, line in enumerate(MAIN_TSX.read_text(encoding="utf-8").splitlines()[:30], 1):
-        print(f"    {i:3d} │ {line}")
+        logger.info(f"    {i:3d} │ {line}")
 
     return True
 
@@ -206,13 +209,13 @@ def run_build():
         ok("Build موفق!")
         for line in output.splitlines():
             if "built in" in line or "HyDroMaCenter" in line or "crypto" in line.lower():
-                print(f"  {line.strip()}")
+                logger.info(f"  {line.strip()}")
         return True
 
     err("Build هنوز شکست می‌خورد")
-    print("\n  ─── ۳۰ خط آخر ───")
+    logger.info("\n  ─── ۳۰ خط آخر ───")
     for line in output.splitlines()[-30:]:
-        print(f"  {line}")
+        logger.info(f"  {line}")
     return False
 
 
@@ -234,7 +237,7 @@ def run_tests():
     output = result.stdout + result.stderr
     for line in output.splitlines():
         if "Test Files" in line or "Tests" in line or "passed" in line.lower() or "failed" in line.lower():
-            print(f"  {line}")
+            logger.info(f"  {line}")
 
     return result.returncode == 0
 
@@ -259,53 +262,53 @@ def commit_changes():
 
 
 def main():
-    print("\n" + "=" * 70)
-    print("  🔧 Fix React Query Installation & Configuration")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  🔧 Fix React Query Installation & Configuration")
+    logger.info("=" * 70 + "\n")
 
     ensure_git_in_path()
 
     # گام ۱: نصب
     if not install_react_query():
         return 1
-    print()
+    logger.info()
 
     # گام ۲: پیکربندی
     if not configure_query_client_provider():
         return 1
-    print()
+    logger.info()
 
     # گام ۳: Build
     build_ok = run_build()
-    print()
+    logger.info()
 
     # گام ۴: تست‌ها
     tests_ok = run_tests()
-    print()
+    logger.info()
 
     # گام ۵: Commit
     if build_ok:
         commit_changes()
-    print()
+    logger.info()
 
     # گزارش
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m")
     if build_ok:
-        print("\033[1m\033[92m  🎉 React Query پیکربندی شد! 🎉\033[0m")
+        logger.info("\033[1m\033[92m  🎉 React Query پیکربندی شد! 🎉\033[0m")
     else:
-        print("\033[1m\033[93m  ⚠️ نیاز به بررسی بیشتر\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+        logger.info("\033[1m\033[93m  ⚠️ نیاز به بررسی بیشتر\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 خلاصه:")
-    print(f"    • Build: {'✅ موفق' if build_ok else '❌ شکست'}")
-    print(f"    • Tests: {'✅ پاس' if tests_ok else '⚠️ برخی شکست'}")
-    print()
+    logger.info("  📊 خلاصه:")
+    logger.info(f"    • Build: {'✅ موفق' if build_ok else '❌ شکست'}")
+    logger.info(f"    • Tests: {'✅ پاس' if tests_ok else '⚠️ برخی شکست'}")
+    logger.info()
 
     if build_ok and tests_ok:
-        print("  🎯 گام بعدی:")
-        print("    • refactor CryptoPaymentWidget تکمیل شد")
-        print("    • آماده ورود به EcoWalletDashboard.tsx (HIGH)")
-        print()
+        logger.info("  🎯 گام بعدی:")
+        logger.info("    • refactor CryptoPaymentWidget تکمیل شد")
+        logger.info("    • آماده ورود به EcoWalletDashboard.tsx (HIGH)")
+        logger.info()
 
     return 0 if (build_ok and tests_ok) else 1
 

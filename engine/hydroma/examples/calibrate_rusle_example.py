@@ -1,4 +1,7 @@
 """Example of calibrating RUSLE model parameters."""
+import structlog
+
+logger = structlog.get_logger()
 from engine.hydroma.calibration.model_calibrator import CalibrationInput, Calibrator
 from engine.hydroma.simulation.contracts import (  # Assuming RUSLEInput exists or is similar to ChainInputs
     ChainInputs,
@@ -55,8 +58,8 @@ def run_example():
     calibrator = Calibrator()
     result = calibrator.execute(cal_input)
 
-    print(f"Calibrated Parameters: {result.calibrated_parameters}")
-    print(f"Best Objective Value (RMSE): {result.best_objective_value}")
+    logger.info(f"Calibrated Parameters: {result.calibrated_parameters}")
+    logger.info(f"Best Objective Value (RMSE): {result.best_objective_value}")
 
 if __name__ == "__main__":
     run_example()

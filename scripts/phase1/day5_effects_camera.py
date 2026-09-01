@@ -11,6 +11,9 @@ Phase 1 - Day 5: Extract Effects & Camera Components
 7. Commit & push
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import subprocess
 from pathlib import Path
@@ -604,53 +607,53 @@ def write_file(path: Path, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
     lines = len(content.splitlines())
-    print(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
+    logger.info(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
 
 
 def main():
-    print("\n" + "=" * 70)
-    print("  🚀 Phase 1 - Day 5: Effects & Camera Components")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  🚀 Phase 1 - Day 5: Effects & Camera Components")
+    logger.info("=" * 70 + "\n")
 
     # ── ایجاد کامپوننت‌ها ──────────────────────────────────────
-    print("🎨 ایجاد کامپوننت‌های Canvas...")
+    logger.info("🎨 ایجاد کامپوننت‌های Canvas...")
     write_file(HYDROMA / "components" / "canvas" / "WindArrows.tsx", WIND_ARROWS)
     write_file(HYDROMA / "components" / "canvas" / "WaterSurface.tsx", WATER_SURFACE)
     write_file(HYDROMA / "components" / "canvas" / "RainParticles.tsx", RAIN_PARTICLES)
     write_file(HYDROMA / "components" / "canvas" / "CameraTour.tsx", CAMERA_TOUR)
     write_file(HYDROMA / "components" / "canvas" / "CameraController.tsx", CAMERA_CONTROLLER)
     write_file(HYDROMA / "components" / "canvas" / "index.ts", CANVAS_INDEX)
-    print()
+    logger.info()
 
     # ── ایجاد تست‌ها ─────────────────────────────────────────
-    print("🧪 ایجاد تست‌ها...")
+    logger.info("🧪 ایجاد تست‌ها...")
     write_file(HYDROMA / "__tests__" / "WindArrows.test.tsx", WIND_ARROWS_TEST)
     write_file(HYDROMA / "__tests__" / "WaterSurface.test.tsx", WATER_SURFACE_TEST)
     write_file(HYDROMA / "__tests__" / "RainParticles.test.tsx", RAIN_PARTICLES_TEST)
     write_file(HYDROMA / "__tests__" / "CameraTour.test.tsx", CAMERA_TOUR_TEST)
     write_file(HYDROMA / "__tests__" / "CameraController.test.tsx", CAMERA_CONTROLLER_TEST)
-    print()
+    logger.info()
 
     # ── خلاصه ─────────────────────────────────────────────────
-    print("=" * 70)
-    print("  📊 Summary")
-    print("=" * 70 + "\n")
+    logger.info("=" * 70)
+    logger.info("  📊 Summary")
+    logger.info("=" * 70 + "\n")
 
-    print("  New components (5):")
-    print(f"    • WindArrows.tsx ({len(WIND_ARROWS.splitlines())} lines)")
-    print(f"    • WaterSurface.tsx ({len(WATER_SURFACE.splitlines())} lines)")
-    print(f"    • RainParticles.tsx ({len(RAIN_PARTICLES.splitlines())} lines)")
-    print(f"    • CameraTour.tsx ({len(CAMERA_TOUR.splitlines())} lines)")
-    print(f"    • CameraController.tsx ({len(CAMERA_CONTROLLER.splitlines())} lines)")
-    print()
+    logger.info("  New components (5):")
+    logger.info(f"    • WindArrows.tsx ({len(WIND_ARROWS.splitlines())} lines)")
+    logger.info(f"    • WaterSurface.tsx ({len(WATER_SURFACE.splitlines())} lines)")
+    logger.info(f"    • RainParticles.tsx ({len(RAIN_PARTICLES.splitlines())} lines)")
+    logger.info(f"    • CameraTour.tsx ({len(CAMERA_TOUR.splitlines())} lines)")
+    logger.info(f"    • CameraController.tsx ({len(CAMERA_CONTROLLER.splitlines())} lines)")
+    logger.info()
 
-    print("  Features added:")
-    print("    ✓ Wind visualization with directional arrows")
-    print("    ✓ Animated water surface with wave motion")
-    print("    ✓ Particle system for rain")
-    print("    ✓ Automatic cinematic camera tour")
-    print("    ✓ View mode presets (3D, Top, Side, Section)")
-    print()
+    logger.info("  Features added:")
+    logger.info("    ✓ Wind visualization with directional arrows")
+    logger.info("    ✓ Animated water surface with wave motion")
+    logger.info("    ✓ Particle system for rain")
+    logger.info("    ✓ Automatic cinematic camera tour")
+    logger.info("    ✓ View mode presets (3D, Top, Side, Section)")
+    logger.info()
 
     # ── اجرای تست‌ها ─────────────────────────────────────────
     git_paths = [
@@ -661,7 +664,7 @@ def main():
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
-    print("🧪 اجرای همه تست‌های hydroma...")
+    logger.info("🧪 اجرای همه تست‌های hydroma...")
     result = subprocess.run(
         "pnpm test features/hydroma",
         shell=True,
@@ -676,20 +679,20 @@ def main():
     tests_passed = result.returncode == 0
 
     if tests_passed:
-        print("  ✓ همه تست‌ها پاس شدند")
+        logger.info("  ✓ همه تست‌ها پاس شدند")
         for line in result.stdout.splitlines():
             if "Test Files" in line or "Tests" in line:
-                print(f"  {line.strip()}")
+                logger.info(f"  {line.strip()}")
     else:
-        print("  ⚠ برخی تست‌ها شکست خوردند")
-        print()
-        print("  ─── آخرین ۲۵ خط ───")
+        logger.info("  ⚠ برخی تست‌ها شکست خوردند")
+        logger.info()
+        logger.info("  ─── آخرین ۲۵ خط ───")
         for line in result.stdout.splitlines()[-25:]:
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ── commit ────────────────────────────────────────────────
-    print("📦 commit تغییرات...")
+    logger.info("📦 commit تغییرات...")
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
 
@@ -705,38 +708,38 @@ def main():
             shell=True, cwd=PROJECT_ROOT, check=True
         )
         subprocess.run("git push origin main", shell=True, cwd=PROJECT_ROOT, check=True)
-        print("  ✓ commit و push موفق\n")
+        logger.info("  ✓ commit و push موفق\n")
     except Exception as e:
-        print(f"  ⚠ commit: {e}\n")
+        logger.info(f"  ⚠ commit: {e}\n")
 
     # ── گزارش نهایی ──────────────────────────────────────────
-    print("=" * 70)
+    logger.info("=" * 70)
     if tests_passed:
-        print("  ✅ Day 5 Complete!")
+        logger.info("  ✅ Day 5 Complete!")
     else:
-        print("  ⚠️ Day 5 Complete (tests pending fix)")
-    print("=" * 70 + "\n")
+        logger.info("  ⚠️ Day 5 Complete (tests pending fix)")
+    logger.info("=" * 70 + "\n")
 
-    print("  Next steps (Day 6):")
-    print("    • Create useRealDem hook (DEM loading)")
-    print("    • Create useTerrainClick hook (interaction logic)")
-    print("    • Create usePolygonDrawing hook (drawing logic)")
-    print("    • Create useErosionEffect hook (RUSLE calculation)")
-    print()
+    logger.info("  Next steps (Day 6):")
+    logger.info("    • Create useRealDem hook (DEM loading)")
+    logger.info("    • Create useTerrainClick hook (interaction logic)")
+    logger.info("    • Create usePolygonDrawing hook (drawing logic)")
+    logger.info("    • Create useErosionEffect hook (RUSLE calculation)")
+    logger.info()
 
-    print("  🎯 Progress:")
-    print("    • Day 1: Types (289 lines) ✅")
-    print("    • Day 2: Store + Constants (590+ lines) ✅")
-    print("    • Day 3: TerrainMesh (178 lines) ✅")
-    print("    • Day 4: Markers + Polygons (~250 lines) ✅")
-    print("    • Day 5: Effects + Camera (~375 lines) ✅")
-    print("    • Day 6: Custom hooks (~300 lines) ⏳")
-    print("    • Day 7: Orchestration (final) ⏳")
-    print()
+    logger.info("  🎯 Progress:")
+    logger.info("    • Day 1: Types (289 lines) ✅")
+    logger.info("    • Day 2: Store + Constants (590+ lines) ✅")
+    logger.info("    • Day 3: TerrainMesh (178 lines) ✅")
+    logger.info("    • Day 4: Markers + Polygons (~250 lines) ✅")
+    logger.info("    • Day 5: Effects + Camera (~375 lines) ✅")
+    logger.info("    • Day 6: Custom hooks (~300 lines) ⏳")
+    logger.info("    • Day 7: Orchestration (final) ⏳")
+    logger.info()
 
-    print("  📉 HyDroMaCenter.tsx: 8804 → ~8000 lines (9% extracted)")
-    print("  📈 Test count: 55 → ~75 tests passing")
-    print()
+    logger.info("  📉 HyDroMaCenter.tsx: 8804 → ~8000 lines (9% extracted)")
+    logger.info("  📈 Test count: 55 → ~75 tests passing")
+    logger.info()
 
     return 0 if tests_passed else 1
 

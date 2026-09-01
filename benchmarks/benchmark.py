@@ -10,6 +10,9 @@ Quantifies:
 Output: prints a compact table; the parent agent writes the markdown report.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import time
 
 import numpy as np
@@ -79,12 +82,12 @@ t_numba = timeit(vg_k_numba, h, KS, TR, TS, ALPHA, N_PAR)
 t_numpy = timeit(vg_k_numpy, h)
 t_pure = timeit(vg_k_pure_py, h.tolist())
 
-print("== 1. van Genuchten K(h), N=%d ==" % N)
-print(f"  numba : {t_numba:.4f} s")
-print(f"  numpy : {t_numpy:.4f} s")
-print(f"  pure  : {t_pure:.4f} s")
-print("  speedup numba/pure : %.1fx" % (t_pure / t_numba))
-print("  speedup numba/numpy: %.1fx" % (t_numpy / t_numba))
+logger.info("== 1. van Genuchten K(h), N=%d ==" % N)
+logger.info(f"  numba : {t_numba:.4f} s")
+logger.info(f"  numpy : {t_numpy:.4f} s")
+logger.info(f"  pure  : {t_pure:.4f} s")
+logger.info("  speedup numba/pure : %.1fx" % (t_pure / t_numba))
+logger.info("  speedup numba/numpy: %.1fx" % (t_numpy / t_numba))
 
 # ---- 2. LHS vs MC variance reduction -----------------------------------
 rng = np.random.default_rng(42)
@@ -113,10 +116,10 @@ def lhs_estimate(n, reps=200):
 n_samp = 100
 se_mc = mc_estimate(n_samp)
 se_lhs = lhs_estimate(n_samp)
-print("== 2. MC vs LHS on E[x+y], n=%d ==" % n_samp)
-print(f"  SE(MC)  = {se_mc:.5f}")
-print(f"  SE(LHS) = {se_lhs:.5f}")
-print("  variance reduction = %.1fx" % (se_mc / se_lhs))
+logger.info("== 2. MC vs LHS on E[x+y], n=%d ==" % n_samp)
+logger.info(f"  SE(MC)  = {se_mc:.5f}")
+logger.info(f"  SE(LHS) = {se_lhs:.5f}")
+logger.info("  variance reduction = %.1fx" % (se_mc / se_lhs))
 
 # ---- 3. Muskingum routing: numba vs pure loop --------------------------
 try:
@@ -138,9 +141,9 @@ try:
 
     t_musk_numba = timeit(route_flood_wave, Q, 1000.0, 50, 0.03, 0.002, 10.0, 5.0)
     t_musk_py = timeit(route_py, Q)
-    print("== 3. Muskingum routing, N=%d ==" % len(Q))
+    logger.info("== 3. Muskingum routing, N=%d ==" % len(Q))
     print(
         f"  numba : {t_musk_numba:.5f} s | pure: {t_musk_py:.5f} s | speedup {t_musk_py / t_musk_numba:.1f}x"
     )
 except Exception as e:  # pragma: no cover
-    print(f"== 3. Muskingum: skipped ({e})")
+    logger.info(f"== 3. Muskingum: skipped ({e})")

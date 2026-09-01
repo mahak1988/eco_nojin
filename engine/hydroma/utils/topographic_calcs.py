@@ -1,11 +1,14 @@
 """Utility functions for topographic calculations using xarray-spatial."""
+import structlog
+
+logger = structlog.get_logger()
 import xarray as xr
 
 try:
     import xrspatial
 except ImportError:
     xrspatial = None
-    print("Warning: xrspatial not found. Some topographic functions may not work.")
+    logger.warning("Warning: xrspatial not found. Some topographic functions may not work.")
 
 
 def calculate_slope_aspect_xarray(dem: xr.DataArray) -> tuple[xr.DataArray, xr.DataArray]:

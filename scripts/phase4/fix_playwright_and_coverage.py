@@ -8,6 +8,9 @@ Fix Playwright Browser Issue & Coverage Thresholds
 3. Enable progressive coverage improvement
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import json
@@ -21,19 +24,19 @@ PLAYWRIGHT_CONFIG = FRONTEND / "playwright.config.ts"
 
 
 def ok(m):
-    print(f"[OK] {m}")
+    logger.info(f"[OK] {m}")
 
 
 def info(m):
-    print(f"[INFO] {m}")
+    logger.info(f"[INFO] {m}")
 
 
 def warn(m):
-    print(f"[WARN] {m}")
+    logger.warning(f"[WARN] {m}")
 
 
 def err(m):
-    print(f"[ERROR] {m}")
+    logger.error(f"[ERROR] {m}")
 
 
 def build_string(lines):
@@ -153,11 +156,11 @@ PLAYWRIGHT_CONFIG_CONTENT = build_string(PLAYWRIGHT_CONFIG_LINES)
 # =======================================================================
 
 def main():
-    print("")
-    print("=" * 70)
-    print("  Fix Playwright Browser & Coverage Thresholds")
-    print("=" * 70)
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  Fix Playwright Browser & Coverage Thresholds")
+    logger.info("=" * 70)
+    logger.info("")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
@@ -166,33 +169,33 @@ def main():
     # ===================================================================
     # Step 1: Update vitest.config.ts with lower thresholds
     # ===================================================================
-    print("[Step 1] Lowering coverage thresholds")
-    print("-" * 70)
+    logger.info("[Step 1] Lowering coverage thresholds")
+    logger.info("-" * 70)
 
     VITEST_CONFIG.write_text(VITEST_CONFIG_CONTENT, encoding="utf-8")
     ok("vitest.config.ts updated with 35% thresholds")
     info("Old: 60% lines, 50% branches")
     info("New: 35% lines, 30% branches")
     info("This allows CI to pass while we progressively add tests")
-    print("")
+    logger.info("")
 
     # ===================================================================
     # Step 2: Update playwright.config.ts to use system Chrome
     # ===================================================================
-    print("[Step 2] Configuring Playwright to use system Chrome")
-    print("-" * 70)
+    logger.info("[Step 2] Configuring Playwright to use system Chrome")
+    logger.info("-" * 70)
 
     PLAYWRIGHT_CONFIG.write_text(PLAYWRIGHT_CONFIG_CONTENT, encoding="utf-8")
     ok("playwright.config.ts updated")
     info("Using 'channel: chrome' to use system-installed Chrome")
     info("This bypasses the 403 CDN download error in restricted regions")
-    print("")
+    logger.info("")
 
     # ===================================================================
     # Step 3: Run tests with new thresholds
     # ===================================================================
-    print("[Step 3] Running tests with new thresholds")
-    print("-" * 70)
+    logger.info("[Step 3] Running tests with new thresholds")
+    logger.info("-" * 70)
     info("Executing: pnpm test:coverage")
 
     result = subprocess.run(
@@ -215,19 +218,19 @@ def main():
             "All files", "Statements", "Branches", "Functions", "Lines",
             "ERROR", "threshold"
         ]):
-            print(f"  {line}")
+            logger.info(f"  {line}")
     
     if result.returncode == 0:
         ok("Coverage thresholds now pass!")
     else:
         warn("Coverage test had issues (check output above)")
-    print("")
+    logger.info("")
 
     # ===================================================================
     # Step 4: Commit
     # ===================================================================
-    print("[Step 4] Committing fixes")
-    print("-" * 70)
+    logger.info("[Step 4] Committing fixes")
+    logger.info("-" * 70)
 
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -257,65 +260,65 @@ def main():
     # ===================================================================
     # Final Report
     # ===================================================================
-    print("")
-    print("=" * 70)
-    print("  Phase B-2: Testing Excellence - FINAL STATUS")
-    print("=" * 70)
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  Phase B-2: Testing Excellence - FINAL STATUS")
+    logger.info("=" * 70)
+    logger.info("")
 
-    print("  Infrastructure Status:")
-    print("    [OK] Vitest with v8 coverage provider")
-    print("    [OK] Playwright configured (system Chrome)")
-    print("    [OK] 3 E2E test suites ready")
-    print("    [OK] All scripts in package.json")
-    print("    [OK] Coverage thresholds adjusted (35%)")
-    print("")
+    logger.info("  Infrastructure Status:")
+    logger.info("    [OK] Vitest with v8 coverage provider")
+    logger.info("    [OK] Playwright configured (system Chrome)")
+    logger.info("    [OK] 3 E2E test suites ready")
+    logger.info("    [OK] All scripts in package.json")
+    logger.info("    [OK] Coverage thresholds adjusted (35%)")
+    logger.info("")
 
-    print("  Test Results:")
-    print("    [OK] Unit tests: 185/185 passing")
-    print("    [INFO] Coverage: ~40% (target: 80%+)")
-    print("    [INFO] E2E: Ready (requires system Chrome)")
-    print("")
+    logger.info("  Test Results:")
+    logger.info("    [OK] Unit tests: 185/185 passing")
+    logger.info("    [INFO] Coverage: ~40% (target: 80%+)")
+    logger.info("    [INFO] E2E: Ready (requires system Chrome)")
+    logger.info("")
 
-    print("  Commands Available (from frontend/):")
-    print("    pnpm test:coverage    # Generates coverage/index.html")
-    print("    pnpm test:e2e         # Runs E2E with system Chrome")
-    print("    pnpm test:e2e:ui      # Opens visual debugger")
-    print("    pnpm test:ui          # Interactive Vitest UI")
-    print("")
+    logger.info("  Commands Available (from frontend/):")
+    logger.info("    pnpm test:coverage    # Generates coverage/index.html")
+    logger.info("    pnpm test:e2e         # Runs E2E with system Chrome")
+    logger.debug("    pnpm test:e2e:ui      # Opens visual debugger")
+    logger.info("    pnpm test:ui          # Interactive Vitest UI")
+    logger.info("")
 
-    print("  Coverage Improvement Strategy (Phase B-3):")
-    print("    1. Identify low-coverage modules:")
-    print("       cd D:\\eco_nojin\\frontend")
-    print("       pnpm test:coverage")
-    print("       # Open coverage/index.html")
-    print("")
-    print("    2. Prioritize critical modules:")
-    print("       - hooks/ (business logic)")
-    print("       - services/api/ (data flow)")
-    print("       - store/ (state management)")
-    print("       - features/*/hooks (feature logic)")
-    print("")
-    print("    3. Target: 80%+ coverage")
-    print("       Update thresholds in vitest.config.ts:")
-    print("         thresholds: { lines: 80, branches: 75, ... }")
-    print("")
+    logger.info("  Coverage Improvement Strategy (Phase B-3):")
+    logger.info("    1. Identify low-coverage modules:")
+    logger.info("       cd D:\\eco_nojin\\frontend")
+    logger.info("       pnpm test:coverage")
+    logger.info("       # Open coverage/index.html")
+    logger.info("")
+    logger.info("    2. Prioritize critical modules:")
+    logger.info("       - hooks/ (business logic)")
+    logger.info("       - services/api/ (data flow)")
+    logger.info("       - store/ (state management)")
+    logger.info("       - features/*/hooks (feature logic)")
+    logger.info("")
+    logger.info("    3. Target: 80%+ coverage")
+    logger.info("       Update thresholds in vitest.config.ts:")
+    logger.info("         thresholds: { lines: 80, branches: 75, ... }")
+    logger.info("")
 
-    print("  E2E Testing Strategy:")
-    print("    - System Chrome used (no CDN download needed)")
-    print("    - Visual debugger: pnpm test:e2e:ui")
-    print("    - Add tests for critical user flows:")
-    print("      * Login/Register flow")
-    print("      * Hydroma dashboard interactions")
-    print("      * Virtual Land Lab simulations")
-    print("      * 3D terrain navigation")
-    print("")
+    logger.info("  E2E Testing Strategy:")
+    logger.info("    - System Chrome used (no CDN download needed)")
+    logger.debug("    - Visual debugger: pnpm test:e2e:ui")
+    logger.info("    - Add tests for critical user flows:")
+    logger.info("      * Login/Register flow")
+    logger.info("      * Hydroma dashboard interactions")
+    logger.info("      * Virtual Land Lab simulations")
+    logger.info("      * 3D terrain navigation")
+    logger.info("")
 
-    print("  Phase Progress:")
-    print("    [COMPLETE] Phase B-1: Code Quality (0 TypeScript errors)")
-    print("    [COMPLETE] Phase B-2: Testing Infrastructure")
-    print("    [NEXT]     Phase B-3: Increase Test Coverage")
-    print("")
+    logger.info("  Phase Progress:")
+    logger.error("    [COMPLETE] Phase B-1: Code Quality (0 TypeScript errors)")
+    logger.info("    [COMPLETE] Phase B-2: Testing Infrastructure")
+    logger.info("    [NEXT]     Phase B-3: Increase Test Coverage")
+    logger.info("")
 
     return 0
 

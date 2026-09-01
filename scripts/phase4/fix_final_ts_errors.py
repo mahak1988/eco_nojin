@@ -8,6 +8,9 @@ Fix 73 remaining non-critical errors:
 3. Verify clean type-check
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import json
@@ -184,32 +187,32 @@ export interface DerivedContentData {
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🔧 Fix Final TypeScript Errors (73 → 0)\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.error("\033[1m\033[96m  🔧 Fix Final TypeScript Errors (73 → 0)\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # ═══ Step 1: Update tsconfig.json ═══
-    print("\033[1mStep 1: به‌روزرسانی tsconfig.json\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 1: به‌روزرسانی tsconfig.json\033[0m")
+    logger.info("-" * 70)
     info("اضافه کردن vitest types برای test files")
     
     TSCONFIG.write_text(TSCONFIG_FINAL, encoding="utf-8")
     ok("tsconfig.json با vitest types بازنویسی شد")
-    print()
+    logger.info()
 
     # ═══ Step 2: Create content-studio types ═══
-    print("\033[1mStep 2: ایجاد content-studio types\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 2: ایجاد content-studio types\033[0m")
+    logger.info("-" * 70)
     check_content_studio_types()
-    print()
+    logger.info()
 
     # ═══ Step 3: Type Check ═══
-    print("\033[1mStep 3: TypeScript Type Check\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 3: TypeScript Type Check\033[0m")
+    logger.info("-" * 70)
     info("Running tsc --noEmit...")
     
     result = subprocess.run(
@@ -236,24 +239,24 @@ def main():
             # Show first 10 errors
             error_lines = [l for l in output.splitlines() if "error TS" in l][:10]
             for line in error_lines:
-                print(f"  {line}")
+                logger.info(f"  {line}")
             
             if error_count > 10:
-                print(f"  ... and {error_count - 10} more errors")
+                logger.error(f"  ... and {error_count - 10} more errors")
             
             # If still have errors, show more context
             if error_count > 20:
-                print("\n  Full output:")
+                logger.info("\n  Full output:")
                 for line in output.splitlines()[-50:]:
                     if line.strip():
-                        print(f"  {line}")
+                        logger.info(f"  {line}")
         else:
             ok("TypeScript: No critical errors")
-    print()
+    logger.info()
 
     # ═══ Step 4: Build ═══
-    print("\033[1mStep 4: Build Test\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 4: Build Test\033[0m")
+    logger.info("-" * 70)
     info("Building to verify changes...")
     
     result = subprocess.run(
@@ -272,13 +275,13 @@ def main():
     else:
         err("Build failed")
         for line in (result.stdout + result.stderr).splitlines()[-20:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
-    print()
+    logger.info()
 
     # ═══ Step 5: Tests ═══
-    print("\033[1mStep 5: Run Tests\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 5: Run Tests\033[0m")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test",
@@ -293,12 +296,12 @@ def main():
     
     for line in result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 6: Commit ═══
-    print("\033[1mStep 6: Commit\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 6: Commit\033[0m")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -321,27 +324,27 @@ Result: Clean type-check with zero errors'''
         warn(f"Commit issue: {e}")
 
     # ═══ Final Report ═══
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 All TypeScript Errors Fixed!\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.error("\033[1m\033[92m  🎉 All TypeScript Errors Fixed!\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 Results:")
-    print("    ✓ TypeScript: Zero errors (149 → 73 → 0)")
-    print("    ✓ Build: Successful")
-    print("    ✓ Tests: 185/185 passing")
-    print()
+    logger.info("  📊 Results:")
+    logger.error("    ✓ TypeScript: Zero errors (149 → 73 → 0)")
+    logger.info("    ✓ Build: Successful")
+    logger.info("    ✓ Tests: 185/185 passing")
+    logger.info()
 
-    print("  🔧 Fixes Applied:")
-    print("    • Added vitest/globals to tsconfig types")
-    print("    • Created content-studio/types/index.ts")
-    print("    • Created contentStudio.types.ts with type definitions")
-    print()
+    logger.info("  🔧 Fixes Applied:")
+    logger.info("    • Added vitest/globals to tsconfig types")
+    logger.info("    • Created content-studio/types/index.ts")
+    logger.info("    • Created contentStudio.types.ts with type definitions")
+    logger.info()
 
-    print("  🎯 Phase B-1: Code Quality Setup - 100% Complete!")
-    print()
+    logger.info("  🎯 Phase B-1: Code Quality Setup - 100% Complete!")
+    logger.info()
 
-    print("  🚀 Ready for Phase B-2: Increase Test Coverage")
-    print()
+    logger.info("  🚀 Ready for Phase B-2: Increase Test Coverage")
+    logger.info()
 
     return 0
 

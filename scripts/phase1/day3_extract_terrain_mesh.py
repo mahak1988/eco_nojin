@@ -9,6 +9,9 @@ Phase 1 - Day 3: Extract TerrainMesh Component
 5. commit و push
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import subprocess
 from pathlib import Path
@@ -398,45 +401,45 @@ def write_file(path: Path, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
     lines = len(content.splitlines())
-    print(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
+    logger.info(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
 
 
 def main():
-    print("\n" + "=" * 70)
-    print("  🚀 Phase 1 - Day 3: Extract TerrainMesh Component")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  🚀 Phase 1 - Day 3: Extract TerrainMesh Component")
+    logger.info("=" * 70 + "\n")
 
     # Create files
-    print("📦 ایجاد کامپوننت‌های Canvas...")
+    logger.info("📦 ایجاد کامپوننت‌های Canvas...")
     write_file(HYDROMA / "components" / "canvas" / "TerrainMesh.tsx", TERRAIN_MESH)
     write_file(HYDROMA / "components" / "canvas" / "TerrainMeshErrorBoundary.tsx", ERROR_BOUNDARY)
     write_file(HYDROMA / "components" / "canvas" / "index.ts", CANVAS_INDEX)
-    print()
+    logger.info()
 
     # Tests
-    print("🧪 ایجاد تست‌ها...")
+    logger.info("🧪 ایجاد تست‌ها...")
     write_file(HYDROMA / "__tests__" / "TerrainMesh.test.tsx", TERRAIN_MESH_TEST)
-    print()
+    logger.info()
 
     # Summary
-    print("=" * 70)
-    print("  📊 Summary")
-    print("=" * 70 + "\n")
+    logger.info("=" * 70)
+    logger.info("  📊 Summary")
+    logger.info("=" * 70 + "\n")
 
-    print("  Files created:")
-    print(f"    • components/canvas/TerrainMesh.tsx ({len(TERRAIN_MESH.splitlines())} lines)")
-    print(f"    • components/canvas/TerrainMeshErrorBoundary.tsx ({len(ERROR_BOUNDARY.splitlines())} lines)")
-    print(f"    • components/canvas/index.ts (barrel)")
-    print(f"    • __tests__/TerrainMesh.test.tsx ({len(TERRAIN_MESH_TEST.splitlines())} lines)")
-    print()
+    logger.info("  Files created:")
+    logger.info(f"    • components/canvas/TerrainMesh.tsx ({len(TERRAIN_MESH.splitlines())} lines)")
+    logger.error(f"    • components/canvas/TerrainMeshErrorBoundary.tsx ({len(ERROR_BOUNDARY.splitlines())} lines)")
+    logger.info(f"    • components/canvas/index.ts (barrel)")
+    logger.info(f"    • __tests__/TerrainMesh.test.tsx ({len(TERRAIN_MESH_TEST.splitlines())} lines)")
+    logger.info()
 
-    print("  Component features:")
-    print("    • 7 layer types supported (surface, soil, bedrock, ndvi, moisture, roots, groundwater)")
-    print("    • Click handler with point & normal")
-    print("    • Texture overlay support (Esri imagery)")
-    print("    • Visibility & opacity control")
-    print("    • Error boundary for WebGL failures")
-    print()
+    logger.info("  Component features:")
+    logger.info("    • 7 layer types supported (surface, soil, bedrock, ndvi, moisture, roots, groundwater)")
+    logger.info("    • Click handler with point & normal")
+    logger.info("    • Texture overlay support (Esri imagery)")
+    logger.info("    • Visibility & opacity control")
+    logger.error("    • Error boundary for WebGL failures")
+    logger.info()
 
     # Git PATH
     git_paths = [
@@ -448,7 +451,7 @@ def main():
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # Run tests
-    print("🧪 اجرای تست‌ها...")
+    logger.info("🧪 اجرای تست‌ها...")
     result = subprocess.run(
         "pnpm test TerrainMesh.test.tsx",
         shell=True,
@@ -461,17 +464,17 @@ def main():
     )
 
     if result.returncode == 0:
-        print("  ✓ همه تست‌ها پاس شدند")
+        logger.info("  ✓ همه تست‌ها پاس شدند")
         for line in result.stdout.splitlines():
             if "Test Files" in line or "Tests" in line:
-                print(f"  {line.strip()}")
+                logger.info(f"  {line.strip()}")
     else:
-        print("  ⚠ برخی تست‌ها شکست خوردند")
-        print(result.stdout[-500:])
-    print()
+        logger.info("  ⚠ برخی تست‌ها شکست خوردند")
+        logger.info(result.stdout[-500:])
+    logger.info()
 
     # Commit
-    print("📦 commit تغییرات...")
+    logger.info("📦 commit تغییرات...")
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
         subprocess.run(
@@ -479,31 +482,31 @@ def main():
             shell=True, cwd=PROJECT_ROOT, check=True
         )
         subprocess.run("git push origin main", shell=True, cwd=PROJECT_ROOT, check=True)
-        print("  ✓ commit و push موفق بود\n")
+        logger.info("  ✓ commit و push موفق بود\n")
     except Exception as e:
-        print(f"  ⚠ commit: {e}\n")
+        logger.info(f"  ⚠ commit: {e}\n")
 
     # Next steps
-    print("=" * 70)
-    print("  ✅ Day 3 Complete!")
-    print("=" * 70 + "\n")
+    logger.info("=" * 70)
+    logger.info("  ✅ Day 3 Complete!")
+    logger.info("=" * 70 + "\n")
 
-    print("  Next steps (Day 4):")
-    print("    • Extract PlacedOpsMarkers.tsx (3D pins with labels)")
-    print("    • Extract PolygonOverlay.tsx (drawing + visualization)")
-    print("    • Both use terrain coordinates, share conversion logic")
-    print()
+    logger.info("  Next steps (Day 4):")
+    logger.info("    • Extract PlacedOpsMarkers.tsx (3D pins with labels)")
+    logger.info("    • Extract PolygonOverlay.tsx (drawing + visualization)")
+    logger.info("    • Both use terrain coordinates, share conversion logic")
+    logger.info()
 
-    print("  🎯 Progress:")
-    print("    • Day 1: Types (289 lines) ✅")
-    print("    • Day 2: Store + Constants (590+ lines) ✅")
-    print("    • Day 3: TerrainMesh (~280 lines) ✅")
-    print("    • Day 4: Markers & Polygons (⏳)")
-    print("    • Day 5-7: Remaining components & hooks")
-    print()
+    logger.info("  🎯 Progress:")
+    logger.info("    • Day 1: Types (289 lines) ✅")
+    logger.info("    • Day 2: Store + Constants (590+ lines) ✅")
+    logger.info("    • Day 3: TerrainMesh (~280 lines) ✅")
+    logger.info("    • Day 4: Markers & Polygons (⏳)")
+    logger.info("    • Day 5-7: Remaining components & hooks")
+    logger.info()
 
-    print("  📉 HyDroMaCenter.tsx: 8804 → ~8520 lines (3.2% extracted)")
-    print()
+    logger.info("  📉 HyDroMaCenter.tsx: 8804 → ~8520 lines (3.2% extracted)")
+    logger.info()
 
 
 if __name__ == "__main__":

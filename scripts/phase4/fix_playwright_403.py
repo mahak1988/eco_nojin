@@ -11,6 +11,9 @@ Multi-layer Solution:
 4. Explicit browser executable path
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import json
@@ -185,18 +188,18 @@ ENV_SETUP_PS1 = build_string(ENV_SETUP_PS1_LINES)
 
 
 def main():
-    print("")
-    print("=" * 70)
-    print("  Definitive Fix: Playwright 403 CDN Error")
-    print("=" * 70)
-    print("")
-    print("  Root Cause: Playwright CDN blocked (403 Forbidden)")
-    print("  Solution: Multi-layer protection with system Chrome")
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.error("  Definitive Fix: Playwright 403 CDN Error")
+    logger.info("=" * 70)
+    logger.info("")
+    logger.info("  Root Cause: Playwright CDN blocked (403 Forbidden)")
+    logger.info("  Solution: Multi-layer protection with system Chrome")
+    logger.info("")
 
     # Step 1: Find Chrome
-    print("[Step 1] Locating system Chrome")
-    print("-" * 70)
+    logger.info("[Step 1] Locating system Chrome")
+    logger.info("-" * 70)
     
     chrome_path = find_chrome_executable()
     
@@ -205,21 +208,21 @@ def main():
     else:
         warn("Chrome not found in standard locations")
         info("Will rely on 'channel: chrome' config")
-    print("")
+    logger.info("")
 
     # Step 2: Write new playwright config
-    print("[Step 2] Rewriting playwright.config.ts")
-    print("-" * 70)
+    logger.info("[Step 2] Rewriting playwright.config.ts")
+    logger.info("-" * 70)
     
     PLAYWRIGHT_CONFIG_FILE = FRONTEND / "playwright.config.ts"
     PLAYWRIGHT_CONFIG_FILE.write_text(PLAYWRIGHT_CONFIG, encoding="utf-8")
     ok(f"Written: {PLAYWRIGHT_CONFIG_FILE.name}")
     info("Config uses: channel: 'chrome' (system browser)")
-    print("")
+    logger.info("")
 
     # Step 3: Create environment setup scripts
-    print("[Step 3] Creating environment setup scripts")
-    print("-" * 70)
+    logger.info("[Step 3] Creating environment setup scripts")
+    logger.info("-" * 70)
     
     env_bat = FRONTEND / "setup-playwright-env.bat"
     env_bat.write_text(ENV_SETUP_BAT, encoding="utf-8")
@@ -228,11 +231,11 @@ def main():
     env_ps1 = FRONTEND / "setup-playwright-env.ps1"
     env_ps1.write_text(ENV_SETUP_PS1, encoding="utf-8")
     ok(f"Created: {env_ps1.name} (for PowerShell)")
-    print("")
+    logger.info("")
 
     # Step 4: Update package.json with env vars in scripts
-    print("[Step 4] Updating package.json scripts with env vars")
-    print("-" * 70)
+    logger.info("[Step 4] Updating package.json scripts with env vars")
+    logger.info("-" * 70)
     
     pkg_data = json.loads(PACKAGE_JSON.read_text(encoding="utf-8"))
     
@@ -261,11 +264,11 @@ def main():
         encoding="utf-8"
     )
     ok("package.json updated")
-    print("")
+    logger.info("")
 
     # Step 5: Create PowerShell launcher script
-    print("[Step 5] Creating PowerShell launcher")
-    print("-" * 70)
+    logger.info("[Step 5] Creating PowerShell launcher")
+    logger.info("-" * 70)
     
     launcher_lines = [
         "# Playwright E2E Test Launcher (PowerShell)",
@@ -317,11 +320,11 @@ def main():
     info("  .\\run-e2e.ps1         # Headless mode")
     info("  .\\run-e2e.ps1 ui      # UI mode")
     info("  .\\run-e2e.ps1 debug   # Debug mode")
-    print("")
+    logger.info("")
 
     # Step 6: Test the setup
-    print("[Step 6] Testing E2E setup")
-    print("-" * 70)
+    logger.info("[Step 6] Testing E2E setup")
+    logger.info("-" * 70)
     
     # Set env vars for this process
     os.environ['PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD'] = '1'
@@ -357,7 +360,7 @@ def main():
     
     if lines_to_show:
         for line in lines_to_show[:20]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
     
     if result.returncode == 0:
         ok("\n✓ Playwright configuration works!")
@@ -366,11 +369,11 @@ def main():
         info("Try the PowerShell launcher instead:")
         info("  cd D:\\eco_nojin\\frontend")
         info("  .\\run-e2e.ps1 ui")
-    print("")
+    logger.info("")
 
     # Step 7: Commit
-    print("[Step 7] Committing changes")
-    print("-" * 70)
+    logger.info("[Step 7] Committing changes")
+    logger.info("-" * 70)
     
     try:
         # Add Git to PATH
@@ -411,49 +414,49 @@ def main():
         warn(f"Commit issue: {e}")
 
     # Final Report
-    print("")
-    print("=" * 70)
-    print("  🎉 Playwright 403 Fix - COMPLETE!")
-    print("=" * 70)
-    print("")
-    print("  HOW TO RUN E2E TESTS (3 Methods):")
-    print("")
-    print("  ╔══════════════════════════════════════════════════════════╗")
-    print("  ║  Method 1: PowerShell Launcher (RECOMMENDED)           ║")
-    print("  ╠══════════════════════════════════════════════════════════╣")
-    print("  ║  cd D:\\eco_nojin\\frontend                               ║")
-    print("  ║  .\\run-e2e.ps1              # Headless tests           ║")
-    print("  ║  .\\run-e2e.ps1 ui           # UI mode (visual)         ║")
-    print("  ║  .\\run-e2e.ps1 debug        # Debug mode               ║")
-    print("  ╚══════════════════════════════════════════════════════════╝")
-    print("")
-    print("  ╔══════════════════════════════════════════════════════════╗")
-    print("  ║  Method 2: Manual PowerShell Setup                     ║")
-    print("  ╠══════════════════════════════════════════════════════════╣")
-    print("  ║  $env:PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = '1'            ║")
-    print("  ║  $env:PLAYWRIGHT_BROWSERS_PATH = '0'                    ║")
-    print("  ║  pnpm exec playwright test --ui                         ║")
-    print("  ╚══════════════════════════════════════════════════════════╝")
-    print("")
-    print("  ╔══════════════════════════════════════════════════════════╗")
-    print("  ║  Method 3: package.json scripts (Windows CMD)          ║")
-    print("  ╠══════════════════════════════════════════════════════════╣")
-    print("  ║  pnpm test:e2e                                          ║")
-    print("  ║  pnpm test:e2e:ui                                       ║")
-    print("  ╚══════════════════════════════════════════════════════════╝")
-    print("")
-    print("  Files Created:")
-    print("    * playwright.config.ts (updated)")
-    print("    * run-e2e.ps1 (PowerShell launcher)")
-    print("    * setup-playwright-env.bat")
-    print("    * setup-playwright-env.ps1")
-    print("")
-    print("  If you still see 403 error:")
-    print("    1. Close ALL PowerShell windows")
-    print("    2. Open new PowerShell")
-    print("    3. cd D:\\eco_nojin\\frontend")
-    print("    4. .\\run-e2e.ps1 ui")
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  🎉 Playwright 403 Fix - COMPLETE!")
+    logger.info("=" * 70)
+    logger.info("")
+    logger.info("  HOW TO RUN E2E TESTS (3 Methods):")
+    logger.info("")
+    logger.info("  ╔══════════════════════════════════════════════════════════╗")
+    logger.info("  ║  Method 1: PowerShell Launcher (RECOMMENDED)           ║")
+    logger.info("  ╠══════════════════════════════════════════════════════════╣")
+    logger.info("  ║  cd D:\\eco_nojin\\frontend                               ║")
+    logger.info("  ║  .\\run-e2e.ps1              # Headless tests           ║")
+    logger.info("  ║  .\\run-e2e.ps1 ui           # UI mode (visual)         ║")
+    logger.debug("  ║  .\\run-e2e.ps1 debug        # Debug mode               ║")
+    logger.info("  ╚══════════════════════════════════════════════════════════╝")
+    logger.info("")
+    logger.info("  ╔══════════════════════════════════════════════════════════╗")
+    logger.info("  ║  Method 2: Manual PowerShell Setup                     ║")
+    logger.info("  ╠══════════════════════════════════════════════════════════╣")
+    logger.info("  ║  $env:PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = '1'            ║")
+    logger.info("  ║  $env:PLAYWRIGHT_BROWSERS_PATH = '0'                    ║")
+    logger.info("  ║  pnpm exec playwright test --ui                         ║")
+    logger.info("  ╚══════════════════════════════════════════════════════════╝")
+    logger.info("")
+    logger.info("  ╔══════════════════════════════════════════════════════════╗")
+    logger.info("  ║  Method 3: package.json scripts (Windows CMD)          ║")
+    logger.info("  ╠══════════════════════════════════════════════════════════╣")
+    logger.info("  ║  pnpm test:e2e                                          ║")
+    logger.info("  ║  pnpm test:e2e:ui                                       ║")
+    logger.info("  ╚══════════════════════════════════════════════════════════╝")
+    logger.info("")
+    logger.info("  Files Created:")
+    logger.info("    * playwright.config.ts (updated)")
+    logger.info("    * run-e2e.ps1 (PowerShell launcher)")
+    logger.info("    * setup-playwright-env.bat")
+    logger.info("    * setup-playwright-env.ps1")
+    logger.info("")
+    logger.error("  If you still see 403 error:")
+    logger.info("    1. Close ALL PowerShell windows")
+    logger.info("    2. Open new PowerShell")
+    logger.info("    3. cd D:\\eco_nojin\\frontend")
+    logger.info("    4. .\\run-e2e.ps1 ui")
+    logger.info("")
 
     return 0
 

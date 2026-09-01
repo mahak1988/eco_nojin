@@ -1,4 +1,7 @@
 """Map Generation Orchestrator - Coordinates pipelines and fetchers."""
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import asyncio
@@ -84,12 +87,12 @@ class MapOrchestrator:
         4. Execute pipeline
         5. Save metadata and cache result
         """
-        print(f"[INFO] Generating {request.map_type.value} map...")
+        logger.info(f"[INFO] Generating {request.map_type.value} map...")
 
         # 1. Check cache
         cached = await self._check_cache(request)
         if cached:
-            print(f"[OK] Cache hit: {cached.map_id}")
+            logger.info(f"[OK] Cache hit: {cached.map_id}")
             return cached
 
         # 2. Get pipeline
@@ -103,11 +106,11 @@ class MapOrchestrator:
 
         # 3. Fetch base layers
         required_layers = pipeline.get_required_layers()
-        print(f"[INFO] Fetching layers: {required_layers}")
+        logger.info(f"[INFO] Fetching layers: {required_layers}")
         base_layers = await self._fetch_layers(required_layers, request.region, **request.parameters)
 
         # 4. Execute pipeline
-        print(f"[INFO] Executing pipeline: {pipeline.map_type.value}")
+        logger.info(f"[INFO] Executing pipeline: {pipeline.map_type.value}")
         result = await pipeline.execute(base_layers, request)
 
         # 5. Save metadata
@@ -135,7 +138,7 @@ class MapOrchestrator:
                 try:
                     return await self.generate(req)
                 except Exception as e:
-                    print(f"[ERROR] Failed to generate {req.map_type.value}: {e}")
+                    logger.error(f"[ERROR] Failed to generate {req.map_type.value}: {e}")
                     return None
 
         tasks = [bounded_generate(req) for req in requests]
@@ -156,7 +159,7 @@ class MapOrchestrator:
             # Verify COG still exists
             cog_path = Path(data["cog_path"])
             if not cog_path.exists():
-                print(f"[WARN] Cached COG missing: {cog_path}")
+                logger.warning(f"[WARN] Cached COG missing: {cog_path}")
                 cache_file.unlink()
                 return None
 
@@ -180,7 +183,7 @@ class MapOrchestrator:
             )
 
         except (json.JSONDecodeError, KeyError, TypeError) as e:
-            print(f"[WARN] Cache read failed: {e}")
+            logger.warning(f"[WARN] Cache read failed: {e}")
             cache_file.unlink(missing_ok=True)
             return None
 
@@ -233,7 +236,7 @@ class MapOrchestrator:
                 encoding="utf-8",
             )
         except Exception as e:
-            print(f"[WARN] Cache write failed: {e}")
+            logger.warning(f"[WARN] Cache write failed: {e}")
 
     def _cache_key(self, request: MapRequest) -> str:
         """Generate deterministic cache key for request."""
@@ -254,12 +257,12 @@ class MapOrchestrator:
     def register_pipeline(self, pipeline: MapPipeline) -> None:
         """Register a new pipeline. Overrides existing for same map_type."""
         self.pipelines[pipeline.map_type] = pipeline
-        print(f"[OK] Registered pipeline: {pipeline.map_type.value}")
+        logger.info(f"[OK] Registered pipeline: {pipeline.map_type.value}")
 
     def register_fetcher(self, fetcher) -> None:
         """Register a new fetcher. Overrides existing for same layer_name."""
         self.fetchers[fetcher.layer_name] = fetcher
-        print(f"[OK] Registered fetcher: {fetcher.layer_name}")
+        logger.info(f"[OK] Registered fetcher: {fetcher.layer_name}")
 
     def list_pipelines(self) -> list[str]:
         """List available pipeline types."""
@@ -282,5 +285,5 @@ class MapOrchestrator:
                 count += 1
             except Exception:
                 pass
-        print(f"[OK] Cleared {count} cached entries")
+        logger.info(f"[OK] Cleared {count} cached entries")
         return count

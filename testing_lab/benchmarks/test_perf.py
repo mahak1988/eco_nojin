@@ -1,4 +1,7 @@
 """Performance benchmarks"""
+import structlog
+
+logger = structlog.get_logger()
 import pytest, time, statistics
 
 class TestPerformance:
@@ -8,11 +11,11 @@ class TestPerformance:
         t0 = time.perf_counter()
         for _ in range(100): np.random.rand(100,100)
         t1 = time.perf_counter()
-        print(f"\n  Time: {(t1-t0)*1000:.2f}ms")
+        logger.info(f"\n  Time: {(t1-t0)*1000:.2f}ms")
         assert (t1-t0) < 10  # should be fast
 
     def test_dict_operations(self):
         t0 = time.perf_counter()
         for _ in range(1000): d={i:i*2 for i in range(500)}
         t1 = time.perf_counter()
-        print(f"\n  Dict Time: {(t1-t0)*1000:.2f}ms")
+        logger.info(f"\n  Dict Time: {(t1-t0)*1000:.2f}ms")

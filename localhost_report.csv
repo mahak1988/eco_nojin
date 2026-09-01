@@ -1,0 +1,87 @@
+File,Line,Content
+analyze_project.py,201,"console_files, print_files, localhost_files = Counter(), Counter(), Counter()"
+analyze_project.py,260,# --- localhost هاردکد ---
+analyze_project.py,261,"for m in re.finditer(r""https?://(?:localhost|127\.0\.0\.1)[^\s\""'<>]*"", text):"
+analyze_project.py,262,localhost_files[rel] += 1
+analyze_project.py,272,"""print_files"": print_files, ""localhost_files"": localhost_files,"
+analyze_project.py,594,"if scan[""localhost_files""]:"
+analyze_project.py,595,"lh = "", "".join(f""`{f}` ({n})"" for f, n in scan[""localhost_files""].most_common(5))"
+analyze_project.py,596,"A(f""- 🔗 localhost هاردکد در {len(scan['localhost_files'])} فایل: {lh}"")"
+phase1_find_localhost.py,3,خروجی: فایل localhost_report.csv
+phase1_find_localhost.py,13,r'(https?://)?(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?'
+phase1_find_localhost.py,28,"print(""[INFO] Scanning for hardcoded localhost instances..."")"
+phase1_find_localhost.py,50,"output_file = os.path.join(base_dir, 'localhost_report.csv')"
+contracts\hardhat.config.js,25,localhost: {
+contracts\hardhat.config.js,26,"url: ""http://127.0.0.1:8545"","
+engine\hydroma\biofertilizer\tests\test_nojin_comprehensive.py,360,"r = requests.get(""http://localhost:8000/api/nojin/health"", timeout=2)"
+engine\hydroma\biofertilizer\tests\test_nojin_comprehensive.py,369,"r = requests.get(""http://localhost:8000/api/nojin/materials?limit=5"", timeout=2)"
+engine\hydroma\config\settings.py,20,"app_host: str = ""127.0.0.1"""
+engine\hydroma\config\settings.py,55,"cors_origins: list[str] = [""http://localhost:3000"", ""http://localhost:8000"", ""http://127.0.0.1:3000"""
+frontend\playwright.config.ts,16,"baseURL: 'http://localhost:5173',"
+frontend\playwright.config.ts,37,"url: 'http://localhost:5173',"
+frontend\dist\assets\HyDroMaCenter-_8C0y8IU.js,1,"import{r as e}from""./rolldown-runtime-hePW80VL.js"";import{d as t,g as n}from""./vendor-antd-CvUYPCCJ."
+frontend\dist\assets\index-5T_VNOZQ.js,3,"درباره‌ی کاربران، خطاها، مزارع، تحلیل‌ها یا وضعیت امنیتی بپرسید.`}]),[i,a]=(0,B.useState)(``),[o,s]="
+frontend\dist\assets\ScientificChainPanel-DYeRoFr8.js,1,"import{r as e}from""./rolldown-runtime-hePW80VL.js"";import{g as t}from""./vendor-antd-CvUYPCCJ.js"";imp"
+frontend\dist\assets\vendor-antd-CvUYPCCJ.js,148,"`]:{transform:`scale(0)`,opacity:0,animationTimingFunction:e.motionEaseOutCirc,""&-prepare"":{transfor"
+frontend\dist\assets\vendor-react-CDWkAgbK.js,1,"import{r as e}from""./rolldown-runtime-hePW80VL.js"";import{g as t}from""./vendor-antd-CvUYPCCJ.js"";imp"
+frontend\src\config.ts,8,export const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000';
+frontend\src\features\content-studio\constants\config.ts,13,'http://localhost:8000/api/v1';
+frontend\src\features\eco-wallet\constants\config.ts,15,'http://localhost:8000/api/v1';
+frontend\src\features\marketplace\constants\config.ts,13,'http://localhost:8000/api/v1';
+frontend\src\features\security\constants\config.ts,11,'http://localhost:8000/api/v1';
+frontend\src\lib\demApi.ts,9,const API_BASE = 'http://localhost:8000/api/v1';
+frontend\src\pages\Visualization3D.tsx,50,const API_BASE = 'http://localhost:8000/api/v1';
+frontend\src\pages\admin\AdminAudit.tsx,4,const API_BASE = 'http://localhost:8000/api/v1';
+frontend\src\pages\admin\AdminErrors.tsx,4,const API_BASE = 'http://localhost:8000/api/v1';
+frontend\src\pages\admin\AdminOverview.tsx,4,const API_BASE = 'http://localhost:8000/api/v1';
+frontend\src\pages\admin\AdminSecurity.tsx,4,const API_BASE = 'http://localhost:8000/api/v1';
+frontend\src\pages\admin\AdminUsers.tsx,4,const API_BASE = 'http://localhost:8000/api/v1';
+frontend\src\pages\admin\AiChatDrawer.tsx,4,const API_BASE = 'http://localhost:8000/api/v1';
+frontend\src\pages\admin\AIModelsMonitor.tsx,18,const API_BASE = 'http://localhost:8000/api/v1';
+frontend\src\pages\admin\BotsManagement.tsx,17,const API_BASE = 'http://localhost:8000/api/v1';
+frontend\src\pages\admin\HyDroMa3D.tsx,44,const API = 'http://localhost:8000/api/v1';
+frontend\src\pages\admin\MotorRunner.tsx,5,const API_BASE = 'http://localhost:8000/api/v1';
+frontend\src\pages\admin\MotorRunner.tsx,6,const MOTORS_BASE = 'http://localhost:8000/api/v1/motors';
+frontend\src\pages\admin\live\useLiveMetrics.ts,25,const url = `http://localhost:8000/api/v1${endpoint}`;
+frontend\src\services\api.ts,3,const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+frontend\src\services\apiService.ts,6,const API_BASE = 'http://localhost:8000/api/v1';
+frontend\src\services\motorsService.ts,6,const API_BASE = 'http://localhost:8000/api/v1';
+frontend\src\services\simulationService.ts,6,const API_BASE = 'http://localhost:8000/api/v1';
+scripts\load_test.py,9,--base http://127.0.0.1:8000
+scripts\load_test.py,75,"parser.add_argument(""--base"", default=""http://127.0.0.1:8000"")"
+scripts\run_with_watchdog.py,23,"""--port"", str(args.port), ""--host"", ""0.0.0.0""],"
+scripts\run_with_watchdog.py,24,"health_url=f""http://127.0.0.1:{args.port}/health"","
+scripts\test_phase7_e2e.py,5,"localhost:8011, then cleans up all test rows. Requires: server on 8011,"
+scripts\test_phase7_e2e.py,26,"BASE = ""http://127.0.0.1:8011"""
+scripts\watchdog.py,8,python scripts/watchdog.py --url http://127.0.0.1:8000/api/v1/health \
+scripts\watchdog.py,120,"parser.add_argument(""--url"", default=""http://127.0.0.1:8000/api/v1/health"")"
+services\ai\admin_assistant.py,113,"return os.getenv(""OLLAMA_BASE_URL"", ""http://127.0.0.1:11434"").rstrip(""/"")"
+services\ai\support_agent.py,79,"return os.getenv(""OLLAMA_BASE_URL"", ""http://127.0.0.1:11434"").rstrip(""/"")"
+services\api_gateway\main.py,94,"logger.info(f""📚 API docs: http://127.0.0.1:8000/docs"")"
+services\api_gateway\routers\admin.py,308,"ollama_base = os.environ.get(""OLLAMA_BASE_URL"", ""http://127.0.0.1:11434"")"
+services\api_gateway\routers\admin.py,1106,"return os.getenv(""OLLAMA_BASE_URL"", ""http://localhost:11434"")"
+services\api_gateway\routers\auth.py,297,"""http://localhost:3000"""
+services\api_gateway\routers\auth.py,298,"if ""127.0.0.1:8000"" in base_url or ""localhost:8000"" in base_url"
+services\api_gateway\routers\auth.py,307,"is_dev = ""127.0.0.1"" in base_url or ""localhost"" in base_url"
+services\bots\config.py,16,"default_factory=lambda: os.getenv(""OLLAMA_BASE_URL"", ""http://localhost:11434"")"
+services\business_modules\blockchain\web3_integration.py,41,"""localhost"": ""http://127.0.0.1:8545"","
+services\security\watchdog.py,59,"def __init__(self, cmd: list[str], health_url: str = ""http://127.0.0.1:8011/health"") -> None:"
+services\security\watchdog.py,119,"cmd=[sys.executable, ""-m"", ""uvicorn"", ""services.api_gateway.main:app"", ""--port"", ""8011"", ""--host"", """
+services\telegram_bot\config.py,19,"API_BASE_URL: str = os.getenv(""BOT_API_BASE_URL"", ""http://127.0.0.1:8000"")"
+services\telegram_bot\formatters.py,215,"🔗 [مستندات API](http://127.0.0.1:8000/docs)"""""""
+services\telegram_bot\proxy_bot.py,5,- v2rayN (socks5://127.0.0.1:10808)
+services\telegram_bot\proxy_bot.py,6,- Clash (socks5://127.0.0.1:7891)
+services\telegram_bot\proxy_bot.py,7,- Hiddify (socks5://127.0.0.1:2080)
+services\telegram_bot\proxy_bot.py,36,"(""v2rayN"", ""socks5"", ""127.0.0.1"", 10808),"
+services\telegram_bot\proxy_bot.py,37,"(""v2rayN-HTTP"", ""http"", ""127.0.0.1"", 10809),"
+services\telegram_bot\proxy_bot.py,38,"(""Clash"", ""socks5"", ""127.0.0.1"", 7891),"
+services\telegram_bot\proxy_bot.py,39,"(""Clash-HTTP"", ""http"", ""127.0.0.1"", 7890),"
+services\telegram_bot\proxy_bot.py,40,"(""Hiddify"", ""socks5"", ""127.0.0.1"", 2080),"
+services\telegram_bot\proxy_bot.py,41,"(""Oblivion"", ""socks5"", ""127.0.0.1"", 8086),"
+services\telegram_bot\proxy_bot.py,42,"(""Shadowsocks"", ""socks5"", ""127.0.0.1"", 1080),"
+services\telegram_bot\proxy_bot.py,43,"(""Tor"", ""socks5"", ""127.0.0.1"", 9050),"
+testing_lab\integration_tests\test_e2e.py,9,"BASE = ""http://127.0.0.1:8011"""
+tests\integration\test_admin_models.py,30,"monkeypatch.setenv(""OLLAMA_BASE_URL"", ""http://127.0.0.1:1"")"
+tests\unit\test_phase1_cors.py,20,"""Origin"": ""http://localhost:3000"","
+tests\unit\test_phase1_cors.py,26,"assert r.headers.get(""access-control-allow-origin"") == ""http://localhost:3000"""
+tests\unit\test_settings.py,16,"assert any(""localhost:3000"" in o for o in s.cors_origins)"

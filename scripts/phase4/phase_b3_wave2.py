@@ -14,6 +14,9 @@ Strategy:
 - Safe fallback to skip if needed
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import re
@@ -322,16 +325,16 @@ describe.skip('{name} (skipped)', () => {{
 
 
 def main():
-    print("")
-    print("=" * 70)
-    print("  Phase B-3 Wave 2: Critical Hooks Testing")
-    print("=" * 70)
-    print("")
-    print("  Target modules:")
-    print("    1. useTerrainClick.ts (8.33% -> 70%+)")
-    print("    2. usePolygonDrawing.ts (28.57% -> 60%+)")
-    print("    3. SceneExtras.tsx components (0% -> 30%+)")
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  Phase B-3 Wave 2: Critical Hooks Testing")
+    logger.info("=" * 70)
+    logger.info("")
+    logger.info("  Target modules:")
+    logger.info("    1. useTerrainClick.ts (8.33% -> 70%+)")
+    logger.info("    2. usePolygonDrawing.ts (28.57% -> 60%+)")
+    logger.info("    3. SceneExtras.tsx components (0% -> 30%+)")
+    logger.info("")
 
     # Fix Git PATH
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
@@ -339,8 +342,8 @@ def main():
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # Step 1: Analyze hooks
-    print("[Step 1] Analyzing hooks")
-    print("-" * 70)
+    logger.info("[Step 1] Analyzing hooks")
+    logger.info("-" * 70)
     
     terrain_click_path = HYDROMA_HOOKS / "useTerrainClick.ts"
     polygon_drawing_path = HYDROMA_HOOKS / "usePolygonDrawing.ts"
@@ -355,11 +358,11 @@ def main():
         info(f"usePolygonDrawing: {len(polygon_info['imports'])} imports, {polygon_info['effects']} effects")
     if scene_extras_path.exists():
         ok(f"SceneExtras.tsx exists ({len(read_file(scene_extras_path))} bytes)")
-    print("")
+    logger.info("")
 
     # Step 2: Write tests
-    print("[Step 2] Writing tests")
-    print("-" * 70)
+    logger.info("[Step 2] Writing tests")
+    logger.info("-" * 70)
     
     tests_dir = HYDROMA_TESTS
     tests_dir.mkdir(parents=True, exist_ok=True)
@@ -382,11 +385,11 @@ def main():
     scene_test_path = farmsim_tests / "SceneExtras.test.ts"
     scene_test_path.write_text(generate_scene_extras_test(), encoding="utf-8")
     ok(f"Written: {scene_test_path.name}")
-    print("")
+    logger.info("")
 
     # Step 3: Run tests
-    print("[Step 3] Running tests")
-    print("-" * 70)
+    logger.info("[Step 3] Running tests")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test",
@@ -404,7 +407,7 @@ def main():
     # Show results
     for line in output.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed", "skipped"]):
-            print(f"  {line}")
+            logger.info(f"  {line}")
     
     all_passing = result.returncode == 0
     
@@ -414,9 +417,9 @@ def main():
         warn("\nSome tests had issues - applying fallback")
         
         # Apply skip fallback for failing tests
-        print("")
-        print("[Step 4] Applying skip fallback for failing tests")
-        print("-" * 70)
+        logger.info("")
+        logger.info("[Step 4] Applying skip fallback for failing tests")
+        logger.info("-" * 70)
         
         # Check which tests failed and skip them
         if "useTerrainClick.enhanced" in output and "FAIL" in output:
@@ -441,9 +444,9 @@ def main():
             ok(f"Skipped: {scene_test_path.name}")
         
         # Run tests again
-        print("")
-        print("[Step 5] Running tests after fallback")
-        print("-" * 70)
+        logger.info("")
+        logger.info("[Step 5] Running tests after fallback")
+        logger.info("-" * 70)
         
         result = subprocess.run(
             "pnpm test",
@@ -460,17 +463,17 @@ def main():
         
         for line in output.splitlines():
             if any(k in line for k in ["Test Files", "Tests", "passed", "failed", "skipped"]):
-                print(f"  {line}")
+                logger.info(f"  {line}")
         
         all_passing = result.returncode == 0
         
         if all_passing:
             ok("\n🎉 ALL TESTS PASSING after fallback!")
-    print("")
+    logger.info("")
 
     # Step 6: Coverage
-    print("[Step 6] Running coverage")
-    print("-" * 70)
+    logger.info("[Step 6] Running coverage")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test:coverage",
@@ -491,15 +494,15 @@ def main():
         if "Coverage report" in line or "All files" in line:
             coverage_section = True
         if coverage_section and "|" in line:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         if coverage_section and line.strip() and not "|" in line and "---" not in line and "All files" not in line:
             if not any(c in line for c in ["File", "%"]):
                 break
-    print("")
+    logger.info("")
 
     # Step 7: Commit
-    print("[Step 7] Committing changes")
-    print("-" * 70)
+    logger.info("[Step 7] Committing changes")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -525,36 +528,36 @@ def main():
         warn(f"Commit issue: {e}")
 
     # Final Report
-    print("")
-    print("=" * 70)
-    print("  🎉 Phase B-3 Wave 2: COMPLETE!")
-    print("=" * 70)
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  🎉 Phase B-3 Wave 2: COMPLETE!")
+    logger.info("=" * 70)
+    logger.info("")
     
-    print("  Tests Added:")
-    print("    * useTerrainClick.enhanced.test.ts")
-    print("    * usePolygonDrawing.enhanced.test.ts")
-    print("    * SceneExtras.test.ts")
-    print("")
+    logger.info("  Tests Added:")
+    logger.info("    * useTerrainClick.enhanced.test.ts")
+    logger.info("    * usePolygonDrawing.enhanced.test.ts")
+    logger.info("    * SceneExtras.test.ts")
+    logger.info("")
     
-    print("  Phase B-3 Progress:")
-    print("    ✓ Wave 1: Core logic (terrainGenerator, demApi, store)")
-    print("    ✓ Wave 2: Critical hooks (terrainClick, polygonDrawing, sceneExtras)")
-    print("    ○ Wave 3: Integration tests & E2E (next)")
-    print("")
+    logger.info("  Phase B-3 Progress:")
+    logger.info("    ✓ Wave 1: Core logic (terrainGenerator, demApi, store)")
+    logger.info("    ✓ Wave 2: Critical hooks (terrainClick, polygonDrawing, sceneExtras)")
+    logger.info("    ○ Wave 3: Integration tests & E2E (next)")
+    logger.info("")
     
-    print("  Next Steps (Wave 3):")
-    print("    1. Integration tests for feature interactions")
-    print("    2. E2E tests for critical user flows")
-    print("    3. API integration tests")
-    print("    4. Target: 80%+ overall coverage")
-    print("")
+    logger.info("  Next Steps (Wave 3):")
+    logger.info("    1. Integration tests for feature interactions")
+    logger.info("    2. E2E tests for critical user flows")
+    logger.info("    3. API integration tests")
+    logger.info("    4. Target: 80%+ overall coverage")
+    logger.info("")
     
-    print("  Commands:")
-    print("    cd D:\\eco_nojin\\frontend")
-    print("    pnpm test:coverage  # View updated coverage")
-    print("    # Open coverage/index.html in browser")
-    print("")
+    logger.info("  Commands:")
+    logger.info("    cd D:\\eco_nojin\\frontend")
+    logger.info("    pnpm test:coverage  # View updated coverage")
+    logger.info("    # Open coverage/index.html in browser")
+    logger.info("")
 
     return 0
 

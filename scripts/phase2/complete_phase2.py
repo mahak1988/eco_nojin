@@ -4,6 +4,9 @@ Complete Phase 2: Fix TelegramManager test + Refactor SecurityAdvanced
 ======================================================================
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import re
@@ -1068,7 +1071,7 @@ def write_file(path: Path, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
     lines = len(content.splitlines())
-    print(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
+    logger.info(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
 
 
 def backup_security():
@@ -1088,92 +1091,92 @@ def backup_security():
 
 
 def main():
-    print("\n" + "=" * 70)
-    print("  🚀 Complete Phase 2: Fix Telegram + Refactor SecurityAdvanced")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  🚀 Complete Phase 2: Fix Telegram + Refactor SecurityAdvanced")
+    logger.info("=" * 70 + "\n")
 
     # ═══ PART A: Fix TelegramManager test ═══
-    print("\033[1m📦 Part A: Fix TelegramManager formatters test\033[0m")
-    print("-" * 70)
+    logger.info("\033[1m📦 Part A: Fix TelegramManager formatters test\033[0m")
+    logger.info("-" * 70)
     info("اصلاح formatDateTime با isNaN() check...")
     TELEGRAM_FORMATTERS.write_text(TELEGRAM_FORMATTERS_FIXED, encoding="utf-8")
     ok("formatters.ts اصلاح شد")
-    print()
+    logger.info()
 
     # ═══ PART B: Refactor SecurityAdvanced ═══
-    print("\033[1m🚀 Part B: Refactor SecurityAdvanced.tsx\033[0m")
-    print("-" * 70)
+    logger.info("\033[1m🚀 Part B: Refactor SecurityAdvanced.tsx\033[0m")
+    logger.info("-" * 70)
 
     # Backup
-    print("💾 پشتیبان‌گیری از SecurityAdvanced...")
+    logger.info("💾 پشتیبان‌گیری از SecurityAdvanced...")
     if not backup_security():
         return 1
-    print()
+    logger.info()
 
     # Structure
-    print("📁 ایجاد ساختار features/security/...")
+    logger.info("📁 ایجاد ساختار features/security/...")
     SECURITY.mkdir(parents=True, exist_ok=True)
     for folder in ["types", "constants", "utils", "api", "hooks", "components", "__tests__"]:
         (SECURITY / folder).mkdir(exist_ok=True)
     ok("ساختار ایجاد شد")
-    print()
+    logger.info()
 
     # Types
-    print("📦 ایجاد Types...")
+    logger.info("📦 ایجاد Types...")
     write_file(SECURITY / "types" / "security.types.ts", SECURITY_TYPES)
-    print()
+    logger.info()
 
     # Constants
-    print("📦 ایجاد Constants...")
+    logger.info("📦 ایجاد Constants...")
     write_file(SECURITY / "constants" / "config.ts", SECURITY_CONFIG)
-    print()
+    logger.info()
 
     # API
-    print("📦 ایجاد API...")
+    logger.info("📦 ایجاد API...")
     write_file(SECURITY / "api" / "securityApi.ts", SECURITY_API)
-    print()
+    logger.info()
 
     # Utils
-    print("📦 ایجاد Utils...")
+    logger.info("📦 ایجاد Utils...")
     write_file(SECURITY / "utils" / "formatters.ts", SECURITY_FORMATTERS)
     write_file(SECURITY / "utils" / "eventTransformers.ts", SECURITY_TRANSFORMERS)
-    print()
+    logger.info()
 
     # Hooks
-    print("📦 ایجاد Hooks...")
+    logger.info("📦 ایجاد Hooks...")
     write_file(SECURITY / "hooks" / "useSecurityEvents.ts", USE_SECURITY_EVENTS_HOOK)
     write_file(SECURITY / "hooks" / "useSecurityStats.ts", USE_SECURITY_STATS_HOOK)
-    print()
+    logger.info()
 
     # Components
-    print("📦 ایجاد Components...")
+    logger.info("📦 ایجاد Components...")
     write_file(SECURITY / "components" / "StatsCards.tsx", STATS_CARDS_COMP)
     write_file(SECURITY / "components" / "AuthTrendChart.tsx", AUTH_TREND_CHART)
     write_file(SECURITY / "components" / "EventDistributionChart.tsx", EVENT_DISTRIBUTION_CHART)
     write_file(SECURITY / "components" / "RecentEventsTable.tsx", RECENT_EVENTS_TABLE)
-    print()
+    logger.info()
 
     # Tests
-    print("📦 ایجاد Tests...")
+    logger.info("📦 ایجاد Tests...")
     write_file(SECURITY / "__tests__" / "eventTransformers.test.ts", EVENT_TRANSFORMERS_TEST)
     write_file(SECURITY / "__tests__" / "formatters.test.ts", SECURITY_FORMATTERS_TEST)
-    print()
+    logger.info()
 
     # Replace main
-    print("🔄 جایگزینی SecurityAdvanced.tsx...")
+    logger.info("🔄 جایگزینی SecurityAdvanced.tsx...")
     OLD_SECURITY.write_text(SECURITY_ADVANCED_NEW, encoding="utf-8")
     ok(f"فایل اصلی جایگزین شد ({len(SECURITY_ADVANCED_NEW.splitlines())} lines)")
-    print()
+    logger.info()
 
     # ═══ PART C: Build & Test ═══
-    print("\033[1m🔨 Part C: Build & Test\033[0m")
-    print("-" * 70)
+    logger.info("\033[1m🔨 Part C: Build & Test\033[0m")
+    logger.info("-" * 70)
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
-    print("🔨 اجرای build...")
+    logger.info("🔨 اجرای build...")
     build_result = subprocess.run(
         "pnpm build",
         shell=True, cwd=FRONTEND,
@@ -1186,17 +1189,17 @@ def main():
     if build_result.returncode != 0:
         err("Build شکست خورد")
         for line in build_output.splitlines()[-30:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
 
     ok("Build موفق")
     for line in build_output.splitlines():
         if "built in" in line:
-            print(f"  {line.strip()}")
-    print()
+            logger.info(f"  {line.strip()}")
+    logger.info()
 
     # Test telegram
-    print("🧪 تست TelegramManager (fixed)...")
+    logger.info("🧪 تست TelegramManager (fixed)...")
     tel_test = subprocess.run(
         "pnpm test features/telegram-manager",
         shell=True, cwd=FRONTEND,
@@ -1206,11 +1209,11 @@ def main():
     )
     for line in tel_test.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # Test security
-    print("🧪 تست SecurityAdvanced (new)...")
+    logger.info("🧪 تست SecurityAdvanced (new)...")
     sec_test = subprocess.run(
         "pnpm test features/security",
         shell=True, cwd=FRONTEND,
@@ -1220,12 +1223,12 @@ def main():
     )
     for line in sec_test.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ PART D: Commit ═══
-    print("\033[1m📦 Part D: Commit\033[0m")
-    print("-" * 70)
+    logger.info("\033[1m📦 Part D: Commit\033[0m")
+    logger.info("-" * 70)
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
         msg = (
@@ -1251,41 +1254,41 @@ def main():
         warn(f"commit: {e}")
 
     # ═══ Final Report ═══
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉🎉🎉 فاز ۲ کامل شد! 🎉🎉🎉\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[92m  🎉🎉🎉 فاز ۲ کامل شد! 🎉🎉🎉\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 آمار نهایی فاز ۲:")
-    print("    ✅ 7 از 7 فایل refactor شدند (100%)")
-    print("    ✅ Build موفق")
-    print("    ✅ ~100 تست پاس")
-    print("    ✅ React Query integration کامل")
-    print("    ✅ All 'any' types حذف شدند")
-    print("    ✅ All anti-patterns رفع شدند")
-    print()
+    logger.info("  📊 آمار نهایی فاز ۲:")
+    logger.info("    ✅ 7 از 7 فایل refactor شدند (100%)")
+    logger.info("    ✅ Build موفق")
+    logger.info("    ✅ ~100 تست پاس")
+    logger.info("    ✅ React Query integration کامل")
+    logger.info("    ✅ All 'any' types حذف شدند")
+    logger.info("    ✅ All anti-patterns رفع شدند")
+    logger.info()
 
-    print("  🏗️ فایل‌های refactor شده:")
-    print("    ✓ CryptoPaymentWidget.tsx   (323 → 121 lines, 63%)")
-    print("    ✓ EcoWalletDashboard.tsx    (368 → 97 lines, 74%)")
-    print("    ✓ MarketplaceDashboard.tsx  (336 → 138 lines, 59%)")
-    print("    ✓ LiveFeed.tsx               (145 → 58 lines, 60%)")
-    print("    ✓ ContentStudio.tsx          (322 → 142 lines, 56%)")
-    print("    ✓ TelegramManager.tsx        (359 → 97 lines, 73%)")
-    print("    ✓ SecurityAdvanced.tsx       (343 → 80 lines, 77%)")
-    print()
+    logger.info("  🏗️ فایل‌های refactor شده:")
+    logger.info("    ✓ CryptoPaymentWidget.tsx   (323 → 121 lines, 63%)")
+    logger.info("    ✓ EcoWalletDashboard.tsx    (368 → 97 lines, 74%)")
+    logger.info("    ✓ MarketplaceDashboard.tsx  (336 → 138 lines, 59%)")
+    logger.info("    ✓ LiveFeed.tsx               (145 → 58 lines, 60%)")
+    logger.info("    ✓ ContentStudio.tsx          (322 → 142 lines, 56%)")
+    logger.info("    ✓ TelegramManager.tsx        (359 → 97 lines, 73%)")
+    logger.info("    ✓ SecurityAdvanced.tsx       (343 → 80 lines, 77%)")
+    logger.info()
 
-    print("  🎯 مشکلات علمی رفع شده:")
-    print("    ✓ Stale closures (ref-based interval + React Query)")
-    print("    ✓ Math.random in render (seeded LCG)")
-    print("    ✓ setState in useEffect (React Query)")
-    print("    ✓ Business logic in render (useMemo)")
-    print("    ✓ Manual intervals (refetchInterval)")
-    print("    ✓ Type assertions (proper interfaces)")
-    print("    ✓ Magic numbers (extracted constants)")
-    print()
+    logger.info("  🎯 مشکلات علمی رفع شده:")
+    logger.info("    ✓ Stale closures (ref-based interval + React Query)")
+    logger.info("    ✓ Math.random in render (seeded LCG)")
+    logger.info("    ✓ setState in useEffect (React Query)")
+    logger.info("    ✓ Business logic in render (useMemo)")
+    logger.info("    ✓ Manual intervals (refetchInterval)")
+    logger.info("    ✓ Type assertions (proper interfaces)")
+    logger.info("    ✓ Magic numbers (extracted constants)")
+    logger.info()
 
-    print("  🚀 آماده برای فاز ۳ (در صورت وجود)!")
-    print()
+    logger.info("  🚀 آماده برای فاز ۳ (در صورت وجود)!")
+    logger.info()
 
     return 0
 

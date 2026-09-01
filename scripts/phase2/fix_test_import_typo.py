@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Fix typo in test import: mock_generator → mockGenerator"""
 
+import structlog
+
+logger = structlog.get_logger()
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -13,6 +16,6 @@ if TEST_FILE.exists():
         "from '../utils/mockGenerator'"
     )
     TEST_FILE.write_text(fixed, encoding="utf-8")
-    print(f"✓ اصلاح شد: {TEST_FILE.name}")
+    logger.info(f"✓ اصلاح شد: {TEST_FILE.name}")
 else:
-    print(f"✗ فایل یافت نشد")
+    logger.info(f"✗ فایل یافت نشد")

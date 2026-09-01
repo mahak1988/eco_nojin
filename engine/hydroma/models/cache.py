@@ -11,6 +11,9 @@ Features:
 - Thread-safe
 - Production-ready (Instagram, WhatsApp, Firefox از SQLite استفاده می‌کنند)
 """
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import json
@@ -253,12 +256,12 @@ class SQLiteCache:
 
 def test_cache():
     """Test the SQLite cache."""
-    print("=" * 80)
-    print("🧪 SQLite Cache Test")
-    print("=" * 80)
+    logger.info("=" * 80)
+    logger.info("🧪 SQLite Cache Test")
+    logger.info("=" * 80)
 
     cache = SQLiteCache()
-    print(f"✅ Database: {cache.db_path}")
+    logger.info(f"✅ Database: {cache.db_path}")
 
     # Store test
     test_result = {
@@ -277,22 +280,22 @@ def test_cache():
     }
 
     cache.store("Test_Region", "wheat", test_result, lat=32.65, lon=51.67)
-    print("✅ Stored test result")
+    logger.info("✅ Stored test result")
 
     # Retrieve test
     cached = cache.get("Test_Region", "wheat")
     if cached:
-        print(f"✅ Retrieved: WBI={cached['wbi']['wbi']}")
+        logger.info(f"✅ Retrieved: WBI={cached['wbi']['wbi']}")
     else:
-        print("❌ Retrieve failed")
+        logger.info("❌ Retrieve failed")
 
     # Stats
     stats = cache.stats()
-    print(f"📊 Stats: {stats}")
+    logger.info(f"📊 Stats: {stats}")
 
     # Cleanup
     cache.clear_all()
-    print("✅ Cleared cache")
+    logger.info("✅ Cleared cache")
 
     return cache
 

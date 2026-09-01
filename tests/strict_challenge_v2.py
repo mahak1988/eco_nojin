@@ -6,6 +6,9 @@
 هدف: پیدا کردن تمام اشکالات، نقاط ضعف، و رفتارهای غیرمنطقی
 ============================================================================
 """
+import structlog
+
+logger = structlog.get_logger()
 import sys
 import math
 import json
@@ -23,7 +26,7 @@ try:
     from engine.hydroma.climate_adaptation.uncertainty_knowledge_engine import UncertaintyAndKnowledgeEngine
     ALL_LOADED = True
 except ImportError as e:
-    print(f"WARNING: {e}")
+    logger.warning(f"WARNING: {e}")
     ALL_LOADED = False
 
 
@@ -63,19 +66,19 @@ class StrictChallengeV2:
         status = "PASS" if passed else "FAIL"
         icon = "[PASS]" if passed else "[FAIL]"
         sev_icon = "!!!" if severity == "critical" else "!!" if severity == "warning" else ""
-        print(f"   {icon} [{category}] {test_name} - {status} {sev_icon}")
+        logger.info(f"   {icon} [{category}] {test_name} - {status} {sev_icon}")
         if not passed and expected:
-            print(f"         انتظار: {expected}")
-            print(f"         دریافت: {message}")
+            logger.info(f"         انتظار: {expected}")
+            logger.info(f"         دریافت: {message}")
 
     # ============================================================
     # دسته ۱: تست‌های مرزی (Boundary Tests)
     # ============================================================
     def test_boundary(self):
         cat = "مرزی"
-        print("\n" + "="*70)
-        print("دسته ۱: تست‌های مرزی (شرایط حدی)")
-        print("="*70)
+        logger.info("\n" + "="*70)
+        logger.info("دسته ۱: تست‌های مرزی (شرایط حدی)")
+        logger.info("="*70)
 
         # ۱.۱ دمای بسیار بالا (۶۰ درجه)
         if self.dse:
@@ -242,9 +245,9 @@ class StrictChallengeV2:
     # ============================================================
     def test_adversarial(self):
         cat = "خصمانه"
-        print("\n" + "="*70)
-        print("دسته ۲: ورودی‌های خصمانه")
-        print("="*70)
+        logger.info("\n" + "="*70)
+        logger.info("دسته ۲: ورودی‌های خصمانه")
+        logger.info("="*70)
 
         # ۲.۱ بارش منفی
         if self.dse:
@@ -394,9 +397,9 @@ class StrictChallengeV2:
     # ============================================================
     def test_physical_laws(self):
         cat = "فیزیک"
-        print("\n" + "="*70)
-        print("دسته ۳: قوانین فیزیکی")
-        print("="*70)
+        logger.info("\n" + "="*70)
+        logger.info("دسته ۳: قوانین فیزیکی")
+        logger.info("="*70)
 
         # ۳.۱ بارش مؤثر هرگز نباید از بارش کل بیشتر شود
         if self.dse:
@@ -501,9 +504,9 @@ class StrictChallengeV2:
     # ============================================================
     def test_agronomic_realism(self):
         cat = "زراعت"
-        print("\n" + "="*70)
-        print("دسته ۴: واقع‌بینی زراعی")
-        print("="*70)
+        logger.info("\n" + "="*70)
+        logger.info("دسته ۴: واقع‌بینی زراعی")
+        logger.info("="*70)
 
         # ۴.۱ سقف عملکرد غلات (گندم حداکثر ~۱۵ تن/هکتار)
         if self.uke:
@@ -593,9 +596,9 @@ class StrictChallengeV2:
     # ============================================================
     def test_monotonicity(self):
         cat = "یکنواختی"
-        print("\n" + "="*70)
-        print("دسته ۵: یکنواختی منطقی")
-        print("="*70)
+        logger.info("\n" + "="*70)
+        logger.info("دسته ۵: یکنواختی منطقی")
+        logger.info("="*70)
 
         # ۵.۱ افزایش دما → کاهش Ks
         if self.dse:
@@ -687,9 +690,9 @@ class StrictChallengeV2:
     # ============================================================
     def test_robustness(self):
         cat = "پایداری"
-        print("\n" + "="*70)
-        print("دسته ۶: پایداری و تکرارپذیری")
-        print("="*70)
+        logger.info("\n" + "="*70)
+        logger.info("دسته ۶: پایداری و تکرارپذیری")
+        logger.info("="*70)
 
         # ۶.۱ تکرارپذیری مونت‌کارلو (با seed ثابت)
         if self.uke:
@@ -745,9 +748,9 @@ class StrictChallengeV2:
     # ============================================================
     def test_interactions(self):
         cat = "تعامل"
-        print("\n" + "="*70)
-        print("دسته ۷: تعامل تنش‌ها")
-        print("="*70)
+        logger.info("\n" + "="*70)
+        logger.info("دسته ۷: تعامل تنش‌ها")
+        logger.info("="*70)
 
         # ۷.۱ ترکیب تنش‌ها باید سخت‌تر از تک‌تنش باشد
         if self.dse:
@@ -794,9 +797,9 @@ class StrictChallengeV2:
     # ============================================================
     def test_cross_validation(self):
         cat = "صحت‌سنجی"
-        print("\n" + "="*70)
-        print("دسته ۸: صحت‌سنجی متقابل")
-        print("="*70)
+        logger.info("\n" + "="*70)
+        logger.info("دسته ۸: صحت‌سنجی متقابل")
+        logger.info("="*70)
 
         # ۸.۱ سازگاری بین ماژول‌ها
         if self.sdm and self.soe:
@@ -856,9 +859,9 @@ class StrictChallengeV2:
     # اجرای کامل
     # ============================================================
     def run_all(self):
-        print("="*70)
-        print("چالش سختگیرانه نسخه ۲ - شکنجه علمی مدل هیدروما")
-        print("="*70)
+        logger.info("="*70)
+        logger.info("چالش سختگیرانه نسخه ۲ - شکنجه علمی مدل هیدروما")
+        logger.info("="*70)
 
         self.test_boundary()
         self.test_adversarial()
@@ -918,29 +921,29 @@ def main():
     results = challenge.run_all()
     report = challenge.generate_report()
 
-    print("\n" + "="*70)
-    print("نتیجه نهایی چالش سختگیرانه نسخه ۲")
-    print("="*70)
-    print(f"   کل تست‌ها: {report['total_tests']}")
-    print(f"   موفق: {report['passed']} ({report['pass_rate_percent']}%)")
-    print(f"   ناموفق: {report['failed']}")
-    print(f"   بحرانی: {report['critical_failures']}")
-    print(f"   هشدارها: {report['warnings']}")
+    logger.info("\n" + "="*70)
+    logger.info("نتیجه نهایی چالش سختگیرانه نسخه ۲")
+    logger.info("="*70)
+    logger.info(f"   کل تست‌ها: {report['total_tests']}")
+    logger.info(f"   موفق: {report['passed']} ({report['pass_rate_percent']}%)")
+    logger.info(f"   ناموفق: {report['failed']}")
+    logger.info(f"   بحرانی: {report['critical_failures']}")
+    logger.warning(f"   هشدارها: {report['warnings']}")
 
-    print("\n   نتایج بر اساس دسته:")
+    logger.info("\n   نتایج بر اساس دسته:")
     for cat, stats in report["by_category"].items():
         cat_rate = stats["passed"] / stats["total"] * 100 if stats["total"] > 0 else 0
-        print(f"      {cat}: {stats['passed']}/{stats['total']} ({cat_rate:.0f}%)")
+        logger.info(f"      {cat}: {stats['passed']}/{stats['total']} ({cat_rate:.0f}%)")
 
-    print(f"\n   حکم نهایی: {report['verdict']}")
-    print("="*70)
+    logger.info(f"\n   حکم نهایی: {report['verdict']}")
+    logger.info("="*70)
 
     # ذخیره گزارش
     report_dir = ROOT / "docs" / "hydroma"
     report_dir.mkdir(parents=True, exist_ok=True)
     report_file = report_dir / "strict_challenge_v2_report.json"
     report_file.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"\nگزارش ذخیره شد: {report_file}")
+    logger.info(f"\nگزارش ذخیره شد: {report_file}")
 
 
 if __name__ == "__main__":

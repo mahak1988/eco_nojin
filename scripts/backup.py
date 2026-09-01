@@ -10,6 +10,9 @@ Usage:
     python scripts/backup.py                 # backup into backups/<timestamp>/
     python scripts/backup.py --retain 10     # keep last N backups
 """
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import argparse
@@ -36,7 +39,7 @@ def _copy_sqlite(src: pathlib.Path, dst: pathlib.Path) -> bool:
         con.close()
         return True
     except Exception as exc:  # pragma: no cover - defensive
-        print(f"  ! sqlite backup failed for {src.name}: {exc}")
+        logger.info(f"  ! sqlite backup failed for {src.name}: {exc}")
         return False
 
 
@@ -44,13 +47,13 @@ def run(retain: int) -> int:
     stamp = _dt.datetime.now().strftime("%Y%m%d_%H%M%S")
     target = BACKUP_ROOT / stamp
     target.mkdir(parents=True, exist_ok=True)
-    print(f"Backup -> {target}")
+    logger.info(f"Backup -> {target}")
 
     # 1) SQLite databases
     for db in ROOT.glob("*.db"):
         if db.name.startswith(("test_", "_")):
             continue
-        print(f"  db: {db.name}")
+        logger.info(f"  db: {db.name}")
         _copy_sqlite(db, target / db.name)
 
     # 2) env + lockfiles
@@ -58,13 +61,13 @@ def run(retain: int) -> int:
         f = ROOT / name
         if f.exists():
             shutil.copy2(f, target / name)
-            print(f"  file: {name}")
+            logger.info(f"  file: {name}")
 
     # 3) alembic migrations
     alem = ROOT / "alembic"
     if alem.exists():
         shutil.copytree(alem, target / "alembic", dirs_exist_ok=True)
-        print("  dir: alembic/")
+        logger.info("  dir: alembic/")
 
     # 4) git bundle (full history, single file)
     try:
@@ -73,17 +76,17 @@ def run(retain: int) -> int:
             ["git", "bundle", "create", str(bundle), "--all"],
             cwd=ROOT, check=True, capture_output=True, timeout=300,
         )
-        print(f"  git bundle: {bundle.name}")
+        logger.info(f"  git bundle: {bundle.name}")
     except Exception as exc:  # pragma: no cover - defensive
-        print(f"  ! git bundle failed: {exc}")
+        logger.info(f"  ! git bundle failed: {exc}")
 
     # 5) retention
     backups = sorted(BACKUP_ROOT.glob("20*"), reverse=True)
     for old in backups[retain:]:
         shutil.rmtree(old, ignore_errors=True)
-        print(f"  removed old backup: {old.name}")
+        logger.info(f"  removed old backup: {old.name}")
 
-    print(f"Done. Total: {(sum(f.stat().st_size for f in target.rglob('*') if f.is_file()) / 1024 / 1024):.1f} MB")
+    logger.info(f"Done. Total: {(sum(f.stat().st_size for f in target.rglob('*') if f.is_file()) / 1024 / 1024):.1f} MB")
     return 0
 
 

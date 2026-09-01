@@ -9,6 +9,9 @@ Fix All Issues - One-Shot Solution
 4. اجرای git init/add/commit
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import shutil
@@ -42,25 +45,25 @@ if sys.platform == "win32":
         pass
 
 def info(msg: str) -> None:
-    print(f"{Colors.BLUE}ℹ{Colors.RESET}  {msg}")
+    logger.info(f"{Colors.BLUE}ℹ{Colors.RESET}  {msg}")
 
 def success(msg: str) -> None:
-    print(f"{Colors.GREEN}✓{Colors.RESET}  {msg}")
+    logger.info(f"{Colors.GREEN}✓{Colors.RESET}  {msg}")
 
 def warning(msg: str) -> None:
-    print(f"{Colors.YELLOW}⚠{Colors.RESET}  {msg}")
+    logger.info(f"{Colors.YELLOW}⚠{Colors.RESET}  {msg}")
 
 def error(msg: str) -> None:
-    print(f"{Colors.RED}✗{Colors.RESET}  {msg}")
+    logger.info(f"{Colors.RED}✗{Colors.RESET}  {msg}")
 
 def header(msg: str) -> None:
-    print(f"\n{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.CYAN}  {msg}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}\n")
+    logger.info(f"\n{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{Colors.CYAN}  {msg}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}\n")
 
 def step(number: int, msg: str) -> None:
-    print(f"\n{Colors.BOLD}{Colors.MAGENTA}[گام {number}]{Colors.RESET} {msg}")
-    print(f"{Colors.DIM if hasattr(Colors, 'DIM') else ''}{'─' * 70}{Colors.RESET}")
+    logger.info(f"\n{Colors.BOLD}{Colors.MAGENTA}[گام {number}]{Colors.RESET} {msg}")
+    logger.info(f"{Colors.DIM if hasattr(Colors, 'DIM') else ''}{'─' * 70}{Colors.RESET}")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -145,11 +148,11 @@ def setup_path() -> dict:
         info(f"pnpm local path افزوده شد: {pnpm_local}")
     
     # تست نهایی
-    print(f"\n{Colors.BOLD}نتیجه تشخیص:{Colors.RESET}")
+    logger.info(f"\n{Colors.BOLD}نتیجه تشخیص:{Colors.RESET}")
     for tool in ["git", "node", "pnpm"]:
         code = subprocess.run(f"{tool} --version", shell=True, capture_output=True).returncode
         status = "🟢" if code == 0 else "🔴"
-        print(f"  {status} {tool}")
+        logger.info(f"  {status} {tool}")
     
     return tools
 
@@ -186,9 +189,9 @@ def clean_double_frontend() -> bool:
     if conflicts:
         warning(f"{len(conflicts)} فایل تداخل دارند:")
         for src, dst in conflicts[:5]:
-            print(f"    - {src.name} → {dst}")
+            logger.info(f"    - {src.name} → {dst}")
         if len(conflicts) > 5:
-            print(f"    - ... و {len(conflicts) - 5} فایل دیگر")
+            logger.info(f"    - ... و {len(conflicts) - 5} فایل دیگر")
         
         info("فایل‌های تکراری حذف می‌شوند (مقصد حفظ می‌شود)")
     
@@ -344,9 +347,9 @@ def setup_git_repo() -> bool:
     if dangerous_files:
         warning(f"{len(dangerous_files)} فایل حساس در staging:")
         for f in dangerous_files[:10]:
-            print(f"    - {f}")
+            logger.info(f"    - {f}")
         if len(dangerous_files) > 10:
-            print(f"    - ... و {len(dangerous_files) - 10} فایل دیگر")
+            logger.info(f"    - ... و {len(dangerous_files) - 10} فایل دیگر")
         
         info("این فایل‌ها unstage می‌شوند...")
         for f in dangerous_files:
@@ -387,10 +390,10 @@ def setup_git_repo() -> bool:
     )
     
     if result.returncode == 0:
-        print(f"\n{Colors.BOLD}آخرین commits:{Colors.RESET}")
+        logger.info(f"\n{Colors.BOLD}آخرین commits:{Colors.RESET}")
         for line in result.stdout.split('\n')[:5]:
             if line:
-                print(f"  {line}")
+                logger.info(f"  {line}")
     
     return True
 
@@ -438,7 +441,7 @@ def final_verification() -> bool:
     for name, ok in checks:
         status = "✓" if ok else "✗"
         color = Colors.GREEN if ok else Colors.RED
-        print(f"  {color}{status}{Colors.RESET} {name}")
+        logger.info(f"  {color}{status}{Colors.RESET} {name}")
         if not ok:
             all_ok = False
     
@@ -450,9 +453,9 @@ def final_verification() -> bool:
 # ═══════════════════════════════════════════════════════════════════════
 
 def main() -> int:
-    print(f"\n{Colors.BOLD}{'═' * 70}{Colors.RESET}")
-    print(f"{Colors.BOLD}  🚀 Fix All - راه‌حل یکپارچه مشکلات فاز صفر{Colors.RESET}")
-    print(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}\n")
+    logger.info(f"\n{Colors.BOLD}{'═' * 70}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}  🚀 Fix All - راه‌حل یکپارچه مشکلات فاز صفر{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}\n")
     
     info(f"مسیر پروژه: {PROJECT_ROOT}")
     
@@ -487,22 +490,22 @@ def main() -> int:
     all_ok = final_verification()
     
     # گزارش نهایی
-    print(f"\n{Colors.BOLD}{'═' * 70}{Colors.RESET}")
+    logger.info(f"\n{Colors.BOLD}{'═' * 70}{Colors.RESET}")
     if all_ok:
-        print(f"{Colors.GREEN}{Colors.BOLD}  🎉 همه موارد با موفقیت انجام شد!{Colors.RESET}")
-        print(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}")
-        print(f"\n{Colors.BOLD}گام‌های بعدی:{Colors.RESET}")
-        print(f"  1. cd {FRONTEND_DIR}")
-        print(f"  2. pnpm install")
-        print(f"  3. pnpm dev")
-        print(f"\n{Colors.BOLD}برای push به origin:{Colors.RESET}")
-        print(f'  $env:Path += ";C:\\Program Files\\Git\\cmd"')
-        print(f'  git remote add origin <your-repo-url>')
-        print(f'  git push -u origin main')
+        logger.info(f"{Colors.GREEN}{Colors.BOLD}  🎉 همه موارد با موفقیت انجام شد!{Colors.RESET}")
+        logger.info(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}")
+        logger.info(f"\n{Colors.BOLD}گام‌های بعدی:{Colors.RESET}")
+        logger.info(f"  1. cd {FRONTEND_DIR}")
+        logger.info(f"  2. pnpm install")
+        logger.info(f"  3. pnpm dev")
+        logger.info(f"\n{Colors.BOLD}برای push به origin:{Colors.RESET}")
+        logger.info(f'  $env:Path += ";C:\\Program Files\\Git\\cmd"')
+        logger.info(f'  git remote add origin <your-repo-url>')
+        logger.info(f'  git push -u origin main')
         return 0
     else:
-        print(f"{Colors.RED}{Colors.BOLD}  ❌ برخی موارد ناموفق بود{Colors.RESET}")
-        print(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}")
+        logger.info(f"{Colors.RED}{Colors.BOLD}  ❌ برخی موارد ناموفق بود{Colors.RESET}")
+        logger.info(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}")
         return 1
 
 

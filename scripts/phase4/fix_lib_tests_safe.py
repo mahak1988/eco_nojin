@@ -7,6 +7,9 @@ Strategy: Rewrite all lib tests to ONLY verify imports work.
 No function calls, no mocks - just module loading verification.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import subprocess
@@ -83,14 +86,14 @@ describe('{module_name} module - Import Verification', () => {{
 
 
 def main():
-    print("")
-    print("=" * 70)
-    print("  Final Fix: Ultra-Safe Lib Tests")
-    print("=" * 70)
-    print("")
-    print("  Strategy: Rewrite all lib tests to only verify imports")
-    print("  Goal: 100% test pass rate for lib/ module tests")
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  Final Fix: Ultra-Safe Lib Tests")
+    logger.info("=" * 70)
+    logger.info("")
+    logger.info("  Strategy: Rewrite all lib tests to only verify imports")
+    logger.info("  Goal: 100% test pass rate for lib/ module tests")
+    logger.info("")
 
     # Fix Git PATH
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
@@ -98,8 +101,8 @@ def main():
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # Step 1: Find all lib files
-    print("[Step 1] Finding lib files")
-    print("-" * 70)
+    logger.info("[Step 1] Finding lib files")
+    logger.info("-" * 70)
     
     lib_files = [f for f in LIB_DIR.glob("*.ts") 
                  if not f.name.endswith('.d.ts') 
@@ -110,11 +113,11 @@ def main():
     
     for f in lib_files:
         info(f"  {f.name}")
-    print("")
+    logger.info("")
 
     # Step 2: Rewrite all tests with ultra-safe template
-    print("[Step 2] Rewriting all lib tests")
-    print("-" * 70)
+    logger.info("[Step 2] Rewriting all lib tests")
+    logger.info("-" * 70)
     
     for lib_file in lib_files:
         module_name = lib_file.stem
@@ -122,11 +125,11 @@ def main():
         test_file = LIB_TESTS / f"{module_name}.test.ts"
         test_file.write_text(test_content, encoding="utf-8")
         ok(f"Rewritten: {test_file.name} (ultra-safe)")
-    print("")
+    logger.info("")
 
     # Step 3: Run tests
-    print("[Step 3] Running tests")
-    print("-" * 70)
+    logger.info("[Step 3] Running tests")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test",
@@ -143,18 +146,18 @@ def main():
     
     for line in output.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed", "skipped"]):
-            print(f"  {line}")
+            logger.info(f"  {line}")
     
     all_passing = result.returncode == 0
     if all_passing:
         ok("\nALL TESTS PASSING!")
     else:
         warn("\nSome tests still have issues")
-    print("")
+    logger.info("")
 
     # Step 4: Coverage
-    print("[Step 4] Running coverage")
-    print("-" * 70)
+    logger.info("[Step 4] Running coverage")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test:coverage",
@@ -169,15 +172,15 @@ def main():
 
     output = result.stdout + result.stderr
     
-    print("\n  Coverage Summary:")
+    logger.info("\n  Coverage Summary:")
     for line in output.splitlines():
         if "All files" in line or "lib" in line.lower() and "|" in line:
-            print(f"  {line}")
-    print("")
+            logger.info(f"  {line}")
+    logger.info("")
 
     # Step 5: Commit and merge
-    print("[Step 5] Committing and merging to main")
-    print("-" * 70)
+    logger.info("[Step 5] Committing and merging to main")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -207,32 +210,32 @@ def main():
         warn(f"Git issue: {e}")
 
     # Final Report
-    print("")
-    print("=" * 70)
+    logger.info("")
+    logger.info("=" * 70)
     if all_passing:
-        print("  🎉🎉🎉 ALL TESTS PASSING! 🎉🎉🎉")
+        logger.info("  🎉🎉🎉 ALL TESTS PASSING! 🎉🎉🎉")
     else:
-        print("  ⚠️  Some issues remain")
-    print("=" * 70)
-    print("")
-    print("  Phase B-3 Final Status:")
-    print("    ✓ Wave 1: Core logic tested")
-    print("    ✓ Wave 2: Critical hooks (skipped - 3D deps)")
-    print("    ✓ Wave 3: Pure logic & state")
-    print("    ✓ Wave 4: Lib module coverage")
-    print("    ✓ Final Fix: Ultra-safe tests")
-    print("")
-    print("  Achievements:")
-    print("    ✓ 255+ unit tests passing")
-    print("    ✓ All test files passing (after fix)")
-    print("    ✓ Merged to main branch")
-    print("    ✓ No regressions")
-    print("")
-    print("  Ready for Phase C: Feature Development")
-    print("    • E2E tests for critical user flows")
-    print("    • Sentry error tracking setup")
-    print("    • Performance optimization")
-    print("")
+        logger.info("  ⚠️  Some issues remain")
+    logger.info("=" * 70)
+    logger.info("")
+    logger.info("  Phase B-3 Final Status:")
+    logger.info("    ✓ Wave 1: Core logic tested")
+    logger.info("    ✓ Wave 2: Critical hooks (skipped - 3D deps)")
+    logger.info("    ✓ Wave 3: Pure logic & state")
+    logger.info("    ✓ Wave 4: Lib module coverage")
+    logger.info("    ✓ Final Fix: Ultra-safe tests")
+    logger.info("")
+    logger.info("  Achievements:")
+    logger.info("    ✓ 255+ unit tests passing")
+    logger.info("    ✓ All test files passing (after fix)")
+    logger.info("    ✓ Merged to main branch")
+    logger.info("    ✓ No regressions")
+    logger.info("")
+    logger.info("  Ready for Phase C: Feature Development")
+    logger.info("    • E2E tests for critical user flows")
+    logger.error("    • Sentry error tracking setup")
+    logger.info("    • Performance optimization")
+    logger.info("")
 
     return 0
 

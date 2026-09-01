@@ -15,6 +15,9 @@ After both parts run:
 - Committed & pushed
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import subprocess
 from pathlib import Path
@@ -31,7 +34,7 @@ def write_file(path: Path, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
     lines = len(content.splitlines())
-    print(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
+    logger.info(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1182,17 +1185,17 @@ export * from './styles';
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n" + "=" * 70)
-    print("  🚀 Phase 1 - Day 7 Part 1: Sidebar Components")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  🚀 Phase 1 - Day 7 Part 1: Sidebar Components")
+    logger.info("=" * 70 + "\n")
 
     # Update useRealDem to be store-based
-    print("🎣 به‌روزرسانی useRealDem hook...")
+    logger.info("🎣 به‌روزرسانی useRealDem hook...")
     write_file(HYDROMA / "hooks" / "useRealDem.ts", USE_REAL_DEM_UPDATED)
-    print()
+    logger.info()
 
     # Create sidebar components
-    print("📦 ایجاد Sidebar Components...")
+    logger.info("📦 ایجاد Sidebar Components...")
     write_file(HYDROMA / "components" / "sidebar" / "styles.ts", SIDEBAR_STYLES)
     write_file(HYDROMA / "components" / "sidebar" / "ViewModeControls.tsx", VIEW_MODE_CONTROLS)
     write_file(HYDROMA / "components" / "sidebar" / "AtmosphereControls.tsx", ATMOSPHERE_CONTROLS)
@@ -1207,37 +1210,37 @@ def main():
     write_file(HYDROMA / "components" / "sidebar" / "ErosionEffectPanel.tsx", EROSION_EFFECT_PANEL)
     write_file(HYDROMA / "components" / "sidebar" / "HydromaSidebar.tsx", HYDROMA_SIDEBAR)
     write_file(HYDROMA / "components" / "sidebar" / "index.ts", SIDEBAR_INDEX)
-    print()
+    logger.info()
 
     # Summary
-    print("=" * 70)
-    print("  📊 Summary Part 1")
-    print("=" * 70 + "\n")
+    logger.info("=" * 70)
+    logger.info("  📊 Summary Part 1")
+    logger.info("=" * 70 + "\n")
 
-    print("  Files created:")
-    print("    • hooks/useRealDem.ts (updated to use store)")
-    print("    • components/sidebar/styles.ts")
-    print("    • components/sidebar/ViewModeControls.tsx")
-    print("    • components/sidebar/AtmosphereControls.tsx")
-    print("    • components/sidebar/ToolModeControls.tsx")
-    print("    • components/sidebar/WindControls.tsx")
-    print("    • components/sidebar/VisualControls.tsx")
-    print("    • components/sidebar/ScientificModelsSection.tsx")
-    print("    • components/sidebar/LayersPanel.tsx")
-    print("    • components/sidebar/PlacedOpsList.tsx")
-    print("    • components/sidebar/PolygonsList.tsx")
-    print("    • components/sidebar/DemStatus.tsx")
-    print("    • components/sidebar/ErosionEffectPanel.tsx")
-    print("    • components/sidebar/HydromaSidebar.tsx (orchestrator)")
-    print("    • components/sidebar/index.ts")
-    print()
+    logger.info("  Files created:")
+    logger.info("    • hooks/useRealDem.ts (updated to use store)")
+    logger.info("    • components/sidebar/styles.ts")
+    logger.info("    • components/sidebar/ViewModeControls.tsx")
+    logger.info("    • components/sidebar/AtmosphereControls.tsx")
+    logger.info("    • components/sidebar/ToolModeControls.tsx")
+    logger.info("    • components/sidebar/WindControls.tsx")
+    logger.info("    • components/sidebar/VisualControls.tsx")
+    logger.info("    • components/sidebar/ScientificModelsSection.tsx")
+    logger.info("    • components/sidebar/LayersPanel.tsx")
+    logger.info("    • components/sidebar/PlacedOpsList.tsx")
+    logger.info("    • components/sidebar/PolygonsList.tsx")
+    logger.info("    • components/sidebar/DemStatus.tsx")
+    logger.info("    • components/sidebar/ErosionEffectPanel.tsx")
+    logger.info("    • components/sidebar/HydromaSidebar.tsx (orchestrator)")
+    logger.info("    • components/sidebar/index.ts")
+    logger.info()
 
-    print("  Next: Run day7_orchestration_part2.py")
-    print("    • Create Viewport components")
-    print("    • Create new HyDroMaCenter.tsx orchestration")
-    print("    • Fix useEsriTexture test")
-    print("    • Backup old file, commit & push")
-    print()
+    logger.info("  Next: Run day7_orchestration_part2.py")
+    logger.info("    • Create Viewport components")
+    logger.info("    • Create new HyDroMaCenter.tsx orchestration")
+    logger.info("    • Fix useEsriTexture test")
+    logger.info("    • Backup old file, commit & push")
+    logger.info()
 
 
 if __name__ == "__main__":

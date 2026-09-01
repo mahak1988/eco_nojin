@@ -10,6 +10,9 @@ Key improvements:
 - 359 → ~80 lines orchestration (78% reduction)
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import shutil
@@ -955,7 +958,7 @@ def write_file(path: Path, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
     lines = len(content.splitlines())
-    print(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
+    logger.info(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
 
 
 def backup_old():
@@ -977,66 +980,66 @@ def backup_old():
 
 
 def main():
-    print("\n" + "=" * 70)
-    print("  🚀 Phase 2 - Refactor TelegramManager")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  🚀 Phase 2 - Refactor TelegramManager")
+    logger.info("=" * 70 + "\n")
 
     # گام ۱: پشتیبان
-    print("💾 گام ۱: پشتیبان‌گیری از فایل قدیمی...")
+    logger.info("💾 گام ۱: پشتیبان‌گیری از فایل قدیمی...")
     if not backup_old():
         return 1
-    print()
+    logger.info()
 
     # گام ۲: ساختار
-    print("📁 گام ۲: ایجاد ساختار features/telegram-manager/...")
+    logger.info("📁 گام ۲: ایجاد ساختار features/telegram-manager/...")
     TELEGRAM.mkdir(parents=True, exist_ok=True)
     for folder in ["types", "constants", "utils", "hooks", "components", "__tests__"]:
         (TELEGRAM / folder).mkdir(exist_ok=True)
     ok("ساختار ایجاد شد")
-    print()
+    logger.info()
 
     # گام ۳: Types
-    print("📦 گام ۳: ایجاد Types...")
+    logger.info("📦 گام ۳: ایجاد Types...")
     write_file(TELEGRAM / "types" / "telegram.types.ts", TELEGRAM_TYPES)
-    print()
+    logger.info()
 
     # گام ۴: Constants
-    print("📦 گام ۴: ایجاد Constants...")
+    logger.info("📦 گام ۴: ایجاد Constants...")
     write_file(TELEGRAM / "constants" / "mockBots.ts", MOCK_BOTS_CONST)
-    print()
+    logger.info()
 
     # گام ۵: Utils
-    print("📦 گام ۵: ایجاد Utils...")
+    logger.info("📦 گام ۵: ایجاد Utils...")
     write_file(TELEGRAM / "utils" / "formatters.ts", FORMATTERS_UTIL)
-    print()
+    logger.info()
 
     # گام ۶: Hooks
-    print("📦 گام ۶: ایجاد Custom Hooks...")
+    logger.info("📦 گام ۶: ایجاد Custom Hooks...")
     write_file(TELEGRAM / "hooks" / "useTelegramBots.ts", USE_TELEGRAM_BOTS_HOOK)
     write_file(TELEGRAM / "hooks" / "useBroadcastMessage.ts", USE_BROADCAST_MESSAGE_HOOK)
     write_file(TELEGRAM / "hooks" / "useTelegramStats.ts", USE_TELEGRAM_STATS_HOOK)
-    print()
+    logger.info()
 
     # گام ۷: Components
-    print("📦 گام ۷: ایجاد Components...")
+    logger.info("📦 گام ۷: ایجاد Components...")
     write_file(TELEGRAM / "components" / "StatsCards.tsx", STATS_CARDS_COMP)
     write_file(TELEGRAM / "components" / "BotsList.tsx", BOTS_LIST_COMP)
     write_file(TELEGRAM / "components" / "BroadcastPanel.tsx", BROADCAST_PANEL_COMP)
-    print()
+    logger.info()
 
     # گام ۸: Tests
-    print("📦 گام ۸: ایجاد Tests...")
+    logger.info("📦 گام ۸: ایجاد Tests...")
     write_file(TELEGRAM / "__tests__" / "formatters.test.ts", FORMATTERS_TEST)
-    print()
+    logger.info()
 
     # گام ۹: جایگزینی
-    print("🔄 گام ۹: جایگزینی TelegramManager.tsx...")
+    logger.info("🔄 گام ۹: جایگزینی TelegramManager.tsx...")
     OLD_FILE.write_text(TELEGRAM_MANAGER_NEW, encoding="utf-8")
     ok(f"فایل اصلی جایگزین شد ({len(TELEGRAM_MANAGER_NEW.splitlines())} lines)")
-    print()
+    logger.info()
 
     # گام ۱۰: Build
-    print("🔨 گام ۱۰: اجرای build...")
+    logger.info("🔨 گام ۱۰: اجرای build...")
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
@@ -1053,17 +1056,17 @@ def main():
     if build_result.returncode != 0:
         err("Build شکست خورد")
         for line in build_output.splitlines()[-30:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
 
     ok("Build موفق")
     for line in build_output.splitlines():
         if "built in" in line or "TelegramManager" in line:
-            print(f"  {line.strip()}")
-    print()
+            logger.info(f"  {line.strip()}")
+    logger.info()
 
     # گام ۱۱: تست‌ها
-    print("🧪 گام ۱۱: اجرای تست‌های جدید...")
+    logger.info("🧪 گام ۱۱: اجرای تست‌های جدید...")
     test_result = subprocess.run(
         "pnpm test features/telegram-manager",
         shell=True, cwd=FRONTEND,
@@ -1074,11 +1077,11 @@ def main():
     test_output = test_result.stdout + test_result.stderr
     for line in test_output.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # گام ۱۲: Commit
-    print("📦 گام ۱۲: commit تغییرات...")
+    logger.info("📦 گام ۱۲: commit تغییرات...")
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
         msg = (
@@ -1097,41 +1100,41 @@ def main():
         ok("commit و push موفق")
     except Exception as e:
         warn(f"commit: {e}")
-    print()
+    logger.info()
 
     # گزارش نهایی
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 TelegramManager با موفقیت refactor شد! 🎉\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[92m  🎉 TelegramManager با موفقیت refactor شد! 🎉\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 آمار:")
-    print("    ✓ 359 → ~80 lines (78% reduction)")
-    print("    ✓ Build موفق")
-    print("    ✓ معماری feature-based")
-    print("    ✓ Mock data در constants (no useEffect)")
-    print("    ✓ useMemo برای derived stats")
-    print("    ✓ 3 extracted components")
-    print("    ✓ React Query ready hooks")
-    print()
+    logger.info("  📊 آمار:")
+    logger.info("    ✓ 359 → ~80 lines (78% reduction)")
+    logger.info("    ✓ Build موفق")
+    logger.info("    ✓ معماری feature-based")
+    logger.info("    ✓ Mock data در constants (no useEffect)")
+    logger.info("    ✓ useMemo برای derived stats")
+    logger.info("    ✓ 3 extracted components")
+    logger.info("    ✓ React Query ready hooks")
+    logger.info()
 
-    print("  🏗️ ساختار جدید:")
-    print("    features/telegram-manager/")
-    print("    ├── types/        (1 file)")
-    print("    ├── constants/    (1 file)")
-    print("    ├── utils/        (1 file)")
-    print("    ├── hooks/        (3 files)")
-    print("    ├── components/   (3 files)")
-    print("    └── __tests__/    (1 file)")
-    print()
+    logger.info("  🏗️ ساختار جدید:")
+    logger.info("    features/telegram-manager/")
+    logger.info("    ├── types/        (1 file)")
+    logger.info("    ├── constants/    (1 file)")
+    logger.info("    ├── utils/        (1 file)")
+    logger.info("    ├── hooks/        (3 files)")
+    logger.info("    ├── components/   (3 files)")
+    logger.info("    └── __tests__/    (1 file)")
+    logger.info()
 
-    print("  🎯 فایل‌های باقی‌مانده از فاز ۲:")
-    print("    • SecurityAdvanced.tsx (MEDIUM) - آخرین فایل!")
-    print()
+    logger.info("  🎯 فایل‌های باقی‌مانده از فاز ۲:")
+    logger.info("    • SecurityAdvanced.tsx (MEDIUM) - آخرین فایل!")
+    logger.info()
 
-    print("  📈 پیشرفت فاز ۲:")
-    print("    • 6 از 7 فایل کامل شدند (86%)")
-    print("    • مجموع تست‌ها: ~85+ پاس")
-    print()
+    logger.info("  📈 پیشرفت فاز ۲:")
+    logger.info("    • 6 از 7 فایل کامل شدند (86%)")
+    logger.info("    • مجموع تست‌ها: ~85+ پاس")
+    logger.info()
 
     return 0
 

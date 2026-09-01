@@ -1,3 +1,6 @@
+import structlog
+
+logger = structlog.get_logger()
 import uuid
 from datetime import UTC, datetime
 from typing import Any, Optional
@@ -47,7 +50,7 @@ def calculate_land_profile(request: LandProfileCreateRequest) -> LandProfileResp
     which would involve calling the engine modules.
     """
     # Placeholder calculation - this should eventually call engine.land modules
-    print(f"Calculating profile for project {request.project_id} at ({request.latitude}, {request.longitude})")
+    logger.info(f"Calculating profile for project {request.project_id} at ({request.latitude}, {request.longitude})")
 
     # Mock data for now
     profile_data = {

@@ -4,6 +4,9 @@ Calibration Engine for Nojin Biofertilizer Models.
 Adjusts model parameters based on field trial outcomes
 to improve prediction accuracy.
 """
+import structlog
+
+logger = structlog.get_logger()
 from datetime import date
 from typing import Any
 
@@ -26,7 +29,7 @@ def calibrate_formulation_model(formulation_id: str, trial_data_ids: list[str], 
     Returns:
         Calibration report and updated parameters.
     """
-    print(f"Calibrating model for formulation {formulation_id} (v{model_version})...")
+    logger.info(f"Calibrating model for formulation {formulation_id} (v{model_version})...")
 
     # Fetch trial data from DB
     db = SessionLocal()
@@ -103,7 +106,7 @@ def calibrate_formulation_model(formulation_id: str, trial_data_ids: list[str], 
         db.add(calibration_record)
         db.commit()
 
-        print(f"Calibration successful. Quality Score: {quality_score:.4f}")
+        logger.info(f"Calibration successful. Quality Score: {quality_score:.4f}")
         return {
             "formulation_id": formulation_id,
             "model_version": model_version,

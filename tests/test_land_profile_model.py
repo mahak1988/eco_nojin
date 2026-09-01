@@ -1,3 +1,6 @@
+import structlog
+
+logger = structlog.get_logger()
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -40,4 +43,4 @@ def test_land_profile_creation_and_relationship(test_db_session):
     assert len(user.land_profiles) == 1
     assert user.land_profiles[0].name == "Test Farm"
 
-    print("Test passed: LandProfile model and relationship work correctly.")
+    logger.info("Test passed: LandProfile model and relationship work correctly.")

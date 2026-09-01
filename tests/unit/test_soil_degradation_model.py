@@ -1,3 +1,6 @@
+import structlog
+
+logger = structlog.get_logger()
 import sys
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
@@ -46,7 +49,7 @@ def main():
     assert "overall_sustainability_score" in report
     assert 0 <= report["overall_sustainability_score"]["overall_score"] <= 100
 
-    print("ALL SOIL DEGRADATION TESTS PASSED (H09-H14)")
+    logger.info("ALL SOIL DEGRADATION TESTS PASSED (H09-H14)")
 
 if __name__ == "__main__":
     main()

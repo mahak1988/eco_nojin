@@ -4,6 +4,9 @@ Console Utilities
 ابزارهای لاگ و نمایش رنگی در کنسول.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import sys
 from typing import Optional
 
@@ -31,30 +34,30 @@ if sys.platform == "win32":
 
 def info(msg: str) -> None:
     """پیام اطلاعاتی آبی"""
-    print(f"{Colors.BLUE}ℹ{Colors.RESET}  {msg}")
+    logger.info(f"{Colors.BLUE}ℹ{Colors.RESET}  {msg}")
 
 def success(msg: str) -> None:
     """پیام موفقیت سبز"""
-    print(f"{Colors.GREEN}✓{Colors.RESET}  {msg}")
+    logger.info(f"{Colors.GREEN}✓{Colors.RESET}  {msg}")
 
 def warning(msg: str) -> None:
     """پیام هشدار زرد"""
-    print(f"{Colors.YELLOW}⚠{Colors.RESET}  {msg}")
+    logger.info(f"{Colors.YELLOW}⚠{Colors.RESET}  {msg}")
 
 def error(msg: str) -> None:
     """پیام خطای قرمز"""
-    print(f"{Colors.RED}✗{Colors.RESET}  {msg}")
+    logger.info(f"{Colors.RED}✗{Colors.RESET}  {msg}")
 
 def header(msg: str) -> None:
     """تیتر با استایل"""
-    print(f"\n{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.CYAN}  {msg}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}\n")
+    logger.info(f"\n{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{Colors.CYAN}  {msg}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}\n")
 
 def step(number: int, msg: str) -> None:
     """گام اجرایی"""
-    print(f"\n{Colors.BOLD}{Colors.MAGENTA}[گام {number}]{Colors.RESET} {msg}")
-    print(f"{Colors.DIM}{'─' * 70}{Colors.RESET}")
+    logger.info(f"\n{Colors.BOLD}{Colors.MAGENTA}[گام {number}]{Colors.RESET} {msg}")
+    logger.info(f"{Colors.DIM}{'─' * 70}{Colors.RESET}")
 
 def question(msg: str, default: Optional[str] = None) -> str:
     """پرسش از کاربر"""

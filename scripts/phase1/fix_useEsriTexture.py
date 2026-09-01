@@ -5,6 +5,9 @@ Fix useEsriTexture Hook
 Use useRef to properly track texture for cleanup.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import subprocess
 from pathlib import Path
@@ -233,23 +236,23 @@ def err(m): print(f"\033[91m✗\033[0m  {m}")
 
 
 def main():
-    print("\n" + "=" * 70)
-    print("  🔧 Fix useEsriTexture Hook (Stale Closure Issue)")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  🔧 Fix useEsriTexture Hook (Stale Closure Issue)")
+    logger.info("=" * 70 + "\n")
 
     # Fix hook
     info("اصلاح useEsriTexture.ts با useRef...")
     hook_file = HYDROMA / "hooks" / "useEsriTexture.ts"
     hook_file.write_text(USE_ESRI_TEXTURE_FIXED, encoding="utf-8")
     ok(f"✓ hook اصلاح شد ({len(USE_ESRI_TEXTURE_FIXED.splitlines())} lines)")
-    print()
+    logger.info()
 
     # Fix test
     info("اصلاح useEsriTexture.test.ts...")
     test_file = HYDROMA / "__tests__" / "useEsriTexture.test.ts"
     test_file.write_text(USE_ESRI_TEXTURE_TEST_FIXED, encoding="utf-8")
     ok(f"✓ تست اصلاح شد ({len(USE_ESRI_TEXTURE_TEST_FIXED.splitlines())} lines)")
-    print()
+    logger.info()
 
     # Run tests
     info("اجرای تست‌ها...")
@@ -269,17 +272,17 @@ def main():
     )
 
     output = result.stdout + result.stderr
-    print()
+    logger.info()
     for line in output.splitlines():
         if any(k in line for k in ["✓", "✗", "❯", "Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
+            logger.info(f"  {line}")
 
     if result.returncode != 0:
         err("تست‌ها هنوز شکست می‌خورند")
         return 1
 
     ok("همه تست‌ها پاس شدند!")
-    print()
+    logger.info()
 
     # Commit
     info("commit اصلاحات...")
@@ -296,34 +299,34 @@ def main():
     except Exception as e:
         info(f"commit: {e}")
 
-    print()
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉🎉🎉 فاز ۱ کاملاً کامل شد! 🎉🎉🎉\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info()
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[92m  🎉🎉🎉 فاز ۱ کاملاً کامل شد! 🎉🎉🎉\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 خلاصه نهایی:")
-    print("    ✓ HyDroMaCenter: 5,651 → 56 lines (99% reduction)")
-    print("    ✓ 93 تست پاس شدند")
-    print("    ✓ Build موفق")
-    print("    ✓ معماری feature-based کامل")
-    print()
+    logger.info("  📊 خلاصه نهایی:")
+    logger.info("    ✓ HyDroMaCenter: 5,651 → 56 lines (99% reduction)")
+    logger.info("    ✓ 93 تست پاس شدند")
+    logger.info("    ✓ Build موفق")
+    logger.info("    ✓ معماری feature-based کامل")
+    logger.info()
 
-    print("  🏗️ ساختار نهایی:")
-    print("    features/hydroma/")
-    print("    ├── types/              (5 interfaces)")
-    print("    ├── store/              (Zustand + selectors)")
-    print("    ├── hooks/              (5 custom hooks)")
-    print("    ├── constants/          (4 config files)")
-    print("    ├── utils/              (shared utilities)")
-    print("    ├── components/")
-    print("    │   ├── canvas/         (9 3D components)")
-    print("    │   ├── sidebar/        (14 components)")
-    print("    │   └── viewport/       (5 components)")
-    print("    └── __tests__/          (93 tests)")
-    print()
+    logger.info("  🏗️ ساختار نهایی:")
+    logger.info("    features/hydroma/")
+    logger.info("    ├── types/              (5 interfaces)")
+    logger.info("    ├── store/              (Zustand + selectors)")
+    logger.info("    ├── hooks/              (5 custom hooks)")
+    logger.info("    ├── constants/          (4 config files)")
+    logger.info("    ├── utils/              (shared utilities)")
+    logger.info("    ├── components/")
+    logger.info("    │   ├── canvas/         (9 3D components)")
+    logger.info("    │   ├── sidebar/        (14 components)")
+    logger.info("    │   └── viewport/       (5 components)")
+    logger.info("    └── __tests__/          (93 tests)")
+    logger.info()
 
-    print("  🚀 آماده ورود به فاز ۲!")
-    print()
+    logger.info("  🚀 آماده ورود به فاز ۲!")
+    logger.info()
 
     return 0
 

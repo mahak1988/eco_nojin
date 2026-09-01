@@ -17,6 +17,9 @@ Output:
 - Performance monitoring hook
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import json
@@ -44,9 +47,9 @@ def info(m): print(f"\033[94mℹ\033[0m  {m}")
 def warn(m): print(f"\033[93m⚠\033[0m  {m}")
 def err(m): print(f"\033[91m✗\033[0m  {m}")
 def header(m):
-    print(f"\n\033[1m\033[96m{'─' * 70}\033[0m")
-    print(f"\033[1m\033[96m  {m}\033[0m")
-    print(f"\033[1m\033[96m{'─' * 70}\033[0m")
+    logger.info(f"\n\033[1m\033[96m{'─' * 70}\033[0m")
+    logger.info(f"\033[1m\033[96m  {m}\033[0m")
+    logger.info(f"\033[1m\033[96m{'─' * 70}\033[0m")
 
 
 def ensure_git():
@@ -61,7 +64,7 @@ def write_file(path: Path, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
     lines = len(content.splitlines())
-    print(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
+    logger.info(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
 
 
 def run_command(cmd: str, cwd: Path, timeout: int = 300) -> tuple:
@@ -917,9 +920,9 @@ PERFORMANCE_BUDGET_JSON = '''{
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print(f"\n\033[1m\033[96m{'═' * 70}\033[0m")
-    print(f"\033[1m\033[96m  🚀 Phase 3: Performance & Animation Optimization\033[0m")
-    print(f"\033[1m\033[96m{'═' * 70}\033[0m\n")
+    logger.info(f"\n\033[1m\033[96m{'═' * 70}\033[0m")
+    logger.info(f"\033[1m\033[96m  🚀 Phase 3: Performance & Animation Optimization\033[0m")
+    logger.info(f"\033[1m\033[96m{'═' * 70}\033[0m\n")
 
     ensure_git()
 
@@ -936,7 +939,7 @@ def main():
     if INDEX_CSS.exists():
         shutil.copy2(INDEX_CSS, backups / "index.css.backup")
         ok("index.css backed up")
-    print()
+    logger.info()
 
     # ═══ Step 2: Install packages ═══
     header("📦 Step 2: Install performance packages")
@@ -956,7 +959,7 @@ def main():
         ok("Packages installed successfully")
     else:
         warn(f"Package installation had warnings (continuing)")
-    print()
+    logger.info()
 
     # ═══ Step 3: Write files ═══
     header("📝 Step 3: Create performance files")
@@ -998,7 +1001,7 @@ def main():
     info("Writing performance budget...")
     budget_file.write_text(PERFORMANCE_BUDGET_JSON, encoding="utf-8")
     ok("performance-budget.json (CI/CD integration)")
-    print()
+    logger.info()
 
     # ═══ Step 4: Update main.tsx ═══
     header("🔧 Step 4: Update main.tsx with performance hook")
@@ -1031,7 +1034,7 @@ def main():
         ok("main.tsx updated")
     else:
         warn("main.tsx not found - skipping update")
-    print()
+    logger.info()
 
     # ═══ Step 5: Build & Test ═══
     header("🔨 Step 5: Build & Validate")
@@ -1043,18 +1046,18 @@ def main():
     if code != 0:
         err("Build failed!")
         for line in output.splitlines()[-30:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
 
     ok("Build successful")
 
     # Show bundle sizes
-    print()
+    logger.info()
     info("Bundle analysis:")
     for line in output.splitlines():
         if "dist/assets/" in line or "built in" in line:
-            print(f"  {line.strip()}")
-    print()
+            logger.info(f"  {line.strip()}")
+    logger.info()
 
     # ═══ Step 6: Bundle Analyzer ═══
     header("📊 Step 6: Generate Bundle Analyzer Report")
@@ -1065,7 +1068,7 @@ def main():
         ok("Bundle analyzer report generated: dist/stats.html")
     else:
         warn("Bundle analyzer had warnings (continuing)")
-    print()
+    logger.info()
 
     # ═══ Step 7: Run all tests ═══
     header("🧪 Step 7: Run all tests")
@@ -1073,8 +1076,8 @@ def main():
 
     for line in output.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 8: Commit ═══
     header("📦 Step 8: Commit changes")
@@ -1125,54 +1128,54 @@ Files:
         ok("Committed and pushed successfully")
     except Exception as e:
         warn(f"Commit issue: {e}")
-    print()
+    logger.info()
 
     # ═══ Final Report ═══
-    print(f"\n\033[1m\033[92m{'═' * 70}\033[0m")
-    print(f"\033[1m\033[92m  🎉 Phase 3 Complete!\033[0m")
-    print(f"\033[1m\033[92m{'═' * 70}\033[0m\n")
+    logger.info(f"\n\033[1m\033[92m{'═' * 70}\033[0m")
+    logger.info(f"\033[1m\033[92m  🎉 Phase 3 Complete!\033[0m")
+    logger.info(f"\033[1m\033[92m{'═' * 70}\033[0m\n")
 
-    print("  📊 Improvements:")
-    print("    ✓ Bundle size optimization (manual chunks)")
-    print("    ✓ Code splitting for better caching")
-    print("    ✓ Performance monitoring (Core Web Vitals)")
-    print("    ✓ Design tokens for consistency")
-    print("    ✓ GPU-accelerated animations (60fps)")
-    print("    ✓ Accessibility (reduced motion, focus styles)")
-    print("    ✓ Visual polish (scrollbar, skeleton, transitions)")
-    print()
+    logger.info("  📊 Improvements:")
+    logger.info("    ✓ Bundle size optimization (manual chunks)")
+    logger.info("    ✓ Code splitting for better caching")
+    logger.info("    ✓ Performance monitoring (Core Web Vitals)")
+    logger.info("    ✓ Design tokens for consistency")
+    logger.info("    ✓ GPU-accelerated animations (60fps)")
+    logger.info("    ✓ Accessibility (reduced motion, focus styles)")
+    logger.info("    ✓ Visual polish (scrollbar, skeleton, transitions)")
+    logger.info()
 
-    print("  📁 Files created:")
-    print("    • vite.config.ts (optimized)")
-    print("    • styles/design-tokens.css (280+ lines)")
-    print("    • styles/smooth-scroll.css (150+ lines)")
-    print("    • utils/animations.ts (150+ lines)")
-    print("    • hooks/usePerformance.ts (60+ lines)")
-    print("    • performance-budget.json (CI/CD)")
-    print()
+    logger.info("  📁 Files created:")
+    logger.info("    • vite.config.ts (optimized)")
+    logger.info("    • styles/design-tokens.css (280+ lines)")
+    logger.info("    • styles/smooth-scroll.css (150+ lines)")
+    logger.info("    • utils/animations.ts (150+ lines)")
+    logger.info("    • hooks/usePerformance.ts (60+ lines)")
+    logger.info("    • performance-budget.json (CI/CD)")
+    logger.info()
 
-    print("  🎯 Next Steps:")
-    print("    1. Open dist/stats.html to analyze bundle")
-    print("    2. Check Core Web Vitals in browser console")
-    print("    3. Use animation utilities in components")
-    print("    4. Apply design tokens throughout")
-    print()
+    logger.info("  🎯 Next Steps:")
+    logger.info("    1. Open dist/stats.html to analyze bundle")
+    logger.info("    2. Check Core Web Vitals in browser console")
+    logger.info("    3. Use animation utilities in components")
+    logger.info("    4. Apply design tokens throughout")
+    logger.info()
 
-    print("  💡 Usage Examples:")
-    print()
-    print("    // Animation utilities")
-    print("    import { fadeIn, slideUp, buttonEffect } from '@/utils/animations';")
-    print("    <motion.div variants={fadeIn}>...</motion.div>")
-    print("    <motion.button {...buttonEffect}>Click</motion.button>")
-    print()
-    print("    // Design tokens in CSS")
-    print("    .card {")
-    print("      background: var(--bg-card);")
-    print("      border-radius: var(--radius-lg);")
-    print("      box-shadow: var(--shadow-md);")
-    print("      transition: var(--transition-base);")
-    print("    }")
-    print()
+    logger.info("  💡 Usage Examples:")
+    logger.info()
+    logger.info("    // Animation utilities")
+    logger.info("    import { fadeIn, slideUp, buttonEffect } from '@/utils/animations';")
+    logger.info("    <motion.div variants={fadeIn}>...</motion.div>")
+    logger.info("    <motion.button {...buttonEffect}>Click</motion.button>")
+    logger.info()
+    logger.info("    // Design tokens in CSS")
+    logger.info("    .card {")
+    logger.info("      background: var(--bg-card);")
+    logger.info("      border-radius: var(--radius-lg);")
+    logger.info("      box-shadow: var(--shadow-md);")
+    logger.info("      transition: var(--transition-base);")
+    logger.info("    }")
+    logger.info()
 
     return 0
 

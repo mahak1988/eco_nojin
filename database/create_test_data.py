@@ -1,3 +1,6 @@
+import structlog
+
+logger = structlog.get_logger()
 import os
 """Create sample data for testing."""
 
@@ -14,14 +17,14 @@ from database.models import User
 
 
 def create_test_data():
-    print("=" * 80)
-    print("🌱 Creating Test Data")
-    print("=" * 80)
+    logger.info("=" * 80)
+    logger.info("🌱 Creating Test Data")
+    logger.info("=" * 80)
     init_db()
     db = SessionLocal()
     try:
         if db.query(User).count() > 0:
-            print("  ⚠️  Test data already exists. Skipping.")
+            logger.info("  ⚠️  Test data already exists. Skipping.")
             return
         user = User(
             email="demo@econojin.org",
@@ -33,7 +36,7 @@ def create_test_data():
         db.add(user)
         db.commit()
         db.refresh(user)
-        print(f"  ✅ User: {user.email}")
+        logger.info(f"  ✅ User: {user.email}")
         farm = Farm(
             name="Green Valley Farm",
             owner_id=user.id,
@@ -47,7 +50,7 @@ def create_test_data():
         db.add(farm)
         db.commit()
         db.refresh(farm)
-        print(f"  ✅ Farm: {farm.name}")
+        logger.info(f"  ✅ Farm: {farm.name}")
         soil = SoilAnalysis(
             farm_id=farm.id,
             user_id=user.id,
@@ -124,10 +127,10 @@ def create_test_data():
                 )
             )
         db.commit()
-        print("  ✅ All test data created!")
+        logger.info("  ✅ All test data created!")
     except Exception as e:
         db.rollback()
-        print(f"  ❌ Error: {e}")
+        logger.error(f"  ❌ Error: {e}")
         import traceback
 
         traceback.print_exc()

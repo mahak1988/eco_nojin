@@ -1,3 +1,6 @@
+import structlog
+
+logger = structlog.get_logger()
 import sys
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
@@ -25,7 +28,7 @@ def main():
     assert abs(e.h04_heat_ks(35.0) - 0.5) < 1e-9
     # H08
     assert e.h08_combined_ks(0.5, 0.5, 1.0, True) < e.h08_combined_ks(0.5, 0.5, 1.0, False)
-    print("ALL DSE TESTS PASSED (H01,H02,H03,H04,H08)")
+    logger.info("ALL DSE TESTS PASSED (H01,H02,H03,H04,H08)")
 
 if __name__ == "__main__":
     main()

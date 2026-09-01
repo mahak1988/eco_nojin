@@ -10,6 +10,9 @@ Fix pnpm v11 Build Scripts - Final Solution
 مستندات: https://pnpm.io/settings#onlybuiltdependencies
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import json
 import os
 import subprocess
@@ -51,9 +54,9 @@ def success(msg): print(f"{Colors.GREEN}✓{Colors.RESET}  {msg}")
 def warning(msg): print(f"{Colors.YELLOW}⚠{Colors.RESET}  {msg}")
 def error(msg): print(f"{Colors.RED}✗{Colors.RESET}  {msg}")
 def header(msg):
-    print(f"\n{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.CYAN}  {msg}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}\n")
+    logger.info(f"\n{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{Colors.CYAN}  {msg}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}\n")
 
 
 def ensure_path():
@@ -82,7 +85,7 @@ def run(cmd, cwd=None, check=True, silent=False, timeout=None):
         if result.returncode != 0 and check:
             if not silent:
                 if result.stdout:
-                    print(result.stdout[:2000])
+                    logger.info(result.stdout[:2000])
                 if result.stderr:
                     error(result.stderr[:1000])
             raise RuntimeError(f"Command failed: {cmd}")
@@ -176,11 +179,11 @@ def create_approved_builds_file():
     info(f"  تعداد پکیج‌های تأیید شده: {len(APPROVED_BUILDS)}")
 
     # نمایش محتوای فایل
-    print(f"\n{Colors.BOLD}محتوای فایل:{Colors.RESET}")
+    logger.info(f"\n{Colors.BOLD}محتوای فایل:{Colors.RESET}")
     for pkg, val in list(APPROVED_BUILDS.items())[:10]:
-        print(f"  {Colors.GREEN}✓{Colors.RESET} {pkg}")
+        logger.info(f"  {Colors.GREEN}✓{Colors.RESET} {pkg}")
     if len(APPROVED_BUILDS) > 10:
-        print(f"  {Colors.DIM}... و {len(APPROVED_BUILDS) - 10} پکیج دیگر{Colors.RESET}")
+        logger.info(f"  {Colors.DIM}... و {len(APPROVED_BUILDS) - 10} پکیج دیگر{Colors.RESET}")
 
     return True
 
@@ -296,7 +299,7 @@ def run_pnpm_install():
         if matches:
             info("پکیج‌های نادیده گرفته شده:")
             for m in matches:
-                print(f"  - {m}")
+                logger.info(f"  - {m}")
         
         # تلاش دوم: با --ignore-scripts
         info("\nتلاش با --ignore-scripts...")
@@ -361,7 +364,7 @@ def test_dev_server():
             
             # نمایش ۲۰ خط اول
             if len(output_lines) <= 20:
-                print(f"  {line.rstrip()}")
+                logger.info(f"  {line.rstrip()}")
 
             # تشخیص آماده شدن
             if "Local:" in line:
@@ -390,8 +393,8 @@ def test_dev_server():
 
         if has_fatal_error:
             error("خطای بحرانی در dev server")
-            print(f"\n{Colors.BOLD}آخرین خطوط:{Colors.RESET}")
-            print("\n".join(output_lines[-15:]))
+            logger.info(f"\n{Colors.BOLD}آخرین خطوط:{Colors.RESET}")
+            logger.info("\n".join(output_lines[-15:]))
             return False
 
         if server_ready:
@@ -401,8 +404,8 @@ def test_dev_server():
             return True
 
         warning("سرور کامل راه‌اندازی نشد")
-        print(f"\n{Colors.BOLD}خروجی:{Colors.RESET}")
-        print("\n".join(output_lines[-10:]))
+        logger.info(f"\n{Colors.BOLD}خروجی:{Colors.RESET}")
+        logger.info("\n".join(output_lines[-10:]))
         return False
 
     except Exception as e:
@@ -480,7 +483,7 @@ def final_report(dev_ok):
     # 6. Dev server
     checks.append(("Dev server", dev_ok))
 
-    print()
+    logger.info()
     all_ok = True
     for name, ok in checks:
         symbol = "✓" if ok else "✗"
@@ -490,23 +493,23 @@ def final_report(dev_ok):
             color = Colors.RED
         else:
             color = Colors.YELLOW
-        print(f"  {color}{symbol}{Colors.RESET} {name}")
+        logger.info(f"  {color}{symbol}{Colors.RESET} {name}")
         if not ok:
             all_ok = False
 
-    print()
+    logger.info()
     if dev_ok:
-        print(f"{Colors.GREEN}{Colors.BOLD}🎉 فاز صفر ۱۰۰٪ کامل شد!{Colors.RESET}")
-        print(f"\n{Colors.BOLD}┌─────────────────────────────────────────┐{Colors.RESET}")
-        print(f"{Colors.BOLD}│  🚀 آماده ورود به فاز ۱               │{Colors.RESET}")
-        print(f"{Colors.BOLD}│  بازنویسی HyDroMaCenter.tsx            │{Colors.RESET}")
-        print(f"{Colors.BOLD}└─────────────────────────────────────────┘{Colors.RESET}")
+        logger.info(f"{Colors.GREEN}{Colors.BOLD}🎉 فاز صفر ۱۰۰٪ کامل شد!{Colors.RESET}")
+        logger.info(f"\n{Colors.BOLD}┌─────────────────────────────────────────┐{Colors.RESET}")
+        logger.info(f"{Colors.BOLD}│  🚀 آماده ورود به فاز ۱               │{Colors.RESET}")
+        logger.info(f"{Colors.BOLD}│  بازنویسی HyDroMaCenter.tsx            │{Colors.RESET}")
+        logger.info(f"{Colors.BOLD}└─────────────────────────────────────────┘{Colors.RESET}")
         return 0
     else:
-        print(f"{Colors.YELLOW}⚠️ فاز صفر ۹۰٪ کامل است{Colors.RESET}")
-        print(f"\n{Colors.BOLD}توصیه:{Colors.RESET}")
-        print(f"  اگر pnpm dev به صورت دستی کار می‌کند،")
-        print(f"  می‌توانید به فاز ۱ بروید. فقط تست خودکار ناموفق بود.")
+        logger.info(f"{Colors.YELLOW}⚠️ فاز صفر ۹۰٪ کامل است{Colors.RESET}")
+        logger.info(f"\n{Colors.BOLD}توصیه:{Colors.RESET}")
+        logger.info(f"  اگر pnpm dev به صورت دستی کار می‌کند،")
+        logger.info(f"  می‌توانید به فاز ۱ بروید. فقط تست خودکار ناموفق بود.")
         return 1
 
 
@@ -515,11 +518,11 @@ def final_report(dev_ok):
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print(f"\n{Colors.BOLD}{'═' * 70}{Colors.RESET}")
-    print(f"{Colors.BOLD}  🔧 Fix pnpm v11 - راه‌حل نهایی و قطعی{Colors.RESET}")
-    print(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}")
-    print(f"\n{Colors.YELLOW}توجه:{Colors.RESET} pnpm v11 دیگر package.json.pnpm.* را نمی‌خواند.")
-    print(f"این اسکریپت از روش رسمی pnpm v11 استفاده می‌کند.\n")
+    logger.info(f"\n{Colors.BOLD}{'═' * 70}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}  🔧 Fix pnpm v11 - راه‌حل نهایی و قطعی{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}")
+    logger.info(f"\n{Colors.YELLOW}توجه:{Colors.RESET} pnpm v11 دیگر package.json.pnpm.* را نمی‌خواند.")
+    logger.info(f"این اسکریپت از روش رسمی pnpm v11 استفاده می‌کند.\n")
 
     ensure_path()
 

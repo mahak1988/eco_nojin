@@ -10,6 +10,9 @@ Comprehensive fix for:
 5. strictNullChecks issues (2 errors)
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import json
@@ -365,65 +368,65 @@ def install_zod():
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🔧 Fix All Remaining TypeScript Errors (62 → 0)\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.error("\033[1m\033[96m  🔧 Fix All Remaining TypeScript Errors (62 → 0)\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # ═══ Step 1: Create index.ts for all features ═══
-    print("\033[1mStep 1: ایجاد index.ts برای همه features\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 1: ایجاد index.ts برای همه features\033[0m")
+    logger.info("-" * 70)
     create_feature_index()
-    print()
+    logger.info()
 
     # ═══ Step 2: Fix web-vitals API ═══
-    print("\033[1mStep 2: Fix web-vitals API (onFID → onINP)\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 2: Fix web-vitals API (onFID → onINP)\033[0m")
+    logger.info("-" * 70)
     fix_web_vitals()
-    print()
+    logger.info()
 
     # ═══ Step 3: Fix api/client.ts ═══
-    print("\033[1mStep 3: Fix api/client.ts missing functions\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 3: Fix api/client.ts missing functions\033[0m")
+    logger.info("-" * 70)
     fix_api_client()
-    print()
+    logger.info()
 
     # ═══ Step 4: Fix HyDroMa3D.tsx ═══
-    print("\033[1mStep 4: Fix HyDroMa3D.tsx imports\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 4: Fix HyDroMa3D.tsx imports\033[0m")
+    logger.info("-" * 70)
     fix_hydroma3d()
-    print()
+    logger.info()
 
     # ═══ Step 5: Fix MotorRunner.tsx ═══
-    print("\033[1mStep 5: Fix MotorRunner.tsx elevation_m\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 5: Fix MotorRunner.tsx elevation_m\033[0m")
+    logger.info("-" * 70)
     fix_motor_runner()
-    print()
+    logger.info()
 
     # ═══ Step 6: Fix hydroma types ═══
-    print("\033[1mStep 6: Fix hydroma type mismatches\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 6: Fix hydroma type mismatches\033[0m")
+    logger.info("-" * 70)
     fix_hydroma_types()
-    print()
+    logger.info()
 
     # ═══ Step 7: Fix FeedEventItem.tsx ═══
-    print("\033[1mStep 7: Fix FeedEventItem.tsx indexing\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 7: Fix FeedEventItem.tsx indexing\033[0m")
+    logger.info("-" * 70)
     fix_feed_event_item()
-    print()
+    logger.info()
 
     # ═══ Step 8: Install zod ═══
-    print("\033[1mStep 8: Install zod (if needed)\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 8: Install zod (if needed)\033[0m")
+    logger.info("-" * 70)
     install_zod()
-    print()
+    logger.info()
 
     # ═══ Step 9: Type Check ═══
-    print("\033[1mStep 9: TypeScript Type Check\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 9: TypeScript Type Check\033[0m")
+    logger.info("-" * 70)
     info("Running tsc --noEmit...")
     
     result = subprocess.run(
@@ -449,19 +452,19 @@ def main():
             
             error_lines = [l for l in output.splitlines() if "error TS" in l][:15]
             for line in error_lines:
-                print(f"  {line}")
+                logger.info(f"  {line}")
             
             if error_count > 15:
-                print(f"  ... and {error_count - 15} more errors")
+                logger.error(f"  ... and {error_count - 15} more errors")
             final_error_count = error_count
         else:
             ok("TypeScript: No critical errors")
             final_error_count = 0
-    print()
+    logger.info()
 
     # ═══ Step 10: Build ═══
-    print("\033[1mStep 10: Build Test\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 10: Build Test\033[0m")
+    logger.info("-" * 70)
     info("Building...")
     
     result = subprocess.run(
@@ -480,13 +483,13 @@ def main():
     else:
         err("Build failed")
         for line in (result.stdout + result.stderr).splitlines()[-20:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
-    print()
+    logger.info()
 
     # ═══ Step 11: Tests ═══
-    print("\033[1mStep 11: Run Tests\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 11: Run Tests\033[0m")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test",
@@ -501,12 +504,12 @@ def main():
     
     for line in result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 12: Commit ═══
-    print("\033[1mStep 12: Commit\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 12: Commit\033[0m")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -534,33 +537,33 @@ Result: TypeScript errors reduced from 62 to {final_error_count}'''
         warn(f"Commit issue: {e}")
 
     # ═══ Final Report ═══
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 TypeScript Cleanup Complete!\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[92m  🎉 TypeScript Cleanup Complete!\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 Results:")
-    print(f"    ✓ TypeScript: 149 → 73 → 62 → {final_error_count}")
-    print("    ✓ Build: Successful")
-    print("    ✓ Tests: All passing")
-    print()
+    logger.info("  📊 Results:")
+    logger.error(f"    ✓ TypeScript: 149 → 73 → 62 → {final_error_count}")
+    logger.info("    ✓ Build: Successful")
+    logger.info("    ✓ Tests: All passing")
+    logger.info()
 
-    print("  🔧 Fixes Applied:")
-    print("    • Created index.ts for 6 features")
-    print("    • Updated web-vitals API (onFID → onINP)")
-    print("    • Added missing API client functions")
-    print("    • Fixed multiple type mismatches")
-    print("    • Added proper type assertions")
-    print("    • Installed zod package")
-    print()
+    logger.info("  🔧 Fixes Applied:")
+    logger.info("    • Created index.ts for 6 features")
+    logger.info("    • Updated web-vitals API (onFID → onINP)")
+    logger.info("    • Added missing API client functions")
+    logger.info("    • Fixed multiple type mismatches")
+    logger.info("    • Added proper type assertions")
+    logger.info("    • Installed zod package")
+    logger.info()
 
     if final_error_count == 0:
-        print("  🎯 Phase B-1: Code Quality Setup - 100% Complete!")
-        print()
-        print("  🚀 Ready for Phase B-2: Increase Test Coverage")
+        logger.info("  🎯 Phase B-1: Code Quality Setup - 100% Complete!")
+        logger.info()
+        logger.info("  🚀 Ready for Phase B-2: Increase Test Coverage")
     else:
-        print(f"  ⚠️  {final_error_count} non-critical errors remain")
-        print("  🚀 Ready for Phase B-2: Increase Test Coverage")
-    print()
+        logger.error(f"  ⚠️  {final_error_count} non-critical errors remain")
+        logger.info("  🚀 Ready for Phase B-2: Increase Test Coverage")
+    logger.info()
 
     return 0
 

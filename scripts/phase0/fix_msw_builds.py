@@ -6,6 +6,9 @@ Fix MSW Build Scripts
 و اطمینان از اجرای pnpm dev بدون خطا.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import json
 import os
 import shutil
@@ -44,9 +47,9 @@ def success(msg): print(f"{Colors.GREEN}✓{Colors.RESET}  {msg}")
 def warning(msg): print(f"{Colors.YELLOW}⚠{Colors.RESET}  {msg}")
 def error(msg): print(f"{Colors.RED}✗{Colors.RESET}  {msg}")
 def header(msg):
-    print(f"\n{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.CYAN}  {msg}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}\n")
+    logger.info(f"\n{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{Colors.CYAN}  {msg}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}\n")
 
 
 def ensure_path():
@@ -72,7 +75,7 @@ def run(cmd, cwd=None, check=True, silent=False):
     )
     if result.returncode != 0 and check:
         if result.stdout and not silent:
-            print(result.stdout[:1000])
+            logger.info(result.stdout[:1000])
         if result.stderr and not silent:
             error(result.stderr[:1000])
         raise RuntimeError(f"Command failed: {cmd}")
@@ -201,7 +204,7 @@ def test_dev_server():
                 output_lines.append(line.rstrip())
                 # چاپ محدود برای کاربر
                 if len(output_lines) <= 10:
-                    print(f"  {line.rstrip()}")
+                    logger.info(f"  {line.rstrip()}")
 
                 # تشخیص آماده شدن سرور
                 if "Local:" in line or "localhost" in line.lower() or "ready" in line.lower():
@@ -225,7 +228,7 @@ def test_dev_server():
 
         if "ERROR" in output_text or "error" in output_text.lower():
             warning("خروجی حاوی error است - بررسی دستی لازم است")
-            print("\n".join(output_lines[-10:]))
+            logger.info("\n".join(output_lines[-10:]))
             return False
 
         warning("سرور راه‌اندازی نشد اما خطای بحرانی هم دیده نشد")
@@ -306,24 +309,24 @@ def final_report():
     for name, ok in checks:
         symbol = "✓" if ok else "✗"
         color = Colors.GREEN if ok else Colors.YELLOW
-        print(f"  {color}{symbol}{Colors.RESET} {name}")
+        logger.info(f"  {color}{symbol}{Colors.RESET} {name}")
 
     all_ok = all(ok for _, ok in checks)
 
     if all_ok:
-        print(f"\n{Colors.GREEN}{Colors.BOLD}🎉 فاز صفر کاملاً موفق بود!{Colors.RESET}")
-        print(f"\n{Colors.BOLD}گام بعدی: ورود به فاز ۱{Colors.RESET}")
-        print("  شروع بازنویسی فایل‌های بحرانی به‌صورت فیچرمحور")
+        logger.info(f"\n{Colors.GREEN}{Colors.BOLD}🎉 فاز صفر کاملاً موفق بود!{Colors.RESET}")
+        logger.info(f"\n{Colors.BOLD}گام بعدی: ورود به فاز ۱{Colors.RESET}")
+        logger.info("  شروع بازنویسی فایل‌های بحرانی به‌صورت فیچرمحور")
     else:
-        print(f"\n{Colors.YELLOW}⚠️ برخی موارد نیاز به بررسی دستی دارند{Colors.RESET}")
+        logger.info(f"\n{Colors.YELLOW}⚠️ برخی موارد نیاز به بررسی دستی دارند{Colors.RESET}")
 
     return all_ok
 
 
 def main():
-    print(f"\n{Colors.BOLD}{'═' * 70}{Colors.RESET}")
-    print(f"{Colors.BOLD}  🔧 Fix MSW Builds - حل خطای نهایی فاز صفر{Colors.RESET}")
-    print(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}")
+    logger.info(f"\n{Colors.BOLD}{'═' * 70}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}  🔧 Fix MSW Builds - حل خطای نهایی فاز صفر{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}")
 
     ensure_path()
 
@@ -348,7 +351,7 @@ def main():
     final_report()
 
     if failed:
-        print(f"\n{Colors.YELLOW}گام‌های شکست‌خورده: {', '.join(failed)}{Colors.RESET}")
+        logger.info(f"\n{Colors.YELLOW}گام‌های شکست‌خورده: {', '.join(failed)}{Colors.RESET}")
         return 1
     return 0
 

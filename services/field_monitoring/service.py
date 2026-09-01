@@ -4,6 +4,9 @@ Field Monitoring Service.
 Handles ingestion and processing of data from field sensors, surveys,
 and citizen science reports.
 """
+import structlog
+
+logger = structlog.get_logger()
 import logging
 from dataclasses import dataclass
 from datetime import datetime
@@ -139,4 +142,4 @@ def example_field_ingest():
 
     service = FieldMonitoringService()
     success = service.ingest_report(report)
-    print(f"Field report ingestion successful: {success}")
+    logger.info(f"Field report ingestion successful: {success}")

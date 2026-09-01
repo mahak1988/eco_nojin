@@ -1,3 +1,6 @@
+import structlog
+
+logger = structlog.get_logger()
 import pytest
 from sqlalchemy import create_engine, inspect, and_, or_
 from sqlalchemy.orm import sessionmaker
@@ -53,7 +56,7 @@ class TestInputValidation:
         # برای اینجا، فقط این را یک نکته برای توجه در نظر می‌گیریم و تست را بر اساس رفتار فعلی می‌نویسیم.
         # اگر مقدار ذخیره شده منفی بود، یعنی اعتبارسنجی وجود ندارد.
         assert lp.area_ha == -10.0
-        print("Warning: Model allows negative area_ha. Consider adding validation.")
+        logger.warning("Warning: Model allows negative area_ha. Consider adding validation.")
 
     def test_coordinates_out_of_range(self, test_db_session):
         """چالش: مختصات باید در محدوده معتبر جغرافیایی باشند."""
@@ -78,7 +81,7 @@ class TestInputValidation:
         # اگر ذخیره شود، یعنی کنترلی وجود ندارد.
         assert lp.location_lat == invalid_lat
         assert lp.location_lon == invalid_lon
-        print("Warning: Model allows out-of-range coordinates. Consider adding validation.")
+        logger.warning("Warning: Model allows out-of-range coordinates. Consider adding validation.")
 
 
 # --- چالش 2: رفتارهای پیچیده رابطه و داده ---

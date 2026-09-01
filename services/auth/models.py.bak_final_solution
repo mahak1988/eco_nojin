@@ -1,2 +1,0 @@
-"""مدل‌های سرویس احراز هویت (re-export)"""
-from database.models import *

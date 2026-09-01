@@ -8,6 +8,9 @@ Fixes 3 errors:
 3. Remove "noEmit": true from tsconfig.node.json
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import json
@@ -116,37 +119,37 @@ TSCONFIG_NODE_FIXED = '''{
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🔧 Fix TypeScript Configuration Errors\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.error("\033[1m\033[96m  🔧 Fix TypeScript Configuration Errors\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # ═══ Step 1: Fix tsconfig.json ═══
-    print("\033[1mStep 1: Fix tsconfig.json\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 1: Fix tsconfig.json\033[0m")
+    logger.info("-" * 70)
     info("حذف 'baseUrl' (deprecated در TS 7.0)")
     info("استفاده از path aliases مدرن (بدون baseUrl)")
     
     TSCONFIG.write_text(TSCONFIG_FIXED, encoding="utf-8")
     ok("tsconfig.json اصلاح شد")
-    print()
+    logger.info()
 
     # ═══ Step 2: Fix tsconfig.node.json ═══
-    print("\033[1mStep 2: Fix tsconfig.node.json\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 2: Fix tsconfig.node.json\033[0m")
+    logger.info("-" * 70)
     info("اضافه کردن 'composite': true")
     info("حذف 'noEmit' (project references نیاز به emit دارند)")
     
     TSCONFIG_NODE.write_text(TSCONFIG_NODE_FIXED, encoding="utf-8")
     ok("tsconfig.node.json اصلاح شد")
-    print()
+    logger.info()
 
     # ═══ Step 3: Type Check ═══
-    print("\033[1mStep 3: TypeScript Type Check\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 3: TypeScript Type Check\033[0m")
+    logger.info("-" * 70)
     info("Running tsc --noEmit...")
     
     result = subprocess.run(
@@ -171,15 +174,15 @@ def main():
             err(f"TypeScript: {error_count} errors found")
             for line in output.splitlines()[-30:]:
                 if line.strip():
-                    print(f"  {line}")
+                    logger.info(f"  {line}")
             return 1
         else:
             ok("TypeScript: No errors")
-    print()
+    logger.info()
 
     # ═══ Step 4: Build ═══
-    print("\033[1mStep 4: Build Test\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 4: Build Test\033[0m")
+    logger.info("-" * 70)
     info("Building to verify changes...")
     
     result = subprocess.run(
@@ -198,13 +201,13 @@ def main():
     else:
         err("Build failed")
         for line in (result.stdout + result.stderr).splitlines()[-20:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
-    print()
+    logger.info()
 
     # ═══ Step 5: Tests ═══
-    print("\033[1mStep 5: Run Tests\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 5: Run Tests\033[0m")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test",
@@ -219,12 +222,12 @@ def main():
     
     for line in result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 6: Commit ═══
-    print("\033[1mStep 6: Commit\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 6: Commit\033[0m")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -248,18 +251,18 @@ All TypeScript errors now resolved.'''
         warn(f"Commit issue: {e}")
 
     # ═══ Final Report ═══
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 TypeScript Errors Fixed!\033[0m")
-    print("\033[1m\033{92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.error("\033[1m\033[92m  🎉 TypeScript Errors Fixed!\033[0m")
+    logger.info("\033[1m\033{92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 Results:")
-    print("    ✓ TypeScript: Zero errors")
-    print("    ✓ Build: Successful")
-    print("    ✓ Tests: All passing")
-    print()
+    logger.info("  📊 Results:")
+    logger.error("    ✓ TypeScript: Zero errors")
+    logger.info("    ✓ Build: Successful")
+    logger.info("    ✓ Tests: All passing")
+    logger.info()
 
-    print("  🚀 Ready for Phase B-2: Increase Test Coverage")
-    print()
+    logger.info("  🚀 Ready for Phase B-2: Increase Test Coverage")
+    logger.info()
 
     return 0
 

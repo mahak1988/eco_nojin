@@ -9,6 +9,9 @@ Fix HyDroMaCenter.tsx - Syntax & Imports (v2)
 4. پشتیبان‌گیری خودکار
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import re
 import sys
 import shutil
@@ -34,9 +37,9 @@ def success(msg): print(f"{Colors.GREEN}✓{Colors.RESET}  {msg}")
 def warning(msg): print(f"{Colors.YELLOW}⚠{Colors.RESET}  {msg}")
 def error(msg): print(f"{Colors.RED}✗{Colors.RESET}  {msg}")
 def header(msg):
-    print(f"\n{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.CYAN}  {msg}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}\n")
+    logger.info(f"\n{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{Colors.CYAN}  {msg}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}\n")
 
 
 def create_backup(path: Path) -> Path:
@@ -201,36 +204,36 @@ def analyze_result(text: str) -> dict:
         "Vignette",
     ]
 
-    print(f"\n{Colors.BOLD}بررسی imports حیاتی:{Colors.RESET}")
+    logger.info(f"\n{Colors.BOLD}بررسی imports حیاتی:{Colors.RESET}")
     for imp in critical_imports:
         if imp in text:
-            print(f"  {Colors.GREEN}✓{Colors.RESET} {imp}")
+            logger.info(f"  {Colors.GREEN}✓{Colors.RESET} {imp}")
         else:
-            print(f"  {Colors.RED}✗{Colors.RESET} {imp} (گم شده!)")
+            logger.info(f"  {Colors.RED}✗{Colors.RESET} {imp} (گم شده!)")
 
     # بررسی الگوهای مشکل‌دار
-    print(f"\n{Colors.BOLD}بررسی الگوهای مشکل‌دار:{Colors.RESET}")
+    logger.info(f"\n{Colors.BOLD}بررسی الگوهای مشکل‌دار:{Colors.RESET}")
 
     # demError بدون )}
     dem_error_pattern = re.compile(
         r'\{demError && \(\s*\n\s*<div[^>]*>\{demError\}</div>\s*\n\s*\{erosionEffect'
     )
     if dem_error_pattern.search(text):
-        print(f"  {Colors.RED}✗{Colors.RESET} demError div هنوز بسته نشده!")
+        logger.error(f"  {Colors.RED}✗{Colors.RESET} demError div هنوز بسته نشده!")
     else:
-        print(f"  {Colors.GREEN}✓{Colors.RESET} demError div صحیح است")
+        logger.error(f"  {Colors.GREEN}✓{Colors.RESET} demError div صحیح است")
 
     # siteId بدون ?
     if "سایت {siteId}" in text:
-        print(f"  {Colors.RED}✗{Colors.RESET} siteId هنوز undefined است!")
+        logger.info(f"  {Colors.RED}✗{Colors.RESET} siteId هنوز undefined است!")
     else:
-        print(f"  {Colors.GREEN}✓{Colors.RESET} siteId safe است")
+        logger.info(f"  {Colors.GREEN}✓{Colors.RESET} siteId safe است")
 
     # map={{
     if "map={{esriTexture}}" in text:
-        print(f"  {Colors.RED}✗{Colors.RESET} map prop هنوز اشتباه است!")
+        logger.info(f"  {Colors.RED}✗{Colors.RESET} map prop هنوز اشتباه است!")
     else:
-        print(f"  {Colors.GREEN}✓{Colors.RESET} map prop صحیح است")
+        logger.info(f"  {Colors.GREEN}✓{Colors.RESET} map prop صحیح است")
 
     return stats
 
@@ -268,10 +271,10 @@ def test_build():
             error(f"✗ build شکست خورد")
             if "Expected `,` or `)`" in result.stdout + result.stderr:
                 error("خطای syntax هنوز وجود دارد!")
-            print(f"\n{Colors.BOLD}۳۰ خط آخر خروجی:{Colors.RESET}")
+            logger.info(f"\n{Colors.BOLD}۳۰ خط آخر خروجی:{Colors.RESET}")
             output = (result.stdout + result.stderr).splitlines()
             for line in output[-30:]:
-                print(f"  {line}")
+                logger.info(f"  {line}")
             return False
 
     except subprocess.TimeoutExpired:
@@ -283,9 +286,9 @@ def test_build():
 
 
 def main() -> int:
-    print(f"\n{Colors.BOLD}{'═' * 70}{Colors.RESET}")
-    print(f"{Colors.BOLD}  🔧 Fix HyDroMaCenter - رفع خطاهای بحرانی (v2){Colors.RESET}")
-    print(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}")
+    logger.info(f"\n{Colors.BOLD}{'═' * 70}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}  🔧 Fix HyDroMaCenter - رفع خطاهای بحرانی (v2){Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}")
 
     if not FILE.exists():
         error(f"فایل یافت نشد: {FILE}")
@@ -341,7 +344,7 @@ def main() -> int:
     header("خلاصه اصلاحات")
     if all_changes:
         for i, change in enumerate(all_changes, 1):
-            print(f"  {i}. {change}")
+            logger.info(f"  {i}. {change}")
     else:
         warning("هیچ تغییری لازم نبود")
 
@@ -351,18 +354,18 @@ def main() -> int:
     # گزارش نهایی
     header("گزارش نهایی")
     if build_ok:
-        print(f"{Colors.GREEN}{Colors.BOLD}🎉 همه اصلاحات موفق بود!{Colors.RESET}")
-        print(f"\n{Colors.BOLD}گام بعدی:{Colors.RESET} شروع بازنویسی ساختاری")
-        print(f"  - ایجاد features/hydroma/")
-        print(f"  - استخراج types و constants")
-        print(f"  - ایجاد Zustand store")
+        logger.info(f"{Colors.GREEN}{Colors.BOLD}🎉 همه اصلاحات موفق بود!{Colors.RESET}")
+        logger.info(f"\n{Colors.BOLD}گام بعدی:{Colors.RESET} شروع بازنویسی ساختاری")
+        logger.info(f"  - ایجاد features/hydroma/")
+        logger.info(f"  - استخراج types و constants")
+        logger.info(f"  - ایجاد Zustand store")
         return 0
     else:
-        print(f"{Colors.YELLOW}⚠️ اصلاحات اعمال شد اما build هنوز شکست می‌خورد{Colors.RESET}")
-        print(f"\n{Colors.BOLD}اقدام بعدی:{Colors.RESET}")
-        print(f"  1. خطاهای بالا را بررسی کنید")
-        print(f"  2. اگر خطای دیگری وجود دارد، گزارش دهید")
-        print(f"  3. پشتیبان: {backup.name}")
+        logger.info(f"{Colors.YELLOW}⚠️ اصلاحات اعمال شد اما build هنوز شکست می‌خورد{Colors.RESET}")
+        logger.info(f"\n{Colors.BOLD}اقدام بعدی:{Colors.RESET}")
+        logger.info(f"  1. خطاهای بالا را بررسی کنید")
+        logger.info(f"  2. اگر خطای دیگری وجود دارد، گزارش دهید")
+        logger.info(f"  3. پشتیبان: {backup.name}")
         return 1
 
 

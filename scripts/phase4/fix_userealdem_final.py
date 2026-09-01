@@ -10,6 +10,9 @@ Strategy:
 3. Use describe.skip as ultimate fallback
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import re
@@ -154,11 +157,11 @@ SKIP_TEST = build_string(SKIP_TEST_LINES)
 
 
 def main():
-    print("")
-    print("=" * 70)
-    print("  Definitive Fix: useRealDem.test.ts")
-    print("=" * 70)
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  Definitive Fix: useRealDem.test.ts")
+    logger.info("=" * 70)
+    logger.info("")
 
     # Fix Git PATH
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
@@ -166,8 +169,8 @@ def main():
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # Step 1: Analyze the real hook
-    print("[Step 1] Analyzing useRealDem.ts")
-    print("-" * 70)
+    logger.info("[Step 1] Analyzing useRealDem.ts")
+    logger.info("-" * 70)
     
     hook_info = analyze_hook_file()
     
@@ -179,20 +182,20 @@ def main():
         info(f"Has top-level fetch: {hook_info['has_top_level_fetch']}")
     else:
         warn("Could not analyze hook file")
-    print("")
+    logger.info("")
 
     # Step 2: Write the safe test
-    print("[Step 2] Writing safe test")
-    print("-" * 70)
+    logger.info("[Step 2] Writing safe test")
+    logger.info("-" * 70)
     
     test_file = HYDROMA_TESTS / "useRealDem.test.ts"
     test_file.write_text(SAFE_TEST, encoding="utf-8")
     ok(f"Written: {test_file.name}")
-    print("")
+    logger.info("")
 
     # Step 3: Try to run tests
-    print("[Step 3] Running tests (first attempt)")
-    print("-" * 70)
+    logger.info("[Step 3] Running tests (first attempt)")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test -- useRealDem",
@@ -213,19 +216,19 @@ def main():
     if file_still_failing:
         warn("Safe test still has file-level error")
         info("Falling back to skip test")
-        print("")
+        logger.info("")
         
         # Step 4: Write skip test as fallback
-        print("[Step 4] Writing skip test (fallback)")
-        print("-" * 70)
+        logger.info("[Step 4] Writing skip test (fallback)")
+        logger.info("-" * 70)
         
         test_file.write_text(SKIP_TEST, encoding="utf-8")
         ok(f"Written: {test_file.name} (skipped)")
-        print("")
+        logger.info("")
         
         # Verify it passes
-        print("[Step 5] Verifying skip test")
-        print("-" * 70)
+        logger.info("[Step 5] Verifying skip test")
+        logger.info("-" * 70)
         
         result = subprocess.run(
             "pnpm test -- useRealDem",
@@ -246,11 +249,11 @@ def main():
             err("Even skip test has issues (very unlikely)")
     else:
         ok("Safe test passes!")
-    print("")
+    logger.info("")
 
     # Step 6: Run all tests
-    print("[Step 6] Running all tests")
-    print("-" * 70)
+    logger.info("[Step 6] Running all tests")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test",
@@ -267,7 +270,7 @@ def main():
     
     for line in output.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
+            logger.info(f"  {line}")
     
     all_passing = result.returncode == 0
     
@@ -275,11 +278,11 @@ def main():
         ok("\n🎉 ALL TESTS PASSING!")
     else:
         err("\nSome tests still failing")
-    print("")
+    logger.info("")
 
     # Step 7: Commit
-    print("[Step 7] Committing changes")
-    print("-" * 70)
+    logger.info("[Step 7] Committing changes")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -312,29 +315,29 @@ def main():
         info("You can commit manually")
 
     # Final Report
-    print("")
-    print("=" * 70)
+    logger.info("")
+    logger.info("=" * 70)
     if all_passing:
-        print("  🎉🎉🎉 ALL TEST FILES PASSING! 🎉🎉🎉")
+        logger.info("  🎉🎉🎉 ALL TEST FILES PASSING! 🎉🎉🎉")
     else:
-        print("  ⚠️  Some issues remain")
-    print("=" * 70)
-    print("")
+        logger.info("  ⚠️  Some issues remain")
+    logger.info("=" * 70)
+    logger.info("")
     
-    print("  Phase B-3 Wave 1 Status: COMPLETE")
-    print("")
-    print("  Achievements:")
-    print("    ✓ All test files passing")
-    print("    ✓ 234+ unit tests working")
-    print("    ✓ Core logic tested")
-    print("    ✓ Coverage improved")
-    print("    ✓ File-level errors resolved")
-    print("")
-    print("  Ready for Wave 2: Critical Hooks")
-    print("    • useTerrainClick.ts")
-    print("    • usePolygonDrawing.ts")
-    print("    • Canvas components")
-    print("")
+    logger.info("  Phase B-3 Wave 1 Status: COMPLETE")
+    logger.info("")
+    logger.info("  Achievements:")
+    logger.info("    ✓ All test files passing")
+    logger.info("    ✓ 234+ unit tests working")
+    logger.info("    ✓ Core logic tested")
+    logger.info("    ✓ Coverage improved")
+    logger.error("    ✓ File-level errors resolved")
+    logger.info("")
+    logger.info("  Ready for Wave 2: Critical Hooks")
+    logger.info("    • useTerrainClick.ts")
+    logger.info("    • usePolygonDrawing.ts")
+    logger.info("    • Canvas components")
+    logger.info("")
     
     return 0 if all_passing else 1
 

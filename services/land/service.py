@@ -3,6 +3,9 @@
 نسخه استاندارد با استفاده از موتور واقعی
 """
 
+import structlog
+
+logger = structlog.get_logger()
 from datetime import UTC, datetime
 from typing import Any
 
@@ -72,7 +75,7 @@ class LandService:
         if not self._profile_exists(profile_id):
             raise ValueError("Profile not found")
 
-        print(f"Delegating terrain analysis for profile {profile_id} to engine via interface.")
+        logger.info(f"Delegating terrain analysis for profile {profile_id} to engine via interface.")
         engine_results = self.engine.analyze_terrain(dem_array, profile_id)
 
         analysis = TerrainAnalysis(
@@ -103,7 +106,7 @@ class LandService:
         if not self._profile_exists(profile_id):
             raise ValueError("Profile not found")
 
-        print(f"Delegating drainage analysis for profile {profile_id} to engine via interface.")
+        logger.info(f"Delegating drainage analysis for profile {profile_id} to engine via interface.")
         engine_results = self.engine.analyze_drainage(
             dem_array, profile_id, resolution, area_km2 or 1.0
         )
@@ -139,7 +142,7 @@ class LandService:
         if not self._profile_exists(profile_id):
             raise ValueError("Profile not found")
 
-        print(f"Delegating capability assessment for profile {profile_id} to engine via interface.")
+        logger.info(f"Delegating capability assessment for profile {profile_id} to engine via interface.")
         engine_results = self.engine.assess_capability(
             profile_id=profile_id,
             slope_degrees=slope_degrees,

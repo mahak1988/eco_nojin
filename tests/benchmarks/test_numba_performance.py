@@ -4,6 +4,9 @@ These tests verify that Numba implementations are actually faster
 and produce equivalent results.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import numpy as np
 import pytest
 
@@ -42,10 +45,10 @@ def test_ndvi_performance_large_array():
 
     # Verify Numba is faster (with reasonable threshold)
     speedup = comparison["speedup"]
-    print(f"\nNDVI Benchmark ({size}x{size}):")
-    print(f"  NumPy:  {comparison['python']['mean_time'] * 1000:.2f} ms")
-    print(f"  Numba:  {comparison['fast']['mean_time'] * 1000:.2f} ms")
-    print(f"  Speedup: {speedup:.2f}x")
+    logger.info(f"\nNDVI Benchmark ({size}x{size}):")
+    logger.info(f"  NumPy:  {comparison['python']['mean_time'] * 1000:.2f} ms")
+    logger.info(f"  Numba:  {comparison['fast']['mean_time'] * 1000:.2f} ms")
+    logger.info(f"  Speedup: {speedup:.2f}x")
 
     # Should be at least 2x faster (conservative due to CI variability)
     assert speedup > 2.0, f"Expected at least 2x speedup, got {speedup:.2f}x"
@@ -68,7 +71,7 @@ def test_ndvi_performance_small_array():
 
     assert comparison["results_match"]
 
-    print(f"\nNDVI Benchmark ({size}x{size}):")
-    print(f"  NumPy:  {comparison['python']['mean_time'] * 1000:.3f} ms")
-    print(f"  Numba:  {comparison['fast']['mean_time'] * 1000:.3f} ms")
-    print(f"  Speedup: {comparison['speedup']:.2f}x")
+    logger.info(f"\nNDVI Benchmark ({size}x{size}):")
+    logger.info(f"  NumPy:  {comparison['python']['mean_time'] * 1000:.3f} ms")
+    logger.info(f"  Numba:  {comparison['fast']['mean_time'] * 1000:.3f} ms")
+    logger.info(f"  Speedup: {comparison['speedup']:.2f}x")

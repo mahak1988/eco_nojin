@@ -1,4 +1,7 @@
 """Module for basic groundwater models and estimations."""
+import structlog
+
+logger = structlog.get_logger()
 import math
 from typing import Any
 
@@ -49,7 +52,7 @@ def calculate_theis_drawdown(transmissivity_m2day: float,
     Calculates drawdown using the Theis equation for a confined aquifer.
     """
     if storativity <= 0 or transmissivity_m2day <= 0:
-        print("Invalid parameters for Theis equation.")
+        logger.info("Invalid parameters for Theis equation.")
         return None
 
     from scipy.special import expi  # Import here to avoid hard dependency
@@ -79,10 +82,10 @@ if __name__ == "__main__":
     props = estimate_aquifer_properties(
         hydraulic_conductivity_m_s=1e-5, specific_yield=0.1, area_m2=10000, water_level_drop_m=2
     )
-    print("Aquifer Properties:", props)
+    logger.info("Aquifer Properties:", props)
 
     drawdown = calculate_theis_drawdown(
         transmissivity_m2day=100, storativity=0.0001, pumping_rate_m3day=1000,
         distance_from_well_m=100, time_since_pumping_start_days=1
     )
-    print(f"Theis Drawdown Estimate: {drawdown} m")
+    logger.info(f"Theis Drawdown Estimate: {drawdown} m")

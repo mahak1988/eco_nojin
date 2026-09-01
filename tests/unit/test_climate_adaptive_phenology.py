@@ -1,3 +1,6 @@
+import structlog
+
+logger = structlog.get_logger()
 import sys
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
@@ -42,7 +45,7 @@ def main():
         winter_temps=temps)
     assert "planting" in adv and "flash_drought" in adv and "chilling" in adv
 
-    print("ALL CAP TESTS PASSED (H05,H06,H07,H24)")
+    logger.info("ALL CAP TESTS PASSED (H05,H06,H07,H24)")
 
 if __name__ == "__main__":
     main()

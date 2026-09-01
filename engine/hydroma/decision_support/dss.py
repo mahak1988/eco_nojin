@@ -4,6 +4,9 @@ Decision Support System (DSS) Engine.
 Synthesizes results from scenarios, optimization, and risk analysis
 to provide actionable recommendations.
 """
+import structlog
+
+logger = structlog.get_logger()
 import logging
 from dataclasses import dataclass
 from enum import Enum
@@ -188,6 +191,6 @@ def example_recommendation_generation(project_id: str, scenario_comparison_data:
     recommendations = dss.generate_recommendations(project_id, scenario_comparison_data, opt_results)
     persisted_ids = dss.persist_recommendations(recommendations)
 
-    print(f"Generated and persisted {len(persisted_ids)} recommendations: {persisted_ids}")
+    logger.info(f"Generated and persisted {len(persisted_ids)} recommendations: {persisted_ids}")
     for rec in recommendations:
-        print(f"- {rec.title}: {rec.description} (Conf: {rec.confidence_level}, Risk: {rec.risk_level})")
+        logger.info(f"- {rec.title}: {rec.description} (Conf: {rec.confidence_level}, Risk: {rec.risk_level})")

@@ -4,6 +4,9 @@
 Fix: Remove ffmpeg requirement from Playwright config
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import subprocess
@@ -64,24 +67,24 @@ export default defineConfig({
 
 
 def main():
-    print("")
-    print("=" * 70)
-    print("  Fix: Remove ffmpeg requirement")
-    print("=" * 70)
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  Fix: Remove ffmpeg requirement")
+    logger.info("=" * 70)
+    logger.info("")
 
     # Step 1: Update config
-    print("[Step 1] Updating playwright.config.ts")
-    print("-" * 70)
+    logger.info("[Step 1] Updating playwright.config.ts")
+    logger.info("-" * 70)
     
     PLAYWRIGHT_CONFIG.write_text(CONFIG_FIXED, encoding="utf-8")
     ok("Config updated - disabled video/trace/screenshot")
     info("ffmpeg no longer required")
-    print("")
+    logger.info("")
 
     # Step 2: Commit
-    print("[Step 2] Committing changes")
-    print("-" * 70)
+    logger.info("[Step 2] Committing changes")
+    logger.info("-" * 70)
     
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
@@ -106,20 +109,20 @@ def main():
         info(f"Commit issue: {e}")
 
     # Final Report
-    print("")
-    print("=" * 70)
-    print("  Fix Complete!")
-    print("=" * 70)
-    print("")
-    print("  Now run E2E tests:")
-    print("    cd D:\\eco_nojin\\frontend")
-    print("    .\\run-e2e.ps1 ui")
-    print("")
-    print("  Note: UI mode will:")
-    print("    1. Start dev server (pnpm dev) - wait 30-60 seconds")
-    print("    2. Open Playwright UI in browser")
-    print("    3. You can then run tests interactively")
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  Fix Complete!")
+    logger.info("=" * 70)
+    logger.info("")
+    logger.info("  Now run E2E tests:")
+    logger.info("    cd D:\\eco_nojin\\frontend")
+    logger.info("    .\\run-e2e.ps1 ui")
+    logger.info("")
+    logger.info("  Note: UI mode will:")
+    logger.info("    1. Start dev server (pnpm dev) - wait 30-60 seconds")
+    logger.info("    2. Open Playwright UI in browser")
+    logger.info("    3. You can then run tests interactively")
+    logger.info("")
 
     return 0
 

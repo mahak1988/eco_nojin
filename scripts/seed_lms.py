@@ -1,4 +1,7 @@
 """Seed LMS courses/lessons from data/lms/courses.json into Supabase (idempotent)."""
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import json
@@ -63,7 +66,7 @@ def main() -> None:
         json={"query": sql},
         timeout=120.0,
     )
-    print(f"seed: HTTP {r.status_code} {r.text[:300]}")
+    logger.info(f"seed: HTTP {r.status_code} {r.text[:300]}")
     if r.status_code >= 400:
         sys.exit(1)
 

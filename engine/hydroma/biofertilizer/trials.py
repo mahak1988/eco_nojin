@@ -4,6 +4,9 @@ Field Trial Manager for Nojin Biofertilizers.
 Handles the design, execution, and analysis of field trials
 to evaluate biofertilizer performance.
 """
+import structlog
+
+logger = structlog.get_logger()
 from datetime import date
 from typing import Any
 
@@ -72,7 +75,7 @@ def execute_trial(trial_design: dict[str, Any], baseline_data: dict[str, Any]):
         trial_design: Output from design_trial.
         baseline_data: Soil, plant, weather data before application.
     """
-    print(f"Executing trial {trial_design['trial_id']}...")
+    logger.info(f"Executing trial {trial_design['trial_id']}...")
     # This would involve actual data collection in the field
     # Here we just record the baseline
     trial_record = NojinFieldTrialDB(
@@ -89,7 +92,7 @@ def execute_trial(trial_design: dict[str, Any], baseline_data: dict[str, Any]):
     try:
         db.add(trial_record)
         db.commit()
-        print(f"Trial {trial_record.id} initiated in DB.")
+        logger.info(f"Trial {trial_record.id} initiated in DB.")
     finally:
         db.close()
 

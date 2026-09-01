@@ -1,3 +1,6 @@
+import structlog
+
+logger = structlog.get_logger()
 from services.land.land_profile import LandProfileCreateRequest, calculate_land_profile
 
 
@@ -22,7 +25,7 @@ def test_calculate_land_profile():
     assert profile.slope_mean_degrees is not None
     assert profile.created_at is not None
 
-    print("Land profile calculation test passed!")
-    print(f"Generated Profile ID: {profile.id}")
-    print(f"Elevation Range: {profile.elevation_min} - {profile.elevation_max} m")
-    print(f"Mean Slope: {profile.slope_mean_degrees} degrees")
+    logger.info("Land profile calculation test passed!")
+    logger.info(f"Generated Profile ID: {profile.id}")
+    logger.info(f"Elevation Range: {profile.elevation_min} - {profile.elevation_max} m")
+    logger.info(f"Mean Slope: {profile.slope_mean_degrees} degrees")

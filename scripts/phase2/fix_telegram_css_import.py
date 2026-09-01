@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Fix CSS import path in TelegramManager.tsx"""
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import subprocess
 from pathlib import Path
@@ -34,7 +37,7 @@ def main():
         ok("مسیر CSS اصلاح شد: ../../live/ → ../live/")
 
     # Build مجدد
-    print("\n🔨 اجرای build...")
+    logger.info("\n🔨 اجرای build...")
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
@@ -51,15 +54,15 @@ def main():
         ok("Build موفق!")
         for line in result.stdout.splitlines():
             if "built in" in line or "TelegramManager" in line:
-                print(f"  {line.strip()}")
+                logger.info(f"  {line.strip()}")
     else:
         err("Build هنوز شکست می‌خورد")
         for line in (result.stdout + result.stderr).splitlines()[-20:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
 
     # تست‌ها
-    print("\n🧪 اجرای تست‌ها...")
+    logger.info("\n🧪 اجرای تست‌ها...")
     test_result = subprocess.run(
         "pnpm test features/telegram-manager",
         shell=True, cwd=FRONTEND,
@@ -69,10 +72,10 @@ def main():
     )
     for line in test_result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
+            logger.info(f"  {line}")
 
     # Commit
-    print("\n📦 commit...")
+    logger.info("\n📦 commit...")
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
         subprocess.run(
@@ -82,9 +85,9 @@ def main():
         subprocess.run("git push origin main", shell=True, cwd=PROJECT_ROOT, check=True)
         ok("commit و push موفق")
     except Exception as e:
-        print(f"  ⚠ commit: {e}")
+        logger.info(f"  ⚠ commit: {e}")
 
-    print("\n\033[1m\033[92m🎉 TelegramManager کامل شد!\033[0m")
+    logger.info("\n\033[1m\033[92m🎉 TelegramManager کامل شد!\033[0m")
     return 0
 
 

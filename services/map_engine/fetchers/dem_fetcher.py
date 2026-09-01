@@ -1,4 +1,7 @@
 """DEM Fetcher - Downloads/caches DEM data (NumPy 2.x & rioxarray compatible)."""
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import hashlib
@@ -53,13 +56,13 @@ class DEMFetcher(MapFetcher):
                 dem = self._load_from_cache(cache_path)
                 # Validate shape
                 if dem.ndim >= 2 and dem.shape[0] >= 3 and dem.shape[1] >= 3:
-                    print(f"  [DEMFETCHER] Loaded from cache: {dem.shape}")
+                    logger.info(f"  [DEMFETCHER] Loaded from cache: {dem.shape}")
                     return dem
                 else:
-                    print(f"  [DEMFETCHER] Cache invalid shape: {dem.shape}, regenerating")
+                    logger.info(f"  [DEMFETCHER] Cache invalid shape: {dem.shape}, regenerating")
                     cache_path.unlink(missing_ok=True)
             except Exception as e:
-                print(f"  [DEMFETCHER] Cache load failed: {e}, regenerating")
+                logger.info(f"  [DEMFETCHER] Cache load failed: {e}, regenerating")
                 cache_path.unlink(missing_ok=True)
 
         # Generate synthetic DEM
@@ -68,7 +71,7 @@ class DEMFetcher(MapFetcher):
         # Save to cache
         self._save_to_cache(dem, cache_path)
 
-        print(f"  [DEMFETCHER] Generated: {dem.shape}")
+        logger.info(f"  [DEMFETCHER] Generated: {dem.shape}")
         return dem
 
     async def _generate_synthetic_dem(

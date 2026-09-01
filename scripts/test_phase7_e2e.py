@@ -5,6 +5,9 @@ bootstraps admin role via SQL, runs the full audit/credit flow against
 localhost:8011, then cleans up all test rows. Requires: server on 8011,
 SUPABASE_ACCESS_TOKEN in .env, PYTHONPATH=D:\\eco_nojin.
 """
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import io
@@ -135,7 +138,7 @@ def main() -> int:
             )
         results.append(("cleanup", "done"))
 
-    print("\n".join(f"{k}: {v}" for k, v in results))
+    logger.info("\n".join(f"{k}: {v}" for k, v in results))
     return 0
 
 

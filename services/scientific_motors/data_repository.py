@@ -11,6 +11,9 @@ ScientificDataRepository - نسخه نهایی و کامل (Final Release)
 ============================================================================
 """
 
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import logging
@@ -436,26 +439,26 @@ def create_repository() -> ScientificDataRepository:
 
 
 if __name__ == "__main__":
-    print("🔍 تست سریع نسخه نهایی ریپازیتوری...")
+    logger.info("🔍 تست سریع نسخه نهایی ریپازیتوری...")
     try:
         repo = ScientificDataRepository()
         
         # تست گونه
         crop = repo.get_crop_parameters("W001")
-        print(f"✅ گونه W001: {crop.get('name_fa', 'N/A') if crop else 'Not Found'}")
+        logger.info(f"✅ گونه W001: {crop.get('name_fa', 'N/A') if crop else 'Not Found'}")
         
         # تست قوانین
         rules = repo.get_critical_plain_rules()
-        print(f"✅ قوانین بحرانی: {len(rules)} رکورد")
+        logger.info(f"✅ قوانین بحرانی: {len(rules)} رکورد")
         
         # تست ماتریس تصمیم با سایت نمونه
         decision_sites = repo.get_all_decision_sites()
         if not decision_sites.is_empty():
             sample_site = decision_sites["site_id"][0]
             matrix = repo.get_decision_engine_matrix(sample_site)
-            print(f"✅ ماتریس تصمیم ({sample_site}): {len(matrix)} رکورد")
+            logger.info(f"✅ ماتریس تصمیم ({sample_site}): {len(matrix)} رکورد")
         
-        print("\n🎉 نسخه نهایی ریپازیتوری آماده استفاده است!")
+        logger.info("\n🎉 نسخه نهایی ریپازیتوری آماده استفاده است!")
         
     except Exception as e:
-        print(f"❌ خطا: {e}")
+        logger.info(f"❌ خطا: {e}")

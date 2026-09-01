@@ -1,3 +1,6 @@
+import structlog
+
+logger = structlog.get_logger()
 import pytest
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
@@ -156,7 +159,7 @@ def test_land_profile_cascading_orphaned_behavior(test_db_session):
     # اتصال lazy به کاربر نباید خطا بدهد، اما باید None باشد
     assert orphaned_lp.user is None
     assert orphaned_lp.name == "Orphaned Farm"
-    print(f"Orphaned LP Name: {orphaned_lp.name}, User ID: {orphaned_lp.user_id}, Related User: {orphaned_lp.user}")
+    logger.info(f"Orphaned LP Name: {orphaned_lp.name}, User ID: {orphaned_lp.user_id}, Related User: {orphaned_lp.user}")
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

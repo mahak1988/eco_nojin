@@ -1,4 +1,7 @@
 """Land Cover Fetcher - Synthetic ESA WorldCover-style data."""
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import hashlib
@@ -70,15 +73,15 @@ class LandCoverFetcher(MapFetcher):
                 da = rioxarray.open_rasterio(str(cache_path), masked=True)
                 if "band" in da.dims and da.sizes["band"] == 1:
                     da = da.isel(band=0, drop=True)
-                print(f"  [LANDCOVER] Loaded from cache: {da.shape}")
+                logger.info(f"  [LANDCOVER] Loaded from cache: {da.shape}")
                 return da
             except Exception as e:
-                print(f"  [LANDCOVER] Cache load failed: {e}")
+                logger.info(f"  [LANDCOVER] Cache load failed: {e}")
                 cache_path.unlink(missing_ok=True)
 
         lc = await self._generate_synthetic_lc(region, resolution)
         lc.rio.to_raster(str(cache_path), driver="GTiff", compress="lzw")
-        print(f"  [LANDCOVER] Generated: {lc.shape}")
+        logger.info(f"  [LANDCOVER] Generated: {lc.shape}")
         return lc
 
     async def _generate_synthetic_lc(

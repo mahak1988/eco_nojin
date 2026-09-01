@@ -13,6 +13,9 @@ Phase 1 - Day 2: Create Zustand Store & Constants
 9. اجرای تست‌ها و commit
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import subprocess
 from pathlib import Path
@@ -1024,57 +1027,57 @@ def write_file(path: Path, content: str, desc: str):
     """نوشتن فایل و نمایش اطلاعات"""
     path.write_text(content, encoding="utf-8")
     lines = len(content.splitlines())
-    print(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
+    logger.info(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
 
 
 def main():
-    print("\n" + "=" * 70)
-    print("  🚀 Phase 1 - Day 2: Create Zustand Store & Constants")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  🚀 Phase 1 - Day 2: Create Zustand Store & Constants")
+    logger.info("=" * 70 + "\n")
 
     # Constants
-    print("📄 ایجاد Constants...")
+    logger.info("📄 ایجاد Constants...")
     write_file(HYDROMA / "constants" / "engineeringOps.ts", ENGINEERING_OPS, "Engineering ops")
     write_file(HYDROMA / "constants" / "viewModes.ts", VIEW_MODES, "View modes")
     write_file(HYDROMA / "constants" / "toolModes.ts", TOOL_MODES, "Tool modes")
     write_file(HYDROMA / "constants" / "layerConfig.ts", LAYER_CONFIG, "Layer config")
     write_file(HYDROMA / "constants" / "index.ts", CONSTANTS_INDEX, "Constants barrel")
-    print()
+    logger.info()
 
     # Store
-    print("📦 ایجاد Zustand Store...")
+    logger.info("📦 ایجاد Zustand Store...")
     write_file(HYDROMA / "store" / "hydromaStore.ts", STORE, "Store")
     write_file(HYDROMA / "store" / "index.ts", STORE_INDEX, "Store barrel")
-    print()
+    logger.info()
 
     # Tests
-    print("🧪 ایجاد تست‌ها...")
+    logger.info("🧪 ایجاد تست‌ها...")
     write_file(HYDROMA / "__tests__" / "hydromaStore.test.ts", STORE_TEST, "Store tests")
-    print()
+    logger.info()
 
     # Summary
-    print("=" * 70)
-    print("  📊 Summary")
-    print("=" * 70 + "\n")
+    logger.info("=" * 70)
+    logger.info("  📊 Summary")
+    logger.info("=" * 70 + "\n")
 
-    print("  Files created:")
-    print(f"    • constants/engineeringOps.ts")
-    print(f"    • constants/viewModes.ts")
-    print(f"    • constants/toolModes.ts")
-    print(f"    • constants/layerConfig.ts")
-    print(f"    • constants/index.ts")
-    print(f"    • store/hydromaStore.ts ({len(STORE.splitlines())} lines)")
-    print(f"    • store/index.ts")
-    print(f"    • __tests__/hydromaStore.test.ts ({len(STORE_TEST.splitlines())} lines)")
-    print()
+    logger.info("  Files created:")
+    logger.info(f"    • constants/engineeringOps.ts")
+    logger.info(f"    • constants/viewModes.ts")
+    logger.info(f"    • constants/toolModes.ts")
+    logger.info(f"    • constants/layerConfig.ts")
+    logger.info(f"    • constants/index.ts")
+    logger.info(f"    • store/hydromaStore.ts ({len(STORE.splitlines())} lines)")
+    logger.info(f"    • store/index.ts")
+    logger.info(f"    • __tests__/hydromaStore.test.ts ({len(STORE_TEST.splitlines())} lines)")
+    logger.info()
 
-    print("  Store features:")
-    print(f"    • 28 state variables")
-    print(f"    • 30+ actions")
-    print(f"    • 8 selectors")
-    print(f"    • DevTools support")
-    print(f"    • Reset functionality")
-    print()
+    logger.info("  Store features:")
+    logger.info(f"    • 28 state variables")
+    logger.info(f"    • 30+ actions")
+    logger.info(f"    • 8 selectors")
+    logger.info(f"    • DevTools support")
+    logger.info(f"    • Reset functionality")
+    logger.info()
 
     # Git PATH
     git_paths = [
@@ -1086,7 +1089,7 @@ def main():
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # Run tests
-    print("🧪 اجرای تست‌ها...")
+    logger.info("🧪 اجرای تست‌ها...")
     result = subprocess.run(
         "pnpm test hydromaStore.test.ts",
         shell=True,
@@ -1099,17 +1102,17 @@ def main():
     )
 
     if result.returncode == 0:
-        print("  ✓ همه تست‌ها پاس شدند")
+        logger.info("  ✓ همه تست‌ها پاس شدند")
         for line in result.stdout.splitlines():
             if "Test Files" in line or "Tests" in line:
-                print(f"  {line.strip()}")
+                logger.info(f"  {line.strip()}")
     else:
-        print("  ⚠ برخی تست‌ها شکست خوردند")
-        print(result.stdout[-500:])
-    print()
+        logger.info("  ⚠ برخی تست‌ها شکست خوردند")
+        logger.info(result.stdout[-500:])
+    logger.info()
 
     # Commit
-    print("📦 commit تغییرات...")
+    logger.info("📦 commit تغییرات...")
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
         subprocess.run(
@@ -1117,24 +1120,24 @@ def main():
             shell=True, cwd=PROJECT_ROOT, check=True
         )
         subprocess.run("git push origin main", shell=True, cwd=PROJECT_ROOT, check=True)
-        print("  ✓ commit و push موفق بود\n")
+        logger.info("  ✓ commit و push موفق بود\n")
     except Exception as e:
-        print(f"  ⚠ commit: {e}\n")
+        logger.info(f"  ⚠ commit: {e}\n")
 
     # Next steps
-    print("=" * 70)
-    print("  ✅ Day 2 Complete!")
-    print("=" * 70 + "\n")
+    logger.info("=" * 70)
+    logger.info("  ✅ Day 2 Complete!")
+    logger.info("=" * 70 + "\n")
 
-    print("  Next steps (Day 3):")
-    print("    • Extract TerrainMesh.tsx to components/canvas/")
-    print("    • Use types from features/hydroma/types/")
-    print("    • Add error boundary")
-    print("    • Write component tests")
-    print()
+    logger.info("  Next steps (Day 3):")
+    logger.info("    • Extract TerrainMesh.tsx to components/canvas/")
+    logger.info("    • Use types from features/hydroma/types/")
+    logger.error("    • Add error boundary")
+    logger.info("    • Write component tests")
+    logger.info()
 
-    print("  🎯 Progress: 8804 lines → ~8750 lines (types + store extracted)")
-    print()
+    logger.info("  🎯 Progress: 8804 lines → ~8750 lines (types + store extracted)")
+    logger.info()
 
 
 if __name__ == "__main__":

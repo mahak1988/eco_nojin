@@ -6,6 +6,9 @@ Phase B-3 Wave 1 - Adaptive Test Generation
 Reads actual source code and generates tests that match the real API.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import re
@@ -391,21 +394,21 @@ def generate_store_test(content, exports):
 
 
 def main():
-    print("")
-    print("=" * 70)
-    print("  Phase B-3 Wave 1 - Adaptive Test Generation")
-    print("=" * 70)
-    print("")
-    print("  Strategy: Read actual source code and generate matching tests")
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  Phase B-3 Wave 1 - Adaptive Test Generation")
+    logger.info("=" * 70)
+    logger.info("")
+    logger.info("  Strategy: Read actual source code and generate matching tests")
+    logger.info("")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # Step 1: Read source files
-    print("[Step 1] Reading source files")
-    print("-" * 70)
+    logger.info("[Step 1] Reading source files")
+    logger.info("-" * 70)
 
     terrain_file = LIB_DIR / "terrainGenerator.ts"
     dem_file = LIB_DIR / "demApi.ts"
@@ -430,11 +433,11 @@ def main():
     else:
         err("hydromaStore.ts not found")
     
-    print("")
+    logger.info("")
 
     # Step 2: Analyze APIs
-    print("[Step 2] Analyzing actual APIs")
-    print("-" * 70)
+    logger.info("[Step 2] Analyzing actual APIs")
+    logger.info("-" * 70)
 
     terrain_exports = extract_exports(terrain_content) if terrain_content else {'functions': [], 'interfaces': [], 'types': [], 'consts': []}
     dem_exports = extract_exports(dem_content) if dem_content else {'functions': [], 'interfaces': [], 'types': [], 'consts': []}
@@ -451,11 +454,11 @@ def main():
     
     store_actions = extract_store_actions(store_content) if store_content else []
     info(f"hydromaStore.ts actions: {len(store_actions)}")
-    print("")
+    logger.info("")
 
     # Step 3: Generate tests
-    print("[Step 3] Generating adaptive tests")
-    print("-" * 70)
+    logger.info("[Step 3] Generating adaptive tests")
+    logger.info("-" * 70)
 
     # Create test directories
     lib_tests_dir = LIB_DIR / "__tests__"
@@ -479,11 +482,11 @@ def main():
         (hydroma_tests_dir / "hydromaStore.enhanced.test.ts").write_text(store_test, encoding="utf-8")
         ok(f"Generated hydromaStore.enhanced.test.ts ({len(store_test)} bytes)")
 
-    print("")
+    logger.info("")
 
     # Step 4: Run tests
-    print("[Step 4] Running adaptive tests")
-    print("-" * 70)
+    logger.info("[Step 4] Running adaptive tests")
+    logger.info("-" * 70)
     info("Executing: pnpm test:coverage")
 
     result = subprocess.run(
@@ -506,7 +509,7 @@ def main():
             "All files", "terrainGenerator", "demApi", "hydromaStore",
             "passed", "failed"
         ]):
-            print(f"  {line}")
+            logger.info(f"  {line}")
 
     if result.returncode == 0:
         ok("All tests passed!")
@@ -514,24 +517,24 @@ def main():
     else:
         warn("Some tests had issues")
         final_error_count = output.count("FAIL")
-    print("")
+    logger.info("")
 
     # Step 5: Coverage improvement
-    print("[Step 5] Coverage improvement summary")
-    print("-" * 70)
+    logger.info("[Step 5] Coverage improvement summary")
+    logger.info("-" * 70)
 
     # Parse coverage from output
     coverage_lines = [l for l in output.splitlines() if '|' in l and ('%' in l or 'All files' in l)]
     
     if coverage_lines:
-        print("\n  Coverage Summary:")
+        logger.info("\n  Coverage Summary:")
         for line in coverage_lines[:20]:
-            print(f"  {line}")
-    print("")
+            logger.info(f"  {line}")
+    logger.info("")
 
     # Step 6: Commit
-    print("[Step 6] Committing changes")
-    print("-" * 70)
+    logger.info("[Step 6] Committing changes")
+    logger.info("-" * 70)
 
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -557,39 +560,39 @@ def main():
         warn(f"Commit issue: {e}")
 
     # Final Report
-    print("")
-    print("=" * 70)
-    print("  Phase B-3 Wave 1: Adaptive Testing - COMPLETE!")
-    print("=" * 70)
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  Phase B-3 Wave 1: Adaptive Testing - COMPLETE!")
+    logger.info("=" * 70)
+    logger.info("")
 
-    print("  Tests Generated:")
+    logger.info("  Tests Generated:")
     if terrain_content:
-        print(f"    * terrainGenerator.test.ts ({len(terrain_exports['functions'])} functions tested)")
+        logger.info(f"    * terrainGenerator.test.ts ({len(terrain_exports['functions'])} functions tested)")
     if dem_content:
-        print(f"    * demApi.test.ts ({len(dem_exports['functions'])} functions tested)")
+        logger.info(f"    * demApi.test.ts ({len(dem_exports['functions'])} functions tested)")
     if store_content:
-        print(f"    * hydromaStore.enhanced.test.ts ({len(store_actions)} actions tested)")
-    print("")
+        logger.info(f"    * hydromaStore.enhanced.test.ts ({len(store_actions)} actions tested)")
+    logger.info("")
 
-    print("  Key Improvements:")
-    print("    * Tests match actual API signatures")
-    print("    * No incorrect assumptions about function names")
-    print("    * Safe assertions that don't break on API changes")
-    print("    * Foundation for incremental coverage increase")
-    print("")
+    logger.info("  Key Improvements:")
+    logger.info("    * Tests match actual API signatures")
+    logger.info("    * No incorrect assumptions about function names")
+    logger.info("    * Safe assertions that don't break on API changes")
+    logger.info("    * Foundation for incremental coverage increase")
+    logger.info("")
 
-    print("  Next Steps:")
-    print("    1. Review coverage/index.html for improvement")
-    print("    2. Identify remaining low-coverage modules")
-    print("    3. Add targeted tests for critical paths")
-    print("    4. Target: 80%+ overall coverage")
-    print("")
+    logger.info("  Next Steps:")
+    logger.info("    1. Review coverage/index.html for improvement")
+    logger.info("    2. Identify remaining low-coverage modules")
+    logger.info("    3. Add targeted tests for critical paths")
+    logger.info("    4. Target: 80%+ overall coverage")
+    logger.info("")
 
-    print("  Commands:")
-    print("    cd D:\\eco_nojin\\frontend")
-    print("    pnpm test:coverage  # See updated coverage")
-    print("")
+    logger.info("  Commands:")
+    logger.info("    cd D:\\eco_nojin\\frontend")
+    logger.info("    pnpm test:coverage  # See updated coverage")
+    logger.info("")
 
     return 0
 

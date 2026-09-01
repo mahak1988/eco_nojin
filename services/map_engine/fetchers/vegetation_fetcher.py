@@ -1,4 +1,7 @@
 """Vegetation Fetcher - Synthetic Sentinel-2 spectral data with phenology."""
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import hashlib
@@ -71,10 +74,10 @@ class VegetationFetcher(MapFetcher):
         if cache_path.exists():
             try:
                 da = rioxarray.open_rasterio(str(cache_path), masked=True)
-                print(f"  [VEGETATION] Loaded from cache: {da.shape}")
+                logger.info(f"  [VEGETATION] Loaded from cache: {da.shape}")
                 return da
             except Exception as e:
-                print(f"  [VEGETATION] Cache load failed: {e}")
+                logger.info(f"  [VEGETATION] Cache load failed: {e}")
                 cache_path.unlink(missing_ok=True)
 
         # Generate synthetic Sentinel-2
@@ -84,7 +87,7 @@ class VegetationFetcher(MapFetcher):
 
         # Save to cache
         s2_data.rio.to_raster(str(cache_path), driver="GTiff", compress="lzw")
-        print(f"  [VEGETATION] Generated: {s2_data.shape}")
+        logger.info(f"  [VEGETATION] Generated: {s2_data.shape}")
         return s2_data
 
     async def _generate_synthetic_s2(

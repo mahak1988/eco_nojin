@@ -4,6 +4,9 @@ Economic Engine - Integration Module.
 Connects economic calculations with outputs from other modules like agriculture,
 infrastructure, and carbon.
 """
+import structlog
+
+logger = structlog.get_logger()
 from datetime import date
 from typing import Any
 
@@ -52,7 +55,7 @@ def calculate_agricultural_project_economics(
     bio_dosage_kg_per_ha = bio_rec.get("dosage_kg_ha", 5.0)
 
     # --- Costing ---
-    print("Calculating costs...")
+    logger.info("Calculating costs...")
     agr_cost_details = calculate_agricultural_cost(
         area_hectares=area_ha,
         crop_type=crop_type,
@@ -76,7 +79,7 @@ def calculate_agricultural_project_economics(
     total_production_cost_irr = agr_cost_details["total_cost_irr"]
 
     # --- Revenue ---
-    print("Calculating revenues...")
+    logger.info("Calculating revenues...")
     agr_rev_details = calculate_agricultural_revenue(
         area_hectares=area_ha,
         yield_ton_per_ha=expected_yield_ton_per_ha,
@@ -105,7 +108,7 @@ def calculate_agricultural_project_economics(
     total_revenue_irr = aggregated_revenue["total_revenue_irr"]
 
     # --- ROI ---
-    print("Calculating ROI...")
+    logger.info("Calculating ROI...")
     roi_details = calculate_agricultural_roi(
         area_hectares=area_ha,
         yield_ton_per_ha=improved_yield, # Use improved yield
@@ -117,7 +120,7 @@ def calculate_agricultural_project_economics(
     )
 
     # --- Risk ---
-    print("Assessing risks...")
+    logger.info("Assessing risks...")
     market_risk = assess_market_price_risk(
         base_price=market_data.get("commodity_price_per_ton_irr", 2000000),
         volatility=risk_params.get("price_volatility", 0.15),
@@ -133,7 +136,7 @@ def calculate_agricultural_project_economics(
     )
 
     # --- Employment (Direct only for this example) ---
-    print("Estimating employment...")
+    logger.info("Estimating employment...")
     employment = estimate_direct_employment(
         activity_type="cultivation",
         scale_of_activity=area_ha,

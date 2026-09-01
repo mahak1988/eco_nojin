@@ -14,6 +14,9 @@ Root causes:
    Solution: Type assertion on the object
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import re
@@ -196,7 +199,7 @@ def fix_hydroma3d():
             info(f"  Context around line {target+1}:")
             for j in range(max(0, target-3), min(len(lines), target+3)):
                 marker = " <<<" if j == target else ""
-                print(f"    {j+1:3d}: {lines[j]}{marker}")
+                logger.info(f"    {j+1:3d}: {lines[j]}{marker}")
     
     # Strategy: Look for callback parameters with bare 'ref' and 'off'
     # Common patterns:
@@ -330,26 +333,26 @@ def fix_motor_runner():
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🔬 FINAL FIX: 7 TypeScript Errors\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.error("\033[1m\033[96m  🔬 FINAL FIX: 7 TypeScript Errors\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
-    print("\033[1mStep 1: Applying precise fixes...\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 1: Applying precise fixes...\033[0m")
+    logger.info("-" * 70)
     
     fix_terrain_mesh()
     fix_scene_content()
     fix_use_terrain_click()
     fix_hydroma3d()
     fix_motor_runner()
-    print()
+    logger.info()
 
-    print("\033[1mStep 2: TypeScript Type Check\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 2: TypeScript Type Check\033[0m")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm type-check",
@@ -370,15 +373,15 @@ def main():
             warn(f"TypeScript: {error_count} errors remaining")
             error_lines = [l for l in output.splitlines() if "error TS" in l][:20]
             for line in error_lines:
-                print(f"  {line}")
+                logger.info(f"  {line}")
             final_error_count = error_count
         else:
             ok("TypeScript: No errors")
             final_error_count = 0
-    print()
+    logger.info()
 
-    print("\033[1mStep 3: Build Test\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 3: Build Test\033[0m")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm build",
@@ -393,12 +396,12 @@ def main():
     else:
         err("Build failed")
         for line in (result.stdout + result.stderr).splitlines()[-25:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
-    print()
+    logger.info()
 
-    print("\033[1mStep 4: Run Tests\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 4: Run Tests\033[0m")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test",
@@ -410,11 +413,11 @@ def main():
     
     for line in result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
-    print("\033[1mStep 5: Commit\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 5: Commit\033[0m")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -441,13 +444,13 @@ Phase B-1: Code Quality Setup COMPLETE!'''
     except Exception as e:
         warn(f"Commit issue: {e}")
 
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
     if final_error_count == 0:
-        print("\033[1m\033[92m  🎉🎉🎉 PHASE B-1: 100% COMPLETE! 🎉🎉🎉\033[0m")
-        print("\033[1m\033[92m  Zero TypeScript Errors | Build OK | All Tests Pass\033[0m")
+        logger.info("\033[1m\033[92m  🎉🎉🎉 PHASE B-1: 100% COMPLETE! 🎉🎉🎉\033[0m")
+        logger.error("\033[1m\033[92m  Zero TypeScript Errors | Build OK | All Tests Pass\033[0m")
     else:
-        print(f"\033[1m\033[93m  ⚠️  {final_error_count} errors remain\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+        logger.error(f"\033[1m\033[93m  ⚠️  {final_error_count} errors remain\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
     return 0
 

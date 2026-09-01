@@ -17,6 +17,9 @@ Outputs:
 - Additionality & permanence proof
 - Co-benefits quantification
 """
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import hashlib
@@ -179,21 +182,21 @@ class MRVSystemMotor(AbstractScientificMotor):
             project = self._parse_project_input(project_data)
 
             # === Phase 1: MONITORING ===
-            print("  [MRV] Phase 1: Monitoring (satellite data)")
+            logger.info("  [MRV] Phase 1: Monitoring (satellite data)")
             monitoring = self._monitoring_phase(project)
 
             # === Phase 2: REPORTING ===
-            print("  [MRV] Phase 2: Reporting (scientific calculations)")
+            logger.info("  [MRV] Phase 2: Reporting (scientific calculations)")
             carbon_seq, co_benefits = self._reporting_phase(project, monitoring)
 
             # === Phase 3: VERIFICATION ===
-            print("  [MRV] Phase 3: Verification (blockchain + standards)")
+            logger.info("  [MRV] Phase 3: Verification (blockchain + standards)")
             verification = self._verification_phase(
                 project, monitoring, carbon_seq
             )
 
             # === Phase 4: CREDIT ISSUANCE ===
-            print("  [MRV] Phase 4: Carbon credit issuance")
+            logger.info("  [MRV] Phase 4: Carbon credit issuance")
             credits = self._issue_credits(
                 project, carbon_seq, verification
             )

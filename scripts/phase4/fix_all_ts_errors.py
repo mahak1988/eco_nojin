@@ -8,6 +8,9 @@ Strategy:
 3. Fix type mismatches
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import json
@@ -329,51 +332,51 @@ def fix_visualization_3d():
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🔧 Fix All TypeScript Errors\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.error("\033[1m\033[96m  🔧 Fix All TypeScript Errors\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # ═══ Step 1: Relax tsconfig ═══
-    print("\033[1mStep 1: Relax tsconfig.json\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 1: Relax tsconfig.json\033[0m")
+    logger.info("-" * 70)
     info("خاموش کردن noUnusedLocals و noUnusedParameters")
     info("این ۱۴۰ خطای unused imports/variables را حل می‌کند")
     
     TSCONFIG.write_text(TSCONFIG_RELAXED, encoding="utf-8")
     ok("tsconfig.json تعدیل شد")
-    print()
+    logger.info()
 
     # ═══ Step 2: Fix MarketplaceDashboard ═══
-    print("\033[1mStep 2: Fix MarketplaceDashboard import\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 2: Fix MarketplaceDashboard import\033[0m")
+    logger.info("-" * 70)
     fix_marketplace_import()
-    print()
+    logger.info()
 
     # ═══ Step 3: Fix api/client.ts ═══
-    print("\033[1mStep 3: Fix api/client.ts missing functions\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 3: Fix api/client.ts missing functions\033[0m")
+    logger.info("-" * 70)
     fix_api_client()
-    print()
+    logger.info()
 
     # ═══ Step 4: Fix MotorRunner ═══
-    print("\033[1mStep 4: Fix MotorRunner elevation_m\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 4: Fix MotorRunner elevation_m\033[0m")
+    logger.info("-" * 70)
     fix_motor_runner()
-    print()
+    logger.info()
 
     # ═══ Step 5: Fix Visualization3D ═══
-    print("\033[1mStep 5: Fix Visualization3D type errors\033[0m")
-    print("-" * 70)
+    logger.error("\033[1mStep 5: Fix Visualization3D type errors\033[0m")
+    logger.info("-" * 70)
     fix_visualization_3d()
-    print()
+    logger.info()
 
     # ═══ Step 6: Type Check ═══
-    print("\033[1mStep 6: TypeScript Type Check\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 6: TypeScript Type Check\033[0m")
+    logger.info("-" * 70)
     info("Running tsc --noEmit...")
     
     result = subprocess.run(
@@ -400,17 +403,17 @@ def main():
             # Show first 10 errors
             error_lines = [l for l in output.splitlines() if "error TS" in l][:10]
             for line in error_lines:
-                print(f"  {line}")
+                logger.info(f"  {line}")
             
             if error_count > 10:
-                print(f"  ... and {error_count - 10} more errors")
+                logger.error(f"  ... and {error_count - 10} more errors")
         else:
             ok("TypeScript: No critical errors")
-    print()
+    logger.info()
 
     # ═══ Step 7: Build ═══
-    print("\033[1mStep 7: Build Test\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 7: Build Test\033[0m")
+    logger.info("-" * 70)
     info("Building to verify changes...")
     
     result = subprocess.run(
@@ -429,13 +432,13 @@ def main():
     else:
         err("Build failed")
         for line in (result.stdout + result.stderr).splitlines()[-20:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
-    print()
+    logger.info()
 
     # ═══ Step 8: Tests ═══
-    print("\033[1mStep 8: Run Tests\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 8: Run Tests\033[0m")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test",
@@ -450,12 +453,12 @@ def main():
     
     for line in result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 9: Commit ═══
-    print("\033[1mStep 9: Commit\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 9: Commit\033[0m")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -480,26 +483,26 @@ All TypeScript errors now resolved.'''
         warn(f"Commit issue: {e}")
 
     # ═══ Final Report ═══
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 All TypeScript Errors Fixed!\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.error("\033[1m\033[92m  🎉 All TypeScript Errors Fixed!\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 Results:")
-    print("    ✓ TypeScript: Zero critical errors")
-    print("    ✓ Build: Successful")
-    print("    ✓ Tests: All passing")
-    print()
+    logger.info("  📊 Results:")
+    logger.error("    ✓ TypeScript: Zero critical errors")
+    logger.info("    ✓ Build: Successful")
+    logger.info("    ✓ Tests: All passing")
+    logger.info()
 
-    print("  🔧 Fixes Applied:")
-    print("    • Relaxed tsconfig (140 unused imports/variables)")
-    print("    • Fixed MarketplaceDashboard import path")
-    print("    • Added missing API client functions")
-    print("    • Fixed MotorRunner elevation_m property")
-    print("    • Fixed Visualization3D geometry type")
-    print()
+    logger.info("  🔧 Fixes Applied:")
+    logger.info("    • Relaxed tsconfig (140 unused imports/variables)")
+    logger.info("    • Fixed MarketplaceDashboard import path")
+    logger.info("    • Added missing API client functions")
+    logger.info("    • Fixed MotorRunner elevation_m property")
+    logger.info("    • Fixed Visualization3D geometry type")
+    logger.info()
 
-    print("  🚀 Ready for Phase B-2: Increase Test Coverage")
-    print()
+    logger.info("  🚀 Ready for Phase B-2: Increase Test Coverage")
+    logger.info()
 
     return 0
 

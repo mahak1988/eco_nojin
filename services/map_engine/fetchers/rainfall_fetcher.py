@@ -1,4 +1,7 @@
 """Rainfall Fetcher - Computes R-factor from climate data."""
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import hashlib
@@ -37,15 +40,15 @@ class RainfallFetcher(MapFetcher):
                 da = rioxarray.open_rasterio(str(cache_path), masked=True)
                 if "band" in da.dims and da.sizes["band"] == 1:
                     da = da.isel(band=0, drop=True)
-                print(f"  [RAINFALL] Loaded from cache: {da.shape}")
+                logger.info(f"  [RAINFALL] Loaded from cache: {da.shape}")
                 return da
             except Exception as e:
-                print(f"  [RAINFALL] Cache load failed: {e}")
+                logger.info(f"  [RAINFALL] Cache load failed: {e}")
                 cache_path.unlink(missing_ok=True)
 
         r_factor = await self._generate_synthetic_r(region, resolution)
         r_factor.rio.to_raster(str(cache_path), driver="GTiff", compress="lzw")
-        print(f"  [RAINFALL] Generated: {r_factor.shape}")
+        logger.info(f"  [RAINFALL] Generated: {r_factor.shape}")
         return r_factor
 
     async def _generate_synthetic_r(self, region: Polygon, resolution: float) -> xr.DataArray:

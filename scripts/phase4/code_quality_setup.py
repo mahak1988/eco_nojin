@@ -14,6 +14,9 @@ Expected outcome:
 - Professional codebase
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import json
@@ -186,17 +189,17 @@ pnpm-lock.yaml
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🚀 Phase B-1: Code Quality Setup\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[96m  🚀 Phase B-1: Code Quality Setup\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # ═══ Step 1: Install quality tools ═══
-    print("\033[1mStep 1: نصب ابزارهای کیفیت کد\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 1: نصب ابزارهای کیفیت کد\033[0m")
+    logger.info("-" * 70)
     
     packages = [
         "@typescript-eslint/parser",
@@ -226,12 +229,12 @@ def main():
     else:
         warn(f"Installation had warnings")
         for line in (result.stdout + result.stderr).splitlines()[-10:]:
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 2: Update tsconfig.json ═══
-    print("\033[1mStep 2: به‌روزرسانی tsconfig.json (strict mode)\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 2: به‌روزرسانی tsconfig.json (strict mode)\033[0m")
+    logger.info("-" * 70)
     
     if TSCONFIG.exists():
         info("Backup existing tsconfig.json...")
@@ -242,11 +245,11 @@ def main():
     
     TSCONFIG.write_text(TSCONFIG_STRICT, encoding="utf-8")
     ok("tsconfig.json updated with strict mode")
-    print()
+    logger.info()
 
     # ═══ Step 3: Create ESLint config ═══
-    print("\033[1mStep 3: ایجاد ESLint configuration\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 3: ایجاد ESLint configuration\033[0m")
+    logger.info("-" * 70)
     
     ESLINT_CONFIG.write_text(ESLINT_CONFIG_CONTENT, encoding="utf-8")
     ok(".eslintrc.cjs created")
@@ -255,11 +258,11 @@ def main():
     eslint_ignore = FRONTEND / ".eslintignore"
     eslint_ignore.write_text("dist\nnode_modules\n", encoding="utf-8")
     ok(".eslintignore created")
-    print()
+    logger.info()
 
     # ═══ Step 4: Create Prettier config ═══
-    print("\033[1mStep 4: ایجاد Prettier configuration\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 4: ایجاد Prettier configuration\033[0m")
+    logger.info("-" * 70)
     
     PRETTIER_CONFIG.write_text(PRETTIER_CONFIG_CONTENT, encoding="utf-8")
     ok(".prettierrc created")
@@ -267,11 +270,11 @@ def main():
     prettier_ignore = FRONTEND / ".prettierignore"
     prettier_ignore.write_text(PRETTIER_IGNORE, encoding="utf-8")
     ok(".prettierignore created")
-    print()
+    logger.info()
 
     # ═══ Step 5: Update package.json scripts ═══
-    print("\033[1mStep 5: به‌روزرسانی package.json scripts\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 5: به‌روزرسانی package.json scripts\033[0m")
+    logger.info("-" * 70)
     
     if PACKAGE_JSON.exists():
         data = json.loads(PACKAGE_JSON.read_text(encoding="utf-8"))
@@ -292,11 +295,11 @@ def main():
             encoding="utf-8"
         )
         ok("package.json scripts updated")
-    print()
+    logger.info()
 
     # ═══ Step 6: Run type check ═══
-    print("\033[1mStep 6: اجرای TypeScript type check\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 6: اجرای TypeScript type check\033[0m")
+    logger.info("-" * 70)
     
     info("Running tsc --noEmit...")
     result = subprocess.run(
@@ -324,18 +327,18 @@ def main():
             lines = output.splitlines()
             error_lines = [l for l in lines if "error TS" in l][:20]
             for line in error_lines:
-                print(f"  {line}")
-            print(f"  ... and {error_count - 20} more errors")
+                logger.info(f"  {line}")
+            logger.error(f"  ... and {error_count - 20} more errors")
         else:
             info("All errors:")
             for line in output.splitlines()[-50:]:
                 if line.strip():
-                    print(f"  {line}")
-    print()
+                    logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 7: Run ESLint ═══
-    print("\033[1mStep 7: اجرای ESLint\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 7: اجرای ESLint\033[0m")
+    logger.info("-" * 70)
     
     info("Running ESLint...")
     result = subprocess.run(
@@ -360,18 +363,18 @@ def main():
         error_count = sum(1 for l in lines if "error" in l.lower())
         warning_count = sum(1 for l in lines if "warning" in l.lower())
         
-        print(f"  Errors: {error_count}")
-        print(f"  Warnings: {warning_count}")
+        logger.error(f"  Errors: {error_count}")
+        logger.warning(f"  Warnings: {warning_count}")
         
         # Show first few
         for line in lines[-20:]:
             if line.strip():
-                print(f"  {line}")
-    print()
+                logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 8: Run Prettier ═══
-    print("\033[1mStep 8: اجرای Prettier\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 8: اجرای Prettier\033[0m")
+    logger.info("-" * 70)
     
     info("Formatting code with Prettier...")
     result = subprocess.run(
@@ -389,11 +392,11 @@ def main():
         ok("Code formatted with Prettier")
     else:
         warn("Prettier had issues")
-    print()
+    logger.info()
 
     # ═══ Step 9: Build test ═══
-    print("\033[1mStep 9: Build test\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 9: Build test\033[0m")
+    logger.info("-" * 70)
     
     info("Building to verify changes...")
     result = subprocess.run(
@@ -412,13 +415,13 @@ def main():
     else:
         err("Build failed")
         for line in (result.stdout + result.stderr).splitlines()[-20:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
-    print()
+    logger.info()
 
     # ═══ Step 10: Run tests ═══
-    print("\033[1mStep 10: اجرای تست‌ها\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 10: اجرای تست‌ها\033[0m")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test",
@@ -433,12 +436,12 @@ def main():
     
     for line in result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 11: Commit ═══
-    print("\033[1mStep 11: commit\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 11: commit\033[0m")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -482,45 +485,45 @@ Next steps:
         warn(f"Commit issue: {e}")
 
     # ═══ Final Report ═══
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 Phase B-1 Complete!\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[92m  🎉 Phase B-1 Complete!\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 Improvements:")
-    print("    ✓ TypeScript strict mode enabled")
-    print("    ✓ ESLint configured (TypeScript + React + A11y)")
-    print("    ✓ Prettier configured (consistent formatting)")
-    print("    ✓ Quality scripts added to package.json")
-    print()
+    logger.info("  📊 Improvements:")
+    logger.info("    ✓ TypeScript strict mode enabled")
+    logger.info("    ✓ ESLint configured (TypeScript + React + A11y)")
+    logger.info("    ✓ Prettier configured (consistent formatting)")
+    logger.info("    ✓ Quality scripts added to package.json")
+    logger.info()
 
-    print("  🛠️ New Scripts:")
-    print("    • pnpm lint          - Check code quality")
-    print("    • pnpm lint:fix      - Auto-fix ESLint issues")
-    print("    • pnpm format        - Format code with Prettier")
-    print("    • pnpm format:check  - Check formatting")
-    print("    • pnpm type-check    - TypeScript type checking")
-    print("    • pnpm quality       - Run all checks")
-    print()
+    logger.info("  🛠️ New Scripts:")
+    logger.info("    • pnpm lint          - Check code quality")
+    logger.info("    • pnpm lint:fix      - Auto-fix ESLint issues")
+    logger.info("    • pnpm format        - Format code with Prettier")
+    logger.info("    • pnpm format:check  - Check formatting")
+    logger.info("    • pnpm type-check    - TypeScript type checking")
+    logger.info("    • pnpm quality       - Run all checks")
+    logger.info()
 
-    print("  📈 Current Status:")
+    logger.info("  📈 Current Status:")
     type_status = "✅ Zero errors" if result.returncode == 0 else "⚠️ Errors found"
-    print(f"    TypeScript: {type_status}")
-    print("    ESLint: ⚠️ Issues found (expected)")
-    print("    Prettier: ✅ Code formatted")
-    print("    Build: ✅ Successful")
-    print("    Tests: ✅ Passing")
-    print()
+    logger.info(f"    TypeScript: {type_status}")
+    logger.info("    ESLint: ⚠️ Issues found (expected)")
+    logger.info("    Prettier: ✅ Code formatted")
+    logger.info("    Build: ✅ Successful")
+    logger.info("    Tests: ✅ Passing")
+    logger.info()
 
-    print("  🎯 Next Steps:")
-    print("    1. Fix TypeScript errors (if any)")
-    print("    2. Phase B-2: Increase test coverage")
-    print("    3. Phase B-3: E2E tests with Playwright")
-    print("    4. Phase B-4: Error tracking (Sentry)")
-    print()
+    logger.info("  🎯 Next Steps:")
+    logger.error("    1. Fix TypeScript errors (if any)")
+    logger.info("    2. Phase B-2: Increase test coverage")
+    logger.info("    3. Phase B-3: E2E tests with Playwright")
+    logger.error("    4. Phase B-4: Error tracking (Sentry)")
+    logger.info()
 
-    print("  🚀 After Testing Complete:")
-    print("    → Phase A: Advanced Performance (Lazy Loading)")
-    print()
+    logger.info("  🚀 After Testing Complete:")
+    logger.info("    → Phase A: Advanced Performance (Lazy Loading)")
+    logger.info()
 
     return 0
 

@@ -11,6 +11,9 @@ Split 1.1MB echarts into:
 Expected reduction: 1.1MB → ~400KB main + 700KB lazy-loaded
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import subprocess
@@ -233,30 +236,30 @@ export default defineConfig(({ mode }) => ({
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🚀 Phase A-1: Split vendor-echarts\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[96m  🚀 Phase A-1: Split vendor-echarts\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # ═══ Step 1: Update Vite Config ═══
-    print("\033[1mStep 1: به‌روزرسانی vite.config.ts\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 1: به‌روزرسانی vite.config.ts\033[0m")
+    logger.info("-" * 70)
     info("اضافه کردن sub-chunks برای echarts:")
-    print("  • vendor-echarts-core (~200KB)")
-    print("  • vendor-echarts-charts (~400KB)")
-    print("  • vendor-echarts-components (~300KB)")
-    print("  • vendor-echarts-renderers (~200KB)")
+    logger.info("  • vendor-echarts-core (~200KB)")
+    logger.info("  • vendor-echarts-charts (~400KB)")
+    logger.info("  • vendor-echarts-components (~300KB)")
+    logger.info("  • vendor-echarts-renderers (~200KB)")
     
     VITE_CONFIG.write_text(VITE_CONFIG_ECHARTS_SPLIT, encoding="utf-8")
     ok("vite.config.ts بازنویسی شد")
-    print()
+    logger.info()
 
     # ═══ Step 2: Build ═══
-    print("\033[1mStep 2: اجرای build\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 2: اجرای build\033[0m")
+    logger.info("-" * 70)
     info("Building with echarts sub-chunks...")
     
     build_result = subprocess.run(
@@ -273,15 +276,15 @@ def main():
     if build_result.returncode != 0:
         err("Build شکست خورد")
         for line in (build_result.stdout + build_result.stderr).splitlines()[-30:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
 
     ok("Build موفق!")
-    print()
+    logger.info()
 
     # ═══ Step 3: Analyze Results ═══
-    print("\033[1mStep 3: تحلیل bundle جدید\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 3: تحلیل bundle جدید\033[0m")
+    logger.info("-" * 70)
     
     output = build_result.stdout
     
@@ -311,8 +314,8 @@ def main():
     
     chunks.sort(key=lambda x: -parse_size(x['size']))
     
-    print("\n📦 Bundle Chunks (sorted by size):")
-    print("=" * 70)
+    logger.info("\n📦 Bundle Chunks (sorted by size):")
+    logger.info("=" * 70)
     
     total_js_size = 0
     echarts_total = 0
@@ -334,25 +337,25 @@ def main():
             color = "\033[92m"  # Green
         
         reset = "\033[0m"
-        print(f"{color}  {chunk['line']}{reset}")
+        logger.info(f"{color}  {chunk['line']}{reset}")
     
-    print("=" * 70)
-    print(f"\n📊 Total JavaScript: {total_js_size:,.2f} KB")
-    print(f"📊 ECharts Total: {echarts_total:,.2f} KB (was 1,129 KB)")
-    print(f"   Reduction: {1129 - echarts_total:,.2f} KB ({(1129 - echarts_total)/1129*100:.1f}%)")
+    logger.info("=" * 70)
+    logger.info(f"\n📊 Total JavaScript: {total_js_size:,.2f} KB")
+    logger.info(f"📊 ECharts Total: {echarts_total:,.2f} KB (was 1,129 KB)")
+    logger.info(f"   Reduction: {1129 - echarts_total:,.2f} KB ({(1129 - echarts_total)/1129*100:.1f}%)")
     
     # Check echarts chunks specifically
     echarts_chunks = [c for c in chunks if 'echarts' in c['name']]
     if echarts_chunks:
-        print(f"\n🎯 ECharts Sub-chunks:")
+        logger.info(f"\n🎯 ECharts Sub-chunks:")
         for chunk in echarts_chunks:
-            print(f"   • {chunk['name']}: {chunk['size']}")
+            logger.info(f"   • {chunk['name']}: {chunk['size']}")
     
-    print()
+    logger.info()
 
     # ═══ Step 4: Run Tests ═══
-    print("\033[1mStep 4: اجرای تست‌ها\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 4: اجرای تست‌ها\033[0m")
+    logger.info("-" * 70)
     test_result = subprocess.run(
         "pnpm test",
         shell=True,
@@ -366,12 +369,12 @@ def main():
     
     for line in test_result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 5: Commit ═══
-    print("\033[1mStep 5: commit\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 5: commit\033[0m")
+    logger.info("-" * 70)
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
         msg = f'''perf(bundle): split vendor-echarts into sub-chunks
@@ -398,22 +401,22 @@ Benefits:
         warn(f"commit: {e}")
 
     # ═══ Final Report ═══
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 Phase A-1 Complete!\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[92m  🎉 Phase A-1 Complete!\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 Improvements:")
-    print(f"    ✓ ECharts split into {len(echarts_chunks)} sub-chunks")
-    print(f"    ✓ {(1129 - echarts_total)/1129*100:.1f}% reduction in main chunk")
-    print("    ✓ Better caching strategy")
-    print("    ✓ Clearer chunk boundaries")
-    print()
+    logger.info("  📊 Improvements:")
+    logger.info(f"    ✓ ECharts split into {len(echarts_chunks)} sub-chunks")
+    logger.info(f"    ✓ {(1129 - echarts_total)/1129*100:.1f}% reduction in main chunk")
+    logger.info("    ✓ Better caching strategy")
+    logger.info("    ✓ Clearer chunk boundaries")
+    logger.info()
 
-    print("  🚀 Next Steps:")
-    print("    • Phase A-2: Lazy loading + Image optimization")
-    print("    • Phase A-3: Service Worker (PWA)")
-    print("    • Phase B-1: TypeScript strict mode + ESLint")
-    print()
+    logger.info("  🚀 Next Steps:")
+    logger.info("    • Phase A-2: Lazy loading + Image optimization")
+    logger.info("    • Phase A-3: Service Worker (PWA)")
+    logger.info("    • Phase B-1: TypeScript strict mode + ESLint")
+    logger.info()
 
     return 0
 

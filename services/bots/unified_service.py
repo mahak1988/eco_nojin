@@ -1,4 +1,7 @@
 """Unified BotService - orchestrates all bot platforms"""
+import structlog
+
+logger = structlog.get_logger()
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
@@ -105,7 +108,7 @@ class UnifiedBotService:
         try:
             # ساده‌سازی: فقط log در console
             # در production باید جدول bot_message_logs داشته باشیم
-            print(f"[BotLog] {message.platform.value}: {message.content[:50]}...")
+            logger.info(f"[BotLog] {message.platform.value}: {message.content[:50]}...")
         except Exception:
             pass
 

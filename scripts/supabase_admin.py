@@ -17,6 +17,9 @@ Commands:
     verify    — PostGIS version, platform_badges count, RLS flags per table
     query     — run an arbitrary SQL string
 """
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import os
@@ -61,17 +64,17 @@ def _run_sql(ref: str, token: str, query: str) -> dict:
 
 
 def _print(label: str, res: dict) -> None:
-    print(f"\n=== {label} ===")
+    logger.info(f"\n=== {label} ===")
     if not res["ok"]:
-        print(f"ERROR {res['status']}: {res['body']}")
+        logger.error(f"ERROR {res['status']}: {res['body']}")
         return
     data = res["data"]
     if isinstance(data, list):
         for row in data[:50]:
-            print(row)
-        print(f"(rows: {len(data)})")
+            logger.info(row)
+        logger.info(f"(rows: {len(data)})")
     else:
-        print(data)
+        logger.info(data)
 
 
 def diagnose(ref: str, token: str) -> None:
@@ -108,9 +111,9 @@ def migrate(ref: str, token: str) -> None:
         sql = sql_path.read_text(encoding="utf-8")
         res = _run_sql(ref, token, sql)
         if res["ok"]:
-            print(f"MIGRATION OK ({res['status']}) — {sql_path.name}")
+            logger.info(f"MIGRATION OK ({res['status']}) — {sql_path.name}")
         else:
-            print(f"MIGRATION FAILED ({res['status']}) — {sql_path.name}: {res['body']}")
+            logger.info(f"MIGRATION FAILED ({res['status']}) — {sql_path.name}: {res['body']}")
             sys.exit(1)
 
 

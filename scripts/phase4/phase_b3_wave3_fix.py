@@ -7,6 +7,9 @@ Problem: engineeringOps.ts is a constants file, not functions
 Solution: Rewrite tests to just verify exports exist
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import subprocess
@@ -117,11 +120,11 @@ HYDROMA_STORE_SAFE = build_string(HYDROMA_STORE_SAFE_LINES)
 
 
 def main():
-    print("")
-    print("=" * 70)
-    print("  Phase B-3 Wave 3 FIX: Safe Test Replacements")
-    print("=" * 70)
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  Phase B-3 Wave 3 FIX: Safe Test Replacements")
+    logger.info("=" * 70)
+    logger.info("")
 
     # Fix Git PATH
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
@@ -129,8 +132,8 @@ def main():
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # Step 1: Replace failing tests with safe versions
-    print("[Step 1] Replacing tests with safe versions")
-    print("-" * 70)
+    logger.info("[Step 1] Replacing tests with safe versions")
+    logger.info("-" * 70)
 
     eng_test = HYDROMA_TESTS / "engineeringOps.test.ts"
     store_test = HYDROMA_TESTS / "hydromaStore.advanced.test.ts"
@@ -140,11 +143,11 @@ def main():
 
     store_test.write_text(HYDROMA_STORE_SAFE, encoding="utf-8")
     ok(f"Rewritten: {store_test.name}")
-    print("")
+    logger.info("")
 
     # Step 2: Run tests
-    print("[Step 2] Running tests")
-    print("-" * 70)
+    logger.info("[Step 2] Running tests")
+    logger.info("-" * 70)
 
     result = subprocess.run(
         "pnpm test",
@@ -161,18 +164,18 @@ def main():
 
     for line in output.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed", "skipped"]):
-            print(f"  {line}")
+            logger.info(f"  {line}")
 
     all_passing = result.returncode == 0
     if all_passing:
         ok("\nALL TESTS PASSING!")
     else:
         warn("\nSome tests had issues")
-    print("")
+    logger.info("")
 
     # Step 3: Run coverage
-    print("[Step 3] Running coverage")
-    print("-" * 70)
+    logger.info("[Step 3] Running coverage")
+    logger.info("-" * 70)
 
     result = subprocess.run(
         "pnpm test:coverage",
@@ -190,12 +193,12 @@ def main():
     # Extract key coverage numbers
     for line in output.splitlines():
         if "All files" in line or "engineeringOps" in line or "hydromaStore" in line:
-            print(f"  {line}")
-    print("")
+            logger.info(f"  {line}")
+    logger.info("")
 
     # Step 4: Commit and push with upstream
-    print("[Step 4] Committing and pushing")
-    print("-" * 70)
+    logger.info("[Step 4] Committing and pushing")
+    logger.info("-" * 70)
 
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -229,21 +232,21 @@ def main():
         warn(f"Commit/push issue: {e}")
 
     # Final Report
-    print("")
-    print("=" * 70)
+    logger.info("")
+    logger.info("=" * 70)
     if all_passing:
-        print("  🎉 ALL TESTS PASSING!")
+        logger.info("  🎉 ALL TESTS PASSING!")
     else:
-        print("  ⚠️  Some issues remain")
-    print("=" * 70)
-    print("")
-    print("  Next Steps:")
-    print("    1. View coverage: coverage/index.html")
-    print("    2. Merge branch when ready:")
-    print("       git checkout main")
-    print("       git merge security/hardening-phase1")
-    print("       git push origin main")
-    print("")
+        logger.info("  ⚠️  Some issues remain")
+    logger.info("=" * 70)
+    logger.info("")
+    logger.info("  Next Steps:")
+    logger.info("    1. View coverage: coverage/index.html")
+    logger.info("    2. Merge branch when ready:")
+    logger.info("       git checkout main")
+    logger.info("       git merge security/hardening-phase1")
+    logger.info("       git push origin main")
+    logger.info("")
 
     return 0
 

@@ -13,6 +13,9 @@ Phase 1 - Day 4: Extract Markers, Polygons & Fix Tests
 9. commit و push
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import subprocess
 import json
@@ -970,21 +973,21 @@ def write_file(path: Path, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
     lines = len(content.splitlines())
-    print(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
+    logger.info(f"  ✓ {path.relative_to(FRONTEND)} ({lines} lines)")
 
 
 def ensure_vitest_setup():
     """اطمینان از وجود vitest setup در vite.config.ts"""
     vite_cfg = FRONTEND / "vite.config.ts"
     if not vite_cfg.exists():
-        print("  ⚠ vite.config.ts یافت نشد")
+        logger.info("  ⚠ vite.config.ts یافت نشد")
         return
 
     text = vite_cfg.read_text(encoding="utf-8")
 
     # بررسی وجود setupFiles
     if "setupFiles" in text and "test/setup.ts" in text:
-        print("  ℹ vitest setup قبلاً پیکربندی شده")
+        logger.info("  ℹ vitest setup قبلاً پیکربندی شده")
         return
 
     # اگر test section وجود ندارد، اضافه کن
@@ -1008,65 +1011,65 @@ def ensure_vitest_setup():
 '''
             text = before + new_middle + after
             vite_cfg.write_text(text, encoding="utf-8")
-            print("  ✓ test section به vite.config.ts اضافه شد")
+            logger.info("  ✓ test section به vite.config.ts اضافه شد")
     else:
-        print("  ℹ test section وجود دارد ولی setupFiles تنظیم نشده")
+        logger.info("  ℹ test section وجود دارد ولی setupFiles تنظیم نشده")
 
 
 def main():
-    print("\n" + "=" * 70)
-    print("  🚀 Phase 1 - Day 4: Markers, Polygons & Test Fix")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  🚀 Phase 1 - Day 4: Markers, Polygons & Test Fix")
+    logger.info("=" * 70 + "\n")
 
     # ── گام 1: ایجاد Utility ────────────────────────────────────
-    print("📦 گام ۱: ایجاد Utility مشترک...")
+    logger.info("📦 گام ۱: ایجاد Utility مشترک...")
     write_file(HYDROMA / "utils" / "worldToTerrainY.ts", WORLD_TO_TERRAIN_Y)
     write_file(HYDROMA / "utils" / "index.ts", UTILS_INDEX)
-    print()
+    logger.info()
 
     # ── گام 2: ایجاد کامپوننت‌های Canvas ────────────────────────
-    print("🎨 گام ۲: ایجاد کامپوننت‌های Canvas...")
+    logger.info("🎨 گام ۲: ایجاد کامپوننت‌های Canvas...")
     write_file(HYDROMA / "components" / "canvas" / "PlacedOpsMarkers.tsx", PLACED_OPS_MARKERS)
     write_file(HYDROMA / "components" / "canvas" / "PolygonOverlay.tsx", POLYGON_OVERLAY)
     write_file(HYDROMA / "components" / "canvas" / "index.ts", CANVAS_INDEX)
-    print()
+    logger.info()
 
     # ── گام 3: ایجاد vitest setup ───────────────────────────────
-    print("⚙️ گام ۳: تنظیم vitest برای mock کردن وابستگی‌ها...")
+    logger.info("⚙️ گام ۳: تنظیم vitest برای mock کردن وابستگی‌ها...")
     write_file(TEST_DIR / "setup.ts", VITEST_SETUP)
     ensure_vitest_setup()
-    print()
+    logger.info()
 
     # ── گام 4: به‌روزرسانی/ایجاد تست‌ها ────────────────────────
-    print("🧪 گام ۴: به‌روزرسانی و ایجاد تست‌ها...")
+    logger.info("🧪 گام ۴: به‌روزرسانی و ایجاد تست‌ها...")
     write_file(HYDROMA / "__tests__" / "TerrainMesh.test.tsx", TERRAIN_MESH_TEST_UPDATED)
     write_file(HYDROMA / "__tests__" / "PlacedOpsMarkers.test.tsx", PLACED_OPS_TEST)
     write_file(HYDROMA / "__tests__" / "PolygonOverlay.test.tsx", POLYGON_OVERLAY_TEST)
     write_file(HYDROMA / "__tests__" / "worldToTerrainY.test.ts", UTILS_TEST)
-    print()
+    logger.info()
 
     # ── گام 5: خلاصه ────────────────────────────────────────────
-    print("=" * 70)
-    print("  📊 Summary")
-    print("=" * 70 + "\n")
+    logger.info("=" * 70)
+    logger.info("  📊 Summary")
+    logger.info("=" * 70 + "\n")
 
-    print("  Files created:")
-    print(f"    • utils/worldToTerrainY.ts ({len(WORLD_TO_TERRAIN_Y.splitlines())} lines)")
-    print(f"    • components/canvas/PlacedOpsMarkers.tsx ({len(PLACED_OPS_MARKERS.splitlines())} lines)")
-    print(f"    • components/canvas/PolygonOverlay.tsx ({len(POLYGON_OVERLAY.splitlines())} lines)")
-    print(f"    • test/setup.ts (global mocks)")
-    print(f"    • __tests__/TerrainMesh.test.tsx (updated)")
-    print(f"    • __tests__/PlacedOpsMarkers.test.tsx")
-    print(f"    • __tests__/PolygonOverlay.test.tsx")
-    print(f"    • __tests__/worldToTerrainY.test.ts")
-    print()
+    logger.info("  Files created:")
+    logger.info(f"    • utils/worldToTerrainY.ts ({len(WORLD_TO_TERRAIN_Y.splitlines())} lines)")
+    logger.info(f"    • components/canvas/PlacedOpsMarkers.tsx ({len(PLACED_OPS_MARKERS.splitlines())} lines)")
+    logger.info(f"    • components/canvas/PolygonOverlay.tsx ({len(POLYGON_OVERLAY.splitlines())} lines)")
+    logger.info(f"    • test/setup.ts (global mocks)")
+    logger.info(f"    • __tests__/TerrainMesh.test.tsx (updated)")
+    logger.info(f"    • __tests__/PlacedOpsMarkers.test.tsx")
+    logger.info(f"    • __tests__/PolygonOverlay.test.tsx")
+    logger.info(f"    • __tests__/worldToTerrainY.test.ts")
+    logger.info()
 
-    print("  Key improvements:")
-    print("    ✓ DRY: worldToTerrainY shared between Markers & Polygons")
-    print("    ✓ Fix: vitest setup mocks lib/terrainGenerator")
-    print("    ✓ Fix: Three.js mocked for unit testing")
-    print("    ✓ Type-safe: all props fully typed")
-    print()
+    logger.info("  Key improvements:")
+    logger.info("    ✓ DRY: worldToTerrainY shared between Markers & Polygons")
+    logger.info("    ✓ Fix: vitest setup mocks lib/terrainGenerator")
+    logger.info("    ✓ Fix: Three.js mocked for unit testing")
+    logger.info("    ✓ Type-safe: all props fully typed")
+    logger.info()
 
     # ── گام 6: اجرای تست‌ها ─────────────────────────────────────
     # افزودن git به PATH
@@ -1078,7 +1081,7 @@ def main():
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
-    print("🧪 گام ۵: اجرای همه تست‌های hydroma...")
+    logger.info("🧪 گام ۵: اجرای همه تست‌های hydroma...")
     result = subprocess.run(
         "pnpm test features/hydroma",
         shell=True,
@@ -1093,20 +1096,20 @@ def main():
     tests_passed = result.returncode == 0
 
     if tests_passed:
-        print("  ✓ همه تست‌ها پاس شدند")
+        logger.info("  ✓ همه تست‌ها پاس شدند")
         for line in result.stdout.splitlines():
             if "Test Files" in line or "Tests" in line or "passed" in line.lower():
-                print(f"  {line.strip()}")
+                logger.info(f"  {line.strip()}")
     else:
-        print("  ⚠ برخی تست‌ها شکست خوردند")
-        print()
-        print("  ─── آخرین ۳۰ خط خروجی ───")
+        logger.info("  ⚠ برخی تست‌ها شکست خوردند")
+        logger.info()
+        logger.info("  ─── آخرین ۳۰ خط خروجی ───")
         for line in result.stdout.splitlines()[-30:]:
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ── گام 7: commit ───────────────────────────────────────────
-    print("📦 گام ۶: commit تغییرات...")
+    logger.info("📦 گام ۶: commit تغییرات...")
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
 
@@ -1121,45 +1124,45 @@ def main():
             shell=True, cwd=PROJECT_ROOT, check=True
         )
         subprocess.run("git push origin main", shell=True, cwd=PROJECT_ROOT, check=True)
-        print("  ✓ commit و push موفق بود\n")
+        logger.info("  ✓ commit و push موفق بود\n")
     except Exception as e:
-        print(f"  ⚠ commit: {e}\n")
+        logger.info(f"  ⚠ commit: {e}\n")
 
     # ── گزارش نهایی ─────────────────────────────────────────────
-    print("=" * 70)
+    logger.info("=" * 70)
     if tests_passed:
-        print("  ✅ Day 4 Complete (با تست‌های موفق)!")
+        logger.info("  ✅ Day 4 Complete (با تست‌های موفق)!")
     else:
-        print("  ⚠️ Day 4 Complete (نیاز به بررسی تست‌ها)")
-    print("=" * 70 + "\n")
+        logger.info("  ⚠️ Day 4 Complete (نیاز به بررسی تست‌ها)")
+    logger.info("=" * 70 + "\n")
 
-    print("  Next steps (Day 5):")
-    print("    • Extract WindArrows.tsx (wind visualization)")
-    print("    • Extract WaterSurface.tsx (animated water)")
-    print("    • Extract RainParticles.tsx (particle system)")
-    print("    • Extract CameraTour.tsx (camera animation)")
-    print("    • Extract CameraController.tsx (preset views)")
-    print()
+    logger.info("  Next steps (Day 5):")
+    logger.info("    • Extract WindArrows.tsx (wind visualization)")
+    logger.info("    • Extract WaterSurface.tsx (animated water)")
+    logger.info("    • Extract RainParticles.tsx (particle system)")
+    logger.info("    • Extract CameraTour.tsx (camera animation)")
+    logger.info("    • Extract CameraController.tsx (preset views)")
+    logger.info()
 
-    print("  🎯 Progress:")
-    print("    • Day 1: Types (289 lines) ✅")
-    print("    • Day 2: Store + Constants (590+ lines) ✅")
-    print("    • Day 3: TerrainMesh (178 lines) ✅")
-    print("    • Day 4: Markers + Polygons (~250 lines) ✅")
-    print("    • Day 5: Effects & Camera (~300 lines) ⏳")
-    print("    • Day 6: Custom hooks (~300 lines) ⏳")
-    print("    • Day 7: Orchestration (final) ⏳")
-    print()
+    logger.info("  🎯 Progress:")
+    logger.info("    • Day 1: Types (289 lines) ✅")
+    logger.info("    • Day 2: Store + Constants (590+ lines) ✅")
+    logger.info("    • Day 3: TerrainMesh (178 lines) ✅")
+    logger.info("    • Day 4: Markers + Polygons (~250 lines) ✅")
+    logger.info("    • Day 5: Effects & Camera (~300 lines) ⏳")
+    logger.info("    • Day 6: Custom hooks (~300 lines) ⏳")
+    logger.info("    • Day 7: Orchestration (final) ⏳")
+    logger.info()
 
-    print("  📉 HyDroMaCenter.tsx: 8804 → ~8260 lines (6.2% extracted)")
-    print()
+    logger.info("  📉 HyDroMaCenter.tsx: 8804 → ~8260 lines (6.2% extracted)")
+    logger.info()
 
     if not tests_passed:
-        print("  ⚠️ Action needed:")
-        print("    Review test failures above. Most likely causes:")
-        print("    1. lib/terrainGenerator exports differ from mocks")
-        print("    2. vitest.setup.ts not loaded (check vite.config.ts)")
-        print()
+        logger.info("  ⚠️ Action needed:")
+        logger.info("    Review test failures above. Most likely causes:")
+        logger.info("    1. lib/terrainGenerator exports differ from mocks")
+        logger.info("    2. vitest.setup.ts not loaded (check vite.config.ts)")
+        logger.info()
 
     return 0 if tests_passed else 1
 

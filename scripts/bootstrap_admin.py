@@ -13,6 +13,9 @@ registered through the site.
 ``--set-password <new>`` resets the password of an EXISTING user
 (e.g. change the admin password after bootstrap).
 """
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import argparse
@@ -50,20 +53,20 @@ def bootstrap_admin(
             )
             db.add(user)
             db.commit()
-            print(f"OK: created {email} with role=admin")
+            logger.info(f"OK: created {email} with role=admin")
             return user.role
         if set_password:
             if len(set_password) < 6:
                 raise ValueError("--set-password must be at least 6 characters")
             user.hashed_password = hash_password(set_password)
             db.commit()
-            print(f"OK: password updated for {email}")
+            logger.info(f"OK: password updated for {email}")
         if user.role != ADMIN_ROLE:
             user.role = ADMIN_ROLE
             db.commit()
-            print(f"OK: {email} -> role=admin")
+            logger.info(f"OK: {email} -> role=admin")
         else:
-            print(f"OK: {email} is already admin")
+            logger.info(f"OK: {email} is already admin")
         return user.role
     finally:
         db.close()
@@ -79,7 +82,7 @@ def main() -> int:
 
     email = args.email.strip().lower()
     if not email or "@" not in email:
-        print("error: a valid email is required")
+        logger.error("error: a valid email is required")
         return 2
     try:
         result = bootstrap_admin(
@@ -89,7 +92,7 @@ def main() -> int:
             set_password=args.set_password,
         )
     except ValueError as exc:
-        print(f"error: {exc}")
+        logger.error(f"error: {exc}")
         return 2
     if result is None:
         print(
@@ -97,7 +100,7 @@ def main() -> int:
             "register first via the site, or re-run with --create --password"
         )
         return 1
-    print(f"done: role={result}")
+    logger.info(f"done: role={result}")
     return 0
 
 

@@ -11,6 +11,9 @@ Usage:
       # OR
       TELEGRAM_PROXY=https://user:pass@host:port
 """
+import structlog
+
+logger = structlog.get_logger()
 import asyncio
 import logging
 import os
@@ -59,18 +62,18 @@ async def test_connection_with_proxy():
 
     token = os.getenv("TELEGRAM_BOT_TOKEN")
     if not token:
-        print("❌ TELEGRAM_BOT_TOKEN not set")
+        logger.info("❌ TELEGRAM_BOT_TOKEN not set")
         return False
 
     if token == "your_token_here":
-        print("❌ TOKEN is placeholder! Get real token from @BotFather")
+        logger.info("❌ TOKEN is placeholder! Get real token from @BotFather")
         return False
 
     proxy_url = os.getenv("TELEGRAM_PROXY")
 
-    print("🔍 Testing connection...")
-    print(f"   Token: {token[:15]}...")
-    print(f"   Proxy: {proxy_url or 'None (direct)'}")
+    logger.info("🔍 Testing connection...")
+    logger.info(f"   Token: {token[:15]}...")
+    logger.info(f"   Proxy: {proxy_url or 'None (direct)'}")
 
     try:
         # Create session with proxy
@@ -82,21 +85,21 @@ async def test_connection_with_proxy():
         # Test getMe
         me = await bot.get_me()
 
-        print("\n✅ SUCCESS! Bot info:")
-        print(f"   ID: {me.id}")
-        print(f"   Username: @{me.username}")
-        print(f"   Name: {me.first_name}")
+        logger.info("\n✅ SUCCESS! Bot info:")
+        logger.info(f"   ID: {me.id}")
+        logger.info(f"   Username: @{me.username}")
+        logger.info(f"   Name: {me.first_name}")
 
         await bot.session.close()
         return True
 
     except Exception as e:
-        print(f"\n❌ Connection failed: {type(e).__name__}: {e}")
-        print("\n💡 Solutions:")
-        print("   1. Check if proxy is running and accessible")
-        print("   2. Verify proxy credentials")
-        print("   3. Try different proxy type (socks5 vs http)")
-        print("   4. Use VPN instead of proxy")
+        logger.info(f"\n❌ Connection failed: {type(e).__name__}: {e}")
+        logger.info("\n💡 Solutions:")
+        logger.info("   1. Check if proxy is running and accessible")
+        logger.info("   2. Verify proxy credentials")
+        logger.info("   3. Try different proxy type (socks5 vs http)")
+        logger.info("   4. Use VPN instead of proxy")
         return False
 
 

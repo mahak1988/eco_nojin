@@ -7,6 +7,9 @@ Fetches monthly temperature and precipitation data from real climate records.
 Source: Open-Meteo Archive API (ERA5 reanalysis, 1950-present)
 URL: https://open-meteo.com/
 """
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 from typing import Any
@@ -94,5 +97,5 @@ class ClimateFetcher:
                 "year": year,
             }
         except Exception as e:
-            print(f"ClimateFetcher error: {e}")
+            logger.error(f"ClimateFetcher error: {e}")
             return None

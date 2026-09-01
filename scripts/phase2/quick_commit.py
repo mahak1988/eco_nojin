@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """Quick commit with PATH setup"""
+import structlog
+
+logger = structlog.get_logger()
 import os
 import subprocess
 from pathlib import Path
@@ -19,4 +22,4 @@ subprocess.run(
     shell=True, check=True
 )
 subprocess.run("git push origin main", shell=True, check=True)
-print("✓ commit و push موفق")
+logger.info("✓ commit و push موفق")

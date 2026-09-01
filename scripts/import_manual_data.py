@@ -5,6 +5,9 @@ Target : D:\eco_nojin\data\manual\eco_manual_v1.sqlite  (budget: <= 10 MB)
 Design : metric columns stored as scaled INTEGER (x10); loaders convert back.
 Run    : .venv\Scripts\python.exe scripts\import_manual_data.py
 """
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import sqlite3
@@ -122,7 +125,7 @@ def main() -> None:
             df = enc(df)
         n = create_sqlite(con, table, df)
         total += n
-        print(f"  {table:32s} {n:>7,} rows x {df.shape[1]} cols", flush=True)
+        logger.info(f"  {table:32s} {n:>7,} rows x {df.shape[1]} cols", flush=True)
 
     con.execute("CREATE TABLE meta_info (key TEXT PRIMARY KEY, value TEXT)")
     con.executemany(
@@ -139,8 +142,8 @@ def main() -> None:
     con.execute("VACUUM")
     size_mb = OUT.stat().st_size / 1e6
     con.close()
-    print(f"TOTAL rows: {total:,}")
-    print(f"DB SIZE: {size_mb:.2f} MB  (budget 10 MB) -> {'OK' if size_mb <= 10 else 'OVER BUDGET'}")
+    logger.info(f"TOTAL rows: {total:,}")
+    logger.info(f"DB SIZE: {size_mb:.2f} MB  (budget 10 MB) -> {'OK' if size_mb <= 10 else 'OVER BUDGET'}")
 
 
 if __name__ == "__main__":

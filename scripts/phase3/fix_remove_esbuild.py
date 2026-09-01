@@ -8,6 +8,9 @@ Solution: Remove esbuild entirely and use Rolldown's built-in minifier.
 Vite 8 + Rolldown has its own minifier, so esbuild is optional.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import json
@@ -201,24 +204,24 @@ export default defineConfig(({ mode }) => ({
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🔧 Remove esbuild - Use Rolldown Minifier\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[96m  🔧 Remove esbuild - Use Rolldown Minifier\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # ═══ Step 1: Remove esbuild from package.json ═══
-    print("\033[1mStep 1: حذف esbuild از package.json\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 1: حذف esbuild از package.json\033[0m")
+    logger.info("-" * 70)
     if not remove_esbuild_from_package_json():
         return 1
-    print()
+    logger.info()
 
     # ═══ Step 2: Uninstall esbuild ═══
-    print("\033[1mStep 2: uninstall esbuild\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 2: uninstall esbuild\033[0m")
+    logger.info("-" * 70)
     info("اجرای pnpm uninstall esbuild...")
     result = subprocess.run(
         "pnpm uninstall esbuild",
@@ -235,18 +238,18 @@ def main():
         ok("esbuild حذف شد")
     else:
         warn(f"uninstall: {result.stderr[:200] if result.stderr else 'warning'}")
-    print()
+    logger.info()
 
     # ═══ Step 3: Write Vite Config ═══
-    print("\033[1mStep 3: بازنویسی vite.config.ts (no esbuild)\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 3: بازنویسی vite.config.ts (no esbuild)\033[0m")
+    logger.info("-" * 70)
     VITE_CONFIG.write_text(VITE_CONFIG_NO_ESBUILD, encoding="utf-8")
     ok("vite.config.ts بازنویسی شد")
-    print()
+    logger.info()
 
     # ═══ Step 4: Clean install ═══
-    print("\033[1mStep 4: pnpm install (clean)\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 4: pnpm install (clean)\033[0m")
+    logger.info("-" * 70)
     info("اجرای pnpm install...")
     result = subprocess.run(
         "pnpm install",
@@ -262,15 +265,15 @@ def main():
     if result.returncode != 0:
         err("pnpm install شکست خورد")
         for line in (result.stdout + result.stderr).splitlines()[-20:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
 
     ok("pnpm install موفق")
-    print()
+    logger.info()
 
     # ═══ Step 5: Build ═══
-    print("\033[1mStep 5: اجرای build\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 5: اجرای build\033[0m")
+    logger.info("-" * 70)
     info("Building production bundle...")
     result = subprocess.run(
         "pnpm build",
@@ -288,26 +291,26 @@ def main():
     if result.returncode != 0:
         err("Build شکست خورد")
         for line in output.splitlines()[-35:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
 
     ok("Build موفق!")
-    print()
+    logger.info()
 
     # Show bundle
     info("Bundle chunks:")
     for line in result.stdout.splitlines():
         if "dist/assets/" in line and any(k in line for k in ["vendor", "index", "HyDroMaCenter"]):
-            print(f"  {line.strip()}")
-    print()
+            logger.info(f"  {line.strip()}")
+    logger.info()
     for line in result.stdout.splitlines():
         if "built in" in line:
-            print(f"  {line.strip()}")
-    print()
+            logger.info(f"  {line.strip()}")
+    logger.info()
 
     # ═══ Step 6: Tests ═══
-    print("\033[1mStep 6: اجرای تست‌ها\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 6: اجرای تست‌ها\033[0m")
+    logger.info("-" * 70)
     test_result = subprocess.run(
         "pnpm test",
         shell=True,
@@ -320,12 +323,12 @@ def main():
     )
     for line in test_result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 7: Commit ═══
-    print("\033[1mStep 7: commit\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 7: commit\033[0m")
+    logger.info("-" * 70)
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
         subprocess.run(
@@ -337,23 +340,23 @@ def main():
     except Exception as e:
         warn(f"commit: {e}")
 
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 Phase 3 - Performance Setup Complete!\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[92m  🎉 Phase 3 - Performance Setup Complete!\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 دستاوردها:")
-    print("    ✓ Removed esbuild dependency (pnpm v11 compatible)")
-    print("    ✓ Using Rolldown's built-in minifier")
-    print("    ✓ Manual chunks for vendor splitting")
-    print("    ✓ Design tokens (colors, spacing, typography)")
-    print("    ✓ Animation utilities (GPU-accelerated)")
-    print("    ✓ Performance monitoring (Core Web Vitals)")
-    print()
+    logger.info("  📊 دستاوردها:")
+    logger.info("    ✓ Removed esbuild dependency (pnpm v11 compatible)")
+    logger.info("    ✓ Using Rolldown's built-in minifier")
+    logger.info("    ✓ Manual chunks for vendor splitting")
+    logger.info("    ✓ Design tokens (colors, spacing, typography)")
+    logger.info("    ✓ Animation utilities (GPU-accelerated)")
+    logger.info("    ✓ Performance monitoring (Core Web Vitals)")
+    logger.info()
 
-    print("  🎯 استفاده:")
-    print("    import { fadeIn, slideUp } from '@/utils/animations';")
-    print("    .card { background: var(--bg-card); }")
-    print()
+    logger.info("  🎯 استفاده:")
+    logger.info("    import { fadeIn, slideUp } from '@/utils/animations';")
+    logger.info("    .card { background: var(--bg-card); }")
+    logger.info()
 
     return 0
 

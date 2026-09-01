@@ -9,6 +9,9 @@ Fix MSW Builds v2 - Final Solution
 4. Rebuild کامل
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import json
 import os
 import subprocess
@@ -48,9 +51,9 @@ def success(msg): print(f"{Colors.GREEN}✓{Colors.RESET}  {msg}")
 def warning(msg): print(f"{Colors.YELLOW}⚠{Colors.RESET}  {msg}")
 def error(msg): print(f"{Colors.RED}✗{Colors.RESET}  {msg}")
 def header(msg):
-    print(f"\n{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.CYAN}  {msg}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}\n")
+    logger.info(f"\n{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{Colors.CYAN}  {msg}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{Colors.CYAN}{'═' * 70}{Colors.RESET}\n")
 
 
 def ensure_path():
@@ -79,7 +82,7 @@ def run(cmd, cwd=None, check=True, silent=False, timeout=None):
         if result.returncode != 0 and check:
             if not silent:
                 if result.stdout:
-                    print(result.stdout[:1500])
+                    logger.info(result.stdout[:1500])
                 if result.stderr:
                     error(result.stderr[:1500])
             raise RuntimeError(f"Command failed: {cmd}")
@@ -311,7 +314,7 @@ def test_dev_server_quick():
                 
                 # نمایش ۱۵ خط اول
                 if len(output_lines) <= 15:
-                    print(f"  {line.rstrip()}")
+                    logger.info(f"  {line.rstrip()}")
 
                 # تشخیص آماده شدن
                 if any(marker in line.lower() for marker in [
@@ -333,7 +336,7 @@ def test_dev_server_quick():
 
         if has_fatal_error:
             error("خطای بحرانی در dev server")
-            print("\n".join(output_lines[-10:]))
+            logger.info("\n".join(output_lines[-10:]))
             return False
 
         if server_ready:
@@ -407,31 +410,31 @@ def final_report():
     dev_test = test_dev_server_quick()
     checks.append(("Dev server", dev_test))
 
-    print()
+    logger.info()
     all_ok = True
     for name, ok in checks:
         symbol = "✓" if ok else "✗"
         color = Colors.GREEN if ok else (Colors.YELLOW if name != "Dev server" else Colors.RED)
-        print(f"  {color}{symbol}{Colors.RESET} {name}")
+        logger.info(f"  {color}{symbol}{Colors.RESET} {name}")
         if not ok:
             all_ok = False
 
-    print()
+    logger.info()
     if all_ok:
-        print(f"{Colors.GREEN}{Colors.BOLD}🎉 فاز صفر ۱۰۰٪ کامل شد!{Colors.RESET}")
-        print(f"\n{Colors.BOLD}گام بعدی:{Colors.RESET} ورود به فاز ۱")
-        print("  شروع بازنویسی HyDroMaCenter.tsx به‌صورت feature-based")
+        logger.info(f"{Colors.GREEN}{Colors.BOLD}🎉 فاز صفر ۱۰۰٪ کامل شد!{Colors.RESET}")
+        logger.info(f"\n{Colors.BOLD}گام بعدی:{Colors.RESET} ورود به فاز ۱")
+        logger.info("  شروع بازنویسی HyDroMaCenter.tsx به‌صورت feature-based")
     else:
-        print(f"{Colors.YELLOW}⚠️ فاز صفر ۹۰٪ کامل است{Colors.RESET}")
-        print(f"  می‌توان به فاز ۱ رفت و باقی مشکلات را موازی حل کرد")
+        logger.info(f"{Colors.YELLOW}⚠️ فاز صفر ۹۰٪ کامل است{Colors.RESET}")
+        logger.info(f"  می‌توان به فاز ۱ رفت و باقی مشکلات را موازی حل کرد")
 
     return all_ok
 
 
 def main():
-    print(f"\n{Colors.BOLD}{'═' * 70}{Colors.RESET}")
-    print(f"{Colors.BOLD}  🔧 Fix MSW Builds v2 - راه‌حل جامع و قطعی{Colors.RESET}")
-    print(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}")
+    logger.info(f"\n{Colors.BOLD}{'═' * 70}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}  🔧 Fix MSW Builds v2 - راه‌حل جامع و قطعی{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{'═' * 70}{Colors.RESET}")
 
     ensure_path()
 
@@ -457,9 +460,9 @@ def main():
     final_report()
 
     if failed:
-        print(f"\n{Colors.YELLOW}گام‌های شکست‌خورده: {', '.join(failed)}{Colors.RESET}")
-        print(f"\n{Colors.BOLD}💡 توصیه:{Colors.RESET} اگر dev server کار می‌کند،")
-        print(f"   می‌توان به فاز ۱ رفت. MSW فقط برای تست‌ها لازم است.")
+        logger.info(f"\n{Colors.YELLOW}گام‌های شکست‌خورده: {', '.join(failed)}{Colors.RESET}")
+        logger.info(f"\n{Colors.BOLD}💡 توصیه:{Colors.RESET} اگر dev server کار می‌کند،")
+        logger.info(f"   می‌توان به فاز ۱ رفت. MSW فقط برای تست‌ها لازم است.")
         return 0 if "test_dev_server" not in failed else 1
     
     return 0

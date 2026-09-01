@@ -1,4 +1,7 @@
 """TelegramIntegrationService - advanced telegram bot features"""
+import structlog
+
+logger = structlog.get_logger()
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
@@ -163,7 +166,7 @@ class TelegramIntegrationService:
     ) -> bool:
         """ارسال اعلان به کاربر"""
         # در production: استفاده از Telegram Bot API
-        print(f"[Telegram] To {user_id}: {message[:50]}...")
+        logger.info(f"[Telegram] To {user_id}: {message[:50]}...")
         return True
 
     async def get_user_stats(self, user_id: int) -> dict[str, Any]:

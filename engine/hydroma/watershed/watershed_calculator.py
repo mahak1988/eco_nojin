@@ -1,4 +1,7 @@
 """Module for watershed structure design calculations."""
+import structlog
+
+logger = structlog.get_logger()
 from typing import Any
 
 
@@ -47,4 +50,4 @@ def design_check_dam(slope_pct: float, area_m2: float, rainfall_mm: float) -> di
 # Example usage
 if __name__ == "__main__":
     result = design_check_dam(slope_pct=15.0, area_m2=5000.0, rainfall_mm=50.0)
-    print(result)
+    logger.info(result)

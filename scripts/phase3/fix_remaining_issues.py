@@ -6,6 +6,9 @@ Phase 3 Final Fix - Remaining Issues
 2. Analyze and split vendor-other chunk
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import subprocess
@@ -278,17 +281,17 @@ export default defineConfig(({ mode }) => ({
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🔧 Fix Remaining Issues - Phase 3 Final\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[96m  🔧 Fix Remaining Issues - Phase 3 Final\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # ═══ Step 1: Fix Tests ═══
-    print("\033[1mStep 1: رفع تست‌های شکست‌خورده\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 1: رفع تست‌های شکست‌خورده\033[0m")
+    logger.info("-" * 70)
 
     # Fix eventGenerator test
     test1 = SRC / "features" / "live-feed" / "__tests__" / "eventGenerator.test.ts"
@@ -304,19 +307,19 @@ def main():
         test2.parent.mkdir(parents=True, exist_ok=True)
         test2.write_text(SMOKE_TEST_FIXED, encoding="utf-8")
         ok("smoke.test.tsx اصلاح شد")
-    print()
+    logger.info()
 
     # ═══ Step 2: Enhanced Vite Config ═══
-    print("\033[1mStep 2: بهبود chunk splitting\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 2: بهبود chunk splitting\033[0m")
+    logger.info("-" * 70)
     info("بازنویسی vite.config.ts با chunk splitting دقیق‌تر...")
     VITE_CONFIG.write_text(VITE_CONFIG_ENHANCED, encoding="utf-8")
     ok("vite.config.ts بازنویسی شد")
-    print()
+    logger.info()
 
     # ═══ Step 3: Run Tests ═══
-    print("\033[1mStep 3: اجرای تست‌ها\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 3: اجرای تست‌ها\033[0m")
+    logger.info("-" * 70)
     test_result = subprocess.run(
         "pnpm test",
         shell=True,
@@ -330,14 +333,14 @@ def main():
 
     for line in test_result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
+            logger.info(f"  {line}")
 
     all_tests_pass = test_result.returncode == 0
-    print()
+    logger.info()
 
     # ═══ Step 4: Build ═══
-    print("\033[1mStep 4: اجرای build\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 4: اجرای build\033[0m")
+    logger.info("-" * 70)
     info("Building with enhanced chunks...")
     build_result = subprocess.run(
         "pnpm build",
@@ -353,26 +356,26 @@ def main():
     if build_result.returncode != 0:
         err("Build شکست خورد")
         for line in (build_result.stdout + build_result.stderr).splitlines()[-25:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
 
     ok("Build موفق!")
-    print()
+    logger.info()
 
     # Show bundle
     info("Bundle chunks (improved):")
     for line in build_result.stdout.splitlines():
         if "dist/assets/" in line and any(k in line for k in ["vendor", "index", "HyDroMaCenter"]):
-            print(f"  {line.strip()}")
-    print()
+            logger.info(f"  {line.strip()}")
+    logger.info()
     for line in build_result.stdout.splitlines():
         if "built in" in line:
-            print(f"  {line.strip()}")
-    print()
+            logger.info(f"  {line.strip()}")
+    logger.info()
 
     # ═══ Step 5: Commit ═══
-    print("\033[1mStep 5: commit\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 5: commit\033[0m")
+    logger.info("-" * 70)
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
         msg = '''fix(perf): fix failing tests + improve chunk splitting
@@ -399,40 +402,40 @@ def main():
         warn(f"commit: {e}")
 
     # ═══ Final Report ═══
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
     if all_tests_pass:
-        print("\033[1m\033[92m  🎉🎉🎉 Phase 3 - 100% Complete! 🎉🎉🎉\033[0m")
+        logger.info("\033[1m\033[92m  🎉🎉🎉 Phase 3 - 100% Complete! 🎉🎉🎉\033[0m")
     else:
-        print("\033[1m\033[93m  ⚠️ Phase 3 - 95% Complete (some tests pending)\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+        logger.info("\033[1m\033[93m  ⚠️ Phase 3 - 95% Complete (some tests pending)\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 Bundle Analysis:")
-    print("    ✓ Vendor chunks split by category")
-    print("    ✓ Reduced vendor-other size")
-    print("    ✓ Optimized caching strategy")
-    print()
+    logger.info("  📊 Bundle Analysis:")
+    logger.info("    ✓ Vendor chunks split by category")
+    logger.info("    ✓ Reduced vendor-other size")
+    logger.info("    ✓ Optimized caching strategy")
+    logger.info()
 
-    print("  📁 New Chunks:")
-    print("    • vendor-motion (framer-motion)")
-    print("    • vendor-icons (lucide-react)")
-    print("    • vendor-radix (@radix-ui)")
-    print("    • vendor-three (three.js)")
-    print("    • vendor-forms (forms library)")
-    print("    • vendor-date (date utilities)")
-    print("    • vendor-utils (general utils)")
-    print()
+    logger.info("  📁 New Chunks:")
+    logger.info("    • vendor-motion (framer-motion)")
+    logger.info("    • vendor-icons (lucide-react)")
+    logger.info("    • vendor-radix (@radix-ui)")
+    logger.info("    • vendor-three (three.js)")
+    logger.info("    • vendor-forms (forms library)")
+    logger.info("    • vendor-date (date utilities)")
+    logger.info("    • vendor-utils (general utils)")
+    logger.info()
 
-    print("  🎯 Phase 3 Summary:")
-    print("    ✓ Design tokens (colors, spacing, typography)")
-    print("    ✓ Animation utilities (GPU-accelerated)")
-    print("    ✓ Performance monitoring (Core Web Vitals)")
-    print("    ✓ Smooth scroll & accessibility")
-    print("    ✓ Bundle optimization")
-    print("    ✓ pnpm v11 compatible (no esbuild)")
-    print()
+    logger.info("  🎯 Phase 3 Summary:")
+    logger.info("    ✓ Design tokens (colors, spacing, typography)")
+    logger.info("    ✓ Animation utilities (GPU-accelerated)")
+    logger.info("    ✓ Performance monitoring (Core Web Vitals)")
+    logger.info("    ✓ Smooth scroll & accessibility")
+    logger.info("    ✓ Bundle optimization")
+    logger.info("    ✓ pnpm v11 compatible (no esbuild)")
+    logger.info()
 
-    print("  🚀 آماده برای Phase 4: Testing & Quality!")
-    print()
+    logger.info("  🚀 آماده برای Phase 4: Testing & Quality!")
+    logger.info()
 
     return 0 if all_tests_pass else 1
 

@@ -8,6 +8,9 @@ Fix Import Paths & Vitest Setup
 4. commit
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import re
 import subprocess
@@ -29,9 +32,9 @@ def info(m): print(f"{C.BLUE}ℹ{C.RESET}  {m}")
 def warn(m): print(f"{C.YELLOW}⚠{C.RESET}  {m}")
 def err(m): print(f"{C.RED}✗{C.RESET}  {m}")
 def header(m):
-    print(f"\n{C.BOLD}{C.CYAN}{'═' * 70}{C.RESET}")
-    print(f"{C.BOLD}{C.CYAN}  {m}{C.RESET}")
-    print(f"{C.BOLD}{C.CYAN}{'═' * 70}{C.RESET}\n")
+    logger.info(f"\n{C.BOLD}{C.CYAN}{'═' * 70}{C.RESET}")
+    logger.info(f"{C.BOLD}{C.CYAN}  {m}{C.RESET}")
+    logger.info(f"{C.BOLD}{C.CYAN}{'═' * 70}{C.RESET}\n")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -271,11 +274,11 @@ def run_tests():
     )
 
     output = result.stdout + result.stderr
-    print()
+    logger.info()
     # نمایش فقط نتایج
     for line in output.splitlines():
         if any(k in line for k in ["✓", "✗", "❯", "Test Files", "Tests", "FAIL", "PASS"]):
-            print(f"  {line}")
+            logger.info(f"  {line}")
 
     return result.returncode == 0
 
@@ -304,9 +307,9 @@ def commit():
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print(f"\n{C.BOLD}{'═' * 70}{C.RESET}")
-    print(f"{C.BOLD}  🔧 Fix Import Paths & Vitest Setup{C.RESET}")
-    print(f"{C.BOLD}{'═' * 70}{C.RESET}")
+    logger.info(f"\n{C.BOLD}{'═' * 70}{C.RESET}")
+    logger.info(f"{C.BOLD}  🔧 Fix Import Paths & Vitest Setup{C.RESET}")
+    logger.info(f"{C.BOLD}{'═' * 70}{C.RESET}")
 
     fix_import_paths()
     fix_vite_config()
@@ -316,12 +319,12 @@ def main():
 
     header("📊 گزارش نهایی")
     if tests_ok:
-        print(f"{C.GREEN}{C.BOLD}🎉 همه تست‌ها پاس شدند!{C.RESET}")
-        print(f"\n  حالا می‌توان به فاز بعدی رفت.")
+        logger.info(f"{C.GREEN}{C.BOLD}🎉 همه تست‌ها پاس شدند!{C.RESET}")
+        logger.info(f"\n  حالا می‌توان به فاز بعدی رفت.")
         return 0
     else:
-        print(f"{C.YELLOW}⚠️ هنوز تست‌ها شکست می‌خورند{C.RESET}")
-        print(f"\n  اقدام بعدی: بررسی دقیق خروجی تست‌ها")
+        logger.info(f"{C.YELLOW}⚠️ هنوز تست‌ها شکست می‌خورند{C.RESET}")
+        logger.info(f"\n  اقدام بعدی: بررسی دقیق خروجی تست‌ها")
         return 1
 
 

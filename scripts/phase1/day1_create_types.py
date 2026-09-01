@@ -9,6 +9,9 @@ Phase 1 - Day 1: Create Hydroma Types Structure
 5. commit
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import subprocess
 from pathlib import Path
@@ -39,14 +42,14 @@ STRUCTURE = [
 
 def create_structure():
     """ایجاد ساختار پوشه‌ها"""
-    print("📁 ایجاد ساختار features/hydroma/")
+    logger.info("📁 ایجاد ساختار features/hydroma/")
 
     HYDROMA.mkdir(parents=True, exist_ok=True)
 
     for folder in STRUCTURE:
         path = HYDROMA / folder
         path.mkdir(parents=True, exist_ok=True)
-        print(f"  ✓ {folder}/")
+        logger.info(f"  ✓ {folder}/")
 
     # ایجاد index.ts در هر پوشه
     for folder in ["types", "store", "hooks", "constants", "utils"]:
@@ -57,7 +60,7 @@ def create_structure():
                 encoding="utf-8"
             )
 
-    print("✓ ساختار ایجاد شد\n")
+    logger.info("✓ ساختار ایجاد شد\n")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -358,13 +361,13 @@ export interface LayerDef {
 
 def create_types_file():
     """ایجاد فایل types"""
-    print("📄 ایجاد types/hydroma.types.ts")
+    logger.info("📄 ایجاد types/hydroma.types.ts")
 
     types_file = HYDROMA / "types" / "hydroma.types.ts"
     types_file.write_text(TYPES_CONTENT, encoding="utf-8")
 
-    print(f"  ✓ {types_file.relative_to(FRONTEND)}")
-    print(f"  📏 {len(TYPES_CONTENT.splitlines())} lines\n")
+    logger.info(f"  ✓ {types_file.relative_to(FRONTEND)}")
+    logger.info(f"  📏 {len(TYPES_CONTENT.splitlines())} lines\n")
 
 
 # ═════════════────────────────══════════════════════════════════════════
@@ -382,12 +385,12 @@ export * from './hydroma.types';
 
 def create_index():
     """ایجاد index.ts"""
-    print("📄 ایجاد types/index.ts")
+    logger.info("📄 ایجاد types/index.ts")
 
     index_file = HYDROMA / "types" / "index.ts"
     index_file.write_text(INDEX_CONTENT, encoding="utf-8")
 
-    print(f"  ✓ {index_file.relative_to(FRONTEND)}\n")
+    logger.info(f"  ✓ {index_file.relative_to(FRONTEND)}\n")
 
 
 # ═════════════────────────────══════════════════════════════════════════
@@ -475,12 +478,12 @@ describe('HyDroMa Types', () => {
 
 def create_test():
     """ایجاد فایل تست"""
-    print("🧪 ایجاد __tests__/hydroma.types.test.ts")
+    logger.info("🧪 ایجاد __tests__/hydroma.types.test.ts")
 
     test_file = HYDROMA / "__tests__" / "hydroma.types.test.ts"
     test_file.write_text(TEST_CONTENT, encoding="utf-8")
 
-    print(f"  ✓ {test_file.relative_to(FRONTEND)}\n")
+    logger.info(f"  ✓ {test_file.relative_to(FRONTEND)}\n")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -489,7 +492,7 @@ def create_test():
 
 def run_tests():
     """اجرای تست‌ها"""
-    print("🧪 اجرای تست‌ها")
+    logger.info("🧪 اجرای تست‌ها")
 
     # افزودن git به PATH
     git_paths = [
@@ -512,14 +515,14 @@ def run_tests():
     )
 
     if result.returncode == 0:
-        print("  ✓ همه تست‌ها پاس شدند")
+        logger.info("  ✓ همه تست‌ها پاس شدند")
         # نمایش خلاصه
         for line in result.stdout.splitlines():
             if "Test Files" in line or "Tests" in line:
-                print(f"  {line.strip()}")
+                logger.info(f"  {line.strip()}")
         return True
     else:
-        print("  ⚠ تست‌ها شکست خوردند (غیر بحرانی)")
+        logger.info("  ⚠ تست‌ها شکست خوردند (غیر بحرانی)")
         return False
 
 
@@ -529,7 +532,7 @@ def run_tests():
 
 def commit():
     """commit تغییرات"""
-    print("📦 commit تغییرات")
+    logger.info("📦 commit تغییرات")
 
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -538,9 +541,9 @@ def commit():
             shell=True, cwd=PROJECT_ROOT, check=True
         )
         subprocess.run("git push origin main", shell=True, cwd=PROJECT_ROOT, check=True)
-        print("  ✓ commit و push موفق بود\n")
+        logger.info("  ✓ commit و push موفق بود\n")
     except Exception as e:
-        print(f"  ⚠ commit: {e}\n")
+        logger.info(f"  ⚠ commit: {e}\n")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -548,49 +551,49 @@ def commit():
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n" + "=" * 70)
-    print("  🚀 Phase 1 - Day 1: Create Hydroma Types Structure")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("  🚀 Phase 1 - Day 1: Create Hydroma Types Structure")
+    logger.info("=" * 70 + "\n")
 
     create_structure()
     create_types_file()
     create_index()
     create_test()
 
-    print("=" * 70)
-    print("  📊 Summary")
-    print("=" * 70 + "\n")
+    logger.info("=" * 70)
+    logger.info("  📊 Summary")
+    logger.info("=" * 70 + "\n")
 
-    print("  Files created:")
-    print(f"    • features/hydroma/types/hydroma.types.ts ({len(TYPES_CONTENT.splitlines())} lines)")
-    print(f"    • features/hydroma/types/index.ts")
-    print(f"    • features/hydroma/__tests__/hydroma.types.test.ts")
-    print()
+    logger.info("  Files created:")
+    logger.info(f"    • features/hydroma/types/hydroma.types.ts ({len(TYPES_CONTENT.splitlines())} lines)")
+    logger.info(f"    • features/hydroma/types/index.ts")
+    logger.info(f"    • features/hydroma/__tests__/hydroma.types.test.ts")
+    logger.info()
 
-    print("  Types defined:")
-    print("    • ViewMode, ToolMode, LayerType (unions)")
-    print("    • TerrainData, DemGrid, SiteMeta (terrain)")
-    print("    • PlacedOp, Polygon, DataPlot (interactions)")
-    print("    • EngineeringOp, ErosionEffect (operations)")
-    print("    • LayerVisibility, ClimateState, VisualState (UI)")
-    print("    • HydromaState (complete store state)")
-    print()
+    logger.info("  Types defined:")
+    logger.info("    • ViewMode, ToolMode, LayerType (unions)")
+    logger.info("    • TerrainData, DemGrid, SiteMeta (terrain)")
+    logger.info("    • PlacedOp, Polygon, DataPlot (interactions)")
+    logger.info("    • EngineeringOp, ErosionEffect (operations)")
+    logger.info("    • LayerVisibility, ClimateState, VisualState (UI)")
+    logger.info("    • HydromaState (complete store state)")
+    logger.info()
 
     test_ok = run_tests()
     commit()
 
-    print("=" * 70)
-    print("  ✅ Day 1 Complete!")
-    print("=" * 70 + "\n")
+    logger.info("=" * 70)
+    logger.info("  ✅ Day 1 Complete!")
+    logger.info("=" * 70 + "\n")
 
-    print("  Next steps (Day 2):")
-    print("    • Create store/hydromaStore.ts (Zustand)")
-    print("    • Migrate 28 state variables from HyDroMaCenter.tsx")
-    print("    • Add actions for all state mutations")
-    print()
+    logger.info("  Next steps (Day 2):")
+    logger.info("    • Create store/hydromaStore.ts (Zustand)")
+    logger.info("    • Migrate 28 state variables from HyDroMaCenter.tsx")
+    logger.info("    • Add actions for all state mutations")
+    logger.info()
 
-    print("  🎯 Goal: Reduce HyDroMaCenter.tsx from 8804 → ~50 lines")
-    print()
+    logger.info("  🎯 Goal: Reduce HyDroMaCenter.tsx from 8804 → ~50 lines")
+    logger.info()
 
 
 if __name__ == "__main__":

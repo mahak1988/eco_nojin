@@ -8,6 +8,9 @@ Fix useRealDem.test.ts and Commit
 3. Commit all changes
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import subprocess
@@ -87,11 +90,11 @@ USE_REAL_DEM_SAFE = build_string(USE_REAL_DEM_SAFE_LINES)
 
 
 def main():
-    print("")
-    print("=" * 70)
-    print("  Fix useRealDem.test.ts & Commit")
-    print("=" * 70)
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  Fix useRealDem.test.ts & Commit")
+    logger.info("=" * 70)
+    logger.info("")
 
     # Fix Git PATH
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
@@ -100,8 +103,8 @@ def main():
             info(f"Added to PATH: {p}")
 
     # Step 1: Rewrite useRealDem.test.ts
-    print("[Step 1] Rewriting useRealDem.test.ts with safe tests")
-    print("-" * 70)
+    logger.info("[Step 1] Rewriting useRealDem.test.ts with safe tests")
+    logger.info("-" * 70)
 
     test_file = HYDROMA_TESTS / "useRealDem.test.ts"
     
@@ -111,11 +114,11 @@ def main():
     else:
         err(f"File not found: {test_file}")
         return 1
-    print("")
+    logger.info("")
 
     # Step 2: Run tests to verify
-    print("[Step 2] Running tests to verify")
-    print("-" * 70)
+    logger.info("[Step 2] Running tests to verify")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test",
@@ -133,18 +136,18 @@ def main():
     # Show summary
     for line in output.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed", "FAIL"]):
-            print(f"  {line}")
+            logger.info(f"  {line}")
 
     if result.returncode == 0:
         ok("\n🎉 ALL TESTS PASSED!")
     else:
         err("\nSome tests still failing. Check output above.")
         # Don't return 1 yet, let's try to commit what we have
-    print("")
+    logger.info("")
 
     # Step 3: Commit
-    print("[Step 3] Committing changes")
-    print("-" * 70)
+    logger.info("[Step 3] Committing changes")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -172,24 +175,24 @@ def main():
         info("  git push origin main")
 
     # Final Report
-    print("")
-    print("=" * 70)
-    print("  🎉 Phase B-3 Wave 1: COMPLETE!")
-    print("=" * 70)
-    print("")
-    print("  Achievements:")
-    print("    ✓ 234 unit tests passing")
-    print("    ✓ Core logic tested (terrainGenerator, demApi, store)")
-    print("    ✓ React Hook testing fixed (renderHook)")
-    print("    ✓ Selector subscription fixed")
-    print("    ✓ Coverage improved from baseline")
-    print("")
-    print("  Next Steps (Phase B-3 Wave 2):")
-    print("    1. cd D:\\eco_nojin\\frontend")
-    print("    2. pnpm test:coverage")
-    print("    3. Open coverage/index.html")
-    print("    4. Identify next modules to test (hooks, services)")
-    print("")
+    logger.info("")
+    logger.info("=" * 70)
+    logger.info("  🎉 Phase B-3 Wave 1: COMPLETE!")
+    logger.info("=" * 70)
+    logger.info("")
+    logger.info("  Achievements:")
+    logger.info("    ✓ 234 unit tests passing")
+    logger.info("    ✓ Core logic tested (terrainGenerator, demApi, store)")
+    logger.info("    ✓ React Hook testing fixed (renderHook)")
+    logger.info("    ✓ Selector subscription fixed")
+    logger.info("    ✓ Coverage improved from baseline")
+    logger.info("")
+    logger.info("  Next Steps (Phase B-3 Wave 2):")
+    logger.info("    1. cd D:\\eco_nojin\\frontend")
+    logger.info("    2. pnpm test:coverage")
+    logger.info("    3. Open coverage/index.html")
+    logger.info("    4. Identify next modules to test (hooks, services)")
+    logger.info("")
 
     return 0
 

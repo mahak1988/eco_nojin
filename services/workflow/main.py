@@ -3,7 +3,7 @@
 
 def main() -> None:
     """Run the workflow service placeholder."""
-    print("Eco Nojin service placeholder: workflow")
+    logger.info("Eco Nojin service placeholder: workflow")
 
 
 if __name__ == "__main__":

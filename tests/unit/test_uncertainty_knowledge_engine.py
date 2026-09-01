@@ -1,3 +1,6 @@
+import structlog
+
+logger = structlog.get_logger()
 import sys
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
@@ -30,7 +33,7 @@ def main():
     assert "overall_reliability" in report
     assert 0.0 <= report["overall_reliability"]["overall_score"] <= 1.0
 
-    print("ALL UNCERTAINTY & KNOWLEDGE TESTS PASSED (H22,H23,H25)")
+    logger.info("ALL UNCERTAINTY & KNOWLEDGE TESTS PASSED (H22,H23,H25)")
 
 if __name__ == "__main__":
     main()

@@ -4,6 +4,9 @@ Eco Nojin Telegram Bot - Main Entry Point.
 Run with:
     python -m services.telegram_bot.main
 """
+import structlog
+
+logger = structlog.get_logger()
 from __future__ import annotations
 
 import logging
@@ -60,8 +63,8 @@ def main():
     """Main entry point."""
     # Validate configuration
     if not config.validate():
-        print("\nPlease set TELEGRAM_BOT_TOKEN in your .env file.")
-        print("Get one from @BotFather on Telegram.")
+        logger.info("\nPlease set TELEGRAM_BOT_TOKEN in your .env file.")
+        logger.info("Get one from @BotFather on Telegram.")
         sys.exit(1)
 
     # Setup logging
@@ -90,9 +93,9 @@ def main():
 
     # Start polling
     logger.info("Starting polling...")
-    print("\n" + "=" * 70)
-    print("BOT IS RUNNING - Press Ctrl+C to stop")
-    print("=" * 70 + "\n")
+    logger.info("\n" + "=" * 70)
+    logger.info("BOT IS RUNNING - Press Ctrl+C to stop")
+    logger.info("=" * 70 + "\n")
 
     application.run_polling(
         allowed_updates=Update.ALL_TYPES,

@@ -11,6 +11,9 @@ Split the 3.3MB vendor-other into smaller, focused chunks:
 Also add lazy loading for heavy features.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import subprocess
@@ -210,32 +213,32 @@ export default defineConfig(({ mode }) => ({
 # ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🚀 Optimize vendor-other Chunk\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[96m  🚀 Optimize vendor-other Chunk\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # ═══ Step 1: Update Vite Config ═══
-    print("\033[1mStep 1: به‌روزرسانی vite.config.ts\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 1: به‌روزرسانی vite.config.ts\033[0m")
+    logger.info("-" * 70)
     info("اضافه کردن chunk splitting برای:")
-    print("  • vendor-antd (antd ecosystem)")
-    print("  • vendor-echarts (echarts + zrender)")
-    print("  • vendor-deckgl (deck.gl + luma.gl)")
-    print("  • vendor-data (apache-arrow)")
-    print("  • vendor-state (zustand)")
-    print("  • vendor-utils (lodash, axios, es-toolkit)")
+    logger.info("  • vendor-antd (antd ecosystem)")
+    logger.info("  • vendor-echarts (echarts + zrender)")
+    logger.info("  • vendor-deckgl (deck.gl + luma.gl)")
+    logger.info("  • vendor-data (apache-arrow)")
+    logger.info("  • vendor-state (zustand)")
+    logger.info("  • vendor-utils (lodash, axios, es-toolkit)")
     
     VITE_CONFIG.write_text(VITE_CONFIG_OPTIMIZED, encoding="utf-8")
     ok("vite.config.ts بازنویسی شد")
-    print()
+    logger.info()
 
     # ═══ Step 2: Build ═══
-    print("\033[1mStep 2: اجرای build\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 2: اجرای build\033[0m")
+    logger.info("-" * 70)
     info("Building with optimized chunks...")
     
     build_result = subprocess.run(
@@ -252,15 +255,15 @@ def main():
     if build_result.returncode != 0:
         err("Build شکست خورد")
         for line in (build_result.stdout + build_result.stderr).splitlines()[-30:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
 
     ok("Build موفق!")
-    print()
+    logger.info()
 
     # ═══ Step 3: Show Bundle Analysis ═══
-    print("\033[1mStep 3: تحلیل bundle جدید\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 3: تحلیل bundle جدید\033[0m")
+    logger.info("-" * 70)
     
     output = build_result.stdout
     
@@ -291,8 +294,8 @@ def main():
     
     chunks.sort(key=lambda x: -parse_size(x['size']))
     
-    print("\n📦 Bundle Chunks (sorted by size):")
-    print("=" * 70)
+    logger.info("\n📦 Bundle Chunks (sorted by size):")
+    logger.info("=" * 70)
     
     total_js_size = 0
     for chunk in chunks:
@@ -308,24 +311,24 @@ def main():
             color = "\033[92m"  # Green
         
         reset = "\033[0m"
-        print(f"{color}  {chunk['line']}{reset}")
+        logger.info(f"{color}  {chunk['line']}{reset}")
     
-    print("=" * 70)
-    print(f"\n📊 Total JavaScript: {total_js_size:,.2f} KB")
+    logger.info("=" * 70)
+    logger.info(f"\n📊 Total JavaScript: {total_js_size:,.2f} KB")
     
     # Check vendor-other specifically
     vendor_other = [c for c in chunks if 'vendor-other' in c['name']]
     if vendor_other:
         other_size = parse_size(vendor_other[0]['size'])
         improvement = 3358 - other_size  # Previous size was 3,358 KB
-        print(f"\n🎯 vendor-other: {other_size:,.2f} KB (was 3,358 KB)")
-        print(f"   Reduction: {improvement:,.2f} KB ({improvement/3358*100:.1f}%)")
+        logger.info(f"\n🎯 vendor-other: {other_size:,.2f} KB (was 3,358 KB)")
+        logger.info(f"   Reduction: {improvement:,.2f} KB ({improvement/3358*100:.1f}%)")
     
-    print()
+    logger.info()
 
     # ═══ Step 4: Run Tests ═══
-    print("\033[1mStep 4: اجرای تست‌ها\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 4: اجرای تست‌ها\033[0m")
+    logger.info("-" * 70)
     test_result = subprocess.run(
         "pnpm test",
         shell=True,
@@ -339,12 +342,12 @@ def main():
     
     for line in test_result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 5: Commit ═══
-    print("\033[1mStep 5: commit\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 5: commit\033[0m")
+    logger.info("-" * 70)
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
         msg = '''perf(bundle): optimize vendor-other chunk splitting
@@ -372,28 +375,28 @@ Benefits:
         warn(f"commit: {e}")
 
     # ═══ Final Report ═══
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 Bundle Optimization Complete!\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[92m  🎉 Bundle Optimization Complete!\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 Improvements:")
-    print("    ✓ vendor-other split into 6 focused chunks")
-    print("    ✓ Better caching strategy")
-    print("    ✓ Clearer chunk boundaries")
-    print("    ✓ Easier performance debugging")
-    print()
+    logger.info("  📊 Improvements:")
+    logger.info("    ✓ vendor-other split into 6 focused chunks")
+    logger.info("    ✓ Better caching strategy")
+    logger.info("    ✓ Clearer chunk boundaries")
+    logger.debug("    ✓ Easier performance debugging")
+    logger.info()
 
-    print("  🎯 New Chunks:")
-    print("    • vendor-antd (UI components)")
-    print("    • vendor-echarts (chart library)")
-    print("    • vendor-deckgl (map visualization)")
-    print("    • vendor-data (data processing)")
-    print("    • vendor-state (state management)")
-    print("    • vendor-utils (utilities)")
-    print()
+    logger.info("  🎯 New Chunks:")
+    logger.info("    • vendor-antd (UI components)")
+    logger.info("    • vendor-echarts (chart library)")
+    logger.info("    • vendor-deckgl (map visualization)")
+    logger.info("    • vendor-data (data processing)")
+    logger.info("    • vendor-state (state management)")
+    logger.info("    • vendor-utils (utilities)")
+    logger.info()
 
-    print("  🚀 Phase 3 - Performance: 100% Complete!")
-    print()
+    logger.info("  🚀 Phase 3 - Performance: 100% Complete!")
+    logger.info()
 
     return 0
 

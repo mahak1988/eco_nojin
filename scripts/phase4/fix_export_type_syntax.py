@@ -5,6 +5,9 @@ Fix TS1205: Use 'export type' instead of 'export'
 When isolatedModules is enabled, type re-exports must use 'export type'.
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import os
 import sys
 import subprocess
@@ -61,17 +64,17 @@ def fix_index_files():
 
 
 def main():
-    print("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[96m  🔧 Fix TS1205: 'export type' Required\033[0m")
-    print("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[96m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[96m  🔧 Fix TS1205: 'export type' Required\033[0m")
+    logger.info("\033[1m\033[96m" + "=" * 70 + "\033[0m\n")
 
     for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
         if Path(p).exists() and p not in os.environ["PATH"]:
             os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
 
     # ═══ Step 1: Fix index.ts files ═══
-    print("\033[1mStep 1: اصلاح index.ts files\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 1: اصلاح index.ts files\033[0m")
+    logger.info("-" * 70)
     info("تبدیل 'export {' به 'export type {' برای type re-exports...")
     
     fixed_count = fix_index_files()
@@ -80,11 +83,11 @@ def main():
         warn("هیچ فایلی نیاز به اصلاح نداشت")
     else:
         ok(f"{fixed_count} فایل اصلاح شدند")
-    print()
+    logger.info()
 
     # ═══ Step 2: Type Check ═══
-    print("\033[1mStep 2: TypeScript Type Check\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 2: TypeScript Type Check\033[0m")
+    logger.info("-" * 70)
     info("Running tsc --noEmit...")
     
     result = subprocess.run(
@@ -110,19 +113,19 @@ def main():
             
             error_lines = [l for l in output.splitlines() if "error TS" in l][:15]
             for line in error_lines:
-                print(f"  {line}")
+                logger.info(f"  {line}")
             
             if error_count > 15:
-                print(f"  ... and {error_count - 15} more errors")
+                logger.error(f"  ... and {error_count - 15} more errors")
             final_error_count = error_count
         else:
             ok("TypeScript: No critical errors")
             final_error_count = 0
-    print()
+    logger.info()
 
     # ═══ Step 3: Build ═══
-    print("\033[1mStep 3: Build Test\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 3: Build Test\033[0m")
+    logger.info("-" * 70)
     info("Building...")
     
     result = subprocess.run(
@@ -141,13 +144,13 @@ def main():
     else:
         err("Build failed")
         for line in (result.stdout + result.stderr).splitlines()[-20:]:
-            print(f"  {line}")
+            logger.info(f"  {line}")
         return 1
-    print()
+    logger.info()
 
     # ═══ Step 4: Tests ═══
-    print("\033[1mStep 4: Run Tests\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 4: Run Tests\033[0m")
+    logger.info("-" * 70)
     
     result = subprocess.run(
         "pnpm test",
@@ -162,12 +165,12 @@ def main():
     
     for line in result.stdout.splitlines():
         if any(k in line for k in ["Test Files", "Tests", "passed", "failed"]):
-            print(f"  {line}")
-    print()
+            logger.info(f"  {line}")
+    logger.info()
 
     # ═══ Step 5: Commit ═══
-    print("\033[1mStep 5: Commit\033[0m")
-    print("-" * 70)
+    logger.info("\033[1mStep 5: Commit\033[0m")
+    logger.info("-" * 70)
     
     try:
         subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
@@ -193,30 +196,30 @@ Result: TypeScript errors reduced from 66 to {final_error_count}'''
         warn(f"Commit issue: {e}")
 
     # ═══ Final Report ═══
-    print("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
-    print("\033[1m\033[92m  🎉 TS1205 Fixed!\033[0m")
-    print("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
+    logger.info("\n\033[1m\033[92m" + "=" * 70 + "\033[0m")
+    logger.info("\033[1m\033[92m  🎉 TS1205 Fixed!\033[0m")
+    logger.info("\033[1m\033[92m" + "=" * 70 + "\033[0m\n")
 
-    print("  📊 Results:")
-    print(f"    ✓ TypeScript: 66 → {final_error_count}")
-    print("    ✓ Build: Successful")
-    print("    ✓ Tests: All passing")
-    print()
+    logger.info("  📊 Results:")
+    logger.error(f"    ✓ TypeScript: 66 → {final_error_count}")
+    logger.info("    ✓ Build: Successful")
+    logger.info("    ✓ Tests: All passing")
+    logger.info()
 
-    print("  🔧 Fixes Applied:")
-    print(f"    • Fixed {fixed_count} index.ts files")
-    print("    • Changed 'export {{' to 'export type {{'")
-    print("    • Resolves TS1205 (isolatedModules requirement)")
-    print()
+    logger.info("  🔧 Fixes Applied:")
+    logger.info(f"    • Fixed {fixed_count} index.ts files")
+    logger.info("    • Changed 'export {{' to 'export type {{'")
+    logger.info("    • Resolves TS1205 (isolatedModules requirement)")
+    logger.info()
 
     if final_error_count == 0:
-        print("  🎯 Phase B-1: Code Quality Setup - 100% Complete!")
+        logger.info("  🎯 Phase B-1: Code Quality Setup - 100% Complete!")
     else:
-        print(f"  ⚠️  {final_error_count} non-critical errors remain")
+        logger.error(f"  ⚠️  {final_error_count} non-critical errors remain")
     
-    print()
-    print("  🚀 Ready for Phase B-2: Increase Test Coverage")
-    print()
+    logger.info()
+    logger.info("  🚀 Ready for Phase B-2: Increase Test Coverage")
+    logger.info()
 
     return 0
 

@@ -12,6 +12,9 @@ Segment File for Analysis
   python scripts/phase1/segment_file.py frontend/src/pages/HyDroMaCenter.tsx 500
 """
 
+import structlog
+
+logger = structlog.get_logger()
 import re
 import sys
 from pathlib import Path
@@ -121,63 +124,63 @@ def analyze_file(file_path: Path) -> dict:
 
 def print_analysis(analysis: dict, file_path: Path):
     """چاپ نتایج تحلیل"""
-    print("=" * 70)
-    print(f"  📊 تحلیل ساختاری فایل")
-    print("=" * 70)
-    print(f"\n  📄 فایل: {file_path.name}")
-    print(f"  📏 مسیر: {file_path}")
-    print(f"\n  ─────────────────────────────────────")
-    print(f"  📐 تعداد خطوط:     {analysis['total_lines']:,}")
-    print(f"  📦 حجم:            {analysis['total_chars']:,} کاراکتر")
-    print(f"  🧩 عمق JSX:        {analysis['jsx_depth_max']}")
+    logger.info("=" * 70)
+    logger.info(f"  📊 تحلیل ساختاری فایل")
+    logger.info("=" * 70)
+    logger.info(f"\n  📄 فایل: {file_path.name}")
+    logger.info(f"  📏 مسیر: {file_path}")
+    logger.info(f"\n  ─────────────────────────────────────")
+    logger.info(f"  📐 تعداد خطوط:     {analysis['total_lines']:,}")
+    logger.info(f"  📦 حجم:            {analysis['total_chars']:,} کاراکتر")
+    logger.info(f"  🧩 عمق JSX:        {analysis['jsx_depth_max']}")
 
-    print(f"\n  ─────────────────────────────────────")
-    print(f"  📥 Imports:        {len(analysis['imports'])}")
-    print(f"  🎣 Hooks:          {sum(c for _, c in analysis['hooks_used'])}")
-    print(f"  🧩 Components:     {len(analysis['components_defined'])}")
-    print(f"  💾 State vars:     {len(analysis['state_variables'])}")
-    print(f"  ⚡ Effects:        {analysis['effects']}")
-    print(f"  🔧 Functions:      {len(analysis['functions'])}")
+    logger.info(f"\n  ─────────────────────────────────────")
+    logger.info(f"  📥 Imports:        {len(analysis['imports'])}")
+    logger.info(f"  🎣 Hooks:          {sum(c for _, c in analysis['hooks_used'])}")
+    logger.info(f"  🧩 Components:     {len(analysis['components_defined'])}")
+    logger.info(f"  💾 State vars:     {len(analysis['state_variables'])}")
+    logger.info(f"  ⚡ Effects:        {analysis['effects']}")
+    logger.info(f"  🔧 Functions:      {len(analysis['functions'])}")
 
-    print(f"\n  ─────────────────────────────────────")
-    print(f"  ⚠️  any types:      {analysis['any_types']}")
-    print(f"  📢 console.*:      {analysis['console_logs']}")
+    logger.info(f"\n  ─────────────────────────────────────")
+    logger.info(f"  ⚠️  any types:      {analysis['any_types']}")
+    logger.info(f"  📢 console.*:      {analysis['console_logs']}")
 
     if analysis["hooks_used"]:
-        print(f"\n  ─────────────────────────────────────")
-        print(f"  🎣 Hooks استفاده شده:")
+        logger.info(f"\n  ─────────────────────────────────────")
+        logger.info(f"  🎣 Hooks استفاده شده:")
         for hook, count in sorted(analysis["hooks_used"], key=lambda x: -x[1]):
-            print(f"      • {hook}: {count}")
+            logger.info(f"      • {hook}: {count}")
 
     if analysis["components_defined"]:
-        print(f"\n  ─────────────────────────────────────")
-        print(f"  🧩 Components تعریف شده:")
+        logger.info(f"\n  ─────────────────────────────────────")
+        logger.info(f"  🧩 Components تعریف شده:")
         for comp in analysis["components_defined"][:15]:
-            print(f"      • {comp}")
+            logger.info(f"      • {comp}")
         if len(analysis["components_defined"]) > 15:
-            print(f"      ... و {len(analysis['components_defined']) - 15} دیگر")
+            logger.info(f"      ... و {len(analysis['components_defined']) - 15} دیگر")
 
     if analysis["state_variables"]:
-        print(f"\n  ─────────────────────────────────────")
-        print(f"  💾 State variables:")
+        logger.info(f"\n  ─────────────────────────────────────")
+        logger.info(f"  💾 State variables:")
         for state in analysis["state_variables"][:15]:
-            print(f"      • {state}")
+            logger.info(f"      • {state}")
         if len(analysis["state_variables"]) > 15:
-            print(f"      ... و {len(analysis['state_variables']) - 15} دیگر")
+            logger.info(f"      ... و {len(analysis['state_variables']) - 15} دیگر")
 
     if analysis["dependencies"]:
-        print(f"\n  ─────────────────────────────────────")
-        print(f"  📦 External dependencies ({len(analysis['dependencies'])}):")
+        logger.info(f"\n  ─────────────────────────────────────")
+        logger.info(f"  📦 External dependencies ({len(analysis['dependencies'])}):")
         for dep in sorted(analysis["dependencies"])[:20]:
-            print(f"      • {dep}")
+            logger.info(f"      • {dep}")
 
     if analysis["errors"]:
-        print(f"\n  ─────────────────────────────────────")
-        print(f"  🚨 مشکلات شناسایی شده:")
+        logger.info(f"\n  ─────────────────────────────────────")
+        logger.info(f"  🚨 مشکلات شناسایی شده:")
         for err in analysis["errors"]:
-            print(f"      {err}")
+            logger.info(f"      {err}")
 
-    print("\n" + "=" * 70)
+    logger.info("\n" + "=" * 70)
 
 
 def segment_file(file_path: Path, segment_size: int = 500):
@@ -188,13 +191,13 @@ def segment_file(file_path: Path, segment_size: int = 500):
 
     num_segments = (total_lines + segment_size - 1) // segment_size
 
-    print(f"\n  ─────────────────────────────────────")
-    print(f"  📤 برنامه ارسال محتوا:")
-    print(f"  ─────────────────────────────────────")
-    print(f"  تعداد کل خطوط: {total_lines}")
-    print(f"  اندازه هر قطعه: {segment_size}")
-    print(f"  تعداد قطعات: {num_segments}")
-    print()
+    logger.info(f"\n  ─────────────────────────────────────")
+    logger.info(f"  📤 برنامه ارسال محتوا:")
+    logger.info(f"  ─────────────────────────────────────")
+    logger.info(f"  تعداد کل خطوط: {total_lines}")
+    logger.info(f"  اندازه هر قطعه: {segment_size}")
+    logger.info(f"  تعداد قطعات: {num_segments}")
+    logger.info()
 
     segments_dir = file_path.parent / f".segments_{file_path.stem}"
     segments_dir.mkdir(exist_ok=True)
@@ -214,24 +217,24 @@ FILE: {file_path.name}
 """
         segment_file.write_text(header + segment_text, encoding="utf-8")
 
-        print(f"  ✓ {segment_file.name}")
+        logger.info(f"  ✓ {segment_file.name}")
 
-    print(f"\n  📂 همه قطعات در: {segments_dir}")
-    print(f"\n  💡 حالا هر قطعه را یکی‌یکی برایم ارسال کنید")
-    print(f"     یا اگر ترجیح می‌دهید، فایل اصلی را یکجا بفرستید")
+    logger.info(f"\n  📂 همه قطعات در: {segments_dir}")
+    logger.info(f"\n  💡 حالا هر قطعه را یکی‌یکی برایم ارسال کنید")
+    logger.info(f"     یا اگر ترجیح می‌دهید، فایل اصلی را یکجا بفرستید")
 
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python segment_file.py <file-path> [segment-size]")
-        print("Example: python segment_file.py frontend/src/pages/HyDroMaCenter.tsx 500")
+        logger.info("Usage: python segment_file.py <file-path> [segment-size]")
+        logger.info("Example: python segment_file.py frontend/src/pages/HyDroMaCenter.tsx 500")
         return 1
 
     file_path = Path(sys.argv[1])
     segment_size = int(sys.argv[2]) if len(sys.argv) > 2 else 500
 
     if not file_path.exists():
-        print(f"✗ فایل یافت نشد: {file_path}")
+        logger.info(f"✗ فایل یافت نشد: {file_path}")
         return 1
 
     analysis = analyze_file(file_path)
@@ -247,7 +250,7 @@ def main():
         json.dumps(serializable, indent=2, ensure_ascii=False),
         encoding="utf-8"
     )
-    print(f"\n  💾 تحلیل ذخیره شد: {analysis_file}")
+    logger.info(f"\n  💾 تحلیل ذخیره شد: {analysis_file}")
 
     return 0
 

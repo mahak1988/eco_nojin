@@ -3,6 +3,9 @@
 چالش ۲۵ دانشمند × ۲۵ منطقه
 تمام کد (مناطق + تست‌ها) در یک فایل واحد
 """
+import structlog
+
+logger = structlog.get_logger()
 import sys
 import math
 import json
@@ -20,7 +23,7 @@ try:
     from engine.hydroma.climate_adaptation.uncertainty_knowledge_engine import UncertaintyAndKnowledgeEngine
     ALL_MODULES_LOADED = True
 except ImportError as e:
-    print(f"WARNING: Some modules not loaded: {e}")
+    logger.warning(f"WARNING: Some modules not loaded: {e}")
     ALL_MODULES_LOADED = False
 
 
@@ -436,7 +439,7 @@ class Scientist25Challenge:
         self.results.append(TestResult(region_id, scientist, test_name, passed, message, severity))
         status = "PASS" if passed else "FAIL"
         icon = "[PASS]" if passed else "[FAIL]"
-        print(f"   {icon} [{region_id}] {scientist}: {test_name} - {status}")
+        logger.info(f"   {icon} [{region_id}] {scientist}: {test_name} - {status}")
 
     def test_hydrologist(self, region_id, region):
         scientist = "هیدرولوژیست"
@@ -691,15 +694,15 @@ class Scientist25Challenge:
                                 False, f"خطا: {str(e)[:50]}", "critical")
 
     def run_all(self):
-        print("=" * 70)
-        print("چالش ۲۵ دانشمند × ۲۵ منطقه")
-        print("=" * 70)
+        logger.info("=" * 70)
+        logger.info("چالش ۲۵ دانشمند × ۲۵ منطقه")
+        logger.info("=" * 70)
 
         for region_id, region in REGIONS.items():
             region_name = region['name_fa']
             koppen = region['koppen']
-            print(f"\n[REGION] {region_id}: {region_name} ({koppen})")
-            print("-" * 50)
+            logger.info(f"\n[REGION] {region_id}: {region_name} ({koppen})")
+            logger.info("-" * 50)
 
             self.test_hydrologist(region_id, region)
             self.test_climatologist(region_id, region)
@@ -751,24 +754,24 @@ def main():
     results = challenge.run_all()
     report = challenge.generate_report()
 
-    print("\n" + "=" * 70)
-    print("نتیجه نهایی چالش ۲۵ دانشمند")
-    print("=" * 70)
-    print(f"   کل تست‌ها: {report['total_tests']}")
-    print(f"   موفق: {report['passed']} ({report['pass_rate_percent']}%)")
-    print(f"   ناموفق: {report['failed']}")
-    print(f"   بحرانی: {report['critical_failures']}")
-    print(f"   هشدارها: {report['warnings']}")
-    print(f"   مناطق: {report['regions_tested']}")
+    logger.info("\n" + "=" * 70)
+    logger.info("نتیجه نهایی چالش ۲۵ دانشمند")
+    logger.info("=" * 70)
+    logger.info(f"   کل تست‌ها: {report['total_tests']}")
+    logger.info(f"   موفق: {report['passed']} ({report['pass_rate_percent']}%)")
+    logger.info(f"   ناموفق: {report['failed']}")
+    logger.info(f"   بحرانی: {report['critical_failures']}")
+    logger.warning(f"   هشدارها: {report['warnings']}")
+    logger.info(f"   مناطق: {report['regions_tested']}")
     verdict = report['verdict']
-    print(f"\n   [VERDICT] {verdict}")
-    print("=" * 70)
+    logger.info(f"\n   [VERDICT] {verdict}")
+    logger.info("=" * 70)
 
     report_dir = ROOT / "docs" / "hydroma"
     report_dir.mkdir(parents=True, exist_ok=True)
     report_file = report_dir / "25_scientist_challenge_report.json"
     report_file.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"\nگزارش ذخیره شد: {report_file}")
+    logger.info(f"\nگزارش ذخیره شد: {report_file}")
 
 
 if __name__ == "__main__":
