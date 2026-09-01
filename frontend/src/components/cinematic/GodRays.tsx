@@ -1,37 +1,31 @@
 import { useMemo } from 'react';
 import * as THREE from 'three';
-import { useWeatherStore } from '../../hooks/useWeatherStore';
+import { getTerrainHeight } from '../../utils/terrainHeight';
 
+/** Subtle vertical light shafts over the farm valley (not a floating fan!). */
 export function GodRays() {
-  const { sunPosition, timeOfDay } = useWeatherStore();
-
-  const rays = useMemo(() => {
+  const shafts = useMemo(() => {
     const arr = [];
-    for (let i = 0; i < 8; i++) {
-      const angle = (i / 8) * Math.PI * 0.5 - Math.PI * 0.25;
-      arr.push({
-        position: [
-          sunPosition[0] * 0.5 + Math.cos(angle) * 10,
-          sunPosition[1] * 0.5,
-          sunPosition[2] * 0.5 + Math.sin(angle) * 10,
-        ] as [number, number, number],
-        rotation: [0.3 + i * 0.05, angle, 0] as [number, number, number],
-      });
+    for (let i = 0; i < 9; i++) {
+      const angle = (i / 9) * Math.PI * 2;
+      const r = 18 + (i % 3) * 9;
+      const x = Math.cos(angle) * r;
+      const z = Math.sin(angle) * r;
+      const h = getTerrainHeight(x, z);
+      arr.push({ x, z, y: h + 18, tilt: (i % 2 === 0 ? 1 : -1) * 0.06, radius: 1.2 + (i % 3) * 0.7 });
     }
     return arr;
-  }, [sunPosition]);
-
-  const intensity = timeOfDay === 'day' ? 0.15 : timeOfDay === 'dawn' || timeOfDay === 'dusk' ? 0.25 : 0;
+  }, []);
 
   return (
     <group>
-      {rays.map((ray, i) => (
-        <mesh key={i} position={ray.position} rotation={ray.rotation}>
-          <cylinderGeometry args={[0.5, 3, 80, 8, 1, true]} />
+      {shafts.map((s, i) => (
+        <mesh key={i} position={[s.x, s.y, s.z]} rotation={[s.tilt, 0, s.tilt]}>
+          <cylinderGeometry args={[s.radius * 0.4, s.radius, 36, 8, 1, true]} />
           <meshBasicMaterial
-            color="#fff8dc"
+            color="#fff4c8"
             transparent
-            opacity={intensity}
+            opacity={0.055}
             blending={THREE.AdditiveBlending}
             depthWrite={false}
             side={THREE.DoubleSide}
