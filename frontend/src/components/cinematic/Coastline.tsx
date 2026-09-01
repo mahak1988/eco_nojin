@@ -1,28 +1,35 @@
 import { useMemo } from 'react';
 import * as THREE from 'three';
-import { getTerrainHeight, LAKE_LEVEL } from '../../utils/terrainHeight';
+import { getTerrainHeight } from '../../utils/terrainHeight';
 
-/** Sandy shore ring around the lake. */
+/**
+ * Continuous beach: 56 overlapping sand quads hugging the terrain,
+ * oriented tangentially (no more scattered white rectangles).
+ */
 export function Coastline() {
-  const ring = useMemo(() => {
-    const pts: { x: number; z: number; y: number; rot: number }[] = [];
-    for (let i = 0; i < 24; i++) {
-      const a = (i / 24) * Math.PI * 2;
-      const r = 56 + Math.sin(i * 3.7) * 4;
+  const patches = useMemo(() => {
+    const list: { x: number; z: number; y: number; yaw: number; s: number }[] = [];
+    const N = 56;
+    for (let i = 0; i < N; i++) {
+      const a = (i / N) * Math.PI * 2;
+      const r = 58 + Math.sin(i * 2.7) * 3;
       const x = Math.cos(a) * r;
       const z = Math.sin(a) * r;
-      pts.push({ x, z, y: Math.max(getTerrainHeight(x, z), LAKE_LEVEL + 0.25), rot: -a });
+      const y = getTerrainHeight(x, z) + 0.06;
+      list.push({ x, z, y, yaw: -a + Math.PI / 2, s: 0.9 + Math.sin(i * 1.3) * 0.15 });
     }
-    return pts;
+    return list;
   }, []);
 
   return (
     <group>
-      {ring.map((p, i) => (
-        <mesh key={i} position={[p.x, p.y, p.z]} rotation={[-Math.PI / 2, 0, p.rot]} receiveShadow>
-          <planeGeometry args={[16, 7]} />
-          <meshStandardMaterial color="#e8d5a6" roughness={0.95} />
-        </mesh>
+      {patches.map((p, i) => (
+        <group key={i} position={[p.x, p.y, p.z]} rotation={[0, p.yaw, 0]} scale={p.s}>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+            <planeGeometry args={[11, 9]} />
+            <meshStandardMaterial color="#e6d3a3" roughness={0.95} />
+          </mesh>
+        </group>
       ))}
     </group>
   );

@@ -9,13 +9,13 @@ export interface ArtisticState {
   enableFireflies: boolean;
   enableBirds: boolean;
   enableButterflies: boolean;
-  enableGodRays: boolean;
+  enableGodRays: boolean;      // deprecated - kept false, no longer rendered
+  enableSunCycle: boolean;     // NEW: moving sun day cycle
   enableCinematicCamera: boolean;
   enableLetterbox: boolean;
   enableFilmGrain: boolean;
   enableLensFlare: boolean;
   timeScale: number;
-  // Agricultural toggles
   enableInsects: boolean;
   enableDomesticAnimals: boolean;
   enablePoultry: boolean;
@@ -39,13 +39,13 @@ export const useArtisticStore = create<ArtisticState>((set) => ({
   enableFireflies: false,
   enableBirds: true,
   enableButterflies: true,
-  enableGodRays: true,
+  enableGodRays: false,
+  enableSunCycle: true,
   enableCinematicCamera: false,
   enableLetterbox: true,
   enableFilmGrain: true,
   enableLensFlare: false,
   timeScale: 1,
-  // Agricultural defaults
   enableInsects: true,
   enableDomesticAnimals: true,
   enablePoultry: true,

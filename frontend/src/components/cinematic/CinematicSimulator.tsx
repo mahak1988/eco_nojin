@@ -18,7 +18,6 @@ import { Rainbow } from './Rainbow';
 import { Fireflies } from './Fireflies';
 import { Birds } from './Birds';
 import { Butterflies } from './Butterflies';
-import { GodRays } from './GodRays';
 import { CinematicCamera } from './CinematicCamera';
 import { CinematicOverlay } from './CinematicOverlay';
 import { SeasonController } from './SeasonController';
@@ -59,7 +58,9 @@ function Scene() {
       {a.enableFireflies && timeOfDay === 'night' && <Fireflies />}
       {a.enableBirds && timeOfDay !== 'night' && condition !== 'storm' && condition !== 'dust' && <Birds />}
       {a.enableButterflies && timeOfDay === 'day' && condition === 'clear' && <Butterflies />}
-      {a.enableGodRays && timeOfDay !== 'night' && condition !== 'dust' && condition !== 'storm' && <GodRays />}
+
+      {/* NOTE: GodRays removed per user request - replaced by
+          moving sun + drifting clouds + real sunshine in LightingSystem */}
 
       {a.enableInsects && <InsectsSystem />}
       {a.enableDomesticAnimals && <DomesticAnimals />}
@@ -94,7 +95,6 @@ function CanvasHost() {
   const tier = useQualityStore((s) => s.tier);
   const { timeOfDay, condition } = useWeatherStore();
 
-  // Adaptive DPR: the single biggest factor for smoothness
   const dpr: [number, number] =
     tier === 'high' ? [1.25, 1.75] : tier === 'medium' ? [1, 1.25] : [0.75, 1];
 
@@ -136,20 +136,12 @@ export function CinematicSimulator() {
       <CanvasHost />
       <CinematicOverlay />
       <WeatherControls />
-
-      {/* Quality badge (adaptive) */}
       <div style={{
-        position: 'absolute',
-        bottom: 10,
-        left: 10,
-        color: 'rgba(255,255,255,0.55)',
-        fontSize: 11,
-        fontFamily: 'monospace',
-        pointerEvents: 'none',
-        zIndex: 100,
-        direction: 'rtl',
+        position: 'absolute', bottom: 10, left: 10,
+        color: 'rgba(255,255,255,0.55)', fontSize: 11, fontFamily: 'monospace',
+        pointerEvents: 'none', zIndex: 100, direction: 'rtl',
       }}>
-        🎬 کیفیت خودکار: {TIER_LABEL[tier]} | DPR تطبیقی | اینتروی سینمایی
+        🎬 کیفیت خودکار: {TIER_LABEL[tier]} | خورشید متحرک + ابرهای متحرک
       </div>
     </div>
   );

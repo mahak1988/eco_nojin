@@ -1,6 +1,3 @@
-import { useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
 import { CustomWater } from './CustomWater';
 import { LAKE_LEVEL } from '../../utils/terrainHeight';
 import { useWeatherStore } from '../../hooks/useWeatherStore';
@@ -20,16 +17,12 @@ export function WaterSystem() {
   const waveHeight = condition === 'storm' ? 0.5 : condition === 'rain' ? 0.3 : 0.15;
 
   return (
-    <group>
-      {/* Central lake at basin level */}
-      <CustomWater
-        position={[0, LAKE_LEVEL, 0]}
-        args={[110, 110]}
-        color={waterColor}
-        waveHeight={waveHeight}
-        waveSpeed={condition === 'storm' ? 1.2 : 0.5}
-        segments={96}
-      />
-    </group>
+    <CustomWater
+      position={[0, LAKE_LEVEL, 0]}
+      radius={55}
+      color={waterColor}
+      waveHeight={waveHeight}
+      waveSpeed={condition === 'storm' ? 1.2 : 0.5}
+    />
   );
 }

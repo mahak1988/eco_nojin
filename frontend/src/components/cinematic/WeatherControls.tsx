@@ -5,8 +5,6 @@ import { useState } from 'react';
 
 const { Text } = Typography;
 
-// Use Unicode emojis instead of @ant-design/icons
-// Benefits: no dependency, always works, more cinematic
 const conditions: { value: WeatherCondition; label: string; emoji: string }[] = [
   { value: 'clear', label: 'آفتابی', emoji: '☀️' },
   { value: 'rain', label: 'باران', emoji: '🌧️' },
@@ -37,12 +35,12 @@ const agriculturalFeatures = [
 ];
 
 const artisticEffects = [
+  { key: 'enableSunCycle', label: 'حرکت خورشید', emoji: '🌞' },
   { key: 'enableAurora', label: 'شفق قطبی', emoji: '🌌' },
   { key: 'enableRainbow', label: 'رنگین‌کمان', emoji: '🌈' },
   { key: 'enableFireflies', label: 'کرم شب‌تاب', emoji: '✨' },
   { key: 'enableBirds', label: 'پرندگان', emoji: '🦅' },
   { key: 'enableButterflies', label: 'پروانه', emoji: '🦋' },
-  { key: 'enableGodRays', label: 'پرتو خورشید', emoji: '☀️' },
   { key: 'enableLetterbox', label: 'لترباکس', emoji: '🎬' },
   { key: 'enableFilmGrain', label: 'گرین فیلم', emoji: '📽️' },
 ];
@@ -75,7 +73,6 @@ export function WeatherControls() {
     >
       {!collapsed && (
         <Space direction="vertical" style={{ width: '100%' }} size="middle">
-          {/* Weather Condition */}
           <div>
             <Text strong style={{ color: '#aaa' }}>🌤️ آب و هوا</Text>
             <Row gutter={[6, 6]} style={{ marginTop: 6 }}>
@@ -84,17 +81,13 @@ export function WeatherControls() {
                   <Button
                     type={store.condition === c.value ? 'primary' : 'default'}
                     onClick={() => store.setCondition(c.value)}
-                    block size="small"
-                    style={{ fontSize: 13 }}
-                  >
-                    {c.emoji} {c.label}
-                  </Button>
+                    block size="small" style={{ fontSize: 13 }}
+                  >{c.emoji} {c.label}</Button>
                 </Col>
               ))}
             </Row>
           </div>
 
-          {/* Time of Day */}
           <div>
             <Text strong style={{ color: '#aaa' }}>⏰ زمان روز</Text>
             <Row gutter={[6, 6]} style={{ marginTop: 6 }}>
@@ -104,22 +97,18 @@ export function WeatherControls() {
                     type={store.timeOfDay === t.value ? 'primary' : 'default'}
                     onClick={() => store.setTimeOfDay(t.value)}
                     block size="small"
-                  >
-                    {t.emoji} {t.label}
-                  </Button>
+                  >{t.emoji} {t.label}</Button>
                 </Col>
               ))}
             </Row>
           </div>
 
-          {/* Wind */}
           <div>
             <Text strong style={{ color: '#aaa' }}>💨 باد: {store.windSpeed} km/h</Text>
             <Slider min={0} max={100} value={store.windSpeed}
               onChange={(v) => store.setWind(v, store.windDirection)} />
           </div>
 
-          {/* Plant Growth */}
           <div>
             <Text strong style={{ color: '#aaa' }}>🌱 رشد گیاه: {Math.round(store.plantGrowthStage * 100)}%</Text>
             <Slider min={0} max={100} value={store.plantGrowthStage * 100}
@@ -128,7 +117,6 @@ export function WeatherControls() {
 
           <Divider style={{ borderColor: 'rgba(255,255,255,0.1)', margin: '8px 0' }} />
 
-          {/* Agricultural Features */}
           <div>
             <Text strong style={{ color: '#feca57', fontSize: 13 }}>🌾 اکوسیستم کشاورزی</Text>
             <Row gutter={[8, 8]} style={{ marginTop: 8 }}>
@@ -136,12 +124,9 @@ export function WeatherControls() {
                 <Col key={key} span={12}>
                   <Button
                     type={(a as any)[key] ? 'primary' : 'default'}
-                    onClick={() => a.toggle(key)}
-                    block size="small"
+                    onClick={() => a.toggle(key)} block size="small"
                     style={{ textAlign: 'right' }}
-                  >
-                    {emoji} {label}
-                  </Button>
+                  >{emoji} {label}</Button>
                 </Col>
               ))}
             </Row>
@@ -149,7 +134,6 @@ export function WeatherControls() {
 
           <Divider style={{ borderColor: 'rgba(255,255,255,0.1)', margin: '8px 0' }} />
 
-          {/* Artistic Effects */}
           <div>
             <Text strong style={{ color: '#feca57', fontSize: 13 }}>✨ جلوه‌های هنری</Text>
             <Row gutter={[8, 8]} style={{ marginTop: 8 }}>
@@ -157,11 +141,8 @@ export function WeatherControls() {
                 <Col key={key} span={12}>
                   <Button
                     type={(a as any)[key] ? 'primary' : 'default'}
-                    onClick={() => a.toggle(key)}
-                    block size="small"
-                  >
-                    {emoji} {label}
-                  </Button>
+                    onClick={() => a.toggle(key)} block size="small"
+                  >{emoji} {label}</Button>
                 </Col>
               ))}
             </Row>
