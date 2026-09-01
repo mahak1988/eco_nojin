@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
+// Detect if we should use system Chrome
+const useSystemChrome = process.env.PLAYWRIGHT_USE_SYSTEM_CHROME !== 'false';
+
 export default defineConfig({
   testDir: './e2e/tests',
   fullyParallel: true,
@@ -15,17 +18,16 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
-    // Use system Chrome instead of bundled Chromium
-    // This bypasses the 403 CDN download error
+    // Force system Chrome to avoid CDN downloads
     launchOptions: {
       channel: 'chrome',
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     },
   },
   projects: [
     {
       name: 'chromium',
       use: {
-        // Use installed Chrome on system
         channel: 'chrome',
         ...devices['Desktop Chrome'],
       },

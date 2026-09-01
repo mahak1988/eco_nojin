@@ -18,11 +18,13 @@
     "quality": "pnpm type-check && pnpm lint && pnpm format:check",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:e2e:debug": "playwright test --debug",
+    "test:e2e": "set PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 && set PLAYWRIGHT_BROWSERS_PATH=0 && playwright test",
+    "test:e2e:ui": "set PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 && set PLAYWRIGHT_BROWSERS_PATH=0 && playwright test --ui",
+    "test:e2e:debug": "set PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 && set PLAYWRIGHT_BROWSERS_PATH=0 && playwright test --debug",
     "test:e2e:report": "playwright show-report",
-    "test:all": "pnpm test && pnpm test:coverage && pnpm test:e2e"
+    "test:all": "pnpm test && pnpm test:coverage && pnpm test:e2e",
+    "test:e2e:pwsh": "pwsh -Command \"$env:PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD='1'; $env:PLAYWRIGHT_BROWSERS_PATH='0'; pnpm exec playwright test\"",
+    "test:e2e:ui:pwsh": "pwsh -Command \"$env:PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD='1'; $env:PLAYWRIGHT_BROWSERS_PATH='0'; pnpm exec playwright test --ui\""
   },
   "dependencies": {
     "@deck.gl/aggregation-layers": "^9.3.10",
