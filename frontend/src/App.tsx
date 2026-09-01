@@ -96,6 +96,24 @@ const APIDocumentation = lazy(() => import('./pages/APIDocumentation'));
 const Settings = lazy(() => import('./pages/Settings'));
 import './styles/global.css';
 
+// Lazy-loaded heavy modules for performance optimization
+import React, { lazy, Suspense } from 'react';
+import { LazyWrapper } from './components/common/LazyWrapper';
+
+// Heavy 3D modules - loaded on demand
+const HydromaDashboard = lazy(() => import('./features/hydroma/HydromaDashboard'));
+const MotorRunner = lazy(() => import('./features/motor-runner/MotorRunner'));
+
+// Admin modules - loaded on demand
+const AdminPanel = lazy(() => import('./features/admin/AdminPanel'));
+const ContentStudio = lazy(() => import('./features/content-studio/ContentStudio'));
+const BotsManagement = lazy(() => import('./features/bots/BotsManagement'));
+const AIModelsMonitor = lazy(() => import('./features/ai-models/AIModelsMonitor'));
+
+// Heavy chart modules
+const AnalyticsDashboard = lazy(() => import('./features/analytics/AnalyticsDashboard'));
+
+
 function App() {
   return (
     <AuthProvider>
@@ -394,7 +412,7 @@ function App() {
                 <ProtectedRoute requiredRole="admin">
                   <ThemeProvider>
                     <AdminLayout>
-                      <MotorRunner />
+                      <Suspense fallback={<div>Loading Motor Runner...</div>}><MotorRunner />
                     </AdminLayout>
                   </ThemeProvider>
                 </ProtectedRoute>
