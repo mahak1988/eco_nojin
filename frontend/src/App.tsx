@@ -412,7 +412,7 @@ function App() {
                 <ProtectedRoute requiredRole="admin">
                   <ThemeProvider>
                     <AdminLayout>
-                      <Suspense fallback={<div>Loading Motor Runner...</div>}><MotorRunner />
+                      <MotorRunner />
                     </AdminLayout>
                   </ThemeProvider>
                 </ProtectedRoute>
