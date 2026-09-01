@@ -239,6 +239,7 @@ function App() {
 
             {/* App (protected) */}
             <Route path="/hydroma" element={<Suspense fallback={<div>در حال بارگذاری...</div>}><CinematicSimulator /></Suspense>} />
+                </Routes>
                 </ProtectedRoute>
               }
             />
