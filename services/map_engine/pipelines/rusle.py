@@ -1,8 +1,8 @@
 """RUSLE Pipeline (M-ERS) - Soil Erosion Risk."""
+from __future__ import annotations
 import structlog
 
 logger = structlog.get_logger()
-from __future__ import annotations
 
 import time
 from pathlib import Path

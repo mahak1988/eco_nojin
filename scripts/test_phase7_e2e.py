@@ -5,10 +5,10 @@ bootstraps admin role via SQL, runs the full audit/credit flow against
 os.environ.get('HOST', 'localhost'):8011, then cleans up all test rows. Requires: server on 8011,
 SUPABASE_ACCESS_TOKEN in .env, PYTHONPATH=D:\\eco_nojin.
 """
+from __future__ import annotations
 import structlog
 
 logger = structlog.get_logger()
-from __future__ import annotations
 
 import io
 import json

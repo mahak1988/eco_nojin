@@ -1,8 +1,8 @@
 """Seed LMS courses/lessons from data/lms/courses.json into Supabase (idempotent)."""
+from __future__ import annotations
 import structlog
 
 logger = structlog.get_logger()
-from __future__ import annotations
 
 import json
 import re

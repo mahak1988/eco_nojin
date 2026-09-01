@@ -197,7 +197,7 @@ function App() {
                 <ProtectedRoute requiredRole="admin">
                   <ThemeProvider>
                     <AdminLayout>
-                      <ContentStudio />
+                      <div data-removed="ContentStudio" />
                     </AdminLayout>
                   </ThemeProvider>
                 </ProtectedRoute>
@@ -245,7 +245,7 @@ function App() {
                 <ProtectedRoute requiredRole="admin">
                   <ThemeProvider>
                     <AdminLayout>
-                      <BotsManagement />
+                      <div data-removed="BotsManagement" />
                     </AdminLayout>
                   </ThemeProvider>
                 </ProtectedRoute>
@@ -257,7 +257,7 @@ function App() {
                 <ProtectedRoute requiredRole="admin">
                   <ThemeProvider>
                     <AdminLayout>
-                      <AIModelsMonitor />
+                      <div data-removed="AIModelsMonitor" />
                     </AdminLayout>
                   </ThemeProvider>
                 </ProtectedRoute>
@@ -409,7 +409,7 @@ function App() {
                 <ProtectedRoute requiredRole="admin">
                   <ThemeProvider>
                     <AdminLayout>
-                      <MotorRunner />
+                      <div data-removed="MotorRunner" />
                     </AdminLayout>
                   </ThemeProvider>
                 </ProtectedRoute>

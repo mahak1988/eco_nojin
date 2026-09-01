@@ -5,10 +5,10 @@ a ChainResult with provenance labels. The chain is pure (no DB access) so
 it is unit-testable; the API layer wires persistence later.
 """
 
+from __future__ import annotations
 import structlog
 
 logger = structlog.get_logger()
-from __future__ import annotations
 
 import logging
 from datetime import date, timedelta

@@ -1,8 +1,8 @@
 """Abstract Database Adapter for Eco Nojin (DuckDB-compatible)."""
+from __future__ import annotations
 import structlog
 
 logger = structlog.get_logger()
-from __future__ import annotations
 
 import json
 from abc import ABC, abstractmethod

@@ -18,10 +18,10 @@ Scientific References:
 - Planetary Computer STAC API
 - Sentinel-2 L2A ATBD (Atmospheric Correction)
 """
+from __future__ import annotations
 import structlog
 
 logger = structlog.get_logger()
-from __future__ import annotations
 
 import warnings
 

@@ -11,10 +11,10 @@ ScientificDataRepository - نسخه نهایی و کامل (Final Release)
 ============================================================================
 """
 
+from __future__ import annotations
 import structlog
 
 logger = structlog.get_logger()
-from __future__ import annotations
 
 import logging
 from functools import lru_cache

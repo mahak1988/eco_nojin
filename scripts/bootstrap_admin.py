@@ -13,10 +13,10 @@ registered through the site.
 ``--set-password <new>`` resets the password of an EXISTING user
 (e.g. change the admin password after bootstrap).
 """
+from __future__ import annotations
 import structlog
 
 logger = structlog.get_logger()
-from __future__ import annotations
 
 import argparse
 import sys

@@ -4,10 +4,10 @@ Eco Nojin Telegram Bot - Main Entry Point.
 Run with:
     python -m services.telegram_bot.main
 """
+from __future__ import annotations
 import structlog
 
 logger = structlog.get_logger()
-from __future__ import annotations
 
 import logging
 import sys

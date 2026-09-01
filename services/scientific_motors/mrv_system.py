@@ -17,10 +17,10 @@ Outputs:
 - Additionality & permanence proof
 - Co-benefits quantification
 """
+from __future__ import annotations
 import structlog
 
 logger = structlog.get_logger()
-from __future__ import annotations
 
 import hashlib
 import json

@@ -7,10 +7,10 @@ Fetches monthly temperature and precipitation data from real climate records.
 Source: Open-Meteo Archive API (ERA5 reanalysis, 1950-present)
 URL: https://open-meteo.com/
 """
+from __future__ import annotations
 import structlog
 
 logger = structlog.get_logger()
-from __future__ import annotations
 
 from typing import Any
 

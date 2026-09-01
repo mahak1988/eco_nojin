@@ -17,10 +17,10 @@ Commands:
     verify    — PostGIS version, platform_badges count, RLS flags per table
     query     — run an arbitrary SQL string
 """
+from __future__ import annotations
 import structlog
 
 logger = structlog.get_logger()
-from __future__ import annotations
 
 import os
 import re

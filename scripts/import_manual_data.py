@@ -5,10 +5,10 @@ Target : D:\eco_nojin\data\manual\eco_manual_v1.sqlite  (budget: <= 10 MB)
 Design : metric columns stored as scaled INTEGER (x10); loaders convert back.
 Run    : .venv\Scripts\python.exe scripts\import_manual_data.py
 """
+from __future__ import annotations
 import structlog
 
 logger = structlog.get_logger()
-from __future__ import annotations
 
 import sqlite3
 from datetime import datetime

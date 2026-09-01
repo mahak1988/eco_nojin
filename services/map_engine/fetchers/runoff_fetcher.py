@@ -1,8 +1,8 @@
 """Runoff Fetcher - Computes Curve Number from Land Cover and Soil."""
+from __future__ import annotations
 import structlog
 
 logger = structlog.get_logger()
-from __future__ import annotations
 
 import hashlib
 from pathlib import Path

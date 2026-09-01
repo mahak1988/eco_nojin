@@ -10,10 +10,10 @@ Usage:
     python scripts/backup.py                 # backup into backups/<timestamp>/
     python scripts/backup.py --retain 10     # keep last N backups
 """
+from __future__ import annotations
 import structlog
 
 logger = structlog.get_logger()
-from __future__ import annotations
 
 import argparse
 import datetime as _dt

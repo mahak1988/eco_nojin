@@ -1,8 +1,8 @@
 """Rainfall Fetcher - Computes R-factor from climate data."""
+from __future__ import annotations
 import structlog
 
 logger = structlog.get_logger()
-from __future__ import annotations
 
 import hashlib
 from pathlib import Path
