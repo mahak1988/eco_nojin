@@ -1,4 +1,40 @@
-import { useWeatherStore, WeatherCondition, TimeOfDay } from '../../hooks/useWeatherStore';
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Final Fix: Replace ALL icons with Unicode Emojis
+=================================================
+Problem: @ant-design/icons@5.6.1 missing many icons from v6.x
+Solution: Replace ALL icon components with Unicode emojis
+Benefits:
+- Zero dependency on @ant-design/icons
+- Always works (emojis are built into OS)
+- Better cinematic/visual appearance
+- Cross-platform compatible
+"""
+
+import os
+import sys
+import subprocess
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+FRONTEND = PROJECT_ROOT / "frontend"
+WEATHER_CONTROLS = FRONTEND / "src" / "components" / "cinematic" / "WeatherControls.tsx"
+
+
+def ok(m): print(f"[OK] {m}")
+def info(m): print(f"[INFO] {m}")
+def err(m): print(f"[ERROR] {m}")
+
+
+def setup_git_path():
+    for p in [r"C:\Program Files\Git\cmd", r"C:\Program Files\Git\bin"]:
+        if Path(p).exists() and p not in os.environ["PATH"]:
+            os.environ["PATH"] = p + os.pathsep + os.environ["PATH"]
+
+
+# Completely rewritten WeatherControls with emojis instead of icons
+WEATHER_CONTROLS_EMOJI = '''import { useWeatherStore, WeatherCondition, TimeOfDay } from '../../hooks/useWeatherStore';
 import { useArtisticStore } from '../../hooks/useArtisticStore';
 import { Card, Slider, Button, Space, Typography, Row, Col, Divider } from 'antd';
 import { useState } from 'react';
@@ -171,3 +207,113 @@ export function WeatherControls() {
     </Card>
   );
 }
+'''
+
+
+def main():
+    print("")
+    print("=" * 70)
+    print("  Final Fix: Replace ALL Icons with Unicode Emojis")
+    print("=" * 70)
+    print("")
+
+    setup_git_path()
+
+    # Step 1: Write completely new file
+    print("[Step 1] Rewriting WeatherControls.tsx with emojis")
+    print("-" * 70)
+    
+    WEATHER_CONTROLS.write_text(WEATHER_CONTROLS_EMOJI, encoding="utf-8")
+    ok("Wrote new WeatherControls.tsx")
+    
+    info("Changes:")
+    info("  - Removed ALL @ant-design/icons imports")
+    info("  - Replaced with Unicode emojis")
+    info("  - Better visual appearance")
+    info("  - No dependency issues")
+    print("")
+
+    # Step 2: Build verification
+    print("[Step 2] Building project")
+    print("-" * 70)
+    info("This will take 1-2 minutes...")
+    
+    result = subprocess.run(
+        "pnpm build",
+        shell=True, cwd=FRONTEND,
+        capture_output=True, text=True,
+        encoding="utf-8", errors="replace", timeout=300,
+    )
+    
+    build_ok = result.returncode == 0
+    output = result.stdout + result.stderr
+    
+    if build_ok:
+        ok("🎉 Build successful!")
+        
+        print("\n  Bundle sizes:")
+        for line in output.splitlines():
+            if "dist/assets/" in line and ("kB" in line or "MB" in line):
+                if any(k in line for k in ["vendor", "index", "HyDroMaCenter", "cinematic"]):
+                    print(f"    {line.strip()}")
+    else:
+        err("Build still failing")
+        print("\n  Error output (last 25 lines):")
+        for line in output.splitlines()[-25:]:
+            if line.strip():
+                print(f"    {line}")
+    print("")
+
+    # Step 3: Commit if successful
+    if build_ok:
+        print("[Step 3] Committing fix")
+        print("-" * 70)
+        try:
+            subprocess.run("git add .", shell=True, cwd=PROJECT_ROOT, check=True)
+            msg = (
+                "fix(icons): replace all @ant-design/icons with Unicode emojis\\n\\n"
+                "Problem:\\n"
+                "- Multiple missing icons in @ant-design/icons@5.6.1\\n"
+                "- CloudSnowOutlined, CloudRainOutlined, WindOutlined, etc. missing\\n"
+                "- Kept hitting MISSING_EXPORT errors\\n\\n"
+                "Solution:\\n"
+                "- Completely removed @ant-design/icons from WeatherControls\\n"
+                "- Replaced with Unicode emojis (☀️🌧️❄️🌫️🏜️⛈️🌅🌙🐝🐄🐔🌊💧⛲🏞️🏖️🏗️🚜🌌🌈✨🦅🦋🎬📽️)\\n\\n"
+                "Benefits:\\n"
+                "- Zero dependency on @ant-design/icons\\n"
+                "- Always works (emojis built into OS)\\n"
+                "- Better cinematic/visual appearance\\n"
+                "- Cross-platform compatible\\n\\n"
+                "Cinematic agricultural simulator now accessible at:\\n"
+                "- http://localhost:5173/hydroma"
+            )
+            subprocess.run(f'git commit -m "{msg}"', shell=True, cwd=PROJECT_ROOT, check=True)
+            subprocess.run("git push", shell=True, cwd=PROJECT_ROOT, check=True)
+            ok("Committed and pushed")
+        except Exception as e:
+            print(f"[WARN] {e}")
+        
+        print("")
+        print("=" * 70)
+        print("  🎉 FIX SUCCESSFUL!")
+        print("=" * 70)
+        print("")
+        print("  ✅ All icons replaced with Unicode emojis!")
+        print("")
+        print("  Next steps:")
+        print("    cd D:\\eco_nojin\\frontend")
+        print("    pnpm dev")
+        print("    Visit: http://localhost:5173/hydroma")
+        print("")
+        print("  🌾 Agricultural Cinematic Simulator Ready!")
+        print("    ☀️🌧️❄️🌫️🏜️⛈️ Weather effects")
+        print("    🐝🐄🐔 Insects, Animals, Poultry")
+        print("    🌊💧⛲🏞️🏖️🏗️🚜 Water & Land features")
+        print("    🌌🌈✨🦅🦋🎬 Artistic effects")
+        print("")
+    
+    return 0 if build_ok else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
