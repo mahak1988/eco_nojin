@@ -1,7 +1,10 @@
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Preload } from '@react-three/drei';
 import * as THREE from 'three';
+import { useQualityStore, TIER_LABEL } from '../../hooks/useQualityStore';
+import { PerformanceGovernor } from './PerformanceGovernor';
+import { CameraIntro } from './CameraIntro';
 import { Terrain } from './Terrain';
 import { WeatherEffects } from './WeatherEffects';
 import { VegetationSystem } from './VegetationSystem';
@@ -35,9 +38,12 @@ import { useArtisticStore } from '../../hooks/useArtisticStore';
 function Scene() {
   const { condition, timeOfDay } = useWeatherStore();
   const a = useArtisticStore();
+  const [introDone, setIntroDone] = useState(false);
 
   return (
     <>
+      <CameraIntro onDone={() => setIntroDone(true)} />
+      <PerformanceGovernor />
       <SeasonController />
       <CinematicCamera />
       <LightingSystem />
@@ -66,11 +72,9 @@ function Scene() {
       {a.enableWatershed && <WatershedEngineering />}
       {a.enablePlowing && <PlowingTrails />}
 
-      {/* NOTE: ContactShadows REMOVED - it created a gray sheet over valleys.
-          Real shadow maps (4096 PCF) are enough. */}
-
       <OrbitControls
         makeDefault
+        enabled={introDone}
         enablePan
         enableZoom
         enableRotate
@@ -86,8 +90,13 @@ function Scene() {
   );
 }
 
-export function CinematicSimulator() {
+function CanvasHost() {
+  const tier = useQualityStore((s) => s.tier);
   const { timeOfDay, condition } = useWeatherStore();
+
+  // Adaptive DPR: the single biggest factor for smoothness
+  const dpr: [number, number] =
+    tier === 'high' ? [1.25, 1.75] : tier === 'medium' ? [1, 1.25] : [0.75, 1];
 
   const exposure = (() => {
     let base = 1.1;
@@ -99,26 +108,49 @@ export function CinematicSimulator() {
   })();
 
   return (
+    <Canvas
+      shadows={tier !== 'low'}
+      camera={{ position: [430, 260, 430], fov: 60, near: 0.5, far: 8000 }}
+      gl={{ antialias: true, powerPreference: 'high-performance' }}
+      dpr={dpr}
+      onCreated={({ gl }) => {
+        gl.toneMapping = THREE.ACESFilmicToneMapping;
+        gl.toneMappingExposure = exposure;
+        gl.outputColorSpace = THREE.SRGBColorSpace;
+        gl.shadowMap.enabled = tier !== 'low';
+        gl.shadowMap.type = THREE.PCFSoftShadowMap;
+      }}
+    >
+      <Suspense fallback={null}>
+        <Scene />
+      </Suspense>
+    </Canvas>
+  );
+}
+
+export function CinematicSimulator() {
+  const tier = useQualityStore((s) => s.tier);
+
+  return (
     <div style={{ width: '100%', height: '100vh', position: 'relative', background: '#000' }}>
-      <Canvas
-        shadows
-        camera={{ position: [120, 60, 120], fov: 60, near: 0.5, far: 8000 }}
-        gl={{ antialias: true, powerPreference: 'high-performance' }}
-        dpr={[1.5, 2]}
-        onCreated={({ gl }) => {
-          gl.toneMapping = THREE.ACESFilmicToneMapping;
-          gl.toneMappingExposure = exposure;
-          gl.outputColorSpace = THREE.SRGBColorSpace;
-          gl.shadowMap.enabled = true;
-          gl.shadowMap.type = THREE.PCFSoftShadowMap;
-        }}
-      >
-        <Suspense fallback={null}>
-          <Scene />
-        </Suspense>
-      </Canvas>
+      <CanvasHost />
       <CinematicOverlay />
       <WeatherControls />
+
+      {/* Quality badge (adaptive) */}
+      <div style={{
+        position: 'absolute',
+        bottom: 10,
+        left: 10,
+        color: 'rgba(255,255,255,0.55)',
+        fontSize: 11,
+        fontFamily: 'monospace',
+        pointerEvents: 'none',
+        zIndex: 100,
+        direction: 'rtl',
+      }}>
+        🎬 کیفیت خودکار: {TIER_LABEL[tier]} | DPR تطبیقی | اینتروی سینمایی
+      </div>
     </div>
   );
 }

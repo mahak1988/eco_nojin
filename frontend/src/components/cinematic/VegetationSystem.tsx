@@ -1,8 +1,9 @@
-import { useRef, useMemo } from 'react';
+import { useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { getTerrainHeight } from '../../utils/terrainHeight';
 import { useWeatherStore } from '../../hooks/useWeatherStore';
+import { useQualityStore } from '../../hooks/useQualityStore';
 
 const grassVertex = `
   uniform float uTime;
@@ -39,10 +40,13 @@ const grassFragment = `
 `;
 
 export function VegetationSystem() {
-  const count = 8000;
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const { windSpeed, condition, plantGrowthStage } = useWeatherStore();
+  const tier = useQualityStore((s) => s.tier);
+
+  // Adaptive grass density
+  const target = tier === 'high' ? 8000 : tier === 'medium' ? 4500 : 2500;
 
   const blade = useMemo(() => {
     const g = new THREE.BufferGeometry();
@@ -54,39 +58,37 @@ export function VegetationSystem() {
     return g;
   }, []);
 
-  const randoms = useMemo(() => {
-    const r = new Float32Array(count);
-    const dummy = new THREE.Object3D();
-    // We need meshRef ready; instead store transforms and apply in effect below
-    for (let i = 0; i < count; i++) r[i] = Math.random();
-    return r;
-  }, []);
-
-  const transforms = useMemo(() => {
+  const { transforms, rands } = useMemo(() => {
     const list: { x: number; y: number; z: number; rot: number; scale: number }[] = [];
-    for (let i = 0; i < count; i++) {
+    const r: number[] = [];
+    let guard = 0;
+    while (list.length < target && guard < target * 4) {
+      guard++;
       const angle = Math.random() * Math.PI * 2;
-      const radius = Math.sqrt(Math.random()) * 110; // farm zone + a bit beyond
+      const radius = Math.sqrt(Math.random()) * 110;
       const x = Math.cos(angle) * radius;
       const z = Math.sin(angle) * radius;
       const y = getTerrainHeight(x, z);
       if (y < -1.0) continue; // no grass under water
       list.push({ x, y, z, rot: Math.random() * Math.PI, scale: 0.7 + Math.random() * 0.9 });
+      r.push(Math.random());
     }
-    return list;
-  }, []);
+    return { transforms: list, rands: new Float32Array(r) };
+  }, [target]);
 
-  useMemo(() => {
-    if (!meshRef.current) return;
+  // FIX: useLayoutEffect (useMemo ran before ref existed -> matrices never applied)
+  useLayoutEffect(() => {
+    const mesh = meshRef.current;
+    if (!mesh) return;
     const dummy = new THREE.Object3D();
     transforms.forEach((t, i) => {
       dummy.position.set(t.x, t.y - 0.05, t.z);
       dummy.rotation.set(0, t.rot, 0);
       dummy.scale.setScalar(t.scale);
       dummy.updateMatrix();
-      meshRef.current!.setMatrixAt(i, dummy.matrix);
+      mesh.setMatrixAt(i, dummy.matrix);
     });
-    meshRef.current.instanceMatrix.needsUpdate = true;
+    mesh.instanceMatrix.needsUpdate = true;
   }, [transforms]);
 
   const baseColor = useMemo(() => {
@@ -111,8 +113,10 @@ export function VegetationSystem() {
     }
   });
 
+  const count = transforms.length;
+
   return (
-    <instancedMesh ref={meshRef} args={[blade, undefined, count]} castShadow>
+    <instancedMesh key={count} ref={meshRef} args={[blade, undefined, count]} castShadow={tier === 'high'}>
       <shaderMaterial
         ref={materialRef}
         vertexShader={grassVertex}
@@ -126,7 +130,7 @@ export function VegetationSystem() {
         }}
         side={THREE.DoubleSide}
       />
-      <instancedBufferAttribute attach="attributes-aRandom" args={[randoms, 1]} />
+      <instancedBufferAttribute attach="attributes-aRandom" args={[rands, 1]} />
     </instancedMesh>
   );
 }

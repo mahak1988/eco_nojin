@@ -1,17 +1,18 @@
 import { EffectComposer, Bloom, DepthOfField, Vignette, ChromaticAberration, HueSaturation, BrightnessContrast } from '@react-three/postprocessing';
-import { BlendFunction } from 'postprocessing';
 import { N8AO } from '@react-three/postprocessing';
 import { useWeatherStore } from '../../hooks/useWeatherStore';
 import { useArtisticStore } from '../../hooks/useArtisticStore';
+import { useQualityStore } from '../../hooks/useQualityStore';
 import { Vector2 } from 'three';
 
 export function PostProcessing() {
-  const { enablePostProcessing, condition, timeOfDay } = useArtisticStore();
+  const artistic = useArtisticStore();
   const weather = useWeatherStore();
+  const tier = useQualityStore((s) => s.tier);
 
-  if (!enablePostProcessing) return null;
+  // Low tier: skip post-processing entirely for max fluidity
+  if (!artistic.enablePostProcessing || tier === 'low') return null;
 
-  // Color grading based on weather
   const hueShift = (() => {
     if (weather.condition === 'drought') return -0.05;
     if (weather.condition === 'snow') return 0.05;
@@ -28,77 +29,33 @@ export function PostProcessing() {
     return 0.08;
   })();
 
-  const brightness = (() => {
-    if (weather.condition === 'storm' || weather.condition === 'dust') return -0.15;
-    if (weather.timeOfDay === 'night') return -0.2;
-    return 0;
-  })();
-
-  const contrast = (() => {
-    if (weather.timeOfDay === 'dawn' || weather.timeOfDay === 'dusk') return 0.15;
-    if (weather.condition === 'dust') return -0.1;
-    return 0.05;
-  })();
+  const brightness = (weather.condition === 'storm' || weather.condition === 'dust') ? -0.15 : weather.timeOfDay === 'night' ? -0.2 : 0;
+  const contrast = (weather.timeOfDay === 'dawn' || weather.timeOfDay === 'dusk') ? 0.15 : weather.condition === 'dust' ? -0.1 : 0.05;
 
   return (
-    <EffectComposer 
-      multisampling={8}  // 8x MSAA for ultra-smooth edges
-      frameBufferType={THREE.HalfFloatType}  // HDR rendering
-    >
-      {/* Ultra quality SSAO via N8AO */}
-      <N8AO
-        aoRadius={0.8}
-        intensity={2.5}
-        distanceFalloff={0.8}
-        color="#1a1a2e"
-        quality="ultra"  // Ultra quality preset
-        halfRes={false}  // Full resolution
-      />
+    <EffectComposer multisampling={tier === 'high' ? 4 : 0}>
+      {tier === 'high' && (
+        <N8AO aoRadius={0.8} intensity={2.5} distanceFalloff={0.8} color="#1a1a2e" quality="performance" halfRes />
+      )}
 
-      {/* Enhanced Bloom with mipmapped blur */}
       <Bloom
         intensity={weather.timeOfDay === 'night' ? 1.2 : 0.5}
         luminanceThreshold={0.75}
         luminanceSmoothing={0.85}
         mipmapBlur
         radius={0.85}
-        levels={8}
       />
 
-      {/* Cinematic Depth of Field */}
-      <DepthOfField
-        focusDistance={0.015}
-        focalLength={0.04}
-        bokehScale={2.5}
-        height={720}
-      />
+      {tier === 'high' && (
+        <DepthOfField focusDistance={0.015} focalLength={0.04} bokehScale={2.5} height={480} />
+      )}
 
-      {/* Brightness & Contrast for cinematic look */}
-      <BrightnessContrast
-        brightness={brightness}
-        contrast={contrast}
-      />
+      <BrightnessContrast brightness={brightness} contrast={contrast} />
+      <HueSaturation hue={hueShift} saturation={saturation} />
+      <Vignette eskil={false} offset={0.25} darkness={0.85} />
 
-      {/* Color grading */}
-      <HueSaturation
-        hue={hueShift}
-        saturation={saturation}
-      />
-
-      {/* Cinematic Vignette */}
-      <Vignette
-        eskil={false}
-        offset={0.25}
-        darkness={0.85}
-      />
-
-      {/* Chromatic aberration for storm/dust */}
       {(weather.condition === 'storm' || weather.condition === 'dust') && (
-        <ChromaticAberration
-          offset={new Vector2(0.0015, 0.0015)}
-          radialModulation={true}
-          modulationOffset={0.5}
-        />
+        <ChromaticAberration offset={new Vector2(0.0015, 0.0015)} radialModulation modulationOffset={0.5} />
       )}
     </EffectComposer>
   );
