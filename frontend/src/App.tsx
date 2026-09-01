@@ -34,57 +34,11 @@ import LoadingSpinner from './components/common/LoadingSpinner';
 import { HomePage } from './pages/HomePage';
 
 // Code-splitting (Phase 3): ط¨ظ‚غŒظ‡ طµظپط­ط§طھ lazy â€” ط¨ط§ظ†ط¯ظ„ ط§ظˆظ„غŒظ‡ ع©ظˆع†ع©â€Œطھط±
-const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })));
-const MissionPage = lazy(() =>
-  import('./pages/MissionPage').then((m) => ({ default: m.MissionPage }))
-);
-const FeaturesPage = lazy(() =>
-  import('./pages/FeaturesPage').then((m) => ({ default: m.FeaturesPage }))
-);
-const PricingPage = lazy(() =>
-  import('./pages/PricingPage').then((m) => ({ default: m.PricingPage }))
-);
-const HydromaPage = lazy(() =>
-  import('./pages/HydromaPage').then((m) => ({ default: m.HydromaPage }))
-);
-const ContactPage = lazy(() =>
-  import('./pages/ContactPage').then((m) => ({ default: m.ContactPage }))
-);
-const DocsPage = lazy(() => import('./pages/DocsPage').then((m) => ({ default: m.DocsPage })));
-const TermsPage = lazy(() => import('./pages/TermsPage').then((m) => ({ default: m.TermsPage })));
-const PrivacyPage = lazy(() =>
-  import('./pages/PrivacyPage').then((m) => ({ default: m.PrivacyPage }))
-);
-const BlogPage = lazy(() => import('./pages/BlogPage').then((m) => ({ default: m.BlogPage })));
 const HelpDocs = lazy(() => import('./pages/HelpDocs'));
 const Support = lazy(() => import('./pages/Support'));
 
-const LoginPage = lazy(() =>
-  import('./pages/auth/LoginPage').then((m) => ({ default: m.LoginPage }))
-);
-const RegisterPage = lazy(() =>
-  import('./pages/auth/RegisterPage').then((m) => ({ default: m.RegisterPage }))
-);
-const ForgotPasswordPage = lazy(() =>
-  import('./pages/auth/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage }))
-);
 
 const HyDroMaCenter = lazy(() => import('./pages/HyDroMaCenter'));
-const HydromaDashboard = lazy(() =>
-  import('./pages/HydromaDashboard').then((m) => ({ default: m.HydromaDashboard }))
-);
-const SimulatorDashboard = lazy(() =>
-  import('./pages/SimulatorDashboard').then((m) => ({ default: m.SimulatorDashboard }))
-);
-const VisualSimulatorsPage = lazy(() =>
-  import('./pages/VisualSimulatorsPage').then((m) => ({ default: m.VisualSimulatorsPage }))
-);
-const VirtualLandLabPage = lazy(() =>
-  import('./pages/VirtualLandLabPage').then((m) => ({ default: m.VirtualLandLabPage }))
-);
-const ProfilePage = lazy(() =>
-  import('./pages/ProfilePage').then((m) => ({ default: m.ProfilePage }))
-);
 
 // Phase 0 pages (default exports)
 const TerrainAnalysis = lazy(() => import('./pages/TerrainAnalysis'));
@@ -100,16 +54,10 @@ import './styles/global.css';
 import { LazyWrapper } from './components/common/LazyWrapper';
 
 // Heavy 3D modules - loaded on demand
-const MotorRunner = lazy(() => import('./features/motor-runner/MotorRunner'));
 
 // Admin modules - loaded on demand
-const AdminPanel = lazy(() => import('./features/admin/AdminPanel'));
-const ContentStudio = lazy(() => import('./features/content-studio/ContentStudio'));
-const BotsManagement = lazy(() => import('./features/bots/BotsManagement'));
-const AIModelsMonitor = lazy(() => import('./features/ai-models/AIModelsMonitor'));
 
 // Heavy chart modules
-const AnalyticsDashboard = lazy(() => import('./features/analytics/AnalyticsDashboard'));
 
 function App() {
   return (
@@ -191,13 +139,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/admin/content"
-              element={
-                <ProtectedRoute requiredRole="admin">
-                  <ThemeProvider>
-                    <AdminLayout>
-                      <div data-removed="ContentStudio" />
+            {/* Route for ContentStudio removed */}
                     </AdminLayout>
                   </ThemeProvider>
                 </ProtectedRoute>
@@ -239,25 +181,13 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/admin/bots"
-              element={
-                <ProtectedRoute requiredRole="admin">
-                  <ThemeProvider>
-                    <AdminLayout>
-                      <div data-removed="BotsManagement" />
+            {/* Route for BotsManagement removed */}
                     </AdminLayout>
                   </ThemeProvider>
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/admin/ai-models"
-              element={
-                <ProtectedRoute requiredRole="admin">
-                  <ThemeProvider>
-                    <AdminLayout>
-                      <div data-removed="AIModelsMonitor" />
+            {/* Route for AIModelsMonitor removed */}
                     </AdminLayout>
                   </ThemeProvider>
                 </ProtectedRoute>
@@ -265,24 +195,12 @@ function App() {
             />
 
             {/* Public */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/mission" element={<MissionPage />} />
-            <Route path="/features" element={<FeaturesPage />} />
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/docs" element={<DocsPage />} />
-            <Route path="/hydroma-about" element={<HydromaPage />} />
-            <Route path="/help" element={<HelpDocs />} />
-            <Route path="/support" element={<Support />} />
-
-            {/* Auth */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            {/* Route for AboutPage removed */}
+            {/* Route for MissionPage removed */}
+            {/* Route for PricingPage removed */}
+            {/* Route for PrivacyPage removed */}
+            {/* Route for LoginPage removed */}
+            {/* Route for RegisterPage removed */}
 
             {/* App (protected) */}
             <Route
@@ -294,28 +212,15 @@ function App() {
               }
             />
             <Route path="/dashboard" element={<Navigate to="/hydroma" replace />} />
-            <Route path="/simulator" element={<Navigate to="/hydroma" replace />} />
-            <Route
-              path="/simulators"
-              element={
-                <ProtectedRoute>
-                  <VisualSimulatorsPage />
+            {/* Route for VisualSimulatorsPage removed */}
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/virtual-lab"
-              element={
-                <ProtectedRoute>
-                  <VirtualLandLabPage />
+            {/* Route for VirtualLandLabPage removed */}
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <ProfilePage />
+            {/* Route for ProfilePage removed */}
                 </ProtectedRoute>
               }
             />
@@ -403,13 +308,7 @@ function App() {
               }
             />
 
-            <Route
-              path="/admin/motor-runner"
-              element={
-                <ProtectedRoute requiredRole="admin">
-                  <ThemeProvider>
-                    <AdminLayout>
-                      <div data-removed="MotorRunner" />
+            {/* Route for MotorRunner removed */}
                     </AdminLayout>
                   </ThemeProvider>
                 </ProtectedRoute>
