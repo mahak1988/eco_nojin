@@ -13,7 +13,7 @@ from typing import Any
 import numpy as np
 from scipy.optimize import minimize
 
-from database.config import SessionLocal
+# [PHASE 2 BLOCKED] Circular dependency fix: from database.config import SessionLocal
 from database.models import NojinCalibrationRecordDB, NojinFieldTrialDB
 
 

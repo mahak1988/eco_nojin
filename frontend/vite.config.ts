@@ -8,7 +8,6 @@
  * - vendor-echarts-renderers: Canvas/SVG renderers (~200KB)
  */
 
-import { visualizer } from 'vite-plugin-visualizer';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -21,15 +20,9 @@ export default defineConfig(({ mode }) => ({
         gzipSize: true,
         brotliSize: true,
       }),
-    react(),
+      react(),
     mode === 'analyze' &&
-      visualizer({
-        open: true,
-        filename: 'dist/stats.html',
-        gzipSize: true,
-        brotliSize: true,
-      }),
-  ].filter(Boolean),
+      ].filter(Boolean),
 
   resolve: {
     alias: {
