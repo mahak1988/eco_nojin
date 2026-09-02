@@ -1,3 +1,4 @@
+import SimulatorPlaceholder from './pages/SimulatorPlaceholder';
 import Diag3D from './pages/Diag3D';
 import { SimulationPipelineProvider } from './contexts/SimulationPipeline';
 import { Suspense, lazy } from 'react';
@@ -12,16 +13,13 @@ import {
   AdminErrors,
   AdminContent,
   AdminSettings,
-  ThemeProvider,
   SecurityAdvanced,
   MarketplaceDashboard,
   EcoWalletDashboard,
   ContentStudio,
   BotsManagement,
   AIModelsMonitor,
-  MotorRunner,
-  HyDroMa3D,
-} from './pages/admin';
+  MotorRunner , ThemeProvider } from './pages/admin';
 import LiveDashboard from './pages/admin/LiveDashboard';
 import CryptoPaymentWidget from './pages/admin/crypto/CryptoPaymentWidget';
 import TelegramManager from './pages/admin/telegram/TelegramManager';
@@ -38,7 +36,6 @@ const HelpDocs = lazy(() => import('./pages/HelpDocs'));
 const Support = lazy(() => import('./pages/Support'));
 
 
-const HyDroMaCenter = lazy(() => import('./pages/HyDroMaCenter'));
 
 // Phase 0 pages (default exports)
 const TerrainAnalysis = lazy(() => import('./pages/TerrainAnalysis'));
@@ -48,7 +45,6 @@ const DataManagement = lazy(() => import('./pages/DataManagement'));
 const LandProfiles = lazy(() => import('./pages/LandProfiles'));
 const APIDocumentation = lazy(() => import('./pages/APIDocumentation'));
 const Settings = lazy(() => import('./pages/Settings'));
-const CinematicSimulator = lazy(() => import('./components/cinematic/CinematicSimulator'));
 import './styles/global.css';
 
 // Lazy-loaded heavy modules for performance optimization
@@ -64,13 +60,12 @@ import { CinematicMode } from './components/cinematic/CinematicMode';
 function App() {
   return (
       <>
-        <CinematicMode />
+        
     <AuthProvider>
       <Suspense fallback={<LoadingSpinner fullScreen />}>
-        <SimulationPipelineProvider>
+        
           <Routes>
             {/* Admin Dashboard Routes - Phase 2 Complete */}
-            <Route path="/diag3d" element={<Diag3D />} />
             <Route
               path="/admin"
               element={
@@ -218,7 +213,7 @@ function App() {
 
             {/* Public */}
             <Route path="/" element={<HomePage />} />
-            <Route path="/cinematic" element={<Suspense fallback={<div>در حال بارگذاری...</div>}><CinematicSimulator /></Suspense>} />
+            <Route path="/cinematic" element={<Suspense fallback={<div>در حال بارگذاری...</div>}></Suspense>} />
             <Route path="/about" element={{/* AboutPage removed */}} />
             <Route path="/mission" element={{/* MissionPage removed */}} />
             <Route path="/features" element={{/* FeaturesPage removed */}} />
@@ -238,7 +233,7 @@ function App() {
             <Route path="/forgot-password" element={{/* ForgotPasswordPage removed */}} />
 
             {/* App (protected) */}
-            <Route path="/hydroma" element={<Suspense fallback={<div>در حال بارگذاری...</div>}><CinematicSimulator /></Suspense>} />
+            <Route path="/hydroma" element={<Suspense fallback={<div>در حال بارگذاری...</div>}></Suspense>} />
             <Route path="/dashboard" element={<Navigate to="/hydroma" replace />} />
             <Route path="/simulator" element={<Navigate to="/hydroma" replace />} />
             <Route
@@ -342,7 +337,7 @@ function App() {
                 <ProtectedRoute requiredRole="admin">
                   <ThemeProvider>
                     <AdminLayout>
-                      <HyDroMa3D />
+                      
                     </AdminLayout>
                   </ThemeProvider>
                 </ProtectedRoute>
@@ -403,7 +398,7 @@ function App() {
               }
             />
           </Routes>
-        </SimulationPipelineProvider>
+        
       </Suspense>
     </AuthProvider>
       </>

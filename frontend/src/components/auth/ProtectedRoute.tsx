@@ -1,70 +1,33 @@
-/**
- * ProtectedRoute - Authentication Guard
- * Supports both default and named imports for compatibility
- * Wraps protected routes with:
- *   - Authentication check
- *   - Role-based access (admin check)
- *   - SimulationPipelineProvider for data sharing
- */
-
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { ReactNode } from 'react';
-import { SimulationPipelineProvider } from '../../contexts/SimulationPipeline';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 interface ProtectedRouteProps {
-  children?: ReactNode;
+  children: React.ReactNode;
   requiredRole?: string;
 }
 
 /**
- * Check if user is authenticated
- * Uses localStorage token as primary check
+ * Route guard that redirects unauthenticated users to /login
+ * and unauthorized users to /.
  */
-export function useAuth(): { isAuthenticated: boolean; isAdmin: boolean; user: any } {
-  const token = localStorage.getItem('access_token');
-  const userStr = localStorage.getItem('user');
+export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
+  const { user, loading } = useAuth();
+  const location = useLocation();
 
-  let user = null;
-  let isAdmin = false;
-
-  try {
-    if (userStr) {
-      user = JSON.parse(userStr);
-      isAdmin = user?.role === 'admin' || user?.is_admin === true;
-    }
-  } catch (e) {
-    console.warn('[Auth] Failed to parse user data');
+  if (loading) {
+    return <LoadingSpinner fullScreen />;
   }
 
-  return {
-    isAuthenticated: !!token,
-    isAdmin,
-    user,
-  };
-}
-
-/**
- * ProtectedRoute component
- * Checks authentication and renders children with PipelineProvider
- */
-function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
-  const location = useLocation();
-  const { isAuthenticated, isAdmin } = useAuth();
-
-  // Check authentication
-  if (!isAuthenticated) {
+  if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Check role-based access
-  if (requiredRole === 'admin' && !isAdmin) {
+  if (requiredRole && user.role !== requiredRole) {
     return <Navigate to="/" replace />;
   }
 
-  // Render with PipelineProvider
-  return <SimulationPipelineProvider>{children || <Outlet />}</SimulationPipelineProvider>;
+  return <>{children}</>;
 }
 
-// Dual export: both default AND named
-export { ProtectedRoute };
 export default ProtectedRoute;
