@@ -1,4 +1,3 @@
-import SimulatorPlaceholder from './pages/SimulatorPlaceholder';
 import Diag3D from './pages/Diag3D';
 import { SimulationPipelineProvider } from './contexts/SimulationPipeline';
 import { Suspense, lazy } from 'react';
@@ -50,6 +49,7 @@ import './styles/global.css';
 // Lazy-loaded heavy modules for performance optimization
 import { LazyWrapper } from './components/common/LazyWrapper';
 import { CinematicMode } from './components/cinematic/CinematicMode';
+const SimulatorPage = lazy(() => import('./components/simulator/SimulatorPage'));
 
 // Heavy 3D modules - loaded on demand
 
