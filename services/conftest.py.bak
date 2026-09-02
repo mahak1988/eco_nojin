@@ -1,0 +1,127 @@
+"""
+conftest.py - Fixtures جامع برای تست‌های بک‌اند
+ایجاد خودکار با کشف 0 مدل دیتابیس
+"""
+
+import pytest
+import pytest_asyncio
+from pathlib import Path
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+import sys
+import importlib
+import inspect
+
+# افزودن مسیر پروژه به sys.path
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+
+# Import Base
+try:
+    from database.models import Base
+except ImportError:
+    try:
+        from services.models.base import Base
+    except ImportError:
+        from sqlalchemy.orm import declarative_base
+        Base = declarative_base()
+
+# Import خودکار همه مدل‌ها
+def import_all_models():
+    """Import خودکار همه مدل‌های SQLAlchemy"""
+    models_imported = []
+    
+    # جستجو در services
+    services_path = project_root / "services"
+    if services_path.exists():
+        for py_file in services_path.rglob("models.py"):
+            try:
+                rel_path = py_file.relative_to(project_root)
+                module_name = str(rel_path).replace("/", ".").replace("\\", ".").replace(".py", "")
+                importlib.import_module(module_name)
+                models_imported.append(module_name)
+            except Exception as e:
+                print(f"Warning: Could not import {py_file}: {e}")
+    
+    # جستجو در database
+    database_path = project_root / "database"
+    if database_path.exists():
+        for py_file in database_path.rglob("*.py"):
+            if py_file.name == "__init__.py":
+                continue
+            try:
+                rel_path = py_file.relative_to(project_root)
+                module_name = str(rel_path).replace("/", ".").replace("\\", ".").replace(".py", "")
+                importlib.import_module(module_name)
+                models_imported.append(module_name)
+            except Exception as e:
+                print(f"Warning: Could not import {py_file}: {e}")
+    
+    return models_imported
+
+# Import همه مدل‌ها
+imported_models = import_all_models()
+print(f"✅ {len(imported_models)} ماژول مدل import شد")
+
+# Fixtures پایه
+@pytest.fixture(scope="session")
+def event_loop():
+    """ایجاد event loop برای تست‌های async"""
+    import asyncio
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+    yield loop
+    loop.close()
+
+@pytest_asyncio.fixture(scope="function")
+async def async_engine():
+    """ایجاد engine دیتابیس در حافظه"""
+    engine = create_async_engine(
+        "sqlite+aiosqlite:///:memory:",
+        echo=False,
+        future=True
+    )
+    
+    # ایجاد همه جداول
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    
+    yield engine
+    
+    # پاک‌سازی
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+    await engine.dispose()
+
+@pytest_asyncio.fixture(scope="function")
+async def db_session(async_engine):
+    """ایجاد session دیتابیس"""
+    async_session = async_sessionmaker(
+        async_engine,
+        class_=AsyncSession,
+        expire_on_commit=False
+    )
+    
+    async with async_session() as session:
+        yield session
+        await session.rollback()
+
+@pytest.fixture(scope="function")
+def sync_engine():
+    """ایجاد engine sync"""
+    engine = create_engine("sqlite:///:memory:", echo=False)
+    Base.metadata.create_all(engine)
+    yield engine
+    Base.metadata.drop_all(engine)
+    engine.dispose()
+
+@pytest.fixture(scope="function")
+def sync_db_session(sync_engine):
+    """ایجاد session sync"""
+    Session = sessionmaker(bind=sync_engine, expire_on_commit=False)
+    session = Session()
+    yield session
+    session.rollback()
+    session.close()
+
+# Fixtures برای سرویس‌های خاص

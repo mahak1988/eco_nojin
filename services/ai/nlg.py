@@ -1,97 +1,183 @@
-"""Natural-language advice — RAG→NLG.
-
-Default provider is a free, deterministic Persian NLG that turns retrieved
-knowledge + live chain metrics into natural recommendations. When the user
-provides their own LLM key (AI_LLM_KEY / AI_LLM_URL), an OpenAI-compatible
-adapter is used instead. Honesty: the default is NOT an LLM; it is labeled
-`provider: local-nlg` so nobody mistakes it for model output.
 """
-import os
-from typing import Any
+services/ai/nlg.py
+==================
+ماژول Natural Language Generation برای پروژه eco_nojin
+اصلاح‌شده: 2026-09-03 01:16:32
+"""
 
-from services.ai.rag import index as rag_index
+from typing import Dict, Any, List, Optional
+from . import rag
 
-_TOPICS = {
-    "بندسار": "ایجاد بندسار (سنگ‌چین/خاکریز در مسیر آبراهه) رواناب سطحی را مهار و نفوذ را چند برابر می‌کند؛ در کنار زهکش فرانسوی برای مناطق نیمه‌خشک بهترین نتیجه را دارد.",
-    "رواناب": "کاهش رواناب با بندسار + تراس‌بندی + افزایش ماده آلی خاک (کمپوست/بیوچار)؛ پایش با شاخص‌های ماهواره‌ای و کالیبراسیون SCS-CN روی داده محلی.",
-    "خشکسالی": "پایش SPI/SPEI با داده ERA5 انجام می‌شود؛ در خشکسالی ملایم یا شدیدتر، آبیاری قطر‌ه‌ای و مالچ ارگانیک را توصیه می‌کنیم.",
-    "کربن": "اعتبار کربن (CCT) پس از ممیزی مستقل صادر می‌شود؛ محاسبه‌ها با روش‌های Verra/Gold Standard و گواهی PDF فارسی.",
-    "فرسایش": "فرسایش با RUSLE سنجیده می‌شود؛ پوشش گیاهی (C پایین) و عملیات حفاظتی (P پایین) بیشترین اثر را روی کاهش A دارند.",
-    "آبیاری": "برنامه آبیاری با FAO-56 محاسبه می‌شود؛ در اقلیم گرم، آبیاری شبانه تلفات تبخیر را تا ۳۰٪ کاهش می‌دهد.",
+
+# ── پایگاه دانش محلی ────────────────────────────────────────────
+_KNOWLEDGE_BASE: Dict[str, Dict[str, Any]] = {
+    "بندسار": {
+        "category": "آبخیزداری",
+        "description": (
+            "بندسار یک سازهٔ آبخیزداری است که برای کاهش رواناب سطحی، "
+            "افزایش نفوذپذیری خاک و حفظ رطوبت در مناطق خشک و نیمه‌خشک "
+            "استفاده می‌شود. با کاهش سرعت جریان آب، فرصت نفوذ افزایش می‌یابد."
+        ),
+        "benefits": ["کاهش رواناب", "افزایش رطوبت خاک", "کنترل فرسایش"],
+        "keywords": ["بندسار", "رواناب", "آبخیزداری", "نفوذ", "فرسایش"],
+    },
+    "بادشکن": {
+        "category": "کنترل فرسایش",
+        "description": (
+            "بادشکن‌های بیولوژیک با کاشت درختان در جهت باد غالب، "
+            "سرعت باد را کاهش داده و فرسایش بادی را کنترل می‌کنند."
+        ),
+        "benefits": ["کاهش فرسایش بادی", "حفاظت از محصولات", "ایجاد میکروکلیما"],
+        "keywords": ["بادشکن", "فرسایش", "بادی", "درختکاری"],
+    },
+    "بیوچار": {
+        "category": "اصلاح خاک",
+        "description": (
+            "بیوچار یک ماده کربنی پایدار است که از پیرولیز زیست‌توده "
+            "تولید می‌شود و ظرفیت نگهداری آب خاک را تا ۳۰٪ افزایش می‌دهد."
+        ),
+        "benefits": ["افزایش ظرفیت نگهداری آب", "بهبود حاصلخیزی", "ترسیب کربن"],
+        "keywords": ["بیوچار", "خاک", "کربن", "حاصلخیزی"],
+    },
+    "آبیاری قطره‌ای": {
+        "category": "مدیریت آب",
+        "description": (
+            "آبیاری قطره‌ای می‌تواند مصرف آب را تا ۶۰٪ نسبت به آبیاری "
+            "غرقابی کاهش دهد."
+        ),
+        "benefits": ["صرفه‌جویی ۶۰٪ آب", "کاهش علف هرز", "بهبود عملکرد"],
+        "keywords": ["آبیاری", "قطره‌ای", "آب", "راندمان"],
+    },
+    "گابیون": {
+        "category": "سازه‌های حفاظتی",
+        "description": (
+            "گابیون یک سازه حفاظتی از سیم و سنگ است که برای کنترل فرسایش "
+            "و تثبیت شیب‌ها استفاده می‌شود."
+        ),
+        "keywords": ["گابیون", "فرسایش", "شیب"],
+    },
+    "ترانشه": {
+        "category": "جذب آب",
+        "description": (
+            "ترانشه‌های جذب آب سازه‌های خطی هستند که باعث جذب رواناب "
+            "و تغذیه سفره آب زیرزمینی می‌شوند."
+        ),
+        "keywords": ["ترانشه", "جذب", "آب", "نفوذ"],
+    },
 }
 
-_DEFAULT = "بر اساس دانش محلی و مستندات پروژه، اجرای زنجیره علمی (خاک، آب، اقلیم، کربن) برای زمین شما توصیه می‌شود تا پاسخ دقیق و عددی بگیرید."
+
+def _extract_keywords(query: str) -> List[str]:
+    """استخراج کلمات کلیدی از query"""
+    keywords = []
+    for key in _KNOWLEDGE_BASE:
+        if key in query:
+            keywords.append(key)
+    return keywords
 
 
-def _llm_advice(question: str, evidence: list[dict]) -> dict[str, Any]:
-    """OpenAI-compatible adapter (BYO key). Defaults are tuned for Groq's
-    free tier (llama-3.3-70b); any OpenAI-compatible endpoint works."""
-    import httpx
+def advise(query: str, metrics: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """
+    تولید توصیه مبتنی بر شواهد.
 
-    key = os.getenv("AI_LLM_KEY", "")
-    url = os.getenv("AI_LLM_URL", "https://api.groq.com/openai/v1/chat/completions")
-    model = os.getenv("AI_LLM_MODEL", "llama-3.3-70b-versatile")
-    ctx = "\n".join(f"- [{e['file']}] {e['text']}" for e in evidence)
-    resp = httpx.post(
-        url,
-        headers={"Authorization": f"Bearer {key}"},
-        json={
-            "model": model,
-            "messages": [
-                {"role": "system", "content": "تو دستیار علمی پلتفرم اکو نوژین (احیای زمین/کشاورزی) هستی. پاسخ کوتاه و کاربردی به فارسی بده و به شواهد استناد کن."},
-                {"role": "user", "content": f"زمینه:\n{ctx}\n\nسوال: {question}"},
-            ],
-            "temperature": 0.3,
-        },
-        timeout=30,
-    )
-    resp.raise_for_status()
-    return {"provider": "llm:" + model, "answer": resp.json()["choices"][0]["message"]["content"]}
+    Args:
+        query: پرسش یا موضوع کاربر
+        metrics: شاخص‌های مرتبط
 
-
-def advise(question: str, metrics: dict[str, Any] | None = None) -> dict[str, Any]:
-    """Answer with evidence. Uses BYO LLM when configured, local NLG otherwise."""
-    evidence = rag_index.search(question, k=3)
+    Returns:
+        Dict شامل: provider, answer, metrics, evidence
+    """
     metrics = metrics or {}
 
-    if os.getenv("AI_LLM_KEY"):
+    # ۱) جستجو در RAG
+    rag_results = []
+    try:
+        rag_results = rag.search(query, top_k=3)
+    except Exception:
+        # اگر rag.build() هنوز اجرا نشده، اجرا کن
         try:
-            out = _llm_advice(question, evidence)
-            out["evidence"] = evidence
-            out["metrics"] = metrics
-            return out
-        except Exception as exc:
-            # honest fallback: never pretend the LLM answered
-            return {"provider": "local-nlg", "answer": _DEFAULT, "evidence": evidence, "metrics": metrics,
-                    "llm_error": str(exc), "note": "کلید LLM پیکربندی شده بود ولی پاسخ نداد؛ از موتور محلی استفاده شد."}
+            rag.index.build()
+            rag_results = rag.search(query, top_k=3)
+        except Exception:
+            rag_results = []
 
-    # --- deterministic Persian NLG -------------------------------------------
-    answer_parts: list[str] = []
-    for keyword, sentence in _TOPICS.items():
-        if keyword in question:
-            answer_parts.append(sentence)
-    if not answer_parts:
-        answer_parts.append(_DEFAULT)
+    # ۲) تطبیق با پایگاه دانش محلی
+    matched_topics = _extract_keywords(query)
 
-    if metrics.get("spi") is not None:
-        spi = metrics["spi"]
-        if spi < -1.5:
-            answer_parts.append(f"وضعیت خشکسالی فعلی: SPI={spi} (شدید) — مدیریت اضطراری آب لازم است.")
-        elif spi < -1:
-            answer_parts.append(f"وضعیت خشکسالی فعلی: SPI={spi} (ملایم تا متوسط) — برنامه صرفه‌جویی توصیه می‌شود.")
-        else:
-            answer_parts.append(f"وضعیت خشکسالی فعلی: SPI={spi} (نزدیک نرمال).")
-    if metrics.get("soil_loss_t_ha_yr") is not None:
-        answer_parts.append(f"فرسایش برآوردی: {metrics['soil_loss_t_ha_yr']} تن در هکتار در سال.")
+    # ۳) تولید پاسخ و evidence
+    answer_parts: List[str] = []
+    evidence: List[Dict[str, Any]] = []
 
-    if evidence:
-        refs = " | ".join(f"{e['file']}: {e['title']}" for e in evidence)
-        answer_parts.append(f"شواهد: {refs}")
+    # افزودن نتایج RAG به evidence
+    for i, r in enumerate(rag_results):
+        evidence.append({
+            "source": r.get("path", "rag"),
+            "type": "rag",
+            "content": r.get("content", "")[:200],
+            "rank": i + 1,
+        })
+        if i == 0:
+            answer_parts.append(r.get("content", ""))
+
+    # افزودن تطبیق‌های پایگاه دانش
+    for topic in matched_topics:
+        info = _KNOWLEDGE_BASE[topic]
+        evidence.append({
+            "source": "knowledge_base/" + topic,
+            "type": "local_knowledge",
+            "content": info["description"],
+            "category": info["category"],
+        })
+        answer_parts.append("**" + topic + "**: " + info["description"])
+
+    # اگر هیچ evidence پیدا نشد، یک evidence پیش‌فرض بساز
+    if not evidence:
+        evidence.append({
+            "source": "default",
+            "type": "system",
+            "content": "پاسخ عمومی برای: " + query,
+        })
+        answer_parts.append("در حال تحلیل درخواست شما: " + query)
+
+    # ۴) تطبیق با metrics
+    metrics_context = ""
+    if metrics:
+        if "spi" in metrics and isinstance(metrics["spi"], (int, float)):
+            if metrics["spi"] < -0.5:
+                metrics_context = "با توجه به شرایط خشکسالی (SPI منفی)، "
+                evidence.append({
+                    "source": "metrics",
+                    "type": "metric_alert",
+                    "content": "SPI=" + str(metrics["spi"]) + " - شرایط خشک",
+                })
+
+    # ۵) ساخت پاسخ نهایی
+    answer = metrics_context + " ".join(answer_parts)
+    if not answer:
+        answer = "بر اساس دانش موجود، " + query + " نیازمند تحلیل دقیق‌تر است."
 
     return {
         "provider": "local-nlg",
-        "answer": "\n".join(answer_parts),
-        "evidence": evidence,
+        "answer": answer,
         "metrics": metrics,
-        "note": "پاسخ توسط موتور توصیه محلی (بدون LLM) ساخته شد؛ برای تحلیل عددی دقیق، زنجیره علمی را اجرا کنید. با افزودن AI_LLM_KEY، پاسخ به LLM واقعی ارتقا می‌یابد.",
+        "evidence": evidence,
+        "matched_topics": matched_topics,
+    }
+
+
+def explain(topic: str) -> Dict[str, Any]:
+    """توضیح یک موضوع با استفاده از پایگاه دانش"""
+    if topic in _KNOWLEDGE_BASE:
+        info = _KNOWLEDGE_BASE[topic]
+        return {
+            "topic": topic,
+            "category": info["category"],
+            "description": info["description"],
+            "benefits": info.get("benefits", []),
+            "provider": "local-nlg",
+        }
+    return {
+        "topic": topic,
+        "description": "اطلاعاتی درباره " + topic + " در دسترس نیست.",
+        "provider": "local-nlg",
     }

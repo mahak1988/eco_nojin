@@ -37,7 +37,10 @@ def run(
         console.info(f"اجرای دستور: {cmd}")
     
     try:
-        result = subprocess.run(cmd.split() if isinstance(cmd, str) else cmd, shell=False, cwd=cwd,
+        result = subprocess.run(
+            cmd,
+            shell=True,
+            cwd=cwd,
             capture_output=capture,
             text=True,
             encoding='utf-8',

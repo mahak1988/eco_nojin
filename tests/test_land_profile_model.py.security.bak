@@ -1,4 +1,3 @@
-import os
 import structlog
 
 logger = structlog.get_logger()
@@ -20,7 +19,7 @@ def test_db_session():
 
 def test_land_profile_creation_and_relationship(test_db_session):
     # ایجاد یک کاربر جدید
-    user = User(email="test@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "hashed_pw"), full_name="Test User")
+    user = User(email="test@example.com", hashed_password="hashed_pw", full_name="Test User")
     test_db_session.add(user)
     test_db_session.commit()
 

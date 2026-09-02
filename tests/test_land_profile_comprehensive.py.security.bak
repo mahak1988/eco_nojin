@@ -1,4 +1,3 @@
-import os
 import structlog
 
 logger = structlog.get_logger()
@@ -43,7 +42,7 @@ def test_land_profile_table_schema(test_db_session):
 
 def test_land_profile_creation_valid_data(test_db_session):
     """بررسی ایجاد یک پروفایل زمین با داده‌های معتبر."""
-    user = User(email="farmer@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "hashed_pw"), full_name="John Doe")
+    user = User(email="farmer@example.com", hashed_password="hashed_pw", full_name="John Doe")
     test_db_session.add(user)
     test_db_session.commit()
 
@@ -71,7 +70,7 @@ def test_land_profile_creation_valid_data(test_db_session):
 
 def test_land_profile_creation_with_defaults(test_db_session):
     """بررسی اعمال مقادیر پیش‌فرض مانند created_at."""
-    user = User(email="farmer2@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "hashed_pw2"))
+    user = User(email="farmer2@example.com", hashed_password="hashed_pw2")
     test_db_session.add(user)
     test_db_session.commit()
 
@@ -95,7 +94,7 @@ def test_land_profile_creation_with_defaults(test_db_session):
 
 def test_land_profile_user_relationship(test_db_session):
     """بررسی رابطه بین LandProfile و User."""
-    user = User(email="owner@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "pw"))
+    user = User(email="owner@example.com", hashed_password="pw")
     test_db_session.add(user)
     test_db_session.commit()
 
@@ -119,7 +118,7 @@ def test_land_profile_user_relationship(test_db_session):
 
 def test_land_profile_nullable_fields(test_db_session):
     """بررسی اینکه فیلدهای اختیاری می‌توانند None باشند."""
-    user = User(email="flexible@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "pw"))
+    user = User(email="flexible@example.com", hashed_password="pw")
     test_db_session.add(user)
     test_db_session.commit()
 
@@ -139,7 +138,7 @@ def test_land_profile_cascading_orphaned_behavior(test_db_session):
     با تغییر nullable=True برای user_id، حذف کاربر باید منجر به قرار گرفتن user_id
     در رکورد LandProfile به NULL شود.
     """
-    user = User(email="to_be_deleted@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "pw"))
+    user = User(email="to_be_deleted@example.com", hashed_password="pw")
     test_db_session.add(user)
     test_db_session.commit()
 

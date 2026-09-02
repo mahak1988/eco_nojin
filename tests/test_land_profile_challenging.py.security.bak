@@ -1,4 +1,3 @@
-import os
 import structlog
 
 logger = structlog.get_logger()
@@ -25,7 +24,7 @@ def test_db_session():
 class TestInputValidation:
     def test_name_cannot_be_empty_string(self, test_db_session):
         """چالش: نام زمین نباید یک رشته خالی باشد."""
-        user = User(email="test@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "pw"))
+        user = User(email="test@example.com", hashed_password="pw")
         test_db_session.add(user)
         test_db_session.commit()
 
@@ -37,7 +36,7 @@ class TestInputValidation:
 
     def test_area_ha_must_be_positive(self, test_db_session):
         """چالش: مساحت نباید منفی باشد."""
-        user = User(email="test@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "pw"))
+        user = User(email="test@example.com", hashed_password="pw")
         test_db_session.add(user)
         test_db_session.commit()
 
@@ -61,7 +60,7 @@ class TestInputValidation:
 
     def test_coordinates_out_of_range(self, test_db_session):
         """چالش: مختصات باید در محدوده معتبر جغرافیایی باشند."""
-        user = User(email="test@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "pw"))
+        user = User(email="test@example.com", hashed_password="pw")
         test_db_session.add(user)
         test_db_session.commit()
 
@@ -89,7 +88,7 @@ class TestInputValidation:
 class TestComplexBehaviors:
     def test_unique_constraint_on_name_per_user(self, test_db_session):
         """چالش: یک کاربر نباید بتواند دو زمین با نام یکسان داشته باشد."""
-        user = User(email="farmer@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "pw"))
+        user = User(email="farmer@example.com", hashed_password="pw")
         test_db_session.add(user)
         test_db_session.commit()
 
@@ -106,7 +105,7 @@ class TestComplexBehaviors:
 
     def test_orphaned_profile_after_user_deletion(self, test_db_session):
         """چالش: بررسی وضعیت پروفایل زمین بعد از حذف کاربر."""
-        user = User(email="orphan@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "pw"))
+        user = User(email="orphan@example.com", hashed_password="pw")
         test_db_session.add(user)
         test_db_session.commit()
 
@@ -126,8 +125,8 @@ class TestComplexBehaviors:
 
     def test_multiple_users_same_land_name_allowed(self, test_db_session):
         """چالش: کاربران مختلف می‌توانند زمین‌هایی با نام یکسان داشته باشند."""
-        u1 = User(email="user1@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "pw"))
-        u2 = User(email="user2@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "pw"))
+        u1 = User(email="user1@example.com", hashed_password="pw")
+        u2 = User(email="user2@example.com", hashed_password="pw")
         test_db_session.add(u1)
         test_db_session.add(u2)
         test_db_session.commit()

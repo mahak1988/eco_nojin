@@ -76,7 +76,7 @@ def test_client_credentials_token_shape_and_cache(monkeypatch):
 
     monkeypatch.setattr("services.satellite.copernicus.httpx.post", fake_post)
     client = CopernicusClient(
-        client_id="cid", client_secret = os.environ.get("CLIENT_SECRET", "csecret"),
+        client_id="cid", client_secret="csecret",
         identity_url="https://identity.test",
     )
     assert client.get_token() == "tok123"
@@ -113,7 +113,7 @@ def test_token_failure_raises_fetch_error(monkeypatch):
 
     monkeypatch.setattr("services.satellite.copernicus.httpx.post", fake_post)
     client = CopernicusClient(
-        client_id="cid", client_secret = os.environ.get("CLIENT_SECRET", "csecret"),
+        client_id="cid", client_secret="csecret",
         identity_url="https://identity.test",
     )
     with pytest.raises(CopernicusFetchError):
@@ -135,7 +135,7 @@ def test_stac_search_sends_auth_and_datetime_window(monkeypatch):
         lambda self, force=False: "tok123",
     )
     client = CopernicusClient(
-        client_id="cid", client_secret = os.environ.get("CLIENT_SECRET", "csecret"),
+        client_id="cid", client_secret="csecret",
         identity_url="https://identity.test", stac_url="https://stac.test",
     )
     client.search_stac(
