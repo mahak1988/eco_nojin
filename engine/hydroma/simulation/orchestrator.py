@@ -1,4 +1,4 @@
-﻿"""Chain orchestrator (Phase 3, sprint 1): RUSLE -> AquaCrop -> RothC.
+"""Chain orchestrator (Phase 3, sprint 1): RUSLE -> AquaCrop -> RothC.
 
 Executes the available model runners for one site + scenario and assembles
 a ChainResult with provenance labels. The chain is pure (no DB access) so

@@ -1,4 +1,4 @@
-﻿"""Support team personas — user-facing platform support (3 languages, named staff).
+"""Support team personas — user-facing platform support (3 languages, named staff).
 
 The personas present themselves as HyDroMa support staff (named, with roles).
 On a DIRECT question about being AI/human, they answer honestly (legal safety).

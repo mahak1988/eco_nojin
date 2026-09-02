@@ -1,4 +1,4 @@
-﻿"""Simulation chain API (Phase 3): run and list simulation runs.
+"""Simulation chain API (Phase 3): run and list simulation runs.
 
 POST /api/v1/simulation/run  execute the RUSLE -> AquaCrop -> RothC chain
 GET  /api/v1/simulation/runs  list persisted runs (filter by site)

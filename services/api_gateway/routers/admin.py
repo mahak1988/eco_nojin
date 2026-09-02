@@ -1,4 +1,4 @@
-﻿"""Admin Router (Phase 5 + Phase 6 + Phase 7) â€” Production Grade.
+"""Admin Router (Phase 5 + Phase 6 + Phase 7) â€” Production Grade.
 ================================================================
 
 Real admin panel API for a single non-technical operator:

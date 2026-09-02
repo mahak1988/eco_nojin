@@ -1,4 +1,4 @@
-﻿"""Real DEM elevation service — Phase 1 (real-site terrain).
+"""Real DEM elevation service — Phase 1 (real-site terrain).
 
 GET /api/v1/elevation/grid/{site_id}?size=129&span_m=2000
 

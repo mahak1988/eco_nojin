@@ -1,4 +1,4 @@
-﻿"""Phase 5: Add audit log fields for RBAC + Audit
+"""Phase 5: Add audit log fields for RBAC + Audit
 
 Revision ID: phase5_audit_complete
 Revises: 20260824_135612

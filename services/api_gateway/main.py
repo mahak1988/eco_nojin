@@ -1,4 +1,4 @@
-﻿"""
+"""
 Eco Nojin - API Gateway
 ========================
 Main FastAPI application entry point.

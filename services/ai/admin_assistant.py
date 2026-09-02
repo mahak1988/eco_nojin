@@ -1,4 +1,4 @@
-﻿"""Admin AI assistant v3 — model switching, deterministic command router, layered prompts.
+"""Admin AI assistant v3 — model switching, deterministic command router, layered prompts.
 
 
 

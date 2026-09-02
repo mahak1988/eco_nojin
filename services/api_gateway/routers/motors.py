@@ -1,4 +1,4 @@
-﻿"""Scientific Motors API - Real Execution Endpoints."""
+"""Scientific Motors API - Real Execution Endpoints."""
 from __future__ import annotations
 
 import time

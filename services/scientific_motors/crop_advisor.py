@@ -1,4 +1,4 @@
-﻿"""
+"""
 Hydroma Nojin - Global Intelligent Crop Advisor
 Climate-centric recommendations using Köppen-Geiger classification.
 """
