@@ -744,3 +744,399 @@ async def public_farms():
             "auth_required": False,
         }
 
+# ============================================================================
+# PUBLIC ENDPOINTS - Corrected with Real Schema (v3.0)
+# These endpoints use actual table names from DuckDB schema discovery
+# ============================================================================
+
+@router.get("/public/full")
+async def public_full_dashboard():
+    """
+    Complete dashboard data - NO AUTHENTICATION REQUIRED.
+    Uses real table names: projects, weather_daily, satellite_observations, etc.
+    """
+    try:
+        from database.hub import hub
+        
+        # Use master database (has most tables)
+        conn = hub.get_duckdb("master")
+        
+        result = {
+            "status": "success",
+            "auth_required": False,
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+        
+        # Projects (replaces "farms")
+        try:
+            projects = conn.execute("""
+                SELECT 
+                    COUNT(*) as cnt, 
+                    COALESCE(SUM(area_ha), 0) as total_area
+                FROM projects
+            """).fetchone()
+            result["projects"] = {
+                "total": projects[0] if projects else 0,
+                "total_area_hectares": float(projects[1]) if projects else 0.0,
+                "status": "ok",
+            }
+        except Exception as e:
+            result["projects"] = {
+                "total": 0,
+                "total_area_hectares": 0.0,
+                "status": f"error: {type(e).__name__}",
+            }
+        
+        # Weather statistics (precip_mm not rain_mm)
+        try:
+            weather = conn.execute("""
+                SELECT 
+                    COUNT(*) as days,
+                    AVG(tmax_c) as avg_temp_max,
+                    AVG(tmin_c) as avg_temp_min,
+                    SUM(precip_mm) as total_rain
+                FROM weather_daily
+            """).fetchone()
+            result["weather"] = {
+                "days_recorded": weather[0] if weather else 0,
+                "avg_temperature_max_c": round(float(weather[1] or 0), 1),
+                "avg_temperature_min_c": round(float(weather[2] or 0), 1),
+                "total_rainfall_mm": round(float(weather[3] or 0), 1),
+                "status": "ok",
+            }
+        except Exception as e:
+            result["weather"] = {
+                "days_recorded": 0,
+                "status": f"error: {type(e).__name__}",
+            }
+        
+        # Satellite data (satellite_observations exists!)
+        try:
+            sat = conn.execute("""
+                SELECT 
+                    COUNT(*) as images,
+                    AVG(ndvi) as avg_ndvi,
+                    AVG(evi) as avg_evi,
+                    AVG(soil_moisture_index) as avg_moisture
+                FROM satellite_observations
+            """).fetchone()
+            result["satellite"] = {
+                "total_images": sat[0] if sat else 0,
+                "avg_ndvi": round(float(sat[1] or 0), 2),
+                "avg_evi": round(float(sat[2] or 0), 2),
+                "avg_soil_moisture": round(float(sat[3] or 0), 2),
+                "status": "ok",
+            }
+        except Exception as e:
+            result["satellite"] = {
+                "total_images": 0,
+                "status": f"error: {type(e).__name__}",
+            }
+        
+        # Soil profiles
+        try:
+            soil = conn.execute("""
+                SELECT 
+                    COUNT(*) as profiles,
+                    AVG(organic_carbon_percent) as avg_carbon,
+                    AVG(ph) as avg_ph
+                FROM soil_profiles
+            """).fetchone()
+            result["soil"] = {
+                "total_profiles": soil[0] if soil else 0,
+                "avg_organic_carbon_pct": round(float(soil[1] or 0), 2),
+                "avg_ph": round(float(soil[2] or 0), 1),
+                "status": "ok",
+            }
+        except Exception as e:
+            result["soil"] = {
+                "total_profiles": 0,
+                "status": f"error: {type(e).__name__}",
+            }
+        
+        # Carbon credits
+        try:
+            carbon = conn.execute("""
+                SELECT COUNT(*) as total
+                FROM carbon_credits
+            """).fetchone()
+            result["carbon"] = {
+                "total_credits": carbon[0] if carbon else 0,
+                "status": "ok",
+            }
+        except Exception as e:
+            result["carbon"] = {
+                "total_credits": 0,
+                "status": f"error: {type(e).__name__}",
+            }
+        
+        # MRV observations
+        try:
+            mrv = conn.execute("""
+                SELECT 
+                    COUNT(*) as total,
+                    COUNT(CASE WHEN verified = TRUE THEN 1 END) as verified
+                FROM mrv_observations
+            """).fetchone()
+            result["mrv"] = {
+                "total_observations": mrv[0] if mrv else 0,
+                "verified_observations": mrv[1] if mrv else 0,
+                "status": "ok",
+            }
+        except Exception as e:
+            result["mrv"] = {
+                "total_observations": 0,
+                "status": f"error: {type(e).__name__}",
+            }
+        
+        # Simulation runs
+        try:
+            sims = conn.execute("""
+                SELECT 
+                    COUNT(*) as total,
+                    COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed
+                FROM simulation_runs
+            """).fetchone()
+            result["simulations"] = {
+                "total_runs": sims[0] if sims else 0,
+                "completed_runs": sims[1] if sims else 0,
+                "status": "ok",
+            }
+        except Exception as e:
+            result["simulations"] = {
+                "total_runs": 0,
+                "status": f"error: {type(e).__name__}",
+            }
+        
+        # Tourism
+        try:
+            tourism = conn.execute("""
+                SELECT 
+                    COUNT(*) as total_bookings,
+                    COALESCE(SUM(total), 0) as total_revenue
+                FROM tourism_bookings
+            """).fetchone()
+            result["tourism"] = {
+                "total_bookings": tourism[0] if tourism else 0,
+                "total_revenue": float(tourism[1]) if tourism else 0.0,
+                "status": "ok",
+            }
+        except Exception as e:
+            result["tourism"] = {
+                "total_bookings": 0,
+                "status": f"error: {type(e).__name__}",
+            }
+        
+        # Platform stats
+        result["platform"] = {
+            "total_tables": 138,
+            "active_motors": 166,
+            "total_services": 216,
+            "api_endpoints": 248,
+            "status": "operational",
+        }
+        
+        return result
+        
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Public dashboard failed: {e}")
+        return {
+            "status": "error",
+            "message": str(e),
+            "error_type": type(e).__name__,
+            "auth_required": False,
+        }
+
+
+@router.get("/public/projects")
+async def public_projects():
+    """Projects list (replaces farms) - NO AUTH."""
+    try:
+        from database.hub import hub
+        conn = hub.get_duckdb("master")
+        
+        projects = conn.execute("""
+            SELECT id, name, region_name, area_ha, created_at
+            FROM projects
+            ORDER BY created_at DESC
+            LIMIT 50
+        """).fetchdf()
+        
+        return {
+            "status": "success",
+            "auth_required": False,
+            "count": len(projects) if projects is not None else 0,
+            "data": projects.to_dict('records') if projects is not None else [],
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e),
+            "auth_required": False,
+        }
+
+
+@router.get("/public/carbon")
+async def public_carbon_dashboard():
+    """Carbon dashboard - NO AUTH."""
+    try:
+        from database.hub import hub
+        conn = hub.get_duckdb("master")
+        
+        # Count carbon credits
+        credits = conn.execute("""
+            SELECT COUNT(*) as total
+            FROM carbon_credits
+        """).fetchone()
+        
+        return {
+            "status": "success",
+            "auth_required": False,
+            "data": {
+                "total_credits": credits[0] if credits else 0,
+                "status": "operational",
+            },
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e),
+            "auth_required": False,
+        }
+
+
+@router.get("/public/analytics")
+async def public_analytics():
+    """Platform analytics - NO AUTH."""
+    try:
+        from database.hub import hub
+        conn = hub.get_duckdb("master")
+        
+        projects = conn.execute("""
+            SELECT COUNT(*) as cnt, COALESCE(SUM(area_ha), 0) as area
+            FROM projects
+        """).fetchone()
+        
+        return {
+            "status": "success",
+            "auth_required": False,
+            "data": {
+                "total_projects": projects[0] if projects else 0,
+                "total_area_hectares": float(projects[1]) if projects else 0.0,
+                "active_motors": 166,
+                "total_services": 216,
+            },
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e),
+            "auth_required": False,
+        }
+
+
+@router.get("/public/weather")
+async def public_weather():
+    """Weather summary - NO AUTH."""
+    try:
+        from database.hub import hub
+        conn = hub.get_duckdb("master")
+        
+        weather = conn.execute("""
+            SELECT 
+                COUNT(*) as days,
+                AVG(tmax_c) as temp_max,
+                AVG(tmin_c) as temp_min,
+                SUM(precip_mm) as rain
+            FROM weather_daily
+        """).fetchone()
+        
+        return {
+            "status": "success",
+            "auth_required": False,
+            "data": {
+                "days_recorded": weather[0] if weather else 0,
+                "avg_temp_max_c": round(float(weather[1] or 0), 1),
+                "avg_temp_min_c": round(float(weather[2] or 0), 1),
+                "total_rainfall_mm": round(float(weather[3] or 0), 1),
+            },
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e),
+            "auth_required": False,
+        }
+
+
+@router.get("/public/satellite")
+async def public_satellite():
+    """Satellite observations - NO AUTH."""
+    try:
+        from database.hub import hub
+        conn = hub.get_duckdb("master")
+        
+        sat = conn.execute("""
+            SELECT 
+                COUNT(*) as images,
+                AVG(ndvi) as ndvi,
+                AVG(evi) as evi,
+                AVG(soil_moisture_index) as moisture
+            FROM satellite_observations
+        """).fetchone()
+        
+        return {
+            "status": "success",
+            "auth_required": False,
+            "data": {
+                "total_images": sat[0] if sat else 0,
+                "avg_ndvi": round(float(sat[1] or 0), 2),
+                "avg_evi": round(float(sat[2] or 0), 2),
+                "avg_soil_moisture_index": round(float(sat[3] or 0), 2),
+            },
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e),
+            "auth_required": False,
+        }
+
+
+@router.get("/public/mrv")
+async def public_mrv():
+    """MRV observations - NO AUTH."""
+    try:
+        from database.hub import hub
+        conn = hub.get_duckdb("master")
+        
+        mrv = conn.execute("""
+            SELECT 
+                COUNT(*) as total,
+                COUNT(CASE WHEN verified = TRUE THEN 1 END) as verified
+            FROM mrv_observations
+        """).fetchone()
+        
+        return {
+            "status": "success",
+            "auth_required": False,
+            "data": {
+                "total_observations": mrv[0] if mrv else 0,
+                "verified": mrv[1] if mrv else 0,
+                "verification_rate": round((mrv[1] / mrv[0] * 100), 1) if mrv and mrv[0] > 0 else 0.0,
+            },
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e),
+            "auth_required": False,
+        }
+
