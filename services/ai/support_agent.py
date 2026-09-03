@@ -109,7 +109,7 @@ def _load_support_prompts(key: str) -> str:
 
 def _user_context(db: Session, user: Any) -> dict[str, Any]:
     from database import models  # noqa: F401
-from database.hub import hub
+    from database.hub import hub
 
     ctx: dict[str, Any] = {"نام": getattr(user, "full_name", None) or getattr(user, "username", None) or getattr(user, "email", "")}
     try:

@@ -1,0 +1,67 @@
+================================================================================
+  💥 CHAOS ENGINEERING REPORT - eco_nojin
+  Generated: 2026-09-03 07:25:02
+================================================================================
+
+📊 EXECUTIVE SUMMARY
+--------------------------------------------------------------------------------
+  Total Tests Run:        6
+  ✅ System Resisted:       4 (66.7%)
+  ❌ System Failed:         2 (33.3%)
+  🎯 Expected Failures:     2 (discovered weaknesses)
+  🛡️  Unexpected Resist:    4 (strong components)
+
+📂 BREAKDOWN BY CATEGORY
+--------------------------------------------------------------------------------
+
+  [SERVICES]
+    Tests: 6 | Resisted: 4 | Failed: 2
+    💥 FAILED DDoS Simulation - 1000 requests
+           ├─ Failure: exception
+           ├─ Error: IndentationError
+           └─ Message: unexpected indent (support_agent.py, line 114)
+    🛡️ RESISTED Payload Bomb - 10MB input
+    🛡️ RESISTED Recursive Service Calls
+    🛡️ RESISTED Malformed Input Injection
+    💥 FAILED Timeout Cascade
+           ├─ Failure: timeout
+           ├─ Error: TimeoutError
+           └─ Message: Test exceeded 2.0s timeout
+    🛡️ RESISTED Circular Dependency
+
+📊 BREAKDOWN BY SEVERITY
+--------------------------------------------------------------------------------
+  MEDIUM: 2 tests, 0 failures
+  HIGH: 2 tests, 1 failures
+  EXTREME: 2 tests, 1 failures
+
+🚨 CRITICAL WEAKNESSES DISCOVERED
+--------------------------------------------------------------------------------
+
+  💥 DDoS Simulation - 1000 requests [SERVICES]
+     Failure Point: exception
+     Error Type: IndentationError
+     Impact: unexpected indent (support_agent.py, line 114)
+
+  💥 Timeout Cascade [SERVICES]
+     Failure Point: timeout
+     Error Type: TimeoutError
+     Impact: Test exceeded 2.0s timeout
+
+🛡️  UNEXPECTEDLY STRONG COMPONENTS
+--------------------------------------------------------------------------------
+  🛡️  Payload Bomb - 10MB input [SERVICES] - resisted HIGH attack
+  🛡️  Recursive Service Calls [SERVICES] - resisted EXTREME attack
+  🛡️  Malformed Input Injection [SERVICES] - resisted MEDIUM attack
+  🛡️  Circular Dependency [SERVICES] - resisted MEDIUM attack
+
+🏆 STABILITY SCORE
+--------------------------------------------------------------------------------
+  ⚠️ Stability Score: 57.1/100 (Grade: C)
+     Total weight: 28 | Passed weight: 16
+
+📋 RECOMMENDATIONS
+--------------------------------------------------------------------------------
+  1. ⏱️  Add circuit breakers and request timeouts to all services
+
+================================================================================

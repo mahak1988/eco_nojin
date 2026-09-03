@@ -1,0 +1,107 @@
+[
+  {
+    "name": "Connection Storm - 1000 connections",
+    "category": "DATAHUB",
+    "severity": "EXTREME",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 641.1302000051364,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Transaction Deadlock",
+    "category": "DATAHUB",
+    "severity": "HIGH",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 96.17259999504313,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Data Corruption Injection",
+    "category": "DATAHUB",
+    "severity": "HIGH",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 1.596999994944781,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Race Condition - 100 threads",
+    "category": "DATAHUB",
+    "severity": "HIGH",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 145.45569999609143,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Query Bomb - 10000 queries",
+    "category": "DATAHUB",
+    "severity": "EXTREME",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 2095.357400015928,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Concurrent Writes - 50 threads",
+    "category": "DATAHUB",
+    "severity": "HIGH",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 132.95749999815598,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Rapid Open/Close - 1000 cycles",
+    "category": "DATAHUB",
+    "severity": "MEDIUM",
+    "passed": false,
+    "failure_point": "timeout",
+    "execution_time_ms": 30011.08270001714,
+    "error_type": "TimeoutError",
+    "error_message": "Test exceeded 30.0s timeout",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  }
+]

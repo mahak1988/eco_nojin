@@ -1,0 +1,60 @@
+================================================================================
+  💥 CHAOS ENGINEERING REPORT - eco_nojin
+  Generated: 2026-09-03 07:31:35
+================================================================================
+
+📊 EXECUTIVE SUMMARY
+--------------------------------------------------------------------------------
+  Total Tests Run:        6
+  ✅ System Resisted:       5 (83.3%)
+  ❌ System Failed:         1 (16.7%)
+  🎯 Expected Failures:     1 (discovered weaknesses)
+  🛡️  Unexpected Resist:    5 (strong components)
+
+📂 BREAKDOWN BY CATEGORY
+--------------------------------------------------------------------------------
+
+  [SERVICES]
+    Tests: 6 | Resisted: 5 | Failed: 1
+    🛡️ RESISTED DDoS Simulation - 1000 requests
+    🛡️ RESISTED Payload Bomb - 10MB input
+    🛡️ RESISTED Recursive Service Calls
+    🛡️ RESISTED Malformed Input Injection
+    💥 FAILED Timeout Cascade
+           ├─ Failure: timeout
+           ├─ Error: TimeoutError
+           └─ Message: Test exceeded 2.0s timeout
+    🛡️ RESISTED Circular Dependency
+
+📊 BREAKDOWN BY SEVERITY
+--------------------------------------------------------------------------------
+  MEDIUM: 2 tests, 0 failures
+  HIGH: 2 tests, 1 failures
+  EXTREME: 2 tests, 0 failures
+
+🚨 CRITICAL WEAKNESSES DISCOVERED
+--------------------------------------------------------------------------------
+
+  💥 Timeout Cascade [SERVICES]
+     Failure Point: timeout
+     Error Type: TimeoutError
+     Impact: Test exceeded 2.0s timeout
+
+🛡️  UNEXPECTEDLY STRONG COMPONENTS
+--------------------------------------------------------------------------------
+  🛡️  DDoS Simulation - 1000 requests [SERVICES] - resisted EXTREME attack
+  🛡️  Payload Bomb - 10MB input [SERVICES] - resisted HIGH attack
+  🛡️  Recursive Service Calls [SERVICES] - resisted EXTREME attack
+  🛡️  Malformed Input Injection [SERVICES] - resisted MEDIUM attack
+  🛡️  Circular Dependency [SERVICES] - resisted MEDIUM attack
+
+🏆 STABILITY SCORE
+--------------------------------------------------------------------------------
+  🏆 Stability Score: 85.7/100 (Grade: A)
+     Total weight: 28 | Passed weight: 24
+
+📋 RECOMMENDATIONS
+--------------------------------------------------------------------------------
+  1. ⏱️  Add circuit breakers and request timeouts to all services
+
+================================================================================

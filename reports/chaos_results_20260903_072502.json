@@ -1,0 +1,92 @@
+[
+  {
+    "name": "DDoS Simulation - 1000 requests",
+    "category": "SERVICES",
+    "severity": "EXTREME",
+    "passed": false,
+    "failure_point": "exception",
+    "execution_time_ms": 5563.081200001761,
+    "error_type": "IndentationError",
+    "error_message": "unexpected indent (support_agent.py, line 114)",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Payload Bomb - 10MB input",
+    "category": "SERVICES",
+    "severity": "HIGH",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 609.7188999992795,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Recursive Service Calls",
+    "category": "SERVICES",
+    "severity": "EXTREME",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 1.5174000000115484,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Malformed Input Injection",
+    "category": "SERVICES",
+    "severity": "MEDIUM",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 0.27570000384002924,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Timeout Cascade",
+    "category": "SERVICES",
+    "severity": "HIGH",
+    "passed": false,
+    "failure_point": "timeout",
+    "execution_time_ms": 2014.1096000152174,
+    "error_type": "TimeoutError",
+    "error_message": "Test exceeded 2.0s timeout",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Circular Dependency",
+    "category": "SERVICES",
+    "severity": "MEDIUM",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 31.201999983750284,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  }
+]

@@ -174,7 +174,6 @@ data/maps/cache/
 # ------------------------------------------------------------------------------
 *.log
 logs/
-reports/
 *.log.*
 benchmarks/
 
@@ -209,3 +208,16 @@ contracts/.env
 # ------------------------------------------------------------------------------
 docs/_build/
 docs/.doctrees/
+# ── Database migration backups ──────────────────────────────
+*.phase1.bak
+*.phase2.bak
+*.phase3.bak
+*.base_fix.bak
+*.final.bak
+*.final_fix.bak
+*.fixtures.bak
+*.patch.bak
+*.sql.bak
+*.surgical.bak
+*.security.bak
+*.final_rebuild.bak

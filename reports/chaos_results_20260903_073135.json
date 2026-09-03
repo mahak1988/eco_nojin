@@ -1,0 +1,92 @@
+[
+  {
+    "name": "DDoS Simulation - 1000 requests",
+    "category": "SERVICES",
+    "severity": "EXTREME",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 5863.309699983802,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Payload Bomb - 10MB input",
+    "category": "SERVICES",
+    "severity": "HIGH",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 600.9354999987409,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Recursive Service Calls",
+    "category": "SERVICES",
+    "severity": "EXTREME",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 0.41680000140331686,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Malformed Input Injection",
+    "category": "SERVICES",
+    "severity": "MEDIUM",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 0.30109999352134764,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Timeout Cascade",
+    "category": "SERVICES",
+    "severity": "HIGH",
+    "passed": false,
+    "failure_point": "timeout",
+    "execution_time_ms": 2007.8502999967895,
+    "error_type": "TimeoutError",
+    "error_message": "Test exceeded 2.0s timeout",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Circular Dependency",
+    "category": "SERVICES",
+    "severity": "MEDIUM",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 30.404700024519116,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  }
+]

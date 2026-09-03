@@ -1,0 +1,107 @@
+[
+  {
+    "name": "Memory Leak - 1000 iterations",
+    "category": "ENGINE",
+    "severity": "HIGH",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 55827.777899976354,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Computation Overflow",
+    "category": "ENGINE",
+    "severity": "MEDIUM",
+    "passed": false,
+    "failure_point": "exception",
+    "execution_time_ms": 56.60419998457655,
+    "error_type": "OutOfRangeException",
+    "error_message": "Out of Range Error: cannot take logarithm of a negative number",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "NaN Propagation",
+    "category": "ENGINE",
+    "severity": "MEDIUM",
+    "passed": false,
+    "failure_point": "exception",
+    "execution_time_ms": 55.88359999819659,
+    "error_type": "OutOfRangeException",
+    "error_message": "Out of Range Error: cannot take square root of a negative number",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Infinite Recursion",
+    "category": "ENGINE",
+    "severity": "EXTREME",
+    "passed": false,
+    "failure_point": "exception",
+    "execution_time_ms": 0.7757999992463738,
+    "error_type": "RecursionError",
+    "error_message": "maximum recursion depth exceeded",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Precision Loss",
+    "category": "ENGINE",
+    "severity": "LOW",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 56.88720001489855,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Heavy Math - 100 queries",
+    "category": "ENGINE",
+    "severity": "HIGH",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 5635.7480000006035,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Boundary Conditions",
+    "category": "ENGINE",
+    "severity": "MEDIUM",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 0.23370000417344272,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  }
+]
