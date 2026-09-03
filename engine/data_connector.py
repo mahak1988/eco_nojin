@@ -204,24 +204,43 @@ class DataConnector:
 
 
     def execute_analytics_query(self, query: str) -> Any:
-        """Execute arbitrary analytics query on master DuckDB."""
-        conn = self.hub.get_duckdb("master")
+        """
+        Execute arbitrary analytics query on master DuckDB.
+        
+        Security:
+        - Query is sanitized BEFORE execution to prevent SQL injection
+        - Only SELECT/WITH statements allowed
+        - Dangerous keywords (DROP, DELETE, etc.) are blocked
+        
+        Args:
+            query: SQL query (must be SELECT or WITH statement)
+        
+        Returns:
+            Query result as pandas DataFrame or list of tuples
+        """
+        # STEP 1: SQL Injection Protection (BEFORE getting connection)
         try:
-            return 
-            # Sanitize query to prevent SQL injection
+            query = self._sanitize_sql(query)
+        except ValueError as e:
+            import logging
+            logging.getLogger(__name__).error(f"SQL injection attempt blocked: {e}")
+            raise
+        
+        # STEP 2: Get connection
+        conn = self.hub.get_duckdb("master")
+        
+        # STEP 3: Execute query
+        try:
+            return conn.execute(query).fetchdf()
+        except Exception as e:
+            # Fallback to fetchall for non-SELECT queries
             try:
-                query = self._sanitize_sql(query)
-            except ValueError as e:
-                logger.error(f"SQL injection attempt blocked: {e}")
+                return conn.execute(query).fetchall()
+            except Exception as e2:
+                import logging
+                logging.getLogger(__name__).error(f"Query execution failed: {e2}")
                 raise
 
-            conn.execute(query).fetchdf()
-        except Exception:
-            return conn.execute(query).fetchall()
-        finally:
-            conn.close()
-
-    # ── SQLite (Manual Reference) Methods ───────────────────────
 
     def get_crop_calendar(self, province: Optional[str] = None) -> List[Dict]:
         """Get crop calendar data from manual SQLite."""
