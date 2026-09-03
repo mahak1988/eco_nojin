@@ -1,0 +1,392 @@
+[
+  {
+    "name": "Memory Leak - 1000 iterations",
+    "category": "ENGINE",
+    "severity": "HIGH",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 57440.246699989075,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Computation Overflow",
+    "category": "ENGINE",
+    "severity": "MEDIUM",
+    "passed": false,
+    "failure_point": "exception",
+    "execution_time_ms": 56.08790001133457,
+    "error_type": "OutOfRangeException",
+    "error_message": "Out of Range Error: cannot take logarithm of a negative number",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "NaN Propagation",
+    "category": "ENGINE",
+    "severity": "MEDIUM",
+    "passed": false,
+    "failure_point": "exception",
+    "execution_time_ms": 53.27400000533089,
+    "error_type": "OutOfRangeException",
+    "error_message": "Out of Range Error: cannot take square root of a negative number",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Infinite Recursion",
+    "category": "ENGINE",
+    "severity": "EXTREME",
+    "passed": false,
+    "failure_point": "exception",
+    "execution_time_ms": 0.8154000097420067,
+    "error_type": "RecursionError",
+    "error_message": "maximum recursion depth exceeded",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Precision Loss",
+    "category": "ENGINE",
+    "severity": "LOW",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 52.771200018469244,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Heavy Math - 100 queries",
+    "category": "ENGINE",
+    "severity": "HIGH",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 5481.79039999377,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Boundary Conditions",
+    "category": "ENGINE",
+    "severity": "MEDIUM",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 0.2586999908089638,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Connection Storm - 1000 connections",
+    "category": "DATAHUB",
+    "severity": "EXTREME",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 187.58309999248013,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Transaction Deadlock",
+    "category": "DATAHUB",
+    "severity": "HIGH",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 88.75379999517463,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Data Corruption Injection",
+    "category": "DATAHUB",
+    "severity": "HIGH",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 1.8000999989453703,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Race Condition - 100 threads",
+    "category": "DATAHUB",
+    "severity": "HIGH",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 145.96850000089034,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Query Bomb - 10000 queries",
+    "category": "DATAHUB",
+    "severity": "EXTREME",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 1702.8008000052068,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Concurrent Writes - 50 threads",
+    "category": "DATAHUB",
+    "severity": "HIGH",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 113.5319999884814,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Rapid Open/Close - 1000 cycles",
+    "category": "DATAHUB",
+    "severity": "MEDIUM",
+    "passed": false,
+    "failure_point": "timeout",
+    "execution_time_ms": 30004.631099989638,
+    "error_type": "TimeoutError",
+    "error_message": "Test exceeded 30.0s timeout",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "DDoS Simulation - 1000 requests",
+    "category": "SERVICES",
+    "severity": "EXTREME",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 5015.470500016818,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Payload Bomb - 10MB input",
+    "category": "SERVICES",
+    "severity": "HIGH",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 649.096000008285,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Recursive Service Calls",
+    "category": "SERVICES",
+    "severity": "EXTREME",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 0.4678000113926828,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Malformed Input Injection",
+    "category": "SERVICES",
+    "severity": "MEDIUM",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 0.38690000656060874,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Timeout Cascade",
+    "category": "SERVICES",
+    "severity": "HIGH",
+    "passed": false,
+    "failure_point": "exception",
+    "execution_time_ms": 5009.722199989483,
+    "error_type": "TimeoutError",
+    "error_message": "10 (of 100) futures unfinished",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Circular Dependency",
+    "category": "SERVICES",
+    "severity": "MEDIUM",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 32.430100021883845,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "HydromaLayout Stress - 1M cells",
+    "category": "HYDROMA",
+    "severity": "EXTREME",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 184.4674000167288,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Hydroma Simulation Overflow",
+    "category": "HYDROMA",
+    "severity": "HIGH",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 0.39820000529289246,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Hydroma Concurrent Models - 100 threads",
+    "category": "HYDROMA",
+    "severity": "EXTREME",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 1335.8038000005763,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "All Hydroma Models Extreme",
+    "category": "HYDROMA",
+    "severity": "EXTREME",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 313.2018999895081,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Hydroma MRV Massive Query",
+    "category": "HYDROMA",
+    "severity": "HIGH",
+    "passed": false,
+    "failure_point": "exception",
+    "execution_time_ms": 41.710799996508285,
+    "error_type": "RuntimeError",
+    "error_message": "MRV stress failed: Conversion Error: Could not convert string 'SITE001' to FLOAT when casting from source column site_id\n\nLINE 4:                     AVG(CAST(site_id AS FLOAT)) as avg_site,\n         ",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  },
+  {
+    "name": "Hydroma Carbon Extreme Calculation",
+    "category": "HYDROMA",
+    "severity": "HIGH",
+    "passed": true,
+    "failure_point": "",
+    "execution_time_ms": 0.4231999919284135,
+    "error_type": "",
+    "error_message": "",
+    "resources": {
+      "memory_delta_mb": 0.0,
+      "memory_before_mb": 0.0,
+      "memory_after_mb": 0.0
+    }
+  }
+]
