@@ -1,0 +1,139 @@
+================================================================================
+  💥 CHAOS ENGINEERING REPORT - eco_nojin
+  Generated: 2026-09-03 08:10:57
+================================================================================
+
+📊 EXECUTIVE SUMMARY
+--------------------------------------------------------------------------------
+  Total Tests Run:        26
+  ✅ System Resisted:       20 (76.9%)
+  ❌ System Failed:         6 (23.1%)
+  🎯 Expected Failures:     6 (discovered weaknesses)
+  🛡️  Unexpected Resist:    20 (strong components)
+
+📂 BREAKDOWN BY CATEGORY
+--------------------------------------------------------------------------------
+
+  [ENGINE]
+    Tests: 7 | Resisted: 4 | Failed: 3
+    🛡️ RESISTED Memory Leak - 1000 iterations
+           ⚠️  Memory leak: +112.1MB
+    💥 FAILED Computation Overflow
+           ├─ Failure: exception
+           ├─ Error: OutOfRangeException
+           └─ Message: Out of Range Error: cannot take logarithm of a negative number
+    💥 FAILED NaN Propagation
+           ├─ Failure: exception
+           ├─ Error: OutOfRangeException
+           └─ Message: Out of Range Error: cannot take square root of a negative number
+    💥 FAILED Infinite Recursion
+           ├─ Failure: exception
+           ├─ Error: RecursionError
+           └─ Message: maximum recursion depth exceeded
+    🛡️ RESISTED Precision Loss
+    🛡️ RESISTED Heavy Math - 100 queries
+           ⚠️  Memory leak: +19.0MB
+    🛡️ RESISTED Boundary Conditions
+
+  [DATAHUB]
+    Tests: 7 | Resisted: 6 | Failed: 1
+    🛡️ RESISTED Connection Storm - 1000 connections
+           ⚠️  Memory leak: +14.7MB
+    🛡️ RESISTED Transaction Deadlock
+    🛡️ RESISTED Data Corruption Injection
+    🛡️ RESISTED Race Condition - 100 threads
+    🛡️ RESISTED Query Bomb - 10000 queries
+    🛡️ RESISTED Concurrent Writes - 50 threads
+    💥 FAILED Rapid Open/Close - 1000 cycles
+           ├─ Failure: timeout
+           ├─ Error: TimeoutError
+           └─ Message: Test exceeded 30.0s timeout
+
+  [SERVICES]
+    Tests: 6 | Resisted: 5 | Failed: 1
+    🛡️ RESISTED DDoS Simulation - 1000 requests
+           ⚠️  Memory leak: +215.4MB
+    🛡️ RESISTED Payload Bomb - 10MB input
+    🛡️ RESISTED Recursive Service Calls
+    🛡️ RESISTED Malformed Input Injection
+    💥 FAILED Timeout Cascade
+           ├─ Failure: exception
+           ├─ Error: TimeoutError
+           └─ Message: 10 (of 100) futures unfinished
+    🛡️ RESISTED Circular Dependency
+
+  [HYDROMA]
+    Tests: 6 | Resisted: 5 | Failed: 1
+    🛡️ RESISTED HydromaLayout Stress - 1M cells
+    🛡️ RESISTED Hydroma Simulation Overflow
+    🛡️ RESISTED Hydroma Concurrent Models - 100 threads
+           ⚠️  Memory leak: +17.2MB
+    🛡️ RESISTED All Hydroma Models Extreme
+    💥 FAILED Hydroma MRV Massive Query
+           ├─ Failure: exception
+           ├─ Error: RuntimeError
+           └─ Message: MRV stress failed: Conversion Error: Could not convert string 'SITE001' to FLOAT when casting from s
+    🛡️ RESISTED Hydroma Carbon Extreme Calculation
+
+📊 BREAKDOWN BY SEVERITY
+--------------------------------------------------------------------------------
+  LOW: 1 tests, 0 failures
+  MEDIUM: 6 tests, 3 failures
+  HIGH: 11 tests, 2 failures
+  EXTREME: 8 tests, 1 failures
+
+🚨 CRITICAL WEAKNESSES DISCOVERED
+--------------------------------------------------------------------------------
+
+  💥 Infinite Recursion [ENGINE]
+     Failure Point: exception
+     Error Type: RecursionError
+     Impact: maximum recursion depth exceeded
+
+  💥 Timeout Cascade [SERVICES]
+     Failure Point: exception
+     Error Type: TimeoutError
+     Impact: 10 (of 100) futures unfinished
+
+  💥 Hydroma MRV Massive Query [HYDROMA]
+     Failure Point: exception
+     Error Type: RuntimeError
+     Impact: MRV stress failed: Conversion Error: Could not convert string 'SITE001' to FLOAT when casting from source column site_id
+
+LINE 4:                     
+
+🛡️  UNEXPECTEDLY STRONG COMPONENTS
+--------------------------------------------------------------------------------
+  🛡️  Memory Leak - 1000 iterations [ENGINE] - resisted HIGH attack
+  🛡️  Precision Loss [ENGINE] - resisted LOW attack
+  🛡️  Heavy Math - 100 queries [ENGINE] - resisted HIGH attack
+  🛡️  Boundary Conditions [ENGINE] - resisted MEDIUM attack
+  🛡️  Connection Storm - 1000 connections [DATAHUB] - resisted EXTREME attack
+  🛡️  Transaction Deadlock [DATAHUB] - resisted HIGH attack
+  🛡️  Data Corruption Injection [DATAHUB] - resisted HIGH attack
+  🛡️  Race Condition - 100 threads [DATAHUB] - resisted HIGH attack
+  🛡️  Query Bomb - 10000 queries [DATAHUB] - resisted EXTREME attack
+  🛡️  Concurrent Writes - 50 threads [DATAHUB] - resisted HIGH attack
+  🛡️  DDoS Simulation - 1000 requests [SERVICES] - resisted EXTREME attack
+  🛡️  Payload Bomb - 10MB input [SERVICES] - resisted HIGH attack
+  🛡️  Recursive Service Calls [SERVICES] - resisted EXTREME attack
+  🛡️  Malformed Input Injection [SERVICES] - resisted MEDIUM attack
+  🛡️  Circular Dependency [SERVICES] - resisted MEDIUM attack
+  🛡️  HydromaLayout Stress - 1M cells [HYDROMA] - resisted EXTREME attack
+  🛡️  Hydroma Simulation Overflow [HYDROMA] - resisted HIGH attack
+  🛡️  Hydroma Concurrent Models - 100 threads [HYDROMA] - resisted EXTREME attack
+  🛡️  All Hydroma Models Extreme [HYDROMA] - resisted EXTREME attack
+  🛡️  Hydroma Carbon Extreme Calculation [HYDROMA] - resisted HIGH attack
+
+🏆 STABILITY SCORE
+--------------------------------------------------------------------------------
+  🏆 Stability Score: 81.8/100 (Grade: A)
+     Total weight: 121 | Passed weight: 99
+
+📋 RECOMMENDATIONS
+--------------------------------------------------------------------------------
+  1. ⏱️  Add circuit breakers and request timeouts to all services
+  2. 🧮 Add NaN/Infinity checks in all numerical computations
+  3. 📊 Implement overflow protection and big number handling
+
+================================================================================

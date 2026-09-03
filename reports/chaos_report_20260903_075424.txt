@@ -1,0 +1,216 @@
+================================================================================
+  💥 CHAOS ENGINEERING REPORT - eco_nojin
+  Generated: 2026-09-03 07:54:24
+================================================================================
+
+📊 EXECUTIVE SUMMARY
+--------------------------------------------------------------------------------
+  Total Tests Run:        26
+  ✅ System Resisted:       8 (30.8%)
+  ❌ System Failed:         18 (69.2%)
+  🎯 Expected Failures:     18 (discovered weaknesses)
+  🛡️  Unexpected Resist:    8 (strong components)
+
+📂 BREAKDOWN BY CATEGORY
+--------------------------------------------------------------------------------
+
+  [ENGINE]
+    Tests: 7 | Resisted: 1 | Failed: 6
+    💥 FAILED Memory Leak - 1000 iterations
+           ├─ Failure: exception
+           ├─ Error: IndentationError
+           └─ Message: unexpected indent (hub.py, line 273)
+           ⚠️  Memory leak: +27.2MB
+    💥 FAILED Computation Overflow
+           ├─ Failure: exception
+           ├─ Error: IndentationError
+           └─ Message: unexpected indent (hub.py, line 273)
+    💥 FAILED NaN Propagation
+           ├─ Failure: exception
+           ├─ Error: IndentationError
+           └─ Message: unexpected indent (hub.py, line 273)
+    💥 FAILED Infinite Recursion
+           ├─ Failure: exception
+           ├─ Error: RecursionError
+           └─ Message: maximum recursion depth exceeded
+    💥 FAILED Precision Loss
+           ├─ Failure: exception
+           ├─ Error: IndentationError
+           └─ Message: unexpected indent (hub.py, line 273)
+    💥 FAILED Heavy Math - 100 queries
+           ├─ Failure: exception
+           ├─ Error: IndentationError
+           └─ Message: unexpected indent (hub.py, line 273)
+    🛡️ RESISTED Boundary Conditions
+
+  [DATAHUB]
+    Tests: 7 | Resisted: 0 | Failed: 7
+    💥 FAILED Connection Storm - 1000 connections
+           ├─ Failure: exception
+           ├─ Error: IndentationError
+           └─ Message: unexpected indent (hub.py, line 273)
+    💥 FAILED Transaction Deadlock
+           ├─ Failure: exception
+           ├─ Error: IndentationError
+           └─ Message: unexpected indent (hub.py, line 273)
+    💥 FAILED Data Corruption Injection
+           ├─ Failure: exception
+           ├─ Error: IndentationError
+           └─ Message: unexpected indent (hub.py, line 273)
+    💥 FAILED Race Condition - 100 threads
+           ├─ Failure: exception
+           ├─ Error: IndentationError
+           └─ Message: unexpected indent (hub.py, line 273)
+    💥 FAILED Query Bomb - 10000 queries
+           ├─ Failure: exception
+           ├─ Error: IndentationError
+           └─ Message: unexpected indent (hub.py, line 273)
+    💥 FAILED Concurrent Writes - 50 threads
+           ├─ Failure: exception
+           ├─ Error: IndentationError
+           └─ Message: unexpected indent (hub.py, line 273)
+    💥 FAILED Rapid Open/Close - 1000 cycles
+           ├─ Failure: exception
+           ├─ Error: IndentationError
+           └─ Message: unexpected indent (hub.py, line 273)
+
+  [SERVICES]
+    Tests: 6 | Resisted: 4 | Failed: 2
+    💥 FAILED DDoS Simulation - 1000 requests
+           ├─ Failure: exception
+           ├─ Error: IndentationError
+           └─ Message: unexpected indent (hub.py, line 273)
+           ⚠️  Memory leak: +12.1MB
+    🛡️ RESISTED Payload Bomb - 10MB input
+    🛡️ RESISTED Recursive Service Calls
+    🛡️ RESISTED Malformed Input Injection
+    💥 FAILED Timeout Cascade
+           ├─ Failure: timeout
+           ├─ Error: TimeoutError
+           └─ Message: Test exceeded 2.0s timeout
+    🛡️ RESISTED Circular Dependency
+
+  [HYDROMA]
+    Tests: 6 | Resisted: 3 | Failed: 3
+    🛡️ RESISTED HydromaLayout Stress - 1M cells
+    🛡️ RESISTED Hydroma Simulation Overflow
+    💥 FAILED Hydroma Concurrent Models - 100 threads
+           ├─ Failure: exception
+           ├─ Error: IndentationError
+           └─ Message: unexpected indent (hub.py, line 273)
+    💥 FAILED All Hydroma Models Extreme
+           ├─ Failure: exception
+           ├─ Error: IndentationError
+           └─ Message: unexpected indent (hub.py, line 273)
+    💥 FAILED Hydroma MRV Massive Query
+           ├─ Failure: exception
+           ├─ Error: IndentationError
+           └─ Message: unexpected indent (hub.py, line 273)
+    🛡️ RESISTED Hydroma Carbon Extreme Calculation
+
+📊 BREAKDOWN BY SEVERITY
+--------------------------------------------------------------------------------
+  LOW: 1 tests, 1 failures
+  MEDIUM: 6 tests, 3 failures
+  HIGH: 11 tests, 8 failures
+  EXTREME: 8 tests, 6 failures
+
+🚨 CRITICAL WEAKNESSES DISCOVERED
+--------------------------------------------------------------------------------
+
+  💥 Memory Leak - 1000 iterations [ENGINE]
+     Failure Point: exception
+     Error Type: IndentationError
+     Impact: unexpected indent (hub.py, line 273)
+
+  💥 Infinite Recursion [ENGINE]
+     Failure Point: exception
+     Error Type: RecursionError
+     Impact: maximum recursion depth exceeded
+
+  💥 Heavy Math - 100 queries [ENGINE]
+     Failure Point: exception
+     Error Type: IndentationError
+     Impact: unexpected indent (hub.py, line 273)
+
+  💥 Connection Storm - 1000 connections [DATAHUB]
+     Failure Point: exception
+     Error Type: IndentationError
+     Impact: unexpected indent (hub.py, line 273)
+
+  💥 Transaction Deadlock [DATAHUB]
+     Failure Point: exception
+     Error Type: IndentationError
+     Impact: unexpected indent (hub.py, line 273)
+
+  💥 Data Corruption Injection [DATAHUB]
+     Failure Point: exception
+     Error Type: IndentationError
+     Impact: unexpected indent (hub.py, line 273)
+
+  💥 Race Condition - 100 threads [DATAHUB]
+     Failure Point: exception
+     Error Type: IndentationError
+     Impact: unexpected indent (hub.py, line 273)
+
+  💥 Query Bomb - 10000 queries [DATAHUB]
+     Failure Point: exception
+     Error Type: IndentationError
+     Impact: unexpected indent (hub.py, line 273)
+
+  💥 Concurrent Writes - 50 threads [DATAHUB]
+     Failure Point: exception
+     Error Type: IndentationError
+     Impact: unexpected indent (hub.py, line 273)
+
+  💥 DDoS Simulation - 1000 requests [SERVICES]
+     Failure Point: exception
+     Error Type: IndentationError
+     Impact: unexpected indent (hub.py, line 273)
+
+  💥 Timeout Cascade [SERVICES]
+     Failure Point: timeout
+     Error Type: TimeoutError
+     Impact: Test exceeded 2.0s timeout
+
+  💥 Hydroma Concurrent Models - 100 threads [HYDROMA]
+     Failure Point: exception
+     Error Type: IndentationError
+     Impact: unexpected indent (hub.py, line 273)
+
+  💥 All Hydroma Models Extreme [HYDROMA]
+     Failure Point: exception
+     Error Type: IndentationError
+     Impact: unexpected indent (hub.py, line 273)
+
+  💥 Hydroma MRV Massive Query [HYDROMA]
+     Failure Point: exception
+     Error Type: IndentationError
+     Impact: unexpected indent (hub.py, line 273)
+
+🛡️  UNEXPECTEDLY STRONG COMPONENTS
+--------------------------------------------------------------------------------
+  🛡️  Boundary Conditions [ENGINE] - resisted MEDIUM attack
+  🛡️  Payload Bomb - 10MB input [SERVICES] - resisted HIGH attack
+  🛡️  Recursive Service Calls [SERVICES] - resisted EXTREME attack
+  🛡️  Malformed Input Injection [SERVICES] - resisted MEDIUM attack
+  🛡️  Circular Dependency [SERVICES] - resisted MEDIUM attack
+  🛡️  HydromaLayout Stress - 1M cells [HYDROMA] - resisted EXTREME attack
+  🛡️  Hydroma Simulation Overflow [HYDROMA] - resisted HIGH attack
+  🛡️  Hydroma Carbon Extreme Calculation [HYDROMA] - resisted HIGH attack
+
+🏆 STABILITY SCORE
+--------------------------------------------------------------------------------
+  🔴 Stability Score: 28.1/100 (Grade: D)
+     Total weight: 121 | Passed weight: 34
+
+📋 RECOMMENDATIONS
+--------------------------------------------------------------------------------
+  1. 🔧 Implement proper resource cleanup and connection pooling
+  2. ⏱️  Add circuit breakers and request timeouts to all services
+  3. 🔒 Implement proper locking/synchronization for concurrent access
+  4. ✅ Add input validation and data integrity checks at all entry points
+  5. 🧮 Add NaN/Infinity checks in all numerical computations
+  6. 📊 Implement overflow protection and big number handling
+
+================================================================================
