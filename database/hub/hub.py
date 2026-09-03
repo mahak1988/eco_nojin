@@ -100,8 +100,8 @@ class DataHub:
                 database_url,
                 echo=False,
                 poolclass=QueuePool,
-                pool_size=10,
-                max_overflow=20,
+                pool_size=30,
+                max_overflow=60,
                 pool_pre_ping=True,
                 pool_recycle=3600,
             )
