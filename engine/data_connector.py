@@ -1,3 +1,4 @@
+import re
 """
 engine.data_connector
 =====================
@@ -224,6 +225,14 @@ class DataConnector:
 
     def get_crop_calendar(self, province: Optional[str] = None) -> List[Dict]:
         """Get crop calendar data from manual SQLite."""
+
+        # SQL Injection Protection
+        try:
+            query = self._sanitize_sql(query)
+        except ValueError as e:
+            logger.error(f"SQL injection attempt blocked: {e}")
+            raise
+
         conn = self.hub.get_sqlite("manual")
 
         try:
