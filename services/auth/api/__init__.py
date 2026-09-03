@@ -2,7 +2,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.config import get_db
+from database.hub import hub
+
+# Compatibility: get_db via hub
+def get_db():
+    with hub.get_session() as session:
+        yield session
 from services.auth.schemas import TokenRefresh, TokenResponse, UserInfo, UserLogin, UserRegister
 from services.auth.service import AuthService
 

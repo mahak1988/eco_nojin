@@ -2,7 +2,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from database.config import get_db  # Fixed import to get 'get_db' from the correct module
+from database.hub import hub
+
+# Compatibility: get_db via hub
+def get_db():
+    with hub.get_session() as session:
+        yield session  # Fixed import to get 'get_db' from the correct module
 from engine.hydroma.analyses.topography_analysis import TopographyAnalyzer, TopographyInput
 from engine.hydroma.calculations.crop_water_req_calc import (
     CropWaterReqInput,

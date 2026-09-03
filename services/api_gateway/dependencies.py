@@ -8,7 +8,10 @@ from collections.abc import Generator
 
 from sqlalchemy.orm import Session
 
-from database.config import SessionLocal
+from database.hub import hub
+
+# Compatibility: SessionLocal via hub
+SessionLocal = hub.get_session_factory()
 
 
 def get_db() -> Generator[Session, None, None]:

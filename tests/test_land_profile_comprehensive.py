@@ -7,7 +7,12 @@ from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime, timezone
 from database.models import User, LandProfile, Base
-from database.config import get_db # فقط برای دسترسی احتمالی به get_db، اگر نیاز شد
+from database.hub import hub
+
+# Compatibility: get_db via hub
+def get_db():
+    with hub.get_session() as session:
+        yield session # فقط برای دسترسی احتمالی به get_db، اگر نیاز شد
 
 # ایجاد یک دیتابیس موقت در حافظه برای تست
 @pytest.fixture(scope="function")

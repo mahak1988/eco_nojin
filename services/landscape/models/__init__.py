@@ -11,7 +11,7 @@ from enum import Enum
 from sqlalchemy import JSON, Boolean, Column, Date, DateTime, Index, Integer, Numeric, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 
-from database.models import Base
+from database.base import Base
 
 
 class LandscapeGovernanceRole(str, Enum):

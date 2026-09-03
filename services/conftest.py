@@ -24,7 +24,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 # ── Import Base ─────────────────────────────────────────────────
-from database.models import Base
+from database.base import Base
 
 # ── Import خودکار همه مدل‌ها ────────────────────────────────────
 def _import_all_models():

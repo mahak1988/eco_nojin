@@ -2,7 +2,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.orm import sessionmaker
-from database.models import Base # از models import می‌کنیم
+from database.base import Base # از models import می‌کنیم
 
 # import همه مدل‌ها
 import database.models

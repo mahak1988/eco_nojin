@@ -26,7 +26,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette import status # Added status import
 
-from database.config import init_db
+from database.hub import hub
+
+# Compatibility: init_db via hub
+def init_db():
+    # Create tables using hub engine
+    from database.base import Base
+    engine = hub.get_sqlalchemy_engine()
+    Base.metadata.create_all(bind=engine)
 from engine.hydroma.config.settings import get_settings
 
 # Import all routers

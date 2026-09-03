@@ -14,7 +14,8 @@ from typing import Any
 import httpx
 from sqlalchemy.orm import Session
 
-from database import models
+from database import models  # noqa: F401
+from database.hub import hub
 
 logger = logging.getLogger(__name__)
 

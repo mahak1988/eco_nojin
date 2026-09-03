@@ -47,8 +47,14 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
 
-from database import models
-from database.config import get_db
+from database import models  # noqa: F401
+from database.hub import hub
+from database.hub import hub
+
+# Compatibility: get_db via hub
+def get_db():
+    with hub.get_session() as session:
+        yield session
 from services.api_gateway.auth import get_current_user, require_roles
 
 logger = logging.getLogger(__name__)

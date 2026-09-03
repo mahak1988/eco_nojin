@@ -10,7 +10,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from database import models
+from database import models  # noqa: F401
+from database.hub import hub
 
 
 def build_oracle_report(project: models.CarbonProject) -> dict[str, Any]:

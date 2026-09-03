@@ -13,7 +13,10 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
-from database.config import SessionLocal
+from database.hub import hub
+
+# Compatibility: SessionLocal via hub
+SessionLocal = hub.get_session_factory()
 from database.models import MonitoringDataDB
 from engine.hydroma.soil.health import calculate_soil_health_index
 from engine.hydroma.water.quality import assess_water_quality

@@ -4,10 +4,11 @@ import asyncio
 import pytest
 from fastapi.testclient import TestClient
 
-from database.models import Base
+from database.base import Base
 from database.config import engine
 from tests.conftest import TEST_SESSION_FACTORY as SessionLocal
-from database import models as db_models
+from database import models  # noqa: F401
+from database.hub import hub as db_models
 from services.api_gateway.auth import hash_password
 from services.api_gateway.main import app
 

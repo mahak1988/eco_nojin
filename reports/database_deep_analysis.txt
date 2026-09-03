@@ -1,0 +1,382 @@
+======================================================================
+گزارش تحلیل عمیق دیتابیس
+======================================================================
+
+1. مدل‌های اصلی دیتابیس
+----------------------------------------
+
+📄 database\models.py
+----------------------------------------
+from sqlalchemy import Text, JSON, Column, String, Boolean, DateTime, Float, Integer, ForeignKey, CheckConstraint, UniqueConstraint
+from sqlalchemy.orm import relationship, declarative_base # declarative_base را مستقیماً import می‌کنیم
+from datetime import datetime, timezone
+import uuid
+
+# تعریف Base مستقیماً در این فایل
+Base = declarative_base()
+
+def _uuid():
+    return str(uuid.uuid4())
+
+def generate_uuid():
+    """Generate a UUID string for primary keys"""
+    return str(uuid.uuid4())
+
+
+# --- مدل کاربر ---
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    email = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    password_hash = Column(String, nullable=True)
+    full_name = Column(String, nullable=True)
+
+    language = Column(String, nullable=True)
+    phone = Column(String, nullable=True)
+    country = Column(String, nullable=True)
+    city = Column(String, nullable=True)
+    avatar_url = Column(String, nullable=True)
+    is_email_verified = Column(Boolean, default=False)
+    role = Column(String, nullable=False, default="farmer")
+    is_active = Column(Boolean, default=True)
+    is_verified = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    # افزودن رابطه به LandProfile
+    land_profiles = relationship("LandProfile", back_populates="user")
+
+
+# --- مدل پروفایل زمین (اصلاح شده در مراحل قبل) ---
+class LandProfile(Base):
+    __tablename__ = "land_profiles"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    name = Column(String, nullable=False)
+    location_lat = Column(Float, nullable=True)
+    location_lon = Column(Float, nullable=True)
+    area_ha = Column(Float, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    
+    user_id = Column(String, ForeignKey('users.id'), nullable=True)
+    user = relationship("User", back_populates="land_profiles")
+    
+    # تعریف صحیح __table_args__ با چندین محدودیت
+    __table_args__ = (
+        UniqueConstraint('user_id', 'name', name='_user_land_name_uc'),
+        CheckConstraint("name != ''", name='ck_land_profile_name_not_empty')
+    )
+
+
+# --- مدل‌های دیگر مورد نیاز ---
+# ترتیب این مدل‌ها مهم است. مدل‌هایی که مورد ارجاع قرار می‌گیرند باید اول تعریف شوند.
+
+class AuditLog(Base):
+    __tablename__ = "auditlog"
+    id = Column(Integer, primary_key=True)
+    detail = Column(String)
+    role = Column(String)
+    actor_id = Column(String)
+    actor_email = Column(String)
+    action = Column(String)
+    user_agent = Column(String(500))
+    ip_address = Column(String(45))
+    details = Column(JSON)
+    resource_id = Column(String(100))
+    resource_type = Column(String(50))
+    target = Column(String)
+    user_id = Column(String)
+    amount = Column(Float)
+    token = Column(String)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    is_active = Column(Boolean, default=True)
+
+class EcoWallet(Base):
+    __tablename__ = "ecowallet"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String)
+    balance = Column(Float, default=0.0)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+class PasswordResetToken(Base):
+    __tablename__ = "password_reset_tokens"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String)
+    token = Column(String)
+    expires_at = Column(DateTime)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+... (169 خط دیگر)
+
+
+📄 database\base.py
+----------------------------------------
+"""Base declarative class for SQLAlchemy models."""
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
+
+
+
+2. ساختار جداول دیتابیس
+----------------------------------------
+
+📦 data\manual\eco_manual_v1.sqlite
+   تعداد جداول: 18
+   تعداد کل ردیف‌ها: 175067
+
+   📋 climate_disasters (1020 ردیف)
+      ستون‌ها: country_fa, year, flood_events, drought_events, storm_events
+      ... و 7 ستون دیگر
+   📋 climate_monthly_300sites (90000 ردیف)
+      ستون‌ها: site_id, lat, lon, year, month
+      ... و 6 ستون دیگر
+   📋 climate_normals (3600 ردیف)
+      ستون‌ها: site_id, month, tmax_c, tmin_c, tavg_c
+      ... و 6 ستون دیگر
+   📋 climate_projections (132 ردیف)
+      ستون‌ها: region_fa, scenario, period, delta_t_deg_c, delta_precip_pct
+      ... و 3 ستون دیگر
+   📋 crop_calendar_iran (260 ردیف)
+      ستون‌ها: calendar_id, province, climate_zone, crop_fa, sow_start_m-d
+      ... و 6 ستون دیگر
+   📋 crop_water_params (52 ردیف)
+      ستون‌ها: species_id, scientific_name, crop_note_fa, kc_ini, kc_mid
+      ... و 13 ستون دیگر
+   📋 food_security_indicators (300 ردیف)
+      ستون‌ها: country_fa, year, pou_pct, des_kcal_cap_day, protein_g_cap_day
+      ... و 7 ستون دیگر
+   📋 iran_provincial_agriculture (3200 ردیف)
+      ستون‌ها: province, year, crop_fa, production_t, area_ha
+      ... و 3 ستون دیگر
+   📋 meta_dictionary (162 ردیف)
+      ستون‌ها: sheet, column, unit, description_fa
+   📋 meta_info (5 ردیف)
+      ستون‌ها: key, value
+   ... و 8 جدول دیگر
+
+📦 data\econojin.db
+   تعداد جداول: 62
+   تعداد کل ردیف‌ها: 36
+
+   📋 ai_conversations (0 ردیف)
+      ستون‌ها: id, user_id
+   📋 alembic_version (1 ردیف)
+      ستون‌ها: version_num
+   📋 analytics_snapshots (0 ردیف)
+      ستون‌ها: id, snapshot_type, village_id, period_start, period_end
+      ... و 2 ستون دیگر
+   📋 auditlog (34 ردیف)
+      ستون‌ها: id, detail, role, actor_id, actor_email
+      ... و 12 ستون دیگر
+   📋 auth_refresh_tokens (0 ردیف)
+      ستون‌ها: id, user_id, token_hash, expires_at, revoked
+      ... و 1 ستون دیگر
+   📋 auth_users (0 ردیف)
+      ستون‌ها: id, email, username, password_hash, is_active
+      ... و 5 ستون دیگر
+   📋 calibrationrecorddb (0 ردیف)
+      ستون‌ها: id, created_at
+   📋 carbon_projects (0 ردیف)
+      ستون‌ها: id, name
+   📋 carbonproject (0 ردیف)
+      ستون‌ها: id, created_at
+   📋 decisionrecommendationdb (0 ردیف)
+      ستون‌ها: id, created_at
+   ... و 52 جدول دیگر
+
+3. ایمپورت‌های مستقیم (نیاز به متمرکزسازی)
+----------------------------------------
+تعداد کل: 47 فایل
+
+📄 services\conftest.py
+   from database.models import Base
+📄 services\land_profile_service.py
+   from database.models import LandProfile as LandProfileModel, User
+📄 services\admin\models.py
+   from database.models import Base
+📄 services\ai\admin_assistant.py
+   from database import models
+   from database import models
+📄 services\ai\support_agent.py
+   from database import models
+📄 services\analytics\models.py
+   from database.models import Base
+📄 services\api_gateway\auth.py
+   from database.config import get_db
+   from database.models import User
+📄 services\api_gateway\dependencies.py
+   from database.config import SessionLocal
+📄 services\api_gateway\main.py
+   from database.config import init_db
+📄 services\auth\models.py
+   from database.models import Base
+📄 services\carbon\oracle.py
+   from database import models
+📄 services\content\bot_dispatch.py
+   from database import models
+📄 services\content\rag_sync.py
+   from database import models
+📄 services\ecowallet\service.py
+   from database.models import EcoWallet
+📄 services\field_monitoring\service.py
+   from database.config import SessionLocal
+   from database.models import MonitoringDataDB
+📄 services\mobile_monitoring\service.py
+   from database.config import SessionLocal
+   from database.models import MonitoringDataDB
+📄 services\models\__init__.py
+   # In the future, imports should come directly from database.models.
+   # But the recommended place to import them is directly from database.models.
+📄 services\reporting\models.py
+   from database.models import Base
+📄 services\admin\api\__init__.py
+   from database.config import get_db
+📄 services\analytics\api\__init__.py
+   from database.config import get_db
+... و 27 فایل دیگر
+
+4. الگوهای ایجاد اتصال
+----------------------------------------
+تعداد کل: 14 فایل
+
+📄 eco_database_audit.py
+   if "create_engine" in content or "create_async_engine" in content:
+   from sqlalchemy import create_engine
+📄 eco_db_deep_analysis.py
+   if 'create_engine' in line or 'create_async_engine' in line:
+📄 alembic\env.py
+   from sqlalchemy import create_engine, pool
+📄 database\config.py
+   from sqlalchemy import create_engine, event
+   engine = create_engine(
+📄 services\conftest.py
+   create_async_engine,
+   from sqlalchemy import create_engine
+📄 tests\test_bot_phase1.py
+   from sqlalchemy import create_engine
+   engine = create_engine(f"sqlite:///{db_path}")
+📄 tests\test_dashboard_api.py
+   from sqlalchemy import create_engine
+   engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+📄 tests\test_db.py
+   from sqlalchemy import create_engine
+   engine = create_engine(
+📄 tests\test_land_profile_challenging.py
+   from sqlalchemy import create_engine, inspect, and_, or_
+   engine = create_engine("sqlite:///:memory:")
+📄 tests\test_land_profile_comprehensive.py
+   from sqlalchemy import create_engine, inspect
+   engine = create_engine("sqlite:///:memory:")
+📄 tests\test_land_profile_model.py
+   from sqlalchemy import create_engine
+   engine = create_engine("sqlite:///:memory:")
+📄 tests\test_land_profile_service.py
+   from sqlalchemy import create_engine
+   engine = create_engine("sqlite:///:memory:")
+📄 database\hub\hub.py
+   from sqlalchemy import create_engine
+   self._sqlalchemy_engine = create_engine(
+📄 tests\unit\test_models.py
+   from sqlalchemy import create_engine
+   engine = create_engine("sqlite:///:memory:")
+
+5. وضعیت هاب مرکزی
+----------------------------------------
+✅ هاب مرکزی وجود دارد
+
+📄 hub.py
+"""
+database.hub.hub
+================
+هاب مرکزی داده - نقطه دسترسی یکپارچه
+
+معماری:
+    همه سرویس‌ها → هاب مرکزی → منابع داده
+    
+مزایا:
+    - نقطه دسترسی واحد
+    - مدیریت اتصال مرکزی
+    - کش یکپارچه
+    - لاگ مرکزی
+"""
+
+from typing import Optional, Any
+from pathlib import Path
+import os
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+
+class DataHub:
+    """
+    هاب مرکزی داده
+    
+    این کلاس نقطه دسترسی یکپارچه به همه منابع داده است.
+    """
+    
+    _instance: Optional['DataHub'] = None
+    
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance._initialized = False
+        return cls._instance
+    
+    def __init__(self):
+        if self._initialized:
+            return
+        
+        self._initialized = True
+        self._duckdb_connection = None
+        self._sqlalchemy_engine = None
+        self._redis_client = None
+        
+        # مسیرهای داده
+        self.data_dir = PROJECT_ROOT / "data"
+        self.master_duckdb = self.data_dir / "eco_nojin_master.duckdb"
+... (114 خط دیگر)
+
+📄 __init__.py
+"""
+database.hub
+============
+هاب مرکزی داده برای پروژه اکو_نوجین
+
+این ماژول نقطه دسترسی یکپارچه به همه منابع داده است.
+همه سرویس‌ها باید از این هاب برای دسترسی به داده استفاده کنند.
+
+استفاده:
+    from database.hub import DataHub
+    
+    hub = DataHub()
+    session = hub.get_session()
+    duckdb_conn = hub.get_duckdb()
+"""
+
+from .hub import DataHub
+
+__all__ = ["DataHub"]
+
+
+
+6. پیشنهادات متمرکزسازی
+----------------------------------------
+
+اولویت 1: ادغام دیتابیس‌های موازی
+  - eco_nojin.duckdb + eco_nojin_master.duckdb → یک دیتابیس اصلی
+  - econojin.db (62 جدول) به عنوان اسکیمای اصلی
+
+اولویت 2: جایگزینی ایمپورت‌های مستقیم
+  - 47 فایل ایمپورت مستقیم → استفاده از هاب مرکزی
+  - الگو: از دیتابیس.هاب استفاده کنید
+
+اولویت 3: یکپارچه‌سازی نشست‌ها
+  - 26 فایل استفاده از نشست → مدیریت مرکزی
+  - استفاده از نشست ساز
+
+اولویت 4: اتصال موتور پردازش
+  - موتور.اتصال‌دهنده_داده → هاب مرکزی
+  - همه سرویس‌های علمی از این مسیر داده بگیرند

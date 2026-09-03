@@ -16,7 +16,12 @@ from jose import JWTError, jwt
 import bcrypt
 from sqlalchemy.orm import Session
 
-from database.config import get_db
+from database.hub import hub
+
+# Compatibility: get_db via hub
+def get_db():
+    with hub.get_session() as session:
+        yield session
 from database.models import User
 from engine.hydroma.config.settings import get_settings
 

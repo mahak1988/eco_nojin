@@ -222,7 +222,7 @@ def temp_farm_db(tmp_path):
     from sqlalchemy.orm import sessionmaker
 
     import db.models  # noqa: F401  (register all tables on Base)
-    from database.models import Base
+    from database.base import Base
 
     db_path = tmp_path / "bot_farm_test.db"
     engine = create_engine(f"sqlite:///{db_path}")

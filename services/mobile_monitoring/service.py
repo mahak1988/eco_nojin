@@ -14,7 +14,10 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
-from database.config import SessionLocal
+from database.hub import hub
+
+# Compatibility: SessionLocal via hub
+SessionLocal = hub.get_session_factory()
 from database.models import MonitoringDataDB
 
 logger = logging.getLogger(__name__)

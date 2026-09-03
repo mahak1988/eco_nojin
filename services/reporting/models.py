@@ -4,7 +4,7 @@ from datetime import UTC, datetime
 
 from sqlalchemy import JSON, Column, DateTime, String
 
-from database.models import Base
+from database.base import Base
 
 
 class Report(Base):

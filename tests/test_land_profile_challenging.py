@@ -9,7 +9,12 @@ from sqlalchemy.exc import IntegrityError, DataError
 from datetime import datetime, timezone
 import re
 from database.models import User, LandProfile, Base
-from database.config import get_db
+from database.hub import hub
+
+# Compatibility: get_db via hub
+def get_db():
+    with hub.get_session() as session:
+        yield session
 
 # ایجاد یک دیتابیس موقت در حافظه برای تست
 @pytest.fixture(scope="function")

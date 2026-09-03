@@ -4,7 +4,7 @@ from datetime import UTC, datetime
 
 from sqlalchemy import Boolean, Column, DateTime, Integer, String
 
-from database.models import Base
+from database.base import Base
 
 
 class AuthUser(Base):

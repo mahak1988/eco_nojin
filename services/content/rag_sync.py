@@ -14,7 +14,8 @@ import logging
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
-from database import models
+from database import models  # noqa: F401
+from database.hub import hub
 
 logger = logging.getLogger(__name__)
 

@@ -1,11 +1,12 @@
 """Phase 5 modules 2-5 integration tests (content, bots, errors, settings)."""
 from fastapi.testclient import TestClient
 
-from database.models import Base
+from database.base import Base
 from database.config import engine
 from services.api_gateway.main import app
 from tests.conftest import TEST_SESSION_FACTORY as SessionLocal
-from database import models
+from database import models  # noqa: F401
+from database.hub import hub
 from services.api_gateway.auth import hash_password
 
 client = TestClient(app)

@@ -49,7 +49,10 @@ class FarmDraft:
 
 def _session():
     """Session factory seam — tests monkeypatch this to use a temp DB."""
-    from database.config import SessionLocal
+    from database.hub import hub
+
+# Compatibility: SessionLocal via hub
+SessionLocal = hub.get_session_factory()
 
     return SessionLocal()
 

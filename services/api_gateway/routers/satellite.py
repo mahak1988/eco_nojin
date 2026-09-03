@@ -24,8 +24,14 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from sqlalchemy.orm import Session
 
-from database import models
-from database.config import get_db
+from database import models  # noqa: F401
+from database.hub import hub
+from database.hub import hub
+
+# Compatibility: get_db via hub
+def get_db():
+    with hub.get_session() as session:
+        yield session
 from services.analytics.duckdb_service import summarize_satellite_rows
 from services.satellite.copernicus import (
     CopernicusClient,

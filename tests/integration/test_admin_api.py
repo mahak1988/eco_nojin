@@ -5,11 +5,12 @@ logger = structlog.get_logger()
 import pytest
 from fastapi.testclient import TestClient
 
-from database.models import Base
+from database.base import Base
 from services.api_gateway.main import app
 from database import get_db
 from tests.test_db import SessionLocal, engine as test_engine
-from database import models
+from database import models  # noqa: F401
+from database.hub import hub
 from services.api_gateway.auth import hash_password
 
 

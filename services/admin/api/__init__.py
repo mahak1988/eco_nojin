@@ -4,7 +4,12 @@ from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.config import get_db
+from database.hub import hub
+
+# Compatibility: get_db via hub
+def get_db():
+    with hub.get_session() as session:
+        yield session
 from services.admin.schemas import AdminStats, AuditLog, ProjectStatus, SystemHealth
 from services.admin.service import AdminService
 

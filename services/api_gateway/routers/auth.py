@@ -12,7 +12,12 @@ from engine.hydroma.config.settings import get_settings
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from sqlalchemy.orm import Session
 
-from database.config import get_db
+from database.hub import hub
+
+# Compatibility: get_db via hub
+def get_db():
+    with hub.get_session() as session:
+        yield session
 from database.models import AuditLog, EcoWallet, PasswordResetToken, User
 from services.api_gateway.auth import (
     create_access_token,

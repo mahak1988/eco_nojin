@@ -7,7 +7,12 @@ GET  /api/v1/simulation/runs  list persisted runs (filter by site)
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from database.config import get_db
+from database.hub import hub
+
+# Compatibility: get_db via hub
+def get_db():
+    with hub.get_session() as session:
+        yield session
 from database.models import SimulationRun
 from engine.hydroma.simulation.contracts import ChainInputs
 from engine.hydroma.simulation.orchestrator import run_chain

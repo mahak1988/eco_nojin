@@ -4,7 +4,12 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from database.config import get_db
+from database.hub import hub
+
+# Compatibility: get_db via hub
+def get_db():
+    with hub.get_session() as session:
+        yield session
 from services.content.rag_sync import search_published_content
 
 router = APIRouter(prefix="/api/v1/content", tags=["content"])

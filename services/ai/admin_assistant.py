@@ -358,7 +358,8 @@ def _db_context(db: Session) -> dict[str, Any]:
 
 
 
-    from database import models
+    from database import models  # noqa: F401
+from database.hub import hub
 
 
 
@@ -726,7 +727,8 @@ def _cmd_errors(db: Session, n: int = 5) -> dict[str, Any]:
 
 
 
-    from database import models
+    from database import models  # noqa: F401
+from database.hub import hub
 
 
 

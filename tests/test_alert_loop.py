@@ -2,10 +2,11 @@ import os
 """Tests: run_all_farm_alerts (all-farm loop) + main.py import sanity."""
 import pytest
 
-from database.models import Base
+from database.base import Base
 from database.config import engine
 from tests.conftest import TEST_SESSION_FACTORY as SessionLocal
-from database import models as db_models
+from database import models  # noqa: F401
+from database.hub import hub as db_models
 from services.bots.core.alert_runner import run_all_farm_alerts
 
 
