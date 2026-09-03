@@ -29,6 +29,19 @@ from .safe_math import (
     validate_numeric,
     with_safe_math,
 )
+from .memory_monitor import (
+    MemoryTracker,
+    track_memory,
+    monitor_memory,
+    MemoryManager,
+    memory_monitor,
+)
+from .resource_manager import (
+    managed_connection,
+    managed_session,
+    cleanup_resources,
+    get_memory_usage_mb,
+)
 from .resilience import (
     circuit_breaker,
     with_timeout,
@@ -39,6 +52,17 @@ from .resilience import (
 )
 
 __all__ = [
+    # Memory Monitoring
+    "MemoryTracker",
+    "track_memory",
+    "monitor_memory",
+    "MemoryManager",
+    "memory_monitor",
+    # Resource Management
+    "managed_connection",
+    "managed_session",
+    "cleanup_resources",
+    "get_memory_usage_mb",
     # DataConnector
     "DataConnector",
     "connector",

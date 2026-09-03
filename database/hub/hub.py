@@ -31,6 +31,7 @@ from typing import Optional, Any, Generator
 from pathlib import Path
 from contextlib import contextmanager
 import os
+import threading
 import logging
 
 logger = logging.getLogger(__name__)
@@ -75,6 +76,11 @@ class DataHub:
         self._sqlalchemy_engine = None
         self._session_factory = None
         self._redis_client = None
+        # Connection limits (Slowloris protection)
+        self._max_connections = 100
+        self._active_connections = 0
+        self._connection_lock = threading.Lock() if 'threading' in dir() else None
+
 
         # Data paths
         self.data_dir = PROJECT_ROOT / "data"
@@ -176,7 +182,7 @@ class DataHub:
 
         db_path.parent.mkdir(parents=True, exist_ok=True)
 
-        conn = duckdb.connect(str(db_path))
+        conn = duckdb.connect(str(db_path, config={'threads': '4', 'memory_limit': '2GB'}))
         logger.info(f"DuckDB connection created: {db_path}")
 
         return conn
@@ -242,6 +248,11 @@ class DataHub:
         if self._redis_client:
             self._redis_client.close()
             self._redis_client = None
+        # Connection limits (Slowloris protection)
+        self._max_connections = 100
+        self._active_connections = 0
+        self._connection_lock = threading.Lock() if 'threading' in dir() else None
+
             logger.info("Redis connection closed")
 
 

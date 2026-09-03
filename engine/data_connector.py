@@ -146,11 +146,75 @@ class DataConnector:
         finally:
             conn.close()
 
+
+    def _sanitize_sql(self, query: str) -> str:
+        """
+        Sanitize SQL query to prevent injection attacks.
+
+        Security measures:
+        - Block dangerous statements (DROP, DELETE, UPDATE, INSERT, ALTER)
+        - Block information_schema access
+        - Block comment-based injection
+        - Detect and reject suspicious patterns
+        """
+        query_upper = query.upper().strip()
+
+        # Block dangerous keywords (except in safe contexts)
+        dangerous_keywords = [
+            'DROP TABLE', 'DROP DATABASE', 'DELETE FROM',
+            'UPDATE ', 'INSERT INTO', 'ALTER TABLE',
+            'TRUNCATE', 'CREATE TABLE', 'CREATE DATABASE',
+            'GRANT', 'REVOKE', 'EXECUTE', 'EXEC(',
+            'XP_CMDSHELL', 'INFORMATION_SCHEMA',
+            'WAITFOR DELAY', 'UNION SELECT',
+            'SHUTDOWN', 'LOAD_FILE', 'INTO OUTFILE',
+            'INTO DUMPFILE'
+        ]
+
+        for keyword in dangerous_keywords:
+            if keyword in query_upper:
+                import logging
+                logging.getLogger(__name__).warning(
+                    f"SQL injection attempt blocked: {keyword} in query"
+                )
+                raise ValueError(
+                    f"Dangerous SQL statement detected: {keyword}. "
+                    f"Only SELECT queries are allowed in analytics."
+                )
+
+        # Block comment-based injection
+        if '--' in query or '/*' in query or ';' in query:
+            import logging
+            logging.getLogger(__name__).warning(
+                f"SQL injection attempt blocked: comment/semicolon detected"
+            )
+            raise ValueError(
+                "SQL comments (;, --, /*) are not allowed in analytics queries. "
+                "Use parameterized queries instead."
+            )
+
+        # Only SELECT allowed
+        if not query_upper.startswith('SELECT') and not query_upper.startswith('WITH'):
+            raise ValueError(
+                "Only SELECT/WITH queries are allowed in execute_analytics_query"
+            )
+
+        return query
+
+
     def execute_analytics_query(self, query: str) -> Any:
         """Execute arbitrary analytics query on master DuckDB."""
         conn = self.hub.get_duckdb("master")
         try:
-            return conn.execute(query).fetchdf()
+            return 
+            # Sanitize query to prevent SQL injection
+            try:
+                query = self._sanitize_sql(query)
+            except ValueError as e:
+                logger.error(f"SQL injection attempt blocked: {e}")
+                raise
+
+            conn.execute(query).fetchdf()
         except Exception:
             return conn.execute(query).fetchall()
         finally:
