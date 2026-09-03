@@ -1,70 +1,67 @@
-"""Database configuration — single source of truth (Phase 0).
+"""
+database.config
+===============
 
-Unified SQLAlchemy setup driven by ``engine.hydroma.config.settings``.
-Fixes Phase-0 finding: two parallel SQLite databases
-(``database/config.py`` vs ``engine/hydroma/core/database.py``) are
-merged into one engine, one Base, one session factory.
+Compatibility layer for database configuration.
 
-Production swaps DATABASE_URL to PostGIS via .env (docker-compose).
+This module provides backward compatibility for code that imports
+from database.config. Internally, it uses the centralized DataHub.
+
+DEPRECATED: Use database.hub directly instead:
+    from database.hub import hub
+    with hub.get_session() as session:
+        # ...
+
+Author: Eco Nojin Architecture Team
 """
 
-from pathlib import Path
-
-from sqlalchemy import create_engine, event
-from sqlalchemy.orm import declarative_base, sessionmaker
-
-from engine.hydroma.config.settings import get_settings
-
-settings = get_settings()
-
-# Resolve SQLite relative paths against the repository root
-_DB_URL = settings.database_url
-if _DB_URL.startswith("sqlite:///") and not _DB_URL.startswith("sqlite:////"):
-    _db_path = _DB_URL.replace("sqlite:///", "", 1)
-    _abs = (Path(__file__).parent.parent / _db_path).resolve()
-    _abs.parent.mkdir(parents=True, exist_ok=True)
-    _DB_URL = f"sqlite:///{_abs.as_posix()}"
-
-Base = declarative_base()
-
-engine = create_engine(
-    _DB_URL,
-    echo=False,
-    pool_pre_ping=True,
-    connect_args={"check_same_thread": False} if _DB_URL.startswith("sqlite") else {},
-)
+from database.hub import hub
+from database.base import Base
 
 
-@event.listens_for(engine, "connect")
-def _set_sqlite_pragma(dbapi_conn, _record):
-    """SQLite performance/safety pragmas (WAL, FK enforcement)."""
-    if _DB_URL.startswith("sqlite"):
-        cursor = dbapi_conn.cursor()
-        cursor.execute("PRAGMA journal_mode=WAL")
-        cursor.execute("PRAGMA foreign_keys=ON")
-        cursor.execute("PRAGMA synchronous=NORMAL")
-        cursor.close()
-
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# Compatibility: SessionLocal
+SessionLocal = hub.get_session_factory()
 
 
 def get_db():
-    """FastAPI dependency: transactional session, always closed."""
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    """
+    Get a database session.
+    
+    DEPRECATED: Use hub.get_session() instead.
+    
+    Usage:
+        with hub.get_session() as session:
+            # ...
+    """
+    with hub.get_session() as session:
+        yield session
 
 
-def init_db() -> list:
-    """Create all tables (research bootstrap; use alembic for migrations)."""
-    from database import models  # noqa: F401  (register ORM models)
-    from engine.hydroma.core import models as engine_models  # noqa: F401
-
+def init_db():
+    """
+    Initialize database tables.
+    
+    Creates all tables defined in Base.metadata.
+    """
+    engine = hub.get_sqlalchemy_engine()
     Base.metadata.create_all(bind=engine)
-    return sorted(Base.metadata.tables.keys())
 
-# Added for backward compatibility with old tests
-SQLALCHEMY_DATABASE_URL = "duckdb:///./data/eco_nojin.duckdb"
+
+# Compatibility: get_engine
+def get_engine():
+    """
+    Get SQLAlchemy engine.
+    
+    DEPRECATED: Use hub.get_sqlalchemy_engine() instead.
+    """
+    return hub.get_sqlalchemy_engine()
+
+
+__all__ = [
+    "SessionLocal",
+    "get_db",
+    "init_db",
+    "get_engine",
+    "hub",
+    "Base",
+]

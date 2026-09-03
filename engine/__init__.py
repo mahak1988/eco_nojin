@@ -1,17 +1,14 @@
 """
-Engine Package for Eco Nojin.
+engine
+======
 
-This package contains the core computational modules for land analysis and hydro-meteorological modeling.
+Processing engine for Eco Nojin project.
+
+Usage:
+    from engine.data_connector import connector
+    df = connector.get_climate_data(station_id=123)
 """
 
-# Optionally, you can import submodules here to make them directly accessible
-# when someone imports 'engine'.
-# However, for large packages, it's often better to let users import explicitly
-# to avoid loading everything at once.
+from .data_connector import DataConnector, connector
 
-# For documentation purposes, list the main sub-packages here.
-# This is not a functional import but clarifies the structure.
-__all__ = [
-    # 'land',  # Uncomment if you want to auto-import
-    # 'hydroma',
-]
+__all__ = ["DataConnector", "connector"]

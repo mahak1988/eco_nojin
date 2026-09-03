@@ -1,9 +1,10 @@
 from sqlalchemy import Text, JSON, Column, String, Boolean, DateTime, Float, Integer, ForeignKey, CheckConstraint, UniqueConstraint
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, declarative_base # declarative_base را مستقیماً import می‌کنیم
 from datetime import datetime, timezone
 import uuid
-from database.base import Base
 
+# تعریف Base مستقیماً در این فایل
+Base = declarative_base()
 
 def _uuid():
     return str(uuid.uuid4())
