@@ -191,3 +191,6 @@ FIX_CONTEXT.txt
 .kilo/
 econojin.egg-info/
 .agent_baseline.json
+
+# off-site backup snapshots
+*.offgit
