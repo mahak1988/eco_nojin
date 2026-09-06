@@ -1,30 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-eco_nojin automation runner v12.
+eco_nojin automation runner v13.
 
-STEP 1 ci-check — GitHub Actions status via API (Security workflow)
-STEP 2 unblock  — (bugfixed) async->def for provably-safe sync-db endpoints
-STEP 3 dedup    — remove duplicate root mounts (auth, platform) + dead
-                  /health twin; evidence-gated; prove-then-commit
-STEP 4 recon    — database/config.py (second engine?), seed-demo auth gate,
-                  finer /api census (motors decision), dead modules
+STEP 1 ci-triage      — dump .github/workflows/ci.yml + local probes
+                        (pytest collection, ruff stats) to find why CI is red
+STEP 2 dead-modules   — remove dependencies.py & register_modules.py
+                        (zero consumers; prove-then-commit, rollback)
+STEP 3 motors-dedup   — drop the unused /api/v1 motors mount (evidence-gated)
+STEP 4 ai-recon       — full dumps to design the AI surface consolidation
 
 Usage:
     python eco_fix.py
-    python eco_fix.py verify | ci-check | unblock | dedup | recon
+    python eco_fix.py verify | ci-triage | dead-modules | motors-dedup | ai-recon
 """
 import ast
-import json
 import re
 import subprocess
 import sys
-import urllib.error
-import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-GITHUB_REPO = "mahak1988/eco_nojin"
 
 GIT_EXE = None
 for _c in (r"C:\Program Files\Git\cmd\git.exe",
@@ -60,13 +56,7 @@ def write_text(p, text, crlf):
     with open(p, "w", encoding="utf-8", newline="") as f:
         f.write(text.replace("\n", "\r\n") if crlf else text)
 
-def modname_of(path: Path) -> str:
-    rel = path.relative_to(ROOT).as_posix()[:-3]
-    if rel.endswith("__init__"):
-        rel = rel[: -len("/__init__")]
-    return rel.replace("/", ".")
-
-def import_smoke(mod, timeout=180):
+def import_smoke(mod, timeout=300):
     code = f"import importlib; importlib.import_module({mod!r}); print('OK')"
     try:
         r = sh([sys.executable, "-c", code], timeout=timeout)
@@ -85,6 +75,15 @@ def dump(p, lo=1, hi=None, title=None):
         out(f"{i+1:4d}| {lines[i]}")
     out("--- end ---")
 
+def frontend_paths():
+    r = git("grep", "-h", "url: ", "--", "frontend/packages/api/src/")
+    blob = r.stdout or ""
+    return (re.findall(r"url:\s*'([^']+)'", blob)
+            + re.findall(r"url:\s*`([^`]+)`", blob))
+
+MAIN = ROOT / "services" / "api_gateway" / "main.py"
+MAIN_MOD = "services.api_gateway.main"
+
 # ---------------------------------------------------------------- verify ---
 def verify():
     out(LINE, "STEP 0 — verify", LINE, sep="\n")
@@ -98,308 +97,186 @@ def verify():
     out(git("log", "--oneline", "-3").stdout)
     return True
 
-# -------------------------------------------------------------- ci-check ---
-def ci_check():
-    out(LINE, "STEP 1 — GitHub Actions status (automated)", LINE, sep="\n")
-    url = f"https://api.github.com/repos/{GITHUB_REPO}/actions/runs?per_page=8"
-    req = urllib.request.Request(url, headers={
-        "User-Agent": "eco_nojin-eco-fix",
-        "Accept": "application/vnd.github+json",
-    })
+# ------------------------------------------------------------- ci-triage ---
+CI_YML = ROOT / ".github" / "workflows" / "ci.yml"
+
+def ci_triage():
+    out(LINE, "STEP 1 — CI triage: why is ci.yml red?", LINE, sep="\n")
+    if not CI_YML.exists():
+        fail("ci.yml not found at .github/workflows/ci.yml")
+        for f in (ROOT / ".github" / "workflows").glob("*"):
+            out("    exists: " + f.name)
+        return True
+    dump(CI_YML, title=".github/workflows/ci.yml (FULL)")
+
+    out("\nstructured step summary:")
     try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-    except urllib.error.HTTPError as e:
-        if e.code in (403, 429):
-            warn("rate-limited — check the Actions tab manually in browser")
-        elif e.code == 404:
-            warn("repo invisible to anonymous API (private?) — open in browser:\n"
-                 "    https://github.com/" + GITHUB_REPO + "/actions -> 'Security'")
-        else:
-            warn(f"HTTP {e.code}")
-        return True
+        import yaml
+        data = yaml.safe_load(CI_YML.read_text(encoding="utf-8",
+                                               errors="replace"))
+        for jname, job in (data.get("jobs") or {}).items():
+            steps = job.get("steps") or []
+            out(f"    job '{jname}' — runs-on: {job.get('runs-on')}, "
+                f"{len(steps)} step(s)")
+            for s in steps:
+                run = s.get("run")
+                if run:
+                    one = " | ".join(l.strip() for l in str(run).splitlines())
+                    out(f"      - {s.get('name', '(unnamed)')}: {one[:160]}")
     except Exception as e:
-        warn(f"network error: {e!r}")
-        return True
-    runs = data.get("workflow_runs", [])
-    if not runs:
-        warn("no workflow runs recorded yet — the workflow was added after the "
-             "last push; make any small commit to trigger it")
-        return True
-    out(f"    {'workflow':26s} {'status':11s} {'conclusion':11s} created")
-    for run in runs:
-        out(f"    {(run.get('name') or '?')[:26]:26s} "
-            f"{(run.get('status') or '?'):11s} "
-            f"{(run.get('conclusion') or '-'):11s} {run.get('created_at', '?')}")
-    sec = [r for r in runs if "security" in (r.get("name") or "").lower()]
-    if sec:
-        c = sec[0].get("conclusion")
-        if c == "success":
-            ok("Security workflow: GREEN ✅ (gitleaks found nothing)")
-        else:
-            warn(f"Security workflow conclusion = {c} — open the failing run "
-                 "and paste findings back!")
-    else:
-        warn("no Security workflow run in the last 8 — trigger with a commit")
+        warn(f"yaml parse failed ({e!r}) — raw dump above is authoritative")
+
+    out("\nlocal probe A: pytest collection (import health of the suite)")
+    try:
+        r = sh([sys.executable, "-m", "pytest", "--collect-only", "-q",
+                "--no-header"], timeout=600)
+        errs = [l for l in r.stdout.splitlines()
+                if l.startswith("ERROR") or "ModuleNotFoundError" in l
+                or "ImportError" in l or l.startswith("error")]
+        out(f"    exit={r.returncode} | collection errors: {len(errs)}")
+        for l in errs[:15]:
+            out("    " + l[:170])
+        tail = [l for l in r.stdout.splitlines() if l.strip()]
+        for l in tail[-3:]:
+            out("    tail: " + l[:170])
+        if "timeout" in r.stdout.lower():
+            warn("    (timed out)")
+    except subprocess.TimeoutExpired:
+        warn("    collection TIMED OUT (>600s) — CI runners likely die here too")
+
+    out("\nlocal probe B: ruff statistics")
+    ruff_exe = ROOT / ".venv" / "Scripts" / "ruff.exe"
+    cmd = [str(ruff_exe)] if ruff_exe.exists() else ["ruff"]
+    try:
+        r = sh(cmd + ["check", ".", "--statistics"], timeout=240)
+        out(f"    exit={r.returncode}")
+        for l in (r.stdout or "").splitlines()[:20]:
+            out("    " + l[:170])
+        if r.returncode != 0:
+            warn("    ruff reports violations (CI may be red on lint)")
+    except subprocess.TimeoutExpired:
+        warn("    ruff timed out")
     return True
 
-# --------------------------------------------------------------- unblock ---
-UNBLOCK_FILES = [
-    "services/api_gateway/routers/nojin.py",
-    "services/api_gateway/routers/admin.py",
-    "services/api_gateway/routers/satellite.py",
-    "services/api_gateway/routers/ai_chat.py",
-]
-SYNC_DB = re.compile(
-    r"\b(db|session|self\.db)\."
-    r"(query|execute|add|commit|rollback|refresh|scalar|scalars|get|delete|flush)\s*\(")
-AWAITISH = re.compile(r"\bawait\b|\basync\s+with\b|\basync\s+for\b")
+# ----------------------------------------------------------- dead-modules ---
+DEAD_MODULES = ["services/api_gateway/dependencies.py",
+                "services/api_gateway/register_modules.py"]
 
-def unblock():
-    out(LINE, "STEP 2 — unblock event loop (bugfixed, re-run)", LINE, sep="\n")
-    plan, originals = {}, {}
-    for rel in UNBLOCK_FILES:
-        p = ROOT / rel
-        if not p.exists():
-            warn(f"missing: {rel}"); continue
-        raw, crlf, text = read_text(p)
-        originals[p] = raw
-        try:
-            tree = ast.parse(text)
-        except SyntaxError as e:
-            warn(f"{rel}: parse error L{e.lineno} — excluded"); continue
-        lines = text.split("\n")
-        targets = []
-        for node in ast.walk(tree):
-            if isinstance(node, ast.AsyncFunctionDef):
-                seg = "\n".join(lines[node.lineno - 1:node.end_lineno])
-                if SYNC_DB.search(seg) and not AWAITISH.search(seg):
-                    targets.append((node.name, node.lineno))
-        if targets:
-            out(f"    {rel}: {len(targets)} convertible: "
-                + ", ".join(n for n, _ in targets))
-            res = import_smoke(modname_of(p))
-            if res == "OK":
-                plan[p] = targets
-            else:
-                warn(f"        import FAIL — excluded: {res[:200]}")
-        else:
-            out(f"    {rel}: 0 convertible (awaits present — deferred to "
-                "service-layer refactor)")
-
-    if not plan:
-        ok("nothing to convert"); return True
-
-    changed = []
-    for p, targets in plan.items():
-        raw = originals[p]
-        text = raw.replace("\r\n", "\n")
-        lines = text.split("\n")
-        for name, ln in targets:
-            idx = ln - 1
-            new_line, n = re.subn(r"^(\s*)async\s+def\b", r"\1def",
-                                  lines[idx], count=1)
-            if n == 1:
-                lines[idx] = new_line
-            else:
-                warn(f"rewrite failed at L{ln} in {p.name}")
-        new_text = "\n".join(lines)
-        try:
-            ast.parse(new_text)
-        except SyntaxError as e:
-            fail(f"{p.name}: parse after edit L{e.lineno} — skipped"); continue
-        write_text(p, new_text, "\r\n" in raw)
-        changed.append(p)
-
-    if not changed:
-        fail("no file written"); return False
-
-    out("\npost-migration import smoke ...")
-    regressions = []
-    for p in changed:
-        res = import_smoke(modname_of(p))
-        out(f"    {modname_of(p)}: {'OK' if res == 'OK' else 'FAIL'}")
-        if res != "OK":
-            regressions.append((p, res))
-    if regressions:
-        fail("REGRESSION — rolling back:")
-        for p, res in regressions:
-            out(f"    {p.name}: {res[:150]}")
-            write_text(p, originals[p], False)   # verbatim original
-        ok("originals restored — nothing committed")
-        return False
-    ok("no regressions")
-
-    for p in changed:
-        git("add", "--", p.relative_to(ROOT).as_posix())
-    r = git("commit", "-m",
-            "perf(gateway): run sync-db endpoints in threadpool (async def -> def)")
-    ok("committed") if r.returncode == 0 else \
-        warn("commit failed: " + (r.stdout + r.stderr)[-400:])
-    r = git("push", "origin", "main")
-    ok("pushed") if r.returncode == 0 else warn("push failed")
-    return True
-
-# ------------------------------------------------------------------ dedup ---
-MAIN = ROOT / "services" / "api_gateway" / "main.py"
-MAIN_MOD = "services.api_gateway.main"
-ROOT_AUTH_PATHS = {"/login", "/register", "/me", "/seed-demo",
-                   "/forgot-password", "/reset-password", "/change-password",
-                   "/profile", "/refresh", "/signup", "/admin/delete-user"}
-ROOT_PLAT_PATHS = {"/landscapes", "/analyze", "/stats"}
-
-def frontend_paths():
-    r = git("grep", "-h", "url: ", "--", "frontend/packages/api/src/")
-    blob = r.stdout or ""
-    return (re.findall(r"url:\s*'([^']+)'", blob)
-            + re.findall(r"url:\s*`([^`]+)`", blob))
-
-def _remove_health_twin(text):
-    lines = text.split("\n")
-    idxs = [i for i, ln in enumerate(lines)
-            if ln.strip().startswith('@app.get("/health")')]
-    if len(idxs) < 2:
-        return text, False
-    dec = idxs[1]
-    j = dec + 1
-    while j < len(lines) and (lines[j].startswith("@")
-                              or lines[j].startswith("def ")
-                              or lines[j].startswith("async def ")):
-        j += 1
-    while j < len(lines) and (not lines[j].strip()
-                              or lines[j].startswith((" ", "\t"))):
-        j += 1
-    s = dec
-    while s > 0 and (not lines[s - 1].strip()
-                     or lines[s - 1].lstrip().startswith("#")):
-        s -= 1
-    new_lines = lines[:s] + [""] + lines[j:]
-    return "\n".join(new_lines), True
-
-def dedup():
-    out(LINE, "STEP 3 — mount dedup (evidence-gated, prove-then-commit)", LINE, sep="\n")
-    paths = frontend_paths()
-
-    auth_hits = [p for p in paths if p in ROOT_AUTH_PATHS]
-    v1_auth = [p for p in paths if p.startswith("/api/v1/auth")]
-    plat_hits = [p for p in paths if p in ROOT_PLAT_PATHS]
-    health_refs = [p for p in paths if p == "/health"]
-
-    out(f"    frontend: {len(paths)} path refs")
-    out(f"    root-level auth paths used: {auth_hits or 'NONE'}")
-    out(f"    /api/v1/auth refs: {len(v1_auth)}")
-    out(f"    root-level platform paths used: {plat_hits or 'NONE'}")
-    out(f"    /health refs: {len(health_refs)} (will be served by the app's "
-        "own rich /health after dedup)")
-
-    if auth_hits or not v1_auth:
-        warn("auth root mount NOT removed (evidence insufficient)")
-    if plat_hits:
-        warn("platform root mount NOT removed (frontend uses root platform paths)")
+def dead_modules():
+    out(LINE, "STEP 2 — remove dead infra modules", LINE, sep="\n")
+    refs = 0
+    for pat in ("api_gateway.dependencies", "api_gateway import dependencies",
+                "api_gateway.register_modules", "register_new_modules"):
+        r = git("grep", "-n", pat, "--", "services/", "tests/", "scripts/",
+                "engine/")
+        hits = [l for l in r.stdout.splitlines() if l.strip()
+                and not l.startswith("eco_fix.py")]
+        refs += len(hits)
+        for l in hits[:4]:
+            out("    " + l)
+    if refs:
+        fail(f"{refs} live reference(s) — NOT removing")
+        return True
+    ok("zero references — both modules confirmed dead")
 
     base = import_smoke(MAIN_MOD, timeout=300)
-    out(f"\n    baseline import of {MAIN_MOD}: {'OK' if base == 'OK' else 'FAIL'}")
     if base != "OK":
-        warn("    " + base[:300])
-        fail(">>> APP MODULE DOES NOT IMPORT — this is a critical pre-existing "
-             "finding! Report it; dedup aborted.")
+        fail("baseline main import failing — aborting")
+        out("    " + base[:300])
         return False
-    ok("the full gateway app imports cleanly (first time proven!)")
 
-    raw, crlf, text = read_text(MAIN)
-    edits, notes = [], []
-
-    n_auth = len(re.findall(r"(?m)^app\.include_router\(auth\.router\)\s*$", text))
-    if not auth_hits and v1_auth and n_auth == 1 \
-            and "app.include_router(auth.router, prefix=" in text:
-        text = "\n".join(ln for ln in text.split("\n")
-                         if not re.match(r"^app\.include_router\(auth\.router\)\s*$", ln))
-        edits.append("root auth mount")
-        notes.append("unauthenticated /seed-demo & friends no longer exposed at root")
-
-    n_plat = len(re.findall(r"(?m)^app\.include_router\(platform\.router\)\s*$", text))
-    if not plat_hits and n_plat == 1 \
-            and "app.include_router(platform.router, prefix=" in text:
-        text = "\n".join(ln for ln in text.split("\n")
-                         if not re.match(r"^app\.include_router\(platform\.router\)\s*$", ln))
-        edits.append("root platform mount")
-        notes.append("app's own /health becomes reachable (was shadowed)")
-
-    text, twin = _remove_health_twin(text)
-    if twin:
-        edits.append("dead /health twin")
-
-    if not edits:
-        ok("nothing to change"); return True
-
-    try:
-        ast.parse(text)
-    except SyntaxError as e:
-        fail(f"main.py parse after edit L{e.lineno}: {e.msg} — aborting")
-        write_text(MAIN, raw, False)
-        return False
-    write_text(MAIN, text, crlf)
+    for rel in DEAD_MODULES:
+        git("rm", "--", rel)
+        ok("git rm " + rel)
 
     post = import_smoke(MAIN_MOD, timeout=300)
     if post != "OK":
-        fail("REGRESSION after dedup — rolling back:")
-        out("    " + post[:300])
-        write_text(MAIN, raw, False)
-        ok("original restored — nothing committed")
+        fail("REGRESSION — restoring removed files")
+        for rel in DEAD_MODULES:
+            git("reset", "--", rel)
+            git("checkout", "--", rel)
+        ok("restored — nothing committed")
         return False
-    ok("post-edit import: OK")
-    for n in notes:
-        out("    * " + n)
+    ok("app still imports cleanly without them")
 
-    git("add", "--", "services/api_gateway/main.py")
     r = git("commit", "-m",
-            "refactor(gateway): drop duplicate root mounts (auth, platform) "
-            "and dead /health twin\n\nFrontend orval client uses only /api/* "
-            "paths (221 refs, zero root auth/platform refs).")
+            "chore(gateway): remove dead modules dependencies.py and "
+            "register_modules.py (zero consumers, import-time side effects)")
     ok("committed") if r.returncode == 0 else \
         warn("commit failed: " + (r.stdout + r.stderr)[-300:])
     r = git("push", "origin", "main")
     ok("pushed") if r.returncode == 0 else warn("push failed")
     return True
 
-# ------------------------------------------------------------------ recon ---
-def recon():
-    out(LINE, "STEP 4 — recon (read-only)", LINE, sep="\n")
-    dump(ROOT / "database" / "config.py", title="database/config.py (second engine?)")
-
-    out("\nseed-demo gating (routers/auth.py around it):")
-    p = ROOT / "services" / "api_gateway" / "routers" / "auth.py"
-    if p.exists():
-        lines = p.read_text(encoding="utf-8", errors="replace").splitlines()
-        idx = next((i for i, ln in enumerate(lines) if "seed-demo" in ln), None)
-        if idx is not None:
-            for i in range(max(0, idx - 15), min(len(lines), idx + 40)):
-                out(f"{i+1:4d}| {lines[i]}")
-        else:
-            warn("seed-demo not found in routers/auth.py")
-
-    out("\nfiner /api census (motors dual-mount decision):")
+# ----------------------------------------------------------- motors-dedup ---
+def motors_dedup():
+    out(LINE, "STEP 3 — motors dual-mount dedup (evidence-gated)", LINE, sep="\n")
     paths = frontend_paths()
-    v1 = [p for p in paths if p.startswith("/api/v1/")]
-    nonv1 = [p for p in paths if p.startswith("/api/") and not p.startswith("/api/v1/")]
-    out(f"    /api/v1/* refs: {len(v1)}")
-    out(f"    /api/* (non-v1) refs: {len(nonv1)}")
-    for p in sorted(set(nonv1))[:25]:
-        out("        " + p)
+    v1 = [p for p in paths if p.startswith("/api/v1/motors")]
+    api = [p for p in paths if p.startswith("/api/motors")]
+    out(f"    frontend /api/motors refs: {len(api)} | /api/v1/motors refs: {len(v1)}")
+    if v1:
+        ok("frontend uses the v1 mount too — keeping both, no change")
+        return True
+    if not api:
+        warn("frontend uses neither — needs product decision, skipping")
+        return True
 
-    out("\ndead-module confirmation:")
-    for pat, name in ((
-            "from services.api_gateway import dependencies", "dependencies.py"),
-            ("from .dependencies", "dependencies.py (relative)"),
-            ("register_modules", "register_modules.py"),
-            ("register_new_modules", "register_new_modules()")):
-        r = git("grep", "-n", pat, "--", "services/", "scripts/", "tests/",
-                "engine/")
-        hits = [l for l in r.stdout.splitlines() if l.strip()
-                and not l.split(":", 1)[0].endswith("eco_fix.py")]
-        out(f"    '{name}' referenced by: {len(hits)}")
-        for l in hits[:5]:
-            out("        " + l)
+    raw, crlf, text = read_text(MAIN)
+    pat = re.compile(r'(?m)^app\.include_router\(motors\.router, prefix="/api/v1"[^\n]*\n')
+    m = pat.search(text)
+    if not m:
+        ok("v1 mount not present (already removed?)")
+        return True
+
+    base = import_smoke(MAIN_MOD, timeout=300)
+    if base != "OK":
+        fail("baseline failing — aborting")
+        return False
+
+    text2 = text[:m.start()] + text[m.end():]
+    ast.parse(text2)
+    write_text(MAIN, text2, crlf)
+
+    post = import_smoke(MAIN_MOD, timeout=300)
+    if post != "OK":
+        fail("REGRESSION — rolling back")
+        write_text(MAIN, raw, False)
+        ok("original restored")
+        return False
+    ok("app imports fine without the redundant mount")
+
+    git("add", "--", "services/api_gateway/main.py")
+    r = git("commit", "-m",
+            "refactor(gateway): drop unused /api/v1 motors mount "
+            "(frontend uses /api/motors only)")
+    ok("committed") if r.returncode == 0 else \
+        warn("commit failed: " + (r.stdout + r.stderr)[-300:])
+    r = git("push", "origin", "main")
+    ok("pushed") if r.returncode == 0 else warn("push failed")
+    return True
+
+# --------------------------------------------------------------- ai-recon ---
+def ai_recon():
+    out(LINE, "STEP 4 — AI surface recon (consolidation design)", LINE, sep="\n")
+    dump(ROOT / "services" / "api_gateway" / "routers" / "ai.py",
+         title="ai.py (RAG chat, 83 lines — FULL)")
+    dump(ROOT / "services" / "api_gateway" / "routers" / "admin.py",
+         lo=1295, hi=1365, title="admin.py AI routes region")
+    dump(ROOT / "services" / "api_gateway" / "routers" / "ai_chat.py",
+         lo=1, hi=70, title="ai_chat.py head (imports, get_db, models)")
+    dump(ROOT / "services" / "api_gateway" / "routers" / "ai_chat.py",
+         lo=200, hi=362, title="ai_chat.py endpoints region")
+
+    out("\nunmounted/sleeping routers (parked — product decision later):")
+    for f in sorted((ROOT / "services" / "api_gateway" / "routers").glob("*.py")):
+        content = f.read_text(encoding="utf-8", errors="replace")
+        if "APIRouter(" in content and f.stem in (
+                "auth_supabase", "supabase_proxy", "lms", "audit",
+                "ogc_router", "ai_advice_router", "insurance", "climate",
+                "economy", "lab", "tourism_router", "security_router"):
+            m = re.search(r'APIRouter\(\s*prefix="([^"]+)"', content)
+            out(f"    {f.name:24s} prefix={m.group(1) if m else '(none)'}")
     return True
 
 # ------------------------------------------------------------------ chore ---
@@ -420,10 +297,12 @@ def main():
     except Exception:
         pass
     cmd = sys.argv[1] if len(sys.argv) > 1 else "all"
-    steps = {"verify": verify, "ci-check": ci_check, "unblock": unblock,
-             "dedup": dedup, "recon": recon}
+    steps = {"verify": verify, "ci-triage": ci_triage,
+             "dead-modules": dead_modules, "motors-dedup": motors_dedup,
+             "ai-recon": ai_recon}
     if cmd == "all":
-        for name in ("verify", "ci-check", "unblock", "dedup", "recon"):
+        for name in ("verify", "ci-triage", "dead-modules",
+                     "motors-dedup", "ai-recon"):
             try:
                 steps[name]()
             except Exception as e:
