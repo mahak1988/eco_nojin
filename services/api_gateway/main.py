@@ -104,7 +104,7 @@ async def lifespan(app: FastAPI):
         logger.error(traceback.format_exc())
     
     logger.info(f"🌍 CORS origins: {_settings.cors_origins}")
-    logger.info(f"📚 API docs: http://os.environ.get('HOST', '127.0.0.1'):8000/docs")
+    logger.info(f"📚 API docs: http://{os.environ.get('HOST', '127.0.0.1')}:8000/docs")
     logger.info("=" * 60)
     
     yield
