@@ -30,6 +30,7 @@ Free sources (no paid APIs anywhere):
 from __future__ import annotations
 
 import logging
+import math
 from datetime import date, timedelta
 from typing import Any
 
@@ -46,7 +47,7 @@ def lai_from_ndvi(ndvi: float) -> float:
     LAI = -ln((0.69 - NDVI) / 0.59) / 0.91, clipped to [0, 8].
     """
     x = max(0.05, min(0.95, ndvi))
-    lai = -1.0 * __import__("math").log((0.69 - x) / 0.59) / 0.91
+    lai = -1.0 * math.log((0.69 - x) / 0.59) / 0.91
     return round(max(0.0, min(8.0, lai)), 3)
 
 
@@ -56,7 +57,7 @@ def c_factor_from_ndvi(ndvi: float) -> float:
     C = exp(-2.0 * NDVI / (1.0 - NDVI)), clipped to [0.001, 1].
     """
     x = max(0.0, min(0.95, ndvi))
-    c = __import__("math").exp(-2.0 * x / (1.0 - x + 1e-9))
+    c = math.exp(-2.0 * x / (1.0 - x + 1e-9))
     return round(max(0.001, min(1.0, c)), 4)
 
 

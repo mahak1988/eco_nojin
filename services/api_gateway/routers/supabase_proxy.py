@@ -6,6 +6,7 @@ pass the USER's JWT through (so RLS ownership policies apply once migration
 the frontend). Honest contract: real rows, real errors, no fabrication.
 """
 
+import os
 from typing import Any
 
 import httpx
@@ -14,20 +15,12 @@ from fastapi import APIRouter, Query
 router = APIRouter(prefix="/api/v1/supabase", tags=["supabase"])
 
 
-def _env(key: str) -> str:
-    for line in open(".env", encoding="utf-8-sig"):
-        k, _, v = line.partition("=")
-        if k.strip() == key:
-            return v.strip()
-    return ""
-
-
 def _cfg() -> dict[str, str]:
-    url = _env("SUPABASE_URL")
-    anon = _env("SUPABASE_ANON_KEY")
-    svc = _env("SUPABASE_SERVICE_ROLE_KEY")
+    url = os.getenv("SUPABASE_URL", "")
+    anon = os.getenv("SUPABASE_ANON_KEY", "")
+    svc = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
     if not url or not anon:
-        raise RuntimeError("SUPABASE_URL / SUPABASE_ANON_KEY missing in .env")
+        raise RuntimeError("SUPABASE_URL / SUPABASE_ANON_KEY missing in environment")
     return {"url": url.rstrip("/"), "anon": anon, "svc": svc}
 
 

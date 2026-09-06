@@ -6,7 +6,7 @@ import pytest
 
 
 DEMO_EMAIL = "farmer@test.com"
-PASSWORD = "SeedGuardPass123"
+PASSWORD = "SeedGuardPass123"  # nosec (مقدار ساختگی تست)
 
 
 def _ensure_demo_account(client) -> None:

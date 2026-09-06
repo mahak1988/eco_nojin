@@ -57,6 +57,7 @@ _COLLECTIONS = {
 def _items_from_supabase(limit: int = 100) -> list[dict[str, Any]]:
     """Fetch real landscape points from Supabase (anon, public read via
     the ogc_landscape_points view created in migration 0007)."""
+    limit = max(1, min(int(limit), 1000))
     url = f"{SUPABASE_URL}/rest/v1/ogc_landscape_points?select=id,name,lon,lat&limit={limit}"
     resp = httpx.get(url, headers={"apikey": SUPABASE_ANON_KEY}, timeout=8)
     resp.raise_for_status()
@@ -73,6 +74,20 @@ def _items_from_supabase(limit: int = 100) -> list[dict[str, Any]]:
 
 def items(limit: int = 100, bbox: str | None = None) -> dict[str, Any]:
     """GeoJSON FeatureCollection. 503 with honest detail when DB unreachable."""
+    if limit < 1 or limit > 1000:
+        return {
+            "type": "FeatureCollection",
+            "status": "error",
+            "code": "InvalidParameter",
+            "detail": "limit must be between 1 and 1000",
+        }
+    if bbox is not None and len(bbox) > 100:
+        return {
+            "type": "FeatureCollection",
+            "status": "error",
+            "code": "InvalidParameter",
+            "detail": "bbox string too long",
+        }
     try:
         features = _items_from_supabase(limit)
     except Exception as exc:

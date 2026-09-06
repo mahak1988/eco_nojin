@@ -1,0 +1,222 @@
+{
+  "health": [
+    {
+      "layer": "L0",
+      "name": "package.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "layer": "L0",
+      "name": "pnpm-workspace.yaml",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "layer": "L0",
+      "name": "turbo.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "layer": "L0",
+      "name": "biome.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "layer": "L0",
+      "name": "tsconfig.base.json",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "layer": "L1",
+      "name": "tooling/typescript",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "layer": "L1",
+      "name": "tooling/tailwind",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "layer": "L1",
+      "name": "tooling/biome",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "layer": "L2",
+      "name": "packages/api",
+      "ok": true,
+      "detail": "deps=10"
+    },
+    {
+      "layer": "L2",
+      "name": "packages/auth",
+      "ok": true,
+      "detail": "deps=7"
+    },
+    {
+      "layer": "L2",
+      "name": "packages/charts",
+      "ok": true,
+      "detail": "deps=6"
+    },
+    {
+      "layer": "L2",
+      "name": "packages/config",
+      "ok": true,
+      "detail": "deps=4"
+    },
+    {
+      "layer": "L2",
+      "name": "packages/geo",
+      "ok": true,
+      "detail": "deps=8"
+    },
+    {
+      "layer": "L2",
+      "name": "packages/i18n",
+      "ok": true,
+      "detail": "deps=7"
+    },
+    {
+      "layer": "L2",
+      "name": "packages/models",
+      "ok": true,
+      "detail": "deps=5"
+    },
+    {
+      "layer": "L2",
+      "name": "packages/ui",
+      "ok": true,
+      "detail": "deps=13"
+    },
+    {
+      "layer": "L2",
+      "name": "packages/utils",
+      "ok": true,
+      "detail": "deps=6"
+    },
+    {
+      "layer": "L2",
+      "name": "tech:react",
+      "ok": true,
+      "detail": "^18.3.1"
+    },
+    {
+      "layer": "L2",
+      "name": "tech:vite",
+      "ok": true,
+      "detail": "^5.4.10"
+    },
+    {
+      "layer": "L2",
+      "name": "tech:tailwindcss",
+      "ok": true,
+      "detail": "^4.0.0"
+    },
+    {
+      "layer": "L2",
+      "name": "tech:typescript",
+      "ok": true,
+      "detail": "^5.9.3"
+    },
+    {
+      "layer": "L2",
+      "name": "tech:zustand",
+      "ok": true,
+      "detail": "^5.0.1"
+    },
+    {
+      "layer": "L2",
+      "name": "tech:@tanstack/react-router",
+      "ok": true,
+      "detail": "^1.87.0"
+    },
+    {
+      "layer": "L2",
+      "name": "tech:@tanstack/react-query",
+      "ok": true,
+      "detail": "^5.59.20"
+    },
+    {
+      "layer": "L3",
+      "name": "web/main+css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "layer": "L3",
+      "name": "web/features",
+      "ok": true,
+      "detail": "4 features"
+    },
+    {
+      "layer": "L3",
+      "name": "web/routes",
+      "ok": true,
+      "detail": "4 routes"
+    },
+    {
+      "layer": "L3",
+      "name": "dashboard/main+css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "layer": "L3",
+      "name": "dashboard/features",
+      "ok": true,
+      "detail": "30 features"
+    },
+    {
+      "layer": "L3",
+      "name": "dashboard/routes",
+      "ok": true,
+      "detail": "30 routes"
+    },
+    {
+      "layer": "L4",
+      "name": "i18n mounted",
+      "ok": false,
+      "detail": "before fix"
+    },
+    {
+      "layer": "L4",
+      "name": "font Vazirmatn",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "layer": "L4",
+      "name": "dir=rtl",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "issues": [
+    "L4/i18n mounted: before fix"
+  ],
+  "tech": {
+    "api_client": "Orval + Zod + Axios",
+    "design": "Tailwind v4 + tokens",
+    "react": "^18.3.1",
+    "vite": "^5.4.10",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.9.3",
+    "zustand": "^5.0.1",
+    "@tanstack/react-router": "^1.87.0",
+    "@tanstack/react-query": "^5.59.20"
+  },
+  "i18n_keys_fa": 86,
+  "numbers_usage": {
+    "toLocaleString": 10,
+    "Intl": 0,
+    "faDigitsLiteral": 52
+  }
+}

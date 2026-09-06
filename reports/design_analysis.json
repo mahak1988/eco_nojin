@@ -1,0 +1,401 @@
+{
+  "metadata": {
+    "timestamp": "2026-09-05T10:33:06.621207",
+    "frontend_root": "D:\\eco_nojin\\frontend",
+    "analyzer_version": "1.0.0"
+  },
+  "score": {
+    "score": 62.5,
+    "grade": "D",
+    "grade_color": "WARNING",
+    "deductions": [
+      {
+        "category": "Inline Styles",
+        "count": 3,
+        "deduction": 1.5,
+        "fix": "Replace with Tailwind classes or design tokens"
+      },
+      {
+        "category": "Hardcoded Colors",
+        "count": 10,
+        "unique_colors": 5,
+        "deduction": 3.0,
+        "fix": "Use design tokens from packages/ui/src/tokens/colors.ts"
+      },
+      {
+        "category": "RTL Issues",
+        "count": 3,
+        "deduction": 3,
+        "fix": "Use logical properties: ms-X, me-X, ps-X, pe-X, start-X, end-X"
+      },
+      {
+        "category": "Accessibility",
+        "count": 14,
+        "deduction": 20,
+        "fix": "Add aria-labels, alt texts, proper semantic HTML"
+      },
+      {
+        "category": "Responsive Design",
+        "count": 28,
+        "deduction": 10,
+        "fix": "Add sm:, md:, lg: breakpoints"
+      }
+    ],
+    "token_usage_percentage": 54.7
+  },
+  "summary": {
+    "files_analyzed": 75,
+    "total_lines": 6727,
+    "unique_colors": 5,
+    "unique_font_sizes": 10,
+    "inline_styles": 3,
+    "rtl_issues": 3,
+    "accessibility_issues": 14
+  },
+  "distributions": {
+    "colors": {
+      "AF5F1E": 2,
+      "DCA164": 2,
+      "06B6D4": 2,
+      "16A34A": 2,
+      "0EA5E9": 2
+    },
+    "font_sizes": {
+      "tw-sm": 173,
+      "tw-xs": 65,
+      "tw-base": 61,
+      "tw-2xl": 34,
+      "tw-lg": 14,
+      "tw-xl": 8,
+      "tw-4xl": 7,
+      "tw-3xl": 6,
+      "tw-5xl": 4,
+      "tw-6xl": 1
+    },
+    "spacing": {}
+  },
+  "recommendations": [
+    {
+      "priority": "CRITICAL",
+      "action": "ADOPT COMPLETE DESIGN SYSTEM",
+      "reason": "5 unique hardcoded colors found",
+      "solution": "\n1. Use shadcn/ui as base (modern, accessible, RTL-ready)\n   - Install: pnpm add @radix-ui/react-* tailwindcss-animate\n   - Copy components from shadcn/ui to packages/ui\n2. Define complete design tokens:\n   - 10 color shades (50-950) for each semantic color\n   - 8-step spacing scale (1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96)\n   - 10-step typography scale (xs to 5xl)\n3. Replace all hardcoded values with tokens\n"
+    },
+    {
+      "priority": "HIGH",
+      "action": "FIX RTL LAYOUT ISSUES",
+      "reason": "3 RTL issues found",
+      "solution": "\nUse CSS logical properties instead of directional ones:\n- margin-left → margin-inline-start (ms-4 in Tailwind)\n- margin-right → margin-inline-end (me-4 in Tailwind)\n- padding-left → padding-inline-start (ps-4)\n- padding-right → padding-inline-end (pe-4)\n- left → inset-inline-start (start-0)\n- right → inset-inline-end (end-0)\n- text-left → text-start\n- text-right → text-end\n\nThis ensures proper rendering in both LTR and RTL contexts.\n"
+    },
+    {
+      "priority": "HIGH",
+      "action": "IMPROVE ACCESSIBILITY (WCAG 2.1 AA)",
+      "reason": "14 accessibility issues",
+      "solution": "\n1. Add aria-label to all icon-only buttons\n2. Add alt text to all images\n3. Use semantic HTML:\n   - <nav> for navigation\n   - <main> for main content\n   - <aside> for sidebars\n   - <header> and <footer>\n4. Ensure color contrast ≥ 4.5:1 for normal text\n5. Add focus indicators (focus-visible:ring-2)\n6. Use proper heading hierarchy (h1, h2, h3...)\n"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "BUILD PROPER COMPONENT LIBRARY",
+      "reason": "Inconsistent UI across pages",
+      "solution": "\nAdopt shadcn/ui pattern:\n1. Base components in packages/ui/src/components/primitives/\n   - Button, Input, Select, Card, Badge, Alert\n2. Composite components in packages/ui/src/components/composites/\n   - StatCard, DataTable, FormField, Modal\n3. Feature components in apps/dashboard/src/features/*/components/\n4. Each component should have:\n   - TypeScript interface\n   - Multiple variants (size, color, state)\n   - Storybook story (for documentation)\n   - Vitest tests\n"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "MOBILE-FIRST RESPONSIVE DESIGN",
+      "reason": "Dashboard not optimized for mobile",
+      "solution": "\nBreakpoints:\n- mobile: < 640px (default styles)\n- tablet: 640-1024px (sm: and md:)\n- desktop: > 1024px (lg: and xl:)\n\nStrategy:\n1. Sidebar: Collapsible on mobile, persistent on desktop\n2. Tables: Horizontal scroll on mobile, full on desktop\n3. Forms: Stacked on mobile, grid on desktop\n4. Charts: Full width on mobile, side-by-side on desktop\n5. Use Container queries for component-level responsiveness\n"
+    }
+  ],
+  "detailed_findings": {
+    "inline_styles": [
+      {
+        "file": "apps\\web\\src\\features\\home\\HomePage.tsx",
+        "line": 33,
+        "content": "style={{\n          backgroundImage:\n            'radial-gradient(circle at 25% 30%, rgb(var(--color-"
+      },
+      {
+        "file": "apps\\web\\src\\features\\home\\HomePage.tsx",
+        "line": 411,
+        "content": "style={{\n              backgroundImage:\n                'radial-gradient(circle at 15% 20%, rgb(var("
+      },
+      {
+        "file": "packages\\ui\\src\\composites\\table.tsx",
+        "line": 76,
+        "content": "style={{ width: c.width }}"
+      }
+    ],
+    "hardcoded_colors": [
+      {
+        "file": "apps\\web\\src\\components\\BrandMark.tsx",
+        "line": 24,
+        "color": "#AF5F1E"
+      },
+      {
+        "file": "apps\\web\\src\\components\\BrandMark.tsx",
+        "line": 25,
+        "color": "#DCA164"
+      },
+      {
+        "file": "apps\\web\\src\\components\\BrandMark.tsx",
+        "line": 26,
+        "color": "#06B6D4"
+      },
+      {
+        "file": "apps\\dashboard\\src\\components\\BrandMark.tsx",
+        "line": 23,
+        "color": "#AF5F1E"
+      },
+      {
+        "file": "apps\\dashboard\\src\\components\\BrandMark.tsx",
+        "line": 24,
+        "color": "#DCA164"
+      },
+      {
+        "file": "apps\\dashboard\\src\\components\\BrandMark.tsx",
+        "line": 25,
+        "color": "#06B6D4"
+      },
+      {
+        "file": "apps\\dashboard\\src\\features\\satellite\\SatellitePage.tsx",
+        "line": 124,
+        "color": "#16A34A"
+      },
+      {
+        "file": "apps\\dashboard\\src\\features\\satellite\\SatellitePage.tsx",
+        "line": 128,
+        "color": "#16A34A"
+      },
+      {
+        "file": "apps\\dashboard\\src\\features\\water\\WaterPage.tsx",
+        "line": 112,
+        "color": "#0EA5E9"
+      },
+      {
+        "file": "apps\\dashboard\\src\\features\\water\\WaterPage.tsx",
+        "line": 116,
+        "color": "#0EA5E9"
+      }
+    ],
+    "rtl_issues": [
+      {
+        "file": "apps\\web\\src\\app\\SiteLayout.tsx",
+        "line": 11,
+        "issue": "left-X (استفاده از left به جای start-X)",
+        "content": "left-4"
+      },
+      {
+        "file": "packages\\ui\\src\\composites\\dialog.tsx",
+        "line": 21,
+        "issue": "left-X (استفاده از left به جای start-X)",
+        "content": "left-1"
+      },
+      {
+        "file": "packages\\ui\\src\\composites\\toast.tsx",
+        "line": 65,
+        "issue": "right-X (استفاده از right به جای end-X)",
+        "content": "right-4"
+      }
+    ],
+    "accessibility_issues": [
+      {
+        "file": "apps\\web\\src\\app\\Footer.tsx",
+        "line": 88,
+        "issue": "Button without aria-label",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "apps\\web\\src\\features\\knowledge\\KnowledgePage.tsx",
+        "line": 116,
+        "issue": "Button without aria-label",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "apps\\web\\src\\features\\models\\ModelsPage.tsx",
+        "line": 60,
+        "issue": "Button without aria-label",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "apps\\dashboard\\src\\app\\WorkspaceLayout.tsx",
+        "line": 133,
+        "issue": "Button without aria-label",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "apps\\dashboard\\src\\components\\Sidebar.tsx",
+        "line": 28,
+        "issue": "Button without aria-label",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "apps\\dashboard\\src\\components\\TopBar.tsx",
+        "line": 8,
+        "issue": "Button without aria-label",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "apps\\dashboard\\src\\features\\auth\\LoginPage.tsx",
+        "line": 142,
+        "issue": "Button without aria-label",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "apps\\dashboard\\src\\features\\auth\\LoginPage.tsx",
+        "line": 151,
+        "issue": "Button without aria-label",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "apps\\dashboard\\src\\features\\models\\ModelsPage.tsx",
+        "line": 91,
+        "issue": "Button without aria-label",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "apps\\dashboard\\src\\features\\motors\\MotorsPage.tsx",
+        "line": 42,
+        "issue": "Button without aria-label",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "apps\\dashboard\\src\\features\\motors\\MotorsPage.tsx",
+        "line": 95,
+        "issue": "Button without aria-label",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "packages\\ui\\src\\composites\\table.tsx",
+        "line": 88,
+        "issue": "Button without aria-label",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "packages\\ui\\src\\composites\\table.tsx",
+        "line": 152,
+        "issue": "Button without aria-label",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "packages\\ui\\src\\composites\\table.tsx",
+        "line": 161,
+        "issue": "Button without aria-label",
+        "severity": "MEDIUM"
+      }
+    ]
+  },
+  "file_stats": [
+    {
+      "path": "apps\\web\\src\\main.tsx",
+      "lines": 30,
+      "issues": []
+    },
+    {
+      "path": "apps\\web\\src\\app\\App.tsx",
+      "lines": 6,
+      "issues": []
+    },
+    {
+      "path": "apps\\web\\src\\app\\Footer.tsx",
+      "lines": 158,
+      "issues": []
+    },
+    {
+      "path": "apps\\web\\src\\app\\LanguageSwitcher.tsx",
+      "lines": 38,
+      "issues": []
+    },
+    {
+      "path": "apps\\web\\src\\app\\router.tsx",
+      "lines": 60,
+      "issues": []
+    },
+    {
+      "path": "apps\\web\\src\\app\\SiteHeader.tsx",
+      "lines": 153,
+      "issues": []
+    },
+    {
+      "path": "apps\\web\\src\\app\\SiteLayout.tsx",
+      "lines": 22,
+      "issues": []
+    },
+    {
+      "path": "apps\\web\\src\\app\\ThemeToggle.tsx",
+      "lines": 40,
+      "issues": []
+    },
+    {
+      "path": "apps\\web\\src\\components\\BrandMark.tsx",
+      "lines": 71,
+      "issues": []
+    },
+    {
+      "path": "apps\\web\\src\\features\\home\\HomePage.tsx",
+      "lines": 584,
+      "issues": [
+        {
+          "type": "INLINE_STYLE",
+          "line": 33,
+          "content": "style={{\n          backgroundImage:\n            'radial-gradient(circle at 25% 30%, rgb(var(--color-",
+          "severity": "HIGH"
+        },
+        {
+          "type": "INLINE_STYLE",
+          "line": 411,
+          "content": "style={{\n              backgroundImage:\n                'radial-gradient(circle at 15% 20%, rgb(var(",
+          "severity": "HIGH"
+        }
+      ]
+    },
+    {
+      "path": "apps\\web\\src\\features\\knowledge\\KnowledgePage.tsx",
+      "lines": 178,
+      "issues": []
+    },
+    {
+      "path": "apps\\web\\src\\features\\models\\ModelsPage.tsx",
+      "lines": 128,
+      "issues": []
+    },
+    {
+      "path": "apps\\web\\src\\features\\system\\NotFoundPage.tsx",
+      "lines": 16,
+      "issues": []
+    },
+    {
+      "path": "apps\\dashboard\\src\\main.tsx",
+      "lines": 30,
+      "issues": []
+    },
+    {
+      "path": "apps\\dashboard\\src\\app\\App.tsx",
+      "lines": 6,
+      "issues": []
+    },
+    {
+      "path": "apps\\dashboard\\src\\app\\LanguageSwitcher.tsx",
+      "lines": 38,
+      "issues": []
+    },
+    {
+      "path": "apps\\dashboard\\src\\app\\router.tsx",
+      "lines": 134,
+      "issues": []
+    },
+    {
+      "path": "apps\\dashboard\\src\\app\\UserMenu.tsx",
+      "lines": 37,
+      "issues": []
+    },
+    {
+      "path": "apps\\dashboard\\src\\app\\WorkspaceLayout.tsx",
+      "lines": 253,
+      "issues": []
+    },
+    {
+      "path": "apps\\dashboard\\src\\components\\BrandMark.tsx",
+      "lines": 70,
+      "issues": []
+    }
+  ]
+}

@@ -119,7 +119,7 @@ class MapOrchestrator:
         # 6. Cache result
         await self._cache_result(request, result)
 
-        print(
+        logger.info(
             f"[OK] Map generated: {result.map_id} "
             f"in {result.processing_time_seconds:.2f}s"
         )

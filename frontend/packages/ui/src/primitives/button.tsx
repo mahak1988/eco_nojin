@@ -1,0 +1,100 @@
+import { cn } from '@eco/utils'
+import { type HTMLAttributes, forwardRef } from 'react'
+
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline'
+type ButtonSize = 'xs' | 'sm' | 'md' | 'lg'
+
+export type ButtonProps = Omit<HTMLAttributes<HTMLButtonElement>, 'type'> & {
+  variant?: ButtonVariant
+  size?: ButtonSize
+  loading?: boolean
+  disabled?: boolean
+  fullWidth?: boolean
+  type?: 'button' | 'submit' | 'reset'
+  /**
+   * Optional icon shown before the label. Wrap your icon with `aria-hidden` yourself.
+   */
+  icon?: React.ReactNode
+}
+
+const VARIANT: Record<ButtonVariant, string> = {
+  primary: 'bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 disabled:bg-brand-300',
+  secondary:
+    'bg-surface-raised text-ink border border-ink/10 hover:bg-surface-muted active:bg-ink/5',
+  ghost: 'bg-transparent text-ink hover:bg-surface-muted active:bg-ink/10',
+  outline:
+    'bg-transparent text-brand-700 border border-brand-600 hover:bg-brand-50 active:bg-brand-100',
+  danger: 'bg-danger text-white hover:bg-red-700 active:bg-red-800 disabled:bg-red-300',
+}
+
+const SIZE: Record<ButtonSize, string> = {
+  xs: 'h-7 px-2 text-xs gap-1',
+  sm: 'h-8 px-3 text-sm gap-1.5',
+  md: 'h-10 px-4 text-sm gap-2',
+  lg: 'h-12 px-6 text-base gap-2.5',
+}
+
+function isDev(): boolean {
+  if (typeof import.meta === 'undefined') return false
+  return Boolean((import.meta as { env?: Record<string, unknown> }).env?.['DEV'])
+}
+
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  {
+    variant = 'primary',
+    size = 'md',
+    loading = false,
+    disabled,
+    fullWidth,
+    type = 'button',
+    className,
+    children,
+    icon,
+    'aria-label': ariaLabel,
+    ...rest
+  },
+  ref,
+) {
+  const isDisabled = disabled || loading
+  const isIconOnly = Boolean(icon) && !children
+
+  if (isDev() && isIconOnly && !ariaLabel) {
+    console.warn(
+      '[a11y] Icon-only <Button> detected without aria-label. Screen readers will not announce the action.',
+    )
+  }
+
+  return (
+    <button
+      ref={ref}
+      type={type}
+      disabled={isDisabled}
+      aria-label={ariaLabel}
+      aria-busy={loading || undefined}
+      aria-disabled={isDisabled || undefined}
+      className={cn(
+        'inline-flex items-center justify-center rounded-md font-medium',
+        'transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:shadow-glow',
+        'disabled:cursor-not-allowed disabled:opacity-70',
+        VARIANT[variant],
+        SIZE[size],
+        fullWidth && 'w-full',
+        className,
+      )}
+      {...rest}
+    >
+      {loading && (
+        <span
+          aria-hidden="true"
+          className="h-3 w-3 animate-spin rounded-full border-2 border-current border-r-transparent"
+        />
+      )}
+      {!loading && icon && (
+        <span aria-hidden="true" className={children ? 'me-1.5' : undefined}>
+          {icon}
+        </span>
+      )}
+      {children && <span>{children}</span>}
+    </button>
+  )
+})

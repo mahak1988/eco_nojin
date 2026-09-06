@@ -103,7 +103,7 @@ class SmartMapService:
         """ساخت کلید cache"""
         import hashlib
         data = f"{request.bbox}:{request.layers}:{request.resolution}"
-        return hashlib.md5(data.encode()).hexdigest()
+        return hashlib.md5(data.encode(), usedforsecurity=False).hexdigest()
 
     async def get_available_layers(self, bbox: dict[str, float]) -> list[MapLayer]:
         """لیست لایه‌های موجود برای یک منطقه"""

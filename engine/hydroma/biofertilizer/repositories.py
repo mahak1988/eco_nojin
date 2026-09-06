@@ -9,7 +9,7 @@ Pattern: Repository Pattern with SQLAlchemy sessions.
 from __future__ import annotations
 
 import logging
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
@@ -250,7 +250,7 @@ class NojinApplicationPlanRepository:
     def get_upcoming(self, days_ahead: int = 30) -> list[NojinApplicationPlan]:
         """Get upcoming application plans."""
         today = date.today()
-        end_date = today + __import__("datetime").timedelta(days=days_ahead)
+        end_date = today + timedelta(days=days_ahead)
         return self.session.query(NojinApplicationPlan).filter(
             NojinApplicationPlan.application_date >= today,
             NojinApplicationPlan.application_date <= end_date,

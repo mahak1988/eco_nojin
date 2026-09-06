@@ -9,6 +9,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from database.hub import DataHub, hub
+import structlog
+logger = structlog.get_logger()
 
 
 def test_singleton():
@@ -16,21 +18,21 @@ def test_singleton():
     hub1 = DataHub()
     hub2 = DataHub()
     assert hub1 is hub2, "DataHub must be a singleton"
-    print("PASS: Singleton test")
+    logger.info("PASS: Singleton test")
 
 
 def test_sqlalchemy_engine():
     """SQLAlchemy engine should be created."""
     engine = hub.get_sqlalchemy_engine()
     assert engine is not None
-    print("PASS: SQLAlchemy engine test")
+    logger.info("PASS: SQLAlchemy engine test")
 
 
 def test_session_factory():
     """Session factory should be created."""
     factory = hub.get_session_factory()
     assert factory is not None
-    print("PASS: Session factory test")
+    logger.info("PASS: Session factory test")
 
 
 def test_get_session():
@@ -38,9 +40,9 @@ def test_get_session():
     try:
         with hub.get_session() as session:
             assert session is not None
-        print("PASS: get_session test")
+        logger.info("PASS: get_session test")
     except Exception as e:
-        print(f"SKIP: get_session test ({e})")
+        logger.info(f"SKIP: get_session test ({e})")
 
 
 def test_duckdb():
@@ -49,9 +51,9 @@ def test_duckdb():
         conn = hub.get_duckdb("master")
         assert conn is not None
         conn.close()
-        print("PASS: DuckDB test")
+        logger.info("PASS: DuckDB test")
     except ImportError:
-        print("SKIP: DuckDB test (not installed)")
+        logger.info("SKIP: DuckDB test (not installed)")
 
 
 def test_sqlite():
@@ -65,13 +67,13 @@ def test_sqlite():
         )
         cursor.fetchone()
         conn.close()
-        print("PASS: SQLite test")
+        logger.info("PASS: SQLite test")
     except Exception as e:
-        print(f"SKIP: SQLite test ({e})")
+        logger.info(f"SKIP: SQLite test ({e})")
 
 
 if __name__ == "__main__":
-    print("Running DataHub tests...\n")
+    logger.info("Running DataHub tests...\n")
 
     test_singleton()
     test_sqlalchemy_engine()
@@ -80,4 +82,4 @@ if __name__ == "__main__":
     test_duckdb()
     test_sqlite()
 
-    print("\nAll tests completed!")
+    logger.info("\nAll tests completed!")

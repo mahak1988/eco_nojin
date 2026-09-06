@@ -1,4 +1,3 @@
-import re
 """
 engine.data_connector
 =====================
@@ -36,6 +35,7 @@ Author: Eco Nojin Architecture Team
 """
 
 import sys
+import re
 from pathlib import Path
 from typing import Optional, Any, Dict, List
 from contextlib import contextmanager
@@ -46,6 +46,12 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from database.hub import hub
+from services.security.query_safe import _safe_ident
+
+import logging
+logger = logging.getLogger(__name__)
+
+
 
 
 class DataConnector:
@@ -76,23 +82,26 @@ class DataConnector:
         conn = self.hub.get_duckdb("master")
 
         conditions = []
+        params = []
         if station_id is not None:
-            conditions.append(f"site_id = {station_id}")
+            conditions.append("site_id = ?")
+            params.append(station_id)
         if year is not None:
-            conditions.append(f"year = {year}")
+            conditions.append("year = ?")
+            params.append(year)
 
         where_clause = " WHERE " + " AND ".join(conditions) if conditions else ""
 
-        query = f"""
+        query = """
             SELECT * FROM weather_daily
-            {where_clause}
+            %s
             LIMIT 10000
-        """
+        """ % where_clause
 
         try:
-            return conn.execute(query).fetchdf()
+            return conn.execute(query, params).fetchdf()
         except Exception:
-            return conn.execute(query).fetchall()
+            return conn.execute(query, params).fetchall()
         finally:
             conn.close()
 
@@ -126,7 +135,7 @@ class DataConnector:
                     return dict(zip(cols, result))
             return {}
         except Exception as e:
-            print(f"Warning: get_crop_parameters failed: {e}")
+            logger.info(f"Warning: get_crop_parameters failed: {e}")
             return {}
         finally:
             conn.close()
@@ -148,19 +157,43 @@ class DataConnector:
             conn.close()
 
 
+    def _extract_table_names(self, query: str) -> set[str]:
+        """Extract table names referenced in a SELECT/WITH query (best-effort).
+
+        Uses a simple regex to identify tokens following FROM and JOIN keywords.
+        This is not a full SQL parser but is sufficient for whitelist checks
+        when combined with a strict identifier allowlist.
+        """
+        text = query
+        pattern = re.compile(
+            r"\b(?:FROM|JOIN)\s+(?:`?\"?([A-Za-z_][A-Za-z0-9_]*)\`?\"?\.)?(?:`?\"?([A-Za-z_][A-Za-z0-9_]*)\`?\"?|\`?\"?([A-Za-z_][A-Za-z0-9_]*)\`?\"?)",
+            re.IGNORECASE,
+        )
+        names: set[str] = set()
+        for match in pattern.finditer(text):
+            for group in match.groups():
+                if group:
+                    names.add(group.lower())
+        return names
+
     def _sanitize_sql(self, query: str) -> str:
         """
         Sanitize SQL query to prevent injection attacks.
 
         Security measures:
-        - Block dangerous statements (DROP, DELETE, UPDATE, INSERT, ALTER)
-        - Block information_schema access
-        - Block comment-based injection
-        - Detect and reject suspicious patterns
+        - Only SELECT/WITH statements allowed
+        - Dangerous keywords (DROP, DELETE, etc.) are blocked
+        - SQL comments (--, /*, ;) are not allowed
+        - Table names MUST appear in the analytics whitelist
+          (defence-in-depth on top of the keyword blacklist)
         """
+        if not isinstance(query, str):
+            raise ValueError("query must be a string")
+        if len(query) > 10_000:
+            raise ValueError("query too long")
         query_upper = query.upper().strip()
 
-        # Block dangerous keywords (except in safe contexts)
+        # Block dangerous keywords (defence-in-depth on top of whitelist)
         dangerous_keywords = [
             'DROP TABLE', 'DROP DATABASE', 'DELETE FROM',
             'UPDATE ', 'INSERT INTO', 'ALTER TABLE',
@@ -169,38 +202,66 @@ class DataConnector:
             'XP_CMDSHELL', 'INFORMATION_SCHEMA',
             'WAITFOR DELAY', 'UNION SELECT',
             'SHUTDOWN', 'LOAD_FILE', 'INTO OUTFILE',
-            'INTO DUMPFILE'
+            'INTO DUMPFILE', 'PG_SLEEP', 'PG_CATALOG',
         ]
 
         for keyword in dangerous_keywords:
             if keyword in query_upper:
-                import logging
-                logging.getLogger(__name__).warning(
-                    f"SQL injection attempt blocked: {keyword} in query"
-                )
+                logger.warning("SQL injection attempt blocked: %s in query", keyword)
                 raise ValueError(
                     f"Dangerous SQL statement detected: {keyword}. "
-                    f"Only SELECT queries are allowed in analytics."
+                    "Only SELECT queries are allowed in analytics."
                 )
 
         # Block comment-based injection
         if '--' in query or '/*' in query or ';' in query:
-            import logging
-            logging.getLogger(__name__).warning(
-                f"SQL injection attempt blocked: comment/semicolon detected"
-            )
+            logger.warning("SQL injection attempt blocked: comment/semicolon detected")
             raise ValueError(
                 "SQL comments (;, --, /*) are not allowed in analytics queries. "
                 "Use parameterized queries instead."
             )
 
-        # Only SELECT allowed
+        # Only SELECT/WITH allowed
         if not query_upper.startswith('SELECT') and not query_upper.startswith('WITH'):
             raise ValueError(
                 "Only SELECT/WITH queries are allowed in execute_analytics_query"
             )
 
+        # Whitelist tables referenced in the query
+        tables = self._extract_table_names(query)
+        unknown = tables - self.ALLOWED_ANALYTICS_TABLES
+        if unknown:
+            logger.warning(
+                "Analytics query references non-whitelisted tables: %s",
+                ", ".join(sorted(unknown)),
+            )
+            raise ValueError(
+                f"Table(s) not in analytics whitelist: {sorted(unknown)}. "
+                "Allowed: " + ", ".join(sorted(self.ALLOWED_ANALYTICS_TABLES))
+            )
+
         return query
+
+    # Whitelist of tables available to ad-hoc analytics queries on master DuckDB.
+    # Restricting to these is safer than a keyword blacklist alone.
+    ALLOWED_ANALYTICS_TABLES: set[str] = {
+        "weather_daily",
+        "climate_normals_monthly",
+        "crop_water_parameters",
+        "ref_sites",
+        "ref_soils",
+        "ref_species",
+        "ref_climate_requirements",
+        "ref_crop_calendar",
+        "ref_indices_registry",
+        "ref_decision_engine",
+        "data_weather_daily",
+        "data_weather_history_annual",
+        "climate_disasters",
+        "v_all_indices",
+        "v_crop_climate_matrix",
+        "v_drought_indices",
+    }
 
 
     def execute_analytics_query(self, query: str) -> Any:
@@ -340,15 +401,10 @@ class DataConnector:
         """Get schema information for a table in master DuckDB."""
         conn = self.hub.get_duckdb("master")
         try:
-            columns = conn.execute(f"""
-                SELECT column_name, data_type
-                FROM information_schema.columns
-                WHERE table_name = '{table_name}'
-                ORDER BY ordinal_position
-            """).fetchall()
+            columns = conn.execute("\n                SELECT column_name, data_type\n                FROM information_schema.columns\n                WHERE table_name = '{}'\n                ORDER BY ordinal_position\n            ".format(_safe_ident(table_name))).fetchall()
 
             row_count = conn.execute(
-                f'SELECT COUNT(*) FROM "{table_name}"'
+                'SELECT COUNT(*) FROM "{}"'.format(_safe_ident(table_name))
             ).fetchone()[0]
 
             return {

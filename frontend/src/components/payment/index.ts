@@ -1,1 +1,0 @@
-export { CryptoPaymentModal } from './CryptoPaymentModal';

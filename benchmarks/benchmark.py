@@ -142,7 +142,7 @@ try:
     t_musk_numba = timeit(route_flood_wave, Q, 1000.0, 50, 0.03, 0.002, 10.0, 5.0)
     t_musk_py = timeit(route_py, Q)
     logger.info("== 3. Muskingum routing, N=%d ==" % len(Q))
-    print(
+    logger.info(
         f"  numba : {t_musk_numba:.5f} s | pure: {t_musk_py:.5f} s | speedup {t_musk_py / t_musk_numba:.1f}x"
     )
 except Exception as e:  # pragma: no cover

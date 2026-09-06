@@ -6,6 +6,7 @@ prevent application startup.
 """
 from __future__ import annotations
 
+import importlib
 import logging
 from typing import TYPE_CHECKING
 
@@ -28,7 +29,7 @@ def register_new_modules(app: FastAPI) -> dict[str, bool]:
 
     for module_path, router_attr, prefix, tags in OPTIONAL_MODULES:
         try:
-            module = __import__(module_path, fromlist=[router_attr])
+            module = importlib.import_module(module_path)
             router = getattr(module, router_attr)
             app.include_router(router, prefix=prefix, tags=tags)
             results[module_path] = True

@@ -17,6 +17,9 @@ Version: 0.1.0 (Phase 0.A)
 """
 import os
 
+from dotenv import load_dotenv
+load_dotenv()
+
 import logging
 import traceback
 from contextlib import asynccontextmanager
@@ -51,6 +54,7 @@ from .routers import elevation
 from .routers import support
 from .routers import manual_data
 from .routers import voice
+from .routers import dashboard
 from services.api_gateway.routers import nojin
 
 app = FastAPI(title="Eco Nojin API Gateway")
@@ -144,6 +148,21 @@ app.add_middleware(
 )
 
 
+# ============================================================================
+# RATE LIMITING + REQUEST ID + SECURITY HEADERS MIDDLEWARES
+# ============================================================================
+from services.api_gateway.security import (
+    RateLimitMiddleware,
+    SecurityHeadersMiddleware,
+    RequestIDMiddleware,
+)
+
+app.add_middleware(RateLimitMiddleware)
+app.add_middleware(SecurityHeadersMiddleware)
+app.add_middleware(RequestIDMiddleware)
+logger.info("Rate limit + security headers + request ID middleware applied")
+
+
 # Pentest fix H1: the manual OPTIONS bypass and the per-response wildcard
 # ACAO header were removed. CORS is enforced exclusively by the
 # CORSMiddleware configured below (explicit origin allowlist).
@@ -232,6 +251,7 @@ app.include_router(models_router.router, tags=["models"])
 app.include_router(elevation.router, tags=["elevation"])
 app.include_router(support.router, tags=["support"])
 app.include_router(manual_data.router, tags=["manual-data"])
+app.include_router(dashboard.router)
 
 
 # ============================================================================

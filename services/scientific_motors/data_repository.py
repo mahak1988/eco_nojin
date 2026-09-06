@@ -117,7 +117,7 @@ class ScientificDataRepository:
 
     def get_soil_restoration_protocols(self) -> pl.DataFrame:
         """دریافت پروتکل‌های احیای خاک"""
-        query = f"""
+        query = """
             SELECT * FROM ref_rules
         """
         return self._conn.execute(query).pl()
@@ -191,7 +191,7 @@ class ScientificDataRepository:
 
     def get_critical_plain_rules(self) -> pl.DataFrame:
         """دریافت قوانین دشت‌های بحرانی"""
-        query = f"""
+        query = """
             SELECT * FROM ref_rules
         """
         return self._conn.execute(query).pl()
@@ -301,7 +301,7 @@ class ScientificDataRepository:
 
     def get_hard_constraints(self) -> pl.DataFrame:
         """دریافت محدودیت‌های سخت"""
-        query = f"""
+        query = """
             SELECT * FROM ref_rules
         """
         return self._conn.execute(query).pl()
@@ -313,13 +313,15 @@ class ScientificDataRepository:
     @lru_cache(maxsize=512)
     def get_site_profile(self, site_id: str) -> Optional[Dict[str, Any]]:
         """دریافت پروفایل کامل یک سایت"""
-        query = f"SELECT * FROM ref_sites WHERE {self.SITE_ID_COL} = ?"
+        from services.security.query_safe import _safe_ident
+        col = _safe_ident(self.SITE_ID_COL)
+        query = "SELECT * FROM ref_sites WHERE " + col + " = ?"
         df = self._conn.execute(query, [site_id]).pl()
         return df.row(0, named=True) if not df.is_empty() else None
 
     def get_all_sites(self) -> pl.DataFrame:
         """دریافت لیست تمام سایت‌ها"""
-        return self._conn.execute(f"SELECT * FROM ref_sites ORDER BY {self.SITE_ID_COL}").pl()
+        return self._conn.execute("SELECT * FROM ref_sites ORDER BY %s", (self.SITE_ID_COL,)).pl()
 
     def get_sites_in_critical_plains(self) -> pl.DataFrame:
         """دریافت سایت‌های بحرانی (فعلاً تمام سایت‌ها)"""

@@ -36,6 +36,8 @@ from datetime import datetime, timedelta
 from enum import Enum, auto
 from contextlib import contextmanager
 import json
+import structlog
+logger = structlog.get_logger()
 
 # Ensure project root in path
 PROJECT_ROOT = Path(__file__).parent.resolve()
@@ -186,15 +188,15 @@ class VictimAssessment:
 
 def log(msg: str, level: str = "INFO"):
     color = getattr(Colors, level, Colors.RESET)
-    print(f"{color}[{level}]{Colors.RESET} {msg}")
+    logger.info(f"{color}[{level}]{Colors.RESET} {msg}")
 
 
 def banner(title: str, char: str = "="):
-    print()
-    print(f"{Colors.BOLD}{char * 80}{Colors.RESET}")
-    print(f"{Colors.BOLD}  {title}{Colors.RESET}")
-    print(f"{Colors.BOLD}{char * 80}{Colors.RESET}")
-    print()
+    logger.info()
+    logger.info(f"{Colors.BOLD}{char * 80}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}  {title}{Colors.RESET}")
+    logger.info(f"{Colors.BOLD}{char * 80}{Colors.RESET}")
+    logger.info()
 
 
 def get_memory_info() -> Dict:
@@ -307,12 +309,12 @@ class ChaosOrchestrator:
     ) -> AttackResult:
         """اجرای یک حمله با نظارت کامل"""
 
-        print()
-        print(f"{Colors.CRITICAL}{'=' * 80}{Colors.RESET}")
-        print(f"{Colors.CRITICAL}  ☠️  ATTACK: {name}{Colors.RESET}")
-        print(f"{Colors.CRITICAL}  Protocol: {protocol.value} | Vector: {vector.name} | Severity: {severity.name}{Colors.RESET}")
-        print(f"{Colors.CRITICAL}  Timeout: {timeout}s | Expected: {'☠️  DEATH' if expected_failure else '🛡️  SURVIVAL'}{Colors.RESET}")
-        print(f"{Colors.CRITICAL}{'=' * 80}{Colors.RESET}")
+        logger.info()
+        logger.info(f"{Colors.CRITICAL}{'=' * 80}{Colors.RESET}")
+        logger.info(f"{Colors.CRITICAL}  ☠️  ATTACK: {name}{Colors.RESET}")
+        logger.info(f"{Colors.CRITICAL}  Protocol: {protocol.value} | Vector: {vector.name} | Severity: {severity.name}{Colors.RESET}")
+        logger.info(f"{Colors.CRITICAL}  Timeout: {timeout}s | Expected: {'☠️  DEATH' if expected_failure else '🛡️  SURVIVAL'}{Colors.RESET}")
+        logger.info(f"{Colors.CRITICAL}{'=' * 80}{Colors.RESET}")
 
         # نظارت اولیه
         mem_before = get_memory_info()
@@ -799,7 +801,7 @@ class ThreadChaosProtocol:
         expected = 100000
         actual = shared["counter"]
         if actual < expected * 0.9:
-            print(f"     ⚠️  Race detected: expected {expected}, got {actual}")
+            logger.info(f"     ⚠️  Race detected: expected {expected}, got {actual}")
         return actual
 
 
@@ -1249,21 +1251,21 @@ def main():
     if not (args.hell or args.protocol):
         args.hell = True
 
-    print()
-    print(f"{Colors.CRITICAL}{'=' * 80}{Colors.RESET}")
-    print(f"{Colors.CRITICAL}  ☠️  HELL PROTOCOL - CHAOS ENGINEERING v2{Colors.RESET}")
-    print(f"{Colors.CRITICAL}  WARNING: This test will BREAK your system{Colors.RESET}")
-    print(f"{Colors.CRITICAL}  Every failure reveals a weakness to fix{Colors.RESET}")
-    print(f"{Colors.CRITICAL}{'=' * 80}{Colors.RESET}")
-    print()
-    print("⚠️  This test suite is designed to:")
-    print("    - Exhaust memory resources")
-    print("    - Trigger deadlocks")
-    print("    - Corrupt data (safely)")
-    print("    - Cause timeouts")
-    print("    - Reveal race conditions")
-    print("    - Stress thread pools")
-    print()
+    logger.info()
+    logger.info(f"{Colors.CRITICAL}{'=' * 80}{Colors.RESET}")
+    logger.info(f"{Colors.CRITICAL}  ☠️  HELL PROTOCOL - CHAOS ENGINEERING v2{Colors.RESET}")
+    logger.info(f"{Colors.CRITICAL}  WARNING: This test will BREAK your system{Colors.RESET}")
+    logger.info(f"{Colors.CRITICAL}  Every failure reveals a weakness to fix{Colors.RESET}")
+    logger.info(f"{Colors.CRITICAL}{'=' * 80}{Colors.RESET}")
+    logger.info()
+    logger.info("⚠️  This test suite is designed to:")
+    logger.info("    - Exhaust memory resources")
+    logger.info("    - Trigger deadlocks")
+    logger.info("    - Corrupt data (safely)")
+    logger.info("    - Cause timeouts")
+    logger.info("    - Reveal race conditions")
+    logger.info("    - Stress thread pools")
+    logger.info()
 
     orchestrator = ChaosOrchestrator()
 
@@ -1492,9 +1494,9 @@ def main():
     # =========================================================================
     # FINAL REPORT
     # =========================================================================
-    print("\n\n")
+    logger.info("\n\n")
     report = orchestrator.generate_hell_report()
-    print(report)
+    logger.info(report)
 
     # Save reports
     reports_dir = PROJECT_ROOT / "reports"
@@ -1503,7 +1505,7 @@ def main():
 
     report_file = reports_dir / f"hell_report_{timestamp}.txt"
     report_file.write_text(report, encoding="utf-8")
-    print(f"\n💾 Report saved: {report_file.relative_to(PROJECT_ROOT)}")
+    logger.info(f"\n💾 Report saved: {report_file.relative_to(PROJECT_ROOT)}")
 
     json_file = reports_dir / f"hell_results_{timestamp}.json"
     json_data = {
@@ -1521,7 +1523,7 @@ def main():
     }
     json_file.write_text(json.dumps(json_data, indent=2, ensure_ascii=False),
                          encoding="utf-8")
-    print(f"💾 JSON saved: {json_file.relative_to(PROJECT_ROOT)}")
+    logger.info(f"💾 JSON saved: {json_file.relative_to(PROJECT_ROOT)}")
 
     # Exit code
     critical_kills = sum(
@@ -1529,18 +1531,18 @@ def main():
         if not r.passed and r.severity in [Severity.CATASTROPHIC, Severity.APOCALYPTIC]
     )
 
-    print()
+    logger.info()
     if critical_kills > 5:
-        print(f"💀 SYSTEM DESTROYED: {critical_kills} catastrophic failures")
+        logger.info(f"💀 SYSTEM DESTROYED: {critical_kills} catastrophic failures")
         return 3
     elif orchestrator.assessment.kill_rate > 50:
-        print(f"☠️  SYSTEM BROKEN: {orchestrator.assessment.kill_rate:.1f}% kill rate")
+        logger.info(f"☠️  SYSTEM BROKEN: {orchestrator.assessment.kill_rate:.1f}% kill rate")
         return 2
     elif orchestrator.assessment.kill_rate > 20:
-        print(f"⚠️  SYSTEM VULNERABLE: {orchestrator.assessment.kill_rate:.1f}% kill rate")
+        logger.info(f"⚠️  SYSTEM VULNERABLE: {orchestrator.assessment.kill_rate:.1f}% kill rate")
         return 1
     else:
-        print(f"✅ SYSTEM HARDENED: {orchestrator.assessment.survival_rate:.1f}% survival rate")
+        logger.info(f"✅ SYSTEM HARDENED: {orchestrator.assessment.survival_rate:.1f}% survival rate")
         return 0
 
 

@@ -1,0 +1,106 @@
+@import "tailwindcss";
+@import "../../../tooling/tailwind/tokens.css";
+
+@source "../../../packages/ui/src";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─────────────── BASE ─────────────── */
+:root { color-scheme: light; }
+.dark { color-scheme: dark; }
+
+body {
+  font-family: "Vazirmatn", "Segoe UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ─────────────── MESH GRADIENT BACKGROUND ─────────────── */
+.bg-mesh {
+  background-color: #f6faf7;
+  background-image:
+    radial-gradient(at 15% 20%, rgb(34 197 94 / .10) 0, transparent 50%),
+    radial-gradient(at 85% 10%, rgb(14 165 233 / .10) 0, transparent 50%),
+    radial-gradient(at 70% 90%, rgb(163 98 30 / .08) 0, transparent 50%),
+    radial-gradient(at 20% 85%, rgb(147 51 234 / .07) 0, transparent 50%);
+}
+.dark .bg-mesh {
+  background-color: #0b1220;
+  background-image:
+    radial-gradient(at 15% 20%, rgb(34 197 94 / .12) 0, transparent 50%),
+    radial-gradient(at 85% 10%, rgb(14 165 233 / .12) 0, transparent 50%),
+    radial-gradient(at 70% 90%, rgb(147 51 234 / .10) 0, transparent 50%);
+}
+
+/* ─────────────── GLASSMORPHISM ─────────────── */
+.glass {
+  background: rgb(255 255 255 / .72);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  border: 1px solid rgb(255 255 255 / .65);
+}
+.dark .glass {
+  background: rgb(15 23 42 / .62);
+  border-color: rgb(255 255 255 / .08);
+}
+
+/* ─────────────── 3D CARDS ─────────────── */
+.card-3d {
+  transform-style: preserve-3d;
+  transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s;
+}
+.card-3d:hover {
+  transform: perspective(900px) rotateX(2.5deg) rotateY(-2.5deg) translateY(-6px);
+  box-shadow: 0 24px 48px -12px rgb(2 8 23 / .22);
+}
+
+/* ─────────────── GRADIENT BORDER ─────────────── */
+.gradient-border { position: relative; background-clip: padding-box; }
+.gradient-border::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, rgb(34 197 94/.6), rgb(14 165 233/.5), rgb(147 51 234/.4));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ─────────────── GLOW SHADOWS ─────────────── */
+.glow-green   { box-shadow: 0 8px 28px -8px rgb(34 197 94 / .55); }
+.glow-water   { box-shadow: 0 8px 28px -8px rgb(14 165 233 / .55); }
+.glow-soil    { box-shadow: 0 8px 28px -8px rgb(175 95 30 / .55); }
+.glow-violet  { box-shadow: 0 8px 28px -8px rgb(147 51 234 / .55); }
+.glow-amber   { box-shadow: 0 8px 28px -8px rgb(245 158 11 / .55); }
+
+/* ─────────────── TEXT GRADIENT ─────────────── */
+.text-gradient {
+  background: linear-gradient(92deg, #16a34a 10%, #0ea5e9 55%, #9333ea 95%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* ─────────────── ICON TILE ─────────────── */
+.icon-tile {
+  display: grid; place-items: center;
+  width: 3rem; height: 3rem; border-radius: 1rem; color: #fff;
+  box-shadow: inset 0 1px 0 rgb(255 255 255/.4), 0 10px 18px -8px rgb(2 8 23/.45);
+}
+
+/* ─────────────── ANIMATIONS ─────────────── */
+@keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }
+.animate-float { animation: float 5s ease-in-out infinite; }
+
+@keyframes fade-up { from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: none } }
+.animate-fade-up { animation: fade-up .5s cubic-bezier(.2,.8,.2,1) both; }
+
+@keyframes shimmer { from { background-position: 200% 0 } to { background-position: -200% 0 } }
+.shimmer {
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255/.5) 50%, transparent 70%);
+  background-size: 200% 100%; animation: shimmer 2.2s linear infinite;
+}
+
+/* ─────────────── SCROLLBAR ─────────────── */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #22c55e, #0ea5e9);
+  border-radius: 8px; border: 2px solid transparent; background-clip: padding-box;
+}

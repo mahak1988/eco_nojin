@@ -1,0 +1,9 @@
+{
+  "extends": "@eco/tsconfig/base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "outDir": "dist",
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}

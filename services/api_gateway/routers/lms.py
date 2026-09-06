@@ -14,19 +14,11 @@ router = APIRouter(prefix="/api/v1/lms", tags=["lms"])
 COURSES_PATH = os.path.join("data", "lms", "courses.json")
 
 
-def _env(key: str) -> str:
-    for line in open(".env", encoding="utf-8-sig"):
-        k, _, v = line.partition("=")
-        if k.strip() == key:
-            return v.strip()
-    return ""
-
-
 def _cfg() -> dict[str, str]:
-    url = _env("SUPABASE_URL")
-    anon = _env("SUPABASE_ANON_KEY")
+    url = os.getenv("SUPABASE_URL", "")
+    anon = os.getenv("SUPABASE_ANON_KEY", "")
     if not url or not anon:
-        raise RuntimeError("SUPABASE_URL / SUPABASE_ANON_KEY missing in .env")
+        raise RuntimeError("SUPABASE_URL / SUPABASE_ANON_KEY missing in environment")
     return {"url": url.rstrip("/"), "anon": anon}
 
 

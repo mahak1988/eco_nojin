@@ -44,7 +44,12 @@ except Exception:
 # ==========================================================
 # ۳. اتصال به دیتابیس ابری (بدون نصب دیتابیس محلی)
 # ==========================================================
-CLOUD_DB_URL = os.environ.get("DATABASE_URL", "postgresql://postgres:[YOUR_PROJECT_REF]:[YOUR_PASSWORD]@aws-0-us-east-1.pooler.supabase.com:5432/postgres")
+CLOUD_DB_URL = os.environ.get("DATABASE_URL")
+if not CLOUD_DB_URL:
+    raise RuntimeError(
+        "DATABASE_URL environment variable is required. "
+        "Copy .env.example to .env and set DATABASE_URL."
+    )
 os.environ["DATABASE_URL"] = CLOUD_DB_URL
 print("[DEV] Pointing to Cloud DB...")
 

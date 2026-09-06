@@ -1,0 +1,302 @@
+/**
+ * Eco Nojin Design Tokens (CSS-first, consumed by Tailwind v4).
+ *
+ * Color philosophy:
+ *   - **Primary (Earth)** — terracotta / soil; signals land & carbon.
+ *   - **Secondary (Sky)** — teal-cyan; signals water & climate.
+ *   - **Accent (Leaf)** — green; signals vegetation & growth.
+ *
+ * Mood shifts between light and dark mode via CSS variables.
+ */
+
+@theme {
+  /* ============ Brand: Earth (Terracotta) ============ */
+  --color-brand-50: 254 247 238;
+  --color-brand-100: 247 226 199;
+  --color-brand-200: 235 196 152;
+  --color-brand-300: 220 161 100;
+  --color-brand-400: 205 130 60;
+  --color-brand-500: 175 95 30;
+  --color-brand-600: 142 73 22;
+  --color-brand-700: 110 56 18;
+  --color-brand-800: 78 40 13;
+  --color-brand-900: 50 25 8;
+  --color-brand-950: 28 14 4;
+
+  /* ============ Sky (Water & Climate) ============ */
+  --color-sky-50: 236 254 255;
+  --color-sky-100: 207 250 254;
+  --color-sky-200: 165 243 252;
+  --color-sky-300: 103 232 249;
+  --color-sky-400: 34 211 238;
+  --color-sky-500: 6 182 212;
+  --color-sky-600: 8 145 178;
+  --color-sky-700: 14 116 144;
+  --color-sky-800: 21 94 117;
+  --color-sky-900: 22 78 99;
+
+  /* ============ Leaf (Vegetation & Carbon) ============ */
+  --color-leaf-50: 240 253 244;
+  --color-leaf-100: 220 252 231;
+  --color-leaf-200: 187 247 208;
+  --color-leaf-300: 134 239 172;
+  --color-leaf-400: 74 222 128;
+  --color-leaf-500: 34 197 94;
+  --color-leaf-600: 22 163 74;
+  --color-leaf-700: 21 128 61;
+  --color-leaf-800: 22 101 52;
+  --color-leaf-900: 20 83 45;
+
+  /* ============ Neutrals (warm-tinted) ============ */
+  --color-surface: 253 252 250;
+  --color-surface-muted: 246 244 240;
+  --color-surface-raised: 255 255 255;
+  --color-surface-overlay: 251 250 248;
+  --color-surface-inverse: 17 24 28;
+  --color-surface-inverse-muted: 33 41 47;
+
+  /* ============ Ink (Text) ============ */
+  --color-ink: 24 24 28;
+  --color-ink-muted: 86 86 92;
+  --color-ink-subtle: 140 140 148;
+  --color-ink-inverse: 250 250 252;
+
+  /* ============ Status (semantic) ============ */
+  --color-success: 22 163 74;
+  --color-warning: 217 119 6;
+  --color-danger: 220 38 38;
+  --color-info: 37 99 235;
+
+  /* ============ Typography ============ */
+  --font-sans: 'Inter', 'Vazirmatn', system-ui, sans-serif;
+  --font-fa: 'Vazirmatn', 'Tahoma', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-display: 'Inter', 'Vazirmatn', system-ui, sans-serif;
+
+  /* ============ Radii ============ */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+
+  /* ============ Shadows ============ */
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 12px rgb(0 0 0 / 0.06);
+  --shadow-raised: 0 4px 8px rgb(0 0 0 / 0.06), 0 12px 24px rgb(0 0 0 / 0.08);
+  --shadow-elevated: 0 12px 24px rgb(0 0 0 / 0.10), 0 24px 48px rgb(0 0 0 / 0.10);
+  --shadow-glow: 0 0 0 4px rgb(var(--color-brand-500) / 0.18);
+  --shadow-glow-sky: 0 0 0 4px rgb(var(--color-sky-500) / 0.18);
+  --shadow-inner: inset 0 2px 4px rgb(0 0 0 / 0.04);
+
+  /* ============ Gradients ============ */
+  --gradient-hero: linear-gradient(135deg, rgb(var(--color-brand-50)), rgb(var(--color-sky-50)) 60%, rgb(var(--color-leaf-50)));
+  --gradient-brand: linear-gradient(135deg, rgb(var(--color-brand-500)), rgb(var(--color-brand-700)));
+  --gradient-sky: linear-gradient(135deg, rgb(var(--color-sky-500)), rgb(var(--color-sky-700)));
+
+  /* ============ Layout ============ */
+  --max-content-width: 1280px;
+  --header-height: 72px;
+
+  /* ============ Animation ============ */
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+}
+
+/* ============================================================
+   Dark mode foundation (Phase 3.2)
+   Activated by adding `class="dark"` to <html>.
+   ============================================================ */
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  :root.dark {
+    /* Neutrals — inverted */
+    --color-surface: 17 24 28;
+    --color-surface-muted: 25 33 38;
+    --color-surface-raised: 31 41 46;
+    --color-surface-overlay: 25 33 38;
+    --color-surface-inverse: 253 252 250;
+    --color-surface-inverse-muted: 240 240 240;
+
+    /* Text — inverted */
+    --color-ink: 250 250 252;
+    --color-ink-muted: 175 175 182;
+    --color-ink-subtle: 120 120 128;
+    --color-ink-inverse: 24 24 28;
+
+    /* Brand — slightly brighter for dark mode legibility */
+    --color-brand-50: 50 25 8;
+    --color-brand-100: 78 40 13;
+    --color-brand-200: 110 56 18;
+    --color-brand-300: 142 73 22;
+    --color-brand-400: 175 95 30;
+    --color-brand-500: 205 130 60;
+    --color-brand-600: 220 161 100;
+    --color-brand-700: 235 196 152;
+    --color-brand-800: 247 226 199;
+    --color-brand-900: 254 247 238;
+
+    /* Sky — slightly brighter */
+    --color-sky-400: 6 182 212;
+    --color-sky-500: 34 211 238;
+    --color-sky-600: 103 232 249;
+
+    /* Leaf — slightly brighter */
+    --color-leaf-400: 34 197 94;
+    --color-leaf-500: 74 222 128;
+    --color-leaf-600: 134 239 172;
+
+    /* Status — tuned for dark */
+    --color-success: 34 197 94;
+    --color-warning: 245 158 11;
+    --color-danger: 248 113 113;
+    --color-info: 96 165 250;
+
+    color-scheme: dark;
+  }
+
+  html[dir='rtl'] body {
+    font-family: var(--font-fa), 'Tahoma', sans-serif;
+  }
+
+  /* Focus rings consistent for keyboard users */
+  :where(button, a, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid rgb(var(--color-brand-500));
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  /* Smooth scroll, balanced wrap */
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv11', 'ss01', 'ss03';
+    line-height: 1.55;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+}
+
+@layer utilities {
+  /* Balanced line wrapping for headings */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Pretty paragraph wrapping */
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Brand gradient text */
+  .text-gradient-brand {
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Subtle surface that adapts to dark mode */
+  .surface-hero {
+    background: var(--gradient-hero);
+  }
+
+  /* Animations */
+  .animate-in-up {
+    animation: inUp var(--duration-slow) var(--ease-out-soft) both;
+  }
+  .animate-in-fade {
+    animation: inFade var(--duration-base) var(--ease-out-soft) both;
+  }
+  .animate-slide-up {
+    animation: slideUp var(--duration-base) var(--ease-out-soft) both;
+  }
+  .animate-slide-down {
+    animation: slideDown var(--duration-base) var(--ease-out-soft) both;
+  }
+  .animate-slide-in-left {
+    animation: slideInLeft var(--duration-base) var(--ease-out-soft) both;
+  }
+  .animate-slide-in-right {
+    animation: slideInRight var(--duration-base) var(--ease-out-soft) both;
+  }
+  .animate-scale-in {
+    animation: scaleIn var(--duration-fast) var(--ease-out-soft) both;
+  }
+  .animate-ripple {
+    animation: ripple 0.6s ease-out forwards;
+  }
+
+  /* Screen-reader only utility (Phase 3.1 a11y baseline) */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .focus\:not-sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: revert;
+    margin: revert;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+}
+
+@keyframes inUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes inFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes ripple {
+  from { transform: scale(0); opacity: 0.6; }
+  to { transform: scale(4); opacity: 0; }
+}

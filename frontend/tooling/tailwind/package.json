@@ -1,0 +1,17 @@
+{
+  "name": "@eco/tailwind-preset",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./preset.ts",
+  "exports": {
+    ".": "./preset.ts",
+    "./tokens.css": "./tokens.css",
+    "./typography-helpers": "./typography-helpers.ts"
+  },
+  "files": ["preset.ts", "tokens.css", "typography-helpers.ts"],
+  "dependencies": {
+    "@eco/ui": "workspace:*",
+    "tailwindcss": "^4.0.0"
+  }
+}

@@ -12,6 +12,16 @@ import pytest
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+
+import re as _re_ident
+
+
+def _safe_ident(name):
+    """فقط identifier معتبر SQL عبور می‌کند (ضد تزریق برای نام جدول/ستون)."""
+    if not _re_ident.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", str(name)):
+        raise ValueError("invalid SQL identifier: %r" % (name,))
+    return str(name)
+
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -207,7 +217,7 @@ class TestDataHubConcurrency:
             try:
                 conn = datahub_instance.get_duckdb("master")
                 try:
-                    result = conn.execute(f"SELECT {idx} AS val").fetchone()
+                    result = conn.execute('SELECT {} AS val'.format(_safe_ident(idx))).fetchone()  # nosec (کد آزمایشی — بدون ورودی کاربر)
                     results.append((idx, result[0]))
                 finally:
                     conn.close()

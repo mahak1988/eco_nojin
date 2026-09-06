@@ -1,0 +1,38 @@
+{
+  "app": {
+    "name": "Eco Nojin",
+    "tagline": "Digital Twin for Landscape Restoration",
+    "loading": "Loading…",
+    "error": "Something went wrong",
+    "retry": "Retry"
+  },
+  "home": {
+    "openDashboard": "Open HyDroMa",
+    "subtitle": "A digital twin for watersheds, soils, and farms — combining satellite data, soil profiles, and 318 scientific models to support evidence-based landscape restoration decisions."
+  },
+  "nav": {
+    "home": "Home",
+    "knowledge": "Knowledge",
+    "models": "Models",
+    "dashboard": "Dashboard",
+    "about": "About"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "submit": "Submit",
+    "search": "Search",
+    "next": "Next",
+    "previous": "Previous"
+  },
+  "units": {
+    "ha": "ha",
+    "t_ha": "t/ha",
+    "mm": "mm",
+    "m3": "m³",
+    "ppm": "ppm"
+  }
+}

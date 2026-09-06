@@ -17,6 +17,7 @@ Storage notes:
 from __future__ import annotations
 
 import os
+import re
 import sqlite3
 from pathlib import Path
 from typing import Any
@@ -55,13 +56,26 @@ def _rescale(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def _query(sql: str, params: tuple = ()) -> pd.DataFrame:
+def _query(table: str, where: str = "", params: tuple = (), order: str = "") -> pd.DataFrame:
+    """Execute a SELECT on the manual SQLite database with safe identifier handling.
+
+    The table name is validated against ``_safe_ident`` before interpolation
+    so that user-supplied identifiers cannot inject SQL.  Values are always
+    bound through ``params``.
+    """
+    from services.security.query_safe import _safe_ident
+    safe_table = _safe_ident(table)
+    sql = "SELECT * FROM " + safe_table
+    if where:
+        sql += where
+    if order:
+        sql += " ORDER BY " + order
     path = db_path()
     if not path.exists():
         raise FileNotFoundError(
-            f"manual dataset not found at {path}; run scripts/import_manual_data.py"
+            "manual dataset not found at " + str(path) + "; run scripts/import_manual_data.py"
         )
-    con = sqlite3.connect(f"file:{path.as_posix()}?mode=ro", uri=True)
+    con = sqlite3.connect("file:" + path.as_posix() + "?mode=ro", uri=True)
     try:
         df = pd.read_sql_query(sql, con, params=params)
     finally:
@@ -70,99 +84,100 @@ def _query(sql: str, params: tuple = ()) -> pd.DataFrame:
 
 
 def _where(conditions: dict[str, Any]) -> tuple[str, tuple]:
-    clauses = [f'"{k}" = ?' for k, v in conditions.items() if v is not None]
+    clauses = ['"' + k + '" = ?' for k, v in conditions.items() if v is not None]
     params = tuple(v for v in conditions.values() if v is not None)
-    return (f" WHERE {' AND '.join(clauses)}" if clauses else ""), params
+    return (" WHERE " + " AND ".join(clauses) if clauses else ""), params
 
 
 # ----------------------------------------------------------------- accessors
 
 def sites() -> pd.DataFrame:
-    return _query("SELECT * FROM sites ORDER BY site_id")
+    return _query("sites", order="site_id")
 
 
 def site(site_id: int) -> pd.DataFrame:
-    return _query("SELECT * FROM sites WHERE site_id = ?", (site_id,))
+    return _query("sites", where=" WHERE site_id = ?", params=(site_id,))
 
 
 def weather_daily(site_id: int, start: str | None = None, end: str | None = None) -> pd.DataFrame:
-    sql, params = "SELECT * FROM weather_daily WHERE site_id = ?", (site_id,)
+    where = " WHERE site_id = ?"
+    params = (site_id,)
     if start:
-        sql += " AND date >= ?"
+        where += " AND date >= ?"
         params += (start,)
     if end:
-        sql += " AND date <= ?"
+        where += " AND date <= ?"
         params += (end,)
-    return _query(sql + " ORDER BY date", params)
+    return _query("weather_daily", where=where, params=params, order="date")
 
 
 def weather_annual(site_id: int | None = None) -> pd.DataFrame:
     w, p = _where({"site_id": site_id})
-    return _query(f"SELECT * FROM weather_annual{w} ORDER BY site_id, year", p)
+    return _query("weather_annual", where=w, params=p, order="site_id, year")
 
 
 def climate_normals(site_id: int | None = None) -> pd.DataFrame:
     w, p = _where({"site_id": site_id})
-    return _query(f"SELECT * FROM climate_normals{w} ORDER BY site_id, month", p)
+    return _query("climate_normals", where=w, params=p, order="site_id, month")
 
 
 def climate_monthly(site_id: int, year: int | None = None) -> pd.DataFrame:
     w, p = _where({"site_id": site_id, "year": year})
-    return _query(f"SELECT * FROM climate_monthly_300sites{w} ORDER BY year, month", p)
+    return _query("climate_monthly_300sites", where=w, params=p, order="year, month")
 
 
 def crop_water_params(species_id: str | None = None) -> pd.DataFrame:
     w, p = _where({"species_id": species_id})
-    return _query(f"SELECT * FROM crop_water_params{w}", p)
+    return _query("crop_water_params", where=w, params=p)
 
 
 def crop_calendar(province: str | None = None, crop_fa: str | None = None) -> pd.DataFrame:
     w, p = _where({"province": province, "crop_fa": crop_fa})
-    return _query(f"SELECT * FROM crop_calendar_iran{w} ORDER BY province, crop_fa", p)
+    return _query("crop_calendar_iran", where=w, params=p, order="province, crop_fa")
 
 
 def soil_regions(province: str | None = None) -> pd.DataFrame:
     w, p = _where({"province": province})
-    return _query(f"SELECT * FROM soil_hydraulic_regions{w}", p)
+    return _query("soil_hydraulic_regions", where=w, params=p)
 
 
 def production_faostat(item_fa: str | None = None, country_fa: str | None = None) -> pd.DataFrame:
     w, p = _where({"item_fa": item_fa, "country_fa": country_fa})
-    return _query(f"SELECT * FROM production_faostat{w} ORDER BY year", p)
+    return _query("production_faostat", where=w, params=p, order="year")
 
 
 def iran_provincial(province: str | None = None, crop_fa: str | None = None) -> pd.DataFrame:
     w, p = _where({"province": province, "crop_fa": crop_fa})
-    return _query(f"SELECT * FROM iran_provincial_agriculture{w} ORDER BY year", p)
+    return _query("iran_provincial_agriculture", where=w, params=p, order="year")
 
 
 def food_security(country_fa: str | None = None) -> pd.DataFrame:
     w, p = _where({"country_fa": country_fa})
-    return _query(f"SELECT * FROM food_security_indicators{w} ORDER BY year", p)
+    return _query("food_security_indicators", where=w, params=p, order="year")
 
 
 def water_resources() -> pd.DataFrame:
-    return _query("SELECT * FROM water_resources_aquastat ORDER BY year")
+    return _query("water_resources_aquastat", order="year")
 
 
 def disasters(country_fa: str | None = None) -> pd.DataFrame:
     w, p = _where({"country_fa": country_fa})
-    return _query(f"SELECT * FROM climate_disasters{w} ORDER BY year", p)
+    return _query("climate_disasters", where=w, params=p, order="year")
 
 
 def climate_projections(region_fa: str | None = None) -> pd.DataFrame:
     w, p = _where({"region_fa": region_fa})
-    return _query(f"SELECT * FROM climate_projections{w}", p)
+    return _query("climate_projections", where=w, params=p)
 
 
 def species_map(species_id: str | None = None) -> pd.DataFrame:
     w, p = _where({"species_id": species_id})
-    return _query(f"SELECT * FROM species_crop_map{w}", p)
+    return _query("species_crop_map", where=w, params=p)
 
 
 def data_dictionary(sheet: str | None = None) -> pd.DataFrame:
     w, p = _where({"sheet": sheet})
-    return _query(f"SELECT * FROM meta_dictionary{w}", p)
+    return _query("meta_dictionary", where=w, params=p)
 
 
 def status() -> dict[str, Any]:
@@ -170,7 +185,8 @@ def status() -> dict[str, Any]:
     path = db_path()
     if not path.exists():
         return {"exists": False, "path": str(path)}
-    con = sqlite3.connect(f"file:{path.as_posix()}?mode=ro", uri=True)
+    db_uri = "file:" + path.as_posix() + "?mode=ro"
+    con = sqlite3.connect(db_uri, uri=True)
     try:
         tables = [
             r[0]
@@ -178,7 +194,13 @@ def status() -> dict[str, Any]:
                 "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
             )
         ]
-        counts = {t: con.execute(f'SELECT COUNT(*) FROM "{t}"').fetchone()[0] for t in tables}
+        from services.security.query_safe import _safe_ident
+        counts = {}
+        for t in tables:
+            safe_t = _safe_ident(t)
+            counts[t] = con.execute(
+                "SELECT COUNT(*) FROM '" + safe_t + "'"
+            ).fetchone()[0]
     finally:
         con.close()
     return {

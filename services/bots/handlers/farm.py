@@ -54,7 +54,7 @@ def _session():
 # Compatibility: SessionLocal via hub
 SessionLocal = hub.get_session_factory()
 
-    return SessionLocal()
+return SessionLocal()
 
 
 @router.message(F.text.in_(_FARM_LABELS))

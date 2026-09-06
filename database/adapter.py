@@ -12,6 +12,8 @@ from uuid import UUID, uuid4
 
 import geopandas as gpd
 
+from services.security.query_safe import _safe_ident
+
 
 class DatabaseAdapter(ABC):
     """Abstract interface for database operations."""
@@ -120,7 +122,8 @@ class DuckDBAdapter(DatabaseAdapter):
         
         for key, value in kwargs.items():
             if value is not None:
-                columns.append(key)
+                safe_key = _safe_ident(key)
+                columns.append(safe_key)
                 # Handle Point/geometry
                 if hasattr(value, 'wkt'):
                     values.append(value.wkt)

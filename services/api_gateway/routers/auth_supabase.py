@@ -15,20 +15,12 @@ from pydantic import BaseModel, Field
 router = APIRouter(prefix="/api/v1/auth/supabase", tags=["auth-supabase"])
 
 
-def _env(key: str) -> str:
-    for line in open(".env", encoding="utf-8-sig"):
-        k, _, v = line.partition("=")
-        if k.strip() == key:
-            return v.strip()
-    return os.environ.get(key, "")
-
-
 def _cfg() -> dict[str, str]:
-    url = _env("SUPABASE_URL").rstrip("/")
-    anon = _env("SUPABASE_ANON_KEY") or _env("SUPABASE_KEY")
-    svc = _env("SUPABASE_SERVICE_ROLE_KEY")
+    url = os.getenv("SUPABASE_URL", "").rstrip("/")
+    anon = os.getenv("SUPABASE_ANON_KEY", "") or os.getenv("SUPABASE_KEY", "")
+    svc = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
     if not url or not anon:
-        raise RuntimeError("SUPABASE_URL / SUPABASE_ANON_KEY missing in .env")
+        raise RuntimeError("SUPABASE_URL / SUPABASE_ANON_KEY missing in environment")
     return {"url": url, "anon": anon, "svc": svc}
 
 

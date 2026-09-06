@@ -1,0 +1,25 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+  - 'tooling/*'
+
+# Use hoisted node_modules so packages can resolve each other's files via
+# relative imports (e.g. packages/api/src/hooks.ts → ./endpoints/*).
+nodeLinker: hoisted
+
+autoInstallPeers: true
+strictPeerDependencies: false
+preferFrozenLockfile: true
+shamefullyHoist: false
+
+publicHoistPattern:
+  - '*eslint*'
+  - '*prettier*'
+  - '*types*'
+
+# pnpm 11: explicit allow-list for build scripts.
+# Without this, install exits with code 1 when biome/esbuild try to run postinstall,
+# which then cascades into Turbo's runDepsStatusCheck failing.
+onlyBuiltDependencies:
+  - '@biomejs/biome'
+  - esbuild

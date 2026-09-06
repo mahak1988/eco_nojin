@@ -7,11 +7,14 @@ Shell Utilities
 import structlog
 
 logger = structlog.get_logger()
+import re
 import subprocess
 import sys
 from pathlib import Path
 from typing import Optional, Tuple
 from . import console
+
+_CMD_RE = re.compile(r"^[a-zA-Z0-9_.-]+$")
 
 def run(
     cmd: str,
@@ -67,11 +70,12 @@ def run(
 
 def command_exists(cmd: str) -> bool:
     """بررسی وجود یک دستور در سیستم"""
+    if not _CMD_RE.match(cmd):
+        raise ValueError("Invalid command name: %r" % (cmd,))
     if sys.platform == "win32":
-        check_cmd = f"where {cmd}"
+        check_cmd = "where " + cmd
     else:
-        check_cmd = f"which {cmd}"
-    
+        check_cmd = "which " + cmd
     code, _, _ = run(check_cmd, check=False, silent=True)
     return code == 0
 

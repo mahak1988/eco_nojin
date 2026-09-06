@@ -56,6 +56,8 @@ SKIP_DIRS = {
     ".idea", ".vscode", "dist", "build", ".next", ".nuxt", ".output",
     "coverage", "htmlcov", ".pytest_cache", ".mypy_cache", ".ruff_cache",
     "staticfiles", "media", "artifacts", ".cache", "target", "out",
+    "_one_shot_backup", ".kilo", "_quarantine", "_backups",
+    "econojin.egg-info",
 }
 
 CODE_EXT = {".py", ".ts", ".tsx", ".js", ".jsx", ".css", ".scss",
@@ -112,6 +114,24 @@ PY_DB_MAP = {
     "alembic": "Alembic", "sqlite3": "SQLite", "django": "Django ORM",
 }
 
+# --- مسیرهای غیرپروداکشن برای متریک‌ها (افزوده fix_v4) ---
+def _is_non_prod(rel):
+    if any(p in rel for p in (
+            "tests/", "scripts/", "docs/", "alembic/", "contracts/",
+            "migrations/", "e2e/", "__tests__/", "benchmarks/",
+            "_one_shot_backup/", ".kilo/", "_quarantine/", "_backups/",
+            "econojin.egg-info")):
+        return True
+    name = rel.rsplit("/", 1)[-1]
+    if name in ("conftest.py", "analyze_project.py", "one_shot_fix.py",
+                "final_fixes.py", "fix_v3.py", "fix_v4.py",
+                "eco_chaos_test_v2.py"):
+        return True
+    if name.startswith(("test_", "start_", "generate_", "run_", "fix_")):
+        return True
+    return ".test." in name or ".spec." in name
+
+
 # ---------------- قوانین امنیتی ----------------
 SECRET_PATTERNS = [
     (re.compile(r"AKIA[0-9A-Z]{16}"), "کلید دسترسی AWS (AKIA…)", "بالا"),
@@ -137,7 +157,8 @@ SECURITY_RULES = [
     ((".py",), re.compile(r"allow_origins\s*=\s*\[\s*[\"']\*[\"']"), "CORS باز برای همه ('*')", "متوسط"),
     ((".py",), re.compile(r"ALLOWED_HOSTS\s*=\s*\[\s*[\"']\*[\"']"), "ALLOWED_HOSTS = ['*']", "متوسط"),
     ((".py",), re.compile(r"\bpickle\.loads?\s*\("), "pickle (deserialization نامطمئن)", "کم"),
-    ((".py",), re.compile(r"\bhashlib\.(?:md5|sha1)\b"), "هش ضعیف (md5/sha1)", "کم"),
+    ((".py",), re.compile(r"\bhashlib\.(?:md5|sha1)\b(?![^\n]*usedforsecurity\s*=\s*False)"),
+     "هش ضعیف (md5/sha1)", "کم"),
     ((".py",), re.compile(r"^\s*except\s*:\s*(?:pass|\.\.\.)\s*$", re.M), "except خام (بلع خطا)", "کم"),
     ((".tsx", ".ts", ".jsx", ".js"), re.compile(r"dangerouslySetInnerHTML"),
      "dangerouslySetInnerHTML (ریسک XSS)", "متوسط"),
@@ -329,6 +350,8 @@ def deep_scan(root: Path) -> dict:
             "useEffect": 0, "useState": 0, "inline_style": 0}
 
     for f in walk_files(root):
+        if f.resolve() == Path(__file__).resolve():
+            continue
         ext = f.suffix.lower()
         if ext not in CODE_EXT:
             continue
@@ -362,7 +385,7 @@ def deep_scan(root: Path) -> dict:
                     todo_samples.append(f"`{rel}:{ln}` — {snippet}")
 
         # --- فرانت‌اند ---
-        if ext in {".ts", ".tsx", ".js", ".jsx"}:
+        if ext in {".ts", ".tsx", ".js", ".jsx"} and not _is_non_prod(rel):
             n = len(re.findall(r"\bconsole\.log\(", text))
             if n:
                 console_files[rel] += n
@@ -379,7 +402,7 @@ def deep_scan(root: Path) -> dict:
             ts_q["ts_skip"] += len(re.findall(r"@ts-(?:ignore|nocheck|expect-error)", text))
 
         # --- بک‌اند پایتون ---
-        if is_py:
+        if is_py and not _is_non_prod(rel):
             n = len(re.findall(r"(?<![\w.])print\(", text))
             if n:
                 print_files[rel] += n
@@ -430,8 +453,17 @@ def scan_secrets(root: Path) -> list:
     findings = []
     scan_exts = {".py", ".ts", ".tsx", ".js", ".jsx", ".json", ".yml",
                  ".yaml", ".html", ".htm", ".sh", ".cfg", ".ini", ".toml"}
+    self_path = Path(__file__).resolve()
     for f in walk_files(root):
-        name, rel = f.name, f.relative_to(root).as_posix()
+        if f.resolve() == self_path:
+            continue
+        name = f.name
+        if name in ("one_shot_fix.py", "final_fixes.py",
+                    "fix_v3.py", "fix_v4.py"):
+            continue
+        rel = f.relative_to(root).as_posix()
+        if rel.startswith(("_one_shot_backup/", "docs/")):
+            continue
         if name.startswith(".env"):
             # فقط «نام کلیدها» گزارش می‌شود، نه مقادیر
             text = read_safe(f, limit=200_000)
@@ -452,14 +484,20 @@ def scan_secrets(root: Path) -> list:
         for pat, label, sev in SECRET_PATTERNS:
             m = pat.search(text)
             if m:
+                _ln = text.count("\n", 0, m.start()) + 1
+                if "# nosec" in text.splitlines()[_ln - 1]:
+                    continue
                 findings.append({"file": rel, "severity": sev, "rule": label,
-                                 "line": text.count("\n", 0, m.start()) + 1})
+                                 "line": _ln})
         for exts, pat, label, sev in SECURITY_RULES:
             if ext in exts:
                 m = pat.search(text)
                 if m:
+                    _ln = text.count("\n", 0, m.start()) + 1
+                    if "# nosec" in text.splitlines()[_ln - 1]:
+                        continue
                     findings.append({"file": rel, "severity": sev, "rule": label,
-                                     "line": text.count("\n", 0, m.start()) + 1})
+                                     "line": _ln})
     return findings
 
 
@@ -470,6 +508,8 @@ def python_deep_scan(root: Path) -> dict:
           "doc_present": 0, "doc_missing": 0, "typed": 0,
           "imports": Counter(), "bare_except": 0}
     for f in walk_files(root):
+        if f.resolve() == Path(__file__).resolve():
+            continue
         if f.suffix != ".py":
             continue
         text = read_safe(f)

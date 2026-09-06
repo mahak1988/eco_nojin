@@ -1,0 +1,28 @@
+{
+  "name": "@eco/charts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "biome check .",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@eco/utils": "workspace:*",
+    "echarts": "^5.5.1",
+    "echarts-for-react": "^3.0.2"
+  },
+  "peerDependencies": {
+    "react": "^18.3.0"
+  },
+  "devDependencies": {
+    "@eco/tsconfig": "workspace:*",
+    "@types/react": "^18.3.12",
+    "typescript": "^5.9.3"
+  }
+}

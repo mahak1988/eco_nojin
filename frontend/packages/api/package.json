@@ -1,0 +1,46 @@
+{
+  "name": "@eco/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./mutator": "./src/mutator.ts",
+    "./hooks": "./src/hooks.ts",
+    "./schema": "./src/schema/index.ts",
+    "./schema/*": "./src/schema/*.ts",
+    "./hooks/*": "./src/hooks/*.ts",
+    "./endpoints/dashboard": "./src/endpoints/dashboard.ts",
+    "./endpoints/carbon": "./src/endpoints/carbon.ts",
+    "./endpoints/models": "./src/endpoints/models.ts",
+    "./endpoints/satellite": "./src/endpoints/satellite.ts",
+    "./endpoints/soil": "./src/endpoints/soil.ts",
+    "./endpoints/climate": "./src/endpoints/climate.ts",
+    "./endpoints/websocket": "./src/endpoints/websocket.ts",
+    "./generated/endpoints": "./src/generated/endpoints/index.ts"
+  },
+  "scripts": {
+    "lint": "biome check .",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@eco/auth": "workspace:*",
+    "@eco/config": "workspace:*",
+    "@eco/utils": "workspace:*",
+    "@tanstack/react-query": "^5.59.20",
+    "axios": "^1.7.7",
+    "zod": "^3.23.8"
+  },
+  "peerDependencies": {
+    "react": "^18.3.0"
+  },
+  "devDependencies": {
+    "@eco/tsconfig": "workspace:*",
+    "@types/node": "^20.16.5",
+    "@types/react": "^18.3.12",
+    "typescript": "^5.9.3"
+  }
+}

@@ -6,6 +6,8 @@ Reference:
   (Approximation of their regression equations; units converted to cm/cm and cm/day)
 """
 
+import math
+
 
 def estimate_soil_parameters(
     sand_pct: float,
@@ -75,7 +77,7 @@ def estimate_soil_parameters(
             - 0.000452 * (sand_pct) * (clay_pct**2)
         )
     )
-    ks_cmh = 2.778 * max(1e-6, float(__import__("math").exp(ln_ks_cmh)))
+    ks_cmh = 2.778 * max(1e-6, float(math.exp(ln_ks_cmh)))
     ks_cm_day = ks_cmh * 24.0
 
     # Sanity clamps (prevent non-physical values)

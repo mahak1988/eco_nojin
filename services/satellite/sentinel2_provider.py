@@ -577,7 +577,7 @@ class Sentinel2Provider:
                 },
             )
 
-        print(f"  [SENTINEL] Loaded {len(bands)} bands @ {target_res}m "
+        logger.info(f"  [SENTINEL] Loaded {len(bands)} bands @ {target_res}m "
               f"(shape: {next(iter(bands.values())).shape})")
 
         # Save to disk cache
@@ -641,7 +641,7 @@ class Sentinel2Provider:
             if count > 0:
                 class_counts[cls] = count
 
-        print(f"  [SENTINEL] Cloud mask: {valid}/{total} pixels valid "
+        logger.info(f"  [SENTINEL] Cloud mask: {valid}/{total} pixels valid "
               f"({100*valid/total:.1f}%)")
 
         # Show breakdown if significant masking occurred
