@@ -5,8 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.hub import hub
 
 # Compatibility: get_db via hub
-def get_db():
-    with hub.get_session() as session:
+async def get_db():
+    async with hub.get_async_session() as session:
         yield session
 from services.auth.schemas import TokenRefresh, TokenResponse, UserInfo, UserLogin, UserRegister
 from services.auth.service import AuthService
