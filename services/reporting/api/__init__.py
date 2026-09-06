@@ -1,5 +1,5 @@
 """Reporting FastAPI router"""
-from typing import List, Optional
+from typing import AsyncGenerator, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,8 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.hub import hub
 
 # Compatibility: get_db via hub
-def get_db():
-    with hub.get_session() as session:
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    async with hub.get_async_session() as session:
         yield session
 from services.reporting.schemas import ReportCreate, ReportRead
 from services.reporting.service import ReportingService
