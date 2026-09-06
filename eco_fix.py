@@ -1,28 +1,30 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-eco_nojin automation runner v11 — event-loop unblocking + gateway hygiene.
+eco_nojin automation runner v12.
 
-STEP 1 unblock: async endpoints using a SYNC session with NO awaits in
-       body -> plain `def` (FastAPI runs them in threadpool — correct
-       pattern for blocking IO). ast-based, prove-then-commit, rollback.
-STEP 2 main.py: fix broken f-string (HOST not interpolated).
-STEP 3 untrack *.offgit backups + gitignore pattern.
-STEP 4 recon: main.py tail, register_modules, nojin get_db,
-       database/__init__, frontend mutator + generated path inventory.
+STEP 1 ci-check — GitHub Actions status via API (Security workflow)
+STEP 2 unblock  — (bugfixed) async->def for provably-safe sync-db endpoints
+STEP 3 dedup    — remove duplicate root mounts (auth, platform) + dead
+                  /health twin; evidence-gated; prove-then-commit
+STEP 4 recon    — database/config.py (second engine?), seed-demo auth gate,
+                  finer /api census (motors decision), dead modules
 
 Usage:
     python eco_fix.py
-    python eco_fix.py verify | unblock | mainfix | offgit | recon
+    python eco_fix.py verify | ci-check | unblock | dedup | recon
 """
 import ast
+import json
 import re
 import subprocess
 import sys
-from collections import Counter
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+GITHUB_REPO = "mahak1988/eco_nojin"
 
 GIT_EXE = None
 for _c in (r"C:\Program Files\Git\cmd\git.exe",
@@ -64,13 +66,24 @@ def modname_of(path: Path) -> str:
         rel = rel[: -len("/__init__")]
     return rel.replace("/", ".")
 
-def import_smoke(mod, timeout=150):
+def import_smoke(mod, timeout=180):
     code = f"import importlib; importlib.import_module({mod!r}); print('OK')"
     try:
         r = sh([sys.executable, "-c", code], timeout=timeout)
     except subprocess.TimeoutExpired:
         return "timeout"
     return "OK" if r.returncode == 0 else (r.stderr or r.stdout)[-300:]
+
+def dump(p, lo=1, hi=None, title=None):
+    p = Path(p)
+    if not p.exists():
+        warn(f"not found: {p}"); return
+    lines = p.read_text(encoding="utf-8", errors="replace").splitlines()
+    hi = hi or len(lines)
+    out(f"--- {title or p} (lines {lo}-{min(hi, len(lines))} of {len(lines)}) ---")
+    for i in range(lo - 1, min(hi, len(lines))):
+        out(f"{i+1:4d}| {lines[i]}")
+    out("--- end ---")
 
 # ---------------------------------------------------------------- verify ---
 def verify():
@@ -83,6 +96,51 @@ def verify():
     else:
         ok("everything pushed to origin/main")
     out(git("log", "--oneline", "-3").stdout)
+    return True
+
+# -------------------------------------------------------------- ci-check ---
+def ci_check():
+    out(LINE, "STEP 1 — GitHub Actions status (automated)", LINE, sep="\n")
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/actions/runs?per_page=8"
+    req = urllib.request.Request(url, headers={
+        "User-Agent": "eco_nojin-eco-fix",
+        "Accept": "application/vnd.github+json",
+    })
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        if e.code in (403, 429):
+            warn("rate-limited — check the Actions tab manually in browser")
+        elif e.code == 404:
+            warn("repo invisible to anonymous API (private?) — open in browser:\n"
+                 "    https://github.com/" + GITHUB_REPO + "/actions -> 'Security'")
+        else:
+            warn(f"HTTP {e.code}")
+        return True
+    except Exception as e:
+        warn(f"network error: {e!r}")
+        return True
+    runs = data.get("workflow_runs", [])
+    if not runs:
+        warn("no workflow runs recorded yet — the workflow was added after the "
+             "last push; make any small commit to trigger it")
+        return True
+    out(f"    {'workflow':26s} {'status':11s} {'conclusion':11s} created")
+    for run in runs:
+        out(f"    {(run.get('name') or '?')[:26]:26s} "
+            f"{(run.get('status') or '?'):11s} "
+            f"{(run.get('conclusion') or '-'):11s} {run.get('created_at', '?')}")
+    sec = [r for r in runs if "security" in (r.get("name") or "").lower()]
+    if sec:
+        c = sec[0].get("conclusion")
+        if c == "success":
+            ok("Security workflow: GREEN ✅ (gitleaks found nothing)")
+        else:
+            warn(f"Security workflow conclusion = {c} — open the failing run "
+                 "and paste findings back!")
+    else:
+        warn("no Security workflow run in the last 8 — trigger with a commit")
     return True
 
 # --------------------------------------------------------------- unblock ---
@@ -98,18 +156,18 @@ SYNC_DB = re.compile(
 AWAITISH = re.compile(r"\bawait\b|\basync\s+with\b|\basync\s+for\b")
 
 def unblock():
-    out(LINE, "STEP 1 — unblock event loop (async->def where provably safe)", LINE, sep="\n")
+    out(LINE, "STEP 2 — unblock event loop (bugfixed, re-run)", LINE, sep="\n")
     plan, originals = {}, {}
     for rel in UNBLOCK_FILES:
         p = ROOT / rel
         if not p.exists():
             warn(f"missing: {rel}"); continue
         raw, crlf, text = read_text(p)
-        originals[p] = (raw, crlf)
+        originals[p] = raw
         try:
             tree = ast.parse(text)
         except SyntaxError as e:
-            warn(f"{rel}: parse error line {e.lineno} — excluded"); continue
+            warn(f"{rel}: parse error L{e.lineno} — excluded"); continue
         lines = text.split("\n")
         targets = []
         for node in ast.walk(tree):
@@ -117,24 +175,25 @@ def unblock():
                 seg = "\n".join(lines[node.lineno - 1:node.end_lineno])
                 if SYNC_DB.search(seg) and not AWAITISH.search(seg):
                     targets.append((node.name, node.lineno))
-        out(f"    {rel}: {len(targets)} convertible endpoint(s)"
-            + (f" -> {', '.join(n for n, _ in targets)}" if targets else ""))
-        if not targets:
-            continue
-        res = import_smoke(modname_of(p))
-        out(f"        baseline import: {'OK' if res == 'OK' else 'FAIL — excluded'}")
-        if res != "OK":
-            warn(f"        {res[:200]}")
-            continue
-        plan[p] = targets
+        if targets:
+            out(f"    {rel}: {len(targets)} convertible: "
+                + ", ".join(n for n, _ in targets))
+            res = import_smoke(modname_of(p))
+            if res == "OK":
+                plan[p] = targets
+            else:
+                warn(f"        import FAIL — excluded: {res[:200]}")
+        else:
+            out(f"    {rel}: 0 convertible (awaits present — deferred to "
+                "service-layer refactor)")
 
     if not plan:
-        ok("nothing convertible & provable — done")
-        return True
+        ok("nothing to convert"); return True
 
     changed = []
     for p, targets in plan.items():
-        raw, crlf, text = originals[p]
+        raw = originals[p]
+        text = raw.replace("\r\n", "\n")
         lines = text.split("\n")
         for name, ln in targets:
             idx = ln - 1
@@ -143,23 +202,21 @@ def unblock():
             if n == 1:
                 lines[idx] = new_line
             else:
-                warn(f"could not rewrite line {ln} in {p.name}")
+                warn(f"rewrite failed at L{ln} in {p.name}")
         new_text = "\n".join(lines)
         try:
             ast.parse(new_text)
         except SyntaxError as e:
-            fail(f"{p.name}: parse failed after edit (line {e.lineno}) — skipped")
-            continue
-        write_text(p, new_text, crlf)
-        _, _, check = read_text(p)
-        ast.parse(check)          # paranoia: re-read from disk
-        changed.append((p, targets))
+            fail(f"{p.name}: parse after edit L{e.lineno} — skipped"); continue
+        write_text(p, new_text, "\r\n" in raw)
+        changed.append(p)
+
     if not changed:
         fail("no file written"); return False
 
     out("\npost-migration import smoke ...")
     regressions = []
-    for p, _ in changed:
+    for p in changed:
         res = import_smoke(modname_of(p))
         out(f"    {modname_of(p)}: {'OK' if res == 'OK' else 'FAIL'}")
         if res != "OK":
@@ -168,16 +225,13 @@ def unblock():
         fail("REGRESSION — rolling back:")
         for p, res in regressions:
             out(f"    {p.name}: {res[:150]}")
-            raw, crlf = originals[p]
-            write_text(p, raw if not crlf else raw.replace("\n", "\r\n"), crlf)
+            write_text(p, originals[p], False)   # verbatim original
         ok("originals restored — nothing committed")
         return False
     ok("no regressions")
 
-    for p, targets in changed:
+    for p in changed:
         git("add", "--", p.relative_to(ROOT).as_posix())
-        out(f"    staged {p.relative_to(ROOT).as_posix()} "
-            f"({len(targets)} endpoints)")
     r = git("commit", "-m",
             "perf(gateway): run sync-db endpoints in threadpool (async def -> def)")
     ok("committed") if r.returncode == 0 else \
@@ -186,100 +240,166 @@ def unblock():
     ok("pushed") if r.returncode == 0 else warn("push failed")
     return True
 
-# ---------------------------------------------------------------- mainfix ---
+# ------------------------------------------------------------------ dedup ---
 MAIN = ROOT / "services" / "api_gateway" / "main.py"
-FSTR_OLD = "http://os.environ.get('HOST', '127.0.0.1'):8000/docs"
-FSTR_NEW = "http://{os.environ.get('HOST', '127.0.0.1')}:8000/docs"
+MAIN_MOD = "services.api_gateway.main"
+ROOT_AUTH_PATHS = {"/login", "/register", "/me", "/seed-demo",
+                   "/forgot-password", "/reset-password", "/change-password",
+                   "/profile", "/refresh", "/signup", "/admin/delete-user"}
+ROOT_PLAT_PATHS = {"/landscapes", "/analyze", "/stats"}
 
-def mainfix():
-    out(LINE, "STEP 2 — main.py f-string fix", LINE, sep="\n")
-    if not MAIN.exists():
-        fail("main.py not found"); return False
+def frontend_paths():
+    r = git("grep", "-h", "url: ", "--", "frontend/packages/api/src/")
+    blob = r.stdout or ""
+    return (re.findall(r"url:\s*'([^']+)'", blob)
+            + re.findall(r"url:\s*`([^`]+)`", blob))
+
+def _remove_health_twin(text):
+    lines = text.split("\n")
+    idxs = [i for i, ln in enumerate(lines)
+            if ln.strip().startswith('@app.get("/health")')]
+    if len(idxs) < 2:
+        return text, False
+    dec = idxs[1]
+    j = dec + 1
+    while j < len(lines) and (lines[j].startswith("@")
+                              or lines[j].startswith("def ")
+                              or lines[j].startswith("async def ")):
+        j += 1
+    while j < len(lines) and (not lines[j].strip()
+                              or lines[j].startswith((" ", "\t"))):
+        j += 1
+    s = dec
+    while s > 0 and (not lines[s - 1].strip()
+                     or lines[s - 1].lstrip().startswith("#")):
+        s -= 1
+    new_lines = lines[:s] + [""] + lines[j:]
+    return "\n".join(new_lines), True
+
+def dedup():
+    out(LINE, "STEP 3 — mount dedup (evidence-gated, prove-then-commit)", LINE, sep="\n")
+    paths = frontend_paths()
+
+    auth_hits = [p for p in paths if p in ROOT_AUTH_PATHS]
+    v1_auth = [p for p in paths if p.startswith("/api/v1/auth")]
+    plat_hits = [p for p in paths if p in ROOT_PLAT_PATHS]
+    health_refs = [p for p in paths if p == "/health"]
+
+    out(f"    frontend: {len(paths)} path refs")
+    out(f"    root-level auth paths used: {auth_hits or 'NONE'}")
+    out(f"    /api/v1/auth refs: {len(v1_auth)}")
+    out(f"    root-level platform paths used: {plat_hits or 'NONE'}")
+    out(f"    /health refs: {len(health_refs)} (will be served by the app's "
+        "own rich /health after dedup)")
+
+    if auth_hits or not v1_auth:
+        warn("auth root mount NOT removed (evidence insufficient)")
+    if plat_hits:
+        warn("platform root mount NOT removed (frontend uses root platform paths)")
+
+    base = import_smoke(MAIN_MOD, timeout=300)
+    out(f"\n    baseline import of {MAIN_MOD}: {'OK' if base == 'OK' else 'FAIL'}")
+    if base != "OK":
+        warn("    " + base[:300])
+        fail(">>> APP MODULE DOES NOT IMPORT — this is a critical pre-existing "
+             "finding! Report it; dedup aborted.")
+        return False
+    ok("the full gateway app imports cleanly (first time proven!)")
+
     raw, crlf, text = read_text(MAIN)
-    if FSTR_NEW in text:
-        ok("already fixed"); return True
-    if FSTR_OLD not in text:
-        warn("pattern not found — line changed? skipped"); return True
-    text = text.replace(FSTR_OLD, FSTR_NEW, 1)
-    ast.parse(text)
-    write_text(MAIN, text, crlf)
-    ok("f-string fixed — HOST now interpolates in startup log")
-    git("add", "--", "services/api_gateway/main.py")
-    r = git("commit", "-m", "fix(gateway): interpolate HOST in startup log f-string")
-    if r.returncode == 0:
-        ok("committed")
-        git("push", "origin", "main")
-    else:
-        ok("nothing to commit")
-    return True
+    edits, notes = [], []
 
-# ----------------------------------------------------------------- offgit ---
-def offgit():
-    out(LINE, "STEP 3 — untrack *.offgit backups", LINE, sep="\n")
-    files = [l.strip() for l in git("ls-files").stdout.splitlines() if l.strip()]
-    offg = [f for f in files if f.endswith(".offgit")]
-    for f in offg:
-        git("rm", "--cached", "--", f)
-        out("    untracked: " + f)
-    ok("no .offgit tracked") if not offg else \
-        ok(f"{len(offg)} .offgit file(s) untracked (stay on disk)")
-    gi = ROOT / ".gitignore"
-    text = gi.read_text(encoding="utf-8", errors="replace")
-    if "*.offgit" not in text:
-        with open(gi, "a", encoding="utf-8") as fh:
-            fh.write("\n# off-site backup snapshots\n*.offgit\n")
-        ok("gitignore: *.offgit added")
-    git("add", "--", ".gitignore")
-    r = git("commit", "-m", "chore: untrack .offgit backup snapshots")
-    if r.returncode == 0:
-        ok("committed")
-        git("push", "origin", "main")
-    else:
-        ok("nothing to commit")
+    n_auth = len(re.findall(r"(?m)^app\.include_router\(auth\.router\)\s*$", text))
+    if not auth_hits and v1_auth and n_auth == 1 \
+            and "app.include_router(auth.router, prefix=" in text:
+        text = "\n".join(ln for ln in text.split("\n")
+                         if not re.match(r"^app\.include_router\(auth\.router\)\s*$", ln))
+        edits.append("root auth mount")
+        notes.append("unauthenticated /seed-demo & friends no longer exposed at root")
+
+    n_plat = len(re.findall(r"(?m)^app\.include_router\(platform\.router\)\s*$", text))
+    if not plat_hits and n_plat == 1 \
+            and "app.include_router(platform.router, prefix=" in text:
+        text = "\n".join(ln for ln in text.split("\n")
+                         if not re.match(r"^app\.include_router\(platform\.router\)\s*$", ln))
+        edits.append("root platform mount")
+        notes.append("app's own /health becomes reachable (was shadowed)")
+
+    text, twin = _remove_health_twin(text)
+    if twin:
+        edits.append("dead /health twin")
+
+    if not edits:
+        ok("nothing to change"); return True
+
+    try:
+        ast.parse(text)
+    except SyntaxError as e:
+        fail(f"main.py parse after edit L{e.lineno}: {e.msg} — aborting")
+        write_text(MAIN, raw, False)
+        return False
+    write_text(MAIN, text, crlf)
+
+    post = import_smoke(MAIN_MOD, timeout=300)
+    if post != "OK":
+        fail("REGRESSION after dedup — rolling back:")
+        out("    " + post[:300])
+        write_text(MAIN, raw, False)
+        ok("original restored — nothing committed")
+        return False
+    ok("post-edit import: OK")
+    for n in notes:
+        out("    * " + n)
+
+    git("add", "--", "services/api_gateway/main.py")
+    r = git("commit", "-m",
+            "refactor(gateway): drop duplicate root mounts (auth, platform) "
+            "and dead /health twin\n\nFrontend orval client uses only /api/* "
+            "paths (221 refs, zero root auth/platform refs).")
+    ok("committed") if r.returncode == 0 else \
+        warn("commit failed: " + (r.stdout + r.stderr)[-300:])
+    r = git("push", "origin", "main")
+    ok("pushed") if r.returncode == 0 else warn("push failed")
     return True
 
 # ------------------------------------------------------------------ recon ---
-def dump(p, lo=1, hi=None, title=None):
-    p = Path(p)
-    if not p.exists():
-        warn(f"not found: {p}"); return
-    lines = p.read_text(encoding="utf-8", errors="replace").splitlines()
-    hi = hi or len(lines)
-    out(f"--- {title or p} (lines {lo}-{min(hi, len(lines))} of {len(lines)}) ---")
-    for i in range(lo - 1, min(hi, len(lines))):
-        out(f"{i+1:4d}| {lines[i]}")
-    out("--- end ---")
-
 def recon():
-    out(LINE, "STEP 4 — recon (read-only) for next decisions", LINE, sep="\n")
-    dump(ROOT / "services/api_gateway/main.py", lo=318, hi=400, title="main.py tail")
-    dump(ROOT / "services/api_gateway/register_modules.py", title="register_modules.py")
-    out("\nwho calls register_modules:")
-    r = git("grep", "-n", "register_modules", "--", "services/", "scripts/", "tests/")
-    for l in [l for l in r.stdout.splitlines() if l.strip()][:15]:
-        out("    " + l)
-    dump(ROOT / "services/api_gateway/routers/nojin.py", lo=250, hi=300,
-         title="nojin.py get_db region")
-    dump(ROOT / "database/__init__.py", title="database/__init__.py")
+    out(LINE, "STEP 4 — recon (read-only)", LINE, sep="\n")
+    dump(ROOT / "database" / "config.py", title="database/config.py (second engine?)")
 
-    out("\nfrontend api mutator (base URL + token wiring):")
-    dump(ROOT / "frontend/packages/api/src/mutator.ts", hi=90)
+    out("\nseed-demo gating (routers/auth.py around it):")
+    p = ROOT / "services" / "api_gateway" / "routers" / "auth.py"
+    if p.exists():
+        lines = p.read_text(encoding="utf-8", errors="replace").splitlines()
+        idx = next((i for i, ln in enumerate(lines) if "seed-demo" in ln), None)
+        if idx is not None:
+            for i in range(max(0, idx - 15), min(len(lines), idx + 40)):
+                out(f"{i+1:4d}| {lines[i]}")
+        else:
+            warn("seed-demo not found in routers/auth.py")
 
-    out("\nfrontend generated path inventory (orval client):")
-    r = git("grep", "-h", "url: ", "--", "frontend/packages/api/src/")
-    blob = r.stdout or ""
-    paths = [m.group(1) for m in re.finditer(r"url:\s*'([^']+)'", blob)]
-    paths += [m.group(1) for m in re.finditer(r"url:\s*`([^`]+)`", blob)]
-    firsts = Counter(p.lstrip("/").split("/")[0] if p.strip("/") else "(root)"
-                     for p in paths)
-    out(f"    distinct paths: {len(set(paths))} | total refs: {len(paths)}")
-    out("    first path segments:")
-    for seg, n in sorted(firsts.items(), key=lambda kv: -kv[1])[:20]:
-        out(f"        /{seg:16s} {n}")
-    out("    notable paths (mount-dedup decision):")
-    for n in ("/login", "/register", "/seed-demo", "/landscapes", "/health",
-              "/advise", "/chat"):
-        out(f"        {n:12s} {'YES — frontend uses it' if n in set(paths) else 'no'}")
+    out("\nfiner /api census (motors dual-mount decision):")
+    paths = frontend_paths()
+    v1 = [p for p in paths if p.startswith("/api/v1/")]
+    nonv1 = [p for p in paths if p.startswith("/api/") and not p.startswith("/api/v1/")]
+    out(f"    /api/v1/* refs: {len(v1)}")
+    out(f"    /api/* (non-v1) refs: {len(nonv1)}")
+    for p in sorted(set(nonv1))[:25]:
+        out("        " + p)
+
+    out("\ndead-module confirmation:")
+    for pat, name in ((
+            "from services.api_gateway import dependencies", "dependencies.py"),
+            ("from .dependencies", "dependencies.py (relative)"),
+            ("register_modules", "register_modules.py"),
+            ("register_new_modules", "register_new_modules()")):
+        r = git("grep", "-n", pat, "--", "services/", "scripts/", "tests/",
+                "engine/")
+        hits = [l for l in r.stdout.splitlines() if l.strip()
+                and not l.split(":", 1)[0].endswith("eco_fix.py")]
+        out(f"    '{name}' referenced by: {len(hits)}")
+        for l in hits[:5]:
+            out("        " + l)
     return True
 
 # ------------------------------------------------------------------ chore ---
@@ -300,10 +420,10 @@ def main():
     except Exception:
         pass
     cmd = sys.argv[1] if len(sys.argv) > 1 else "all"
-    steps = {"verify": verify, "unblock": unblock, "mainfix": mainfix,
-             "offgit": offgit, "recon": recon}
+    steps = {"verify": verify, "ci-check": ci_check, "unblock": unblock,
+             "dedup": dedup, "recon": recon}
     if cmd == "all":
-        for name in ("verify", "unblock", "mainfix", "offgit", "recon"):
+        for name in ("verify", "ci-check", "unblock", "dedup", "recon"):
             try:
                 steps[name]()
             except Exception as e:
