@@ -252,3 +252,6 @@ data/_archived_excel_data/
 # --- eco_fix v3 ---
 data/maps/
 *.local
+
+# --- eco_fix v4 ---
+*.bak
