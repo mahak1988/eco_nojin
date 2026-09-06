@@ -51,10 +51,8 @@ def _session():
     """Session factory seam — tests monkeypatch this to use a temp DB."""
     from database.hub import hub
 
-# Compatibility: SessionLocal via hub
-SessionLocal = hub.get_session_factory()
-
-return SessionLocal()
+    SessionLocal = hub.get_session_factory()
+    return SessionLocal()
 
 
 @router.message(F.text.in_(_FARM_LABELS))
