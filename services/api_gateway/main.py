@@ -333,14 +333,6 @@ if _settings.app_env == "development":
 # ============================================================================
 # Health Check Endpoint
 # ============================================================================
-@app.get("/health")
-async def health_check():
-    """Health check endpoint for monitoring."""
-    return {
-        "status": "healthy",
-        "service": "Eco Nojin API Gateway",
-        "timestamp": datetime.now().isoformat() if 'datetime' in dir() else "N/A"
-    }
 
 if __name__ == "__main__":
     import uvicorn
