@@ -206,7 +206,6 @@ async def not_found_handler(request: Request, exc):
 # INCLUDE ALL ROUTERS
 # ============================================================================
 # Auth & User Management
-app.include_router(auth.router)
 
 app.include_router(land.router)
 # Scientific Modules
@@ -235,7 +234,6 @@ app.include_router(ussd.router)
 app.include_router(voice.router)
 app.include_router(sync.router)
 app.include_router(benchmark.router)
-app.include_router(platform.router)
 
 # ═══════════════════════════════════════════════════════════════
 # Nojin Biofertilizer Router - Scientific soil restoration
