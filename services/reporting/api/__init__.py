@@ -19,14 +19,14 @@ router = APIRouter(prefix="/reports", tags=["Reports"])
 async def create_report(data: ReportCreate, db: AsyncSession = Depends(get_db)):
     return await ReportingService(db).create_report(data)
 
-@router.post("/<report_id>/generate", response_model=ReportRead)
+@router.post("/{report_id}/generate", response_model=ReportRead)
 async def generate_report(report_id: str, db: AsyncSession = Depends(get_db)):
     try:
         return await ReportingService(db).generate_report(report_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-@router.get("/<report_id>", response_model=ReportRead)
+@router.get("/{report_id}", response_model=ReportRead)
 async def get_report(report_id: str, db: AsyncSession = Depends(get_db)):
     try:
         return await ReportingService(db).get_report(report_id)
