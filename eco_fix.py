@@ -1,23 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-eco_nojin automation runner v3.
+eco_nojin automation runner v5.
 
-Removes the broken Windows gitleaks hook, repairs .gitignore syntax bugs,
-moves secret-scanning to CI, commits the staged cleanup, applies the XSS
-patch, and prints repo diagnostics.
+verify | canonical .gitignore (+ live tests) | fix admin_assistant syntax |
+fix Flask-style reporting routes | recon phase-2 files |
+history surgery (EXPLICIT confirmation only).
 
 Usage:
-    python eco_fix.py            # full run
-    python eco_fix.py unhook     # only remove pre-commit hook
-    python eco_fix.py commit     # gitignore fix + index rebuild + commit/push/tag
-    python eco_fix.py patch      # only XSS patch
-    python eco_fix.py report     # only diagnostics
+    python eco_fix.py                     # all safe steps
+    python eco_fix.py verify
+    python eco_fix.py audit
+    python eco_fix.py fix-assistant
+    python eco_fix.py fix-reporting
+    python eco_fix.py recon
+    python eco_fix.py history-surgery CONFIRM
 """
-import re
+import ast
 import subprocess
 import sys
-from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -37,339 +38,580 @@ def ok(m): out(f"[ OK ] {m}")
 def warn(m): out(f"[WARN] {m}")
 def fail(m): out(f"[FAIL] {m}")
 
-def sh(cmd, timeout=900):
+def sh(cmd, timeout=900, input=None):
     return subprocess.run(cmd, cwd=str(ROOT), capture_output=True, text=True,
-                          encoding="utf-8", errors="replace", timeout=timeout)
+                          encoding="utf-8", errors="replace",
+                          timeout=timeout, input=input)
 
 def git(*a, **kw):
     if GIT_EXE is None:
         raise RuntimeError("git.exe not found")
     return sh([GIT_EXE, *a], **kw)
 
-def pymod(m, *a, **kw):
-    return sh([sys.executable, "-m", m, *a], **kw)
-
 # ------------------------------------------------------------- constants ---
-INLINE_COMMENT = re.compile(r"^(?!\s*#)(\S.*?)\s+#.*$")
+CANONICAL_GITIGNORE = """\
+# ==============================================================================
+# eco_nojin .gitignore — canonical (managed by eco_fix.py)
+# ==============================================================================
 
-ROOT_ANCHOR_DIRS = ["benchmarks/", "DELIVERY/", "analysis.json/", "logs/",
-                    "html/", "lib/", "lib64/", "build/", "dist/", "var/",
-                    "parts/", "downloads/", "eggs/", "sdist/", "wheels/",
-                    "develop-eggs/"]
+# --- 1. Environment & secrets ---
+.env
+.env.local
+.env.*.local
+!.env.example
+!.env.template
+secrets/
+*.key
+*.pem
+*.p12
+*.pfx
+*.local
 
-REQUIRED_PATTERNS = [
-    "engine/cpp_core/build*/", "*.iobj", "*.ipdb", "*.pdb", "**/*.tsbuildinfo",
-    ".turbo/", "__pycache__/", "data/*.duckdb", "data/maps/",
-    "data/motors/cache/", "data/_archived_excel_data/",
-    "backups/", "_backups/", ".benchmarks/",
-    ".env", "contracts/.env", "*.local",
-    "*.tmp", "reports/temp_*",
-]
+# --- 2. OS junk ---
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+._*
+.Spotlight-V100
+.Trashes
 
-EXT_ARTIFACTS = (".iobj", ".ipdb", ".pdb", ".tlog", ".lastbuildstate", ".recipe",
-                 ".tsbuildinfo", ".duckdb", ".gpkg", ".tif", ".tiff", ".zip",
-                 ".coverage")
-DIR_ARTIFACTS = ("engine/cpp_core/build", "data/maps/", "data/_archived",
-                 "data/motors/cache", "_backups/", "backups/",
-                 "reports/temp_", ".turbo/")
-INTENT_DIRS = ("benchmarks/", "DELIVERY/", "analysis.json/", "logs/")
+# --- 3. IDE ---
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
 
-CI_SECURITY_YML = """name: Security
+# --- 4. Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+/build/
+/develop-eggs/
+/dist/
+/downloads/
+/eggs/
+/.eggs/
+/parts/
+/sdist/
+/var/
+/wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+venv/
+/env/
+/ENV/
+.ipynb_checkpoints/
+.pytest_cache/
+.tox/
+.nox/
+.coverage
+coverage/
+htmlcov/
+/html/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+.playwright-artifacts/
+frontend/test-results/
+frontend/playwright-report/
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+# --- 5. Node / pnpm / turbo ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+/frontend/dist/
+/frontend/build/
+/frontend/.vite/
+.turbo/
+**/*.tsbuildinfo
 
-jobs:
-  gitleaks:
-    name: gitleaks (detect hardcoded secrets)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout (full history)
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Run gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+# --- 6. C++ engine build outputs ---
+engine/cpp_core/build*/
+*.obj
+*.o
+*.a
+*.lib
+*.exe
+*.dll
+*.dylib
+*.iobj
+*.ipdb
+*.pdb
+*.tlog
+*.lastbuildstate
+*.vcxproj
+*.vcxproj.filters
+*.recipe
+
+# --- 7. Databases & heavy geodata ---
+*.db
+*.db-wal
+*.wal
+*.sqlite
+*.sqlite3
+*.duckdb
+*.tif
+*.tiff
+*.gpkg
+*.nc
+*.h5
+*.hdf
+*.shp
+*.shx
+*.dbf
+*.prj
+*.zst
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.pkl
+
+# --- 8. ML artifacts ---
+*.pt
+*.pth
+*.onnx
+*.bin
+*.safetensors
+
+# --- 9. Project data directories ---
+data/maps/
+data/motors/cache/
+data/_archived_excel_data/
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/copernicus_cache/*
+!data/copernicus_cache/.gitkeep
+ml/models/*
+!ml/models/.gitkeep
+/دیتا دستی اکسل/
+
+# --- 10. Local-only project dirs ---
+/_backups/
+/backups/
+/DELIVERY/
+/_quarantine/
+/analysis.json/
+/benchmarks/
+/.satellite_cache/
+/.cache/
+/.parcel-cache/
+/.benchmarks/
+/logs/
+
+# --- 11. Logs & temp ---
+*.log
+*.log.*
+*.tmp
+reports/temp_*
+
+# --- 12. Blockchain ---
+contracts/artifacts/
+contracts/cache/
+contracts/typechain-types/
+contracts/.env
+
+# --- 13. Docs builds ---
+docs/_build/
+docs/.doctrees/
+
+# --- 14. Legacy migration & tooling artifacts ---
+*.bak
+_one_shot_backup/
+_secret_migration.local.txt
+FIX_REVIEW.md
+FIX_CONTEXT.txt
+.kilo/
+econojin.egg-info/
+.agent_baseline.json
 """
 
-# ---------------------------------------------------- 1. remove the hook ---
-def unhook():
-    out(LINE, "STEP 1 — remove broken pre-commit hook (Windows blocker)", LINE, sep="\n")
-    r = pymod("pre_commit", "uninstall")
-    ok("pre-commit uninstalled") if r.returncode == 0 else \
-        warn(f"pre_commit uninstall rc={r.returncode} (continuing)")
-    hook = ROOT / ".git" / "hooks" / "pre-commit"
-    if hook.exists():
-        try:
-            hook.unlink()
-            ok(".git/hooks/pre-commit removed")
-        except OSError as e:
-            fail(f"cannot remove hook: {e}")
-            return False
+AUDIT_SAMPLES = [
+    "data/eco_nojin_master.duckdb",
+    "data/eco_nojin.duckdb",
+    "data/eco_nojin_analytics.duckdb",
+    "data/maps/M-TOP_3d6aeb1b/contours.gpkg",
+    "data/_archived_excel_data/Weather_Daily.csv",
+    "database/hub/hub.py.phase4.bak",
+    "engine/cpp_core/build2/hydroma_core.sln",
+    ".coverage",
+    "econojin.db-wal",
+    "دیتا دستی اکسل/1787955036.png",
+]
+DANGER_EXT = (".duckdb", ".gpkg", ".tif", ".tiff", ".zst", ".xlsx", ".bak",
+              ".iobj", ".ipdb", ".sqlite", "db-wal", "temp_bomb", ".wal")
+
+FILTER_PATHS = [
+    "data/maps", "data/_archived_excel_data", "data/motors",
+    "data/copernicus_cache", "engine/cpp_core/build2",
+    "_backups", "backups", "DELIVERY",
+    "econojin.db", "econojin.db-wal", "دیتا دستی اکسل",
+]
+FILTER_GLOBS = [
+    "reports/temp_*", "*.duckdb", "*.gpkg", "*.tif", "*.zst", "*.bak",
+    "*.iobj", "*.ipdb", "*.tlog",
+]
+
+# ---------------------------------------------------------------- verify ---
+def verify():
+    out(LINE, "STEP 0 — verify remote state", LINE, sep="\n")
+    git("fetch", "origin", timeout=300)
+    r = git("log", "--oneline", "origin/main..main")
+    unpushed = [l for l in r.stdout.splitlines() if l.strip()]
+    if unpushed:
+        warn(f"{len(unpushed)} unpushed commit(s) — pushing ...")
+        r2 = git("push", "origin", "main")
+        ok("pushed") if r2.returncode == 0 else \
+            fail("push failed: " + (r2.stderr or "")[-400:])
     else:
-        ok("no hook file present")
-    cfg = ROOT / ".pre-commit-config.yaml"
-    if cfg.exists():
-        cfg.unlink()
-        ok(".pre-commit-config.yaml removed (secret scanning moves to CI)")
+        ok("everything pushed to origin/main")
+    st = [l for l in git("status", "--porcelain").stdout.splitlines() if l.strip()]
+    out(f"working-tree entries: {len(st)}")
+    for l in st[:10]:
+        out("    " + l)
+    out("\n" + git("log", "--oneline", "-5").stdout)
     return True
 
-# ---------------------------------------------------- 2. fix .gitignore ---
-def fix_gitignore():
-    out(LINE, "STEP 2 — repair .gitignore", LINE, sep="\n")
+# ---------------------------------------------------------------- audit ----
+def audit():
+    out(LINE, "STEP A — canonical .gitignore + live tests", LINE, sep="\n")
     gi = ROOT / ".gitignore"
-    text = gi.read_text(encoding="utf-8", errors="replace") if gi.exists() else ""
-    fixed, anchored, new_lines = [], [], []
-    for ln in text.splitlines():
-        m = INLINE_COMMENT.match(ln)
-        if m and m.group(1).strip():
-            fixed.append(m.group(1).strip())
-            new_lines.append(m.group(1).rstrip())
+    cur = gi.read_text(encoding="utf-8", errors="replace").replace("\r\n", "\n") \
+        if gi.exists() else ""
+    if cur.strip() == CANONICAL_GITIGNORE.strip():
+        ok(".gitignore already canonical")
+    else:
+        gi.write_text(CANONICAL_GITIGNORE, encoding="utf-8", newline="\n")
+        ok(".gitignore rewritten to canonical version")
+
+    out("\nignore-check on sample heavy paths (untracked → reliable now):")
+    problems = 0
+    for f in AUDIT_SAMPLES:
+        if not (ROOT / f).exists():
             continue
-        s = ln.strip()
-        if s in ROOT_ANCHOR_DIRS and not ln.lstrip().startswith("/"):
-            anchored.append(s)
-            new_lines.append("/" + s)
-            continue
-        new_lines.append(ln)
-    if fixed:
-        ok(f"fixed {len(fixed)} dead pattern(s) — inline '#' comments are NOT valid:")
-        for f in fixed:
-            out(f"    {f}")
-    if anchored:
-        ok(f"root-anchored {len(anchored)} dir pattern(s) — protects nested dirs like tests/benchmarks/:")
-        for a in anchored:
-            out(f"    {a}  ->  /{a}")
-    present = {ln.strip() for ln in new_lines}
-    missing = [p for p in REQUIRED_PATTERNS if p not in present]
-    if missing:
-        new_lines += ["", "# --- eco_fix v3 ---"] + missing
-        ok(f"appended {len(missing)} pattern(s): {', '.join(missing)}")
-    gi.write_text("\n".join(new_lines) + "\n", encoding="utf-8", newline="\n")
-    ok(".gitignore written")
-    return True
+        r = git("check-ignore", "-v", "--", f)
+        if r.returncode == 0 and r.stdout.strip():
+            out(f"    IGNORED   {f}")
+        else:
+            problems += 1
+            warn(f"    NOT IGNORED: {f}")
+    if problems:
+        fail(f"{problems} sample path(s) not ignored — report this output")
+    else:
+        ok("all sample heavy paths ignored")
 
-# ------------------------------------------------- 3. CI security workflow -
-def ensure_ci():
-    out(LINE, "STEP 3 — CI-side secret scanning (GitHub Actions)", LINE, sep="\n")
-    wf_dir = ROOT / ".github" / "workflows"
-    wf_dir.mkdir(parents=True, exist_ok=True)
-    wf = wf_dir / "security.yml"
-    if wf.exists():
-        ok(".github/workflows/security.yml already exists (left untouched)")
-        return True
-    wf.write_text(CI_SECURITY_YML, encoding="utf-8", newline="\n")
-    ok("created .github/workflows/security.yml (gitleaks on every push/PR)")
-    return True
+    out("\ntracked-stray check (db / manual-data / sqlite / zst):")
+    strays = []
+    for f in (l.strip() for l in git("ls-files").stdout.splitlines() if l.strip()):
+        p = f.replace("\\", "/")
+        if (p.startswith("econojin.db") or p.startswith("دیتا دستی اکسل/")
+                or p.lower().endswith((".sqlite", ".zst"))):
+            strays.append(f)
+    for f in strays:
+        git("rm", "--cached", "--", f)
+        out("    untracked stray: " + f)
+    ok("no tracked strays") if not strays else \
+        ok(f"{len(strays)} stray(s) untracked (stay on disk)")
 
-# ------------------------------------------------ 4. rebuild + commit -----
-def is_artifact(p):
-    p = p.replace("\\", "/")
-    return p.lower().endswith(EXT_ARTIFACTS) or any(d in p for d in DIR_ARTIFACTS)
-
-def is_user_intent(p):
-    return p.replace("\\", "/").startswith(INTENT_DIRS)
-
-def commit_cleanup():
-    out(LINE, "STEP 4 — rebuild index, commit, push, tag", LINE, sep="\n")
-    if not (ROOT / ".git").exists():
-        fail("no .git directory")
+    out("\nbehavioral test — 'git add --dry-run .':")
+    r = git("add", "--dry-run", ".")
+    would = [l.strip() for l in (r.stdout or "").splitlines() if l.strip()]
+    dangers = [l for l in would if any(d in l.lower() for d in DANGER_EXT)]
+    out(f"    files that would be added: {len(would)}")
+    for l in would[:25]:
+        out("    " + l)
+    if len(would) > 25:
+        out(f"    ... and {len(would) - 25} more")
+    if dangers:
+        fail("DANGER — heavy files would be re-added:")
+        for l in dangers[:20]:
+            out("    " + l)
         return False
-    ok("git " + git("--version").stdout.strip())
+    ok("no heavy file would be re-added by 'git add .'")
 
-    out("rebuilding index — may take a minute or two ...")
-    git("rm", "-r", "--cached", ".")
-    git("add", ".")
-
-    r = git("diff", "--cached", "--name-only", "--diff-filter=D")
-    deletions = [l.strip() for l in r.stdout.splitlines() if l.strip()]
-    on_disk = [f for f in deletions if (ROOT / f).exists()]
-    out(f"staged deletions: {len(deletions)} | real files on disk: {len(on_disk)}")
-
-    keep, drop_i = [], []
-    for f in on_disk:
-        if not is_artifact(f) and not is_user_intent(f):
-            keep.append(f)
-        elif is_user_intent(f):
-            drop_i.append(f)
-    for f in keep:
-        rr = git("add", "-f", "--", f)
-        if rr.returncode != 0:
-            fail(f"git add -f failed: {f}")
-            return False
-    ok(f"kept tracked (source/placeholder files): {len(keep)}")
-    for f in keep:
-        out("    + " + f)
-    out(f"untracked by YOUR ignore-intent (stay on disk, not in git): {len(drop_i)}")
-    for f in drop_i:
-        out("    ~ " + f)
-
-    r = git("diff", "--cached", "--name-only", "--diff-filter=D")
-    bad = [f for f in r.stdout.splitlines() if f.strip()
-           and (ROOT / f).exists()
-           and not is_artifact(f) and not is_user_intent(f)]
-    if bad:
-        fail(f"{len(bad)} real files still untracked — ABORT:")
-        for f in bad[:40]:
-            out("    " + f)
-        return False
-    ok("safety check passed")
-
-    git("add", ".")
-    r = git("commit", "-m",
-            "chore: repair .gitignore syntax, untrack build artifacts, heavy "
-            "data, backups and stale temp files; add CI security workflow")
+    git("add", "--", ".gitignore", "eco_fix.py")
+    r = git("commit", "-m", "chore: canonical .gitignore; update automation script")
     if r.returncode == 0:
-        ok("cleanup commit created")
+        ok("gitignore commit created")
+        r2 = git("push", "origin", "main")
+        ok("pushed") if r2.returncode == 0 else \
+            warn("push failed — run: python eco_fix.py verify")
     elif "nothing to commit" in (r.stdout + r.stderr):
-        ok("nothing to commit (already done)")
+        ok("nothing to commit")
     else:
-        warn("commit failed:")
-        out((r.stdout + r.stderr)[-800:])
-        return False
-
-    r = git("push", "origin", "main")
-    if r.returncode == 0:
-        ok("pushed origin/main")
-    else:
-        warn("push failed — push manually later with: git push origin main")
-        out((r.stderr or r.stdout)[-500:])
-
-    if git("tag", "v0.2-clean").returncode == 0:
-        git("push", "origin", "v0.2-clean")
-        ok("tag v0.2-clean created & pushed")
-    else:
-        warn("tag v0.2-clean not created (already exists?)")
-    out("\n" + git("log", "--oneline", "-3").stdout)
+        warn("commit failed: " + (r.stdout + r.stderr)[-500:])
     return True
 
-# ------------------------------------------------------- 5. XSS patch -----
-EDITOR = ROOT / "frontend" / "packages" / "ui" / "src" / "primitives" / "rich-text-editor.tsx"
-EDITOR_GIT = "frontend/packages/ui/src/primitives/rich-text-editor.tsx"
+# --------------------------------------------------------- fix-assistant ---
+ASSISTANT = ROOT / "services" / "ai" / "admin_assistant.py"
+A_OLD = "    from database import models  # noqa: F401\nfrom database.hub import hub"
+A_NEW = "    from database import models  # noqa: F401\n    from database.hub import hub"
 
-REACT_IMPORT = "import { useRef } from 'react'"
-DOMPURIFY_IMPORT = "import DOMPurify from 'dompurify'"
-SANITIZE_CONFIG = (
-    "\nconst SANITIZE_CONFIG = {\n"
-    "  ALLOWED_TAGS: ['b', 'strong', 'i', 'em', 'u', 's', 'strike', 'del',\n"
-    "                 'ul', 'ol', 'li', 'br', 'p', 'div', 'span'],\n"
-    "  ALLOWED_ATTR: ['style', 'align'],\n"
-    "}\n"
-)
-OLD_SYNC = ("  const sync = () => {\n"
-            "    if (editorRef.current) onChange(editorRef.current.innerHTML)\n"
-            "  }")
-NEW_SYNC = ("  const sync = () => {\n"
-            "    if (editorRef.current) {\n"
-            "      onChange(DOMPurify.sanitize(editorRef.current.innerHTML, SANITIZE_CONFIG))\n"
-            "    }\n"
-            "  }")
-OLD_DSI = "dangerouslySetInnerHTML={{ __html: value }}"
-NEW_DSI = "dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(value, SANITIZE_CONFIG) }}"
-
-def patch_editor():
-    out(LINE, "STEP 5 — XSS patch (input + render paths)", LINE, sep="\n")
-    if not EDITOR.exists():
-        fail("editor file not found")
-        return False
-    with open(EDITOR, "r", encoding="utf-8", newline="") as f:
+def fix_assistant():
+    out(LINE, "STEP B — admin_assistant.py syntax fix", LINE, sep="\n")
+    if not ASSISTANT.exists():
+        fail("file not found"); return False
+    with open(ASSISTANT, "r", encoding="utf-8", newline="") as f:
         raw = f.read()
     crlf = "\r\n" in raw
     text = raw.replace("\r\n", "\n")
 
-    out("--- current file (full) ---")
-    for i, ln in enumerate(text.splitlines(), 1):
-        out(f"{i:4d}| {ln}")
-    out("--- end of file ---")
-
-    if "DOMPurify" in text:
-        ok("already patched")
-        return True
-    if REACT_IMPORT not in text:
-        fail("anchor 'import { useRef }' not found — paste the file above for me")
+    if A_OLD in text:
+        text = text.replace(A_OLD, A_NEW, 1)
+        ok("indentation repaired (line ~362: 'from database.hub import hub')")
+    elif A_NEW in text:
+        ok("indentation already correct")
+    else:
+        fail("anchor not found — lines 355-375:")
+        for i, ln in enumerate(text.splitlines()[354:375], 355):
+            out(f"{i:4d}| {ln}")
         return False
 
-    text = text.replace(REACT_IMPORT,
-                        REACT_IMPORT + "\n" + DOMPURIFY_IMPORT + SANITIZE_CONFIG, 1)
-    applied = ["import"]
-    if OLD_SYNC in text:
-        text = text.replace(OLD_SYNC, NEW_SYNC, 1)
-        applied.append("sync()")
-    else:
-        warn("sync() block not matched — input-side NOT patched")
-    if OLD_DSI in text:
-        text = text.replace(OLD_DSI, NEW_DSI, 1)
-        applied.append("render")
-    else:
-        warn("dangerouslySetInnerHTML not matched — render-side NOT patched")
+    try:
+        ast.parse(text)
+        ok("file parses cleanly now")
+    except SyntaxError as e:
+        fail(f"STILL broken — line {e.lineno}: {e.msg}")
+        lines = text.splitlines()
+        ln = e.lineno or 1
+        for i in range(max(0, ln - 12), min(len(lines), ln + 11)):
+            out(f"{i+1:4d}| {lines[i]}")
+        out(">>> NOT committed; report this output")
+        return False
 
-    with open(EDITOR, "w", encoding="utf-8", newline="") as f:
+    with open(ASSISTANT, "w", encoding="utf-8", newline="") as f:
         f.write(text.replace("\n", "\r\n") if crlf else text)
-    ok("patched: " + ", ".join(applied))
-    out("\ngit diff:\n" + (git("diff", "--", EDITOR_GIT).stdout[:2500] or "(none)"))
-
-    if not ({"sync()", "render"} & set(applied)):
-        warn("nothing critical applied — not committing")
-        return False
-    git("add", "--", "frontend/packages/ui")
-    for line in git("status", "--porcelain").stdout.splitlines():
-        p = line[3:].strip().strip('"')
-        if "pnpm-lock.yaml" in p:
-            git("add", "--", p)
-    r = git("commit", "-m", "fix(ui): sanitize rich-text-editor HTML (XSS, input+render)")
+    git("add", "--", "services/ai/admin_assistant.py")
+    r = git("commit", "-m",
+            "fix(ai): repair lost indentation causing SyntaxError in admin_assistant")
     if r.returncode == 0:
-        ok("editor fix committed")
+        ok("committed")
         git("push", "origin", "main")
     else:
-        warn("commit failed:")
-        out((r.stdout + r.stderr)[-800:])
+        warn("commit failed: " + (r.stdout + r.stderr)[-400:])
     return True
 
-# ------------------------------------------------------- 6. diagnostics ---
-def report():
-    out(LINE, "STEP 6 — diagnostics", LINE, sep="\n")
-    out("remotes:\n" + (git("remote", "-v").stdout.strip() or "(none!)"))
-    files = [l.strip() for l in git("ls-files").stdout.splitlines() if l.strip()]
-    out(f"tracked files: {len(files)}")
-    cnt = Counter(Path(f).suffix.lower() or "(no-ext)" for f in files)
-    out("tracked files by extension (top 25):")
-    for ext, n in cnt.most_common(25):
-        out(f"    {ext:12s} {n}")
-    for pattern in (".zst", ".bak", ".csv", ".xlsx", ".zip", ".log"):
-        hits = [f for f in files if f.lower().endswith(pattern)]
-        if hits:
-            out(f"still tracked {pattern}: {len(hits)} file(s), e.g.:")
-            for h in hits[:5]:
-                out("    " + h)
-    out("repo object store size (includes full history):")
-    out(git("count-objects", "-vH").stdout.strip())
-    out(f"hook present: {(ROOT / '.git' / 'hooks' / 'pre-commit').exists()} | "
-        f"tag v0.2-clean: {bool(git('tag', '-l', 'v0.2-clean').stdout.strip())}")
+# --------------------------------------------------------- fix-reporting ---
+REPORTING = ROOT / "services" / "reporting" / "api" / "__init__.py"
+R_REPL = [
+    ('"/<report_id>/generate"', '"/{report_id}/generate"'),
+    ('"/<report_id>"', '"/{report_id}"'),
+]
 
+def fix_reporting():
+    out(LINE, "STEP C — reporting routes: Flask <param> → FastAPI {param}", LINE, sep="\n")
+    if not REPORTING.exists():
+        fail("file not found"); return False
+    with open(REPORTING, "r", encoding="utf-8", newline="") as f:
+        raw = f.read()
+    crlf = "\r\n" in raw
+    text = raw.replace("\r\n", "\n")
+
+    applied = []
+    for old, new in R_REPL:
+        if old in text:
+            text = text.replace(old, new)
+            applied.append(old)
+    if applied:
+        ok(f"replaced {len(applied)} route pattern(s)")
+    elif "{report_id}" in text:
+        ok("routes already FastAPI-style")
+    else:
+        warn("no <report_id> patterns found — file changed?")
+
+    try:
+        ast.parse(text)
+    except SyntaxError as e:
+        fail(f"parse failed after edit (line {e.lineno}: {e.msg}) — NOT written")
+        return False
+
+    if applied:
+        with open(REPORTING, "w", encoding="utf-8", newline="") as f:
+            f.write(text.replace("\n", "\r\n") if crlf else text)
+        git("add", "--", "services/reporting/api/__init__.py")
+        r = git("commit", "-m",
+                "fix(reporting): convert Flask-style <report_id> routes to FastAPI {report_id}")
+        if r.returncode == 0:
+            ok("committed")
+            git("push", "origin", "main")
+        else:
+            warn("commit failed: " + (r.stdout + r.stderr)[-400:])
+    return True
+
+# ----------------------------------------------------------------- recon ---
+def recon():
+    out(LINE, "STEP D — recon (read-only) for next phase", LINE, sep="\n")
+    p = ROOT / "services" / "reporting" / "service.py"
+    if p.exists():
+        lines = p.read_text(encoding="utf-8", errors="replace").splitlines()
+        out(f"--- services/reporting/service.py (first 70 of {len(lines)}) ---")
+        for i, ln in enumerate(lines[:70], 1):
+            out(f"{i:4d}| {ln}")
+    else:
+        warn("reporting/service.py not found")
+
+    hp = ROOT / "database" / "hub" / "hub.py"
+    if hp.exists():
+        lines = hp.read_text(encoding="utf-8", errors="replace").splitlines()
+        idx = [i for i, ln in enumerate(lines) if "def get_session" in ln]
+        if idx:
+            i = idx[0]
+            out(f"\n--- database/hub/hub.py around get_session (line {i+1}) ---")
+            for j in range(max(0, i - 10), min(len(lines), i + 25)):
+                out(f"{j+1:4d}| {lines[j]}")
+            if lines[i].lstrip().startswith("async def"):
+                out(">>> get_session is ASYNC — reporting's sync 'with' is incompatible!")
+            else:
+                out(">>> get_session is SYNC — but reporting types it as AsyncSession.")
+        else:
+            warn("get_session not found in hub.py")
+    else:
+        warn("database/hub/hub.py not found")
+
+    out("\ntracked-file census (surgery planning):")
+    files = [l.strip() for l in git("ls-files").stdout.splitlines() if l.strip()]
+    for pat in ("econojin.db", "db-wal", "دیتا دستی", "sandbox/", ".zst",
+                ".sqlite", ".xlsx"):
+        hits = [f for f in files if pat.lower() in f.lower()]
+        out(f"    '{pat}': {len(hits)} tracked" + (f"  e.g. {hits[:3]}" if hits else ""))
+    out("\ncount-objects:\n" + git("count-objects", "-vH").stdout)
+    return True
+
+# ------------------------------------------------------- history surgery ---
+def history_surgery(confirm=None):
+    out(LINE, "STEP E — history surgery (git filter-repo)", LINE, sep="\n")
+    if confirm != "CONFIRM":
+        out("""This REWRITES history to drop heavy blobs: 4 versions of
+master.duckdb (~122 MiB), build2 (~45 MiB), maps, xlsx, .bak files,
+~1856 temp ghosts, econojin.db-wal, Persian manual-data dir.
+Current pack: 88.69 MiB → expected ~10-20 MiB.
+
+Consequences: ALL commit SHAs change; remote is force-pushed.
+A full backup bundle is created first (eco_nojin_pre_surgery.bundle).
+
+If you accept, run EXACTLY:
+    python eco_fix.py history-surgery CONFIRM""")
+        return False
+
+    st = [l for l in git("status", "--porcelain").stdout.splitlines() if l.strip()]
+    dirty = [l for l in st if l[3:].strip().strip('"') != "eco_fix.py"]
+    if dirty:
+        fail("working tree not clean — commit/stash first: " + str(dirty[:5]))
+        return False
+    git("fetch", "origin", timeout=300)
+    r = git("log", "--oneline", "origin/main..main")
+    if [l for l in r.stdout.splitlines() if l.strip()]:
+        fail("unpushed commits — push first"); return False
+    ok("tree clean & everything pushed")
+
+    url = git("remote", "get-url", "origin").stdout.strip()
+    if not url:
+        fail("no origin remote"); return False
+    ok("remote: " + url)
+
+    bundle = ROOT.parent / "eco_nojin_pre_surgery.bundle"
+    r = git("bundle", "create", str(bundle), "--all")
+    if r.returncode != 0:
+        fail("bundle failed: " + r.stderr[-300:]); return False
+    ok(f"backup bundle: {bundle} ({bundle.stat().st_size/1048576:.1f} MiB)")
+
+    r = sh([sys.executable, "-m", "pip", "install", "-q", "git-filter-repo"],
+           timeout=600)
+    if r.returncode != 0:
+        fail("pip install git-filter-repo failed: " + (r.stderr or "")[-300:])
+        return False
+    ok("git-filter-repo ready")
+
+    fr = ROOT / ".venv" / "Scripts" / "git-filter-repo.exe"
+    cmd = [str(fr)] if fr.exists() else [sys.executable, "-m", "git_filter_repo"]
+    args = cmd + ["--force", "--invert-paths"]
+    for pth in FILTER_PATHS:
+        args += ["--path", pth]
+    for g in FILTER_GLOBS:
+        args += ["--path-glob", g]
+    out("running filter-repo (minutes) ...")
+    try:
+        r = sh(args, timeout=3600)
+    except subprocess.TimeoutExpired:
+        fail("filter-repo timed out"); return False
+    if r.returncode != 0:
+        fail("filter-repo failed: " + (r.stdout + r.stderr)[-800:]); return False
+    ok("history rewritten")
+
+    git("remote", "add", "origin", url)
+    if git("remote", "get-url", "origin").returncode != 0:
+        fail("could not re-add origin — run: git remote add origin " + url)
+        return False
+    ok("origin re-added (filter-repo strips remotes)")
+
+    for gk in ("data/copernicus_cache/.gitkeep",):
+        p = ROOT / gk
+        if not p.exists():
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.touch()
+            out("restored placeholder: " + gk)
+    for gk in ("data/raw/.gitkeep", "data/processed/.gitkeep",
+               "ml/models/.gitkeep", "data/copernicus_cache/.gitkeep"):
+        if (ROOT / gk).exists():
+            git("add", "--", gk)
+    r = git("commit", "-m", "chore: restore placeholder files after history surgery")
+    ok("placeholders committed") if r.returncode == 0 else \
+        ok("no placeholder commit needed")
+
+    r = git("push", "--force", "origin", "--all")
+    ok("branches force-pushed") if r.returncode == 0 else \
+        warn("branch push failed: " + r.stderr[-300:])
+    r = git("push", "--force", "origin", "--tags")
+    ok("tags force-pushed") if r.returncode == 0 else \
+        warn("tag push failed: " + r.stderr[-300:])
+
+    out("\ncount-objects after surgery:\n" + git("count-objects", "-vH").stdout)
+    files = [l for l in git("ls-files").stdout.splitlines() if l.strip()]
+    out(f"tracked files: {len(files)}")
+    out("log:\n" + git("log", "--oneline", "-3").stdout)
+    out("NOTE: GitHub keeps old objects server-side until its GC runs —")
+    out("remote size may lag. Fine for a private single-dev repo.")
+    return True
+
+# ------------------------------------------------------------------ main ---
 def main():
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     except Exception:
         pass
     cmd = sys.argv[1] if len(sys.argv) > 1 else "all"
+    arg2 = sys.argv[2] if len(sys.argv) > 2 else None
+    steps = {"verify": verify, "audit": audit, "recon": recon,
+             "fix-assistant": fix_assistant, "fix-reporting": fix_reporting}
     if cmd == "all":
-        for fn in (unhook, fix_gitignore, ensure_ci, commit_cleanup, patch_editor):
-            if fn() is False:
-                fail(f"aborted in {fn.__name__}() — re-run or report output")
-                break
-        report()
-    elif cmd == "unhook": unhook()
-    elif cmd == "commit":
-        for fn in (fix_gitignore, ensure_ci, commit_cleanup):
-            if fn() is False:
-                break
-    elif cmd == "patch": patch_editor()
-    elif cmd == "report": report()
+        verify()
+        if audit():
+            fix_assistant()
+            fix_reporting()
+        recon()
+    elif cmd == "history-surgery":
+        history_surgery(arg2)
+    elif cmd in steps:
+        steps[cmd]()
     else:
         out(__doc__)
 

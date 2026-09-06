@@ -1,10 +1,8 @@
 # ==============================================================================
-# eco_nojin .gitignore (Optimized by Senior Architect)
+# eco_nojin .gitignore — canonical (managed by eco_fix.py)
 # ==============================================================================
 
-# ------------------------------------------------------------------------------
-# 1. Environment & Secrets (بالاترین اولویت امنیتی)
-# ------------------------------------------------------------------------------
+# --- 1. Environment & secrets ---
 .env
 .env.local
 .env.*.local
@@ -15,22 +13,18 @@ secrets/
 *.pem
 *.p12
 *.pfx
+*.local
 
-# ------------------------------------------------------------------------------
-# 2. System & OS Files
-# ------------------------------------------------------------------------------
+# --- 2. OS junk ---
 .DS_Store
-.DS_Store?
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 ._*
 .Spotlight-V100
 .Trashes
-ehthumbs.db
-Thumbs.db
-Desktop.ini
 
-# ------------------------------------------------------------------------------
-# 3. IDE & Editors
-# ------------------------------------------------------------------------------
+# --- 3. IDE ---
 .vscode/
 !.vscode/settings.json
 !.vscode/extensions.json
@@ -44,9 +38,7 @@ Desktop.ini
 *.sublime-project
 *.sublime-workspace
 
-# ------------------------------------------------------------------------------
-# 4. Python
-# ------------------------------------------------------------------------------
+# --- 4. Python ---
 __pycache__/
 *.py[cod]
 *$py.class
@@ -57,9 +49,7 @@ __pycache__/
 /dist/
 /downloads/
 /eggs/
-.eggs/
-/lib/
-/lib64/
+/.eggs/
 /parts/
 /sdist/
 /var/
@@ -69,123 +59,16 @@ __pycache__/
 *.egg
 .venv/
 venv/
-ENV/
-env/
-
-# Jupyter Notebook (مهم برای پوشه ml/notebooks)
+/env/
+/ENV/
 .ipynb_checkpoints/
-
-# ------------------------------------------------------------------------------
-# 5. Node.js / pnpm / Frontend Build
-# ------------------------------------------------------------------------------
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-.pnpm-store/
-
-frontend/dist/
-frontend/build/
-frontend/.vite/
-
-# ------------------------------------------------------------------------------
-# 6. C++ Engine Build Outputs (موتور Hydroma)
-# ------------------------------------------------------------------------------
-engine/cpp_core/build2/
-*.obj
-*.o
-*.a
-*.lib
-*.exe
-*.dll
-*.so
-*.dylib
-*.iobj
-*.ipdb
-*.pdb
-*.tlog
-*.lastbuildstate
-*.vcxproj
-*.recipe
-
-# ------------------------------------------------------------------------------
-# 7. Database & Heavy Binary Data (جلوگیری از فاجعه حجم ریپازیتوری)
-# ------------------------------------------------------------------------------
-# دیتابیس‌ها
-*.db
-*.sqlite
-*.sqlite3
-*.duckdb
-
-# فایل‌های جغرافیایی و رستری حجیم
-*.tif
-*.tiff
-*.nc
-*.h5
-*.hdf
-*.gpkg
-*.shp
-*.shx
-*.dbf
-*.prj
-
-# فایل‌های فشرده و دیتای خام
-*.zip
-*.tar.gz
-*.rar
-*.7z
-*.pkl
-
-# ------------------------------------------------------------------------------
-# 8. ML Models & Datasets (وزن‌های آموزش دیده)
-# ------------------------------------------------------------------------------
-*.pt
-*.pth
-*.onnx
-*.bin
-*.safetensors
-ml/models/
-data/raw/
-data/processed/
-
-# ------------------------------------------------------------------------------
-# 9. Project Specific Directories (پوشه‌های زباله‌دان و موقت پروژه)
-# ------------------------------------------------------------------------------
-# بکاپ‌های دستی (نباید در گیت باشند)
-_backups/
-backups/
-/DELIVERY/
-
-# قرنطینه و اسکنرهای قدیمی
-_quarantine/
-/analysis.json/
-
-# کش‌های پردازشی
-data/copernicus_cache/
-data/maps/cache/
-.satellite_cache/
-.cache/
-.parcel-cache/
-.turbo/
-
-# ------------------------------------------------------------------------------
-# 10. Logs & Reports
-# ------------------------------------------------------------------------------
-*.log
-/logs/
-*.log.*
-/benchmarks/
-
-# ------------------------------------------------------------------------------
-# 11. Testing & Coverage Artifacts
-# ------------------------------------------------------------------------------
-coverage/
-.coverage
-htmlcov/
 .pytest_cache/
 .tox/
 .nox/
+.coverage
+coverage/
+htmlcov/
+/html/
 test-results/
 playwright-report/
 blob-report/
@@ -193,65 +76,118 @@ playwright/.cache/
 .playwright-artifacts/
 frontend/test-results/
 frontend/playwright-report/
-/html/
 
-# ------------------------------------------------------------------------------
-# 12. Blockchain (Hardhat & Secrets)
-# ------------------------------------------------------------------------------
+# --- 5. Node / pnpm / turbo ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+/frontend/dist/
+/frontend/build/
+/frontend/.vite/
+.turbo/
+**/*.tsbuildinfo
+
+# --- 6. C++ engine build outputs ---
+engine/cpp_core/build*/
+*.obj
+*.o
+*.a
+*.lib
+*.exe
+*.dll
+*.dylib
+*.iobj
+*.ipdb
+*.pdb
+*.tlog
+*.lastbuildstate
+*.vcxproj
+*.vcxproj.filters
+*.recipe
+
+# --- 7. Databases & heavy geodata ---
+*.db
+*.db-wal
+*.wal
+*.sqlite
+*.sqlite3
+*.duckdb
+*.tif
+*.tiff
+*.gpkg
+*.nc
+*.h5
+*.hdf
+*.shp
+*.shx
+*.dbf
+*.prj
+*.zst
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.pkl
+
+# --- 8. ML artifacts ---
+*.pt
+*.pth
+*.onnx
+*.bin
+*.safetensors
+
+# --- 9. Project data directories ---
+data/maps/
+data/motors/cache/
+data/_archived_excel_data/
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/copernicus_cache/*
+!data/copernicus_cache/.gitkeep
+ml/models/*
+!ml/models/.gitkeep
+/دیتا دستی اکسل/
+
+# --- 10. Local-only project dirs ---
+/_backups/
+/backups/
+/DELIVERY/
+/_quarantine/
+/analysis.json/
+/benchmarks/
+/.satellite_cache/
+/.cache/
+/.parcel-cache/
+/.benchmarks/
+/logs/
+
+# --- 11. Logs & temp ---
+*.log
+*.log.*
+*.tmp
+reports/temp_*
+
+# --- 12. Blockchain ---
 contracts/artifacts/
 contracts/cache/
 contracts/typechain-types/
 contracts/.env
 
-# ------------------------------------------------------------------------------
-# 13. Documentation Build
-# ------------------------------------------------------------------------------
+# --- 13. Docs builds ---
 docs/_build/
 docs/.doctrees/
-# ── Database migration backups ──────────────────────────────
-*.phase1.bak
-*.phase2.bak
-*.phase3.bak
-*.base_fix.bak
-*.final.bak
-*.final_fix.bak
-*.fixtures.bak
-*.patch.bak
-*.sql.bak
-*.surgical.bak
-*.security.bak
-*.final_rebuild.bak
-# one_shot_fix
+
+# --- 14. Legacy migration & tooling artifacts ---
+*.bak
 _one_shot_backup/
 _secret_migration.local.txt
 FIX_REVIEW.md
-
-# fix tooling
 FIX_CONTEXT.txt
-
-# tooling / local artifacts (fix_v4)
 .kilo/
 econojin.egg-info/
 .agent_baseline.json
-
-# Temp files (generated by chaos test scripts)
-*.tmp
-reports/temp_*
-# Temp files (chaos-test output)
-*.tmp
-reports/temp_*
-
-# --- eco_fix ---
-engine/cpp_core/build*/
-**/*.tsbuildinfo
-data/*.duckdb
-data/motors/cache/
-data/_archived_excel_data/
-.benchmarks/
-
-# --- eco_fix v3 ---
-data/maps/
-*.local
-
-# --- eco_fix v4 ---
-*.bak
