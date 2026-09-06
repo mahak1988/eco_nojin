@@ -1,5 +1,12 @@
 import { cn } from '@eco/utils'
 import { useRef } from 'react'
+import DOMPurify from 'dompurify'
+const SANITIZE_CONFIG = {
+  ALLOWED_TAGS: ['b', 'strong', 'i', 'em', 'u', 's', 'strike', 'del',
+                 'ul', 'ol', 'li', 'br', 'p', 'div', 'span'],
+  ALLOWED_ATTR: ['style', 'align'],
+}
+
 
 export type RichTextEditorProps = {
   value: string
@@ -23,7 +30,9 @@ export function RichTextEditor({
   }
 
   const sync = () => {
-    if (editorRef.current) onChange(editorRef.current.innerHTML)
+    if (editorRef.current) {
+      onChange(DOMPurify.sanitize(editorRef.current.innerHTML, SANITIZE_CONFIG))
+    }
   }
 
   const ToolbarButton = ({
@@ -62,7 +71,7 @@ export function RichTextEditor({
         suppressContentEditableWarning
         onInput={sync}
         onBlur={sync}
-        dangerouslySetInnerHTML={{ __html: value }}
+        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(value, SANITIZE_CONFIG) }}
         className="min-h-[120px] p-3 text-sm text-ink outline-none"
         data-placeholder={placeholder}
       />
