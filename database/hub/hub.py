@@ -27,9 +27,9 @@ Usage:
 Author: Eco Nojin Architecture Team
 """
 
-from typing import Optional, Any, Generator
+from typing import Optional, Any, AsyncGenerator, Generator
 from pathlib import Path
-from contextlib import contextmanager
+from contextlib import asynccontextmanager, contextmanager
 import os
 import logging
 
@@ -74,6 +74,8 @@ class DataHub:
         self._duckdb_connection = None
         self._sqlalchemy_engine = None
         self._session_factory = None
+        self._async_engine = None
+        self._async_session_factory = None
         self._redis_client = None
 
         # Data paths
@@ -151,6 +153,75 @@ class DataHub:
             raise
         finally:
             session.close()
+
+    def get_async_engine(self) -> Any:
+        """Get async SQLAlchemy engine (additive — sync paths untouched)."""
+        if getattr(self, "_async_engine", None) is None:
+            from sqlalchemy.ext.asyncio import create_async_engine
+
+            database_url = os.environ.get(
+                "DATABASE_URL",
+                f"sqlite:///{self.main_sqlite}",
+            )
+
+            # translate sync driver scheme -> async driver
+            if database_url.startswith("sqlite:///"):
+                async_url = database_url.replace(
+                    "sqlite:///", "sqlite+aiosqlite:///", 1)
+            elif database_url.startswith("postgresql://"):
+                async_url = database_url.replace(
+                    "postgresql://", "postgresql+psycopg://", 1)
+            elif database_url.startswith("postgres://"):
+                async_url = database_url.replace(
+                    "postgres://", "postgresql+psycopg://", 1)
+            else:
+                async_url = database_url  # assume async-capable already
+
+            self._async_engine = create_async_engine(
+                async_url,
+                echo=False,
+                pool_pre_ping=True,
+            )
+            logger.info(f"Async SQLAlchemy engine created: {async_url}")
+
+        return self._async_engine
+
+    def get_async_session_factory(self) -> Any:
+        """Get async session factory."""
+        if getattr(self, "_async_session_factory", None) is None:
+            from sqlalchemy.ext.asyncio import async_sessionmaker
+
+            engine = self.get_async_engine()
+            self._async_session_factory = async_sessionmaker(
+                bind=engine,
+                expire_on_commit=False,
+                autoflush=False,
+            )
+            logger.info("Async session factory created")
+
+        return self._async_session_factory
+
+    @asynccontextmanager
+    async def get_async_session(self) -> AsyncGenerator[Any, None]:
+        """
+        Get an async session with automatic transaction management.
+
+        Usage:
+            async with hub.get_async_session() as session:
+                result = await session.execute(select(User))
+        """
+        factory = self.get_async_session_factory()
+        session = factory()
+
+        try:
+            yield session
+            await session.commit()
+        except Exception as e:
+            await session.rollback()
+            logger.error(f"Async transaction failed: {e}")
+            raise
+        finally:
+            await session.close()
 
     def get_duckdb(self, database: str = "master") -> Any:
         """
