@@ -297,7 +297,7 @@ router = APIRouter(
 # ═══════════════════════════════════════════════════════════════════
 
 @router.get("/health", response_model=HealthResponse)
-async def health_check(db: Session = Depends(get_db)):
+def health_check(db: Session = Depends(get_db)):
     """
     Health check endpoint.
     
@@ -331,7 +331,7 @@ async def health_check(db: Session = Depends(get_db)):
 
 
 @router.get("/statistics", response_model=StatisticsResponse)
-async def get_statistics(db: Session = Depends(get_db)):
+def get_statistics(db: Session = Depends(get_db)):
     """
     Get comprehensive system statistics.
     
@@ -377,7 +377,7 @@ async def get_statistics(db: Session = Depends(get_db)):
 # ═══════════════════════════════════════════════════════════════════
 
 @router.get("/materials", response_model=list[MaterialResponse])
-async def list_materials(
+def list_materials(
     category: str | None = Query(None, description="Filter by category"),
     arid_only: bool = Query(False, description="Only arid-suitable materials"),
     min_priority: int = Query(0, ge=0, le=10, description="Minimum arid priority score"),
@@ -441,7 +441,7 @@ async def list_materials(
 
 
 @router.get("/materials/arid-priority", response_model=list[MaterialResponse])
-async def list_arid_priority_materials(
+def list_arid_priority_materials(
     min_score: int = Query(9, ge=1, le=10),
     db: Session = Depends(get_db),
 ):
@@ -496,7 +496,7 @@ async def list_arid_priority_materials(
 
 
 @router.get("/materials/{material_code}", response_model=MaterialResponse)
-async def get_material(material_code: str, db: Session = Depends(get_db)):
+def get_material(material_code: str, db: Session = Depends(get_db)):
     """
     Get detailed information about a specific material.
     
@@ -552,7 +552,7 @@ async def get_material(material_code: str, db: Session = Depends(get_db)):
 # ═══════════════════════════════════════════════════════════════════
 
 @router.get("/soils", response_model=list[SoilTypeResponse])
-async def list_soil_types(db: Session = Depends(get_db)):
+def list_soil_types(db: Session = Depends(get_db)):
     """List all soil types."""
     import json
 
@@ -589,7 +589,7 @@ async def list_soil_types(db: Session = Depends(get_db)):
 
 
 @router.get("/soils/{soil_code}", response_model=SoilTypeResponse)
-async def get_soil_type(soil_code: str, db: Session = Depends(get_db)):
+def get_soil_type(soil_code: str, db: Session = Depends(get_db)):
     """Get detailed information about a specific soil type."""
     import json
 
@@ -704,7 +704,7 @@ async def classify_soil(
 # ═══════════════════════════════════════════════════════════════════
 
 @router.get("/recipes", response_model=list[RecipeResponse])
-async def list_recipes(
+def list_recipes(
     soil_code: str | None = None,
     db: Session = Depends(get_db),
 ):
@@ -751,7 +751,7 @@ async def list_recipes(
 
 
 @router.get("/recipes/{recipe_code}", response_model=RecipeResponse)
-async def get_recipe(recipe_code: str, db: Session = Depends(get_db)):
+def get_recipe(recipe_code: str, db: Session = Depends(get_db)):
     """Get detailed information about a specific recipe."""
     import json
 
@@ -819,7 +819,7 @@ def _load_calculators():
 
 
 @router.post("/recommend", response_model=RecommendResponse)
-async def get_recommendation(
+def get_recommendation(
     request: RecommendRequest,
     db: Session = Depends(get_db),
 ):
@@ -1044,7 +1044,7 @@ async def calculate_scale(request: ScaleRequest):
 
 
 @router.post("/full-analysis", response_model=FullAnalysisResponse)
-async def full_analysis(request: FullAnalysisRequest, db: Session = Depends(get_db)):
+def full_analysis(request: FullAnalysisRequest, db: Session = Depends(get_db)):
     """
     Complete analysis combining all calculators.
     
