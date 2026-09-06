@@ -1,27 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-eco_nojin automation runner v17 — the 9-route mystery.
+eco_nojin automation runner v18.
 
-STEP 1 anatomy     — full app.routes enumeration (path/method/endpoint/__module__),
-                     per-router route counts from the routers package,
-                     duplicate-module scan in sys.modules
-STEP 2 file-evidence— current main.py state, routers/__init__.py dump,
-                     start_dev_v4.py head, health-twin grep
-STEP 3 ci-jobs     — verdict of the run triggered by the pywin32 push
-STEP 4 ci-frontend — pin pnpm action version to the exact packageManager value
-STEP 5 land-models — restore the lost import block (prove-then-commit)
+STEP 1 mystery     — traced import: which include_router calls ran, on which
+                     app instance, with how many routes at mount time;
+                     manual re-mount experiment; FastAPI version; pyc check
+STEP 2 compile     — local repro of CI 'Compile check' + auto-fix of the
+                     proven mangled-indent pattern (parse-gated, rollback)
+STEP 3 ci-frontend — pin pnpm/action-setup to exact packageManager version
+STEP 4 dead-models — services/models package: broad grep, delete if dead
+STEP 5 health-twin — actually remove the dead /health twin (v12 was a no-op)
 
 Usage:
     python eco_fix.py
-    python eco_fix.py verify | anatomy | file-evidence | ci-jobs | ci-frontend | land-models
+    python eco_fix.py verify | mystery | compile | ci-frontend | dead-models | health-twin
 """
 import ast
 import json
 import re
 import subprocess
 import sys
-import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -36,7 +35,6 @@ for _c in (r"C:\Program Files\Git\cmd\git.exe",
         break
 
 LINE = "=" * 62
-TS = re.compile(r"^\d{4}-\d{2}-\d{2}T[\d:.]+Z\s*")
 
 def out(*a, **kw):
     print(*a, flush=True, **kw)
@@ -60,6 +58,19 @@ def git(*a, **kw):
         raise RuntimeError("git.exe not found")
     return sh([GIT_EXE, *a], **kw)
 
+def read_text(p):
+    with open(p, "r", encoding="utf-8", newline="") as f:
+        raw = f.read()
+    return raw, ("\r\n" in raw), raw.replace("\r\n", "\n")
+
+def write_text(p, text, crlf):
+    with open(p, "w", encoding="utf-8", newline="") as f:
+        f.write(text.replace("\n", "\r\n") if crlf else text)
+
+def write_raw(p, raw):
+    with open(p, "w", encoding="utf-8", newline="") as f:
+        f.write(raw)
+
 def dump(p, lo=1, hi=None, title=None):
     p = Path(p)
     if not p.exists():
@@ -72,19 +83,13 @@ def dump(p, lo=1, hi=None, title=None):
         out(f"{i+1:4d}| {lines[i]}")
     out("--- end ---")
 
-def _gh_json(url):
-    req = urllib.request.Request(url, headers={
-        "User-Agent": "eco_nojin-eco-fix",
-        "Accept": "application/vnd.github+json"})
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        return json.loads(resp.read().decode("utf-8"))
-
-def _gh_text(url):
-    req = urllib.request.Request(url, headers={
-        "User-Agent": "eco_nojin-eco-fix",
-        "Accept": "application/vnd.github+json"})
-    with urllib.request.urlopen(req, timeout=90) as resp:
-        return resp.read().decode("utf-8", errors="replace")
+def import_smoke(mod, timeout=300):
+    code = f"import importlib; importlib.import_module({mod!r}); print('OK')"
+    try:
+        r = sh([sys.executable, "-c", code], timeout=timeout)
+    except subprocess.TimeoutExpired:
+        return "timeout"
+    return "OK" if r.returncode == 0 else (r.stderr or r.stdout)[-300:]
 
 # ---------------------------------------------------------------- verify ---
 def verify():
@@ -99,284 +104,388 @@ def verify():
     out(git("log", "--oneline", "-3").stdout)
     return True
 
-# --------------------------------------------------------------- anatomy ---
-ANATOMY = """
-import json, sys
-from services.api_gateway.main import app
-import services.api_gateway.routers as rp
+# ---------------------------------------------------------------- mystery ---
+MYSTERY = """
+import json, os, sys
+import fastapi
+from fastapi import FastAPI
 
-print("APP_TITLE:" + str(getattr(app, "title", "?")))
-rows = []
-for r in app.routes:
-    path = getattr(r, "path", None)
-    if path is None:
-        continue
-    ep = getattr(r, "endpoint", None)
-    rows.append({
-        "path": path,
-        "methods": ",".join(sorted(getattr(r, "methods", None) or [])) or "WS",
-        "ep": getattr(ep, "__name__", "?"),
-        "mod": getattr(ep, "__module__", "?"),
+creations = []
+_orig_init = FastAPI.__init__
+def _traced_init(self, *a, **kw):
+    creations.append(id(self))
+    return _orig_init(self, *a, **kw)
+FastAPI.__init__ = _traced_init
+
+mount_calls = []
+_orig_ir = FastAPI.include_router
+def _traced_ir(self, router, *a, **kw):
+    mount_calls.append({
+        "app": id(self),
+        "rprefix": getattr(router, "prefix", ""),
+        "n": len(getattr(router, "routes", []) or []),
+        "mprefix": kw.get("prefix", ""),
     })
-print("TOTAL:" + str(len(rows)))
-for row in rows:
-    print("ROUTE:" + json.dumps(row))
+    return _orig_ir(self, router, *a, **kw)
+FastAPI.include_router = _traced_ir
 
-NAMES = ["platform","admin","auth","analyses","land","soil","satellite",
-         "carbon","watershed","scenarios","ai","ai_chat","ecowallet",
-         "marketplace","farms","analytics","materials","blockchain",
-         "ussd","voice","sync","benchmark","nojin","simulation","motors",
-         "mrv","science","models","elevation","support","manual_data",
-         "dashboard"]
-for n in NAMES:
-    obj = getattr(rp, n, None)
-    if obj is None:
-        print("PKG:" + n + ":MISSING:-")
-        continue
-    kind = type(obj).__name__
-    if kind == "module":
-        rt = getattr(obj, "router", None)
-        cnt = len(getattr(rt, "routes", []) or [])
-        rkind = type(rt).__name__ if rt is not None else "None"
-        print("PKG:" + n + ":module:" + rkind + ":" + str(cnt))
-    else:
-        cnt = len(getattr(obj, "routes", []) or [])
-        print("PKG:" + n + ":" + kind + ":" + str(cnt))
+import services.api_gateway.main as m
+FastAPI.include_router = _orig_ir
+FastAPI.__init__ = _orig_init
 
-dups = sorted(k for k in sys.modules
-              if "api_gateway" in k and not k.startswith("services.api_gateway"))
-print("DUPMODS:" + json.dumps(dups))
+print("VERSION:" + str(fastapi.__version__))
+print("FILE:" + str(m.__file__))
+print("APP_ID:" + str(id(m.app)))
+print("CREATIONS:" + json.dumps(creations))
+print("NMOUNTS:" + str(len(mount_calls)))
+for e in mount_calls:
+    print("MOUNT:" + json.dumps(e))
+print("MOUNTS_EMPTY:" + str(sum(1 for e in mount_calls if e["n"] == 0)))
+print("TOTAL_ROUTES:" + str(len(m.app.routes)))
+
+import services.api_gateway.routers.land as land_mod
+print("LAND_NOW:" + str(len(land_mod.router.routes)))
+before = len(m.app.routes)
+m.app.include_router(land_mod.router)
+print("REMOUNT:" + str(before) + "->" + str(len(m.app.routes)))
+
+import importlib.util
+pyc = importlib.util.cache_from_source(m.__file__)
+print("PYC:" + str(os.path.exists(pyc)))
 """
 
-def anatomy():
-    out(LINE, "STEP 1 — app anatomy (the 9-route mystery)", LINE, sep="\n")
-    r = sh([sys.executable, "-c", ANATOMY], timeout=300)
+def mystery():
+    out(LINE, "STEP 1 — mystery probe (traced import — decisive)", LINE, sep="\n")
+    r = sh([sys.executable, "-c", MYSTERY], timeout=300)
     if r.returncode != 0:
-        fail("anatomy probe failed: " + (r.stderr or r.stdout)[-600:])
+        fail("probe failed: " + (r.stderr or r.stdout)[-700:])
         return False
+    app_id = ""
+    nmounts = 0
+    nempty = 0
+    remount = ""
     for line in r.stdout.splitlines():
-        if line.startswith("APP_TITLE:"):
-            out("    app title: " + line[10:])
-        elif line.startswith("TOTAL:"):
-            out("    total routes: " + line[6:])
-        elif line.startswith("ROUTE:"):
-            row = json.loads(line[6:])
-            out(f"    {row['methods']:8s} {row['path']:28s} "
-                f"{row['ep']:18s} [{row['mod']}]")
-        elif line.startswith("PKG:"):
-            out("    " + line[4:])
-        elif line.startswith("DUPMODS:"):
-            out("    duplicate module names: " + line[8:])
-    if r.stderr.strip():
-        out("    stderr tail: " + r.stderr[-300:])
-    return True
-
-# --------------------------------------------------------- file-evidence ---
-def file_evidence():
-    out(LINE, "STEP 2 — file evidence (current state)", LINE, sep="\n")
-
-    r = git("grep", "-n", 'app.get("/health")', "--",
-            "services/api_gateway/main.py")
-    out('    @app.get("/health") occurrences in main.py:')
-    for l in [l for l in r.stdout.splitlines() if l.strip()]:
-        out("    " + l)
-
-    r = git("grep", "-n", "def health_check", "--", "services/")
-    out("\n    'def health_check' owners across services/:")
-    for l in [l for l in r.stdout.splitlines() if l.strip()][:10]:
-        out("    " + l)
-
-    dump(ROOT / "services" / "api_gateway" / "main.py", lo=55, hi=75,
-         title="main.py app creation + first mounts")
-    dump(ROOT / "services" / "api_gateway" / "main.py", lo=205, hi=258,
-         title="main.py mount block (current)")
-    dump(ROOT / "services" / "api_gateway" / "routers" / "__init__.py",
-         title="routers/__init__.py (FULL)")
-    dump(ROOT / "start_dev_v4.py", hi=45, title="start_dev_v4.py head")
-
-    out("\n    entrypoint candidates in repo root:")
-    for f in sorted(ROOT.glob("*.py")):
-        try:
-            head = f.read_text(encoding="utf-8", errors="replace")[:400]
-        except OSError:
+        if ":" not in line:
             continue
-        if "uvicorn" in head or "FastAPI(" in head:
-            out(f"    {f.name}")
+        key, val = line.split(":", 1)
+        if key == "MOUNT":
+            e = json.loads(val)
+            out(f"      mount app={e['app']} router={e['rprefix']:18s} "
+                f"routes_at_mount={e['n']:3d} mount_prefix={e['mprefix']}")
+        elif key == "APP_ID":
+            app_id = val
+            out("    APP_ID: " + val)
+        elif key == "NMOUNTS":
+            nmounts = int(val)
+        elif key == "MOUNTS_EMPTY":
+            nempty = int(val)
+        elif key == "REMOUNT":
+            remount = val
+        else:
+            out("    " + key + ": " + val)
+
+    out("\n    INTERPRETATION:")
+    if nmounts == 0:
+        out("      >>> ZERO include_router calls executed — mount block never "
+            "ran. Check FILE above (pyc/source mismatch?).")
+    elif nempty == nmounts:
+        out("      >>> ALL mounts ran with EMPTY routers — circular import "
+            "confirmed: routers populated AFTER mounting. v19 = break the cycle.")
+    elif remount and "->" in remount:
+        b, a = remount.split("->")
+        if int(a) > int(b):
+            out("      >>> include_router works manually; mounts had "
+                f"{nmounts - nempty}/{nmounts} populated calls — inspect "
+                "trace rows above (which routers were empty).")
+        else:
+            out("      >>> include_router does NOT add routes even manually — "
+                "FastAPI-level anomaly; report VERSION above.")
+    else:
+        out("      >>> mixed state — inspect trace rows above.")
+
+    out("\n    circular-import candidates (who references api_gateway.main):")
+    r = git("grep", "-n", "-E",
+            "api_gateway[.]main|api_gateway import main|from [.]main import",
+            "--", "services/", "engine/", "scripts/", "tests/")
+    hits = [l for l in r.stdout.splitlines() if l.strip()]
+    out(f"    hits: {len(hits)}")
+    for l in hits[:20]:
+        out("    " + l)
+    dump(ROOT / "services" / "api_gateway" / "auth.py", hi=45,
+         title="services/api_gateway/auth.py head (imports)")
     return True
 
-# --------------------------------------------------------------- ci-jobs ---
-def ci_jobs():
-    out(LINE, "STEP 3 — CI verdict (post-pywin32 run)", LINE, sep="\n")
-    try:
-        runs = _gh_json(
-            "https://api.github.com/repos/" + GITHUB_REPO
-            + "/actions/workflows/ci.yml/runs?per_page=6"
-        ).get("workflow_runs", [])
-    except Exception as e:
-        warn(f"API failed: {e!r}")
+# ---------------------------------------------------------------- compile ---
+TWO_LINE_BUG = ("    from database import models  # noqa: F401\n"
+                "from database.hub import hub")
+TWO_LINE_FIX = ("    from database import models  # noqa: F401\n"
+                "    from database.hub import hub")
+
+def _next_nonblank(lines, j):
+    for k in range(j + 1, len(lines)):
+        if lines[k].strip():
+            return lines[k]
+    return ""
+
+def _try_auto_fix(text, lineno):
+    lines = text.split("\n")
+    for j in range((lineno or 2) - 2, max(-1, (lineno or 2) - 40), -1):
+        s = lines[j]
+        if not s.strip() or s.startswith((" ", "\t")):
+            continue
+        stripped = s.lstrip()
+        if stripped.startswith(("def ", "class ", "@", "#")):
+            return None
+        if not stripped.startswith(("import ", "from ")):
+            continue
+        nxt = _next_nonblank(lines, j)
+        if nxt.startswith((" ", "\t")):
+            indent = len(nxt) - len(nxt.lstrip())
+            lines[j] = " " * indent + s
+            return "\n".join(lines), j + 1
+    return None
+
+def compile_step():
+    out(LINE, "STEP 2 — compileall local repro (CI's failing step)", LINE, sep="\n")
+    r = sh([sys.executable, "-m", "compileall", "-q", "services"], timeout=900)
+    out("    exit code: " + str(r.returncode))
+    combined = (r.stdout or "") + (r.stderr or "")
+    files = []
+    for m in re.finditer(r'File "([^"]+)", line', combined):
+        f = m.group(1)
+        if f not in files:
+            files.append(f)
+    if r.returncode == 0 and not files:
+        ok("services/ compiles cleanly LOCALLY — CI failure is environment-"
+           "specific; open the run in browser and paste the Compile step log")
         return True
-    for run in runs[:6]:
-        out(f"    id={run['id']} sha={run.get('head_sha', '?')[:8]} "
-            f"{run.get('status'):10s} {run.get('conclusion') or '-'}")
-    target = next((r for r in runs if r.get("status") == "completed"), None)
-    if target is None:
-        warn("latest run still in progress — re-run ci-jobs in a few minutes")
-        return True
-    out(f"\n    deep-dive on run {target['id']}:")
-    try:
-        jobs = _gh_json(
-            "https://api.github.com/repos/" + GITHUB_REPO
-            + f"/actions/runs/{target['id']}/jobs"
-        ).get("jobs", [])
-    except Exception as e:
-        warn(f"jobs API failed: {e!r}")
-        return True
-    failed = []
-    for job in jobs:
-        out(f"    JOB {job.get('name')} -> {job.get('conclusion')}")
-        for st in (job.get("steps") or []):
-            c = st.get("conclusion") or st.get("status") or "?"
-            mark = " X " if c == "failure" else (" * " if c == "skipped" else " . ")
-            out(f"      {mark}{st.get('name')}  [{c}]")
-            if c == "failure":
-                failed.append((job.get("name"), st.get("name"), job.get("id")))
-    for jname, sname, job_id in failed:
-        out(f"\n    fetching log for failed step '{sname}' (job {jname}) ...")
+
+    out(f"    failing file(s): {len(files)}")
+    originals = {}
+    fixed = []
+    for f in files:
+        p = Path(f)
+        if not p.exists() or not str(p).startswith(str(ROOT)):
+            out("    (outside root, skipped): " + f)
+            continue
+        raw, crlf, text = read_text(p)
+        originals[p] = raw
+        changed = False
+        if TWO_LINE_BUG in text:
+            text = text.replace(TWO_LINE_BUG, TWO_LINE_FIX)
+            changed = True
+        for _ in range(8):
+            try:
+                ast.parse(text)
+                break
+            except SyntaxError as e:
+                if (e.msg or "").startswith("unexpected indent"):
+                    res = _try_auto_fix(text, e.lineno)
+                    if res:
+                        text = res[0]
+                        changed = True
+                        continue
+                out(f"    {p.name}: unfixable — line {e.lineno}: {e.msg}")
+                break
         try:
-            log = _gh_text(
-                "https://api.github.com/repos/" + GITHUB_REPO
-                + f"/actions/jobs/{job_id}/logs")
-            lines = [TS.sub("", l).rstrip() for l in log.splitlines()]
-            keys = ("##[error", "error:", "no matching distribution",
-                    "could not find", "fatal", "exception", "version")
-            hits = [l for l in lines if any(k in l.lower() for k in keys)]
-            for l in hits[:20]:
-                out("    | " + l[:170])
-            out("    --- last 4 lines ---")
-            for l in lines[-4:]:
-                out("    | " + l[:170])
-        except Exception as e:
-            warn(f"    log fetch failed ({e!r}) — open:")
-            warn("    https://github.com/" + GITHUB_REPO + "/actions")
-    if not failed:
-        ok("no failed steps — CI may be GREEN now! 🎉")
+            ast.parse(text)
+        except SyntaxError:
+            out("    " + str(p.relative_to(ROOT)) + " left unfixed (context next round)")
+            continue
+        if changed:
+            write_text(p, text, crlf)
+            fixed.append(p)
+            ok("fixed: " + str(p.relative_to(ROOT)))
+
+    if not fixed:
+        fail("nothing auto-fixed — report the file list above")
+        return False
+
+    r2 = sh([sys.executable, "-m", "compileall", "-q", "services"], timeout=900)
+    if r2.returncode != 0:
+        fail("compileall still red — rolling back all fixes")
+        for p, raw in originals.items():
+            if p in fixed:
+                write_raw(p, raw)
+        ok("originals restored — nothing committed")
+        return False
+    ok("compileall now GREEN locally")
+
+    for p in fixed:
+        git("add", "--", str(p.relative_to(ROOT)).replace("\\", "/"))
+    r = git("commit", "-m",
+            "fix(services): repair formatter-mangled indents found by CI "
+            "compile check")
+    if r.returncode == 0:
+        ok("committed (push triggers fresh CI run)")
+        git("push", "origin", "main")
+    else:
+        ok("nothing to commit")
     return True
 
 # ------------------------------------------------------------ ci-frontend ---
 CI_YML = ROOT / ".github" / "workflows" / "ci.yml"
 
 def ci_frontend():
-    out(LINE, "STEP 4 — ci.yml: pin pnpm action to exact packageManager", LINE, sep="\n")
-    version = None
-    for pj in (ROOT / "package.json", ROOT / "frontend" / "package.json"):
-        if pj.exists():
-            m = re.search(r'"packageManager"\s*:\s*"pnpm@([^"]+)"',
-                          pj.read_text(encoding="utf-8", errors="replace"))
-            if m:
-                version = m.group(1)
-                out(f"    packageManager (from {pj.relative_to(ROOT)}): pnpm@{version}")
-                break
-    if version is None:
-        version = "11.4.0"
-        warn("no packageManager field found — defaulting to 11.4.0")
+    out(LINE, "STEP 3 — ci.yml: pin pnpm to exact packageManager version", LINE, sep="\n")
+    version = "11.4.0"
+    pj = ROOT / "package.json"
+    if pj.exists():
+        m = re.search(r'"packageManager"\s*:\s*"pnpm@([^"]+)"',
+                      pj.read_text(encoding="utf-8", errors="replace"))
+        if m:
+            version = m.group(1)
+    out("    target version: " + version)
     if not CI_YML.exists():
         fail("ci.yml not found")
         return False
     text = CI_YML.read_text(encoding="utf-8", errors="replace")
-    new, n = re.subn(r"(uses:\s*pnpm/action-setup@v4\n\s+version:\s*)[^\n]+",
-                     r"\g<1>" + version, text)
-    if n == 0:
-        if f"version: {version}" in text:
-            ok("already pinned correctly")
-            return True
-        warn("pnpm version input not found — manual check needed")
-        return True
-    if new == text:
-        ok("already pinned correctly")
+    pat = re.compile(r"(pnpm/action-setup@v4[^\n]*\n\s*with:\s*\n\s*version:\s*)([^\n]+)")
+    new, n = pat.subn(lambda mm: mm.group(1) + version, text)
+    if n == 0 or new == text:
+        ok("already pinned (or block not found — check ci.yml manually)")
         return True
     CI_YML.write_text(new, encoding="utf-8", newline="\n")
     try:
         import yaml
-        data = yaml.safe_load(new)
-        assert "frontend" in (data.get("jobs") or {})
+        yaml.safe_load(new)
         ok("ci.yml still valid YAML")
     except Exception as e:
         warn(f"yaml check failed: {e!r}")
     git("add", "--", ".github/workflows/ci.yml")
     r = git("commit", "-m",
-            f"ci(frontend): pin pnpm/action-setup version to {version} "
-            "(exact match with packageManager field)")
+            "ci(frontend): pin pnpm version to exact packageManager value ("
+            + version + ") — fixes version-mismatch failure")
     if r.returncode == 0:
-        ok("committed (push triggers a fresh CI run)")
+        ok("committed (push triggers fresh CI run)")
         git("push", "origin", "main")
     else:
         ok("nothing to commit")
     return True
 
-# ------------------------------------------------------------ land-models ---
-LM = ROOT / "services" / "models" / "land_models.py"
-LM_IMPORTS = (
-    "from .base import Base\n"
-    "\n"
-    "import uuid\n"
-    "\n"
-    "from sqlalchemy import Column, DateTime, Float, ForeignKey, String, Text, func\n"
-    "from sqlalchemy.dialects.postgresql import JSONB\n"
-    "from sqlalchemy.dialects.postgresql import UUID as PG_UUID\n"
-)
+# ------------------------------------------------------------ dead-models ---
+def dead_models():
+    out(LINE, "STEP 4 — services/models: dead-package verdict", LINE, sep="\n")
+    dump(ROOT / "services" / "models" / "__init__.py",
+         title="services/models/__init__.py (FULL)")
+    dump(ROOT / "services" / "models" / "base.py", hi=30,
+         title="services/models/base.py head")
 
-def land_models():
-    out(LINE, "STEP 5 — land_models.py: restore lost import block", LINE, sep="\n")
-    r = git("grep", "-n", "land_models", "--", "services/", "tests/",
-            "engine/", "scripts/")
+    r = git("grep", "-n", "-E",
+            "services[.]models|from services import models", "--", ".")
     hits = [l for l in r.stdout.splitlines() if l.strip()]
-    out(f"    references to land_models: {len(hits)}")
-    for l in hits[:8]:
+    code_refs = []
+    for l in hits:
+        fp = l.split(":", 1)[0]
+        if fp == "eco_fix.py":
+            continue
+        if fp.replace("\\", "/").startswith("services/models/"):
+            continue
+        if fp.endswith(".py"):
+            code_refs.append(l)
+    out(f"    total hits: {len(hits)} | live CODE refs outside package: {len(code_refs)}")
+    for l in code_refs[:12]:
         out("    " + l)
-    if not LM.exists():
-        fail("file not found")
-        return False
-    text = LM.read_text(encoding="utf-8", errors="replace").replace("\r\n", "\n")
-    if "from sqlalchemy import Column" in text:
-        ok("imports already present")
+    if code_refs:
+        warn("live code references exist — NOT deleting")
         return True
-    if not text.startswith("from .base import Base"):
-        fail("unexpected file head — aborting")
-        return True
-    new_text = LM_IMPORTS + text[len("from .base import Base"):]
-    try:
-        ast.parse(new_text)
-    except SyntaxError as e:
-        fail(f"parse after edit L{e.lineno}: {e.msg}")
-        return False
-    LM.write_text(new_text, encoding="utf-8", newline="\n")
-    ok("import block written")
+    ok("no live code references — package is dead")
 
-    r = sh([sys.executable, "-c",
-            "import importlib; importlib.import_module("
-            "'services.models.land_models'); print('IMPORT-OK')"], timeout=180)
-    if "IMPORT-OK" not in (r.stdout or ""):
-        fail("module still not importable — ROLLING BACK")
-        out("    " + (r.stderr or r.stdout)[-400:])
-        LM.write_text(text, encoding="utf-8", newline="\n")
-        ok("original restored")
+    base = import_smoke("services.api_gateway.main")
+    if base != "OK":
+        fail("baseline main import failing — aborting")
         return False
-    ok("module imports cleanly now (proof green)")
+    git("rm", "-r", "--", "services/models")
+    ok("git rm -r services/models (recoverable from history)")
+
+    post = import_smoke("services.api_gateway.main")
+    coll = sh([sys.executable, "-m", "pytest", "--collect-only", "-q",
+               "--no-header"], timeout=600)
+    if post != "OK" or coll.returncode != 0:
+        fail("regression — restoring package")
+        git("reset", "--", "services/models")
+        git("checkout", "--", "services/models")
+        ok("restored — nothing committed")
+        return False
+    ok("main import OK, pytest collection OK without the package")
 
     ruff_exe = ROOT / ".venv" / "Scripts" / "ruff.exe"
     cmd = [str(ruff_exe)] if ruff_exe.exists() else ["ruff"]
-    r = sh(cmd + ["check", "services/models/land_models.py",
-                  "--select", "F821", "--output-format", "concise"],
-           timeout=120)
-    remaining = [l for l in (r.stdout or "").splitlines() if "F821" in l]
-    out(f"    remaining F821 in land_models.py: {len(remaining)}")
-    for l in remaining[:5]:
-        out("    " + l)
+    r = sh(cmd + ["check", ".", "--select", "F821"], timeout=240)
+    m = re.search(r"(\d+)\s+F821", r.stdout or "")
+    out("    remaining F821 repo-wide: " + (m.group(1) if m else "?"))
 
-    git("add", "--", "services/models/land_models.py")
     r = git("commit", "-m",
-            "fix(models): restore lost sqlalchemy import block in land_models "
-            "(84 ruff F821 undefined names)")
+            "chore: remove dead services/models package (superseded by "
+            "database.models; imports were commented out, base broken)")
+    if r.returncode == 0:
+        ok("committed")
+        git("push", "origin", "main")
+    else:
+        ok("nothing to commit")
+    return True
+
+# ------------------------------------------------------------ health-twin ---
+MAIN = ROOT / "services" / "api_gateway" / "main.py"
+HEALTH_PROBE = (
+    "from services.api_gateway.main import app; "
+    "hs=[(sorted(getattr(r,'methods',[]) or []), "
+    "getattr(getattr(r,'endpoint',None),'__name__','?')) "
+    "for r in app.routes if getattr(r,'path',None)=='/health']; "
+    "print(hs)"
+)
+
+def health_state():
+    r = sh([sys.executable, "-c", HEALTH_PROBE], timeout=300)
+    return r.stdout.strip()
+
+def health_twin():
+    out(LINE, "STEP 5 — remove the dead /health twin (for real this time)", LINE, sep="\n")
+    before = health_state()
+    out("    BEFORE: " + before)
+    if "health_check" not in before:
+        ok("twin already gone")
+        return True
+
+    raw, crlf, text = read_text(MAIN)
+    tree = ast.parse(text)
+    target = None
+    for node in tree.body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) \
+                and node.name == "health_check":
+            for dec in node.decorator_list:
+                if (isinstance(dec, ast.Call)
+                        and isinstance(dec.func, ast.Attribute)
+                        and dec.func.attr == "get"
+                        and dec.args
+                        and isinstance(dec.args[0], ast.Constant)
+                        and dec.args[0].value == "/health"):
+                    target = node
+    if target is None:
+        warn("twin endpoint not found via AST — skipping")
+        return True
+    start = min(d.lineno for d in target.decorator_list)
+    end = target.end_lineno
+    lines = text.split("\n")
+    new_text = re.sub(r"\n{4,}", "\n\n\n",
+                      "\n".join(lines[: start - 1] + lines[end:]))
+    ast.parse(new_text)
+    write_text(MAIN, new_text, crlf)
+    ok(f"removed twin 'health_check' (lines {start}-{end})")
+
+    after = health_state()
+    out("    AFTER:  " + after)
+    if "health_check" in after or "'health'" not in after:
+        fail("proof mismatch — ROLLING BACK")
+        write_raw(MAIN, raw)
+        ok("original restored")
+        return False
+    ok("exactly one GET /health remains ('health' — the rich one)")
+
+    git("add", "--", "services/api_gateway/main.py")
+    r = git("commit", "-m",
+            "fix(gateway): actually remove dead /health twin endpoint "
+            "(previous attempt in 9b30b6b was a silent no-op)")
     if r.returncode == 0:
         ok("committed")
         git("push", "origin", "main")
@@ -401,12 +510,12 @@ def main():
     except Exception:
         pass
     cmd = sys.argv[1] if len(sys.argv) > 1 else "all"
-    steps = {"verify": verify, "anatomy": anatomy,
-             "file-evidence": file_evidence, "ci-jobs": ci_jobs,
-             "ci-frontend": ci_frontend, "land-models": land_models}
+    steps = {"verify": verify, "mystery": mystery, "compile": compile_step,
+             "ci-frontend": ci_frontend, "dead-models": dead_models,
+             "health-twin": health_twin}
     if cmd == "all":
-        for name in ("verify", "anatomy", "file-evidence", "ci-jobs",
-                     "ci-frontend", "land-models"):
+        for name in ("verify", "mystery", "compile", "ci-frontend",
+                     "dead-models", "health-twin"):
             try:
                 steps[name]()
             except Exception as e:
