@@ -20,9 +20,10 @@ publicHoistPattern:
 # pnpm 11: explicit allow-list for build scripts.
 # Without this, install exits with code 1 when biome/esbuild try to run postinstall,
 # which then cascades into Turbo's runDepsStatusCheck failing.
-onlyBuiltDependencies:
+ignoredBuiltDependencies:
   - '@biomejs/biome'
   - esbuild
 
 allowBuilds:
+  '@biomejs/biome': set this to true or false
   esbuild: set this to true or false

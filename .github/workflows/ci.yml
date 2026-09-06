@@ -44,6 +44,9 @@ jobs:
           cache: pnpm
           cache-dependency-path: frontend/pnpm-lock.yaml
       - name: Install
-        run: pnpm -C frontend install --frozen-lockfile
+        # --ignore-scripts: biome/esbuild binaries ship as platform-specific
+        # optional deps; postinstall scripts are not needed for the build and
+        # pnpm 11 hoisted-linker turns them into a hard error otherwise.
+        run: pnpm -C frontend install --frozen-lockfile --ignore-scripts
       - name: Build
         run: pnpm -C frontend build
