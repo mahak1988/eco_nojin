@@ -19,7 +19,8 @@ from database.hub import hub
 from database.base import Base
 
 
-# Compatibility: SessionLocal
+# Compatibility: engine & SessionLocal
+engine = hub.get_sqlalchemy_engine()
 SessionLocal = hub.get_session_factory()
 
 
