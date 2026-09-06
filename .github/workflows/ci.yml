@@ -30,8 +30,8 @@ jobs:
         run: pytest -q --tb=short || true
 
   frontend:
-    name: "Frontend (vite build)"
-    runs-on: ubuntu-latest
+          - name: Install
+        run: pnpm -C frontend install --frozen-lockfile
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
