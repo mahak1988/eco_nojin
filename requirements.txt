@@ -1,4 +1,4 @@
-﻿# ============================================================
+# ============================================================
 # Eco Nojin — Python dependencies (free, no registration)
 # Generated from the project venv: pip freeze (Python 3.12.10)
 # Install:  .venv\Scripts\python.exe -m pip install -r requirements.txt
@@ -271,7 +271,7 @@ pyupgrade==3.19.0
 pyvista==0.48.4
 pyvistaqt==0.12.0
 PyWavelets==1.9.0
-pywin32==312
+pywin32==312 ; sys_platform == "win32"
 pywr==1.31.1
 PyYAML==6.0.3
 qdldl==0.1.9.post1
