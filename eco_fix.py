@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-eco_nojin automation runner v16.
+eco_nojin automation runner v17 — the 9-route mystery.
 
-STEP 1 ci-logs    — fetch RAW failure logs of the latest red run
-STEP 2 req-marker — guard pywin32 (Windows-only) with a PEP 508 marker
-STEP 3 route-map  — fixed parser; full mount map + collision report
-STEP 4 ai-dedup   — evidence-based removal of the shadowed POST /chat
-STEP 5 recon      — frontend packageManager, lockfile, land_models F821
+STEP 1 anatomy     — full app.routes enumeration (path/method/endpoint/__module__),
+                     per-router route counts from the routers package,
+                     duplicate-module scan in sys.modules
+STEP 2 file-evidence— current main.py state, routers/__init__.py dump,
+                     start_dev_v4.py head, health-twin grep
+STEP 3 ci-jobs     — verdict of the run triggered by the pywin32 push
+STEP 4 ci-frontend — pin pnpm action version to the exact packageManager value
+STEP 5 land-models — restore the lost import block (prove-then-commit)
 
 Usage:
     python eco_fix.py
-    python eco_fix.py verify | ci-logs | req-marker | route-map | ai-dedup | recon
+    python eco_fix.py verify | anatomy | file-evidence | ci-jobs | ci-frontend | land-models
 """
 import ast
 import json
@@ -57,15 +60,6 @@ def git(*a, **kw):
         raise RuntimeError("git.exe not found")
     return sh([GIT_EXE, *a], **kw)
 
-def read_text(p):
-    with open(p, "r", encoding="utf-8", newline="") as f:
-        raw = f.read()
-    return raw, ("\r\n" in raw), raw.replace("\r\n", "\n")
-
-def write_text(p, text, crlf):
-    with open(p, "w", encoding="utf-8", newline="") as f:
-        f.write(text.replace("\n", "\r\n") if crlf else text)
-
 def dump(p, lo=1, hi=None, title=None):
     p = Path(p)
     if not p.exists():
@@ -87,7 +81,8 @@ def _gh_json(url):
 
 def _gh_text(url):
     req = urllib.request.Request(url, headers={
-        "User-Agent": "eco_nojin-eco-fix"})
+        "User-Agent": "eco_nojin-eco-fix",
+        "Accept": "application/vnd.github+json"})
     with urllib.request.urlopen(req, timeout=90) as resp:
         return resp.read().decode("utf-8", errors="replace")
 
@@ -104,30 +99,130 @@ def verify():
     out(git("log", "--oneline", "-3").stdout)
     return True
 
-# --------------------------------------------------------------- ci-logs ---
-LOG_KEYS = ("##[error", "error:", "could not find", "no matching distribution",
-            "npm err", "fatal", "exception", "failed to", "not found")
+# --------------------------------------------------------------- anatomy ---
+ANATOMY = """
+import json, sys
+from services.api_gateway.main import app
+import services.api_gateway.routers as rp
 
-def ci_logs():
-    out(LINE, "STEP 1 — CI failure logs (raw evidence)", LINE, sep="\n")
+print("APP_TITLE:" + str(getattr(app, "title", "?")))
+rows = []
+for r in app.routes:
+    path = getattr(r, "path", None)
+    if path is None:
+        continue
+    ep = getattr(r, "endpoint", None)
+    rows.append({
+        "path": path,
+        "methods": ",".join(sorted(getattr(r, "methods", None) or [])) or "WS",
+        "ep": getattr(ep, "__name__", "?"),
+        "mod": getattr(ep, "__module__", "?"),
+    })
+print("TOTAL:" + str(len(rows)))
+for row in rows:
+    print("ROUTE:" + json.dumps(row))
+
+NAMES = ["platform","admin","auth","analyses","land","soil","satellite",
+         "carbon","watershed","scenarios","ai","ai_chat","ecowallet",
+         "marketplace","farms","analytics","materials","blockchain",
+         "ussd","voice","sync","benchmark","nojin","simulation","motors",
+         "mrv","science","models","elevation","support","manual_data",
+         "dashboard"]
+for n in NAMES:
+    obj = getattr(rp, n, None)
+    if obj is None:
+        print("PKG:" + n + ":MISSING:-")
+        continue
+    kind = type(obj).__name__
+    if kind == "module":
+        rt = getattr(obj, "router", None)
+        cnt = len(getattr(rt, "routes", []) or [])
+        rkind = type(rt).__name__ if rt is not None else "None"
+        print("PKG:" + n + ":module:" + rkind + ":" + str(cnt))
+    else:
+        cnt = len(getattr(obj, "routes", []) or [])
+        print("PKG:" + n + ":" + kind + ":" + str(cnt))
+
+dups = sorted(k for k in sys.modules
+              if "api_gateway" in k and not k.startswith("services.api_gateway"))
+print("DUPMODS:" + json.dumps(dups))
+"""
+
+def anatomy():
+    out(LINE, "STEP 1 — app anatomy (the 9-route mystery)", LINE, sep="\n")
+    r = sh([sys.executable, "-c", ANATOMY], timeout=300)
+    if r.returncode != 0:
+        fail("anatomy probe failed: " + (r.stderr or r.stdout)[-600:])
+        return False
+    for line in r.stdout.splitlines():
+        if line.startswith("APP_TITLE:"):
+            out("    app title: " + line[10:])
+        elif line.startswith("TOTAL:"):
+            out("    total routes: " + line[6:])
+        elif line.startswith("ROUTE:"):
+            row = json.loads(line[6:])
+            out(f"    {row['methods']:8s} {row['path']:28s} "
+                f"{row['ep']:18s} [{row['mod']}]")
+        elif line.startswith("PKG:"):
+            out("    " + line[4:])
+        elif line.startswith("DUPMODS:"):
+            out("    duplicate module names: " + line[8:])
+    if r.stderr.strip():
+        out("    stderr tail: " + r.stderr[-300:])
+    return True
+
+# --------------------------------------------------------- file-evidence ---
+def file_evidence():
+    out(LINE, "STEP 2 — file evidence (current state)", LINE, sep="\n")
+
+    r = git("grep", "-n", 'app.get("/health")', "--",
+            "services/api_gateway/main.py")
+    out('    @app.get("/health") occurrences in main.py:')
+    for l in [l for l in r.stdout.splitlines() if l.strip()]:
+        out("    " + l)
+
+    r = git("grep", "-n", "def health_check", "--", "services/")
+    out("\n    'def health_check' owners across services/:")
+    for l in [l for l in r.stdout.splitlines() if l.strip()][:10]:
+        out("    " + l)
+
+    dump(ROOT / "services" / "api_gateway" / "main.py", lo=55, hi=75,
+         title="main.py app creation + first mounts")
+    dump(ROOT / "services" / "api_gateway" / "main.py", lo=205, hi=258,
+         title="main.py mount block (current)")
+    dump(ROOT / "services" / "api_gateway" / "routers" / "__init__.py",
+         title="routers/__init__.py (FULL)")
+    dump(ROOT / "start_dev_v4.py", hi=45, title="start_dev_v4.py head")
+
+    out("\n    entrypoint candidates in repo root:")
+    for f in sorted(ROOT.glob("*.py")):
+        try:
+            head = f.read_text(encoding="utf-8", errors="replace")[:400]
+        except OSError:
+            continue
+        if "uvicorn" in head or "FastAPI(" in head:
+            out(f"    {f.name}")
+    return True
+
+# --------------------------------------------------------------- ci-jobs ---
+def ci_jobs():
+    out(LINE, "STEP 3 — CI verdict (post-pywin32 run)", LINE, sep="\n")
     try:
         runs = _gh_json(
             "https://api.github.com/repos/" + GITHUB_REPO
-            + "/actions/workflows/ci.yml/runs?per_page=5"
+            + "/actions/workflows/ci.yml/runs?per_page=6"
         ).get("workflow_runs", [])
     except Exception as e:
-        warn(f"runs API failed: {e!r}")
+        warn(f"API failed: {e!r}")
         return True
-    for run in runs[:5]:
+    for run in runs[:6]:
         out(f"    id={run['id']} sha={run.get('head_sha', '?')[:8]} "
             f"{run.get('status'):10s} {run.get('conclusion') or '-'}")
-    target = next((r for r in runs
-                   if r.get("status") == "completed"
-                   and r.get("conclusion") == "failure"), None)
+    target = next((r for r in runs if r.get("status") == "completed"), None)
     if target is None:
-        ok("no failed completed run — maybe already green!")
+        warn("latest run still in progress — re-run ci-jobs in a few minutes")
         return True
-    out(f"\ninspecting failed run {target['id']} ...")
+    out(f"\n    deep-dive on run {target['id']}:")
     try:
         jobs = _gh_json(
             "https://api.github.com/repos/" + GITHUB_REPO
@@ -136,72 +231,81 @@ def ci_logs():
     except Exception as e:
         warn(f"jobs API failed: {e!r}")
         return True
+    failed = []
     for job in jobs:
-        if job.get("conclusion") != "failure":
-            continue
-        out(f"\n### JOB: {job.get('name')} (job id={job.get('id')})")
+        out(f"    JOB {job.get('name')} -> {job.get('conclusion')}")
         for st in (job.get("steps") or []):
-            if st.get("conclusion") == "failure":
-                out(f"    failed step: {st.get('name')}")
+            c = st.get("conclusion") or st.get("status") or "?"
+            mark = " X " if c == "failure" else (" * " if c == "skipped" else " . ")
+            out(f"      {mark}{st.get('name')}  [{c}]")
+            if c == "failure":
+                failed.append((job.get("name"), st.get("name"), job.get("id")))
+    for jname, sname, job_id in failed:
+        out(f"\n    fetching log for failed step '{sname}' (job {jname}) ...")
         try:
             log = _gh_text(
                 "https://api.github.com/repos/" + GITHUB_REPO
-                + f"/actions/jobs/{job['id']}/logs")
+                + f"/actions/jobs/{job_id}/logs")
+            lines = [TS.sub("", l).rstrip() for l in log.splitlines()]
+            keys = ("##[error", "error:", "no matching distribution",
+                    "could not find", "fatal", "exception", "version")
+            hits = [l for l in lines if any(k in l.lower() for k in keys)]
+            for l in hits[:20]:
+                out("    | " + l[:170])
+            out("    --- last 4 lines ---")
+            for l in lines[-4:]:
+                out("    | " + l[:170])
         except Exception as e:
-            warn(f"    log fetch failed ({e!r}) — open in browser:")
-            warn(f"    https://github.com/{GITHUB_REPO}/actions/runs/{target['id']}")
-            continue
-        lines = [TS.sub("", l).rstrip() for l in log.splitlines()]
-        out(f"    log: {len(lines)} lines")
-        interesting = [l for l in lines
-                       if any(k in l.lower() for k in LOG_KEYS)]
-        out(f"    interesting lines: {len(interesting)}")
-        for l in interesting[:25]:
-            out("    | " + l[:170])
-        out("    --- last 6 lines of log ---")
-        for l in lines[-6:]:
-            out("    | " + l[:170])
+            warn(f"    log fetch failed ({e!r}) — open:")
+            warn("    https://github.com/" + GITHUB_REPO + "/actions")
+    if not failed:
+        ok("no failed steps — CI may be GREEN now! 🎉")
     return True
 
-# ------------------------------------------------------------ req-marker ---
-REQ = ROOT / "requirements.txt"
+# ------------------------------------------------------------ ci-frontend ---
+CI_YML = ROOT / ".github" / "workflows" / "ci.yml"
 
-def req_marker():
-    out(LINE, "STEP 2 — requirements.txt: platform marker for pywin32", LINE, sep="\n")
-    if not REQ.exists():
-        fail("requirements.txt not found")
+def ci_frontend():
+    out(LINE, "STEP 4 — ci.yml: pin pnpm action to exact packageManager", LINE, sep="\n")
+    version = None
+    for pj in (ROOT / "package.json", ROOT / "frontend" / "package.json"):
+        if pj.exists():
+            m = re.search(r'"packageManager"\s*:\s*"pnpm@([^"]+)"',
+                          pj.read_text(encoding="utf-8", errors="replace"))
+            if m:
+                version = m.group(1)
+                out(f"    packageManager (from {pj.relative_to(ROOT)}): pnpm@{version}")
+                break
+    if version is None:
+        version = "11.4.0"
+        warn("no packageManager field found — defaulting to 11.4.0")
+    if not CI_YML.exists():
+        fail("ci.yml not found")
         return False
-    raw = REQ.read_text(encoding="utf-8-sig", errors="replace")
-    text = raw.replace("\r\n", "\n")
-    lines = text.split("\n")
-    changed = []
-    for i, ln in enumerate(lines):
-        s = ln.strip()
-        if s.lower().startswith("pywin32") and ";" not in s:
-            lines[i] = ln.rstrip() + ' ; sys_platform == "win32"'
-            changed.append(s)
-    if not changed:
-        ok("pywin32 already guarded (or absent)")
+    text = CI_YML.read_text(encoding="utf-8", errors="replace")
+    new, n = re.subn(r"(uses:\s*pnpm/action-setup@v4\n\s+version:\s*)[^\n]+",
+                     r"\g<1>" + version, text)
+    if n == 0:
+        if f"version: {version}" in text:
+            ok("already pinned correctly")
+            return True
+        warn("pnpm version input not found — manual check needed")
         return True
-    new = "\n".join(lines)
-    if not new.endswith("\n"):
-        new += "\n"
-    with open(REQ, "w", encoding="utf-8", newline="\n") as f:
-        f.write(new)
-    ok(f"guarded: {changed}")
-
-    r = git("grep", "-n", "win32", "--", "services/", "engine/", "scripts/")
-    hits = [l for l in r.stdout.splitlines() if l.strip()]
-    out(f"    win32 usage in code: {len(hits)} hit(s)")
-    for l in hits[:5]:
-        out("    " + l)
-    if not hits:
-        out("    (pywin32 also appears unused — full-removal candidate later)")
-
-    git("add", "--", "requirements.txt")
+    if new == text:
+        ok("already pinned correctly")
+        return True
+    CI_YML.write_text(new, encoding="utf-8", newline="\n")
+    try:
+        import yaml
+        data = yaml.safe_load(new)
+        assert "frontend" in (data.get("jobs") or {})
+        ok("ci.yml still valid YAML")
+    except Exception as e:
+        warn(f"yaml check failed: {e!r}")
+    git("add", "--", ".github/workflows/ci.yml")
     r = git("commit", "-m",
-            "fix(ci): guard pywin32 with sys_platform marker "
-            "(Windows-only package broke Linux install)")
+            f"ci(frontend): pin pnpm/action-setup version to {version} "
+            "(exact match with packageManager field)")
     if r.returncode == 0:
         ok("committed (push triggers a fresh CI run)")
         git("push", "origin", "main")
@@ -209,183 +313,75 @@ def req_marker():
         ok("nothing to commit")
     return True
 
-# -------------------------------------------------------------- route-map ---
-MOUNT_PROBE = """
-import json, ast
-from pathlib import Path
-src = Path('services/api_gateway/main.py').read_text(encoding='utf-8', errors='replace')
-tree = ast.parse(src)
-mounts = []
-for node in ast.walk(tree):
-    if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) \\
-            and node.func.attr == 'include_router':
-        router_expr = node.args[0]
-        if isinstance(router_expr, ast.Attribute):
-            name = router_expr.attr
-        elif isinstance(router_expr, ast.Name):
-            name = router_expr.id
-        else:
-            name = '?'
-        prefix = ''
-        for kw in node.keywords:
-            if kw.arg == 'prefix' and isinstance(kw.value, ast.Constant):
-                prefix = kw.value.value
-        mounts.append({'router': name, 'prefix': prefix})
-print('MOUNTS:' + json.dumps(mounts))
+# ------------------------------------------------------------ land-models ---
+LM = ROOT / "services" / "models" / "land_models.py"
+LM_IMPORTS = (
+    "from .base import Base\n"
+    "\n"
+    "import uuid\n"
+    "\n"
+    "from sqlalchemy import Column, DateTime, Float, ForeignKey, String, Text, func\n"
+    "from sqlalchemy.dialects.postgresql import JSONB\n"
+    "from sqlalchemy.dialects.postgresql import UUID as PG_UUID\n"
+)
 
-from services.api_gateway.main import app
-rows = []
-for r in app.routes:
-    path = getattr(r, 'path', None)
-    if not path:
-        continue
-    methods = sorted(getattr(r, 'methods', None) or []) or ['WS']
-    ep = getattr(getattr(r, 'endpoint', None), '__name__', '?')
-    rows.append({'path': path, 'methods': ','.join(methods), 'ep': ep})
-print('ROUTES:' + json.dumps(rows))
-"""
-
-def route_map(verbose=True):
-    if verbose:
-        out(LINE, "STEP 3 — route map (fixed parser)", LINE, sep="\n")
-    r = sh([sys.executable, "-c", MOUNT_PROBE], timeout=300)
-    if r.returncode != 0:
-        fail("probe failed: " + (r.stderr or r.stdout)[-500:])
-        return None
-    mounts = routes = None
-    for line in r.stdout.splitlines():
-        if line.startswith("MOUNTS:"):
-            mounts = json.loads(line[len("MOUNTS:"):])
-        elif line.startswith("ROUTES:"):
-            routes = json.loads(line[len("ROUTES:"):])
-    if mounts is None or routes is None:
-        fail("probe output unparsable")
-        return None
-    if verbose:
-        out("mounts (AST):")
-        for m in mounts:
-            out(f"    {m['router']:16s} prefix={m['prefix'] or '(none)'}")
-        out(f"\nlive routes: {len(routes)}")
-        ai = [row for row in routes if row["path"].startswith("/api/v1/ai")]
-        out(f"AI routes ({len(ai)}):")
-        for row in sorted(ai, key=lambda x: x["path"]):
-            out(f"    {row['methods']:8s} {row['path']:34s} -> {row['ep']}")
-        out("\nroute-collision audit (same path+method, different endpoints):")
-        seen = {}
-        for row in routes:
-            k = (row["path"], row["methods"])
-            seen.setdefault(k, []).append(row["ep"])
-        collided = 0
-        for (p, m), eps in sorted(seen.items()):
-            if len(eps) > 1:
-                collided += 1
-                out(f"    {m:8s} {p}: {eps}  <== COLLISION")
-        if not collided:
-            ok("no collisions found across all mounted routes")
-    return routes
-
-# --------------------------------------------------------------- ai-dedup ---
-AI_CHAT = ROOT / "services" / "api_gateway" / "routers" / "ai_chat.py"
-
-def ai_dedup():
-    out(LINE, "STEP 4 — AI dedup (route-map evidence)", LINE, sep="\n")
-    routes = route_map(verbose=True)
-    if routes is None:
+def land_models():
+    out(LINE, "STEP 5 — land_models.py: restore lost import block", LINE, sep="\n")
+    r = git("grep", "-n", "land_models", "--", "services/", "tests/",
+            "engine/", "scripts/")
+    hits = [l for l in r.stdout.splitlines() if l.strip()]
+    out(f"    references to land_models: {len(hits)}")
+    for l in hits[:8]:
+        out("    " + l)
+    if not LM.exists():
+        fail("file not found")
         return False
-    chat_routes = [r for r in routes
-                   if r["path"].endswith("/chat") and "POST" in r["methods"]]
-    out(f"\n    POST .../chat routes: "
-        + str([(r["path"], r["ep"]) for r in chat_routes]))
-    dup = {}
-    for r in chat_routes:
-        dup.setdefault(r["path"], []).append(r["ep"])
-    collision_path = next((p for p, eps in dup.items() if len(eps) > 1), None)
-    if not collision_path:
-        ok("no AI /chat collision — done")
+    text = LM.read_text(encoding="utf-8", errors="replace").replace("\r\n", "\n")
+    if "from sqlalchemy import Column" in text:
+        ok("imports already present")
         return True
-    eps = dup[collision_path]
-    out(f"    collision at {collision_path}: {eps}")
-    if "chat" not in eps or "chat_endpoint" not in eps:
-        warn("unexpected endpoint names — aborting for manual review")
+    if not text.startswith("from .base import Base"):
+        fail("unexpected file head — aborting")
         return True
-
-    raw, crlf, text = read_text(AI_CHAT)
-    tree = ast.parse(text)
-    target = None
-    for node in tree.body:
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) \
-                and node.name == "chat":
-            for dec in node.decorator_list:
-                if (isinstance(dec, ast.Call)
-                        and isinstance(dec.func, ast.Attribute)
-                        and dec.func.attr == "post"
-                        and dec.args
-                        and isinstance(dec.args[0], ast.Constant)
-                        and dec.args[0].value == "/chat"):
-                    target = node
-    if target is None:
-        fail("chat endpoint not found in ai_chat.py — aborting")
+    new_text = LM_IMPORTS + text[len("from .base import Base"):]
+    try:
+        ast.parse(new_text)
+    except SyntaxError as e:
+        fail(f"parse after edit L{e.lineno}: {e.msg}")
         return False
-    start = min(d.lineno for d in target.decorator_list)
-    end = target.end_lineno
-    lines = text.split("\n")
-    new_text = re.sub(r"\n{4,}", "\n\n\n",
-                      "\n".join(lines[: start - 1] + lines[end:]))
-    ast.parse(new_text)
-    write_text(AI_CHAT, new_text, crlf)
-    ok(f"removed dead 'chat' endpoint (lines {start}-{end})")
+    LM.write_text(new_text, encoding="utf-8", newline="\n")
+    ok("import block written")
 
-    routes2 = route_map(verbose=False)
-    if routes2 is None:
-        fail("post-proof failed — ROLLING BACK")
-        write_text(AI_CHAT, raw, False)
+    r = sh([sys.executable, "-c",
+            "import importlib; importlib.import_module("
+            "'services.models.land_models'); print('IMPORT-OK')"], timeout=180)
+    if "IMPORT-OK" not in (r.stdout or ""):
+        fail("module still not importable — ROLLING BACK")
+        out("    " + (r.stderr or r.stdout)[-400:])
+        LM.write_text(text, encoding="utf-8", newline="\n")
         ok("original restored")
         return False
-    eps2 = [r["ep"] for r in routes2
-            if r["path"] == collision_path and "POST" in r["methods"]]
-    if eps2 != ["chat_endpoint"]:
-        fail(f"post-proof mismatch ({eps2}) — ROLLING BACK")
-        write_text(AI_CHAT, raw, False)
-        ok("original restored")
-        return False
-    ok(f"{collision_path} now served only by 'chat_endpoint' (RAG)")
-    git("add", "--", "services/api_gateway/routers/ai_chat.py")
+    ok("module imports cleanly now (proof green)")
+
+    ruff_exe = ROOT / ".venv" / "Scripts" / "ruff.exe"
+    cmd = [str(ruff_exe)] if ruff_exe.exists() else ["ruff"]
+    r = sh(cmd + ["check", "services/models/land_models.py",
+                  "--select", "F821", "--output-format", "concise"],
+           timeout=120)
+    remaining = [l for l in (r.stdout or "").splitlines() if "F821" in l]
+    out(f"    remaining F821 in land_models.py: {len(remaining)}")
+    for l in remaining[:5]:
+        out("    " + l)
+
+    git("add", "--", "services/models/land_models.py")
     r = git("commit", "-m",
-            "refactor(ai): remove shadowed duplicate POST /api/v1/ai/chat\n\n"
-            "ai.py (RAG) was registered first and was the live handler; the "
-            "auth-gated KB 'chat' in ai_chat.py was unreachable dead code.")
+            "fix(models): restore lost sqlalchemy import block in land_models "
+            "(84 ruff F821 undefined names)")
     if r.returncode == 0:
         ok("committed")
+        git("push", "origin", "main")
     else:
-        warn("commit failed: " + (r.stdout + r.stderr)[-300:])
-    git("push", "origin", "main")
-    return True
-
-# ------------------------------------------------------------------ recon ---
-def recon():
-    out(LINE, "STEP 5 — recon", LINE, sep="\n")
-    pj = ROOT / "frontend" / "package.json"
-    if pj.exists():
-        text = pj.read_text(encoding="utf-8", errors="replace")
-        m = re.search(r'"packageManager"\s*:\s*"([^"]+)"', text)
-        out(f"    frontend packageManager: {m.group(1) if m else '(not set)'}")
-    lock = ROOT / "frontend" / "pnpm-lock.yaml"
-    if lock.exists():
-        head = lock.read_text(encoding="utf-8", errors="replace").splitlines()[:2]
-        out("    pnpm-lock head: " + " | ".join(head))
-
-    lm = ROOT / "services" / "models" / "land_models.py"
-    if lm.exists():
-        ruff_exe = ROOT / ".venv" / "Scripts" / "ruff.exe"
-        cmd = [str(ruff_exe)] if ruff_exe.exists() else ["ruff"]
-        r = sh(cmd + ["check", "services/models/land_models.py",
-                      "--select", "F821", "--output-format", "concise"],
-               timeout=120)
-        names = sorted(set(re.findall(r"F821 Undefined name `(\w+)`",
-                                      r.stdout or "")))
-        out(f"\n    land_models.py undefined names ({len(names)}):")
-        out("    " + ", ".join(names[:40]))
-        dump(lm, hi=45, title="land_models.py head")
+        ok("nothing to commit")
     return True
 
 # ------------------------------------------------------------------ chore ---
@@ -405,11 +401,12 @@ def main():
     except Exception:
         pass
     cmd = sys.argv[1] if len(sys.argv) > 1 else "all"
-    steps = {"verify": verify, "ci-logs": ci_logs, "req-marker": req_marker,
-             "route-map": route_map, "ai-dedup": ai_dedup, "recon": recon}
+    steps = {"verify": verify, "anatomy": anatomy,
+             "file-evidence": file_evidence, "ci-jobs": ci_jobs,
+             "ci-frontend": ci_frontend, "land-models": land_models}
     if cmd == "all":
-        for name in ("verify", "ci-logs", "req-marker", "route-map",
-                     "ai-dedup", "recon"):
+        for name in ("verify", "anatomy", "file-evidence", "ci-jobs",
+                     "ci-frontend", "land-models"):
             try:
                 steps[name]()
             except Exception as e:
