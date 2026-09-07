@@ -7,8 +7,15 @@
     "retry": "Retry"
   },
   "home": {
+    "heroTitle": "From data to living landscapes",
+    "heroSubtitle": "Measure, model, and restore watersheds, soils, and farms with a science-first digital twin.",
+    "subtitle": "A digital twin for watersheds, soils, and farms — combining satellite data, soil profiles, and 318 scientific models to support evidence-based landscape restoration decisions.",
     "openDashboard": "Open HyDroMa",
-    "subtitle": "A digital twin for watersheds, soils, and farms — combining satellite data, soil profiles, and 318 scientific models to support evidence-based landscape restoration decisions."
+    "noSignup": "No sign-up required",
+    "openSource": "Open & transparent",
+    "liveSnapshot": "Live platform snapshot",
+    "platformTitle": "Eco Nojin, at a glance",
+    "trustLabel": "Built on trusted scientific data"
   },
   "nav": {
     "home": "Home",
@@ -16,6 +23,85 @@
     "models": "Models",
     "dashboard": "Dashboard",
     "about": "About"
+  },
+  "crises": {
+    "title": "Four crises, one solution",
+    "subtitle": "We design for the hardest parts of restoration.",
+    "water": { "title": "Water scarcity", "stat": "2.3B", "body": "People already live under water stress." },
+    "soil": { "title": "Soil degradation", "stat": "33%", "body": "Of land is degraded worldwide." },
+    "livelihood": { "title": "Livelihood pressure", "stat": "1.1B", "body": "Rural livelihoods depend on fragile land." },
+    "climate": { "title": "Climate risk", "stat": "+1.2°C", "body": "Rising temperatures intensify every stressor." }
+  },
+  "principles": {
+    "title": "Our principles",
+    "subtitle": "A science-first, farmer-honest approach.",
+    "p1": { "title": "Evidence over opinion", "body": "Every decision is backed by peer-reviewed models." },
+    "p2": { "title": "Landscape scale", "body": "We work at watershed scale, not plot scale." },
+    "p3": { "title": "Farmer-first economics", "body": "Restoration must pay for the people who live there." },
+    "p4": { "title": "Radical transparency", "body": "Open data, open methods, verifiable MRV." }
+  },
+  "features": {
+    "eyebrow": "Capabilities",
+    "title": "One platform, end to end",
+    "f1": { "title": "AI & scientific modeling", "body": "Run proven agro-hydrology and carbon models." },
+    "f2": { "title": "Earth observation", "body": "Sentinel-2 NDVI, ERA5 climate, and more." },
+    "f3": { "title": "Verifiable MRV", "body": "Carbon and water claims you can prove." },
+    "f4": { "title": "Land & water scenarios", "body": "Compare interventions before you invest." },
+    "f5": { "title": "Secure & auditable", "body": "Blockchain-anchored records and audit trails." },
+    "f6": { "title": "Real-time analytics", "body": "Live dashboards, from plot to portfolio." }
+  },
+  "workflow": {
+    "eyebrow": "How it works",
+    "title": "From landscape to decision",
+    "s1": { "title": "Ingest", "body": "Pull satellite, soil, and climate data in real time." },
+    "s2": { "title": "Model", "body": "Run scientific models like AquaCrop, SWAT+, and RothC." },
+    "s3": { "title": "Decide", "body": "Turn forecasts into land and water decisions." }
+  },
+  "finance": {
+    "title": "Impact & Economics",
+    "subtitle": "Restoration that pays for itself",
+    "irr": "IRR",
+    "irrValue": "26%",
+    "npv": "NPV",
+    "npvValue": "$12.4M",
+    "bc": "B/C Ratio",
+    "bcValue": "2.8×",
+    "payback": "Payback",
+    "paybackValue": "4.2 yr"
+  },
+  "impact": {
+    "title": "Measurable impact",
+    "wue": "Higher water-use efficiency",
+    "soc": "Carbon sequestered in soil",
+    "erosion": "Less soil erosion",
+    "income": "Higher farm income",
+    "jobs": "New rural jobs",
+    "villages": "Resilient villages"
+  },
+  "models": {
+    "title": "Scientific Models",
+    "subtitle": "Each card is a scientific model. Select one to run in HyDroMa.",
+    "launch": "Launch in HyDroMa",
+    "domains": {
+      "water": "Water",
+      "hydraulic": "Hydraulic",
+      "crop": "Crop",
+      "erosion": "Erosion",
+      "carbon": "Carbon"
+    },
+    "swat": { "name": "SWAT+", "desc": "Daily hydrology, sediment, and nutrients on sub-basin scale." },
+    "pywr": { "name": "Pywr", "desc": "Water resource network simulation with optimal allocation." },
+    "hecras": { "name": "HEC-RAS", "desc": "1D steady/unsteady open-channel flow via Manning equation." },
+    "aquacrop": { "name": "AquaCrop", "desc": "FAO crop-water productivity under water stress." },
+    "rusle": { "name": "RUSLE", "desc": "Revised Universal Soil Loss Equation for annual erosion." },
+    "rothc": { "name": "RothC", "desc": "Soil organic carbon turnover with 26.4 compartment kinetics." }
+  },
+  "cta": {
+    "badge": "Get started",
+    "title": "See your landscape in a new light",
+    "body": "Open the dashboard and explore the scenarios for your land, water, and carbon.",
+    "secondary": "Explore the knowledge base",
+    "footer": "Free to explore. Your data stays yours."
   },
   "actions": {
     "save": "Save",

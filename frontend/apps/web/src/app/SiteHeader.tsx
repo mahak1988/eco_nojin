@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { APP_NAME } from '@eco/config';
 import { cn } from '@eco/utils';
@@ -42,7 +42,7 @@ export function SiteHeader() {
       className={cn(
         'sticky top-0 z-40 w-full transition-all duration-base ease-out-soft',
         scrolled
-          ? 'border-b border-ink/10 bg-surface/85 backdrop-blur-xl shadow-soft'
+          ? 'header-frost border-b border-ink/10 shadow-soft'
           : 'bg-surface/0',
       )}
     >
@@ -68,7 +68,7 @@ export function SiteHeader() {
                 className="rounded-lg px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
               >
                 {t(link.labelKey, link.fallback)}
-                <span aria-hidden="true" className="ms-1 text-[10px]">↗</span>
+                <span aria-hidden="true" className="ms-1 text-[10px] rtl-flip">↗</span>
               </a>
             ) : (
               <a
@@ -90,11 +90,11 @@ export function SiteHeader() {
             href="/dashboard"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden items-center gap-1.5 rounded-lg bg-gradient-brand px-4 py-2 text-sm font-semibold text-white shadow-soft transition-all hover:shadow-raised focus-visible:shadow-glow focus-visible:outline-none sm:inline-flex"
+            className="hidden items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-ink-inverse shadow-soft transition-all hover:shadow-raised focus-visible:shadow-glow focus-visible:outline-none sm:inline-flex"
             aria-label={`${t('home.openDashboard', 'Open HyDroMa')} — opens in a new tab`}
           >
             {t('nav.dashboard', 'HyDroMa')}
-            <span aria-hidden="true">→</span>
+            <span aria-hidden="true" className="rtl-flip">→</span>
           </a>
 
           {/* Mobile menu toggle */}
@@ -141,7 +141,7 @@ export function SiteHeader() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setMobileOpen(false)}
-              className="mt-2 inline-flex items-center justify-center gap-1.5 rounded-lg bg-gradient-brand px-4 py-2.5 text-sm font-semibold text-white"
+              className="mt-2 inline-flex items-center justify-center gap-1.5 rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-ink-inverse"
             >
               {t('home.openDashboard', 'Open HyDroMa')}
             </a>

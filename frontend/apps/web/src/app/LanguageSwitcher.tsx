@@ -1,15 +1,36 @@
-import { useI18n } from '@eco/i18n';
+import { useLocale, useSwitchLocale } from '@eco/i18n';
+import { useTranslation } from 'react-i18next';
+
+const LANGS = [
+  { code: 'fa', label: 'فارسی' },
+  { code: 'en', label: 'English' },
+  { code: 'ar', label: 'العربية' },
+  { code: 'ur', label: 'اردو' },
+] as const;
 
 export function LanguageSwitcher() {
-  const { lang, setLang } = useI18n();
+  const { locale } = useLocale();
+  const switchTo = useSwitchLocale();
+  const { t } = useTranslation();
+
   return (
-    <button
-      type="button"
-      onClick={() => setLang(lang === 'fa' ? 'en' : 'fa')}
-      className="rounded-full border border-gray-300 dark:border-gray-700 px-3 py-1 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:ring-2 focus-visible:ring-green-500"
-      aria-label={lang === 'fa' ? 'Switch to English' : 'تغییر زبان به فارسی'}
-    >
-      {lang === 'fa' ? 'EN' : 'فارسی'}
-    </button>
+    <label className="flex items-center gap-1">
+      <span className="sr-only">{t('common.language', 'Language')}</span>
+      <select
+        value={locale}
+        onChange={(e) => {
+          e.preventDefault();
+          switchTo(e.target.value as typeof locale);
+        }}
+        className="rounded-lg border border-ink/10 bg-surface px-2 py-1.5 text-sm text-ink focus:border-brand-400 focus:outline-none"
+        aria-label={t('common.language', 'Language')}
+      >
+        {LANGS.map((l) => (
+          <option key={l.code} value={l.code}>
+            {l.label}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }

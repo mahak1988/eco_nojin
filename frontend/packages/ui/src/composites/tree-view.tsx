@@ -53,7 +53,7 @@ export function TreeView({ data, onSelect, className }: TreeViewProps) {
           <span className="truncate">{node.label}</span>
         </button>
         {hasChildren && isExpanded && (
-            <div>{node.children?.map((child) => renderNode(child, depth + 1))}</div>
+          <div>{node.children?.map((child) => renderNode(child, depth + 1))}</div>
         )}
       </div>
     )

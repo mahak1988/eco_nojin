@@ -44,11 +44,17 @@ export type IconName =
   | 'star'
   | 'upload-cloud'
   | 'bell'
+  | 'archive'
+  | 'trash2'
+  | 'pen'
+  | 'eraser'
+  | 'undo'
+  | 'redo'
 
 type El =
   | { t: 'path'; d: string }
   | { t: 'circle'; cx: number; cy: number; r: number }
-  | { t: 'rect'; x: number; y: number; width: number; height: number }
+  | { t: 'rect'; x: number; y: number; width: number; height: number; rx?: number }
   | { t: 'polygon'; points: string }
   | { t: 'line'; x1: string; y1: string; x2: string; y2: string }
 
@@ -212,6 +218,32 @@ const ICONS: Record<IconName, El[]> = {
     { t: 'path', d: 'M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242' },
     { t: 'path', d: 'M12 12v9M8 17l4-5 4 5' },
   ],
+  archive: [
+    { t: 'rect', x: 2, y: 4, width: 20, height: 16, rx: 2 },
+    { t: 'path', d: 'M2 8h20' },
+    { t: 'path', d: 'M12 12v6' },
+  ],
+  trash2: [
+    { t: 'path', d: 'M3 6h18' },
+    { t: 'path', d: 'M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6' },
+    { t: 'path', d: 'M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2' },
+  ],
+  pen: [
+    { t: 'path', d: 'M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z' },
+  ],
+  eraser: [
+    { t: 'path', d: 'm7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21' },
+    { t: 'path', d: 'M22 21H7' },
+    { t: 'path', d: 'm5 11 9 9' },
+  ],
+  undo: [
+    { t: 'path', d: 'M3 7v6h6' },
+    { t: 'path', d: 'M21 17a9.9 9.9 0 0 0-9.3-14.6 9.9 9.9 0 0 0-10.6 10.1c0 3.3 1.3 6.3 3.5 8.5' },
+  ],
+  redo: [
+    { t: 'path', d: 'M21 7v6h-6' },
+    { t: 'path', d: 'M3 17a9.9 9.9 0 0 1 9.3-14.6 9.9 9.9 0 0 1 10.6 10.1c0 3.3-1.3 6.3-3.5 8.5' },
+  ],
 }
 
 export interface IconProps extends SVGProps<SVGSVGElement> {
@@ -236,7 +268,7 @@ export const Icon = forwardRef<SVGSVGElement, IconProps>(({ name, size = 20, ...
     {ICONS[name].map((el, i) => {
       if (el.t === 'circle') return <circle key={i} cx={el.cx} cy={el.cy} r={el.r} />
       if (el.t === 'rect')
-        return <rect key={i} x={el.x} y={el.y} width={el.width} height={el.height} />
+        return <rect key={i} x={el.x} y={el.y} width={el.width} height={el.height} rx={el.rx} />
       if (el.t === 'polygon') return <polygon key={i} points={el.points} />
       if (el.t === 'line') return <line key={i} x1={el.x1} y1={el.y1} x2={el.x2} y2={el.y2} />
       return <path key={i} d={el.d} />
@@ -265,6 +297,12 @@ const ICON_ALIASES: Record<string, IconName> = {
   UploadCloud: 'upload-cloud',
   Search: 'search',
   Bell: 'bell',
+  Archive: 'archive',
+  Trash2: 'trash2',
+  Pen: 'pen',
+  Eraser: 'eraser',
+  Undo: 'undo',
+  Redo: 'redo',
 }
 
 export const Check = (props: Omit<React.SVGProps<SVGSVGElement>, 'name'> & { size?: number }) => (
@@ -323,4 +361,22 @@ export const Search = (props: Omit<React.SVGProps<SVGSVGElement>, 'name'> & { si
 )
 export const Bell = (props: Omit<React.SVGProps<SVGSVGElement>, 'name'> & { size?: number }) => (
   <Icon name="bell" {...props} />
+)
+export const Archive = (props: Omit<React.SVGProps<SVGSVGElement>, 'name'> & { size?: number }) => (
+  <Icon name="archive" {...props} />
+)
+export const Trash2 = (props: Omit<React.SVGProps<SVGSVGElement>, 'name'> & { size?: number }) => (
+  <Icon name="trash2" {...props} />
+)
+export const Pen = (props: Omit<React.SVGProps<SVGSVGElement>, 'name'> & { size?: number }) => (
+  <Icon name="pen" {...props} />
+)
+export const Eraser = (props: Omit<React.SVGProps<SVGSVGElement>, 'name'> & { size?: number }) => (
+  <Icon name="eraser" {...props} />
+)
+export const Undo = (props: Omit<React.SVGProps<SVGSVGElement>, 'name'> & { size?: number }) => (
+  <Icon name="undo" {...props} />
+)
+export const Redo = (props: Omit<React.SVGProps<SVGSVGElement>, 'name'> & { size?: number }) => (
+  <Icon name="redo" {...props} />
 )

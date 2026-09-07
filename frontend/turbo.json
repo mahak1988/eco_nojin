@@ -31,7 +31,6 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["^build"],
       "inputs": [
         "src/**",
         "public/**",

@@ -97,7 +97,7 @@ export function KnowledgePage() {
               دانش‌نامه
             </Badge>
             <h1 className={cn('mt-3 text-balance md:text-5xl', roleClasses.display)}>
-              پشتوانهٔ علمی اکو نُژین
+               پشتوانهٔ علمی اکو نوژین
             </h1>
             <p className="mt-4 text-balance text-base text-ink-muted md:text-lg">
               مقاله‌ها، راهنماها و توضیحات عملی از مدل‌های علمی پشت پلتفرم.

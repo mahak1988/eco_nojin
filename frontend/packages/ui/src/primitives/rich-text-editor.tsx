@@ -1,12 +1,26 @@
 import { cn } from '@eco/utils'
-import { useRef } from 'react'
 import DOMPurify from 'dompurify'
+import { useRef } from 'react'
 const SANITIZE_CONFIG = {
-  ALLOWED_TAGS: ['b', 'strong', 'i', 'em', 'u', 's', 'strike', 'del',
-                 'ul', 'ol', 'li', 'br', 'p', 'div', 'span'],
+  ALLOWED_TAGS: [
+    'b',
+    'strong',
+    'i',
+    'em',
+    'u',
+    's',
+    'strike',
+    'del',
+    'ul',
+    'ol',
+    'li',
+    'br',
+    'p',
+    'div',
+    'span',
+  ],
   ALLOWED_ATTR: ['style', 'align'],
 }
-
 
 export type RichTextEditorProps = {
   value: string

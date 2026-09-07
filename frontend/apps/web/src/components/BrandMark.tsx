@@ -63,7 +63,7 @@ export function BrandWordmark({
           Eco Nojin
         </span>
         <span className={`text-[10px] font-medium uppercase tracking-[0.18em] ${subColor}`}>
-          اکو نُژین
+          اکو نوژین
         </span>
       </div>
     </div>
