@@ -1,17 +1,11 @@
-# pnpm workspace configuration
 packages:
-  - 'frontend'
-  - 'services/*'
-
-# این تنظیمات باید در workspace level باشد نه global
+- frontend
+- services/*
 autoInstallPeers: true
 strictPeerDependencies: false
-
-# تنظیمات performance
 preferFrozenLockfile: true
-
 onlyBuiltDependencies:
-  - "@biomejs/biome"
-  - esbuild
-  - prisma
-  - msw
+- '@biomejs/biome'
+- esbuild
+- prisma
+- msw

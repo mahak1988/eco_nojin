@@ -30,8 +30,8 @@ jobs:
         run: pytest -q --tb=short || true
 
   frontend:
-          - name: Install
-        run: pnpm -C frontend install --frozen-lockfile
+    name: "Frontend (vite build)"
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
@@ -44,9 +44,6 @@ jobs:
           cache: pnpm
           cache-dependency-path: frontend/pnpm-lock.yaml
       - name: Install
-        # --ignore-scripts: biome/esbuild binaries ship as platform-specific
-        # optional deps; postinstall scripts are not needed for the build and
-        # pnpm 11 hoisted-linker turns them into a hard error otherwise.
         run: pnpm -C frontend install --frozen-lockfile --ignore-scripts
       - name: Build
         run: pnpm -C frontend build
