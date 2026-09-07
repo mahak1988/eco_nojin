@@ -41,3 +41,5 @@ coverage/
 # Misc
 *.tsbuildinfo
 .pnpm-workspace-state-v1.json
+# intermediate i18n fragments (merged into locales)
+.i18n-fragments/

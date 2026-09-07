@@ -1,4 +1,4 @@
-export { Tabs, TabsList, TabsTrigger, TabsContent, type TabsProps } from './tabs'
+﻿export { Tabs, TabsList, TabsTrigger, TabsContent, type TabsProps } from './tabs'
 export {
   Dialog,
   DialogTrigger,
@@ -145,3 +145,4 @@ export {
   type ModalStackProviderProps,
   type ModalStackItemProps,
 } from './modal-stack'
+export { Reveal, type RevealProps } from './reveal'

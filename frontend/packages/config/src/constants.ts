@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Shared constants used by both apps and design system.
  * Mirrors backend `engine/hydroma/core/constants.py` where applicable.
  */
@@ -26,3 +26,13 @@ export const SCI_CONSTANTS = {
 export const API_TIMEOUT_MS = 30_000;
 export const API_VERSION = 'v1';
 export const API_BASE_PATH = `/api/${API_VERSION}`;
+/** Cross-app navigation targets (single source of truth). */
+export const DASHBOARD_URL: string =
+  (typeof import.meta !== 'undefined' &&
+    (import.meta as { env?: Record<string, string | undefined> }).env?.['VITE_DASHBOARD_URL']) ||
+  '/dashboard';
+
+export const PUBLIC_SITE_URL: string =
+  (typeof import.meta !== 'undefined' &&
+    (import.meta as { env?: Record<string, string | undefined> }).env?.['VITE_PUBLIC_SITE_URL']) ||
+  '/';

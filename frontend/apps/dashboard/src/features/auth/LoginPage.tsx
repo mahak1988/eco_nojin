@@ -1,7 +1,9 @@
 import { useId, useRef, useState, type FormEvent } from 'react';
 import { useNavigate } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@eco/auth';
 import { Alert, Button, Card, CardBody, Input, Spinner } from '@eco/ui';
+import { LogoMark } from '@eco/ui';
 
 function Field({
   label,
@@ -26,6 +28,7 @@ function Field({
 }
 
 export function LoginPage() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
@@ -52,7 +55,7 @@ export function LoginPage() {
       }
       void navigate({ to: '/' });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Authentication failed');
+      setError(err instanceof Error ? err.message : t('auth.failed', 'ورود ناموفق بود'));
     } finally {
       setSubmitting(false);
     }
@@ -61,23 +64,18 @@ export function LoginPage() {
   return (
     <main
       role="main"
-      aria-label="صفحهٔ ورود"
-      className="flex min-h-screen items-center justify-center bg-surface-muted p-4"
+      aria-label={t('auth.ariaPage', 'صفحهٔ ورود')}
+      className="bg-mesh flex min-h-screen items-center justify-center p-4"
     >
       <Card className="w-full max-w-md">
         <CardBody>
           <div className="mb-6 text-center">
-            <div
-              aria-hidden="true"
-              className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-lg bg-brand-600 text-lg font-bold text-white"
-            >
-              EN
-            </div>
-            <h1 className="text-2xl font-semibold">HyDroMa — Sign in</h1>
+            <LogoMark size={52} className="mx-auto mb-3" />
+            <h1 className="text-2xl font-semibold">{t('auth.title', 'HyDroMa — ورود')}</h1>
             <p className="mt-1 text-sm text-ink-muted">
               {auth.isSupabaseConfigured
-                ? 'Supabase authentication is enabled.'
-                : 'Supabase is not configured. You can sign in via the dev fallback below.'}
+                ? t('auth.supabaseOn', 'احراز هویت Supabase فعال است.')
+                : t('auth.supabaseOff', 'Supabase تنظیم نشده؛ می‌توانید از ورود آزمایشی پایین استفاده کنید.')}
             </p>
           </div>
 
@@ -88,7 +86,7 @@ export function LoginPage() {
             className="mb-2"
           >
             {error && (
-              <Alert tone="danger" title="Authentication failed" className="mb-2">
+              <Alert tone="danger" title={t('auth.failed', 'ورود ناموفق بود')} className="mb-2">
                 {error}
               </Alert>
             )}
@@ -96,13 +94,13 @@ export function LoginPage() {
 
           {auth.status === 'loading' && !submitting && (
             <div className="mb-3 flex items-center gap-2 text-sm text-ink-muted">
-              <Spinner size="sm" aria-hidden={false} aria-label="Loading session" />
-              <span>Restoring session…</span>
+              <Spinner size="sm" aria-hidden={false} aria-label={t('auth.loadingSession', 'بازیابی نشست')} />
+              <span>{t('auth.restoring', 'در حال بازیابی نشست…')}</span>
             </div>
           )}
 
           <form onSubmit={submit} className="flex flex-col gap-3" noValidate={false}>
-            <Field label="Email">
+            <Field label={t('auth.email', 'ایمیل')}>
               <Input
                 id={emailId}
                 type="email"
@@ -115,7 +113,7 @@ export function LoginPage() {
                 ref={emailRef}
               />
             </Field>
-            <Field label="Password">
+            <Field label={t('auth.password', 'گذرواژه')}>
               <Input
                 id={passwordId}
                 type="password"
@@ -131,10 +129,10 @@ export function LoginPage() {
             <Button
               type="submit"
               disabled={submitting || !email || !password}
-              aria-label={mode === 'signin' ? 'ورود به سیستم' : 'ایجاد حساب کاربری'}
+              aria-label={mode === 'signin' ? t('auth.signIn', 'ورود به سیستم') : t('auth.createAccount', 'ایجاد حساب کاربری')}
             >
               {submitting && <Spinner size="sm" tone="inverse" />}
-              {mode === 'signin' ? 'Sign in' : 'Create account'}
+              {mode === 'signin' ? t('auth.signIn', 'ورود') : t('auth.createAccount', 'ایجاد حساب')}
             </Button>
           </form>
 
@@ -145,7 +143,7 @@ export function LoginPage() {
               className="text-brand-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded"
               aria-pressed={mode === 'signup'}
             >
-              {mode === 'signin' ? 'Need an account? Sign up' : 'Have an account? Sign in'}
+              {mode === 'signin' ? t('auth.needAccount', 'حساب ندارید؟ ثبت‌نام') : t('auth.haveAccount', 'حساب دارید؟ ورود')}
             </button>
             {!auth.isSupabaseConfigured && (
               <button
@@ -156,7 +154,7 @@ export function LoginPage() {
                 }}
                 className="text-ink-muted hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded"
               >
-                Continue as demo user
+                {t('auth.demoUser', 'ادامه به‌عنوان کاربر نمونه')}
               </button>
             )}
           </div>

@@ -1,0 +1,15 @@
+{
+  "name": "اکو نوجین — Eco Nojin",
+  "short_name": "اکو نوجین",
+  "description": "دوقلوی دیجیتال علمی برای بازسازی سرزمین: آب، خاک، کربن و پایش ماهواره‌ای",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6faf7",
+  "theme_color": "#af5f1e",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

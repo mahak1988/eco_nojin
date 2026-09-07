@@ -1,71 +1,81 @@
-import { useTranslation } from 'react-i18next';
-import { APP_DESCRIPTION, APP_NAME } from '@eco/config';
-import { BrandMark } from '../components/BrandMark';
-import { cn } from '@eco/utils';
+import { Link } from '@tanstack/react-router';
+import { APP_DESCRIPTION, APP_NAME, DASHBOARD_URL } from '@eco/config';
+import { BrandWordmark } from '../components/BrandMark';
 
-const FOOTER_COLS = [
+type FooterLink = {
+  href: string;
+  label: string;
+  external?: boolean;
+  /** Cross-app link (HyDroMa) */
+  crossApp?: boolean;
+};
+
+const FOOTER_COLS: { title: string; links: readonly FooterLink[] }[] = [
   {
     title: 'محصول',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
-        <rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
-      </svg>
-    ),
     links: [
-      { href: '/', label: 'خانه', external: false },
-      { href: '/knowledge', label: 'دانش‌نامه', external: false },
-      { href: '/models', label: 'مدل‌های علمی', external: false },
-      { href: '/dashboard', label: 'داشبورد HyDroMa', external: true },
+      { href: '/', label: 'خانه' },
+      { href: '/knowledge', label: 'دانشنامه' },
+      { href: '/models', label: 'مدل‌های علمی' },
+      { href: DASHBOARD_URL, label: 'داشبورد HyDroMa', external: true, crossApp: true },
     ],
   },
   {
     title: 'تخصص‌ها',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" strokeLinejoin="round" />
-      </svg>
-    ),
     links: [
-      { href: '/knowledge#carbon', label: 'کربن خاک (RothC)', external: false },
-      { href: '/knowledge#hydrology', label: 'هیدرولوژی (SWAT+)', external: false },
-      { href: '/knowledge#crop', label: 'محصول-آب (AquaCrop)', external: false },
-      { href: '/knowledge#satellite', label: 'سنجش از دور (Sentinel)', external: false },
+      { href: '/knowledge#carbon', label: 'کربن خاک (RothC)' },
+      { href: '/knowledge#hydrology', label: 'هیدرولوژی (SWAT+)' },
+      { href: '/knowledge#crop', label: 'محصول-آب (AquaCrop)' },
+      { href: '/knowledge#satellite', label: 'سنجش از دور (Sentinel)' },
     ],
   },
   {
     title: 'منابع',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" strokeLinecap="round" />
-        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" strokeLinejoin="round" />
-      </svg>
-    ),
     links: [
-      { href: '/knowledge', label: 'مقالات علمی', external: false },
-      { href: '/models', label: 'کاتالوگ مدل‌ها', external: false },
-      { href: 'https://github.com', label: 'مخزن کد', external: true },
-      { href: '/dashboard', label: 'مستندات API', external: false },
+      { href: '/knowledge', label: 'مقالات علمی' },
+      { href: '/models', label: 'کاتالوگ مدل‌ها' },
+      { href: DASHBOARD_URL, label: 'مستندات API', external: true, crossApp: true },
     ],
   },
   {
     title: 'سازمان',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 4-6 8-6s8 2 8 6" strokeLinejoin="round" />
-      </svg>
-    ),
     links: [
-      { href: '/about', label: 'درباره ما', external: false },
-      { href: '/contact', label: 'تماس', external: false },
-      { href: '/privacy', label: 'حریم خصوصی', external: false },
-      { href: '/terms', label: 'شرایط استفاده', external: false },
+      { href: '/knowledge', label: 'درباره ما' },
+      { href: '/knowledge', label: 'تماس' },
+      { href: '/knowledge', label: 'حریم خصوصی' },
+      { href: '/knowledge', label: 'شرایط استفاده' },
     ],
   },
 ] as const;
 
+function FooterLinkItem({ link }: { link: FooterLink }) {
+  if (link.crossApp) {
+    return (
+      <a
+        href={link.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-ink-inverse/70 transition-colors hover:text-ink-inverse"
+      >
+        {link.label} <span aria-hidden="true" className="text-[10px]">↗</span>
+      </a>
+    );
+  }
+  if (link.external || link.href.includes('#')) {
+    return (
+      <a href={link.href} className="text-ink-inverse/70 transition-colors hover:text-ink-inverse">
+        {link.label}
+      </a>
+    );
+  }
+  return (
+    <Link to={link.href as '/'} className="text-ink-inverse/70 transition-colors hover:text-ink-inverse">
+      {link.label}
+    </Link>
+  );
+}
+
 export function Footer() {
-  const { t } = useTranslation();
   const year = new Date().getFullYear();
 
   return (
@@ -77,18 +87,8 @@ export function Footer() {
           {/* Brand card */}
           <div className="md:col-span-4">
             <div className="h-full rounded-2xl border border-ink-inverse/10 bg-surface-inverse-muted p-6">
-              <div className="flex items-center gap-3 text-ink-inverse">
-                <BrandMark size={40} className="drop-shadow-sm" />
-                <div className="flex flex-col leading-tight">
-                  <span className="text-lg font-semibold">{APP_NAME}</span>
-                  <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-ink-inverse/60">
-                    اکو نوژین
-                  </span>
-                </div>
-              </div>
-              <p className="mt-4 text-sm leading-relaxed text-ink-inverse/70">
-                {APP_DESCRIPTION}
-              </p>
+              <BrandWordmark size="md" variant="dark" />
+              <p className="mt-4 text-sm leading-relaxed text-ink-inverse/70">{APP_DESCRIPTION}</p>
 
               <div className="mt-6">
                 <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-inverse/60">
@@ -131,24 +131,13 @@ export function Footer() {
                   key={col.title}
                   className="rounded-2xl border border-ink-inverse/10 bg-surface-inverse-muted p-5 transition-all hover:border-ink-inverse/20 hover:shadow-soft"
                 >
-                  <div className="flex items-center gap-2 text-brand-300">
-                    {col.icon}
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-inverse/80">
-                      {col.title}
-                    </h4>
-                  </div>
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-inverse/80">
+                    {col.title}
+                  </h4>
                   <ul className="mt-4 space-y-2.5 text-sm">
                     {col.links.map((link) => (
-                      <li key={link.href}>
-                        <a
-                          href={link.href}
-                          target={link.external ? '_blank' : undefined}
-                          rel={link.external ? 'noopener noreferrer' : undefined}
-                          className="flex items-center gap-2 text-ink-inverse/75 transition-colors hover:text-brand-300"
-                        >
-                          <span className="h-1 w-1 rounded-full bg-ink-inverse/30 transition-colors group-hover:bg-brand-400" />
-                          {link.label}
-                        </a>
+                      <li key={`${col.title}-${link.label}`}>
+                        <FooterLinkItem link={link} />
                       </li>
                     ))}
                   </ul>
@@ -158,22 +147,13 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom strip */}
-        <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-2xl border border-ink-inverse/10 bg-surface-inverse-muted px-6 py-4 text-xs text-ink-inverse/60 md:flex-row md:items-center">
-          <div className="flex items-center gap-2">
-            <span>© {year} {APP_NAME}. {t('app.tagline')}</span>
-          </div>
-          <div className="flex items-center gap-3 text-ink-inverse/70">
-            <a href="/privacy" className="transition-colors hover:text-brand-300">حریم خصوصی</a>
-            <span className="text-ink-inverse/30">·</span>
-            <a href="/terms" className="transition-colors hover:text-brand-300">شرایط</a>
-            <span className="text-ink-inverse/30">·</span>
-            <a href="/contact" className="transition-colors hover:text-brand-300">تماس</a>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="rounded-full border border-ink-inverse/15 px-2 py-0.5">v2.0.0-beta</span>
-            <span className="rounded-full bg-leaf-700/30 px-2 py-0.5 text-leaf-300">ساخت ایران</span>
-          </div>
+        {/* Bottom bar */}
+        <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-ink-inverse/10 pt-6 text-xs text-ink-inverse/50 md:flex-row md:items-center">
+          <span>© {year} {APP_NAME} — همهٔ حقوق محفوظ است.</span>
+          <span className="flex items-center gap-2">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-leaf-400" aria-hidden="true" />
+            ساخته‌شده برای تیم‌های بازسازی سرزمین
+          </span>
         </div>
       </div>
     </footer>

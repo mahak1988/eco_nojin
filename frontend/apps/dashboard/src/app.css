@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 @import "../../../tooling/tailwind/tokens.css";
 
 @source "../../../packages/ui/src";
@@ -103,4 +103,20 @@ body {
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #22c55e, #0ea5e9);
   border-radius: 8px; border: 2px solid transparent; background-clip: padding-box;
+}
+
+/* ==== Self-hosted Vazirmatn (variable, all weights 100-900) ==== */
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/vazirmatn-var.woff2') format('woff2-variations'),
+       url('/fonts/vazirmatn-var.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ==== Respect reduced motion for decorative animations ==== */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float, .marquee, .shimmer, .animate-ripple { animation: none !important; }
+  .card-3d:hover { transform: none; }
 }

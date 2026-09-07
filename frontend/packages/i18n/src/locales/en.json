@@ -15,7 +15,23 @@
     "openSource": "Open & transparent",
     "liveSnapshot": "Live platform snapshot",
     "platformTitle": "Eco Nojin, at a glance",
-    "trustLabel": "Built on trusted scientific data"
+    "trustLabel": "Built on global data & standards",
+    "docTitle": "Eco Nojin — Digital Twin for Landscape Restoration",
+    "statModels": "Models registered in the run engine",
+    "statDomains": "Scientific domains",
+    "statStandards": "Global standard models",
+    "statLangs": "UI languages",
+    "socDemo": "Soil organic carbon trajectory (demo)",
+    "map": {
+      "badge": "Live geodata",
+      "title": "From satellite to decision map",
+      "subtitle": "NDVI, soil and water layers at a glance — the same engine that powers HyDroMa.",
+      "aria": "Interactive world map",
+      "legend": "Watersheds and land cover overview",
+      "legendHint": "Pan and zoom to explore",
+      "fallbackTitle": "Interactive map temporarily unavailable",
+      "fallbackBody": "The tile service did not respond on this network; full satellite and GIS layers are available in HyDroMa."
+    }
   },
   "nav": {
     "home": "Home",
@@ -27,35 +43,90 @@
   "crises": {
     "title": "Four crises, one solution",
     "subtitle": "We design for the hardest parts of restoration.",
-    "water": { "title": "Water scarcity", "stat": "2.3B", "body": "People already live under water stress." },
-    "soil": { "title": "Soil degradation", "stat": "33%", "body": "Of land is degraded worldwide." },
-    "livelihood": { "title": "Livelihood pressure", "stat": "1.1B", "body": "Rural livelihoods depend on fragile land." },
-    "climate": { "title": "Climate risk", "stat": "+1.2°C", "body": "Rising temperatures intensify every stressor." }
+    "water": {
+      "title": "Water scarcity",
+      "stat": "2.3B",
+      "body": "People already live under water stress."
+    },
+    "soil": {
+      "title": "Soil degradation",
+      "stat": "33%",
+      "body": "Of land is degraded worldwide."
+    },
+    "livelihood": {
+      "title": "Livelihood pressure",
+      "stat": "1.1B",
+      "body": "Rural livelihoods depend on fragile land."
+    },
+    "climate": {
+      "title": "Climate risk",
+      "stat": "+1.2°C",
+      "body": "Rising temperatures intensify every stressor."
+    }
   },
   "principles": {
     "title": "Our principles",
     "subtitle": "A science-first, farmer-honest approach.",
-    "p1": { "title": "Evidence over opinion", "body": "Every decision is backed by peer-reviewed models." },
-    "p2": { "title": "Landscape scale", "body": "We work at watershed scale, not plot scale." },
-    "p3": { "title": "Farmer-first economics", "body": "Restoration must pay for the people who live there." },
-    "p4": { "title": "Radical transparency", "body": "Open data, open methods, verifiable MRV." }
+    "p1": {
+      "title": "Evidence over opinion",
+      "body": "Every decision is backed by peer-reviewed models."
+    },
+    "p2": {
+      "title": "Landscape scale",
+      "body": "We work at watershed scale, not plot scale."
+    },
+    "p3": {
+      "title": "Farmer-first economics",
+      "body": "Restoration must pay for the people who live there."
+    },
+    "p4": {
+      "title": "Radical transparency",
+      "body": "Open data, open methods, verifiable MRV."
+    }
   },
   "features": {
     "eyebrow": "Capabilities",
     "title": "One platform, end to end",
-    "f1": { "title": "AI & scientific modeling", "body": "Run proven agro-hydrology and carbon models." },
-    "f2": { "title": "Earth observation", "body": "Sentinel-2 NDVI, ERA5 climate, and more." },
-    "f3": { "title": "Verifiable MRV", "body": "Carbon and water claims you can prove." },
-    "f4": { "title": "Land & water scenarios", "body": "Compare interventions before you invest." },
-    "f5": { "title": "Secure & auditable", "body": "Blockchain-anchored records and audit trails." },
-    "f6": { "title": "Real-time analytics", "body": "Live dashboards, from plot to portfolio." }
+    "f1": {
+      "title": "AI & scientific modeling",
+      "body": "Run proven agro-hydrology and carbon models."
+    },
+    "f2": {
+      "title": "Earth observation",
+      "body": "Sentinel-2 NDVI, ERA5 climate, and more."
+    },
+    "f3": {
+      "title": "Verifiable MRV",
+      "body": "Carbon and water claims you can prove."
+    },
+    "f4": {
+      "title": "Land & water scenarios",
+      "body": "Compare interventions before you invest."
+    },
+    "f5": {
+      "title": "Secure & auditable",
+      "body": "Blockchain-anchored records and audit trails."
+    },
+    "f6": {
+      "title": "Real-time analytics",
+      "body": "Live dashboards, from plot to portfolio."
+    }
   },
   "workflow": {
     "eyebrow": "How it works",
     "title": "From landscape to decision",
-    "s1": { "title": "Ingest", "body": "Pull satellite, soil, and climate data in real time." },
-    "s2": { "title": "Model", "body": "Run scientific models like AquaCrop, SWAT+, and RothC." },
-    "s3": { "title": "Decide", "body": "Turn forecasts into land and water decisions." }
+    "s1": {
+      "title": "Ingest",
+      "body": "Pull satellite, soil, and climate data in real time."
+    },
+    "s2": {
+      "title": "Model",
+      "body": "Run scientific models like AquaCrop, SWAT+, and RothC."
+    },
+    "s3": {
+      "title": "Decide",
+      "body": "Turn forecasts into land and water decisions."
+    }
   },
   "finance": {
     "title": "Impact & Economics",
@@ -89,12 +160,32 @@
       "erosion": "Erosion",
       "carbon": "Carbon"
     },
-    "swat": { "name": "SWAT+", "desc": "Daily hydrology, sediment, and nutrients on sub-basin scale." },
-    "pywr": { "name": "Pywr", "desc": "Water resource network simulation with optimal allocation." },
-    "hecras": { "name": "HEC-RAS", "desc": "1D steady/unsteady open-channel flow via Manning equation." },
-    "aquacrop": { "name": "AquaCrop", "desc": "FAO crop-water productivity under water stress." },
-    "rusle": { "name": "RUSLE", "desc": "Revised Universal Soil Loss Equation for annual erosion." },
-    "rothc": { "name": "RothC", "desc": "Soil organic carbon turnover with 26.4 compartment kinetics." }
+    "swat": {
+      "name": "SWAT+",
+      "desc": "Daily hydrology, sediment, and nutrients on sub-basin scale."
+    },
+    "pywr": {
+      "name": "Pywr",
+      "desc": "Water resource network simulation with optimal allocation."
+    },
+    "hecras": {
+      "name": "HEC-RAS",
+      "desc": "1D steady/unsteady open-channel flow via Manning equation."
+    },
+    "aquacrop": {
+      "name": "AquaCrop",
+      "desc": "FAO crop-water productivity under water stress."
+    },
+    "rusle": {
+      "name": "RUSLE",
+      "desc": "Revised Universal Soil Loss Equation for annual erosion."
+    },
+    "rothc": {
+      "name": "RothC",
+      "desc": "Soil organic carbon turnover with 26.4 compartment kinetics."
+    },
+    "showcaseTitle": "Scientific engines of the platform",
+    "launchIn": "Launch in HyDroMa"
   },
   "cta": {
     "badge": "Get started",
@@ -120,5 +211,159 @@
     "mm": "mm",
     "m3": "m³",
     "ppm": "ppm"
+  },
+  "common": {
+    "mainNav": "Main navigation",
+    "openMenu": "Open menu",
+    "userMenu": "User menu",
+    "guest": "Guest",
+    "profile": "Profile",
+    "settings": "Settings",
+    "signOut": "Sign out",
+    "publicSite": "Public site",
+    "search": "Search",
+    "searchPlaceholder": "Search pages…",
+    "commandPalette": "Command palette",
+    "skipToContent": "Skip to main content",
+    "mainSidebar": "Main sidebar",
+    "mainHeader": "Main header",
+    "mainContent": "Main content",
+    "breadcrumb": "Breadcrumb",
+    "expandSidebar": "Expand sidebar",
+    "collapseSidebar": "Collapse sidebar",
+    "retry": "Retry",
+    "language": "Language"
+  },
+  "dashboard": {
+    "workspaceName": "HyDroMa Workspace",
+    "footerNote": "Built for land restoration teams",
+    "nav": {
+      "groups": {
+        "overview": "Overview",
+        "scientific": "Scientific",
+        "finance": "Finance",
+        "experimental": "Experimental"
+      },
+      "items": {
+        "overview": "Overview",
+        "carbon": "Carbon",
+        "water": "Water",
+        "soil": "Soil",
+        "climate": "Climate",
+        "satellite": "Satellite",
+        "mrv": "MRV",
+        "models": "Models hub",
+        "motors": "Motors",
+        "farms": "Farms",
+        "aquacrop": "AquaCrop",
+        "swat": "SWAT+",
+        "rothc": "RothC",
+        "erosion": "RUSLE",
+        "groundwater": "Groundwater",
+        "irrigation": "Irrigation",
+        "structures": "Structures",
+        "topography": "Topography",
+        "landCapability": "Land capability",
+        "landTerrain": "Land terrain",
+        "landDrainage": "Land drainage",
+        "era5": "ERA5",
+        "satelliteAnalyze": "Sat analyze",
+        "carbonOracle": "Carbon oracle",
+        "blockchain": "Blockchain",
+        "marketplace": "Marketplace",
+        "wallet": "Wallet",
+        "aiCopilot": "AI Copilot",
+        "chat": "Chat"
+      }
+    },
+    "home": {
+      "title": "Workspace overview",
+      "generated": "Generated",
+      "liveSnapshot": "Live snapshot",
+      "live": "Live",
+      "cannotReach": "Cannot reach backend",
+      "projects": "Projects",
+      "totalArea": "Total area",
+      "carbonCredits": "Carbon credits",
+      "activeMotors": "Active motors",
+      "weatherDays": "Weather days",
+      "avgTemp": "Avg temperature",
+      "avgNdvi": "Avg NDVI",
+      "soilProfiles": "Soil profiles",
+      "recentProjects": "Recent projects",
+      "platform": "Platform",
+      "tables": "Tables",
+      "services": "Services",
+      "endpoints": "Endpoints",
+      "motors": "Motors",
+      "noProjects": "No projects reported by backend yet.",
+      "name": "Name",
+      "region": "Region",
+      "area": "Area (ha)",
+      "created": "Created"
+    },
+    "pages": {
+      "farms": {
+        "title": "Farms",
+        "subtitle": "Your registered farms on the platform — straight from the backend.",
+        "live": "API connected",
+        "errorTitle": "Failed to load farms",
+        "emptyTitle": "No farms yet",
+        "emptyBody": "Create your first farm in the backend and it will appear here.",
+        "unnamed": "Unnamed",
+        "region": "Region",
+        "area": "Area",
+        "created": "Created"
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "subtitle": "Products and producers of a transparent supply chain.",
+        "live": "API connected",
+        "errorTitle": "Failed to load products",
+        "emptyTitle": "No products yet",
+        "emptyBody": "As soon as a product is registered in the backend it will appear here.",
+        "unnamed": "Unnamed",
+        "totalProducts": "Total products",
+        "totalOrders": "Total orders",
+        "totalProducers": "Producers",
+        "totalRevenue": "Total revenue"
+      },
+      "wallet": {
+        "title": "Eco Wallet",
+        "subtitle": "Eco tokens: earn from green actions, redeem and distribute.",
+        "live": "API connected",
+        "errorTitle": "Failed to load wallet stats",
+        "earningOptions": "Ways to earn tokens",
+        "about": "About Eco tokens",
+        "aboutBody": "Earn tokens by running restoration actions (planting, protection, monitoring) and redeem or distribute them on the marketplace. Full details in the blockchain and carbon oracle modules.",
+        "noOptions": "No options registered.",
+        "totalWallets": "Total wallets",
+        "totalTokens": "Total tokens",
+        "tokensEarned": "Tokens earned",
+        "tokensRedeemed": "Tokens redeemed",
+        "activeWallets": "Active wallets"
+      }
+    }
+  },
+  "auth": {
+    "ariaPage": "Sign in page",
+    "title": "HyDroMa — Sign in",
+    "supabaseOn": "Supabase authentication is enabled.",
+    "supabaseOff": "Supabase is not configured. You can use the dev fallback below.",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "createAccount": "Create account",
+    "needAccount": "Need an account? Sign up",
+    "haveAccount": "Have an account? Sign in",
+    "demoUser": "Continue as demo user",
+    "restoring": "Restoring session…",
+    "loadingSession": "Loading session",
+    "failed": "Authentication failed"
+  },
+  "notFound": {
+    "title": "404 — page not found",
+    "body": "The page you were looking for has moved or never existed.",
+    "goHome": "Go home"
   }
 }

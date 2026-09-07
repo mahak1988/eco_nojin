@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Eco Nojin Design Tokens (CSS-first, consumed by Tailwind v4).
  *
  * Color philosophy:
@@ -68,10 +68,10 @@
   --color-info: 37 99 235;
 
   /* ============ Typography ============ */
-  --font-sans: 'Inter', 'Vazirmatn', system-ui, sans-serif;
+  --font-sans: 'Vazirmatn', 'Segoe UI', system-ui, sans-serif;
   --font-fa: 'Vazirmatn', 'Tahoma', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-  --font-display: 'Inter', 'Vazirmatn', system-ui, sans-serif;
+  --font-display: 'Vazirmatn', 'Segoe UI', system-ui, sans-serif;
 
   /* ============ Radii ============ */
   --radius-xs: 4px;
@@ -189,8 +189,11 @@
 
   h1, h2, h3, h4 {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
     font-weight: 700;
+  }
+  /* Negative tracking harms Persian letter-joining - LTR only */
+  html[dir='ltr'] h1, html[dir='ltr'] h2, html[dir='ltr'] h3, html[dir='ltr'] h4 {
+    letter-spacing: -0.02em;
   }
 }
 

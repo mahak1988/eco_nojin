@@ -1,28 +1,22 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { APP_NAME } from '@eco/config';
+import { DASHBOARD_URL, APP_NAME } from '@eco/config';
 import { cn } from '@eco/utils';
 import { BrandWordmark } from '../components/BrandMark';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ThemeToggle } from './ThemeToggle';
 
 type NavLink = {
-  href: string;
+  href: '/' | '/knowledge' | '/models';
   labelKey: string;
   fallback: string;
-  external?: boolean;
 };
 
 const NAV: readonly NavLink[] = [
   { href: '/', labelKey: 'nav.home', fallback: 'Home' },
   { href: '/knowledge', labelKey: 'nav.knowledge', fallback: 'Knowledge' },
   { href: '/models', labelKey: 'nav.models', fallback: 'Models' },
-  {
-    href: '/dashboard',
-    labelKey: 'nav.dashboard',
-    fallback: 'HyDroMa',
-    external: true,
-  },
 ];
 
 export function SiteHeader() {
@@ -41,57 +35,47 @@ export function SiteHeader() {
     <header
       className={cn(
         'sticky top-0 z-40 w-full transition-all duration-base ease-out-soft',
-        scrolled
-          ? 'header-frost border-b border-ink/10 shadow-soft'
-          : 'bg-surface/0',
+        scrolled ? 'header-frost border-b border-ink/10 shadow-soft' : 'bg-surface/0',
       )}
     >
       <div className="mx-auto flex h-header w-full max-w-content items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         {/* Brand */}
-        <a
-          href="/"
-          className="flex items-center gap-3 transition-opacity hover:opacity-80"
-          aria-label={`${APP_NAME} home`}
-        >
+        <Link to="/" className="flex items-center gap-3 transition-opacity hover:opacity-80" aria-label={`${APP_NAME} home`}>
           <BrandWordmark size="md" />
-        </a>
+        </Link>
 
         {/* Desktop nav */}
-        <nav aria-label="ناوبری اصلی" className="hidden items-center gap-1 md:flex">
-          {NAV.map((link) =>
-            link.external ? (
-              <a
-                key={link.href}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-lg px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-              >
-                {t(link.labelKey, link.fallback)}
-                <span aria-hidden="true" className="ms-1 text-[10px] rtl-flip">↗</span>
-              </a>
-            ) : (
-              <a
-                key={link.href}
-                href={link.href}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-              >
-                {t(link.labelKey, link.fallback)}
-              </a>
-            ),
-          )}
+        <nav aria-label={t('common.mainNav', 'منوی اصلی')} className="hidden items-center gap-1 md:flex">
+          {NAV.map((link) => (
+            <Link
+              key={link.href}
+              to={link.href}
+              className="rounded-lg px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+            >
+              {t(link.labelKey, link.fallback)}
+            </Link>
+          ))}
+          <a
+            href={DASHBOARD_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-lg px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+          >
+            {t('nav.dashboard', 'HyDroMa')}
+            <span aria-hidden="true" className="ms-1 text-[10px]">↗</span>
+          </a>
         </nav>
 
         {/* Right side actions */}
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <LanguageSwitcher />
-<a
-            href="/dashboard"
+          <a
+            href={DASHBOARD_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="hidden items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-ink-inverse shadow-soft transition-all hover:shadow-raised focus-visible:shadow-glow focus-visible:outline-none sm:inline-flex"
-            aria-label={`${t('home.openDashboard', 'Open HyDroMa')} — opens in a new tab`}
+            aria-label={t('home.openDashboard', 'Open HyDroMa')}
           >
             {t('nav.dashboard', 'HyDroMa')}
             <span aria-hidden="true" className="rtl-flip">→</span>
@@ -100,7 +84,7 @@ export function SiteHeader() {
           {/* Mobile menu toggle */}
           <button
             type="button"
-            aria-label="Open menu"
+            aria-label={t('common.openMenu', 'باز کردن منو')}
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((v) => !v)}
             className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-ink/10 text-ink-muted hover:bg-surface-muted md:hidden"
@@ -123,21 +107,19 @@ export function SiteHeader() {
       {/* Mobile menu drawer */}
       {mobileOpen && (
         <div className="border-t border-ink/10 bg-surface/95 backdrop-blur-xl md:hidden">
-          <nav className="flex flex-col gap-1 p-4">
+          <nav className="flex flex-col gap-1 p-4" aria-label={t('common.mainNav', 'منوی اصلی')}>
             {NAV.map((link) => (
-              <a
+              <Link
                 key={link.href}
-                href={link.href}
-                target={link.external ? '_blank' : undefined}
-                rel={link.external ? 'noopener noreferrer' : undefined}
+                to={link.href}
                 onClick={() => setMobileOpen(false)}
                 className="rounded-lg px-3 py-2.5 text-sm font-medium text-ink hover:bg-surface-muted"
               >
                 {t(link.labelKey, link.fallback)}
-              </a>
+              </Link>
             ))}
             <a
-              href="/dashboard"
+              href={DASHBOARD_URL}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setMobileOpen(false)}

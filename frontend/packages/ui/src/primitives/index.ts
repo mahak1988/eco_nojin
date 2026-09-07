@@ -1,4 +1,4 @@
-export { Button, type ButtonProps } from './button'
+﻿export { Button, type ButtonProps } from './button'
 export { Card, CardHeader, CardBody, CardFooter, type CardProps } from './card'
 export { Input, Textarea, type InputProps, type TextareaProps } from './input'
 export { Badge, type BadgeProps } from './badge'
@@ -65,3 +65,6 @@ export { Whiteboard, type WhiteboardProps, type Tool } from './whiteboard'
 export { DrawingCanvas, type DrawingCanvasProps } from './drawing-canvas'
 export { Mascot, type MascotProps } from './mascot'
 export { ThreeDIllustration, type ThreeDIllustrationProps } from './three-d-illustration'
+
+export { Command, type CommandItem, type CommandProps } from './command'
+export { LogoMark, BrandWordmark, type LogoMarkProps, type BrandWordmarkProps } from './logo'

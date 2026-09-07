@@ -1,4 +1,4 @@
-import { RTL_LOCALES, type Locale } from '@eco/config';
+﻿import { RTL_LOCALES, type Locale } from '@eco/config';
 import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
@@ -22,7 +22,7 @@ export function isRTL(locale: Locale): boolean {
 
 let initialized = false;
 
-export function setupI18n(defaultLocale: Locale = 'fa'): typeof i18n {
+export function setupI18n(_defaultLocale: Locale = 'fa'): typeof i18n {
   if (initialized) return i18n;
   initialized = true;
 
@@ -31,7 +31,7 @@ export function setupI18n(defaultLocale: Locale = 'fa'): typeof i18n {
     .use(initReactI18next)
     .init({
       resources,
-      fallbackLng: defaultLocale,
+      fallbackLng: 'en',
       supportedLngs: ['en', 'fa', 'ar', 'ur'],
       interpolation: { escapeValue: false },
       detection: {
