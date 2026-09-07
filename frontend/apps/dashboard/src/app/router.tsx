@@ -1,3 +1,4 @@
+import { lazyPage } from './lazy';
 import {
   Outlet,
   RouterProvider,
@@ -5,37 +6,37 @@ import {
   createRoute,
   createRouter,
 } from '@tanstack/react-router';
-import { AiCopilotPage } from '@/features/ai-copilot/AiCopilotPage';
-import { CropWaterReqPage } from '@/features/aquacrop/CropWaterReqPage';
+const AiCopilotPage = lazyPage(() => import('@/features/ai-copilot/AiCopilotPage'));;
+const CropWaterReqPage = lazyPage(() => import('@/features/aquacrop/CropWaterReqPage'));;
 import { LoginPage } from '@/features/auth/LoginPage';
 import { ProtectedRoute } from '@/features/auth/ProtectedRoute';
-import { BlockchainPage } from '@/features/blockchain/BlockchainPage';
-import { CarbonOraclePage } from '@/features/carbon-oracle/CarbonOraclePage';
-import { CarbonPage } from '@/features/carbon/CarbonPage';
-import { ChatPage } from '@/features/chat/ChatPage';
-import { ClimatePage } from '@/features/climate/ClimatePage';
-import { DashboardHome } from '@/features/dashboard/DashboardHome';
-import { LandDrainagePage } from '@/features/land-drainage/LandDrainagePage';
-import { LandCapabilityPage } from '@/features/land-capability/LandCapabilityPage';
-import { LandTerrainPage } from '@/features/land-terrain/LandTerrainPage';
-import { MarketplacePage } from '@/features/marketplace/MarketplacePage';
-import { ModelsPage } from '@/features/models/ModelsPage';
-import { MotorsPage } from '@/features/motors/MotorsPage';
-import { MrvPage } from '@/features/mrv/MrvPage';
-import { RunoffPage } from '@/features/runoff/RunoffPage';
-import { SatelliteAnalyzePage } from '@/features/satellite-analyze/SatelliteAnalyzePage';
-import { SatellitePage } from '@/features/satellite/SatellitePage';
-import { ErosionPage } from '@/features/erosion/ErosionPage';
-import { Era5Page } from '@/features/era5/Era5Page';
-import { GroundwaterPage } from '@/features/groundwater/GroundwaterPage';
-import { IrrigationDesignPage } from '@/features/irrigation/IrrigationDesignPage';
-import { SoilCarbonPage } from '@/features/soil-carbon/SoilCarbonPage';
-import { SoilPage } from '@/features/soil/SoilPage';
-import { StructureDesignPage } from '@/features/structure/StructureDesignPage';
-import { TopographyPage } from '@/features/topography/TopographyPage';
-import { FarmsPage } from '@/features/farms/FarmsPage';
-import { WalletPage } from '@/features/wallet/WalletPage';
-import { WaterPage } from '@/features/water/WaterPage';
+const BlockchainPage = lazyPage(() => import('@/features/blockchain/BlockchainPage'));;
+const CarbonOraclePage = lazyPage(() => import('@/features/carbon-oracle/CarbonOraclePage'));;
+const CarbonPage = lazyPage(() => import('@/features/carbon/CarbonPage'));;
+const ChatPage = lazyPage(() => import('@/features/chat/ChatPage'));;
+const ClimatePage = lazyPage(() => import('@/features/climate/ClimatePage'));;
+const DashboardHome = lazyPage(() => import('@/features/dashboard/DashboardHome'));;
+const LandDrainagePage = lazyPage(() => import('@/features/land-drainage/LandDrainagePage'));;
+const LandCapabilityPage = lazyPage(() => import('@/features/land-capability/LandCapabilityPage'));;
+const LandTerrainPage = lazyPage(() => import('@/features/land-terrain/LandTerrainPage'));;
+const MarketplacePage = lazyPage(() => import('@/features/marketplace/MarketplacePage'));;
+const ModelsPage = lazyPage(() => import('@/features/models/ModelsPage'));;
+const MotorsPage = lazyPage(() => import('@/features/motors/MotorsPage'));;
+const MrvPage = lazyPage(() => import('@/features/mrv/MrvPage'));;
+const RunoffPage = lazyPage(() => import('@/features/runoff/RunoffPage'));;
+const SatelliteAnalyzePage = lazyPage(() => import('@/features/satellite-analyze/SatelliteAnalyzePage'));;
+const SatellitePage = lazyPage(() => import('@/features/satellite/SatellitePage'));;
+const ErosionPage = lazyPage(() => import('@/features/erosion/ErosionPage'));;
+const Era5Page = lazyPage(() => import('@/features/era5/Era5Page'));;
+const GroundwaterPage = lazyPage(() => import('@/features/groundwater/GroundwaterPage'));;
+const IrrigationDesignPage = lazyPage(() => import('@/features/irrigation/IrrigationDesignPage'));;
+const SoilCarbonPage = lazyPage(() => import('@/features/soil-carbon/SoilCarbonPage'));;
+const SoilPage = lazyPage(() => import('@/features/soil/SoilPage'), 'SoilPage');
+const StructureDesignPage = lazyPage(() => import('@/features/structure/StructureDesignPage'));;
+const TopographyPage = lazyPage(() => import('@/features/topography/TopographyPage'));;
+const FarmsPage = lazyPage(() => import('@/features/farms/FarmsPage'));;
+const WalletPage = lazyPage(() => import('@/features/wallet/WalletPage'));;
+const WaterPage = lazyPage(() => import('@/features/water/WaterPage'));;
 import { GlobalErrorBoundary } from '../components/GlobalErrorBoundary';
 import { WorkspaceLayout } from './WorkspaceLayout';
 
