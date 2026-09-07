@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRunMotorEndpoint } from '@/hooks/useMotorEndpoint';
 import { Alert, Button, Card, CardBody, CardHeader, Field, ResultCard, RunResultView } from '@eco/ui';
 
 export function SoilCarbonPage() {
+  const { t } = useTranslation();
   const [clayPct, setClayPct] = useState('25');
   const [socInitial, setSocInitial] = useState('50');
   const [temperature, setTemperature] = useState('15');
@@ -26,18 +28,18 @@ export function SoilCarbonPage() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-semibold">🌍 RothC Soil Carbon</h1>
+        <h1 className="text-2xl font-semibold">{t('dashboard.pages.soil-carbon.title', '🌍 RothC Soil Carbon')}</h1>
         <p className="text-sm text-ink-muted">
-          26.4-year Rothamsted carbon turnover model. Outputs final SOC + CO₂ flux.
+          {t('dashboard.pages.soil-carbon.subtitle', '26.4-year Rothamsted carbon turnover model. Outputs final SOC + CO₂ flux.')}
         </p>
       </header>
 
       <Card>
         <CardHeader>
-          <h2 className="text-base font-semibold">Inputs</h2>
+          <h2 className="text-base font-semibold">{t('dashboard.pages.soil-carbon.inputs', 'Inputs')}</h2>
         </CardHeader>
         <CardBody className="grid gap-4 md:grid-cols-3">
-          <Field label="Clay (%)">
+          <Field label={t('dashboard.pages.soil-carbon.clay', 'Clay (%)')}>
             <input
               type="number"
               min={0}
@@ -47,7 +49,7 @@ export function SoilCarbonPage() {
               className="rounded-md border border-ink/15 bg-surface-raised px-3 py-2 text-sm"
             />
           </Field>
-          <Field label="Initial SOC (tC/ha)">
+          <Field label={t('dashboard.pages.soil-carbon.socInitial', 'Initial SOC (tC/ha)')}>
             <input
               type="number"
               min={0}
@@ -56,7 +58,7 @@ export function SoilCarbonPage() {
               className="rounded-md border border-ink/15 bg-surface-raised px-3 py-2 text-sm"
             />
           </Field>
-          <Field label="Mean annual T (°C)">
+          <Field label={t('dashboard.pages.soil-carbon.temperature', 'Mean annual T (°C)')}>
             <input
               type="number"
               value={temperature}
@@ -64,7 +66,7 @@ export function SoilCarbonPage() {
               className="rounded-md border border-ink/15 bg-surface-raised px-3 py-2 text-sm"
             />
           </Field>
-          <Field label="Mean annual rainfall (mm)">
+          <Field label={t('dashboard.pages.soil-carbon.rainfall', 'Mean annual rainfall (mm)')}>
             <input
               type="number"
               value={rainfall}
@@ -72,7 +74,7 @@ export function SoilCarbonPage() {
               className="rounded-md border border-ink/15 bg-surface-raised px-3 py-2 text-sm"
             />
           </Field>
-          <Field label="Years">
+          <Field label={t('dashboard.pages.soil-carbon.years', 'Years')}>
             <input
               type="number"
               min={1}
@@ -82,38 +84,38 @@ export function SoilCarbonPage() {
               className="rounded-md border border-ink/15 bg-surface-raised px-3 py-2 text-sm"
             />
           </Field>
-          <Field label="Land use">
+          <Field label={t('dashboard.pages.soil-carbon.landUse', 'Land use')}>
             <select
               value={landUse}
               onChange={(e) => setLandUse((e.target as HTMLSelectElement).value)}
               className="rounded-md border border-ink/15 bg-surface-raised px-3 py-2 text-sm"
             >
-              <option value="cropland">Cropland</option>
-              <option value="grassland">Grassland</option>
-              <option value="forest">Forest</option>
-              <option value="shrubland">Shrubland</option>
-              <option value="bare">Bare</option>
+              <option value="cropland">{t('dashboard.pages.soil-carbon.cropland', 'Cropland')}</option>
+              <option value="grassland">{t('dashboard.pages.soil-carbon.grassland', 'Grassland')}</option>
+              <option value="forest">{t('dashboard.pages.soil-carbon.forest', 'Forest')}</option>
+              <option value="shrubland">{t('dashboard.pages.soil-carbon.shrubland', 'Shrubland')}</option>
+              <option value="bare">{t('dashboard.pages.soil-carbon.bare', 'Bare')}</option>
             </select>
           </Field>
         </CardBody>
         <div className="border-t border-ink/5 p-5">
           <Button onClick={submit} disabled={run.isPending}>
             {run.isPending && <span className="me-2 h-3 w-3 animate-spin rounded-full border-2 border-white border-r-transparent" />}
-            Run RothC
+            {t('dashboard.pages.soil-carbon.runButton', 'Run RothC')}
           </Button>
         </div>
       </Card>
 
       {run.error && (
-        <Alert tone="danger" title="Run failed">
+        <Alert tone="danger" title={t('dashboard.pages.soil-carbon.runFailed', 'Run failed')}>
           {(run.error as Error).message}
         </Alert>
       )}
 
       <ResultCard
-        title="Soil carbon trajectory"
-        subtitle={`${landUse} • ${years} years • ${temperature}°C`}
-        badge={run.isSuccess ? { tone: 'success', label: 'Complete' } : undefined}
+        title={t('dashboard.pages.soil-carbon.resultTitle', 'Soil carbon trajectory')}
+        subtitle={t('dashboard.pages.soil-carbon.resultSubtitle', { landUse, years, temperature, defaultValue: '{{landUse}} • {{years}} years • {{temperature}}°C' })}
+        badge={run.isSuccess ? { tone: 'success', label: t('dashboard.pages.soil-carbon.complete', 'Complete') } : undefined}
       >
         <RunResultView data={run.data} loading={run.isPending} error={run.error as Error | null} />
       </ResultCard>

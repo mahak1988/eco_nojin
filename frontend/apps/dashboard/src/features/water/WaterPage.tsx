@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useWaterBalance } from '@eco/api/hooks/use-water';
 import { LineChart } from '@eco/charts';
 import { GeoJsonLayer, MapMarker, MapView } from '@eco/geo';
@@ -27,6 +28,7 @@ const DEMO_RIVER: FeatureCollection = {
 };
 
 export function WaterPage() {
+  const { t } = useTranslation();
   const [start, setStart] = useState('2025-01-01');
   const [end, setEnd] = useState('2025-12-31');
 
@@ -40,19 +42,19 @@ export function WaterPage() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-semibold">Water balance</h1>
+        <h1 className="text-2xl font-semibold">{t('dashboard.pages.water.title', 'Water balance')}</h1>
         <p className="text-sm text-ink-muted">
-          Daily / monthly precipitation, ET₀, runoff, and groundwater recharge.
+          {t('dashboard.pages.water.subtitle', 'Daily / monthly precipitation, ET₀, runoff, and groundwater recharge.')}
         </p>
       </header>
 
       <Card>
         <CardHeader>
-          <h2 className="text-base font-semibold">Range</h2>
+          <h2 className="text-base font-semibold">{t('dashboard.pages.water.range', 'Range')}</h2>
         </CardHeader>
         <CardBody className="flex flex-wrap gap-3">
           <label className="flex flex-col gap-1 text-xs text-ink-muted">
-            Start
+            {t('dashboard.pages.water.start', 'Start')}
             <input
               type="date"
               value={start}
@@ -61,7 +63,7 @@ export function WaterPage() {
             />
           </label>
           <label className="flex flex-col gap-1 text-xs text-ink-muted">
-            End
+            {t('dashboard.pages.water.end', 'End')}
             <input
               type="date"
               value={end}
@@ -74,23 +76,23 @@ export function WaterPage() {
 
       {balance.isLoading && (
         <div className="flex items-center gap-2 text-sm text-ink-muted">
-          <Spinner size="sm" /> Loading water balance…
+          <Spinner size="sm" /> {t('dashboard.pages.water.loading', 'Loading water balance…')}
         </div>
       )}
 
       {balance.data && (
         <Card>
           <CardHeader>
-            <h2 className="text-base font-semibold">Hydrological fluxes</h2>
+            <h2 className="text-base font-semibold">{t('dashboard.pages.water.fluxes', 'Hydrological fluxes')}</h2>
           </CardHeader>
           <CardBody>
             <LineChart
               height={360}
               series={[
-                { name: 'Precip', data: balance.data.timestamps.map((t, i) => ({ x: t, y: balance.data!.precipitation_mm[i] ?? 0 })) },
-                { name: 'ET₀', data: balance.data.timestamps.map((t, i) => ({ x: t, y: balance.data!.et0_mm[i] ?? 0 })) },
-                { name: 'Runoff', data: balance.data.timestamps.map((t, i) => ({ x: t, y: balance.data!.runoff_mm[i] ?? 0 })) },
-                { name: 'Recharge', data: balance.data.timestamps.map((t, i) => ({ x: t, y: balance.data!.recharge_mm[i] ?? 0 })) },
+                { name: t('dashboard.pages.water.precip', 'Precip'), data: balance.data.timestamps.map((t, i) => ({ x: t, y: balance.data!.precipitation_mm[i] ?? 0 })) },
+                { name: t('dashboard.pages.water.et0', 'ET₀'), data: balance.data.timestamps.map((t, i) => ({ x: t, y: balance.data!.et0_mm[i] ?? 0 })) },
+                { name: t('dashboard.pages.water.runoff', 'Runoff'), data: balance.data.timestamps.map((t, i) => ({ x: t, y: balance.data!.runoff_mm[i] ?? 0 })) },
+                { name: t('dashboard.pages.water.recharge', 'Recharge'), data: balance.data.timestamps.map((t, i) => ({ x: t, y: balance.data!.recharge_mm[i] ?? 0 })) },
               ]}
               yLabel="mm"
             />
@@ -100,7 +102,7 @@ export function WaterPage() {
 
       <Card>
         <CardHeader>
-          <h2 className="text-base font-semibold">Watershed map</h2>
+          <h2 className="text-base font-semibold">{t('dashboard.pages.water.mapTitle', 'Watershed map')}</h2>
         </CardHeader>
         <CardBody>
           <MapView
@@ -114,12 +116,12 @@ export function WaterPage() {
               latitude={35.68}
               longitude={51.4}
               color="#0ea5e9"
-              label="Outlet"
-              popup={<span className="text-xs">Watershed outlet (demo)</span>}
+              label={t('dashboard.pages.water.outlet', 'Outlet')}
+              popup={<span className="text-xs">{t('dashboard.pages.water.outletPopup', 'Watershed outlet (demo)')}</span>}
             />
           </MapView>
           <p className="mt-3 text-xs text-ink-muted">
-            Showing the demo watershed bounding box. Real HEC-RAS / SWAT outputs will replace the demo layer once the backend exposes them.
+            {t('dashboard.pages.water.mapNote', 'Showing the demo watershed bounding box. Real HEC-RAS / SWAT outputs will replace the demo layer once the backend exposes them.')}
           </p>
         </CardBody>
       </Card>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
 import { apiClient } from '@eco/api/mutator';
 import { Alert, Badge, Button, Card, CardBody, CardHeader, EmptyState, Input, Spinner } from '@eco/ui';
@@ -14,6 +15,7 @@ type DroughtResult = {
 };
 
 export function ClimatePage() {
+  const { t } = useTranslation();
   const [lat, setLat] = useState('35.6892');
   const [lon, setLon] = useState('51.3890');
 
@@ -32,18 +34,20 @@ export function ClimatePage() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-semibold">🌤️ Climate analysis</h1>
+        <h1 className="text-2xl font-semibold">{t('dashboard.pages.climate.title', '🌤️ Climate analysis')}</h1>
         <p className="text-sm text-ink-muted">
-          Drought, ERA5 reanalysis, and climate projection workflows via <code className="rounded bg-surface-muted px-1">/climate/*</code>.
+          {t('dashboard.pages.climate.subtitle', 'Drought, ERA5 reanalysis, and climate projection workflows via')}{' '}
+          <code className="rounded bg-surface-muted px-1">/climate/*</code>
+          {t('dashboard.pages.climate.subtitlePeriod', '.')}
         </p>
       </header>
 
       <Card>
         <CardHeader>
-          <h2 className="text-base font-semibold">Drought analysis (SPI)</h2>
+          <h2 className="text-base font-semibold">{t('dashboard.pages.climate.droughtAnalysis', 'Drought analysis (SPI)')}</h2>
         </CardHeader>
         <CardBody className="grid gap-4 md:grid-cols-3">
-          <Field label="Latitude">
+          <Field label={t('dashboard.pages.climate.latitude', 'Latitude')}>
             <Input
               type="number"
               step="0.0001"
@@ -51,7 +55,7 @@ export function ClimatePage() {
               onChange={(e) => setLat((e.target as HTMLInputElement).value)}
             />
           </Field>
-          <Field label="Longitude">
+          <Field label={t('dashboard.pages.climate.longitude', 'Longitude')}>
             <Input
               type="number"
               step="0.0001"
@@ -62,47 +66,47 @@ export function ClimatePage() {
           <div className="flex items-end">
             <Button onClick={() => drought.mutate()} disabled={drought.isPending}>
               {drought.isPending && <Spinner size="sm" tone="inverse" />}
-              Analyze drought
+              {t('dashboard.pages.climate.analyzeDrought', 'Analyze drought')}
             </Button>
           </div>
         </CardBody>
       </Card>
 
       {drought.error && (
-        <Alert tone="danger" title="Drought analysis failed">
+        <Alert tone="danger" title={t('dashboard.pages.climate.droughtFailed', 'Drought analysis failed')}>
           {(drought.error as Error).message}
         </Alert>
       )}
 
       {value && (
         <section className="grid gap-4 md:grid-cols-3">
-          <StatCard3D label="SPI index" value={formatNumber(value.spi ?? NaN, { decimals: 2 })} icon="📈" />
-          <StatCard3D label="Status" value={value.status ?? value.category ?? '—'} icon="📊" />
-          <StatCard3D label="Severity" value={value.severity ?? '—'} icon="⚠️" />
+          <StatCard3D label={t('dashboard.pages.climate.spiIndex', 'SPI index')} value={formatNumber(value.spi ?? NaN, { decimals: 2 })} icon="📈" />
+          <StatCard3D label={t('dashboard.pages.climate.status', 'Status')} value={value.status ?? value.category ?? '—'} icon="📊" />
+          <StatCard3D label={t('dashboard.pages.climate.severity', 'Severity')} value={value.severity ?? '—'} icon="⚠️" />
         </section>
       )}
 
       <section className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <h3 className="text-base font-semibold">Available workflows</h3>
+            <h3 className="text-base font-semibold">{t('dashboard.pages.climate.availableWorkflows', 'Available workflows')}</h3>
           </CardHeader>
           <CardBody className="grid grid-cols-2 gap-2 text-sm">
-            <Badge tone="info" variant="soft">Drought (SPI)</Badge>
-            <Badge tone="info" variant="soft">ERA5 reanalysis</Badge>
-            <Badge tone="info" variant="soft">RCP projections</Badge>
-            <Badge tone="info" variant="soft">Bayesian calibration</Badge>
+            <Badge tone="info" variant="soft">{t('dashboard.pages.climate.workflowDrought', 'Drought (SPI)')}</Badge>
+            <Badge tone="info" variant="soft">{t('dashboard.pages.climate.workflowEra5', 'ERA5 reanalysis')}</Badge>
+            <Badge tone="info" variant="soft">{t('dashboard.pages.climate.workflowRcp', 'RCP projections')}</Badge>
+            <Badge tone="info" variant="soft">{t('dashboard.pages.climate.workflowBayesian', 'Bayesian calibration')}</Badge>
           </CardBody>
         </Card>
         <Card>
           <CardHeader>
-            <h3 className="text-base font-semibold">Latest snapshot</h3>
+            <h3 className="text-base font-semibold">{t('dashboard.pages.climate.latestSnapshot', 'Latest snapshot')}</h3>
           </CardHeader>
           <CardBody className="text-sm">
             {!value ? (
               <EmptyState
-                title="No data yet"
-                description="Run a drought analysis to populate the snapshot."
+                title={t('dashboard.pages.climate.noDataYet', 'No data yet')}
+                description={t('dashboard.pages.climate.noDataDescription', 'Run a drought analysis to populate the snapshot.')}
               />
             ) : (
               <pre className="overflow-auto text-[11px] text-ink">

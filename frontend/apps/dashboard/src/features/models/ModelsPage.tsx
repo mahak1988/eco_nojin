@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useModels, useRunModel, type Model } from '@eco/api';
 import { loadStaticCatalog, listModels, type ModelMeta } from '@eco/models';
 import { Badge, Button, Card, CardBody, CardHeader, EmptyState, Input, Skeleton } from '@eco/ui';
@@ -16,6 +17,8 @@ const DOMAINS = [
 ];
 
 export function ModelsPage() {
+  const { t } = useTranslation();
+
   useEffect(() => {
     loadStaticCatalog();
   }, []);
@@ -75,15 +78,15 @@ export function ModelsPage() {
     <div className="flex flex-col gap-6">
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Scientific models hub</h1>
-          <p className="text-sm text-ink-muted">Browse, filter, and run scientific models exposed by the backend.</p>
+          <h1 className="text-2xl font-semibold">{t('dashboard.pages.models.title', 'Scientific models hub')}</h1>
+          <p className="text-sm text-ink-muted">{t('dashboard.pages.models.subtitle', 'Browse, filter, and run scientific models exposed by the backend.')}</p>
         </div>
-        <Badge tone="brand" variant="soft">{filtered.length} shown</Badge>
+        <Badge tone="brand" variant="soft">{t('dashboard.pages.models.shownCount', '{{count}} shown', { count: filtered.length })}</Badge>
       </header>
 
       <Card>
         <CardHeader>
-          <h2 className="text-base font-semibold">Filters</h2>
+          <h2 className="text-base font-semibold">{t('dashboard.pages.models.filters', 'Filters')}</h2>
         </CardHeader>
         <CardBody className="flex flex-col gap-3">
           <div className="flex flex-wrap gap-2">
@@ -98,12 +101,12 @@ export function ModelsPage() {
                     : 'rounded-full border border-ink/10 px-3 py-1 text-xs text-ink-muted hover:bg-surface-muted'
                 }
               >
-                {d.label}
+                {t(`dashboard.pages.models.domain.${d.value}`, d.label)}
               </button>
             ))}
           </div>
           <Input
-            placeholder="Search by name or id…"
+            placeholder={t('dashboard.pages.models.searchPlaceholder', 'Search by name or id…')}
             value={search}
             onChange={(e) => setSearch((e.target as HTMLInputElement).value)}
           />
@@ -120,8 +123,8 @@ export function ModelsPage() {
 
       {filtered.length === 0 && !remote.isLoading && (
         <EmptyState
-          title="No models match"
-          description="Try clearing filters or check the backend /models/list endpoint."
+          title={t('dashboard.pages.models.emptyTitle', 'No models match')}
+          description={t('dashboard.pages.models.emptyDescription', 'Try clearing filters or check the backend /models/list endpoint.')}
         />
       )}
 
@@ -144,9 +147,9 @@ export function ModelsPage() {
                 variant="secondary"
                 onClick={() => run.mutate({ slug: m.id, inputs: { demo: true } })}
                 disabled={run.isPending}
-                aria-label={`Run ${m.name}`}
+                aria-label={t('dashboard.pages.models.ariaRun', 'Run {{name}}', { name: m.name })}
               >
-                Run
+                {t('dashboard.pages.models.runButton', 'Run')}
               </Button>
             </CardBody>
           </Card>
@@ -156,7 +159,7 @@ export function ModelsPage() {
       {run.data !== undefined && run.data !== null && (
         <Card>
           <CardHeader>
-            <h2 className="text-base font-semibold">Last run</h2>
+            <h2 className="text-base font-semibold">{t('dashboard.pages.models.lastRun', 'Last run')}</h2>
           </CardHeader>
           <CardBody>
             <pre className="overflow-auto text-[11px] text-ink">
@@ -168,7 +171,7 @@ export function ModelsPage() {
 
       {run.error && (
         <EmptyState
-          title="Run failed"
+          title={t('dashboard.pages.models.runFailed', 'Run failed')}
           description={(run.error as Error).message}
         />
       )}

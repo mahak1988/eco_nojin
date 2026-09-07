@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSoilProfile } from '@eco/api/hooks/use-soil';
 import type { GeoBounds } from '@eco/api/schema/common';
 import { GeoBoundsSchema } from '@eco/api/schema/common';
@@ -12,6 +13,7 @@ const DEFAULT_BOUNDS: GeoBounds = GeoBoundsSchema.parse({
 });
 
 export function SoilPage() {
+  const { t } = useTranslation();
   const [bounds, setBounds] = useState<GeoBounds>(DEFAULT_BOUNDS);
   const [text, setText] = useState(() => JSON.stringify(DEFAULT_BOUNDS));
 
@@ -20,19 +22,19 @@ export function SoilPage() {
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold">Soil profiles</h1>
+        <h1 className="text-2xl font-semibold">{t('dashboard.pages.soil.title', 'Soil profiles')}</h1>
         <p className="text-sm text-ink-muted">
-          SoilGrids-backed soil organic carbon, texture, and bulk density by bounds.
+          {t('dashboard.pages.soil.subtitle', 'SoilGrids-backed soil organic carbon, texture, and bulk density by bounds.')}
         </p>
       </header>
 
       <Card>
         <CardHeader>
-          <h2 className="text-base font-semibold">Query bounds</h2>
+          <h2 className="text-base font-semibold">{t('dashboard.pages.soil.queryBounds', 'Query bounds')}</h2>
         </CardHeader>
         <CardBody className="flex flex-col gap-3">
           <label className="flex flex-col gap-1 text-xs text-ink-muted">
-            GeoJSON bounds (south, west, north, east)
+            {t('dashboard.pages.soil.boundsLabel', 'GeoJSON bounds (south, west, north, east)')}
             <Input
               value={text}
               onChange={(e) => setText((e.target as HTMLInputElement).value)}
@@ -51,24 +53,24 @@ export function SoilPage() {
 
       {profile.isLoading && (
         <div className="flex items-center gap-2 text-sm text-ink-muted">
-          <Spinner size="sm" /> Loading soil profile…
+          <Spinner size="sm" /> {t('dashboard.pages.soil.loading', 'Loading soil profile…')}
         </div>
       )}
 
       {profile.data && (
         <Card>
           <CardHeader>
-            <h2 className="text-base font-semibold">Layers</h2>
+            <h2 className="text-base font-semibold">{t('dashboard.pages.soil.layers', 'Layers')}</h2>
           </CardHeader>
           <CardBody>
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-start text-xs uppercase text-ink-muted">
-                  <th className="py-2 text-start">Depth</th>
-                  <th className="py-2 text-start">Texture</th>
-                  <th className="py-2 text-start">OC %</th>
-                  <th className="py-2 text-start">Bulk density</th>
-                  <th className="py-2 text-start">pH</th>
+                  <th className="py-2 text-start">{t('dashboard.pages.soil.depth', 'Depth')}</th>
+                  <th className="py-2 text-start">{t('dashboard.pages.soil.texture', 'Texture')}</th>
+                  <th className="py-2 text-start">{t('dashboard.pages.soil.oc', 'OC %')}</th>
+                  <th className="py-2 text-start">{t('dashboard.pages.soil.bulkDensity', 'Bulk density')}</th>
+                  <th className="py-2 text-start">{t('dashboard.pages.soil.ph', 'pH')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-ink/5">
@@ -89,7 +91,7 @@ export function SoilPage() {
 
       {profile.error && (
         <EmptyState
-          title="Soil profile error"
+          title={t('dashboard.pages.soil.errorTitle', 'Soil profile error')}
           description={(profile.error as Error).message}
         />
       )}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
 import { apiClient } from '@eco/api/mutator';
 import { Alert, Button, Card, CardBody, CardHeader, Input, Spinner } from '@eco/ui';
@@ -12,6 +13,7 @@ type ChatResult = {
 };
 
 export function AiCopilotPage() {
+  const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [history, setHistory] = useState<Array<{ role: 'user' | 'assistant'; text: string; meta?: ChatResult }>>([]);
 
@@ -23,7 +25,7 @@ export function AiCopilotPage() {
       return data;
     },
     onSuccess: (data) => {
-      const text = data.response ?? data.message ?? 'No response from backend';
+      const text = data.response ?? data.message ?? t('dashboard.pages.ai-copilot.noResponse', 'No response from backend');
       setHistory((prev) => [
         ...prev,
         { role: 'user', text: query },
@@ -41,21 +43,23 @@ export function AiCopilotPage() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-semibold">🤖 AI Copilot</h1>
+        <h1 className="text-2xl font-semibold">{t('dashboard.pages.ai-copilot.title', '🤖 AI Copilot')}</h1>
         <p className="text-sm text-ink-muted">
-          Ask scientific questions in natural language via <code className="rounded bg-surface-muted px-1">/ai/chat</code>.
+          {t('dashboard.pages.ai-copilot.subtitle', 'Ask scientific questions in natural language via')}{' '}
+          <code className="rounded bg-surface-muted px-1">/ai/chat</code>
+          {t('dashboard.pages.ai-copilot.subtitlePeriod', '.')}
         </p>
       </header>
 
       <Card>
         <CardHeader>
-          <h2 className="text-base font-semibold">Conversation</h2>
+          <h2 className="text-base font-semibold">{t('dashboard.pages.ai-copilot.conversation', 'Conversation')}</h2>
         </CardHeader>
         <CardBody className="flex flex-col gap-3">
           <div className="flex max-h-96 flex-col gap-3 overflow-y-auto rounded bg-surface-muted p-3">
             {history.length === 0 ? (
               <p className="py-12 text-center text-sm text-ink-muted">
-                Ask a question to start the conversation.
+                {t('dashboard.pages.ai-copilot.emptyState', 'Ask a question to start the conversation.')}
               </p>
             ) : (
               history.map((msg, idx) => (
@@ -68,7 +72,7 @@ export function AiCopilotPage() {
                   }
                 >
                   <div className="mb-1 text-[10px] uppercase tracking-wide opacity-70">
-                    {msg.role === 'user' ? 'You' : 'Copilot'}
+                    {msg.role === 'user' ? t('dashboard.pages.ai-copilot.you', 'You') : t('dashboard.pages.ai-copilot.copilot', 'Copilot')}
                   </div>
                   <div className="whitespace-pre-wrap">{msg.text}</div>
                 </div>
@@ -78,7 +82,7 @@ export function AiCopilotPage() {
 
           <div className="flex gap-2">
             <Input
-              placeholder="e.g. What's the best cover crop for dryland wheat?"
+              placeholder={t('dashboard.pages.ai-copilot.inputPlaceholder', "e.g. What's the best cover crop for dryland wheat?")}
               value={query}
               onChange={(e) => setQuery((e.target as HTMLInputElement).value)}
               onKeyDown={(e) => {
@@ -91,12 +95,12 @@ export function AiCopilotPage() {
             />
             <Button onClick={ask} disabled={chat.isPending || !query.trim()}>
               {chat.isPending ? <Spinner size="sm" tone="inverse" /> : null}
-              Ask
+              {t('dashboard.pages.ai-copilot.ask', 'Ask')}
             </Button>
           </div>
 
           {chat.error && (
-            <Alert tone="danger" title="Copilot error">
+            <Alert tone="danger" title={t('dashboard.pages.ai-copilot.errorTitle', 'Copilot error')}>
               {(chat.error as Error).message}
             </Alert>
           )}

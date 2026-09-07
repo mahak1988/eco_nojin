@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRunMotorEndpoint } from '@/hooks/useMotorEndpoint';
 import { Alert, Button, Card, CardBody, CardHeader, Field, ResultCard, RunResultView } from '@eco/ui';
 
@@ -11,6 +12,7 @@ type SatInput = {
 };
 
 export function SatelliteAnalyzePage() {
+  const { t } = useTranslation();
   const [farmId, setFarmId] = useState('FARM-001');
   const [source, setSource] = useState<SatInput['source']>('sentinel2');
   const [index, setIndex] = useState<SatInput['index']>('NDVI');
@@ -26,25 +28,25 @@ export function SatelliteAnalyzePage() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-semibold">🛰️ Satellite index analysis</h1>
+        <h1 className="text-2xl font-semibold">{t('dashboard.pages.satellite-analyze.title', '🛰️ Satellite index analysis')}</h1>
         <p className="text-sm text-ink-muted">
-          Cloud-masked composites + per-pixel NDVI/NDWI/EVI/LAI/SAVI summaries.
+          {t('dashboard.pages.satellite-analyze.subtitle', 'Cloud-masked composites + per-pixel NDVI/NDWI/EVI/LAI/SAVI summaries.')}
         </p>
       </header>
 
       <Card>
         <CardHeader>
-          <h2 className="text-base font-semibold">Inputs</h2>
+          <h2 className="text-base font-semibold">{t('dashboard.pages.satellite-analyze.inputs', 'Inputs')}</h2>
         </CardHeader>
         <CardBody className="grid gap-4 md:grid-cols-2">
-          <Field label="Farm ID">
+          <Field label={t('dashboard.pages.satellite-analyze.farmId', 'Farm ID')}>
             <input
               value={farmId}
               onChange={(e) => setFarmId((e.target as HTMLInputElement).value)}
               className="rounded-md border border-ink/15 bg-surface-raised px-3 py-2 text-sm"
             />
           </Field>
-          <Field label="Source">
+          <Field label={t('dashboard.pages.satellite-analyze.source', 'Source')}>
             <select
               value={source}
               onChange={(e) => setSource((e.target as HTMLSelectElement).value as SatInput['source'])}
@@ -56,7 +58,7 @@ export function SatelliteAnalyzePage() {
               <option value="modis">MODIS</option>
             </select>
           </Field>
-          <Field label="Index">
+          <Field label={t('dashboard.pages.satellite-analyze.index', 'Index')}>
             <select
               value={index}
               onChange={(e) => setIndex((e.target as HTMLSelectElement).value as SatInput['index'])}
@@ -69,7 +71,7 @@ export function SatelliteAnalyzePage() {
               <option value="SAVI">SAVI</option>
             </select>
           </Field>
-          <Field label="Start">
+          <Field label={t('dashboard.pages.satellite-analyze.start', 'Start')}>
             <input
               type="date"
               value={start}
@@ -77,7 +79,7 @@ export function SatelliteAnalyzePage() {
               className="rounded-md border border-ink/15 bg-surface-raised px-3 py-2 text-sm"
             />
           </Field>
-          <Field label="End">
+          <Field label={t('dashboard.pages.satellite-analyze.end', 'End')}>
             <input
               type="date"
               value={end}
@@ -89,21 +91,21 @@ export function SatelliteAnalyzePage() {
         <div className="border-t border-ink/5 p-5">
           <Button onClick={submit} disabled={run.isPending}>
             {run.isPending && <span className="me-2 h-3 w-3 animate-spin rounded-full border-2 border-white border-r-transparent" />}
-            Analyze
+            {t('dashboard.pages.satellite-analyze.analyze', 'Analyze')}
           </Button>
         </div>
       </Card>
 
       {run.error && (
-        <Alert tone="danger" title="Run failed">
+        <Alert tone="danger" title={t('dashboard.pages.satellite-analyze.runFailed', 'Run failed')}>
           {(run.error as Error).message}
         </Alert>
       )}
 
       <ResultCard
-        title={`${index} analysis`}
-        subtitle={`${source} • farm ${farmId}`}
-        badge={run.isSuccess ? { tone: 'success', label: 'Complete' } : undefined}
+        title={t('dashboard.pages.satellite-analyze.resultTitle', { index, defaultValue: '{{index}} analysis' })}
+        subtitle={t('dashboard.pages.satellite-analyze.resultSubtitle', { source, farmId, defaultValue: '{{source}} • farm {{farmId}}' })}
+        badge={run.isSuccess ? { tone: 'success', label: t('dashboard.pages.satellite-analyze.complete', 'Complete') } : undefined}
       >
         <RunResultView data={run.data} loading={run.isPending} error={run.error as Error | null} />
       </ResultCard>

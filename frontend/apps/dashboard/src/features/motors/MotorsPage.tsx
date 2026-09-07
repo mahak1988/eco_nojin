@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRunMotor, useRunMotorChain } from '@eco/api/hooks/use-motors';
 import type { MotorKind } from '@eco/api/schema/motors';
 import { AQUACROP_META, HECRAS_META, PYWR_META, ROTH_META, RUSLE_META, SWAT_META } from '@eco/models';
@@ -16,6 +17,7 @@ const META: Record<MotorKind, { name: string; domain: string }> = {
 };
 
 export function MotorsPage() {
+  const { t } = useTranslation();
   const [motor, setMotor] = useState<MotorKind>('swat');
   const [chain, setChain] = useState<MotorKind[]>(['swat', 'rusle', 'aquacrop', 'rothc']);
 
@@ -25,19 +27,19 @@ export function MotorsPage() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-semibold">Scientific motors</h1>
+        <h1 className="text-2xl font-semibold">{t('dashboard.pages.motors.title', 'Scientific motors')}</h1>
         <p className="text-sm text-ink-muted">
-          Single motor or chained pipeline. Backend routes to the C++ core where applicable.
+          {t('dashboard.pages.motors.subtitle', 'Single motor or chained pipeline. Backend routes to the C++ core where applicable.')}
         </p>
       </header>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <h2 className="text-base font-semibold">Run a single motor</h2>
+            <h2 className="text-base font-semibold">{t('dashboard.pages.motors.singleTitle', 'Run a single motor')}</h2>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
-            <div className="flex flex-wrap gap-2" role="group" aria-label="انتخاب موتور">
+            <div className="flex flex-wrap gap-2" role="group" aria-label={t('dashboard.pages.motors.ariaSelectMotor', 'انتخاب موتور')}>
               {ALL_MOTORS.map((m) => (
                 <button
                   key={m}
@@ -63,10 +65,10 @@ export function MotorsPage() {
                 })
               }
               disabled={single.isPending}
-              aria-label={`اجرای ${META[motor].name}`}
+              aria-label={t('dashboard.pages.motors.ariaRunMotor', 'اجرای {{name}}', { name: META[motor].name })}
             >
               {single.isPending ? <Spinner size="sm" tone="inverse" /> : null}
-              Run {META[motor].name}
+              {t('dashboard.pages.motors.runMotor', 'Run {{name}}', { name: META[motor].name })}
             </Button>
 
             {single.data && (
@@ -74,7 +76,7 @@ export function MotorsPage() {
                 <Badge tone="success" variant="soft">
                   {single.data.duration_ms} ms
                 </Badge>{' '}
-                <span className="ms-2 text-ink-muted">cached={String(single.data.cached)}</span>
+                <span className="ms-2 text-ink-muted">{t('dashboard.pages.motors.cached', 'cached')}={String(single.data.cached)}</span>
                 <pre className="mt-2 overflow-auto text-[11px] text-ink">
                   {JSON.stringify(single.data.output, null, 2)}
                 </pre>
@@ -85,10 +87,10 @@ export function MotorsPage() {
 
         <Card>
           <CardHeader>
-            <h2 className="text-base font-semibold">Run a chain</h2>
+            <h2 className="text-base font-semibold">{t('dashboard.pages.motors.chainTitle', 'Run a chain')}</h2>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
-            <div className="flex flex-wrap gap-2" role="group" aria-label="انتخاب زنجیرهٔ موتورها">
+            <div className="flex flex-wrap gap-2" role="group" aria-label={t('dashboard.pages.motors.ariaSelectChain', 'انتخاب زنجیرهٔ موتورها')}>
               {ALL_MOTORS.filter((m) => m !== 'optimize').map((m) => {
                 const active = chain.includes(m);
                 return (
@@ -116,22 +118,22 @@ export function MotorsPage() {
               variant="secondary"
               onClick={() => chained.mutate({ chain, payload: { demo: true } })}
               disabled={chained.isPending || chain.length === 0}
-              aria-label={`اجرای زنجیرهٔ ${chain.length} مرحله‌ای`}
+              aria-label={t('dashboard.pages.motors.ariaRunChain', 'اجرای زنجیرهٔ {{count}} مرحله‌ای', { count: chain.length })}
             >
               {chained.isPending ? <Spinner size="sm" /> : null}
-              Run {chain.length}-step chain
+              {t('dashboard.pages.motors.runChain', 'Run {{count}}-step chain', { count: chain.length })}
             </Button>
 
             {chained.data && (
               <div className="rounded-md bg-surface-muted p-3 text-xs">
                 <Badge tone="success" variant="soft">
-                  {chained.data.duration_ms} ms total
+                  {chained.data.duration_ms} {t('dashboard.pages.motors.msTotal', 'ms total')}
                 </Badge>
                 <ol className="mt-2 list-decimal ps-5">
                   {chained.data.steps.map((s) => (
                     <li key={s.motor}>
                       <span className="font-medium">{META[s.motor].name}</span> — {s.duration_ms} ms
-                      {s.cached ? ' (cached)' : ''}
+                      {s.cached ? ` (${t('dashboard.pages.motors.cached', 'cached')})` : ''}
                     </li>
                   ))}
                 </ol>
@@ -141,7 +143,7 @@ export function MotorsPage() {
         </Card>
       </div>
 
-      {single.error && <EmptyState title="Run failed" description={(single.error as Error).message} />}
+      {single.error && <EmptyState title={t('dashboard.pages.motors.runFailed', 'Run failed')} description={(single.error as Error).message} />}
     </div>
   );
 }

@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useCarbonCalculate, useCarbonProjects, type CarbonProject } from '@eco/api';
 import { Alert, Badge, Button, Card, CardBody, CardHeader, EmptyState, Input, Skeleton, Spinner } from '@eco/ui';
 import { formatCompact } from '@eco/utils';
 
 export function CarbonPage() {
+  const { t } = useTranslation();
   const projects = useCarbonProjects();
   const calculate = useCarbonCalculate();
 
@@ -24,16 +26,20 @@ export function CarbonPage() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-semibold">Carbon calculator</h1>
-        <p className="text-sm text-ink-muted">CO₂ sequestration and credit estimation via <code className="rounded bg-surface-muted px-1">/carbon/calculate</code>.</p>
+        <h1 className="text-2xl font-semibold">{t('dashboard.pages.carbon.title', 'Carbon calculator')}</h1>
+        <p className="text-sm text-ink-muted">
+          {t('dashboard.pages.carbon.subtitle', 'CO₂ sequestration and credit estimation via')}{' '}
+          <code className="rounded bg-surface-muted px-1">/carbon/calculate</code>
+          {t('dashboard.pages.carbon.subtitlePeriod', '.')}
+        </p>
       </header>
 
       <Card>
         <CardHeader>
-          <h2 className="text-base font-semibold">Inputs</h2>
+          <h2 className="text-base font-semibold">{t('dashboard.pages.carbon.inputs', 'Inputs')}</h2>
         </CardHeader>
         <CardBody className="grid gap-4 md:grid-cols-4">
-          <Field label="Area (ha)">
+          <Field label={t('dashboard.pages.carbon.areaHa', 'Area (ha)')}>
             <Input
               type="number"
               min={1}
@@ -41,14 +47,14 @@ export function CarbonPage() {
               onChange={(e) => setAreaHa((e.target as HTMLInputElement).value)}
             />
           </Field>
-          <Field label="Species">
+          <Field label={t('dashboard.pages.carbon.species', 'Species')}>
             <Input
               value={species}
               onChange={(e) => setSpecies((e.target as HTMLInputElement).value)}
-              placeholder="oak / pine / mixed"
+              placeholder={t('dashboard.pages.carbon.speciesPlaceholder', 'oak / pine / mixed')}
             />
           </Field>
-          <Field label="Years">
+          <Field label={t('dashboard.pages.carbon.years', 'Years')}>
             <Input
               type="number"
               min={1}
@@ -57,18 +63,18 @@ export function CarbonPage() {
               onChange={(e) => setYears((e.target as HTMLInputElement).value)}
             />
           </Field>
-          <Field label="Region (optional)">
+          <Field label={t('dashboard.pages.carbon.region', 'Region (optional)')}>
             <Input
               value={region}
               onChange={(e) => setRegion((e.target as HTMLInputElement).value)}
-              placeholder="e.g. temperate"
+              placeholder={t('dashboard.pages.carbon.regionPlaceholder', 'e.g. temperate')}
             />
           </Field>
         </CardBody>
         <div className="border-t border-ink/5 p-5">
           <Button onClick={submit} disabled={calculate.isPending}>
             {calculate.isPending && <Spinner size="sm" tone="inverse" />}
-            Calculate CO₂ sequestration
+            {t('dashboard.pages.carbon.calculate', 'Calculate CO₂ sequestration')}
           </Button>
         </div>
       </Card>
@@ -77,7 +83,7 @@ export function CarbonPage() {
         <Alert
           tone="danger"
           variant="soft"
-          title="Calculation failed"
+          title={t('dashboard.pages.carbon.calculationFailed', 'Calculation failed')}
         >
           {(calculate.error as Error).message}
         </Alert>
@@ -90,7 +96,7 @@ export function CarbonPage() {
               <div className="text-3xl font-semibold text-brand-700">
                 {formatCompact(calculate.data.co2_tons)}
               </div>
-              <div className="text-sm text-ink-muted">CO₂ sequestered (t)</div>
+              <div className="text-sm text-ink-muted">{t('dashboard.pages.carbon.co2Sequestered', 'CO₂ sequestered (t)')}</div>
               {calculate.data.methodology && (
                 <div className="mt-2 text-xs text-ink-subtle">{calculate.data.methodology}</div>
               )}
@@ -101,7 +107,7 @@ export function CarbonPage() {
               <div className="text-3xl font-semibold text-brand-700">
                 {formatCompact(calculate.data.credits)}
               </div>
-              <div className="text-sm text-ink-muted">Carbon credits</div>
+              <div className="text-sm text-ink-muted">{t('dashboard.pages.carbon.carbonCredits', 'Carbon credits')}</div>
             </CardBody>
           </Card>
           <Card>
@@ -111,14 +117,14 @@ export function CarbonPage() {
                   ? `$${formatCompact(calculate.data.revenue_usd)}`
                   : '—'}
               </div>
-              <div className="text-sm text-ink-muted">Estimated revenue (USD)</div>
+              <div className="text-sm text-ink-muted">{t('dashboard.pages.carbon.estimatedRevenue', 'Estimated revenue (USD)')}</div>
             </CardBody>
           </Card>
         </div>
       )}
 
       <section>
-        <h2 className="mb-3 text-base font-semibold">Projects</h2>
+        <h2 className="mb-3 text-base font-semibold">{t('dashboard.pages.carbon.projectsTitle', 'Projects')}</h2>
         {projects.isLoading && (
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -128,7 +134,7 @@ export function CarbonPage() {
         )}
         {projects.error && (
           <EmptyState
-            title="Could not load projects"
+            title={t('dashboard.pages.carbon.loadProjectsFailed', 'Could not load projects')}
             description={(projects.error as Error).message}
           />
         )}

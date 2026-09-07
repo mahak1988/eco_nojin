@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRunMotorEndpoint } from '@/hooks/useMotorEndpoint';
 import { Alert, Button, Card, CardBody, CardHeader, Field, ResultCard, RunResultView } from '@eco/ui';
 
 export function LandDrainagePage() {
+  const { t } = useTranslation();
   const [profileId, setProfileId] = useState('PROFILE-001');
 
   const run = useRunMotorEndpoint(`/api/v1/land/profiles/${encodeURIComponent(profileId)}/drainage-analysis`);
@@ -14,15 +16,15 @@ export function LandDrainagePage() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-semibold">🌊 Land drainage</h1>
+        <h1 className="text-2xl font-semibold">{t('dashboard.pages.land-drainage.title', '🌊 Land drainage')}</h1>
         <p className="text-sm text-ink-muted">
-          Subsurface drainage design and drainage coefficient estimation.
+          {t('dashboard.pages.land-drainage.subtitle', 'Subsurface drainage design and drainage coefficient estimation.')}
         </p>
       </header>
 
       <Card>
         <CardBody className="flex items-end gap-3">
-          <Field label="Profile ID">
+          <Field label={t('dashboard.pages.land-drainage.profileId', 'Profile ID')}>
             <input
               value={profileId}
               onChange={(e) => setProfileId((e.target as HTMLInputElement).value)}
@@ -31,20 +33,20 @@ export function LandDrainagePage() {
           </Field>
           <Button onClick={submit} disabled={run.isPending}>
             {run.isPending && <span className="me-2 h-3 w-3 animate-spin rounded-full border-2 border-white border-r-transparent" />}
-            Analyze drainage
+            {t('dashboard.pages.land-drainage.submit', 'Analyze drainage')}
           </Button>
         </CardBody>
       </Card>
 
       {run.error && (
-        <Alert tone="danger" title="Run failed">
+        <Alert tone="danger" title={t('dashboard.pages.land-drainage.runFailed', 'Run failed')}>
           {(run.error as Error).message}
         </Alert>
       )}
 
       <ResultCard
-        title={`Drainage for ${profileId}`}
-        badge={run.isSuccess ? { tone: 'success', label: 'Complete' } : undefined}
+        title={t('dashboard.pages.land-drainage.resultTitle', 'Drainage for {{profileId}}', { profileId })}
+        badge={run.isSuccess ? { tone: 'success', label: t('dashboard.pages.land-drainage.complete', 'Complete') } : undefined}
       >
         <RunResultView data={run.data} loading={run.isPending} error={run.error as Error | null} />
       </ResultCard>

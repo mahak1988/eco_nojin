@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSatelliteIndexSeries } from '@eco/api/hooks/use-satellite';
 import type { SatelliteSource } from '@eco/api/schema/satellite';
 import { LineChart } from '@eco/charts';
@@ -31,6 +32,7 @@ const DEMO_FARM: FeatureCollection = {
 };
 
 export function SatellitePage() {
+  const { t } = useTranslation();
   const [source, setSource] = useState<SatelliteSource>('sentinel2');
   const [index, setIndex] = useState<'NDVI' | 'NDWI' | 'EVI' | 'LAI' | 'SAVI'>('NDVI');
 
@@ -45,15 +47,15 @@ export function SatellitePage() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-semibold">🛰️ Satellite indices</h1>
+        <h1 className="text-2xl font-semibold">{t('dashboard.pages.satellite.title', '🛰️ Satellite indices')}</h1>
         <p className="text-sm text-ink-muted">
-          Time series of vegetation / water indices from Sentinel, Landsat, MODIS, ERA5.
+          {t('dashboard.pages.satellite.subtitle', 'Time series of vegetation / water indices from Sentinel, Landsat, MODIS, ERA5.')}
         </p>
       </header>
 
       <Card>
         <CardHeader>
-          <h2 className="text-base font-semibold">Source &amp; index</h2>
+          <h2 className="text-base font-semibold">{t('dashboard.pages.satellite.sourceIndex', 'Source & index')}</h2>
         </CardHeader>
         <CardBody className="flex flex-wrap gap-3">
           <select
@@ -83,7 +85,7 @@ export function SatellitePage() {
 
       {series.isLoading && (
         <div className="flex items-center gap-2 text-sm text-ink-muted">
-          <Spinner size="sm" /> Fetching satellite composites…
+          <Spinner size="sm" /> {t('dashboard.pages.satellite.loading', 'Fetching satellite composites…')}
         </div>
       )}
 
@@ -91,7 +93,7 @@ export function SatellitePage() {
         <Card>
           <CardHeader>
             <h2 className="text-base font-semibold">
-              {index} time series — {source}
+              {t('dashboard.pages.satellite.timeSeriesTitle', { index, source, defaultValue: '{{index}} time series — {{source}}' })}
             </h2>
           </CardHeader>
           <CardBody>
@@ -112,7 +114,7 @@ export function SatellitePage() {
 
       <Card>
         <CardHeader>
-          <h2 className="text-base font-semibold">Spatial context</h2>
+          <h2 className="text-base font-semibold">{t('dashboard.pages.satellite.spatialContext', 'Spatial context')}</h2>
         </CardHeader>
         <CardBody>
           <MapView
@@ -126,28 +128,28 @@ export function SatellitePage() {
               latitude={0.5 * (DEMO_BOUNDS.south + DEMO_BOUNDS.north)}
               longitude={0.5 * (DEMO_BOUNDS.west + DEMO_BOUNDS.east)}
               color="#16a34a"
-              label="Demo farm centroid"
+              label={t('dashboard.pages.satellite.demoFarmCentroid', 'Demo farm centroid')}
               popup={
                 <div className="text-xs">
-                  <strong>Demo farm</strong>
-                  <div>BBox: {JSON.stringify(expandBounds(DEMO_BOUNDS, 0.5))}</div>
+                  <strong>{t('dashboard.pages.satellite.demoFarm', 'Demo farm')}</strong>
+                  <div>{t('dashboard.pages.satellite.bbox', { value: JSON.stringify(expandBounds(DEMO_BOUNDS, 0.5)), defaultValue: 'BBox: {{value}}' })}</div>
                 </div>
               }
             />
           </MapView>
           <p className="mt-3 text-xs text-ink-muted">
-            Map uses MapLibre + OpenFreeMap tiles (no API key). Draw area-of-interest with the navigation control.
+            {t('dashboard.pages.satellite.mapNote', 'Map uses MapLibre + OpenFreeMap tiles (no API key). Draw area-of-interest with the navigation control.')}
           </p>
           <p className="mt-1 text-xs text-ink-subtle">
-            Bounds: {JSON.stringify(bboxToMaplibreBounds(DEMO_BOUNDS))}
+            {t('dashboard.pages.satellite.bounds', { value: JSON.stringify(bboxToMaplibreBounds(DEMO_BOUNDS)), defaultValue: 'Bounds: {{value}}' })}
           </p>
         </CardBody>
       </Card>
 
       {!series.data && !series.isLoading && (
         <EmptyState
-          title="No satellite data yet"
-          description="Backend may not be reachable, or the selected bounds have no scenes."
+          title={t('dashboard.pages.satellite.noDataTitle', 'No satellite data yet')}
+          description={t('dashboard.pages.satellite.noDataDescription', 'Backend may not be reachable, or the selected bounds have no scenes.')}
         />
       )}
     </div>

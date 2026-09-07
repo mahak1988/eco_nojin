@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { apiClient } from '@eco/api/mutator';
 import { Alert, Badge, Button, Card, CardBody, CardHeader, EmptyState, Skeleton, Spinner } from '@eco/ui';
 
@@ -11,6 +12,8 @@ type CarbonBudgetResult = {
 };
 
 export function MrvPage() {
+  const { t } = useTranslation();
+
   const budget = useMutation({
     mutationFn: async () => {
       const { data } = await apiClient.post<CarbonBudgetResult>('/mrv/carbon-budget', {});
@@ -31,27 +34,27 @@ export function MrvPage() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-semibold">✅ Monitoring, Reporting &amp; Verification</h1>
+        <h1 className="text-2xl font-semibold">{t('dashboard.pages.mrv.title', '✅ Monitoring, Reporting & Verification')}</h1>
         <p className="text-sm text-ink-muted">
-          Field-truthed verification for Verra/Gold-Standard carbon claims via <code className="rounded bg-surface-muted px-1">/mrv/*</code>.
+          {t('dashboard.pages.mrv.subtitle', 'Field-truthed verification for Verra/Gold-Standard carbon claims via')} <code className="rounded bg-surface-muted px-1">/mrv/*</code>.
         </p>
       </header>
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <h2 className="text-base font-semibold">Carbon budget report</h2>
+            <h2 className="text-base font-semibold">{t('dashboard.pages.mrv.budgetTitle', 'Carbon budget report')}</h2>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
             <p className="text-sm text-ink-muted">
-              Aggregate ground observations into a defensible budget per Verra VM0007.
+              {t('dashboard.pages.mrv.budgetDesc', 'Aggregate ground observations into a defensible budget per Verra VM0007.')}
             </p>
             <Button onClick={() => budget.mutate()} disabled={budget.isPending}>
               {budget.isPending && <Spinner size="sm" tone="inverse" />}
-              Generate carbon budget
+              {t('dashboard.pages.mrv.budgetAction', 'Generate carbon budget')}
             </Button>
             {budget.error && (
-              <Alert tone="danger" title="Budget generation failed">
+              <Alert tone="danger" title={t('dashboard.pages.mrv.budgetError', 'Budget generation failed')}>
                 {(budget.error as Error).message}
               </Alert>
             )}
@@ -60,18 +63,18 @@ export function MrvPage() {
 
         <Card>
           <CardHeader>
-            <h2 className="text-base font-semibold">Batch verification</h2>
+            <h2 className="text-base font-semibold">{t('dashboard.pages.mrv.verifyTitle', 'Batch verification')}</h2>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
             <p className="text-sm text-ink-muted">
-              Verify the latest observation queue and return the breakdown.
+              {t('dashboard.pages.mrv.verifyDesc', 'Verify the latest observation queue and return the breakdown.')}
             </p>
             <Button variant="secondary" onClick={() => verify.mutate()} disabled={verify.isPending}>
               {verify.isPending && <Spinner size="sm" />}
-              Verify queue
+              {t('dashboard.pages.mrv.verifyAction', 'Verify queue')}
             </Button>
             {verify.error && (
-              <Alert tone="danger" title="Verification failed">
+              <Alert tone="danger" title={t('dashboard.pages.mrv.verifyError', 'Verification failed')}>
                 {(verify.error as Error).message}
               </Alert>
             )}
@@ -80,24 +83,24 @@ export function MrvPage() {
       </div>
 
       <section>
-        <h2 className="mb-3 text-base font-semibold">Last budget</h2>
+        <h2 className="mb-3 text-base font-semibold">{t('dashboard.pages.mrv.lastBudget', 'Last budget')}</h2>
         {budget.isPending ? (
           <Skeleton className="h-40" />
         ) : !budget.data ? (
           <EmptyState
-            title="No budget generated yet"
-            description="Click 'Generate carbon budget' to create one."
+            title={t('dashboard.pages.mrv.noBudgetTitle', 'No budget generated yet')}
+            description={t('dashboard.pages.mrv.noBudgetDesc', "Click 'Generate carbon budget' to create one.")}
           />
         ) : (
           <Card>
             <CardBody>
               <div className="mb-3 flex items-center gap-3 text-sm">
                 <Badge tone="brand" variant="soft">
-                  ID: {budget.data.report_id ?? '—'}
+                  {t('dashboard.pages.mrv.idLabel', 'ID')}: {budget.data.report_id ?? '—'}
                 </Badge>
                 {budget.data.generated_at && (
                   <span className="text-ink-muted">
-                    Generated {new Date(budget.data.generated_at).toLocaleString()}
+                    {t('dashboard.pages.mrv.generatedAt', 'Generated')} {new Date(budget.data.generated_at).toLocaleString()}
                   </span>
                 )}
                 {typeof budget.data.total_co2e === 'number' && (

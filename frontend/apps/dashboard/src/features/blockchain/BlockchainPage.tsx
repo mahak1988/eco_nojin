@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { apiClient } from '@eco/api/mutator';
 import { useMutation } from '@tanstack/react-query';
 import { Alert, Badge, Button, Card, CardBody, CardHeader, EmptyState, Field, Skeleton } from '@eco/ui';
@@ -19,6 +20,7 @@ type BlockchainProject = {
 };
 
 export function BlockchainPage() {
+  const { t } = useTranslation();
   const [projectId, setProjectId] = useState('');
 
   const credits = useMutation({
@@ -49,26 +51,26 @@ export function BlockchainPage() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-semibold">⛓️ Carbon blockchain ledger</h1>
+        <h1 className="text-2xl font-semibold">{t('dashboard.pages.blockchain.title', '⛓️ Carbon blockchain ledger')}</h1>
         <p className="text-sm text-ink-muted">
-          On-chain tracking of verified carbon projects and credits (Verra / Gold Standard).
+          {t('dashboard.pages.blockchain.subtitle', 'On-chain tracking of verified carbon projects and credits (Verra / Gold Standard).')}
         </p>
       </header>
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <h2 className="text-base font-semibold">Projects</h2>
+            <h2 className="text-base font-semibold">{t('dashboard.pages.blockchain.projectsTitle', 'Projects')}</h2>
           </CardHeader>
           <CardBody>
             <Button size="sm" onClick={() => projects.mutate()} disabled={projects.isPending}>
-              Load projects
+              {t('dashboard.pages.blockchain.loadProjects', 'Load projects')}
             </Button>
             {projects.isPending && <Skeleton className="mt-3 h-20" />}
             {projects.data && (
               <div className="mt-3 space-y-2">
                 {projects.data.items.length === 0 ? (
-                  <EmptyState title="No projects yet" description="" />
+                  <EmptyState title={t('dashboard.pages.blockchain.noProjects', 'No projects yet')} description="" />
                 ) : (
                   projects.data.items.map((p) => (
                     <div key={p.id} className="rounded bg-surface-muted p-3 text-sm">
@@ -89,17 +91,17 @@ export function BlockchainPage() {
 
         <Card>
           <CardHeader>
-            <h2 className="text-base font-semibold">Credits</h2>
+            <h2 className="text-base font-semibold">{t('dashboard.pages.blockchain.creditsTitle', 'Credits')}</h2>
           </CardHeader>
           <CardBody>
             <Button size="sm" onClick={() => credits.mutate()} disabled={credits.isPending}>
-              Load credits
+              {t('dashboard.pages.blockchain.loadCredits', 'Load credits')}
             </Button>
             {credits.isPending && <Skeleton className="mt-3 h-20" />}
             {credits.data && (
               <div className="mt-3 space-y-2">
                 {credits.data.items.length === 0 ? (
-                  <EmptyState title="No credits" description="" />
+                  <EmptyState title={t('dashboard.pages.blockchain.noCredits', 'No credits')} description="" />
                 ) : (
                   credits.data.items.map((c) => (
                     <div key={c.id} className="rounded bg-surface-muted p-3 text-sm">
@@ -108,7 +110,7 @@ export function BlockchainPage() {
                         <Badge tone="success" variant="soft">{c.status}</Badge>
                       </div>
                       <div className="text-xs text-ink-muted">
-                        Vintage {c.vintage} • {c.standard}
+                        {t('dashboard.pages.blockchain.vintage', 'Vintage')} {c.vintage} • {c.standard}
                       </div>
                     </div>
                   ))
@@ -121,10 +123,10 @@ export function BlockchainPage() {
 
       <Card>
         <CardHeader>
-          <h2 className="text-base font-semibold">Verify a project</h2>
+          <h2 className="text-base font-semibold">{t('dashboard.pages.blockchain.verifyTitle', 'Verify a project')}</h2>
         </CardHeader>
         <CardBody className="flex items-end gap-3">
-          <Field label="Project ID">
+          <Field label={t('dashboard.pages.blockchain.projectId', 'Project ID')}>
             <input
               value={projectId}
               onChange={(e) => setProjectId((e.target as HTMLInputElement).value)}
@@ -136,13 +138,13 @@ export function BlockchainPage() {
             disabled={!projectId || verify.isPending}
             size="sm"
           >
-            Verify
+            {t('dashboard.pages.blockchain.verify', 'Verify')}
           </Button>
         </CardBody>
       </Card>
 
       {verify.error && (
-        <Alert tone="danger" title="Verification failed">
+        <Alert tone="danger" title={t('dashboard.pages.blockchain.verificationFailed', 'Verification failed')}>
           {(verify.error as Error).message}
         </Alert>
       )}
