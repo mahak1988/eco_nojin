@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Badge, Reveal } from '@eco/ui';
+import { Reveal } from '@eco/ui';
 
 /**
  * Live map section — real geospatial context with MapLibre.
@@ -44,14 +44,12 @@ export function LiveMapSection() {
   }, []);
 
   return (
-    <section className="py-24 lg:py-32">
+    <section className="bg-surface py-24 lg:py-32">
       <div className="mx-auto w-full max-w-content px-4 sm:px-6 lg:px-8">
         <Reveal>
           <div className="mx-auto max-w-2xl text-center">
-            <Badge tone="sky" variant="soft" className="mx-auto">
-              {t('home.map.badge', 'دادهٔ جغرافیایی زنده')}
-            </Badge>
-            <h2 className="mt-4 text-balance text-3xl font-bold tracking-tight sm:text-4xl">
+            <p className="text-sm font-medium text-ink-subtle">{t('home.map.badge', 'دادهٔ جغرافیایی زنده')}</p>
+            <h2 className="mt-3 text-balance text-4xl font-bold tracking-tight sm:text-5xl">
               {t('home.map.title', 'از ماهواره تا نقشهٔ تصمیم')}
             </h2>
             <p className="mt-4 text-balance text-base text-ink-muted md:text-lg">
@@ -60,11 +58,11 @@ export function LiveMapSection() {
           </div>
         </Reveal>
 
-        <Reveal delay={120} className="mt-12">
-          <div className="gradient-border relative overflow-hidden rounded-3xl shadow-elevated">
-            <div className="relative h-[420px] w-full bg-surface-muted dark:bg-slate-900">
+        <Reveal delay={120} className="mt-14">
+          <div className="overflow-hidden rounded-[28px] border border-ink/10 shadow-soft">
+            <div className="relative h-[440px] w-full bg-surface-muted dark:bg-slate-900">
               {failed ? (
-                <div className="bg-mesh flex h-full w-full flex-col items-center justify-center gap-3 p-8 text-center">
+                <div className="flex h-full w-full flex-col items-center justify-center gap-3 p-8 text-center">
                   <span className="text-3xl" aria-hidden="true">🛰️</span>
                   <p className="text-sm font-medium text-ink">{t('home.map.fallbackTitle', 'نقشهٔ تعاملی موقتاً در دسترس نیست')}</p>
                   <p className="max-w-md text-xs leading-relaxed text-ink-muted">

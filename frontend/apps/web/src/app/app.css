@@ -1,0 +1,175 @@
+@import "tailwindcss";
+@import "../../../tooling/tailwind/tokens.css";
+
+@source "../../../packages/ui/src";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ================================================================
+   Apple-style design language — scoped to the public web app only
+   (the dashboard keeps the original eco palette)
+   ================================================================ */
+:root {
+  color-scheme: light;
+  /* Apple neutrals */
+  --color-surface: 255 255 255;
+  --color-surface-muted: 245 245 247; /* #f5f5f7 */
+  --color-surface-raised: 255 255 255;
+  --color-surface-overlay: 251 251 253;
+  --color-surface-inverse: 29 29 31;  /* #1d1d1f */
+  --color-surface-inverse-muted: 42 42 46;
+  --color-ink: 29 29 31;
+  --color-ink-muted: 110 110 115;     /* #6e6e73 */
+  --color-ink-subtle: 137 137 141;    /* #86868b */
+  --color-ink-inverse: 245 245 247;
+  /* Apple blue as the single CTA color (solid, not gradient) */
+  --gradient-brand: linear-gradient(135deg, rgb(0 113 227), rgb(0 113 227));
+  --max-content-width: 980px;
+  --header-height: 48px;
+}
+
+.dark {
+  color-scheme: dark;
+  --color-surface: 0 0 0;
+  --color-surface-muted: 22 22 23;    /* #161617 */
+  --color-surface-raised: 29 29 31;
+  --color-surface-overlay: 22 22 23;
+  --color-surface-inverse: 245 245 247;
+  --color-surface-inverse-muted: 224 224 229;
+  --color-ink: 245 245 247;
+  --color-ink-muted: 134 134 139;     /* #86868b */
+  --color-ink-subtle: 110 110 115;
+  --color-ink-inverse: 0 0 0;
+  --gradient-brand: linear-gradient(135deg, rgb(41 151 255), rgb(41 151 255));
+}
+
+/* ================================================================
+   BASE
+   ================================================================ */
+body {
+  font-family: 'Vazirmatn', 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ================================================================
+   APPLE FROSTED SURFACES
+   ================================================================ */
+.header-frost {
+  background: rgb(var(--color-surface) / 0.72);
+  backdrop-filter: saturate(1.8) blur(20px);
+  -webkit-backdrop-filter: saturate(1.8) blur(20px);
+}
+
+.glass {
+  background: rgb(255 255 255 / 0.78);
+  backdrop-filter: blur(30px) saturate(1.8);
+  -webkit-backdrop-filter: blur(30px) saturate(1.8);
+  border: 1px solid rgb(0 0 0 / 0.06);
+  border-radius: 28px;
+}
+.dark .glass {
+  background: rgb(29 29 31 / 0.75);
+  border-color: rgb(255 255 255 / 0.08);
+}
+
+/* Cards: restrained lift instead of 3D tilt */
+.card-3d {
+  transition: transform 0.3s var(--ease-out-soft), box-shadow 0.3s var(--ease-out-soft);
+}
+.card-3d:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgb(0 0 0 / 0.08);
+}
+
+/* Flat hairline border instead of gradient rim */
+.gradient-border { position: relative; background-clip: padding-box; }
+.gradient-border::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  padding: 1px;
+  background: rgb(0 0 0 / 0.10);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  pointer-events: none;
+}
+.dark .gradient-border::before { background: rgb(255 255 255 / 0.14); }
+
+/* Plain gray sections (Apple alternates white / #f5f5f7 / black) */
+.surface-hero { background: rgb(var(--color-surface-muted)); }
+.bg-mesh { background-color: rgb(var(--color-surface-muted)); background-image: none; }
+
+/* Wordmark keeps the eco gradient; CTAs use Apple blue */
+.text-gradient-brand {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Apple link with chevron */
+.link-apple { color: rgb(0 113 227); }
+.dark .link-apple { color: rgb(41 151 255); }
+.link-apple:hover { text-decoration: underline; }
+
+/* ================================================================
+   ANIMATIONS (restrained)
+   ================================================================ */
+@keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }
+.animate-float { animation: float 5s ease-in-out infinite; }
+
+@keyframes fade-up { from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: none } }
+.animate-fade-up { animation: fade-up .5s cubic-bezier(.2,.8,.2,1) both; }
+
+@keyframes shimmer { from { background-position: 200% 0 } to { background-position: -200% 0 } }
+.shimmer {
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255/.5) 50%, transparent 70%);
+  background-size: 200% 100%; animation: shimmer 2.2s linear infinite;
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s var(--ease-out-soft), transform 0.7s var(--ease-out-soft);
+  will-change: opacity, transform;
+}
+.reveal.in { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* Marquee (kept for reuse; currently static row is used) */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee { display: flex; width: max-content; animation: marquee 34s linear infinite; }
+.marquee:hover { animation-play-state: paused; }
+[dir='rtl'] .marquee { animation-direction: reverse; }
+
+/* RTL arrow flip */
+[dir='rtl'] .rtl-flip { transform: scaleX(-1); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--color-ink) / 0.22);
+  border-radius: 8px; border: 2px solid transparent; background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background: rgb(var(--color-ink) / 0.35); }
+
+/* ==== Self-hosted Vazirmatn (variable, all weights 100-900) ==== */
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/vazirmatn-var.woff2') format('woff2-variations'),
+       url('/fonts/vazirmatn-var.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ==== Respect reduced motion ==== */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float, .marquee, .shimmer, .animate-ripple { animation: none !important; }
+  .card-3d:hover { transform: none; }
+}

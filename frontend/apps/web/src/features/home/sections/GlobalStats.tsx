@@ -20,16 +20,14 @@ export function GlobalStats() {
   ];
 
   return (
-    <section className="border-y border-ink/10 bg-surface-inverse py-16 text-ink-inverse dark:border-ink/10">
+    <section className="bg-surface-muted py-24">
       <div className="mx-auto w-full max-w-content px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-4">
           {STATS.map((s, i) => (
             <Reveal key={s.labelKey} delay={i * 60}>
               <div className="text-center">
-                <div className="text-4xl font-bold tracking-tight text-brand-300 dark:text-brand-200">{s.node}</div>
-                <div className="mt-2 text-xs uppercase tracking-wider text-ink-inverse/60">
-                  {t(s.labelKey, s.fallback)}
-                </div>
+                <div className="text-5xl font-semibold tracking-tight text-ink">{s.node}</div>
+                <div className="mt-3 text-sm text-ink-muted">{t(s.labelKey, s.fallback)}</div>
               </div>
             </Reveal>
           ))}

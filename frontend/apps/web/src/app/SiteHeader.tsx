@@ -35,22 +35,22 @@ export function SiteHeader() {
     <header
       className={cn(
         'sticky top-0 z-40 w-full transition-all duration-base ease-out-soft',
-        scrolled ? 'header-frost border-b border-ink/10 shadow-soft' : 'bg-surface/0',
+        scrolled ? 'header-frost border-b border-ink/10' : 'bg-surface/0',
       )}
     >
-      <div className="mx-auto flex h-header w-full max-w-content items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-header w-full max-w-content items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
         {/* Brand */}
-        <Link to="/" className="flex items-center gap-3 transition-opacity hover:opacity-80" aria-label={`${APP_NAME} home`}>
-          <BrandWordmark size="md" />
+        <Link to="/" className="flex items-center transition-opacity hover:opacity-80" aria-label={`${APP_NAME} home`}>
+          <BrandWordmark size="sm" />
         </Link>
 
-        {/* Desktop nav */}
-        <nav aria-label={t('common.mainNav', 'منوی اصلی')} className="hidden items-center gap-1 md:flex">
+        {/* Desktop nav — small, quiet, Apple-style */}
+        <nav aria-label={t('common.mainNav', 'منوی اصلی')} className="hidden items-center gap-7 md:flex">
           {NAV.map((link) => (
             <Link
               key={link.href}
               to={link.href}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+              className="text-xs font-normal text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
             >
               {t(link.labelKey, link.fallback)}
             </Link>
@@ -59,26 +59,24 @@ export function SiteHeader() {
             href={DASHBOARD_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-lg px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+            className="text-xs font-normal text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
           >
             {t('nav.dashboard', 'HyDroMa')}
-            <span aria-hidden="true" className="ms-1 text-[10px]">↗</span>
           </a>
         </nav>
 
         {/* Right side actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <ThemeToggle />
           <LanguageSwitcher />
           <a
             href={DASHBOARD_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-ink-inverse shadow-soft transition-all hover:shadow-raised focus-visible:shadow-glow focus-visible:outline-none sm:inline-flex"
+            className="hidden h-7 items-center rounded-full bg-gradient-brand px-3.5 text-xs font-medium text-white transition-all hover:opacity-90 focus-visible:outline-none sm:inline-flex"
             aria-label={t('home.openDashboard', 'Open HyDroMa')}
           >
-            {t('nav.dashboard', 'HyDroMa')}
-            <span aria-hidden="true" className="rtl-flip">→</span>
+            {t('home.openDashboard', 'ورود به HyDroMa')}
           </a>
 
           {/* Mobile menu toggle */}
@@ -87,9 +85,9 @@ export function SiteHeader() {
             aria-label={t('common.openMenu', 'باز کردن منو')}
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((v) => !v)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-ink/10 text-ink-muted hover:bg-surface-muted md:hidden"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-ink-muted hover:bg-surface-muted md:hidden"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
               {mobileOpen ? (
                 <path d="M6 6l12 12M18 6l-12 12" strokeLinecap="round" />
               ) : (
@@ -106,8 +104,8 @@ export function SiteHeader() {
 
       {/* Mobile menu drawer */}
       {mobileOpen && (
-        <div className="border-t border-ink/10 bg-surface/95 backdrop-blur-xl md:hidden">
-          <nav className="flex flex-col gap-1 p-4" aria-label={t('common.mainNav', 'منوی اصلی')}>
+        <div className="header-frost border-t border-ink/10 md:hidden">
+          <nav className="flex flex-col gap-1 p-5" aria-label={t('common.mainNav', 'منوی اصلی')}>
             {NAV.map((link) => (
               <Link
                 key={link.href}
@@ -123,9 +121,9 @@ export function SiteHeader() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setMobileOpen(false)}
-              className="mt-2 inline-flex items-center justify-center gap-1.5 rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-ink-inverse"
+              className="mt-2 inline-flex items-center justify-center rounded-full bg-gradient-brand px-4 py-2.5 text-sm font-medium text-white"
             >
-              {t('home.openDashboard', 'Open HyDroMa')}
+              {t('home.openDashboard', 'ورود به HyDroMa')}
             </a>
           </nav>
         </div>
