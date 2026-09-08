@@ -12,6 +12,7 @@
 #include "hydroma/erosion.hpp"
 #include "hydroma/hydrology.hpp"
 #include "hydroma/indices.hpp"
+#include "hydroma/nojin_calculator.hpp"
 #include "hydroma/richards.hpp"
 #include "hydroma/saint_venant.hpp"
 #include "hydroma/sampling.hpp"
