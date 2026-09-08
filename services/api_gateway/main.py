@@ -107,6 +107,8 @@ async def lifespan(app: FastAPI):
         logger.error(f"❌ Database init failed: {e}")
         logger.error(traceback.format_exc())
     
+    app.state.start_time = time.time()
+    
     logger.info(f"🌍 CORS origins: {_settings.cors_origins}")
     logger.info(f"📚 API docs: http://{os.environ.get('HOST', '127.0.0.1')}:8000/docs")
     logger.info("=" * 60)
@@ -293,8 +295,54 @@ async def root():
 @app.get("/health", tags=["health"])
 async def health():
     """Health check endpoint - used by load balancers and monitoring."""
+    checks = {
+        "database": "ok",
+        "settings": "ok",
+        "routers": "loaded",
+    }
+
+    # Check database connectivity
+    try:
+        from sqlalchemy import text
+        engine = hub.get_sqlalchemy_engine()
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        checks["database"] = "ok"
+    except Exception as exc:
+        logger.warning("Health check database failed: %s", exc)
+        checks["database"] = "error"
+
+    # Check Redis connectivity (if configured)
+    try:
+        redis_url = getattr(_settings, "redis_url", None)
+        if redis_url:
+            redis_client = hub.get_redis()
+            if redis_client is not None:
+                redis_client.ping()
+                checks["redis"] = "ok"
+            else:
+                checks["redis"] = "unavailable"
+        else:
+            checks["redis"] = "not_configured"
+    except Exception as exc:
+        logger.warning("Health check redis failed: %s", exc)
+        checks["redis"] = "error"
+
+    # Check C++ core availability
+    try:
+        from engine.hydroma.cpp_bindings import is_available
+        checks["cpp_core"] = "ok" if is_available() else "fallback"
+    except Exception as exc:
+        logger.warning("Health check cpp_core failed: %s", exc)
+        checks["cpp_core"] = "error"
+
+    # Determine overall status
+    status = "healthy"
+    if any(v == "error" for v in checks.values()):
+        status = "degraded"
+
     return {
-        "status": "healthy",
+        "status": status,
         "service": "api-gateway",
         "version": getattr(_settings, "api_version", "0.1.0"),
         "environment": _settings.app_env,
@@ -317,11 +365,7 @@ async def health():
             "sms_commands": True,
             "voice_ivr": True,
         },
-        "checks": {
-            "database": "ok",
-            "settings": "ok",
-            "routers": "loaded",
-        },
+        "checks": checks,
     }
 
 
@@ -337,6 +381,27 @@ async def readiness():
     return {
         "ready": True,
         "service": "api-gateway",
+    }
+
+
+@app.get("/metrics", tags=["observability"])
+async def metrics():
+    """Prometheus-style metrics endpoint."""
+    try:
+        from engine.hydroma.cpp_bindings import get_telemetry, is_available
+        cpp_telemetry = get_telemetry()
+        cpp_available = is_available()
+    except Exception:
+        cpp_telemetry = {}
+        cpp_available = False
+
+    return {
+        "service": "api-gateway",
+        "cpp_core_available": cpp_available,
+        "cpp_calls": cpp_telemetry.get("cpp_calls", 0),
+        "cpp_fallback_calls": cpp_telemetry.get("fallback_calls", 0),
+        "cpp_total_time_ms": cpp_telemetry.get("total_cpp_time_ms", 0.0),
+        "uptime_seconds": int(time.time() - app.state.start_time) if hasattr(app.state, "start_time") else 0,
     }
 
 
