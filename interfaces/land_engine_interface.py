@@ -1,20 +1,26 @@
 """Abstract interface for the Land Analysis Engine."""
 
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional, List
+from typing import Optional
 import numpy as np
+
+from engine.land.models import (
+    CapabilityAssessment,
+    DrainageAnalysis,
+    TerrainAnalysis,
+)
 
 
 class ILandEngine(ABC):
     """Interface defining the methods the LandService expects from the analysis engine."""
 
     @abstractmethod
-    def analyze_terrain(self, dem_array: np.ndarray, profile_id: str = "") -> Dict[str, Any]:
+    def analyze_terrain(self, dem_array: np.ndarray, profile_id: str = "") -> TerrainAnalysis:
         """Performs comprehensive terrain analysis."""
         pass
 
     @abstractmethod
-    def analyze_drainage(self, dem_array: np.ndarray, profile_id: str = "") -> Dict[str, Any]:
+    def analyze_drainage(self, dem_array: np.ndarray, profile_id: str = "") -> DrainageAnalysis:
         """Performs drainage analysis."""
         pass
 
@@ -27,11 +33,11 @@ class ILandEngine(ABC):
         drainage_class: str = "well_drained",
         climate_zone: str = "temperate",
         soil_texture: str = "loam"
-    ) -> Dict[str, Any]:
+    ) -> CapabilityAssessment:
         """Assesses land capability."""
         pass
 
     @abstractmethod
-    def analyze_surface_water(self, dem_file_path: str) -> Dict[str, Any]:
+    def analyze_surface_water(self, dem_file_path: str) -> dict:
         """Analyzes surface water potential using DEM."""
         pass

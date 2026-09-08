@@ -266,3 +266,50 @@ class ScenarioDB(Base):
     user = relationship("User")
 
 # Add other models similarly...
+# --- Public website contact messages (public site phase) ---
+class ContactMessage(Base):
+    __tablename__ = "contact_messages"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    name = Column(String(120), nullable=False)
+    email = Column(String(200), nullable=False, index=True)
+    role = Column(String(80), nullable=True)
+    message = Column(Text, nullable=False)
+    locale = Column(String(8), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+# --- Pilot applications (public site phase) ---
+class PilotApplication(Base):
+    __tablename__ = "pilot_applications"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    name = Column(String(120), nullable=False)
+    phone = Column(String(20), nullable=False)
+    province = Column(String(80), nullable=False)
+    land_hectares = Column(Float, nullable=True)
+    main_crop = Column(String(120), nullable=True)
+    preferred_channel = Column(String(40), nullable=True)
+    consent = Column(Boolean, nullable=False, default=False)
+    locale = Column(String(8), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+
+
+# --- Newsletter subscribers (public site phase) ---
+class NewsletterSubscriber(Base):
+    __tablename__ = "newsletter_subscribers"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    email = Column(String(200), nullable=False, unique=True, index=True)
+    locale = Column(String(8), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+# --- HyDroMa data hub: per-user model runs (public dashboard aggregation) ---
+class ModelRun(Base):
+    __tablename__ = "hydroma_model_runs"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    user_key = Column(String(64), nullable=False, index=True)
+    model_id = Column(String(80), nullable=False, index=True)
+    title = Column(String(160), nullable=True)
+    inputs = Column(JSON, nullable=True)
+    outputs = Column(JSON, nullable=True)
+    shared = Column(Boolean, nullable=False, default=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)

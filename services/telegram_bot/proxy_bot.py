@@ -32,15 +32,14 @@ logger = logging.getLogger("proxy_bot")
 # =====================================================================
 
 PROXY_CANDIDATES = [
-    # (name, protocol, host, port)
-    ("v2rayN", "socks5", "os.environ.get('HOST', '127.0.0.1')", 10808),
-    ("v2rayN-HTTP", "http", "os.environ.get('HOST', '127.0.0.1')", 10809),
-    ("Clash", "socks5", "os.environ.get('HOST', '127.0.0.1')", 7891),
-    ("Clash-HTTP", "http", "os.environ.get('HOST', '127.0.0.1')", 7890),
-    ("Hiddify", "socks5", "os.environ.get('HOST', '127.0.0.1')", 2080),
-    ("Oblivion", "socks5", "os.environ.get('HOST', '127.0.0.1')", 8086),
-    ("Shadowsocks", "socks5", "os.environ.get('HOST', '127.0.0.1')", 1080),
-    ("Tor", "socks5", "os.environ.get('HOST', '127.0.0.1')", 9050),
+    ("v2rayN", "socks5", "localhost", 10808),
+    ("v2rayN-HTTP", "http", "localhost", 10809),
+    ("Clash", "socks5", "localhost", 7891),
+    ("Clash-HTTP", "http", "localhost", 7890),
+    ("Hiddify", "socks5", "localhost", 2080),
+    ("Oblivion", "socks5", "localhost", 8086),
+    ("Shadowsocks", "socks5", "localhost", 1080),
+    ("Tor", "socks5", "localhost", 9050),
 ]
 
 

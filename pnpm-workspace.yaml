@@ -1,11 +1,16 @@
 packages:
-- frontend
-- services/*
+  - frontend
+  - apps/*
+  - packages/*
+  - services/*
 autoInstallPeers: true
 strictPeerDependencies: false
 preferFrozenLockfile: true
 onlyBuiltDependencies:
-- '@biomejs/biome'
-- esbuild
-- prisma
-- msw
+  - '@biomejs/biome'
+  - esbuild
+  - prisma
+  - msw
+allowBuilds:
+  esbuild: true
+  prisma: false

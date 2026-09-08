@@ -1,8 +1,0 @@
-{
-  "extends": "@eco/tsconfig/react.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "jsx": "react-jsx"
-  },
-  "include": ["src"]
-}

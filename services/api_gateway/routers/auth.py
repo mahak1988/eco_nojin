@@ -298,18 +298,14 @@ def forgot_password(req: ForgotPasswordRequest, request: Request, db: Session = 
     db.commit()
 
     base_url = str(request.base_url).rstrip("/")
-    frontend_url = (
-        "http://os.environ.get('HOST', 'localhost'):3000"
-        if "os.environ.get('HOST', '127.0.0.1'):8000" in base_url or "os.environ.get('HOST', 'localhost'):8000" in base_url
-        else base_url
-    )
+    frontend_url = os.environ.get("FRONTEND_URL", base_url)
     reset_url = f"{frontend_url}/reset-password?token={reset_token.token}"
 
     # Log URL for development (in production, send via email service)
     logger.info(f"[RESET] {user.email}: {reset_url}")
 
     # In development, return URL for testing
-    is_dev = "os.environ.get('HOST', '127.0.0.1')" in base_url or "os.environ.get('HOST', 'localhost')" in base_url
+    is_dev = os.environ.get("APP_ENV", "development") != "production"
     return MessageResponse(
         message=generic_msg,
         data={"reset_url": reset_url, "token": reset_token.token} if is_dev else None,

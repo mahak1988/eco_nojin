@@ -1,74 +1,78 @@
-# 🌱 Eco Nojin Frontend
+# Eco Nojin — Frontend (وب‌سایت عمومی)
 
-Monorepo for Eco Nojin scientific agricultural platform.
+وب‌سایت رسمی و مدرن پلتفرم **اکو نوژین** (احیای اکوسیستم، کشاورزی هوشمند، اقتصاد کربن).
 
-## Structure
+- **پشته:** Vite 5 · React 18 · TypeScript (strict) · Tailwind CSS v4 · Framer Motion · lucide-react · React Router 7
+- **زبان:** فارسی-اول (RTL) با سوییچ fa/en — فونت وزیرمتن به‌صورت محلی باندل شده (بدون نیاز به اینترنت)
+- **بدون Docker** — فقط Node 20+ و pnpm 9+
+
+## اجرا
+
+```bash
+# از ریشهٔ مونوریپو (D:\eco_nojin)
+pnpm install          # یک بار برای کل workspace
+pnpm dev              # سرور توسعه روی http://localhost:5173
+
+# بیلد production و پیش‌نمایش
+pnpm build            # tsc --noEmit + vite build → خروجی در frontend/dist
+pnpm start            # سرو کردن بیلد روی http://localhost:4173
+```
+
+اسکریپت‌های معادل داخل `frontend/`:
+
+| فرمان | کار |
+|---|---|
+| `pnpm dev` | سرور توسعه (HMR) روی 5173 |
+| `pnpm build` | چک تایپ + بیلد production |
+| `pnpm start` / `pnpm preview` | سرو بیلد روی 4173 |
+| `pnpm lint` | ESLint (flat config) |
+| `pnpm test` | تست‌های Vitest + Testing Library |
+| `pnpm type-check` | فقط چک تایپ TypeScript |
+
+## ساختار
 
 ```
 frontend/
-├── apps/
-│   ├── web/          # 🌐 Eco NojiN (Public)
-│   └── dashboard/    # 🎯 HyDroMa (Professional)
-├── packages/
-│   ├── ui/           # Design System
-│   ├── api/          # Type-safe API Client
-│   ├── models/       # Scientific Models SDK
-│   ├── charts/       # Chart Components
-│   ├── geo/          # GIS/Maps
-│   ├── auth/         # Authentication
-│   ├── i18n/         # Translations
-│   ├── utils/        # Shared utilities
-│   └── config/       # Shared configs
-└── tooling/
-    ├── typescript/   # TS configs
-    ├── tailwind/     # Tailwind preset
-    └── biome/        # Biome configs
+├─ index.html                  # شل HTML (fa/RTL پیش‌فرض)
+├─ public/favicon.svg          # نشان برند (برگ + مدار ماهواره)
+└─ src/
+   ├─ main.tsx                 # نقطهٔ ورود
+   ├─ App.tsx                  # Router + chrome مشترک (lazy routes)
+   ├─ index.css                # Tailwind v4 + توکن‌های تم (پالت شب‌جنگلی/سبز)
+   ├─ content/site.ts          # تک‌منبع محتوا (fa/en، تایپ‌شده)
+   ├─ i18n/LanguageContext.tsx # زبان + جهت (RTL/LTR) + ماندگاری در localStorage
+   ├─ public/robots.txt + sitemap.xml + og.png   # سئوی فنی
+├─ content/pages/*.ts       # محتوای صفحات جدید (تقسیم‌شده بر اساس صفحه)
+├─ content/menus.ts         # گروه‌های لینک فوتر (دوزبانه)
+├─ lib/api.ts + lib/contact.ts  # کلاینت API (تماس، خبرنامه، پایلوت)
+├─ components/
+   │  ├─ layout/               # Navbar، Footer
+   │  ├─ sections/             # Hero، Stats، Capabilities، ScienceChain، Channels، Carbon، CTA، …
+   │  ├─ ui/                   # Icon، Reveal، SectionHeading، RouteFallback
+   │  └─ visuals/              # Logo، Backdrop، FieldScene (صحنهٔ ماهواره‌ای SVG)
+   ├─ pages/                   # ۲۳ صفحه: Home، Platform، Hydroma، About، Blog، FAQ، Contact، Transparency، Developers، Support، Status، Impact، Carbon، Partners، Careers، Investors، PilotIran، Academia، Marketplace، Resources، Terms، Rules، Privacy، 404
+   └─ test/                    # setup + smoke tests (7)
 ```
 
-## Development
+هر فایل از `main.tsx` قابل ردیابی است (قاعدهٔ zero-orphan). تصاویر همه SVG/CSS محلی‌اند؛ هیچ منبع ریموتی وجود ندارد.
 
-```bash
-# Install dependencies
-pnpm install
+## تغییرات رایج
 
-# Start all apps
-pnpm dev
+- **متن‌ها (فارسی/انگلیسی):** فقط `src/content/site.ts` — همهٔ برچسب‌ها، آمار، کارت‌ها و مدل‌ها از همین فایل خوانده می‌شوند.
+- **رنگ و تم:** توکن‌های `@theme` در `src/index.css` (پالت leaf/sand/aqua/night).
+- **صفحهٔ جدید:** فایل در `src/pages/` + مسیر در `App.tsx` + لینک در `Navbar` و `content/site.ts`.
+- **زبان پیش‌فرض:** `readInitialLang` در `LanguageContext.tsx` (فعلاً `fa`).
 
-# Start specific app
-pnpm --filter @eco/web dev          # http://localhost:5173
-pnpm --filter @eco/dashboard dev    # http://localhost:5174
+## کیفیت
 
-# Build
-pnpm build
+- `tsc --noEmit` سبز (strict) · ESLint: ۰ خطا · Vitest: ۱۵/۱۵ سبز (smoke + contact/status libs)
+- ۲۳ مسیر فعال (از جمله Developers/Support/Status/Impact/Carbon/Investors/Pilot/Academia/Marketplace/Resources) · سئو کامل · فرم تماس/پایلوت/خبرنامه متصل به درگاه API · sitemap/robots · ریسپانسیو موبایل/دسکتاپ · احترام به `prefers-reduced-motion` · ناوبری با کیبورد و aria-label
+- اعداد فارسی در نسخهٔ فارسی، لاتین در انگلیسی (Intl.NumberFormat)
 
-# Test
-pnpm test
+## اتصال به بک‌اند (فعال)
 
-# Lint
-pnpm lint
-
-# Type check
-pnpm type-check
-```
-
-## Tech Stack
-
-- React 18.3
-- TypeScript 5.9 (strict)
-- Vite 5 / 6
-- Tailwind CSS v4
-- TanStack Router + Query
-- Zustand
-- Turborepo + pnpm
-- Biome (lint/format)
-
-## Phase 1 — Foundation ✅
-
-- [x] Monorepo + pnpm workspaces
-- [x] Turborepo configuration
-- [x] Strict TypeScript (with `noPropertyAccessFromIndexSignature`)
-- [x] Biome linting
-- [x] Two app shells (web + dashboard)
-- [x] Nine package shells
-- [x] Design tokens (colors, spacing, typography, shadows)
-- [x] RTL-first (Persian + Arabic + Urdu + English)
+- **فرم تماس** به `POST /api/v1/contact`، **فرم پایلوت** به `POST /api/v1/pilot/apply` و **خبرنامهٔ فوتر** به `POST /api/v1/newsletter/subscribe` وصل‌اند (مدل‌های ContactMessage/PilotApplication/NewsletterSubscriber؛ بدون ذخیرهٔ IP؛ هانی‌پات).
+- `VITE_API_BASE_URL` را در `.env.local` فرانت‌اند تنظیم کنید (پیش‌فرض `http://localhost:8000`).
+- CORS: `.env` ریشه باید پرت‌های 5173 (dev) و 4173 (preview) را در `CORS_ORIGINS` داشته باشد — اضافه شده.
+- تست بک‌اند: `tests/unit/test_contact_router.py` (۶ تست، دیتابیس درون‌حافظه‌ای).
+- برای داشبورد داده‌محور بعدی، یک کلاینت با TanStack Query روی همین درگاه اضافه کنید.

@@ -1,59 +1,84 @@
 """Unit tests for the LandService using mocked dependencies."""
 
 import unittest
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 from services.land.service import LandService
 from interfaces.land_engine_interface import ILandEngine
-from interfaces.hydroma_engine_interface import IHydromaEngine
 import numpy as np
+
 
 class TestLandService(unittest.TestCase):
 
     def setUp(self):
-        """Set up a LandService instance with mocked engines for each test."""
+        """Set up a LandService instance with mocked engine for each test."""
         self.mock_land_engine = Mock(spec=ILandEngine)
-        self.mock_hydroma_engine = Mock(spec=IHydromaEngine)
-        self.service = LandService(engine=self.mock_land_engine, hydroma_engine=self.mock_hydroma_engine)
+        self.service = LandService(engine=self.mock_land_engine)
 
     def test_analyze_terrain_delegates_to_engine(self):
         """Test that analyze_terrain calls the injected engine."""
-        profile_id = "test-profile-1"
+        profile = self.service.create_profile(name="test", location_lat=0, location_lon=0)
         dem_array = np.array([[1, 2], [3, 4]])
-        
-        mock_result = {
-            "profile_id": profile_id,
-            "slope_mean": 10.0,
-            "aspect_dominant": "N"
-        }
+
+        from engine.land.models import TerrainAnalysis
+        mock_result = TerrainAnalysis(
+            profile_id=profile.id,
+            elevation_min=1.0,
+            elevation_max=4.0,
+            elevation_mean=2.5,
+            slope_mean=10.0,
+            slope_max=15.0,
+        )
         self.mock_land_engine.analyze_terrain.return_value = mock_result
 
-        result = self.service.analyze_terrain(profile_id, dem_array, resolution=30.0)
+        result = self.service.analyze_terrain(profile.id, dem_array, resolution=30.0)
 
-        # Assert the engine was called
-        self.mock_land_engine.analyze_terrain.assert_called_once_with(dem_array, profile_id)
-        # Assert the service returned a correctly structured object
-        self.assertEqual(result.profile_id, profile_id)
-        self.assertEqual(result.mean_slope_degrees, 10.0)
+        self.mock_land_engine.analyze_terrain.assert_called_once()
+        self.assertEqual(result.profile_id, profile.id)
+        self.assertEqual(result.slope_mean, 10.0)
 
-    def test_analyze_soil_delegates_to_hydroma_engine(self):
-        """Test that analyze_soil calls the injected hydroma engine."""
-        profile_id = "test-profile-2"
-        soil_data = {"ec": 2.5, "texture_class": "Clay"}
-        
-        mock_result = {
-            "salinity_classification": "Low",
-            "texture_class": "Clay"
-        }
-        self.mock_hydroma_engine.analyze_soil.return_value = mock_result
+    def test_analyze_drainage_delegates_to_engine(self):
+        """Test that analyze_drainage calls the injected engine."""
+        profile = self.service.create_profile(name="test", location_lat=0, location_lon=0)
+        dem_array = np.array([[1, 2], [3, 4]])
 
-        result = self.service.analyze_soil(profile_id, soil_data)
+        from engine.land.models import DrainageAnalysis, DrainagePattern
+        mock_result = DrainageAnalysis(
+            profile_id=profile.id,
+            drainage_pattern=DrainagePattern.DENDRITIC,
+            drainage_density=1.5,
+        )
+        self.mock_land_engine.analyze_drainage.return_value = mock_result
 
-        # Assert the hydroma engine was called
-        self.mock_hydroma_engine.analyze_soil.assert_called_once_with(soil_data)
-        # Assert the service returned a correctly structured object
-        self.assertIsNotNone(result)
-        self.assertEqual(result["profile_id"], profile_id)
-        self.assertEqual(result["salinity_classification"], "Low")
+        result = self.service.analyze_drainage(profile.id, dem_array, resolution=30.0, area_km2=1.0)
+
+        self.mock_land_engine.analyze_drainage.assert_called_once()
+        self.assertEqual(result.profile_id, profile.id)
+        self.assertEqual(result.drainage_pattern, DrainagePattern.DENDRITIC)
+
+    def test_assess_capability_delegates_to_engine(self):
+        """Test that assess_capability calls the injected engine."""
+        profile = self.service.create_profile(name="test", location_lat=0, location_lon=0)
+
+        from engine.land.models import CapabilityAssessment, LandCapabilityClass
+        mock_result = CapabilityAssessment(
+            profile_id=profile.id,
+            capability_class=LandCapabilityClass.CLASS_II,
+            confidence_score=0.85,
+        )
+        self.mock_land_engine.assess_capability.return_value = mock_result
+
+        result = self.service.assess_capability(
+            profile_id=profile.id,
+            slope_degrees=8.0,
+            soil_depth_m=1.5,
+            erosion_risk="low",
+            drainage_class="well_drained",
+            climate_zone="temperate",
+        )
+
+        self.mock_land_engine.assess_capability.assert_called_once()
+        self.assertEqual(result.profile_id, profile.id)
+        self.assertEqual(result.capability_class, LandCapabilityClass.CLASS_II)
 
 
 if __name__ == '__main__':

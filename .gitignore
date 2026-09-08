@@ -194,3 +194,6 @@ econojin.egg-info/
 
 # off-site backup snapshots
 *.offgit
+
+# pnpm temp dirs (2026-09-07, Mahak)
+_nmb*/

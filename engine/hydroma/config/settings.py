@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     app_name: str = "Eco Nojin"
     app_env: Literal["development", "production", "staging", "test"] = "development"
     app_debug: bool = True
-    app_host: str = "os.environ.get('HOST', '127.0.0.1')"
+    app_host: str = os.environ.get("HOST", "127.0.0.1")
     app_port: int = 8000
     app_log_level: str = "INFO"
     app_secret_key: str = "change-me-in-production"
@@ -54,7 +54,7 @@ class Settings(BaseSettings):
     # =====================================================================
     # CORS
     # =====================================================================
-    cors_origins: list[str] = ["http://localhost:3000", "http://localhost:8000", "http://127.0.0.1:3000"]
+    cors_origins: list[str] = os.environ.get("CORS_ORIGINS", "http://localhost:3000,http://localhost:8000,http://127.0.0.1:3000").split(",")
     allow_credentials: bool = True
     cors_allow_credentials: bool = True
 

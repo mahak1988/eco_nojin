@@ -214,7 +214,7 @@ def format_help() -> str:
 
 💡 *نکته:* مختصات جغرافیایی را از Google Maps کپی کنید.
 
-🔗 [مستندات API](http://os.environ.get('HOST', '127.0.0.1'):8000/docs)"""
+🔗 [مستندات API]({os.environ.get('API_BASE_URL', 'http://localhost:8000')}/docs)"""
 
 
 def format_welcome() -> str:

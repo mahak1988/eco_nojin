@@ -76,7 +76,7 @@ def _is_identity_question(question: str) -> bool:
 
 
 def _ollama_base() -> str:
-    return os.getenv("OLLAMA_BASE_URL", "http://os.environ.get('HOST', '127.0.0.1'):11434").rstrip("/")
+    return os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434").rstrip("/")
 
 
 def _llm_timeout() -> float:

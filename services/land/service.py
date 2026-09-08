@@ -10,12 +10,27 @@ from datetime import UTC, datetime
 from typing import Any
 
 from adapters.engine_adapter import EngineAdapter
-from services.land.land_profile import (
+from engine.land.models import (
     CapabilityAssessment,
     DrainageAnalysis,
-    LandProfile,
     TerrainAnalysis,
 )
+
+
+class LandProfile:
+    """مدل پروفایل زمین"""
+    def __init__(self, name: str, location_lat: float = 0.0, location_lon: float = 0.0, area_ha: float | None = None, **kwargs):
+        self.id = str(__import__('uuid').uuid4())
+        self.name = name
+        self.location_lat = location_lat
+        self.location_lon = location_lon
+        self.area_ha = area_ha
+        self.terrain_analysis: TerrainAnalysis | None = None
+        self.drainage_analysis: DrainageAnalysis | None = None
+        self.capability_assessment: CapabilityAssessment | None = None
+        self.created_at = datetime.now(UTC)
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
 
 class LandService:
@@ -25,7 +40,7 @@ class LandService:
         self.engine = engine or EngineAdapter()
         self.db = db
         self.session = session
-        self._profiles = {}  # id -> LandProfile
+        self._profiles: dict[str, LandProfile] = {}
 
     def create_profile(
         self,
@@ -69,29 +84,15 @@ class LandService:
         self,
         profile_id: str,
         dem_array: Any,
-        resolution: float
+        resolution: float = 30.0,
     ) -> TerrainAnalysis:
         """تحلیل توپوگرافی با استفاده از موتور"""
         if not self._profile_exists(profile_id):
             raise ValueError("Profile not found")
 
         logger.info(f"Delegating terrain analysis for profile {profile_id} to engine via interface.")
-        engine_results = self.engine.analyze_terrain(dem_array, profile_id)
+        analysis = self.engine.analyze_terrain(dem_array, profile_id, resolution)
 
-        analysis = TerrainAnalysis(
-            profile_id=profile_id,
-            terrain_type=engine_results.get('terrain_type', 'unknown'),
-            elevation_min=engine_results.get('elevation_min', 0.0),
-            elevation_max=engine_results.get('elevation_max', 0.0),
-            elevation_mean=engine_results.get('elevation_mean', 0.0),
-            slope_mean=engine_results.get('slope_mean', 0.0),
-            slope_max=engine_results.get('slope_max', 0.0),
-            aspect_dominant=engine_results.get('aspect_dominant', 0.0),
-            mean_slope_degrees=engine_results.get('slope_mean', 0.0),
-            dominant_aspect_degrees=engine_results.get('aspect_dominant', 0.0),
-            analysis_data=engine_results,
-            analyzed_at=datetime.now(UTC)
-        )
         self._profiles[profile_id].terrain_analysis = analysis
         return analysis
 
@@ -99,7 +100,7 @@ class LandService:
         self,
         profile_id: str,
         dem_array: Any,
-        resolution: float,
+        resolution: float = 30.0,
         area_km2: float | None = None
     ) -> DrainageAnalysis:
         """تحلیل زهکشی با استفاده از موتور"""
@@ -107,24 +108,10 @@ class LandService:
             raise ValueError("Profile not found")
 
         logger.info(f"Delegating drainage analysis for profile {profile_id} to engine via interface.")
-        engine_results = self.engine.analyze_drainage(
+        analysis = self.engine.analyze_drainage(
             dem_array, profile_id, resolution, area_km2 or 1.0
         )
 
-        analysis = DrainageAnalysis(
-            profile_id=profile_id,
-            drainage_pattern=engine_results.get('drainage_pattern', 'dendritic'),
-            drainage_density=engine_results.get('drainage_density', 0.0),
-            density_class=engine_results.get('density_class', 'low'),
-            stream_orders=engine_results.get('stream_orders', []),
-            stream_order_max=engine_results.get('stream_order_max', 0),
-            bifurcation_ratio=engine_results.get('bifurcation_ratio', 0.0),
-            flow_accumulation=engine_results.get('flow_accumulation', []),
-            watershed_area_km2=area_km2 or 1.0,
-            time_of_concentration_hours=engine_results.get('time_of_concentration_hours', 0.0),
-            main_channel_length_km=engine_results.get('main_channel_length_km', 0.0),
-            analyzed_at=datetime.now(UTC)
-        )
         self._profiles[profile_id].drainage_analysis = analysis
         return analysis
 
@@ -143,7 +130,7 @@ class LandService:
             raise ValueError("Profile not found")
 
         logger.info(f"Delegating capability assessment for profile {profile_id} to engine via interface.")
-        engine_results = self.engine.assess_capability(
+        assessment = self.engine.assess_capability(
             profile_id=profile_id,
             slope_degrees=slope_degrees,
             soil_depth_m=soil_depth_m,
@@ -153,13 +140,5 @@ class LandService:
             soil_texture=soil_texture
         )
 
-        assessment = CapabilityAssessment(
-            profile_id=profile_id,
-            capability_class=engine_results.get('class', 'I'),
-            confidence_score=engine_results.get('confidence_score', 0.8),
-            limitations=engine_results.get('limitations', []),
-            analysis_data=engine_results,
-            assessed_at=datetime.now(UTC)
-        )
         self._profiles[profile_id].capability_assessment = assessment
         return assessment

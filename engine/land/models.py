@@ -151,7 +151,7 @@ class TerrainAnalysis(BaseModel):
         }
     )
     profile_id: str
-    terrain_type: str | None = None
+    terrain_type: TerrainType | None = None
     elevation_min: float
     elevation_max: float
     elevation_mean: float
@@ -160,7 +160,7 @@ class TerrainAnalysis(BaseModel):
     slope_max: float = Field(..., ge=0, le=90)
     slope_class_dominant: SlopeClass | None = None
     slope_distribution: dict[str, float] | None = None
-    aspect_dominant: float | None = None
+    aspect_dominant: str | float | None = None
     aspect_distribution: dict[str, float] | None = None
     curvature: CurvatureResult | None = None
     indices: TerrainIndices | None = None

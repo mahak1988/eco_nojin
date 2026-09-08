@@ -52,6 +52,10 @@ from .routers import simulation, motors, mrv, science
 from .routers import models as models_router
 from .routers import elevation
 from .routers import support
+from .routers import contact
+from .routers import pilot
+from .routers import newsletter
+from .routers import hydroma_hub
 from .routers import manual_data
 from .routers import voice
 from .routers import dashboard
@@ -250,6 +254,10 @@ app.include_router(elevation.router, tags=["elevation"])
 app.include_router(support.router, tags=["support"])
 app.include_router(manual_data.router, tags=["manual-data"])
 app.include_router(dashboard.router)
+app.include_router(contact.router, tags=["contact"])
+app.include_router(pilot.router, tags=["pilot"])
+app.include_router(newsletter.router, tags=["newsletter"])
+app.include_router(hydroma_hub.router, tags=["hydroma-hub"])
 
 
 # ============================================================================

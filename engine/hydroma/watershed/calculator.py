@@ -40,7 +40,17 @@ def calculate_runoff(
 
     Returns:
         Runoff volume in m³
+
+    Raises:
+        ValueError: If inputs are invalid
     """
+    if area_m2 <= 0:
+        raise ValueError(f"Area must be positive, got {area_m2}")
+    if rainfall_mm < 0:
+        raise ValueError(f"Rainfall must be non-negative, got {rainfall_mm}")
+    if not (0 <= runoff_coefficient <= 1):
+        raise ValueError(f"Runoff coefficient must be in [0,1], got {runoff_coefficient}")
+
     rainfall_m = rainfall_mm / 1000
     return area_m2 * rainfall_m * runoff_coefficient
 
