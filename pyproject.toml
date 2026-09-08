@@ -7,39 +7,30 @@ name = "econojin"
 version = "0.1.0"
 description = "Integrated Sustainable Agriculture Platform - Global Digital Twin"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 license = { text = "Proprietary" }
 authors = [{ name = "Eco Nojin Team" }]
 keywords = ["agriculture", "digital-twin", "gis", "hydrology", "sustainability"]
 
-# === CORE DEPENDENCIES (Lean Core) ===
+# === CORE DEPENDENCIES ===
 dependencies = [
-    # Core API & Server
-    "fastapi>=0.110,<1.0",
-    "uvicorn[standard]>=0.29,<1.0",
-    "pydantic>=2.6,<3.0",
-    "pydantic-settings>=2.2,<3.0",
+    "fastapi>=0.141,<1.0",
+    "uvicorn[standard]>=0.30,<1.0",
+    "pydantic>=2.13,<3.0",
+    "pydantic-settings>=2.5,<3.0",
     "python-dotenv>=1.0,<2.0",
-    "python-multipart>=0.0.7,<1.0",
-    
-    # Auth & Security
+    "python-multipart>=0.0.32,<1.0",
     "python-jose[cryptography]>=3.3,<4.0",
     "passlib[bcrypt]>=1.7,<2.0",
-    
-    # Database (Psycopg3 for SQLAlchemy 2.0 Async compatibility)
     "sqlalchemy>=2.0,<3.0",
     "alembic>=1.13,<2.0",
-    "asyncpg>=0.29,<1.0",
-    "psycopg[binary]>=3.1,<4.0", 
-    
-    # Core Data & HTTP
-    "numpy>=2.3,<2.4",  # 🚨 PINNED: نقطه تعادل برای سازگاری همزمان Numba و Tifffile
-    "pandas>=2.2,<3.0",
-    "httpx>=0.27,<1.0",
-    "requests>=2.31,<3.0",
-    
-    # Bots
-    "aiogram>=3.4,<4.0",
+    "psycopg[binary]>=3.3,<4.0",
+    "numpy>=2.3,<2.4",
+    "pandas>=2.3,<3.0",
+    "httpx>=0.28,<1.0",
+    "requests>=2.34,<3.0",
+    "aiogram>=3.30,<4.0",
+    "structlog>=26.0,<27.0",
 ]
 
 [project.optional-dependencies]
@@ -144,7 +135,7 @@ exclude = ["tests*", "docs*", "backups*", "build*"]
 # === RUFF CONFIGURATION ===
 [tool.ruff]
 line-length = 100
-target-version = "py311"
+target-version = "py312"
 src = ["."]
 exclude = [
     ".git", ".venv", "venv", "__pycache__", "build", "dist",
@@ -165,7 +156,7 @@ combine-as-imports = true
 
 # === MYPY CONFIGURATION ===
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 warn_return_any = true
 warn_unused_configs = true
 check_untyped_defs = true

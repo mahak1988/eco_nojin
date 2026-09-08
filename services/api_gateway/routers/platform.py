@@ -21,8 +21,9 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import httpx
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
 from engine.hydroma.cpp_bindings import (
     estimate_rainfall_erosivity,
@@ -33,7 +34,15 @@ from engine.hydroma.cpp_bindings import (
     reset_telemetry,
     rusle_annual_soil_loss,
 )
+from services.api_gateway.auth import require_user
 from services.supabase.client import get_supabase_client
+from database.hub import hub
+
+# Compatibility: get_db via hub
+def get_db():
+    with hub.get_session() as session:
+        yield session
+from database.models import User
 
 logger = logging.getLogger("econojin.platform")
 
@@ -258,7 +267,7 @@ async def list_landscapes():
 
 
 @router.post("/landscapes", response_model=LandscapeOut)
-async def create_landscape(data: LandscapeCreate):
+async def create_landscape(data: LandscapeCreate, user: User = Depends(require_user)):
     """Create a new landscape in Supabase."""
     client = get_supabase_client()
     try:

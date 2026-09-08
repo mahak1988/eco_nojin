@@ -231,7 +231,12 @@ def verify_project_methodology(
     db: Session = Depends(get_db),
 ):
     """Run honest VM0042-style methodology checks (baseline/additionality/
-    leakage/permanence). Never rubber-stamps: failed checks are returned."""
+    leakage/permanence). Never rubber-stamps: failed checks are returned.
+
+    DISCLAIMER: This is an internal scientific check, NOT accredited verification.
+    Do NOT present verified projects as certified carbon credits without
+    third-party validation by an accredited verifier (e.g., Verra, Gold Standard).
+    """
     from services.carbon.verification import run_verification
 
     project = _get_owned_project(db, project_id, user)
@@ -247,7 +252,11 @@ def verify_project_methodology(
     project.verification_detail = json.dumps(result, ensure_ascii=False)
     project.verification_status = "verified" if result["passed"] else "failed"
     db.commit()
-    return {"project_id": project.project_id, "verification": result}
+    return {
+        "project_id": project.project_id,
+        "verification": result,
+        "disclaimer": "Internal scientific check only — not accredited verification.",
+    }
 
 
 @router.post("/projects/{project_id}/issue")

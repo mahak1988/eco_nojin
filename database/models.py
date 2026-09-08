@@ -64,24 +64,18 @@ class LandProfile(Base):
 # ترتیب این مدل‌ها مهم است. مدل‌هایی که مورد ارجاع قرار می‌گیرند باید اول تعریف شوند.
 
 class AuditLog(Base):
+    """Audit trail for data changes and security events."""
     __tablename__ = "auditlog"
+
     id = Column(Integer, primary_key=True)
-    detail = Column(String)
-    role = Column(String)
-    actor_id = Column(String)
-    actor_email = Column(String)
-    action = Column(String)
-    user_agent = Column(String(500))
-    ip_address = Column(String(45))
-    details = Column(JSON)
-    resource_id = Column(String(100))
-    resource_type = Column(String(50))
-    target = Column(String)
-    user_id = Column(String)
-    amount = Column(Float)
-    token = Column(String)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    is_active = Column(Boolean, default=True)
+    actor_id = Column(String, nullable=True)
+    action = Column(String, nullable=False)
+    resource_type = Column(String(50), nullable=False)
+    resource_id = Column(String(100), nullable=True)
+    details = Column(JSON, nullable=True)
+    ip_address = Column(String(45), nullable=True)
+    user_agent = Column(String(500), nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
 
 class EcoWallet(Base):
     __tablename__ = "ecowallet"

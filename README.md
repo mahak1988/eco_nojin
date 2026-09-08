@@ -1,7 +1,7 @@
 # Eco Nojin (اکو نوژین) / HyDroMa (هیدروما)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/)
 [![React 19](https://img.shields.io/badge/React-19-61DAFB.svg)](https://react.dev/)
 [![C++20](https://img.shields.io/badge/C++-20-00599C.svg)](https://isocpp.org/)
 [![Services: 38](https://img.shields.io/badge/microservices-38-blueviolet.svg)](services/)
@@ -42,7 +42,7 @@ simulations for land, water, and carbon.
 
 ### Prerequisites
 
-- Python 3.11+
+- Python 3.12+
 - Node.js 20+ and pnpm 9+
 - A C++20 compiler (MSVC 2022 / GCC 12+ / Clang 15+) — only required to rebuild `cpp_core`
 - PostgreSQL 15+ (or Supabase project) for persistence
@@ -74,7 +74,7 @@ Copy `.env.example` to `.env` and fill in:
 ### Quick start
 
 ```bash
-# Python 3.11+ virtual environment
+# Python 3.12+ virtual environment
 python -m venv .venv
 .venv\Scripts\activate          # Windows
 pip install -r requirements.txt
@@ -221,7 +221,7 @@ See `docs/12_30_year_strategy.md` for the long-horizon roadmap (2025 → 2055).
 
 ### پیش‌نیازها
 
-- پایتون ۳.۱۱ به بالا
+- پایتون ۳.۱۲ به بالا
 - Node.js ۲۰ به بالا و pnpm ۹ به بالا
 - کامپایلر C++20 (MSVC 2022 / GCC 12+ / Clang 15+) — فقط برای بازسازی `cpp_core`
 - PostgreSQL ۱۵ به بالا (یا پروژه Supabase) برای ذخیره‌سازی

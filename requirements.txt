@@ -1,7 +1,7 @@
 # ============================================================
-# Eco Nojin — Python dependencies (free, no registration)
-# Generated from the project venv: pip freeze (Python 3.12.10)
-# Install:  .venv\Scripts\python.exe -m pip install -r requirements.txt
+# Eco Nojin — Python dependencies (LOCKED)
+# Generated: pip freeze from Python 3.12.10 venv
+# DO NOT EDIT MANUALLY — use `pip freeze > requirements.lock.txt`
 # ============================================================
 about-time==4.2.1
 aenum==3.1.17

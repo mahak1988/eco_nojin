@@ -11,7 +11,8 @@ from database.hub import hub
 def get_db():
     with hub.get_session() as session:
         yield session
-from database.models import SoilAnalysis
+from database.models import SoilAnalysis, User
+from services.api_gateway.auth import require_user
 
 router = APIRouter(prefix="/api/v1/soil", tags=["soil"])
 
@@ -398,7 +399,7 @@ BIOLOGICAL_REMEDIATION = {
 
 
 @router.post("/analyze")
-def analyze_soil(req: SoilAnalysisRequest, db: Session = Depends(get_db)):
+def analyze_soil(req: SoilAnalysisRequest, user: User = Depends(require_user)):
     lang = req.language
     total = req.clay + req.silt + req.sand or 1
     clay_pct = (req.clay / total) * 100
@@ -667,7 +668,7 @@ _soil_profile_counter = [0]
 
 
 @router.post("/", response_model=SoilProfileRead, status_code=201, tags=["soil"])
-async def create_soil_profile(profile: SoilProfileCreate):
+async def create_soil_profile(profile: SoilProfileCreate, user: User = Depends(require_user)):
     """Create a new soil profile.
     
     Args:

@@ -2,9 +2,18 @@
 
 import contextlib
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
+from database.hub import hub
+
+# Compatibility: get_db via hub
+def get_db():
+    with hub.get_session() as session:
+        yield session
+from database.models import User
+from services.api_gateway.auth import require_user
 from services.marketplace.models import OrderStatus, ProductCategory
 from services.marketplace.order_management import get_order_manager
 from services.marketplace.product_catalog import get_catalog
@@ -168,7 +177,7 @@ def list_producers():
 
 
 @router.post("/orders")
-def create_order(payload: OrderRequest):
+def create_order(payload: OrderRequest, user: User = Depends(require_user)):
     """Create a new order."""
     manager = get_order_manager()
 
@@ -221,7 +230,7 @@ def list_orders(status: str | None = None):
 
 
 @router.post("/orders/{order_id}/confirm")
-def confirm_order(order_id: str):
+def confirm_order(order_id: str, user: User = Depends(require_user)):
     """Confirm an order."""
     manager = get_order_manager()
     if manager.confirm_order(order_id):

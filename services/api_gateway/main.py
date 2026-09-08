@@ -156,15 +156,17 @@ app.add_middleware(
 # RATE LIMITING + REQUEST ID + SECURITY HEADERS MIDDLEWARES
 # ============================================================================
 from services.api_gateway.security import (
+    HTTPSRedirectMiddleware,
     RateLimitMiddleware,
     SecurityHeadersMiddleware,
     RequestIDMiddleware,
 )
 
+app.add_middleware(HTTPSRedirectMiddleware)
 app.add_middleware(RateLimitMiddleware)
 app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(RequestIDMiddleware)
-logger.info("Rate limit + security headers + request ID middleware applied")
+logger.info("HTTPS redirect + rate limit + security headers + request ID middleware applied")
 
 
 # Pentest fix H1: the manual OPTIONS bypass and the per-response wildcard

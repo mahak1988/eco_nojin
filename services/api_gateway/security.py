@@ -5,6 +5,7 @@
   deployments must move to Redis).
 - ``SecurityHeadersMiddleware``: hardening headers + HSTS in production.
 - ``RequestIDMiddleware``: traceable request ids.
+- ``HTTPSRedirectMiddleware``: redirect HTTP to HTTPS in production.
 """
 
 import time
@@ -13,7 +14,7 @@ from collections import defaultdict, deque
 
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, RedirectResponse
 
 from engine.hydroma.config.settings import get_settings
 
@@ -88,3 +89,14 @@ class RequestIDMiddleware(BaseHTTPMiddleware):
         response = await call_next(request)
         response.headers["X-Request-ID"] = rid
         return response
+
+
+class HTTPSRedirectMiddleware(BaseHTTPMiddleware):
+    """Redirect HTTP to HTTPS in production."""
+
+    async def dispatch(self, request: Request, call_next):
+        settings = get_settings()
+        if getattr(settings, "is_production", False) and request.url.scheme == "http":
+            url = request.url.replace(scheme="https")
+            return RedirectResponse(url=str(url), status_code=301)
+        return await call_next(request)

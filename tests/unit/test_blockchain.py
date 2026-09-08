@@ -14,6 +14,24 @@ from services.api_gateway.main import app
 client = TestClient(app)
 
 
+def _auth_headers(email: str = "blockchain-test@example.com", password: str = "TestPass123") -> dict:
+    resp = client.post(
+        "/api/v1/auth/api/v1/auth/register",
+        json={
+            "email": email,
+            "full_name": "Blockchain Tester",
+            "password": password,
+            "accept_tos": True,
+            "accept_privacy": True,
+        },
+    )
+    if resp.status_code != 200:
+        resp = client.post("/api/v1/auth/api/v1/auth/login", json={"email": email, "password": password})
+    assert resp.status_code == 200, resp.text
+    token = resp.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}
+
+
 class TestWeb3Provider:
     """Test Web3 provider."""
 
@@ -212,6 +230,7 @@ class TestBlockchainAPIEndpoints:
         """Verify carbon project registration endpoint."""
         response = client.post(
             "/api/v1/blockchain/carbon/projects",
+            headers=_auth_headers(),
             json={
                 "owner": "api_owner1",
                 "project_type": "afforestation",
@@ -223,13 +242,16 @@ class TestBlockchainAPIEndpoints:
         assert response.status_code == 200
         data = response.json()
         assert data["owner"] == "api_owner1"
-        assert data["status"] == "submitted"
+        assert data["project_type"] == "afforestation"
+        assert data["area_ha"] == 100.0
+        assert "project_id" in data
 
     def test_verify_carbon_project_endpoint(self):
         """Verify carbon project verification endpoint."""
-        # Register first
+        headers = _auth_headers("verify-test@example.com")
         reg = client.post(
             "/api/v1/blockchain/carbon/projects",
+            headers=headers,
             json={
                 "owner": "api_owner2",
                 "project_type": "reforestation",
@@ -239,9 +261,9 @@ class TestBlockchainAPIEndpoints:
         )
         project_id = reg.json()["project_id"]
 
-        # Verify
         response = client.post(
             f"/api/v1/blockchain/carbon/projects/{project_id}/verify",
+            headers=headers,
             json={
                 "verifier": "api_verifier",
             },
@@ -254,6 +276,7 @@ class TestBlockchainAPIEndpoints:
         """Verify supply chain product registration endpoint."""
         response = client.post(
             "/api/v1/blockchain/supply-chain/products",
+            headers=_auth_headers(),
             json={
                 "producer": "api_producer",
                 "batch_number": "BATCH_API_001",

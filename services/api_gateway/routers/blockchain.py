@@ -1,8 +1,17 @@
 """API endpoints for Blockchain Ledger."""
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
+from database.hub import hub
+
+# Compatibility: get_db via hub
+def get_db():
+    with hub.get_session() as session:
+        yield session
+from database.models import User
+from services.api_gateway.auth import require_user
 from services.business_modules.blockchain.carbon_registry import get_carbon_registry
 from services.business_modules.blockchain.supply_chain import get_supply_chain_registry
 from services.business_modules.blockchain.web3_provider import get_web3_provider
@@ -63,7 +72,7 @@ class AddTraceEventRequest(BaseModel):
 
 
 @router.post("/carbon/projects")
-def register_carbon_project(payload: RegisterProjectRequest):
+def register_carbon_project(payload: RegisterProjectRequest, user: User = Depends(require_user)):
     """Register a new carbon project on blockchain."""
     registry = get_carbon_registry()
     project = registry.register_project(
@@ -79,14 +88,12 @@ def register_carbon_project(payload: RegisterProjectRequest):
         "project_type": project.project_type,
         "area_ha": project.area_ha,
         "duration_years": project.duration_years,
-        "status": project.status.value,
-        "tx_hash": project.tx_hash,
         "created_at": project.created_at.isoformat(),
     }
 
 
 @router.post("/carbon/projects/{project_id}/verify")
-def verify_carbon_project(project_id: str, payload: VerifyProjectRequest):
+def verify_carbon_project(project_id: str, payload: VerifyProjectRequest, user: User = Depends(require_user)):
     """Verify a carbon project."""
     registry = get_carbon_registry()
 
@@ -104,7 +111,7 @@ def verify_carbon_project(project_id: str, payload: VerifyProjectRequest):
 
 
 @router.post("/carbon/projects/{project_id}/issue")
-def issue_carbon_credits(project_id: str, payload: IssueCreditsRequest):
+def issue_carbon_credits(project_id: str, payload: IssueCreditsRequest, user: User = Depends(require_user)):
     """Issue carbon credits for a verified project."""
     registry = get_carbon_registry()
 
@@ -123,7 +130,7 @@ def issue_carbon_credits(project_id: str, payload: IssueCreditsRequest):
 
 
 @router.post("/carbon/credits/transfer")
-def transfer_carbon_credits(payload: TransferCreditsRequest):
+def transfer_carbon_credits(payload: TransferCreditsRequest, user: User = Depends(require_user)):
     """Transfer carbon credits between owners."""
     registry = get_carbon_registry()
 
@@ -145,7 +152,7 @@ def transfer_carbon_credits(payload: TransferCreditsRequest):
 
 
 @router.post("/carbon/credits/{credit_id}/retire")
-def retire_carbon_credits(credit_id: str, payload: RetireCreditsRequest):
+def retire_carbon_credits(credit_id: str, payload: RetireCreditsRequest, user: User = Depends(require_user)):
     """Retire carbon credits (permanently remove from circulation)."""
     registry = get_carbon_registry()
 
@@ -221,7 +228,7 @@ def carbon_stats():
 
 
 @router.post("/supply-chain/products")
-def register_supply_chain_product(payload: RegisterProductRequest):
+def register_supply_chain_product(payload: RegisterProductRequest, user: User = Depends(require_user)):
     """Register a new product in supply chain."""
     registry = get_supply_chain_registry()
     product = registry.register_product(
@@ -243,7 +250,7 @@ def register_supply_chain_product(payload: RegisterProductRequest):
 
 
 @router.post("/supply-chain/products/{product_id}/events")
-def add_trace_event(product_id: str, payload: AddTraceEventRequest):
+def add_trace_event(product_id: str, payload: AddTraceEventRequest, user: User = Depends(require_user)):
     """Add a trace event to a product."""
     registry = get_supply_chain_registry()
 
