@@ -36,6 +36,13 @@ def calculate_runoff(
 ) -> float:
     """Calculate runoff volume using rational method.
 
+    LIMITATIONS:
+    - Rational method assumes uniform rainfall intensity and constant runoff
+      coefficient; it is best suited for small catchments (< 1 km²).
+    - It does not account for spatial rainfall variation, infiltration excess,
+      or saturation excess mechanisms.
+    - Runoff coefficient should be calibrated for local land use/soil.
+
     Args:
         area_m2: Catchment area in m²
         rainfall_mm: Design rainfall in mm

@@ -1,5 +1,11 @@
 """Crop yield scenarios using simplified AquaCrop approach.
 
+LIMITATIONS:
+- This is a simplified water-balance model, not a full AquaCrop simulation.
+- It does not simulate canopy expansion, root growth, or soil fertility dynamics.
+- Water productivity values are approximate and should be calibrated for local
+  conditions before use in planning or investment decisions.
+
 Implements water-limited yield potential based on:
 - FAO AquaCrop principles (Steduto et al., 2009)
 - Water productivity concept

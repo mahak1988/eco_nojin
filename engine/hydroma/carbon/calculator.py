@@ -59,6 +59,12 @@ class CarbonProject:
 
 # Carbon sequestration rates (tonnes CO2/ha/year) by project type
 # Based on IPCC AR6 and peer-reviewed literature
+#
+# LIMITATIONS:
+# - These are regional averages for planning/estimation only.
+# - Actual sequestration depends on species, soil, climate, and management.
+# - Do NOT use these values for certified carbon credit issuance without
+#   project-specific measurement and third-party verification.
 SEQUESTRATION_RATES: dict[CarbonProjectType, dict[str, float]] = {
     CarbonProjectType.AFFORESTATION: {
         "rate": 8.0,  # tonnes CO2/ha/year (tropical/temperate average)
