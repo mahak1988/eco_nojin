@@ -11,6 +11,14 @@ import sys
 from pathlib import Path
 from typing import Any
 
+# Telemetry storage
+_telemetry = {
+    "cpp_calls": 0,
+    "fallback_calls": 0,
+    "total_cpp_time_ms": 0.0,
+    "total_fallback_time_ms": 0.0,
+}
+
 # Try to find the library
 _LIB_SEARCH_PATHS = [
     Path(__file__).parent.parent / "cpp_core" / "build2" / "Release",
@@ -77,6 +85,11 @@ def is_available() -> bool:
     return _available
 
 
+def is_cpp_available() -> bool:
+    """Check if C++ backend is available (alias for is_available)."""
+    return _available
+
+
 def get_module():
     """Get the raw C++ module or None."""
     return _module
@@ -98,9 +111,27 @@ def get_info() -> dict:
     return info
 
 
+def get_telemetry() -> dict:
+    """Get performance telemetry."""
+    return _telemetry.copy()
+
+
+def reset_telemetry() -> None:
+    """Reset telemetry counters."""
+    global _telemetry
+    _telemetry = {
+        "cpp_calls": 0,
+        "fallback_calls": 0,
+        "total_cpp_time_ms": 0.0,
+        "total_fallback_time_ms": 0.0,
+    }
+
+
 # Expose all C++ functions at module level
 def __getattr__(name: str) -> Any:
     """Dynamically expose C++ functions as module attributes."""
+    if name.startswith("__") and name.endswith("__"):
+        raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
     if _module is not None and hasattr(_module, name):
         return getattr(_module, name)
     raise ImportError(

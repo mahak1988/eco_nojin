@@ -184,6 +184,7 @@ class OrderStatus(Enum):
     CANCELLED = "cancelled"
 
 # Merged from models_legacy.py
+@dataclass
 class Producer:
     """A product producer (farmer, pastoralist, cooperative)."""
 
@@ -211,7 +212,9 @@ class Producer:
             alpha = 0.3  # Weight for new rating
             self.rating = alpha * new_rating + (1 - alpha) * self.rating
 
+
 # Merged from models_legacy.py
+@dataclass
 class Product:
     """A product listed in the marketplace."""
 
@@ -257,7 +260,9 @@ class Product:
             and quantity_kg <= self.quantity_available_kg
         )
 
+
 # Merged from models_legacy.py
+@dataclass
 class Order:
     """A marketplace order."""
 
@@ -289,7 +294,9 @@ class Order:
         self.status = OrderStatus.CANCELLED
         self.updated_at = datetime.now(UTC).replace(tzinfo=None)
 
+
 # Merged from models_legacy.py
+@dataclass
 class TraceRecord:
     """A single record in the supply chain trace."""
 

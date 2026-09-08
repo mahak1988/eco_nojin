@@ -194,70 +194,85 @@ class WaterQualityOutput(BaseModel):
 class SWATInput:
     """Placeholder for compatibility with old tests."""
     def __init__(self, *args, **kwargs):
-        pass
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
 
 class SWATOutput:
     """Placeholder for compatibility with old tests."""
     def __init__(self, *args, **kwargs):
-        pass
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+    def model_dump(self) -> dict:
+        return {k: v for k, v in self.__dict__.items() if not k.startswith("_")}
 
 
 class AquaCropInput:
     """Placeholder for compatibility with old tests."""
     def __init__(self, *args, **kwargs):
-        pass
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
 
 class AquaCropOutput:
     """Placeholder for compatibility with old tests."""
     def __init__(self, *args, **kwargs):
-        pass
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
 
 class RothCInput:
     """Placeholder for compatibility with old tests."""
     def __init__(self, *args, **kwargs):
-        pass
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
 
 class RothCOutput:
     """Placeholder for compatibility with old tests."""
     def __init__(self, *args, **kwargs):
-        pass
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
 
 class HECRASInput:
     """Placeholder for compatibility."""
     def __init__(self, *args, **kwargs):
-        pass
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
 
 class HECRASOutput:
     """Placeholder for compatibility."""
     def __init__(self, *args, **kwargs):
-        pass
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
 
 class RUSLEInput:
     """Placeholder for compatibility."""
     def __init__(self, *args, **kwargs):
-        pass
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
 
 class RUSLEOutput:
     """Placeholder for compatibility."""
     def __init__(self, *args, **kwargs):
-        pass
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
 
 class WEAPInput:
     """Placeholder for compatibility."""
     def __init__(self, *args, **kwargs):
-        pass
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
 
 class WEAPOutput:
     """Placeholder for compatibility."""
     def __init__(self, *args, **kwargs):
-        pass
+        for k, v in kwargs.items():
+            setattr(self, k, v)

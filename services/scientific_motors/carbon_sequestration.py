@@ -26,7 +26,7 @@ from __future__ import annotations
 # Added by fix_future_imports.py
 # =========================================================================
 try:
-    from engine.hydroma.cpp_bridge import (
+    from engine.hydroma.cpp_bindings import (
         is_cpp_available,
         simulate_richards as _cpp_richards,
     )

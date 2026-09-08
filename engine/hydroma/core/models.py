@@ -44,13 +44,15 @@ class Material(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
 
 
-class SoilProfile:
-    """Placeholder for SoilProfile compatibility."""
-    def __init__(self, *args, **kwargs):
-        # تنظیم ویژگی‌های ارسالی به عنوان attribute
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-        # در صورت نیاز به id پیش‌فرض
-        if not hasattr(self, 'id'):
-            import uuid
-            self.id = str(uuid.uuid4())
+class SoilProfile(Base):
+    """Represents a soil profile with physical and chemical properties."""
+
+    __tablename__ = "soil_profiles"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(150), nullable=False, index=True)
+    texture: Mapped[str] = mapped_column(String(50), nullable=False)
+    ph: Mapped[float] = mapped_column(Float, nullable=False)
+    ec: Mapped[float] = mapped_column(Float, nullable=False, comment="Electrical conductivity (dS/m)")
+    organic_matter: Mapped[float] = mapped_column(Float, nullable=False, comment="Organic matter (%)")
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))

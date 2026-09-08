@@ -24,7 +24,7 @@ import httpx
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from engine.hydroma.cpp_bridge import (
+from engine.hydroma.cpp_bindings import (
     estimate_rainfall_erosivity,
     get_telemetry,
     is_cpp_available,

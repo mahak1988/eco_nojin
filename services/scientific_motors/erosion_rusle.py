@@ -14,7 +14,7 @@ from __future__ import annotations
 # Added by fix_future_imports.py
 # =========================================================================
 try:
-    from engine.hydroma.cpp_bridge import (
+    from engine.hydroma.cpp_bindings import (
         estimate_rainfall_erosivity as _cpp_rainfall_r,
         is_cpp_available,
         ls_factor as _cpp_ls_factor,

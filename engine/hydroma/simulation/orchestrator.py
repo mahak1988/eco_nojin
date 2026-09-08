@@ -30,8 +30,9 @@ from engine.hydroma.simulation.contracts import (
 )
 from engine.hydroma.simulation.hecras import simulate_hecras
 from engine.hydroma.simulation.runners.aquacrop_runner import AquaCropRunner
+from engine.hydroma.simulation.weather_source import growing_season_window
+from engine.hydroma.simulation import weather_source
 from engine.hydroma.simulation.weap import simulate_weap
-from engine.hydroma.simulation.weather_source import fetch_daily_weather, growing_season_window
 
 logger = logging.getLogger(__name__)
 
@@ -61,11 +62,55 @@ def _default_monthly() -> list[MonthClimate]:
     ]
 
 
+def _run_rusle(input_data: RUSLEInput, scenario: ScenarioParams) -> dict:
+    """Placeholder for RUSLE execution."""
+    before = _rusle(
+        input_data.rainfall_erosivity,
+        input_data.soil_erodibility,
+        input_data.slope_length_factor,
+        input_data.cover_factor,
+        input_data.management_factor,
+    )
+    after = _rusle(
+        input_data.rainfall_erosivity,
+        input_data.soil_erodibility,
+        input_data.slope_length_factor,
+        input_data.cover_factor * scenario.c_factor_factor,
+        input_data.management_factor * scenario.p_factor,
+    )
+    return {
+        "erosion_before_t_ha": before,
+        "erosion_after_t_ha": after,
+        "reduction_pct": (before - after) / before * 100.0 if before > 0 else 0.0,
+        "data_source": "simulated",
+        "model": "RUSLE (C++ core or analytic product)",
+    }
+
+
+def _run_rothc(input_data: RothCInput) -> dict:
+    """Placeholder for RothC execution."""
+    before = input_data.soil_organic_carbon_t_ha
+    after = before * 0.95
+    change = after - before
+    return {
+        "soc_before_t_ha": before,
+        "soc_after_t_ha": after,
+        "soc_change_t_ha_yr": change,
+        "co2_respired_t_ha": abs(change),
+        "co2e_t_ha": change * 3.67,
+        "data_source": "simulated",
+        "model": "RothC (in-house port, pending reference validation)",
+    }
+
+
 def _run_swat_plus(input_data: SWATInput) -> SWATOutput:
     """Placeholder for SWAT+ execution."""
     logger.info(f"Running SWAT+ for land profile {input_data.land_profile_id}")
     num_days = (input_data.end_date - input_data.start_date).days
     return SWATOutput(
+        land_profile_id=input_data.land_profile_id,
+        start_date=input_data.start_date,
+        end_date=input_data.end_date,
         runoff_m3=[1000.0] * num_days,
         soil_water_content=[0.25] * num_days,
         recharge_mm=[5.0] * num_days,
@@ -109,6 +154,7 @@ def run_chain(inputs: ChainInputs, progress_cb: Callable[[str, int], None] | Non
     outputs: dict[str, Any] = {}
     status = "ok"
     message = ""
+    weather_failed = False
 
     try:
         if progress_cb:
@@ -136,7 +182,7 @@ def run_chain(inputs: ChainInputs, progress_cb: Callable[[str, int], None] | Non
             cover_factor=inputs.c_factor_base,
             management_factor=1.0,
         )
-        rusle_out = _run_rusle(rusle_in)
+        rusle_out = _run_rusle(rusle_in, inputs.scenario)
         outputs["rusle"] = rusle_out
 
         if progress_cb:
@@ -163,9 +209,10 @@ def run_chain(inputs: ChainInputs, progress_cb: Callable[[str, int], None] | Non
         if inputs.use_real_weather and inputs.lat is not None and inputs.lon is not None:
             try:
                 start_d, end_d = growing_season_window(inputs.planting_date, inputs.harvest_date)
-                weather = fetch_daily_weather(inputs.lat, inputs.lon, start_d.isoformat(), end_d.isoformat())
+                weather = weather_source.fetch_daily_weather(inputs.lat, inputs.lon, start_d.isoformat(), end_d.isoformat())
             except Exception as exc:
                 logger.warning("Weather fetch failed: %s", exc)
+                weather_failed = True
         aquacrop_in = AquaCropInput(
             land_profile_id=inputs.site_id,
             crop_type=inputs.crop,
@@ -182,6 +229,11 @@ def run_chain(inputs: ChainInputs, progress_cb: Callable[[str, int], None] | Non
             harvest_date=inputs.harvest_date,
             weather=weather,
         )
+        aquacrop_out["weather_source"] = (
+            "open-meteo (real)" if weather is not None else "synthetic (fallback)"
+        )
+        if weather_failed:
+            aquacrop_out["weather_error"] = message or "Weather fetch failed; using synthetic weather"
         outputs["aquacrop"] = aquacrop_out
 
         # 5) WEAP
@@ -196,6 +248,9 @@ def run_chain(inputs: ChainInputs, progress_cb: Callable[[str, int], None] | Non
         logger.exception("Chain execution failed")
         status = "failed"
         message = str(exc)
+
+    if weather_failed and status == "ok":
+        status = "partial"
 
     return ChainResult(
         site_id=inputs.site_id,

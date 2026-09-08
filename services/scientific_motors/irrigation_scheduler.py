@@ -12,7 +12,7 @@ from __future__ import annotations
 # Added by fix_future_imports.py
 # =========================================================================
 try:
-    from engine.hydroma.cpp_bridge import (
+    from engine.hydroma.cpp_bindings import (
         is_cpp_available,
         penman_monteith_et0 as _cpp_penman,
         simulate_crop_water as _cpp_crop_water,
