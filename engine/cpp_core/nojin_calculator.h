@@ -1,10 +1,10 @@
-#ifndef NOJJIN_CALCULATOR_H
-#define NOJJIN_CALCULATOR_H
+#ifndef NOJIN_CALCULATOR_H
+#define NOJIN_CALCULATOR_H
 
 #include <string>
 #include <vector>
 
-namespace cpp_core {
+namespace hydroma {
 
 /**
  * @brief Calculates the theoretical efficacy of a biofertilizer type based on soil conditions.
@@ -30,6 +30,6 @@ double calculate_biofertilizer_efficacy(double soil_nitrogen_ppm, double soil_ph
  */
 double predict_yield_response(const std::vector<double>& baseline_yield, const std::vector<double>& biofert_efficacy, double baseline_fertilizer_rate, double biofert_dosage);
 
-} // namespace cpp_core
+} // namespace hydroma
 
-#endif // NOJJIN_CALCULATOR_H
+#endif // NOJIN_CALCULATOR_H

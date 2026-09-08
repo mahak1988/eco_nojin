@@ -114,9 +114,9 @@ double penman_monteith_et0(double t_min, double t_max, double rh_mean_pct,
 
 // --- Added by Implementation Plan ---
 std::vector<double> hargreaves_et0_array(const std::vector<double>& t_min,
-                                         const std::vector<double>& t_max,
-                                         const std::vector<double>& t_mean,
-                                         const std::vector<double>& ra_mj) {
+                                          const std::vector<double>& t_max,
+                                          const std::vector<double>& t_mean,
+                                          const std::vector<double>& ra_mj) {
     check_same_size_climate(t_min, t_max, "hargreaves_et0_array");
     check_same_size_climate(t_min, t_mean, "hargreaves_et0_array");
     check_same_size_climate(t_min, ra_mj, "hargreaves_et0_array");
@@ -129,9 +129,11 @@ std::vector<double> hargreaves_et0_array(const std::vector<double>& t_min,
         const double tmean = t_mean[i];
         const double ra = ra_mj[i];
 
-        if (tmax < tmin || ra < 0.0) {
-            out[i] = 0.0; // Or throw, depending on desired behavior for invalid input
-            continue;
+        if (tmax < tmin) {
+            throw std::invalid_argument("t_max must be >= t_min at index " + std::to_string(i));
+        }
+        if (ra < 0.0) {
+            throw std::invalid_argument("radiation cannot be negative at index " + std::to_string(i));
         }
         out[i] = 0.0023 * 0.408 * ra * (tmean + 17.8) * std::sqrt(tmax - tmin);
     }
@@ -139,7 +141,7 @@ std::vector<double> hargreaves_et0_array(const std::vector<double>& t_min,
 }
 
 std::vector<double> extraterrestrial_radiation_array(const std::vector<double>& lat_deg,
-                                                    const std::vector<int>& doy) {
+                                                     const std::vector<int>& doy) {
     check_same_size_climate_int(lat_deg, doy, "extraterrestrial_radiation_array");
 
     std::vector<double> out(lat_deg.size());
@@ -149,8 +151,7 @@ std::vector<double> extraterrestrial_radiation_array(const std::vector<double>& 
         const int day = doy[i];
 
         if (day < 1 || day > 366) {
-            out[i] = 0.0; // Or throw
-            continue;
+            throw std::invalid_argument("doy must be in [1, 366] at index " + std::to_string(i));
         }
 
         const double phi = lat * kPi / 180.0;
@@ -194,9 +195,17 @@ std::vector<double> penman_monteith_et0_array(const std::vector<double>& t_min,
         const double lat = lat_deg[i];
         const int day = doy[i];
 
-        if (tmax < tmin || wind < 0.0 || rs < 0.0) {
-            out[i] = 0.0; // Or throw
-            continue;
+        if (tmax < tmin) {
+            throw std::invalid_argument("t_max must be >= t_min at index " + std::to_string(i));
+        }
+        if (wind < 0.0) {
+            throw std::invalid_argument("wind speed cannot be negative at index " + std::to_string(i));
+        }
+        if (rs < 0.0) {
+            throw std::invalid_argument("radiation cannot be negative at index " + std::to_string(i));
+        }
+        if (day < 1 || day > 366) {
+            throw std::invalid_argument("doy must be in [1, 366] at index " + std::to_string(i));
         }
 
         // Replicate the scalar function logic here for efficiency within the parallel loop

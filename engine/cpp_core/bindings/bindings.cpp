@@ -257,6 +257,17 @@ PYBIND11_MODULE(hydroma_core, m) {
         .def_readonly("failure_probability", &YieldStats::failure_probability)
         .def_readonly("n_samples", &YieldStats::n_samples);
     m.def("yield_ensemble_lhs", &yield_ensemble_lhs, py::arg("mean_water_mm"),
-          py::arg("water_std_mm"), py::arg("mean_temp_c"), py::arg("temp_std_c"),
-          py::arg("crop"), py::arg("n_samples"), py::arg("seed"));
+           py::arg("water_std_mm"), py::arg("mean_temp_c"), py::arg("temp_std_c"),
+           py::arg("crop"), py::arg("n_samples"), py::arg("seed"));
+
+    // --- Nojin Calculator --------------------------------------------------
+    m.def("calculate_biofertilizer_efficacy", &calculate_biofertilizer_efficacy,
+          py::arg("soil_nitrogen_ppm"), py::arg("soil_phosphorus_ppm"),
+          py::arg("soil_potassium_ppm"), py::arg("ph"),
+          py::arg("organic_matter_pct"), py::arg("biofert_type"),
+          "Calculate biofertilizer efficacy based on soil conditions");
+    m.def("predict_yield_response", &predict_yield_response,
+          py::arg("baseline_yield"), py::arg("biofert_efficacy"),
+          py::arg("baseline_fertilizer_rate"), py::arg("biofert_dosage"),
+          "Predict yield response from biofertilizer application");
 }

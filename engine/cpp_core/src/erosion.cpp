@@ -104,7 +104,7 @@ std::vector<double> rusle_annual_soil_loss_array(const std::vector<double>& R,
 }
 
 std::vector<double> ls_factor_array(const std::vector<double>& slope_length_m,
-                                   const std::vector<double>& slope_percent) {
+                                    const std::vector<double>& slope_percent) {
     check_same_size_erosion(slope_length_m, slope_percent, "ls_factor_array");
 
     std::vector<double> out(slope_length_m.size());
@@ -113,8 +113,12 @@ std::vector<double> ls_factor_array(const std::vector<double>& slope_length_m,
         const double slope_len = slope_length_m[i];
         const double slope_pct = slope_percent[i];
 
-        if (slope_len <= 0.0) { out[i] = 0.0; continue; } // Skip invalid, return 0.0
-        if (slope_pct < 0.0) { out[i] = 0.0; continue; } // Skip invalid, return 0.0
+        if (slope_len <= 0.0) {
+            throw std::invalid_argument("slope length must be positive at index " + std::to_string(i));
+        }
+        if (slope_pct < 0.0) {
+            throw std::invalid_argument("slope cannot be negative at index " + std::to_string(i));
+        }
 
         const double slope_fraction = slope_pct / 100.0;
         const double theta = std::atan(slope_fraction);

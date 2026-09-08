@@ -31,6 +31,7 @@ add_library(hydroma_core STATIC
   src/crop_water.cpp
   src/sediment.cpp
   src/sampling.cpp
+  src/nojin_calculator.cpp
 )
 # Add OpenMP to the hydroma_core library
 target_link_libraries(hydroma_core PUBLIC OpenMP::OpenMP_CXX)
@@ -111,6 +112,9 @@ if(HYDROMA_BUILD_TESTS)
 
   add_executable(test_sampling_unit tests/test_sampling_unit.cpp)
   target_link_libraries(test_sampling_unit PRIVATE hydroma_core)
+
+  add_executable(test_nojin_calculator tests/test_nojin_calculator.cpp)
+  target_link_libraries(test_nojin_calculator PRIVATE hydroma_core)
 
   add_executable(benchmark_sampling tests/benchmark_sampling.cpp)
   target_link_libraries(benchmark_sampling PRIVATE hydroma_core)
