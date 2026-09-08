@@ -140,3 +140,18 @@ def benchmark_timer():
             self.elapsed = time.perf_counter() - self.start
     
     return Timer()
+
+
+@pytest.fixture(scope="session")
+def app():
+    """FastAPI app instance for API tests."""
+    from services.api_gateway.main import app as api_app
+    return api_app
+
+
+@pytest.fixture(scope="function")
+def client(app):
+    """FastAPI TestClient for API integration tests."""
+    from fastapi.testclient import TestClient
+    with TestClient(app) as test_client:
+        yield test_client

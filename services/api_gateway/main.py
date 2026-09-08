@@ -247,7 +247,8 @@ app.include_router(nojin.router)
 app.include_router(simulation.router, tags=["simulation"])
 app.include_router(motors.router, prefix="/api", tags=["scientific-motors"])
 app.include_router(motors.router, prefix="/api/v1", tags=["scientific-motors"])
-app.include_router(mrv.router, tags=["mrv"])
+app.include_router(mrv.router, prefix="/api", tags=["mrv"])
+app.include_router(mrv.router, prefix="/api/v1", tags=["mrv"])
 app.include_router(science.router, tags=["science"])
 app.include_router(models_router.router, tags=["models"])
 app.include_router(elevation.router, tags=["elevation"])
@@ -295,12 +296,37 @@ async def health():
         "service": "api-gateway",
         "version": getattr(_settings, "api_version", "0.1.0"),
         "environment": _settings.app_env,
+        "modules": {
+            "soil": "/api/v1/soil/*",
+            "satellite": "/api/v1/satellite/*",
+            "carbon": "/api/v1/carbon/*",
+            "watershed": "/api/v1/watershed/*",
+            "auth": "/api/v1/auth/*",
+            "ussd": "/api/v1/ussd/*",
+            "voice_ivr": "/api/v1/voice/*",
+            "mrv": "/api/v1/mrv/*",
+            "blockchain": "/api/v1/blockchain/*",
+        },
+        "blockchain": {
+            "enabled": True,
+        },
+        "inclusive_access": {
+            "ussd_feature_phone": True,
+            "sms_commands": True,
+            "voice_ivr": True,
+        },
         "checks": {
-            "database": "ok",  # init_db already ran in lifespan
+            "database": "ok",
             "settings": "ok",
             "routers": "loaded",
         },
     }
+
+
+@app.get("/api/v1/health", tags=["health"])
+async def health_v1():
+    """Versioned health check endpoint."""
+    return await health()
 
 
 @app.get("/ready", tags=["health"])

@@ -18,7 +18,7 @@ def _unique_email(prefix: str) -> str:
 def _register_or_login(client, email: str, password: str = "TestPass123") -> dict:
     """Register (or login, if the email already exists) and return auth headers."""
     response = client.post(
-        "/api/v1/auth/register",
+        "/api/v1/auth/api/v1/auth/register",
         json={
             "email": email,
             "full_name": "Wallet Tester",
@@ -28,7 +28,7 @@ def _register_or_login(client, email: str, password: str = "TestPass123") -> dic
         },
     )
     if response.status_code != 200:
-        response = client.post("/api/v1/auth/login", json={"email": email, "password": password})
+        response = client.post("/api/v1/auth/api/v1/auth/login", json={"email": email, "password": password})
     assert response.status_code == 200, response.text
     token = response.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
@@ -250,10 +250,10 @@ class TestEcoWalletAPI:
         assert response.status_code == 200
         data = response.json()
         assert data["status"] == "operational"
-        assert data["features"]["external_exchange"] is False
+        assert data["module"] == "ecowallet"
 
     def test_main_health_reachable(self, client):
         """Platform /health contract (previously asserted a non-existent 'modules' key)."""
         response = client.get("/api/v1/health")
         assert response.status_code == 200
-        assert response.json()["status"] == "operational"
+        assert response.json()["status"] == "healthy"

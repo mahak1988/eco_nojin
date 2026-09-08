@@ -203,7 +203,7 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
     db.flush()
 
     # Create EcoWallet automatically
-    wallet = EcoWallet(user_id=user.id, balance=0.0, total_earned=0.0, total_redeemed=0.0)
+    wallet = EcoWallet(user_id=user.id, balance=0.0)
     db.add(wallet)
 
     db.commit()

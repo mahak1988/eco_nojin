@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
 
@@ -10,8 +10,10 @@ from services.mrv.kobo import average_measured_soc, fetch_kobo_submissions
 from services.mrv.mrv_pdf import build_mrv_pdf
 from services.scientific_motors.carbon_mrv import CarbonMrvMotor
 from services.scientific_motors.chain_runner import run_scientific_chain
+from engine.hydroma.mrv import satellite_cdse
+from engine.hydroma.mrv.satellite_cdse import CdseUnavailable
 
-router = APIRouter(prefix="/api/mrv", tags=["mrv"])
+router = APIRouter(prefix="/mrv", tags=["mrv"])
 
 
 class CarbonBudgetRequest(BaseModel):
@@ -99,3 +101,37 @@ async def carbon_budget_report(req: CarbonBudgetRequest) -> Response:
         media_type="application/pdf",
         headers={"Content-Disposition": "attachment; filename=mrv_carbon_budget.pdf"},
     )
+
+
+class SatelliteRefreshRequest(BaseModel):
+    site_id: str
+    lat: float
+    lon: float
+    start: str
+    end: str
+
+
+@router.post("/satellite-refresh")
+async def satellite_refresh(req: SatelliteRefreshRequest) -> dict[str, Any]:
+    """Refresh satellite NDVI data for a site."""
+    from engine.hydroma.config.settings import get_settings
+    from fastapi import HTTPException
+
+    settings = get_settings()
+    if str(getattr(settings, "enable_satellite_real", "false")).lower() == "false":
+        raise HTTPException(status_code=503, detail="Satellite refresh disabled")
+
+    import requests
+
+    session = requests.Session()
+    try:
+        result = satellite_cdse.retrieve_ndvi(
+            session=session,
+            cfg=settings,
+            bbox=[req.lon - 0.05, req.lat - 0.05, req.lon + 0.05, req.lat + 0.05],
+            start=req.start,
+            end=req.end,
+        )
+        return result
+    except CdseUnavailable as exc:
+        raise HTTPException(status_code=502, detail=f"CDSE retrieval failed: {exc}") from exc

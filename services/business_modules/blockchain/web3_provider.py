@@ -35,7 +35,15 @@ class Web3Provider:
                 "Install it with: pip install 'eth-tester[py-evm]'"
             ) from exc
 
-        eth_tester = EthereumTester(backend=PyEVMBackend())
+        try:
+            eth_tester = EthereumTester(backend=PyEVMBackend())
+        except Exception as exc:
+            raise ConnectionError(
+                "Blockchain backend unavailable. "
+                "Install 'eth-tester[py-evm]' to enable the simulated chain, "
+                "or configure a real provider (Infura/Alchemy). "
+                f"Underlying error: {exc}"
+            ) from exc
         provider = EthereumTesterProvider(eth_tester)
         self.w3 = Web3(provider)
 
