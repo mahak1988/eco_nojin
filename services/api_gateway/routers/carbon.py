@@ -16,6 +16,7 @@ def get_db():
         yield session
 from database.models import CarbonProject, User
 from services.api_gateway.auth import require_user
+from services.carbon.repository import CarbonProjectRepository
 from services.api_gateway.routers.carbon_engine import (
     STANDARDS,
     WOOD_DENSITIES,
@@ -109,18 +110,16 @@ def register_project(
 
     project_id = f"ECO-{uuid.uuid4().hex[:8].upper()}"
 
-    project = CarbonProject(
+    repo = CarbonProjectRepository(db)
+    project = repo.create_project(
         project_id=project_id,
         name=req.name,
-        user_id=user.id,
         project_type="afforestation",
-        area_hectares=req.area_hectares,
+        area_ha=req.area_hectares,
+        user_id=user.id,
         status="registered",
         credits_issued=verification["net_credits"],
     )
-    db.add(project)
-    db.commit()
-    db.refresh(project)
 
     return {
         "success": True,
@@ -134,12 +133,8 @@ def register_project(
 @router.get("/projects")
 def list_projects(user: User = Depends(require_user), db: Session = Depends(get_db)):
     """List user's carbon projects."""
-    projects = (
-        db.query(CarbonProject)
-        .filter(CarbonProject.user_id == user.id)
-        .order_by(CarbonProject.registered_at.desc())
-        .all()
-    )
+    repo = CarbonProjectRepository(db)
+    projects = repo.list_projects(user_id=user.id)
     return [
         {
             "id": p.id,
