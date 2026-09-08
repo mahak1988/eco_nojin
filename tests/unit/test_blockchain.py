@@ -37,12 +37,14 @@ class TestWeb3Provider:
 
     def test_connect_to_blockchain(self):
         """Verify connection to test blockchain."""
+        pytest.importorskip("py_evm")
         provider = get_web3_provider()
         w3 = provider.connect()
         assert w3.is_connected()
 
     def test_get_accounts(self):
         """Verify test accounts are available."""
+        pytest.importorskip("py_evm")
         provider = get_web3_provider()
         accounts = provider.get_accounts()
         assert len(accounts) > 0

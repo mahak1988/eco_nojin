@@ -374,6 +374,60 @@ curl -X POST http://127.0.0.1:8000/api/v1/platform/analyze \
 - Swagger: http://127.0.0.1:8000/docs
 - ReDoc: http://127.0.0.1:8000/redoc
 
+## Windows Deployment (No Docker Required)
+
+For Windows environments where Docker is not available, Eco Nojin can run as a
+native Windows Service using **NSSM** (Non-Sucking Service Manager).
+
+### Prerequisites
+
+- Python 3.12+ installed
+- Project venv activated: `.\.venv\Scripts\Activate.ps1`
+- Dependencies installed: `pip install -r requirements.txt`
+
+### Quick Setup
+
+```powershell
+# 1. Activate venv
+.\.venv\Scripts\Activate.ps1
+
+# 2. Install the service (one-time setup)
+.\scripts\install-service.ps1
+
+# 3. Start the service
+.\scripts\start-service.ps1
+
+# 4. Check status
+.\scripts\service-status.ps1
+
+# 5. View logs
+.\scripts\service-logs.ps1
+```
+
+### Manual Run (Development)
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+.\scripts\start.ps1
+```
+
+### Install py-evm (Optional, for Blockchain tests)
+
+```powershell
+.\scripts\install-py-evm.ps1
+```
+
+### Service Management
+
+| Command | Action |
+|---------|--------|
+| `.\scripts\start-service.ps1` | Start API Gateway |
+| `.\scripts\stop-service.ps1` | Stop API Gateway |
+| `.\scripts\service-status.ps1` | Check service status |
+| `.\scripts\service-logs.ps1` | Tail live logs |
+
+The service starts automatically on Windows boot. Logs are written to `logs/api-gateway.log`.
+
 ## License
 
 MIT License
