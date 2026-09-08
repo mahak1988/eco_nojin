@@ -19,7 +19,7 @@ def test_preflight_allowed_origin_still_works():
     r = client.options(
         "/api/v1/auth/login",
         headers={
-            "Origin": "http://os.environ.get('HOST', 'localhost'):3000",
+            "Origin": "http://localhost:3000",
             "Access-Control-Request-Method": "POST",
             "Access-Control-Request-Headers": "content-type",
         },

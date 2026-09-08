@@ -27,6 +27,7 @@ export default function Navbar() {
     { to: '/', label: t.nav.home },
     { to: '/platform', label: t.nav.platform },
     { to: '/hydroma', label: t.nav.science },
+    { to: '/dashboard', label: lang === 'fa' ? 'داشبورد' : 'Dashboard' },
     { to: '/blog', label: t.nav.blog },
     { to: '/about', label: t.nav.about },
   ];

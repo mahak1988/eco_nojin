@@ -15,7 +15,7 @@ class TestSettingsDefaults:
         assert s.environment == "development"
         assert s.rate_limit_requests > 0
         assert s.access_token_expire_minutes > 0
-        assert any("os.environ.get('HOST', 'localhost'):3000" in o for o in s.cors_origins)
+        assert "http://localhost:3000" in s.cors_origins
 
     def test_dev_secret_marked_insecure(self):
         s = Settings(_env_file=None)

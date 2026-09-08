@@ -24,6 +24,59 @@ import {
 const inputCls =
   'w-full rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-emerald-50 focus:border-leaf-400/60 focus:outline-none';
 
+/** Bilingual labels for all dashboard calculators (shared with ModelDetail). */
+export function buildCalculatorLabels(lang: 'fa' | 'en') {
+  const isFa = lang === 'fa';
+  return {
+    horton: {
+      title: isFa ? 'نفوذ هورتون (HP-01/03 · F-01)' : 'Horton infiltration (HP-01/03 · F-01)',
+      f0: isFa ? 'نرخ اولیه' : 'Initial rate',
+      fc: isFa ? 'نرخ نهایی' : 'Final rate',
+      k: isFa ? 'ضریب کاهش' : 'Decay coefficient',
+      duration: isFa ? 'بازه' : 'Window',
+      cumulative6: isFa ? 'نفوذ تجمعی ۶ ساعت' : '6-hour cumulative',
+    },
+    scs: {
+      title: isFa ? 'رواناب SCS-CN (HP-01/03 · F-02/03)' : 'SCS-CN runoff (HP-01/03 · F-02/03)',
+      cn: isFa ? 'شماره منحنی (CN)' : 'Curve number (CN)',
+      retention: isFa ? 'نگهداشت پتانسیل S' : 'Potential retention S',
+      runoff50: isFa ? 'رواناب برای بارش ۵۰ میلی‌متر' : 'Runoff for 50 mm rainfall',
+      hydroGoal: isFa ? 'هدف HP-01: کاهش CN' : 'HP-01 goal: CN reduction',
+    },
+    vg: {
+      title: isFa ? 'منحنی رطوبت Van Genuchten (HP-01/06 · F-04)' : 'Van Genuchten retention (HP-01/06 · F-04)',
+      thetaR: isFa ? 'رطوبت پسماند θr' : 'Residual moisture θr',
+      thetaS: isFa ? 'رطوبت اشباع θs' : 'Saturated moisture θs',
+      alpha: 'α',
+      n: 'n',
+      thetaSat: isFa ? 'θ نزدیک اشباع' : 'θ near saturation',
+      awc: isFa ? 'آب قابل دسترس (تقریبی)' : 'Available water (approx.)',
+    },
+    hydraulics: {
+      title: isFa ? 'هیدرولیک کانال مانینگ (HP-02 · F-02..F-08)' : 'Manning channel hydraulics (HP-02 · F-02..F-08)',
+      manningN: isFa ? 'ضریب زبری مانینگ n' : 'Manning roughness n',
+      area: isFa ? 'سطح مقطع جریان A' : 'Flow area A',
+      perimeter: isFa ? 'محیط خیس P' : 'Wetted perimeter P',
+      slope: isFa ? 'شیب بستر S' : 'Bed slope S',
+      hydraulicR: isFa ? 'شعاع هیدرولیکی R' : 'Hydraulic radius R',
+      discharge: isFa ? 'دبی Q' : 'Discharge Q',
+      reynolds: isFa ? 'عدد رینولدز' : 'Reynolds number',
+      froude: isFa ? 'عدد فرود' : 'Froude number',
+      weirL: isFa ? 'طول سرریز L' : 'Weir length L',
+      weirH: isFa ? 'ارتفاع آب روی سرریز H' : 'Head over weir H',
+      weirQ: isFa ? 'دبی سرریز فرانسیس' : 'Francis weir discharge',
+    },
+    ring: {
+      title: isFa ? 'ذخیرهٔ حلقهٔ سنگی (HP-03 · F-01/02)' : 'Stone-ring storage (HP-03 · F-01/02)',
+      radius: isFa ? 'شعاع حلقه r' : 'Ring radius r',
+      depth: isFa ? 'عمق پرشدگی h' : 'Fill depth h',
+      nEff: isFa ? 'تخلخل مؤثر n_eff' : 'Effective porosity n_eff',
+      storage: isFa ? 'حجم ذخیره' : 'Storage volume',
+      darcy: isFa ? 'نفوذ دارسی (تقریبی)' : 'Darcy flux (approx.)',
+    },
+  };
+}
+
 function Field({
   label,
   value,

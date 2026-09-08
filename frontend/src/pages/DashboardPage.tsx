@@ -2,7 +2,8 @@
  * + model registry (zero-orphan) + central data hub (per-user aggregation). */
 
 import { useCallback, useEffect, useState } from 'react';
-import { RefreshCcw, Share2, ShieldCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { RefreshCcw, Share2, ShieldCheck, User, Settings } from 'lucide-react';
 import Seo from '../components/ui/Seo';
 import PageHeader from '../components/sections/PageHeader';
 import Reveal from '../components/ui/Reveal';
@@ -11,6 +12,7 @@ import { useLang } from '../i18n/LanguageContext';
 import { dashboard } from '../content/pages/dashboard';
 import { categories as registryCategories, registry, registryStats } from '../lib/hydromaregistry';
 import { fetchHubRuns, setHubRunShared, type HubRun } from '../lib/hub';
+import { buildCalculatorLabels } from '../components/dashboard/calculators';
 import {
   HortonCalculator,
   HydraulicsCalculator,
@@ -83,54 +85,7 @@ export default function DashboardPage() {
     }
   };
 
-  const calcLabels = {
-    horton: {
-      title: lang === 'fa' ? 'نفوذ هورتون (HP-01/03 · F-01)' : 'Horton infiltration (HP-01/03 · F-01)',
-      f0: 'نرخ اولیه',
-      fc: 'نرخ نهایی',
-      k: 'ضریب کاهش',
-      duration: 'بازه',
-      cumulative6: 'نفوذ تجمعی ۶ ساعت',
-    },
-    scs: {
-      title: lang === 'fa' ? 'رواناب SCS-CN (HP-01/03 · F-02/03)' : 'SCS-CN runoff (HP-01/03 · F-02/03)',
-      cn: 'شماره منحنی (CN)',
-      retention: 'نگهداشت پتانسیل S',
-      runoff50: 'رواناب برای بارش ۵۰ میلی‌متر',
-      hydroGoal: 'هدف HP-01: کاهش CN',
-    },
-    vg: {
-      title: lang === 'fa' ? 'منحنی رطوبت Van Genuchten (HP-01/06 · F-04)' : 'Van Genuchten retention (HP-01/06 · F-04)',
-      thetaR: 'رطوبت پسماند θr',
-      thetaS: 'رطوبت اشباع θs',
-      alpha: 'پارامتر α',
-      n: 'پارامتر n',
-      thetaSat: 'θ نزدیک اشباع',
-      awc: 'آب قابل دسترس (تقریبی)',
-    },
-    hydraulics: {
-      title: lang === 'fa' ? 'هیدرولیک کانال مانینگ (HP-02 · F-02..F-08)' : 'Manning channel hydraulics (HP-02 · F-02..F-08)',
-      manningN: 'ضریب زبری مانینگ n',
-      area: 'سطح مقطع جریان A',
-      perimeter: 'محیط خیس P',
-      slope: 'شیب بستر S',
-      hydraulicR: 'شعاع هیدرولیکی R',
-      discharge: 'دبی Q',
-      reynolds: 'عدد رینولدز',
-      froude: 'عدد فرود',
-      weirL: 'طول سرریز L',
-      weirH: 'ارتفاع آب روی سرریز H',
-      weirQ: 'دبی سرریز فرانسیس',
-    },
-    ring: {
-      title: lang === 'fa' ? 'ذخیرهٔ حلقهٔ سنگی (HP-03 · F-01/02)' : 'Stone-ring storage (HP-03 · F-01/02)',
-      radius: 'شعاع حلقه r',
-      depth: 'عمق پرشدگی h',
-      nEff: 'تخلخل مؤثر n_eff',
-      storage: 'حجم ذخیره',
-      darcy: 'نفوذ دارسی (تقریبی)',
-    },
-  };
+  const calcLabels = buildCalculatorLabels(lang);
 
   return (
     <>
@@ -164,6 +119,16 @@ export default function DashboardPage() {
                 : 'Every calculator can register its result in the central hub; your runs are aggregated here and outputs can be shared publicly. The user key is anonymous — no IP or personal data is stored.'
             }
           />
+          <div className="flex flex-wrap items-center gap-2">
+            <Link to="/dashboard/profile" className="glass glass-hover inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-emerald-100/70">
+              <User className="h-3.5 w-3.5" aria-hidden />
+              {lang === 'fa' ? 'پروفایل' : 'Profile'}
+            </Link>
+            <Link to="/dashboard/settings" className="glass glass-hover inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-emerald-100/70">
+              <Settings className="h-3.5 w-3.5" aria-hidden />
+              {lang === 'fa' ? 'تنظیمات' : 'Settings'}
+            </Link>
+          </div>
           <div className="flex items-center justify-between">
             <button
               type="button"

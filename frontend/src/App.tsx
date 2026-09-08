@@ -28,7 +28,7 @@ const PilotIranPage = lazy(() => import('./pages/PilotIranPage'));
 const AcademiaPage = lazy(() => import('./pages/AcademiaPage'));
 const MarketplacePage = lazy(() => import('./pages/MarketplacePage'));
 const ResourcesPage = lazy(() => import('./pages/ResourcesPage'));
-const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+const DashboardLayout = lazy(() => import('./components/dashboard/DashboardLayout'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
 const RulesPage = lazy(() => import('./pages/RulesPage'));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
@@ -74,7 +74,7 @@ export function AppShell() {
             <Route path="/academia" element={<AcademiaPage />} />
             <Route path="/marketplace" element={<MarketplacePage />} />
             <Route path="/resources" element={<ResourcesPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/dashboard/*" element={<DashboardLayout />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/rules" element={<RulesPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />

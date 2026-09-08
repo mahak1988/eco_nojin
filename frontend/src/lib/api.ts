@@ -1,6 +1,14 @@
-/** Shared API helpers: gateway base URL, newsletter and pilot submissions. */
+/** Shared API helpers: gateway base URL, newsletter and pilot submissions.
+ * The base URL can be overridden from the dashboard settings page
+ * (localStorage: hydroma-api-base). */
 
 export function getApiBase(): string {
+  try {
+    const override = localStorage.getItem('hydroma-api-base');
+    if (override && /^https?:\/\//.test(override.trim())) return override.trim().replace(/\/$/, '');
+  } catch {
+    /* localStorage unavailable — fall through to default */
+  }
   return import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000';
 }
 
