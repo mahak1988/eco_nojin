@@ -169,6 +169,24 @@ class CarbonProject(Base):
     __tablename__ = "carbon_projects"
     id = Column(Integer, primary_key=True)
     name = Column(String)
+    project_id = Column(String(64), unique=True, nullable=False, index=True)
+    user_id = Column(String, ForeignKey('users.id'), nullable=True)
+    project_type = Column(String(80), nullable=True)
+    area_hectares = Column(Float, nullable=True)
+    status = Column(String(32), nullable=False, default="draft")
+    credits_issued = Column(Float, nullable=True)
+    registered_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=True)
+    verification_detail = Column(Text, nullable=True)
+    estimated_carbon_tonnes = Column(Float, nullable=True)
+    annual_rate_tonnes = Column(Float, nullable=True)
+    methodology = Column(String(120), nullable=True)
+    region = Column(String(80), nullable=True)
+    duration_years = Column(Integer, nullable=True)
+    price_per_tonne_usd = Column(Float, nullable=True)
+    estimated_revenue_usd = Column(Float, nullable=True)
+    confidence = Column(String(32), nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
 
 class Product(Base):
     __tablename__ = "product"

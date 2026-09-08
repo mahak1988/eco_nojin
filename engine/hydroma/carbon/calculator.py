@@ -16,6 +16,7 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+from typing import Optional
 
 
 class CarbonProjectType(Enum):
@@ -46,7 +47,7 @@ class CarbonProject:
 
     # Verification
     status: str = "draft"  # draft, submitted, verified, certified
-    verification_date: datetime | None = None
+    verification_date: Optional[datetime] = None
     verifier: str = ""
 
     # Results
@@ -225,23 +226,81 @@ def compare_project_types(area_ha: float = 100, duration_years: int = 10) -> dic
     }
 
 
-# Project registry (in-memory for research mode)
+# Project registry (DB-backed when repository is provided; in-memory fallback otherwise)
 _projects: dict[str, CarbonProject] = {}
+_repository = None
+
+
+def set_repository(repository) -> None:
+    """Set the carbon project repository for DB-backed persistence."""
+    global _repository
+    _repository = repository
 
 
 def register_project(project: CarbonProject) -> str:
     """Register a new carbon project."""
+    if _repository is not None:
+        try:
+            db_project = _repository.create_project(
+                project_id=project.id,
+                name=project.name,
+                project_type=project.project_type.value,
+                area_ha=project.area_ha,
+                status=project.status,
+                estimated_carbon_tonnes=project.estimated_carbon_tonnes,
+                annual_rate_tonnes=project.annual_rate_tonnes,
+                methodology=project.methodology,
+            )
+            return str(db_project.id)
+        except Exception:
+            pass
     _projects[project.id] = project
     return project.id
 
 
-def get_project(project_id: str) -> CarbonProject | None:
+def get_project(project_id: str) -> Optional[CarbonProject]:
     """Get project by ID."""
+    if _repository is not None:
+        try:
+            db_project = _repository.get_project(project_id)
+            if db_project is not None:
+                return CarbonProject(
+                    id=db_project.project_id,
+                    name=db_project.name,
+                    project_type=CarbonProjectType(db_project.project_type or "afforestation"),
+                    area_ha=db_project.area_hectares or 0.0,
+                    status=db_project.status or "draft",
+                    estimated_carbon_tonnes=db_project.estimated_carbon_tonnes or 0.0,
+                    annual_rate_tonnes=db_project.annual_rate_tonnes or 0.0,
+                    methodology=db_project.methodology or "",
+                    created_at=db_project.created_at or datetime.utcnow(),
+                )
+        except Exception:
+            pass
     return _projects.get(project_id)
 
 
-def list_projects(status: str | None = None) -> list:
+def list_projects(status: Optional[str] = None) -> list:
     """List all projects with optional status filter."""
+    if _repository is not None:
+        try:
+            db_projects = _repository.list_projects(status=status)
+            return [
+                CarbonProject(
+                    id=p.project_id,
+                    name=p.name,
+                    project_type=CarbonProjectType(p.project_type or "afforestation"),
+                    area_ha=p.area_hectares or 0.0,
+                    status=p.status or "draft",
+                    estimated_carbon_tonnes=p.estimated_carbon_tonnes or 0.0,
+                    annual_rate_tonnes=p.annual_rate_tonnes or 0.0,
+                    methodology=p.methodology or "",
+                    created_at=p.created_at or datetime.utcnow(),
+                )
+                for p in db_projects
+            ]
+        except Exception:
+            pass
     projects = list(_projects.values())
     if status:
         projects = [p for p in projects if p.status == status]
