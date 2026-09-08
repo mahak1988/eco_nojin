@@ -106,9 +106,42 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"❌ Database init failed: {e}")
         logger.error(traceback.format_exc())
-    
+
     app.state.start_time = time.time()
-    
+
+    # Initialize marketplace repositories
+    try:
+        from services.marketplace.repositories.marketplace_repository import (
+            OrderRepository,
+            ProductRepository,
+            SellerRepository,
+        )
+        from services.marketplace.product_catalog import init_catalog
+        from services.marketplace.order_management import init_order_manager
+
+        with hub.get_session() as session:
+            seller_repo = SellerRepository(session)
+            product_repo = ProductRepository(session)
+            order_repo = OrderRepository(session)
+
+        init_catalog(seller_repo=seller_repo, product_repo=product_repo)
+        init_order_manager(order_repo=order_repo)
+        logger.info("✅ Marketplace repositories initialized")
+    except Exception as e:
+        logger.warning(f"⚠️ Marketplace repositories not initialized: {e}")
+
+    # Initialize carbon repository
+    try:
+        from services.carbon.repository import CarbonProjectRepository
+        from engine.hydroma.carbon.calculator import set_repository as set_carbon_repository
+
+        with hub.get_session() as session:
+            carbon_repo = CarbonProjectRepository(session)
+        set_carbon_repository(carbon_repo)
+        logger.info("✅ Carbon repository initialized")
+    except Exception as e:
+        logger.warning(f"⚠️ Carbon repository not initialized: {e}")
+
     logger.info(f"🌍 CORS origins: {_settings.cors_origins}")
     logger.info(f"📚 API docs: http://{os.environ.get('HOST', '127.0.0.1')}:8000/docs")
     logger.info("=" * 60)
