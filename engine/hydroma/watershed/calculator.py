@@ -1,5 +1,8 @@
-
+ 
+import logging
 import numpy as np
+
+logger = logging.getLogger(__name__)
 
 """Watershed structure calculator for soil and water conservation.
 

@@ -3,6 +3,8 @@
 
 import { useState, type ReactNode } from 'react';
 import MiniChart from './MiniChart';
+import { submitHubRun } from '../../lib/hub';
+import { useLang } from '../../i18n/LanguageContext';
 import {
   darcyFlow,
   effectivePorosity,
@@ -65,6 +67,51 @@ function Result({ label, value, unit }: { label: string; value: string; unit?: s
   );
 }
 
+function HubSubmitButton({
+  modelId,
+  title,
+  payload,
+}: {
+  modelId: string;
+  title: string;
+  payload: { inputs: Record<string, unknown>; outputs: Record<string, unknown> };
+}) {
+  const { lang } = useLang();
+  const [hubStatus, setHubStatus] = useState<'idle' | 'sending' | 'ok' | 'error'>('idle');
+  const labels = {
+    button: lang === 'fa' ? 'ثبت در مرکز تجمیع' : 'Register in hub',
+    ok: lang === 'fa' ? 'در مرکز تجمیع ثبت شد ✓' : 'Registered in the hub ✓',
+    error: lang === 'fa' ? 'ثبت ناموفق — درگاه در دسترس نیست.' : 'Registration failed — gateway unreachable.',
+  };
+  return (
+    <div className="flex flex-col items-start gap-1.5">
+      <button
+        type="button"
+        onClick={async () => {
+          setHubStatus('sending');
+          try {
+            await submitHubRun({ modelId, title, inputs: payload.inputs, outputs: payload.outputs });
+            setHubStatus('ok');
+          } catch (submitError) {
+            console.error('hub registration failed', submitError);
+            setHubStatus('error');
+          }
+        }}
+        disabled={hubStatus === 'sending'}
+        className="rounded-full bg-aqua-500/15 px-4 py-1.5 text-[11px] font-extrabold text-aqua-300 transition-colors hover:bg-aqua-500/25 disabled:opacity-60"
+      >
+        {hubStatus === 'sending' ? '…' : labels.button}
+      </button>
+      {hubStatus === 'ok' ? <p className="text-[10px] font-bold text-leaf-300">{labels.ok}</p> : null}
+      {hubStatus === 'error' ? (
+        <p role="alert" className="text-[10px] font-bold text-red-300">
+          {labels.error}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 function CalcShell({
   title,
   formula,
@@ -119,6 +166,11 @@ export function HortonCalculator({ labels }: { labels: Record<string, string> })
         <Result label={labels.fc} value={hortonRate(f0, fc, k, 6).toFixed(1)} unit="mm/h" />
         <Result label={labels.cumulative6} value={hortonCumulative(f0, fc, k, 6).toFixed(0)} unit="mm" />
       </div>
+      <HubSubmitButton
+        modelId="horton-infiltration"
+        title={labels.title}
+        payload={{ inputs: { f0, fc, k }, outputs: { cum6: hortonCumulative(f0, fc, k, 6) } }}
+      />
     </CalcShell>
   );
 }
@@ -148,6 +200,11 @@ export function ScsCalculator({ labels }: { labels: Record<string, string> }) {
           value={`${cn} → ${Math.max(30, Math.round(cn * 0.5))}`}
         />
       </div>
+      <HubSubmitButton
+        modelId="scs-cn-runoff"
+        title={labels.title}
+        payload={{ inputs: { cn }, outputs: { retention, q50 } }}
+      />
     </CalcShell>
   );
 }
@@ -178,6 +235,11 @@ export function VgCalculator({ labels }: { labels: Record<string, string> }) {
         <Result label={labels.thetaSat} value={vanGenuchtenTheta(1, thetaR, thetaS, alpha, n).toFixed(3)} />
         <Result label={labels.awc} value={awc.toFixed(3)} unit="cm³/cm³" />
       </div>
+      <HubSubmitButton
+        modelId="van-genuchten"
+        title={labels.title}
+        payload={{ inputs: { thetaR, thetaS, alpha, n }, outputs: { awc } }}
+      />
     </CalcShell>
   );
 }
@@ -220,6 +282,14 @@ export function HydraulicsCalculator({ labels }: { labels: Record<string, string
         <Field label={labels.weirH} value={weirH} onChange={setWeirH} step="0.05" suffix="m" />
       </div>
       <Result label={labels.weirQ} value={weirQ.toFixed(3)} unit="m³/s" />
+      <HubSubmitButton
+        modelId="manning-channel"
+        title={labels.title}
+        payload={{
+          inputs: { n, area, perimeter, slope, weirL, weirH },
+          outputs: { q, reynolds: re, froude: fr, weirQ },
+        }}
+      />
     </CalcShell>
   );
 }
@@ -250,6 +320,11 @@ export function RingCalculator({ labels }: { labels: Record<string, string> }) {
         <Result label={labels.storage} value={(volume * 1000).toFixed(0)} unit="L" />
         <Result label={labels.darcy} value={(darcy * 3600 * 1000).toFixed(1)} unit="L/h" />
       </div>
+      <HubSubmitButton
+        modelId="ring-storage"
+        title={labels.title}
+        payload={{ inputs: { radius, depth }, outputs: { nEff, storageL: volume * 1000, darcyLh: darcy * 3600 * 1000 } }}
+      />
     </CalcShell>
   );
 }

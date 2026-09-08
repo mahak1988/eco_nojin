@@ -5,7 +5,6 @@ import numpy as np
 import pytest
 
 from services.land.service import LandService
-from services.land.land_profile import LandProfile
 from adapters.engine_adapter import EngineAdapter
 from adapters.hydroma_adapter import HydromaAdapter
 from interfaces.hydroma_engine_interface import IHydromaEngine

@@ -66,12 +66,12 @@ frontend/
 ## کیفیت
 
 - `tsc --noEmit` سبز (strict) · ESLint: ۰ خطا · Vitest: ۱۵/۱۵ سبز (smoke + contact/status libs)
-- ۲۳ مسیر فعال (از جمله Developers/Support/Status/Impact/Carbon/Investors/Pilot/Academia/Marketplace/Resources) · سئو کامل · فرم تماس/پایلوت/خبرنامه متصل به درگاه API · sitemap/robots · ریسپانسیو موبایل/دسکتاپ · احترام به `prefers-reduced-motion` · ناوبری با کیبورد و aria-label
+- ۲۶ مسیر فعال (+dashboard/declaration/eco-coin) (از جمله Developers/Support/Status/Impact/Carbon/Investors/Pilot/Academia/Marketplace/Resources) · سئو کامل · فرم تماس/پایلوت/خبرنامه متصل به درگاه API · sitemap/robots · ریسپانسیو موبایل/دسکتاپ · احترام به `prefers-reduced-motion` · ناوبری با کیبورد و aria-label
 - اعداد فارسی در نسخهٔ فارسی، لاتین در انگلیسی (Intl.NumberFormat)
 
 ## اتصال به بک‌اند (فعال)
 
-- **فرم تماس** به `POST /api/v1/contact`، **فرم پایلوت** به `POST /api/v1/pilot/apply` و **خبرنامهٔ فوتر** به `POST /api/v1/newsletter/subscribe` وصل‌اند (مدل‌های ContactMessage/PilotApplication/NewsletterSubscriber؛ بدون ذخیرهٔ IP؛ هانی‌پات).
+- **فرم تماس** به `POST /api/v1/contact`، **فرم پایلوت** به `POST /api/v1/pilot/apply`، **خبرنامه** به `POST /api/v1/newsletter/subscribe` و **محاسبه‌گرهای داشبورد** به `POST /api/v1/hub/runs` (مرکز تجمیع) وصل‌اند (مدل‌های ContactMessage/PilotApplication/NewsletterSubscriber؛ بدون ذخیرهٔ IP؛ هانی‌پات).
 - `VITE_API_BASE_URL` را در `.env.local` فرانت‌اند تنظیم کنید (پیش‌فرض `http://localhost:8000`).
 - CORS: `.env` ریشه باید پرت‌های 5173 (dev) و 4173 (preview) را در `CORS_ORIGINS` داشته باشد — اضافه شده.
 - تست بک‌اند: `tests/unit/test_contact_router.py` (۶ تست، دیتابیس درون‌حافظه‌ای).

@@ -13,24 +13,9 @@ from adapters.engine_adapter import EngineAdapter
 from engine.land.models import (
     CapabilityAssessment,
     DrainageAnalysis,
+    LandProfile as LandProfileModel,
     TerrainAnalysis,
 )
-
-
-class LandProfile:
-    """مدل پروفایل زمین"""
-    def __init__(self, name: str, location_lat: float = 0.0, location_lon: float = 0.0, area_ha: float | None = None, **kwargs):
-        self.id = str(__import__('uuid').uuid4())
-        self.name = name
-        self.location_lat = location_lat
-        self.location_lon = location_lon
-        self.area_ha = area_ha
-        self.terrain_analysis: TerrainAnalysis | None = None
-        self.drainage_analysis: DrainageAnalysis | None = None
-        self.capability_assessment: CapabilityAssessment | None = None
-        self.created_at = datetime.now(UTC)
-        for key, value in kwargs.items():
-            setattr(self, key, value)
 
 
 class LandService:
@@ -40,7 +25,7 @@ class LandService:
         self.engine = engine or EngineAdapter()
         self.db = db
         self.session = session
-        self._profiles: dict[str, LandProfile] = {}
+        self._profiles: dict[str, LandProfileModel] = {}
 
     def create_profile(
         self,
@@ -49,23 +34,26 @@ class LandService:
         location_lon: float = 0,
         area_ha: float | None = None,
         **kwargs
-    ) -> LandProfile:
+    ) -> LandProfileModel:
         """ایجاد پروفایل جدید"""
-        profile = LandProfile(
+        profile = LandProfileModel(
+            id=str(__import__('uuid').uuid4()),
             name=name,
             location_lat=location_lat,
             location_lon=location_lon,
-            area_ha=area_ha,
-            **kwargs
+            area_hectares=area_ha,
+            created_at=datetime.now(UTC),
+            updated_at=datetime.now(UTC),
+            **{k: v for k, v in kwargs.items() if k in LandProfileModel.model_fields}
         )
         self._profiles[profile.id] = profile
         return profile
 
-    def get_profile(self, profile_id: str) -> LandProfile | None:
+    def get_profile(self, profile_id: str) -> LandProfileModel | None:
         """دریافت پروفایل با شناسه"""
         return self._profiles.get(profile_id)
 
-    def list_profiles(self) -> list[LandProfile]:
+    def list_profiles(self) -> list[LandProfileModel]:
         """فهرست پروفایل‌ها"""
         return list(self._profiles.values())
 

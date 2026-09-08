@@ -103,7 +103,7 @@ def __getattr__(name: str) -> Any:
     """Dynamically expose C++ functions as module attributes."""
     if _module is not None and hasattr(_module, name):
         return getattr(_module, name)
-    raise AttributeError(
+    raise ImportError(
         f"module 'cpp_bindings' has no attribute '{name}'. C++ available: {_available}"
     )
 

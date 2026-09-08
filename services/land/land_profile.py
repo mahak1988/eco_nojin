@@ -3,15 +3,9 @@ import structlog
 logger = structlog.get_logger()
 import uuid
 from datetime import UTC, datetime
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
-
-from engine.land.models import (
-    CapabilityAssessment as EngineCapabilityAssessment,
-    DrainageAnalysis as EngineDrainageAnalysis,
-    TerrainAnalysis as EngineTerrainAnalysis,
-)
 
 
 class LandProfileCreateRequest(BaseModel):
@@ -80,16 +74,3 @@ def calculate_land_profile(request: LandProfileCreateRequest) -> LandProfileResp
     }
 
     return LandProfileResponse(**profile_data)
-
-
-class LandProfile(BaseModel):
-    """مدل پروفایل زمین"""
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    name: str
-    location_lat: float = 0.0
-    location_lon: float = 0.0
-    area_ha: float | None = None
-    terrain_analysis: Optional[EngineTerrainAnalysis] = None
-    drainage_analysis: Optional[EngineDrainageAnalysis] = None
-    capability_assessment: Optional[EngineCapabilityAssessment] = None
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
