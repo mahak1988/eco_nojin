@@ -45,15 +45,41 @@ export interface PilotPayload {
   locale: string;
 }
 
-/** Submits a pilot interest application via POST /api/v1/pilot/apply. */
+export interface PilotFilePayload extends PilotPayload {
+  file?: File | null;
+}
+
 export async function submitPilotApplication(
   payload: PilotPayload,
   fetchImpl: typeof fetch = fetch,
 ): Promise<{ ok: boolean; id?: string }> {
+  const hasFile = 'file' in payload && (payload as PilotFilePayload).file instanceof File;
+
+  const headers: Record<string, string> = {};
+  let body: BodyInit;
+
+  if (hasFile) {
+    const form = new FormData();
+    const filePayload = payload as PilotFilePayload;
+    form.append('name', filePayload.name);
+    form.append('phone', filePayload.phone);
+    form.append('province', filePayload.province);
+    form.append('consent', String(filePayload.consent));
+    form.append('locale', filePayload.locale);
+    if (filePayload.land_hectares != null) form.append('land_hectares', String(filePayload.land_hectares));
+    if (filePayload.main_crop != null) form.append('main_crop', filePayload.main_crop);
+    if (filePayload.preferred_channel != null) form.append('preferred_channel', filePayload.preferred_channel);
+    if (filePayload.file) form.append('file', filePayload.file);
+    body = form;
+  } else {
+    headers['Content-Type'] = 'application/json';
+    body = JSON.stringify(payload);
+  }
+
   const response = await fetchImpl(`${getApiBase()}/api/v1/pilot/apply`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    headers,
+    body,
   });
   if (!response.ok) {
     throw new Error(`pilot_apply_failed_${response.status}`);

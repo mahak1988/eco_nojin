@@ -36,8 +36,10 @@ class TestAquaCropRunner:
         )
         assert result["data_source"] == "simulated"
         assert "AquaCrop-OSPy" in result["model"]
-        assert result["yield_kg_ha"] is not None and result["yield_kg_ha"] > 0.0
-        assert result["biomass_kg_ha"] is not None and result["biomass_kg_ha"] > 0.0
+        assert result["yield_kg_ha"] is not None
+        assert result["yield_kg_ha"] > 0.0
+        assert result["biomass_kg_ha"] is not None
+        assert result["biomass_kg_ha"] > 0.0
         assert result["residue_kg_ha"] >= 0.0
         assert "Dry yield (tonne/ha)" in result["raw_keys"]
 

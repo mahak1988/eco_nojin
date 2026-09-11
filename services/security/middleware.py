@@ -19,11 +19,11 @@ from starlette.responses import JSONResponse
 from .anomaly import anomaly_detector
 from .audit import log_event
 from .honeypot import honeypot
-from .rate_limit import rate_limiter
+from .rate_limit import RateLimiter
 from .waf import waf_engine
 from .watchdog import circuit_breaker
 
-logger = logging.getLogger("econojin.firewall")
+logger = logging.getLogger(__name__)
 
 MAX_BODY_BYTES = 2_000_000  # scan cap; larger bodies are still forwarded
 
@@ -38,9 +38,10 @@ def _client_ip(scope) -> str:
 
 
 class SpiderFirewallMiddleware:
-    def __init__(self, app, exempt_prefixes=("/health", "/ready", "/docs", "/openapi.json", "/redoc")) -> None:
+    def __init__(self, app, exempt_prefixes=("/health", "/ready", "/docs", "/openapi.json", "/redoc"), redis_client=None) -> None:
         self.app = app
         self.exempt = exempt_prefixes
+        self._rate_limiter = RateLimiter(redis_client=redis_client)
 
     async def __call__(self, scope, receive, send) -> None:
         if scope["type"] != "http":
@@ -111,7 +112,7 @@ class SpiderFirewallMiddleware:
                 user_id = payload.get("sub")
             except Exception:
                 user_id = None
-        ok, retry_after = rate_limiter.check(ip, path, user_id)
+        ok, retry_after = self._rate_limiter.check(ip, path, user_id)
         if not ok:
             log_event("rate", ip, method + " " + path, "block", {"retry_after": retry_after}, severity="medium")
             resp = JSONResponse({"detail": "rate limit exceeded"}, status_code=429, headers={"Retry-After": str(retry_after)})

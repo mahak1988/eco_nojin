@@ -1,7 +1,22 @@
-from sqlalchemy import Text, JSON, Column, String, Boolean, DateTime, Float, Integer, ForeignKey, CheckConstraint, UniqueConstraint
-from sqlalchemy.orm import relationship
-from datetime import datetime, timezone
 import uuid
+from datetime import UTC, datetime
+
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    CheckConstraint,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+)
+from sqlalchemy.orm import relationship
+
 from database.base import Base
 
 
@@ -20,20 +35,20 @@ class User(Base):
     id = Column(String, primary_key=True, default=_uuid)
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
-    password_hash = Column(String, nullable=True)
     full_name = Column(String, nullable=True)
-
-    language = Column(String, nullable=True)
+    date_of_birth = Column(DateTime, nullable=True)
     phone = Column(String, nullable=True)
+    address = Column(String, nullable=True)
     country = Column(String, nullable=True)
     city = Column(String, nullable=True)
     avatar_url = Column(String, nullable=True)
+    language = Column(String, default="fa")
     is_email_verified = Column(Boolean, default=False)
     role = Column(String, nullable=False, default="farmer")
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
 
     # افزودن رابطه به LandProfile
     land_profiles = relationship("LandProfile", back_populates="user")
@@ -48,11 +63,11 @@ class LandProfile(Base):
     location_lat = Column(Float, nullable=True)
     location_lon = Column(Float, nullable=True)
     area_ha = Column(Float, nullable=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+
     user_id = Column(String, ForeignKey('users.id'), nullable=True)
     user = relationship("User", back_populates="land_profiles")
-    
+
     # تعریف صحیح __table_args__ با چندین محدودیت
     __table_args__ = (
         UniqueConstraint('user_id', 'name', name='_user_land_name_uc'),
@@ -61,7 +76,7 @@ class LandProfile(Base):
 
 
 # --- مدل‌های دیگر مورد نیاز ---
-# ترتیب این مدل‌ها مهم است. مدل‌هایی که مورد ارجاع قرار می‌گیرند باید اول تعریف شوند.
+# ترتیب این مدل‌ها مهم است. مدل‌هایی که مورد ارجاع قرار می‌گیرند باید اول تعریف شوند.  # noqa: RUF003
 
 class AuditLog(Base):
     """Audit trail for data changes and security events."""
@@ -75,14 +90,44 @@ class AuditLog(Base):
     details = Column(JSON, nullable=True)
     ip_address = Column(String(45), nullable=True)
     user_agent = Column(String(500), nullable=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
+
+
+class LedgerEntry(Base):
+    """Double-entry ledger for carbon credits and ECO token movements."""
+    __tablename__ = "ledgerentry"
+
+    id = Column(Integer, primary_key=True)
+    account_id = Column(String, nullable=False, index=True)
+    entry_type = Column(String, nullable=False)  # debit | credit
+    asset = Column(String, nullable=False)  # carbon_credit | eco_token | fiat
+    amount = Column(Float, nullable=False)
+    reference_type = Column(String, nullable=True)
+    reference_id = Column(Integer, nullable=True)
+    description = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
+
+
+class Notification(Base):
+    """Multi-channel user notification record."""
+    __tablename__ = "notification"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    user_id = Column(String, nullable=False, index=True)
+    channel = Column(String, nullable=False)  # email | sms | in_app | telegram
+    subject = Column(String, nullable=True)
+    message = Column(Text, nullable=False)
+    metadata = Column(JSON, nullable=True)
+    status = Column(String, default="pending")  # pending | sent | read | failed
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
+    read_at = Column(DateTime, nullable=True)
 
 class EcoWallet(Base):
     __tablename__ = "ecowallet"
     id = Column(Integer, primary_key=True)
     user_id = Column(String)
     balance = Column(Float, default=0.0)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
 class PasswordResetToken(Base):
     __tablename__ = "password_reset_tokens"
@@ -90,7 +135,7 @@ class PasswordResetToken(Base):
     user_id = Column(String)
     token = Column(String)
     expires_at = Column(DateTime)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
 class TopographyAnalysisResult(Base):
     __tablename__ = "topography_analysis_results"
@@ -102,20 +147,20 @@ class MRVObservation(Base):
     __tablename__ = "mrvobservation"
     id = Column(Integer, primary_key=True)
     # Add other fields as needed based on usage
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
 class Setting(Base):
     """System-wide settings storage (key-value pairs)"""
     __tablename__ = "settings"
-    
+
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     key = Column(String, unique=True, nullable=False, index=True)
     value = Column(Text, nullable=True)
     description = Column(String, nullable=True)
     category = Column(String, default='general')
     is_secret = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
 
 class ErrorLog(Base):
     __tablename__ = "errorlog"
@@ -125,7 +170,7 @@ class ErrorLog(Base):
     status = Column(Integer)
     message = Column(Text)
     acked = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
 class SimulationRun(Base):
     """Persisted result of a HyDroMa simulation chain run (RUSLE > AquaCrop > RothC)."""
@@ -138,7 +183,11 @@ class SimulationRun(Base):
     status = Column(String(32), default="completed")
     outputs = Column(JSON)
     message = Column(Text)
-    executed_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
+    executed_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
+
+    __table_args__ = (
+        Index("ix_simulationrun_site_executed", "site_id", "executed_at"),
+    )
 
     def __repr__(self):
         return f"<SimulationRun id={self.id} site='{self.site_id}' status='{self.status}>"
@@ -153,12 +202,21 @@ class SoilAnalysis(Base):
     __tablename__ = "soil_analyses"
     id = Column(Integer, primary_key=True)
     farm_id = Column(String)
+    analyzed_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=True)
+    __table_args__ = (
+        Index("ix_soil_analyses_farm_analyzed", "farm_id", "analyzed_at"),
+    )
+
 
 class SatelliteAnalysis(Base):
     __tablename__ = "satellite_analyses"
     id = Column(Integer, primary_key=True)
     farm_id = Column(String)
     ndvi = Column(Float)
+    analyzed_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=True)
+    __table_args__ = (
+        Index("ix_satellite_analyses_farm_analyzed", "farm_id", "analyzed_at"),
+    )
 
 class AIConversation(Base):
     __tablename__ = "ai_conversations"
@@ -175,7 +233,7 @@ class CarbonProject(Base):
     area_hectares = Column(Float, nullable=True)
     status = Column(String(32), nullable=False, default="draft")
     credits_issued = Column(Float, nullable=True)
-    registered_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=True)
+    registered_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=True)
     verification_detail = Column(Text, nullable=True)
     estimated_carbon_tonnes = Column(Float, nullable=True)
     annual_rate_tonnes = Column(Float, nullable=True)
@@ -185,8 +243,12 @@ class CarbonProject(Base):
     price_per_tonne_usd = Column(Float, nullable=True)
     estimated_revenue_usd = Column(Float, nullable=True)
     confidence = Column(String(32), nullable=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
+
+    __table_args__ = (
+        Index("ix_carbon_projects_user_status", "user_id", "status"),
+    )
 
 class Product(Base):
     __tablename__ = "product"
@@ -206,75 +268,79 @@ class CalibrationRecordDB(Base):
     # Add other relevant fields
 
 # --- مدل‌های Placeholder با رابطه ---
-# توجه کنید که مدل‌هایی که از land_profiles یا users ارجاع می‌دهند، بعد از آن‌ها تعریف می‌شوند.
+# توجه کنید که مدل‌هایی که از land_profiles یا users ارجاع می‌دهند، بعد از آن‌ها تعریف می‌شوند.  # noqa: RUF003
 
 class NojinApplicationPlanDB(Base):
     __tablename__ = "nojin_application_plans" # احتمالاً اسم جدول از خطا تشخیص داده شده
     id = Column(Integer, primary_key=True)
     land_profile_id = Column(String, ForeignKey('land_profiles.id')) # اضافه کردن ForeignKey
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     # افزودن رابطه
     land_profile = relationship("LandProfile")
+
+    __table_args__ = (
+        Index("ix_nojin_app_plan_profile_created", "land_profile_id", "created_at"),
+    )
 
 class NojinCalibrationRecordDB(Base):
     __tablename__ = "nojincalibrationrecorddb"
     id = Column(Integer, primary_key=True)
     user_id = Column(String, ForeignKey('users.id')) # اضافه کردن ForeignKey
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     user = relationship("User")
 
 class ModelVersionDB(Base):
     __tablename__ = "modelversiondb"
     id = Column(Integer, primary_key=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
 class ScenarioResultDB(Base):
     __tablename__ = "scenarioresultdb"
     id = Column(Integer, primary_key=True)
     scenario_run_id = Column(Integer, ForeignKey('scenariorun.id')) # نیاز به تعریف scenariorun اول
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     scenario_run = relationship("ScenarioRun")
 
 class ScenarioRun(Base):
     __tablename__ = "scenariorun"
     id = Column(Integer, primary_key=True)
     user_id = Column(String, ForeignKey('users.id'))
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     user = relationship("User")
 
 class DecisionRecommendationDB(Base):
     __tablename__ = "decisionrecommendationdb"
     id = Column(Integer, primary_key=True)
     user_id = Column(String, ForeignKey('users.id'))
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     user = relationship("User")
 
 class OptimizationResultDB(Base):
     __tablename__ = "optimizationresultdb"
     id = Column(Integer, primary_key=True)
     user_id = Column(String, ForeignKey('users.id'))
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     user = relationship("User")
 
 class MonitoringDataDB(Base):
     __tablename__ = "monitoringdatadb"
     id = Column(Integer, primary_key=True)
     user_id = Column(String, ForeignKey('users.id'))
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     user = relationship("User")
 
 class NojinFieldTrialDB(Base):
     __tablename__ = "nojinfieldtrialdb"
     id = Column(Integer, primary_key=True)
     user_id = Column(String, ForeignKey('users.id'))
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     user = relationship("User")
 
 class ScenarioDB(Base):
     __tablename__ = "scenariodb"
     id = Column(Integer, primary_key=True)
     user_id = Column(String, ForeignKey('users.id'))
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     user = relationship("User")
 
 # Add other models similarly...
@@ -288,7 +354,7 @@ class ContactMessage(Base):
     role = Column(String(80), nullable=True)
     message = Column(Text, nullable=False)
     locale = Column(String(8), nullable=True)
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
 # --- Pilot applications (public site phase) ---
 class PilotApplication(Base):
     __tablename__ = "pilot_applications"
@@ -302,7 +368,7 @@ class PilotApplication(Base):
     preferred_channel = Column(String(40), nullable=True)
     consent = Column(Boolean, nullable=False, default=False)
     locale = Column(String(8), nullable=True)
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
 
 
 # --- Newsletter subscribers (public site phase) ---
@@ -312,7 +378,7 @@ class NewsletterSubscriber(Base):
     id = Column(String, primary_key=True, default=_uuid)
     email = Column(String(200), nullable=False, unique=True, index=True)
     locale = Column(String(8), nullable=True)
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
 # --- HyDroMa data hub: per-user model runs (public dashboard aggregation) ---
 class ModelRun(Base):
     __tablename__ = "hydroma_model_runs"
@@ -324,4 +390,44 @@ class ModelRun(Base):
     inputs = Column(JSON, nullable=True)
     outputs = Column(JSON, nullable=True)
     shared = Column(Boolean, nullable=False, default=False)
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+
+    __table_args__ = (
+        Index("ix_model_run_user_model_created", "user_key", "model_id", "created_at"),
+    )
+
+
+class OAuthConnection(Base):
+    """OAuth provider connection for a user (Google, GitHub, Microsoft, etc.)"""
+    __tablename__ = "oauth_connections"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    user_id = Column(String, ForeignKey('users.id'), nullable=False)
+    provider = Column(String, nullable=False)
+    provider_user_id = Column(String, nullable=True)
+    access_token_encrypted = Column(String, nullable=True)
+    refresh_token_encrypted = Column(String, nullable=True)
+    connected_at = Column(DateTime, default=lambda: datetime.now(UTC))
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+
+    user = relationship("User", lazy="selectin")
+
+    __table_args__ = (
+        UniqueConstraint('user_id', 'provider', name='uq_user_provider_oauth'),
+    )
+
+
+class ApiKey(Base):
+    """API key for programmatic access."""
+    __tablename__ = "api_keys"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    user_id = Column(String, ForeignKey('users.id'), nullable=False)
+    name = Column(String, nullable=False)
+    key_hash = Column(String, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+    last_used_at = Column(DateTime, nullable=True)
+    revoked = Column(Boolean, default=False)
+    revoked_at = Column(DateTime, nullable=True)
+
+    user = relationship("User", lazy="selectin")

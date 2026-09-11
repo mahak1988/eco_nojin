@@ -1,0 +1,22 @@
+#!/bin/bash
+# Pre-commit hook: scan for secrets and run basic checks
+
+set -e
+
+echo "🔍 Running pre-commit checks..."
+
+# Check for secrets
+python scripts/utils/secrets_audit.py
+if [ $? -ne 0 ]; then
+    echo "❌ Secret scan failed. Remove secrets before committing."
+    exit 1
+fi
+
+# Check for large files (warn only)
+large_files=$(find . -type f -size +10M -not -path "./.git/*" -not -path "./node_modules/*" -not -path "./.venv/*" -not -path "./venv/*" -not -path "./engine/cpp_core/build*")
+if [ -n "$large_files" ]; then
+    echo "⚠️  Large files detected (consider Git LFS):"
+    echo "$large_files"
+fi
+
+echo "✅ Pre-commit checks passed."

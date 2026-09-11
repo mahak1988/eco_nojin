@@ -17,6 +17,13 @@ Author: Eco Nojin Architecture Team
 
 from database.hub import hub
 from database.base import Base
+import os
+
+
+SQLALCHEMY_DATABASE_URL = os.environ.get(
+    "DATABASE_URL",
+    f"sqlite:///{hub.main_sqlite}"
+)
 
 
 # Compatibility: engine & SessionLocal
@@ -59,6 +66,7 @@ def get_engine():
 
 
 __all__ = [
+    "SQLALCHEMY_DATABASE_URL",
     "SessionLocal",
     "get_db",
     "init_db",

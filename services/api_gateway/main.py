@@ -21,13 +21,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import logging
+import time
 import traceback
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request # Added Request
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from starlette import status # Added status import
+from starlette import status
+
+from services.api_gateway.exceptions import EcoNojinException
+from services.api_gateway.middleware import UploadSizeMiddleware
 
 from database.hub import hub
 
@@ -63,13 +67,11 @@ from services.api_gateway.routers import nojin
 
 app = FastAPI(title="Eco Nojin API Gateway")
 
-# Include existing routers
-app.include_router(platform.router, prefix="/api/v1", tags=["platform"])
+# Include existing routers (prefixes are defined in each router)
+app.include_router(platform.router)
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["admin"])
-app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
-
-# Include the new analyses router
-app.include_router(analyses.router, prefix="/api/v1", tags=["analyses"]) # Register the new router
+app.include_router(auth.router)
+app.include_router(analyses.router)
 
 # ============================================================================
 # LOGGING CONFIGURATION
@@ -196,12 +198,36 @@ from services.api_gateway.security import (
     SecurityHeadersMiddleware,
     RequestIDMiddleware,
 )
+from services.security.csrf import CSRFMiddleware
 
+app.add_middleware(UploadSizeMiddleware)
 app.add_middleware(HTTPSRedirectMiddleware)
-app.add_middleware(RateLimitMiddleware)
+
+# Initialize Redis client if available for rate limiting
+_redis_client = None
+try:
+    import redis as _redis
+    _redis_url = getattr(_settings, "redis_url", "")
+    if _redis_url:
+        _redis_client = _redis.from_url(_redis_url, decode_responses=False)
+        _redis_client.ping()
+        logger.info("✅ Redis connected for rate limiting")
+except Exception:
+    _redis_client = None
+    logger.info("ℹ️ Redis not available, using in-memory rate limiting")
+
+app.add_middleware(RateLimitMiddleware, redis_client=_redis_client)
 app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(RequestIDMiddleware)
-logger.info("HTTPS redirect + rate limit + security headers + request ID middleware applied")
+app.add_middleware(CSRFMiddleware)
+logger.info("HTTPS redirect + rate limit + security headers + request ID + CSRF middleware applied")
+
+# OpenTelemetry tracing (optional)
+try:
+    from services.api_gateway.tracing import setup_tracing
+    setup_tracing(app)
+except Exception:
+    pass
 
 
 # Pentest fix H1: the manual OPTIONS bypass and the per-response wildcard
@@ -212,15 +238,23 @@ logger.info("HTTPS redirect + rate limit + security headers + request ID middlew
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     """Catch-all exception handler - log and return safe response."""
+    if isinstance(exc, EcoNojinException):
+        logger.error("Handled error: %s", exc.message)
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={
+                "detail": exc.message,
+                "code": exc.code,
+                "path": str(request.url.path),
+            },
+        )
     logger.error(f"Unhandled error on {request.method} {request.url.path}: {exc}")
     logger.error(traceback.format_exc())
-    
     error_detail = (
-        str(exc) 
-        if _settings.app_env == "development" 
+        str(exc)
+        if _settings.app_env == "development"
         else "Internal server error"
     )
-    
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
@@ -439,12 +473,12 @@ async def metrics():
 
 
 # ============================================================================
-# DEBUG ENDPOINT (development only)
+# DEBUG ENDPOINT (explicit toggle, off by default in production)
 # ============================================================================
-if _settings.app_env == "development":
+if _settings.enable_debug_routes:
     @app.get("/debug/routes", tags=["debug"])
     async def debug_routes():
-        """List all registered routes (development only)."""
+        """List all registered routes (debug mode only)."""
         routes = []
         for route in app.routes:
             if hasattr(route, "path") and hasattr(route, "methods"):

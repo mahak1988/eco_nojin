@@ -3,6 +3,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import date, datetime
+from typing import Any
 
 import numpy as np
 
@@ -22,6 +23,10 @@ class SatelliteTile:
     # synthetic/demo data. Consumers MUST surface this to users (honesty
     # requirement: simulated data must never be presented as real).
     data_source: str = "real"
+    # Per-tile provenance metadata. Keys are intentionally generic so
+    # different providers can record different diagnostics without changing
+    # the dataclass signature.
+    quality_flags: dict[str, Any] | None = None
 
 
 class SatelliteProvider(ABC):

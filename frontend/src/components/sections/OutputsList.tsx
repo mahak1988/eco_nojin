@@ -19,10 +19,10 @@ export default function OutputsList() {
           {t.science.outputs.map((output, index) => (
             <Reveal key={output} delay={index * 0.06}>
               <div className="glass glass-hover flex h-full items-start gap-4 rounded-2xl p-6">
-                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-leaf-500/12 text-leaf-300">
+                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-leaf-500)]/12 text-[var(--color-leaf-300)]">
                   <FileCheck2 className="h-5 w-5" aria-hidden />
                 </span>
-                <p className="text-sm leading-7 text-emerald-50/85">{output}</p>
+                <p className="text-sm leading-7 text-[var(--color-night-100)]/85">{output}</p>
               </div>
             </Reveal>
           ))}

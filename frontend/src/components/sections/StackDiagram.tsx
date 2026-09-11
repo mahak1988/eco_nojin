@@ -21,20 +21,20 @@ export default function StackDiagram() {
           {layers.map((layer, index) => (
             <Reveal key={layer.title} delay={index * 0.06}>
               <div className="glass glass-hover flex items-center gap-4 rounded-2xl p-4 sm:gap-5 sm:px-6">
-                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-aqua-500/12 text-aqua-300">
+                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-aqua-500)]/12 text-[var(--color-aqua-300)]">
                   <Icon name={layer.icon} className="h-5 w-5" aria-hidden />
                 </span>
                 <div className="flex min-w-0 flex-col">
-                  <h3 className="text-sm font-extrabold text-emerald-50 sm:text-base">
+                  <h3 className="text-sm font-extrabold text-[var(--color-night-100)] sm:text-base">
                     {layer.title}
                   </h3>
-                  <p className="text-xs leading-6 text-emerald-100/60 sm:text-sm">
+                  <p className="text-xs leading-6 text-[var(--color-night-200)]/60 sm:text-sm">
                     {layer.desc}
                   </p>
                 </div>
                 {index < layers.length - 1 ? (
                   <span
-                    className="ms-auto hidden shrink-0 text-leaf-500/40 sm:block"
+                    className="ms-auto hidden shrink-0 text-[var(--color-leaf-500)]/40 sm:block"
                     aria-hidden
                   >
                     {dir === 'rtl' ? '↓' : '↓'}

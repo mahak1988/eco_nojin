@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import subprocess
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -54,7 +55,7 @@ def parse_output_hru(path: str) -> dict[str, Any]:
     header_parts: list[str] = []
     rows: list[list[str]] = []
 
-    with open(path, encoding="utf-8", errors="replace") as fh:
+    with Path(path).open(encoding="utf-8", errors="replace") as fh:
         for line in fh:
             parts = line.split()
             if not parts:
@@ -134,14 +135,12 @@ class SwatRunner(ModelRunner):
         project_dir = kwargs.get("project_dir", self._config.project_dir)
         output_file = kwargs.get("output_file", self._config.output_file)
 
-        import os
-
-        if not executable or not os.path.isfile(executable):
+        if not executable or not Path(executable).is_file():
             raise SwatUnavailable(
                 "SWAT+ executable not found; download it from swat.tamu.edu "
                 "and set the executable path (no simulated fallback is fabricated)"
             )
-        if not os.path.isdir(project_dir):
+        if not Path(project_dir).is_dir():
             raise SwatUnavailable(f"SWAT+ project directory not found: {project_dir}")
 
         # SWAT+ runs in its project directory (text I/O convention).
@@ -157,8 +156,8 @@ class SwatRunner(ModelRunner):
                 f"SWAT+ exited with code {proc.returncode}: {(proc.stderr or '')[-300:]}"
             )
 
-        output_path = os.path.join(project_dir, output_file)
-        if not os.path.isfile(output_path):
+        output_path = Path(project_dir) / output_file
+        if not output_path.is_file():
             raise SwatUnavailable(f"SWAT+ produced no {output_file} in {project_dir}")
         result = parse_output_hru(output_path)
         result["data_source"] = "simulated"

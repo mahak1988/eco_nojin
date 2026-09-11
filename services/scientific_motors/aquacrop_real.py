@@ -284,19 +284,27 @@ class AquaCropSimulator:
         weather = self.repo.get_weather_daily(site_id)
         if not weather.is_empty():
             config.simulation_days = min(len(weather), 365)
-            
-            # استخراج بارش و دما
+
             if "precip_mm" in weather.columns:
                 config.rainfall_daily = weather["precip_mm"].to_list()[:config.simulation_days]
             if "tmin_c" in weather.columns:
                 config.tmin_daily = weather["tmin_c"].to_list()[:config.simulation_days]
             if "tmax_c" in weather.columns:
                 config.tmax_daily = weather["tmax_c"].to_list()[:config.simulation_days]
-            
-            # محاسبه ET0 با فرمول ساده هارگریو
+
+            rh_min_list = weather["rh_pct"].to_list()[:config.simulation_days] if "rh_pct" in weather.columns else None
+            rh_max_list = rh_min_list  # daily mean RH used as proxy when min/max absent
+            wind_list = weather["wind_ms"].to_list()[:config.simulation_days] if "wind_ms" in weather.columns else None
+            rad_list = weather["rad_mj_m2"].to_list()[:config.simulation_days] if "rad_mj_m2" in weather.columns else None
+
             config.et0_daily = self._calculate_et0(
                 config.tmin_daily, config.tmax_daily,
-                site.get("lat", 30.0) if site else 30.0
+                lat=site.get("lat", 30.0) if site else 30.0,
+                rh_min=rh_min_list,
+                rh_max=rh_max_list,
+                wind_speed=wind_list,
+                solar_radiation=rad_list,
+                elevation=site.get("elevation_m", 0.0) if site else 0.0,
             )
         
         logger.info(f"✅ Config loaded: {species_id} @ {site_id} ({irrigation_mode})")
@@ -462,23 +470,65 @@ class AquaCropSimulator:
     # توابع کمکی
     # ----------------------------------------------------------
     
-    def _calculate_et0(self, tmin: Optional[List[float]], 
+    def _calculate_et0(self, tmin: Optional[List[float]],
                        tmax: Optional[List[float]],
-                       lat: float) -> Optional[List[float]]:
-        """محاسبه تبخیر و تعرق مرجع با فرمول هارگریو"""
+                       lat: float,
+                       rh_min: Optional[List[float]] = None,
+                       rh_max: Optional[List[float]] = None,
+                       wind_speed: Optional[List[float]] = None,
+                       solar_radiation: Optional[List[float]] = None,
+                       elevation: float = 0.0) -> Optional[List[float]]:
+        """محاسبه تبخیر و تعرق مرجع با اولویت Penman-Monteith کامل.
+
+        اگر همه پارامترهای PM موجود باشند → فرمول کامل FAO-56.
+        در غیر این صورت → fallback به Hargreaves-Samani.
+        """
         if not tmin or not tmax:
             return None
-        
+
+        from engine.hydroma.climate.et_calculator import (
+            ClimateData,
+            calc_et0_penman_monteith,
+            calc_et0_hargreaves,
+            calc_extraterrestrial_radiation,
+        )
+
         et0_list = []
         for i in range(len(tmin)):
             t_mean = (tmin[i] + tmax[i]) / 2
-            t_range = max(0.1, tmax[i] - tmin[i])
-            
-            # فرمول هارگریو: ET0 = 0.0023 × Ra × (T+17.8) × √TR
-            ra = 15.0 + lat * 0.1  # تخمین ساده تابش
-            et0 = 0.0023 * ra * (t_mean + 17.8) * math.sqrt(t_range)
+            doy = 180  # approximated; could be passed in if needed
+
+            # Try full Penman-Monteith if all parameters available
+            if (rh_min is not None and rh_max is not None and
+                wind_speed is not None and solar_radiation is not None):
+                try:
+                    data = ClimateData(
+                        tmin=tmin[i],
+                        tmax=tmax[i],
+                        rh_min=rh_min[i],
+                        rh_max=rh_max[i],
+                        wind_speed=wind_speed[i],
+                        solar_radiation=solar_radiation[i],
+                        elevation=elevation,
+                        latitude=lat,
+                        doy=doy,
+                    )
+                    et0 = calc_et0_penman_monteith(data)
+                    et0_list.append(max(0.5, min(12.0, et0)))
+                    continue
+                except Exception:
+                    pass  # fall back to Hargreaves
+
+            # Hargreaves fallback
+            ra = calc_extraterrestrial_radiation(lat, doy)
+            et0 = calc_et0_hargreaves(
+                t_min=tmin[i],
+                t_max=tmax[i],
+                t_mean=t_mean,
+                ra_mj=ra,
+            )
             et0_list.append(max(0.5, min(12.0, et0)))
-        
+
         return et0_list
     
     def _estimate_kc_max(self, crop_data: Dict) -> float:

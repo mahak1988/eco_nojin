@@ -62,8 +62,8 @@ export default function ContactPage() {
   };
 
   const inputCls = (invalid: boolean) =>
-    `w-full rounded-xl border bg-white/5 px-4 py-3 text-sm text-emerald-50 placeholder:text-emerald-100/30 focus:outline-none ${
-      invalid ? 'border-red-400/60' : 'border-white/10 focus:border-leaf-400/60'
+    `w-full rounded-xl border bg-white/5 px-4 py-3 text-sm text-[var(--color-night-100)] placeholder:text-[var(--color-night-200)]/30 focus:outline-none ${
+      invalid ? 'border-red-400/60' : 'border-white/10 focus:border-[var(--color-leaf-400)]/60'
     }`;
 
   return (
@@ -81,15 +81,15 @@ export default function ContactPage() {
           <Reveal>
             {status === 'success' ? (
               <div className="glass flex flex-col items-start gap-3 rounded-3xl p-8">
-                <CheckCircle2 className="h-10 w-10 text-leaf-400" aria-hidden />
-                <h2 className="text-lg font-extrabold text-emerald-50">
+                <CheckCircle2 className="h-10 w-10 text-[var(--color-leaf-400)]" aria-hidden />
+                <h2 className="text-lg font-extrabold text-[var(--color-night-100)]">
                   {t.contact.successTitle}
                 </h2>
-                <p className="text-sm leading-7 text-emerald-100/65">{t.contact.successNote}</p>
+                <p className="text-sm leading-7 text-[var(--color-night-200)]/65">{t.contact.successNote}</p>
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="mt-2 rounded-full bg-leaf-500/15 px-5 py-2 text-xs font-extrabold text-leaf-300 hover:bg-leaf-500/25"
+                  className="mt-2 rounded-full bg-[var(--color-leaf-500)]/15 px-5 py-2 text-xs font-extrabold text-[var(--color-leaf-300)] hover:bg-[var(--color-leaf-500)]/25"
                 >
                   {t.contact.formTitle}
                 </button>
@@ -101,18 +101,18 @@ export default function ContactPage() {
                 className="glass flex flex-col gap-4 rounded-3xl p-7"
                 aria-labelledby="contact-form-title"
               >
-                <h2 id="contact-form-title" className="text-lg font-extrabold text-emerald-50">
+                <h2 id="contact-form-title" className="text-lg font-extrabold text-[var(--color-night-100)]">
                   {t.contact.formTitle}
                 </h2>
-                <p className="text-xs leading-6 text-emerald-100/50">{t.contact.formNote}</p>
-              <p className="text-xs leading-6 text-emerald-100/50">
-                <Link to="/faq" className="font-bold text-leaf-300 hover:underline">
+                <p className="text-xs leading-6 text-[var(--color-night-200)]/50">{t.contact.formNote}</p>
+              <p className="text-xs leading-6 text-[var(--color-night-200)]/50">
+                <Link to="/faq" className="font-bold text-[var(--color-leaf-300)] hover:underline">
                   {t.contact.faqLink}
                 </Link>
               </p>
 
                 <label className="flex flex-col gap-1.5">
-                  <span className="text-xs font-bold text-emerald-100/70">
+                  <span className="text-xs font-bold text-[var(--color-night-200)]/70">
                     {t.contact.nameLabel}
                   </span>
                   <input
@@ -125,7 +125,7 @@ export default function ContactPage() {
                 </label>
 
                 <label className="flex flex-col gap-1.5">
-                  <span className="text-xs font-bold text-emerald-100/70">
+                  <span className="text-xs font-bold text-[var(--color-night-200)]/70">
                     {t.contact.emailLabel}
                   </span>
                   <input
@@ -139,7 +139,7 @@ export default function ContactPage() {
                 </label>
 
                 <label className="flex flex-col gap-1.5">
-                  <span className="text-xs font-bold text-emerald-100/70">
+                  <span className="text-xs font-bold text-[var(--color-night-200)]/70">
                     {t.contact.roleLabel}
                   </span>
                   <select
@@ -148,7 +148,7 @@ export default function ContactPage() {
                     className={inputCls(false)}
                   >
                     {t.contact.roles.map((option) => (
-                      <option key={option} value={option} className="bg-night-900 text-emerald-50">
+                      <option key={option} value={option} className="bg-[var(--color-night-900)] text-[var(--color-night-100)]">
                         {option}
                       </option>
                     ))}
@@ -156,7 +156,7 @@ export default function ContactPage() {
                 </label>
 
                 <label className="flex flex-col gap-1.5">
-                  <span className="text-xs font-bold text-emerald-100/70">
+                  <span className="text-xs font-bold text-[var(--color-night-200)]/70">
                     {t.contact.messageLabel}
                   </span>
                   <textarea
@@ -201,13 +201,13 @@ export default function ContactPage() {
                       <button
                         type="button"
                         onClick={() => setStatus('idle')}
-                        className="rounded-full bg-white/10 px-4 py-2 text-xs font-bold text-emerald-50 hover:bg-white/15"
+                        className="rounded-full bg-white/10 px-4 py-2 text-xs font-bold text-[var(--color-night-100)] hover:bg-white/15"
                       >
                         {lang === 'fa' ? 'تلاش دوباره' : 'Retry'}
                       </button>
                       <a
                         href={buildContactMailto(payload, CONTACT_EMAIL)}
-                        className="rounded-full bg-leaf-500/15 px-4 py-2 text-xs font-bold text-leaf-300 hover:bg-leaf-500/25"
+                        className="rounded-full bg-[var(--color-leaf-500)]/15 px-4 py-2 text-xs font-bold text-[var(--color-leaf-300)] hover:bg-[var(--color-leaf-500)]/25"
                       >
                         {t.contact.errorFallback}
                       </a>
@@ -218,7 +218,7 @@ export default function ContactPage() {
                 <button
                   type="submit"
                   disabled={status === 'sending'}
-                  className="ring-glow inline-flex items-center justify-center gap-2 rounded-full bg-leaf-500 px-6 py-3 text-sm font-extrabold text-night-950 transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="ring-glow inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-leaf-500)] px-6 py-3 text-sm font-extrabold text-[var(--color-night-950)] transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <Send className="h-4 w-4" aria-hidden />
                   {status === 'sending' ? '…' : t.contact.sendButton}
@@ -231,16 +231,16 @@ export default function ContactPage() {
           <div className="flex flex-col gap-5">
             <Reveal delay={0.08}>
               <div className="glass flex flex-col gap-2 rounded-3xl p-7">
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-leaf-500/12 text-leaf-300">
+                <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--color-leaf-500)]/12 text-[var(--color-leaf-300)]">
                   <Mail className="h-5 w-5" aria-hidden />
                 </span>
-                <h2 className="mt-2 text-sm font-extrabold text-emerald-50">
+                <h2 className="mt-2 text-sm font-extrabold text-[var(--color-night-100)]">
                   {t.contact.emailCardTitle}
                 </h2>
                 <a
                   href={`mailto:${CONTACT_EMAIL}`}
                   dir="ltr"
-                  className="text-sm font-bold text-leaf-300 hover:underline"
+                  className="text-sm font-bold text-[var(--color-leaf-300)] hover:underline"
                 >
                   {CONTACT_EMAIL}
                 </a>
@@ -249,13 +249,13 @@ export default function ContactPage() {
 
             <Reveal delay={0.16}>
               <div className="glass flex flex-col gap-2 rounded-3xl p-7">
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-aqua-500/12 text-aqua-300">
+                <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--color-aqua-500)]/12 text-[var(--color-aqua-300)]">
                   <MessageSquare className="h-5 w-5" aria-hidden />
                 </span>
-                <h2 className="mt-2 text-sm font-extrabold text-emerald-50">
+                <h2 className="mt-2 text-sm font-extrabold text-[var(--color-night-100)]">
                   {t.contact.channelsTitle}
                 </h2>
-                <p className="text-xs leading-6 text-emerald-100/55">
+                <p className="text-xs leading-6 text-[var(--color-night-200)]/55">
                   {t.contact.channelsNote}
                 </p>
               </div>
@@ -264,7 +264,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <p className="pb-6 text-center text-xs text-emerald-100/35" dir={lang === 'fa' ? 'rtl' : 'ltr'}>
+      <p className="pb-6 text-center text-xs text-[var(--color-night-200)]/35" dir={lang === 'fa' ? 'rtl' : 'ltr'}>
         {lang === 'fa'
           ? 'پیام شما فقط با نام، ایمیل، نقش و متن پیام ذخیره می‌شود؛ بدون IP و بدون ردیاب.'
           : 'Only your name, email, role and message are stored — no IP, no trackers.'}

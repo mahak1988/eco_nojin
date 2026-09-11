@@ -35,11 +35,11 @@ export default function TransparencyPage() {
             {t.transparency.phases.map((phase, index) => (
               <Reveal key={phase.id} delay={index * 0.04}>
                 <li className="glass glass-hover flex h-full flex-col gap-2 rounded-2xl p-5">
-                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-leaf-500/15 text-xs font-extrabold text-leaf-300">
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-leaf-500)]/15 text-xs font-extrabold text-[var(--color-leaf-300)]">
                     {phase.id}
                   </span>
-                  <h3 className="text-sm font-extrabold text-emerald-50">{phase.title}</h3>
-                  <p className="text-xs leading-6 text-emerald-100/60">{phase.desc}</p>
+                  <h3 className="text-sm font-extrabold text-[var(--color-night-100)]">{phase.title}</h3>
+                  <p className="text-xs leading-6 text-[var(--color-night-200)]/60">{phase.desc}</p>
                 </li>
               </Reveal>
             ))}
@@ -51,20 +51,20 @@ export default function TransparencyPage() {
       <section className="px-4 pb-10 sm:px-6" id="verification">
         <div className="mx-auto max-w-5xl">
           <Reveal>
-            <div className="relative overflow-hidden rounded-[2rem] border border-leaf-500/20 bg-gradient-to-br from-night-800 via-night-900 to-night-950 p-8 sm:p-10">
+            <div className="relative overflow-hidden rounded-[2rem] border border-[var(--color-leaf-500)]/20 bg-gradient-to-br from-night-800 via-night-900 to-night-950 p-8 sm:p-10">
               <div
                 className="absolute -top-20 end-[-6%] h-56 w-56 rounded-full opacity-25 blur-[100px]"
                 style={{ background: 'radial-gradient(circle, #2fb36b 0%, transparent 70%)' }}
                 aria-hidden
               />
-              <h2 className="text-2xl font-extrabold text-emerald-50 sm:text-3xl">
+              <h2 className="text-2xl font-extrabold text-[var(--color-night-100)] sm:text-3xl">
                 {t.transparency.verificationTitle}
               </h2>
               <ul className="mt-6 flex flex-col gap-3">
                 {t.transparency.verification.map((item) => (
                   <li key={item} className="glass flex items-start gap-3 rounded-2xl p-4">
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-leaf-400" aria-hidden />
-                    <span className="text-sm leading-7 text-emerald-50/85">{item}</span>
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-leaf-400)]" aria-hidden />
+                    <span className="text-sm leading-7 text-[var(--color-night-100)]/85">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -77,8 +77,8 @@ export default function TransparencyPage() {
       <section className="px-4 pb-10 sm:px-6" id="commitments">
         <div className="mx-auto max-w-5xl">
           <Reveal>
-            <h2 className="mb-6 flex items-center gap-2 text-xl font-extrabold text-emerald-50 sm:text-2xl">
-              <ScrollText className="h-5 w-5 text-sand-300" aria-hidden />
+            <h2 className="mb-6 flex items-center gap-2 text-xl font-extrabold text-[var(--color-night-100)] sm:text-2xl">
+              <ScrollText className="h-5 w-5 text-[var(--color-sand-300)]" aria-hidden />
               {c.commitmentsTitle}
             </h2>
           </Reveal>
@@ -86,8 +86,8 @@ export default function TransparencyPage() {
             {c.commitments.map((item, index) => (
               <Reveal key={item} delay={(index % 2) * 0.05}>
                 <div className="glass flex h-full items-start gap-3 rounded-2xl p-4">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-sand-300" aria-hidden />
-                  <span className="text-sm leading-7 text-emerald-50/85">{item}</span>
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-sand-300)]" aria-hidden />
+                  <span className="text-sm leading-7 text-[var(--color-night-100)]/85">{item}</span>
                 </div>
               </Reveal>
             ))}
@@ -98,7 +98,7 @@ export default function TransparencyPage() {
       {/* reports promise */}
       <section className="px-4 pb-10 sm:px-6">
         <Reveal className="mx-auto max-w-3xl">
-          <p className="rounded-2xl border border-aqua-500/25 bg-aqua-500/8 p-5 text-center text-xs leading-6 text-aqua-200/90">
+          <p className="rounded-2xl border border-[var(--color-aqua-500)]/25 bg-[var(--color-aqua-500)]/8 p-5 text-center text-xs leading-6 text-[var(--color-aqua-200)]/90">
             {t.transparency.reportsNote}
           </p>
         </Reveal>

@@ -6,7 +6,7 @@ export default function Backdrop() {
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden>
       {/* base gradient */}
-      <div className="absolute inset-0 bg-night-950" />
+      <div className="absolute inset-0 bg-[var(--color-night-950)]" />
       {/* grid */}
       <div className="absolute inset-0 bg-grid" />
       {/* emerald orb */}

@@ -16,9 +16,9 @@ interface Accent {
 
 /** Per-category accent colors — stable order in content/menus.ts. */
 const accents: Accent[] = [
-  { text: 'text-leaf-300', softBg: 'bg-leaf-500/10', border: 'border-leaf-500/30', dot: 'bg-leaf-400', hoverText: 'hover:text-leaf-300' },
-  { text: 'text-aqua-300', softBg: 'bg-aqua-500/10', border: 'border-aqua-500/30', dot: 'bg-aqua-400', hoverText: 'hover:text-aqua-300' },
-  { text: 'text-sand-300', softBg: 'bg-sand-500/10', border: 'border-sand-500/30', dot: 'bg-sand-400', hoverText: 'hover:text-sand-300' },
+  { text: 'text-[var(--color-leaf-300)]', softBg: 'bg-[var(--color-leaf-500)]/10', border: 'border-[var(--color-leaf-500)]/30', dot: 'bg-[var(--color-leaf-400)]', hoverText: 'hover:text-[var(--color-leaf-300)]' },
+  { text: 'text-[var(--color-aqua-300)]', softBg: 'bg-[var(--color-aqua-500)]/10', border: 'border-[var(--color-aqua-500)]/30', dot: 'bg-[var(--color-aqua-400)]', hoverText: 'hover:text-[var(--color-aqua-300)]' },
+  { text: 'text-[var(--color-sand-300)]', softBg: 'bg-[var(--color-sand-500)]/10', border: 'border-[var(--color-sand-500)]/30', dot: 'bg-[var(--color-sand-400)]', hoverText: 'hover:text-[var(--color-sand-300)]' },
   { text: 'text-violet-300', softBg: 'bg-violet-400/10', border: 'border-violet-400/30', dot: 'bg-violet-300', hoverText: 'hover:text-violet-300' },
 ];
 
@@ -65,18 +65,18 @@ export default function Footer() {
         <div className="glass mb-6 grid gap-8 rounded-[2rem] p-7 sm:p-9 lg:grid-cols-[1.35fr_1fr] lg:items-center">
           <div className="flex flex-col gap-4">
             <Logo wordmark={t.brand.name} size={44} />
-            <p className="max-w-md text-sm leading-7 text-emerald-100/55">{t.footer.desc}</p>
+            <p className="max-w-md text-sm leading-7 text-[var(--color-night-200)]/55">{t.footer.desc}</p>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
               <a
                 href={`mailto:${t.about.email}`}
-                className="inline-flex items-center gap-2 text-sm text-emerald-100/60 transition-colors hover:text-leaf-300"
+                className="inline-flex items-center gap-2 text-sm text-[var(--color-night-200)]/60 transition-colors hover:text-[var(--color-leaf-300)]"
                 dir="ltr"
               >
-                <Mail className="h-4 w-4 shrink-0 text-leaf-400/80" aria-hidden />
+                <Mail className="h-4 w-4 shrink-0 text-[var(--color-leaf-400)]/80" aria-hidden />
                 {t.about.email}
               </a>
-              <span className="inline-flex items-center gap-2 text-sm text-emerald-100/60" dir="ltr">
-                <Globe className="h-4 w-4 shrink-0 text-leaf-400/80" aria-hidden />
+              <span className="inline-flex items-center gap-2 text-sm text-[var(--color-night-200)]/60" dir="ltr">
+                <Globe className="h-4 w-4 shrink-0 text-[var(--color-leaf-400)]/80" aria-hidden />
                 {t.about.site}
               </span>
             </div>
@@ -84,11 +84,11 @@ export default function Footer() {
 
           <form
             onSubmit={handleNewsletter}
-            className="rounded-3xl border border-aqua-500/25 bg-aqua-500/8 p-6"
+            className="rounded-3xl border border-[var(--color-aqua-500)]/25 bg-[var(--color-aqua-500)]/8 p-6"
             aria-label={newsLabels.title}
           >
-            <h3 className="text-sm font-extrabold text-aqua-200">{newsLabels.title}</h3>
-            <p className="mt-1 text-[11px] leading-5 text-emerald-100/50">{newsLabels.hint}</p>
+            <h3 className="text-sm font-extrabold text-[var(--color-aqua-200)]">{newsLabels.title}</h3>
+            <p className="mt-1 text-[11px] leading-5 text-[var(--color-night-200)]/50">{newsLabels.hint}</p>
             <div className="mt-4 flex gap-2">
               <input
                 type="email"
@@ -96,20 +96,20 @@ export default function Footer() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={newsLabels.placeholder}
-                className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-xs text-emerald-50 placeholder:text-emerald-100/30 focus:border-aqua-400/60 focus:outline-none"
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-xs text-[var(--color-night-100)] placeholder:text-[var(--color-night-200)]/30 focus:border-[var(--color-aqua-400)]/60 focus:outline-none"
                 required
               />
               <button
                 type="submit"
                 disabled={newsStatus === 'sending'}
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-aqua-400 px-4 py-2.5 text-xs font-extrabold text-night-950 transition-transform hover:scale-[1.03] disabled:opacity-60"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-[var(--color-aqua-400)] px-4 py-2.5 text-xs font-extrabold text-[var(--color-night-950)] transition-transform hover:scale-[1.03] disabled:opacity-60"
               >
                 <Send className="h-3.5 w-3.5" aria-hidden />
                 {newsLabels.button}
               </button>
             </div>
             {newsStatus === 'ok' ? (
-              <p className="mt-2 text-[11px] font-bold text-leaf-300">{newsLabels.ok}</p>
+              <p className="mt-2 text-[11px] font-bold text-[var(--color-leaf-300)]">{newsLabels.ok}</p>
             ) : null}
             {newsStatus === 'error' ? (
               <p role="alert" className="mt-2 text-[11px] font-bold text-red-300">
@@ -145,7 +145,7 @@ export default function Footer() {
                     <Link
                       key={link.to}
                       to={link.to}
-                      className={`w-fit rounded-lg px-2 py-1 text-[13px] text-emerald-100/65 transition-colors hover:bg-white/5 ${accent.hoverText}`}
+                      className={`w-fit rounded-lg px-2 py-1 text-[13px] text-[var(--color-night-200)]/65 transition-colors hover:bg-white/5 ${accent.hoverText}`}
                     >
                       {link.label}
                     </Link>
@@ -163,13 +163,13 @@ export default function Footer() {
               <Link
                 key={link.to}
                 to={link.to}
-                className="rounded-full px-3.5 py-1.5 text-xs text-emerald-100/55 transition-colors hover:bg-white/5 hover:text-leaf-300"
+                className="rounded-full px-3.5 py-1.5 text-xs text-[var(--color-night-200)]/55 transition-colors hover:bg-white/5 hover:text-[var(--color-leaf-300)]"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
-          <p className="text-center text-xs text-emerald-100/35">{t.footer.legal}</p>
+          <p className="text-center text-xs text-[var(--color-night-200)]/35">{t.footer.legal}</p>
         </div>
       </div>
     </footer>

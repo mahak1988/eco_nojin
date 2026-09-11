@@ -22,11 +22,16 @@ class Settings(BaseSettings):
     app_host: str = os.environ.get("HOST", "127.0.0.1")
     app_port: int = 8000
     app_log_level: str = "INFO"
-    app_secret_key: str = "change-me-in-production"
+    app_secret_key: str = os.environ.get("APP_SECRET_KEY", "change-me-in-production")
     api_version: str = "0.1.0"
     project_name: str = "Eco Nojin"
     environment: Literal["development", "production", "staging", "test"] = "development"
     debug: bool = True
+
+    # =====================================================================
+    # DEBUG & DEVELOPMENT
+    # =====================================================================
+    enable_debug_routes: bool = os.environ.get("ENABLE_DEBUG_ROUTES", "false").lower() == "true"
 
     # =====================================================================
     # DATABASE
@@ -37,8 +42,8 @@ class Settings(BaseSettings):
     # =====================================================================
     # JWT / AUTH
     # =====================================================================
-    secret_key: str = "dev-secret-key"
-    jwt_secret: str = "dev-jwt-secret"
+    secret_key: str = os.environ.get("SECRET_KEY", "dev-secret-key")
+    jwt_secret: str = os.environ.get("JWT_SECRET", "dev-jwt-secret")
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 10080
     refresh_token_expire_minutes: int = 43200
@@ -134,6 +139,7 @@ class Settings(BaseSettings):
     enable_satellite_real: bool = True
     enable_ai_assistant: bool = True
     enable_marketplace: bool = True
+    enable_simulated_data: bool = True  # W-001: disable in production
 
     # =====================================================================
     # SECURITY
@@ -311,3 +317,9 @@ def get_settings() -> Settings:
     if _settings_cache is None:
         _settings_cache = Settings()
     return _settings_cache
+
+
+def clear_settings_cache() -> None:
+    """Clear the settings cache (for testing)."""
+    global _settings_cache
+    _settings_cache = None

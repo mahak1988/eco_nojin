@@ -6,6 +6,7 @@ for farmers, pastoralists, and ecosystem managers.
 
 from dataclasses import dataclass
 from datetime import date, timedelta
+from typing import Any
 
 import numpy as np
 
@@ -37,6 +38,8 @@ class FieldAnalysis:
     cloud_cover: float
     data_quality: str  # "good", "moderate", "poor"
     recommendation: str
+    data_source: str = "simulated"
+    quality_flags: dict[str, Any] | None = None
 
 
 class SatelliteAnalyzer:
@@ -122,6 +125,8 @@ class SatelliteAnalyzer:
             cloud_cover=tile.cloud_cover,
             data_quality="good" if tile.cloud_cover < 10 else "moderate",
             recommendation=recommendation,
+            data_source=tile.data_source,
+            quality_flags=getattr(tile, "quality_flags", None),
         )
 
     def _fallback_analysis(self, lat: float, lon: float, analysis_date: date) -> FieldAnalysis:
@@ -139,6 +144,8 @@ class SatelliteAnalyzer:
             cloud_cover=100.0,
             data_quality="poor",
             recommendation="Satellite data temporarily unavailable. Please try again later or provide manual field observations.",
+            data_source="simulated",
+            quality_flags={"reason": "no_tiles"},
         )
 
     def _generate_recommendation(

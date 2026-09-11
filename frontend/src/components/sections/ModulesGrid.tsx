@@ -15,11 +15,11 @@ export default function ModulesGrid() {
           {t.platform.modules.map((item, index) => (
             <Reveal key={item.title} delay={(index % 4) * 0.07}>
               <article className="glass glass-hover flex h-full flex-col gap-3 rounded-3xl p-6">
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-leaf-500/12 text-leaf-300">
+                <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--color-leaf-500)]/12 text-[var(--color-leaf-300)]">
                   <Icon name={item.icon} className="h-5 w-5" aria-hidden />
                 </span>
-                <h3 className="text-base font-extrabold text-emerald-50">{item.title}</h3>
-                <p className="text-xs leading-6 text-emerald-100/60">{item.desc}</p>
+                <h3 className="text-base font-extrabold text-[var(--color-night-100)]">{item.title}</h3>
+                <p className="text-xs leading-6 text-[var(--color-night-200)]/60">{item.desc}</p>
               </article>
             </Reveal>
           ))}

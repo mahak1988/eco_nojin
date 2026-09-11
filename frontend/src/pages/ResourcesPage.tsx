@@ -24,20 +24,20 @@ export default function ResourcesPage() {
               <Reveal key={category.title} delay={(index % 2) * 0.07}>
                 <article className="glass glass-hover flex h-full flex-col gap-2 rounded-3xl p-6">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h3 className="text-base font-extrabold text-emerald-50">{category.title}</h3>
-                    <span className="rounded-full border border-sand-500/30 bg-sand-500/10 px-3 py-1 text-[11px] font-bold text-sand-300">
+                    <h3 className="text-base font-extrabold text-[var(--color-night-100)]">{category.title}</h3>
+                    <span className="rounded-full border border-[var(--color-sand-500)]/30 bg-[var(--color-sand-500)]/10 px-3 py-1 text-[11px] font-bold text-[var(--color-sand-300)]">
                       {category.status}
                     </span>
                   </div>
-                  <p className="text-sm leading-7 text-emerald-100/60">{category.desc}</p>
+                  <p className="text-sm leading-7 text-[var(--color-night-200)]/60">{category.desc}</p>
                 </article>
               </Reveal>
             ))}
           </div>
           <Reveal>
             <div className="glass rounded-3xl p-7">
-              <h2 className="text-base font-extrabold text-emerald-50">{c.contributeTitle}</h2>
-              <p className="mt-2 text-sm leading-8 text-emerald-100/65">{c.contributeBody}</p>
+              <h2 className="text-base font-extrabold text-[var(--color-night-100)]">{c.contributeTitle}</h2>
+              <p className="mt-2 text-sm leading-8 text-[var(--color-night-200)]/65">{c.contributeBody}</p>
             </div>
           </Reveal>
         </div>

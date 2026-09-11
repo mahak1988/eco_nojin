@@ -25,15 +25,15 @@ export default function Hero() {
         <div className="flex flex-col items-start gap-6">
           <motion.span
             {...fade(0)}
-            className="glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold text-leaf-300"
+            className="glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold text-[var(--color-leaf-300)]"
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-leaf-400 animate-pulse-soft" aria-hidden />
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-leaf-400)] animate-pulse-soft" aria-hidden />
             {t.hero.kicker}
           </motion.span>
 
           <motion.h1
             {...fade(0.12)}
-            className="text-4xl font-extrabold leading-[1.25] text-emerald-50 sm:text-5xl lg:text-[3.4rem] lg:leading-[1.2]"
+            className="text-4xl font-extrabold leading-[1.25] text-[var(--color-night-100)] sm:text-5xl lg:text-[3.4rem] lg:leading-[1.2]"
           >
             {t.hero.title}{' '}
             <span className="text-gradient-leaf text-shimmer">{t.hero.titleAccent}</span>
@@ -41,7 +41,7 @@ export default function Hero() {
 
           <motion.p
             {...fade(0.24)}
-            className="max-w-xl text-base leading-8 text-emerald-100/65 sm:text-lg sm:leading-9"
+            className="max-w-xl text-base leading-8 text-[var(--color-night-200)]/65 sm:text-lg sm:leading-9"
           >
             {t.hero.subtitle}
           </motion.p>
@@ -49,7 +49,7 @@ export default function Hero() {
           <motion.div {...fade(0.36)} className="flex flex-wrap items-center gap-3">
             <Link
               to="/platform"
-              className="ring-glow inline-flex items-center gap-2 rounded-full bg-leaf-500 px-6 py-3 text-sm font-extrabold text-night-950 transition-transform hover:scale-[1.03] active:scale-[0.98]"
+              className="ring-glow inline-flex items-center gap-2 rounded-full bg-[var(--color-leaf-500)] px-6 py-3 text-sm font-extrabold text-[var(--color-night-950)] transition-transform hover:scale-[1.03] active:scale-[0.98]"
             >
               {t.hero.ctaPrimary}
               {dir === 'rtl' ? (
@@ -60,14 +60,14 @@ export default function Hero() {
             </Link>
             <Link
               to="/hydroma"
-              className="glass glass-hover inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-extrabold text-emerald-50"
+              className="glass glass-hover inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-extrabold text-[var(--color-night-100)]"
             >
-              <FlaskConical className="h-4 w-4 text-aqua-300" aria-hidden />
+              <FlaskConical className="h-4 w-4 text-[var(--color-aqua-300)]" aria-hidden />
               {t.hero.ctaSecondary}
             </Link>
           </motion.div>
 
-          <motion.p {...fade(0.48)} className="text-xs text-emerald-100/40" dir={lang === 'fa' ? 'ltr' : 'rtl'}>
+          <motion.p {...fade(0.48)} className="text-xs text-[var(--color-night-200)]/40" dir={lang === 'fa' ? 'ltr' : 'rtl'}>
             {lang === 'fa' ? 'HyDroMa · Sentinel-2 · ERA5 · Polygon' : 'هیدروما · سنتینل-۲ · ERA5 · پالیگون'}
           </motion.p>
         </div>

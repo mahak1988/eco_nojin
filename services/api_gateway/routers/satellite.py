@@ -85,6 +85,7 @@ class SatelliteAnalyzeResponse(BaseModel):
     scene_id: str | None = None
     cloud_cover: float | None = None
     sensed_at: str | None = None
+    warning: str | None = None  # W-001: transparency warning for simulated data
 
 
 class RealLandResponse(BaseModel):
@@ -263,10 +264,21 @@ async def satellite_health():
 @router.post("/analyze", response_model=SatelliteAnalyzeResponse)
 async def analyze_satellite(request: SatelliteAnalyzeRequest, db: Session = Depends(get_db)):
     """Analyze satellite data for a location (real Copernicus when possible)."""
+    from engine.hydroma.config.settings import get_settings
+    settings = get_settings()
+    
+    if not settings.enable_simulated_data and not _copernicus_client().configured:
+        raise HTTPException(
+            status_code=503,
+            detail="Simulated data is disabled in production. Configure Copernicus CDSE credentials for real data.",
+        )
+    
     logger.info(f"Analyzing satellite data for lat={request.lat}, lon={request.lon}")
 
     client = _copernicus_client()
     analysis = _simulated_analysis(request.lat, request.lon)
+    warning = None
+    
     if client.configured:
         try:
             cop = await client.analyze_location(request.lat, request.lon, request.analysis_date)
@@ -284,12 +296,16 @@ async def analyze_satellite(request: SatelliteAnalyzeRequest, db: Session = Depe
                     "sensed_at": cop["sensed_at"],
                 }
             else:
+                warning = "Copernicus data unavailable; using simulated values for demonstration only."
                 logger.warning(
                     "Copernicus path returned %s; labelled fallback",
                     cop.get("status"),
                 )
         except CopernicusError as exc:
+            warning = f"Copernicus error ({exc}); using simulated values for demonstration only."
             logger.warning("Copernicus error, labelled fallback: %s", exc)
+    else:
+        warning = "Copernicus CDSE not configured; returning simulated data for demonstration only. Configure CDSE credentials for real satellite data."
 
     # Persist the analysis when a farm id was provided.
     if request.farm_id is not None:
@@ -327,6 +343,7 @@ async def analyze_satellite(request: SatelliteAnalyzeRequest, db: Session = Depe
         scene_id=analysis.get("scene_id"),
         cloud_cover=analysis.get("cloud_cover"),
         sensed_at=analysis.get("sensed_at"),
+        warning=warning,
     )
 
 

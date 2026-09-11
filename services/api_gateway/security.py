@@ -1,8 +1,7 @@
 """Security middleware for the API gateway (Phase 0).
 
-- ``RateLimitMiddleware``: in-memory token bucket per client IP
-  (sufficient for a single-process research deployment; multi-worker
-  deployments must move to Redis).
+- ``RateLimitMiddleware``: Redis-backed rate limiter per client IP
+  with in-memory fallback for single-process deployments.
 - ``SecurityHeadersMiddleware``: hardening headers + HSTS in production.
 - ``RequestIDMiddleware``: traceable request ids.
 - ``HTTPSRedirectMiddleware``: redirect HTTP to HTTPS in production.
@@ -17,13 +16,13 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse, RedirectResponse
 
 from engine.hydroma.config.settings import get_settings
+from services.security.redis_rate_limit import RedisRateLimiter
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
-    """Fixed-window rate limiter keyed by client IP.
+    """Redis-backed rate limiter keyed by client IP.
 
-    Overridable per-instance for tests via constructor kwargs.
-    In-memory only — documented limitation for single-process mode.
+    Falls back to in-memory when Redis is unavailable.
     """
 
     def __init__(
@@ -32,28 +31,22 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         limit: int | None = None,
         window: int | None = None,
         enabled: bool | None = None,
+        redis_client=None,
     ):
         super().__init__(app)
         settings = get_settings()
         self._window = window if window is not None else settings.rate_limit_window_seconds
         self._limit = limit if limit is not None else settings.rate_limit_requests
         self._enabled = enabled if enabled is not None else settings.rate_limit_enabled
-        self._hits: dict[str, deque[float]] = defaultdict(deque)
+        self._limiter = RedisRateLimiter(redis_client=redis_client)
 
     async def dispatch(self, request: Request, call_next):
         if not self._enabled:
             return await call_next(request)
 
         client = request.client.host if request.client else "unknown"
-        now = time.monotonic()
-        cutoff = now - self._window
-
-        q = self._hits[client]
-        while q and q[0] < cutoff:
-            q.popleft()
-
-        if len(q) >= self._limit:
-            retry_after = int(self._window - (now - q[0])) + 1 if q else self._window
+        ok, retry_after = self._limiter.check(client, request.url.path)
+        if not ok:
             return JSONResponse(
                 status_code=429,
                 content={
@@ -62,8 +55,6 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 },
                 headers={"Retry-After": str(retry_after)},
             )
-
-        q.append(now)
         return await call_next(request)
 
 

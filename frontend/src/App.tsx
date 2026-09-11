@@ -24,7 +24,9 @@ const CarbonPage = lazy(() => import('./pages/CarbonPage'));
 const PartnersPage = lazy(() => import('./pages/PartnersPage'));
 const CareersPage = lazy(() => import('./pages/CareersPage'));
 const InvestorsPage = lazy(() => import('./pages/InvestorsPage'));
-const PilotIranPage = lazy(() => import('./pages/PilotIranPage'));
+const PilotPage = lazy(() => import('./pages/PilotPage'));
+const UssdGuidePage = lazy(() => import('./pages/UssdGuidePage'));
+const VoiceGuidePage = lazy(() => import('./pages/VoiceGuidePage'));
 const AcademiaPage = lazy(() => import('./pages/AcademiaPage'));
 const MarketplacePage = lazy(() => import('./pages/MarketplacePage'));
 const ResourcesPage = lazy(() => import('./pages/ResourcesPage'));
@@ -70,7 +72,10 @@ export function AppShell() {
             <Route path="/partners" element={<PartnersPage />} />
             <Route path="/careers" element={<CareersPage />} />
             <Route path="/investors" element={<InvestorsPage />} />
-            <Route path="/pilot-iran" element={<PilotIranPage />} />
+            <Route path="/pilot" element={<PilotPage />} />
+            <Route path="/pilot-iran" element={<PilotPage />} />
+            <Route path="/ussd-guide" element={<UssdGuidePage />} />
+            <Route path="/voice-guide" element={<VoiceGuidePage />} />
             <Route path="/academia" element={<AcademiaPage />} />
             <Route path="/marketplace" element={<MarketplacePage />} />
             <Route path="/resources" element={<ResourcesPage />} />

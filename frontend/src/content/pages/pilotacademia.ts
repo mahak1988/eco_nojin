@@ -17,8 +17,10 @@ export interface PilotContent {
   provinceLabel: string;
   hectaresLabel: string;
   cropLabel: string;
-  channelLabel: string;
+   channelLabel: string;
   channels: string[];
+  fileUploadLabel: string;
+  fileUploadNote: string;
   consentLabel: string;
   submitButton: string;
   successTitle: string;
@@ -55,6 +57,8 @@ export const pilotIran = {
     cropLabel: 'محصول اصلی (اختیاری)',
     channelLabel: 'کانال مورد علاقه',
     channels: ['وب/PWA', 'USSD', 'SMS', 'ربات پیام‌رسان', 'صوتی'],
+    fileUploadLabel: 'بارگذاری فایل (اختیاری)',
+    fileUploadNote: 'مدرک لوی حمایت، برنامه زمانی یا CV را بارگذاری کنید (PDF، حداکثر ۵ مگابایت).',
     consentLabel: 'با ثبت دادهٔ میدانی زمینم در دورهٔ پایلوت موافقم.',
     submitButton: 'ثبت علاقه‌مندی',
     successTitle: 'ثبت شد',
@@ -89,6 +93,8 @@ export const pilotIran = {
     cropLabel: 'Main crop (optional)',
     channelLabel: 'Preferred channel',
     channels: ['Web/PWA', 'USSD', 'SMS', 'Messaging bot', 'Voice'],
+    fileUploadLabel: 'File upload (optional)',
+    fileUploadNote: 'Upload a LOI, timeline or CV (PDF, max 5 MB).',
     consentLabel: 'I agree to record my land’s field data during the pilot.',
     submitButton: 'Register interest',
     successTitle: 'Registered',

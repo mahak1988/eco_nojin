@@ -130,7 +130,7 @@ class AquaCropRunner(ModelRunner):
             "wue_kg_m3": None,
             "data_source": "simulated",
             "model": f"AquaCrop-OSPy {self.version}",
-            "raw_keys": sorted(str(k) for k in results.keys()),
+            "raw_keys": sorted(str(k) for k in results),
         }
 
     @staticmethod

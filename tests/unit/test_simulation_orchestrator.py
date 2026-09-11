@@ -9,17 +9,17 @@ from engine.hydroma.simulation.scenarios import SCENARIOS
 
 
 def _inputs(**overrides) -> ChainInputs:
-    base = dict(
-        site_id="sim-test-1",
-        area_ha=10.0,
-        scenario=SCENARIOS["Medium"],
-        r_factor=1200.0,
-        k_factor=0.04,
-        ls_factor=2.0,
-        c_factor_base=0.30,
-        initial_soc_t_ha=55.0,
-        clay_pct=20.0,
-    )
+    base = {
+        "site_id": "sim-test-1",
+        "area_ha": 10.0,
+        "scenario": SCENARIOS["Medium"],
+        "r_factor": 1200.0,
+        "k_factor": 0.04,
+        "ls_factor": 2.0,
+        "c_factor_base": 0.30,
+        "initial_soc_t_ha": 55.0,
+        "clay_pct": 20.0,
+    }
     base.update(overrides)
     return ChainInputs(**base)
 

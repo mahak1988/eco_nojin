@@ -23,8 +23,8 @@ export default function CareersPage() {
             {c.values.map((value, index) => (
               <Reveal key={value.title} delay={index * 0.07}>
                 <div className="glass glass-hover h-full rounded-3xl p-6">
-                  <h3 className="text-base font-extrabold text-emerald-50">{value.title}</h3>
-                  <p className="mt-2 text-sm leading-7 text-emerald-100/60">{value.desc}</p>
+                  <h3 className="text-base font-extrabold text-[var(--color-night-100)]">{value.title}</h3>
+                  <p className="mt-2 text-sm leading-7 text-[var(--color-night-200)]/60">{value.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -36,11 +36,11 @@ export default function CareersPage() {
         <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-2">
           <Reveal>
             <div className="glass h-full rounded-3xl p-8">
-              <h2 className="text-lg font-extrabold text-emerald-50">{c.rolesTitle}</h2>
+              <h2 className="text-lg font-extrabold text-[var(--color-night-100)]">{c.rolesTitle}</h2>
               <ul className="mt-4 flex flex-col gap-3">
                 {c.roles.map((role) => (
-                  <li key={role} className="flex items-start gap-3 text-sm leading-7 text-emerald-100/65">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-leaf-400" aria-hidden />
+                  <li key={role} className="flex items-start gap-3 text-sm leading-7 text-[var(--color-night-200)]/65">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-leaf-400)]" aria-hidden />
                     {role}
                   </li>
                 ))}
@@ -49,8 +49,8 @@ export default function CareersPage() {
           </Reveal>
           <Reveal delay={0.1}>
             <div className="ring-glow flex h-full flex-col justify-center gap-3 rounded-3xl bg-gradient-to-b from-leaf-600/20 to-night-900 p-8">
-              <h2 className="text-lg font-extrabold text-emerald-50">{c.openTitle}</h2>
-              <p className="text-sm leading-8 text-emerald-100/70">{c.openBody}</p>
+              <h2 className="text-lg font-extrabold text-[var(--color-night-100)]">{c.openTitle}</h2>
+              <p className="text-sm leading-8 text-[var(--color-night-200)]/70">{c.openBody}</p>
             </div>
           </Reveal>
         </div>

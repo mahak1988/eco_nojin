@@ -8,6 +8,7 @@ import ModelsMarquee from '../components/sections/ModelsMarquee';
 import ChannelsGrid from '../components/sections/ChannelsGrid';
 import CarbonBand from '../components/sections/CarbonBand';
 import CtaBand from '../components/sections/CtaBand';
+import TrustBand from '../components/sections/TrustBand';
 import { useLang } from '../i18n/LanguageContext';
 
 /** Landing page: the full story in one scroll. */
@@ -25,6 +26,7 @@ export default function HomePage() {
       <ModelsMarquee />
       <ChannelsGrid />
       <CarbonBand />
+      <TrustBand />
       <CtaBand />
     </>
   );

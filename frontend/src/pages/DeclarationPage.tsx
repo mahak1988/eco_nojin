@@ -17,19 +17,19 @@ export default function DeclarationPage() {
 
       <section className="px-4 pb-4 pt-14 sm:px-6 lg:pt-20">
         <Reveal className="mx-auto flex max-w-3xl flex-col items-start gap-4">
-          <span className="inline-flex items-center gap-2 rounded-full border border-leaf-500/30 bg-leaf-500/10 px-4 py-1 text-xs font-bold text-leaf-300">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-leaf-500)]/30 bg-[var(--color-leaf-500)]/10 px-4 py-1 text-xs font-bold text-[var(--color-leaf-300)]">
             <ScrollText className="h-3.5 w-3.5" aria-hidden />
             {c.kicker}
           </span>
-          <h1 className="text-3xl font-extrabold leading-snug text-emerald-50 sm:text-4xl lg:text-[2.6rem]">
+          <h1 className="text-3xl font-extrabold leading-snug text-[var(--color-night-100)] sm:text-4xl lg:text-[2.6rem]">
             {c.title}
           </h1>
-          <p className="max-w-2xl text-base leading-8 text-emerald-100/60">{c.lead}</p>
+          <p className="max-w-2xl text-base leading-8 text-[var(--color-night-200)]/60">{c.lead}</p>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="glass rounded-full px-4 py-1.5 text-xs font-bold text-emerald-100/70" dir="ltr">
+            <span className="glass rounded-full px-4 py-1.5 text-xs font-bold text-[var(--color-night-200)]/70" dir="ltr">
               {c.version}
             </span>
-            <span className="glass rounded-full px-4 py-1.5 text-xs font-bold text-emerald-100/70">
+            <span className="glass rounded-full px-4 py-1.5 text-xs font-bold text-[var(--color-night-200)]/70">
               {c.updated}
             </span>
           </div>
@@ -38,22 +38,22 @@ export default function DeclarationPage() {
 
       <section className="px-4 pb-4 sm:px-6">
         <div className="mx-auto flex max-w-3xl flex-col gap-3">
-          <div className="flex items-start gap-3 rounded-2xl border border-sand-500/25 bg-sand-500/8 p-4">
-            <Info className="mt-0.5 h-5 w-5 shrink-0 text-sand-300" aria-hidden />
-            <p className="text-xs leading-6 text-sand-200/90">
+          <div className="flex items-start gap-3 rounded-2xl border border-[var(--color-sand-500)]/25 bg-[var(--color-sand-500)]/8 p-4">
+            <Info className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-sand-300)]" aria-hidden />
+            <p className="text-xs leading-6 text-[var(--color-sand-200)]/90">
               {c.legalNote}{' '}
-              <Link to="/terms" className="font-bold text-leaf-300 hover:underline">
+              <Link to="/terms" className="font-bold text-[var(--color-leaf-300)] hover:underline">
                 {t.footer.legalLinks.terms}
               </Link>{' '}
               ·{' '}
-              <Link to="/rules" className="font-bold text-leaf-300 hover:underline">
+              <Link to="/rules" className="font-bold text-[var(--color-leaf-300)] hover:underline">
                 {t.footer.legalLinks.rules}
               </Link>
             </p>
           </div>
-          <p className="rounded-2xl border border-aqua-500/25 bg-aqua-500/8 p-4 text-xs leading-6 text-aqua-200/90">
+          <p className="rounded-2xl border border-[var(--color-aqua-500)]/25 bg-[var(--color-aqua-500)]/8 p-4 text-xs leading-6 text-[var(--color-aqua-200)]/90">
             {c.refsNote}{' '}
-            <Link to="/transparency" className="font-bold text-aqua-300 hover:underline">
+            <Link to="/transparency" className="font-bold text-[var(--color-aqua-300)] hover:underline">
               {t.footer.quickLinks.transparency}
             </Link>
           </p>
@@ -65,11 +65,11 @@ export default function DeclarationPage() {
           {c.sections.map((section, index) => (
             <Reveal key={section.heading} delay={Math.min(index * 0.03, 0.15)}>
               <article className="flex flex-col gap-4">
-                <h2 className="text-xl font-extrabold leading-snug text-emerald-50 sm:text-2xl">
+                <h2 className="text-xl font-extrabold leading-snug text-[var(--color-night-100)] sm:text-2xl">
                   {section.heading}
                 </h2>
                 {section.paragraphs.map((paragraph) => (
-                  <p key={paragraph} className="text-[15px] leading-9 text-emerald-50/80">
+                  <p key={paragraph} className="text-[15px] leading-9 text-[var(--color-night-100)]/80">
                     {paragraph}
                   </p>
                 ))}
@@ -78,10 +78,10 @@ export default function DeclarationPage() {
                     {section.bullets.map((bullet) => (
                       <li
                         key={bullet}
-                        className="glass flex items-start gap-3 rounded-2xl p-4 text-sm leading-7 text-emerald-50/85"
+                        className="glass flex items-start gap-3 rounded-2xl p-4 text-sm leading-7 text-[var(--color-night-100)]/85"
                       >
                         <span
-                          className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-leaf-400"
+                          className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-leaf-400)]"
                           aria-hidden
                         />
                         {bullet}
@@ -101,10 +101,10 @@ export default function DeclarationPage() {
                   key={line}
                   className={
                     index === 0
-                      ? 'text-lg font-extrabold text-emerald-50'
+                      ? 'text-lg font-extrabold text-[var(--color-night-100)]'
                       : index === c.signoff.length - 1
-                        ? 'text-xs font-bold text-emerald-100/40'
-                        : 'text-sm font-bold text-emerald-100/70'
+                        ? 'text-xs font-bold text-[var(--color-night-200)]/40'
+                        : 'text-sm font-bold text-[var(--color-night-200)]/70'
                   }
                 >
                   {line}

@@ -1,0 +1,317 @@
+{
+  "timestamp": "2026-09-09T22:43:00.053Z",
+  "totalSize": 831475,
+  "totalMB": 0.7929563522338867,
+  "chunks": [
+    {
+      "file": "index-B7RBi7pm.js",
+      "size": 296051,
+      "sizeFormatted": "289.11 KB"
+    },
+    {
+      "file": "DashboardLayout-C1XkF6q_.js",
+      "size": 132556,
+      "sizeFormatted": "129.45 KB"
+    },
+    {
+      "file": "Reveal-C2mNIeyA.js",
+      "size": 112941,
+      "sizeFormatted": "110.29 KB"
+    },
+    {
+      "file": "index-5ImZq2zQ.css",
+      "size": 78379,
+      "sizeFormatted": "76.54 KB"
+    },
+    {
+      "file": "DeclarationPage-D_XKfHYK.js",
+      "size": 33774,
+      "sizeFormatted": "32.98 KB"
+    },
+    {
+      "file": "HomePage-fTZ-bH5b.js",
+      "size": 12604,
+      "sizeFormatted": "12.31 KB"
+    },
+    {
+      "file": "EcoCoinPage-Bm9h3hfn.js",
+      "size": 9987,
+      "sizeFormatted": "9.75 KB"
+    },
+    {
+      "file": "ImpactPage-CBg4jXBr.js",
+      "size": 9164,
+      "sizeFormatted": "8.95 KB"
+    },
+    {
+      "file": "RegisterPage-DM2gkB-s.js",
+      "size": 8374,
+      "sizeFormatted": "8.18 KB"
+    },
+    {
+      "file": "Icon-1KU6xoos.js",
+      "size": 7962,
+      "sizeFormatted": "7.78 KB"
+    },
+    {
+      "file": "ContactPage-BIZH88Vy.js",
+      "size": 6989,
+      "sizeFormatted": "6.83 KB"
+    },
+    {
+      "file": "LoginPage-9ujyHenz.js",
+      "size": 6746,
+      "sizeFormatted": "6.59 KB"
+    },
+    {
+      "file": "pilotacademia-vCXsNQxz.js",
+      "size": 6630,
+      "sizeFormatted": "6.47 KB"
+    },
+    {
+      "file": "InvestorsPage-D1uzEF8A.js",
+      "size": 6229,
+      "sizeFormatted": "6.08 KB"
+    },
+    {
+      "file": "SupportPage-5SCtO4_y.js",
+      "size": 6079,
+      "sizeFormatted": "5.94 KB"
+    },
+    {
+      "file": "DevelopersPage-DqoJS7gX.js",
+      "size": 5754,
+      "sizeFormatted": "5.62 KB"
+    },
+    {
+      "file": "ResetPasswordPage-Dwhi_BMF.js",
+      "size": 5652,
+      "sizeFormatted": "5.52 KB"
+    },
+    {
+      "file": "PilotIranPage-Dsmp3exw.js",
+      "size": 5484,
+      "sizeFormatted": "5.36 KB"
+    },
+    {
+      "file": "StatusPage-nq_PVv5f.js",
+      "size": 5296,
+      "sizeFormatted": "5.17 KB"
+    },
+    {
+      "file": "impactcarbon-DcZf9tnZ.js",
+      "size": 4995,
+      "sizeFormatted": "4.88 KB"
+    },
+    {
+      "file": "AboutPage-gIwbXZky.js",
+      "size": 4954,
+      "sizeFormatted": "4.84 KB"
+    },
+    {
+      "file": "partnerscareers-DNq9r_1q.js",
+      "size": 4654,
+      "sizeFormatted": "4.54 KB"
+    },
+    {
+      "file": "marketreresources-B3q6TVyM.js",
+      "size": 4515,
+      "sizeFormatted": "4.41 KB"
+    },
+    {
+      "file": "AcademiaPage-Bitx3XR6.js",
+      "size": 4336,
+      "sizeFormatted": "4.23 KB"
+    },
+    {
+      "file": "ForgotPasswordPage-FTCyTa_T.js",
+      "size": 3997,
+      "sizeFormatted": "3.9 KB"
+    },
+    {
+      "file": "BlogPage-DXQ9CT9z.js",
+      "size": 3854,
+      "sizeFormatted": "3.76 KB"
+    },
+    {
+      "file": "FaqPage-Bj9dXm0C.js",
+      "size": 3354,
+      "sizeFormatted": "3.28 KB"
+    },
+    {
+      "file": "TransparencyPage-Dy7IS5f7.js",
+      "size": 3311,
+      "sizeFormatted": "3.23 KB"
+    },
+    {
+      "file": "PlatformPage-tYdJ8jL1.js",
+      "size": 3034,
+      "sizeFormatted": "2.96 KB"
+    },
+    {
+      "file": "ScienceChain-VeeZQprU.js",
+      "size": 2781,
+      "sizeFormatted": "2.72 KB"
+    },
+    {
+      "file": "CarbonPage-C9-e8hUs.js",
+      "size": 2752,
+      "sizeFormatted": "2.69 KB"
+    },
+    {
+      "file": "LegalPage-CZBIlJrg.js",
+      "size": 2590,
+      "sizeFormatted": "2.53 KB"
+    },
+    {
+      "file": "MarketplacePage-B3eK6Rbp.js",
+      "size": 2163,
+      "sizeFormatted": "2.11 KB"
+    },
+    {
+      "file": "CareersPage-BWnVwJ9p.js",
+      "size": 1929,
+      "sizeFormatted": "1.88 KB"
+    },
+    {
+      "file": "BaseCard-Dd9jgnMx.js",
+      "size": 1817,
+      "sizeFormatted": "1.77 KB"
+    },
+    {
+      "file": "PartnersPage-B1ivzXl5.js",
+      "size": 1790,
+      "sizeFormatted": "1.75 KB"
+    },
+    {
+      "file": "HydromaPage-UKNVU0DJ.js",
+      "size": 1672,
+      "sizeFormatted": "1.63 KB"
+    },
+    {
+      "file": "NotFoundPage-BB5grygN.js",
+      "size": 1668,
+      "sizeFormatted": "1.63 KB"
+    },
+    {
+      "file": "ResourcesPage-CxezmicU.js",
+      "size": 1366,
+      "sizeFormatted": "1.33 KB"
+    },
+    {
+      "file": "lock-De8ewswh.js",
+      "size": 1300,
+      "sizeFormatted": "1.27 KB"
+    },
+    {
+      "file": "Seo-DzleqVgt.js",
+      "size": 1079,
+      "sizeFormatted": "1.05 KB"
+    },
+    {
+      "file": "server-B-NCMERN.js",
+      "size": 928,
+      "sizeFormatted": "928 Bytes"
+    },
+    {
+      "file": "SectionHeading-BJkX0BIE.js",
+      "size": 919,
+      "sizeFormatted": "919 Bytes"
+    },
+    {
+      "file": "CtaBand-CXMoPo0z.js",
+      "size": 910,
+      "sizeFormatted": "910 Bytes"
+    },
+    {
+      "file": "PageHeader-yCJkYBQK.js",
+      "size": 851,
+      "sizeFormatted": "851 Bytes"
+    },
+    {
+      "file": "StatsBand-Cn5Ufdqe.js",
+      "size": 706,
+      "sizeFormatted": "706 Bytes"
+    },
+    {
+      "file": "contact-DnyvWBaX.js",
+      "size": 633,
+      "sizeFormatted": "633 Bytes"
+    },
+    {
+      "file": "chrome-CLdbKIXI.js",
+      "size": 531,
+      "sizeFormatted": "531 Bytes"
+    },
+    {
+      "file": "scroll-text-DMcJ8xIN.js",
+      "size": 517,
+      "sizeFormatted": "517 Bytes"
+    },
+    {
+      "file": "refresh-ccw-EiVQxyX0.js",
+      "size": 489,
+      "sizeFormatted": "489 Bytes"
+    },
+    {
+      "file": "shield-check-7ZBCw0UQ.js",
+      "size": 488,
+      "sizeFormatted": "488 Bytes"
+    },
+    {
+      "file": "house-C0XO9oT9.js",
+      "size": 458,
+      "sizeFormatted": "458 Bytes"
+    },
+    {
+      "file": "PrivacyPage-C0c6AgkR.js",
+      "size": 373,
+      "sizeFormatted": "373 Bytes"
+    },
+    {
+      "file": "info-D3xBNWtb.js",
+      "size": 368,
+      "sizeFormatted": "368 Bytes"
+    },
+    {
+      "file": "RulesPage-DWhr81Ph.js",
+      "size": 367,
+      "sizeFormatted": "367 Bytes"
+    },
+    {
+      "file": "TermsPage-B_82IvR-.js",
+      "size": 365,
+      "sizeFormatted": "365 Bytes"
+    },
+    {
+      "file": "user-8zprB4bn.js",
+      "size": 365,
+      "sizeFormatted": "365 Bytes"
+    },
+    {
+      "file": "message-square-Bd2ojqxu.js",
+      "size": 347,
+      "sizeFormatted": "347 Bytes"
+    },
+    {
+      "file": "circle-check-DGSwu_1H.js",
+      "size": 341,
+      "sizeFormatted": "341 Bytes"
+    },
+    {
+      "file": "search-B4zruuNh.js",
+      "size": 336,
+      "sizeFormatted": "336 Bytes"
+    },
+    {
+      "file": "arrow-left-DoIxco1B.js",
+      "size": 333,
+      "sizeFormatted": "333 Bytes"
+    },
+    {
+      "file": "check-B--vWWWA.js",
+      "size": 288,
+      "sizeFormatted": "288 Bytes"
+    }
+  ]
+}

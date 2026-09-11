@@ -6,6 +6,9 @@ Fixes W-016: real auth with roles. Secret key comes from settings
 - ``get_current_user`` (strict 401) and ``get_current_user_optional``
 - ``require_roles`` RBAC dependency
 - API-key guard for telco webhooks (USSD/SMS/Voice)
+
+Async version (Week 2 fix): uses async SQLAlchemy sessions to avoid
+thread-safety issues with SQLite in async FastAPI endpoints.
 """
 
 from datetime import UTC, datetime, timedelta
@@ -14,20 +17,22 @@ from fastapi import Depends, Header, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 import bcrypt
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.hub import hub
-
-# Compatibility: get_db via hub
-def get_db():
-    with hub.get_session() as session:
-        yield session
 from database.models import User
 from engine.hydroma.config.settings import get_settings
 
 _settings = get_settings()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
+
+
+async def _get_async_db():
+    """Dependency wrapper for async database session."""
+    async with hub.get_async_session() as session:
+        yield session
 
 # Well-known roles
 ROLE_FARMER = "farmer"
@@ -101,17 +106,17 @@ def decode_refresh_token(token: str) -> dict | None:
     return payload
 
 
-def _user_from_payload(payload: dict, db: Session) -> User | None:
+async def _user_from_payload(payload: dict, db: AsyncSession) -> User | None:
     sub = payload.get("sub")
     if sub is None:
         return None
-    # Handle both UUID strings and integer IDs
-    return db.query(User).filter(User.id == sub).first()
+    result = await db.execute(select(User).where(User.id == sub))
+    return result.scalar_one_or_none()
 
 
 async def get_current_user_optional(
     token: str | None = Depends(oauth2_scheme),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(_get_async_db),
 ) -> User | None:
     """Return user for valid token, else None (public endpoints)."""
     if not token:
@@ -119,12 +124,12 @@ async def get_current_user_optional(
     payload = decode_token(token)
     if payload is None:
         return None
-    return _user_from_payload(payload, db)
+    return await _user_from_payload(payload, db)
 
 
 async def get_current_user(
     token: str | None = Depends(oauth2_scheme),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(_get_async_db),
 ) -> User:
     """Strict auth: 401 when missing/invalid token or unknown user."""
     user = await get_current_user_optional(token, db)

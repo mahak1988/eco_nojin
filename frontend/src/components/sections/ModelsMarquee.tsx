@@ -32,10 +32,10 @@ export default function ModelsMarquee() {
       <div className="flex w-max items-center gap-10 px-5 animate-marquee">
         {items.map((model, index) => (
           <span key={model + index} className="flex items-center gap-10">
-            <span dir="ltr" className="text-lg font-extrabold tracking-wide text-emerald-100/45">
+            <span dir="ltr" className="text-lg font-extrabold tracking-wide text-[var(--color-night-200)]/45">
               {model}
             </span>
-            <span className="h-1.5 w-1.5 rounded-full bg-leaf-500/60" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-leaf-500)]/60" />
           </span>
         ))}
       </div>

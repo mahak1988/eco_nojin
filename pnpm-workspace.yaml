@@ -12,5 +12,6 @@ onlyBuiltDependencies:
   - prisma
   - msw
 allowBuilds:
+  '@prisma/engines': true
   esbuild: true
   prisma: false

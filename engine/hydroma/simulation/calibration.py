@@ -28,7 +28,7 @@ def saltelli_matrices(a: np.ndarray, b: np.ndarray) -> list[np.ndarray]:
 
     Returns [A, B, AB_0..AB_{d-1}, BA_0..BA_{d-1}].
     """
-    n, d = a.shape
+    _n, d = a.shape
     matrices = [a, b]
     for i in range(d):
         ab = a.copy()
@@ -66,7 +66,6 @@ def sobol_indices(
     for i in range(d):
         # saltelli_matrices interleaves: [A, B, AB0, BA0, AB1, BA1, ...]
         yab = y[2 + 2 * i]
-        yba = y[3 + 2 * i]
         s1[i] = float(np.mean(yb * (yab - ya)) / var)
         st[i] = float(np.mean((ya - yab) ** 2) / (2.0 * var))
     return {"S1": s1, "ST": st, "var": var}
@@ -90,7 +89,6 @@ def sensitivity_of_metric(
         seed: RNG seed for reproducibility.
     """
     rng = np.random.default_rng(seed)
-    d = len(bounds)
     if dist == "uniform":
         lo = np.array([b[0] for b in bounds], dtype=float)
         hi = np.array([b[1] for b in bounds], dtype=float)

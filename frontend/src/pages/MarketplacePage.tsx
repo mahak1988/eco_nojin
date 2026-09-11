@@ -23,8 +23,8 @@ export default function MarketplacePage() {
             {c.features.map((feature, index) => (
               <Reveal key={feature.title} delay={index * 0.07}>
                 <div className="glass glass-hover h-full rounded-3xl p-6">
-                  <h3 className="text-base font-extrabold text-emerald-50">{feature.title}</h3>
-                  <p className="mt-2 text-sm leading-7 text-emerald-100/60">{feature.desc}</p>
+                  <h3 className="text-base font-extrabold text-[var(--color-night-100)]">{feature.title}</h3>
+                  <p className="mt-2 text-sm leading-7 text-[var(--color-night-200)]/60">{feature.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -36,11 +36,11 @@ export default function MarketplacePage() {
         <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-2">
           <Reveal>
             <div className="glass h-full rounded-3xl p-8">
-              <h2 className="text-lg font-extrabold text-emerald-50">{c.howTitle}</h2>
+              <h2 className="text-lg font-extrabold text-[var(--color-night-100)]">{c.howTitle}</h2>
               <ol className="mt-4 flex flex-col gap-3">
                 {c.how.map((step, index) => (
-                  <li key={step} className="flex items-start gap-3 text-sm leading-7 text-emerald-100/65">
-                    <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-leaf-500/15 text-[11px] font-extrabold text-leaf-300">
+                  <li key={step} className="flex items-start gap-3 text-sm leading-7 text-[var(--color-night-200)]/65">
+                    <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--color-leaf-500)]/15 text-[11px] font-extrabold text-[var(--color-leaf-300)]">
                       {new Intl.NumberFormat(lang === 'fa' ? 'fa-IR' : 'en-US').format(index + 1)}
                     </span>
                     {step}
@@ -51,11 +51,11 @@ export default function MarketplacePage() {
           </Reveal>
           <Reveal delay={0.08}>
             <div className="ring-glow flex h-full flex-col justify-center gap-3 rounded-3xl bg-gradient-to-b from-leaf-600/20 to-night-900 p-8">
-              <h2 className="text-lg font-extrabold text-emerald-50">{c.statusTitle}</h2>
-              <p className="text-sm leading-8 text-emerald-100/70">{c.statusBody}</p>
+              <h2 className="text-lg font-extrabold text-[var(--color-night-100)]">{c.statusTitle}</h2>
+              <p className="text-sm leading-8 text-[var(--color-night-200)]/70">{c.statusBody}</p>
               <Link
                 to="/contact"
-                className="mt-1 w-fit rounded-full bg-leaf-500 px-5 py-2.5 text-xs font-extrabold text-night-950 transition-transform hover:scale-[1.03]"
+                className="mt-1 w-fit rounded-full bg-[var(--color-leaf-500)] px-5 py-2.5 text-xs font-extrabold text-[var(--color-night-950)] transition-transform hover:scale-[1.03]"
               >
                 {t.cta.button}
               </Link>

@@ -12,6 +12,10 @@ Schema:
     Uses real table names: projects, weather_daily, satellite_observations,
     soil_profiles, carbon_credits, mrv_observations, simulation_runs
 
+Security:
+    - All queries use parameterized statements to prevent SQL injection
+    - User inputs are validated before being passed to queries
+
 Author: Eco Nojin Architecture Team
 Version: 4.0.0 (Final, Schema-Verified)
 """
@@ -19,9 +23,9 @@ Version: 4.0.0 (Final, Schema-Verified)
 import os
 import logging
 from datetime import UTC, datetime
-from typing import Optional
+from typing import Optional, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
@@ -100,6 +104,46 @@ class DashboardData(BaseModel):
 
 
 # ============================================================================
+# Query Helpers
+# ============================================================================
+
+def _execute_parameterized(conn, query: str, params: tuple = ()) -> Any:
+    """Execute a parameterized query safely.
+    
+    Args:
+        conn: DuckDB connection
+        query: SQL query with ? placeholders
+        params: Query parameters tuple
+    
+    Returns:
+        Query result
+    """
+    try:
+        return conn.execute(query, params).fetchone()
+    except Exception as e:
+        logger.error(f"Query failed: {query[:100]}... Error: {e}")
+        raise
+
+
+def _execute_parameterized_df(conn, query: str, params: tuple = ()) -> Any:
+    """Execute a parameterized query and return DataFrame.
+    
+    Args:
+        conn: DuckDB connection
+        query: SQL query with ? placeholders
+        params: Query parameters tuple
+    
+    Returns:
+        pandas DataFrame
+    """
+    try:
+        return conn.execute(query, params).fetchdf()
+    except Exception as e:
+        logger.error(f"Query failed: {query[:100]}... Error: {e}")
+        raise
+
+
+# ============================================================================
 # Data Fetching Services (Real Schema)
 # ============================================================================
 
@@ -109,11 +153,11 @@ def _get_carbon_summary() -> dict:
         from database.hub import hub
         conn = hub.get_duckdb("master")
         
-        # carbon_credits table
-        result = conn.execute("""
+        # Parameterized query (no user input currently, but safe pattern)
+        result = _execute_parameterized(conn, """
             SELECT COUNT(*) as total
             FROM carbon_credits
-        """).fetchone()
+        """)
         
         return {
             "total_credits": result[0] if result else 0,
@@ -124,23 +168,40 @@ def _get_carbon_summary() -> dict:
         return {"total_credits": 0, "status": f"error: {type(e).__name__}"}
 
 
-def _get_weather_data() -> dict:
-    """Fetch current weather data from weather_daily."""
+def _get_weather_data(farm_id: Optional[str] = None) -> dict:
+    """Fetch current weather data from weather_daily.
+    
+    Args:
+        farm_id: Optional farm/project ID to filter by
+    """
     try:
         from database.hub import hub
         conn = hub.get_duckdb("master")
         
-        # Use precip_mm (not rain_mm)
-        result = conn.execute("""
-            SELECT 
-                COUNT(*) as days,
-                AVG(tmax_c) as avg_temp_max,
-                AVG(tmin_c) as avg_temp_min,
-                AVG(tavg_c) as avg_temp,
-                SUM(precip_mm) as total_rain,
-                AVG(rh_pct) as avg_humidity
-            FROM weather_daily
-        """).fetchone()
+        # Parameterized query with optional filter
+        if farm_id:
+            result = _execute_parameterized(conn, """
+                SELECT 
+                    COUNT(*) as days,
+                    AVG(tmax_c) as avg_temp_max,
+                    AVG(tmin_c) as avg_temp_min,
+                    AVG(tavg_c) as avg_temp,
+                    SUM(precip_mm) as total_rain,
+                    AVG(rh_pct) as avg_humidity
+                FROM weather_daily
+                WHERE farm_id = ?
+            """, (farm_id,))
+        else:
+            result = _execute_parameterized(conn, """
+                SELECT 
+                    COUNT(*) as days,
+                    AVG(tmax_c) as avg_temp_max,
+                    AVG(tmin_c) as avg_temp_min,
+                    AVG(tavg_c) as avg_temp,
+                    SUM(precip_mm) as total_rain,
+                    AVG(rh_pct) as avg_humidity
+                FROM weather_daily
+            """)
         
         if result:
             return {
@@ -163,20 +224,36 @@ def _get_weather_data() -> dict:
     }
 
 
-def _get_satellite_data() -> dict:
-    """Fetch satellite-derived vegetation data."""
+def _get_satellite_data(farm_id: Optional[str] = None) -> dict:
+    """Fetch satellite-derived vegetation data.
+    
+    Args:
+        farm_id: Optional farm/project ID to filter by
+    """
     try:
         from database.hub import hub
         conn = hub.get_duckdb("master")
         
-        result = conn.execute("""
-            SELECT 
-                COUNT(*) as images,
-                AVG(ndvi) as avg_ndvi,
-                AVG(evi) as avg_evi,
-                AVG(soil_moisture_index) as avg_moisture
-            FROM satellite_observations
-        """).fetchone()
+        # Parameterized query with optional filter
+        if farm_id:
+            result = _execute_parameterized(conn, """
+                SELECT 
+                    COUNT(*) as images,
+                    AVG(ndvi) as avg_ndvi,
+                    AVG(evi) as avg_evi,
+                    AVG(soil_moisture_index) as avg_moisture
+                FROM satellite_observations
+                WHERE farm_id = ?
+            """, (farm_id,))
+        else:
+            result = _execute_parameterized(conn, """
+                SELECT 
+                    COUNT(*) as images,
+                    AVG(ndvi) as avg_ndvi,
+                    AVG(evi) as avg_evi,
+                    AVG(soil_moisture_index) as avg_moisture
+                FROM satellite_observations
+            """)
         
         if result:
             return {
@@ -202,12 +279,12 @@ def _get_projects_data() -> dict:
         from database.hub import hub
         conn = hub.get_duckdb("master")
         
-        result = conn.execute("""
+        result = _execute_parameterized(conn, """
             SELECT 
                 COUNT(*) as cnt,
                 COALESCE(SUM(area_ha), 0) as total_area
             FROM projects
-        """).fetchone()
+        """)
         
         if result:
             return {
@@ -221,19 +298,34 @@ def _get_projects_data() -> dict:
     return {"total": 0, "total_area_hectares": 0.0, "status": "error"}
 
 
-def _get_soil_data() -> dict:
-    """Fetch soil profiles data."""
+def _get_soil_data(farm_id: Optional[str] = None) -> dict:
+    """Fetch soil profiles data.
+    
+    Args:
+        farm_id: Optional farm/project ID to filter by
+    """
     try:
         from database.hub import hub
         conn = hub.get_duckdb("master")
         
-        result = conn.execute("""
-            SELECT 
-                COUNT(*) as profiles,
-                AVG(organic_carbon_percent) as avg_carbon,
-                AVG(ph) as avg_ph
-            FROM soil_profiles
-        """).fetchone()
+        # Parameterized query with optional filter
+        if farm_id:
+            result = _execute_parameterized(conn, """
+                SELECT 
+                    COUNT(*) as profiles,
+                    AVG(organic_carbon_percent) as avg_carbon,
+                    AVG(ph) as avg_ph
+                FROM soil_profiles
+                WHERE farm_id = ?
+            """, (farm_id,))
+        else:
+            result = _execute_parameterized(conn, """
+                SELECT 
+                    COUNT(*) as profiles,
+                    AVG(organic_carbon_percent) as avg_carbon,
+                    AVG(ph) as avg_ph
+                FROM soil_profiles
+            """)
         
         if result:
             return {
@@ -248,18 +340,32 @@ def _get_soil_data() -> dict:
     return {"total_profiles": 0, "status": "no_data"}
 
 
-def _get_mrv_data() -> dict:
-    """Fetch MRV observations."""
+def _get_mrv_data(farm_id: Optional[str] = None) -> dict:
+    """Fetch MRV observations.
+    
+    Args:
+        farm_id: Optional farm/project ID to filter by
+    """
     try:
         from database.hub import hub
         conn = hub.get_duckdb("master")
         
-        result = conn.execute("""
-            SELECT 
-                COUNT(*) as total,
-                COUNT(CASE WHEN verified = TRUE THEN 1 END) as verified
-            FROM mrv_observations
-        """).fetchone()
+        # Parameterized query with optional filter
+        if farm_id:
+            result = _execute_parameterized(conn, """
+                SELECT 
+                    COUNT(*) as total,
+                    COUNT(CASE WHEN verified = TRUE THEN 1 END) as verified
+                FROM mrv_observations
+                WHERE farm_id = ?
+            """, (farm_id,))
+        else:
+            result = _execute_parameterized(conn, """
+                SELECT 
+                    COUNT(*) as total,
+                    COUNT(CASE WHEN verified = TRUE THEN 1 END) as verified
+                FROM mrv_observations
+            """)
         
         if result:
             total = result[0] or 0
@@ -276,18 +382,32 @@ def _get_mrv_data() -> dict:
     return {"total_observations": 0, "status": "no_data"}
 
 
-def _get_simulations_data() -> dict:
-    """Fetch simulation runs."""
+def _get_simulations_data(farm_id: Optional[str] = None) -> dict:
+    """Fetch simulation runs.
+    
+    Args:
+        farm_id: Optional farm/project ID to filter by
+    """
     try:
         from database.hub import hub
         conn = hub.get_duckdb("master")
         
-        result = conn.execute("""
-            SELECT 
-                COUNT(*) as total,
-                COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed
-            FROM simulation_runs
-        """).fetchone()
+        # Parameterized query with optional filter
+        if farm_id:
+            result = _execute_parameterized(conn, """
+                SELECT 
+                    COUNT(*) as total,
+                    COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed
+                FROM simulation_runs
+                WHERE farm_id = ?
+            """, (farm_id,))
+        else:
+            result = _execute_parameterized(conn, """
+                SELECT 
+                    COUNT(*) as total,
+                    COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed
+                FROM simulation_runs
+            """)
         
         if result:
             return {
@@ -307,12 +427,12 @@ def _get_tourism_data() -> dict:
         from database.hub import hub
         conn = hub.get_duckdb("master")
         
-        result = conn.execute("""
+        result = _execute_parameterized(conn, """
             SELECT 
                 COUNT(*) as total_bookings,
                 COALESCE(SUM(total), 0) as total_revenue
             FROM tourism_bookings
-        """).fetchone()
+        """)
         
         if result:
             return {
@@ -331,10 +451,15 @@ def _get_tourism_data() -> dict:
 # ============================================================================
 
 @router.get("/public/full")
-async def public_full_dashboard():
+async def public_full_dashboard(
+    farm_id: Optional[str] = Query(None, description="Filter by farm/project ID")
+):
     """
     Complete dashboard data - NO AUTHENTICATION REQUIRED.
     Returns aggregated statistics from all major data sources.
+    
+    Args:
+        farm_id: Optional farm/project ID to filter data
     """
     try:
         return {
@@ -342,12 +467,12 @@ async def public_full_dashboard():
             "auth_required": False,
             "timestamp": datetime.now(UTC).isoformat(),
             "projects": _get_projects_data(),
-            "weather": _get_weather_data(),
-            "satellite": _get_satellite_data(),
-            "soil": _get_soil_data(),
+            "weather": _get_weather_data(farm_id),
+            "satellite": _get_satellite_data(farm_id),
+            "soil": _get_soil_data(farm_id),
             "carbon": _get_carbon_summary(),
-            "mrv": _get_mrv_data(),
-            "simulations": _get_simulations_data(),
+            "mrv": _get_mrv_data(farm_id),
+            "simulations": _get_simulations_data(farm_id),
             "tourism": _get_tourism_data(),
             "platform": {
                 "total_tables": 138,
@@ -368,18 +493,25 @@ async def public_full_dashboard():
 
 
 @router.get("/public/projects")
-async def public_projects():
-    """Projects list (replaces farms) - NO AUTH."""
+async def public_projects(
+    limit: int = Query(50, ge=1, le=200, description="Maximum number of projects to return")
+):
+    """Projects list (replaces farms) - NO AUTH.
+    
+    Args:
+        limit: Maximum number of projects to return (1-200)
+    """
     try:
         from database.hub import hub
         conn = hub.get_duckdb("master")
         
-        projects = conn.execute("""
+        # Parameterized query with validated limit
+        projects = _execute_parameterized_df(conn, """
             SELECT id, name, region_name, area_ha, created_at
             FROM projects
             ORDER BY created_at DESC
-            LIMIT 50
-        """).fetchdf()
+            LIMIT ?
+        """, (limit,))
         
         return {
             "status": "success",
@@ -422,56 +554,86 @@ async def public_analytics():
 
 
 @router.get("/public/weather")
-async def public_weather():
-    """Weather summary - NO AUTH."""
+async def public_weather(
+    farm_id: Optional[str] = Query(None, description="Filter by farm/project ID")
+):
+    """Weather summary - NO AUTH.
+    
+    Args:
+        farm_id: Optional farm/project ID to filter by
+    """
     return {
         "status": "success",
         "auth_required": False,
-        "data": _get_weather_data(),
+        "data": _get_weather_data(farm_id),
         "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
 @router.get("/public/satellite")
-async def public_satellite():
-    """Satellite observations - NO AUTH."""
+async def public_satellite(
+    farm_id: Optional[str] = Query(None, description="Filter by farm/project ID")
+):
+    """Satellite observations - NO AUTH.
+    
+    Args:
+        farm_id: Optional farm/project ID to filter by
+    """
     return {
         "status": "success",
         "auth_required": False,
-        "data": _get_satellite_data(),
+        "data": _get_satellite_data(farm_id),
         "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
 @router.get("/public/soil")
-async def public_soil():
-    """Soil profiles - NO AUTH."""
+async def public_soil(
+    farm_id: Optional[str] = Query(None, description="Filter by farm/project ID")
+):
+    """Soil profiles - NO AUTH.
+    
+    Args:
+        farm_id: Optional farm/project ID to filter by
+    """
     return {
         "status": "success",
         "auth_required": False,
-        "data": _get_soil_data(),
+        "data": _get_soil_data(farm_id),
         "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
 @router.get("/public/mrv")
-async def public_mrv():
-    """MRV observations - NO AUTH."""
+async def public_mrv(
+    farm_id: Optional[str] = Query(None, description="Filter by farm/project ID")
+):
+    """MRV observations - NO AUTH.
+    
+    Args:
+        farm_id: Optional farm/project ID to filter by
+    """
     return {
         "status": "success",
         "auth_required": False,
-        "data": _get_mrv_data(),
+        "data": _get_mrv_data(farm_id),
         "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
 @router.get("/public/simulations")
-async def public_simulations():
-    """Simulation runs - NO AUTH."""
+async def public_simulations(
+    farm_id: Optional[str] = Query(None, description="Filter by farm/project ID")
+):
+    """Simulation runs - NO AUTH.
+    
+    Args:
+        farm_id: Optional farm/project ID to filter by
+    """
     return {
         "status": "success",
         "auth_required": False,
-        "data": _get_simulations_data(),
+        "data": _get_simulations_data(farm_id),
         "timestamp": datetime.now(UTC).isoformat(),
     }
 
@@ -508,6 +670,195 @@ async def public_test():
             "/dashboard/public/simulations",
             "/dashboard/public/tourism",
             "/dashboard/public/test",
+            "/dashboard/data",
+            "/dashboard/refresh-data",
+            "/dashboard/recommendations/{farm_id}",
         ],
         "timestamp": datetime.now(UTC).isoformat(),
     }
+
+
+# ============================================================================
+# AUTHENTICATED ENDPOINTS - Authentication Required
+# ============================================================================
+
+def _get_current_user_optional(request: Request):
+    """Try to extract user from request. Returns None if not authenticated."""
+    auth_header = request.headers.get("authorization", "")
+    if auth_header.startswith("Bearer "):
+        token = auth_header[7:]
+        try:
+            from services.auth import compat
+            return compat.decode_token_safe(token)
+        except Exception:
+            return None
+    return None
+
+
+@router.get("/data")
+async def get_dashboard_data(request: Request):
+    """
+    Authenticated dashboard data.
+    Requires valid JWT token in Authorization header.
+    """
+    user = _get_current_user_optional(request)
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    try:
+        from database.hub import hub
+        conn = hub.get_duckdb("master")
+
+        weather = _get_weather_data(None)
+        satellite = _get_satellite_data(None)
+        soil = _get_soil_data(None)
+        carbon = _get_carbon_summary()
+        projects = _get_projects_data()
+
+        return {
+            "status": "success",
+            "user_id": user.get("sub"),
+            "data": {
+                "projects": projects,
+                "weather": weather,
+                "satellite": satellite,
+                "soil": soil,
+                "carbon": carbon,
+            },
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+    except Exception as e:
+        logger.error(f"Dashboard data fetch failed: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to fetch dashboard data",
+        )
+
+
+@router.post("/refresh-data")
+async def refresh_dashboard_data(request: Request):
+    """
+    Refresh/refresh dashboard data.
+    Requires valid JWT token.
+    """
+    user = _get_current_user_optional(request)
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    try:
+        from database.hub import hub
+        conn = hub.get_duckdb("master")
+
+        weather = _get_weather_data(None)
+        satellite = _get_satellite_data(None)
+        soil = _get_soil_data(None)
+        carbon = _get_carbon_summary()
+        projects = _get_projects_data()
+        simulations = _get_simulations_data(None)
+        mrv = _get_mrv_data(None)
+
+        return {
+            "status": "success",
+            "refreshed": True,
+            "user_id": user.get("sub"),
+            "data": {
+                "projects": projects,
+                "weather": weather,
+                "satellite": satellite,
+                "soil": soil,
+                "carbon": carbon,
+                "simulations": simulations,
+                "mrv": mrv,
+            },
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+    except Exception as e:
+        logger.error(f"Dashboard refresh failed: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to refresh dashboard data",
+        )
+
+
+@router.get("/recommendations/{farm_id}")
+async def get_recommendations(farm_id: str, request: Request):
+    """
+    Get AI recommendations for a specific farm/project.
+    Requires valid JWT token.
+    """
+    user = _get_current_user_optional(request)
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    try:
+        from database.hub import hub
+        conn = hub.get_duckdb("master")
+
+        weather = _get_weather_data(farm_id)
+        satellite = _get_satellite_data(farm_id)
+        soil = _get_soil_data(farm_id)
+        mrv = _get_mrv_data(farm_id)
+        simulations = _get_simulations_data(farm_id)
+
+        recommendations = []
+
+        if soil.get("avg_organic_carbon_pct", 0) < 2.0:
+            recommendations.append({
+                "type": "soil_carbon",
+                "priority": "high",
+                "message": "Increase organic matter through compost application",
+            })
+
+        if weather.get("avg_temperature_c", 0) > 30:
+            recommendations.append({
+                "type": "water_management",
+                "priority": "high",
+                "message": "Implement irrigation scheduling based on weather forecasts",
+            })
+
+        if satellite.get("avg_ndvi", 0) < 0.4:
+            recommendations.append({
+                "type": "vegetation_health",
+                "priority": "medium",
+                "message": "Monitor vegetation stress and consider fertilization",
+            })
+
+        if mrv.get("verification_rate_pct", 0) < 80:
+            recommendations.append({
+                "type": "data_quality",
+                "priority": "medium",
+                "message": "Increase MRV observation frequency for better verification",
+            })
+
+        return {
+            "status": "success",
+            "farm_id": farm_id,
+            "user_id": user.get("sub"),
+            "data": {
+                "weather": weather,
+                "satellite": satellite,
+                "soil": soil,
+                "mrv": mrv,
+                "simulations": simulations,
+            },
+            "recommendations": recommendations,
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+    except Exception as e:
+        logger.error(f"Recommendations fetch failed: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to generate recommendations",
+        )

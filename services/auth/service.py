@@ -1,10 +1,18 @@
-"""AuthService"""
+"""AuthService - backward compatible with unified auth backend."""
 import hashlib
 import secrets
 from datetime import UTC, datetime, timedelta
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from services.auth.compat import (
+    create_access_token_compat,
+    create_refresh_token_compat,
+    decode_refresh_token_compat,
+    hash_password,
+    password_hasher,
+    verify_password,
+)
 from services.auth.models import AuthUser
 from services.auth.repository import AuthRepository
 from services.auth.schemas import TokenResponse, UserInfo, UserLogin, UserRegister
@@ -20,22 +28,13 @@ class AuthService:
         self.repo = AuthRepository(db)
 
     def _hash_password(self, password: str, salt: str | None = None) -> tuple[str, str]:
-        if salt is None:
-            salt = secrets.token_hex(16)
-        hashed = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 100_000).hex()
-        return f"{salt}:{hashed}", salt
+        return hash_password(password), ""
 
     def _verify_password(self, password: str, stored_hash: str) -> bool:
-        try:
-            salt, _ = stored_hash.split(":", 1)
-            computed, _ = self._hash_password(password, salt)
-            return secrets.compare_digest(computed, stored_hash)
-        except Exception:
-            return False
+        return verify_password(password, stored_hash)
 
     def _generate_token(self, user_id: str, ttl: int) -> str:
-        payload = f"{user_id}:{int(datetime.now(UTC).timestamp())}:{ttl}"
-        return f"{payload}:{secrets.token_urlsafe(32)}"
+        return generate_token(user_id, ttl)
 
     async def register(self, data: UserRegister) -> AuthUser:
         if not data.validate_password_strength():
@@ -54,8 +53,16 @@ class AuthService:
         if not self._verify_password(data.password, user.password_hash):
             await self.repo.increment_failed_attempts(user.id)
             raise ValueError("Invalid credentials")
-        access = self._generate_token(user.id, self.ACCESS_TOKEN_TTL)
-        refresh = self._generate_token(user.id, self.REFRESH_TOKEN_TTL)
+        if password_hasher.needs_migration(user.password_hash):
+            user.password_hash = hash_password(data.password)
+            await self.db.commit()
+            await self.db.refresh(user)
+        access = create_access_token_compat(
+            {"user_id": user.id}, subject=str(user.id), role="farmer"
+        )
+        refresh = create_refresh_token_compat(
+            {}, subject=str(user.id), role="farmer"
+        )
         await self.repo.save_refresh_token(
             user.id, hashlib.sha256(refresh.encode()).hexdigest(),
             datetime.now(UTC) + timedelta(seconds=self.REFRESH_TOKEN_TTL),

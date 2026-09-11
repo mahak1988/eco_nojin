@@ -28,10 +28,10 @@ export default function NdviConceptChart() {
   return (
     <figure className="glass rounded-3xl p-6">
       <figcaption className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-extrabold text-emerald-50">
+        <h3 className="text-sm font-extrabold text-[var(--color-night-100)]">
           {lang === 'fa' ? 'روند NDVI — نمونهٔ تصویری' : 'NDVI trend — illustrative sample'}
         </h3>
-        <span className="rounded-full bg-aqua-500/12 px-3 py-1 text-[10px] font-bold text-aqua-300">
+        <span className="rounded-full bg-[var(--color-aqua-500)]/12 px-3 py-1 text-[10px] font-bold text-[var(--color-aqua-300)]">
           {t.common.conceptual}
         </span>
       </figcaption>
@@ -107,7 +107,7 @@ export default function NdviConceptChart() {
         ))}
       </svg>
 
-      <p className="mt-3 text-[11px] leading-5 text-emerald-100/40">
+      <p className="mt-3 text-[11px] leading-5 text-[var(--color-night-200)]/40">
         {lang === 'fa'
           ? 'شکل بالا یک نمونهٔ تصویری از خروجی صفحهٔ پایش است؛ دادهٔ واقعی سری‌های زمانی پس از اتصال به سرویس ماهواره و پایلوت، در همین نمودار زنده می‌شود.'
           : 'The chart above is an illustrative sample of the monitoring output; real time-series data goes live here once the satellite service and pilot are connected.'}

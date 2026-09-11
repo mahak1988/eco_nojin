@@ -6,16 +6,15 @@ it is unit-testable; the API layer wires persistence later.
 """
 
 from __future__ import annotations
+
+from collections.abc import Callable
+from datetime import date, timedelta
+from typing import Any
+
 import structlog
 
-logger = structlog.get_logger()
-
-import logging
-from datetime import date, timedelta
-from typing import Any, Callable
-
+from engine.hydroma.simulation import weather_source
 from engine.hydroma.simulation.contracts import (
-    AquaCropInput,
     ChainInputs,
     ChainResult,
     HECRASInput,
@@ -23,6 +22,7 @@ from engine.hydroma.simulation.contracts import (
     MonthClimate,
     RothCInput,
     RUSLEInput,
+    ScenarioParams,
     SWATInput,
     SWATOutput,
     WEAPInput,
@@ -30,11 +30,10 @@ from engine.hydroma.simulation.contracts import (
 )
 from engine.hydroma.simulation.hecras import simulate_hecras
 from engine.hydroma.simulation.runners.aquacrop_runner import AquaCropRunner
-from engine.hydroma.simulation.weather_source import growing_season_window
-from engine.hydroma.simulation import weather_source
 from engine.hydroma.simulation.weap import simulate_weap
+from engine.hydroma.simulation.weather_source import growing_season_window
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 
 def _rusle(r_factor: float, k_factor: float, ls_factor: float, c_factor: float, p_factor: float) -> float:
@@ -213,15 +212,6 @@ def run_chain(inputs: ChainInputs, progress_cb: Callable[[str, int], None] | Non
             except Exception as exc:
                 logger.warning("Weather fetch failed: %s", exc)
                 weather_failed = True
-        aquacrop_in = AquaCropInput(
-            land_profile_id=inputs.site_id,
-            crop_type=inputs.crop,
-            climate_data=[],
-            soil_data=[],
-            irrigation_data=[],
-            planting_date=inputs.planting_date,
-            harvest_date=inputs.harvest_date,
-        )
         aquacrop_out = AquaCropRunner().run(
             crop=inputs.crop,
             soil_type=inputs.soil_type,

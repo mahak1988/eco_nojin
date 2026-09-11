@@ -321,7 +321,9 @@ class ScientificDataRepository:
 
     def get_all_sites(self) -> pl.DataFrame:
         """دریافت لیست تمام سایت‌ها"""
-        return self._conn.execute("SELECT * FROM ref_sites ORDER BY %s", (self.SITE_ID_COL,)).pl()
+        from services.security.query_safe import _safe_ident
+        col = _safe_ident(self.SITE_ID_COL)
+        return self._conn.execute(f"SELECT * FROM ref_sites ORDER BY {col}").pl()
 
     def get_sites_in_critical_plains(self) -> pl.DataFrame:
         """دریافت سایت‌های بحرانی (فعلاً تمام سایت‌ها)"""

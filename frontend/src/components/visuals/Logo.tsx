@@ -49,8 +49,8 @@ export default function Logo({ size = 40, withWordmark = true, wordmark }: LogoP
       </svg>
       {withWordmark ? (
         <span className="flex flex-col leading-tight">
-          <span className="text-lg font-extrabold text-emerald-50">{wordmark}</span>
-          <span className="text-[10px] font-medium tracking-[0.2em] text-leaf-300/80">
+          <span className="text-lg font-extrabold text-[var(--color-night-100)]">{wordmark}</span>
+          <span className="text-[10px] font-medium tracking-[0.2em] text-[var(--color-leaf-300)]/80">
             ECO NOJIN
           </span>
         </span>

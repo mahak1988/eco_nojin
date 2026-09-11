@@ -11,6 +11,7 @@ import {
   Droplets,
   FlaskConical,
   Globe,
+  Leaf,
   Layers,
   MessageSquare,
   Mic,
@@ -20,8 +21,11 @@ import {
   Route,
   Satellite,
   Server,
+  Shield,
   Sprout,
   Store,
+  Users,
+  BarChart3,
 } from 'lucide-react';
 import type { IconKey } from '../../content/site';
 
@@ -49,6 +53,10 @@ const iconMap: Record<IconKey, LucideIcon> = {
   server: Server,
   database: Database,
   route: Route,
+  shield: Shield,
+  leaf: Leaf,
+  people: Users,
+  co2: BarChart3,
 };
 
 interface IconProps {

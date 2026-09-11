@@ -22,7 +22,7 @@ import {
 } from '../../lib/hydromamodels';
 
 const inputCls =
-  'w-full rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-emerald-50 focus:border-leaf-400/60 focus:outline-none';
+  'w-full rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-[var(--color-night-100)] focus:border-[var(--color-leaf-400)]/60 focus:outline-none';
 
 /** Bilingual labels for all dashboard calculators (shared with ModelDetail). */
 export function buildCalculatorLabels(lang: 'fa' | 'en') {
@@ -94,8 +94,8 @@ function Field({
 }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-[11px] font-bold text-emerald-100/60">
-        {label} {suffix ? <span className="text-emerald-100/35">({suffix})</span> : null}
+      <span className="text-[11px] font-bold text-[var(--color-night-200)]/60">
+        {label} {suffix ? <span className="text-[var(--color-night-200)]/35">({suffix})</span> : null}
       </span>
       <input
         type="number"
@@ -112,9 +112,9 @@ function Field({
 function Result({ label, value, unit }: { label: string; value: string; unit?: string }) {
   return (
     <div className="glass rounded-xl px-3 py-2">
-      <p className="text-[10px] text-emerald-100/45">{label}</p>
-      <p className="text-sm font-extrabold text-leaf-300" dir="ltr">
-        {value} <span className="text-[10px] font-bold text-emerald-100/45">{unit}</span>
+      <p className="text-[10px] text-[var(--color-night-200)]/45">{label}</p>
+      <p className="text-sm font-extrabold text-[var(--color-leaf-300)]" dir="ltr">
+        {value} <span className="text-[10px] font-bold text-[var(--color-night-200)]/45">{unit}</span>
       </p>
     </div>
   );
@@ -151,11 +151,11 @@ function HubSubmitButton({
           }
         }}
         disabled={hubStatus === 'sending'}
-        className="rounded-full bg-aqua-500/15 px-4 py-1.5 text-[11px] font-extrabold text-aqua-300 transition-colors hover:bg-aqua-500/25 disabled:opacity-60"
+        className="rounded-full bg-[var(--color-aqua-500)]/15 px-4 py-1.5 text-[11px] font-extrabold text-[var(--color-aqua-300)] transition-colors hover:bg-[var(--color-aqua-500)]/25 disabled:opacity-60"
       >
         {hubStatus === 'sending' ? '…' : labels.button}
       </button>
-      {hubStatus === 'ok' ? <p className="text-[10px] font-bold text-leaf-300">{labels.ok}</p> : null}
+      {hubStatus === 'ok' ? <p className="text-[10px] font-bold text-[var(--color-leaf-300)]">{labels.ok}</p> : null}
       {hubStatus === 'error' ? (
         <p role="alert" className="text-[10px] font-bold text-red-300">
           {labels.error}
@@ -175,15 +175,15 @@ function CalcShell({
   children: ReactNode;
 }) {
   return (
-    <details className="glass group rounded-3xl open:border-leaf-500/30">
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-5 text-sm font-extrabold text-emerald-50 marker:content-none [&::-webkit-details-marker]:hidden">
+    <details className="glass group rounded-3xl open:border-[var(--color-leaf-500)]/30">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-5 text-sm font-extrabold text-[var(--color-night-100)] marker:content-none [&::-webkit-details-marker]:hidden">
         {title}
-        <span className="text-leaf-400 transition-transform group-open:rotate-45" aria-hidden>
+        <span className="text-[var(--color-leaf-400)] transition-transform group-open:rotate-45" aria-hidden>
           +
         </span>
       </summary>
       <div className="flex flex-col gap-4 border-t border-white/8 p-5">
-        <p className="rounded-xl bg-black/30 px-4 py-2 text-center text-xs font-bold text-aqua-300" dir="ltr">
+        <p className="rounded-xl bg-black/30 px-4 py-2 text-center text-xs font-bold text-[var(--color-aqua-300)]" dir="ltr">
           {formula}
         </p>
         {children}

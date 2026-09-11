@@ -11,7 +11,6 @@ from engine.hydroma.simulation.calibration import (
     ishigami,
     saltelli_matrices,
     sensitivity_of_metric,
-    sobol_indices,
 )
 
 ISHIGAMI_BOUNDS = [(-np.pi, np.pi)] * 3
@@ -34,7 +33,7 @@ class TestSaltelliMatrices:
 class TestIshigamiIndices:
     def test_first_order_indices(self):
         result = sensitivity_of_metric(ishigami, ISHIGAMI_BOUNDS, n=8192, seed=42)
-        s1, st = result["S1"], result["ST"]
+        s1 = result["S1"]
         assert s1[0] == pytest.approx(0.3139, abs=0.04)
         assert s1[1] == pytest.approx(0.4424, abs=0.04)
         assert s1[2] == pytest.approx(0.0, abs=0.02)

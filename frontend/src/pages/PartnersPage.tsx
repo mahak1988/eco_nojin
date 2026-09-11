@@ -23,8 +23,8 @@ export default function PartnersPage() {
             {c.who.map((item, index) => (
               <Reveal key={item.title} delay={(index % 2) * 0.07}>
                 <div className="glass glass-hover h-full rounded-3xl p-6">
-                  <h3 className="text-base font-extrabold text-emerald-50">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-7 text-emerald-100/60">{item.desc}</p>
+                  <h3 className="text-base font-extrabold text-[var(--color-night-100)]">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-7 text-[var(--color-night-200)]/60">{item.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -39,16 +39,16 @@ export default function PartnersPage() {
             {c.models.map((model, index) => (
               <Reveal key={model.title} delay={index * 0.07}>
                 <div className="ring-glow flex h-full flex-col gap-2 rounded-3xl bg-gradient-to-b from-leaf-600/15 to-night-900 p-6">
-                  <h3 className="text-base font-extrabold text-emerald-50">{model.title}</h3>
-                  <p className="text-sm leading-7 text-emerald-100/65">{model.desc}</p>
+                  <h3 className="text-base font-extrabold text-[var(--color-night-100)]">{model.title}</h3>
+                  <p className="text-sm leading-7 text-[var(--color-night-200)]/65">{model.desc}</p>
                 </div>
               </Reveal>
             ))}
           </div>
           <Reveal>
             <div className="glass rounded-3xl p-8">
-              <h2 className="text-lg font-extrabold text-emerald-50">{c.ctaTitle}</h2>
-              <p className="mt-2 text-sm leading-8 text-emerald-100/65">{c.ctaBody}</p>
+              <h2 className="text-lg font-extrabold text-[var(--color-night-100)]">{c.ctaTitle}</h2>
+              <p className="mt-2 text-sm leading-8 text-[var(--color-night-200)]/65">{c.ctaBody}</p>
             </div>
           </Reveal>
         </div>

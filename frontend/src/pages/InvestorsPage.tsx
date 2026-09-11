@@ -22,8 +22,8 @@ export default function InvestorsPage() {
             {c.problem.map((item, index) => (
               <Reveal key={item.title} delay={index * 0.07}>
                 <div className="glass glass-hover h-full rounded-3xl p-6">
-                  <h3 className="text-base font-extrabold text-leaf-300">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-7 text-emerald-100/60">{item.desc}</p>
+                  <h3 className="text-base font-extrabold text-[var(--color-leaf-300)]">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-7 text-[var(--color-night-200)]/60">{item.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -35,11 +35,11 @@ export default function InvestorsPage() {
         <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-2">
           <Reveal>
             <div className="glass h-full rounded-3xl p-8">
-              <h2 className="text-lg font-extrabold text-emerald-50">{c.solutionTitle}</h2>
+              <h2 className="text-lg font-extrabold text-[var(--color-night-100)]">{c.solutionTitle}</h2>
               <ul className="mt-4 flex flex-col gap-3">
                 {c.solution.map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm leading-7 text-emerald-100/65">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-leaf-400" aria-hidden />
+                  <li key={item} className="flex items-start gap-3 text-sm leading-7 text-[var(--color-night-200)]/65">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-leaf-400)]" aria-hidden />
                     {item}
                   </li>
                 ))}
@@ -48,11 +48,11 @@ export default function InvestorsPage() {
           </Reveal>
           <Reveal delay={0.08}>
             <div className="glass h-full rounded-3xl p-8">
-              <h2 className="text-lg font-extrabold text-emerald-50">{c.statusTitle}</h2>
+              <h2 className="text-lg font-extrabold text-[var(--color-night-100)]">{c.statusTitle}</h2>
               <ul className="mt-4 flex flex-col gap-3">
                 {c.status.map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm leading-7 text-emerald-100/65">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-aqua-400" aria-hidden />
+                  <li key={item} className="flex items-start gap-3 text-sm leading-7 text-[var(--color-night-200)]/65">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-aqua-400)]" aria-hidden />
                     {item}
                   </li>
                 ))}
@@ -65,11 +65,11 @@ export default function InvestorsPage() {
       <section className="px-4 pb-10 sm:px-6" id="round">
         <Reveal className="mx-auto max-w-4xl">
           <div className="ring-glow flex flex-col items-start gap-4 rounded-[2rem] bg-gradient-to-b from-leaf-600/25 to-night-900 p-8 sm:p-10">
-            <h2 className="text-2xl font-extrabold text-emerald-50">{c.roundTitle}</h2>
-            <p className="text-sm leading-8 text-emerald-100/70">{c.roundBody}</p>
+            <h2 className="text-2xl font-extrabold text-[var(--color-night-100)]">{c.roundTitle}</h2>
+            <p className="text-sm leading-8 text-[var(--color-night-200)]/70">{c.roundBody}</p>
             <a
               href={`mailto:${t.about.email}?subject=${encodeURIComponent(`[${c.kicker}] Pitch deck request`)}`}
-              className="ring-glow inline-flex items-center gap-2 rounded-full bg-leaf-500 px-6 py-3 text-sm font-extrabold text-night-950 transition-transform hover:scale-[1.03]"
+              className="ring-glow inline-flex items-center gap-2 rounded-full bg-[var(--color-leaf-500)] px-6 py-3 text-sm font-extrabold text-[var(--color-night-950)] transition-transform hover:scale-[1.03]"
             >
               {c.deckCta}
               <ArrowLeftIcon dir={dir} />

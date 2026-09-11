@@ -78,7 +78,7 @@ class TestRothC:
         assert result["co2e_t_ha"] == pytest.approx(result["soc_change_t_ha_yr"] * 3.67, abs=0.01)
 
     def test_empty_climate_rejected(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="monthly climate list must not be empty"):
             run_rothc(50.0, 25.0, [])
 
     def test_multi_year_run(self):

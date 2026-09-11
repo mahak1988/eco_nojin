@@ -4,6 +4,7 @@
 export interface SupportGuide {
   title: string;
   steps: string[];
+  guideLink?: string;
 }
 
 export interface SupportContent {
@@ -28,6 +29,7 @@ export const support = {
     guidesTitle: 'راهنمای کانال‌ها',
     ussd: {
       title: 'USSD — بدون اینترنت',
+      guideLink: '/ussd-guide',
       steps: [
         'کد USSD پلتفرم را در برنامهٔ شماره‌گیری گوشی وارد و تماس بگیرید.',
         'منوی متنی روی صفحهٔ گوشی باز می‌شود؛ با اعداد گزینه‌ها را انتخاب کنید.',
@@ -46,6 +48,7 @@ export const support = {
     },
     voice: {
       title: 'دستیار صوتی',
+      guideLink: '/voice-guide',
       steps: [
         'از منوی تماس، گزینهٔ دستیار صوتی را انتخاب کنید.',
         'پرسش خود را به زبان خودتان بگویید.',
@@ -68,6 +71,7 @@ export const support = {
     guidesTitle: 'Channel guides',
     ussd: {
       title: 'USSD — no internet',
+      guideLink: '/ussd-guide',
       steps: [
         'Dial the platform’s USSD code from the phone app.',
         'A text menu opens on the screen; pick options with numbers.',
@@ -86,6 +90,7 @@ export const support = {
     },
     voice: {
       title: 'Voice assistant',
+      guideLink: '/voice-guide',
       steps: [
         'Pick the voice assistant option from the call menu.',
         'Ask your question in your own language.',

@@ -41,10 +41,10 @@ export default function StatusPage() {
 
   const badge =
     probe === 'online'
-      ? 'border-leaf-500/40 bg-leaf-500/12 text-leaf-300'
+      ? 'border-[var(--color-leaf-500)]/40 bg-[var(--color-leaf-500)]/12 text-[var(--color-leaf-300)]'
       : probe === 'offline'
         ? 'border-red-400/40 bg-red-400/10 text-red-300'
-        : 'border-white/15 bg-white/5 text-emerald-100/70';
+        : 'border-white/15 bg-white/5 text-[var(--color-night-200)]/70';
 
   return (
     <>
@@ -64,19 +64,19 @@ export default function StatusPage() {
                 {probe === 'online' ? c.online : probe === 'offline' ? c.offline : c.checking}
               </span>
               {probe !== 'checking' && latency !== null ? (
-                <p className="text-xs text-emerald-100/55">
+                <p className="text-xs text-[var(--color-night-200)]/55">
                   {c.latencyLabel}: <span dir="ltr">{latency} ms</span>
                 </p>
               ) : null}
               <button
                 type="button"
                 onClick={check}
-                className="glass glass-hover inline-flex items-center gap-2 rounded-full px-5 py-2 text-xs font-extrabold text-emerald-50"
+                className="glass glass-hover inline-flex items-center gap-2 rounded-full px-5 py-2 text-xs font-extrabold text-[var(--color-night-100)]"
               >
                 <RefreshCcw className="h-3.5 w-3.5" aria-hidden />
                 {c.refresh}
               </button>
-              <p className="text-[11px] text-emerald-100/35">{c.autoNote}</p>
+              <p className="text-[11px] text-[var(--color-night-200)]/35">{c.autoNote}</p>
             </div>
           </Reveal>
 
@@ -86,8 +86,8 @@ export default function StatusPage() {
               {c.scope.map((item, index) => (
                 <Reveal key={item} delay={index * 0.05}>
                   <li className="glass flex items-start gap-3 rounded-2xl p-4">
-                    <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-leaf-400" aria-hidden />
-                    <span className="text-sm leading-7 text-emerald-100/70">{item}</span>
+                    <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-leaf-400)]" aria-hidden />
+                    <span className="text-sm leading-7 text-[var(--color-night-200)]/70">{item}</span>
                   </li>
                 </Reveal>
               ))}
@@ -96,8 +96,8 @@ export default function StatusPage() {
 
           <div className="mt-10">
             <Reveal>
-              <h2 className="text-lg font-extrabold text-emerald-50">{c.incidentsTitle}</h2>
-              <p className="mt-2 text-sm leading-7 text-emerald-100/55">{c.incidentsNote}</p>
+              <h2 className="text-lg font-extrabold text-[var(--color-night-100)]">{c.incidentsTitle}</h2>
+              <p className="mt-2 text-sm leading-7 text-[var(--color-night-200)]/55">{c.incidentsNote}</p>
             </Reveal>
           </div>
         </div>

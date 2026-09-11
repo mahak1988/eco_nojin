@@ -3,7 +3,78 @@ import structlog
 
 logger = structlog.get_logger()
 import math
+from dataclasses import dataclass, field
 from typing import Any
+
+
+@dataclass
+class GroundwaterBucketInput:
+    """Inputs for simple linear-reservoir groundwater balance."""
+
+    initial_storage_mm: float = 200.0
+    recharge_mm: float = 50.0
+    pumping_mm: float = 0.0
+    alpha: float = 0.03
+    rcoeff: float = 0.15
+    soil_water_mm: float = 150.0
+    months: int = 12
+
+
+@dataclass
+class GroundwaterBucketOutput:
+    """Outputs from simple linear-reservoir groundwater balance."""
+
+    storage_series_mm: list[float] = field(default_factory=list)
+    baseflow_series_mm: list[float] = field(default_factory=list)
+    recharge_series_mm: list[float] = field(default_factory=list)
+    pumping_series_mm: list[float] = field(default_factory=list)
+    final_storage_mm: float = 0.0
+    total_baseflow_mm: float = 0.0
+    total_recharge_mm: float = 0.0
+    total_pumping_mm: float = 0.0
+    data_source: str = "simulated"
+    model: str = "Groundwater bucket (linear reservoir)"
+
+
+def run_groundwater_bucket(inputs: GroundwaterBucketInput) -> GroundwaterBucketOutput:
+    """Run monthly groundwater balance with linear reservoir."""
+    storage = max(inputs.initial_storage_mm, 0.0)
+    storage_series: list[float] = []
+    baseflow_series: list[float] = []
+    recharge_series: list[float] = []
+    pumping_series: list[float] = []
+
+    total_baseflow = 0.0
+    total_recharge = 0.0
+    total_pumping = 0.0
+
+    for _ in range(inputs.months):
+        recharge = max(inputs.soil_water_mm * inputs.rcoeff, 0.0)
+        baseflow = max(storage * inputs.alpha, 0.0)
+        pumping = max(inputs.pumping_mm, 0.0)
+
+        storage = storage + recharge - baseflow - pumping
+        storage = max(storage, 0.0)
+
+        storage_series.append(round(storage, 4))
+        baseflow_series.append(round(baseflow, 4))
+        recharge_series.append(round(recharge, 4))
+        pumping_series.append(round(pumping, 4))
+
+        total_baseflow += baseflow
+        total_recharge += recharge
+        total_pumping += pumping
+
+    return GroundwaterBucketOutput(
+        storage_series_mm=storage_series,
+        baseflow_series_mm=baseflow_series,
+        recharge_series_mm=recharge_series,
+        pumping_series_mm=pumping_series,
+        final_storage_mm=round(storage, 4),
+        total_baseflow_mm=round(total_baseflow, 4),
+        total_recharge_mm=round(total_recharge, 4),
+        total_pumping_mm=round(total_pumping, 4),
+    )
 
 
 def estimate_aquifer_properties(hydraulic_conductivity_m_s: float,

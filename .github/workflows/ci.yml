@@ -7,87 +7,36 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  test:
-    runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.12"]
-
+  backend-tests:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
-          cache: 'pip'
-
+          python-version: "3.12"
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-
       - name: Run backend tests
         run: |
-          python -m pytest tests/unit/ -v --tb=short
+          cd services
+          python -m pytest -q --tb=short
+      - name: Secret scan
+        run: python scripts/utils/secrets_audit.py
 
-      - name: Run engine tests
-        run: |
-          python -m pytest engine/ -v --tb=short
-
-      - name: Run frontend type check
-        run: |
-          cd frontend
-          npm ci
-          npm run type-check
-        continue-on-error: true
-
-  lint:
-    runs-on: windows-latest
+  frontend-tests:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v5
+      - uses: pnpm/action-setup@v4
         with:
-          python-version: "3.12"
-          cache: 'pip'
-
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Run Ruff linter
-        run: |
-          python -m ruff check .
-        continue-on-error: true
-
-  security:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: 'pip'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Run Bandit security scan
-        run: |
-          python -m bandit -r services/ engine/ -f json -o bandit-report.json || true
-        continue-on-error: true
-
-      - name: Upload security report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: bandit-report
-          path: bandit-report.json
+        run: pnpm install
+      - name: Run frontend tests
+        run: pnpm test

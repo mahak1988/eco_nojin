@@ -35,8 +35,8 @@ export default function Navbar() {
   const linkCls = ({ isActive }: { isActive: boolean }) =>
     `rounded-full px-4 py-2 text-sm font-bold transition-colors ${
       isActive
-        ? 'bg-leaf-500/15 text-leaf-300'
-        : 'text-emerald-100/70 hover:bg-white/5 hover:text-emerald-50'
+        ? 'bg-[var(--color-leaf-500)]/15 text-[var(--color-leaf-300)]'
+        : 'text-[var(--color-night-200)]/70 hover:bg-white/5 hover:text-[var(--color-night-100)]'
     }`;
 
   return (
@@ -64,9 +64,9 @@ export default function Navbar() {
             type="button"
             onClick={toggle}
             aria-label={lang === 'fa' ? 'Switch to English' : 'تغییر به فارسی'}
-            className="glass glass-hover inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-extrabold text-emerald-50"
+            className="glass glass-hover inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-extrabold text-[var(--color-night-100)]"
           >
-            <Languages className="h-4 w-4 text-leaf-300" aria-hidden />
+            <Languages className="h-4 w-4 text-[var(--color-leaf-300)]" aria-hidden />
             {t.nav.langLabel}
           </button>
 
@@ -76,7 +76,7 @@ export default function Navbar() {
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-label={open ? 'Close menu' : 'Open menu'}
-            className="glass inline-flex rounded-full p-2.5 text-emerald-50 lg:hidden"
+            className="glass inline-flex rounded-full p-2.5 text-[var(--color-night-100)] lg:hidden"
           >
             {open ? <X className="h-5 w-5" aria-hidden /> : <Menu className="h-5 w-5" aria-hidden />}
           </button>
@@ -93,7 +93,7 @@ export default function Navbar() {
               end={link.to === '/'}
               className={({ isActive }) =>
                 `rounded-xl px-4 py-3 text-sm font-bold ${
-                  isActive ? 'bg-leaf-500/15 text-leaf-300' : 'text-emerald-100/75 hover:bg-white/5'
+                  isActive ? 'bg-[var(--color-leaf-500)]/15 text-[var(--color-leaf-300)]' : 'text-[var(--color-night-200)]/75 hover:bg-white/5'
                 }`
               }
             >

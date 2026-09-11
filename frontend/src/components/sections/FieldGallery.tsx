@@ -106,18 +106,18 @@ export default function FieldGallery() {
           <figure className="glass glass-hover h-full overflow-hidden rounded-3xl">
             <div className="relative h-32 w-full">
               <FieldShape card={card} />
-              <span className="absolute bottom-2 end-2 rounded-full bg-black/50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-100/80">
+              <span className="absolute bottom-2 end-2 rounded-full bg-black/50 px-2.5 py-0.5 text-[10px] font-bold text-[var(--color-night-200)]/80">
                 NDVI ▲
               </span>
             </div>
             <figcaption className="p-5">
-              <h3 className="text-sm font-extrabold text-emerald-50">{titles[card.title].title}</h3>
-              <p className="mt-1.5 text-xs leading-6 text-emerald-100/60">{titles[card.title].desc}</p>
+              <h3 className="text-sm font-extrabold text-[var(--color-night-100)]">{titles[card.title].title}</h3>
+              <p className="mt-1.5 text-xs leading-6 text-[var(--color-night-200)]/60">{titles[card.title].desc}</p>
             </figcaption>
           </figure>
         </Reveal>
       ))}
-      <p className="col-span-full text-center text-[11px] text-emerald-100/35">
+      <p className="col-span-full text-center text-[11px] text-[var(--color-night-200)]/35">
         {lang === 'fa'
           ? 'تصاویر بالا مفهومی و SVG هستند؛ عکس‌های واقعی میدان با نخستین پایلوت در همین گالری منتشر می‌شود.'
           : 'The visuals above are conceptual SVGs; real field photos will be published in this gallery with the first pilot.'}

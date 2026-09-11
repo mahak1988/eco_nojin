@@ -20,15 +20,15 @@ export default function SectionHeading({
 
   return (
     <Reveal className={`flex flex-col gap-3 ${alignCls}`}>
-      <span className="inline-flex items-center gap-2 rounded-full border border-leaf-500/30 bg-leaf-500/10 px-4 py-1 text-xs font-bold tracking-wide text-leaf-300">
-        <span className="h-1.5 w-1.5 rounded-full bg-leaf-400 animate-pulse-soft" aria-hidden />
+      <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-leaf-500)]/30 bg-[var(--color-leaf-500)]/10 px-4 py-1 text-xs font-bold tracking-wide text-[var(--color-leaf-300)]">
+        <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-leaf-400)] animate-pulse-soft" aria-hidden />
         {kicker}
       </span>
-      <h2 className="max-w-2xl text-3xl font-extrabold leading-snug text-emerald-50 sm:text-4xl">
+      <h2 className="max-w-2xl text-3xl font-extrabold leading-snug text-[var(--color-night-100)] sm:text-4xl">
         {title}
       </h2>
       {lead ? (
-        <p className={`max-w-2xl text-base leading-8 text-emerald-100/60 ${lang === 'fa' ? 'sm:text-[17px]' : ''}`}>
+        <p className={`max-w-2xl text-base leading-8 text-[var(--color-night-200)]/60 ${lang === 'fa' ? 'sm:text-[17px]' : ''}`}>
           {lead}
         </p>
       ) : null}

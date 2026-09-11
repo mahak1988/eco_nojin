@@ -98,7 +98,7 @@ export default function FieldScene() {
         />
 
         {/* frame caption */}
-        <span className="absolute bottom-3 start-4 text-[10px] tracking-widest text-emerald-100/40">
+        <span className="absolute bottom-3 start-4 text-[10px] tracking-widest text-[var(--color-night-200)]/40">
           {t.common.conceptual.toUpperCase()}
         </span>
       </div>
@@ -107,7 +107,7 @@ export default function FieldScene() {
       {chips.map((chip) => (
         <motion.span
           key={chip.label}
-          className={`glass absolute z-10 rounded-full px-3.5 py-1.5 text-xs font-bold text-emerald-50 shadow-lg ${chip.cls}`}
+          className={`glass absolute z-10 rounded-full px-3.5 py-1.5 text-xs font-bold text-[var(--color-night-100)] shadow-lg ${chip.cls}`}
           initial={{ opacity: 0, scale: 0.8 }}
           animate={reduceMotion ? { opacity: 1, scale: 1 } : { opacity: 1, scale: 1 }}
           transition={{ delay: 0.6 + chip.delay * 0.4, duration: 0.5 }}

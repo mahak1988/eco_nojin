@@ -52,26 +52,26 @@ export default function SettingsPage() {
   };
 
   const inputCls =
-    'w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-emerald-50 focus:border-leaf-400/60 focus:outline-none';
+    'w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-[var(--color-night-100)] focus:border-[var(--color-leaf-400)]/60 focus:outline-none';
 
   return (
     <>
       <Seo title={`${c.title} | ${t.brand.name}`} description={c.lead} path="/dashboard/settings" />
       <Reveal className="flex flex-col gap-3">
-        <span className="inline-flex w-fit items-center gap-2 rounded-full border border-leaf-500/30 bg-leaf-500/10 px-4 py-1 text-xs font-bold text-leaf-300">
+        <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[var(--color-leaf-500)]/30 bg-[var(--color-leaf-500)]/10 px-4 py-1 text-xs font-bold text-[var(--color-leaf-300)]">
           <Server className="h-3.5 w-3.5" aria-hidden />
           {c.kicker}
         </span>
-        <h1 className="text-2xl font-extrabold text-emerald-50 sm:text-3xl">{c.title}</h1>
-        <p className="max-w-2xl text-sm leading-7 text-emerald-100/60">{c.lead}</p>
+        <h1 className="text-2xl font-extrabold text-[var(--color-night-100)] sm:text-3xl">{c.title}</h1>
+        <p className="max-w-2xl text-sm leading-7 text-[var(--color-night-200)]/60">{c.lead}</p>
       </Reveal>
 
       <div className="mt-6 flex flex-col gap-5">
         {/* API base */}
         <Reveal delay={0.05}>
           <div className="glass flex flex-col gap-3 rounded-3xl p-7">
-            <h2 className="text-sm font-extrabold text-emerald-50">{c.apiTitle}</h2>
-            <p className="text-xs leading-6 text-emerald-100/55">{c.apiHint}</p>
+            <h2 className="text-sm font-extrabold text-[var(--color-night-100)]">{c.apiTitle}</h2>
+            <p className="text-xs leading-6 text-[var(--color-night-200)]/55">{c.apiHint}</p>
             <div className="flex flex-col gap-2 sm:flex-row">
               <input
                 type="url"
@@ -87,13 +87,13 @@ export default function SettingsPage() {
               <button
                 type="button"
                 onClick={saveApi}
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-leaf-500 px-4 py-2.5 text-xs font-extrabold text-night-950 transition-transform hover:scale-[1.02]"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-[var(--color-leaf-500)] px-4 py-2.5 text-xs font-extrabold text-[var(--color-night-950)] transition-transform hover:scale-[1.02]"
               >
                 {apiSaved ? <Check className="h-3.5 w-3.5" aria-hidden /> : null}
                 {c.apiSave}
               </button>
             </div>
-            {apiSaved ? <p className="text-[11px] font-bold text-leaf-300">{c.apiSaved}</p> : null}
+            {apiSaved ? <p className="text-[11px] font-bold text-[var(--color-leaf-300)]">{c.apiSaved}</p> : null}
             {apiError ? (
               <p role="alert" className="text-[11px] font-bold text-red-300">
                 {c.apiInvalid}
@@ -106,15 +106,15 @@ export default function SettingsPage() {
         <Reveal delay={0.1}>
           <div className="glass flex flex-col gap-3 rounded-3xl p-7 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-col gap-1">
-              <h2 className="text-sm font-extrabold text-emerald-50">{c.langTitle}</h2>
-              <p className="text-xs text-emerald-100/55">{c.langHint}</p>
+              <h2 className="text-sm font-extrabold text-[var(--color-night-100)]">{c.langTitle}</h2>
+              <p className="text-xs text-[var(--color-night-200)]/55">{c.langHint}</p>
             </div>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setLang('fa')}
                 aria-pressed={lang === 'fa'}
-                className={`rounded-full px-4 py-1.5 text-xs font-extrabold ${lang === 'fa' ? 'bg-leaf-500 text-night-950' : 'bg-white/8 text-emerald-100/70'}`}
+                className={`rounded-full px-4 py-1.5 text-xs font-extrabold ${lang === 'fa' ? 'bg-[var(--color-leaf-500)] text-[var(--color-night-950)]' : 'bg-white/8 text-[var(--color-night-200)]/70'}`}
               >
                 فارسی
               </button>
@@ -122,7 +122,7 @@ export default function SettingsPage() {
                 type="button"
                 onClick={() => setLang('en')}
                 aria-pressed={lang === 'en'}
-                className={`rounded-full px-4 py-1.5 text-xs font-extrabold ${lang === 'en' ? 'bg-leaf-500 text-night-950' : 'bg-white/8 text-emerald-100/70'}`}
+                className={`rounded-full px-4 py-1.5 text-xs font-extrabold ${lang === 'en' ? 'bg-[var(--color-leaf-500)] text-[var(--color-night-950)]' : 'bg-white/8 text-[var(--color-night-200)]/70'}`}
               >
                 English
               </button>
@@ -133,22 +133,22 @@ export default function SettingsPage() {
         {/* endpoints reference */}
         <Reveal delay={0.12}>
           <div className="glass rounded-3xl p-7">
-            <h2 className="text-sm font-extrabold text-emerald-50">{c.endpointsTitle}</h2>
+            <h2 className="text-sm font-extrabold text-[var(--color-night-100)]">{c.endpointsTitle}</h2>
             <div className="mt-3 flex flex-col gap-2">
               {c.endpoints.map((endpoint) => (
                 <div key={endpoint.method + endpoint.path} className="flex flex-wrap items-center gap-2 rounded-xl bg-black/25 px-3 py-2">
                   <span
                     className={`rounded-md px-2 py-0.5 text-[10px] font-extrabold ${
-                      endpoint.method === 'GET' ? 'bg-aqua-500/15 text-aqua-300' : 'bg-leaf-500/15 text-leaf-300'
+                      endpoint.method === 'GET' ? 'bg-[var(--color-aqua-500)]/15 text-[var(--color-aqua-300)]' : 'bg-[var(--color-leaf-500)]/15 text-[var(--color-leaf-300)]'
                     }`}
                     dir="ltr"
                   >
                     {endpoint.method}
                   </span>
-                  <span className="text-[11px] text-emerald-100/70" dir="ltr">
+                  <span className="text-[11px] text-[var(--color-night-200)]/70" dir="ltr">
                     {endpoint.path}
                   </span>
-                  <span className="ms-auto text-[11px] text-emerald-100/45">{endpoint.desc}</span>
+                  <span className="ms-auto text-[11px] text-[var(--color-night-200)]/45">{endpoint.desc}</span>
                 </div>
               ))}
             </div>
@@ -158,11 +158,11 @@ export default function SettingsPage() {
         {/* local data */}
         <Reveal delay={0.15}>
           <div className="glass flex flex-col gap-3 rounded-3xl p-7">
-            <h2 className="flex items-center gap-2 text-sm font-extrabold text-emerald-50">
+            <h2 className="flex items-center gap-2 text-sm font-extrabold text-[var(--color-night-100)]">
               <Trash2 className="h-4 w-4 text-red-300" aria-hidden />
               {c.dataTitle}
             </h2>
-            <p className="text-xs leading-6 text-emerald-100/55">{c.dataHint}</p>
+            <p className="text-xs leading-6 text-[var(--color-night-200)]/55">{c.dataHint}</p>
             <button
               type="button"
               onClick={clearLocal}

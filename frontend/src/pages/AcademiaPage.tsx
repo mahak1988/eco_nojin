@@ -44,7 +44,7 @@ export default function AcademiaPage() {
   };
 
   const inputCls =
-    'w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-emerald-50 placeholder:text-emerald-100/30 focus:border-leaf-400/60 focus:outline-none';
+    'w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-[var(--color-night-100)] placeholder:text-[var(--color-night-200)]/30 focus:border-[var(--color-leaf-400)]/60 focus:outline-none';
 
   return (
     <>
@@ -58,19 +58,19 @@ export default function AcademiaPage() {
             {c.models.map((model, index) => (
               <Reveal key={model.title} delay={index * 0.07}>
                 <div className="glass glass-hover h-full rounded-3xl p-6">
-                  <h3 className="text-base font-extrabold text-emerald-50">{model.title}</h3>
-                  <p className="mt-2 text-sm leading-7 text-emerald-100/60">{model.desc}</p>
+                  <h3 className="text-base font-extrabold text-[var(--color-night-100)]">{model.title}</h3>
+                  <p className="mt-2 text-sm leading-7 text-[var(--color-night-200)]/60">{model.desc}</p>
                 </div>
               </Reveal>
             ))}
           </div>
           <Reveal>
             <div className="glass rounded-3xl p-7">
-              <h2 className="text-base font-extrabold text-emerald-50">{c.provideTitle}</h2>
+              <h2 className="text-base font-extrabold text-[var(--color-night-100)]">{c.provideTitle}</h2>
               <ul className="mt-3 flex flex-col gap-2.5">
                 {c.provide.map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm leading-7 text-emerald-100/65">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-leaf-400" aria-hidden />
+                  <li key={item} className="flex items-start gap-3 text-sm leading-7 text-[var(--color-night-200)]/65">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-leaf-400)]" aria-hidden />
                     {item}
                   </li>
                 ))}
@@ -86,9 +86,9 @@ export default function AcademiaPage() {
           {status === 'success' ? (
             <Reveal className="mt-8">
               <div className="glass flex flex-col items-center gap-3 rounded-3xl p-10 text-center">
-                <CheckCircle2 className="h-12 w-12 text-leaf-400" aria-hidden />
-                <h3 className="text-lg font-extrabold text-emerald-50">{c.successTitle}</h3>
-                <p className="text-sm leading-7 text-emerald-100/65">{c.successNote}</p>
+                <CheckCircle2 className="h-12 w-12 text-[var(--color-leaf-400)]" aria-hidden />
+                <h3 className="text-lg font-extrabold text-[var(--color-night-100)]">{c.successTitle}</h3>
+                <p className="text-sm leading-7 text-[var(--color-night-200)]/65">{c.successNote}</p>
               </div>
             </Reveal>
           ) : (
@@ -96,20 +96,20 @@ export default function AcademiaPage() {
               <form onSubmit={handleSubmit} noValidate className="glass flex flex-col gap-4 rounded-3xl p-7">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="flex flex-col gap-1.5">
-                    <span className="text-xs font-bold text-emerald-100/70">{c.nameLabel}</span>
+                    <span className="text-xs font-bold text-[var(--color-night-200)]/70">{c.nameLabel}</span>
                     <input type="text" value={name} onChange={(e) => setName(e.target.value)} className={inputCls} required />
                   </label>
                   <label className="flex flex-col gap-1.5">
-                    <span className="text-xs font-bold text-emerald-100/70">{c.emailLabel}</span>
+                    <span className="text-xs font-bold text-[var(--color-night-200)]/70">{c.emailLabel}</span>
                     <input type="email" dir="ltr" value={email} onChange={(e) => setEmail(e.target.value)} className={inputCls} required />
                   </label>
                 </div>
                 <label className="flex flex-col gap-1.5">
-                  <span className="text-xs font-bold text-emerald-100/70">{c.affiliationLabel}</span>
+                  <span className="text-xs font-bold text-[var(--color-night-200)]/70">{c.affiliationLabel}</span>
                   <input type="text" value={affiliation} onChange={(e) => setAffiliation(e.target.value)} className={inputCls} required />
                 </label>
                 <label className="flex flex-col gap-1.5">
-                  <span className="text-xs font-bold text-emerald-100/70">{c.topicLabel}</span>
+                  <span className="text-xs font-bold text-[var(--color-night-200)]/70">{c.topicLabel}</span>
                   <textarea value={topic} onChange={(e) => setTopic(e.target.value)} rows={4} className={inputCls} required />
                 </label>
 
@@ -122,7 +122,7 @@ export default function AcademiaPage() {
                 <button
                   type="submit"
                   disabled={status === 'sending'}
-                  className="ring-glow inline-flex items-center justify-center gap-2 rounded-full bg-leaf-500 px-6 py-3 text-sm font-extrabold text-night-950 transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="ring-glow inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-leaf-500)] px-6 py-3 text-sm font-extrabold text-[var(--color-night-950)] transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <Send className="h-4 w-4" aria-hidden />
                   {status === 'sending' ? '…' : c.submitButton}

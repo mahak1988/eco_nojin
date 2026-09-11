@@ -1,0 +1,113 @@
+/* src/styles/tokens.css */
+/* CSS Custom Properties from Design System Tokens */
+
+:root {
+  /* Color Palette - Leaf */
+  --color-leaf-200: #b5f0cd;
+  --color-leaf-300: #7ee2a8;
+  --color-leaf-400: #4cd08a;
+  --color-leaf-500: #2fb36b;
+  --color-leaf-600: #1f9155;
+  --color-leaf-700: #177246;
+
+  /* Color Palette - Sand */
+  --color-sand-200: #f7e3bd;
+  --color-sand-300: #f2d49b;
+  --color-sand-400: #e6b96b;
+  --color-sand-500: #d49b3f;
+
+  /* Color Palette - Aqua */
+  --color-aqua-200: #c5ecf4;
+  --color-aqua-300: #7fd8e8;
+  --color-aqua-400: #45bcd4;
+  --color-aqua-500: #2a9bb5;
+
+  /* Color Palette - Night */
+  --color-night-950: #04100b;
+  --color-night-900: #071811;
+  --color-night-800: #0b241a;
+  --color-night-700: #12352a;
+
+  /* Spacing Scale */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 0.75rem;
+  --spacing-lg: 1rem;
+  --spacing-xl: 1.25rem;
+  --spacing-2xl: 1.5rem;
+  --spacing-3xl: 1.75rem;
+  --spacing-4xl: 2rem;
+  --spacing-5xl: 2.5rem;
+  --spacing-6xl: 3rem;
+
+  /* Font Sizes */
+  --font-xs: 0.75rem;
+  --font-sm: 0.875rem;
+  --font-base: 1rem;
+  --font-lg: 1.125rem;
+  --font-xl: 1.25rem;
+  --font-2xl: 1.5rem;
+  --font-3xl: 1.75rem;
+  --font-4xl: 2rem;
+  --font-5xl: 2.25rem;
+
+  /* Font Weights */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+
+  /* Border Radius */
+  --radius-sm: 0.125rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+  /* Animation Durations */
+  --duration-fast: 0.15s;
+  --duration-normal: 0.3s;
+  --duration-slow: 0.6s;
+  --duration-slower: 0.9s;
+
+  /* Z-Index */
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-overlay: 1200;
+  --z-modal: 1300;
+  --z-popover: 1400;
+  --z-tooltip: 1500;
+}
+
+/* Dark Theme (default) */
+:root,
+.dark {
+  --theme-bg: #04100b;
+  --theme-surface: rgba(212, 155, 63, 0.08);
+  --theme-surface-hover: rgba(212, 155, 63, 0.13);
+  --theme-border: rgba(212, 155, 63, 0.22);
+  --theme-text: #e6f2ea;
+  --theme-text-muted: rgba(230, 242, 234, 0.6);
+  --theme-text-dim: rgba(230, 242, 234, 0.4);
+}
+
+/* Light Theme */
+.light {
+  --theme-bg: #f7f5f0;
+  --theme-surface: rgba(180, 140, 80, 0.10);
+  --theme-surface-hover: rgba(180, 140, 80, 0.16);
+  --theme-border: rgba(180, 140, 80, 0.25);
+  --theme-text: #1a1510;
+  --theme-text-muted: rgba(26, 21, 16, 0.65);
+  --theme-text-dim: rgba(26, 21, 16, 0.45);
+}

@@ -202,7 +202,11 @@ class WatershedIntegrator:
         self._load_modules()
 
     def _load_modules(self):
-        """Load existing runoff pipeline if available (optional dependency)."""
+        """Load existing runoff pipeline if available (optional dependency).
+
+        Uses lazy import to avoid circular dependency between
+        ``engine.land.integration`` and ``services.map_engine.pipelines``.
+        """
         try:
             from services.map_engine.pipelines.runoff import RunoffPipeline
             self._runoff_pipeline = RunoffPipeline

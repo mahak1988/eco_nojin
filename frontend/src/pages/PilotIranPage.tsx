@@ -49,7 +49,7 @@ export default function PilotIranPage() {
   };
 
   const inputCls =
-    'w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-emerald-50 placeholder:text-emerald-100/30 focus:border-leaf-400/60 focus:outline-none';
+    'w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-[var(--color-night-100)] placeholder:text-[var(--color-night-200)]/30 focus:border-[var(--color-leaf-400)]/60 focus:outline-none';
 
   return (
     <>
@@ -60,11 +60,11 @@ export default function PilotIranPage() {
         <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-2">
           <Reveal>
             <div className="glass h-full rounded-3xl p-7">
-              <h2 className="text-lg font-extrabold text-emerald-50">{c.offerTitle}</h2>
+              <h2 className="text-lg font-extrabold text-[var(--color-night-100)]">{c.offerTitle}</h2>
               <ul className="mt-4 flex flex-col gap-3">
                 {c.offer.map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm leading-7 text-emerald-100/70">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-leaf-400" aria-hidden />
+                  <li key={item} className="flex items-start gap-3 text-sm leading-7 text-[var(--color-night-200)]/70">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-leaf-400)]" aria-hidden />
                     {item}
                   </li>
                 ))}
@@ -73,11 +73,11 @@ export default function PilotIranPage() {
           </Reveal>
           <Reveal delay={0.08}>
             <div className="glass h-full rounded-3xl p-7">
-              <h2 className="text-lg font-extrabold text-emerald-50">{c.eligibilityTitle}</h2>
+              <h2 className="text-lg font-extrabold text-[var(--color-night-100)]">{c.eligibilityTitle}</h2>
               <ul className="mt-4 flex flex-col gap-3">
                 {c.eligibility.map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm leading-7 text-emerald-100/70">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-aqua-400" aria-hidden />
+                  <li key={item} className="flex items-start gap-3 text-sm leading-7 text-[var(--color-night-200)]/70">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-aqua-400)]" aria-hidden />
                     {item}
                   </li>
                 ))}
@@ -93,9 +93,9 @@ export default function PilotIranPage() {
           {status === 'success' ? (
             <Reveal className="mt-8">
               <div className="glass flex flex-col items-center gap-3 rounded-3xl p-10 text-center">
-                <CheckCircle2 className="h-12 w-12 text-leaf-400" aria-hidden />
-                <h3 className="text-lg font-extrabold text-emerald-50">{c.successTitle}</h3>
-                <p className="text-sm leading-7 text-emerald-100/65">{c.successNote}</p>
+                <CheckCircle2 className="h-12 w-12 text-[var(--color-leaf-400)]" aria-hidden />
+                <h3 className="text-lg font-extrabold text-[var(--color-night-100)]">{c.successTitle}</h3>
+                <p className="text-sm leading-7 text-[var(--color-night-200)]/65">{c.successNote}</p>
               </div>
             </Reveal>
           ) : (
@@ -103,30 +103,30 @@ export default function PilotIranPage() {
               <form onSubmit={handleSubmit} noValidate className="glass flex flex-col gap-4 rounded-3xl p-7">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="flex flex-col gap-1.5">
-                    <span className="text-xs font-bold text-emerald-100/70">{c.nameLabel}</span>
+                    <span className="text-xs font-bold text-[var(--color-night-200)]/70">{c.nameLabel}</span>
                     <input type="text" value={name} onChange={(e) => setName(e.target.value)} className={inputCls} required />
                   </label>
                   <label className="flex flex-col gap-1.5">
-                    <span className="text-xs font-bold text-emerald-100/70">{c.phoneLabel}</span>
+                    <span className="text-xs font-bold text-[var(--color-night-200)]/70">{c.phoneLabel}</span>
                     <input type="tel" dir="ltr" value={phone} onChange={(e) => setPhone(e.target.value)} className={inputCls} required />
                   </label>
                   <label className="flex flex-col gap-1.5">
-                    <span className="text-xs font-bold text-emerald-100/70">{c.provinceLabel}</span>
+                    <span className="text-xs font-bold text-[var(--color-night-200)]/70">{c.provinceLabel}</span>
                     <input type="text" value={province} onChange={(e) => setProvince(e.target.value)} className={inputCls} required />
                   </label>
                   <label className="flex flex-col gap-1.5">
-                    <span className="text-xs font-bold text-emerald-100/70">{c.hectaresLabel}</span>
+                    <span className="text-xs font-bold text-[var(--color-night-200)]/70">{c.hectaresLabel}</span>
                     <input type="number" min="0" step="0.1" dir="ltr" value={hectares} onChange={(e) => setHectares(e.target.value)} className={inputCls} />
                   </label>
                   <label className="flex flex-col gap-1.5">
-                    <span className="text-xs font-bold text-emerald-100/70">{c.cropLabel}</span>
+                    <span className="text-xs font-bold text-[var(--color-night-200)]/70">{c.cropLabel}</span>
                     <input type="text" value={crop} onChange={(e) => setCrop(e.target.value)} className={inputCls} />
                   </label>
                   <label className="flex flex-col gap-1.5">
-                    <span className="text-xs font-bold text-emerald-100/70">{c.channelLabel}</span>
+                    <span className="text-xs font-bold text-[var(--color-night-200)]/70">{c.channelLabel}</span>
                     <select value={channel} onChange={(e) => setChannel(e.target.value)} className={inputCls}>
                       {c.channels.map((option) => (
-                        <option key={option} value={option} className="bg-night-900 text-emerald-50">
+                        <option key={option} value={option} className="bg-[var(--color-night-900)] text-[var(--color-night-100)]">
                           {option}
                         </option>
                       ))}
@@ -134,7 +134,7 @@ export default function PilotIranPage() {
                   </label>
                 </div>
 
-                <label className="flex items-start gap-3 text-xs leading-6 text-emerald-100/70">
+                <label className="flex items-start gap-3 text-xs leading-6 text-[var(--color-night-200)]/70">
                   <input
                     type="checkbox"
                     checked={consent}
@@ -154,7 +154,7 @@ export default function PilotIranPage() {
                 <button
                   type="submit"
                   disabled={status === 'sending'}
-                  className="ring-glow inline-flex items-center justify-center gap-2 rounded-full bg-leaf-500 px-6 py-3 text-sm font-extrabold text-night-950 transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="ring-glow inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-leaf-500)] px-6 py-3 text-sm font-extrabold text-[var(--color-night-950)] transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <Send className="h-4 w-4" aria-hidden />
                   {status === 'sending' ? '…' : c.submitButton}
@@ -168,8 +168,8 @@ export default function PilotIranPage() {
       <section className="px-4 pb-10 sm:px-6" id="timeline">
         <Reveal className="mx-auto max-w-3xl">
           <div className="glass rounded-2xl p-5">
-            <p className="text-sm font-extrabold text-emerald-50">{c.timelineTitle}</p>
-            <p className="mt-1 text-xs leading-6 text-emerald-100/55">{c.timelineNote}</p>
+            <p className="text-sm font-extrabold text-[var(--color-night-100)]">{c.timelineTitle}</p>
+            <p className="mt-1 text-xs leading-6 text-[var(--color-night-200)]/55">{c.timelineNote}</p>
           </div>
         </Reveal>
       </section>

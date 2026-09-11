@@ -10,6 +10,11 @@ from .service import (
     GroundwaterService,
     WaterQualityClass,
 )
+from .models import (
+    GroundwaterBucketInput,
+    GroundwaterBucketOutput,
+    run_groundwater_bucket,
+)
 
 __all__ = [
     "AquiferType",
@@ -17,4 +22,7 @@ __all__ = [
     "GroundwaterResult",
     "GroundwaterService",
     "WaterQualityClass",
+    "GroundwaterBucketInput",
+    "GroundwaterBucketOutput",
+    "run_groundwater_bucket",
 ]

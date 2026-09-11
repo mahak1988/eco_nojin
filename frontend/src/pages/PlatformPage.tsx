@@ -29,12 +29,12 @@ export default function PlatformPage() {
       <section className="px-4 pb-6 sm:px-6">
         <Reveal className="mx-auto max-w-6xl">
           <div className="glass flex flex-col gap-4 rounded-3xl p-8 sm:flex-row sm:items-center sm:gap-6">
-            <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-aqua-500/12 text-aqua-300">
+            <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-aqua-500)]/12 text-[var(--color-aqua-300)]">
               <Server className="h-6 w-6" aria-hidden />
             </span>
             <div className="flex flex-col gap-1.5">
-              <h3 className="text-base font-extrabold text-emerald-50">{t.platform.apiTitle}</h3>
-              <p className="text-sm leading-7 text-emerald-100/60">{t.platform.apiDesc}</p>
+              <h3 className="text-base font-extrabold text-[var(--color-night-100)]">{t.platform.apiTitle}</h3>
+              <p className="text-sm leading-7 text-[var(--color-night-200)]/60">{t.platform.apiDesc}</p>
             </div>
           </div>
         </Reveal>
