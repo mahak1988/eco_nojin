@@ -1,6 +1,8 @@
 /** Developers page content (bilingual). Facts: gateway has 200+ documented
  * OpenAPI paths, JWT auth, active rate-limiting middleware. */
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000';
+
 export interface CodeSample {
   label: string;
   code: string;
@@ -42,11 +44,11 @@ export const developers = {
     samples: [
       {
         label: 'cURL — سلامت سرویس',
-        code: 'curl http://localhost:8000/health',
+        code: `curl ${API_BASE}/health`,
       },
       {
         label: 'cURL — ارسال پیام تماس',
-        code: `curl -X POST http://localhost:8000/api/v1/contact \\
+        code: `curl -X POST ${API_BASE}/api/v1/contact \\
   -H "Content-Type: application/json" \\
   -d '{"name":"Ali","email":"ali@example.com","message":"We want to join the pilot."}'`,
       },
@@ -55,7 +57,7 @@ export const developers = {
         code: `import requests
 
 r = requests.get(
-    "http://localhost:8000/api/v1/soil/profiles",
+    "${API_BASE}/api/v1/soil/profiles",
     headers={"Authorization": "Bearer <TOKEN>"},
 )
 print(r.json())`,
@@ -82,11 +84,11 @@ print(r.json())`,
     samples: [
       {
         label: 'cURL — service health',
-        code: 'curl http://localhost:8000/health',
+        code: `curl ${API_BASE}/health`,
       },
       {
         label: 'cURL — submit a contact message',
-        code: `curl -X POST http://localhost:8000/api/v1/contact \\
+        code: `curl -X POST ${API_BASE}/api/v1/contact \\
   -H "Content-Type: application/json" \\
   -d '{"name":"Ali","email":"ali@example.com","message":"We want to join the pilot."}'`,
       },
@@ -95,7 +97,7 @@ print(r.json())`,
         code: `import requests
 
 r = requests.get(
-    "http://localhost:8000/api/v1/soil/profiles",
+    "${API_BASE}/api/v1/soil/profiles",
     headers={"Authorization": "Bearer <TOKEN>"},
 )
 print(r.json())`,

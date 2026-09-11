@@ -1,5 +1,7 @@
 /** Profile & settings page content (dashboard account pages, bilingual). */
 
+const DEFAULT_API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000';
+
 export interface ProfileContent {
   kicker: string;
   title: string;
@@ -60,7 +62,7 @@ export const profileSettings = {
       title: 'تنظیمات پلتفرم',
       lead: 'پیکربندی محلی داشبورد — آدرس درگاه، زبان و داده‌های محلی.',
       apiTitle: 'آدرس درگاه API',
-      apiHint: 'پیش‌فرض: http://localhost:8000 — برای سرور دیگر آدرس را عوض کنید (بلافاصله اعمال می‌شود).',
+      apiHint: `پیش‌فرض: ${DEFAULT_API_BASE} — برای سرور دیگر آدرس را عوض کنید (بلافاصله اعمال می‌شود).`,
       apiLabel: 'آدرس درگاه',
       apiSave: 'ذخیره آدرس',
       apiSaved: 'ذخیره شد ✓',
@@ -102,7 +104,7 @@ export const profileSettings = {
       title: 'Platform settings',
       lead: 'Local dashboard configuration — gateway URL, language and local data.',
       apiTitle: 'API gateway URL',
-      apiHint: 'Default: http://localhost:8000 — change it to point at another server (applies immediately).',
+      apiHint: `Default: ${DEFAULT_API_BASE} — change it to point at another server (applies immediately).`,
       apiLabel: 'Gateway URL',
       apiSave: 'Save URL',
       apiSaved: 'Saved ✓',
