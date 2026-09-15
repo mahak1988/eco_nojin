@@ -401,5 +401,8 @@ class TraceRecord:
     humidity_pct: float | None = None
 
 
+# payments (plan v2.1 multi-gateway + escrow)
+from .marketplace_payment import MarketplaceEscrowEntry, MarketplacePayment  # noqa: E402,F401
+
 # founders (plan v2.0 phase 1.1-b)
 from .marketplace_founder import MarketplaceFounder  # noqa: E402,F401

@@ -7,6 +7,7 @@ from sqlalchemy import (
     Boolean,
     CheckConstraint,
     Column,
+    Date,
     DateTime,
     Enum,
     Float,
@@ -150,6 +151,51 @@ class LedgerEntry(Base):
     reference_id = Column(Integer, nullable=True)
     description = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+
+
+class FinJournalBatch(Base):
+    """Journal batch for double-entry accounting."""
+    __tablename__ = "fin_journal_batch"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    batch_number = Column(String(50), unique=True, nullable=False, index=True)
+    batch_date = Column(Date, nullable=False)
+    reference_type = Column(String, nullable=True)  # order, payment, eco_earning, carbon_issuance
+    reference_id = Column(String, nullable=True)
+    description = Column(Text, nullable=True)
+    created_by = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    posted_at = Column(DateTime(timezone=True), nullable=True)
+    is_posted = Column(Boolean, default=False, nullable=False)
+
+
+class FinJournalEntry(Base):
+    """Individual journal entry within a batch."""
+    __tablename__ = "fin_journal_entry"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    batch_id = Column(Integer, nullable=False, index=True)
+    account_id = Column(String, nullable=False, index=True)
+    entry_type = Column(String, nullable=False)  # debit | credit
+    asset = Column(String, nullable=False)  # IRR, ECO, CARBON_tCO2e, USD
+    amount = Column(Numeric(19, 4), nullable=False)
+    description = Column(Text, nullable=True)
+
+
+class FinAccount(Base):
+    """Chart of accounts."""
+    __tablename__ = "fin_account"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    code = Column(String(20), unique=True, nullable=False, index=True)
+    name = Column(String, nullable=False)
+    type = Column(String, nullable=False)  # asset, liability, equity, income, expense
+    asset = Column(String, nullable=True)  # IRR, ECO, CARBON_tCO2e, USD
+    currency = Column(String(3), default="IRR")
+    parent_id = Column(Integer, ForeignKey("fin_account.id"), nullable=True)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
 
 
 class Notification(Base):
@@ -305,6 +351,60 @@ class FinIdempotencyKey(Base):
 
     def __repr__(self):
         return f"<FinIdempotencyKey user_id={self.user_id} key={self.key} status={self.status}>"
+
+
+class AuditEvent(Base):
+    """Immutable audit trail for financial and operational events."""
+    __tablename__ = "audit_event"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    correlation_id = Column(String(64), nullable=False, index=True)
+    actor_id = Column(String, nullable=False, index=True)
+    action = Column(String, nullable=False)  # create, update, delete, earn, redeem, pay, etc.
+    resource_type = Column(String(50), nullable=False, index=True)  # wallet, order, payment, inventory, etc.
+    resource_id = Column(String(100), nullable=False, index=True)
+    before_state = Column(JSON, nullable=True)
+    after_state = Column(JSON, nullable=True)
+    ip_address = Column(String(45), nullable=True)
+    user_agent = Column(String(500), nullable=True)
+    request_id = Column(String(64), nullable=True, index=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False, index=True)
+
+    __table_args__ = (
+        Index("ix_audit_event_correlation", "correlation_id"),
+        Index("ix_audit_event_actor_action", "actor_id", "action"),
+        Index("ix_audit_event_resource", "resource_type", "resource_id"),
+        Index("ix_audit_event_created", "created_at"),
+    )
+
+    def __repr__(self):
+        return f"<AuditEvent id={self.id} action={self.action} resource={self.resource_type}:{self.resource_id}>"
+
+
+def __repr__(self):
+        return f"<AuditEvent id={self.id} action={self.action} resource={self.resource_type}:{self.resource_id}>"
+
+
+class IntOutboxEvent(Base):
+    """Outbox event for event-driven integration."""
+    __tablename__ = "int_outbox_event"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    aggregate_type = Column(String, nullable=False, index=True)
+    aggregate_id = Column(String, nullable=False, index=True)
+    event_type = Column(String, nullable=False)
+    payload = Column(JSON, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    processed_at = Column(DateTime(timezone=True), nullable=True)
+    retry_count = Column(Integer, default=0)
+
+    __table_args__ = (
+        Index("ix_int_outbox_unprocessed", "created_at", postgresql_where="processed_at IS NULL"),
+    )
+
+    def __repr__(self):
+        return f"<IntOutboxEvent id={self.id} type={self.event_type} aggregate={self.aggregate_type}:{self.aggregate_id}>"
+
 
 class ErrorLog(Base):
     __tablename__ = "errorlog"
