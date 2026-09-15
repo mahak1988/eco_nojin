@@ -64,12 +64,13 @@ class MarketplaceSeller(Base):
     shop_description = Column(Text)
     status = Column(String(20), default="pending", index=True)
     is_verified = Column(Boolean, default=False)
+    verified_at = Column(DateTime(timezone=True), nullable=True)
     certifications = Column(JSON, default=list)
     total_sales = Column(Integer, default=0)
     total_revenue = Column(Numeric(15, 2), default=Decimal("0.00"))
     rating = Column(Numeric(3, 2), default=Decimal("0.00"))
-    created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), index=True)
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
     products = relationship("MarketplaceProduct", back_populates="seller")
     marketplace = relationship("Marketplace", back_populates="shops")
 
@@ -99,7 +100,7 @@ class MarketplaceProduct(Base):
     uses_village_brand = Column(Boolean, default=True)
     status = Column(SQLEnum(MarketplaceProductStatus), default=MarketplaceProductStatus.DRAFT, index=True)
     approved_by = Column(String(36), nullable=True)
-    approved_at = Column(DateTime, nullable=True)
+    approved_at = Column(DateTime(timezone=True), nullable=True)
     images = Column(JSON, default=list)
     pgs_certified = Column(Boolean, default=False)
     organic = Column(Boolean, default=False)
@@ -107,8 +108,8 @@ class MarketplaceProduct(Base):
     metadata_json = Column(JSON, default=dict)
     sales_count = Column(Integer, default=0)
     rating = Column(Numeric(3, 2), default=Decimal("0.00"))
-    created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), index=True)
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
     seller = relationship("MarketplaceSeller", back_populates="products")
 
 
@@ -155,8 +156,8 @@ class Marketplace(Base):
     contact_phone = Column(String(50))
     marketing_enabled = Column(Boolean, default=True)
     branding_enabled = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), index=True)
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
     shops = relationship("MarketplaceSeller", back_populates="marketplace")
 
 
@@ -201,8 +202,11 @@ class MarketplaceOrder(Base):
     shipping_address = Column(JSON)
     blockchain_tx_hash = Column(String(100), nullable=True)
     settlement_status = Column(String(20), default="pending")
-    created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    paid_at = Column(DateTime(timezone=True), nullable=True)
+    tracking_code = Column(String(100), nullable=True)
+    delivered_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), index=True)
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
 
 
 class MarketplaceCommissionRule(Base):
@@ -213,7 +217,7 @@ class MarketplaceCommissionRule(Base):
     platform_fee_bps = Column(Integer, default=300)
     landscape_fee_bps = Column(Integer, default=100)
     is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
 
 
 class MarketplaceWishlist(Base):
@@ -395,3 +399,7 @@ class TraceRecord:
     notes: str = ""
     temperature_c: float | None = None
     humidity_pct: float | None = None
+
+
+# founders (plan v2.0 phase 1.1-b)
+from .marketplace_founder import MarketplaceFounder  # noqa: E402,F401

@@ -763,13 +763,14 @@ async def toggle_2fa(
         from database.hub import hub as _hub
         conn = _hub.get_sqlite("manual")
         from sqlalchemy import text
-        existing = conn.execute(text(f"SELECT value FROM settings WHERE key = '{pref_key}'")).fetchone()
+        # Use parameterized queries to prevent SQL injection
+        existing = conn.execute(text("SELECT value FROM settings WHERE key = :key"), {"key": pref_key}).fetchone()
         current_val = existing[0] if existing else "false"
         new_val = "false" if current_val == "true" else "true"
         if existing:
-            conn.execute(text(f"UPDATE settings SET value = '{new_val}' WHERE key = '{pref_key}'"))
+            conn.execute(text("UPDATE settings SET value = :val WHERE key = :key"), {"val": new_val, "key": pref_key})
         else:
-            conn.execute(text(f"INSERT INTO settings (key, value, category) VALUES ('{pref_key}', '{new_val}', 'security')"))
+            conn.execute(text("INSERT INTO settings (key, value, category) VALUES (:key, :val, 'security')"), {"key": pref_key, "val": new_val})
         conn.commit()
         enabled = new_val == "true"
         return {"status": "success", "data": {"enabled": enabled, "message": f"2FA {'enabled' if enabled else 'disabled'}"}}

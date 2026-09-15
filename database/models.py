@@ -13,6 +13,7 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
+    Numeric,
     String,
     Text,
     UniqueConstraint,
@@ -144,11 +145,11 @@ class LedgerEntry(Base):
     account_id = Column(String, nullable=False, index=True)
     entry_type = Column(String, nullable=False)  # debit | credit
     asset = Column(String, nullable=False)  # carbon_credit | eco_token | fiat
-    amount = Column(Float, nullable=False)
+    amount = Column(Numeric(19, 4), nullable=False)
     reference_type = Column(String, nullable=True)
     reference_id = Column(Integer, nullable=True)
     description = Column(Text, nullable=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
 
 
 class Notification(Base):
@@ -169,8 +170,12 @@ class EcoWallet(Base):
     __tablename__ = "ecowallet"
     id = Column(Integer, primary_key=True)
     user_id = Column(String)
-    balance = Column(Float, default=0.0)
-    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+    balance = Column(Numeric(19, 4), default=0.0)
+    total_earned = Column(Numeric(19, 4), default=0.0)
+    total_redeemed = Column(Numeric(19, 4), default=0.0)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
 
 class PasswordResetToken(Base):
     __tablename__ = "password_reset_tokens"
@@ -274,8 +279,32 @@ class Setting(Base):
     description = Column(String, nullable=True)
     category = Column(String, default='general')
     is_secret = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+
+
+class FinIdempotencyKey(Base):
+    """Idempotency key storage for financial operations."""
+    __tablename__ = "fin_idempotency_key"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(String, nullable=False, index=True)
+    key = Column(String, nullable=False)
+    route = Column(String, nullable=False)
+    request_hash = Column(String(64), nullable=False)
+    status = Column(String, nullable=False, default="pending")  # pending, completed, failed
+    response_code = Column(Integer, nullable=True)
+    response_body = Column(JSON, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+
+    __table_args__ = (
+        Index("ix_fin_idempotency_user_key", "user_id", "key", unique=True),
+        Index("ix_fin_idempotency_expires", "expires_at"),
+    )
+
+    def __repr__(self):
+        return f"<FinIdempotencyKey user_id={self.user_id} key={self.key} status={self.status}>"
 
 class ErrorLog(Base):
     __tablename__ = "errorlog"
@@ -376,7 +405,11 @@ class EcoTransaction(Base):
     __tablename__ = "ecotransaction"
     id = Column(Integer, primary_key=True)
     user_id = Column(String)
-    amount = Column(Float)
+    amount = Column(Numeric(19, 4))
+    transaction_type = Column(String)  # earn | redeem | transfer
+    category = Column(String)
+    reference_id = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
 
 class CalibrationRecordDB(Base):
     __tablename__ = "calibrationrecorddb"
