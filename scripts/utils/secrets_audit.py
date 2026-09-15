@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Secrets audit utility - scans for hardcoded secrets in the codebase.
+"""Secrets audit utility — scans all text files for hardcoded secrets.
 
 Run this before committing to ensure no secrets are leaked.
+Scans Python, TypeScript, JavaScript, JSON, YAML, TOML, shell, and env files.
 """
 from __future__ import annotations
 
@@ -11,25 +12,19 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
-# Patterns that indicate potential secrets
 SECRET_PATTERNS = [
-    # API keys and tokens
     (r'(?i)(api[_-]?key|apikey|api_secret|token|secret|password|passwd|pwd)\s*[=:]\s*["\'][^"\']{8,}["\']', "Hardcoded secret"),
-    # Connection strings with credentials
     (r'(?i)(postgresql|mysql|mongodb|redis)://[^:]+:[^@]+@', "Database credentials in URL"),
-    # JWT secrets
     (r'(?i)jwt[_-]?secret\s*[=:]\s*["\'][^"\']{8,}["\']', "JWT secret"),
-    # Private keys
     (r'(?i)(private[_-]?key|privatekey)\s*[=:]\s*["\'][^"\']+["\']', "Private key"),
-    # OAuth tokens
     (r'(?i)(oauth|bearer|auth)\s*token\s*[=:]\s*["\'][^"\']{8,}["\']', "OAuth token"),
-    # AWS keys
     (r'(?i)(aws_access_key|aws_secret|aws_session_token)\s*[=:]\s*["\'][^"\']+["\']', "AWS credential"),
-    # Generic base64-like long strings (potential keys)
     (r'["\'][A-Za-z0-9+/]{40,}={0,2}["\']', "Potential base64 secret"),
+    (r'(?i)bot[_-]?token\s*[=:]\s*["\'][^"\']{10,}["\']', "Bot token"),
+    (r'(?i)(access[_-]?token|refresh[_-]?token)\s*[=:]\s*["\']eyJ[^"\']+["\']', "JWT token"),
+    (r'(?i)service[_-]?role[_-]?key\s*[=:]\s*["\']eyJ[^"\']+["\']', "Service role key"),
 ]
 
-# Files to skip
 SKIP_FILES = {
     ".env.example",
     ".env.template",
@@ -40,14 +35,14 @@ SKIP_FILES = {
     "*.dylib",
     "*.dll",
     "*.exe",
-    "*.json",
     "*.md",
     "*.txt",
     "*.bak",
     "*.security.bak",
+    "package-lock.json",
+    "pnpm-lock.yaml",
 }
 
-# Directories to skip
 SKIP_DIRS = {
     ".git",
     "node_modules",
@@ -66,9 +61,14 @@ SKIP_DIRS = {
     "data/motors/cache",
 }
 
+SCAN_EXTENSIONS = {
+    ".py", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs",
+    ".json", ".yaml", ".yml", ".toml", ".sh", ".bash",
+    ".env", ".cfg", ".ini", ".xml", ".vue", ".svelte",
+}
+
 
 def should_skip(path: Path) -> bool:
-    """Check if file should be skipped."""
     for skip_dir in SKIP_DIRS:
         if skip_dir in str(path):
             return True
@@ -79,7 +79,6 @@ def should_skip(path: Path) -> bool:
 
 
 def scan_file(path: Path) -> list[tuple[int, str, str]]:
-    """Scan a file for secrets. Returns list of (line, pattern_name, line_content)."""
     findings = []
     try:
         content = path.read_text(encoding="utf-8", errors="ignore")
@@ -97,12 +96,17 @@ def main() -> int:
     print("🔍 Scanning for secrets in codebase...")
     findings = []
 
-    for py_file in PROJECT_ROOT.rglob("*.py"):
-        if should_skip(py_file):
+    for file_path in PROJECT_ROOT.rglob("*"):
+        if not file_path.is_file():
             continue
-        file_findings = scan_file(py_file)
+        if should_skip(file_path):
+            continue
+        if file_path.suffix not in SCAN_EXTENSIONS:
+            continue
+
+        file_findings = scan_file(file_path)
         if file_findings:
-            findings.append((py_file, file_findings))
+            findings.append((file_path, file_findings))
 
     if findings:
         print(f"\n❌ Found {len(findings)} files with potential secrets:\n")

@@ -113,7 +113,7 @@
 
 ```bash
 # Install axe-core
-npm install -D axe-core @axe-core/playwright
+pnpm install -D axe-core @axe-core/playwright
 
 # Run audit
 npx playwright test --config=playwright.audit.config.ts

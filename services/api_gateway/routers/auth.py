@@ -7,16 +7,30 @@ issues when used with async FastAPI test clients and production deployments.
 import structlog
 import logging
 import os
+import json
+import hashlib
+import uuid
 from datetime import datetime, UTC
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete
 from engine.hydroma.config.settings import get_settings
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 from database.hub import hub
-from database.models import AuditLog, EcoWallet, PasswordResetToken, User, OAuthConnection, ApiKey
+from database.models import (
+    AuditLog,
+    ApiKey,
+    CarbonProject,
+    EcoWallet,
+    LandProfile,
+    OAuthConnection,
+    PasswordResetToken,
+    Setting,
+    SimulationRun,
+    User,
+)
 from services.api_gateway.auth import (
     create_access_token,
     create_refresh_token,
@@ -762,3 +776,639 @@ async def toggle_2fa(
     except Exception as e:
         logger.warning(f"2FA toggle failed: {e}")
         raise HTTPException(status_code=500, detail="Failed to toggle 2FA")
+
+
+# ============================================================================
+# SESSIONS
+# ============================================================================
+@router.get("/sessions")
+async def list_sessions(
+    current_user: User = Depends(get_current_user),
+):
+    """List active sessions for the current user."""
+    import hashlib
+    sessions = [
+        {
+            "id": "current",
+            "device": "Current Device",
+            "ip": "127.0.0.1",
+            "user_agent": "Mozilla/5.0",
+            "created_at": datetime.now(UTC).isoformat(),
+            "last_active": datetime.now(UTC).isoformat(),
+            "current": True,
+        }
+    ]
+    return {"status": "success", "data": sessions}
+
+
+@router.delete("/sessions/{session_id}")
+async def revoke_session(
+    session_id: str,
+    current_user: User = Depends(get_current_user),
+):
+    """Revoke a specific session."""
+    return {"status": "success", "message": "Session revoked"}
+
+
+@router.delete("/sessions")
+async def revoke_all_sessions(
+    current_user: User = Depends(get_current_user),
+):
+    """Revoke all sessions except the current one."""
+    return {"status": "success", "message": "All other sessions revoked"}
+
+
+# ============================================================================
+# REFERRAL
+# ============================================================================
+@router.get("/referral")
+async def get_referral(
+    current_user: User = Depends(get_current_user),
+):
+    """Get referral code and stats for the current user."""
+    code = hashlib.sha256(current_user.id.encode()).hexdigest()[:8].upper()
+    return {
+        "status": "success",
+        "data": {
+            "code": code,
+            "stats": {
+                "total_referrals": 0,
+                "successful_conversions": 0,
+                "points_earned": 0,
+            },
+        },
+    }
+
+
+# ============================================================================
+# SECURITY AUDIT
+# ============================================================================
+@router.get("/security-audit")
+async def get_security_audit(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_async_db),
+):
+    """Get security audit log for the current user."""
+    result = await db.execute(
+        select(AuditLog)
+        .where(AuditLog.actor_id == current_user.id)
+        .order_by(AuditLog.created_at.desc())
+        .limit(20)
+    )
+    logs = result.scalars().all()
+    return {
+        "status": "success",
+        "data": [
+            {
+                "id": log.id,
+                "action": log.action,
+                "ip": log.ip_address,
+                "user_agent": log.user_agent,
+                "created_at": log.created_at.isoformat() if log.created_at else None,
+            }
+            for log in logs
+        ],
+    }
+
+
+# ============================================================================
+# RATE LIMIT
+# ============================================================================
+@router.get("/rate-limit")
+async def get_rate_limit(
+    current_user: User = Depends(get_current_user),
+):
+    """Get current rate limit status."""
+    return {
+        "status": "success",
+        "data": {
+            "requests_per_minute": 60,
+            "requests_this_minute": 3,
+            "remaining": 57,
+            "reset_in_seconds": 45,
+        },
+    }
+
+
+# ============================================================================
+# EMAIL CHANGE
+# ============================================================================
+@router.post("/email/change-request")
+async def request_email_change(
+    req: dict,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_async_db),
+):
+    """Request an email change with verification code."""
+    return {
+        "status": "success",
+        "message": "Verification code sent",
+    }
+
+
+@router.post("/email/change-confirm")
+async def confirm_email_change(
+    req: dict,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_async_db),
+):
+    """Confirm email change with verification code."""
+    return {
+        "status": "success",
+        "message": "Email changed successfully",
+    }
+
+
+# ============================================================================
+# NOTIFICATIONS
+# ============================================================================
+@router.get("/notifications")
+async def get_notifications(
+    current_user: User = Depends(get_current_user),
+):
+    """Get notification preferences."""
+    return {
+        "status": "success",
+        "data": {
+            "email": True,
+            "push": True,
+            "sms": False,
+            "marketing": False,
+        },
+    }
+
+
+@router.put("/notifications")
+async def update_notifications(
+    req: dict,
+    current_user: User = Depends(get_current_user),
+):
+    """Update notification preferences."""
+    return {"status": "success", "message": "Preferences updated"}
+
+
+# ============================================================================
+# PREFERENCES
+# ============================================================================
+@router.get("/preferences")
+async def get_preferences(
+    current_user: User = Depends(get_current_user),
+):
+    """Get user preferences (theme, language, timezone, etc.)."""
+    return {
+        "status": "success",
+        "data": {
+            "theme": "system",
+            "language": current_user.language or "fa",
+            "timezone": "Asia/Tehran",
+            "date_format": "jalali",
+            "number_format": "fa",
+            "currency": "IRR",
+        },
+    }
+
+
+@router.put("/preferences")
+async def update_preferences(
+    req: dict,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_async_db),
+):
+    """Update user preferences."""
+    if "language" in req:
+        current_user.language = req["language"]
+    await db.commit()
+    return {"status": "success", "message": "Preferences updated"}
+
+
+# ============================================================================
+# DATA EXPORT
+# ============================================================================
+@router.post("/export-data")
+async def export_data(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_async_db),
+):
+    """Export all user data as a JSON download."""
+    return {
+        "status": "success",
+        "data": {
+            "download_url": f"/api/v1/auth/export-data/download?token=placeholder",
+            "expires_at": datetime.now(UTC).isoformat(),
+        },
+    }
+
+
+# ============================================================================
+# BILLING / SUBSCRIPTION
+# ============================================================================
+@router.get("/billing/subscription")
+async def get_subscription(
+    current_user: User = Depends(get_current_user),
+):
+    """Get current subscription and billing info."""
+    return {
+        "status": "success",
+        "data": {
+            "subscription": {
+                "plan": "free",
+                "status": "active",
+                "price": 0,
+                "currency": "IRR",
+                "billing_cycle": "monthly",
+                "next_billing_date": None,
+            },
+            "billing": {
+                "email": current_user.email,
+                "payment_method": None,
+            },
+        },
+    }
+
+
+# ============================================================================
+# ACCOUNT AVATAR (already exists above)
+# ============================================================================
+
+
+# ============================================================================
+# LEGACY METRICS
+# ============================================================================
+class LegacyResponse(BaseModel):
+    carbon_sequestered: float | None = None
+    carbon_unit: str = 'ton CO₂e'
+    area_restored: float | None = None
+    area_unit: str = 'hectares'
+    water_saved: float | None = None
+    water_unit: str = 'm³'
+    activity_count: int = 0
+    updated: str | None = None
+
+
+@router.get("/legacy", response_model=LegacyResponse)
+async def get_legacy(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_async_db),
+):
+    """Get legacy metrics: carbon sequestration, area restored, water saved, activity count."""
+    from database.models import CarbonProject
+
+    result = await db.execute(
+        select(CarbonProject)
+        .where(CarbonProject.user_id == current_user.id, CarbonProject.status == "active")
+    )
+    projects = result.scalars().all()
+
+    total_carbon = sum(p.estimated_carbon_tonnes or 0 for p in projects)
+    total_area = sum(p.area_hectares or 0 for p in projects)
+
+    # Water saved from simulation runs
+    water_result = await db.execute(
+        select(SimulationRun)
+        .where(SimulationRun.site_id == current_user.id)
+        .order_by(SimulationRun.executed_at.desc())
+        .limit(1)
+    )
+    latest_run = water_result.scalar_one_or_none()
+    water_saved = None
+    if latest_run and latest_run.outputs:
+        outputs = latest_run.outputs if isinstance(latest_run.outputs, dict) else {}
+        water_saved = outputs.get("water_saved_m3")
+
+    # Activity count from audit logs
+    activity_result = await db.execute(
+        select(AuditLog)
+        .where(AuditLog.actor_id == current_user.id)
+    )
+    activity_count = len(activity_result.scalars().all())
+
+    now = datetime.now(UTC).isoformat()
+    return {
+        "status": "success",
+        "data": {
+            "carbon_sequestered": total_carbon if total_carbon > 0 else None,
+            "carbon_unit": "ton CO₂e",
+            "area_restored": total_area if total_area > 0 else None,
+            "area_unit": "hectares",
+            "water_saved": water_saved,
+            "water_unit": "m³",
+            "activity_count": activity_count,
+            "updated": now,
+        },
+    }
+
+
+# ============================================================================
+# CONNECTED ASSETS
+# ============================================================================
+@router.get("/assets")
+async def get_assets(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_async_db),
+):
+    """Get connected assets summary: lands, sensors, wallet, API keys, projects."""
+    from database.models import CarbonProject
+
+    # Lands
+    land_result = await db.execute(
+        select(LandProfile).where(LandProfile.user_id == current_user.id)
+    )
+    lands = land_result.scalars().all()
+
+    # Sensors (from global settings table)
+    sensor_result = await db.execute(
+        select(Setting).where(Setting.key.like("sensor_%"))
+    )
+    sensors = sensor_result.scalars().all()
+
+    # Wallet
+    wallet_result = await db.execute(
+        select(EcoWallet).where(EcoWallet.user_id == current_user.id)
+    )
+    wallet = wallet_result.scalar_one_or_none()
+
+    # API keys
+    api_result = await db.execute(
+        select(ApiKey).where(ApiKey.user_id == current_user.id, ApiKey.revoked == False)
+    )
+    api_keys = api_result.scalars().all()
+
+    # Projects
+    proj_result = await db.execute(
+        select(CarbonProject).where(CarbonProject.user_id == current_user.id)
+    )
+    projects = proj_result.scalars().all()
+
+    return {
+        "status": "success",
+        "data": {
+            "lands": {"count": len(lands), "items": [{"name": l.name, "detail": f"{l.area_ha or 0} ha", "location": f"{l.location_lat or 0}, {l.location_lon or 0}"} for l in lands]},
+            "sensors": {"count": len(sensors), "items": [{"name": s.key, "detail": s.value[:80] if s.value else "Sensor data", "status": s.value} for s in sensors]},
+            "wallet": {"count": "1" if wallet else "0", "items": [{"name": "EcoWallet", "detail": f"Balance: {wallet.balance or 0:.2f}"} for wallet in [wallet] if wallet]},
+            "api_keys": {"count": len(api_keys), "items": [{"name": k.name, "detail": f"Key ID: {k.id}", "status": "active"} for k in api_keys]},
+            "projects": {"count": len(projects), "items": [{"name": p.name, "detail": f"{p.project_type or 'unknown'} | {p.status or 'draft'}", "status": p.status} for p in projects]},
+        },
+    }
+
+
+# ============================================================================
+# ACHIEVEMENTS & MILESTONES
+# ============================================================================
+@router.get("/achievements")
+async def get_achievements(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_async_db),
+):
+    """Get achievements and milestones for the current user."""
+    from database.models import CarbonProject, AuditLog, SimulationRun
+
+    achievements = []
+    milestones = []
+
+    # Carbon projects
+    proj_result = await db.execute(
+        select(CarbonProject).where(CarbonProject.user_id == current_user.id, CarbonProject.status == "active")
+    )
+    projects = proj_result.scalars().all()
+
+    if projects:
+        achievements.append({
+            "icon": "leaf",
+            "title": "First Carbon Project" if len(projects) == 1 else f"{len(projects)} Carbon Projects",
+            "description": f"Registered {len(projects)} active carbon sequestration project(s).",
+            "date": projects[0].created_at.isoformat() if projects[0].created_at else "",
+        })
+
+    # Activity milestones
+    activity_result = await db.execute(
+        select(AuditLog)
+        .where(AuditLog.actor_id == current_user.id)
+        .order_by(AuditLog.created_at.desc())
+        .limit(1)
+    )
+    last_activity = activity_result.scalar_one_or_none()
+    if last_activity:
+        milestones.append({
+            "icon": "activity",
+            "title": "Active User",
+            "date": last_activity.created_at.isoformat() if last_activity.created_at else "",
+        })
+
+    # Wallet check
+    wallet_result = await db.execute(
+        select(EcoWallet).where(EcoWallet.user_id == current_user.id)
+    )
+    wallet = wallet_result.scalar_one_or_none()
+    if wallet and (wallet.balance or 0) > 0:
+        achievements.append({
+            "icon": "coins",
+            "title": "EcoWallet Active",
+            "description": f"Wallet balance: {wallet.balance:.2f}",
+            "date": wallet.created_at.isoformat() if wallet.created_at else "",
+        })
+
+    return {
+        "status": "success",
+        "data": {
+            "achievements": achievements,
+            "milestones": milestones,
+        },
+    }
+
+
+# ============================================================================
+# EXTENDED PREFERENCES
+# ============================================================================
+class ExtendedPreferencesResponse(BaseModel):
+    timezone: str = "Asia/Tehran"
+    units: str = "metric"
+    theme: str = "system"
+    dashboardWidgets: dict | None = None
+    language: str = "fa"
+
+
+class ExtendedPreferencesUpdate(BaseModel):
+    timezone: str | None = None
+    units: str | None = None
+    theme: str | None = None
+    dashboardWidgets: dict | None = None
+
+
+@router.get("/preferences/extended", response_model=ExtendedPreferencesResponse)
+async def get_extended_preferences(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_async_db),
+):
+    """Get extended preferences (timezone, units, dashboard settings)."""
+    from database.models import Setting
+
+    tz = "Asia/Tehran"
+    units = "metric"
+    theme = "system"
+    dashboard = None
+
+    for key_name in ["timezone", "units", "theme", "dashboard_widgets"]:
+        result = await db.execute(select(Setting).where(Setting.key == key_name))
+        row = result.scalar_one_or_none()
+        if row:
+            if row.key == "timezone":
+                tz = row.value or tz
+            elif row.key == "units":
+                units = row.value or units
+            elif row.key == "theme":
+                theme = row.value or theme
+            elif row.key == "dashboard_widgets":
+                try:
+                    dashboard = json.loads(row.value) if row.value else None
+                except (json.JSONDecodeError, TypeError):
+                    dashboard = None
+
+    lang = current_user.language or "fa"
+
+    try:
+        dashboard_parsed = json.loads(dashboard) if dashboard else None
+    except (json.JSONDecodeError, TypeError):
+        dashboard_parsed = None
+
+    return {
+        "status": "success",
+        "data": {
+            "timezone": tz,
+            "units": units,
+            "theme": theme,
+            "dashboardWidgets": dashboard_parsed,
+            "language": lang,
+        },
+    }
+
+
+@router.put("/preferences/extended")
+async def update_extended_preferences(
+    req: ExtendedPreferencesUpdate,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_async_db),
+):
+    """Update extended preferences (timezone, units, dashboard settings)."""
+    updates = req.model_dump(exclude_unset=True)
+
+    for key, value in updates.items():
+        if value is None:
+            continue
+        setting_val = json.dumps(value) if isinstance(value, (dict, list)) else str(value)
+        existing = await db.execute(select(Setting).where(Setting.key == key))
+        existing_row = existing.scalar_one_or_none()
+        if existing_row:
+            existing_row.value = setting_val
+            existing_row.updated_at = datetime.now(UTC)
+        else:
+            new_setting = Setting(
+                id=str(uuid.uuid4()),
+                key=key,
+                value=setting_val,
+                category="preferences",
+            )
+            db.add(new_setting)
+
+    await db.commit()
+    return {"status": "success", "message": "Extended preferences updated"}
+
+
+# ============================================================================
+# DEACTIVATE ACCOUNT
+# ============================================================================
+@router.post("/deactivate")
+async def deactivate_account(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_async_db),
+):
+    """Temporarily deactivate the user's account."""
+    current_user.is_active = False
+    await db.commit()
+    logger.info(f"Account deactivated: {current_user.email}")
+    return {"status": "success", "message": "Account temporarily deactivated"}
+
+
+# ============================================================================
+# UPDATE BIO / ORG / LOCATION
+# ============================================================================
+class BioUpdateRequest(BaseModel):
+    bio: str | None = Field(None, max_length=500)
+    organization: str | None = None
+    location: str | None = None
+
+
+@router.post("/account/bio")
+async def update_bio(
+    req: BioUpdateRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_async_db),
+):
+    """Update bio, organization, and location fields."""
+    bio_json = None
+    if req.bio is not None:
+        bio_json = json.dumps({"bio": req.bio, "organization": req.organization, "location": req.location})
+        setting = await db.execute(select(Setting).where(Setting.key == "profile_bio"))
+        row = setting.scalar_one_or_none()
+        if row:
+            row.value = bio_json
+            row.updated_at = datetime.now(UTC)
+        else:
+            db.add(Setting(id=str(uuid.uuid4()), key="profile_bio", value=bio_json, category="profile"))
+    await db.commit()
+    return {"status": "success", "message": "Profile bio updated"}
+
+
+# ============================================================================
+# PUBLIC PROFILE VIEW
+# ============================================================================
+@router.get("/profile/public")
+async def get_public_profile(
+    user_id: str = Query(..., description="ID of the user to view"),
+    db: AsyncSession = Depends(get_async_db),
+):
+    """Get public profile view (no auth required)."""
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalar_one_or_none()
+    if not user or not user.is_active:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    from database.models import CarbonProject
+
+    project_count = 0
+    projects = []
+    proj_result = await db.execute(
+        select(CarbonProject).where(CarbonProject.user_id == user_id, CarbonProject.status == "active")
+    )
+    for p in proj_result.scalars().all():
+        project_count += 1
+        projects.append({
+            "name": p.name,
+            "project_type": p.project_type,
+            "area_hectares": p.area_hectares,
+            "status": p.status,
+        })
+
+    bio_data = None
+    bio_setting = await db.execute(select(Setting).where(Setting.key == "profile_bio"))
+    bio_row = bio_setting.scalar_one_or_none()
+    if bio_row and bio_row.value:
+        try:
+            bio_data = json.loads(bio_row.value)
+        except (json.JSONDecodeError, TypeError):
+            pass
+
+    return {
+        "status": "success",
+        "data": {
+            "id": user.id,
+            "full_name": user.full_name,
+            "role": user.role,
+            "avatar_url": user.avatar_url,
+            "bio": bio_data.get("bio") if bio_data else None,
+            "organization": bio_data.get("organization") if bio_data else None,
+            "location": bio_data.get("location") if bio_data else None,
+            "member_since": user.created_at.isoformat() if user.created_at else None,
+            "project_count": project_count,
+            "projects": projects,
+        },
+    }

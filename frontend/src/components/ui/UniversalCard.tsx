@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { useLang } from '../../i18n/LanguageContext';
 import type { ReactNode } from 'react';
+import { useCallback } from 'react';
 import Icon from './Icon';
 import type { IconKey } from '../../content/site';
 
@@ -87,6 +88,15 @@ export default function UniversalCard({
   const iconClr = iconColor || themeColors[theme];
   const shadow = themeShadows[theme];
 
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if ((e.key === 'Enter' || e.key === ' ') && onClick) {
+      e.preventDefault();
+      onClick();
+    }
+  }, [onClick]);
+
+  const isInteractive = !!onClick;
+
   if (!flipOnHover || !backContent) {
     return (
       <motion.div
@@ -95,6 +105,10 @@ export default function UniversalCard({
         animate={reduce ? undefined : { opacity: 1, y: 0 }}
         transition={{ delay: index * 0.05, duration: 0.5, ease: [0.22, 0.61, 0.36, 1] }}
         onClick={onClick}
+        onKeyDown={handleKeyDown}
+        tabIndex={isInteractive ? 0 : undefined}
+        role={isInteractive ? 'button' : undefined}
+        aria-pressed={isInteractive ? false : undefined}
       >
         <motion.div
           className="glass glass-hover group relative flex h-full flex-col gap-3 rounded-[1.6rem] p-6 cursor-default"
@@ -149,6 +163,10 @@ export default function UniversalCard({
       initial={reduce ? undefined : { opacity: 0, rotateY: -30 }}
       animate={reduce ? undefined : { opacity: 1, rotateY: 0 }}
       transition={{ delay: index * 0.05, duration: 0.6, ease: [0.220, 0.61, 0.36, 1] }}
+      onKeyDown={handleKeyDown}
+      tabIndex={isInteractive ? 0 : undefined}
+      role={isInteractive ? 'button' : undefined}
+      aria-pressed={isInteractive ? false : undefined}
     >
       <motion.div
         className="relative h-full w-full [transform-style:preserve-3d]"

@@ -7,18 +7,19 @@ interface PageHeaderProps {
   lead: string;
 }
 
-/** Shared top block for inner pages. */
+/** Shared top block for inner pages — editorial display title, mono kicker
+ * with gold accent, and a gradient hairline (Design-Horizons upgrade). */
 export default function PageHeader({ kicker, title, lead }: PageHeaderProps) {
   const { lang } = useLang();
 
   return (
     <section className="px-4 pb-8 pt-14 sm:px-6 lg:pt-20">
       <Reveal className="mx-auto flex max-w-6xl flex-col items-start gap-4">
-        <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-leaf-500)]/30 bg-[var(--color-leaf-500)]/10 px-4 py-1 text-xs font-bold text-[var(--color-leaf-300)]">
-          <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-leaf-400)] animate-pulse-soft" aria-hidden />
+        <p className={`kicker flex items-center gap-3 ${lang === 'fa' ? 'kicker-fa' : ''}`}>
+          <span className="inline-block h-px w-8 bg-[var(--color-sand-400)]/60" aria-hidden />
           {kicker}
-        </span>
-        <h1 className="max-w-3xl text-3xl font-extrabold leading-snug text-[var(--color-night-100)] sm:text-5xl sm:leading-tight">
+        </p>
+        <h1 className="font-display max-w-3xl text-4xl font-semibold leading-[1.18] text-[var(--color-night-100)] sm:text-6xl">
           {title}
         </h1>
         <p
@@ -28,6 +29,7 @@ export default function PageHeader({ kicker, title, lead }: PageHeaderProps) {
         >
           {lead}
         </p>
+        <hr className="hairline mt-2 w-full max-w-md" />
       </Reveal>
     </section>
   );

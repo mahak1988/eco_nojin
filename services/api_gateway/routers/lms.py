@@ -1,4 +1,4 @@
-"""LMS router (Phase 6C) — cloud-first on Supabase (lms_courses/lms_lessons/
+"""LMS router — cloud-first on Supabase (lms_courses/lms_lessons/
 lms_progress, RLS ownership), falls back to repo JSON when the cloud is
 unreachable. Progress endpoints require a valid user JWT (token query param)."""
 

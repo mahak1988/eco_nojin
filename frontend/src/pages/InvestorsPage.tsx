@@ -93,7 +93,7 @@ function ArrowLeftIcon({ dir }: { dir: 'rtl' | 'ltr' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden
-      style={{ transform: dir === 'rtl' ? 'none' : 'rotate(180deg)' }}
+      className={dir === 'rtl' ? '' : 'rotate-180'}
     >
       <path d="M19 12H5" />
       <path d="m12 19-7-7 7-7" />

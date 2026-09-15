@@ -7,9 +7,11 @@ import { ArrowLeft, Search } from 'lucide-react';
 import Seo from '../../components/ui/Seo';
 import Reveal from '../../components/ui/Reveal';
 import BaseCard, { type CardVariant } from '../../components/dashboard/BaseCard';
+import SpotlightCard from '../../components/ui/SpotlightCard';
 import { useLang } from '../../i18n/LanguageContext';
 import { categories, registry, type RegistryEntry } from '../../lib/hydromaregistry';
 import type { ModelImplementation } from '../../lib/hydromaregistry';
+import type { Lang } from '../../content/site';
 
 const VARIANT_MAP: Record<string, CardVariant> = {
   indices: 'leaf',
@@ -29,7 +31,7 @@ const IMPL_LABEL: Record<string, { fa: string; en: string; className: string }> 
   engine: { fa: 'موتور محاسباتی', en: 'Computational engine', className: 'bg-[var(--color-sand-500)] text-[var(--color-night-200)]' },
 };
 
-function implBadge(impl: ModelImplementation, lang: 'fa' | 'en') {
+function implBadge(impl: ModelImplementation, lang: Lang) {
   const label = IMPL_LABEL[impl];
   const text = lang === 'fa' ? label.fa : label.en;
   return (
@@ -46,6 +48,7 @@ function ModelCard({ entry, variant }: { entry: RegistryEntry; variant: CardVari
   const desc = isFa ? entry.descFa : entry.descEn;
 
   return (
+    <SpotlightCard className="h-full rounded-3xl">
     <BaseCard variant={variant} title={name}>
       <p className="text-xs leading-6 text-[var(--color-night-200)]">{desc}</p>
       <div className="mt-2 flex items-center justify-between">
@@ -58,6 +61,7 @@ function ModelCard({ entry, variant }: { entry: RegistryEntry; variant: CardVari
         </Link>
       </div>
     </BaseCard>
+    </SpotlightCard>
   );
 }
 
@@ -119,7 +123,7 @@ export default function CategoryPage({ categoryKey }: { categoryKey: string }) {
           {isFa ? 'بازگشت به داشبورد' : 'Back to dashboard'}
         </Link>
         <div className="flex flex-wrap items-center gap-2">
-          <span className={`rounded-full px-3 py-1 text-[11px] font-extrabold bg-${variant}-500/15 text-${variant}-300`}>
+          <span className={`rounded-full px-3 py-1 text-[11px] font-extrabold ${variant === 'leaf' ? 'bg-leaf-500/15 text-leaf-300' : variant === 'aqua' ? 'bg-aqua-500/15 text-aqua-300' : variant === 'sand' ? 'bg-sand-500/15 text-sand-300' : 'bg-white/10 text-ink-3'}`}>
             {entries.length} {isFa ? 'مدل' : 'models'}
           </span>
         </div>

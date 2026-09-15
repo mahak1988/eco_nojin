@@ -1,4 +1,4 @@
-"""Audit router (Phase 7) — carbon audit queue, auditor votes, credit issuance,
+"""Audit router — carbon audit queue, auditor votes, credit issuance,
 and Persian RTL credit certificates. All writes go through SECURITY DEFINER
 RPCs (auditor_vote / admin_issue_credits) that check roles server-side;
 reads are RLS-filtered by the user's JWT. Honest errors, real rows only."""

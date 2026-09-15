@@ -1,49 +1,35 @@
+'use client';
+
 import { Component, type ReactNode } from 'react';
 
-interface ErrorBoundaryState {
-  hasError: boolean;
-  error: Error | null;
-}
+interface Props { children: ReactNode; fallback?: ReactNode; }
+interface State { hasError: boolean; error: Error | null; }
 
-interface ErrorBoundaryProps {
-  children: ReactNode;
-  fallback?: ReactNode;
-}
-
-export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
+export class ErrorBoundary extends Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = { hasError: false, error: null };
   }
-
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+  static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
-
-  componentDidCatch(error: Error, errorInfo: { componentStack: string }) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.error('[ErrorBoundary]', error, info.componentStack);
   }
-
   render() {
     if (this.state.hasError) {
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
-      return (
-        <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 px-4 text-center">
-          <h2 className="text-2xl font-extrabold text-[var(--color-night-100)]">خطایی رخ داده است</h2>
-          <p className="max-w-md text-sm leading-7 text-[var(--color-night-200)]/60">
-            متأسفانه در بارگذاری این صفحه خطایی رخ داده است. لطفاً صفحه را.refresh کنید یا به صفحه اصلی برگردید.
-          </p>
-          <button
-            type="button"
-            onClick={() => {
-              this.setState({ hasError: false, error: null });
-            }}
-            className="rounded-full bg-[var(--color-leaf-500)] px-6 py-3 text-sm font-extrabold text-[var(--color-night-950)] transition-transform hover:scale-[1.03]"
-          >
-            تلاش مجدد
-          </button>
+      return this.props.fallback ?? (
+        <div role="alert" className="p-6 text-center" style={{ background: 'var(--color-night-950)', color: 'var(--color-night-100)', minHeight: '50vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.75rem' }}>خطا در بارگذاری بخش</h2>
+            <p style={{ color: 'var(--color-night-200)', marginBottom: '1.5rem' }}>{this.state.error?.message ?? 'خطای ناشناخته'}</p>
+            <button
+              onClick={() => window.location.reload()}
+              style={{ background: 'var(--color-leaf-500)', color: 'var(--color-night-950)', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '9999px', fontWeight: 800, cursor: 'pointer' }}
+            >
+              بازنشانی صفحه
+            </button>
+          </div>
         </div>
       );
     }

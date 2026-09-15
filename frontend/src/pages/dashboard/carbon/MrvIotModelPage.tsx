@@ -1,6 +1,6 @@
-import ModelDetail from '../../../components/dashboard/ModelDetail';
+import MrvIotRunner from '../../../components/dashboard/MrvIotRunner';
 
 /** HyDroMa dashboard - model page: mrv-iot (category: carbon). */
 export default function MrvIotModelPage() {
-  return <ModelDetail modelId="mrv-iot" />;
+  return <MrvIotRunner />;
 }

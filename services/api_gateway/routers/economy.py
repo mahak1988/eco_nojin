@@ -1,4 +1,4 @@
-"""Phase 5 router — economy / livelihood cost-benefit analysis."""
+"""router — economy / livelihood cost-benefit analysis."""
 
 from typing import Any
 

@@ -97,6 +97,55 @@ def parse_ttn_v3(payload: dict[str, Any], site_id: str | None = None) -> list[Io
     return readings
 
 
+def get_latest_readings(
+    site_id: str,
+    sensor_types: list[str] | None = None,
+    limit: int = 10,
+) -> list[IoTReading]:
+    """Fetch the most recent IoT readings for a site.
+
+    Queries the MRVObservation table for level=2 (IoT) readings,
+    filtered by site_id and optionally by sensor_types.
+
+    Args:
+        site_id: Site/parcel identifier
+        sensor_types: Optional list of sensor types to filter (e.g., ["soil_moisture", "temp"])
+        limit: Maximum number of readings to return (default 10)
+
+    Returns:
+        List of IoTReading objects, most recent first
+    """
+    from database.hub import hub
+
+    with hub.get_session() as session:
+        query = session.query(MRVObservation).filter(
+            MRVObservation.site_id == site_id,
+            MRVObservation.level == 2,
+            MRVObservation.source == "iot",
+        )
+        if sensor_types:
+            query = query.filter(MRVObservation.sensor_type.in_(sensor_types))
+
+        query = query.order_by(MRVObservation.observed_at.desc()).limit(limit)
+        rows = query.all()
+
+    readings: list[IoTReading] = []
+    for row in rows:
+        try:
+            readings.append(
+                IoTReading(
+                    site_id=row.site_id,
+                    sensor_type=row.sensor_type,
+                    value=row.value,
+                    unit=row.unit,
+                    ts=row.observed_at,
+                )
+            )
+        except (ValueError, TypeError):
+            continue
+    return readings
+
+
 def webhook_key_ok(provided: str | None, expected: str) -> bool:
     """Constant-time comparison; an empty expected key means 'not configured'."""
     if not expected:

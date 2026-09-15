@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Search, Filter, Leaf, Satellite, Layers, Droplets, Blocks, CloudSun, Coins, FlaskConical } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { useLang } from '../../i18n/LanguageContext';
+import { useBilingual } from '../../hooks/useBilingual';
 import Reveal from '../ui/Reveal';
 import UniversalCard from '../ui/UniversalCard';
 import type { CardTheme } from '../ui/UniversalCard';
@@ -22,7 +22,7 @@ const CATEGORY_CONFIG: Record<string, { theme: CardTheme; icon: LucideIcon }> = 
 
 /** Collapsible model category tree with UniversalCard-powered model entries. */
 export default function CategoryTree() {
-  const { lang } = useLang();
+  const { fa } = useBilingual();
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
   const [showCalculatorsOnly, setShowCalculatorsOnly] = useState(false);
@@ -77,7 +77,7 @@ export default function CategoryTree() {
             type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={lang === 'fa' ? 'جستجوی مدل...' : 'Search models...'}
+            placeholder={fa('جستجوی مدل...', 'Search models...')}
             className="w-full rounded-2xl border border-white/10 bg-[var(--color-night-950)]/60 px-3 py-2 pl-9 text-sm text-[var(--color-night-100)] outline-none placeholder:text-[var(--color-night-200)]/40 focus:border-[var(--color-leaf-500)]/40"
           />
           <Search className="absolute start-2.5 top-2.5 h-4 w-4 text-[var(--color-night-200)]/40" />
@@ -93,7 +93,7 @@ export default function CategoryTree() {
           }}`}
         >
           <Filter className="h-3 w-3" />
-          {lang === 'fa' ? 'محاسبه‌گرها' : 'Calculators'}
+          {fa('محاسبه‌گرها', 'Calculators')}
         </button>
 
         <button
@@ -101,7 +101,10 @@ export default function CategoryTree() {
           onClick={toggleAll}
           className="rounded-full bg-white/5 px-3 py-1.5 text-[10px] font-bold text-[var(--color-night-200)]/40 hover:text-[var(--color-night-100)]"
         >
-          {lang === 'fa' ? (isOpenAll() ? 'بستن همه' : 'باز کردن همه') : isOpenAll() ? 'Collapse all' : 'Expand all'}
+          {fa(
+            isOpenAll() ? 'بستن همه' : 'باز کردن همه',
+            isOpenAll() ? 'Collapse all' : 'Expand all'
+          )}
         </button>
       </div>
 
@@ -133,10 +136,10 @@ export default function CategoryTree() {
 
                   <div className="flex-1">
                     <h3 className="text-sm font-extrabold text-[var(--color-night-100)]">
-                      {lang === 'fa' ? category.nameFa : category.nameEn}
+                      {fa(category.nameFa, category.nameEn)}
                     </h3>
                     <p className="text-[10px] text-[var(--color-night-200)]/40">
-                      {entries.length} {lang === 'fa' ? 'مدل' : 'models'}
+                      {entries.length} {fa('مدل', 'models')}
                     </p>
                   </div>
 
@@ -165,8 +168,8 @@ export default function CategoryTree() {
                             className="group"
                           >
                             <UniversalCard
-                              title={lang === 'fa' ? entry.nameFa : entry.nameEn}
-                              desc={lang === 'fa' ? entry.descFa : entry.descEn}
+                              title={fa(entry.nameFa, entry.nameEn)}
+                              desc={fa(entry.descFa, entry.descEn)}
                               icon="flask"
                               iconColor={
                                 config.theme === 'aqua'

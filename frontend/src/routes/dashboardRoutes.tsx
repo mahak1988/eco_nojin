@@ -1,13 +1,17 @@
-/** Dashboard route table — generated page files organized by model category
- * folders (indices/formulas/soil/hydro/simulation/carbon/climate/economics)
- * + account pages. Kept separate from the public route tree.
- * NOTE: this file lives in src/routes/ — imports use ONE level up to src/. */
+/** Dashboard routes — includes newly implemented pages. */
 
 import type { ReactElement } from 'react';
+import { useParams } from 'react-router-dom';
 import DashboardHome from '../pages/DashboardPage';
 import ModelDetail from '../components/dashboard/ModelDetail';
+import CategoryPage from '../pages/dashboard/CategoryPage';
+import AdminGate from '../components/auth/AdminGate';
 import ProfilePage from '../pages/dashboard/account/ProfilePage';
 import SettingsPage from '../pages/dashboard/account/SettingsPage';
+import AdvisoryPage from '../pages/dashboard/AdvisoryPage';
+import VoiceDiagnosticsPage from '../pages/dashboard/VoiceDiagnosticsPage';
+import VoiceAskPage from '../pages/dashboard/VoiceAskPage';
+import OrganizationManagementPage from '../pages/dashboard/OrganizationManagementPage';
 
 /* generated model page imports — indices */
 import EcsiModelPage from '../pages/dashboard/indices/EcsiModelPage';
@@ -71,6 +75,27 @@ import EconRiskModelPage from '../pages/dashboard/economics/EconRiskModelPage';
 import EconIntegrationModelPage from '../pages/dashboard/economics/EconIntegrationModelPage';
 import MultiObjectiveOptimizerModelPage from '../pages/dashboard/economics/MultiObjectiveOptimizerModelPage';
 import DecisionSupportModelPage from '../pages/dashboard/economics/DecisionSupportModelPage';
+/* live */
+import LiveStatusPage from '../pages/dashboard/live/LiveStatusPage';
+import LiveSatellitePage from '../pages/dashboard/live/LiveSatellitePage';
+import LiveChainPage from '../pages/dashboard/live/LiveChainPage';
+import LiveIndicesPage from '../pages/dashboard/live/LiveIndicesPage';
+import LiveSoilPage from '../pages/dashboard/live/LiveSoilPage';
+import LiveCarbonPage from '../pages/dashboard/live/LiveCarbonPage';
+import LiveEt0Page from '../pages/dashboard/live/LiveEt0Page';
+import LoginPage from '../pages/dashboard/account/LoginPage';
+/* specialized */
+import LiveMonitoringPage from '../pages/dashboard/monitoring/LiveMonitoringPage';
+import LiveSciencePage from '../pages/dashboard/live/LiveSciencePage';
+import LiveEconomyPage from '../pages/dashboard/live/LiveEconomyPage';
+import DashboardSupportPage from '../pages/dashboard/support/DashboardSupportPage';
+import ValidationPage from '../pages/dashboard/ops/ValidationPage';
+import RegionalSettingsPage from '../pages/dashboard/RegionalSettingsPage';
+
+function CategoryRoute() {
+  const { key } = useParams();
+  return <CategoryPage categoryKey={key ?? ''} />;
+}
 
 export interface DashboardRoute {
   path: string;
@@ -79,9 +104,15 @@ export interface DashboardRoute {
 
 export const dashboardRoutes: DashboardRoute[] = [
   { path: '', element: <DashboardHome /> },
+  { path: 'category/:key', element: <CategoryRoute /> },
   { path: 'profile', element: <ProfilePage /> },
   { path: 'settings', element: <SettingsPage /> },
+  { path: 'regional', element: <RegionalSettingsPage /> },
+  { path: 'voice/diagnostics', element: <VoiceDiagnosticsPage /> },
+  { path: 'voice/ask', element: <VoiceAskPage /> },
+  { path: 'organizations', element: <OrganizationManagementPage /> },
 
+  /* model pages */
   { path: 'models/ecsi', element: <EcsiModelPage /> },
   { path: 'models/epia', element: <EpiaModelPage /> },
   { path: 'models/esri', element: <EsriModelPage /> },
@@ -91,7 +122,6 @@ export const dashboardRoutes: DashboardRoute[] = [
   { path: 'models/hpheno', element: <HphenoModelPage /> },
   { path: 'models/hyrue', element: <HyrueModelPage /> },
   { path: 'models/runoff-model', element: <RunoffModelPage /> },
-
   { path: 'models/horton-infiltration', element: <HortonInfiltrationModelPage /> },
   { path: 'models/scs-cn-runoff', element: <ScsCnRunoffModelPage /> },
   { path: 'models/van-genuchten', element: <VanGenuchtenModelPage /> },
@@ -102,7 +132,6 @@ export const dashboardRoutes: DashboardRoute[] = [
   { path: 'models/francis-weir', element: <FrancisWeirModelPage /> },
   { path: 'models/ring-storage', element: <RingStorageModelPage /> },
   { path: 'models/effective-porosity', element: <EffectivePorosityModelPage /> },
-
   { path: 'models/soil-texture', element: <SoilTextureModelPage /> },
   { path: 'models/soil-taxonomy', element: <SoilTaxonomyModelPage /> },
   { path: 'models/soil-water-retention', element: <SoilWaterRetentionModelPage /> },
@@ -112,28 +141,23 @@ export const dashboardRoutes: DashboardRoute[] = [
   { path: 'models/soil-salinity', element: <SoilSalinityModelPage /> },
   { path: 'models/soil-health', element: <SoilHealthModelPage /> },
   { path: 'models/soil-recommendations', element: <SoilRecommendationsModelPage /> },
-
   { path: 'models/groundwater-model', element: <GroundwaterModelPage /> },
   { path: 'models/groundwater-service', element: <GroundwaterServiceModelPage /> },
   { path: 'models/runoff-surface', element: <RunoffSurfaceModelPage /> },
-
   { path: 'models/sim-orchestrator', element: <SimOrchestratorModelPage /> },
   { path: 'models/hecras', element: <HecrasModelPage /> },
   { path: 'models/weap', element: <WeapModelPage /> },
   { path: 'models/sim-calibration', element: <SimCalibrationModelPage /> },
   { path: 'models/sim-scenarios', element: <SimScenariosModelPage /> },
   { path: 'models/weather-source', element: <WeatherSourceModelPage /> },
-
   { path: 'models/carbon-calculator', element: <CarbonCalculatorModelPage /> },
   { path: 'models/mrv-satellite', element: <MrvSatelliteModelPage /> },
   { path: 'models/mrv-iot', element: <MrvIotModelPage /> },
   { path: 'models/mrv-citizen', element: <MrvCitizenModelPage /> },
   { path: 'models/mrv-qa', element: <MrvQaModelPage /> },
   { path: 'models/mrv-metrics', element: <MrvMetricsModelPage /> },
-
   { path: 'models/et-calculator', element: <EtCalculatorModelPage /> },
   { path: 'models/irrigation-scheduler', element: <IrrigationSchedulerModelPage /> },
-
   { path: 'models/econ-analysis', element: <EconAnalysisModelPage /> },
   { path: 'models/econ-costing', element: <EconCostingModelPage /> },
   { path: 'models/econ-revenue', element: <EconRevenueModelPage /> },
@@ -143,9 +167,23 @@ export const dashboardRoutes: DashboardRoute[] = [
   { path: 'models/econ-integration', element: <EconIntegrationModelPage /> },
   { path: 'models/multi-objective-optimizer', element: <MultiObjectiveOptimizerModelPage /> },
   { path: 'models/decision-support', element: <DecisionSupportModelPage /> },
+
+  { path: 'login', element: <LoginPage /> },
+  { path: 'live/status', element: <AdminGate><LiveStatusPage /></AdminGate> },
+  { path: 'live/satellite', element: <LiveSatellitePage /> },
+  { path: 'live/chain', element: <LiveChainPage /> },
+  { path: 'live/indices', element: <LiveIndicesPage /> },
+  { path: 'live/soil', element: <LiveSoilPage /> },
+  { path: 'live/carbon', element: <LiveCarbonPage /> },
+  { path: 'live/et0', element: <LiveEt0Page /> },
+  { path: 'monitoring', element: <LiveMonitoringPage /> },
+  { path: 'science-live', element: <LiveSciencePage /> },
+  { path: 'economy', element: <LiveEconomyPage /> },
+  { path: 'support', element: <DashboardSupportPage /> },
+  { path: 'validation', element: <ValidationPage /> },
+  { path: 'advisory', element: <AdvisoryPage /> },
 ];
 
-/** Fallback element used by the layout for unknown dashboard paths. */
 export function DashboardUnknown() {
   return <ModelDetail modelId="__unknown__" />;
 }

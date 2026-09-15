@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import { useLang } from '../../i18n/LanguageContext';
 import Reveal from '../ui/Reveal';
@@ -13,6 +14,7 @@ interface ScienceChainProps {
 export default function ScienceChain({ variant }: ScienceChainProps) {
   const { t, dir } = useLang();
   const isFull = variant === 'full';
+  const reduceMotion = useReducedMotion();
 
   return (
     <section className="px-4 py-16 sm:px-6 lg:py-24" id="science">
@@ -22,8 +24,12 @@ export default function ScienceChain({ variant }: ScienceChainProps) {
         {/* chain steps */}
         <ol className="relative grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {/* connector line (desktop) */}
-          <div
-            className="absolute inset-x-8 top-9 hidden border-t-2 border-dashed border-[var(--color-leaf-500)]/25 lg:block"
+          <motion.div
+            className="absolute inset-x-8 top-9 hidden origin-center border-t-2 border-dashed border-[var(--color-leaf-500)]/25 lg:block"
+            initial={reduceMotion ? false : { scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 1.4, ease: 'easeInOut' }}
             aria-hidden
           />
           {t.science.steps.map((step, index) => (

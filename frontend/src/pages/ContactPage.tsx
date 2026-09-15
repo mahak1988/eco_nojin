@@ -169,7 +169,7 @@ export default function ContactPage() {
                 </label>
 
                 {/* honeypot — hidden from real users */}
-                <div aria-hidden style={{ position: 'absolute', insetInlineStart: '-9999px' }}>
+                <div aria-hidden className="absolute start-[-9999px]">
                   <label>
                     Website
                     <input

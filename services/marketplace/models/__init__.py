@@ -53,9 +53,11 @@ class MarketplaceSeller(Base):
     __table_args__ = (
         Index("idx_seller_village", "village_id"),
         Index("idx_seller_status", "status"),
+        Index("idx_seller_marketplace", "marketplace_id"),
     )
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    marketplace_id = Column(String(36), ForeignKey("marketplaces.id"), nullable=True, index=True)
     user_id = Column(String(36), nullable=False, index=True)
     village_id = Column(String(100), nullable=False)
     shop_name = Column(String(200), nullable=False)
@@ -69,6 +71,7 @@ class MarketplaceSeller(Base):
     created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
     updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
     products = relationship("MarketplaceProduct", back_populates="seller")
+    marketplace = relationship("Marketplace", back_populates="shops")
 
 
 class MarketplaceProduct(Base):
@@ -81,6 +84,7 @@ class MarketplaceProduct(Base):
     )
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    marketplace_id = Column(String(36), ForeignKey("marketplaces.id"), nullable=True, index=True)
     seller_id = Column(String(36), ForeignKey("marketplace_sellers.id"), nullable=False)
     name = Column(String(300), nullable=False)
     slug = Column(String(300), nullable=False, unique=True, index=True)
@@ -106,6 +110,73 @@ class MarketplaceProduct(Base):
     created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
     updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
     seller = relationship("MarketplaceSeller", back_populates="products")
+
+
+class MarketplaceType(str, Enum):
+    RURAL = "rural"
+    TRIBAL = "tribal"
+
+
+class MarketplaceStatus(str, Enum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+    INACTIVE = "inactive"
+
+
+class Marketplace(Base):
+    __tablename__ = "marketplaces"
+    __table_args__ = (
+        Index("idx_marketplace_village", "village_id"),
+        Index("idx_marketplace_type", "marketplace_type"),
+        Index("idx_marketplace_status", "status"),
+    )
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    name = Column(String(200), nullable=False)
+    slug = Column(String(300), nullable=False, unique=True, index=True)
+    description = Column(Text)
+    marketplace_type = Column(String(20), nullable=False)
+    logo = Column(String(500), default="")
+    banner = Column(String(500), default="")
+    address = Column(Text)
+    postal_code = Column(String(20))
+    location = Column(String(500))
+    village_id = Column(String(100), nullable=False)
+    founder_ids = Column(JSON, default=list)
+    e_commerce_rules_accepted = Column(Boolean, default=False)
+    buy_sell_rules_accepted = Column(Boolean, default=False)
+    identity_verified = Column(Boolean, default=False)
+    admin_approved = Column(Boolean, default=False)
+    admin_rejected_reason = Column(Text, nullable=True)
+    status = Column(String(20), default="pending", index=True)
+    rules_document = Column(Text)
+    contact_email = Column(String(200))
+    contact_phone = Column(String(50))
+    marketing_enabled = Column(Boolean, default=True)
+    branding_enabled = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    shops = relationship("MarketplaceSeller", back_populates="marketplace")
+
+
+class MarketplaceMember(Base):
+    __tablename__ = "marketplace_members"
+    __table_args__ = (
+        Index("idx_member_marketplace", "marketplace_id"),
+        Index("idx_member_user", "user_id"),
+    )
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    marketplace_id = Column(String(36), ForeignKey("marketplaces.id"), nullable=False, index=True)
+    user_id = Column(String(36), nullable=False, index=True)
+    role = Column(String(20), nullable=False)
+    joined_at = Column(DateTime, default=lambda: datetime.now(UTC))
+    is_active = Column(Boolean, default=True)
+    marketplace = relationship("Marketplace", back_populates="members")
+
+
+Marketplace.members = relationship("MarketplaceMember", back_populates="marketplace")
 
 
 class MarketplaceOrder(Base):
@@ -143,6 +214,19 @@ class MarketplaceCommissionRule(Base):
     landscape_fee_bps = Column(Integer, default=100)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+
+
+class MarketplaceWishlist(Base):
+    __tablename__ = "marketplace_wishlist"
+    __table_args__ = (
+        Index("idx_wishlist_user", "user_id"),
+        Index("idx_wishlist_product", "product_id"),
+    )
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String(36), nullable=False, index=True)
+    product_id = Column(String(36), nullable=False, index=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
 
 
 # Merged from models_legacy.py
@@ -244,6 +328,9 @@ class Product:
     batch_number: str = ""
     traceability_code: str = field(default_factory=lambda: f"ECO-{uuid.uuid4().hex[:12].upper()}")
 
+    # Images
+    images: list[str] = field(default_factory=list)
+
     # Status
     is_active: bool = True
     created_at: datetime = field(default_factory=datetime.utcnow)
@@ -270,6 +357,7 @@ class Order:
     product_id: str = ""
     product_name: str = ""
     buyer_name: str = ""
+    seller_id: str = ""
     quantity_kg: float = 0.0
     unit_price: float = 0.0
     total_price: float = 0.0

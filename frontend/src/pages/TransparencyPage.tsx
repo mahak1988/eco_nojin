@@ -53,8 +53,7 @@ export default function TransparencyPage() {
           <Reveal>
             <div className="relative overflow-hidden rounded-[2rem] border border-[var(--color-leaf-500)]/20 bg-gradient-to-br from-night-800 via-night-900 to-night-950 p-8 sm:p-10">
               <div
-                className="absolute -top-20 end-[-6%] h-56 w-56 rounded-full opacity-25 blur-[100px]"
-                style={{ background: 'radial-gradient(circle, #2fb36b 0%, transparent 70%)' }}
+                className="absolute -top-20 end-[-6%] h-56 w-56 rounded-full opacity-25 blur-[100px] gradient-blob-leaf"
                 aria-hidden
               />
               <h2 className="text-2xl font-extrabold text-[var(--color-night-100)] sm:text-3xl">

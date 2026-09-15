@@ -1,15 +1,21 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { Languages, Menu, X } from 'lucide-react';
+import { Languages, Menu, X, LogIn, LogOut, User, Search, Command } from 'lucide-react';
 import { useLang } from '../../i18n/LanguageContext';
+import { useAuth } from '../../context/AuthContext';
 import Logo from '../visuals/Logo';
+import { SearchModal, useGlobalSearchShortcut } from '../ui/SearchModal';
 
 /** Fixed top navigation with glass background on scroll and a mobile sheet. */
 export default function Navbar() {
   const { t, toggle, lang } = useLang();
+  const { isAuthenticated, user, logout } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
+
+  useGlobalSearchShortcut(() => setSearchOpen(true));
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 14);
@@ -22,6 +28,11 @@ export default function Navbar() {
   useEffect(() => {
     setOpen(false);
   }, [location.pathname]);
+
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/';
+  };
 
   const links = [
     { to: '/', label: t.nav.home },
@@ -40,11 +51,18 @@ export default function Navbar() {
     }`;
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled ? 'glass shadow-lg shadow-black/20' : 'bg-transparent'
-      }`}
-    >
+    <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:start-2 focus:z-[100] focus:rounded-xl focus:bg-[var(--color-leaf-500)] focus:px-4 focus:py-2 focus:text-sm focus:font-extrabold focus:text-[var(--color-night-950)]"
+      >
+        {lang === 'fa' ? 'پرش به محتوای اصلی' : 'Skip to main content'}
+      </a>
+      <header
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+          scrolled ? 'glass shadow-lg shadow-black/20' : 'bg-transparent'
+        }`}
+      >
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link to="/" aria-label={t.brand.name} className="transition-opacity hover:opacity-85">
           <Logo wordmark={t.brand.name} size={38} />
@@ -60,6 +78,45 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
+          {isAuthenticated ? (
+            <>
+              <Link
+                to="/dashboard/profile"
+                className="glass glass-hover hidden items-center gap-1.5 rounded-full border border-[var(--color-aqua-500)]/30 bg-[var(--color-aqua-500)]/10 px-4 py-2 text-xs font-extrabold text-[var(--color-aqua-300)] sm:inline-flex"
+              >
+                <User className="h-4 w-4" aria-hidden />
+                {user?.full_name || user?.email?.split('@')[0] || (lang === 'fa' ? 'کاربر' : 'User')}
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="glass glass-hover hidden items-center gap-1.5 rounded-full border border-red-500/30 bg-red-500/10 px-4 py-2 text-xs font-extrabold text-red-300 sm:inline-flex"
+              >
+                <LogOut className="h-4 w-4" aria-hidden />
+                {lang === 'fa' ? 'خروج' : 'Logout'}
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/login"
+              className="glass glass-hover hidden items-center gap-1.5 rounded-full border border-[var(--color-leaf-500)]/40 bg-[var(--color-leaf-500)]/10 px-4 py-2 text-xs font-extrabold text-[var(--color-leaf-300)] sm:inline-flex"
+            >
+              <LogIn className="h-4 w-4" aria-hidden />
+              {lang === 'fa' ? 'ورود' : 'Login'}
+            </Link>
+          )}
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
+            aria-label={lang === 'fa' ? 'جستجوی سراسری' : 'Global search'}
+            className="glass glass-hover inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-extrabold text-[var(--color-night-100)] hidden sm:flex"
+          >
+            <Search className="h-4 w-4 text-[var(--color-night-200)]/60" aria-hidden />
+            <kbd className="inline-flex items-center gap-1 rounded bg-white/5 px-1.5 py-0.5 font-mono text-[10px]">
+              <Command className="h-2.5 w-2.5" />
+              <span>K</span>
+            </kbd>
+          </button>
           <button
             type="button"
             onClick={toggle}
@@ -100,8 +157,37 @@ export default function Navbar() {
               {link.label}
             </NavLink>
           ))}
+          {isAuthenticated ? (
+            <>
+              <Link
+                to="/dashboard/profile"
+                className="flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-[var(--color-aqua-300)]"
+              >
+                <User className="h-4 w-4" aria-hidden />
+                {user?.full_name || user?.email?.split('@')[0] || (lang === 'fa' ? 'کاربر' : 'User')}
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-red-300"
+              >
+                <LogOut className="h-4 w-4" aria-hidden />
+                {lang === 'fa' ? 'خروج' : 'Logout'}
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/login"
+              className="flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-[var(--color-leaf-300)]"
+            >
+              <LogIn className="h-4 w-4" aria-hidden />
+              {lang === 'fa' ? 'ورود' : 'Login'}
+            </Link>
+          )}
         </div>
       ) : null}
     </header>
+    <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+    </>
   );
 }

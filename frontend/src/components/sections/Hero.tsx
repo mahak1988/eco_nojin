@@ -4,10 +4,15 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { useLang } from '../../i18n/LanguageContext';
 import FieldScene from '../visuals/FieldScene';
 
-/** Landing hero: headline + CTAs on one side, satellite field scene on the other. */
+/**
+ * Hero v2 — golden-ratio split (61.8 / 38.2), one primary CTA + one text
+ * link, and a slim 4-stat row. The old chip clutter is removed (report 66).
+ */
 export default function Hero() {
-  const { t, lang, dir } = useLang();
+  const { t, dir, lang } = useLang();
+  const isFa = lang === 'fa';
   const reduceMotion = useReducedMotion();
+  const slimStats = t.stats.slice(0, 4);
 
   const fade = (delay: number) =>
     reduceMotion
@@ -19,62 +24,58 @@ export default function Hero() {
         };
 
   return (
-    <section className="relative overflow-hidden px-4 pb-20 pt-14 sm:px-6 lg:pb-28 lg:pt-20">
-      <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
-        {/* copy */}
-        <div className="flex flex-col items-start gap-6">
-          <motion.span
-            {...fade(0)}
-            className="glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold text-[var(--color-leaf-300)]"
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-leaf-400)] animate-pulse-soft" aria-hidden />
-            {t.hero.kicker}
-          </motion.span>
-
+    <section className="relative overflow-hidden px-4 pb-[55px] pt-[55px] sm:px-6 lg:pb-[89px] lg:pt-[89px]">
+      <div className="mx-auto grid max-w-6xl items-center gap-[34px] lg:grid-cols-[1.618fr_1fr]">
+        {/* copy — 61.8% */}
+        <div className="flex flex-col items-start gap-[21px]">
+          <motion.p {...fade(0)} className={isFa ? 'kicker kicker-fa' : 'kicker'}>
+            {isFa ? 'پلتفرم علمی احیا و کشاورزی دقیق' : 'Restoration & precision farming science platform'}
+          </motion.p>
           <motion.h1
-            {...fade(0.12)}
-            className="text-4xl font-extrabold leading-[1.25] text-[var(--color-night-100)] sm:text-5xl lg:text-[3.4rem] lg:leading-[1.2]"
+            {...fade(0)}
+            className="font-display text-[44px] font-semibold leading-[1.18] text-ink-1 sm:text-[58px] lg:text-[66px] lg:leading-[1.14]"
           >
-            {t.hero.title}{' '}
-            <span className="text-gradient-leaf text-shimmer">{t.hero.titleAccent}</span>
+            {t.hero.title} <span className="text-gradient-leaf text-shimmer">{t.hero.titleAccent}</span>
           </motion.h1>
 
-          <motion.p
-            {...fade(0.24)}
-            className="max-w-xl text-base leading-8 text-[var(--color-night-200)]/65 sm:text-lg sm:leading-9"
-          >
+          <motion.p {...fade(0.12)} className="max-w-xl text-base leading-[1.9] text-ink-2 sm:text-lg">
             {t.hero.subtitle}
           </motion.p>
 
-          <motion.div {...fade(0.36)} className="flex flex-wrap items-center gap-3">
+          <motion.div {...fade(0.24)} className="flex flex-wrap items-center gap-[13px]">
             <Link
               to="/platform"
-              className="ring-glow inline-flex items-center gap-2 rounded-full bg-[var(--color-leaf-500)] px-6 py-3 text-sm font-extrabold text-[var(--color-night-950)] transition-transform hover:scale-[1.03] active:scale-[0.98]"
+              className="ring-glow inline-flex items-center gap-2 rounded-full bg-leaf-500 px-[21px] py-3 text-sm font-extrabold text-night-950 transition-transform hover:scale-[1.03] active:scale-[0.98]"
             >
               {t.hero.ctaPrimary}
-              {dir === 'rtl' ? (
-                <ArrowLeft className="h-4 w-4" aria-hidden />
-              ) : (
-                <ArrowLeft className="h-4 w-4 rotate-180" aria-hidden />
-              )}
+              <ArrowLeft className={`h-4 w-4 ${dir === 'rtl' ? '' : 'rotate-180'}`} aria-hidden />
             </Link>
             <Link
               to="/hydroma"
-              className="glass glass-hover inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-extrabold text-[var(--color-night-100)]"
+              className="inline-flex items-center gap-2 px-2 py-2 text-sm font-extrabold text-ink-2 transition-colors hover:text-leaf-300"
             >
-              <FlaskConical className="h-4 w-4 text-[var(--color-aqua-300)]" aria-hidden />
+              <FlaskConical className="h-4 w-4 text-aqua-400" aria-hidden />
               {t.hero.ctaSecondary}
             </Link>
           </motion.div>
 
-          <motion.p {...fade(0.48)} className="text-xs text-[var(--color-night-200)]/40" dir={lang === 'fa' ? 'ltr' : 'rtl'}>
-            {lang === 'fa' ? 'HyDroMa · Sentinel-2 · ERA5 · Polygon' : 'هیدروما · سنتینل-۲ · ERA5 · پالیگون'}
-          </motion.p>
+          {/* slim 4-stat row (φ spacing, quiet dividers) */}
+          <motion.dl
+            {...fade(0.36)}
+            className="mt-[13px] flex flex-wrap items-center gap-x-[34px] gap-y-[13px] border-t border-white/8 pt-[21px]"
+          >
+            {slimStats.map((stat) => (
+              <div key={stat.label} className="flex flex-col gap-0.5">
+                <dt className="font-tech order-2 text-[10px] uppercase tracking-[0.14em] text-ink-3">{stat.label}</dt>
+                <dd className="font-display order-1 text-2xl font-semibold text-leaf-200">{stat.value}</dd>
+              </div>
+            ))}
+          </motion.dl>
         </div>
 
-        {/* visual */}
+        {/* visual — 38.2% */}
         <motion.div
-          initial={reduceMotion ? undefined : { opacity: 0, scale: 0.94 }}
+          initial={reduceMotion ? undefined : { opacity: 0, scale: 0.96 }}
           animate={reduceMotion ? undefined : { opacity: 1, scale: 1 }}
           transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 0.61, 0.36, 1] }}
         >

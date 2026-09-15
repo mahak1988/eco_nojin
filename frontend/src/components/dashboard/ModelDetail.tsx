@@ -16,6 +16,15 @@ import {
   ScsCalculator,
   VgCalculator,
 } from './calculators';
+import IndexRunner from './IndexRunner';
+import { engineClientFor } from '../../lib/hydromaTools';
+import EtCalculatorRunner from './EtCalculatorRunner';
+import MrvSatelliteRunner from './MrvSatelliteRunner';
+import ChainRunner from './ChainRunner';
+import MrvIotRunner from './MrvIotRunner';
+import MrvCitizenRunner from './MrvCitizenRunner';
+import MrvQaRunner from './MrvQaRunner';
+import MrvMetricsRunner from './MrvMetricsRunner';
 
 const CALC_MAP: Record<string, 'horton' | 'scs' | 'vg' | 'hydraulics' | 'ring'> = {
   'horton-infiltration': 'horton',
@@ -51,6 +60,7 @@ export default function ModelDetail({ modelId }: { modelId: string }) {
 
   const category = registryCategories.find((item) => item.key === entry.category);
   const calcKey = CALC_MAP[entry.id];
+  const toolApi = engineClientFor(entry.id);
   const labels = buildCalculatorLabels(lang);
 
   const implLabel = isFa
@@ -124,14 +134,46 @@ export default function ModelDetail({ modelId }: { modelId: string }) {
           {calcKey === 'hydraulics' ? <HydraulicsCalculator labels={labels.hydraulics} /> : null}
           {calcKey === 'ring' ? <RingCalculator labels={labels.ring} /> : null}
         </Reveal>
+      ) : toolApi ? (
+        <Reveal className="flex flex-col gap-3">
+          <IndexRunner modelId={entry.id} api={toolApi} />
+        </Reveal>
+      ) : entry.id === 'et-calculator' ? (
+        <Reveal className="flex flex-col gap-3">
+          <EtCalculatorRunner />
+        </Reveal>
+      ) : entry.id === 'sim-orchestrator' ? (
+        <Reveal className="flex flex-col gap-3">
+          <ChainRunner />
+        </Reveal>
+      ) : entry.id === 'mrv-satellite' ? (
+        <Reveal className="flex flex-col gap-3">
+          <MrvSatelliteRunner />
+        </Reveal>
+      ) : entry.id === 'mrv-iot' ? (
+        <Reveal className="flex flex-col gap-3">
+          <MrvIotRunner />
+        </Reveal>
+      ) : entry.id === 'mrv-citizen' ? (
+        <Reveal className="flex flex-col gap-3">
+          <MrvCitizenRunner />
+        </Reveal>
+      ) : entry.id === 'mrv-qa' ? (
+        <Reveal className="flex flex-col gap-3">
+          <MrvQaRunner />
+        </Reveal>
+      ) : entry.id === 'mrv-metrics' ? (
+        <Reveal className="flex flex-col gap-3">
+          <MrvMetricsRunner />
+        </Reveal>
       ) : (
         <Reveal>
           <div className="glass flex items-start gap-3 rounded-2xl p-5">
             <FlaskConical className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-aqua-300)]" aria-hidden />
             <p className="text-xs leading-6 text-[var(--color-night-200)]/60">
               {isFa
-                ? 'این مدل در موتور پایتون/C++ پیاده‌سازی شده است؛ محاسبه‌گر تعاملی آن در فاز بعدی داشبورد اضافه می‌شود. اجرای سمت سرور از طریق درگاه API انجام می‌گیرد.'
-                : 'This model is implemented in the Python/C++ engine; its interactive calculator arrives in the next dashboard phase. Server-side execution runs through the API gateway.'}
+                ? 'این مدل روی هستهٔ علمی هیدروما (Python/C++) اجرا می‌شود و از طریق درگاه API پلتفرم قابل فراخوانی است.'
+                : 'This model runs on the HyDroMa scientific core (Python/C++) and is callable through the platform API gateway.'}
             </p>
           </div>
         </Reveal>

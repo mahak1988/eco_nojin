@@ -1,25 +1,17 @@
 import { useLang } from '../../i18n/LanguageContext';
-import Reveal from '../ui/Reveal';
-import UniversalCard from '../ui/UniversalCard';
 
-/** Horizontal band of key platform statistics — animated 3D cards. */
+/** Slim single-row stats strip (About page) — quiet numbers, no cards. */
 export default function StatsBand() {
   const { t } = useLang();
-  const themes = ['aqua', 'leaf', 'sand', 'aqua', 'leaf', 'sand'];
 
   return (
-    <section className="px-4 py-10 sm:px-6" aria-label="Key numbers">
-      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        {t.stats.map((stat, index) => (
-          <Reveal key={stat.label} delay={index * 0.06}>
-            <UniversalCard
-              title={stat.value}
-              desc={stat.label}
-              theme={themes[index] as 'leaf' | 'aqua' | 'sand'}
-              index={index}
-              flipOnHover={false}
-            />
-          </Reveal>
+    <section className="px-4 py-[34px] sm:px-6" aria-label="Key numbers">
+      <div className="stats-strip mx-auto max-w-6xl rounded-[21px] border border-white/8 bg-night-900 px-[13px] py-[21px]">
+        {t.stats.map((stat) => (
+          <div key={stat.label} className="flex flex-col items-center gap-1 px-[13px] text-center">
+            <span className="text-lg font-extrabold text-leaf-300">{stat.value}</span>
+            <span className="text-[11px] leading-5 text-ink-3">{stat.label}</span>
+          </div>
         ))}
       </div>
     </section>

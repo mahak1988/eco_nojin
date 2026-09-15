@@ -11,11 +11,14 @@
 import secrets
 from datetime import UTC, datetime
 from decimal import Decimal
+from typing import Optional
 
-from sqlalchemy import select
+from sqlalchemy import select, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from services.marketplace.models import (
+    Marketplace,
+    MarketplaceMember,
     MarketplaceCommissionRule,
     MarketplaceOrder,
     MarketplaceOrderStatus,
@@ -282,6 +285,121 @@ class MarketplaceService:
 
         return order
 
+    async def register_marketplace(self, data: dict) -> Marketplace:
+        """ثبت بازارچه جدید."""
+        marketplace = Marketplace(**data)
+        self.db.add(marketplace)
+        await self.db.commit()
+        await self.db.refresh(marketplace)
+
+        for founder_id in data.get("founder_ids", []):
+            await self.db.execute(
+                insert(MarketplaceMember)
+                .values(marketplace_id=marketplace.id, user_id=founder_id, role="founder")
+            )
+        await self.db.commit()
+
+        return marketplace
+
+    async def get_marketplace(self, marketplace_id: str) -> Optional[Marketplace]:
+        result = await self.db.execute(
+            select(Marketplace).where(Marketplace.id == marketplace_id)
+        )
+        return result.scalar_one_or_none()
+
+    async def list_marketplaces(
+        self,
+        marketplace_type: Optional[str] = None,
+        village_id: Optional[str] = None,
+        status: Optional[str] = None,
+        limit: int = 50,
+    ) -> list[Marketplace]:
+        stmt = select(Marketplace)
+        if marketplace_type:
+            stmt = stmt.where(Marketplace.marketplace_type == marketplace_type)
+        if village_id:
+            stmt = stmt.where(Marketplace.village_id == village_id)
+        if status:
+            stmt = stmt.where(Marketplace.status == status)
+        stmt = stmt.limit(limit)
+        result = await self.db.execute(stmt)
+        return result.scalars().all()
+
+    async def verify_marketplace(self, marketplace_id: str, approved: bool, verified_by: str) -> Marketplace:
+        result = await self.db.execute(
+            select(Marketplace).where(Marketplace.id == marketplace_id)
+        )
+        marketplace = result.scalar_one_or_none()
+        if not marketplace:
+            raise ValueError(f"بازارچه یافت نشد: {marketplace_id}")
+        if approved:
+            marketplace.admin_approved = True
+            marketplace.status = "approved"
+        else:
+            marketplace.status = "rejected"
+        await self.db.commit()
+        await self.db.refresh(marketplace)
+        return marketplace
+
+    async def add_marketplace_member(self, marketplace_id: str, user_id: str, role: str = "member") -> MarketplaceMember:
+        existing = await self.db.execute(
+            select(MarketplaceMember).where(
+                MarketplaceMember.marketplace_id == marketplace_id,
+                MarketplaceMember.user_id == user_id,
+            )
+        )
+        if existing.scalar_one_or_none():
+            raise ValueError("این کاربر قبلاً عضو بازارچه است")
+        member = MarketplaceMember(
+            marketplace_id=marketplace_id,
+            user_id=user_id,
+            role=role,
+        )
+        self.db.add(member)
+        await self.db.commit()
+        await self.db.refresh(member)
+        return member
+
+    async def create_marketplace_shop(self, marketplace_id: str, user_id: str, data: dict) -> MarketplaceSeller:
+        result = await self.db.execute(
+            select(Marketplace).where(Marketplace.id == marketplace_id)
+        )
+        marketplace = result.scalar_one_or_none()
+        if not marketplace:
+            raise ValueError(f"بازارچه یافت نشد: {marketplace_id}")
+        if marketplace.status != "approved":
+            raise ValueError("بازارچه هنوز تأیید نشده است")
+
+        existing = await self.db.execute(
+            select(MarketplaceSeller).where(
+                MarketplaceSeller.marketplace_id == marketplace_id,
+                MarketplaceSeller.user_id == user_id,
+            )
+        )
+        if existing.scalar_one_or_none():
+            raise ValueError("این کاربر قبلاً فروشگاه دارد")
+
+        shop = MarketplaceSeller(
+            marketplace_id=marketplace_id,
+            user_id=user_id,
+            village_id=data.get("village_id", ""),
+            shop_name=data["shop_name"],
+            shop_description=data.get("shop_description", ""),
+            status="pending",
+        )
+        self.db.add(shop)
+        await self.db.commit()
+        await self.db.refresh(shop)
+        return shop
+
+    async def list_marketplace_shops(self, marketplace_id: str, limit: int = 50) -> list[MarketplaceSeller]:
+        result = await self.db.execute(
+            select(MarketplaceSeller)
+            .where(MarketplaceSeller.marketplace_id == marketplace_id)
+            .limit(limit)
+        )
+        return result.scalars().all()
+
     async def _get_commission_rule(self, village_id: str) -> MarketplaceCommissionRule:
         """دریافت قانون کارمزد برای روستا یا قانون پیش‌فرض."""
         result = await self.db.execute(
@@ -343,3 +461,14 @@ class MarketplaceService:
         timestamp = datetime.now(UTC).strftime("%Y%m%d%H%M%S")
         random_suffix = secrets.token_hex(3).upper()
         return f"ORD-{timestamp}-{random_suffix}"
+
+
+_marketplace_service: MarketplaceService | None = None
+
+
+def get_marketplace_service(db=None) -> MarketplaceService:
+    """Get or create singleton marketplace service."""
+    global _marketplace_service
+    if _marketplace_service is None:
+        _marketplace_service = MarketplaceService(db)
+    return _marketplace_service

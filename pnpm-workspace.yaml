@@ -6,12 +6,13 @@ packages:
 autoInstallPeers: true
 strictPeerDependencies: false
 preferFrozenLockfile: true
-onlyBuiltDependencies:
-  - '@biomejs/biome'
-  - esbuild
-  - prisma
-  - msw
 allowBuilds:
+  '@biomejs/biome': true
   '@prisma/engines': true
   esbuild: true
   prisma: false
+  sharp: true
+  msw: true
+overrides:
+  '@types/react': 19.0.0
+  '@types/react-dom': 19.0.0

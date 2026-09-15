@@ -273,7 +273,7 @@ export default function Avatar({ src, alt = 'Avatar', size = 96, onUpload, edita
           }}
         >
           {preview ? (
-            <img src={preview} alt={alt} className="h-full w-full object-cover" />
+            <img src={preview} alt={alt} loading="lazy" className="h-full w-full object-cover" />
           ) : (
             <span
               className="flex items-center justify-center bg-[var(--color-sand-500)] text-lg font-extrabold text-[var(--color-night-200)]"

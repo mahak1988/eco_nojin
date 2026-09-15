@@ -35,10 +35,12 @@ def get_db():
 
 class RunCreate(BaseModel):
     user_key: str = Field(min_length=8, max_length=64)
-    model_id: str = Field(min_length=2, max_length=80)
+    model_id: str = Field(min_length=2, max_length=80, alias="modelId")
     title: str | None = Field(default=None, max_length=160)
     inputs: dict[str, Any] | None = None
     outputs: dict[str, Any] | None = None
+
+    model_config = {"populate_by_name": True}
 
     @field_validator("user_key")
     @classmethod

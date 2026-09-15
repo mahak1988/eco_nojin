@@ -6,14 +6,16 @@ Fixes W-016: real auth with roles. Secret key comes from settings
 - ``get_current_user`` (strict 401) and ``get_current_user_optional``
 - ``require_roles`` RBAC dependency
 - API-key guard for telco webhooks (USSD/SMS/Voice)
+- Tenant-aware authentication for multi-tenant SaaS
 
 Async version (Week 2 fix): uses async SQLAlchemy sessions to avoid
 thread-safety issues with SQLite in async FastAPI endpoints.
 """
 
 from datetime import UTC, datetime, timedelta
+from typing import NamedTuple
 
-from fastapi import Depends, Header, HTTPException, status
+from fastapi import Depends, Header, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 import bcrypt
@@ -57,12 +59,16 @@ def create_access_token(
     expires_delta: timedelta | None = None,
     subject: str | None = None,
     role: str = ROLE_FARMER,
+    tenant_id: str | None = None,
 ) -> str:
     """Create signed JWT. ``data`` may carry extra claims."""
     to_encode = data.copy()
     if subject is not None:
         to_encode["sub"] = str(subject)
     to_encode["role"] = role
+    if tenant_id is not None:
+        to_encode["platform_id"] = tenant_id
+        to_encode["tenant_id"] = tenant_id
     expire = datetime.now(UTC) + (
         expires_delta or timedelta(minutes=_settings.access_token_expire_minutes)
     )
@@ -82,6 +88,7 @@ def create_refresh_token(
     data: dict,
     subject: str | None = None,
     role: str = ROLE_FARMER,
+    tenant_id: str | None = None,
 ) -> str:
     """Create a refresh JWT (long-lived, ``type=refresh`` claim).
 
@@ -93,6 +100,9 @@ def create_refresh_token(
         to_encode["sub"] = str(subject)
     to_encode["role"] = role
     to_encode["type"] = "refresh"
+    if tenant_id is not None:
+        to_encode["platform_id"] = tenant_id
+        to_encode["tenant_id"] = tenant_id
     expire = datetime.now(UTC) + timedelta(minutes=_settings.refresh_token_expire_minutes)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, _settings.secret_key, algorithm=_settings.jwt_algorithm)
@@ -156,6 +166,10 @@ def require_roles(*roles: str):
     return _dependency
 
 
+def require_admin(user: User = Depends(require_roles(ROLE_ADMIN))) -> User:
+    return user
+
+
 def require_api_key(
     x_api_key: str | None = Header(default=None, alias="X-API-Key"),
 ) -> str:
@@ -179,6 +193,39 @@ def require_api_key(
 
 def role_of(user: User) -> str:
     return user.role if user.role in ALL_ROLES else ROLE_FARMER
+
+
+class UserWithTenant(NamedTuple):
+    """Container for user and their tenant context."""
+    user: User
+    tenant_id: str | None
+
+
+async def get_current_user_with_tenant(
+    request: Request,
+    token: str | None = Depends(oauth2_scheme),
+    db: AsyncSession = Depends(_get_async_db),
+) -> UserWithTenant:
+    """Strict auth with tenant context: returns User and tenant_id from JWT or header.
+    
+    Extracts tenant_id from:
+    1. JWT payload (platform_id or tenant_id claim)
+    2. X-Tenant-Id header (for API key auth)
+    
+    Returns UserWithTenant(user, tenant_id) where tenant_id may be None.
+    """
+    user = await get_current_user(token, db)
+    
+    tenant_id: str | None = None
+    payload = decode_token(token) if token else None
+    if payload:
+        tenant_id = payload.get("platform_id") or payload.get("tenant_id")
+    
+    # Fallback to header for API key auth
+    if not tenant_id:
+        tenant_id = request.headers.get("X-Tenant-Id")
+    
+    return UserWithTenant(user=user, tenant_id=tenant_id)
 
 
 # Backward-compatible alias: existing routers import `require_user`

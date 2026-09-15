@@ -5,6 +5,7 @@ import { useState, type ReactNode } from 'react';
 import MiniChart from './MiniChart';
 import { submitHubRun } from '../../lib/hub';
 import { useLang } from '../../i18n/LanguageContext';
+import type { Lang } from '../../content/site';
 import {
   darcyFlow,
   effectivePorosity,
@@ -25,7 +26,7 @@ const inputCls =
   'w-full rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-[var(--color-night-100)] focus:border-[var(--color-leaf-400)]/60 focus:outline-none';
 
 /** Bilingual labels for all dashboard calculators (shared with ModelDetail). */
-export function buildCalculatorLabels(lang: 'fa' | 'en') {
+export function buildCalculatorLabels(lang: Lang) {
   const isFa = lang === 'fa';
   return {
     horton: {

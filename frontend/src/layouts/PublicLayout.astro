@@ -1,0 +1,14 @@
+---
+import Layout from './Layout.astro';
+import { Astro } from 'astro';
+
+const { title, description, lang = 'fa' } = Astro.props;
+---
+
+<Layout title={title} description={description} lang={lang}>
+  <astro-island component-url="../components/layout/Navbar.tsx" client:load />
+  <main class="flex-1 pt-16" id="main-content">
+    <slot />
+  </main>
+  <astro-island component-url="../components/layout/Footer.tsx" client:load />
+</Layout>

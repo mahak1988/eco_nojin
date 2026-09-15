@@ -73,7 +73,6 @@ export default function BaseCard({
   const cardInner = (
     <Reveal
       className={`${containerCls} ${dragCls} ${dragStateCls} ${className ?? ''}`}
-      scale
       onClick={onClick}
     >
       {kicker ? (

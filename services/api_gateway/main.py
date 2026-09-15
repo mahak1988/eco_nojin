@@ -32,6 +32,7 @@ from starlette import status
 
 from services.api_gateway.exceptions import EcoNojinException
 from services.api_gateway.middleware import UploadSizeMiddleware
+from services.api_gateway.middleware.tenant import TenantMiddleware
 
 from database.hub import hub
 
@@ -44,7 +45,7 @@ def init_db():
 from engine.hydroma.config.settings import get_settings
 
 # Import all routers
-from .routers import platform, admin, auth, analyses # Import the new router
+from .routers import platform, admin, auth, analyses, auth_supabase, organizations  # Import the new router
 
 # Import individual routers that are used later with app.include_router
 from .routers import land, soil, satellite, carbon, watershed, scenarios, ai, ai_chat, ecowallet, marketplace, farms, analytics, materials, blockchain
@@ -60,9 +61,24 @@ from .routers import contact
 from .routers import pilot
 from .routers import newsletter
 from .routers import hydroma_hub
+from .routers import hydroma_indices
+from .routers import hydroma_soil
+from .routers import hydroma_simulation
+from .routers import hydroma_water
+from .routers import automation
+from .routers import hydroma_ops
+from .routers import hydroma_mrv
+from .routers import hydroma_economics
+from .routers import hydroma_carbon
+from .routers import hydroma_climate
 from .routers import manual_data
 from .routers import voice
+from .routers import iot_devices
+from .routers import organizations
+from .routers import carbon as carbon_router
+from .routers import marketplace as marketplace_router
 from .routers import dashboard
+from .routers import iot_devices
 from services.api_gateway.routers import nojin
 
 app = FastAPI(title="Eco Nojin API Gateway")
@@ -72,6 +88,8 @@ app.include_router(platform.router)
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["admin"])
 app.include_router(auth.router)
 app.include_router(analyses.router)
+app.include_router(auth_supabase.router)
+app.include_router(organizations.router)
 
 # ============================================================================
 # LOGGING CONFIGURATION
@@ -201,6 +219,7 @@ from services.api_gateway.security import (
 from services.security.csrf import CSRFMiddleware
 
 app.add_middleware(UploadSizeMiddleware)
+app.add_middleware(TenantMiddleware)
 app.add_middleware(HTTPSRedirectMiddleware)
 
 # Initialize Redis client if available for rate limiting
@@ -330,6 +349,17 @@ app.include_router(contact.router, tags=["contact"])
 app.include_router(pilot.router, tags=["pilot"])
 app.include_router(newsletter.router, tags=["newsletter"])
 app.include_router(hydroma_hub.router, tags=["hydroma-hub"])
+app.include_router(hydroma_indices.router, tags=["hydroma-indices"])
+app.include_router(hydroma_soil.router, tags=["hydroma-soil"])
+app.include_router(hydroma_simulation.router, tags=["hydroma-simulation"])
+app.include_router(hydroma_water.router, tags=["hydroma-water"])
+app.include_router(automation.router, tags=["automation"])
+app.include_router(hydroma_ops.router, tags=["hydroma-ops"])
+app.include_router(hydroma_mrv.router, tags=["hydroma-mrv"])
+app.include_router(hydroma_economics.router, tags=["hydroma-economics"])
+app.include_router(hydroma_carbon.router, tags=["hydroma-carbon"])
+app.include_router(hydroma_climate.router, tags=["hydroma-climate"])
+app.include_router(iot_devices.router, tags=["iot-devices"])
 
 
 # ============================================================================

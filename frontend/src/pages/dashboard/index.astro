@@ -1,0 +1,50 @@
+---
+import PublicLayout from '../../layouts/PublicLayout.astro';
+---
+
+<PublicLayout title="داشبورد هیدروما | اکو نوژین" description="داشبورد تعاملی هیدروما: مدل‌های علمی، محاسبات، نمودارها و پایش زنده.">
+  <main class="mx-auto flex max-w-7xl flex-col gap-6 px-4 pt-8 sm:px-6 pb-10">
+    <header class="mb-4">
+      <h1 class="text-2xl font-extrabold text-[var(--color-night-100)] sm:text-3xl">داشبورد هیدروما</h1>
+      <p class="text-[var(--color-night-200)]/60">شبیه‌سازها، نمودارها، محاسبات و پایش زنده</p>
+    </header>
+
+    <section class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" aria-labelledby="categories-heading">
+      <h2 id="categories-heading" class="sr-only">دسته‌بندی‌های داشبورد</h2>
+      {[
+        { href: '/dashboard/soil', icon: '🌱', title: 'خاک', desc: 'فیزیک، شیمی، سالینیته، بافت، osztály‌بندی' },
+        { href: '/dashboard/hydro', icon: '💧', title: 'آب', desc: 'رطوبت، جریان سطحی، آب زیرزمینی، هیدرولیک' },
+        { href: '/dashboard/simulation', icon: '⚙️', title: 'شبیه‌سازی', desc: 'SNW، WEAP، کالیبراسیون، سناریوها' },
+        { href: '/dashboard/indices', icon: '📊', title: 'شاخص‌ها', desc: 'NDVI، EVI، SAVI، NDWI، NBR، پوشش گیاهی' },
+        { href: '/dashboard/calculators', icon: '🧮', title: 'ماشین‌حسابها', desc: 'SCS، هورتون،ینگن، هیدرولیک، حلقه' },
+        { href: '/dashboard/hub', icon: '🔬', title: 'هاب شبیه‌ساز', desc: 'اجرای مدل‌ها، مدیریت پروژه‌ها، خروجی‌ها' },
+      ].map((cat) => (
+        <a href={cat.href} class="glass glass-hover flex flex-col gap-3 rounded-3xl p-6">
+          <span class="text-3xl" aria-hidden>{cat.icon}</span>
+          <h3 class="font-extrabold text-[var(--color-night-100)]">{cat.title}</h3>
+          <p class="text-sm text-[var(--color-night-200)]/60">{cat.desc}</p>
+        </a>
+      ))}
+    </section>
+
+    <section class="glass rounded-3xl p-6" aria-labelledby="quick-stats-heading">
+      <h2 id="quick-stats-heading" class="text-xl font-extrabold text-[var(--color-night-100)] mb-4">آمار سریع</h2>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {[
+          { label: 'پروژه‌های فعال', value: '۱۲', icon: '📁' },
+          { label: 'مدل‌های در حال اجرا', value: '۳', icon: '⚙️' },
+          { label: 'آخرین به‌روزرسانی', value: '۲ ساعت پیش', icon: '🕐' },
+          { label: 'حالت اتصال', value: 'آنلاین', icon: '🟢' },
+        ].map((stat) => (
+          <div class="flex items-center gap-4 rounded-2xl p-4 bg-white/3">
+            <span class="text-2xl" aria-hidden>{stat.icon}</span>
+            <div>
+              <p class="text-sm text-[var(--color-night-200)]/60">{stat.label}</p>
+              <p class="font-bold text-[var(--color-night-100)]">{stat.value}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  </main>
+</PublicLayout>

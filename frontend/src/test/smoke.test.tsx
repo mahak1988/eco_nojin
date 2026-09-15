@@ -18,9 +18,9 @@ function renderShell(initialPath: string) {
 }
 
 describe('AppShell', () => {
-  it('renders the brand name in the navbar on the home route', async () => {
+  it('renders the brand name on the home route', async () => {
     renderShell('/');
-    const logos = await screen.findAllByText('اکو نوژین');
+    const logos = await screen.findAllByText(/اکو نوژین/);
     expect(logos.length).toBeGreaterThan(0);
   });
 

@@ -9,6 +9,7 @@ import {
 import { content, type Lang, type SiteContent } from '../content/site';
 
 export type Dir = 'rtl' | 'ltr';
+export type LangExtended = 'fa' | 'en' | 'ur' | 'ps';
 
 interface LanguageValue {
   lang: Lang;
@@ -21,20 +22,19 @@ interface LanguageValue {
 const LanguageContext = createContext<LanguageValue | null>(null);
 const STORAGE_KEY = 'eco_nojin_lang';
 const COOKIE_NAME = 'lang';
+const SUPPORTED_LANGS: Lang[] = ['fa', 'en', 'ur', 'ps'];
 
 function readInitialLang(): Lang {
-  // SSR-safe: check cookie first (available during SSR via Next.js cookies())
-  // then fallback to localStorage (client-only)
   if (typeof window !== 'undefined') {
     try {
       const cookieLang = getCookie(COOKIE_NAME);
-      if (cookieLang === 'fa' || cookieLang === 'en') return cookieLang;
+      if (SUPPORTED_LANGS.includes(cookieLang as Lang)) return cookieLang as Lang;
     } catch {
-      // ignore cookie read errors
+      // Ignore cookie parsing errors
     }
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored === 'fa' || stored === 'en') return stored;
+      if (SUPPORTED_LANGS.includes(stored as Lang)) return stored as Lang;
     } catch (error) {
       console.warn('Could not read stored language preference', error);
     }
@@ -56,11 +56,6 @@ function setCookie(name: string, value: string, days = 365) {
   document.cookie = `${name}=${value}; expires=${expires}; path=/; SameSite=Lax`;
 }
 
-/**
- * Provides the active language, its text direction, and the typed content
- * dictionary. Mirrors state onto <html lang/dir>; page titles are owned by
- * the per-page <Seo> component, not here.
- */
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(readInitialLang);
   const [mounted, setMounted] = useState(false);
@@ -77,12 +72,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
   }, [lang]);
 
-  // Prevent hydration mismatch by rendering fallback until mounted
   const value = useMemo<LanguageValue>(
     () => ({
       lang,
       dir: lang === 'fa' ? 'rtl' : 'ltr',
-      t: content[lang],
+      t: content[lang] ?? content['fa'],
       setLang: setLangState,
       toggle: () => setLangState((current) => (current === 'fa' ? 'en' : 'fa')),
     }),
@@ -90,7 +84,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   );
 
   if (!mounted) {
-    // SSR: render with initial lang but no children yet to avoid hydration mismatch
     return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
   }
 
@@ -105,24 +98,18 @@ export function useLang(): LanguageValue {
   return value;
 }
 
-/**
- * SSR helper: detect language from request headers or cookies.
- * Use in getServerSideProps or server components.
- */
 export function detectLangFromRequest(
   headers: Headers | { get: (name: string) => string | null },
 ): Lang {
-  // Check cookie header
   const cookieHeader = headers.get('cookie') ?? '';
   const match = cookieHeader.match(new RegExp(`(^|; )${COOKIE_NAME}=([^;]+)`));
   if (match) {
     const val = match[2];
-    if (val === 'fa' || val === 'en') return val;
+    if (SUPPORTED_LANGS.includes(val as Lang)) return val as Lang;
   }
-  // Check Accept-Language header as fallback
   const acceptLang = headers.get('accept-language') ?? '';
-  if (acceptLang.startsWith('fa') || acceptLang.includes(';q=') && acceptLang.includes('fa')) {
-    return 'fa';
+  for (const l of SUPPORTED_LANGS) {
+    if (acceptLang.includes(l)) return l;
   }
-  return 'en';
+  return 'fa';
 }

@@ -1,22 +1,50 @@
 #!/bin/bash
-# Pre-commit hook: scan for secrets and run basic checks
+# Pre-commit hook: scan for secrets, type errors, lint, and basic checks
 
 set -e
 
 echo "🔍 Running pre-commit checks..."
 
-# Check for secrets
+# 1. Secret scan — all text files (not just Python)
 python scripts/utils/secrets_audit.py
 if [ $? -ne 0 ]; then
     echo "❌ Secret scan failed. Remove secrets before committing."
     exit 1
 fi
 
-# Check for large files (warn only)
+# 2. Frontend type check (if frontend directory has changes)
+if git diff --cached --name-only | grep -q "^frontend/"; then
+    echo "📘 Running frontend type check..."
+    cd frontend && npx tsc --noEmit
+    if [ $? -ne 0 ]; then
+        echo "❌ TypeScript check failed."
+        exit 1
+    fi
+    cd ..
+fi
+
+# 3. Frontend lint (if frontend directory has changes)
+if git diff --cached --name-only | grep -q "^frontend/"; then
+    echo "🔧 Running frontend lint..."
+    cd frontend && npx eslint src/
+    if [ $? -ne 0 ]; then
+        echo "❌ ESLint check failed."
+        exit 1
+    fi
+    cd ..
+fi
+
+# 4. Check for large files (warn only)
 large_files=$(find . -type f -size +10M -not -path "./.git/*" -not -path "./node_modules/*" -not -path "./.venv/*" -not -path "./venv/*" -not -path "./engine/cpp_core/build*")
 if [ -n "$large_files" ]; then
     echo "⚠️  Large files detected (consider Git LFS):"
     echo "$large_files"
+fi
+
+# 5. Ensure .env is not staged
+if git diff --cached --name-only | grep -q "\.env$"; then
+    echo "🚨 BLOCKED: Attempted to commit .env file. Use .env.example instead."
+    exit 1
 fi
 
 echo "✅ Pre-commit checks passed."

@@ -3,63 +3,95 @@
 @import '@fontsource/vazirmatn/700.css';
 @import '@fontsource/vazirmatn/800.css';
 @import 'tailwindcss';
+@import '@fontsource/markazi-text/400.css';
+@import '@fontsource/markazi-text/600.css';
+@import '@fontsource/playfair-display/500.css';
+@import '@fontsource/playfair-display/700.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/600.css';
+
+/* =====================================================================
+   Eco Nojin — Visual System v2 (report 66)
+   60-30-10 color rule · φ spacing scale · 3-card system · WCAG AA
+   ===================================================================== */
 
 @theme {
   --font-sans: 'Vazirmatn', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Design-Horizons upgrade: editorial display + technical mono */
+  --font-display: 'Playfair Display', 'Markazi Text', Georgia, serif;
+  --font-tech: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
 
-  /* Night forest base */
-  --color-night-950: #04100b;
-  --color-night-900: #071811;
-  --color-night-800: #0b241a;
-  --color-night-700: #12352a;
+  /* background + surfaces (60%) */
+  --color-night-950: #06120d;
+  --color-night-900: #0d2118;
+  --color-night-800: #122a1f;
+  --color-night-700: #1a3a2b;
 
-  /* Leaf (primary) */
+  /* ink (text, 30%) — WCAG: ink-1 ≈15:1, ink-2 ≈9:1, ink-3 ≈4.6:1 */
+  --color-ink-1: #eef6f0;
+  --color-ink-2: #c9dcd1;
+  --color-ink-3: #8aa797;
+
+  /* legacy emerald palette (dashboard pages) — aliases to ink/leaf */
+  --color-emerald-50: #eef6f0;
+  --color-emerald-100: #c9dcd1;
+  --color-emerald-200: #8aa797;
+  --color-emerald-300: #237a50;
+  --color-emerald-400: #5fd49a;
+  --color-emerald-500: #3fbf7f;
+  --color-emerald-600: #2f9c66;
+  --color-emerald-700: #237a50;
+  --color-emerald-950: #04100b;
+
+  /* accents (10%) — psychology: growth / water / earth / science */
   --color-leaf-200: #b5f0cd;
-  --color-leaf-300: #7ee2a8;
-  --color-leaf-400: #4cd08a;
-  --color-leaf-500: #2fb36b;
-  --color-leaf-600: #1f9155;
-  --color-leaf-700: #177246;
+  --color-leaf-300: #86e2ac;
+  --color-leaf-400: #5fd49a;
+  --color-leaf-500: #3fbf7f;
+  --color-leaf-600: #2f9c66;
+  --color-leaf-700: #237a50;
 
-  /* Sand (secondary, earth) */
-  --color-sand-200: #f7e3bd;
-  --color-sand-300: #f2d49b;
-  --color-sand-400: #e6b96b;
-  --color-sand-500: #d49b3f;
-
-  /* Aqua (water) */
   --color-aqua-200: #c5ecf4;
-  --color-aqua-300: #7fd8e8;
-  --color-aqua-400: #45bcd4;
-  --color-aqua-500: #2a9bb5;
+  --color-aqua-300: #8fd8e6;
+  --color-aqua-400: #56c2d6;
+  --color-aqua-500: #3ba3ba;
 
-  --animate-orbit: orbit 22s linear infinite;
-  --animate-orbit-slow: orbit 34s linear infinite reverse;
-  --animate-float: float 7s ease-in-out infinite;
-  --animate-float-late: float 8s ease-in-out 1.2s infinite;
-  --animate-scan: scan 5.5s ease-in-out infinite;
-  --animate-pulse-soft: pulse-soft 4.5s ease-in-out infinite;
+  --color-sand-200: #f4e3c2;
+  --color-sand-300: #ecd3a4;
+  --color-sand-400: #e0b96b;
+  --color-sand-500: #c9a04e;
+
+  --color-iris-300: #c9bfea;
+  --color-iris-400: #b7a6e8;
+
+  /* φ spacing + type scale */
+  --space-1: 8px;
+  --space-2: 13px;
+  --space-3: 21px;
+  --space-4: 34px;
+  --space-5: 55px;
+  --space-6: 89px;
+
+  --radius-card: 21px;
+
   --animate-shimmer: shimmer 6s linear infinite;
   --animate-marquee: marquee 38s linear infinite;
-  --animate-shimmer: shimmer 6s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-orbit: orbit 22s linear infinite;
+  --animate-scan: scan 5.5s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 4.5s ease-in-out infinite;
 
+  @keyframes shimmer {
+    to {
+      background-position: 200% center;
+    }
+  }
   @keyframes marquee {
     from {
       transform: translateX(0);
     }
     to {
       transform: translateX(-50%);
-    }
-  }
-  @keyframes shimmer {
-    to {
-      background-position: 200% center;
-    }
-  }
-
-  @keyframes orbit {
-    to {
-      transform: rotate(360deg);
     }
   }
   @keyframes float {
@@ -69,6 +101,11 @@
     }
     50% {
       transform: translateY(-12px);
+    }
+  }
+  @keyframes orbit {
+    to {
+      transform: rotate(360deg);
     }
   }
   @keyframes scan {
@@ -97,9 +134,14 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Lenis inertial scrolling (SmoothScroll) */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
 body {
   background-color: var(--color-night-950);
-  color: #e6f2ea;
+  color: var(--color-ink-2);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -125,47 +167,157 @@ body {
   background: var(--color-leaf-700);
 }
 
-/* ---- Reusable visual helpers ---- */
+/* ---- card system: exactly 3 kinds ---- */
 
+/* base card — solid surface, no shadow, calm border */
 .glass {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: var(--color-night-900);
+  border: 1px solid rgba(134, 226, 172, 0.1);
 }
 
+/* advanced glass — richer surface with subtle inner highlight */
+.glass-advanced {
+  background: linear-gradient(160deg, rgba(18, 42, 31, 0.92), rgba(13, 33, 24, 0.92));
+  border: 1px solid rgba(134, 226, 172, 0.18);
+  backdrop-filter: blur(8px);
+}
+
+/* hover is quiet: lift + border, no glow */
 .glass-hover {
   transition:
-    transform 0.35s ease,
-    border-color 0.35s ease,
-    background 0.35s ease,
-    box-shadow 0.35s ease;
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    background 0.3s ease;
 }
 .glass-hover:hover {
-  transform: translateY(-4px);
-  border-color: rgba(126, 226, 168, 0.35);
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 18px 44px -18px rgba(47, 179, 107, 0.35);
+  transform: translateY(-3px);
+  border-color: rgba(134, 226, 172, 0.24);
+  background: var(--color-night-800);
 }
 
+/* highlight card accent ring (used sparingly, max 2 per page) */
+.ring-glow {
+  box-shadow: 0 0 0 1px rgba(134, 226, 172, 0.22);
+}
+
+/* hero title gradient — the only gradient text on the site */
 .text-gradient-leaf {
-  background: linear-gradient(120deg, #7ee2a8 10%, #45bcd4 60%, #e6b96b 110%);
+  background: linear-gradient(120deg, #86e2ac 10%, #56c2d6 60%, #e0b96b 110%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  background-size: 200% auto;
+}
+.text-shimmer {
+  animation: shimmer 6s linear infinite;
 }
 
-.bg-grid {
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 46px 46px;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 30%, transparent 75%);
-  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 30%, transparent 75%);
+/* thin single-row stats strip (About page) */
+.stats-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 }
 
-.ring-glow {
-  box-shadow:
-    0 0 0 1px rgba(126, 226, 168, 0.25),
-    0 0 42px -6px rgba(47, 179, 107, 0.45);
+/* ---- Design-Horizons upgrade: editorial + ambient system ---- */
+
+/* editorial display headings (serif, fa: Markazi / en: Playfair) */
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* technical mono labels */
+.font-tech {
+  font-family: var(--font-tech);
+}
+
+/* kicker — mono caption with wide tracking, gold accent (showcase signature) */
+.kicker {
+  font-family: var(--font-tech);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-sand-400);
+}
+
+/* Persian is a connected script — wide tracking breaks letter joining */
+.kicker-fa {
+  letter-spacing: 0.03em;
+}
+
+/* gradient hairline separator (transparent -> accent -> transparent) */
+.hairline {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(134, 226, 172, 0.28),
+    transparent
+  );
+}
+.hairline-strong {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(
+    to right,
+    transparent 10%,
+    rgba(134, 226, 172, 0.5) 50%,
+    transparent 90%
+  );
+}
+
+/* dot grid (digital-design chapter signature) */
+.bg-dot-grid {
+  background-image: radial-gradient(
+    circle,
+    rgba(134, 226, 172, 0.09) 1px,
+    transparent 1px
+  );
+  background-size: 26px 26px;
+}
+
+/* layered ambient glows (leaf + aqua + gold ellipses) */
+.ambient-glow {
+  background:
+    radial-gradient(ellipse 55% 45% at 28% 28%, rgba(63, 191, 127, 0.13) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 40% at 76% 20%, rgba(59, 163, 186, 0.1) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 45% at 55% 88%, rgba(201, 169, 110, 0.05) 0%, transparent 55%);
+}
+
+/* editorial display scale */
+.display-1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 6vw, 4.75rem);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+}
+.display-2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 4vw, 3rem);
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+}
+
+/* ---- print (legal pages) ---- */
+@media print {
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+  .glass {
+    background: #ffffff !important;
+    border-color: #d4d4d4 !important;
+  }
+  .text-gradient-leaf {
+    color: #111111 !important;
+    -webkit-text-fill-color: #111111 !important;
+  }
 }

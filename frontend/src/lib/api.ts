@@ -3,13 +3,18 @@
  * (localStorage: hydroma-api-base). */
 
 export function getApiBase(): string {
+  // In dev, Vite proxies /api → http://localhost:8000, so a relative base
+  // avoids CORS entirely. In production the frontend and API share an origin,
+  // so relative URLs also work there.
   try {
     const override = localStorage.getItem('hydroma-api-base');
     if (override && /^https?:\/\//.test(override.trim())) return override.trim().replace(/\/$/, '');
   } catch {
     /* localStorage unavailable — fall through to default */
   }
-  return import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000';
+  const envBase = import.meta.env.VITE_API_BASE_URL;
+  if (envBase && /^https?:\/\//.test(envBase.trim())) return envBase.trim().replace(/\/$/, '');
+  return ''; // relative — works with Vite proxy (dev) and same-origin (prod)
 }
 
 export interface NewsletterResult {

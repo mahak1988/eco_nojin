@@ -4,7 +4,7 @@
  * Facts are limited to what the repository documents state (no invented numbers).
  */
 
-export type Lang = 'fa' | 'en';
+export type Lang = 'fa' | 'en' | 'ur' | 'ps';
 
   export type IconKey =
   | 'satellite'
@@ -1900,4 +1900,4 @@ const en: SiteContent = {
   },
 };
 
-export const content: Record<Lang, SiteContent> = { fa, en };
+export const content: Record<Lang, SiteContent> = { fa, en, ur: fa, ps: fa };

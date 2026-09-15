@@ -1,0 +1,98 @@
+{
+  "name": "Eco Nojin — زنجیره علمی از طریق Webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "econojin-chain",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "econojin-webhook",
+      "name": "Webhook زنجیره علمی",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-360, 0],
+      "webhookId": "econojin-chain"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/api/v1/motors/chain",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"lat\": {{ $json.body.lat }},\n  \"lon\": {{ $json.body.lon }},\n  \"crop\": \"{{ $json.body.crop || 'wheat' }}\",\n  \"years\": {{ $json.body.years || 20 }},\n  \"slope_pct\": {{ $json.body.slope_pct || 10 }}\n}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "econojin-chain",
+      "name": "اجرای زنجیره RUSLE→RothC→AquaCrop",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-120, 0]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "econojin-respond",
+      "name": "پاسخ به فراخوان",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [140, 0]
+    },
+    {
+      "parameters": {
+        "content": "## زنجیره علمی از طریق n8n\n\n`POST http://<n8n>/webhook/econojin-chain`\n\n```json\n{ \"lat\": 35.7, \"lon\": 51.4, \"crop\": \"wheat\", \"years\": 20, \"slope_pct\": 10 }\n```\n\nخروجی: ZKE، فرسایش RUSLE، کربن RothC و عملکرد AquaCrop — همه با برچسب منبع داده.",
+        "height": 260,
+        "width": 360
+      },
+      "id": "econojin-note2",
+      "name": "راهنما",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-360, 200]
+    }
+  ],
+  "connections": {
+    "Webhook زنجیره علمی": {
+      "main": [
+        [
+          {
+            "node": "اجرای زنجیره RUSLE→RothC→AquaCrop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "اجرای زنجیره RUSLE→RothC→AquaCrop": {
+      "main": [
+        [
+          {
+            "node": "پاسخ به فراخوان",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "econojin-local"
+  }
+}

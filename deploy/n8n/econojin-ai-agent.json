@@ -1,0 +1,272 @@
+{
+  "name": "Eco Nojin — ایجنت هوشمند پلتفرم (AI Agent)",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "econojin-chat-trigger",
+      "name": "پیام چت",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [-520, 0],
+      "webhookId": "econojin-ai-agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "=You are the Eco Nojin platform assistant (دستیار پلتفرم اکو نوژین) — a scientific restoration & precision-farming platform.\n\nSTRICT RULES:\n1. ALWAYS ground every number in a tool result from this session. Never invent data.\n2. Available tools (call the right one):\n   - get_formula_validation: independent formula verification report (15 checks with sources)\n   - get_db_stats: internal database health (journal mode, size, rows)\n   - get_models: list of the 22 scientific models with parameters\n   - run_model: run one scientific model — needs slug + params object (use get_models first to learn the parameter names)\n   - get_hydroma_indices: the 8 live HyDroMa index models (ECSI, EPIA, ESRI, EWSI, HDVI, HLHS, H-Pheno, HY-RUE)\n   - run_agent_cycle: daily agent cycle (formula verification + database health, stores a digest)\n3. When citing verification results, name the check id and its source.\n4. Units come from the API response — repeat them exactly.\n5. If a tool call fails, tell the user what failed instead of guessing.\n6. Answer in the user's language (Persian or English)."
+        }
+      },
+      "id": "econojin-ai-agent",
+      "name": "ایجنت پلتفرم",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [-220, 0]
+    },
+    {
+      "parameters": {
+        "modelName": "gpt-4o-mini",
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "id": "econojin-llm",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [-340, 220]
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "id": "econojin-memory",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [-180, 220]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Run the independent formula verification suite (15 checks with sources) and return pass/fail per check",
+        "url": "http://127.0.0.1:8000/api/v1/hydroma/validation",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "econojin-tool-validation",
+      "name": "get_formula_validation",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [-520, 220]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Internal database health: journal mode, foreign keys, size, table row counts, indexes",
+        "url": "http://127.0.0.1:8000/api/v1/hydroma/db-stats",
+        "options": {}
+      },
+      "id": "econojin-tool-dbstats",
+      "name": "get_db_stats",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [-380, 380]
+    },
+    {
+      "parameters": {
+        "toolDescription": "List all 22 scientific models with slug, parameters, units and defaults. Call this before run_model to learn parameter names.",
+        "url": "http://127.0.0.1:8000/api/v1/models",
+        "options": {}
+      },
+      "id": "econojin-tool-models",
+      "name": "get_models",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [-240, 380]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Run one scientific model. First call get_models to find the slug and its parameter names, then pass them here.",
+        "method": "POST",
+        "url": "=http://127.0.0.1:8000/api/v1/models/{{ $fromAI('slug', 'model slug from get_models, e.g. et0_hargreaves', 'string') }}/run",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($fromAI('params', 'parameters object matching the model spec', 'object')) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "econojin-tool-runmodel",
+      "name": "run_model",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [-100, 380]
+    },
+    {
+      "parameters": {
+        "toolDescription": "List the 8 live HyDroMa index models (ECSI, EPIA, ESRI, EWSI, HDVI, HLHS, H-Pheno, HY-RUE) with their parameters",
+        "url": "http://127.0.0.1:8000/api/v1/hydroma/indices",
+        "options": {}
+      },
+      "id": "econojin-tool-indices",
+      "name": "get_hydroma_indices",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [40, 380]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Run one internal agent cycle: formula verification + database health, stores an auditable digest in the hub",
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/api/v1/automation/agent-run",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Agent-Token",
+              "value": "={{ $env.ECONOJIN_AGENT_TOKEN || 'dev-agent-token' }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"watch_farms\": [], \"store_digest\": true}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "econojin-tool-agent",
+      "name": "run_agent_cycle",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [180, 380]
+    },
+    {
+      "parameters": {
+        "content": "## Eco Nojin — AI Agent (الگوی بومی n8n)\n\n**گره‌ها:** Chat Trigger → AI Agent → (LLM + Memory + 6 ابزار HTTP)\n\n**نصب:**\n1. در نود OpenAI Chat Model، اعتبارنامه (Credential) بسازید — یا برای اجرای محلی، مدل را با `lmChatOllama` جایگزین کنید.\n2. `ECONOJIN_AGENT_TOKEN` را در env ست کنید.\n3. اگر n8n روی هاست دیگری است، آدرس 127.0.0.1:8000 را عوض کنید.\n\n**اصل بهترین‌روال:** LLM فقط مسیریابی و خلاصه میکند؛ داده همیشه از ابزارهای واقعی پلتفرم میآید.",
+        "height": 300,
+        "width": 400
+      },
+      "id": "econojin-note3",
+      "name": "راهنما",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-520, 420]
+    }
+  ],
+  "connections": {
+    "پیام چت": {
+      "main": [
+        [
+          {
+            "node": "ایجنت پلتفرم",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "ایجنت پلتفرم",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "ایجنت پلتفرم",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_formula_validation": {
+      "ai_tool": [
+        [
+          {
+            "node": "ایجنت پلتفرم",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_db_stats": {
+      "ai_tool": [
+        [
+          {
+            "node": "ایجنت پلتفرم",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_models": {
+      "ai_tool": [
+        [
+          {
+            "node": "ایجنت پلتفرم",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "run_model": {
+      "ai_tool": [
+        [
+          {
+            "node": "ایجنت پلتفرم",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_hydroma_indices": {
+      "ai_tool": [
+        [
+          {
+            "node": "ایجنت پلتفرم",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "run_agent_cycle": {
+      "ai_tool": [
+        [
+          {
+            "node": "ایجنت پلتفرم",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "econojin-local"
+  }
+}

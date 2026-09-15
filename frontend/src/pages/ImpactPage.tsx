@@ -4,6 +4,7 @@ import LiveCounters from '../components/visuals/LiveCounters';
 import MrvCycleChart from '../components/visuals/MrvCycleChart';
 import UniversalCard from '../components/ui/UniversalCard';
 import ImpactTimeSeries from '../components/visuals/ImpactTimeSeries';
+import RechartsImpactChart from '../components/visuals/RechartsImpactChart';
 import SatelliteMap from '../components/visuals/SatelliteMap';
 import FieldGallery from '../components/sections/FieldGallery';
 import NdviConceptChart from '../components/visuals/NdviConceptChart';
@@ -67,6 +68,10 @@ export default function ImpactPage() {
 
       {/* time-series charts */}
       <ImpactTimeSeries />
+
+      <RechartsImpactChart
+        data={c.sampleTimeSeries}
+      />
 
       {/* satellite map */}
       <SatelliteMap />

@@ -1,311 +1,240 @@
+"""Carbon tokenization API router.
 
-"""Carbon module router - scientific carbon sequestration."""
+Endpoints for on-chain carbon credit management and Verra integration.
+"""
 
-import json
+import logging
+from contextlib import suppress
 from datetime import UTC, datetime
+from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
+from services.api_gateway.auth import require_user
 from database.hub import hub
+from database.models import User
+from services.business_modules.carbon.tokenization import (
+    CarbonTokenService,
+    CreditType,
+)
+from services.business_modules.carbon.verra_integration import (
+    VerraService,
+    VerraConfig,
+)
 
-# Compatibility: get_db via hub
+logger = logging.getLogger(__name__)
+
+router = APIRouter(prefix="/api/v1/carbon", tags=["Carbon Credits"])
+
+
 def get_db():
     with hub.get_session() as session:
         yield session
-from database.models import CarbonProject, User
-from services.api_gateway.auth import require_user
-from services.carbon.repository import CarbonProjectRepository
-from services.api_gateway.routers.carbon_engine import (
-    STANDARDS,
-    WOOD_DENSITIES,
-    farquhar_photosynthesis,
-    get_all_calculations,
-    quantum_efficiency,
-    rothc_carbon_pools,
-    verify_project,
-)
-
-router = APIRouter(prefix="/api/v1/carbon", tags=["carbon"])
 
 
-# ============================================================================
-# Pydantic Models
-# ============================================================================
-class ProjectCalculateRequest(BaseModel):
-    name: str = Field(min_length=3)
-    area_hectares: float = Field(gt=0, le=100000)
-    species: str = "tropical_moist"
-    trees_per_ha: int = Field(1000, ge=100, le=10000)
-    avg_diameter_cm: float = Field(20, gt=0, le=200)
-    avg_height_m: float = Field(12, gt=0, le=100)
-    project_years: int = Field(30, ge=5, le=100)
-    latitude: float = 0.0
-    longitude: float = 0.0
-    soil_carbon_tha: float = 40.0
-    mean_temperature_C: float = 25.0
+class _LazyCarbonService:
+    _instance = None
+
+    def __getattr__(self, name):
+        if self._instance is None:
+            from services.business_modules.carbon.tokenization import get_tokenization_service
+            self._instance = get_tokenization_service()
+        return getattr(self._instance, name)
 
 
-class ProjectOut(BaseModel):
-    id: int
-    project_id: str
-    name: str
-    project_type: str
-    area_hectares: float
-    status: str
-    credits_issued: float
+class _LazyVerraService:
+    _instance = None
+
+    def __getattr__(self, name):
+        if self._instance is None:
+            from services.business_modules.carbon.verra_integration import get_verra_integration
+            self._instance = get_verra_integration()
+        return getattr(self._instance, name)
 
 
-# ============================================================================
-# Endpoints
-# ============================================================================
-@router.post("/calculate")
-def calculate_project(req: ProjectCalculateRequest):
-    """
-    Calculate carbon sequestration for a project using scientific models.
-
-    Models used:
-    - Chave et al. 2014 (biomass allometry)
-    - Farquhar-von Caemmerer-Berry (photosynthesis)
-    - RothC-26.3 (soil carbon)
-    - FMO quantum coherence
-    - Evapotranspiration cooling
-    """
-    return get_all_calculations(
-        D_cm=req.avg_diameter_cm,
-        H_m=req.avg_height_m,
-        species=req.species,
-        area_ha=req.area_hectares,
-        trees_per_ha=req.trees_per_ha,
-        project_years=req.project_years,
-        soil_C_tha=req.soil_carbon_tha,
-        T_C=req.mean_temperature_C,
-    )
+_carbon_service = _LazyCarbonService()
+_verra_service = _LazyVerraService()
 
 
-@router.post("/register")
-def register_project(
-    req: ProjectCalculateRequest,
-    db: Session = Depends(get_db),
-    user: User = Depends(require_user),
-):
-    """Register a carbon project after calculation."""
-    # Calculate first
-    calc = get_all_calculations(
-        D_cm=req.avg_diameter_cm,
-        H_m=req.avg_height_m,
-        species=req.species,
-        area_ha=req.area_hectares,
-        trees_per_ha=req.trees_per_ha,
-        project_years=req.project_years,
-        soil_C_tha=req.soil_carbon_tha,
-        T_C=req.mean_temperature_C,
-    )
-
-    total_co2 = calc["project_summary"]["project_total"]["total_co2_tons"]
-    verification = verify_project(total_co2)
-
-    import uuid
-
-    project_id = f"ECO-{uuid.uuid4().hex[:8].upper()}"
-
-    repo = CarbonProjectRepository(db)
-    project = repo.create_project(
-        project_id=project_id,
-        name=req.name,
-        project_type="afforestation",
-        area_ha=req.area_hectares,
-        user_id=user.id,
-        status="registered",
-        credits_issued=verification["net_credits"],
-    )
-
-    return {
-        "success": True,
-        "project_id": project_id,
-        "db_id": project.id,
-        "credits": verification["net_credits"],
-        "verification": verification,
-    }
+class TokenizeRequest(BaseModel):
+    project_id: str = Field(..., min_length=1)
+    amount_tonnes: float = Field(..., gt=0)
+    credit_type: str = Field("VCS")
+    recipient_address: str | None = None
 
 
-@router.get("/projects")
-def list_projects(user: User = Depends(require_user), db: Session = Depends(get_db)):
-    """List user's carbon projects."""
-    repo = CarbonProjectRepository(db)
-    projects = repo.list_projects(user_id=user.id)
-    return [
-        {
-            "id": p.id,
-            "project_id": p.project_id,
-            "name": p.name,
-            "project_type": p.project_type,
-            "area_hectares": p.area_hectares,
-            "status": p.status,
-            "credits_issued": p.credits_issued,
-            "registered_at": p.registered_at.isoformat() if p.registered_at else None,
-        }
-        for p in projects
-    ]
+class TransferRequest(BaseModel):
+    from_address: str = Field(..., min_length=1)
+    to_address: str = Field(..., min_length=1)
+    token_id: str = Field(..., min_length=1)
 
 
-@router.get("/standards")
-def list_standards():
-    """List available verification standards."""
-    return STANDARDS
+class RetireRequest(BaseModel):
+    token_id: str = Field(..., min_length=1)
+    retirement_justification: str = Field(default="")
 
 
-@router.get("/species")
-def list_species():
-    """List available tree species with wood densities."""
-    return WOOD_DENSITIES
+class VerraSearchRequest(BaseModel):
+    country: str | None = None
+    methodology: str | None = None
+    page: int = Field(default=1, ge=1)
 
 
-@router.post("/photosynthesis")
-def calc_photosynthesis(
-    PAR_umol: float = 1500,
-    T_leaf_C: float = 25.0,
-    CO2_ppm: float = 420.0,
-    Vcmax25: float = 80.0,
-):
-    """Calculate photosynthesis using Farquhar model."""
-    return farquhar_photosynthesis(PAR_umol, T_leaf_C, CO2_ppm, Vcmax25)
-
-
-@router.get("/quantum")
-def calc_quantum(T_C: float = 25.0):
-    """Calculate quantum coherence efficiency in FMO complex."""
-    return quantum_efficiency(T_C)
-
-
-@router.post("/soil-carbon")
-def calc_soil_carbon(
-    initial_C_tha: float = 40.0,
-    annual_input_tha: float = 3.0,
-    clay_pct: float = 30.0,
-    temperature_C: float = 15.0,
-    rainfall_mm: float = 500.0,
-    years: int = 50,
-):
-    """Simulate soil carbon using RothC-26.3 model."""
-    return rothc_carbon_pools(
-        initial_C_tha, annual_input_tha, 1.44, clay_pct, temperature_C, rainfall_mm, years
-    )
-
-
-# ============================================================================
-# Phase 8 — methodology verification + credit issuance (VM0042-aligned)
-# ============================================================================
-
-
-class VerifyRequest(BaseModel):
-    baseline_activity: str = Field(..., description="pre-project land use")
-    has_financing: bool = False
-    would_happen_without_project: bool = False
-    activity_displacement: bool = False
-    market_leakage: bool = False
-    commitment_years: int = Field(30, ge=1, le=100)
-    risk_flag: bool = False
-
-
-def _get_owned_project(db: Session, project_id: int, user: User):
-    project = db.query(CarbonProject).filter(CarbonProject.id == project_id).first()
-    if project is None:
-        raise HTTPException(status_code=404, detail="project not found")
-    if project.user_id != user.id:
-        raise HTTPException(status_code=403, detail="not your project")
-    return project
-
-
-@router.post("/projects/{project_id}/verify")
-def verify_project_methodology(
-    project_id: int,
-    req: VerifyRequest,
+@router.post("/tokenize")
+def tokenize_credits(
+    payload: TokenizeRequest,
     user: User = Depends(require_user),
     db: Session = Depends(get_db),
 ):
-    """Run honest VM0042-style methodology checks (baseline/additionality/
-    leakage/permanence). Never rubber-stamps: failed checks are returned.
-
-    DISCLAIMER: This is an internal scientific check, NOT accredited verification.
-    Do NOT present verified projects as certified carbon credits without
-    third-party validation by an accredited verifier (e.g., Verra, Gold Standard).
-    """
-    from services.carbon.verification import run_verification
-
-    project = _get_owned_project(db, project_id, user)
-    result = run_verification(
-        baseline_activity=req.baseline_activity,
-        has_financing=req.has_financing,
-        would_happen_without_project=req.would_happen_without_project,
-        activity_displacement=req.activity_displacement,
-        market_leakage=req.market_leakage,
-        commitment_years=req.commitment_years,
-        risk_flag=req.risk_flag,
-    )
-    project.verification_detail = json.dumps(result, ensure_ascii=False)
-    project.verification_status = "verified" if result["passed"] else "failed"
-    db.commit()
-    return {
-        "project_id": project.project_id,
-        "verification": result,
-        "disclaimer": "Internal scientific check only — not accredited verification.",
-    }
-
-
-@router.post("/projects/{project_id}/issue")
-def issue_credits(
-    project_id: int,
-    user: User = Depends(require_user),
-    db: Session = Depends(get_db),
-):
-    """Issue carbon credits for a VERIFIED project and credit the wallet."""
-    from services.ecowallet.service import earn as wallet_earn
-
-    project = _get_owned_project(db, project_id, user)
-    if project.verification_status != "verified":
-        raise HTTPException(
-            status_code=400,
-            detail=f"project not verified (status={project.verification_status}); "
-            "run POST /projects/{id}/verify first",
+    """Mint carbon credits on-chain."""
+    try:
+        result = _carbon_service.issue_credits(
+            project_id=payload.project_id,
+            amount=payload.amount_tonnes,
+            credit_type=payload.credit_type,
+            recipient_address=payload.recipient_address,
         )
-    credits = project.credits_issued or 0.0
-    if credits <= 0:
-        raise HTTPException(status_code=400, detail="no credits to issue")
-    amount, balance = wallet_earn(db, user.id, "carbon_credit", quantity=credits)
-    project.status = "issued"
-    project.issued_at = datetime.now(UTC).replace(tzinfo=None)
-    db.commit()
+    except Exception as exc:
+        logger.error("Tokenization failed: %s", exc)
+        raise HTTPException(status_code=400, detail=str(exc))
+
     return {
-        "project_id": project.project_id,
-        "credits_issued": credits,
-        "wallet_eco_earned": amount,
-        "wallet_balance": balance,
-        "issued_at": project.issued_at.isoformat(),
+        **result,
+        "requested_by": user.id,
+        "project_id": payload.project_id,
     }
 
 
-@router.get("/projects/{project_id}/oracle-report")
-def oracle_report(
-    project_id: int,
+@router.post("/credits/transfer")
+def transfer_credits(
+    payload: TransferRequest,
     user: User = Depends(require_user),
     db: Session = Depends(get_db),
 ):
-    """VerificationOracle certificate for an owned project."""
-    from services.carbon.oracle import build_oracle_report
+    """Transfer carbon credits."""
+    try:
+        result = _carbon_service.transfer_credits(
+            from_address=payload.from_address,
+            to_address=payload.to_address,
+            token_id=payload.token_id,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except Exception as exc:
+        logger.error("Transfer failed: %s", exc)
+        raise HTTPException(status_code=400, detail=str(exc))
 
-    project = _get_owned_project(db, project_id, user)
-    return build_oracle_report(project)
+    return {**result, "requested_by": user.id}
 
 
-@router.get("/wallet")
-def carbon_wallet(
+@router.post("/credits/retire")
+def retire_credits(
+    payload: RetireRequest,
     user: User = Depends(require_user),
     db: Session = Depends(get_db),
 ):
-    """DB-backed ECO wallet state (persists across restarts)."""
-    from services.ecowallet.service import wallet_state
+    """Retire carbon credits."""
+    try:
+        result = _carbon_service.retire_credits(
+            token_id=payload.token_id,
+            retirement_justification=payload.retirement_justification,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
-    return wallet_state(db, user.id)
+    return {**result, "retired_by": user.id}
 
+
+@router.get("/credits/balance")
+def get_balance(
+    address: str = Query(..., min_length=1),
+    user: User = Depends(require_user),
+):
+    """Get token balance for address."""
+    balance = _carbon_service.get_balance(address)
+    return {"address": address, "balance": balance, "unit": "base_units"}
+
+
+@router.get("/credits/{token_id}/history")
+def get_credit_history(
+    token_id: str,
+    user: User = Depends(require_user),
+):
+    """Get credit lifecycle history."""
+    try:
+        history = _carbon_service.get_credit_history(token_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    return {"token_id": token_id, "history": history}
+
+
+@router.get("/credits/{token_id}/verify")
+def verify_credit(
+    token_id: str,
+    user: User = Depends(require_user),
+):
+    """Verify credit on-chain."""
+    try:
+        result = _carbon_service.verify_on_chain(token_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    return result
+
+
+@router.get("/verra/standards")
+def list_standards(user: User = Depends(require_user)):
+    """List available carbon credit standards."""
+    import asyncio
+    standards = asyncio.get_event_loop().run_until_complete(
+        _verra_service.list_standards()
+    )
+    return {"standards": standards}
+
+
+@router.post("/verra/search")
+def search_verra(
+    payload: VerraSearchRequest | None = None,
+    user: User = Depends(require_user),
+):
+    """Search Verra registry."""
+    import asyncio
+    payload = payload or VerraSearchRequest()
+    results = asyncio.get_event_loop().run_until_complete(
+        _verra_service.search_projects(payload.country, payload.methodology, payload.page)
+    )
+    return {"results": results, "page": payload.page}
+
+
+@router.post("/verra/sync")
+def sync_verra_project(
+    registry_id: str = Query(..., min_length=1),
+    user: User = Depends(require_user),
+):
+    """Sync a Verra project into Eco Nojin."""
+    import asyncio
+    try:
+        result = asyncio.get_event_loop().run_until_complete(
+            _verra_service.sync_project_from_verra(registry_id)
+        )
+    except Exception as exc:
+        logger.error("Verra sync failed: %s", exc)
+        raise HTTPException(status_code=400, detail=str(exc))
+    return result
+
+
+@router.get("/verra/{registry_id}")
+def get_verra_project(
+    registry_id: str,
+    user: User = Depends(require_user),
+):
+    """Get Verra project details."""
+    import asyncio
+    try:
+        result = asyncio.get_event_loop().run_until_complete(
+            _verra_service.get_project(registry_id)
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    return result

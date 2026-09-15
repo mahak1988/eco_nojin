@@ -1,5 +1,5 @@
 """
-Dashboard API Router - Final Version (v4.0)
+Dashboard API Router
 ===========================================
 
 Real-time dashboard data from DuckDB analytics database.

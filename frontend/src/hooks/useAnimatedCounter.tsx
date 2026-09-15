@@ -9,11 +9,11 @@ interface AnimatedCounterProps {
   prefix?: string;
 }
 
-export function useAnimatedCounter(target: number, duration = 1000) {
+export function useAnimatedCounter(target: number | null | undefined, duration = 1000) {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    if (target === 0) {
+    if (target === null || target === undefined || target === 0) {
       setCurrent(0);
       return;
     }

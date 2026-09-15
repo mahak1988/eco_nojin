@@ -66,11 +66,11 @@ class Settings(BaseSettings):
     # =====================================================================
     # RATE LIMITING
     # =====================================================================
-    rate_limit_enabled: bool = False
-    rate_limit_requests: int = 60
+    rate_limit_enabled: bool = True
+    rate_limit_requests: int = 300
     rate_limit_window_seconds: int = 60
-    rate_limit_per_minute: int = 60
-    rate_limit_burst: int = 10
+    rate_limit_per_minute: int = 300
+    rate_limit_burst: int = 50
 
     # =====================================================================
     # EXTERNAL SERVICES

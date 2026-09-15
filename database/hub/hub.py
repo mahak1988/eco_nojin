@@ -108,6 +108,20 @@ class DataHub:
                 pool_recycle=3600,
             )
 
+
+            # --- SQLite hardening (WAL + FK + busy timeout) ---
+            if database_url.startswith("sqlite"):
+                from sqlalchemy import event as _sa_event
+
+                @_sa_event.listens_for(self._sqlalchemy_engine, "connect")
+                def _set_sqlite_pragmas(dbapi_connection, _record):  # noqa: ANN001
+                    cursor = dbapi_connection.cursor()
+                    cursor.execute("PRAGMA journal_mode=WAL")
+                    cursor.execute("PRAGMA foreign_keys=ON")
+                    cursor.execute("PRAGMA busy_timeout=5000")
+                    cursor.execute("PRAGMA synchronous=NORMAL")
+                    cursor.close()
+
             logger.info(f"SQLAlchemy engine created: {database_url}")
 
         return self._sqlalchemy_engine

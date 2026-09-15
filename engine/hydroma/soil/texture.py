@@ -71,10 +71,8 @@ def classify_texture(sand: float, silt: float, clay: float) -> str:
         return "clay_loam"
     if clay >= 27 and clay < 40 and sand > 45:
         return "sandy_clay_loam"
-    if clay >= 20 and clay < 27 and silt >= 40 and sand <= 40:
-        return "silty_clay_loam"
     if clay >= 20 and clay < 27 and sand > 40 and sand <= 52:
-        return "clay_loam"
+        return "loam"
     if clay >= 20 and clay < 27 and sand > 52:
         return "sandy_clay_loam"
     if clay < 20 and silt >= 80:

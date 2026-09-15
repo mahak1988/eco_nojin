@@ -38,7 +38,11 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self._window = window if window is not None else settings.rate_limit_window_seconds
         self._limit = limit if limit is not None else settings.rate_limit_requests
         self._enabled = enabled if enabled is not None else settings.rate_limit_enabled
-        self._limiter = RedisRateLimiter(redis_client=redis_client)
+        self._limiter = RedisRateLimiter(
+            redis_client=redis_client,
+            limit=self._limit,
+            window=self._window,
+        )
 
     async def dispatch(self, request: Request, call_next):
         if not self._enabled:

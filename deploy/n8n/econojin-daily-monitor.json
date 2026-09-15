@@ -1,0 +1,230 @@
+{
+  "name": "Eco Nojin — پایش روزانه ایجنت",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 6 * * *"
+            }
+          ]
+        }
+      },
+      "id": "econojin-schedule",
+      "name": "هر روز ۶ صبح",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -420,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/api/v1/automation/agent-run",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Agent-Token",
+              "value": "={{ $env.ECONOJIN_AGENT_TOKEN || 'dev-agent-token' }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"watch_farms\": [],\n  \"store_digest\": true\n}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "econojin-agent-run",
+      "name": "اجرای سایکل ایجنت",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -180,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "check-failed",
+              "leftValue": "={{ $json.validation.failed }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "econojin-check",
+      "name": "چک شکست‌خورده؟",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        60,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/api/v1/hub/runs",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"user_key\": \"automation-agent\",\n  \"model_id\": \"agent-alert\",\n  \"title\": \"هشدار راستی‌آزمایی فرمول‌ها\",\n  \"outputs\": {{ JSON.stringify($json) }}\n}",
+        "options": {}
+      },
+      "id": "econojin-alert",
+      "name": "ثبت هشدار در مرکز داده",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        300,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Eco Nojin — Daily Agent Monitor\n\nهر روز ۶ صبح سایکل ایجنت داخلی را اجرا می‌کند:\n1. راستی‌آزمایی فرمول‌ها (۱۵ چک مستقل)\n2. سلامت دیتابیس داخلی\n3. ثبت digest در مرکز داده (audit trail)\n\nاگر چکی شکست بخورد، هشدار در hub ثبت می‌شود.\n\n**تنظیم:** متغیر محیطی `ECONOJIN_AGENT_TOKEN` را در n8n ست کنید.",
+        "height": 260,
+        "width": 380
+      },
+      "id": "econojin-note",
+      "name": "راهنما",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -420,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.ECONOJIN_TELEGRAM_CHAT_ID || \"\" }}",
+        "text": "=🚨 Eco Nojin — راستی‌آزمایی فرمول‌ها: {{ $json.validation.failed }} چک شکست خورد. جزئیات در مرکز داده (agent-digest).",
+        "additionalFields": {}
+      },
+      "id": "econojin-telegram",
+      "name": "تلگرام هشدار",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $env.ECONOJIN_ALERT_FROM || \"alerts@econojin.local\" }}",
+        "toEmail": "={{ $env.ECONOJIN_ALERT_TO || \"admin@econojin.local\" }}",
+        "subject": "=Eco Nojin — هشدار راستی‌آزمایی ({{ $json.validation.failed }} شکست)",
+        "emailFormat": "text",
+        "text": "=گزارش کامل در /api/v1/hydroma/validation — جزئیات در hub (agent-digest).\n\n{{ JSON.stringify($json.validation) }}",
+        "options": {}
+      },
+      "id": "econojin-email",
+      "name": "ایمیل هشدار",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        740,
+        -80
+      ]
+    }
+  ],
+  "connections": {
+    "هر روز ۶ صبح": {
+      "main": [
+        [
+          {
+            "node": "اجرای سایکل ایجنت",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "اجرای سایکل ایجنت": {
+      "main": [
+        [
+          {
+            "node": "چک شکست‌خورده؟",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "چک شکست‌خورده؟": {
+      "main": [
+        [
+          {
+            "node": "ثبت هشدار در مرکز داده",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "ثبت هشدار در مرکز داده": {
+      "main": [
+        [
+          {
+            "node": "تلگرام هشدار",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "تلگرام هشدار": {
+      "main": [
+        [
+          {
+            "node": "ایمیل هشدار",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "econojin-local"
+  }
+}

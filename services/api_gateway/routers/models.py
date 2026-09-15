@@ -74,6 +74,8 @@ def models_run(slug: str, params: dict[str, Any] = ...):
     """Run a model with validated parameters (honest errors, no fallbacks)."""
     if not isinstance(params, dict):
         raise HTTPException(status_code=400, detail="params must be an object")
+    if get_model(slug) is None:
+        raise HTTPException(status_code=404, detail=f"unknown model: {slug}")
     try:
         return run_model(slug, params)
     except ValueError as exc:

@@ -1,4 +1,4 @@
-"""Public content search (Phase 6 RAG surface)."""
+"""Public content search (RAG surface)."""
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query

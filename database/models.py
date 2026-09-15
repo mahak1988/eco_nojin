@@ -1,5 +1,6 @@
 import uuid
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
+from enum import Enum as PyEnum
 
 from sqlalchemy import (
     JSON,
@@ -7,6 +8,7 @@ from sqlalchemy import (
     CheckConstraint,
     Column,
     DateTime,
+    Enum,
     Float,
     ForeignKey,
     Index,
@@ -41,17 +43,58 @@ class User(Base):
     address = Column(String, nullable=True)
     country = Column(String, nullable=True)
     city = Column(String, nullable=True)
-    avatar_url = Column(String, nullable=True)
     language = Column(String, default="fa")
+    platform_id = Column(String, nullable=True, index=True)
     is_email_verified = Column(Boolean, default=False)
-    role = Column(String, nullable=False, default="farmer")
-    is_active = Column(Boolean, default=True)
-    is_verified = Column(Boolean, default=False)
+
+    land_profiles = relationship("LandProfile", back_populates="user")
+
+
+class OrganizationRole(str, PyEnum):
+    ADMIN = "admin"
+    MEMBER = "member"
+    VIEWER = "viewer"
+
+
+class OrganizationStatus(str, PyEnum):
+    ACTIVE = "active"
+    INVITED = "invited"
+    REMOVED = "removed"
+
+
+class Organization(Base):
+    __tablename__ = "organizations"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    name = Column(String, nullable=False)
+    slug = Column(String, unique=True, index=True, nullable=False)
+    country = Column(String, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
 
-    # افزودن رابطه به LandProfile
-    land_profiles = relationship("LandProfile", back_populates="user")
+    members = relationship("OrganizationMembership", back_populates="organization")
+
+
+class OrganizationMembership(Base):
+    __tablename__ = "organization_memberships"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    org_id = Column(String, ForeignKey("organizations.id"), nullable=False, index=True)
+    user_id = Column(String, ForeignKey("users.id"), nullable=False, index=True)
+    role = Column(Enum(OrganizationRole), nullable=False, default=OrganizationRole.MEMBER)
+    status = Column(Enum(OrganizationStatus), nullable=False, default=OrganizationStatus.INVITED)
+    joined_at = Column(DateTime, default=lambda: datetime.now(UTC))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+
+    organization = relationship("Organization", back_populates="members")
+    user = relationship("User")
+
+    __table_args__ = (
+        UniqueConstraint("org_id", "user_id", name="uq_org_user"),
+        Index("ix_org_membership_org_status", "org_id", "status"),
+        Index("ix_org_membership_user_status", "user_id", "status"),
+    )
 
 
 # --- مدل پروفایل زمین (اصلاح شده در مراحل قبل) ---
@@ -117,7 +160,7 @@ class Notification(Base):
     channel = Column(String, nullable=False)  # email | sms | in_app | telegram
     subject = Column(String, nullable=True)
     message = Column(Text, nullable=False)
-    metadata = Column(JSON, nullable=True)
+    extra_data = Column(JSON, nullable=True)
     status = Column(String, default="pending")  # pending | sent | read | failed
     created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
     read_at = Column(DateTime, nullable=True)
@@ -135,7 +178,34 @@ class PasswordResetToken(Base):
     user_id = Column(String)
     token = Column(String)
     expires_at = Column(DateTime)
+    used = Column(Boolean, default=False)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+
+    @property
+    def is_valid(self) -> bool:
+        """True when the token has not been used and has not expired.
+        Handles both timezone-aware and naive datetimes (SQLite stores
+        datetimes as naive strings)."""
+        if self.used:
+            return False
+        if self.expires_at is None:
+            return False
+        now = datetime.now(UTC)
+        expires = self.expires_at
+        # If the stored datetime is naive, compare against naive now.
+        if expires.tzinfo is None:
+            now = now.replace(tzinfo=None)
+        return now < expires
+
+    @classmethod
+    def create_for_user(cls, user_id: str, hours_valid: int = 1) -> "PasswordResetToken":
+        """Create a new reset token valid for `hours_valid` hours."""
+        return cls(
+            user_id=user_id,
+            token=str(uuid.uuid4()),
+            expires_at=datetime.now(UTC) + timedelta(hours=hours_valid),
+            used=False,
+        )
 
 class TopographyAnalysisResult(Base):
     __tablename__ = "topography_analysis_results"
@@ -143,11 +213,56 @@ class TopographyAnalysisResult(Base):
     profile_id = Column(String)
     data = Column(String)
 
+class IoTDevice(Base):
+    __tablename__ = "iot_devices"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    device_name = Column(String(200), nullable=False)
+    device_type = Column(String(50), nullable=False, index=True)  # sensor, gateway, actuator
+    sensor_types = Column(JSON, nullable=False, default=list)  # ["soil_moisture", "temp", "ec"]
+    location = Column(JSON, nullable=True)  # {"lat": 35.6892, "lon": 51.3890, "address": "..."}
+    status = Column(String(20), default="active", index=True)  # active, inactive, error
+    firmware_version = Column(String(50), nullable=True)
+    last_seen = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    platform_id = Column(String(100), nullable=True, index=True)  # TTN device_id, etc.
+
+    __table_args__ = (
+        Index("ix_iot_device_status_type", "status", "device_type"),
+        Index("ix_iot_device_platform", "platform_id"),
+    )
+
+    def __repr__(self):
+        return f"<IoTDevice id={self.id} name={self.device_name} type={self.device_type} status={self.status}>"
+
+
 class MRVObservation(Base):
     __tablename__ = "mrvobservation"
-    id = Column(Integer, primary_key=True)
-    # Add other fields as needed based on usage
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    site_id = Column(String(200), nullable=False, index=True)
+    level = Column(Integer, nullable=False)  # 1=satellite, 2=iot, 3=citizen
+    source = Column(String(50), nullable=False)  # satellite, iot, citizen
+    sensor_type = Column(String(100), nullable=False, index=True)
+    value = Column(Float, nullable=False)
+    unit = Column(String(50), nullable=False)
+    payload = Column(JSON, nullable=True)
+    data_source = Column(String(20), nullable=False)  # real, simulated, no_data
+    qa_status = Column(String(20), nullable=False)  # ok, suspect, rejected
+    qa_message = Column(Text, nullable=True)
+    observed_at = Column(DateTime, nullable=False, index=True)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+
+    __table_args__ = (
+        Index("ix_mrv_obs_site_level", "site_id", "level"),
+        Index("ix_mrv_obs_site_sensor_time", "site_id", "sensor_type", "observed_at"),
+        Index("ix_mrv_obs_qa_status", "qa_status"),
+    )
+
+    def __repr__(self):
+        return f"<MRVObservation id={self.id} site={self.site_id} sensor={self.sensor_type} qa={self.qa_status}>"
+
 
 class Setting(Base):
     """System-wide settings storage (key-value pairs)"""
@@ -229,6 +344,7 @@ class CarbonProject(Base):
     name = Column(String)
     project_id = Column(String(64), unique=True, nullable=False, index=True)
     user_id = Column(String, ForeignKey('users.id'), nullable=True)
+    platform_id = Column(String, nullable=True, index=True)
     project_type = Column(String(80), nullable=True)
     area_hectares = Column(Float, nullable=True)
     status = Column(String(32), nullable=False, default="draft")
@@ -248,6 +364,7 @@ class CarbonProject(Base):
 
     __table_args__ = (
         Index("ix_carbon_projects_user_status", "user_id", "status"),
+        Index("ix_carbon_projects_platform_status", "platform_id", "status"),
     )
 
 class Product(Base):

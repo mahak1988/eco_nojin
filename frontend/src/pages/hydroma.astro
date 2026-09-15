@@ -1,0 +1,76 @@
+---
+import PublicLayout from '../../layouts/PublicLayout.astro';
+---
+
+<PublicLayout title="علم هیدروما | اکو نوژین" description="موتور علمی هیدروما: ۶۱ مدل فیزیکی قطعی شامل ریچاردز، سنت‌ونان، FAO-56، روت‌سی، SWAT و پایش ماهواره‌ای سنتینل-۲.">
+  <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+    <header class="mx-auto max-w-4xl text-center mb-16">
+      <p class="mb-2 text-sm font-extrabold text-[var(--color-leaf-400)]">موتور علمی هیدروما</p>
+      <h1 class="text-3xl font-extrabold text-[var(--color-night-100)] sm:text-4xl">مدل‌های فیزیکی، نه حدس و گمان</h1>
+      <p class="mt-4 text-lg leading-7 text-[var(--color-night-200)]/60">هیدروما مدل‌های قطعی علوم زمین را با دادهٔ ماهواره‌ای و لایهٔ اقتصاد ترکیب می‌کند تا خروجی، «درجهٔ تصمیم» داشته باشد.</p>
+    </header>
+
+    <section class="mb-16" aria-labelledby="steps-heading">
+      <h2 id="steps-heading" class="sr-only">مراحل علمی هیدروما</h2>
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <article class="glass glass-hover flex flex-col gap-4 rounded-3xl p-6 relative">
+          <div class="absolute -top-3 start-3 text-4xl font-extrabold text-[var(--color-leaf-500)]/20">۰۱</div>
+          <div class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--color-leaf-500)]/15 text-[var(--color-leaf-400)]" aria-hidden>👁️</div>
+          <h3 class="text-lg font-extrabold text-[var(--color-night-100)]">مشاهده</h3>
+          <p class="text-sm leading-6 text-[var(--color-night-200)]/60">دادهٔ سنتینل-۲، اقلیم ERA5 و خاک SoilGrids گردآوری می‌شود.</p>
+        </article>
+        <article class="glass glass-hover flex flex-col gap-4 rounded-3xl p-6 relative">
+          <div class="absolute -top-3 start-3 text-4xl font-extrabold text-[var(--color-leaf-500)]/20">۰۲</div>
+          <div class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--color-aqua-500)]/15 text-[var(--color-aqua-400)]" aria-hidden>⚙️</div>
+          <h3 class="text-lg font-extrabold text-[var(--color-night-100)]">شبیه‌سازی</h3>
+          <p class="text-sm leading-6 text-[var(--color-night-200)]/60">مدل‌های فیزیکی قطعی هیدروما زمین، آب و کربن را پیش‌بینی می‌کنند.</p>
+        </article>
+        <article class="glass glass-hover flex flex-col gap-4 rounded-3xl p-6 relative">
+          <div class="absolute -top-3 start-3 text-4xl font-extrabold text-[var(--color-leaf-500)]/20">۰۳</div>
+          <div class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--color-sand-500)]/15 text-[var(--color-sand-400)]" aria-hidden>🎯</div>
+          <h3 class="text-lg font-extrabold text-[var(--color-night-100)]">بهینه‌سازی</h3>
+          <p class="text-sm leading-6 text-[var(--color-night-200)]/60">سناریوها مقایسه و با NSGA-II بهینه می‌شوند.</p>
+        </article>
+        <article class="glass glass-hover flex flex-col gap-4 rounded-3xl p-6 relative">
+          <div class="absolute -top-3 start-3 text-4xl font-extrabold text-[var(--color-leaf-500)]/20">۰۴</div>
+          <div class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-400" aria-hidden>📋</div>
+          <h3 class="text-lg font-extrabold text-[var(--color-night-100)]">تصمیم و MRV</h3>
+          <p class="text-sm leading-6 text-[var(--color-night-200)]/60">گزارش شفاف و قابل اعتماد برای اقدام و ثبت کربن.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="mb-16" aria-labelledby="models-heading">
+      <h2 id="models-heading" class="text-2xl font-extrabold text-[var(--color-night-100)] mb-6">هستهٔ مدل‌ها</h2>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {[
+          { name: 'Richards', desc: 'جریان آب در خاک غیراشباع' },
+          { name: 'Saint-Venant', desc: 'هیدرولیک جریان سطحی' },
+          { name: 'FAO-56', desc: 'تبخیر-تعرق گیاه مرجع' },
+          { name: 'RUSLE', desc: 'تلفات خاک ناشی از فرسایش' },
+          { name: 'SWAT', desc: 'شبیه‌سازی حوزهٔ آبخیز' },
+          { name: 'RothC', desc: 'چرخهٔ کربن آلی خاک' },
+          { name: 'AquaCrop', desc: 'بهره‌وری آب در عملکرد محصول' },
+          { name: 'NSGA-II', desc: 'بهینه‌سازی چندهدفی سناریوها' },
+          { name: 'HEC-RAS / Manning', desc: 'هیدرولیک جریان رودخانه' },
+        ].map((model) => (
+          <article class="glass glass-hover flex flex-col gap-2 rounded-2xl p-4">
+            <h3 class="font-extrabold text-[var(--color-night-100)]">{model.name}</h3>
+            <p class="text-sm text-[var(--color-night-200)]/60">{model.desc}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="glass rounded-3xl p-6 sm:p-8" aria-labelledby="outputs-heading">
+      <h2 id="outputs-heading" class="text-2xl font-extrabold text-[var(--color-night-100)] mb-4">خروجی‌های تصمیم‌ساز</h2>
+      <p class="text-[var(--color-night-200)]/60 mb-6">نتیجهٔ زنجیرهٔ علمی، محصولات مشخصی است که مستقیم به تصمیم مزرعه و گزارش سازمانی وصل می‌شود.</p>
+      <ul class="grid gap-3 sm:grid-cols-2" role="list">
+        <li class="flex items-start gap-3"><span class="shrink-0 mt-1 h-2 w-2 rounded-full bg-[var(--color-leaf-400)]" aria-hidden /><span>نقشه‌های ریسک فرسایش و سناریوهای حفاظت خاک</span></li>
+        <li class="flex items-start gap-3"><span class="shrink-0 mt-1 h-2 w-2 rounded-full bg-[var(--color-leaf-400)]" aria-hidden /><span>توصیهٔ آبیاری مبتنی بر FAO-56 و دادهٔ اقلیمی واقعی</span></li>
+        <li class="flex items-start gap-3"><span class="shrink-0 mt-1 h-2 w-2 rounded-full bg-[var(--color-leaf-400)]" aria-hidden /><span>مقایسهٔ سناریوها با شاخص‌های اقتصادی</span></li>
+        <li class="flex items-start gap-3"><span class="shrink-0 mt-1 h-2 w-2 rounded-full bg-[var(--color-leaf-400)]" aria-hidden /><span>گزارش MRV قابل اعتماد برای اعتبار کربن</span></li>
+      </ul>
+    </section>
+  </div>
+</PublicLayout>

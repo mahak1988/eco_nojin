@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 SAFE_METHODS = {"GET", "HEAD", "OPTIONS", "TRACE"}
 CSRF_HEADER = "x-csrf-token"
 CSRF_COOKIE = "econojin_csrf"
-EXEMPT_PREFIXES = ("/api/v1/auth", "/api/v1/newsletter", "/api/v1/pilot", "/dashboard")
+EXEMPT_PREFIXES = ("/api/v1/auth", "/api/v1/newsletter", "/api/v1/pilot", "/dashboard", "/api/v1/hydroma", "/api/v1/models", "/api/v1/hub", "/api/v1/automation", "/api/v1/satellite", "/api/v1/mrv")
 
 
 class CSRFMiddleware(BaseHTTPMiddleware):

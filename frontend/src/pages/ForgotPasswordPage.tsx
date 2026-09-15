@@ -20,6 +20,9 @@ const translations = {
     success: 'لینک بازیابی ارسال شد',
     checkEmail: 'لینک بازیابی به ایمیل شما ارسال شد.',
     checkEmailDesc: 'لطفاً صندوق ورودی خود را بررسی کنید.',
+    emailRequired: 'ایمیل الزامی است',
+    emailInvalid: 'لطفاً ایمیل معتبر وارد کنید',
+    invalidEmail: 'ایمیل نامعتبر است',
   },
   en: {
     kicker: 'Password Recovery',
@@ -33,8 +36,13 @@ const translations = {
     success: 'Reset link sent',
     checkEmail: 'We sent you a password reset link.',
     checkEmailDesc: 'Please check your inbox.',
+    emailRequired: 'Email is required',
+    emailInvalid: 'Please enter a valid email',
+    invalidEmail: 'Invalid email',
   },
 };
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function ForgotPasswordPage() {
   const { lang } = useLang();
@@ -45,10 +53,28 @@ export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
+  const [fieldError, setFieldError] = useState('');
+
+  const validate = (): boolean => {
+    if (!email.trim()) {
+      setFieldError(t.emailRequired);
+      return false;
+    }
+    if (!EMAIL_RE.test(email.trim())) {
+      setFieldError(t.emailInvalid);
+      return false;
+    }
+    setFieldError('');
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setFieldError('');
+
+    if (!validate()) return;
+
     setIsLoading(true);
 
     try {
@@ -56,18 +82,20 @@ export default function ForgotPasswordPage() {
       const response = await fetch(`${base}/api/v1/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: email.trim() }),
       });
 
+      const data = await response.json();
       if (!response.ok) {
-        throw new Error('Failed to send reset link');
+        throw new Error(data.detail || 'Failed to send reset link');
       }
 
       setSent(true);
       showToast({ type: 'success', title: t.success, description: t.checkEmail });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send reset link');
-      showToast({ type: 'error', title: 'Error', description: error });
+      const msg = err instanceof Error ? err.message : 'Failed to send reset link';
+      setError(msg);
+      showToast({ type: 'error', title: 'Error', description: msg });
     } finally {
       setIsLoading(false);
     }
@@ -112,13 +140,24 @@ export default function ForgotPasswordPage() {
                     <input
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (fieldError) setFieldError('');
+                      }}
                       placeholder={t.emailPlaceholder}
                       required
                       dir="ltr"
-                      className="w-full rounded-xl border border-[var(--color-night-700)] bg-[var(--color-night-900)] py-2.5 pl-10 pr-3 text-sm text-[var(--color-night-100)] placeholder:text-[var(--color-night-200)] focus:border-[var(--color-leaf-400)] focus:outline-none"
+                      aria-invalid={!!fieldError}
+                      className={`w-full rounded-xl border py-2.5 pl-10 pr-3 text-sm text-[var(--color-night-100)] placeholder:text-[var(--color-night-200)] focus:outline-none ${
+                        fieldError
+                          ? 'border-red-500/60 focus:border-red-400'
+                          : 'border-[var(--color-night-700)] focus:border-[var(--color-leaf-400)]'
+                      }`}
                     />
                   </div>
+                  {fieldError && (
+                    <span className="text-[10px] text-red-400">{fieldError}</span>
+                  )}
                 </div>
 
                 <button

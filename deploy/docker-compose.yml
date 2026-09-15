@@ -1,0 +1,50 @@
+# Eco Nojin — production path: Postgres + n8n (queue-ready)
+# Usage:  docker compose up -d
+# Then:   import deploy/n8n/*.json into n8n, set ECONOJIN_AGENT_TOKEN + credentials.
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: econojin
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_DB: econojin
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U econojin"]
+      interval: 10s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+
+  n8n:
+    image: n8nio/n8n:latest
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "5678:5678"
+    environment:
+      # queue-mode ready: swap EXECUTIONS_MODE=queue + add Redis/worker when scaling
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_DATABASE: econojin
+      DB_POSTGRESDB_USER: econojin
+      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      ECONOJIN_AGENT_TOKEN: ${ECONOJIN_AGENT_TOKEN:-dev-agent-token}
+      ECONOJIN_TELEGRAM_CHAT_ID: ${ECONOJIN_TELEGRAM_CHAT_ID:-}
+      GENERIC_TIMEZONE: Asia/Tehran
+    volumes:
+      - n8ndata:/home/node/.n8n
+
+volumes:
+  pgdata:
+  n8ndata:

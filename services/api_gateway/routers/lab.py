@@ -1,4 +1,4 @@
-"""Phase 4-D router — lab data upload + measured-vs-modelled comparison."""
+"""router — lab data upload + measured-vs-modelled comparison."""
 
 from typing import Any
 
