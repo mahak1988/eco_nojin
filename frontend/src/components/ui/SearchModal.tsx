@@ -20,11 +20,11 @@ interface SearchResult {
 
 const SEARCH_INDEX_KEY = 'econojin-search-index';
 
-function buildSearchIndex(): SearchResult[] {
+function buildSearchIndex(lang: 'fa' | 'en'): SearchResult[] {
   const results: SearchResult[] = [];
   
   // Index all pages from content
-  Object.entries(content.fa).forEach(([sectionKey, section]) => {
+  Object.entries(content[lang]).forEach(([sectionKey, section]) => {
     if (section && typeof section === 'object') {
       Object.entries(section).forEach(([key, value]) => {
         if (typeof value === 'string' && value.length > 10) {
@@ -39,8 +39,8 @@ function buildSearchIndex(): SearchResult[] {
         } else if (Array.isArray(value)) {
           value.forEach((item, index) => {
             if (item && typeof item === 'object') {
-              const title = (item as any).title || (item as any).name || `${key}[${index}]`;
-              const desc = (item as any).desc || (item as any).description || (item as any).excerpt || '';
+              const title = (item as any).title || (item as any).name || (item as any).q || (item as any).question || `${key}[${index}]`;
+              const desc = (item as any).desc || (item as any).description || (item as any).excerpt || (item as any).a || (item as any).answer || '';
               if (typeof title === 'string') {
                 results.push({
                   id: `${sectionKey}.${key}.${index}`,
@@ -61,11 +61,11 @@ function buildSearchIndex(): SearchResult[] {
   return results;
 }
 
-function getOrBuildIndex(): SearchResult[] {
+function getOrBuildIndex(lang: 'fa' | 'en'): SearchResult[] {
   if (typeof window === 'undefined') return [];
   
   try {
-    const cached = localStorage.getItem(SEARCH_INDEX_KEY);
+    const cached = localStorage.getItem(SEARCH_INDEX_KEY + ':' + lang);
     if (cached) {
       const parsed = JSON.parse(cached);
       if (Array.isArray(parsed) && parsed.length > 0) {
@@ -76,9 +76,9 @@ function getOrBuildIndex(): SearchResult[] {
     // ignore
   }
   
-  const index = buildSearchIndex();
+  const index = buildSearchIndex(lang);
   try {
-    localStorage.setItem(SEARCH_INDEX_KEY, JSON.stringify(index));
+    localStorage.setItem(SEARCH_INDEX_KEY + ':' + lang, JSON.stringify(index));
   } catch {
     // ignore
   }
@@ -95,8 +95,10 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const reduce = useReducedMotion();
   const Fuse = use(fuseImport).default;
   const fuseInstanceRef = useRef<any>(null);
-  if (!fuseInstanceRef.current) {
-    const index = getOrBuildIndex();
+  const fuseLangRef = useRef<string>('');
+  const indexLang: 'fa' | 'en' = lang === 'en' ? 'en' : 'fa';
+  if (!fuseInstanceRef.current || fuseLangRef.current !== indexLang) {
+    const index = getOrBuildIndex(indexLang);
     fuseInstanceRef.current = new Fuse(index, {
       keys: ['title', 'description', 'category', 'section'],
       threshold: 0.4,

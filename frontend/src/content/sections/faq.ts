@@ -40,7 +40,7 @@ export const faq = {
       {
         cat: 'کربن',
         q: 'اعتبار کربن چطور تأیید می‌شود؟',
-        a: 'اندازه‌گیری با ترکیب پایش ماهواره‌ای و میدانی انجام می‌شود و ثبت اعتبار با تأیید بلاکچین روی پالیگون ثبت می‌گردد؛ گزارش MRV شفاف برای خریداران ارائه می‌شود.',
+         a: 'اندازه‌گیری با ترکیب پایش ماهواره‌ای و میدانی انجام می‌شود و ثبت اعتبار با شبیه‌سازی‌شده روی رجیستری (Polygon testnet/mock) ثبت می‌گردد؛ گزارش MRV شفاف برای خریداران ارائه می‌شود.',
       },
       {
         cat: 'کربن',
@@ -108,7 +108,7 @@ export const faq = {
       {
         cat: 'Carbon',
         q: 'How is a carbon credit verified?',
-        a: 'Measurement combines satellite and field monitoring, and credit registration is recorded with blockchain verification on Polygon; transparent MRV reports go to buyers.',
+         a: 'Measurement combines satellite and field monitoring, and credit registration is recorded with simulated registration on Polygon testnet/mock; transparent MRV reports go to buyers.',
       },
       {
         cat: 'Carbon',

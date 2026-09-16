@@ -10,6 +10,13 @@ import { carbon } from '../content/pages/impactcarbon';
 
 const STEP_THEMES: ('leaf' | 'aqua' | 'sand' | 'night')[] = ['leaf', 'aqua', 'sand', 'night'];
 
+const STEP_GATES = [
+  { fa: 'دروازهٔ رجیستری', en: 'Registry gate' },
+  { fa: 'دروازهٔ VVB', en: 'VVB gate' },
+  { fa: 'دروازهٔ حقوقی', en: 'Legal gate' },
+  { fa: 'دروازهٔ نشر', en: 'Publication gate' },
+];
+
 /** Carbon page — the credit path, participation and honest status. */
 export default function CarbonPage() {
   const { lang, t, dir } = useLang();
@@ -35,6 +42,10 @@ export default function CarbonPage() {
                   index={index}
                   flipOnHover={false}
                 />
+                <div className="mt-2 flex items-center gap-1 text-[10px] font-bold text-[var(--color-night-200)]/50">
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--color-sand-400)]" aria-hidden />
+                  {STEP_GATES[index] ? (lang === 'fa' ? STEP_GATES[index].fa : STEP_GATES[index].en) : ''}
+                </div>
               </Reveal>
             ))}
           </div>
@@ -71,6 +82,14 @@ export default function CarbonPage() {
             <div className="ring-glow flex h-full flex-col justify-center gap-3 rounded-3xl bg-gradient-to-b from-leaf-600/20 to-night-900 p-8">
               <h2 className="text-lg font-extrabold text-[var(--color-night-100)]">{c.statusTitle}</h2>
               <p className="text-sm leading-8 text-[var(--color-night-200)]/70">{c.statusBody}</p>
+              <div className="mt-2 flex flex-wrap gap-2 text-xs">
+                <span className="rounded-full px-3 py-1 bg-white/5 text-[var(--color-night-200)]/70">
+                  دروازه‌ها: VVB + رجیستری + حقوقی
+                </span>
+                <span className="rounded-full px-3 py-1 bg-white/5 text-[var(--color-night-200)]/70">
+                  وضعیت: شبیه‌سازی
+                </span>
+              </div>
               <Link
                 to="/transparency"
                 className="inline-flex w-fit items-center gap-2 text-sm font-extrabold text-[var(--color-leaf-300)] hover:text-[var(--color-leaf-200)]"

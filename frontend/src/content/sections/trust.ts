@@ -24,7 +24,7 @@ export const trust = {
       {
         icon: 'blocks',
         title: 'کربنی قابل اثبات',
-        desc: 'مرجع اعتبار کربن با ثبت تأییدشده روی بلاکچین پالیگون; MRV شفاف برای خریداران.',
+        desc: 'مرجع اعتبار کربن با ثبت شبیه‌سازی‌شده روی رجیستری (Polygon testnet/mock); MRV شفاف برای خریداران.',
       },
       {
         icon: 'shield',
@@ -51,7 +51,7 @@ export const trust = {
       {
         icon: 'blocks',
         title: 'Provable carbon',
-        desc: 'Carbon-credit registry with blockchain verification on Polygon; transparent MRV for buyers.',
+        desc: 'Carbon-credit registry with simulated registration on Polygon testnet/mock; transparent MRV for buyers.',
       },
       {
         icon: 'shield',

@@ -1,7 +1,9 @@
+from sqlalchemy import select
 """API endpoints for Marketplace."""
 
 import contextlib
-from datetime import datetime
+import logging
+from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
@@ -24,6 +26,8 @@ from services.marketplace.product_catalog import get_catalog
 from services.marketplace.traceability import get_traceability
 from services.marketplace.service import get_marketplace_service
 from services.business_modules.carbon import get_tokenization_service
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/v1/marketplace", tags=["Marketplace"])
 
@@ -128,7 +132,8 @@ async def create_product(
                 images=payload.images,
             )
         )
-        return {"product_id": product.id, "status": "created"}
+        product_id_created = product if isinstance(product, str) else product.id
+        return {"product_id": product_id_created, "status": "created"}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -690,10 +695,38 @@ async def apply_vendor(
             currency=payload.currency,
             marketplace_id=payload.marketplace_id,
         )
-        return {"vendor_id": vendor.id, "status": "pending"}
+        vendor_db_id = vendor.id
+        try:
+            with hub.get_session() as session:
+                row = session.execute(
+                    select(MarketplaceSeller).where(MarketplaceSeller.user_id == str(user.id))
+                ).scalar_one_or_none()
+                if row is None:
+                    row = MarketplaceSeller(
+                        user_id=str(user.id),
+                        village_id=payload.village_id,
+                        shop_name=payload.shop_name,
+                        shop_description=payload.description,
+                        location=payload.location,
+                        status="pending",
+                        is_verified=False,
+                        certifications=[],
+                    )
+                    session.add(row)
+                else:
+                    row.shop_name = payload.shop_name
+                    row.shop_description = payload.description
+                    row.village_id = payload.village_id
+                    row.location = payload.location
+                    row.status = "pending"
+                session.commit()
+                session.refresh(row)
+                vendor_db_id = row.id
+        except Exception as persist_error:
+            logger.error(f"Vendor application persistence failed: {persist_error}")
+        return {"vendor_id": vendor_db_id, "status": "pending"}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-
 
 @router.get("/vendors")
 async def list_vendors(
@@ -701,22 +734,53 @@ async def list_vendors(
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
 ):
-    """List vendors with filters."""
-    catalog = get_catalog()
-    producers = catalog.list_producers()
+    """List vendors from the persisted seller registry (D6 fix)."""
+    with hub.get_session() as session:
+        q = (
+            select(MarketplaceSeller)
+            .order_by(MarketplaceSeller.created_at.desc())
+            .limit(limit)
+            .offset(offset)
+        )
+        rows = session.execute(q).scalars().all()
+    vendors = [
+        {
+            "id": r.id,
+            "shop_name": r.shop_name,
+            "name": r.shop_name,
+            "description": (r.shop_description or ""),
+            "location": (getattr(r, "location", "") or ""),
+            "village_id": r.village_id,
+            "status": r.status,
+            "is_verified": bool(r.is_verified),
+            "rating": float(r.rating or 0),
+            "total_sales": int(r.total_sales or 0),
+        }
+        for r in rows
+    ]
     if location:
-        producers = [p for p in producers if location.lower() in p.get("location", "").lower()]
-    return {"vendors": producers[:limit], "offset": offset, "limit": limit}
-
+        vendors = [v for v in vendors if location.lower() in (v["location"] or "").lower()]
+    return {"vendors": vendors, "offset": offset, "limit": limit}
 
 @router.get("/vendors/{vendor_id}")
 async def get_vendor(vendor_id: str):
-    """Get vendor details."""
-    catalog = get_catalog()
-    producer = catalog.get_producer(vendor_id) if hasattr(catalog, "get_producer") else None
-    if not producer:
+    """Get vendor details from the persisted seller registry (D6 fix)."""
+    with hub.get_session() as session:
+        r = session.get(MarketplaceSeller, vendor_id)
+    if r is None:
         raise HTTPException(status_code=404, detail="Vendor not found")
-    return producer
+    return {
+        "id": r.id,
+        "shop_name": r.shop_name,
+        "name": r.shop_name,
+        "description": (r.shop_description or ""),
+        "location": (getattr(r, "location", "") or ""),
+        "village_id": r.village_id,
+        "status": r.status,
+        "is_verified": bool(r.is_verified),
+        "rating": float(r.rating or 0),
+        "total_sales": int(r.total_sales or 0),
+    }
 
 
 @router.get("/vendors/{vendor_id}/products")
@@ -777,15 +841,22 @@ async def admin_approve_product(
         raise HTTPException(status_code=404, detail="Product not found")
     return {"product_id": product_id, "approved": approve, "status": "approved" if approve else "rejected"}
 
-
 @router.patch("/admin/vendors/{vendor_id}/approve")
 async def admin_approve_vendor(
     vendor_id: str,
     approve: bool = Query(True),
     user: User = Depends(require_admin),
 ):
-    """Admin: approve or reject a vendor."""
-    return {"vendor_id": vendor_id, "approved": approve, "status": "active" if approve else "suspended"}
+    """Admin: approve or reject a vendor (real DB mutation, D6 fix)."""
+    with hub.get_session() as session:
+        row = session.get(MarketplaceSeller, vendor_id)
+        if row is None:
+            raise HTTPException(status_code=404, detail="Vendor not found")
+        row.status = "active" if approve else "suspended"
+        row.is_verified = bool(approve)
+        row.verified_at = datetime.now(timezone.utc) if approve else None
+        session.commit()
+        return {"vendor_id": vendor_id, "approved": approve, "status": row.status}
 
 
 @router.get("/admin/orders")

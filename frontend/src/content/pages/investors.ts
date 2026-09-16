@@ -31,7 +31,7 @@ export const investors = {
     solution: [
       'پنج کانال دسترسی (وب/PWA، USSD، SMS، ربات، صوتی) در چهارده زبان.',
       'موتور علمی هیدروما: مدل‌های فیزیکی قطعی + سنجش‌ازدور + لایهٔ اقتصاد.',
-      'اقتصاد کربن با MRV شفاف و رجیستری بلاکچینی.',
+       'اقتصاد کربن با MRV شفاف و رجیستری شبیه‌سازی‌شده.',
       'معماری مونوریپو آمادهٔ مقیاس: ۳۸ میکروسرویس + هستهٔ عددی C++20.',
     ],
     statusTitle: 'وضعیت اجرا',
@@ -59,7 +59,7 @@ export const investors = {
     solution: [
       'Five access channels (web/PWA, USSD, SMS, bots, voice) in fourteen languages.',
       'The HyDroMa engine: deterministic physical models + remote sensing + an economics layer.',
-      'A carbon economy with transparent MRV and a blockchain registry.',
+       'A carbon economy with transparent MRV and a simulated registry.',
       'A scale-ready monorepo: 38 microservices + a C++20 numerical core.',
     ],
     statusTitle: 'Execution status',

@@ -1,5 +1,6 @@
 import uuid
 from datetime import UTC, datetime, timedelta
+from decimal import Decimal
 from enum import Enum as PyEnum
 
 from sqlalchemy import (
@@ -108,6 +109,9 @@ class LandProfile(Base):
     location_lat = Column(Float, nullable=True)
     location_lon = Column(Float, nullable=True)
     area_ha = Column(Float, nullable=True)
+    description = Column(Text, nullable=True)
+    dem_source = Column(String(100), nullable=True)
+    dem_resolution_m = Column(Float, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
     user_id = Column(String, ForeignKey('users.id'), nullable=True)
@@ -441,6 +445,15 @@ class Farm(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(String)
     name = Column(String)
+    # D2 fix: columns the farms router writes/reads (previously missing -> 500)
+    owner_id = Column(String, nullable=True)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    elevation_m = Column(Float, nullable=True)
+    area_hectares = Column(Float, nullable=True)
+    soil_type = Column(String, nullable=True)
+    climate_zone = Column(String, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=True)
 
 class SoilAnalysis(Base):
     __tablename__ = "soil_analyses"
@@ -490,10 +503,15 @@ class CarbonProject(Base):
     confidence = Column(String(32), nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
     updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
+    issued_at = Column(DateTime, nullable=True)
+    verification_status = Column(String(32), nullable=True, default="unverified")
+    field_verified = Column(Boolean, default=False, nullable=False)
+    mrv_documents = Column(JSON, nullable=True)
 
     __table_args__ = (
         Index("ix_carbon_projects_user_status", "user_id", "status"),
         Index("ix_carbon_projects_platform_status", "platform_id", "status"),
+        Index("ix_carbon_projects_lifecycle", "status", "verification_status"),
     )
 
 class Product(Base):
@@ -681,3 +699,167 @@ class ApiKey(Base):
     revoked_at = Column(DateTime, nullable=True)
 
     user = relationship("User", lazy="selectin")
+
+# === Carbon MRV credit ledger (Phase 8) ==============================
+# Sustainable & auditable carbon-credit issuance backed by the
+# CarbonMrvMotor accounting engine. No fabricated hashes and no claim of
+# endorsement by any real Validation/Verification Body (VVB): verification
+# here is the honest, methodology-aligned check from
+# ``services.carbon.verification`` plus the motor's data provenance.
+
+
+class CarbonCreditState(str, PyEnum):
+    """Lifecycle state of an issued carbon credit (fungible lot)."""
+
+    DRAFT = "DRAFT"
+    SUBMITTED = "SUBMITTED"
+    VERIFIED = "VERIFIED"
+    ACTIVE = "ACTIVE"
+    RETIRED = "RETIRED"
+
+
+class CarbonCredit(Base):
+    """A fungible carbon-credit lot issued from a verified project.
+
+    Double-issuance / double-counting safeguards live at two layers:
+      * DB constraints: unique ``credit_id``/``serial``;
+        ``retired_amount <= total_amount`` and ``available_amount >= 0``.
+      * Service layer: idempotency keys, holder-ownership checks, and the
+        irreversible retirement accounting in ``services.carbon.service``.
+    """
+
+    __tablename__ = "carbon_credits"
+
+    id = Column(Integer, primary_key=True)
+    credit_id = Column(
+        String(64), unique=True, nullable=False, index=True,
+        default=lambda: f"CR-{uuid.uuid4().hex}",
+    )
+    project_id = Column(
+        String(64),
+        ForeignKey("carbon_projects.project_id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    serial = Column(
+        String(80), unique=True, nullable=False, index=True,
+        default=lambda: f"SER-{uuid.uuid4().hex}",
+    )
+    vintage_year = Column(Integer, nullable=False)
+    methodology = Column(String(120), nullable=True)
+    standard = Column(String(120), nullable=True)
+    data_mode = Column(
+        String(32), nullable=False, default="modelled_estimate",
+    )  # modelled_estimate | field_verified
+    mrv_documents = Column(JSON, nullable=True)
+    total_amount = Column(Numeric(19, 4), nullable=False)
+    retired_amount = Column(Numeric(19, 4), default=Decimal("0"), nullable=False)
+    available_amount = Column(Numeric(19, 4), nullable=False)
+    holder_id = Column(String, ForeignKey("users.id"), nullable=True, index=True)
+    state = Column(
+        Enum(CarbonCreditState, name="carbon_credit_state", length=16),
+        nullable=False,
+        default=CarbonCreditState.DRAFT,
+    )
+    issued_by = Column(String, nullable=True)
+    issued_at = Column(DateTime, nullable=True)
+
+    # Freeze / unfreeze bookkeeping (actor & authority recorded for audit)
+    frozen = Column(Boolean, default=False, nullable=False)
+    frozen_by = Column(String, nullable=True)
+    frozen_authority = Column(String, nullable=True)
+    frozen_reason = Column(Text, nullable=True)
+    frozen_at = Column(DateTime, nullable=True)
+
+    version = Column(Integer, nullable=False, default=1)  # optimistic concurrency
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(
+        DateTime,
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+        nullable=False,
+    )
+
+    __table_args__ = (
+        CheckConstraint("retired_amount >= 0", name="ck_carbon_credits_retired_non_negative"),
+        CheckConstraint("available_amount >= 0", name="ck_carbon_credits_available_non_negative"),
+        CheckConstraint("retired_amount <= total_amount", name="ck_carbon_credits_retired_le_total"),
+        Index("ix_carbon_credits_project_state", "project_id", "state"),
+        Index("ix_carbon_credits_holder_state", "holder_id", "state"),
+    )
+
+
+class CarbonEvent(Base):
+    """Immutable event log for the credit/project lifecycle (event sourcing)."""
+
+    __tablename__ = "carbon_events"
+
+    id = Column(Integer, primary_key=True)
+    event_id = Column(
+        String(64), unique=True, nullable=False, index=True,
+        default=lambda: f"EVT-{uuid.uuid4().hex}",
+    )
+    aggregate_type = Column(String(32), nullable=False)  # credit | project
+    aggregate_id = Column(String(64), nullable=False, index=True)
+    event_type = Column(String(32), nullable=False, index=True)
+    actor = Column(String, nullable=True)
+    authority = Column(String, nullable=True)
+    reason = Column(Text, nullable=True)
+    payload = Column(JSON, nullable=True)
+    correlation_id = Column(String(64), nullable=True, index=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
+
+    __table_args__ = (
+        Index("ix_carbon_events_aggregate", "aggregate_type", "aggregate_id", "created_at"),
+    )
+
+
+class CreditAuditLog(Base):
+    """Projectable, immutable audit trail for compliance queries.
+
+    A denormalized projection of significant credit actions (issue / transfer /
+    retire / freeze / unfreeze) kept for straightforward audit reads.
+    """
+
+    __tablename__ = "carbon_audit_log"
+
+    id = Column(Integer, primary_key=True)
+    audit_id = Column(
+        String(64), unique=True, nullable=False, index=True,
+        default=lambda: f"AUD-{uuid.uuid4().hex}",
+    )
+    credit_id = Column(String(64), index=True, nullable=True)
+    project_id = Column(String(64), index=True, nullable=True)
+    action = Column(String(32), nullable=False)
+    actor = Column(String, nullable=True)
+    authority = Column(String, nullable=True)
+    reason = Column(Text, nullable=True)
+    before_state = Column(String(32), nullable=True)
+    after_state = Column(String(32), nullable=True)
+    delta_amount = Column(Numeric(19, 4), nullable=True)
+    correlation_id = Column(String(64), nullable=True, index=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
+
+    __table_args__ = (
+        Index("ix_carbon_audit_credit", "credit_id", "created_at"),
+        Index("ix_carbon_audit_project", "project_id", "created_at"),
+    )
+
+
+class IdempotencyKey(Base):
+    """Client-supplied idempotency key for safe retries (no fabricated hash).
+
+    The key is stored verbatim so an identical client request can never produce
+    a second credit or a second retirement.
+    """
+
+    __tablename__ = "idempotency_keys"
+
+    key = Column(String(128), primary_key=True)
+    action = Column(String(32), nullable=False, index=True)
+    result_reference = Column(String(128), nullable=True, index=True)
+    status = Column(String(16), nullable=False, default="pending")
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
+    expires_at = Column(DateTime, nullable=True)
+
+    __table_args__ = (Index("ix_idempotency_keys_action_status", "action", "status"),)

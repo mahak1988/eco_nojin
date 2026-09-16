@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { LanguageProvider } from './i18n/LanguageContext';
+import { ThemeProvider } from './components/theme/ThemeProvider';
 import { AuthProvider } from './context/AuthContext';
 import { MarketplaceProvider } from './context/MarketplaceContext';
 import { ToastProvider } from './components/ui/Toast';
@@ -146,6 +147,7 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <LanguageProvider>
+      <ThemeProvider>
       <AuthProvider>
         <ToastProvider>
           <MarketplaceProvider>
@@ -185,6 +187,7 @@ export default function App() {
                   <Route path="/voice-guide" element={<PublicLayout><VoiceGuidePage /></PublicLayout>} />
                   <Route path="/academia" element={<PublicLayout><AcademiaPage /></PublicLayout>} />
                   <Route path="/marketplace" element={<PublicLayout><MarketplaceLayout><CatalogPage /></MarketplaceLayout></PublicLayout>} />
+        <Route path="/marketplace/about" element={<PublicLayout><MarketplacePage /></PublicLayout>} />
                   <Route path="/marketplace/products/:id" element={<PublicLayout><MarketplaceLayout><ProductPage /></MarketplaceLayout></PublicLayout>} />
                   <Route path="/marketplace/vendor/:id" element={<PublicLayout><MarketplaceLayout><VendorPage /></MarketplaceLayout></PublicLayout>} />
                   <Route path="/marketplace/cart" element={<PublicLayout><MarketplaceLayout><CartPage /></MarketplaceLayout></PublicLayout>} />
@@ -208,6 +211,7 @@ export default function App() {
           </MarketplaceProvider>
         </ToastProvider>
       </AuthProvider>
+      </ThemeProvider>
     </LanguageProvider>
   );
 }

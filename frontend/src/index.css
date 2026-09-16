@@ -140,8 +140,8 @@ html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-stopped { overflow: hidden; }
 
 body {
-  background-color: var(--color-night-950);
-  color: var(--color-ink-2);
+  background-color: var(--theme-bg, var(--color-night-950));
+  color: var(--theme-text, var(--color-ink-2));
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -171,8 +171,8 @@ body {
 
 /* base card — solid surface, no shadow, calm border */
 .glass {
-  background: var(--color-night-900);
-  border: 1px solid rgba(134, 226, 172, 0.1);
+  background: var(--theme-surface, var(--color-night-900));
+  border: 1px solid var(--theme-border, rgba(134, 226, 172, 0.1));
 }
 
 /* advanced glass — richer surface with subtle inner highlight */

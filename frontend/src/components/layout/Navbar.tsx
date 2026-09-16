@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Languages, Menu, X, LogIn, LogOut, User, Search, Command } from 'lucide-react';
 import { useLang } from '../../i18n/LanguageContext';
+import DarkModeToggle from '../sections/DarkModeToggle';
 import { useAuth } from '../../context/AuthContext';
 import Logo from '../visuals/Logo';
 import { SearchModal, useGlobalSearchShortcut } from '../ui/SearchModal';
@@ -38,6 +39,8 @@ export default function Navbar() {
     { to: '/', label: t.nav.home },
     { to: '/platform', label: t.nav.platform },
     { to: '/hydroma', label: t.nav.science },
+    { to: '/marketplace', label: lang === 'fa' ? 'بازارگاه' : 'Marketplace' },
+    { to: '/solutions', label: lang === 'fa' ? 'راهکارها' : 'Solutions' },
     { to: '/dashboard', label: lang === 'fa' ? 'داشبورد' : 'Dashboard' },
     { to: '/blog', label: t.nav.blog },
     { to: '/about', label: t.nav.about },
@@ -117,6 +120,7 @@ export default function Navbar() {
               <span>K</span>
             </kbd>
           </button>
+          <DarkModeToggle />
           <button
             type="button"
             onClick={toggle}

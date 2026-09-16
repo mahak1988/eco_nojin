@@ -8,22 +8,18 @@ pragma solidity ^0.8.24;
  */
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract LandscapeFund is AccessControl, Pausable, ReentrancyGuard {
-    using Counters for Counters.Counter;
-    
     string public constant VERSION = "2.0.0";
+    uint256 private _villageIdCounter;
     uint256 public constant MAX_FEE_BPS = 500;
     uint256 public constant DEFAULT_FEE_BPS = 100;
     
     bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant DISTRIBUTOR_ROLE = keccak256("DISTRIBUTOR_ROLE");
-    
-    Counters.Counter private _villageIdCounter;
     
     struct Village {
         uint256 id;
@@ -80,8 +76,7 @@ contract LandscapeFund is AccessControl, Pausable, ReentrancyGuard {
         if (manager == address(0)) revert InvalidAddress(manager);
         if (feeBps > MAX_FEE_BPS) revert InvalidFee(feeBps);
         
-        _villageIdCounter.increment();
-        id = _villageIdCounter.current();
+        id = ++_villageIdCounter;
         
         villages[id] = Village({
             id: id, villageId: villageId, name: name,

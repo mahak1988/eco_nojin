@@ -11,13 +11,13 @@ interface Badge {
 const BADGES_FA: Badge[] = [
   { icon: 'shield', title: 'رمزنگاری هیبریدی', desc: 'Kyber + Dilithium در مسیر داده' },
   { icon: 'award', title: 'مجوز MIT', desc: 'هسته متن‌باز تحت مجوز MIT' },
-  { icon: 'check', title: 'MRV تأییدشده', desc: 'ثبت بلاکچین پالیگون تأیید شده' },
+  { icon: 'check', title: 'MRV پیش‌راستی‌آزمایی', desc: 'ثبت رجیستری شبیه‌سازی‌شده تأیید شده' },
 ];
 
 const BADGES_EN: Badge[] = [
   { icon: 'shield', title: 'Hybrid Encryption', desc: 'Kyber + Dilithium on data path' },
   { icon: 'award', title: 'MIT Licensed', desc: 'Open source core under MIT' },
-  { icon: 'check', title: 'Verified MRV', desc: 'Polygon blockchain confirmed' },
+  { icon: 'check', title: 'Pre-verified MRV', desc: 'Simulated registry registration confirmed' },
 ];
 
 /** Certification and trust badges. */

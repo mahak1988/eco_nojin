@@ -331,7 +331,7 @@ const fa: SiteContent = {
       {
         icon: 'blocks',
         title: 'کربنی قابل اثبات',
-        desc: 'مرجع اعتبار کربن با ثبت تأییدشده روی بلاکچین پالیگون؛ MRV شفاف برای خریداران.',
+        desc: 'مرجع اعتبار کربن با ثبت شبیه‌سازی‌شده روی رجیستری (Polygon testnet/mock)؛ MRV شفاف برای خریداران.',
       },
       {
         icon: 'shield',
@@ -380,7 +380,7 @@ const fa: SiteContent = {
       {
         icon: 'blocks',
         title: 'اثرِ قابل اثبات',
-        desc: 'از اندازه‌گیری ماهواره‌ای تا ثبت کربن روی بلاکچین؛ هر ادعا قابل راستی‌آزمایی است.',
+        desc: 'از اندازه‌گیری ماهواره‌ای تا ثبت کربن روی رجیستری شبیه‌سازی‌شده؛ هر ادعا به‌صورت پیش‌راستی‌آزمایی قابل راستی‌آزمایی است.',
       },
     ],
   },
@@ -412,7 +412,7 @@ const fa: SiteContent = {
       {
         icon: 'blocks',
         title: 'کربنِ اثبات‌پذیر',
-        desc: 'رجیستری اعتبار کربن با ثبت تأییدشده روی بلاکچین پالیگون.',
+        desc: 'رجیستری اعتبار کربن با ثبت شبیه‌سازی‌شده روی رجیستری (Polygon testnet/mock).',
       },
       {
         icon: 'store',
@@ -498,7 +498,7 @@ const fa: SiteContent = {
     metrics: [
       { name: 'هکتار زیر پایش', desc: 'مساحت زمین‌های تحت پایش ماهواره‌ای مستمر', unit: 'هکتار', source: 'Sentinel-2 L2A', method: 'تحلیل طیفی و چندطیفی', standard: 'Copernicus CDS', frequency: 'روزانه', apiField: 'area_ha' },
       { name: 'کشاورز آموزش‌دیده', desc: 'کشاورزانی که از کانال‌های پنج‌گانه آموزش دیده‌اند', unit: 'نفر', source: 'KoBo field forms', method: 'پیگیری دوره‌های LMS', standard: '-', frequency: 'هفتگی', apiField: 'farmers_trained' },
-      { name: 'اعتبار کربن صادرشده', desc: 'اعتبارهای تأییدشده و ثبت‌شده روی رجیستری', unit: 'اعتبار', source: 'Registry API (Polygon)', method: 'MRV + بلاکچین', standard: 'Verra / Puro-Earth / ISO 14064-2', frequency: 'ماهیانه', apiField: 'credits_issued' },
+      { name: 'اعتبار کربن صادرشده', desc: 'اعتبارهای پیش‌راستی‌آزمایی‌شده و ثبت‌شده در شبیه‌سازی', unit: 'اعتبار', source: 'Registry simulation (Polygon testnet/mock)', method: 'MRV + رजیستری شبیه‌سازی‌شده', standard: 'Pre-verification vs. Verra / Puro-Earth / ISO 14064-2', frequency: 'ماهیانه', apiField: 'credits_issued' },
       { name: 'بهبود شاخص پوشش گیاشتی', desc: 'تغییر NDVI قبل/بعد در زمین‌های برنامهٔ احیا', unit: 'ΔNDVI', source: 'Sentinel-2 L2A', method: 'مقایسه زمان‌سری NDVI', standard: 'ESA CCI', frequency: 'ماهیانه', apiField: 'ndvi_improvement' },
       { name: 'صرفه‌جویی آب', desc: 'کاهش مصرف با توصیهٔ آبیاری مبتنی بر FAO-56', unit: 'مترمکعب', source: 'Soil + ERA5', method: 'Richards + FAO-56', standard: 'FAO Irrigation', frequency: 'هفتگی', apiField: 'water_saved_m3' },
       { name: 'انتشار جلوگیری‌شده CO₂', desc: 'مقادیر CO₂ معادل به‌واسطهٔ احیای اکوسیستم ثبت‌شده است', unit: 'تن CO₂e', source: 'RothC + Sentinel-2', method: 'IPCC 2019 Refinement', standard: 'IPCC 2019 / ISO 14064-2', frequency: 'سالیانه', apiField: 'co2_sequestered_tco2e' },
@@ -551,7 +551,7 @@ const fa: SiteContent = {
     lead: 'احیای اکوسیستم باید برای جامعهٔ محلی درآمد بسازد؛ MRV اکو نوژین این مسیر را شفاف می‌کند.',
     bullets: [
       'پایش ماهواره‌ای و میدانی (KoBo) برای اندازه‌گیری واقعی.',
-      'ثبت اعتبار کربن با تأیید بلاکچین روی پالیگون.',
+      'ثبت اعتبار کربن با ثبت شبیه‌سازی‌شده روی رجیستری (Polygon testnet/mock).',
       'گزارش MRV شفاف برای خریداران و نهادهای توسعه.',
     ],
     cta: 'مسیر اعتبار کربن',
@@ -696,7 +696,7 @@ const fa: SiteContent = {
       {
         title: 'خدمات مالی و اکوکویین',
         body: [
-          'اکوکویین واحد دیجیتال اعتبار اکو نوژین است و در دو فاز تعریف می‌شود: فاز یک (فعلی) — توکن کاربردی برای دسترسی به خدمات پلتفرم؛ فاز دو — اعتبار کربنی معادل یک تن دی‌اکسیدکربن ترسیب‌شده، که فقط پس از راستی‌آزمایی مستقل مطابق ISO 14064-2 و تأیید نهاد اعتبارسنج مستقل (VVB) صادر و در رجیستری ثبت می‌شود.',
+          'اکوکویین واحد دیجیتال اعتبار اکو نوژین است و در دو فاز تعریف می‌شود: فاز یک (فعلی) — توکن کاربردی برای دسترسی به خدمات پلتفرم؛ فاز دو — اعتبار کربنی معادل یک تن دی‌اکسیدکربن ترسیب‌شده، که فقط پس از پیش‌راستی‌آزمایی شبیه‌سازی‌شده مطابق ISO 14064-2 (pre-verification) و تأیید نهاد اعتبارسنج مستقل (VVB — pre-confirmed) صادر و در رجیستری (شبیه‌سازی) ثبت می‌شود.',
           'در هیچ فاز، اکوکویین فروش توکن، وعدهٔ سود یا محصول سرمایه‌گذاری نیست؛ در صورت تحقق شرایط حقوقی و مجوزها، عرضهٔ اعتبار کربنی تابع اظهارنظر حقوقی مستقل خواهد بود و پلتفرم تسهیل‌گر است، نه نگهدارندهٔ وجوه.',
           'اکوکویینِ ذخیره‌شده در حساب کاربر، دارایی دیجیتال اوست؛ انتقال داوطلبانه با رضایت کاربر انجام می‌شود و توقیف یا مسدودسازی تنها بر اساس دستور قضایی/اداری معتبر و الزامات مبارزه با پول‌شویی (AML) انجام می‌گیرد.',
           'حداقل ۵۰ درصد ارزش ناخالص فروش هر اعتبار کربنی، به جوامع محلی و مجریان پروژه‌های احیا اختصاص می‌یابد و گزارش سالانهٔ آن در صفحهٔ شفافیت منتشر می‌شود.',
@@ -881,10 +881,10 @@ const fa: SiteContent = {
         title: 'کربنی که قابل اثبات است',
         date: 'شهریور ۱۴۰۵',
         excerpt:
-          'MRV شفاف، پایش میدانی و ثبت بلاکچینی؛ چرا «اثبات» قلب اقتصاد کربن است.',
+          'MRV شفاف، پایش میدانی و ثبت شبیه‌سازی‌شده روی رجیستری؛ چرا «اثبات» قلب اقتصاد کربن است.',
         paragraphs: [
           'بازار کربن وقتی اعتماد می‌سازد که هر اعتبار، قابل اندازه‌گیری و راستی‌آزمایی باشد. اکو نوژین پایش ماهواره‌ای را با داده‌های میدانی (فرم‌های KoBo) ترکیب می‌کند تا اندازه‌گیری واقعی شود.',
-          'اعتبار کربن با ثبت تأییدشده روی بلاکچین پالیگون ثبت می‌شود و گزارش MRV برای خریداران و نهادهای توسعه شفاف ارائه می‌گردد.',
+          'اعتبار کربن با ثبت شبیه‌سازی‌شده روی رجیستری (Polygon testnet/mock) ثبت می‌شود و گزارش MRV برای خریداران و نهادهای توسعه شفاف ارائه می‌گردد.',
           'نتیجه برای جامعهٔ محلی روشن است: احیای زمین باید درآمد بسازد — و این درآمد باید قابل اثبات باشد، نه وعده.',
         ],
       },
@@ -970,7 +970,7 @@ const fa: SiteContent = {
       {
         cat: 'کربن',
         q: 'اعتبار کربن چطور تأیید می‌شود؟',
-        a: 'اندازه‌گیری با ترکیب پایش ماهواره‌ای و میدانی انجام می‌شود و ثبت اعتبار با تأیید بلاکچین روی پالیگون ثبت می‌گردد؛ گزارش MRV شفاف برای خریداران ارائه می‌شود.',
+         a: 'اندازه‌گیری با ترکیب پایش ماهواره‌ای و میدانی انجام می‌شود و ثبت اعتبار با شبیه‌سازی‌شده روی رجیستری (Polygon testnet/mock) ثبت می‌گردد؛ گزارش MRV شفاف برای خریداران ارائه می‌شود.',
       },
       {
         cat: 'کربن',
@@ -1050,7 +1050,7 @@ const fa: SiteContent = {
     verification: [
       'اندازه‌گیری: ترکیب پایش ماهواره‌ای سنتینل با دادهٔ میدانی KoBo.',
       'محاسبه: مدل‌های فیزیکی قطعی روی هستهٔ عددی C++.',
-      'ثبت: اعتبار کربن با تأیید بلاکچین روی پالیگون.',
+       'ثبت: اعتبار کربن با ثبت شبیه‌سازی‌شده روی رجیستری (Polygon testnet/mock).',
       'گزارش: MRV شفاف برای خریداران و نهادهای توسعه.',
     ],
     commitmentsTitle: 'تعهدات ما (ماده ۳ بیانیه)',
@@ -1134,7 +1134,7 @@ const en: SiteContent = {
       {
         icon: 'blocks',
         title: 'Provable carbon',
-        desc: 'Carbon-credit registry with blockchain verification on Polygon; transparent MRV for buyers.',
+        desc: 'Carbon-credit registry with simulated registration on Polygon testnet/mock; transparent MRV for buyers.',
       },
       {
         icon: 'shield',
@@ -1183,7 +1183,7 @@ const en: SiteContent = {
       {
         icon: 'blocks',
         title: 'Provable impact',
-        desc: 'From satellite measurement to blockchain-registered carbon; every claim is verifiable.',
+        desc: 'From satellite measurement to simulated registry carbon; every claim is pre-verified.',
       },
     ],
   },
@@ -1215,7 +1215,7 @@ const en: SiteContent = {
       {
         icon: 'blocks',
         title: 'Provable carbon',
-        desc: 'Carbon-credit registry with blockchain-verified records on Polygon.',
+        desc: 'Carbon-credit registry with simulated registration on Polygon testnet/mock.',
       },
       {
         icon: 'store',
@@ -1301,7 +1301,7 @@ const en: SiteContent = {
     metrics: [
       { name: 'Hectares under monitoring', desc: 'Land area under continuous satellite monitoring', unit: 'ha', source: 'Sentinel-2 L2A', method: 'Spectral analysis', standard: 'Copernicus CDS', frequency: 'Daily', apiField: 'area_ha' },
       { name: 'Farmers trained', desc: 'Farmers reached through the five access channels', unit: 'people', source: 'KoBo field forms', method: 'LMS course tracking', standard: '-', frequency: 'Weekly', apiField: 'farmers_trained' },
-      { name: 'Carbon credits issued', desc: 'Verified credits registered on the registry', unit: 'credits', source: 'Registry API (Polygon)', method: 'MRV + blockchain', standard: 'Verra / Puro-Earth / ISO 14064-2', frequency: 'Monthly', apiField: 'credits_issued' },
+      { name: 'Carbon credits issued', desc: 'Pre-verified credits (simulation) — not yet on a live registry', unit: 'credits', source: 'Registry simulation (Polygon testnet/mock)', method: 'MRV + simulated ledger', standard: 'Pre-verification vs. Verra / Puro-Earth / ISO 14064-2', frequency: 'Monthly', apiField: 'credits_issued' },
       { name: 'Vegetation index improvement', desc: 'Before/after NDVI change in restoration fields', unit: 'ΔNDVI', source: 'Sentinel-2 L2A', method: 'Time-series NDVI comparison', standard: 'ESA CCI', frequency: 'Monthly', apiField: 'ndvi_improvement' },
       { name: 'Water saved', desc: 'Reduced use via FAO-56-based irrigation advice', unit: 'm³', source: 'Soil + ERA5', method: 'Richards + FAO-56', standard: 'FAO Irrigation', frequency: 'Weekly', apiField: 'water_saved_m3' },
       { name: 'CO₂ sequestered', desc: 'Tonnes of CO₂ equivalent captured via ecosystem restoration', unit: 'tCO₂e', source: 'RothC + Sentinel-2', method: 'IPCC 2019 Refinement', standard: 'IPCC 2019 / ISO 14064-2', frequency: 'Annual', apiField: 'co2_sequestered_tco2e' },
@@ -1322,7 +1322,7 @@ const en: SiteContent = {
     },
     mrvCycle: {
       title: 'Transparent MRV cycle',
-      desc: 'Every Eco Nojin report follows the standard MRV cycle per ISO 14064-2: measurement via satellite and field, transparent reporting, then independent verification.',
+      desc: 'Every Eco Nojin report follows the standard MRV cycle per ISO 14064-2 (pre-verification): measurement via satellite and field, transparent reporting, then independent verification — currently simulation only.',
     },
     chartsTitle: 'Time-series charts',
     chartsNote: 'The charts below are illustrative samples; real data goes live once the satellite service and pilot are connected.',
@@ -1354,7 +1354,7 @@ const en: SiteContent = {
     lead: 'Restoration must pay local communities; Eco Nojin MRV makes that path transparent.',
     bullets: [
       'Satellite and field monitoring (KoBo) for real measurement.',
-      'Carbon credits registered with blockchain verification on Polygon.',
+      'Carbon credits registered with simulated registration on Polygon testnet/mock.',
       'Transparent MRV reporting for buyers and development institutions.',
     ],
     cta: 'The carbon-credit path',
@@ -1499,7 +1499,7 @@ const en: SiteContent = {
       {
         title: 'Financial services and Eco Coin',
         body: [
-          'Eco Coin is the digital credit unit of Eco Nojin, defined in two phases: phase one (current) — a utility token for accessing platform services; phase two — a carbon credit equivalent to one tonne of sequestered CO2, issued and registered only after independent verification per ISO 14064-2 and confirmation by an independent validation body (VVB).',
+          'Eco Coin is the digital credit unit of Eco Nojin, defined in two phases: phase one (current) — a utility token for accessing platform services; phase two — a carbon credit equivalent to one tonne of sequestered CO2, issued and registered only after pre-verification per ISO 14064-2 (pre-verification) and confirmation by an independent validation body (VVB — pre-confirmed).',
           'In neither phase is Eco Coin a token sale, a profit promise or an investment product; if legal conditions and licenses are met, offering carbon credits will follow an independent legal opinion, and the platform facilitates rather than holds funds.',
           'Eco Coins stored in a user’s account are that user’s digital asset; voluntary transfer happens with the user’s consent, and freezing or blocking occurs only under valid judicial/administrative orders and anti-money-laundering (AML) obligations.',
  'At least 50% of the gross value of every carbon credit is allocated directly to local communities and restoration project implementers, with an annual report published on the transparency page.',
@@ -1684,10 +1684,10 @@ const en: SiteContent = {
         title: 'Carbon you can prove',
         date: 'September 2026',
         excerpt:
-          'Transparent MRV, field monitoring and blockchain registration — why “proof” is the heart of the carbon economy.',
+          'Transparent MRV, field monitoring and simulated registry registration — why “proof” is the heart of the carbon economy.',
         paragraphs: [
           'The carbon market builds trust only when every credit is measurable and verifiable. Eco Nojin combines satellite monitoring with field data (KoBo forms) to make measurement real.',
-          'Carbon credits are registered with blockchain verification on Polygon, and MRV reports are delivered transparently to buyers and development institutions.',
+          'Carbon credits are registered with simulated registration on Polygon testnet/mock, and MRV reports are delivered transparently to buyers and development institutions.',
           'The outcome for local communities is clear: restoring land must generate income — and that income must be provable, not promised.',
         ],
       },
@@ -1773,7 +1773,7 @@ const en: SiteContent = {
       {
         cat: 'Carbon',
         q: 'How is a carbon credit verified?',
-        a: 'Measurement combines satellite and field monitoring, and credit registration is recorded with blockchain verification on Polygon; transparent MRV reports go to buyers.',
+         a: 'Measurement combines satellite and field monitoring, and credit registration is recorded with simulated registration on Polygon testnet/mock; transparent MRV reports go to buyers.',
       },
       {
         cat: 'Carbon',
@@ -1853,7 +1853,7 @@ const en: SiteContent = {
     verification: [
       'Measurement: Sentinel satellite monitoring combined with KoBo field data.',
       'Computation: deterministic physical models on the C++ numerical core.',
-      'Registration: carbon credits recorded with blockchain verification on Polygon.',
+       'Registration: carbon credits recorded with simulated registration on Polygon testnet/mock.',
       'Reporting: transparent MRV for buyers and development institutions.',
     ],
     commitmentsTitle: 'Our commitments (Article 3 of the declaration)',

@@ -23,7 +23,7 @@ export const why = {
       {
         icon: 'blocks',
         title: 'اثرِ قابل اثبات',
-        desc: 'از اندازه‌گیری ماهواره‌ای تا ثبت کربن روی بلاکچین؛ هر ادعا قابل راستی‌آزمایی است.',
+        desc: 'از اندازه‌گیری ماهواره‌ای تا ثبت کربن روی رجیستری شبیه‌سازی‌شده؛ هر ادعا پیش‌راستی‌آزمایی است.',
       },
     ],
   },
@@ -44,7 +44,7 @@ export const why = {
       {
         icon: 'blocks',
         title: 'Provable impact',
-        desc: 'From satellite measurement to blockchain-registered carbon; every claim is verifiable.',
+        desc: 'From satellite measurement to simulated registry carbon; every claim is pre-verified.',
       },
     ],
   },

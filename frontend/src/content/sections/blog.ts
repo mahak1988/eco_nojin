@@ -41,10 +41,10 @@ export const blog = {
         title: 'کربنی که قابل اثبات است',
         date: 'شهریور ۱۴۰۵',
         excerpt:
-          'MRV شفاف، پایش میدانی و ثبت بلاکچینی؛ چرا «اثبات» قلب اقتصاد کربن است.',
+          'MRV شفاف، پایش میدانی و ثبت شبیه‌سازی‌شده روی رجیستری؛ چرا «اثبات» قلب اقتصاد کربن است.',
         paragraphs: [
           'بازار کربن وقتی اعتماد می‌سازد که هر اعتبار، قابل اندازه‌گیری و راستی‌آزمایی باشد. اکو نوژین پایش ماهواره‌ای را با داده‌های میدانی (فرم‌های KoBo) ترکیب می‌کند تا اندازه‌گیری واقعی شود.',
-          'اعتبار کربن با ثبت تأییدشده روی بلاکچین پالیگون ثبت می‌شود و گزارش MRV برای خریداران و نهادهای توسعه شفاف ارائه می‌گردد.',
+          'اعتبار کربن با ثبت شبیه‌سازی‌شده روی رجیستری (Polygon testnet/mock) ثبت می‌شود و گزارش MRV برای خریداران و نهادهای توسعه شفاف ارائه می‌گردد.',
           'نتیجه برای جامعهٔ محلی روشن است: احیای زمین باید درآمد بسازد — و این درآمد باید قابل اثبات باشد، نه وعده.',
         ],
       },
@@ -131,10 +131,10 @@ export const blog = {
         title: 'Carbon you can prove',
         date: 'September 2026',
         excerpt:
-          'Transparent MRV, field monitoring and blockchain registration — why “proof” is the heart of the carbon economy.',
+          'Transparent MRV, field monitoring and simulated registry registration — why “proof” is the heart of the carbon economy.',
         paragraphs: [
           'The carbon market builds trust only when every credit is measurable and verifiable. Eco Nojin combines satellite monitoring with field data (KoBo forms) to make measurement real.',
-          'Carbon credits are registered with blockchain verification on Polygon, and MRV reports are delivered transparently to buyers and development institutions.',
+          'Carbon credits are registered with simulated registration on Polygon testnet/mock, and MRV reports are delivered transparently to buyers and development institutions.',
           'The outcome for local communities is clear: restoring land must generate income — and that income must be provable, not promised.',
         ],
       },

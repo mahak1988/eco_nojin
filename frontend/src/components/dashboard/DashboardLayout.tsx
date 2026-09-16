@@ -4,7 +4,7 @@
  * are reachable from the dashboard home registry. */
 
 import { NavLink, Link, Route, Routes } from 'react-router-dom';
-import { Globe, LayoutDashboard, LogIn, Settings, User } from 'lucide-react';
+import { Globe, LayoutDashboard, LogIn, Settings, User, Store, Shield, CreditCard, Truck, HandCoins, Users, Database, Activity, SlidersHorizontal } from 'lucide-react';
 import { useLang } from '../../i18n/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
 import { categories as registryCategories } from '../../lib/hydromaregistry';
@@ -22,6 +22,23 @@ export default function DashboardLayout() {
     { to: '/dashboard/profile', label: isFa ? 'پروفایل' : 'Profile', icon: User, end: false },
     { to: '/dashboard/settings', label: isFa ? 'تنظیمات' : 'Settings', icon: Settings, end: false },
     { to: '/dashboard/login', label: isFa ? 'ورود' : 'Login', icon: LogIn, end: false },
+  ];
+
+  const commerceLinks = [
+    { to: '/dashboard/commerce', label: isFa ? 'مدیریت تجارت' : 'Commerce', icon: Store },
+    { to: '/dashboard/commerce/orders', label: isFa ? 'سفارش‌ها' : 'Orders', icon: CreditCard },
+    { to: '/dashboard/commerce/payments', label: isFa ? 'پرداخت‌ها' : 'Payments', icon: HandCoins },
+    { to: '/dashboard/commerce/shipping', label: isFa ? 'ارسال' : 'Shipping', icon: Truck },
+    { to: '/dashboard/commerce/settlements', label: isFa ? 'تسویه' : 'Settlements', icon: Database },
+  ];
+
+  const adminLinks = [
+    { to: '/dashboard/admin', label: isFa ? 'پنل ادمین' : 'Admin Panel', icon: Shield },
+    { to: '/dashboard/admin/users', label: isFa ? 'کاربران' : 'Users', icon: Users },
+    { to: '/dashboard/admin/vendors', label: isFa ? 'فروشندگان' : 'Vendors', icon: Store },
+    { to: '/dashboard/admin/marketplace', label: isFa ? 'بازارگاه' : 'Marketplace', icon: Activity },
+    { to: '/dashboard/admin/transactions', label: isFa ? 'تراکنش‌ها' : 'Transactions', icon: CreditCard },
+    { to: '/dashboard/admin/settings', label: isFa ? 'تنظیمات سیستم' : 'System Settings', icon: SlidersHorizontal },
   ];
 
   const liveLinks = [
@@ -99,6 +116,40 @@ export default function DashboardLayout() {
                 }`
               }
             >
+              {link.label}
+            </NavLink>
+          ))}
+
+          {commerceLinks.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              className={({ isActive }) =>
+                `shrink-0 rounded-full px-3 py-1.5 text-[11px] font-bold transition-colors ${
+                  isActive
+                    ? 'bg-leaf-500/15 text-leaf-300'
+                    : 'text-ink-3 hover:bg-white/5 hover:text-ink-1'
+                }`
+              }
+            >
+              <link.icon className="h-3.5 w-3.5 mr-1" aria-hidden />
+              {link.label}
+            </NavLink>
+          ))}
+
+          {isAdmin && adminLinks.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              className={({ isActive }) =>
+                `shrink-0 rounded-full px-3 py-1.5 text-[11px] font-bold transition-colors ${
+                  isActive
+                    ? 'bg-purple-500/15 text-purple-300'
+                    : 'text-ink-3 hover:bg-white/5 hover:text-ink-1'
+                }`
+              }
+            >
+              <link.icon className="h-3.5 w-3.5 mr-1" aria-hidden />
               {link.label}
             </NavLink>
           ))}

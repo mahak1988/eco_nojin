@@ -12,6 +12,14 @@ import AdvisoryPage from '../pages/dashboard/AdvisoryPage';
 import VoiceDiagnosticsPage from '../pages/dashboard/VoiceDiagnosticsPage';
 import VoiceAskPage from '../pages/dashboard/VoiceAskPage';
 import OrganizationManagementPage from '../pages/dashboard/OrganizationManagementPage';
+/* commerce */
+import CommerceDashboard from '../pages/dashboard/commerce/CommerceDashboard';
+import CommerceOrdersPage from '../pages/dashboard/commerce/CommerceOrdersPage';
+import CommercePaymentsPage from '../pages/dashboard/commerce/CommercePaymentsPage';
+import CommerceShippingPage from '../pages/dashboard/commerce/CommerceShippingPage';
+import CommerceSettlementsPage from '../pages/dashboard/commerce/CommerceSettlementsPage';
+/* admin */
+import { adminRoutes } from './adminRoutes';
 
 /* generated model page imports — indices */
 import EcsiModelPage from '../pages/dashboard/indices/EcsiModelPage';
@@ -111,6 +119,16 @@ export const dashboardRoutes: DashboardRoute[] = [
   { path: 'voice/diagnostics', element: <VoiceDiagnosticsPage /> },
   { path: 'voice/ask', element: <VoiceAskPage /> },
   { path: 'organizations', element: <OrganizationManagementPage /> },
+
+  /* commerce */
+  { path: 'commerce', element: <AdminGate><CommerceDashboard /></AdminGate> },
+  { path: 'commerce/orders', element: <AdminGate><CommerceOrdersPage /></AdminGate> },
+  { path: 'commerce/payments', element: <AdminGate><CommercePaymentsPage /></AdminGate> },
+  { path: 'commerce/shipping', element: <AdminGate><CommerceShippingPage /></AdminGate> },
+  { path: 'commerce/settlements', element: <AdminGate><CommerceSettlementsPage /></AdminGate> },
+
+  /* admin */
+  ...adminRoutes.map(r => ({ path: r.path.replace('/dashboard/', ''), element: r.element })),
 
   /* model pages */
   { path: 'models/ecsi', element: <EcsiModelPage /> },

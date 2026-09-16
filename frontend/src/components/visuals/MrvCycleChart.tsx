@@ -22,14 +22,14 @@ const STEPS_FA: MrvStep[] = [
   {
     id: 'report',
     title: 'گزارش',
-    desc: 'خروجی MRV شفاف مبتنی بر ISO 14064-2',
+      desc: 'خروجی MRV شفاف مبتنی بر ISO 14064-2 (پیش‌راستی‌آزمایی)',
     icon: FileBarChart,
     color: 'var(--color-aqua-500)',
   },
   {
     id: 'verify',
     title: 'راستی‌آزمایی',
-    desc: 'بازبینی مستقل و ثبت بر روی بلاکچین',
+      desc: 'بازبینی مستقل و ثبت روی رجیستری شبیه‌سازی‌شده',
     icon: ShieldCheck,
     color: 'var(--color-sand-500)',
   },
@@ -46,20 +46,20 @@ const STEPS_EN: MrvStep[] = [
   {
     id: 'report',
     title: 'Report',
-    desc: 'Transparent MRV output per ISO 14064-2',
+      desc: 'Transparent MRV output per ISO 14064-2 (pre-verification)',
     icon: FileBarChart,
     color: 'var(--color-aqua-500)',
   },
   {
     id: 'verify',
     title: 'Verify',
-    desc: 'Independent review + blockchain registration',
+      desc: 'Independent review + simulated registry registration',
     icon: ShieldCheck,
     color: 'var(--color-sand-500)',
   },
 ];
 
-/** Animated MRV cycle: Measurement → Reporting → Verification (ISO 14064-2). */
+/** Animated MRV cycle: Measurement → Reporting → Verification (ISO 14064-2 pre-verification). */
 export default function MrvCycleChart() {
   const { t, lang } = useLang();
   const reduce = useReducedMotion();

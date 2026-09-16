@@ -20,9 +20,14 @@ async function main() {
   await carbonCredit.waitForDeployment();
   
   const carbonCreditAddress = await carbonCredit.getAddress();
+  const network = await ethers.provider.getNetwork();
+  const carbonChainId = await carbonCredit.chainId();
+  const carbonContractAddress = await carbonCredit.contractAddress();
   console.log("✅ CarbonCredit deployed at:", carbonCreditAddress);
   console.log("   Symbol: ENCC");
   console.log("   Max Supply: 1,000,000,000 ENCC");
+  console.log(`   Chain ID: ${network.chainId} (contract: ${carbonChainId})`);
+  console.log(`   Contract address: ${carbonContractAddress}`);
 
   // ═══════════════════════════════════════════════════════
   // Deploy LandscapeFund
@@ -45,8 +50,8 @@ async function main() {
   console.log("\n═══════════════════════════════════════════════════════");
   console.log("📋 Deployment Summary");
   console.log("═══════════════════════════════════════════════════════");
-  console.log(`Network:          ${(await ethers.provider.getNetwork()).name}`);
-  console.log(`Chain ID:         ${(await ethers.provider.getNetwork()).chainId}`);
+  console.log(`Network:          ${network.name}`);
+  console.log(`Chain ID:         ${network.chainId}`);
   console.log(`Deployer:         ${deployer.address}`);
   console.log(`CarbonCredit:     ${carbonCreditAddress}`);
   console.log(`LandscapeFund:    ${landscapeFundAddress}`);
@@ -60,6 +65,8 @@ async function main() {
   console.log(`   npx hardhat verify --network mumbai ${landscapeFundAddress}`);
   console.log("\n💾 Save these addresses to your .env file:");
   console.log(`   CARBON_CREDIT_ADDRESS=${carbonCreditAddress}`);
+  console.log(`   CARBON_CREDIT_CHAIN_ID=${carbonChainId}`);
+  console.log(`   CARBON_CREDIT_CONTRACT_ADDRESS=${carbonContractAddress}`);
   console.log(`   LANDSCAPE_FUND_ADDRESS=${landscapeFundAddress}`);
   console.log("═══════════════════════════════════════════════════════\n");
 }

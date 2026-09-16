@@ -28,7 +28,7 @@ export const transparency = {
     verification: [
       'اندازه‌گیری: ترکیب پایش ماهواره‌ای سنتینل با دادهٔ میدانی KoBo.',
       'محاسبه: مدل‌های فیزیکی قطعی روی هستهٔ عددی C++.',
-      'ثبت: اعتبار کربن با تأیید بلاکچین روی پالیگون.',
+       'ثبت: اعتبار کربن با ثبت شبیه‌سازی‌شده روی رجیستری (Polygon testnet/mock).',
       'گزارش: MRV شفاف برای خریداران و نهادهای توسعه.',
     ],
     commitmentsTitle: 'تعهدات ما (ماده ۳ بیانیه)',
@@ -64,7 +64,7 @@ export const transparency = {
     verification: [
       'Measurement: Sentinel satellite monitoring combined with KoBo field data.',
       'Computation: deterministic physical models on the C++ numerical core.',
-      'Registration: carbon credits recorded with blockchain verification on Polygon.',
+       'Registration: carbon credits recorded with simulated registration on Polygon testnet/mock.',
       'Reporting: transparent MRV for buyers and development institutions.',
     ],
     commitmentsTitle: 'Our commitments (Article 3 of the declaration)',

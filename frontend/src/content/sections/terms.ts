@@ -50,7 +50,7 @@ export const terms = {
       {
         title: 'خدمات مالی و اکوکویین',
         body: [
-          'اکوکویین واحد دیجیتال اعتبار اکو نوژین است و در دو فاز تعریف می‌شود: فاز یک (فعلی) — توکن کاربردی برای دسترسی به خدمات پلتفرم؛ فاز دو — اعتبار کربنی معادل یک تن دی‌اکسیدکربن ترسیب‌شده، که فقط پس از راستی‌آزمایی مستقل مطابق ISO 14064-2 و تأیید نهاد اعتبارسنج مستقل (VVB) صادر و در رجیستری ثبت می‌شود.',
+          'اکوکویین واحد دیجیتال اعتبار اکو نوژین است و در دو فاز تعریف می‌شود: فاز یک (فعلی) — توکن کاربردی برای دسترسی به خدمات پلتفرم؛ فاز دو — اعتبار کربنی معادل یک تن دی‌اکسیدکربن ترسیب‌شده، که فقط پس از پیش‌راستی‌آزمایی شبیه‌سازی‌شده مطابق ISO 14064-2 (pre-verification) و تأیید نهاد اعتبارسنج مستقل (VVB — pre-confirmed) صادر و در رجیستری (شبیه‌سازی) ثبت می‌شود.',
           'در هیچ فاز، اکوکویین فروش توکن، وعدهٔ سود یا محصول سرمایه‌گذاری نیست؛ در صورت تحقق شرایط حقوقی و مجوزها، عرضهٔ اعتبار کربنی تابع اظهارنظر حقوقی مستقل خواهد بود و پلتفرم تسهیل‌گر است، نه نگهدارندهٔ وجوه.',
           'اکوکویینِ ذخیره‌شده در حساب کاربر، دارایی دیجیتال اوست؛ انتقال داوطلبانه با رضایت کاربر انجام می‌شود و توقیف یا مسدودسازی تنها بر اساس دستور قضایی/اداری معتبر و الزامات مبارزه با پول‌شویی (AML) انجام می‌گیرد.',
           'حداقل ۵۰ درصد ارزش ناخالص فروش هر اعتبار کربنی، به جوامع محلی و مجریان پروژه‌های احیا اختصاص می‌یابد و گزارش سالانهٔ آن در صفحهٔ شفافیت منتشر می‌شود.',
@@ -121,7 +121,7 @@ export const terms = {
       {
         title: 'Financial services and Eco Coin',
         body: [
-          'Eco Coin is the digital credit unit of Eco Nojin, defined in two phases: phase one (current) — a utility token for accessing platform services; phase two — a carbon credit equivalent to one tonne of sequestered CO2, issued and registered only after independent verification per ISO 14064-2 and confirmation by an independent validation body (VVB).',
+          'Eco Coin is the digital credit unit of Eco Nojin, defined in two phases: phase one (current) — a utility token for accessing platform services; phase two — a carbon credit equivalent to one tonne of sequestered CO2, issued and registered only after pre-verification per ISO 14064-2 (pre-verification) and confirmation by an independent validation body (VVB — pre-confirmed).',
           'In neither phase is Eco Coin a token sale, a profit promise or an investment product; if legal conditions and licenses are met, offering carbon credits will follow an independent legal opinion, and the platform facilitates rather than holds funds.',
           'Eco Coins stored in a user’s account are that user’s digital asset; voluntary transfer happens with the user’s consent, and freezing or blocking occurs only under valid judicial/administrative orders and anti-money-laundering (AML) obligations.',
  'At least 50% of the gross value of every carbon credit is allocated directly to local communities and restoration project implementers, with an annual report published on the transparency page.',

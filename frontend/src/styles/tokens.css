@@ -97,8 +97,8 @@
   --theme-surface-hover: rgba(212, 155, 63, 0.13);
   --theme-border: rgba(212, 155, 63, 0.22);
   --theme-text: #e6f2ea;
-  --theme-text-muted: rgba(230, 242, 234, 0.6);
-  --theme-text-dim: rgba(230, 242, 234, 0.4);
+  --theme-text-muted: rgba(230, 242, 234, 0.72);
+  --theme-text-dim: rgba(230, 242, 234, 0.55);
 }
 
 /* Light Theme */
@@ -108,6 +108,34 @@
   --theme-surface-hover: rgba(180, 140, 80, 0.16);
   --theme-border: rgba(180, 140, 80, 0.25);
   --theme-text: #1a1510;
-  --theme-text-muted: rgba(26, 21, 16, 0.65);
-  --theme-text-dim: rgba(26, 21, 16, 0.45);
+  --theme-text-muted: rgba(26, 21, 16, 0.75);
+  --theme-text-dim: rgba(26, 21, 16, 0.58);
+
+  /* Light-theme remap of the dark utility palette: components hardcode
+     night-* tokens for text/surfaces; remapping keeps them readable. */
+  --color-night-100: #16241d;
+  --color-night-200: #26362e;
+  --color-night-300: #3c4c44;
+  --color-night-700: #d9e5dd;
+  --color-night-800: #eef2ec;
+  --color-night-900: #f7f5f0;
+  --color-night-950: #0e241a;
+}
+/* High-contrast preference: raise text contrast further (accessibility). */
+@media (prefers-contrast: more) {
+  :root,
+  .dark {
+    --theme-text: #f4faf5;
+    --theme-text-muted: #d7e6db;
+    --theme-text-dim: #b9cfc0;
+    --theme-border: rgba(212, 155, 63, 0.45);
+  }
+  .light {
+    --theme-text: #0f0b07;
+    --theme-text-muted: #3a3128;
+    --theme-text-dim: #54483c;
+    --theme-border: rgba(140, 100, 40, 0.5);
+    --color-night-200: #1d2c24;
+    --color-night-300: #2f3f36;
+  }
 }

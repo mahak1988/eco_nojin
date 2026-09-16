@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ShieldCheck, Sparkles } from 'lucide-react';
+import { ShieldCheck, Sparkles, Snowflake, Ban, KeyRound } from 'lucide-react';
 import Seo from '../components/ui/Seo';
 import PageHeader from '../components/sections/PageHeader';
 import Reveal from '../components/ui/Reveal';
@@ -7,7 +7,13 @@ import SectionHeading from '../components/ui/SectionHeading';
 import { useLang } from '../i18n/LanguageContext';
 import { ecoCoin } from '../content/pages/ecocoin';
 
-/** Eco Coin page — two-phase framework + issuance chain + honest gate. */
+const VERIFY_COLORS: Record<string, string> = {
+  modeled_estimate: 'text-[var(--color-sand-400)] bg-[var(--color-sand-500)]/15',
+  field_verified: 'text-[var(--color-leaf-400)] bg-[var(--color-leaf-500)]/15',
+  not_certified: 'text-[var(--color-night-200)]/70 bg-white/5',
+};
+
+/** Eco Coin page — two-phase framework + issuance chain + honest gate + status. */
 export default function EcoCoinPage() {
   const { lang, t, dir } = useLang();
   const c = ecoCoin[lang as 'fa' | 'en'];
@@ -44,6 +50,16 @@ export default function EcoCoinPage() {
                     >
                       {phase.status}
                     </span>
+                    {!index && (
+                      <span className="rounded-full px-3 py-1 text-[11px] font-bold bg-[var(--color-leaf-500)]/10 text-[var(--color-leaf-300)]">
+                        Gate: Utility — behind VVB
+                      </span>
+                    )}
+                    {index === 1 && (
+                      <span className="rounded-full px-3 py-1 text-[11px] font-bold bg-[var(--color-sand-500)]/10 text-[var(--color-sand-300)]">
+                        Gate: Carbon — behind Registry + Legal
+                      </span>
+                    )}
                   </div>
                   <h3 className="mt-3 text-lg font-extrabold text-[var(--color-night-100)]">{phase.title}</h3>
                   <p className="mt-2 text-sm leading-8 text-[var(--color-night-200)]/65">{phase.desc}</p>
@@ -71,10 +87,62 @@ export default function EcoCoinPage() {
                   </span>
                   <h3 className="mt-1 text-sm font-extrabold text-[var(--color-night-100)]">{step.title}</h3>
                   <p className="text-xs leading-6 text-[var(--color-night-200)]/60">{step.desc}</p>
+                  {step.verificationLabel && (
+                    <span className={`inline-flex w-fit rounded-full px-2 py-0.5 text-[10px] font-bold ${VERIFY_COLORS[step.verificationLabel] ?? ''}`}>
+                      {step.verificationLabel}
+                    </span>
+                  )}
                 </li>
               </Reveal>
             ))}
           </ol>
+        </div>
+      </section>
+
+      {/* freeze / retirement / idempotency status */}
+      <section className="px-4 py-6 sm:px-6" id="status">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="text-lg font-extrabold text-[var(--color-night-100)]">
+            {lang === 'fa' ? 'وضعیت حساب و اعتبار' : 'Account & credit status'}
+          </h2>
+          <div className="mt-4 grid gap-4 sm:grid-cols-3">
+            <div className="glass flex flex-col gap-2 rounded-3xl p-5">
+              <div className="flex items-center gap-2 text-sm font-extrabold text-[var(--color-night-100)]">
+                <Snowflake className="h-4 w-4 text-[var(--color-aqua-400)]" aria-hidden />
+                Freeze
+              </div>
+              <p className="text-xs leading-6 text-[var(--color-night-200)]/60">
+                {lang === 'fa' ? 'توقیف فقط با دستور قضایی/AML' : 'Freezing only under judicial/AML order'}
+              </p>
+              <span className="rounded-full px-2 py-0.5 text-[10px] font-bold text-[var(--color-leaf-400)] bg-[var(--color-leaf-500)]/15">
+                {lang === 'fa' ? 'بدون توقف' : 'No freeze'}
+              </span>
+            </div>
+            <div className="glass flex flex-col gap-2 rounded-3xl p-5">
+              <div className="flex items-center gap-2 text-sm font-extrabold text-[var(--color-night-100)]">
+                <Ban className="h-4 w-4 text-[var(--color-sand-400)]" aria-hidden />
+                Retirement
+              </div>
+              <p className="text-xs leading-6 text-[var(--color-night-200)]/60">
+                {lang === 'fa' ? 'بازنشستگی تا حذف کامل' : 'Retirement until cancellation'}
+              </p>
+              <span className="rounded-full px-2 py-0.5 text-[10px] font-bold text-[var(--color-night-200)]/70 bg-white/5">
+                {lang === 'fa' ? 'بدون بازنشستگی' : 'No retirement'}
+              </span>
+            </div>
+            <div className="glass flex flex-col gap-2 rounded-3xl p-5">
+              <div className="flex items-center gap-2 text-sm font-extrabold text-[var(--color-night-100)]">
+                <KeyRound className="h-4 w-4 text-[var(--color-leaf-400)]" aria-hidden />
+                Idempotency
+              </div>
+              <p className="text-xs leading-6 text-[var(--color-night-200)]/60">
+                {lang === 'fa' ? 'کلید بازیابی فعال (RFC 7807)' : 'Idempotency key active (RFC 7807)'}
+              </p>
+              <span className="rounded-full px-2 py-0.5 text-[10px] font-bold text-[var(--color-leaf-400)] bg-[var(--color-leaf-500)]/15">
+                {lang === 'fa' ? 'فعال' : 'Active'}
+              </span>
+            </div>
+          </div>
         </div>
       </section>
 

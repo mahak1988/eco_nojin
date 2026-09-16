@@ -88,11 +88,11 @@ export const impact = {
       },
       {
         name: 'اعتبار کربن صادرشده',
-        desc: 'اعتبارهای تأییدشده و ثبت‌شده روی رجیستری',
+        desc: 'اعتبارهای پیش‌راستی‌آزمایی‌شده (شبیه‌سازی) — هنوز در رجیستری تولیدی ثبت نشده‌اند',
         unit: 'اعتبار',
-        source: 'Registry API (Polygon)',
-        method: 'MRV + بلاکچین',
-        standard: 'Verra / Puro-Earth / ISO 14064-2',
+        source: 'Registry simulation (Polygon testnet/mock)',
+        method: 'MRV + simulated ledger',
+        standard: 'Pre-verification vs. Verra / Puro-Earth / ISO 14064-2',
         frequency: 'ماهیانه',
         apiField: 'credits_issued',
       },
@@ -122,7 +122,7 @@ export const impact = {
         unit: 'تن CO₂e',
         source: 'RothC + Sentinel-2',
         method: 'IPCC 2019 Refinement',
-        standard: 'IPCC 2019 / ISO 14064-2',
+        standard: 'IPCC 2019 / ISO 14064-2 (pre-verification)',
         frequency: 'سالیانه',
         apiField: 'co2_sequestered_tco2e',
       },
@@ -179,7 +179,7 @@ export const impact = {
     },
     mrvCycle: {
       title: 'چرخهٔ MRV شفاف',
-      desc: 'هر گزارش اکو نوژین از چرخهٔ استاندارد MRV بر اساس ISO 14064-2 عبور می‌کند: اندازه‌گیری با ماهواره و میدان، گزارش‌گیری شفاف، سپس راستی‌آزمایی مستقل.',
+      desc: 'هر گزارش اکو نوژین از چرخهٔ استاندارد MRV بر اساس ISO 14064-2 (پیش‌راستی‌آزمایی) عبور می‌کند: اندازه‌گیری با ماهواره و میدان، گزارش‌گیری شفاف، سپس راستی‌آزمایی مستقل — هنوز در حالت شبیه‌سازی.',
     },
     chartsTitle: 'نمودارهای زمان‌سری',
     chartsNote: 'نمونه‌های تصویری زیر نمادین هستند؛ داده‌های زنده پس از وصل شدن به سرویس ماهواره‌ای و پایلوت منتشر می‌شود.',
@@ -259,11 +259,11 @@ export const impact = {
       },
       {
         name: 'Carbon credits issued',
-        desc: 'Verified credits registered on the registry',
+        desc: 'Pre-verified credits (simulation) — not yet on a live registry',
         unit: 'credits',
-        source: 'Registry API (Polygon)',
-        method: 'MRV + blockchain',
-        standard: 'Verra / Puro-Earth / ISO 14064-2',
+        source: 'Registry simulation (Polygon testnet/mock)',
+        method: 'MRV + simulated ledger',
+        standard: 'Pre-verification vs. Verra / Puro-Earth / ISO 14064-2',
         frequency: 'Monthly',
         apiField: 'credits_issued',
       },
@@ -293,7 +293,7 @@ export const impact = {
         unit: 'tCO₂e',
         source: 'RothC + Sentinel-2',
         method: 'IPCC 2019 Refinement',
-        standard: 'IPCC 2019 / ISO 14064-2',
+        standard: 'IPCC 2019 / ISO 14064-2 (pre-verification)',
         frequency: 'Annual',
         apiField: 'co2_sequestered_tco2e',
       },
@@ -350,7 +350,7 @@ export const impact = {
     },
     mrvCycle: {
       title: 'Transparent MRV cycle',
-      desc: 'Every Eco Nojin report follows the standard MRV cycle per ISO 14064-2: measurement via satellite and field, transparent reporting, then independent verification.',
+      desc: 'Every Eco Nojin report follows the standard MRV cycle per ISO 14064-2 (pre-verification): measurement via satellite and field, transparent reporting, then independent verification — currently simulation only.',
     },
     chartsTitle: 'Time-series charts',
     chartsNote: 'The charts below are illustrative samples; real data goes live once the satellite service and pilot are connected.',
@@ -399,7 +399,7 @@ export const impact = {
     },
     methodTitle: 'Measurement method',
     methodBody:
-      'Every metric is computed from Sentinel-2 data, ERA5 climate and KoBo field records, published in transparent MRV reports. Made-up numbers have no place on this platform.',
+      'Every metric is computed from Sentinel-2 data, ERA5 climate and KoBo field records, published in transparent MRV reports. Credit registration is simulation/pre-verification only. Made-up numbers have no place on this platform.',
   },
 } satisfies Record<'fa' | 'en', ImpactContent>;
 
@@ -439,14 +439,14 @@ export const carbon = {
   },
   en: {
     kicker: 'Carbon projects',
-    title: 'The carbon registry, from farm to blockchain',
+    title: 'The carbon registry, from farm to simulated registry',
     lead: 'The Eco Nojin credit path is transparent and step-by-step; the live project map goes live with the first pilot.',
     howTitle: 'The carbon-credit path',
     how: [
       { title: 'Register land', desc: 'The farmer registers land and conservation actions.' },
       { title: 'Measure', desc: 'Satellite monitoring + KoBo field records.' },
       { title: 'Verify', desc: 'Model-based calculation and MRV report verification.' },
-      { title: 'Register & sell', desc: 'Credits are recorded with blockchain verification on Polygon.' },
+       { title: 'Register & sell', desc: 'Credits are recorded with simulated registration on Polygon testnet/mock.' },
     ],
     participateTitle: 'How to participate?',
     participate: [

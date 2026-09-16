@@ -270,6 +270,8 @@ def get_db() -> Session:
             yield db
         finally:
             db.close()
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Database connection failed: {e}")
         raise HTTPException(

@@ -60,6 +60,7 @@ class MarketplaceSeller(Base):
     marketplace_id = Column(String(36), ForeignKey("marketplaces.id"), nullable=True, index=True)
     user_id = Column(String(36), nullable=False, index=True)
     village_id = Column(String(100), nullable=False)
+    location = Column(String(100), nullable=True)
     shop_name = Column(String(200), nullable=False)
     shop_description = Column(Text)
     status = Column(String(20), default="pending", index=True)

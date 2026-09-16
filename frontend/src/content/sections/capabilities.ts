@@ -34,7 +34,7 @@ export const capabilities = {
       {
         icon: 'blocks',
         title: 'کربنِ اثبات‌پذیر',
-        desc: 'رجیستری اعتبار کربن با ثبت تأییدشده روی بلاکچین پالیگون.',
+        desc: 'رجیستری اعتبار کربن با ثبت شبیه‌سازی‌شده روی رجیستری (Polygon testnet/mock).',
       },
       {
         icon: 'store',
@@ -71,7 +71,7 @@ export const capabilities = {
       {
         icon: 'blocks',
         title: 'Provable carbon',
-        desc: 'Carbon-credit registry with blockchain-verified records on Polygon.',
+        desc: 'Carbon-credit registry with simulated registration on Polygon testnet/mock.',
       },
       {
         icon: 'store',

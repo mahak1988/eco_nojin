@@ -35,7 +35,10 @@ class LandService:
         area_ha: float | None = None,
         **kwargs
     ) -> LandProfileModel:
-        """ایجاد پروفایل جدید"""
+        """D1 fix: router passes area_hectares which used to collide in **kwargs."""
+        router_area = kwargs.pop("area_hectares", None)
+        if area_ha is None:
+            area_ha = router_area
         profile = LandProfileModel(
             id=str(__import__('uuid').uuid4()),
             name=name,
@@ -47,22 +50,112 @@ class LandService:
             **{k: v for k, v in kwargs.items() if k in LandProfileModel.model_fields}
         )
         self._profiles[profile.id] = profile
+        self._persist_profile(profile)
         return profile
 
+    # ---- D5 fix: durable storage (DB with graceful in-memory fallback) ----
+
+    def _db_session(self):
+        try:
+            from database.hub import hub
+            return hub.get_session()
+        except Exception as e:
+            logger.warning(f"LandService: DB unavailable ({e}); using in-memory store")
+            return None
+
+    def _persist_profile(self, profile) -> None:
+        cm = self._db_session()
+        if cm is None:
+            return
+        try:
+            from database.models import LandProfile as LandProfileDB
+            with cm as s:
+                row = s.get(LandProfileDB, profile.id)
+                if row is None:
+                    row = LandProfileDB(id=profile.id)
+                    s.add(row)
+                row.name = profile.name
+                row.location_lat = profile.location_lat
+                row.location_lon = profile.location_lon
+                row.description = getattr(profile, "description", None)
+                row.area_ha = profile.area_hectares
+                row.dem_source = getattr(profile, "dem_source", None)
+                row.dem_resolution_m = getattr(profile, "dem_resolution_m", None)
+                s.commit()
+        except Exception as e:
+            logger.warning(f"LandService: profile persistence failed: {e}")
+
+    def _row_to_profile(self, row):
+        try:
+            return LandProfileModel(
+                id=row.id,
+                name=row.name,
+                description=row.description,
+                location_lat=row.location_lat or 0,
+                location_lon=row.location_lon or 0,
+                area_hectares=row.area_ha,
+                dem_source=row.dem_source,
+                dem_resolution_m=row.dem_resolution_m,
+            )
+        except Exception as e:
+            logger.warning(f"LandService: bad land_profiles row {getattr(row, 'id', '?')}: {e}")
+            return None
+
     def get_profile(self, profile_id: str) -> LandProfileModel | None:
-        """دریافت پروفایل با شناسه"""
-        return self._profiles.get(profile_id)
+        profile = self._profiles.get(profile_id)
+        if profile is not None:
+            return profile
+        cm = self._db_session()
+        if cm is not None:
+            try:
+                from database.models import LandProfile as LandProfileDB
+                with cm as s:
+                    row = s.get(LandProfileDB, profile_id)
+                    if row is not None:
+                        profile = self._row_to_profile(row)
+                        if profile is not None:
+                            self._profiles[profile_id] = profile
+                        return profile
+            except Exception as e:
+                logger.warning(f"LandService: DB get failed: {e}")
+        return None
 
     def list_profiles(self) -> list[LandProfileModel]:
-        """فهرست پروفایل‌ها"""
-        return list(self._profiles.values())
+        profiles: dict[str, LandProfileModel] = {}
+        cm = self._db_session()
+        if cm is not None:
+            try:
+                from database.models import LandProfile as LandProfileDB
+                with cm as s:
+                    for row in s.query(LandProfileDB).order_by(LandProfileDB.created_at.desc()).all():
+                        pr = self._row_to_profile(row)
+                        if pr is not None:
+                            profiles[pr.id] = pr
+            except Exception as e:
+                logger.warning(f"LandService: DB list failed: {e}")
+        for pid, pr in self._profiles.items():
+            profiles[pid] = pr
+        self._profiles = profiles
+        return list(profiles.values())
 
     def delete_profile(self, profile_id: str) -> bool:
-        """حذف پروفایل"""
+        existed = False
+        cm = self._db_session()
+        if cm is not None:
+            try:
+                from database.models import LandProfile as LandProfileDB
+                with cm as s:
+                    row = s.get(LandProfileDB, profile_id)
+                    if row is not None:
+                        s.delete(row)
+                        s.commit()
+                        existed = True
+            except Exception as e:
+                logger.warning(f"LandService: DB delete failed: {e}")
         if profile_id in self._profiles:
             del self._profiles[profile_id]
-            return True
-        return False
+            existed = True
+        return existed
 
     def _profile_exists(self, profile_id: str) -> bool:
         """بررسی وجود پروفایل"""

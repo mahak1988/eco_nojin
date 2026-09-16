@@ -1,7 +1,15 @@
 // require("@nomicfoundation/hardhat-toolbox");  // Disabled to avoid HH801
+require("@nomicfoundation/hardhat-ethers");
+require("@nomicfoundation/hardhat-chai-matchers");
 require("dotenv").config();
 
-const PRIVATE_KEY = process.env.PRIVATE_KEY || "0x" + "0".repeat(64);
+const configuredAccounts = (() => {
+  const privateKey = process.env.PRIVATE_KEY;
+  if (typeof privateKey === "string" && /^0x[0-9a-fA-F]{64}$/.test(privateKey)) {
+    return [privateKey];
+  }
+  return undefined;
+})();
 const POLYGON_RPC_URL = process.env.POLYGON_RPC_URL || "https://polygon-rpc.com";
 const MUMBAI_RPC_URL = process.env.MUMBAI_RPC_URL || "https://rpc-mumbai.maticvigil.com";
 const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY || "";
@@ -27,13 +35,13 @@ module.exports = {
     },
     mumbai: {
       url: MUMBAI_RPC_URL,
-      accounts: [PRIVATE_KEY],
+      ...(configuredAccounts ? { accounts: configuredAccounts } : {}),
       chainId: 80001,
       gasPrice: 35000000000,
     },
     polygon: {
       url: POLYGON_RPC_URL,
-      accounts: [PRIVATE_KEY],
+      ...(configuredAccounts ? { accounts: configuredAccounts } : {}),
       chainId: 137,
       gasPrice: 50000000000,
     },
