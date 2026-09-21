@@ -44,17 +44,17 @@ from services.carbon.service import CarbonService
 # Fixtures / builders
 # --------------------------------------------------------------------------- #
 @pytest.fixture
-def service(sync_db_session):
-    return CarbonService(sync_db_session)
+def service(async_db_session):
+    return CarbonService(async_db_session)
 
 
-def _register(
+async def _register(
     svc: CarbonService,
     project_id: str = "P-001",
     owner: str = "owner-1",
     mrv_documents: list[str] | None = None,
 ) -> None:
-    svc.register_project(
+    await svc.register_project(
         {
             "project_id": project_id,
             "name": "Demo agroforestry",
@@ -79,10 +79,10 @@ SOC_PARAMS = {
 }
 
 
-def _verify(
+async def _verify(
     svc: CarbonService, project_id: str = "P-001", measured_soc: float | None = 100.0
 ) -> None:
-    svc.verify_project(
+    await svc.verify_project(
         {
             "project_id": project_id,
             **SOC_PARAMS,
@@ -91,14 +91,14 @@ def _verify(
     )
 
 
-def _issue(
+async def _issue(
     svc: CarbonService,
     project_id: str = "P-001",
     idempotency_key: str = "issue-key-aaaaaaaa",
     measured_soc: float | None = 100.0,
     issuer: str = "issuer-A",
 ) -> dict:
-    return svc.issue_credits(
+    return await svc.issue_credits(
         {
             "project_id": project_id,
             "vintage_year": 2024,
@@ -113,9 +113,9 @@ def _issue(
 # --------------------------------------------------------------------------- #
 # Project lifecycle
 # --------------------------------------------------------------------------- #
-def test_register_project_creates_draft(service, sync_db_session):
-    _register(service)
-    project = sync_db_session.scalar(
+async def test_register_project_creates_draft(service, async_db_session):
+    await _register(service)
+    project = await async_db_session.scalar(
         select(CarbonProject).where(CarbonProject.project_id == "P-001")
     )
     assert project.status == CreditState.DRAFT.value
@@ -123,8 +123,8 @@ def test_register_project_creates_draft(service, sync_db_session):
     assert project.field_verified is False
 
 
-def test_register_is_idempotent(service):
-    first = service.register_project(
+async def test_register_is_idempotent(service):
+    first = await service.register_project(
         {
             "project_id": "P-DUP",
             "name": "a",
@@ -135,7 +135,7 @@ def test_register_is_idempotent(service):
             "owner_id": "owner-1",
         }
     )
-    second = service.register_project(
+    second = await service.register_project(
         {
             "project_id": "P-DUP",
             "name": "a",
@@ -151,15 +151,17 @@ def test_register_is_idempotent(service):
     assert second["project_id"] == "P-DUP"
 
 
-def test_submit_transitions_to_submitted(service, sync_db_session):
-    _register(service)
-    service.submit_project("P-001", "owner-1")
-    project = sync_db_session.scalar(
+async def test_submit_transitions_to_submitted(service, async_db_session):
+    await _register(service)
+    await service.submit_project("P-001", "owner-1")
+    project = await async_db_session.scalar(
         select(CarbonProject).where(CarbonProject.project_id == "P-001")
     )
     assert project.status == CreditState.SUBMITTED.value
-    events = sync_db_session.scalars(
-        select(CarbonEvent).where(CarbonEvent.aggregate_id == "P-001")
+    events = (
+        await async_db_session.scalars(
+            select(CarbonEvent).where(CarbonEvent.aggregate_id == "P-001")
+        )
     ).all()
     assert any(e.event_type == "submit" for e in events)
 
@@ -167,13 +169,13 @@ def test_submit_transitions_to_submitted(service, sync_db_session):
 # --------------------------------------------------------------------------- #
 # Verification
 # --------------------------------------------------------------------------- #
-def test_verify_without_field_data_passes_checks(service, sync_db_session):
-    _register(service)
-    service.submit_project("P-001", "owner-1")
-    res = service.verify_project({**SOC_PARAMS, "project_id": "P-001", "measured_soc_t_ha": None})
+async def test_verify_without_field_data_passes_checks(service, async_db_session):
+    await _register(service)
+    await service.submit_project("P-001", "owner-1")
+    res = await service.verify_project({**SOC_PARAMS, "project_id": "P-001", "measured_soc_t_ha": None})
     assert res["methodology_checks"]["passed"] is True
     assert res["data_mode"] == "modelled_estimate"
-    project = sync_db_session.scalar(
+    project = await async_db_session.scalar(
         select(CarbonProject).where(CarbonProject.project_id == "P-001")
     )
     assert project.field_verified is False
@@ -181,56 +183,56 @@ def test_verify_without_field_data_passes_checks(service, sync_db_session):
     assert project.status == CreditState.VERIFIED.value
 
 
-def test_verify_with_field_data_marks_field_verified(service, sync_db_session):
-    _register(service)
-    service.submit_project("P-001", "owner-1")
-    res = service.verify_project({**SOC_PARAMS, "project_id": "P-001", "measured_soc_t_ha": 100.0})
+async def test_verify_with_field_data_marks_field_verified(service, async_db_session):
+    await _register(service)
+    await service.submit_project("P-001", "owner-1")
+    res = await service.verify_project({**SOC_PARAMS, "project_id": "P-001", "measured_soc_t_ha": 100.0})
     assert res["data_mode"] == "field_verified"
-    project = sync_db_session.scalar(
+    project = await async_db_session.scalar(
         select(CarbonProject).where(CarbonProject.project_id == "P-001")
     )
     assert project.field_verified is True
 
 
-def test_issue_blocked_when_project_not_verified(service):
-    _register(service)  # DRAFT, not verified
+async def test_issue_blocked_when_project_not_verified(service):
+    await _register(service)  # DRAFT, not verified
     with pytest.raises(ProjectNotVerifiedError):
-        _issue(service)
+        await _issue(service)
 
 
-def test_issue_blocked_without_field_verified_or_mrv(service, sync_db_session):
-    _register(service)  # no mrv_documents
-    service.submit_project("P-001", "owner-1")
-    service.verify_project({**SOC_PARAMS, "project_id": "P-001", "measured_soc_t_ha": None})
+async def test_issue_blocked_without_field_verified_or_mrv(service, async_db_session):
+    await _register(service)  # no mrv_documents
+    await service.submit_project("P-001", "owner-1")
+    await service.verify_project({**SOC_PARAMS, "project_id": "P-001", "measured_soc_t_ha": None})
     with pytest.raises(IssueNotAllowedError):
-        _issue(service, measured_soc=None)
+        await _issue(service, measured_soc=None)
 
 
 # --------------------------------------------------------------------------- #
 # Issuance + idempotency + double-issuance
 # --------------------------------------------------------------------------- #
-def test_issue_mints_active_credit(service, sync_db_session):
-    _register(service)
-    service.submit_project("P-001", "owner-1")
-    _verify(service)
-    res = _issue(service)
+async def test_issue_mints_active_credit(service, async_db_session):
+    await _register(service)
+    await service.submit_project("P-001", "owner-1")
+    await _verify(service)
+    res = await _issue(service)
     assert res["state"] == CreditState.ACTIVE.value
     assert Decimal(res["total_amount"]) > 0
     assert Decimal(res["available_amount"]) == Decimal(res["total_amount"])
-    credit = sync_db_session.scalar(
+    credit = await async_db_session.scalar(
         select(CarbonCredit).where(CarbonCredit.credit_id == res["credit_id"])
     )
     assert credit.data_mode == "field_verified"
     assert credit.holder_id == "owner-1"
 
 
-def test_issue_amount_matches_motor(service, sync_db_session):
+async def test_issue_amount_matches_motor(service, async_db_session):
     from services.scientific_motors.carbon_mrv import CarbonMrvMotor
 
-    _register(service)
-    service.submit_project("P-001", "owner-1")
-    _verify(service)
-    res = _issue(service)
+    await _register(service)
+    await service.submit_project("P-001", "owner-1")
+    await _verify(service)
+    res = await _issue(service)
     expected = CarbonMrvMotor().execute(
         {
             **SOC_PARAMS,
@@ -241,23 +243,25 @@ def test_issue_amount_matches_motor(service, sync_db_session):
     assert Decimal(res["total_amount"]) == expected_amount
 
 
-def test_issue_idempotent_same_key_no_double_mint(service, sync_db_session):
-    _register(service)
-    service.submit_project("P-001", "owner-1")
-    _verify(service)
-    first = _issue(service, idempotency_key="issue-key-aaaaaaaa")
-    second = _issue(service, idempotency_key="issue-key-aaaaaaaa")
+async def test_issue_idempotent_same_key_no_double_mint(service, async_db_session):
+    await _register(service)
+    await service.submit_project("P-001", "owner-1")
+    await _verify(service)
+    first = await _issue(service, idempotency_key="issue-key-aaaaaaaa")
+    second = await _issue(service, idempotency_key="issue-key-aaaaaaaa")
     assert first["credit_id"] == second["credit_id"]
     assert second["replay"] == "idempotent-replay"
     # only one credit row exists
-    total = sync_db_session.scalars(select(CarbonCredit)).all()
+    total = (
+        await async_db_session.scalars(select(CarbonCredit))
+    ).all()
     assert len(total) == 1
 
 
-def test_pending_idempotency_key_blocks_double_issuance(service):
-    _register(service)
-    service.submit_project("P-001", "owner-1")
-    _verify(service)
+async def test_pending_idempotency_key_blocks_double_issuance(service):
+    await _register(service)
+    await service.submit_project("P-001", "owner-1")
+    await _verify(service)
     # Simulate an in-flight key by reserving it manually with status pending.
     idem = IdempotencyKey(
         key="issue-key-inflight",
@@ -268,26 +272,26 @@ def test_pending_idempotency_key_blocks_double_issuance(service):
     service.db.add(idem)
     service.db.commit()
     with pytest.raises(DoubleIssuanceError):
-        _issue(service, idempotency_key="issue-key-inflight")
+        await _issue(service, idempotency_key="issue-key-inflight")
 
 
-def test_idempotency_key_stored_verbatim_not_hashed(service, sync_db_session):
-    _register(service)
-    service.submit_project("P-001", "owner-1")
-    _verify(service)
-    _issue(service, idempotency_key="issue-key-verbatim----")
-    idem = sync_db_session.get(IdempotencyKey, "issue-key-verbatim----")
+async def test_idempotency_key_stored_verbatim_not_hashed(service, async_db_session):
+    await _register(service)
+    await service.submit_project("P-001", "owner-1")
+    await _verify(service)
+    await _issue(service, idempotency_key="issue-key-verbatim----")
+    idem = await async_db_session.get(IdempotencyKey, "issue-key-verbatim----")
     assert idem is not None
     assert idem.key == "issue-key-verbatim----"  # verbatim, no digest
     assert idem.action == "issue"
     assert idem.status == "completed"
 
 
-def test_no_fake_vvb_claim_in_issue_result(service):
-    _register(service)
-    service.submit_project("P-001", "owner-1")
-    _verify(service)
-    res = _issue(service)
+async def test_no_fake_vvb_claim_in_issue_result(service):
+    await _register(service)
+    await service.submit_project("P-001", "owner-1")
+    await _verify(service)
+    res = await _issue(service)
     note = res["note"]
     assert "Not a certification by any VVB" in note
     assert "verified tonnage" not in note.lower()
@@ -296,33 +300,33 @@ def test_no_fake_vvb_claim_in_issue_result(service):
 # --------------------------------------------------------------------------- #
 # MRV documents evidence floor (field_verified False but docs present)
 # --------------------------------------------------------------------------- #
-def test_mrv_documents_allow_issuance_without_field_verified(service, sync_db_session):
-    _register(service, mrv_documents=["doc/1", "doc/2"])
-    service.submit_project("P-001", "owner-1")
-    service.verify_project({**SOC_PARAMS, "project_id": "P-001", "measured_soc_t_ha": None})
-    project = sync_db_session.scalar(
+async def test_mrv_documents_allow_issuance_without_field_verified(service, async_db_session):
+    await _register(service, mrv_documents=["doc/1", "doc/2"])
+    await service.submit_project("P-001", "owner-1")
+    await service.verify_project({**SOC_PARAMS, "project_id": "P-001", "measured_soc_t_ha": None})
+    project = await async_db_session.scalar(
         select(CarbonProject).where(CarbonProject.project_id == "P-001")
     )
     assert project.field_verified is False
     assert project.mrv_documents == ["doc/1", "doc/2"]
-    res = _issue(service, measured_soc=None)  # credit data_mode modelled, still issued
+    res = await _issue(service, measured_soc=None)  # credit data_mode modelled, still issued
     assert res["state"] == CreditState.ACTIVE.value
 
 
 # --------------------------------------------------------------------------- #
 # Transfer
 # --------------------------------------------------------------------------- #
-def _full_issue(service) -> dict:
-    _register(service)
-    service.submit_project("P-001", "owner-1")
-    _verify(service)
-    return _issue(service)
+async def _full_issue(service) -> dict:
+    await _register(service)
+    await service.submit_project("P-001", "owner-1")
+    await _verify(service)
+    return await _issue(service)
 
 
-def test_transfer_blocked_for_non_holder(service):
-    credit = _full_issue(service)
+async def test_transfer_blocked_for_non_holder(service):
+    credit = await _full_issue(service)
     with pytest.raises(NotHolderError):
-        service.transfer_credit(
+        await service.transfer_credit(
             {
                 "credit_id": credit["credit_id"],
                 "to_holder_id": "user-2",
@@ -332,9 +336,9 @@ def test_transfer_blocked_for_non_holder(service):
         )
 
 
-def test_transfer_updates_holder(service, sync_db_session):
-    credit = _full_issue(service)
-    service.transfer_credit(
+async def test_transfer_updates_holder(service, async_db_session):
+    credit = await _full_issue(service)
+    await service.transfer_credit(
         {
             "credit_id": credit["credit_id"],
             "to_holder_id": "user-2",
@@ -342,15 +346,15 @@ def test_transfer_updates_holder(service, sync_db_session):
             "idempotency_key": "tr-key-aaaaaaaa",
         }
     )
-    c = sync_db_session.scalar(
+    c = await async_db_session.scalar(
         select(CarbonCredit).where(CarbonCredit.credit_id == credit["credit_id"])
     )
     assert c.holder_id == "user-2"
 
 
-def test_transfer_frozen_blocked(service):
-    credit = _full_issue(service)
-    service.freeze_credit(
+async def test_transfer_frozen_blocked(service):
+    credit = await _full_issue(service)
+    await service.freeze_credit(
         {
             "credit_id": credit["credit_id"],
             "actor": "regulator",
@@ -359,7 +363,7 @@ def test_transfer_frozen_blocked(service):
         }
     )
     with pytest.raises(FrozenCreditError):
-        service.transfer_credit(
+        await service.transfer_credit(
             {
                 "credit_id": credit["credit_id"],
                 "to_holder_id": "user-3",
@@ -372,9 +376,9 @@ def test_transfer_frozen_blocked(service):
 # --------------------------------------------------------------------------- #
 # Freeze / unfreeze
 # --------------------------------------------------------------------------- #
-def test_freeze_records_actor_and_authority(service, sync_db_session):
-    credit = _full_issue(service)
-    service.freeze_credit(
+async def test_freeze_records_actor_and_authority(service, async_db_session):
+    credit = await _full_issue(service)
+    await service.freeze_credit(
         {
             "credit_id": credit["credit_id"],
             "actor": "regulator",
@@ -382,7 +386,7 @@ def test_freeze_records_actor_and_authority(service, sync_db_session):
             "reason": "under review",
         }
     )
-    c = sync_db_session.scalar(
+    c = await async_db_session.scalar(
         select(CarbonCredit).where(CarbonCredit.credit_id == credit["credit_id"])
     )
     assert c.frozen is True
@@ -392,9 +396,9 @@ def test_freeze_records_actor_and_authority(service, sync_db_session):
     assert c.frozen_at is not None
 
 
-def test_unfreeze_requires_matching_authority(service, sync_db_session):
-    credit = _full_issue(service)
-    service.freeze_credit(
+async def test_unfreeze_requires_matching_authority(service, async_db_session):
+    credit = await _full_issue(service)
+    await service.freeze_credit(
         {
             "credit_id": credit["credit_id"],
             "actor": "regulator",
@@ -403,7 +407,7 @@ def test_unfreeze_requires_matching_authority(service, sync_db_session):
         }
     )
     with pytest.raises(FrozenCreditError):
-        service.unfreeze_credit(
+        await service.unfreeze_credit(
             {
                 "credit_id": credit["credit_id"],
                 "actor": "regulator",
@@ -411,7 +415,7 @@ def test_unfreeze_requires_matching_authority(service, sync_db_session):
                 "reason": "done",
             }
         )
-    service.unfreeze_credit(
+    await service.unfreeze_credit(
         {
             "credit_id": credit["credit_id"],
             "actor": "regulator",
@@ -419,16 +423,16 @@ def test_unfreeze_requires_matching_authority(service, sync_db_session):
             "reason": "resolved",
         }
     )
-    c = sync_db_session.scalar(
+    c = await async_db_session.scalar(
         select(CarbonCredit).where(CarbonCredit.credit_id == credit["credit_id"])
     )
     assert c.frozen is False
 
 
-def test_unfreeze_non_frozen_raises(service):
-    credit = _full_issue(service)
+async def test_unfreeze_non_frozen_raises(service):
+    credit = await _full_issue(service)
     with pytest.raises(CreditStateError):
-        service.unfreeze_credit(
+        await service.unfreeze_credit(
             {
                 "credit_id": credit["credit_id"],
                 "actor": "regulator",
@@ -441,10 +445,10 @@ def test_unfreeze_non_frozen_raises(service):
 # --------------------------------------------------------------------------- #
 # Retirement / double counting
 # --------------------------------------------------------------------------- #
-def test_retire_partial_reduces_available(service, sync_db_session):
-    credit = _full_issue(service)
+async def test_retire_partial_reduces_available(service, async_db_session):
+    credit = await _full_issue(service)
     total = Decimal(credit["total_amount"])
-    service.retire_credit(
+    await service.retire_credit(
         {
             "credit_id": credit["credit_id"],
             "reason": "offset",
@@ -453,7 +457,7 @@ def test_retire_partial_reduces_available(service, sync_db_session):
             "idempotency_key": "ret-key-aaaaaaaa",
         }
     )
-    c = sync_db_session.scalar(
+    c = await async_db_session.scalar(
         select(CarbonCredit).where(CarbonCredit.credit_id == credit["credit_id"])
     )
     assert c.retired_amount == Decimal("100.0")
@@ -461,10 +465,10 @@ def test_retire_partial_reduces_available(service, sync_db_session):
     assert c.state.value == CreditState.ACTIVE.value
 
 
-def test_retire_full_marks_retired(service, sync_db_session):
-    credit = _full_issue(service)
+async def test_retire_full_marks_retired(service, async_db_session):
+    credit = await _full_issue(service)
     total = Decimal(credit["total_amount"])
-    service.retire_credit(
+    await service.retire_credit(
         {
             "credit_id": credit["credit_id"],
             "reason": "full offset",
@@ -472,7 +476,7 @@ def test_retire_full_marks_retired(service, sync_db_session):
             "idempotency_key": "ret-key-bbbbbbbb",
         }
     )
-    c = sync_db_session.scalar(
+    c = await async_db_session.scalar(
         select(CarbonCredit).where(CarbonCredit.credit_id == credit["credit_id"])
     )
     assert c.state.value == CreditState.RETIRED.value
@@ -480,10 +484,10 @@ def test_retire_full_marks_retired(service, sync_db_session):
     assert c.available_amount == Decimal("0")
 
 
-def test_retire_over_available_blocked(service):
-    credit = _full_issue(service)
+async def test_retire_over_available_blocked(service):
+    credit = await _full_issue(service)
     with pytest.raises(InsufficientAvailableError):
-        service.retire_credit(
+        await service.retire_credit(
             {
                 "credit_id": credit["credit_id"],
                 "reason": "offset",
@@ -494,9 +498,9 @@ def test_retire_over_available_blocked(service):
         )
 
 
-def test_retire_already_retired_blocked(service):
-    credit = _full_issue(service)
-    service.retire_credit(
+async def test_retire_already_retired_blocked(service):
+    credit = await _full_issue(service)
+    await service.retire_credit(
         {
             "credit_id": credit["credit_id"],
             "reason": "full",
@@ -505,7 +509,7 @@ def test_retire_already_retired_blocked(service):
         }
     )
     with pytest.raises(CreditStateError):
-        service.retire_credit(
+        await service.retire_credit(
             {
                 "credit_id": credit["credit_id"],
                 "reason": "again",
@@ -515,9 +519,9 @@ def test_retire_already_retired_blocked(service):
         )
 
 
-def test_retire_frozen_blocked(service):
-    credit = _full_issue(service)
-    service.freeze_credit(
+async def test_retire_frozen_blocked(service):
+    credit = await _full_issue(service)
+    await service.freeze_credit(
         {
             "credit_id": credit["credit_id"],
             "actor": "regulator",
@@ -526,7 +530,7 @@ def test_retire_frozen_blocked(service):
         }
     )
     with pytest.raises(FrozenCreditError):
-        service.retire_credit(
+        await service.retire_credit(
             {
                 "credit_id": credit["credit_id"],
                 "reason": "offset",
@@ -537,8 +541,8 @@ def test_retire_frozen_blocked(service):
         )
 
 
-def test_retire_idempotent_same_key(service, sync_db_session):
-    credit = _full_issue(service)
+async def test_retire_idempotent_same_key(service, async_db_session):
+    credit = await _full_issue(service)
     payload = {
         "credit_id": credit["credit_id"],
         "reason": "offset",
@@ -546,9 +550,9 @@ def test_retire_idempotent_same_key(service, sync_db_session):
         "actor": "owner-1",
         "idempotency_key": "ret-key-0000000a",
     }
-    service.retire_credit(payload)
-    service.retire_credit(payload)  # second call must not double-retire
-    c = sync_db_session.scalar(
+    await service.retire_credit(payload)
+    await service.retire_credit(payload)  # second call must not double-retire
+    c = await async_db_session.scalar(
         select(CarbonCredit).where(CarbonCredit.credit_id == credit["credit_id"])
     )
     assert c.retired_amount == Decimal("50.0")
@@ -557,10 +561,10 @@ def test_retire_idempotent_same_key(service, sync_db_session):
 # --------------------------------------------------------------------------- #
 # History + stats
 # --------------------------------------------------------------------------- #
-def test_history_records_lifecycle_events(service, sync_db_session):
-    credit = _full_issue(service)
+async def test_history_records_lifecycle_events(service, async_db_session):
+    credit = await _full_issue(service)
     cid = credit["credit_id"]
-    service.transfer_credit(
+    await service.transfer_credit(
         {
             "credit_id": cid,
             "to_holder_id": "user-2",
@@ -568,7 +572,7 @@ def test_history_records_lifecycle_events(service, sync_db_session):
             "idempotency_key": "tr-key-history",
         }
     )
-    service.freeze_credit(
+    await service.freeze_credit(
         {
             "credit_id": cid,
             "actor": "regulator",
@@ -576,7 +580,7 @@ def test_history_records_lifecycle_events(service, sync_db_session):
             "reason": "x",
         }
     )
-    service.unfreeze_credit(
+    await service.unfreeze_credit(
         {
             "credit_id": cid,
             "actor": "regulator",
@@ -584,7 +588,7 @@ def test_history_records_lifecycle_events(service, sync_db_session):
             "reason": "ok",
         }
     )
-    service.retire_credit(
+    await service.retire_credit(
         {
             "credit_id": cid,
             "reason": "offset",
@@ -593,7 +597,7 @@ def test_history_records_lifecycle_events(service, sync_db_session):
             "idempotency_key": "ret-key-history1",
         }
     )
-    history = service.credit_history(cid)
+    history = await service.credit_history(cid)
     types = [h["event_type"] for h in history]
     assert "issue" in types
     assert "transfer" in types
@@ -601,19 +605,21 @@ def test_history_records_lifecycle_events(service, sync_db_session):
     assert "unfreeze" in types
     assert "retire" in types
     assert all(h["event_id"].startswith("EVT-") for h in history)
-    audit = sync_db_session.scalars(
-        select(CreditAuditLog).where(CreditAuditLog.credit_id == cid)
+    audit = (
+        await async_db_session.scalars(
+            select(CreditAuditLog).where(CreditAuditLog.credit_id == cid)
+        )
     ).all()
     assert len(audit) >= 4  # issue, transfer, freeze, retire (+unfreeze)
 
 
-def test_stats_project_and_overall(service):
-    credit = _full_issue(service)
-    before = service.credit_stats(project_id="P-001")
+async def test_stats_project_and_overall(service):
+    credit = await _full_issue(service)
+    before = await service.credit_stats(project_id="P-001")
     assert Decimal(before["total_issued"]) > 0
     assert before["by_state"][CreditState.ACTIVE.value] == 1
     # retire everything, then stats should reflect RETIRED
-    service.retire_credit(
+    await service.retire_credit(
         {
             "credit_id": credit["credit_id"],
             "reason": "full",
@@ -621,20 +627,20 @@ def test_stats_project_and_overall(service):
             "idempotency_key": "ret-key-stats--1",
         }
     )
-    after = service.credit_stats(project_id="P-001")
+    after = await service.credit_stats(project_id="P-001")
     assert Decimal(after["total_retired"]) > Decimal("0")
     assert after["by_state"].get(CreditState.RETIRED.value, 0) == 1
     assert after["by_state"].get(CreditState.ACTIVE.value, 0) == 0
-    overall = service.credit_stats()
+    overall = await service.credit_stats()
     assert Decimal(overall["total_issued"]) >= Decimal(before["total_issued"])
 
 
 # --------------------------------------------------------------------------- #
 # Pydantic input validation
 # --------------------------------------------------------------------------- #
-def test_pydantic_rejects_negative_area(service):
+async def test_pydantic_rejects_negative_area(service):
     with pytest.raises(ValidationError):
-        service.register_project(
+        await service.register_project(
             {
                 "project_id": "P-X",
                 "name": "x",
@@ -647,12 +653,12 @@ def test_pydantic_rejects_negative_area(service):
         )
 
 
-def test_pydantic_rejects_short_idempotency_key(service):
-    _register(service)
-    service.submit_project("P-001", "owner-1")
-    service.verify_project({**SOC_PARAMS, "project_id": "P-001", "measured_soc_t_ha": 100.0})
+async def test_pydantic_rejects_short_idempotency_key(service):
+    await _register(service)
+    await service.submit_project("P-001", "owner-1")
+    await service.verify_project({**SOC_PARAMS, "project_id": "P-001", "measured_soc_t_ha": 100.0})
     with pytest.raises(ValidationError):
-        service.issue_credits(
+        await service.issue_credits(
             {
                 "project_id": "P-001",
                 "vintage_year": 2024,
@@ -664,10 +670,10 @@ def test_pydantic_rejects_short_idempotency_key(service):
         )
 
 
-def test_pydantic_rejects_negative_retire_amount(service):
-    credit = _full_issue(service)
+async def test_pydantic_rejects_negative_retire_amount(service):
+    credit = await _full_issue(service)
     with pytest.raises(ValidationError):
-        service.retire_credit(
+        await service.retire_credit(
             {
                 "credit_id": credit["credit_id"],
                 "reason": "x",
@@ -678,9 +684,9 @@ def test_pydantic_rejects_negative_retire_amount(service):
         )
 
 
-def test_credit_not_found_raises(service):
+async def test_credit_not_found_raises(service):
     with pytest.raises(CreditNotFoundError):
-        service.retire_credit(
+        await service.retire_credit(
             {
                 "credit_id": "CR-DoesNotExist",
                 "reason": "x",

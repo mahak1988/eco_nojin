@@ -137,6 +137,10 @@ class RegisterProjectRequest(BaseModel):
     duration_years: int = Field(..., ge=1, le=100)
     owner_id: str = Field(..., min_length=1, max_length=64)
     mrv_documents: list[str] | None = None
+    # Optional: kept for callers that carry the raw geometry/WKT payload.
+    geometry: str | None = None
+    baseline_activity: str | None = None
+    has_financing: bool = False
 
 
 class VerifyProjectRequest(BaseModel):
@@ -189,6 +193,14 @@ class IssueCreditsRequest(BaseModel):
     idempotency_key: str = Field(..., min_length=8, max_length=128)
     issued_by: str = Field(..., min_length=1, max_length=120)
 
+    # Optional Motor / SOC inputs used to re-run the MRV motor at issuance time.
+    soc_initial_t_ha: float = 0.0
+    soc_final_t_ha: float = 0.0
+    area_ha: float = 0.0
+    measured_soc_t_ha: float | None = None
+    methodology: str = Field("vm0032", max_length=120)
+    permanence_factor: float = Field(0.85, gt=0, le=1)
+
     @field_validator("measurements")
     @classmethod
     def _validate_measurements(cls, v: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -196,6 +208,8 @@ class IssueCreditsRequest(BaseModel):
             if not isinstance(m, dict) or "year" not in m or "soc_t_ha" not in m:
                 raise ValueError("each measurement must have 'year' and 'soc_t_ha'")
         return v
+    # Optional: retained for callers that record who issued the credit.
+    issued_by: str | None = None
 
 
 class TransferRequest(BaseModel):
@@ -203,6 +217,10 @@ class TransferRequest(BaseModel):
     to_holder_id: str = Field(..., min_length=1, max_length=64)
     actor: str = Field(..., min_length=1, max_length=120)
     idempotency_key: str | None = Field(None, min_length=8, max_length=128)
+    # Optional legacy aliases: explicit sender and partial amount.
+    from_holder: str | None = None
+    to_holder: str | None = None
+    amount: Decimal | None = None
 
 
 class RetireRequest(BaseModel):
@@ -218,6 +236,9 @@ class RetireRequest(BaseModel):
         if self.amount is not None and self.amount <= 0:
             raise ValueError("retire amount must be positive")
         return self
+    # Optional legacy aliases.
+    holder_id: str | None = None
+    retirement_reason: str | None = None
 
 
 class FreezeRequest(BaseModel):
