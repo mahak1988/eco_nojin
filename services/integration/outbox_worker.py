@@ -1,7 +1,7 @@
-"""Outbox worker — polls IntOutboxEvent and dispatches events exactly-once.
+"""Outbox worker — polls IntOutboxEvent and dispatches events to NATS JetStream.
 
 Uses PostgreSQL ``FOR UPDATE SKIP LOCKED`` to claim events atomically.
-After successful dispatch, marks the event as processed. On failure,
+After successful dispatch to NATS, marks the event as processed. On failure,
 increments retry_count for redelivery.
 """
 
@@ -16,6 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.hub import hub
 from database.models import IntOutboxEvent
+from services.api_gateway.eventbus import get_nats_manager
 
 logger = logging.getLogger(__name__)
 
@@ -26,13 +27,14 @@ BATCH_SIZE = 100
 
 
 class OutboxWorker:
-    """Polling outbox worker for exactly-once event delivery."""
+    """Polling outbox worker for exactly-once event delivery to NATS."""
 
     def __init__(self, db: AsyncSession):
         self.db = db
+        self._nats_manager = get_nats_manager()
 
     async def poll_once(self, limit: int = BATCH_SIZE) -> int:
-        """Poll for unprocessed events, claim them atomically, and dispatch.
+        """Poll for unprocessed events, claim them atomically, and dispatch to NATS.
 
         Returns the number of events successfully processed in this cycle.
         """
@@ -74,7 +76,9 @@ class OutboxWorker:
                 await self._dispatch_event(event)
                 processed += 1
             except Exception as exc:
-                logger.error("Outbox: failed to dispatch event %d (%s): %s", event.id, event.event_type, exc)
+                logger.error(
+                    "Outbox: failed to dispatch event %d (%s): %s", event.id, event.event_type, exc
+                )
                 # Reset processed_at so other workers can retry
                 await self.db.execute(
                     update(IntOutboxEvent)
@@ -90,70 +94,96 @@ class OutboxWorker:
         return processed
 
     async def _dispatch_event(self, event: IntOutboxEvent) -> None:
-        """Dispatch a single outbox event to the appropriate handler.
+        """Dispatch a single outbox event to NATS JetStream.
 
         The payload contains:
           - aggregate_type / aggregate_id for tracing
-          - event_type to determine the handler
+          - event_type to determine the subject
           - payload with event-specific data
         """
         payload = event.payload or {}
         event_type = event.event_type
+        aggregate_type = event.aggregate_type or "unknown"
+        aggregate_id = event.aggregate_id or "unknown"
 
-        # Dispatch based on event type
-        if event_type.startswith("wallet."):
-            await self._dispatch_wallet_event(payload)
+        # Determine NATS subject from event_type
+        subject = self._get_subject(event_type, aggregate_type)
+
+        # Prepare NATS message
+        nats_payload = {
+            "event_type": event_type,
+            "aggregate_type": aggregate_type,
+            "aggregate_id": aggregate_id,
+            "timestamp": datetime.now(UTC).isoformat(),
+            "payload": payload,
+        }
+
+        # Correlation ID from outbox event
+        correlation_id = f"outbox-{event.id}"
+
+        # Publish to NATS with retry
+        success = await self._nats_manager.publish_with_retry(
+            subject,
+            nats_payload,
+            correlation_id=correlation_id,
+            max_retries=3,
+        )
+
+        if not success:
+            raise RuntimeError(f"Failed to publish event {event.id} to NATS after retries")
+
+        # Mark as Supabase synced (for compatibility with existing sync flow)
+        await self.db.execute(
+            update(IntOutboxEvent)
+            .where(IntOutboxEvent.id == event.id)
+            .values(supabase_synced=True)
+        )
+
+        logger.info(
+            "Outbox: event %d (%s) published to NATS subject %s",
+            event.id, event_type, subject,
+        )
+
+    def _get_subject(self, event_type: str, aggregate_type: str) -> str:
+        """Map event_type to NATS subject prefix."""
+        # Domain-specific subject mapping
+        if event_type.startswith("user."):
+            return f"user.{event_type.split('.', 1)[1]}"
+        elif event_type.startswith("sync."):
+            return f"sync.{event_type.split('.', 1)[1]}"
+        elif event_type.startswith("wallet."):
+            return f"wallet.{event_type.split('.', 1)[1]}"
         elif event_type.startswith("order."):
-            await self._dispatch_order_event(payload)
+            return f"order.{event_type.split('.', 1)[1]}"
         elif event_type.startswith("payment."):
-            await self._dispatch_payment_event(payload)
+            return f"payment.{event_type.split('.', 1)[1]}"
         elif event_type.startswith("inventory."):
-            await self._dispatch_inventory_event(payload)
+            return f"inventory.{event_type.split('.', 1)[1]}"
         elif event_type.startswith("ledger."):
-            await self._dispatch_ledger_event(payload)
+            return f"ledger.{event_type.split('.', 1)[1]}"
+        elif event_type.startswith("carbon."):
+            return f"carbon.{event_type.split('.', 1)[1]}"
+        elif event_type.startswith("mrv."):
+            return f"mrv.{event_type.split('.', 1)[1]}"
+        elif event_type.startswith("marketplace."):
+            return f"marketplace.{event_type.split('.', 1)[1]}"
+        elif event_type.startswith("farm."):
+            return f"farm.{event_type.split('.', 1)[1]}"
+        elif event_type.startswith("simulation."):
+            return f"simulation.{event_type.split('.', 1)[1]}"
+        elif event_type.startswith("realtime."):
+            return f"realtime.{event_type.split('.', 1)[1]}"
         else:
-            logger.warning("Outbox: unknown event type: %s", event_type)
-
-    async def _dispatch_wallet_event(self, payload: dict) -> None:
-        """Handle wallet-related events (earn, redeem, transfer)."""
-        handler = payload.get("handler", "noop")
-        if handler == "noop":
-            return  # no external system to notify
-        logger.info("Outbox: wallet event dispatched (handler=%s)", handler)
-
-    async def _dispatch_order_event(self, payload: dict) -> None:
-        """Handle order lifecycle events."""
-        handler = payload.get("handler", "noop")
-        if handler == "noop":
-            return
-        logger.info("Outbox: order event dispatched (handler=%s)", handler)
-
-    async def _dispatch_payment_event(self, payload: dict) -> None:
-        """Handle payment events (create, confirm, refund)."""
-        handler = payload.get("handler", "noop")
-        if handler == "noop":
-            return
-        logger.info("Outbox: payment event dispatched (handler=%s)", handler)
-
-    async def _dispatch_inventory_event(self, payload: dict) -> None:
-        """Handle inventory events (receipt, issue, transfer, stocktake)."""
-        handler = payload.get("handler", "noop")
-        if handler == "noop":
-            return
-        logger.info("Outbox: inventory event dispatched (handler=%s)", handler)
-
-    async def _dispatch_ledger_event(self, payload: dict) -> None:
-        """Handle ledger events (batch posted, batch reversed)."""
-        handler = payload.get("handler", "noop")
-        if handler == "noop":
-            return
-        logger.info("Outbox: ledger event dispatched (handler=%s)", handler)
+            # Fallback: use aggregate_type as domain
+            return f"{aggregate_type}.{event_type}"
 
     async def cleanup_expired(self, older_than_hours: int = 24) -> int:
         """Delete processed events older than the given threshold."""
         cutoff = datetime.now(UTC) - timedelta(hours=older_than_hours)
         result = await self.db.execute(
-            text("DELETE FROM int_outbox_event WHERE processed_at IS NOT NULL AND processed_at < :cutoff"),
+            text(
+                "DELETE FROM int_outbox_event WHERE processed_at IS NOT NULL AND processed_at < :cutoff"
+            ),
             {"cutoff": cutoff},
         )
         await self.db.commit()
@@ -161,14 +191,14 @@ class OutboxWorker:
 
     async def run_forever(self, poll_interval: float = POLL_INTERVAL_SECONDS) -> None:
         """Run the outbox worker continuously."""
-        logger.info("Outbox worker started (poll interval=%.1fs)", poll_interval)
+        logger.info("Outbox worker started (poll interval=%.1fs, NATS bridge enabled)", poll_interval)
         while True:
             try:
                 async with hub.get_async_session() as db:
                     worker = OutboxWorker(db)
                     processed = await worker.poll_once()
                     if processed:
-                        logger.info("Outbox: processed %d events", processed)
+                        logger.info("Outbox: processed %d events to NATS", processed)
                     await worker.cleanup_expired()
             except Exception as exc:
                 logger.error("Outbox worker cycle error: %s", exc)
@@ -178,6 +208,7 @@ class OutboxWorker:
 # ---------------------------------------------------------------------------
 # Idempotency key cleanup
 # ---------------------------------------------------------------------------
+
 
 async def cleanup_expired_idempotency_keys(db: AsyncSession, older_than_hours: int = 24) -> int:
     """Remove expired idempotency keys from the store."""
@@ -193,10 +224,12 @@ async def cleanup_expired_idempotency_keys(db: AsyncSession, older_than_hours: i
 # CLI entry point
 # ---------------------------------------------------------------------------
 
+
 async def main():
     """Run the outbox worker as a background process."""
-    worker = OutboxWorker(None)
-    await worker.run_forever()
+    async with hub.get_async_session() as db:
+        worker = OutboxWorker(db)
+        await worker.run_forever()
 
 
 if __name__ == "__main__":

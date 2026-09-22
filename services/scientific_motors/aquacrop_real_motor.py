@@ -16,6 +16,7 @@ stays responsive; the chain runner adds result caching.
 Honesty: any model failure returns MotorStatus.FAILED with the real
 error message — no fabricated yield.
 """
+
 from __future__ import annotations
 
 import time
@@ -44,6 +45,7 @@ def _first_number(row: Any, column: str) -> float | None:
     except (TypeError, ValueError):
         return None
 
+
 try:
     from aquacrop import (
         AquaCropModel,
@@ -52,6 +54,7 @@ try:
         IrrigationManagement,
         Soil,
     )
+
     AQUACROP_AVAILABLE = True
 except Exception:  # pragma: no cover - import guard
     AquaCropModel = None  # type: ignore
@@ -71,27 +74,73 @@ AQUACROP_SOIL_TYPES = {
     "clay": "Clay",
 }
 AQUACROP_VALID_SOILS = set(AQUACROP_SOIL_TYPES.values()) | {
-    "LoamySand", "SandyClay", "SandyClayLoam", "Silt", "SiltClayLoam",
-    "SiltClay", "Paddy", "Default",
+    "LoamySand",
+    "SandyClay",
+    "SandyClayLoam",
+    "Silt",
+    "SiltClayLoam",
+    "SiltClay",
+    "Paddy",
+    "Default",
 }
 
 # Common crop names -> AquaCrop built-in crop names
 AQUACROP_CROP_ALIASES = {
-    "wheat": "Wheat", "maize": "Maize", "corn": "Maize",
-    "barley": "Barley", "cotton": "Cotton", "soybean": "Soybean",
-    "potato": "Potato", "tomato": "Tomato", "sorghum": "Sorghum",
-    "sunflower": "Sunflower", "rice": "PaddyRice", "sugarcane": "SugarCane",
-    "quinoa": "Quinoa", "tef": "Tef", "cassava": "Cassava",
-    "sugarbeet": "SugarBeet", "drybean": "DryBean",
+    "wheat": "Wheat",
+    "maize": "Maize",
+    "corn": "Maize",
+    "barley": "Barley",
+    "cotton": "Cotton",
+    "soybean": "Soybean",
+    "potato": "Potato",
+    "tomato": "Tomato",
+    "sorghum": "Sorghum",
+    "sunflower": "Sunflower",
+    "rice": "PaddyRice",
+    "sugarcane": "SugarCane",
+    "quinoa": "Quinoa",
+    "tef": "Tef",
+    "cassava": "Cassava",
+    "sugarbeet": "SugarBeet",
+    "drybean": "DryBean",
 }
 AQUACROP_VALID_CROPS = {
-    "Barley", "BarleyGDD", "Cotton", "CottonGDD", "Default", "DryBean",
-    "DryBeanGDD", "Maize", "MaizeGDD", "PaddyRice", "PaddyRiceGDD",
-    "Potato", "PotatoGDD", "PotatoLocalGDD", "Quinoa", "Sorghum",
-    "SorghumGDD", "Soybean", "SoybeanGDD", "SugarBeet", "SugarBeetGDD",
-    "SugarBeetGDD_UK", "SugarCane", "Sunflower", "SunflowerGDD", "Tomato",
-    "TomatoGDD", "Wheat", "WheatGDD", "WheatGDD_1dec", "HydWheatGDD",
-    "WheatLongGDD", "localpaddy", "MaizeChampionGDD", "Tef", "AlfalfaGDD",
+    "Barley",
+    "BarleyGDD",
+    "Cotton",
+    "CottonGDD",
+    "Default",
+    "DryBean",
+    "DryBeanGDD",
+    "Maize",
+    "MaizeGDD",
+    "PaddyRice",
+    "PaddyRiceGDD",
+    "Potato",
+    "PotatoGDD",
+    "PotatoLocalGDD",
+    "Quinoa",
+    "Sorghum",
+    "SorghumGDD",
+    "Soybean",
+    "SoybeanGDD",
+    "SugarBeet",
+    "SugarBeetGDD",
+    "SugarBeetGDD_UK",
+    "SugarCane",
+    "Sunflower",
+    "SunflowerGDD",
+    "Tomato",
+    "TomatoGDD",
+    "Wheat",
+    "WheatGDD",
+    "WheatGDD_1dec",
+    "HydWheatGDD",
+    "WheatLongGDD",
+    "localpaddy",
+    "MaizeChampionGDD",
+    "Tef",
+    "AlfalfaGDD",
     "Cassava",
 }
 
@@ -109,7 +158,9 @@ class RealAquaCropMotor(AbstractScientificMotor):
 
     def get_input_requirements(self) -> list[MotorInput]:
         return [
-            MotorInput("weather_df", "timeseries", description="Daily tmin/tmax/precip/reference_et"),
+            MotorInput(
+                "weather_df", "timeseries", description="Daily tmin/tmax/precip/reference_et"
+            ),
             MotorInput("soil_texture", "scalar", description="SoilGrids texture class"),
             MotorInput("crop_name", "scalar", description="FAO crop name, e.g. wheat"),
             MotorInput("planting_date", "scalar", description="YYYY-MM-DD"),
@@ -146,8 +197,7 @@ class RealAquaCropMotor(AbstractScientificMotor):
         aqua_crop = AQUACROP_CROP_ALIASES.get(crop_name.lower(), crop_name)
         if aqua_crop not in AQUACROP_VALID_CROPS:
             raise ValueError(
-                f"unknown AquaCrop crop '{crop_name}' "
-                f"(valid: {sorted(AQUACROP_VALID_CROPS)})"
+                f"unknown AquaCrop crop '{crop_name}' (valid: {sorted(AQUACROP_VALID_CROPS)})"
             )
         # AquaCrop expects planting date as MM/DD (the year comes from the
         # simulation clock, see compute_crop_calendar.py)
@@ -205,15 +255,14 @@ class RealAquaCropMotor(AbstractScientificMotor):
             pass
         return out
 
-    async def execute(
-        self, inputs: dict[str, Any], parameters: MotorParameters
-    ) -> MotorResult:
+    async def execute(self, inputs: dict[str, Any], parameters: MotorParameters) -> MotorResult:
         start_time = time.time()
         run_id = f"AQUACROP_REAL_{int(time.time())}"
 
         if not AQUACROP_AVAILABLE:
             return MotorResult(
-                run_id=run_id, motor_type=self.motor_type,
+                run_id=run_id,
+                motor_type=self.motor_type,
                 status=MotorStatus.FAILED,
                 error_message="aquacrop package not installed (pip install aquacrop)",
             )
@@ -232,16 +281,14 @@ class RealAquaCropMotor(AbstractScientificMotor):
 
             df = pd.DataFrame(weather_rows)
             df["Date"] = pd.to_datetime(df["datetime"])
-            df = (
-                df.rename(columns={
+            df = df.rename(
+                columns={
                     "tmin": "MinTemp",
                     "tmax": "MaxTemp",
                     "precip": "Precipitation",
                     "et0": "ReferenceET",
-                })
-                [["MinTemp", "MaxTemp", "Precipitation", "ReferenceET", "Date"]]
-                .dropna()
-            )
+                }
+            )[["MinTemp", "MaxTemp", "Precipitation", "ReferenceET", "Date"]].dropna()
             # avoid divide-by-zero in the crop model
             df["ReferenceET"] = df["ReferenceET"].clip(lower=0.1)
             # Restrict weather to the simulation window (+-30 days buffer)
@@ -261,8 +308,13 @@ class RealAquaCropMotor(AbstractScientificMotor):
 
             result = await asyncio.to_thread(
                 self._run_sync,
-                df, soil_texture, crop_name, planting_date,
-                sim_start, sim_end, threshold,
+                df,
+                soil_texture,
+                crop_name,
+                planting_date,
+                sim_start,
+                sim_end,
+                threshold,
             )
 
             # NOTE: AquaCrop-OSPy v3 reports Dry yield already in tonne/ha
@@ -297,7 +349,8 @@ class RealAquaCropMotor(AbstractScientificMotor):
         except Exception as exc:
             detail = str(exc) or type(exc).__name__
             return MotorResult(
-                run_id=run_id, motor_type=self.motor_type,
+                run_id=run_id,
+                motor_type=self.motor_type,
                 status=MotorStatus.FAILED,
                 error_message=f"AquaCrop execution failed: {detail}",
                 execution_time_seconds=round(time.time() - start_time, 3),

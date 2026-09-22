@@ -164,6 +164,16 @@ namespace_packages = true
 explicit_package_bases = true
 mypy_path = "."
 plugins = ["pydantic.mypy"]
+exclude = [
+    ".venv",
+    "venv",
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    ".pytest_cache",
+    ".mypy_cache",
+]
 
 [[tool.mypy.overrides]]
 module = [
@@ -172,7 +182,12 @@ module = [
     "pyproj.*", "shapely.*", "pystac.*", "planetary_computer.*",
     "dask.*", "zarr.*", "netCDF4.*", "h5py.*", "numba.*", "duckdb.*",
     "aiogram.*", "aiohttp.*", "web3.*", "eth_account.*",
-    "tifffile.*", "sparsediffpy.*", # اضافه شده برای جلوگیری از خطاهای Mypy
+    "tifffile.*", "sparsediffpy.*",
+    "arabic_reshaper", "bidi.algorithm",
+    "twilio.rest", "hydroma_core",
+    "psutil", "pymoo.*", "pywr.*", "pyRothC.*", "pySWATPlus.*",
+    "aquacrop.*",
+    "dns.*",
 ]
 ignore_missing_imports = true
 
@@ -185,3 +200,12 @@ branch = true
 [tool.coverage.report]
 show_missing = true
 skip_empty = true
+
+# === MUTMUT CONFIGURATION ===
+[tool.mutmut]
+paths_to_mutate = ["engine", "services"]
+backup = false
+runner = "pytest -x"
+tests_dir = "tests"
+timeout_factor = 2.0
+hash_of_tests = true

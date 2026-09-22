@@ -1,0 +1,156 @@
+site_name: Eco Nojin Documentation
+site_description: Ecological Intelligence Platform — Modular, Service-Oriented Architecture
+site_author: Eco Nojin Team
+site_url: https://docs.econojin.io
+repo_url: https://github.com/econojin/econojin
+edit_uri: edit/main/docs/
+
+copyright: Copyright &copy; 2026 Eco Nojin Team
+
+theme:
+  name: material
+  language: fa
+  direction: rtl
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+  palette:
+    - scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Vazirmatn
+    code: JetBrains Mono
+  icon:
+    repo: fontawesome/brands/github
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/econojin/econojin
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/econojin
+    - icon: fontawesome/brands/linkedin
+      link: https://linkedin.com/company/econojin
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.twemoji
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+plugins:
+  - search:
+      lang: fa
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: date
+  - minify:
+      minify_html: true
+  - git-authors:
+      enable: true
+  - git-committers:
+      enable: true
+
+nav:
+  - خانه: index.md
+  - معماری:
+      - بررسی کلی: architecture/overview.md
+      - معماری سطح بالا: architecture/high-level.md
+      - لایه داده: architecture/data-layer.md
+      - لایه API: architecture/api-layer.md
+      - لایه فرانت‌اند: architecture/frontend-layer.md
+      - رویدادها و پیام‌رسانی: architecture/event-driven.md
+      - آفلاین-فIRST: architecture/offline-first.md
+  - راهنمای API:
+      - مروری: api/overview.md
+      - احراز هویت: api/auth.md
+      - خاک و زمین: api/soil.md
+      - مواد: api/materials.md
+      - دستیار AI: api/ai-assistant.md
+      - ماهواره: api/satellite.md
+      - سناریوها: api/scenarios.md
+      - بازارچه: api/marketplace.md
+      - کربن: api/carbon.md
+      - حوضه‌آب: api/watershed.md
+      - همگام‌سازی: api/sync.md
+      - بلادرنگ: api/realtime.md
+      - USSD/SMS: api/ussd.md
+      - صوتی/IVR: api/voice.md
+      - بلاکچین: api/blockchain.md
+  - راهنمای توسعه:
+      - شروع کار: development/getting-started.md
+      - تنظیم محیط: development/setup.md
+      - استانداردهای کد: development/code-standards.md
+      - تست‌نویسی: development/testing.md
+      - CI/CD: development/ci-cd.md
+      -/migrations: development/database-migrations.md
+  - معماری تصمیمات (ADR):
+      - فرآیند ADR: adr/process.md
+      - 0001: استراتژی چندزبانه: adr/0001-language-strategy.md
+  - مرجع معماری:
+      - مروری: reference/overview.md
+      - مدل‌های داده: reference/data-models.md
+      - کدهای خطا: reference/error-codes.md
+      - پرچم‌های ویژگی: reference/feature-flags.md
+      - متغیرهای محیطی: reference/environment-variables.md
+  - عملیات:
+      - استقرار: operations/deployment.md
+      - مانیتورینگ: operations/monitoring.md
+      - لاک‌گیری: operations/logging.md
+      - روتیت کلیدها: operations/supabase-rotation.md
+      - بازیابی فاجعه: operations/disaster-recovery.md
+  - امنیت:
+      - مروری: security/overview.md
+      - احراز هویت: security/authentication.md
+      - مجوزها: security/authorization.md
+      - حملات رایج: security/common-attacks.md
+  - مستندات علمی:
+      - هیدروولوژی: science/hydrology.md
+      - اقلیم: science/climate.md
+      - فرسایش: science/erosion.md
+      - کربن: science/carbon.md
+      - بیوفرتیلایزر: science/biofertilizer.md
+
+# Custom 404
+extra_javascript:
+  - javascripts/extra.js

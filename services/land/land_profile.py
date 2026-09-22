@@ -5,11 +5,12 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 
 
 class LandProfileCreateRequest(BaseModel):
     """Request model for creating a new land profile."""
+
     project_id: str
     latitude: float
     longitude: float
@@ -19,6 +20,7 @@ class LandProfileCreateRequest(BaseModel):
 
 class LandProfileResponse(BaseModel):
     """Response model for a land profile."""
+
     id: str
     project_id: str
     location: dict[str, float]
@@ -48,7 +50,9 @@ def calculate_land_profile(request: LandProfileCreateRequest) -> LandProfileResp
     This function acts as a placeholder for the actual calculation logic
     which would involve calling the engine modules.
     """
-    logger.info(f"Calculating profile for project {request.project_id} at ({request.latitude}, {request.longitude})")
+    logger.info(
+        f"Calculating profile for project {request.project_id} at ({request.latitude}, {request.longitude})"
+    )
 
     profile_data = {
         "id": str(uuid.uuid4()),
@@ -70,7 +74,7 @@ def calculate_land_profile(request: LandProfileCreateRequest) -> LandProfileResp
         "dem_source": "SRTM",
         "dem_resolution": 30.0,
         "created_at": datetime.now(UTC),
-        "updated_at": datetime.now(UTC)
+        "updated_at": datetime.now(UTC),
     }
 
     return LandProfileResponse(**profile_data)

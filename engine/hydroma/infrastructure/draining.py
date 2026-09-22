@@ -4,6 +4,7 @@ Hydraulic Design Engine - Draining Systems.
 Calculates and designs draining systems based on land topography,
 soil permeability, and rainfall intensity to prevent waterlogging.
 """
+
 import math
 from dataclasses import dataclass
 from typing import Any
@@ -15,6 +16,7 @@ GRAVITY = 9.81  # m/s^2
 @dataclass
 class DrainDesignCriteria:
     """Criteria for drain design."""
+
     max_flow_rate: float  # m3/s
     max_velocity: float  # m/s
     min_velocity: float  # m/s
@@ -28,6 +30,7 @@ class DrainDesignCriteria:
 @dataclass
 class DrainSection:
     """Calculated dimensions for a drain section."""
+
     length: float  # m
     bottom_width: float  # m
     depth: float  # m
@@ -40,11 +43,13 @@ class DrainSection:
     excavation_volume: float  # m3
 
 
-def calculate_open_channel_flow(area: float, radius: float, slope: float, manning_n: float) -> float:
+def calculate_open_channel_flow(
+    area: float, radius: float, slope: float, manning_n: float
+) -> float:
     """Calculate flow rate using Manning's equation."""
     if radius <= 0 or slope <= 0:
         return 0.0
-    return (1.0 / manning_n) * area * (radius ** (2.0 / 3.0)) * (slope ** 0.5)
+    return (1.0 / manning_n) * area * (radius ** (2.0 / 3.0)) * (slope**0.5)
 
 
 def design_rectangular_drain(criteria: DrainDesignCriteria, channel_slope: float) -> DrainSection:
@@ -104,11 +109,13 @@ def design_rectangular_drain(criteria: DrainDesignCriteria, channel_slope: float
         hydraulic_radius=R_final,
         velocity=V_final,
         capacity=Q_final,
-        excavation_volume=A_final * 100.0 # Volume per unit length * length
+        excavation_volume=A_final * 100.0,  # Volume per unit length * length
     )
 
 
-def design_pipe_drain(max_flow_rate: float, slope: float, material_roughness: float) -> dict[str, Any]:
+def design_pipe_drain(
+    max_flow_rate: float, slope: float, material_roughness: float
+) -> dict[str, Any]:
     """
     Designs a circular pipe drain.
 
@@ -127,7 +134,7 @@ def design_pipe_drain(max_flow_rate: float, slope: float, material_roughness: fl
     # => D = ( Q * n * 4^(5/3) / (pi * S^(1/2) ) )^(3/8)
 
     numerator = max_flow_rate * material_roughness * (4 ** (5.0 / 3.0))
-    denominator = math.pi * (slope ** 0.5)
+    denominator = math.pi * (slope**0.5)
     if denominator <= 0:
         raise ValueError("Slope must be positive for pipe flow calculation.")
 
@@ -143,6 +150,6 @@ def design_pipe_drain(max_flow_rate: float, slope: float, material_roughness: fl
         "cross_section_area_m2": A,
         "hydraulic_radius_m": R,
         "velocity_m_s": V,
-        "capacity_m3_s": max_flow_rate, # Assumed to meet requirement after design
-        "material_roughness": material_roughness
+        "capacity_m3_s": max_flow_rate,  # Assumed to meet requirement after design
+        "material_roughness": material_roughness,
     }

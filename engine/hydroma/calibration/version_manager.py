@@ -3,6 +3,7 @@ Model Version Manager.
 
 Handles the lifecycle of model versions, including creation, promotion, and rollback.
 """
+
 import structlog
 
 logger = structlog.get_logger()
@@ -26,12 +27,12 @@ class ModelVersionManager:
         self,
         model_name: str,
         version_number: str,
-        version_type: str, # e.g., 'major', 'minor', 'patch', 'calibrated'
+        version_type: str,  # e.g., 'major', 'minor', 'patch', 'calibrated'
         description: str,
         parameters: dict[str, Any],
         performance_metrics: dict[str, float],
         calibration_record_id: str = None,
-        promote_to_current: bool = False
+        promote_to_current: bool = False,
     ) -> str:
         """
         Creates a new model version entry in the database.
@@ -60,7 +61,7 @@ class ModelVersionManager:
             parameters=parameters,
             performance_metrics=performance_metrics,
             calibration_record_id=calibration_record_id,
-            is_current=promote_to_current
+            is_current=promote_to_current,
         )
 
         db = SessionLocal()
@@ -73,7 +74,7 @@ class ModelVersionManager:
             if promote_to_current:
                 self._set_other_versions_not_current(db, model_name, version_id)
 
-            db.commit() # Commit the is_current updates if any
+            db.commit()  # Commit the is_current updates if any
             return str(version_id)
 
         except Exception as e:
@@ -87,10 +88,11 @@ class ModelVersionManager:
         """Retrieves the currently active version of a model."""
         db = SessionLocal()
         try:
-            current_version = db.query(ModelVersionDB).filter(
-                ModelVersionDB.model_name == model_name,
-                ModelVersionDB.is_current == True
-            ).first()
+            current_version = (
+                db.query(ModelVersionDB)
+                .filter(ModelVersionDB.model_name == model_name, ModelVersionDB.is_current == True)
+                .first()
+            )
             return current_version
         finally:
             db.close()
@@ -99,10 +101,14 @@ class ModelVersionManager:
         """Retrieves a specific version of a model by its number."""
         db = SessionLocal()
         try:
-            version = db.query(ModelVersionDB).filter(
-                ModelVersionDB.model_name == model_name,
-                ModelVersionDB.version_number == version_number
-            ).first()
+            version = (
+                db.query(ModelVersionDB)
+                .filter(
+                    ModelVersionDB.model_name == model_name,
+                    ModelVersionDB.version_number == version_number,
+                )
+                .first()
+            )
             return version
         finally:
             db.close()
@@ -113,7 +119,9 @@ class ModelVersionManager:
         db = SessionLocal()
         try:
             # Find the version to promote
-            version_to_promote = db.query(ModelVersionDB).filter(ModelVersionDB.id == version_id).first()
+            version_to_promote = (
+                db.query(ModelVersionDB).filter(ModelVersionDB.id == version_id).first()
+            )
             if not version_to_promote:
                 logger.error(f"Version ID {version_id} not found.")
                 return False
@@ -126,7 +134,9 @@ class ModelVersionManager:
             # Set the target version to is_current = True
             version_to_promote.is_current = True
             db.commit()
-            logger.info(f"Successfully promoted version {version_to_promote.version_number} (ID: {version_id}) to current.")
+            logger.info(
+                f"Successfully promoted version {version_to_promote.version_number} (ID: {version_id}) to current."
+            )
             return True
 
         except Exception as e:
@@ -136,11 +146,12 @@ class ModelVersionManager:
         finally:
             db.close()
 
-    def _set_other_versions_not_current(self, db_session: SessionLocal, model_name: str, current_version_id: str):
+    def _set_other_versions_not_current(
+        self, db_session: SessionLocal, model_name: str, current_version_id: str
+    ):
         """Helper to set is_current=False for all versions of a model except the specified one."""
         db_session.query(ModelVersionDB).filter(
-            ModelVersionDB.model_name == model_name,
-            ModelVersionDB.id != current_version_id
+            ModelVersionDB.model_name == model_name, ModelVersionDB.id != current_version_id
         ).update({"is_current": False})
 
 
@@ -154,10 +165,10 @@ def example_version_creation_and_promotion(cal_record_id: str):
         version_number="1.1.0-calibrated-20241027",
         version_type="calibrated",
         description="Version 1.1.0 after calibration using field data from Q3 2024.",
-        parameters={"base_n_level": 115.5, "decay_rate": 0.12}, # From cal record
-        performance_metrics={"rmse": 8.2, "nse": 0.85, "r2": 0.87}, # From cal/validation
+        parameters={"base_n_level": 115.5, "decay_rate": 0.12},  # From cal record
+        performance_metrics={"rmse": 8.2, "nse": 0.85, "r2": 0.87},  # From cal/validation
         calibration_record_id=cal_record_id,
-        promote_to_current=True # Promote this new calibrated version
+        promote_to_current=True,  # Promote this new calibrated version
     )
 
     if new_version_id:

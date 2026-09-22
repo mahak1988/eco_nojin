@@ -1,4 +1,3 @@
-
 """Comprehensive soil analysis and remediation router."""
 
 from fastapi import APIRouter, Depends
@@ -7,10 +6,13 @@ from sqlalchemy.orm import Session
 
 from database.hub import hub
 
+
 # Compatibility: get_db via hub
 def get_db():
     with hub.get_session() as session:
         yield session
+
+
 from database.models import SoilAnalysis, User
 from services.api_gateway.auth import require_user
 
@@ -46,16 +48,16 @@ ORGANIC_REMEDIATION = {
             "soil_benefit_adds_calcium_and_magnesium",
             "soil_benefit_improves_soil_structure",
             "soil_benefit_non_toxic_to_soil_life",
-            "soil_benefit_long_lasting_2_3_years"
+            "soil_benefit_long_lasting_2_3_years",
         ],
         "risks": [
             "soil_risk_takes_3_6_months_to_work",
             "soil_risk_requires_incorporation",
-            "soil_risk_over_application_can_cause_alkalinity"
+            "soil_risk_over_application_can_cause_alkalinity",
         ],
         "application": "soil_apply_2_4_tons_ha",
         "cost": "soil_cost_50_100_ha",
-        "time": "soil_time_3_6_months"
+        "time": "soil_time_3_6_months",
     },
     "high_ph": {
         "title_en": "Elemental Sulfur + Organic Matter",
@@ -68,16 +70,16 @@ ORGANIC_REMEDIATION = {
             "soil_benefit_gradual_ph_reduction",
             "soil_benefit_improves_microbial_activity",
             "soil_benefit_adds_organic_matter",
-            "soil_benefit_safe_for_ecosystem"
+            "soil_benefit_safe_for_ecosystem",
         ],
         "risks": [
             "soil_risk_slow_6_12_months",
             "soil_risk_requires_warm_moist_conditions",
-            "soil_risk_may_need_multiple_applications"
+            "soil_risk_may_need_multiple_applications",
         ],
         "application": "soil_apply_0_5_2_tons_ha_sulfur_5_10_tons_ha_compost",
         "cost": "soil_cost_100_200_ha",
-        "time": "soil_time_6_12_months"
+        "time": "soil_time_6_12_months",
     },
     "low_nitrogen": {
         "title_en": "Legume Cover Crops + Compost",
@@ -91,16 +93,16 @@ ORGANIC_REMEDIATION = {
             "soil_benefit_improves_soil_structure_2",
             "soil_benefit_adds_organic_matter_2",
             "soil_benefit_supports_beneficial_microbes",
-            "soil_benefit_prevents_erosion"
+            "soil_benefit_prevents_erosion",
         ],
         "risks": [
             "soil_risk_takes_one_growing_season",
             "soil_risk_requires_management",
-            "soil_risk_may_compete_with_main_crop"
+            "soil_risk_may_compete_with_main_crop",
         ],
         "application": "soil_apply_20_30_kg_ha_seed_10_20_tons_ha_compost",
         "cost": "soil_cost_80_150_ha",
-        "time": "soil_time_3_6_months_2"
+        "time": "soil_time_3_6_months_2",
     },
     "low_phosphorus": {
         "title_en": "Rock Phosphate + Mycorrhizal Fungi",
@@ -113,16 +115,16 @@ ORGANIC_REMEDIATION = {
             "soil_benefit_slow_release_phosphorus",
             "soil_benefit_mycorrhizae_increase_uptake_10_100x",
             "soil_benefit_improves_drought_resistance",
-            "soil_benefit_long_term_investment"
+            "soil_benefit_long_term_investment",
         ],
         "risks": [
             "soil_risk_slow_availability_months",
             "soil_risk_mycorrhizae_need_living_roots",
-            "soil_risk_less_effective_in_high_p_soils"
+            "soil_risk_less_effective_in_high_p_soils",
         ],
         "application": "soil_apply_500_1000_kg_ha_rock_phosphate_inoculant",
         "cost": "soil_cost_100_200_ha_2",
-        "time": "soil_time_3_6_months"
+        "time": "soil_time_3_6_months",
     },
     "low_potassium": {
         "title_en": "Wood Ash + Greensand",
@@ -135,16 +137,16 @@ ORGANIC_REMEDIATION = {
             "soil_benefit_provides_potassium_trace_minerals",
             "soil_benefit_wood_ash_adds_calcium",
             "soil_benefit_greensand_releases_slowly",
-            "soil_benefit_improves_soil_structure"
+            "soil_benefit_improves_soil_structure",
         ],
         "risks": [
             "soil_risk_wood_ash_raises_ph",
             "soil_risk_greensand_slow_acting",
-            "soil_risk_ash_must_be_from_untreated_wood"
+            "soil_risk_ash_must_be_from_untreated_wood",
         ],
         "application": "soil_apply_1_2_tons_ha_ash_or_2_5_tons_ha_greensand",
         "cost": "soil_cost_50_150_ha",
-        "time": "soil_time_1_12_months"
+        "time": "soil_time_1_12_months",
     },
     "low_organic_matter": {
         "title_en": "Compost + Biochar + Cover Crops",
@@ -158,16 +160,16 @@ ORGANIC_REMEDIATION = {
             "soil_benefit_biochar_permanent_carbon_storage_1000_yrs",
             "soil_benefit_cover_crops_continuous_om",
             "soil_benefit_improves_all_properties",
-            "soil_benefit_sequesters_carbon"
+            "soil_benefit_sequesters_carbon",
         ],
         "risks": [
             "soil_risk_requires_significant_material",
             "soil_risk_biochar_must_be_charged",
-            "soil_risk_takes_time"
+            "soil_risk_takes_time",
         ],
         "application": "soil_apply_20_40_tons_ha_compost_5_10_tons_ha_biochar",
         "cost": "soil_cost_200_500_ha",
-        "time": "soil_time_6_12_months_2"
+        "time": "soil_time_6_12_months_2",
     },
     "poor_drainage": {
         "title_en": "Biochar + Organic Matter + French Drains",
@@ -180,16 +182,16 @@ ORGANIC_REMEDIATION = {
             "soil_benefit_biochar_creates_permanent_pores",
             "soil_benefit_organic_matter_improves_aggregation",
             "soil_benefit_french_drains_provide_relief",
-            "soil_benefit_prevents_waterlogging"
+            "soil_benefit_prevents_waterlogging",
         ],
         "risks": [
             "soil_risk_may_require_labor",
             "soil_risk_drains_need_maintenance",
-            "soil_risk_biochar_must_be_prepared"
+            "soil_risk_biochar_must_be_prepared",
         ],
         "application": "soil_apply_10_20_tons_ha_biochar_30_50_tons_ha_compos",
         "cost": "soil_cost_500_1500_ha",
-        "time": "soil_time_3_6_months_2"
+        "time": "soil_time_3_6_months_2",
     },
     "compaction": {
         "title_en": "Deep-Rooted Cover Crops + No-Till",
@@ -202,17 +204,17 @@ ORGANIC_REMEDIATION = {
             "soil_benefit_radishes_penetrate_60_cm",
             "soil_benefit_roots_create_channels",
             "soil_benefit_no_till_prevents_re_compaction",
-            "soil_benefit_builds_structure"
+            "soil_benefit_builds_structure",
         ],
         "risks": [
             "soil_risk_takes_multiple_seasons",
             "soil_risk_requires_patience",
-            "soil_risk_may_need_specialized_equipment"
+            "soil_risk_may_need_specialized_equipment",
         ],
         "application": "soil_apply_daikon_radish_ryegrass_strict_no_till",
         "cost": "soil_cost_50_150_ha_2",
-        "time": "soil_time_1_2_seasons"
-    }
+        "time": "soil_time_1_2_seasons",
+    },
 }
 
 
@@ -227,7 +229,7 @@ CHEMICAL_REMEDIATION = {
         "benefits": [
             "soil_benefit_works_in_days",
             "soil_benefit_precise_application",
-            "soil_benefit_immediate_results"
+            "soil_benefit_immediate_results",
         ],
         "risks": [
             "soil_risk_burns_plant_roots_if_over_applied",
@@ -236,11 +238,11 @@ CHEMICAL_REMEDIATION = {
             "soil_risk_nutrient_lockout",
             "soil_risk_runoff_pollutes_water",
             "soil_risk_caustic_to_handle",
-            "soil_risk_short_term_fix"
+            "soil_risk_short_term_fix",
         ],
         "application": "soil_apply_1_2_tons_ha",
         "cost": "soil_cost_80_150_ha_2",
-        "time": "soil_time_1_2_weeks"
+        "time": "soil_time_1_2_weeks",
     },
     "low_nitrogen": {
         "title_en": "Synthetic NPK Fertilizer",
@@ -252,7 +254,7 @@ CHEMICAL_REMEDIATION = {
         "benefits": [
             "soil_benefit_immediate_uptake",
             "soil_benefit_precise_dosing",
-            "soil_benefit_fast_greening"
+            "soil_benefit_fast_greening",
         ],
         "risks": [
             "soil_risk_kills_80_of_soil_microbes",
@@ -263,11 +265,11 @@ CHEMICAL_REMEDIATION = {
             "soil_risk_n2o_greenhouse_gas",
             "soil_risk_burns_plants_if_over_applied",
             "soil_risk_fossil_fuel_intensive",
-            "soil_risk_destroys_nitrogen_cycle"
+            "soil_risk_destroys_nitrogen_cycle",
         ],
         "application": "soil_apply_100_200_kg_n_ha",
         "cost": "soil_cost_150_300_ha",
-        "time": "soil_time_immediate"
+        "time": "soil_time_immediate",
     },
     "low_phosphorus": {
         "title_en": "Triple Super Phosphate",
@@ -276,10 +278,7 @@ CHEMICAL_REMEDIATION = {
         "description_fa": "فسفر غلیظ.",
         "title_ar": "سوبر فوسفات ثلاثي",
         "description_ar": "فوسفور مركّز.",
-        "benefits": [
-            "soil_benefit_fast_availability",
-            "soil_benefit_precise"
-        ],
+        "benefits": ["soil_benefit_fast_availability", "soil_benefit_precise"],
         "risks": [
             "soil_risk_algal_blooms_from_runoff",
             "soil_risk_binds_with_ca_fe",
@@ -287,11 +286,11 @@ CHEMICAL_REMEDIATION = {
             "soil_risk_depletes_finite_resource",
             "soil_risk_cadmium_contamination",
             "soil_risk_dependency",
-            "soil_risk_dead_zones"
+            "soil_risk_dead_zones",
         ],
         "application": "soil_apply_50_100_kg_p2o5_ha",
         "cost": "soil_cost_100_200_ha",
-        "time": "soil_time_1_2_weeks_2"
+        "time": "soil_time_1_2_weeks_2",
     },
     "low_potassium": {
         "title_en": "Muriate of Potash (KCl)",
@@ -300,10 +299,7 @@ CHEMICAL_REMEDIATION = {
         "description_fa": "کلرید پتاسیم غلیظ.",
         "title_ar": "كلوريد البوتاسيوم (KCl)",
         "description_ar": "كلوريد بوتاسيوم مركّز.",
-        "benefits": [
-            "soil_benefit_immediate_k",
-            "soil_benefit_cost_effective"
-        ],
+        "benefits": ["soil_benefit_immediate_k", "soil_benefit_cost_effective"],
         "risks": [
             "soil_risk_chloride_toxicity",
             "soil_risk_salt_buildup_2",
@@ -311,12 +307,12 @@ CHEMICAL_REMEDIATION = {
             "soil_risk_leaches",
             "soil_risk_mining_damage",
             "soil_risk_reduces_biodiversity",
-            "soil_risk_dependency_2"
+            "soil_risk_dependency_2",
         ],
         "application": "soil_apply_100_200_kg_k2o_ha",
         "cost": "soil_cost_100_250_ha",
-        "time": "soil_time_immediate_2"
-    }
+        "time": "soil_time_immediate_2",
+    },
 }
 
 
@@ -334,17 +330,17 @@ BIOLOGICAL_REMEDIATION = {
             "soil_benefit_suppresses_diseases",
             "soil_benefit_improves_structure",
             "soil_benefit_disease_resistance",
-            "soil_benefit_drought_tolerance"
+            "soil_benefit_drought_tolerance",
         ],
         "risks": [
             "soil_risk_requires_knowledge",
             "soil_risk_killed_by_chemicals",
             "soil_risk_needs_organic_matter",
-            "soil_risk_takes_time_2"
+            "soil_risk_takes_time_2",
         ],
         "application": "soil_apply_apply_tea_every_2_4_weeks",
         "cost": "soil_cost_50_200_ha",
-        "time": "soil_time_1_3_months"
+        "time": "soil_time_1_3_months",
     },
     "mycorrhizae": {
         "title_en": "Mycorrhizal Fungi Inoculation",
@@ -359,17 +355,17 @@ BIOLOGICAL_REMEDIATION = {
             "soil_benefit_drought_resistance",
             "soil_benefit_pathogen_protection",
             "soil_benefit_connects_plants",
-            "soil_benefit_sequesters_carbon_2"
+            "soil_benefit_sequesters_carbon_2",
         ],
         "risks": [
             "soil_risk_killed_by_tillage",
             "soil_risk_apply_at_planting",
             "soil_risk_needs_living_hosts",
-            "soil_risk_species_specific"
+            "soil_risk_species_specific",
         ],
         "application": "soil_apply_apply_to_seeds_roots_at_planting",
         "cost": "soil_cost_30_100_ha",
-        "time": "soil_time_1_2_months"
+        "time": "soil_time_1_2_months",
     },
     "nitrogen_fixers": {
         "title_en": "Free-Living Nitrogen Fixers (Azotobacter)",
@@ -383,18 +379,18 @@ BIOLOGICAL_REMEDIATION = {
             "soil_benefit_works_with_any_crop",
             "soil_benefit_growth_hormones",
             "soil_benefit_improves_roots",
-            "soil_benefit_self_sustaining"
+            "soil_benefit_self_sustaining",
         ],
         "risks": [
             "soil_risk_killed_by_synthetic_n",
             "soil_risk_needs_organic_matter_2",
             "soil_risk_slower_than_synthetic",
-            "soil_risk_ph_sensitive"
+            "soil_risk_ph_sensitive",
         ],
         "application": "soil_apply_seed_treatment_or_drench",
         "cost": "soil_cost_20_60_ha",
-        "time": "soil_time_2_4_weeks"
-    }
+        "time": "soil_time_2_4_weeks",
+    },
 }
 
 
@@ -526,7 +522,11 @@ def analyze_soil(req: SoilAnalysisRequest, user: User = Depends(require_user)):
                 "soil_action_deep_rooted",
                 "soil_action_drainage_tiles",
             ],
-            "estimated_cost": {"en": "$500-2000/ha", "fa": "۵۰۰-۲۰۰۰ دلار در هکتار", "ar": "500-2000 دولار/هكتار"},
+            "estimated_cost": {
+                "en": "$500-2000/ha",
+                "fa": "۵۰۰-۲۰۰۰ دلار در هکتار",
+                "ar": "500-2000 دولار/هكتار",
+            },
         }
     saved_id = None
     if req.farm_id:
@@ -644,6 +644,7 @@ from pydantic import BaseModel, Field
 
 class SoilProfileCreate(BaseModel):
     """Request model for creating a soil profile."""
+
     name: str = Field(..., description="Profile name")
     texture: str = Field(..., description="Soil texture class")
     ph: float = Field(..., ge=0, le=14, description="Soil pH")
@@ -653,6 +654,7 @@ class SoilProfileCreate(BaseModel):
 
 class SoilProfileRead(BaseModel):
     """Response model for soil profile."""
+
     id: int
     name: str
     texture: str
@@ -670,10 +672,10 @@ _soil_profile_counter = [0]
 @router.post("/", response_model=SoilProfileRead, status_code=201, tags=["soil"])
 async def create_soil_profile(profile: SoilProfileCreate, user: User = Depends(require_user)):
     """Create a new soil profile.
-    
+
     Args:
         profile: Soil profile data
-        
+
     Returns:
         Created soil profile with ID
     """
@@ -694,9 +696,8 @@ async def create_soil_profile(profile: SoilProfileCreate, user: User = Depends(r
 @router.get("/", response_model=list[SoilProfileRead], tags=["soil"])
 async def list_soil_profiles():
     """List all soil profiles.
-    
+
     Returns:
         List of all soil profiles
     """
     return _soil_profiles_db
-

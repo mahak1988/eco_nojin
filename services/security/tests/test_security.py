@@ -1,4 +1,5 @@
 """Phase 8-C security layer tests (offline/deterministic)."""
+
 from services.security import pqcrypto
 from services.security.anti_phishing import domain_squatting
 from services.security.honeypot import honeypot
@@ -7,14 +8,18 @@ from services.security.waf import waf_engine
 
 
 def test_waf_blocks_sqli():
-    allowed, score, hits, _ = waf_engine.check("POST", "/api/v1/x", "", "a' union select 1--", "test")
+    allowed, score, hits, _ = waf_engine.check(
+        "POST", "/api/v1/x", "", "a' union select 1--", "test"
+    )
     assert not allowed
     assert score >= 40
     assert "sqli-union" in hits
 
 
 def test_waf_blocks_xss():
-    allowed, _, hits, _ = waf_engine.check("POST", "/api/v1/x", "", "<script>alert(1)</script>", "test")
+    allowed, _, hits, _ = waf_engine.check(
+        "POST", "/api/v1/x", "", "<script>alert(1)</script>", "test"
+    )
     assert not allowed
     assert "xss-script" in hits
 
@@ -39,7 +44,7 @@ def test_waf_blocks_scanner_ua():
 
 
 def test_rate_limiter_budget():
-    rate_limiter._ip.clear()
+    rate_limiter._memory.clear()
     ok_until_120 = all(rate_limiter.check("10.0.0.1", "/api/v1/x")[0] for _ in range(120))
     assert ok_until_120
     ok, _ = rate_limiter.check("10.0.0.1", "/api/v1/x")
@@ -47,7 +52,7 @@ def test_rate_limiter_budget():
 
 
 def test_rate_limiter_auth_strict():
-    rate_limiter._auth_ip.clear()
+    rate_limiter._memory.clear()
     for _ in range(10):
         rate_limiter.check("10.0.0.2", "/api/v1/auth/login")
     ok, _ = rate_limiter.check("10.0.0.2", "/api/v1/auth/login")

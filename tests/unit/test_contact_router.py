@@ -1,4 +1,5 @@
 """Tests for the public contact endpoint (isolated in-memory database)."""
+
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient

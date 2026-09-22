@@ -1,4 +1,4 @@
-/** IoT device manager — connects DeviceManager service to MQTT backend.
+"""IoT device manager - connects DeviceManager service to MQTT backend.
 
 This module wires the DeviceManager (services/business_modules/iot/device_manager.py)
 with the MQTT broker for real-time device provisioning and status updates.
@@ -10,7 +10,7 @@ Usage:
 """
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +42,7 @@ class DeviceConnector:
 
         try:
             from services.business_modules.iot.device_manager import DeviceManager
+
             self._device_manager = DeviceManager()
         except Exception as exc:
             logger.warning("DeviceManager import failed: %s", exc)
@@ -49,7 +50,7 @@ class DeviceConnector:
     def start(self):
         """Connect to MQTT broker and start listening."""
         if not self.config.is_configured:
-            logger.warning("MQTT broker not configured — skipping connection")
+            logger.warning("MQTT broker not configured - skipping connection")
             return
 
         try:
@@ -66,9 +67,13 @@ class DeviceConnector:
                 self._client.subscribe(topic)
 
             self._client.loop_start()
-            logger.info("MQTT device connector started on %s:%s", self.config.broker_host, self.config.broker_port)
+            logger.info(
+                "MQTT device connector started on %s:%s",
+                self.config.broker_host,
+                self.config.broker_port,
+            )
         except ImportError:
-            logger.warning("paho-mqtt not installed — MQTT integration disabled")
+            logger.warning("paho-mqtt not installed - MQTT integration disabled")
         except Exception as exc:
             logger.warning("MQTT connection failed: %s", exc)
 
@@ -81,18 +86,21 @@ class DeviceConnector:
             logger.info("MQTT device connector stopped")
 
     def _on_message(self, _client, _userdata, message):
-        """Handle incoming MQTT messages — persist readings."""
+        """Handle incoming MQTT messages - persist readings."""
         import json
+
         try:
             data = json.loads(message.payload.decode("utf-8"))
             if self._device_manager:
                 from engine.hydroma.mrv.iot_ingest import parse_ttn_v3
+
                 readings = parse_ttn_v3({"uplink_message": {"decoded_payload": data}})
                 for reading in readings:
                     # Persist via iot_ingest
                     try:
-                        from engine.hydroma.mrv.iot_ingest import persist_iot_reading
                         from database.hub import hub
+                        from engine.hydroma.mrv.iot_ingest import persist_iot_reading
+
                         with hub.get_session() as session:
                             persist_iot_reading(session, reading)
                     except Exception as exc:

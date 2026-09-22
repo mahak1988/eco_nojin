@@ -1,5 +1,7 @@
 """DEM Fetcher - Downloads/caches DEM data (NumPy 2.x & rioxarray compatible)."""
+
 from __future__ import annotations
+
 import structlog
 
 logger = structlog.get_logger()
@@ -141,9 +143,7 @@ class DEMFetcher(MapFetcher):
 
         # Validate
         if da.ndim != 2:
-            raise ValueError(
-                f"DEM has unexpected shape after load: {da.shape}, dims: {da.dims}"
-            )
+            raise ValueError(f"DEM has unexpected shape after load: {da.shape}, dims: {da.dims}")
 
         # Ensure proper spatial dimensions
         if "y" not in da.dims or "x" not in da.dims:

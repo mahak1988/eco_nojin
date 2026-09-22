@@ -3,23 +3,20 @@
 Provides drop-in replacements for the legacy auth service so that
 both old and new routers produce compatible JWTs and bcrypt password hashes.
 """
+
 from __future__ import annotations
 
 import hashlib
 import secrets
 from datetime import UTC, datetime, timedelta
-from typing import Any
 
 from services.api_gateway.auth import (
-    decode_token,
-    hash_password as bcrypt_hash_password,
-    verify_password as bcrypt_verify_password,
     create_access_token,
     create_refresh_token,
     decode_refresh_token,
+    hash_password as bcrypt_hash_password,
+    verify_password as bcrypt_verify_password,
 )
-
-from services.auth.models import AuthUser, RefreshToken
 
 
 class PasswordHasher:
@@ -44,7 +41,9 @@ class PasswordHasher:
     def _verify_legacy(self, password: str, stored_hash: str) -> bool:
         try:
             _, salt, hashed = stored_hash.split(":", 2)
-            computed = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 100_000).hex()
+            computed = hashlib.pbkdf2_hmac(
+                "sha256", password.encode(), salt.encode(), 100_000
+            ).hex()
             return secrets.compare_digest(computed, hashed)
         except Exception:
             return False

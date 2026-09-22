@@ -1,19 +1,18 @@
 """Base router and service with common patterns for Eco Nojin API."""
+
 from __future__ import annotations
 
 import logging
-from collections.abc import Generator, Sequence
+from collections.abc import Generator
 from typing import Any, Generic, TypeVar
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from database.hub import hub
 from services.api_gateway.exceptions import (
-    ConflictException,
     NotFoundException,
-    ValidationException,
 )
 
 logger = logging.getLogger(__name__)
@@ -80,4 +79,3 @@ class BaseService(Generic[M]):
 
     def _paginate(self, query: Any, skip: int = 0, limit: int = 100) -> list[Any]:
         return list(query.offset(skip).limit(limit).all())
-

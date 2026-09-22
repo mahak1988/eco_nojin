@@ -39,10 +39,16 @@ async def _get(table: str, select: str, extra: str = "", token: str | None = Non
     async with httpx.AsyncClient(timeout=20) as s:
         r = await s.get(
             f"{cfg['url']}/rest/v1/{table}?select={select}{extra}",
-            headers={"apikey": cfg["anon"], "Authorization": f"Bearer {bearer}", "Accept": "application/json"},
+            headers={
+                "apikey": cfg["anon"],
+                "Authorization": f"Bearer {bearer}",
+                "Accept": "application/json",
+            },
         )
         if r.status_code != 200:
-            raise HTTPException(status_code=502, detail=f"Supabase {table}: HTTP {r.status_code} {r.text[:150]}")
+            raise HTTPException(
+                status_code=502, detail=f"Supabase {table}: HTTP {r.status_code} {r.text[:150]}"
+            )
         return r.json()
 
 
@@ -52,10 +58,16 @@ async def _rpc(fn: str, body: dict[str, Any], token: str) -> Any:
         r = await s.post(
             f"{cfg['url']}/rest/v1/rpc/{fn}",
             json=body,
-            headers={"apikey": cfg["anon"], "Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+            headers={
+                "apikey": cfg["anon"],
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json",
+            },
         )
         if r.status_code != 200:
-            raise HTTPException(status_code=400, detail=f"{fn}: HTTP {r.status_code} {r.text[:200]}")
+            raise HTTPException(
+                status_code=400, detail=f"{fn}: HTTP {r.status_code} {r.text[:200]}"
+            )
         return r.json()
 
 
@@ -73,11 +85,26 @@ async def queue(token: str, limit: int = Query(default=50, ge=1, le=200)) -> dic
 
 
 @router.post("/vote")
-async def vote(token: str, verification_id: str, vote_value: str, confidence: int = 70, comment: str | None = None) -> dict[str, Any]:
+async def vote(
+    token: str,
+    verification_id: str,
+    vote_value: str,
+    confidence: int = 70,
+    comment: str | None = None,
+) -> dict[str, Any]:
     """Auditor vote (validator_id = auth.uid via auditor_vote RPC)."""
     try:
         await _user_from_token(token)
-        res = await _rpc("auditor_vote", {"verification_id": verification_id, "vote": vote_value, "confidence": confidence, "comment": comment}, token)
+        res = await _rpc(
+            "auditor_vote",
+            {
+                "verification_id": verification_id,
+                "vote": vote_value,
+                "confidence": confidence,
+                "comment": comment,
+            },
+            token,
+        )
         return {"status": "ok", "recorded": bool(res)}
     except HTTPException:
         raise
@@ -90,7 +117,9 @@ async def issue_credits(token: str, project_id: str, amount: float) -> dict[str,
     """Admin issues carbon credits (admin_issue_credits RPC -> credit + tx)."""
     try:
         await _user_from_token(token)
-        res = await _rpc("admin_issue_credits", {"p_project_id": project_id, "p_amount": amount}, token)
+        res = await _rpc(
+            "admin_issue_credits", {"p_project_id": project_id, "p_amount": amount}, token
+        )
         return {"status": "ok", "credit": res}
     except HTTPException:
         raise
@@ -103,7 +132,12 @@ async def credits(token: str) -> dict[str, Any]:
     """Own credits (admin sees all via RLS)."""
     try:
         u = await _user_from_token(token)
-        rows = await _get("platform_carbon_credits", "id,project_id,owner_id,amount,issued_at,retired,tx_hash", f"&owner_id=eq.{u['id']}&order=issued_at.desc", token=token)
+        rows = await _get(
+            "platform_carbon_credits",
+            "id,project_id,owner_id,amount,issued_at,retired,tx_hash",
+            f"&owner_id=eq.{u['id']}&order=issued_at.desc",
+            token=token,
+        )
         return {"status": "ok", "count": len(rows), "credits": rows}
     except HTTPException:
         raise
@@ -118,25 +152,46 @@ async def certificate(project_id: str, token: str) -> Response:
 
     try:
         u = await _user_from_token(token)
-        projs = await _get("platform_carbon_projects", "*", f"&id=eq.{project_id}&limit=1", token=token)
+        projs = await _get(
+            "platform_carbon_projects", "*", f"&id=eq.{project_id}&limit=1", token=token
+        )
         if not projs:
             raise HTTPException(status_code=404, detail="project not found")
         proj = projs[0]
-        creds = await _get("platform_carbon_credits", "*", f"&project_id=eq.{project_id}&order=issued_at.desc&limit=1", token=token)
+        creds = await _get(
+            "platform_carbon_credits",
+            "*",
+            f"&project_id=eq.{project_id}&order=issued_at.desc&limit=1",
+            token=token,
+        )
         if not creds:
             raise HTTPException(status_code=404, detail="no credits issued for this project")
         credit = creds[0]
-        owners = await _get("platform_profiles", "display_name", f"&id=eq.{proj.get('owner_id')}&limit=1", token=token)
+        owners = await _get(
+            "platform_profiles",
+            "display_name",
+            f"&id=eq.{proj.get('owner_id')}&limit=1",
+            token=token,
+        )
         owner = owners[0] if owners else {"display_name": u.get("email")}
         owner["email"] = u.get("email")
         data = {
             "project": proj,
             "credit": credit,
             "owner": owner,
-            "meta": {"standard": "IPCC 2019 Refinement", "standard_link": "https://www.ipcc-nggip.iges.or.jp/2019Refinement/"},
+            "meta": {
+                "standard": "IPCC 2019 Refinement",
+                "standard_link": "https://www.ipcc-nggip.iges.or.jp/2019Refinement/",
+            },
         }
         pdf = build_certificate_pdf(data)
-        return Response(content=pdf, media_type="application/pdf", headers={"Content-Disposition": f'attachment; filename="cert-{str(credit["id"])[:8]}.pdf"'})
+        return Response(
+            content=pdf,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f'attachment; filename="cert-{str(credit["id"])[:8]}.pdf"'
+            },
+        )
     except HTTPException:
         raise
     except Exception as exc:

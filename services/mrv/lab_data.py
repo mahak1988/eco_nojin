@@ -96,7 +96,9 @@ async def _modelled_soc(lat: float, lon: float) -> float:
 
 async def compare_model() -> dict[str, Any]:
     """Measured (lab) vs modelled (SoilGrids) SOC per sample + honest stats."""
-    rows = [r for r in _load() if r.get("lat") is not None and r.get("lon") is not None][:MAX_COMPARE_POINTS]
+    rows = [r for r in _load() if r.get("lat") is not None and r.get("lon") is not None][
+        :MAX_COMPARE_POINTS
+    ]
     if not rows:
         return {
             "status": "no_lab_data",
@@ -119,7 +121,10 @@ async def compare_model() -> dict[str, Any]:
             }
         )
     if not pairs:
-        return {"status": "model_unavailable", "message": "SoilGrids برای نقاط ثبتشده در دسترس نبود."}
+        return {
+            "status": "model_unavailable",
+            "message": "SoilGrids برای نقاط ثبتشده در دسترس نبود.",
+        }
     n = len(pairs)
     meas = [float(p["measured_soc_t_ha"]) for p in pairs]
     mod = [float(p["modelled_soc_t_ha"]) for p in pairs]

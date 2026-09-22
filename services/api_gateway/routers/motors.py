@@ -1,4 +1,5 @@
 """Scientific Motors API - Real Execution Endpoints."""
+
 from __future__ import annotations
 
 import time
@@ -24,8 +25,11 @@ _motor_results: dict[str, dict[str, Any]] = {}
 
 # ============ Pydantic Models ============
 
+
 class MotorRunRequest(BaseModel):
-    motor_type: str | None = Field(None, description="Motor type: swat_plus, aquacrop, rothc, hecras, what_if")
+    motor_type: str | None = Field(
+        None, description="Motor type: swat_plus, aquacrop, rothc, hecras, what_if"
+    )
     motor_key: str | None = Field(None, description="Alternative: motor key from /motors/list")
     scenario_name: str = Field(default="baseline")
     start_date: str = Field(default="2026-01-01")
@@ -47,6 +51,7 @@ class MotorStatusResponse(BaseModel):
 
 class ScientificChainRequest(BaseModel):
     """Phase-2 scientific chain: RUSLE + RothC-26.3 + AquaCrop with REAL data."""
+
     lat: float = Field(..., ge=-90, le=90)
     lon: float = Field(..., ge=-180, le=180)
     crop: str = Field(default="wheat", description="FAO crop name (aquacrop)")
@@ -55,10 +60,14 @@ class ScientificChainRequest(BaseModel):
     slope_pct: float = Field(default=10.0, ge=0, le=90)
     practice: str = Field(default="none", description="RUSLE P factor: none/contour/terrace")
     irrigation_threshold_mm: float | None = Field(default=None, ge=0, le=200)
-    observed: dict[str, Any] | None = Field(default=None, description="Observed values for KGE (e.g. yield_ton_ha)")
+    observed: dict[str, Any] | None = Field(
+        default=None, description="Observed values for KGE (e.g. yield_ton_ha)"
+    )
     use_cache: bool = Field(default=True)
     optimize: bool = Field(default=False, description="Run pymoo NSGA-II (surrogate)")
-    catchment_km2: float = Field(default=10.0, ge=0.1, le=10000, description="Catchment area for Pywr/HEC-RAS")
+    catchment_km2: float = Field(
+        default=10.0, ge=0.1, le=10000, description="Catchment area for Pywr/HEC-RAS"
+    )
 
 
 class ScientificChainResponse(BaseModel):
@@ -81,6 +90,7 @@ class ScientificChainResponse(BaseModel):
 
 # ============ Helper Functions ============
 
+
 async def _run_motor_background(
     run_id: str,
     motor_type: str,
@@ -99,7 +109,9 @@ async def _run_motor_background(
             result = await motor.execute(layers, params)
 
         elif motor_type == "aquacrop":
-            swat_layers = await map_orch._fetch_layers(["dem", "soil", "landcover", "rainfall"], region)
+            swat_layers = await map_orch._fetch_layers(
+                ["dem", "soil", "landcover", "rainfall"], region
+            )
             swat = SWATPlusMotor()
             swat_result = await swat.execute(swat_layers, params)
 
@@ -112,19 +124,25 @@ async def _run_motor_background(
             result = await motor.execute(inputs, params)
 
         elif motor_type == "rothc":
-            swat_layers = await map_orch._fetch_layers(["dem", "soil", "landcover", "rainfall"], region)
+            swat_layers = await map_orch._fetch_layers(
+                ["dem", "soil", "landcover", "rainfall"], region
+            )
             swat = SWATPlusMotor()
             swat_result = await swat.execute(swat_layers, params)
 
             aquacrop = AquaCropMotor(crop_type="wheat")
             aquacrop_params = MotorParameters(
-                start_date=params.start_date, end_date=params.end_date,
-                time_step="daily", scenario_name="baseline",
+                start_date=params.start_date,
+                end_date=params.end_date,
+                time_step="daily",
+                scenario_name="baseline",
                 custom_params={"irrigation_mm": 50.0},
             )
             aquacrop_result = await aquacrop.execute(
-                {"soil_water_mm": swat_result.outputs.get("soil_water_mm"),
-                 "et_mm": swat_result.outputs.get("et_mm")},
+                {
+                    "soil_water_mm": swat_result.outputs.get("soil_water_mm"),
+                    "et_mm": swat_result.outputs.get("et_mm"),
+                },
                 aquacrop_params,
             )
 
@@ -137,11 +155,15 @@ async def _run_motor_background(
 
         elif motor_type == "hecras":
             layers = await map_orch._fetch_layers(["dem", "landcover"], region)
-            swat_layers = await map_orch._fetch_layers(["dem", "soil", "landcover", "rainfall"], region)
+            swat_layers = await map_orch._fetch_layers(
+                ["dem", "soil", "landcover", "rainfall"], region
+            )
             swat = SWATPlusMotor()
             swat_params = MotorParameters(
-                start_date=params.start_date, end_date=params.end_date,
-                time_step="daily", scenario_name="baseline",
+                start_date=params.start_date,
+                end_date=params.end_date,
+                time_step="daily",
+                scenario_name="baseline",
             )
             swat_result = await swat.execute(swat_layers, swat_params)
 
@@ -155,21 +177,27 @@ async def _run_motor_background(
             result = await motor.execute(inputs, params)
 
         elif motor_type == "what_if":
-            swat_layers = await map_orch._fetch_layers(["dem", "soil", "landcover", "rainfall"], region)
+            swat_layers = await map_orch._fetch_layers(
+                ["dem", "soil", "landcover", "rainfall"], region
+            )
             swat = SWATPlusMotor()
             swat_result = await swat.execute(swat_layers, params)
 
             aquacrop = AquaCropMotor(crop_type="wheat")
             aquacrop_result = await aquacrop.execute(
-                {"soil_water_mm": swat_result.outputs.get("soil_water_mm"),
-                 "et_mm": swat_result.outputs.get("et_mm")},
+                {
+                    "soil_water_mm": swat_result.outputs.get("soil_water_mm"),
+                    "et_mm": swat_result.outputs.get("et_mm"),
+                },
                 params,
             )
 
             rothc = RothCMotor(years=20)
             rothc_result = await rothc.execute(
-                {"soil_water_mm": swat_result.outputs.get("soil_water_mm"),
-                 "biomass_ton_ha": aquacrop_result.outputs.get("biomass_ton_ha")},
+                {
+                    "soil_water_mm": swat_result.outputs.get("soil_water_mm"),
+                    "biomass_ton_ha": aquacrop_result.outputs.get("biomass_ton_ha"),
+                },
                 params,
             )
 
@@ -203,6 +231,7 @@ async def _run_motor_background(
 
 
 # ============ Endpoints ============
+
 
 @router.get("/list")
 async def list_motors():
@@ -253,7 +282,14 @@ async def run_motor(request: MotorRunRequest, background_tasks: BackgroundTasks)
     """Start motor execution in background."""
     # Validate motor type (accept motor_key from generic clients)
     valid_motors = ["swat_plus", "aquacrop", "rothc", "hecras", "what_if"]
-    key_map = {"aquacrop": "aquacrop", "swat_plus": "swat_plus", "rothc": "rothc", "hecras": "hecras", "whatif": "what_if", "what_if": "what_if"}
+    key_map = {
+        "aquacrop": "aquacrop",
+        "swat_plus": "swat_plus",
+        "rothc": "rothc",
+        "hecras": "hecras",
+        "whatif": "what_if",
+        "what_if": "what_if",
+    }
     motor_type = request.motor_type or key_map.get((request.motor_key or "").lower())
     if motor_type not in valid_motors:
         raise HTTPException(400, f"Invalid motor type. Choose from: {valid_motors}")
@@ -262,9 +298,15 @@ async def run_motor(request: MotorRunRequest, background_tasks: BackgroundTasks)
     b = request.region_bounds
     if len(b) != 4:
         raise HTTPException(400, "region_bounds must be [minx, miny, maxx, maxy]")
-    region = Polygon([
-        (b[0], b[1]), (b[2], b[1]), (b[2], b[3]), (b[0], b[3]), (b[0], b[1]),
-    ])
+    region = Polygon(
+        [
+            (b[0], b[1]),
+            (b[2], b[1]),
+            (b[2], b[3]),
+            (b[0], b[3]),
+            (b[0], b[1]),
+        ]
+    )
 
     # Build parameters
     params = MotorParameters(
@@ -284,7 +326,11 @@ async def run_motor(request: MotorRunRequest, background_tasks: BackgroundTasks)
     # Launch in background
     background_tasks.add_task(
         _run_motor_background,
-        run_id, motor_type, region, params, request.parameters,
+        run_id,
+        motor_type,
+        region,
+        params,
+        request.parameters,
     )
 
     return {"run_id": run_id, "status": "running", "message": "Motor started in background"}
@@ -351,16 +397,29 @@ async def motor_health():
 # Admin: run scientific motors on manual-dataset sites (one click from panel)
 # ============================================================================
 
-from datetime import date as _date  # noqa: E402
+
 from fastapi import Depends as _Depends  # noqa: E402
-from services.api_gateway.auth import get_current_user as _get_current_user  # noqa: E402
-from services.api_gateway.auth import require_roles as _require_roles  # noqa: E402
-from services.data_manual import manual as _manual  # noqa: E402
-from services.data_manual import motor_feed as _motor_feed  # noqa: E402
-from services.scientific_motors.aquacrop_real import RealAquaCropMotor as _RealAquaCropMotor  # noqa: E402
-from services.scientific_motors.crop_advisor import CropAdvisorMotor as _CropAdvisorMotor  # noqa: E402
-from services.scientific_motors.irrigation_scheduler import IrrigationSchedulerMotor as _IrrigationSchedulerMotor  # noqa: E402
-from services.scientific_motors.planting_calendar import PlantingCalendarMotor as _PlantingCalendarMotor  # noqa: E402
+
+from services.api_gateway.auth import (
+    get_current_user as _get_current_user,
+    require_roles as _require_roles,
+)
+from services.data_manual import (
+    manual as _manual,
+    motor_feed as _motor_feed,
+)
+from services.scientific_motors.aquacrop_real import (
+    RealAquaCropMotor as _RealAquaCropMotor,
+)
+from services.scientific_motors.crop_advisor import (
+    CropAdvisorMotor as _CropAdvisorMotor,
+)
+from services.scientific_motors.irrigation_scheduler import (
+    IrrigationSchedulerMotor as _IrrigationSchedulerMotor,
+)
+from services.scientific_motors.planting_calendar import (
+    PlantingCalendarMotor as _PlantingCalendarMotor,
+)
 
 try:
     _require_admin = _require_roles("admin")
@@ -399,7 +458,20 @@ async def list_manual_sites(
 ) -> dict:
     """Sites available in the manual reference dataset (for the panel picker)."""
     sites = _manual.sites()
-    cols = [c for c in ("site_id", "country", "admin1_city", "province", "lat", "lon", "koppen", "elevation_m") if c in sites.columns]
+    cols = [
+        c
+        for c in (
+            "site_id",
+            "country",
+            "admin1_city",
+            "province",
+            "lat",
+            "lon",
+            "koppen",
+            "elevation_m",
+        )
+        if c in sites.columns
+    ]
     return {"count": len(sites), "sites": sites[cols].to_dict("records")}
 
 
@@ -439,7 +511,9 @@ async def run_motor_for_site(
             bundle = _motor_feed.planting_bundle(payload.site_id, payload.crops)
             runner = _PlantingCalendarMotor()
         elif motor == "crop_advisor":
-            bundle = _motor_feed.crop_advisor_bundle(payload.site_id, soil_province=payload.soil_province)
+            bundle = _motor_feed.crop_advisor_bundle(
+                payload.site_id, soil_province=payload.soil_province
+            )
             runner = _CropAdvisorMotor()
         elif motor == "rusle":
             return _motor_feed.rusle_bundle(payload.site_id, soil_province=payload.soil_province)
@@ -455,4 +529,3 @@ async def run_motor_for_site(
         "provenance": bundle.get("provenance"),
         "result": _motor_result_to_dict(result),
     }
-

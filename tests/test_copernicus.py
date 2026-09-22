@@ -1,4 +1,5 @@
 import os
+
 """Unit tests for the Copernicus CDSE client v2 (offline, no credentials)."""
 import datetime
 
@@ -23,6 +24,7 @@ def _no_creds(monkeypatch):
 # ---------------------------------------------------------------------------
 # Client config gating
 # ---------------------------------------------------------------------------
+
 
 def test_unconfigured_reports_false():
     assert CopernicusClient().configured is False
@@ -54,6 +56,7 @@ def test_search_raises_when_unconfigured():
 # Token requests (mocked HTTP)
 # ---------------------------------------------------------------------------
 
+
 class FakeResponse:
     def __init__(self, status_code, json_data):
         self.status_code = status_code
@@ -76,7 +79,8 @@ def test_client_credentials_token_shape_and_cache(monkeypatch):
 
     monkeypatch.setattr("services.satellite.copernicus.httpx.post", fake_post)
     client = CopernicusClient(
-        client_id="cid", client_secret = os.environ.get("CLIENT_SECRET", "csecret"),
+        client_id="cid",
+        client_secret=os.environ.get("CLIENT_SECRET", "csecret"),
         identity_url="https://identity.test",
     )
     assert client.get_token() == "tok123"
@@ -98,7 +102,8 @@ def test_password_grant_token_uses_cdse_public(monkeypatch):
 
     monkeypatch.setattr("services.satellite.copernicus.httpx.post", fake_post)
     client = CopernicusClient(
-        username="farmer", password=os.getenv("PASSWORD", ""),
+        username="farmer",
+        password=os.getenv("PASSWORD", ""),
         identity_url="https://identity.test",
     )
     assert client.get_token() == "tok123"
@@ -113,7 +118,8 @@ def test_token_failure_raises_fetch_error(monkeypatch):
 
     monkeypatch.setattr("services.satellite.copernicus.httpx.post", fake_post)
     client = CopernicusClient(
-        client_id="cid", client_secret = os.environ.get("CLIENT_SECRET", "csecret"),
+        client_id="cid",
+        client_secret=os.environ.get("CLIENT_SECRET", "csecret"),
         identity_url="https://identity.test",
     )
     with pytest.raises(CopernicusFetchError):
@@ -135,11 +141,14 @@ def test_stac_search_sends_auth_and_datetime_window(monkeypatch):
         lambda self, force=False: "tok123",
     )
     client = CopernicusClient(
-        client_id="cid", client_secret = os.environ.get("CLIENT_SECRET", "csecret"),
-        identity_url="https://identity.test", stac_url="https://stac.test",
+        client_id="cid",
+        client_secret=os.environ.get("CLIENT_SECRET", "csecret"),
+        identity_url="https://identity.test",
+        stac_url="https://stac.test",
     )
     client.search_stac(
-        35.0, 51.0,
+        35.0,
+        51.0,
         start_date=datetime.date(2026, 7, 1),
         end_date=datetime.date(2026, 7, 10),
     )

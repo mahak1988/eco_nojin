@@ -1,4 +1,5 @@
 """Tests for the Phase 4 NASA POWER client (offline, mocked HTTP, asyncio.run)."""
+
 import asyncio
 import datetime
 from typing import Optional
@@ -22,6 +23,7 @@ def run(coro):
 # Pure math: Hargreaves ET0
 # ---------------------------------------------------------------------------
 
+
 def test_hargreaves_known_regime():
     # Warm, dry day -> clearly positive ET0
     et0 = hargreaves_et0(tmax=30.0, tmin=15.0, tmean=22.5, doy=180, lat=35.0)
@@ -34,10 +36,10 @@ def test_hargreaves_cold_day_low_et0():
 
 
 def test_hargreaves_invalid_inputs_return_zero():
-    assert hargreaves_et0(20, 10, 15, 0, 35) == 0.0       # doy out of range
-    assert hargreaves_et0(20, 10, 15, 180, 95) == 0.0     # lat out of range
-    assert hargreaves_et0(10, 20, 15, 180, 35) == 0.0     # tmax < tmin
-    assert hargreaves_et0(20, 20, 20, 180, 35) == 0.0     # tmax == tmin
+    assert hargreaves_et0(20, 10, 15, 0, 35) == 0.0  # doy out of range
+    assert hargreaves_et0(20, 10, 15, 180, 95) == 0.0  # lat out of range
+    assert hargreaves_et0(10, 20, 15, 180, 35) == 0.0  # tmax < tmin
+    assert hargreaves_et0(20, 20, 20, 180, 35) == 0.0  # tmax == tmin
 
 
 def test_validate_climate_value():
@@ -55,6 +57,7 @@ def test_validate_climate_value():
 # HTTP layer (mocked)
 # ---------------------------------------------------------------------------
 
+
 class FakeAsyncResponse:
     def __init__(self, status_code, json_data):
         self.status_code = status_code
@@ -62,9 +65,7 @@ class FakeAsyncResponse:
 
     def raise_for_status(self):
         if self.status_code >= 400:
-            raise httpx.HTTPStatusError(
-                f"HTTP {self.status_code}", request=None, response=None
-            )
+            raise httpx.HTTPStatusError(f"HTTP {self.status_code}", request=None, response=None)
 
     def json(self):
         return self._json
@@ -160,7 +161,8 @@ def test_get_daily_climate_skips_nasa_fill_days(monkeypatch):
     )
     daily = run(
         get_daily_climate(
-            35.0, 51.0,
+            35.0,
+            51.0,
             datetime.date(2026, 7, 1),
             datetime.date(2026, 7, 2),
         )

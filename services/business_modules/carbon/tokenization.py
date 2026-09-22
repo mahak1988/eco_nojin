@@ -19,9 +19,8 @@ from datetime import UTC, datetime
 from enum import Enum
 
 from services.business_modules.blockchain.carbon_registry import (
-    CarbonRegistry,
-    CarbonCredit,
     CarbonProject,
+    CarbonRegistry,
 )
 from services.business_modules.blockchain.ledger import BlockchainLedger
 from services.business_modules.blockchain.web3_integration import get_web3
@@ -90,7 +89,9 @@ class CarbonTokenService:
                 status="active",
             )
 
-        credit_type_enum = CreditType(credit_type) if credit_type in CreditType.__members__ else CreditType.VCS
+        credit_type_enum = (
+            CreditType(credit_type) if credit_type in CreditType.__members__ else CreditType.VCS
+        )
 
         token_id = f"CTC-{project_id}-{datetime.now(UTC).strftime('%Y%m%d%H%M%S')}"
         tx_hash = None
@@ -128,7 +129,9 @@ class CarbonTokenService:
             }
         )
         self._credits[token_id] = credit
-        self._balances[credit.owner_address] = self._balances.get(credit.owner_address, 0) + int(amount * 1000)
+        self._balances[credit.owner_address] = self._balances.get(credit.owner_address, 0) + int(
+            amount * 1000
+        )
 
         return {
             "token_id": token_id,
@@ -138,9 +141,7 @@ class CarbonTokenService:
             "credit_type": credit_type_enum.value,
         }
 
-    def transfer_credits(
-        self, from_address: str, to_address: str, token_id: str
-    ) -> dict:
+    def transfer_credits(self, from_address: str, to_address: str, token_id: str) -> dict:
         """Transfer credits from one address to another."""
         credit = self._credits.get(token_id)
         if not credit:
@@ -171,8 +172,12 @@ class CarbonTokenService:
                 "tx_hash": credit.transaction_hash,
             }
         )
-        self._balances[old_owner] = self._balances.get(old_owner, 0) - int(credit.amount_tonnes * 1000)
-        self._balances[to_address] = self._balances.get(to_address, 0) + int(credit.amount_tonnes * 1000)
+        self._balances[old_owner] = self._balances.get(old_owner, 0) - int(
+            credit.amount_tonnes * 1000
+        )
+        self._balances[to_address] = self._balances.get(to_address, 0) + int(
+            credit.amount_tonnes * 1000
+        )
 
         return {
             "token_id": token_id,
@@ -182,9 +187,7 @@ class CarbonTokenService:
             "status": "transferred",
         }
 
-    def retire_credits(
-        self, token_id: str, retirement_justification: str = ""
-    ) -> dict:
+    def retire_credits(self, token_id: str, retirement_justification: str = "") -> dict:
         """Retire credits (permanent removal from circulation)."""
         credit = self._credits.get(token_id)
         if not credit:

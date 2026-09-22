@@ -4,6 +4,7 @@ Data models for workflow module.
 This module contains Pydantic models and dataclasses
 for Workflow management service
 """
+
 from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -22,14 +23,17 @@ class BaseWorkflow(BaseModel):
 
 class WorkflowCreate(BaseModel):
     """Model for creating workflow."""
+
     pass
 
 
 class WorkflowRead(BaseModel):
     """Model for reading workflow."""
+
     pass
 
 
 class WorkflowUpdate(BaseModel):
     """Model for updating workflow."""
+
     pass

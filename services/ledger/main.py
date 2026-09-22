@@ -10,15 +10,14 @@ Provides append-only accounting for:
 import logging
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.hub import hub
-from database.models import LedgerEntry, User
+from database.models import LedgerEntry
 from engine.hydroma.config.settings import get_settings
 
 logger = logging.getLogger(__name__)
@@ -33,8 +32,8 @@ class EntryCreate(BaseModel):
     asset: str  # carbon_credit | eco_token | fiat
     amount: Decimal = Field(..., gt=0)
     reference_type: str  # carbon_issue | marketplace | wallet_transfer
-    reference_id: Optional[int] = None
-    description: Optional[str] = None
+    reference_id: int | None = None
+    description: str | None = None
 
 
 async def get_db() -> AsyncSession:
@@ -84,7 +83,7 @@ async def get_balance(
 
 @router.get("/entries")
 async def list_entries(
-    account_id: Optional[int] = None,
+    account_id: int | None = None,
     limit: int = 50,
     db: AsyncSession = Depends(get_db),
 ):

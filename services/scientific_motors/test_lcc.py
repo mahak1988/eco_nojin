@@ -1,10 +1,11 @@
 """Test Land Capability Classification motor."""
+
 import structlog
 
 logger = structlog.get_logger()
 import sys
 
-sys.path.insert(0, '.')
+sys.path.insert(0, ".")
 
 import asyncio
 
@@ -30,17 +31,20 @@ async def test_lcc():
 
     dem = xr.DataArray(
         np.random.uniform(1000, 1500, shape),
-        dims=["y", "x"], coords=coords,
+        dims=["y", "x"],
+        coords=coords,
     )
 
     soil_depth = xr.DataArray(
         np.random.uniform(20, 120, shape),
-        dims=["y", "x"], coords=coords,
+        dims=["y", "x"],
+        coords=coords,
     )
 
     soil_texture = xr.DataArray(
         np.random.randint(1, 12, shape),
-        dims=["y", "x"], coords=coords,
+        dims=["y", "x"],
+        coords=coords,
     )
 
     # Run motor

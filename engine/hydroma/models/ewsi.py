@@ -8,6 +8,7 @@ Multi-source fusion index combining:
 
 Reference: Gao (1996), Monteith (1993)
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -21,6 +22,7 @@ from .base import ScientificModel, ValidationResult
 @dataclass
 class EWSIWeights:
     """وزن‌های مؤلفه‌های EWSI"""
+
     ndmi: float = 0.4
     vpd: float = 0.3
     soil: float = 0.3
@@ -54,7 +56,9 @@ class EWSI(ScientificModel):
         super().__init__(**config)
         self.weights = weights or EWSIWeights()
 
-    def validate_inputs(self, nir, swir, vpd, soil_moisture, soil_field_capacity) -> tuple[bool, list[str]]:
+    def validate_inputs(
+        self, nir, swir, vpd, soil_moisture, soil_field_capacity
+    ) -> tuple[bool, list[str]]:
         errors = []
 
         # NDMI validation
@@ -92,7 +96,7 @@ class EWSI(ScientificModel):
     ) -> np.ndarray:
         """
         Compute EWSI
-        
+
         Returns:
             numpy array in range [0, 1] where:
             - 0: no stress (optimal)
@@ -110,9 +114,9 @@ class EWSI(ScientificModel):
 
         # Weighted fusion
         ewsı = (
-            self.weights.ndmi * ndmi_stress +
-            self.weights.vpd * vpd_stress +
-            self.weights.soil * soil_stress
+            self.weights.ndmi * ndmi_stress
+            + self.weights.vpd * vpd_stress
+            + self.weights.soil * soil_stress
         )
 
         return np.clip(ewsı, 0, 1)
@@ -125,7 +129,9 @@ class EWSI(ScientificModel):
         tolerance: float = 0.1,
     ) -> ValidationResult:
         computed = self.compute(**inputs)
-        computed_value = float(np.mean(computed)) if isinstance(computed, np.ndarray) else float(computed)
+        computed_value = (
+            float(np.mean(computed)) if isinstance(computed, np.ndarray) else float(computed)
+        )
 
         relative_error = abs(computed_value - reference_output) / (reference_output + 1e-9)
 
@@ -143,7 +149,5 @@ class EWSI(ScientificModel):
     def classify(ewsı: np.ndarray) -> np.ndarray:
         """طبقه‌بندی سطح تنش آبی"""
         return np.select(
-            [ewsı < 0.3, ewsı < 0.6, ewsı < 0.8],
-            ["optimal", "mild", "moderate"],
-            default="severe"
+            [ewsı < 0.3, ewsı < 0.6, ewsı < 0.8], ["optimal", "mild", "moderate"], default="severe"
         )

@@ -1,0 +1,312 @@
+# Alert Rules for Eco Nojin API Gateway
+# ======================================
+# Prometheus alerting rules for monitoring the Eco Nojin platform
+# Apply with: kubectl apply -f monitoring/alerts.yml
+
+groups:
+  - name: eco-nojin-api
+    interval: 30s
+    rules:
+      # === Service Health ===
+      - alert: APIHighLatency
+        expr: |
+          histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{job="eco-nojin-api"}[5m])) > 0.2
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High API latency (P99 > 200ms)"
+          description: "P99 latency is {{ $value | humanizeDuration }} for {{ $labels.instance }}"
+          runbook_url: "https://docs.econojin.io/operations/runbooks/high-latency"
+
+      - alert: APIVeryHighLatency
+        expr: |
+          histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{job="eco-nojin-api"}[5m])) > 1.0
+        for: 2m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Very high API latency (P99 > 1s)"
+          description: "P99 latency is {{ $value | humanizeDuration }} for {{ $labels.instance }}"
+          runbook_url: "https://docs.econojin.io/operations/runbooks/high-latency"
+
+      - alert: APIHighErrorRate
+        expr: |
+          sum(rate(http_requests_total{job="eco-nojin-api",status=~"5.."}[5m])) 
+          / sum(rate(http_requests_total{job="eco-nojin-api"}[5m])) > 0.05
+        for: 3m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "High API error rate (> 5%)"
+          description: "Error rate is {{ $value | humanizePercentage }} for {{ $labels.instance }}"
+          runbook_url: "https://docs.econojin.io/operations/runbooks/high-error-rate"
+
+      - alert: APIDown
+        expr: up{job="eco-nojin-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "API instance down"
+          description: "{{ $labels.instance }} has been down for more than 1 minute"
+          runbook_url: "https://docs.econojin.io/operations/runbooks/api-down"
+
+  - name: eco-nojin-cache
+    interval: 30s
+    rules:
+      # === Cache Health ===
+      - alert: CacheDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Redis cache down"
+          description: "Redis cache is unreachable"
+          runbook_url: "https://docs.econojin.io/operations/runbooks/redis-down"
+
+      - alert: CacheHighLatency
+        expr: |
+          histogram_quantile(0.99, rate(redis_command_duration_seconds_bucket{command=~"GET|SET"}[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High Redis latency (P99 > 50ms)"
+          description: "Redis command latency is {{ $value | humanizeDuration }}"
+
+      - alert: CacheLowHitRate
+        expr: |
+          sum(rate(cache_hits_total[5m])) / sum(rate(cache_requests_total[5m])) < 0.5
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Low cache hit rate (< 50%)"
+          description: "Cache hit rate is {{ $value | humanizePercentage }}. Consider warming cache or adjusting TTL."
+
+      - alert: CacheMemoryHigh
+        expr: |
+          redis_memory_used_bytes / redis_memory_max_bytes > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Redis memory usage high (> 85%)"
+          description: "Redis memory usage is {{ $value | humanizePercentage }}. Consider increasing memory or reducing TTL."
+
+      - alert: CacheMemoryCritical
+        expr: |
+          redis_memory_used_bytes / redis_memory_max_bytes > 0.95
+        for: 2m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Redis memory critically high (> 95%)"
+          description: "Redis memory usage is {{ $value | humanizePercentage }}. Immediate action required."
+
+      - alert: CacheInvalidationFailures
+        expr: |
+          rate(cache_invalidation_failures_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Cache invalidation failures detected"
+          description: "Invalidation failure rate is {{ $value }}/sec. Check Redis pub/sub connectivity."
+
+  - name: eco-nojin-database
+    interval: 30s
+    rules:
+      # === Database Health ===
+      - alert: DatabaseDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "PostgreSQL database down"
+          description: "Database is unreachable"
+          runbook_url: "https://docs.econojin.io/operations/runbooks/db-down"
+
+      - alert: DatabaseHighConnections
+        expr: |
+          pg_stat_activity_count / pg_settings_max_connections > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High database connection usage (> 80%)"
+          description: "{{ $value | humanizePercentage }} of max connections in use"
+
+      - alert: DatabaseSlowQueries
+        expr: |
+          histogram_quantile(0.95, rate(pg_query_duration_seconds_bucket[5m])) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Slow database queries (P95 > 1s)"
+          description: "P95 query duration is {{ $value | humanizeDuration }}"
+
+      - alert: DatabaseReplicationLag
+        expr: |
+          pg_replication_lag_bytes > 100000000
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Database replication lag > 100MB"
+          description: "Replication lag is {{ $value | humanizeBytes }}"
+
+  - name: eco-nojin-sync
+    interval: 60s
+    rules:
+      # === Sync Service ===
+      - alert: SyncPendingEventsHigh
+        expr: |
+          sync_pending_events > 1000
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High number of pending sync events (> 1000)"
+          description: "{{ $value }} events pending synchronization to Supabase"
+
+      - alert: SyncPendingEventsCritical
+        expr: |
+          sync_pending_events > 10000
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Critical number of pending sync events (> 10000)"
+          description: "{{ $value }} events pending. Supabase sync may be failing."
+
+      - alert: SyncSupabaseDisconnected
+        expr: |
+          sync_supabase_connected == 0
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Supabase disconnected"
+          description: "Sync service cannot connect to Supabase. Check credentials and network."
+
+      - alert: SyncFailureRateHigh
+        expr: |
+          rate(sync_failures_total[15m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High sync failure rate"
+          description: "Sync failure rate is {{ $value }}/sec. Check Supabase logs."
+
+  - name: eco-nojin-realtime
+    interval: 60s
+    rules:
+      # === Realtime SSE ===
+      - alert: RealtimeConnectionsHigh
+        expr: |
+          realtime_active_connections > 10000
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High realtime SSE connections (> 10000)"
+          description: "{{ $value }} active SSE connections. Consider scaling."
+
+      - alert: RealtimeStreamErrors
+        expr: |
+          rate(realtime_stream_errors_total[5m]) > 1
+        for: 3m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High SSE stream error rate"
+          description: "SSE stream error rate is {{ $value }}/sec"
+
+  - name: eco-nojin-cpp
+    interval: 60s
+    rules:
+      # === C++ Core ===
+      - alert: CppCoreUnavailable
+        expr: |
+          cpp_core_available == 0
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "C++ core unavailable, using Python fallback"
+          description: "C++ accelerated functions are not available. Performance degraded."
+
+      - alert: CppFallbackRateHigh
+        expr: |
+          rate(cpp_fallback_calls_total[5m]) / rate(cpp_calls_total[5m]) > 0.5
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High C++ fallback rate (> 50%)"
+          description: "More than 50% of C++ calls are falling back to Python. Check C++ build."
+
+  - name: eco-nojin-business
+    interval: 300s
+    rules:
+      # === Business Metrics ===
+      - alert: NewUserRegistrationsDrop
+        expr: |
+          rate(user_registrations_total[1h]) < 0.1
+        for: 2h
+        labels:
+          severity: info
+          team: product
+        annotations:
+          summary: "Low new user registrations"
+          description: "Only {{ $value }} registrations per hour. Check signup flow."
+
+      - alert: ActiveUsersDrop
+        expr: |
+          active_users_daily < 100
+        for: 6h
+        labels:
+          severity: warning
+          team: product
+        annotations:
+          summary: "Low daily active users"
+          description: "Only {{ $value }} daily active users. Check for issues."
+
+      - alert: SyncEventsBacklogGrowing
+        expr: |
+          sync_pending_events > sync_pending_events 1h ago
+        for: 30m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Sync events backlog growing"
+          description: "Pending sync events are increasing. Sync service may be stalled."

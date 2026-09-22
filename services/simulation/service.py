@@ -14,7 +14,9 @@ class SimulationService:
         self.orchestrator = SimulationOrchestrator()
 
     async def run_simulation(
-        self, sim_type: SimulationType, ctx: SimulationContext,
+        self,
+        sim_type: SimulationType,
+        ctx: SimulationContext,
     ) -> SimulationResult:
         return await self.orchestrator.run_single(sim_type, ctx)
 

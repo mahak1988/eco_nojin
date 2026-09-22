@@ -1,4 +1,5 @@
 """RothC Motor - Soil Organic Carbon Model (5-pool, Numerically Stable)."""
+
 from __future__ import annotations
 
 import time
@@ -20,11 +21,11 @@ from .base import (
 # RothC pool decomposition rates (yr^-1)
 # Reduced rates for numerical stability
 ROTHC_RATES = {
-    "dpm": 1.0,    # Decomposable plant material (was 10, reduced for stability)
-    "rpm": 0.3,    # Resistant plant material
-    "bio": 0.66,   # Microbial biomass
-    "hum": 0.02,   # Humified organic matter
-    "iom": 0.0,    # Inert organic matter (stable)
+    "dpm": 1.0,  # Decomposable plant material (was 10, reduced for stability)
+    "rpm": 0.3,  # Resistant plant material
+    "bio": 0.66,  # Microbial biomass
+    "hum": 0.02,  # Humified organic matter
+    "iom": 0.0,  # Inert organic matter (stable)
 }
 
 # Carbon partitioning: DPM/RPM ratio depends on land use

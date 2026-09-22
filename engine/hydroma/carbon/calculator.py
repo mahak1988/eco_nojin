@@ -1,4 +1,4 @@
-"""Carbon sequestration calculator for various project types.
+"""Carbon sequestration calculator for project-level estimation.
 
 Implements methodologies from:
 - Verra VCS (Verified Carbon Standard)
@@ -10,6 +10,22 @@ Project types supported:
 - Soil Carbon (no-till, cover crops, compost)
 - Biochar
 - Agroforestry
+
+Role: **Project-level accounting & screening** — uses IPCC Tier 1 default
+sequestration rates and regional adjustment factors for rapid project
+screening and economic valuation. Does NOT simulate process-based
+soil carbon dynamics; uses fixed annual rates per project type.
+
+For process-based, site-specific soil carbon dynamics with monthly
+climate forcing, use:
+    - engine.hydroma.simulation.runners.rothc_runner.run_rothc (canonical)
+    - engine.hydroma.models.ecsi.ECSI (annual interface, delegates to above)
+
+LIMITATIONS:
+- These are regional averages for planning/estimation only.
+- Actual sequestration depends on species, soil, climate, and management.
+- Do NOT use these values for certified carbon credit issuance without
+  project-specific measurement and third-party verification.
 """
 
 import uuid

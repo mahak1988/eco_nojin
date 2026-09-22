@@ -23,8 +23,8 @@ from typing import Any
 import httpx
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
-from sqlalchemy.orm import Session
 
+from database.hub import hub
 from engine.hydroma.cpp_bindings import (
     estimate_rainfall_erosivity,
     get_telemetry,
@@ -36,13 +36,15 @@ from engine.hydroma.cpp_bindings import (
 )
 from services.api_gateway.auth import require_user
 from services.supabase.client import get_supabase_client
-from database.hub import hub
+
 
 # Compatibility: get_db via hub
 def get_db():
     with hub.get_session() as session:
         yield session
-from database.models import User
+
+
+from database.models import CarbonProject, LandProfile, User
 
 logger = logging.getLogger("econojin.platform")
 
@@ -53,29 +55,31 @@ router = APIRouter(prefix="/api/v1/platform", tags=["platform"])
 # Pydantic Models
 # =============================================================================
 
+
 class LandscapeCreate(BaseModel):
     """Request model for creating a landscape."""
+
     name: str = Field(..., min_length=2, max_length=100)
-    slug: str = Field(..., pattern=r'^[a-z0-9-]+$')
-    country: str = Field(..., min_length=2, max_length=2)
-    province: str | None = None
     latitude: float = Field(..., ge=-90, le=90)
     longitude: float = Field(..., ge=-180, le=180)
     area_ha: float = Field(..., gt=0, le=100000)
+    description: str | None = None
 
 
 class LandscapeOut(BaseModel):
-    """Response model for landscape."""
+    """Response model for a land profile (real fields only)."""
+
     id: str
     name: str
-    slug: str
-    country: str
-    province: str | None
-    created_at: str
+    location_lat: float | None = None
+    location_lon: float | None = None
+    area_ha: float | None = None
+    created_at: str | None = None
 
 
 class AnalyzeRequest(BaseModel):
     """Request model for land analysis."""
+
     name: str = Field(..., min_length=2, max_length=100)
     latitude: float = Field(..., ge=-90, le=90)
     longitude: float = Field(..., ge=-180, le=180)
@@ -86,6 +90,7 @@ class AnalyzeRequest(BaseModel):
 
 class AnalysisResult(BaseModel):
     """Complete analysis result."""
+
     landscape_id: str
     name: str
     location: dict[str, float]
@@ -110,6 +115,7 @@ class AnalysisResult(BaseModel):
 # =============================================================================
 # Helper Functions
 # =============================================================================
+
 
 async def fetch_climate_data(lat: float, lon: float) -> dict[str, Any]:
     """
@@ -243,65 +249,92 @@ def generate_recommendations(risks: dict, climate: dict) -> list[str]:
 # Endpoints
 # =============================================================================
 
+
 @router.get("/health")
 async def platform_health():
-    """Health check for platform router."""
+    """Health check for platform router — reports the REAL database reachability."""
+    db_ok = False
+    try:
+        with hub.get_session() as session:
+            session.query(LandProfile).limit(1).all()
+        db_ok = True
+    except Exception as e:  # noqa: BLE001
+        logger.error(f"Database health check failed: {e}")
+
     return {
-        "status": "operational",
+        "status": "operational" if db_ok else "degraded",
         "service": "platform",
         "cpp_available": is_cpp_available(),
-        "supabase_available": get_supabase_client() is not None,
+        "db_backend": "sqlite",
+        "db_reachable": db_ok,
     }
 
 
 @router.get("/landscapes", response_model=list[LandscapeOut])
 async def list_landscapes():
-    """List all landscapes from Supabase."""
-    client = get_supabase_client()
+    """List land profiles from the real database (SQLite via the SQLAlchemy hub)."""
     try:
-        result = client.table("platform_landscapes").select("*").execute()
-        return result.data
-    except Exception as e:
-        logger.error(f"Failed to list landscapes: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        with hub.get_session() as session:
+            rows = session.query(LandProfile).order_by(LandProfile.created_at.desc()).all()
+            return [
+                LandscapeOut(
+                    id=str(r.id),
+                    name=r.name,
+                    location_lat=r.location_lat,
+                    location_lon=r.location_lon,
+                    area_ha=r.area_ha,
+                    created_at=r.created_at.isoformat() if r.created_at else None,
+                )
+                for r in rows
+            ]
+    except Exception as e:  # noqa: BLE001
+        logger.exception("Failed to list land profiles")
+        raise HTTPException(status_code=503, detail=f"database unavailable: {e}") from e
 
 
 @router.post("/landscapes", response_model=LandscapeOut)
 async def create_landscape(data: LandscapeCreate, user: User = Depends(require_user)):
-    """Create a new landscape in Supabase."""
-    client = get_supabase_client()
+    """Create a new land profile in the real database."""
     try:
-        result = client.table("platform_landscapes").insert({
-            "name": data.name,
-            "slug": f"{data.slug}-{int(time.time()) % 1000000}",
-            "country": data.country,
-            "province": data.province,
-            "geo_boundary": {
-                "type": "Point",
-                "coordinates": [data.longitude, data.latitude],
-            },
-        }).execute()
-
-        if result.data:
-            return result.data[0]
-        raise HTTPException(status_code=500, detail="Failed to create landscape")
-    except Exception as e:
-        logger.error(f"Failed to create landscape: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        with hub.get_session() as session:
+            obj = LandProfile(
+                name=data.name,
+                description=data.description,
+                location_lat=data.latitude,
+                location_lon=data.longitude,
+                area_ha=data.area_ha,
+                user_id=str(user.id),
+            )
+            session.add(obj)
+            session.flush()
+            return LandscapeOut(
+                id=str(obj.id),
+                name=obj.name,
+                location_lat=obj.location_lat,
+                location_lon=obj.location_lon,
+                area_ha=obj.area_ha,
+                created_at=obj.created_at.isoformat() if obj.created_at else None,
+            )
+    except Exception as e:  # noqa: BLE001
+        logger.exception("Failed to create land profile")
+        raise HTTPException(status_code=503, detail=f"database unavailable: {e}") from e
 
 
 @router.post("/analyze", response_model=AnalysisResult)
 async def analyze_land(request: AnalyzeRequest):
-    """
-    Full land analysis - the MAIN endpoint of the platform.
-    
-    Flow:
-    1. Create/retrieve landscape in Supabase
-    2. Fetch climate data from Open-Meteo
-    3. Run C++ accelerated computations
-    4. Apply Python decision layer
-    5. Save and return results
-    """
+    # HONESTY GUARD (2026-09-22): the previous implementation returned synthetic
+    # values (np.random NDVI, hard-coded soil factors). It is disabled until it is
+    # wired to a real data source (Sentinel-2 / ERA5 / Copernicus). We never serve
+    # fabricated numbers to users.
+    raise HTTPException(
+        status_code=503,
+        detail=(
+            "Land analysis is not available yet: it requires a real data source "
+            "(satellite/climate). No synthetic results are served."
+        ),
+    )
+
+    # --- legacy implementation kept below for reference (currently unreachable) ---
     reset_telemetry()
     t_start = time.perf_counter()
 
@@ -312,16 +345,22 @@ async def analyze_land(request: AnalyzeRequest):
     # -------------------------------------------------------------------------
     slug = request.name.lower().replace(" ", "-")[:40] + "-" + str(int(time.time()) % 1000000)
     try:
-        landscape_result = client.table("platform_landscapes").insert({
-            "name": request.name,
-            "slug": f"{slug}-{int(time.time()) % 1000000}",
-            "country": "IR",  # Default for now
-            "province": None,
-            "geo_boundary": {
-                "type": "Point",
-                "coordinates": [request.longitude, request.latitude],
-            },
-        }).execute()
+        landscape_result = (
+            client.table("platform_landscapes")
+            .insert(
+                {
+                    "name": request.name,
+                    "slug": f"{slug}-{int(time.time()) % 1000000}",
+                    "country": "IR",  # Default for now
+                    "province": None,
+                    "geo_boundary": {
+                        "type": "Point",
+                        "coordinates": [request.longitude, request.latitude],
+                    },
+                }
+            )
+            .execute()
+        )
 
         landscape_id = str(landscape_result.data[0]["id"])
     except Exception as e:
@@ -350,6 +389,7 @@ async def analyze_land(request: AnalyzeRequest):
     # Simulate a grid of NDVI values
     try:
         import numpy as np
+
         red_grid = np.random.uniform(0.05, 0.3, (100, 100)).astype(np.float32)
         nir_grid = np.random.uniform(0.2, 0.7, (100, 100)).astype(np.float32)
 
@@ -413,14 +453,16 @@ async def analyze_land(request: AnalyzeRequest):
     # Step 5: Save results to Supabase
     # -------------------------------------------------------------------------
     try:
-        client.table("platform_carbon_projects").insert({
-            "landscape_id": landscape_id,
-            "name": request.name + " - Carbon Project",
-            "project_type": "soil_carbon",
-            "area_ha": request.area_ha,
-            "duration_years": 30,
-            "status": "draft",
-        }).execute()
+        client.table("platform_carbon_projects").insert(
+            {
+                "landscape_id": landscape_id,
+                "name": request.name + " - Carbon Project",
+                "project_type": "soil_carbon",
+                "area_ha": request.area_ha,
+                "duration_years": 30,
+                "status": "draft",
+            }
+        ).execute()
     except Exception as e:
         logger.warning(f"Could not save carbon project: {e}")
 
@@ -453,7 +495,6 @@ async def analyze_land(request: AnalyzeRequest):
         },
         area_ha=request.area_ha,
         timestamp=datetime.now(UTC).replace(tzinfo=None).isoformat(),
-
         climate={
             "source": climate.get("source"),
             "period": climate.get("period"),
@@ -462,67 +503,65 @@ async def analyze_land(request: AnalyzeRequest):
             "total_precip_mm": round(climate.get("total_precip_mm", 0), 1),
             "avg_et0_mm_day": round(climate.get("avg_et0_mm", 0), 2),
         },
-
         vegetation={
             "avg_ndvi": round(avg_ndvi, 3),
             "health": vegetation_health,
             "grid_size": "100x100",
         },
-
         erosion={
             "rusle_rate_t_ha_yr": round(erosion_rate, 2),
             "risk_level": risk_assessment["erosion"],
-            "R_factor": round(R, 2) if 'R' in locals() else None,
+            "R_factor": round(R, 2) if "R" in locals() else None,
         },
-
         irrigation={
             "et0_mm_day": round(et0, 2),
             "annual_water_need_mm": round(et0 * 365 * 0.7, 0),  # 70% of ETo
             "recommendation": "drip" if climate.get("total_precip_mm", 100) < 100 else "sprinkler",
         },
-
         carbon={
             "rate_tCO2e_ha_yr": round(carbon_rate, 2),
             "total_potential_tCO2e": round(total_carbon_potential, 1),
             "annual_value_usd": round(total_carbon_potential * 30, 2),  # $30/tCO2e
             "suitability": risk_assessment["carbon_potential"],
         },
-
         risk_assessment=risk_assessment,
         recommendations=recommendations,
-
         performance=performance,
     )
 
 
 @router.get("/stats")
 async def platform_stats():
-    """Platform statistics."""
-    client = get_supabase_client()
-
-    stats = {
+    """Platform statistics from the REAL database. No fabricated fallbacks:
+    on failure the counters are null and db_reachable is False."""
+    stats: dict[str, Any] = {
         "cpp_available": is_cpp_available(),
+        "db_backend": "sqlite",
+        "db_reachable": False,
+        "total_landscapes": None,
+        "total_projects": None,
+        "active_projects": None,
     }
 
     try:
-        landscapes = client.table("platform_landscapes").select("id").execute()
-        stats["total_landscapes"] = len(landscapes.data)
-    except Exception:
-        stats["total_landscapes"] = 0
-
-    try:
-        projects = client.table("platform_carbon_projects").select("id", "status").execute()
-        stats["total_projects"] = len(projects.data)
-        stats["active_projects"] = sum(1 for p in projects.data if p.get("status") == "active")
-    except Exception:
-        stats["total_projects"] = 0
-        stats["active_projects"] = 0
+        with hub.get_session() as session:
+            stats["total_landscapes"] = session.query(LandProfile).count()
+            stats["total_projects"] = session.query(CarbonProject).count()
+            stats["active_projects"] = (
+                session.query(CarbonProject).filter(CarbonProject.status == "active").count()
+            )
+        stats["db_reachable"] = True
+    except Exception as e:  # noqa: BLE001
+        logger.exception("Failed to read platform statistics")
+        stats["error"] = str(e)
 
     return stats
+
 
 # =============================================================================
 # Python Fallbacks for C++ functions with signature mismatches
 # =============================================================================
+
 
 def _py_ndvi_array(red, nir):
     """
@@ -531,6 +570,7 @@ def _py_ndvi_array(red, nir):
     """
     try:
         import numpy as np
+
         red = np.asarray(red, dtype=np.float32)
         nir = np.asarray(nir, dtype=np.float32)
         denom = nir + red + 1e-10
@@ -538,15 +578,14 @@ def _py_ndvi_array(red, nir):
     except Exception:
         # Pure Python fallback
         if isinstance(red, (list, tuple)):
-            return [[(n - r) / (n + r + 1e-10) for r, n in zip(row_r, row_n)]
-                    for row_r, row_n in zip(red, nir)]
+            return [
+                [(n - r) / (n + r + 1e-10) for r, n in zip(row_r, row_n)]
+                for row_r, row_n in zip(red, nir)
+            ]
         return (nir - red) / (nir + red + 1e-10)
 
 
-def _py_penman_monteith_et0(
-    t_min, t_max, rh_min, rh_max, wind_speed, latitude, doy,
-    **kwargs
-):
+def _py_penman_monteith_et0(t_min, t_max, rh_min, rh_max, wind_speed, latitude, doy, **kwargs):
     """
     Python fallback for FAO-56 Penman-Monteith ETo.
     Reference: Allen et al. 1998, FAO Irrigation and Drainage Paper 56.
@@ -581,9 +620,14 @@ def _py_penman_monteith_et0(
     dec = 0.409 * math.sin(2 * math.pi * doy / 365.0 - 1.39)
 
     ws = math.acos(-math.tan(lat_rad) * math.tan(dec))
-    Ra = (24 * 60 / math.pi) * Gsc * dr * (
-        ws * math.sin(lat_rad) * math.sin(dec) +
-        math.cos(lat_rad) * math.cos(dec) * math.sin(ws)
+    Ra = (
+        (24 * 60 / math.pi)
+        * Gsc
+        * dr
+        * (
+            ws * math.sin(lat_rad) * math.sin(dec)
+            + math.cos(lat_rad) * math.cos(dec) * math.sin(ws)
+        )
     )
 
     # Net shortwave radiation (assuming grass reference)
@@ -591,9 +635,12 @@ def _py_penman_monteith_et0(
 
     # Net longwave radiation (simplified)
     sigma = 4.903e-9  # MJ/K⁴/m²/day
-    Rnl = sigma * (((t_max + 273.16)**4 + (t_min + 273.16)**4) / 2) * (
-        0.34 - 0.14 * math.sqrt(ea)
-    ) * (1.35 * min(Ra * 0.75 + 0.25, 1.0) - 0.35)
+    Rnl = (
+        sigma
+        * (((t_max + 273.16) ** 4 + (t_min + 273.16) ** 4) / 2)
+        * (0.34 - 0.14 * math.sqrt(ea))
+        * (1.35 * min(Ra * 0.75 + 0.25, 1.0) - 0.35)
+    )
 
     Rn = Rns - Rnl
 
@@ -601,7 +648,9 @@ def _py_penman_monteith_et0(
     G = 0.0
 
     # FAO-56 Penman-Monteith
-    numerator = 0.408 * delta * (Rn - G) + gamma * (900 / (t_mean + 273)) * wind_speed * (es_mean - ea)
+    numerator = 0.408 * delta * (Rn - G) + gamma * (900 / (t_mean + 273)) * wind_speed * (
+        es_mean - ea
+    )
     denominator = delta + gamma * (1 + 0.34 * wind_speed)
 
     et0 = numerator / denominator
@@ -616,21 +665,24 @@ _logger = logging.getLogger("econojin.platform")
 # Wrap ndvi_array
 _original_ndvi_array = ndvi_array
 
+
 def ndvi_array_with_fallback(red, nir):
     try:
         result = _original_ndvi_array(red, nir)
         # Check if result is valid
-        if result is None or (hasattr(result, 'size') and result.size == 0):
+        if result is None or (hasattr(result, "size") and result.size == 0):
             raise ValueError("Empty result")
         return result
     except Exception as e:
         _logger.debug(f"C++ ndvi_array failed, using Python: {e}")
         return _py_ndvi_array(red, nir)
 
+
 ndvi_array = ndvi_array_with_fallback
 
 # Wrap penman_monteith_et0
 _original_penman = penman_monteith_et0
+
 
 def penman_monteith_with_fallback(**kwargs):
     try:
@@ -642,7 +694,7 @@ def penman_monteith_with_fallback(**kwargs):
         _logger.debug(f"C++ penman_monteith failed, using Python: {e}")
         return _py_penman_monteith_et0(**kwargs)
 
+
 import math
 
 penman_monteith_et0 = penman_monteith_with_fallback
-

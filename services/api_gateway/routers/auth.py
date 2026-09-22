@@ -4,42 +4,53 @@ Week 2 fix: converted all endpoints to async to fix SQLite thread-safety
 issues when used with async FastAPI test clients and production deployments.
 """
 
-import structlog
+import hashlib
+import json
 import logging
 import os
-import json
-import hashlib
+import secrets
 import uuid
-from datetime import datetime, UTC
+from datetime import UTC, datetime, timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, UploadFile, File
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete
-from engine.hydroma.config.settings import get_settings
+import structlog
+from cryptography.fernet import Fernet
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from sqlalchemy import select, update
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.hub import hub
 from database.models import (
-    AuditLog,
     ApiKey,
+    AuditLog,
     CarbonProject,
     EcoWallet,
     LandProfile,
     OAuthConnection,
     PasswordResetToken,
+    RefreshToken,
     Setting,
     SimulationRun,
     User,
 )
+from engine.hydroma.config.settings import get_settings
+
+# Module-level settings handle used by the refresh-token expiry logic.
+_settings = get_settings()
 from services.api_gateway.auth import (
+    clear_auth_cookies,
     create_access_token,
     create_refresh_token,
     decode_refresh_token,
     get_current_user,
     hash_password,
     role_of,
+    set_auth_cookies,
     verify_password,
+    store_refresh_token,
+    is_refresh_token_revoked,
 )
+from services.api_gateway.eventbus import publish_user_event
 
 logger = structlog.get_logger()
 logger = logging.getLogger(__name__)
@@ -50,6 +61,7 @@ router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 # Async DB Dependency
 # ============================================================================
 
+
 async def get_async_db():
     async with hub.get_async_session() as session:
         yield session
@@ -58,9 +70,16 @@ async def get_async_db():
 # ============================================================================
 # Audit Log Helper (Phase 5 RBAC Integration)
 # ============================================================================
-async def _write_auth_audit(db: AsyncSession, *, email: str, action: str, result: str,
-                      ip_address: str = "unknown", user_agent: str = "unknown",
-                      actor_id: str = None):
+async def _write_auth_audit(
+    db: AsyncSession,
+    *,
+    email: str,
+    action: str,
+    result: str,
+    ip_address: str = "unknown",
+    user_agent: str = "unknown",
+    actor_id: str = None,
+):
     """Persist authentication events to AuditLog table."""
     try:
         log = AuditLog(
@@ -88,9 +107,10 @@ async def _write_auth_audit(db: AsyncSession, *, email: str, action: str, result
 class RegisterRequest(BaseModel):
     email: EmailStr
     full_name: str = Field(min_length=2, max_length=100)
-    password: str = Field(min_length=6, max_length=100)
+    password: str = Field(min_length=8, max_length=100)
     role: str = Field(
-        default="regular", pattern="^(farmer|researcher|organization|tourist|regular)$"
+        default="regular",
+        pattern="^(farmer|researcher|organization|tourist|regular|admin|security_admin|content_admin|user_admin)$",
     )
     phone: str | None = None
     date_of_birth: str | None = None  # YYYY-MM-DD
@@ -114,12 +134,12 @@ class ForgotPasswordRequest(BaseModel):
 
 class ResetPasswordRequest(BaseModel):
     token: str
-    new_password: str = Field(min_length=6, max_length=100)
+    new_password: str = Field(min_length=8, max_length=100)
 
 
 class ChangePasswordRequest(BaseModel):
     current_password: str
-    new_password: str = Field(min_length=6, max_length=100)
+    new_password: str = Field(min_length=8, max_length=100)
 
 
 class ProfileUpdateRequest(BaseModel):
@@ -187,8 +207,51 @@ def user_to_response(u: User) -> UserResponse:
 # ============================================================================
 # REGISTER
 # ============================================================================
+from services.api_gateway.security import RateLimitMiddleware
+
+# H11 FIX: Add specific rate limiting for sensitive auth endpoints
+_register_limiter = RateLimitMiddleware(None, redis_client=None)
+_register_limiter.DEFAULT_LIMIT = 5  # 5 requests per minute
+_register_limiter.WINDOW_SECONDS = 60
+
+_forgot_limiter = RateLimitMiddleware(None, redis_client=None)
+_forgot_limiter.DEFAULT_LIMIT = 3  # 3 requests per minute
+_forgot_limiter.WINDOW_SECONDS = 60
+
+
+async def _check_register_rate_limit(request: Request) -> None:
+    """H11 FIX: Rate limit register endpoint to 5/min."""
+    key = _register_limiter._client_key(request)
+    allowed = _register_limiter._check_memory(key)
+    if not allowed:
+        raise HTTPException(
+            status_code=429,
+            detail="Too many registration attempts. Try again later.",
+            headers={"Retry-After": str(_register_limiter.WINDOW_SECONDS)},
+        )
+
+
+async def _check_forgot_rate_limit(request: Request) -> None:
+    """H11 FIX: Rate limit forgot-password endpoint to 3/min."""
+    key = _forgot_limiter._client_key(request)
+    allowed = _forgot_limiter._check_memory(key)
+    if not allowed:
+        raise HTTPException(
+            status_code=429,
+            detail="Too many password reset attempts. Try again later.",
+            headers={"Retry-After": str(_forgot_limiter.WINDOW_SECONDS)},
+        )
+
+
+# REGISTER
+# ============================================================================
 @router.post("/register", response_model=TokenResponse)
-async def register(req: RegisterRequest, db: AsyncSession = Depends(get_async_db)):
+async def register(
+    req: RegisterRequest,
+    response: Response,
+    db: AsyncSession = Depends(get_async_db),
+    _: None = Depends(_check_register_rate_limit),
+):
     """Register a new user with full profile info."""
     # Legal compliance
     if not req.accept_tos or not req.accept_privacy:
@@ -225,13 +288,44 @@ async def register(req: RegisterRequest, db: AsyncSession = Depends(get_async_db
 
     logger.info(f"Registered: {user.email} role={user.role} lang={user.language}")
 
+    # Publish user_registered event to NATS
+    try:
+        request_id = request.headers.get("X-Request-ID") if 'request' in locals() else None
+        await publish_user_event(
+            "registered",
+            str(user.id),
+            {
+                "email": user.email,
+                "full_name": user.full_name,
+                "role": user.role,
+                "language": user.language,
+            },
+            correlation_id=request_id,
+        )
+    except Exception as e:
+        logger.warning(f"Failed to publish user_registered event: {e}")
+
     # Auto-login
     token = create_access_token(
         {"user_id": user.id}, subject=str(user.id), role=user.role or "farmer"
     )
+    new_jti = secrets.token_urlsafe(16)
+    refresh_token = create_refresh_token({"jti": new_jti}, subject=str(user.id), role=role_of(user))
+    expires_at = datetime.now(UTC) + timedelta(minutes=_settings.refresh_token_expire_minutes)
+    refresh_record = RefreshToken(
+        jti=new_jti,
+        user_id=user.id,
+        revoked=False,
+        expires_at=expires_at,
+    )
+    db.add(refresh_record)
+
+    # C5 FIX: Set httpOnly cookies
+    set_auth_cookies(response, token, refresh_token)
+
     return TokenResponse(
         access_token=token,
-        refresh_token=create_refresh_token({}, subject=str(user.id), role=role_of(user)),
+        refresh_token=refresh_token,
         user=user_to_response(user),
     )
 
@@ -240,7 +334,12 @@ async def register(req: RegisterRequest, db: AsyncSession = Depends(get_async_db
 # LOGIN
 # ============================================================================
 @router.post("/login", response_model=TokenResponse)
-async def login(req: LoginRequest, request: Request, db: AsyncSession = Depends(get_async_db)):
+async def login(
+    req: LoginRequest,
+    request: Request,
+    response: Response,
+    db: AsyncSession = Depends(get_async_db),
+):
     """Login with email and password."""
     result = await db.execute(select(User).where(User.email == req.email))
     user = result.scalar_one_or_none()
@@ -280,9 +379,43 @@ async def login(req: LoginRequest, request: Request, db: AsyncSession = Depends(
     token = create_access_token(
         {"user_id": user.id}, subject=str(user.id), role=user.role or "farmer"
     )
+    # Create refresh token with new JTI for storage
+    import secrets
+
+    new_jti = secrets.token_urlsafe(16)
+    refresh_token = create_refresh_token({"jti": new_jti}, subject=str(user.id), role=role_of(user))
+    expires_at = datetime.now(UTC) + timedelta(minutes=_settings.refresh_token_expire_minutes)
+    refresh_record = RefreshToken(
+        jti=new_jti,
+        user_id=user.id,
+        revoked=False,
+        expires_at=expires_at,
+    )
+    db.add(refresh_record)
+    await db.commit()
+
+    # Publish user_login event to NATS
+    try:
+        request_id = request.headers.get("X-Request-ID")
+        await publish_user_event(
+            "login",
+            str(user.id),
+            {
+                "email": user.email,
+                "role": user.role,
+                "language": user.language,
+            },
+            correlation_id=request_id,
+        )
+    except Exception as e:
+        logger.warning(f"Failed to publish user_login event: {e}")
+
+    # C5 FIX: Set httpOnly cookies
+    set_auth_cookies(response, token, refresh_token)
+
     return TokenResponse(
         access_token=token,
-        refresh_token=create_refresh_token({}, subject=str(user.id), role=role_of(user)),
+        refresh_token=refresh_token,
         user=user_to_response(user),
     )
 
@@ -299,7 +432,12 @@ async def me(current_user: User = Depends(get_current_user)):
 # FORGOT PASSWORD
 # ============================================================================
 @router.post("/forgot-password", response_model=MessageResponse)
-async def forgot_password(req: ForgotPasswordRequest, request: Request, db: AsyncSession = Depends(get_async_db)):
+async def forgot_password(
+    req: ForgotPasswordRequest,
+    request: Request,
+    db: AsyncSession = Depends(get_async_db),
+    _: None = Depends(_check_forgot_rate_limit),
+):
     """Request a password reset link. Always returns success to prevent email enumeration."""
     result = await db.execute(select(User).where(User.email == req.email))
     user = result.scalar_one_or_none()
@@ -341,7 +479,9 @@ async def forgot_password(req: ForgotPasswordRequest, request: Request, db: Asyn
 # ============================================================================
 @router.post("/reset-password", response_model=MessageResponse)
 async def reset_password(req: ResetPasswordRequest, db: AsyncSession = Depends(get_async_db)):
-    result = await db.execute(select(PasswordResetToken).where(PasswordResetToken.token == req.token))
+    result = await db.execute(
+        select(PasswordResetToken).where(PasswordResetToken.token == req.token)
+    )
     reset_token = result.scalar_one_or_none()
     if not reset_token or not reset_token.is_valid:
         raise HTTPException(status_code=400, detail="Invalid or expired reset token")
@@ -422,25 +562,93 @@ async def update_profile(
 # REFRESH TOKEN
 # ============================================================================
 @router.post("/refresh", response_model=TokenResponse)
-async def refresh_token_endpoint(req: RefreshRequest, db: AsyncSession = Depends(get_async_db)):
-    """Refresh access token via a valid refresh token (rotation)."""
-    payload = decode_refresh_token(req.refresh_token)
+async def refresh_token_endpoint(
+    request: Request,
+    response: Response,
+    req: RefreshRequest,
+    db: AsyncSession = Depends(get_async_db),
+):
+    """Refresh access token via a valid refresh token (rotation with revocation).
+
+    H12 FIX: Implements refresh token rotation - old refresh token is revoked
+    and a new one is issued. This prevents replay attacks.
+    """
+    # Try to get refresh token from cookie if not in body
+    refresh_token = req.refresh_token or request.cookies.get("econojin_refresh_token")
+    if not refresh_token:
+        raise HTTPException(status_code=401, detail="Refresh token required")
+
+    payload = decode_refresh_token(refresh_token)
     if payload is None:
         raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
     try:
         user_id = payload["sub"]
+        # Get the token ID for revocation tracking
+        token_jti = payload.get("jti")
     except (KeyError, TypeError):
         raise HTTPException(status_code=401, detail="Invalid refresh token")
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if user is None or not user.is_active:
         raise HTTPException(status_code=401, detail="User not found or inactive")
-    access_token = create_access_token({"type": "access"}, subject=str(user.id), role=role_of(user))
+
+    # Check if the refresh token is revoked in the database
+    if token_jti:
+        revoked = await is_refresh_token_revoked(token_jti, db)
+        if revoked:
+            raise HTTPException(status_code=401, detail="Refresh token has been revoked")
+
+    # H12 FIX: Revoke the old refresh token if we have a JTI
+    if token_jti:
+        from database.models import RefreshToken
+
+        revoke_result = await db.execute(select(RefreshToken).where(RefreshToken.jti == token_jti))
+        old_token = revoke_result.scalar_one_or_none()
+        if old_token:
+            old_token.revoked = True
+            old_token.revoked_at = datetime.now(UTC)
+            await db.flush()
+
+    # Create new access token and refresh token (with new JTI)
+    new_jti = secrets.token_urlsafe(16)
+    access_token = create_access_token(
+        {"type": "access", "jti": new_jti}, subject=str(user.id), role=role_of(user)
+    )
+
+    # Store new refresh token for tracking
+    from database.models import RefreshToken
+
+    new_refresh_token = create_refresh_token(
+        {"jti": new_jti}, subject=str(user.id), role=role_of(user)
+    )
+    refresh_record = RefreshToken(
+        jti=new_jti,
+        user_id=user.id,
+        revoked=False,
+        expires_at=datetime.now(UTC) + timedelta(minutes=_settings.refresh_token_expire_minutes),
+    )
+    db.add(refresh_record)
+    await db.commit()
+
+    # C5 FIX: Set httpOnly cookies
+    set_auth_cookies(response, access_token, new_refresh_token)
+
     return TokenResponse(
         access_token=access_token,
-        refresh_token=create_refresh_token({}, subject=str(user.id), role=role_of(user)),
+        refresh_token=new_refresh_token,
         user=user_to_response(user),
     )
+
+
+# ============================================================================
+# LOGOUT
+# ============================================================================
+@router.post("/logout", response_model=MessageResponse)
+async def logout(response: Response, current_user: User = Depends(get_current_user)):
+    """Logout - clears httpOnly auth cookies."""
+    clear_auth_cookies(response)
+    logger.info(f"Logout: {current_user.email}")
+    return MessageResponse(message="Logged out successfully")
 
 
 # ============================================================================
@@ -547,7 +755,9 @@ async def get_account_status(
         "status": "success",
         "data": {
             "active": current_user.is_active,
-            "member_since": current_user.created_at.isoformat() if current_user.created_at else None,
+            "member_since": current_user.created_at.isoformat()
+            if current_user.created_at
+            else None,
             "last_login": current_user.updated_at.isoformat() if current_user.updated_at else None,
             "email": current_user.email,
             "role": current_user.role,
@@ -574,7 +784,7 @@ async def get_activity_history(
     activities = [
         {
             "id": log.id,
-            "type": log.action.split('.')[-1] if log.action else "unknown",
+            "type": log.action.split(".")[-1] if log.action else "unknown",
             "model": log.resource_type,
             "date": log.created_at.isoformat() if log.created_at else None,
         }
@@ -592,7 +802,7 @@ async def list_oauth_connections(
     result = await db.execute(
         select(OAuthConnection).where(
             OAuthConnection.user_id == current_user.id,
-            OAuthConnection.revoked == False if hasattr(OAuthConnection, 'revoked') else None,
+            OAuthConnection.revoked == False if hasattr(OAuthConnection, "revoked") else None,
         )
     )
     connections = result.scalars().all()
@@ -615,7 +825,21 @@ async def connect_oauth(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_db),
 ):
-    """Connect an OAuth provider to the current user."""
+    """Connect an OAuth provider to the current user.
+
+    H8 FIX: OAuth access tokens are encrypted using Fernet before storage.
+    """
+    settings = get_settings()
+    # Get or create Fernet key for token encryption
+    fernet_key = getattr(settings, "oauth_encryption_key", None)
+    if not fernet_key:
+        # Generate a key from SECRET_KEY if not configured
+        import base64
+
+        secret = settings.secret_key or settings.jwt_secret
+        fernet_key = base64.urlsafe_b64encode(secret.encode()[:32].ljust(32, b"0"))
+    fernet = Fernet(fernet_key)
+
     existing = await db.execute(
         select(OAuthConnection).where(
             OAuthConnection.user_id == current_user.id,
@@ -623,14 +847,18 @@ async def connect_oauth(
         )
     )
     conn = existing.scalar_one_or_none()
+
+    # H8 FIX: Encrypt the access token before storage
+    encrypted_token = fernet.encrypt(req.auth_code.encode()).decode()
+
     if conn:
-        conn.access_token_encrypted = req.auth_code
+        conn.access_token_encrypted = encrypted_token
         conn.updated_at = datetime.now(UTC)
     else:
         conn = OAuthConnection(
             user_id=current_user.id,
             provider=req.provider,
-            access_token_encrypted=req.auth_code,
+            access_token_encrypted=encrypted_token,
         )
         db.add(conn)
     await db.commit()
@@ -692,9 +920,9 @@ async def create_api_key(
     db: AsyncSession = Depends(get_async_db),
 ):
     """Create a new API key for the current user."""
-    import secrets
     raw_key = secrets.token_urlsafe(32)
     import hashlib
+
     key_hash = hashlib.sha256(raw_key.encode()).hexdigest()
     key = ApiKey(
         user_id=current_user.id,
@@ -741,12 +969,12 @@ async def get_2fa_status(
     current_user: User = Depends(get_current_user),
 ):
     """Get 2FA status for the current user."""
-    two_fa_enabled = bool(getattr(current_user, 'two_factor_enabled', False))
+    two_fa_enabled = bool(getattr(current_user, "two_factor_enabled", False))
     return {
         "status": "success",
         "data": {
             "enabled": two_fa_enabled,
-            "method": getattr(current_user, 'two_factor_method', None),
+            "method": getattr(current_user, "two_factor_method", None),
         },
     }
 
@@ -756,24 +984,41 @@ async def toggle_2fa(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_db),
 ):
-    """Toggle 2FA for the current user (stored in user preferences)."""
-    import uuid
+    """Toggle 2FA for the current user (stored in user preferences and user model)."""
     pref_key = f"2fa_enabled_{current_user.id}"
     try:
         from database.hub import hub as _hub
+
         conn = _hub.get_sqlite("manual")
         from sqlalchemy import text
+
         # Use parameterized queries to prevent SQL injection
-        existing = conn.execute(text("SELECT value FROM settings WHERE key = :key"), {"key": pref_key}).fetchone()
+        existing = conn.execute(
+            text("SELECT value FROM settings WHERE key = :key"), {"key": pref_key}
+        ).fetchone()
         current_val = existing[0] if existing else "false"
         new_val = "false" if current_val == "true" else "true"
         if existing:
-            conn.execute(text("UPDATE settings SET value = :val WHERE key = :key"), {"val": new_val, "key": pref_key})
+            conn.execute(
+                text("UPDATE settings SET value = :val WHERE key = :key"),
+                {"val": new_val, "key": pref_key},
+            )
         else:
-            conn.execute(text("INSERT INTO settings (key, value, category) VALUES (:key, :val, 'security')"), {"key": pref_key, "val": new_val})
+            conn.execute(
+                text("INSERT INTO settings (key, value, category) VALUES (:key, :val, 'security')"),
+                {"key": pref_key, "val": new_val},
+            )
         conn.commit()
         enabled = new_val == "true"
-        return {"status": "success", "data": {"enabled": enabled, "message": f"2FA {'enabled' if enabled else 'disabled'}"}}
+
+        # Also update the user model's two_factor_enabled field
+        current_user.two_factor_enabled = enabled
+        await db.commit()
+
+        return {
+            "status": "success",
+            "data": {"enabled": enabled, "message": f"2FA {'enabled' if enabled else 'disabled'}"},
+        }
     except Exception as e:
         logger.warning(f"2FA toggle failed: {e}")
         raise HTTPException(status_code=500, detail="Failed to toggle 2FA")
@@ -787,7 +1032,6 @@ async def list_sessions(
     current_user: User = Depends(get_current_user),
 ):
     """List active sessions for the current user."""
-    import hashlib
     sessions = [
         {
             "id": "current",
@@ -994,7 +1238,7 @@ async def export_data(
     return {
         "status": "success",
         "data": {
-            "download_url": f"/api/v1/auth/export-data/download?token=placeholder",
+            "download_url": "/api/v1/auth/export-data/download?token=placeholder",
             "expires_at": datetime.now(UTC).isoformat(),
         },
     }
@@ -1037,11 +1281,11 @@ async def get_subscription(
 # ============================================================================
 class LegacyResponse(BaseModel):
     carbon_sequestered: float | None = None
-    carbon_unit: str = 'ton CO₂e'
+    carbon_unit: str = "ton CO₂e"
     area_restored: float | None = None
-    area_unit: str = 'hectares'
+    area_unit: str = "hectares"
     water_saved: float | None = None
-    water_unit: str = 'm³'
+    water_unit: str = "m³"
     activity_count: int = 0
     updated: str | None = None
 
@@ -1052,11 +1296,11 @@ async def get_legacy(
     db: AsyncSession = Depends(get_async_db),
 ):
     """Get legacy metrics: carbon sequestration, area restored, water saved, activity count."""
-    from database.models import CarbonProject
 
     result = await db.execute(
-        select(CarbonProject)
-        .where(CarbonProject.user_id == current_user.id, CarbonProject.status == "active")
+        select(CarbonProject).where(
+            CarbonProject.user_id == current_user.id, CarbonProject.status == "active"
+        )
     )
     projects = result.scalars().all()
 
@@ -1077,10 +1321,7 @@ async def get_legacy(
         water_saved = outputs.get("water_saved_m3")
 
     # Activity count from audit logs
-    activity_result = await db.execute(
-        select(AuditLog)
-        .where(AuditLog.actor_id == current_user.id)
-    )
+    activity_result = await db.execute(select(AuditLog).where(AuditLog.actor_id == current_user.id))
     activity_count = len(activity_result.scalars().all())
 
     now = datetime.now(UTC).isoformat()
@@ -1108,7 +1349,6 @@ async def get_assets(
     db: AsyncSession = Depends(get_async_db),
 ):
     """Get connected assets summary: lands, sensors, wallet, API keys, projects."""
-    from database.models import CarbonProject
 
     # Lands
     land_result = await db.execute(
@@ -1117,15 +1357,11 @@ async def get_assets(
     lands = land_result.scalars().all()
 
     # Sensors (from global settings table)
-    sensor_result = await db.execute(
-        select(Setting).where(Setting.key.like("sensor_%"))
-    )
+    sensor_result = await db.execute(select(Setting).where(Setting.key.like("sensor_%")))
     sensors = sensor_result.scalars().all()
 
     # Wallet
-    wallet_result = await db.execute(
-        select(EcoWallet).where(EcoWallet.user_id == current_user.id)
-    )
+    wallet_result = await db.execute(select(EcoWallet).where(EcoWallet.user_id == current_user.id))
     wallet = wallet_result.scalar_one_or_none()
 
     # API keys
@@ -1143,11 +1379,54 @@ async def get_assets(
     return {
         "status": "success",
         "data": {
-            "lands": {"count": len(lands), "items": [{"name": l.name, "detail": f"{l.area_ha or 0} ha", "location": f"{l.location_lat or 0}, {l.location_lon or 0}"} for l in lands]},
-            "sensors": {"count": len(sensors), "items": [{"name": s.key, "detail": s.value[:80] if s.value else "Sensor data", "status": s.value} for s in sensors]},
-            "wallet": {"count": "1" if wallet else "0", "items": [{"name": "EcoWallet", "detail": f"Balance: {wallet.balance or 0:.2f}"} for wallet in [wallet] if wallet]},
-            "api_keys": {"count": len(api_keys), "items": [{"name": k.name, "detail": f"Key ID: {k.id}", "status": "active"} for k in api_keys]},
-            "projects": {"count": len(projects), "items": [{"name": p.name, "detail": f"{p.project_type or 'unknown'} | {p.status or 'draft'}", "status": p.status} for p in projects]},
+            "lands": {
+                "count": len(lands),
+                "items": [
+                    {
+                        "name": l.name,
+                        "detail": f"{l.area_ha or 0} ha",
+                        "location": f"{l.location_lat or 0}, {l.location_lon or 0}",
+                    }
+                    for l in lands
+                ],
+            },
+            "sensors": {
+                "count": len(sensors),
+                "items": [
+                    {
+                        "name": s.key,
+                        "detail": s.value[:80] if s.value else "Sensor data",
+                        "status": s.value,
+                    }
+                    for s in sensors
+                ],
+            },
+            "wallet": {
+                "count": "1" if wallet else "0",
+                "items": [
+                    {"name": "EcoWallet", "detail": f"Balance: {wallet.balance or 0:.2f}"}
+                    for wallet in [wallet]
+                    if wallet
+                ],
+            },
+            "api_keys": {
+                "count": len(api_keys),
+                "items": [
+                    {"name": k.name, "detail": f"Key ID: {k.id}", "status": "active"}
+                    for k in api_keys
+                ],
+            },
+            "projects": {
+                "count": len(projects),
+                "items": [
+                    {
+                        "name": p.name,
+                        "detail": f"{p.project_type or 'unknown'} | {p.status or 'draft'}",
+                        "status": p.status,
+                    }
+                    for p in projects
+                ],
+            },
         },
     }
 
@@ -1161,24 +1440,30 @@ async def get_achievements(
     db: AsyncSession = Depends(get_async_db),
 ):
     """Get achievements and milestones for the current user."""
-    from database.models import CarbonProject, AuditLog, SimulationRun
+    from database.models import AuditLog
 
     achievements = []
     milestones = []
 
     # Carbon projects
     proj_result = await db.execute(
-        select(CarbonProject).where(CarbonProject.user_id == current_user.id, CarbonProject.status == "active")
+        select(CarbonProject).where(
+            CarbonProject.user_id == current_user.id, CarbonProject.status == "active"
+        )
     )
     projects = proj_result.scalars().all()
 
     if projects:
-        achievements.append({
-            "icon": "leaf",
-            "title": "First Carbon Project" if len(projects) == 1 else f"{len(projects)} Carbon Projects",
-            "description": f"Registered {len(projects)} active carbon sequestration project(s).",
-            "date": projects[0].created_at.isoformat() if projects[0].created_at else "",
-        })
+        achievements.append(
+            {
+                "icon": "leaf",
+                "title": "First Carbon Project"
+                if len(projects) == 1
+                else f"{len(projects)} Carbon Projects",
+                "description": f"Registered {len(projects)} active carbon sequestration project(s).",
+                "date": projects[0].created_at.isoformat() if projects[0].created_at else "",
+            }
+        )
 
     # Activity milestones
     activity_result = await db.execute(
@@ -1189,24 +1474,26 @@ async def get_achievements(
     )
     last_activity = activity_result.scalar_one_or_none()
     if last_activity:
-        milestones.append({
-            "icon": "activity",
-            "title": "Active User",
-            "date": last_activity.created_at.isoformat() if last_activity.created_at else "",
-        })
+        milestones.append(
+            {
+                "icon": "activity",
+                "title": "Active User",
+                "date": last_activity.created_at.isoformat() if last_activity.created_at else "",
+            }
+        )
 
     # Wallet check
-    wallet_result = await db.execute(
-        select(EcoWallet).where(EcoWallet.user_id == current_user.id)
-    )
+    wallet_result = await db.execute(select(EcoWallet).where(EcoWallet.user_id == current_user.id))
     wallet = wallet_result.scalar_one_or_none()
     if wallet and (wallet.balance or 0) > 0:
-        achievements.append({
-            "icon": "coins",
-            "title": "EcoWallet Active",
-            "description": f"Wallet balance: {wallet.balance:.2f}",
-            "date": wallet.created_at.isoformat() if wallet.created_at else "",
-        })
+        achievements.append(
+            {
+                "icon": "coins",
+                "title": "EcoWallet Active",
+                "description": f"Wallet balance: {wallet.balance:.2f}",
+                "date": wallet.created_at.isoformat() if wallet.created_at else "",
+            }
+        )
 
     return {
         "status": "success",
@@ -1347,14 +1634,18 @@ async def update_bio(
     """Update bio, organization, and location fields."""
     bio_json = None
     if req.bio is not None:
-        bio_json = json.dumps({"bio": req.bio, "organization": req.organization, "location": req.location})
+        bio_json = json.dumps(
+            {"bio": req.bio, "organization": req.organization, "location": req.location}
+        )
         setting = await db.execute(select(Setting).where(Setting.key == "profile_bio"))
         row = setting.scalar_one_or_none()
         if row:
             row.value = bio_json
             row.updated_at = datetime.now(UTC)
         else:
-            db.add(Setting(id=str(uuid.uuid4()), key="profile_bio", value=bio_json, category="profile"))
+            db.add(
+                Setting(id=str(uuid.uuid4()), key="profile_bio", value=bio_json, category="profile")
+            )
     await db.commit()
     return {"status": "success", "message": "Profile bio updated"}
 
@@ -1373,21 +1664,23 @@ async def get_public_profile(
     if not user or not user.is_active:
         raise HTTPException(status_code=404, detail="User not found")
 
-    from database.models import CarbonProject
-
     project_count = 0
     projects = []
     proj_result = await db.execute(
-        select(CarbonProject).where(CarbonProject.user_id == user_id, CarbonProject.status == "active")
+        select(CarbonProject).where(
+            CarbonProject.user_id == user_id, CarbonProject.status == "active"
+        )
     )
     for p in proj_result.scalars().all():
         project_count += 1
-        projects.append({
-            "name": p.name,
-            "project_type": p.project_type,
-            "area_hectares": p.area_hectares,
-            "status": p.status,
-        })
+        projects.append(
+            {
+                "name": p.name,
+                "project_type": p.project_type,
+                "area_hectares": p.area_hectares,
+                "status": p.status,
+            }
+        )
 
     bio_data = None
     bio_setting = await db.execute(select(Setting).where(Setting.key == "profile_bio"))

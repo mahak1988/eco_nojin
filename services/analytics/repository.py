@@ -1,4 +1,5 @@
 """Analytics repository"""
+
 from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import delete, select
@@ -12,8 +13,12 @@ class AnalyticsRepository:
         self.db = db
 
     async def save_snapshot(
-        self, snapshot_type: str, period_start: datetime,
-        period_end: datetime, data: dict, village_id: str | None = None,
+        self,
+        snapshot_type: str,
+        period_start: datetime,
+        period_end: datetime,
+        data: dict,
+        village_id: str | None = None,
     ) -> AnalyticsSnapshot:
         snapshot = AnalyticsSnapshot(
             snapshot_type=snapshot_type,
@@ -28,11 +33,11 @@ class AnalyticsRepository:
         return snapshot
 
     async def get_latest_snapshot(
-        self, snapshot_type: str, village_id: str | None = None,
+        self,
+        snapshot_type: str,
+        village_id: str | None = None,
     ) -> AnalyticsSnapshot | None:
-        stmt = select(AnalyticsSnapshot).where(
-            AnalyticsSnapshot.snapshot_type == snapshot_type
-        )
+        stmt = select(AnalyticsSnapshot).where(AnalyticsSnapshot.snapshot_type == snapshot_type)
         if village_id:
             stmt = stmt.where(AnalyticsSnapshot.village_id == village_id)
         stmt = stmt.order_by(AnalyticsSnapshot.created_at.desc()).limit(1)
@@ -41,9 +46,7 @@ class AnalyticsRepository:
 
     async def cleanup_old_snapshots(self, older_than_days: int = 90) -> int:
         cutoff = datetime.now(UTC) - timedelta(days=older_than_days)
-        stmt = delete(AnalyticsSnapshot).where(
-            AnalyticsSnapshot.created_at < cutoff
-        )
+        stmt = delete(AnalyticsSnapshot).where(AnalyticsSnapshot.created_at < cutoff)
         result = await self.db.execute(stmt)
         await self.db.commit()
         return result.rowcount

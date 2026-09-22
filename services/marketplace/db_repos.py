@@ -6,13 +6,14 @@ Postgres in production). No demo data anywhere.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
-from typing import Callable, Iterator
 
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from database.hub import hub
+
 from .models import (
     MarketplaceProduct,
     MarketplaceProductStatus,
@@ -51,7 +52,9 @@ class DbSellerRepo:
                     select(MarketplaceSeller)
                     .order_by(MarketplaceSeller.created_at.desc())
                     .limit(limit)
-                ).scalars().all()
+                )
+                .scalars()
+                .all()
             )
 
 
@@ -73,17 +76,24 @@ class DbProductRepo:
                 .where(MarketplaceProduct.id == product_id)
             ).scalar_one_or_none()
 
-    def list_products(self, category: str | None = None, organic_only: bool = False,
-                      query: str | None = None, limit: int = 50):
+    def list_products(
+        self,
+        category: str | None = None,
+        organic_only: bool = False,
+        query: str | None = None,
+        limit: int = 50,
+    ):
         with self.session() as s:
             stmt = (
                 select(MarketplaceProduct)
                 .options(joinedload(MarketplaceProduct.seller))
                 .where(
-                    MarketplaceProduct.status.in_([
-                        MarketplaceProductStatus.APPROVED,
-                        MarketplaceProductStatus.ACTIVE,
-                    ])
+                    MarketplaceProduct.status.in_(
+                        [
+                            MarketplaceProductStatus.APPROVED,
+                            MarketplaceProductStatus.ACTIVE,
+                        ]
+                    )
                 )
             )
             if category:
@@ -95,10 +105,21 @@ class DbProductRepo:
             stmt = stmt.order_by(MarketplaceProduct.created_at.desc()).limit(limit)
             return list(s.execute(stmt).scalars().all())
 
-    def create_product(self, seller_id: str, name: str, category: str, price: float,
-                       village_id: str, description: str | None = None, stock: int = 0,
-                       unit: str = "kg", status: str = "draft", organic: bool = False) -> MarketplaceProduct:
+    def create_product(
+        self,
+        seller_id: str,
+        name: str,
+        category: str,
+        price: float,
+        village_id: str,
+        description: str | None = None,
+        stock: int = 0,
+        unit: str = "kg",
+        status: str = "draft",
+        organic: bool = False,
+    ) -> MarketplaceProduct:
         import uuid
+
         with self.session() as s:
             row = MarketplaceProduct(
                 id=str(uuid.uuid4()),

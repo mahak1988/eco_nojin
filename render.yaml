@@ -5,7 +5,7 @@ services:
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: python scripts/run_with_watchdog.py
+    startCommand: python -m services.api_gateway.main
     healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION
@@ -19,4 +19,8 @@ services:
       - key: SUPABASE_ACCESS_TOKEN
         sync: false
       - key: AI_LLM_KEY
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: JWT_SECRET
         sync: false

@@ -20,11 +20,15 @@ Outputs:
 - Risk alerts (frost, drought, heat stress)
 - Best companion crops per season
 """
+
 from __future__ import annotations
+
 # --- Hydroma Climate Adaptive Phenology (auto-installed, Phase 2) ---
 try:
     from engine.hydroma.climate_adaptation.climate_adaptive_phenology import (
-        ClimateAdaptivePhenology as _CAP_cls)
+        ClimateAdaptivePhenology as _CAP_cls,
+    )
+
     _HYDROMA_CAP = _CAP_cls()
 except Exception:
     _HYDROMA_CAP = None
@@ -49,6 +53,7 @@ from .base import (
 # Constants & Enums
 # =====================================================================
 
+
 class Hemisphere(Enum):
     NORTHERN = "Northern"
     SOUTHERN = "Southern"
@@ -57,6 +62,7 @@ class Hemisphere(Enum):
 
 class Season(Enum):
     """فصول کشاورزی جهانی"""
+
     SPRING = "Spring"
     SUMMER = "Summer"
     AUTUMN = "Autumn"
@@ -233,6 +239,7 @@ GROWTH_STAGES = {
 @dataclass
 class PlantingWindow:
     """پنجره کاشت برای یک محصول"""
+
     crop_id: str
     crop_name: str
     hemisphere: Hemisphere
@@ -250,10 +257,11 @@ class PlantingWindow:
 # Main Motor
 # =====================================================================
 
+
 class PlantingCalendarMotor(AbstractScientificMotor):
     """
     Global Planting Calendar Generator
-    
+
     Generates hemisphere-aware, Köppen-adapted planting calendars.
     """
 
@@ -289,12 +297,15 @@ class PlantingCalendarMotor(AbstractScientificMotor):
         try:
             # --- Extract parameters ---
             latitude = float(parameters.custom_params.get("latitude", inputs.get("latitude", 35.0)))
-            koppen = str(parameters.custom_params.get("koppen_climate", inputs.get("koppen_climate", "BSk")))
+            koppen = str(
+                parameters.custom_params.get("koppen_climate", inputs.get("koppen_climate", "BSk"))
+            )
             crop_ids = parameters.custom_params.get("crops", inputs.get("crops", ["wheat"]))
-            frost_free_days = int(parameters.custom_params.get(
-                "frost_free_days",
-                self._estimate_frost_free_days(latitude, koppen)
-            ))
+            frost_free_days = int(
+                parameters.custom_params.get(
+                    "frost_free_days", self._estimate_frost_free_days(latitude, koppen)
+                )
+            )
 
             # --- Detect hemisphere ---
             hemisphere = self._detect_hemisphere(latitude)
@@ -320,10 +331,7 @@ class PlantingCalendarMotor(AbstractScientificMotor):
                 )
 
             # --- Generate growth stage timelines ---
-            growth_stages = {
-                w.crop_id: self._compute_growth_stages(w)
-                for w in planting_windows
-            }
+            growth_stages = {w.crop_id: self._compute_growth_stages(w) for w in planting_windows}
 
             # --- Generate risk alerts ---
             risk_alerts = self._generate_risk_alerts(
@@ -346,12 +354,8 @@ class PlantingCalendarMotor(AbstractScientificMotor):
                 "earliest_planting_month": min(
                     min(w.planting_months_local) for w in planting_windows
                 ),
-                "latest_harvest_month": max(
-                    max(w.harvest_months_local) for w in planting_windows
-                ),
-                "frost_sensitive_crops": sum(
-                    1 for w in planting_windows if w.frost_sensitive
-                ),
+                "latest_harvest_month": max(max(w.harvest_months_local) for w in planting_windows),
+                "frost_sensitive_crops": sum(1 for w in planting_windows if w.frost_sensitive),
                 "risk_alerts_count": len(risk_alerts),
             }
 
@@ -378,6 +382,7 @@ class PlantingCalendarMotor(AbstractScientificMotor):
 
         except Exception as e:
             import traceback
+
             return MotorResult(
                 run_id=run_id,
                 motor_type=self.motor_type,
@@ -402,15 +407,32 @@ class PlantingCalendarMotor(AbstractScientificMotor):
         """Estimate frost-free days based on latitude and Köppen."""
         # Köppen-based estimates
         koppen_frost_free = {
-            "Af": 365, "Am": 365, "Aw": 365,  # Tropical
-            "BWh": 300, "BSh": 280,           # Hot arid
-            "BWk": 180, "BSk": 200,           # Cold arid
-            "Csa": 270, "Csb": 250, "Csc": 200,  # Mediterranean
-            "Cfa": 240, "Cfb": 220, "Cfc": 180,  # Temperate
-            "Cwa": 280, "Cwb": 250, "Cwc": 200,  # Subtropical highland
-            "Dfa": 180, "Dfb": 150, "Dfc": 100, "Dfd": 70,  # Continental
-            "Dwa": 170, "Dwb": 140, "Dwc": 90, "Dwd": 60,
-            "ET": 50, "EF": 0,  # Polar
+            "Af": 365,
+            "Am": 365,
+            "Aw": 365,  # Tropical
+            "BWh": 300,
+            "BSh": 280,  # Hot arid
+            "BWk": 180,
+            "BSk": 200,  # Cold arid
+            "Csa": 270,
+            "Csb": 250,
+            "Csc": 200,  # Mediterranean
+            "Cfa": 240,
+            "Cfb": 220,
+            "Cfc": 180,  # Temperate
+            "Cwa": 280,
+            "Cwb": 250,
+            "Cwc": 200,  # Subtropical highland
+            "Dfa": 180,
+            "Dfb": 150,
+            "Dfc": 100,
+            "Dfd": 70,  # Continental
+            "Dwa": 170,
+            "Dwb": 140,
+            "Dwc": 90,
+            "Dwd": 60,
+            "ET": 50,
+            "EF": 0,  # Polar
         }
         base = koppen_frost_free.get(koppen, 200)
 
@@ -419,7 +441,10 @@ class PlantingCalendarMotor(AbstractScientificMotor):
         return max(0, int(base - lat_adj))
 
     def _build_planting_window(
-        self, crop_id: str, koppen: str, hemisphere: Hemisphere,
+        self,
+        crop_id: str,
+        koppen: str,
+        hemisphere: Hemisphere,
         frost_free_days: int,
     ) -> PlantingWindow | None:
         """Build a planting window for a specific crop."""
@@ -458,6 +483,7 @@ class PlantingCalendarMotor(AbstractScientificMotor):
 
         # Get crop name from our database
         from .crop_database import get_crop_by_id
+
         crop = get_crop_by_id(crop_id)
         crop_name = crop.name_en if crop else crop_id
 
@@ -493,13 +519,15 @@ class PlantingCalendarMotor(AbstractScientificMotor):
             month_offset = days_from_start // 30
             stage_month = (start_month + month_offset - 1) % 12 + 1
 
-            stages.append({
-                "stage": stage_name,
-                "gdd_cumulative": stage_gdd,
-                "days_from_planting": stage_days,
-                "estimated_month": stage_month,
-                "description": self._stage_description(stage_name, window.crop_id),
-            })
+            stages.append(
+                {
+                    "stage": stage_name,
+                    "gdd_cumulative": stage_gdd,
+                    "days_from_planting": stage_days,
+                    "estimated_month": stage_month,
+                    "description": self._stage_description(stage_name, window.crop_id),
+                }
+            )
 
         return stages
 
@@ -520,8 +548,11 @@ class PlantingCalendarMotor(AbstractScientificMotor):
         return descriptions.get(stage_name, "Growth stage")
 
     def _generate_risk_alerts(
-        self, windows: list[PlantingWindow], latitude: float,
-        koppen: str, frost_free_days: int,
+        self,
+        windows: list[PlantingWindow],
+        latitude: float,
+        koppen: str,
+        frost_free_days: int,
     ) -> list[dict]:
         """Generate risk alerts based on conditions."""
         alerts = []
@@ -529,41 +560,49 @@ class PlantingCalendarMotor(AbstractScientificMotor):
         for w in windows:
             # Frost risk
             if w.frost_sensitive and frost_free_days < w.growing_days:
-                alerts.append({
-                    "crop": w.crop_name,
-                    "risk": "FROST",
-                    "severity": "HIGH",
-                    "description": (
-                        f"Growing period ({w.growing_days} days) exceeds "
-                        f"frost-free window ({frost_free_days} days)"
-                    ),
-                    "mitigation": "Use row covers, select early-maturing variety",
-                })
+                alerts.append(
+                    {
+                        "crop": w.crop_name,
+                        "risk": "FROST",
+                        "severity": "HIGH",
+                        "description": (
+                            f"Growing period ({w.growing_days} days) exceeds "
+                            f"frost-free window ({frost_free_days} days)"
+                        ),
+                        "mitigation": "Use row covers, select early-maturing variety",
+                    }
+                )
 
             # Heat stress in hot climates
             if koppen in ["BWh", "BSh"] and w.frost_sensitive:
-                alerts.append({
-                    "crop": w.crop_name,
-                    "risk": "HEAT_STRESS",
-                    "severity": "MEDIUM",
-                    "description": "High temperatures may cause heat stress",
-                    "mitigation": "Provide shade, increase irrigation, mulch",
-                })
+                alerts.append(
+                    {
+                        "crop": w.crop_name,
+                        "risk": "HEAT_STRESS",
+                        "severity": "MEDIUM",
+                        "description": "High temperatures may cause heat stress",
+                        "mitigation": "Provide shade, increase irrigation, mulch",
+                    }
+                )
 
             # Drought risk in arid climates
             if koppen.startswith("B") and w.gdd_required > 2500:
-                alerts.append({
-                    "crop": w.crop_name,
-                    "risk": "DROUGHT",
-                    "severity": "MEDIUM",
-                    "description": "Long growing season in arid climate",
-                    "mitigation": "Use drip irrigation, mulch, drought-tolerant variety",
-                })
+                alerts.append(
+                    {
+                        "crop": w.crop_name,
+                        "risk": "DROUGHT",
+                        "severity": "MEDIUM",
+                        "description": "Long growing season in arid climate",
+                        "mitigation": "Use drip irrigation, mulch, drought-tolerant variety",
+                    }
+                )
 
         return alerts
 
     def _recommend_companions(
-        self, windows: list[PlantingWindow], koppen: str,
+        self,
+        windows: list[PlantingWindow],
+        koppen: str,
     ) -> list[dict]:
         """Recommend companion crops based on current selection."""
         # Companion planting rules
@@ -582,12 +621,14 @@ class PlantingCalendarMotor(AbstractScientificMotor):
             companions = companion_rules.get(w.crop_id, [])
             for comp in companions:
                 if comp not in crop_ids:
-                    recommendations.append({
-                        "main_crop": w.crop_name,
-                        "companion": comp,
-                        "benefit": self._companion_benefit(w.crop_id, comp),
-                        "timing": "Plant simultaneously or 2 weeks apart",
-                    })
+                    recommendations.append(
+                        {
+                            "main_crop": w.crop_name,
+                            "companion": comp,
+                            "benefit": self._companion_benefit(w.crop_id, comp),
+                            "timing": "Plant simultaneously or 2 weeks apart",
+                        }
+                    )
 
         return recommendations[:5]  # Limit to 5
 
@@ -604,36 +645,48 @@ class PlantingCalendarMotor(AbstractScientificMotor):
         }
         return benefits.get((main, companion), "Mutual benefit")
 
-    def _build_annual_schedule(
-        self, windows: list[PlantingWindow]
-    ) -> dict[int, list[dict]]:
+    def _build_annual_schedule(self, windows: list[PlantingWindow]) -> dict[int, list[dict]]:
         """Build month-by-month activity schedule."""
         schedule = {m: [] for m in range(1, 13)}
 
         for w in windows:
             # Planting months
             for m in w.planting_months_local:
-                schedule[m].append({
-                    "action": "PLANT",
-                    "crop": w.crop_name,
-                    "crop_id": w.crop_id,
-                })
+                schedule[m].append(
+                    {
+                        "action": "PLANT",
+                        "crop": w.crop_name,
+                        "crop_id": w.crop_id,
+                    }
+                )
 
             # Harvest months
             for m in w.harvest_months_local:
-                schedule[m].append({
-                    "action": "HARVEST",
-                    "crop": w.crop_name,
-                    "crop_id": w.crop_id,
-                })
+                schedule[m].append(
+                    {
+                        "action": "HARVEST",
+                        "crop": w.crop_name,
+                        "crop_id": w.crop_id,
+                    }
+                )
 
         return {str(k): v for k, v in schedule.items() if v}
 
     def _window_to_dict(self, w: PlantingWindow) -> dict:
         """Convert PlantingWindow to Integerizable dict."""
         month_names = [
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
         ]
         return {
             "crop_id": w.crop_id,
@@ -643,9 +696,9 @@ class PlantingCalendarMotor(AbstractScientificMotor):
             "season": w.season_name,
             "planting_months_nh": w.planting_months_nh,
             "planting_months_local": w.planting_months_local,
-            "planting_month_names": [month_names[m-1] for m in w.planting_months_local],
+            "planting_month_names": [month_names[m - 1] for m in w.planting_months_local],
             "harvest_months_local": w.harvest_months_local,
-            "harvest_month_names": [month_names[m-1] for m in w.harvest_months_local],
+            "harvest_month_names": [month_names[m - 1] for m in w.harvest_months_local],
             "growing_days": w.growing_days,
             "gdd_required": w.gdd_required,
             "frost_sensitive": w.frost_sensitive,

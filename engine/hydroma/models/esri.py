@@ -5,6 +5,7 @@ Spectral Salinity Index + soil EC + irrigation management.
 
 Reference: Ayers & Westcot (1985) FAO-29, Richards (1954)
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -27,7 +28,13 @@ class ESRI(ScientificModel):
     }
 
     def validate_inputs(
-        self, blue, red, nir, swir, ec_soil_dsm, ec_irrigation_dsm,
+        self,
+        blue,
+        red,
+        nir,
+        swir,
+        ec_soil_dsm,
+        ec_irrigation_dsm,
     ) -> tuple[bool, list[str]]:
         errors = []
         for band_name, band in [("blue", blue), ("red", red), ("nir", nir), ("swir", swir)]:
@@ -40,8 +47,9 @@ class ESRI(ScientificModel):
         return len(errors) == 0, errors
 
     @staticmethod
-    def salinity_index_s2(blue: np.ndarray, red: np.ndarray,
-                          nir: np.ndarray, swir: np.ndarray) -> np.ndarray:
+    def salinity_index_s2(
+        blue: np.ndarray, red: np.ndarray, nir: np.ndarray, swir: np.ndarray
+    ) -> np.ndarray:
         """Sentinel-2 Salinity Index"""
         with np.errstate(divide="ignore", invalid="ignore"):
             numerator = np.sqrt(blue * red + 1e-9)
@@ -97,14 +105,15 @@ class ESRI(ScientificModel):
     def classify(esri: np.ndarray) -> np.ndarray:
         """طبقه‌بندی ریسک شوری"""
         return np.select(
-            [esri < 0.3, esri < 0.6, esri < 0.8],
-            ["low", "moderate", "high"],
-            default="severe"
+            [esri < 0.3, esri < 0.6, esri < 0.8], ["low", "moderate", "high"], default="severe"
         )
 
     def validate_against_reference(
-        self, inputs: dict[str, Any], reference_output: float,
-        reference_source: str, tolerance: float = 0.15,
+        self,
+        inputs: dict[str, Any],
+        reference_output: float,
+        reference_source: str,
+        tolerance: float = 0.15,
     ) -> ValidationResult:
         result = self.compute(**inputs)
         computed_value = float(np.mean(result["esri"]))

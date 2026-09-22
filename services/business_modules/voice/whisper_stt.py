@@ -14,10 +14,10 @@ to mock transcription with a logged warning.
 
 import logging
 import os
-from dataclasses import dataclass
+
+from services.business_modules.voice.stt_provider import STTProvider, STTResult
 
 from .tts_provider import VoiceLanguage
-from services.business_modules.voice.stt_provider import STTProvider, STTResult
 
 logger = logging.getLogger(__name__)
 
@@ -85,6 +85,7 @@ class WhisperSTTProvider(STTProvider):
             try:
                 if os.environ.get("WHISPER_API_KEY") or os.environ.get("OPENAI_API_KEY"):
                     import openai
+
                     self._openai_client = openai.OpenAI(
                         api_key=os.environ.get("WHISPER_API_KEY")
                         or os.environ.get("OPENAI_API_KEY")
@@ -100,6 +101,7 @@ class WhisperSTTProvider(STTProvider):
         if self.mode in ("local", "auto"):
             try:
                 import whisper as whisper_model
+
                 self._local_model = whisper_model.load_model(self.model_size)
                 self._is_real = True
                 logger.info("Whisper: Local model loaded (%s)", self.model_size)
@@ -135,12 +137,10 @@ class WhisperSTTProvider(STTProvider):
     def _transcribe_api(self, audio_data: bytes, language: str) -> STTResult:
         """Transcribe using OpenAI Whisper API."""
         try:
-            import tempfile
             import os
+            import tempfile
 
-            with tempfile.NamedTemporaryFile(
-                suffix=".webm", delete=False
-            ) as tmp:
+            with tempfile.NamedTemporaryFile(suffix=".webm", delete=False) as tmp:
                 tmp.write(audio_data)
                 tmp_path = tmp.name
 
@@ -159,9 +159,7 @@ class WhisperSTTProvider(STTProvider):
                 language=VoiceLanguage(language),
                 confidence=0.95,
                 duration_seconds=len(audio_data) / 16000 if audio_data else 0,
-                alternatives=[
-                    {"text": response.text, "confidence": 0.85}
-                ],
+                alternatives=[{"text": response.text, "confidence": 0.85}],
             )
         except Exception as exc:
             logger.warning("Whisper API transcription failed: %s", exc)
@@ -170,13 +168,10 @@ class WhisperSTTProvider(STTProvider):
     def _transcribe_local(self, audio_data: bytes, language: str) -> STTResult:
         """Transcribe using local Whisper model."""
         try:
-            import tempfile
             import os
-            import numpy as np
+            import tempfile
 
-            with tempfile.NamedTemporaryFile(
-                suffix=".wav", delete=False
-            ) as tmp:
+            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
                 tmp.write(audio_data)
                 tmp_path = tmp.name
 
@@ -190,17 +185,13 @@ class WhisperSTTProvider(STTProvider):
                 language=VoiceLanguage(language),
                 confidence=0.90,
                 duration_seconds=len(audio_data) / 16000 if audio_data else 0,
-                alternatives=[
-                    {"text": result["text"].strip(), "confidence": 0.80}
-                ],
+                alternatives=[{"text": result["text"].strip(), "confidence": 0.80}],
             )
         except Exception as exc:
             logger.warning("Local Whisper transcription failed: %s", exc)
             return self._mock_transcribe(audio_data, VoiceLanguage(language))
 
-    def _mock_transcribe(
-        self, audio_data: bytes, language: VoiceLanguage
-    ) -> STTResult:
+    def _mock_transcribe(self, audio_data: bytes, language: VoiceLanguage) -> STTResult:
         """Fallback mock transcription."""
         mock_text = "how to make good compost"
         if language == VoiceLanguage.FA:

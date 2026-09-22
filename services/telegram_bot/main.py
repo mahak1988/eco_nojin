@@ -4,7 +4,9 @@ Eco Nojin Telegram Bot - Main Entry Point.
 Run with:
     python -m services.telegram_bot.main
 """
+
 from __future__ import annotations
+
 import structlog
 
 logger = structlog.get_logger()
@@ -73,12 +75,7 @@ def main():
 
     # Build application
     logger.info("Building Telegram bot application...")
-    application = (
-        Application.builder()
-        .token(config.BOT_TOKEN)
-        .post_init(post_init)
-        .build()
-    )
+    application = Application.builder().token(config.BOT_TOKEN).post_init(post_init).build()
 
     # Register command handlers
     application.add_handler(CommandHandler("start", start_command))
@@ -105,4 +102,5 @@ def main():
 
 if __name__ == "__main__":
     from telegram import Update
+
     main()

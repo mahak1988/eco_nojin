@@ -1,4 +1,5 @@
 """Phase 5 modules 2-5 integration tests (content, bots, errors, settings)."""
+
 from fastapi.testclient import TestClient
 
 from database.base import Base
@@ -30,13 +31,16 @@ def _make_admin():
     db.commit()
     db.refresh(u)
     db.close()
-    resp = client.post("/api/v1/auth/login", json={"email": "boss@test.com", "password": "testpass123"})
+    resp = client.post(
+        "/api/v1/auth/login", json={"email": "boss@test.com", "password": "testpass123"}
+    )
     return {"Authorization": f"Bearer {resp.json()['access_token']}"}
 
 
 # ---------------------------------------------------------------------------
 # Content
 # ---------------------------------------------------------------------------
+
 
 def test_content_crud_and_publish():
     h = _make_admin()
@@ -52,7 +56,9 @@ def test_content_crud_and_publish():
     assert item["status"] == "draft"
 
     # update
-    resp = client.put(f"/api/v1/admin/content/{item['id']}", json={"title": "کمپوست و کربن"}, headers=h)
+    resp = client.put(
+        f"/api/v1/admin/content/{item['id']}", json={"title": "کمپوست و کربن"}, headers=h
+    )
     assert resp.status_code == 200
     assert resp.json()["title"] == "کمپوست و کربن"
 
@@ -78,6 +84,7 @@ def test_content_crud_and_publish():
 # ---------------------------------------------------------------------------
 # Bots
 # ---------------------------------------------------------------------------
+
 
 def test_bots_list_and_toggle():
     h = _make_admin()
@@ -106,6 +113,7 @@ def test_bots_unknown_platform_404():
 # Errors
 # ---------------------------------------------------------------------------
 
+
 def test_errors_list_and_ack():
     h = _make_admin()
     db = SessionLocal()
@@ -127,9 +135,12 @@ def test_errors_list_and_ack():
 # Settings
 # ---------------------------------------------------------------------------
 
+
 def test_settings_update_and_validation():
     h = _make_admin()
-    resp = client.put("/api/v1/admin/settings/site_announcement", json={"value": "تعمیرات شبانه"}, headers=h)
+    resp = client.put(
+        "/api/v1/admin/settings/site_announcement", json={"value": "تعمیرات شبانه"}, headers=h
+    )
     assert resp.status_code == 200
     assert resp.json()["value"] == "تعمیرات شبانه"
 

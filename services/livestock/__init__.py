@@ -1,4 +1,5 @@
 """Livestock Module - دامداری و اقتصاد دام"""
+
 from services.livestock.schemas import (
     AnimalType,
     EconomicAnalysis,

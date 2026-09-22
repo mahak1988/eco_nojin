@@ -30,6 +30,18 @@ import requests
 # Sentinel-2 L2A asset keys in the CDSE STAC catalogue (10 m bands).
 ASSET_RED = "B04"
 ASSET_NIR = "B08"
+ASSET_BLUE = "B02"
+ASSET_GREEN = "B03"
+ASSET_SWIR1 = "B11"
+ASSET_SWIR2 = "B12"
+ASSET_SCL = "SCL"
+
+# Landsat 8/9 C2 L2 asset keys
+ASSET_LST = "ST_B10"
+
+# Sentinel-1 GRD asset keys
+ASSET_VV = "VV"
+ASSET_VH = "VH"
 
 
 class CdseUnavailable(RuntimeError):
@@ -54,7 +66,12 @@ class CdseConfig:
         env = env if env is not None else os.environ
         missing = [
             key
-            for key in ("CDSE_BASE_URL", "CDSE_IDENTITY_URL", "CDSE_CLIENT_ID", "CDSE_CLIENT_SECRET")
+            for key in (
+                "CDSE_BASE_URL",
+                "CDSE_IDENTITY_URL",
+                "CDSE_CLIENT_ID",
+                "CDSE_CLIENT_SECRET",
+            )
             if not env.get(key)
         ]
         if missing:

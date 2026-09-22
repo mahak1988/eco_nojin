@@ -2,6 +2,7 @@
 AquaCrop Adapter - شبیه‌ساز رشد گیاه
 نسخه علمی مبتنی بر FAO-33 و FAO-56 (بدون وابستگی به aquacrop library)
 """
+
 import math
 from datetime import UTC, datetime, timedelta
 
@@ -46,7 +47,9 @@ class AquaCropAdapter(BaseSimulator):
 
     async def run(self, ctx: SimulationContext) -> SimulationResult:
         crop_type = ctx.crop.crop_type.lower()
-        crop_data = self.CROP_DB.get(crop_type, {"yield": 5.0, "duration": 120, "kc": 0.85, "hi": 0.45})
+        crop_data = self.CROP_DB.get(
+            crop_type, {"yield": 5.0, "duration": 120, "kc": 0.85, "hi": 0.45}
+        )
 
         base_yield = crop_data["yield"]
         duration = crop_data["duration"]
@@ -77,12 +80,14 @@ class AquaCropAdapter(BaseSimulator):
         for m in range(1, months + 1):
             stage = m / months
             growth = 1 / (1 + math.exp(-10 * (stage - 0.5)))
-            time_series.append({
-                "month": m,
-                "stage": round(stage, 2),
-                "growth": round(growth, 3),
-                "cumulative_yield": round(final_yield * growth, 2),
-            })
+            time_series.append(
+                {
+                    "month": m,
+                    "stage": round(stage, 2),
+                    "growth": round(growth, 3),
+                    "cumulative_yield": round(final_yield * growth, 2),
+                }
+            )
 
         return SimulationResult(
             simulation_id=ctx.simulation_id,
@@ -108,21 +113,30 @@ class AquaCropAdapter(BaseSimulator):
     def _soil_factor(self, soil) -> float:
         oc_bonus = min(1.2, 0.7 + soil.organic_carbon_pct * 0.15)
         texture = {
-            "loam": 1.0, "silt_loam": 1.05, "clay_loam": 0.95,
-            "sandy_loam": 0.85, "clay": 0.80, "sand": 0.70,
+            "loam": 1.0,
+            "silt_loam": 1.05,
+            "clay_loam": 0.95,
+            "sandy_loam": 0.85,
+            "clay": 0.80,
+            "sand": 0.70,
         }.get(soil.texture.lower(), 0.90)
         return oc_bonus * texture
 
     def _water_factor(self, precipitation: float) -> float:
-        if precipitation >= 500: return 1.0
-        if precipitation >= 300: return 0.85
-        if precipitation >= 150: return 0.70
+        if precipitation >= 500:
+            return 1.0
+        if precipitation >= 300:
+            return 0.85
+        if precipitation >= 150:
+            return 0.70
         return 0.55
 
     def _climate_factor(self, weather) -> float:
         avg = (weather.temp_min_c + weather.temp_max_c) / 2
-        if 18 <= avg <= 28: return 1.0
-        if 12 <= avg < 18 or 28 < avg <= 32: return 0.85
+        if 18 <= avg <= 28:
+            return 1.0
+        if 12 <= avg < 18 or 28 < avg <= 32:
+            return 0.85
         return 0.65
 
     def _et0_hargreaves(self, weather) -> float:

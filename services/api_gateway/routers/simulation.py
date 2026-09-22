@@ -9,10 +9,13 @@ from sqlalchemy.orm import Session
 
 from database.hub import hub
 
+
 # Compatibility: get_db via hub
 def get_db():
     with hub.get_session() as session:
         yield session
+
+
 from database.models import SimulationRun
 from engine.hydroma.simulation.contracts import ChainInputs
 from engine.hydroma.simulation.orchestrator import run_chain
@@ -73,7 +76,6 @@ def list_simulation_runs(
 import asyncio
 import json as _json
 
-from fastapi import BackgroundTasks
 from fastapi.responses import StreamingResponse
 
 _chain_runs: dict[str, dict] = {}
@@ -87,6 +89,7 @@ def _chain_progress_cb(run_id: str):
         st["stage"] = stage
         if stage not in st["stages"]:
             st["stages"].append(stage)
+
     return cb
 
 
@@ -117,7 +120,9 @@ async def create_simulation_run_async(
             db.add(row)
             db.commit()
             st = _chain_runs.setdefault(run_id, {})
-            st.update({"status": result.status, "progress": 100, "result": result.model_dump(mode="json")})
+            st.update(
+                {"status": result.status, "progress": 100, "result": result.model_dump(mode="json")}
+            )
         except Exception as exc:
             st = _chain_runs.setdefault(run_id, {})
             st.update({"status": "failed", "error": str(exc)[:300], "progress": 100})

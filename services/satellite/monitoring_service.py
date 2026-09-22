@@ -1,4 +1,5 @@
 """SatelliteMonitoringService - unified satellite data access"""
+
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from enum import Enum
@@ -12,12 +13,14 @@ class SatelliteSource(str, Enum):
     LANDSAT_8 = "landsat_8"
     COPERNICUS = "copernicus"
 
+
 class BandType(str, Enum):
     NDVI = "ndvi"
     NDWI = "ndwi"
     EVI = "evi"
     MOISTURE = "moisture"
     TEMPERATURE = "temperature"
+
 
 @dataclass
 class SatelliteScene:
@@ -28,6 +31,7 @@ class SatelliteScene:
     bands: dict[str, Any] = field(default_factory=dict)
     bbox: dict[str, float] | None = None
 
+
 @dataclass
 class VegetationIndex:
     index_type: BandType
@@ -36,10 +40,11 @@ class VegetationIndex:
     scene_id: str
     captured_at: datetime
 
+
 class SatelliteMonitoringService:
     """
     سرویس یکپارچه پایش ماهواره‌ای
-    
+
     قابلیت‌ها:
     - دریافت تصاویر Sentinel-2 و Landsat-8
     - محاسبه شاخص‌های گیاهی (NDVI, NDWI, EVI)
@@ -52,34 +57,66 @@ class SatelliteMonitoringService:
         self.db = db
 
     async def get_latest_scene(
-        self, bbox: dict[str, float], source: SatelliteSource = SatelliteSource.SENTINEL_2,
+        self,
+        bbox: dict[str, float],
+        source: SatelliteSource = SatelliteSource.SENTINEL_2,
         max_cloud_cover: float = 20.0,
     ) -> SatelliteScene | None:
         """دریافت آخرین تصویر ماهواره‌ای برای منطقه مشخص"""
         try:
-            from services.satellite.copernicus import CdsClient
-            client = CdsClient()
-            # شبیه‌سازی - در production باید به CDS API متصل شود
+            from services.satellite.copernicus import CopernicusClient
+
+            client = CopernicusClient()
+            if not client.configured:
+                return None
+            lat = (bbox.get("north", 0) + bbox.get("south", 0)) / 2
+            lon = (bbox.get("east", 0) + bbox.get("west", 0)) / 2
+            scenes = client.search_stac(lat, lon, max_cloud_cover=max_cloud_cover)
+            if not scenes:
+                return None
+            scene = scenes[0]
             return SatelliteScene(
-                scene_id=f"scene_{datetime.now(UTC).timestamp():.0f}",
-                source=source,
-                capture_date=datetime.now(UTC) - timedelta(days=1),
-                cloud_cover=5.0,
+                scene_id=scene.id,
+                source=SatelliteSource.COPERNICUS,
+                capture_date=datetime.fromisoformat(scene.datetime.replace("Z", "+00:00"))
+                if scene.datetime
+                else datetime.now(UTC),
+                cloud_cover=scene.cloud_cover,
                 bbox=bbox,
             )
         except Exception:
             return None
 
     async def calculate_vegetation_index(
-        self, scene: SatelliteScene, index_type: BandType,
+        self,
+        scene: SatelliteScene,
+        index_type: BandType,
     ) -> VegetationIndex | None:
         """محاسبه شاخص گیاهی از تصویر"""
         try:
-            from engine.hydroma.crop.ndvi_analysis import calculate_ndvi
+            from services.satellite.copernicus import (
+                CopernicusClient,
+                CopernicusError,
+                ndvi_from_bands,
+                evi_from_bands,
+                savi_from_bands,
+            )
 
+            client = CopernicusClient()
+            if not client.configured:
+                return None
+            lat = (scene.bbox.get("north", 0) + scene.bbox.get("south", 0)) / 2
+            lon = (scene.bbox.get("east", 0) + scene.bbox.get("west", 0)) / 2
+            scenes = client.search_stac(lat, lon, max_cloud_cover=20.0)
+            if not scenes:
+                return None
+            usable = [s for s in scenes if s.is_usable]
+            if not usable:
+                return None
+            s_scene = usable[0]
+            bands = await client.sample_bands(s_scene, lat, lon)
             if index_type == BandType.NDVI:
-                # شبیه‌سازی
-                value = 0.65  # NDVI معمولی برای گیاهان سالم
+                value = ndvi_from_bands(bands["nir"], bands["red"])
                 return VegetationIndex(
                     index_type=index_type,
                     value=value,
@@ -87,19 +124,40 @@ class SatelliteMonitoringService:
                     scene_id=scene.scene_id,
                     captured_at=scene.capture_date,
                 )
+            elif index_type == BandType.EVI:
+                blue = bands.get("blue") or 0.1
+                value = evi_from_bands(bands["nir"], bands["red"], blue)
+                return VegetationIndex(
+                    index_type=index_type,
+                    value=value,
+                    confidence=0.95,
+                    scene_id=scene.scene_id,
+                    captured_at=scene.capture_date,
+                )
+            elif index_type == BandType.NDWI:
+                from engine.hydroma.satellite.processors.indices import calculate_ndwi
+                import numpy as np
+                ndwi_arr = calculate_ndwi(
+                    np.array([[bands.get("green", bands["nir"] * 0.5)]]),
+                    np.array([[bands["nir"]]]),
+                )
+                value = float(ndwi_arr[0, 0])
+                return VegetationIndex(
+                    index_type=index_type,
+                    value=value,
+                    confidence=0.90,
+                    scene_id=scene.scene_id,
+                    captured_at=scene.capture_date,
+                )
             return None
-        except ImportError:
-            # Fallback
-            return VegetationIndex(
-                index_type=index_type,
-                value=0.5,
-                confidence=0.7,
-                scene_id=scene.scene_id,
-                captured_at=scene.capture_date,
-            )
+        except Exception:
+            return None
 
     async def monitor_field(
-        self, village_id: str, field_bbox: dict[str, float], days_back: int = 30,
+        self,
+        village_id: str,
+        field_bbox: dict[str, float],
+        days_back: int = 30,
     ) -> dict[str, Any]:
         """پایش کامل یک زمین کشاورزی"""
         scene = await self.get_latest_scene(field_bbox)
@@ -134,7 +192,9 @@ class SatelliteMonitoringService:
             return "excellent"
 
     async def detect_changes(
-        self, field_bbox: dict[str, float], days_back: int = 90,
+        self,
+        field_bbox: dict[str, float],
+        days_back: int = 90,
     ) -> dict[str, Any]:
         """تشخیص تغییرات در طول زمان"""
         # شبیه‌سازی تشخیص تغییرات

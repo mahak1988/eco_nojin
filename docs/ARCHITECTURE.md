@@ -91,33 +91,35 @@ eco_nojin/
 |   +-- include/         # C++ headers
 |   +-- bindings/        # pybind11 bindings for Python
 +-- services/
-|   +-- api_gateway/     # Main FastAPI application, routing to all services
-|   |   +-- main.py      # FastAPI app entry
-|   |   +-- routers/     # API endpoints per module (admin, ai, land, soil, blockchain, etc.)
-|   +-- admin/           # Administrative panel logic
-|   +-- analytics/       # Analytics and reporting services
-|   +-- auth/            # Authentication and authorization
-|   +-- bots/            # Chatbot integrations
-|   +-- business_modules/ # Business logic modules
-|   +-- carbon/          # Carbon-specific service logic
-|   +-- content/         # Content management
-|   +-- data_sources/    # External data source connectors
-|   +-- design_engine/   # Design and planning engine
-|   +-- ecowallet/       # Wallet and payment logic
-|   +-- field_monitoring/ # Field monitoring services
-|   +-- land/            # Land management services
-|   +-- ledger/          # Transaction ledger
-|   +-- map_engine/      # Mapping and GIS engine
-|   +-- mobile_monitoring/ # Mobile-specific monitoring
-|   +-- models/          # Shared data models
-|   +-- notification/    # Notification services
-|   +-- reporting/       # Reporting services
-|   +-- satellite/       # Satellite data processing services
-|   +-- science/         # Core science service facade
-|   +-- scientific_motors/ # Reusable scientific computation units
-|   +-- supabase/        # Supabase integration services
-|   +-- telegram_bot/    # Telegram bot logic
-|   +-- workflow/        # Workflow management
+ |   +-- api_gateway/     # Main FastAPI application, routing to all services
+ |   |   +-- main.py      # FastAPI app entry
+ |   |   +-- routers/     # API endpoints per module (admin, ai, land, soil, blockchain, etc.)
+ |   +-- admin/           # Administrative panel logic
+ |   +-- analytics/       # Analytics and reporting services
+ |   +-- auth/            # Authentication and authorization
+ |   +-- bots/            # Chatbot integrations
+ |   +-- business_modules/ # Business logic modules
+ |   +-- carbon/          # Carbon-specific service logic
+ |   +-- content/         # Content management
+ |   +-- data_sources/    # External data source connectors
+ |   +-- design_engine/   # Design and planning engine
+ |   +-- ecowallet/       # Wallet and payment logic
+ |   +-- field_monitoring/ # Field monitoring services
+ |   +-- land/            # Land management services
+ |   +-- ledger/          # Transaction ledger
+ |   +-- map_engine/      # Mapping and GIS engine
+ |   +-- mobile_monitoring/ # Mobile-specific monitoring
+ |   +-- models/          # Shared data models
+ |   +-- notification/    # Notification services
+ |   +-- reporting/       # Reporting services
+ |   +-- realtime/        # SSE real-time event streaming (sync status, model runs)
+ |   +-- satellite/       # Satellite data processing services
+ |   +-- science/         # Core science service facade
+ |   +-- scientific_motors/ # Reusable scientific computation units
+ |   +-- supabase/        # Supabase integration services
+ |   +-- sync/            # Outbox pattern sync with Supabase
+ |   +-- telegram_bot/    # Telegram bot logic
+ |   +-- workflow/        # Workflow management
 +-- frontend/
 |   +-- app/             # Next.js app router
 |   +-- components/      # React components (10 panels)
@@ -158,6 +160,24 @@ Developer -> POST /api/v1/blockchain/carbon/projects
   -> Issue credits: POST /issue
   -> Transfer: POST /transfer
   -> Retire: POST /retire (permanent offset)
+```
+
+### Supabase Sync Flow (Outbox Pattern)
+```
+Local Transaction -> IntOutboxEvent (pending)
+  -> Background worker / manual trigger POST /api/v1/sync/trigger
+  -> Supabase upsert (idempotent)
+  -> Mark processed_at, supabase_synced=true
+  -> Local-first, cloud sync when online
+```
+
+### Real-time SSE Stream Flow
+```
+Client -> GET /api/v1/realtime/stream?user_key=xxx&events=sync_status,model_runs
+  -> Server-Sent Events (text/event-stream)
+  -> Heartbeat every 2s (configurable)
+  -> Event: model_run | sync_status
+  -> Auto-reconnect on disconnect
 ```
 
 ## Scientific Foundation

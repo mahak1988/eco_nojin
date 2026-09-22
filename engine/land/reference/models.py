@@ -17,6 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class Continent(str, Enum):
     """Continents"""
+
     AFRICA = "africa"
     ASIA = "asia"
     EUROPE = "europe"
@@ -28,6 +29,7 @@ class Continent(str, Enum):
 
 class Country(BaseModel):
     """Country reference data"""
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
@@ -55,6 +57,7 @@ class Country(BaseModel):
 
 class Region(BaseModel):
     """Province/State/Region reference data"""
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
@@ -81,6 +84,7 @@ class Region(BaseModel):
 
 class City(BaseModel):
     """City reference data"""
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
@@ -106,13 +110,14 @@ class City(BaseModel):
 
 class TerrainClassification(BaseModel):
     """Standard terrain classification reference"""
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
                 "code": "rolling",
                 "slope_min_deg": 8,
                 "slope_max_deg": 15,
-                "description": "Rolling terrain with gentle undulations"
+                "description": "Rolling terrain with gentle undulations",
             }
         }
     )
@@ -127,6 +132,7 @@ class TerrainClassification(BaseModel):
 
 class DrainageStandard(BaseModel):
     """Standard drainage density classification"""
+
     code: str
     name: str
     density_min_km_km2: float = Field(..., ge=0)

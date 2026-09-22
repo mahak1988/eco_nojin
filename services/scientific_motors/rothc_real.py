@@ -16,6 +16,7 @@ References
 Honesty: failures raise a clear error into MotorResult.FAILED — no
 fabricated carbon trajectories.
 """
+
 from __future__ import annotations
 
 import time
@@ -35,6 +36,7 @@ from .base import (
 
 try:  # pyRothC is a declared project dependency (package name: pyRothC)
     from pyRothC.RothC import RothC as PyRothC
+
     PYROTHC_AVAILABLE = True
 except Exception:  # pragma: no cover - import guard
     PyRothC = None  # type: ignore
@@ -67,12 +69,22 @@ class RealRothCMotor(AbstractScientificMotor):
 
     def get_input_requirements(self) -> list[MotorInput]:
         return [
-            MotorInput("monthly_temperature_c", "timeseries", description="12 monthly mean temps (°C)"),
-            MotorInput("monthly_precipitation_mm", "timeseries", description="12 monthly precipitation sums (mm)"),
-            MotorInput("monthly_et0_mm", "timeseries", description="12 monthly potential ET sums (mm)"),
+            MotorInput(
+                "monthly_temperature_c", "timeseries", description="12 monthly mean temps (°C)"
+            ),
+            MotorInput(
+                "monthly_precipitation_mm",
+                "timeseries",
+                description="12 monthly precipitation sums (mm)",
+            ),
+            MotorInput(
+                "monthly_et0_mm", "timeseries", description="12 monthly potential ET sums (mm)"
+            ),
             MotorInput("clay_pct", "scalar", description="Soil clay content (%)"),
             MotorInput("soc_initial_t_ha", "scalar", description="Initial topsoil SOC (t C/ha)"),
-            MotorInput("land_use", "scalar", required=False, description="cropland/grassland/forest/..."),
+            MotorInput(
+                "land_use", "scalar", required=False, description="cropland/grassland/forest/..."
+            ),
         ]
 
     def get_outputs(self) -> list[MotorOutput]:
@@ -83,15 +95,14 @@ class RealRothCMotor(AbstractScientificMotor):
             MotorOutput("annual_series", "timeseries", "t C/ha", "Annual total SOC trajectory"),
         ]
 
-    async def execute(
-        self, inputs: dict[str, Any], parameters: MotorParameters
-    ) -> MotorResult:
+    async def execute(self, inputs: dict[str, Any], parameters: MotorParameters) -> MotorResult:
         start_time = time.time()
         run_id = f"ROTHC_REAL_{int(time.time())}"
 
         if not PYROTHC_AVAILABLE:
             return MotorResult(
-                run_id=run_id, motor_type=self.motor_type,
+                run_id=run_id,
+                motor_type=self.motor_type,
                 status=MotorStatus.FAILED,
                 error_message="pyRothC package not installed (pip install pyRothC)",
             )
@@ -113,7 +124,7 @@ class RealRothCMotor(AbstractScientificMotor):
 
             # RothC initial pools: IOM = 0.049 * SOC^1.139 (RothC-26.3);
             # remaining SOC starts in HUM (documented approximation).
-            iom = 0.049 * soc_t_ha ** 1.139
+            iom = 0.049 * soc_t_ha**1.139
             hum = max(0.0, soc_t_ha - iom)
             c0 = np.array([0.0, 0.0, 0.0, hum, iom])
 
@@ -130,14 +141,13 @@ class RealRothCMotor(AbstractScientificMotor):
                 clay=clay_pct,
                 soil_thickness=25.0,
                 DR=dr,
-                pE=1.0,          # potential ET0 (FAO-56) → pE=1.0
+                pE=1.0,  # potential ET0 (FAO-56) → pE=1.0
                 bare=bare,
             )
             df = model.compute()  # monthly pool matrix (years*12 rows)
 
             annual = [
-                float(df.iloc[i * 12:(i + 1) * 12].sum(axis=1).mean())
-                for i in range(years)
+                float(df.iloc[i * 12 : (i + 1) * 12].sum(axis=1).mean()) for i in range(years)
             ]
             final_pools = {k: round(float(v), 3) for k, v in df.iloc[-1].items()}
             final_soc = float(df.iloc[-1].sum())
@@ -164,7 +174,8 @@ class RealRothCMotor(AbstractScientificMotor):
             )
         except Exception as exc:
             return MotorResult(
-                run_id=run_id, motor_type=self.motor_type,
+                run_id=run_id,
+                motor_type=self.motor_type,
                 status=MotorStatus.FAILED,
                 error_message=f"RothC-26.3 execution failed: {exc}",
                 execution_time_seconds=round(time.time() - start_time, 3),

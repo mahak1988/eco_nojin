@@ -17,4 +17,4 @@
 # Since they are now in database.models, we could potentially import them from there if needed here.
 # But the recommended place to import them is directly from database.models.
 
-__all__ = [] # Models are now in database.models
+__all__ = []  # Models are now in database.models

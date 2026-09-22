@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+
+# `err` always exits, so code following it is reachable but flagged.
+# shellcheck disable=SC2317
+
+set -eo pipefail
+
+# NOTE: if you make modifications to this script, please increment the version number.
+# WARNING: the SemVer pattern: major.minor.patch must be followed as we use it to determine if the script is up to date.
+# Read by external tooling from the raw URL, so it stays even though the bootstrap
+# no longer self-updates.
+# shellcheck disable=SC2034
+FOUNDRYUP_INSTALLER_VERSION="2.0.0"
+
+# ----------------------------------------------------------------------------
+# Rust foundryup migration bootstrap
+#
+# The bash foundryup has been replaced by the Rust rewrite
+# (https://github.com/foundry-rs/foundryup). This script is a one-shot
+# bootstrap: on first run it replaces itself with the Rust `foundryup` binary
+# and execs it. Subsequent runs go straight to the Rust binary, so the bash
+# implementation is gone.
+#
+# It downloads and validates the Rust binary in a staging directory, then
+# atomically moves it over this script, so a failed or partial install never
+# corrupts an existing foundryup.
+# ----------------------------------------------------------------------------
+
+BASE_DIR="${XDG_CONFIG_HOME:-$HOME}"
+FOUNDRY_DIR="${FOUNDRY_DIR:-"$BASE_DIR/.foundry"}"
+FOUNDRY_BIN_DIR="$FOUNDRY_DIR/bin"
+
+# Pinned Rust foundryup version to bootstrap. Override for testing/emergencies.
+FOUNDRYUP_BOOTSTRAP_VERSION="${FOUNDRYUP_BOOTSTRAP_VERSION:-0.0.8}"
+# `foundryup-init.sh` for the pinned bootstrap version.
+FOUNDRYUP_INIT_URL="${FOUNDRYUP_INIT_URL:-"https://raw.githubusercontent.com/foundry-rs/foundryup/v${FOUNDRYUP_BOOTSTRAP_VERSION}/foundryup-init.sh"}"
+
+# Resolve the running launcher independently of FOUNDRY_DIR so an override only
+# changes where Rust foundryup manages its data and installed Foundry binaries.
+FOUNDRY_BIN_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)/$(basename "${BASH_SOURCE[0]}")"
+
+# Temp paths cleaned up on exit; kept at script scope so the trap can reach them.
+_init=""
+_stage=""
+
+# All bootstrap chatter goes to stderr so a migrated `foundryup --version` keeps
+# stdout clean once it execs the Rust binary.
+say() { printf 'foundryup: %s\n' "$1" >&2; }
+warn() { say "warning: $1"; }
+err() {
+  say "$1"
+  exit 1
+}
+
+# Downloads $1 to $2 over HTTPS with curl or wget. Returns nonzero on failure.
+download() {
+  if command -v curl >/dev/null 2>&1; then
+    curl --proto '=https' --tlsv1.2 -fsSL --retry 3 --retry-delay 1 -o "$2" "$1"
+  elif command -v wget >/dev/null 2>&1; then
+    wget --https-only --secure-protocol=TLSv1_2 -qO "$2" "$1"
+  else
+    err "need 'curl' or 'wget' (command not found)"
+  fi
+}
+
+cleanup() {
+  [ -n "${_init:-}" ] && rm -f "$_init"
+  [ -n "${_stage:-}" ] && rm -rf "$_stage"
+  return 0
+}
+
+# Installs the Rust foundryup into a staging dir, validates it, atomically moves
+# it onto $FOUNDRY_BIN_PATH (replacing this script), and execs it.
+bootstrap() {
+  # If the exec below re-enters this script, the Rust binary is missing or
+  # broken; stop rather than looping on reinstall.
+  if [ "${FOUNDRYUP_BOOTSTRAP_ACTIVE:-0}" = "1" ]; then
+    err "bootstrap loop detected: $FOUNDRY_BIN_PATH is not a working Rust foundryup"
+  fi
+
+  mkdir -p "$FOUNDRY_BIN_DIR"
+
+  trap cleanup EXIT INT TERM
+  _init="$(mktemp)"
+  # Stage beside the launcher so the final move is an atomic same-filesystem rename.
+  _stage="$(mktemp -d "$(dirname "$FOUNDRY_BIN_PATH")/.foundryup-bootstrap.XXXXXX")"
+
+  say "installing the Rust foundryup (v$FOUNDRYUP_BOOTSTRAP_VERSION)..."
+
+  if ! download "$FOUNDRYUP_INIT_URL" "$_init"; then
+    err "could not download the Rust foundryup installer from $FOUNDRYUP_INIT_URL"
+  fi
+
+  # A missing tag returns a `404: Not Found` body with a success status; reject
+  # anything that isn't a script before handing it to `sh`.
+  if ! head -n 1 "$_init" | grep -q '^#!'; then
+    err "the downloaded Rust foundryup installer is not a valid script (unexpected response from $FOUNDRYUP_INIT_URL)"
+  fi
+
+  # Install into the staging FOUNDRY_DIR so the installer never overwrites this
+  # running script. FOUNDRYUP_VERSION pins the Rust foundryup release; both are
+  # scoped to this invocation so they never leak into the user's environment.
+  # Drop stdout: it's post-install PATH advice for the temporary staging dir.
+  # Errors/warnings go to stderr and are preserved.
+  if ! env FOUNDRY_DIR="$_stage" FOUNDRYUP_VERSION="$FOUNDRYUP_BOOTSTRAP_VERSION" \
+    sh "$_init" -y >/dev/null; then
+    err "the Rust foundryup installer failed"
+  fi
+
+  local _staged="$_stage/bin/foundryup"
+  if [ ! -x "$_staged" ]; then
+    err "the Rust foundryup binary was not found after installation"
+  fi
+  if ! "$_staged" --version >/dev/null 2>&1; then
+    err "the installed Rust foundryup binary failed validation"
+  fi
+
+  # Same-filesystem atomic replace of this script with the Rust binary.
+  ensure_replace "$_staged"
+
+  trap - EXIT
+  cleanup
+
+  exec env FOUNDRYUP_BOOTSTRAP_ACTIVE=1 FOUNDRY_DIR="$FOUNDRY_DIR" "$FOUNDRY_BIN_PATH" "$@"
+}
+
+ensure_replace() {
+  if ! mv -f "$1" "$FOUNDRY_BIN_PATH"; then
+    err "could not install the Rust foundryup to $FOUNDRY_BIN_PATH"
+  fi
+}
+
+# Skip execution when sourced by tests.
+if [ "${FOUNDRYUP_TEST:-0}" != "1" ]; then
+  bootstrap "$@"
+fi

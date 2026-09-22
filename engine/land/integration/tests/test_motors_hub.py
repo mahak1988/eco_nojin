@@ -104,20 +104,24 @@ class TestScientificMotorsHub:
 
     def test_unified_analysis_handles_extreme_values(self, hub):
         """Should handle extreme values gracefully"""
-        result = hub.analyze_land({
-            "soil_ph": -10,
-            "annual_precip_mm": -100,
-            "mean_temp_c": -100,
-        })
+        result = hub.analyze_land(
+            {
+                "soil_ph": -10,
+                "annual_precip_mm": -100,
+                "mean_temp_c": -100,
+            }
+        )
         assert isinstance(result, UnifiedLandAnalysis)
 
     def test_unified_analysis_handles_large_values(self, hub):
         """Should handle large values gracefully"""
-        result = hub.analyze_land({
-            "soil_ph": 100,
-            "annual_precip_mm": 100000,
-            "mean_temp_c": 100,
-        })
+        result = hub.analyze_land(
+            {
+                "soil_ph": 100,
+                "annual_precip_mm": 100000,
+                "mean_temp_c": 100,
+            }
+        )
         assert isinstance(result, UnifiedLandAnalysis)
 
     def test_unified_analysis_handles_special_chars(self, hub):

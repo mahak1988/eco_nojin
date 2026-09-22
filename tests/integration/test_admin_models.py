@@ -1,4 +1,5 @@
 """Tests for the Phase 5 models module (honest Ollama state)."""
+
 import os
 
 import pytest
@@ -78,7 +79,5 @@ def test_models_requires_admin_role(admin_client):
         json={"email": "farmer@test.com", "password": "testpass123"},
     )
     token = resp.json()["access_token"]
-    resp = admin_client.get(
-        "/api/v1/admin/models", headers={"Authorization": f"Bearer {token}"}
-    )
+    resp = admin_client.get("/api/v1/admin/models", headers={"Authorization": f"Bearer {token}"})
     assert resp.status_code == 403

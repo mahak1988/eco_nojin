@@ -19,6 +19,7 @@ Env vars (see .env):
 Honesty: ``configured`` is True only when uid+key are both set; every
 network call raises DataStoreNotConfigured otherwise. Never fabricates data.
 """
+
 from __future__ import annotations
 
 import logging
@@ -60,9 +61,7 @@ DATA_STORES: dict[str, dict[str, str]] = {
 
 SEPAL_BASE_URL = os.environ.get("SEPAL_BASE_URL", "https://sepal.io")
 
-CDS_API_URL = os.environ.get(
-    "CDS_API_URL", "https://cds.climate.copernicus.eu/api"
-)
+CDS_API_URL = os.environ.get("CDS_API_URL", "https://cds.climate.copernicus.eu/api")
 CDS_UID = os.environ.get("CDS_UID", "")
 CDS_API_KEY = os.environ.get("CDS_API_KEY", "")
 
@@ -100,7 +99,9 @@ class DataStoreClient:
             raise ValueError(f"unknown store: {store} (use {list(DATA_STORES)})")
         spec = DATA_STORES[store]
         self.store = store
-        self._base = (base_url or os.environ.get(spec["url_env"]) or spec["url_default"]).rstrip("/")
+        self._base = (base_url or os.environ.get(spec["url_env"]) or spec["url_default"]).rstrip(
+            "/"
+        )
         self._uid = uid if uid is not None else os.environ.get(spec["uid_env"], "")
         self._key = api_key if api_key is not None else os.environ.get(spec["key_env"], "")
         self._timeout = timeout
@@ -162,9 +163,7 @@ class DataStoreClient:
         """Submit a retrieval job; returns the task URL."""
         url = f"{self._base}/retrieve/v1/processes/{dataset}/execution"
         try:
-            resp = httpx.post(
-                url, headers=self._auth_headers(), json=params, timeout=self._timeout
-            )
+            resp = httpx.post(url, headers=self._auth_headers(), json=params, timeout=self._timeout)
         except httpx.HTTPError as exc:
             raise DataStoreRequestError(f"{self.store} submit failed: {exc}") from exc
         if resp.status_code not in (200, 201, 202):
@@ -181,9 +180,7 @@ class DataStoreClient:
         deadline = time.monotonic() + max_seconds
         while time.monotonic() < deadline:
             try:
-                resp = httpx.get(
-                    task_url, headers=self._auth_headers(), timeout=self._timeout
-                )
+                resp = httpx.get(task_url, headers=self._auth_headers(), timeout=self._timeout)
             except httpx.HTTPError as exc:
                 raise DataStoreRequestError(f"{self.store} poll failed: {exc}") from exc
             if resp.status_code == 200:
@@ -198,9 +195,7 @@ class DataStoreClient:
     def download(self, task_url: str) -> bytes:
         """Download the finished result as bytes (follows JSON 'url' field)."""
         try:
-            resp = httpx.get(
-                task_url, headers=self._auth_headers(), timeout=600.0
-            )
+            resp = httpx.get(task_url, headers=self._auth_headers(), timeout=600.0)
         except httpx.HTTPError as exc:
             raise DataStoreRequestError(f"{self.store} download failed: {exc}") from exc
         if resp.status_code != 200:
@@ -215,13 +210,9 @@ class DataStoreClient:
         if isinstance(payload, dict) and payload.get("url"):
             file_url = payload["url"]
             try:
-                resp = httpx.get(
-                    file_url, headers=self._auth_headers(), timeout=600.0
-                )
+                resp = httpx.get(file_url, headers=self._auth_headers(), timeout=600.0)
             except httpx.HTTPError as exc:
-                raise DataStoreRequestError(
-                    f"{self.store} file download failed: {exc}"
-                ) from exc
+                raise DataStoreRequestError(f"{self.store} file download failed: {exc}") from exc
             if resp.status_code != 200:
                 raise DataStoreRequestError(
                     f"{self.store} file download HTTP {resp.status_code}: {resp.text[:200]}"

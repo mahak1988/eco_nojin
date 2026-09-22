@@ -1,4 +1,5 @@
 """Base classes for all simulators"""
+
 import time
 import uuid
 from abc import ABC, abstractmethod
@@ -67,9 +68,11 @@ class BaseSimulator(ABC):
                 error=f"{type(e).__name__}: {e!s}",
             )
 
+
 class SimulatorRegistry:
     """رجیستری تمام شبیه‌سازها - Singleton Pattern"""
-    _instance: Optional['SimulatorRegistry'] = None
+
+    _instance: Optional["SimulatorRegistry"] = None
     _simulators: dict[SimulationType, type[BaseSimulator]] = {}
 
     def __new__(cls):

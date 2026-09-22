@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "eco-nojin.fullname" . }}-api-gateway
+  namespace: {{ include "eco-nojin.namespace" . }}
+  labels:
+    {{- include "eco-nojin.labels" . | nindent 4 }}
+    app: api-gateway
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "eco-nojin.fullname" . }}-frontend
+  namespace: {{ include "eco-nojin.namespace" . }}
+  labels:
+    {{- include "eco-nojin.labels" . | nindent 4 }}
+    app: frontend
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "eco-nojin.fullname" . }}-api-gateway-role
+  namespace: {{ include "eco-nojin.namespace" . }}
+  labels:
+    {{- include "eco-nojin.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "services", "configmaps", "secrets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "eco-nojin.fullname" . }}-api-gateway-rolebinding
+  namespace: {{ include "eco-nojin.namespace" . }}
+  labels:
+    {{- include "eco-nojin.labels" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "eco-nojin.fullname" . }}-api-gateway
+    namespace: {{ include "eco-nojin.namespace" . }}
+roleRef:
+  kind: Role
+  name: {{ include "eco-nojin.fullname" . }}-api-gateway-role
+  apiGroup: rbac.authorization.k8s.io

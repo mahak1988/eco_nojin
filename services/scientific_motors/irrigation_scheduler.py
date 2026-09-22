@@ -5,6 +5,7 @@ Crop water requirement calculation and irrigation scheduling.
 Science: FAO-56 Method
 ETc = ET0 × Kc  (Crop evapotranspiration = Reference ET × Crop coefficient)
 """
+
 from __future__ import annotations
 
 # =========================================================================
@@ -17,6 +18,7 @@ try:
         penman_monteith_et0 as _cpp_penman,
         simulate_crop_water as _cpp_crop_water,
     )
+
     _CPP_AVAILABLE = is_cpp_available()
 except ImportError:
     _CPP_AVAILABLE = False
@@ -41,10 +43,11 @@ from .base import (
 
 class IrrigationSystem(Enum):
     """سیستم‌های آبیاری با راندمان جهانی"""
-    SURFACE_FLOOD = ("Surface/Flood", 0.60, 500)      # راندمان 60%, هزینه $500/ha
-    SPRINKLER = ("Sprinkler", 0.75, 2000)              # بارانی، $2000/ha
-    CENTER_PIVOT = ("Center Pivot", 0.85, 4000)        # محور مرکزی، $4000/ha
-    DRIP = ("Drip", 0.90, 3000)                        # قطره‌ای، $3000/ha
+
+    SURFACE_FLOOD = ("Surface/Flood", 0.60, 500)  # راندمان 60%, هزینه $500/ha
+    SPRINKLER = ("Sprinkler", 0.75, 2000)  # بارانی، $2000/ha
+    CENTER_PIVOT = ("Center Pivot", 0.85, 4000)  # محور مرکزی، $4000/ha
+    DRIP = ("Drip", 0.90, 3000)  # قطره‌ای، $3000/ha
     SUBSURFACE_DRIP = ("Subsurface Drip", 0.95, 5000)  # قطره‌ای زیرسطحی، $5000/ha
 
 
@@ -115,29 +118,37 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
             water_cost_m3 = float(parameters.custom_params.get("water_cost_per_m3", 0.05))
 
             if et0 is None:
-                return MotorResult(run_id=run_id, motor_type=self.motor_type,
-                                   status=MotorStatus.FAILED,
-                                   error_message="ET0 is required")
+                return MotorResult(
+                    run_id=run_id,
+                    motor_type=self.motor_type,
+                    status=MotorStatus.FAILED,
+                    error_message="ET0 is required",
+                )
 
             # Get crop coefficients
             kc_stages = CROP_COEFFICIENTS.get(crop_id, CROP_COEFFICIENTS["default"])
 
             # 1. Calculate ETc for full season (simplified daily simulation)
-            etc_season, kc_series = self._simulate_season(
-                et0, kc_stages, season_days
-            )
+            etc_season, kc_series = self._simulate_season(et0, kc_stages, season_days)
 
             # 2. Soil water balance
             awc = field_capacity - wilting_point  # Available Water Capacity
             mad = awc * 0.5  # Management Allowed Depletion (50%)
 
-            mean_moisture = float(np.mean(soil_moisture.values)) if soil_moisture is not None else field_capacity
+            mean_moisture = (
+                float(np.mean(soil_moisture.values))
+                if soil_moisture is not None
+                else field_capacity
+            )
 
             # 3. Generate irrigation schedule
             schedule = self._generate_schedule(
-                kc_series, et0_mean=float(np.mean(et0.values)),
-                soil_moisture=mean_moisture, field_capacity=field_capacity,
-                wilting_point=wilting_point, root_depth=root_depth,
+                kc_series,
+                et0_mean=float(np.mean(et0.values)),
+                soil_moisture=mean_moisture,
+                field_capacity=field_capacity,
+                wilting_point=wilting_point,
+                root_depth=root_depth,
                 season_days=season_days,
             )
 
@@ -198,8 +209,12 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
             )
 
         except Exception as e:
-            return MotorResult(run_id=run_id, motor_type=self.motor_type,
-                               status=MotorStatus.FAILED, error_message=str(e))
+            return MotorResult(
+                run_id=run_id,
+                motor_type=self.motor_type,
+                status=MotorStatus.FAILED,
+                error_message=str(e),
+            )
 
     def _simulate_season(self, et0, kc_stages, season_days):
         """Simulate daily Kc and calculate ETc."""
@@ -230,8 +245,16 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
 
         return etc_total, kc_series
 
-    def _generate_schedule(self, kc_series, et0_mean, soil_moisture,
-                          field_capacity, wilting_point, root_depth, season_days):
+    def _generate_schedule(
+        self,
+        kc_series,
+        et0_mean,
+        soil_moisture,
+        field_capacity,
+        wilting_point,
+        root_depth,
+        season_days,
+    ):
         """Generate irrigation events using simple water balance."""
         awc = field_capacity - wilting_point
         mad = awc * 0.5
@@ -252,23 +275,29 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
             if current_moisture <= (field_capacity - mad):
                 # Refill to field capacity
                 deficit_mm = (field_capacity - current_moisture) * root_mm
-                schedule.append({
-                    "day": day,
-                    "amount_mm": round(deficit_mm, 1),
-                    "kc": kc,
-                    "stage": self._get_stage(day, season_days),
-                    "cumulative_mm": round(cumulative_etc, 1),
-                })
+                schedule.append(
+                    {
+                        "day": day,
+                        "amount_mm": round(deficit_mm, 1),
+                        "kc": kc,
+                        "stage": self._get_stage(day, season_days),
+                        "cumulative_mm": round(cumulative_etc, 1),
+                    }
+                )
                 current_moisture = field_capacity
 
         return schedule
 
     def _get_stage(self, day, season_days):
         ratio = day / season_days
-        if ratio < 0.15: return "initial"
-        elif ratio < 0.40: return "development"
-        elif ratio < 0.80: return "mid_season"
-        else: return "late_season"
+        if ratio < 0.15:
+            return "initial"
+        elif ratio < 0.40:
+            return "development"
+        elif ratio < 0.80:
+            return "mid_season"
+        else:
+            return "late_season"
 
     def _recommend_system(self, etc_season, available_water, crop_id):
         """Recommend optimal irrigation system."""

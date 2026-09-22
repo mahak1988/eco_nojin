@@ -32,7 +32,9 @@ class DEMProcessor:
             with rasterio.open(self.dem_file_path) as dataset:
                 self._dataset = dataset
                 self._data = dataset.read(1)  # Read the first band (elevation values)
-                logger.info(f"DEM loaded successfully from {self.dem_file_path}. Shape: {self._data.shape}")
+                logger.info(
+                    f"DEM loaded successfully from {self.dem_file_path}. Shape: {self._data.shape}"
+                )
         except Exception as e:
             logger.error(f"Error loading DEM from {self.dem_file_path}: {e}")
             raise
@@ -57,7 +59,9 @@ class DEMProcessor:
 
         return min_val, max_val, mean_val
 
-    def get_window_data(self, row_start: int, col_start: int, height: int, width: int) -> np.ndarray:
+    def get_window_data(
+        self, row_start: int, col_start: int, height: int, width: int
+    ) -> np.ndarray:
         """
         Extracts a window of data from the DEM.
 

@@ -1,4 +1,5 @@
 """Auth Module - Authentication, JWT"""
+
 from services.auth.schemas import (
     TokenRefresh,
     TokenResponse,

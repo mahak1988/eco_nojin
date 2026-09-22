@@ -11,16 +11,14 @@ Requirements:
 
 import logging
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
-from sqlalchemy import JSON, Column, DateTime, Float, Integer, String, select
+from sqlalchemy import select
 
-from database.base import Base
 from database.hub import hub
-from engine.hydroma.mrv.schemas import IoTReading
 
 logger = logging.getLogger(__name__)
 
@@ -36,25 +34,6 @@ class DeviceType(str, Enum):
     SENSOR = "sensor"
     GATEWAY = "gateway"
     ACTUATOR = "actuator"
-
-
-class IoTDevice(Base):
-    __tablename__ = "iot_devices"
-    __table_args__ = {"extend_existing": True}
-
-    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    device_name = Column(String(200), nullable=False)
-    device_type = Column(String(20), nullable=False, index=True)
-    sensor_types = Column(JSON, default=list)
-    location = Column(JSON, default=dict)
-    status = Column(String(20), default=DeviceStatus.ACTIVE.value, index=True)
-    firmware_version = Column(String(50), nullable=True)
-    last_seen = Column(DateTime, nullable=True)
-    platform_id = Column(String(36), nullable=True, index=True)
-    qr_code = Column(String(100), unique=True, nullable=True)
-    metadata_json = Column(JSON, default=dict)
-    created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
 
 
 @dataclass
@@ -81,7 +60,7 @@ class DeviceManager:
         sensor_types: list[str] | None = None,
         location: dict | None = None,
         platform_id: str | None = None,
-    ) -> IoTDevice:
+    ) -> Any:
         """Provision a new IoT device."""
         from database.models import IoTDevice as DbDevice
 
@@ -107,7 +86,7 @@ class DeviceManager:
         finally:
             db.close()
 
-    def get_device(self, device_id: str) -> IoTDevice | None:
+    def get_device(self, device_id: str) -> Any | None:
         """Get device details by ID."""
         from database.models import IoTDevice as DbDevice
 
@@ -143,7 +122,7 @@ class DeviceManager:
         finally:
             db.close()
 
-    def update_device_status(self, device_id: str, status: str) -> IoTDevice | None:
+    def update_device_status(self, device_id: str, status: str) -> Any | None:
         """Update device status (active/inactive/error)."""
         from database.models import IoTDevice as DbDevice
 
@@ -176,9 +155,7 @@ class DeviceManager:
         finally:
             db.close()
 
-    def get_device_readings(
-        self, device_id: str, limit: int = 100
-    ) -> list[dict]:
+    def get_device_readings(self, device_id: str, limit: int = 100) -> list[dict]:
         """Get recent MRV observations for a device."""
         from database.models import MRVObservation
 
@@ -207,7 +184,7 @@ class DeviceManager:
         finally:
             db.close()
 
-    def provision_device_from_qr(self, qr_data: dict) -> IoTDevice | None:
+    def provision_device_from_qr(self, qr_data: dict) -> Any | None:
         """Provision a device via QR code scan."""
         device_name = qr_data.get("device_name", "Unknown Device")
         device_type = qr_data.get("device_type", DeviceType.SENSOR.value)

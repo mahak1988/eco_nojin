@@ -1,4 +1,5 @@
 """Telegram bot command handlers."""
+
 from __future__ import annotations
 
 import logging
@@ -96,7 +97,7 @@ async def landscapes_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
 async def analyze_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
     Handle /analyze command.
-    
+
     Format: /analyze latitude longitude area_ha [name]
     Example: /analyze 35.6892 51.389 50 Tehran Farm
     """
@@ -118,7 +119,7 @@ async def analyze_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         latitude = float(args[0])
         longitude = float(args[1])
         area_ha = float(args[2])
-        name = " ".join(args[3:]) if len(args) > 3 else f"Farm-{int(latitude*1000)}"
+        name = " ".join(args[3:]) if len(args) > 3 else f"Farm-{int(latitude * 1000)}"
 
         # Validate ranges
         if not (-90 <= latitude <= 90):
@@ -159,7 +160,7 @@ async def analyze_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         # Telegram has 4096 char limit, split if needed
         if len(formatted) > 4000:
             # Send in chunks
-            chunks = [formatted[i:i+4000] for i in range(0, len(formatted), 4000)]
+            chunks = [formatted[i : i + 4000] for i in range(0, len(formatted), 4000)]
             for chunk in chunks:
                 await update.message.reply_text(
                     chunk,
@@ -175,8 +176,7 @@ async def analyze_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     else:
         await update.message.reply_text(
             format_error(
-                "تحلیل زمین ناموفق بود.\n\n"
-                "لطفاً بعداً دوباره تلاش کنید یا با پشتیبانی تماس بگیرید."
+                "تحلیل زمین ناموفق بود.\n\nلطفاً بعداً دوباره تلاش کنید یا با پشتیبانی تماس بگیرید."
             ),
             parse_mode="Markdown",
         )

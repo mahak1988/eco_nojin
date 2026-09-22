@@ -6,10 +6,11 @@ It provides RAG capabilities using Groq (LLM) and Qdrant (Vector DB).
 
 Usage:
     from engine.hydroma.ai_assistant.rag_service import RAGService
-    
+
     rag = RAGService()
     answer = await rag.query("How to improve soil health in arid regions?")
 """
+
 import os
 from typing import Any
 
@@ -43,9 +44,7 @@ class RAGService:
         # For now, return empty list
         return []
 
-    async def _generate(
-        self, question: str, context: list[dict], user_context: str
-    ) -> str:
+    async def _generate(self, question: str, context: list[dict], user_context: str) -> str:
         """Generate answer using Groq LLM."""
         # Implementation will use Groq SDK
         # For now, return placeholder

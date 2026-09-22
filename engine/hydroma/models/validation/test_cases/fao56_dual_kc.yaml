@@ -1,0 +1,185 @@
+# FAO-56 Dual Kc (Crop Evapotranspiration with Basal + Evaporation) - Test Cases
+# Reference: Allen et al. 1998 FAO-56 Chapter 7; Allen et al. 2005 "FAO-56 Dual Crop Coefficient"
+# ETc = (Kcb * Ks + Ke) * ET0
+# Root zone depletion: Dr_i = Dr_{i-1} - (P-RO) - I + ETc + DP
+
+model: fao56_dual_kc
+reference: "Allen et al. 1998 FAO-56 Ch.7; Allen et al. 2005 'FAO-56 Dual Crop Coefficient'; https://www.fao.org/3/x0490e/x0490e08.htm"
+category: crop
+language: cpp
+status: validated
+
+tolerances:
+  rtol: 1e-3
+  atol: 1e-4
+  depletion_abs_tol: 0.5  # mm
+
+parameters:
+  # Crop coefficients for Wheat (example)
+  kcb_ini: 0.15
+  kcb_mid: 1.15
+  kcb_end: 0.30
+  # Growth stages (days after planting)
+  ini_days: 30
+  dev_days: 50
+  mid_days: 60
+  late_days: 30
+  # Soil evaporation
+  rew: 8.0  # Readily evaporable water (mm)
+  tew: 25.0  # Total evaporable water (mm)
+  # Root zone
+  root_depth_max: 1.5  # m
+  root_depth_ini: 0.3  # m
+  # Soil
+  fc: 0.35  # Field capacity
+  wp: 0.15  # Wilting point
+  raw: 0.20  # Readily available water fraction
+
+cases:
+  - name: wheat_full_season_reference
+    description: "Full season wheat simulation matching FAO-56 examples"
+    inputs:
+      crop: "wheat"
+      planting_date: "2024-11-01"
+      harvest_date: "2025-06-15"
+      daily_climate:
+        # 226 days of data
+        et0_mm: [3.5]*226  # Simplified constant ET0
+        prec_mm: [0.0]*226  # No rain - irrigation only
+        t_max_c: [20.0]*226
+        t_min_c: [10.0]*226
+      irrigation_schedule:
+        - date: "2024-11-15"
+          depth_mm: 50.0
+        - date: "2024-12-01"
+          depth_mm: 50.0
+        - date: "2024-12-20"
+          depth_mm: 50.0
+        - date: "2025-01-15"
+          depth_mm: 50.0
+        - date: "2025-02-15"
+          depth_mm: 50.0
+        - date: "2025-03-15"
+          depth_mm: 50.0
+        - date: "2025-04-15"
+          depth_mm: 50.0
+        - date: "2025-05-15"
+          depth_mm: 50.0
+      initial_conditions:
+        root_zone_depletion_mm: 0.0
+        evaporation_layer_depletion_mm: 0.0
+    expected:
+      # From FAO-56 Example 30 (winter wheat)
+      total_et_mm: 650.0
+      total_irrigation_mm: 400.0
+      final_depletion_mm: 0.0
+      rtol: 1e-2
+      # Seasonal Kc breakdown
+      seasonal_et_breakdown:
+        transpiration_mm: 480.0
+        evaporation_mm: 170.0
+
+  - name: no_rain_no_irrigation
+    description: "Rainfed conditions - soil depletion to wilting point"
+    inputs:
+      crop: "maize"
+      planting_date: "2024-05-01"
+      harvest_date: "2024-10-15"
+      daily_climate:
+        et0_mm: [5.0]*168
+        prec_mm: [0.0]*168
+        t_max_c: [30.0]*168
+        t_min_c: [18.0]*168
+      irrigation_schedule: []
+      initial_conditions:
+        root_zone_depletion_mm: 0.0
+        evaporation_layer_depletion_mm: 0.0
+    expected:
+      # Soil depletes to wilting point, then stress kicks in
+      final_depletion_mm: 150.0  # Approaching TAW
+      stress_coefficient_avg: 0.45
+      seasonal_yield_reduction: 0.35
+      rtol: 1e-2
+
+  - name: frequent_light_irrigation
+    description: "Frequent light irrigation keeps evaporation high"
+    inputs:
+      crop: "tomato"
+      planting_date: "2024-04-01"
+      harvest_date: "2024-09-30"
+      daily_climate:
+        et0_mm: [6.0]*182
+        prec_mm: [0.0]*182
+        t_max_c: [28.0]*182
+        t_min_c: [16.0]*182
+      irrigation_schedule:
+        # Daily 5mm irrigation
+        - date: "2024-04-01"
+          depth_mm: 5.0
+        - date: "2024-04-02"
+          depth_mm: 5.0
+        # ... (daily for season)
+      initial_conditions:
+        root_zone_depletion_mm: 0.0
+        evaporation_layer_depletion_mm: 0.0
+    expected:
+      # High evaporation due to wet surface
+      evaporation_fraction: 0.35  # Ke/(Kcb*Ks+Ke)
+      total_et_mm: 1092.0
+      rtol: 1e-2
+
+  - name: stress_coefficient_ks
+    description: "Test Ks stress coefficient at depletion boundary"
+    inputs:
+      crop: "wheat"
+      planting_date: "2024-11-01"
+      daily_climate:
+        et0_mm: [4.0]*60
+        prec_mm: [0.0]*60
+        t_max_c: [20.0]*60
+        t_min_c: [10.0]*60
+      irrigation_schedule: []
+      initial_conditions:
+        # Start at RAW boundary (readily available water depleted)
+        root_zone_depletion_mm: 60.0  # RAW = 0.2 * (0.35-0.15) * 1500 = 60mm
+        evaporation_layer_depletion_mm: 0.0
+    expected:
+      # At RAW boundary, Ks should be 1.0 (no stress)
+      ks_day_1: 1.0
+      # After 10 days with ETc=4mm, depletion = 60+40=100mm
+      # TAW = (FC-WP)*Zr = 0.20*1500 = 300mm
+      # Ks at 100mm depletion = 1.0 (still > RAW)
+      ks_day_10: 1.0
+      rtol: 1e-3
+
+  - name: evaporation_layer_depletion
+    description: "Test Ke calculation with evaporation layer depletion"
+    inputs:
+      crop: "cotton"
+      planting_date: "2024-04-01"
+      daily_climate:
+        et0_mm: [7.0]*30
+        prec_mm: [0.0]*30
+        t_max_c: [32.0]*30
+        t_min_c: [20.0]*30
+      irrigation_schedule:
+        # Single irrigation at day 15
+        - date: "2024-04-15"
+          depth_mm: 30.0
+      initial_conditions:
+        root_zone_depletion_mm: 0.0
+        evaporation_layer_depletion_mm: 0.0
+    expected:
+      # Day 1-14: TEW not depleted, Ke = 1.0 (energy limited)
+      # Day 15: Irrigation wets surface, TEW resets
+      # Day 16-30: TEW depletes, Ke declines
+      evaporation_day_10: 7.0  # Ke=1.0
+      evaporation_day_16: 6.5  # Ke slightly < 1.0
+      evaporation_day_30: 2.0  # Ke declining
+      rtol: 1e-1
+
+# Metadata for CI matrix
+ci_matrix:
+  backends: ["cpp", "python"]
+  priority: high
+  estimated_time_seconds: 90

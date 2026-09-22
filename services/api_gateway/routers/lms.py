@@ -27,20 +27,28 @@ def _load_local() -> dict[str, Any]:
         return json.load(fh)
 
 
-async def _get(table: str, select: str, extra: str = "", auth: str | None = None) -> list[dict[str, Any]]:
+async def _get(
+    table: str, select: str, extra: str = "", auth: str | None = None
+) -> list[dict[str, Any]]:
     cfg = _cfg()
     bearer = auth or cfg["anon"]
     async with httpx.AsyncClient(timeout=20) as s:
         r = await s.get(
             f"{cfg['url']}/rest/v1/{table}?select={select}{extra}",
-            headers={"apikey": cfg["anon"], "Authorization": f"Bearer {bearer}", "Accept": "application/json"},
+            headers={
+                "apikey": cfg["anon"],
+                "Authorization": f"Bearer {bearer}",
+                "Accept": "application/json",
+            },
         )
         if r.status_code != 200:
             raise RuntimeError(f"Supabase {table}: HTTP {r.status_code} {r.text[:150]}")
         return r.json()
 
 
-async def _write(method: str, table: str, body: dict[str, Any], token: str, extra: str = "") -> dict[str, Any]:
+async def _write(
+    method: str, table: str, body: dict[str, Any], token: str, extra: str = ""
+) -> dict[str, Any]:
     cfg = _cfg()
     async with httpx.AsyncClient(timeout=20) as s:
         r = await s.request(
@@ -54,7 +62,12 @@ async def _write(method: str, table: str, body: dict[str, Any], token: str, extr
                 "Prefer": "return=representation",
             },
         )
-        return {"http": r.status_code, "body": r.json() if r.headers.get("content-type", "").startswith("application/json") else {"raw": r.text[:200]}}
+        return {
+            "http": r.status_code,
+            "body": r.json()
+            if r.headers.get("content-type", "").startswith("application/json")
+            else {"raw": r.text[:200]},
+        }
 
 
 async def _user_from_token(token: str) -> dict[str, Any]:
@@ -85,7 +98,11 @@ def _shape(c: dict[str, Any]) -> dict[str, Any]:
 async def courses() -> dict[str, Any]:
     """Course catalog — cloud first, local JSON fallback."""
     try:
-        rows = await _get("lms_courses", "id,slug,title,level,duration_min,description,lesson_count", "&order=created_at")
+        rows = await _get(
+            "lms_courses",
+            "id,slug,title,level,duration_min,description,lesson_count",
+            "&order=created_at",
+        )
         out = [_shape(r) for r in rows]
         return {"status": "ok", "count": len(out), "courses": out, "source": "supabase"}
     except Exception as exc:
@@ -113,12 +130,18 @@ async def courses() -> dict[str, Any]:
 async def course(course_id: str) -> dict[str, Any]:
     """Full course content (lessons with body text) — cloud first."""
     try:
-        rows = await _get("lms_courses", "id,slug,title,level,duration_min,description", f"&id=eq.{course_id}&limit=1")
+        rows = await _get(
+            "lms_courses",
+            "id,slug,title,level,duration_min,description",
+            f"&id=eq.{course_id}&limit=1",
+        )
         if not rows:
             return {"status": "error", "error": "course not found"}
         c = rows[0]
         lessons = await _get(
-            "lms_lessons", "id,title,minutes,content,position", f"&course_id=eq.{course_id}&order=position"
+            "lms_lessons",
+            "id,title,minutes,content,position",
+            f"&course_id=eq.{course_id}&order=position",
         )
         return {"status": "ok", "course": {**_shape(c), "lessons": lessons}, "source": "supabase"}
     except Exception as exc:
@@ -148,7 +171,9 @@ async def mark_progress(token: str, lesson_id: str) -> dict[str, Any]:
     """Mark a lesson complete (owner-only insert, RLS WITH CHECK)."""
     try:
         u = await _user_from_token(token)
-        res = await _write("POST", "lms_progress", {"user_id": u["id"], "lesson_id": lesson_id}, token)
+        res = await _write(
+            "POST", "lms_progress", {"user_id": u["id"], "lesson_id": lesson_id}, token
+        )
         if res["http"] in (200, 201):
             return {"status": "ok", "lesson_id": lesson_id}
         return {"status": "error", "error": f"HTTP {res['http']} {res['body']}"}
@@ -161,7 +186,9 @@ async def unmark_progress(token: str, lesson_id: str) -> dict[str, Any]:
     """Unmark a lesson (owner-only delete)."""
     try:
         u = await _user_from_token(token)
-        res = await _write("DELETE", "lms_progress", {}, token, f"?user_id=eq.{u['id']}&lesson_id=eq.{lesson_id}")
+        res = await _write(
+            "DELETE", "lms_progress", {}, token, f"?user_id=eq.{u['id']}&lesson_id=eq.{lesson_id}"
+        )
         if res["http"] in (200, 204):
             return {"status": "ok", "lesson_id": lesson_id, "removed": True}
         return {"status": "error", "error": f"HTTP {res['http']} {res['body']}"}

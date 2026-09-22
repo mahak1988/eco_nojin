@@ -23,12 +23,13 @@ async def get_db() -> AsyncSession:
 
 
 def _uid(user) -> str:
-    return str(user.id) if hasattr(user, 'id') else str(user.get('id'))
+    return str(user.id) if hasattr(user, "id") else str(user.get("id"))
 
 
 # ---------------------------------------------------------------------------
 # Pydantic schemas
 # ---------------------------------------------------------------------------
+
 
 class SKUCreate(BaseModel):
     sku_code: str = Field(..., min_length=1, max_length=50)
@@ -127,13 +128,20 @@ class StocktakeCreate(BaseModel):
 # SKU / Warehouse / Location endpoints
 # ---------------------------------------------------------------------------
 
+
 @router.post("/skus", response_model=dict)
-async def create_sku(body: SKUCreate, db: AsyncSession = Depends(get_db), user=Depends(require_admin)):
+async def create_sku(
+    body: SKUCreate, db: AsyncSession = Depends(get_db), user=Depends(require_admin)
+):
     service = StockService(db)
     try:
         sku = await service.create_sku(
-            body.sku_code, body.name, body.uom,
-            body.category_id, body.standard_cost, body.warehouse_id,
+            body.sku_code,
+            body.name,
+            body.uom,
+            body.category_id,
+            body.standard_cost,
+            body.warehouse_id,
         )
     except EcoNojinException as e:
         raise HTTPException(status_code=e.status_code or 400, detail=e.message)
@@ -142,25 +150,38 @@ async def create_sku(body: SKUCreate, db: AsyncSession = Depends(get_db), user=D
 
 @router.get("/skus", response_model=list[dict])
 async def list_skus(
-    is_active: bool = True, limit: int = 100,
-    db: AsyncSession = Depends(get_db), user=Depends(require_user),
+    is_active: bool = True,
+    limit: int = 100,
+    db: AsyncSession = Depends(get_db),
+    user=Depends(require_user),
 ):
     result = await db.execute(
         __import__("sqlalchemy").select(InvSKU).where(InvSKU.is_active == is_active).limit(limit)
     )
     skus = result.scalars().all()
-    return [{"id": s.id, "sku_code": s.sku_code, "name": s.name, "uom": s.uom, "is_active": s.is_active} for s in skus]
+    return [
+        {"id": s.id, "sku_code": s.sku_code, "name": s.name, "uom": s.uom, "is_active": s.is_active}
+        for s in skus
+    ]
 
 
 @router.get("/skus/{sku_code}", response_model=dict)
 async def get_sku(sku_code: str, db: AsyncSession = Depends(get_db), user=Depends(require_user)):
     service = StockService(db)
     sku = await service.get_sku(sku_code)
-    return {"id": sku.id, "sku_code": sku.sku_code, "name": sku.name, "uom": sku.uom, "is_trackable": sku.is_trackable}
+    return {
+        "id": sku.id,
+        "sku_code": sku.sku_code,
+        "name": sku.name,
+        "uom": sku.uom,
+        "is_trackable": sku.is_trackable,
+    }
 
 
 @router.post("/warehouses", response_model=dict)
-async def create_warehouse(body: WarehouseCreate, db: AsyncSession = Depends(get_db), user=Depends(require_admin)):
+async def create_warehouse(
+    body: WarehouseCreate, db: AsyncSession = Depends(get_db), user=Depends(require_admin)
+):
     service = StockService(db)
     wh = await service.create_warehouse(body.code, body.name, body.city)
     return {"id": wh.id, "code": wh.code, "name": wh.name, "city": wh.city}
@@ -169,24 +190,35 @@ async def create_warehouse(body: WarehouseCreate, db: AsyncSession = Depends(get
 @router.get("/warehouses", response_model=list[dict])
 async def list_warehouses(db: AsyncSession = Depends(get_db), user=Depends(require_user)):
     from sqlalchemy import select
+
     result = await db.execute(select(InvWarehouse).where(InvWarehouse.is_active == True))
     whs = result.scalars().all()
     return [{"id": w.id, "code": w.code, "name": w.name, "city": w.city} for w in whs]
 
 
 @router.post("/locations", response_model=dict)
-async def create_location(body: LocationCreate, db: AsyncSession = Depends(get_db), user=Depends(require_admin)):
+async def create_location(
+    body: LocationCreate, db: AsyncSession = Depends(get_db), user=Depends(require_admin)
+):
     service = StockService(db)
     loc = await service.create_location(body.warehouse_id, body.code, body.location_type)
-    return {"id": loc.id, "warehouse_id": loc.warehouse_id, "code": loc.code, "location_type": loc.location_type}
+    return {
+        "id": loc.id,
+        "warehouse_id": loc.warehouse_id,
+        "code": loc.code,
+        "location_type": loc.location_type,
+    }
 
 
 # ---------------------------------------------------------------------------
 # Stock movement endpoints
 # ---------------------------------------------------------------------------
 
+
 @router.post("/movements/receipt", response_model=dict)
-async def receipt(body: ReceiptRequest, db: AsyncSession = Depends(get_db), user=Depends(require_user)):
+async def receipt(
+    body: ReceiptRequest, db: AsyncSession = Depends(get_db), user=Depends(require_user)
+):
     service = StockService(db)
     try:
         m = await service.receipt(
@@ -222,7 +254,9 @@ async def issue(body: IssueRequest, db: AsyncSession = Depends(get_db), user=Dep
 
 
 @router.post("/movements/transfer", response_model=dict)
-async def transfer(body: TransferRequest, db: AsyncSession = Depends(get_db), user=Depends(require_user)):
+async def transfer(
+    body: TransferRequest, db: AsyncSession = Depends(get_db), user=Depends(require_user)
+):
     service = StockService(db)
     try:
         m = await service.transfer(
@@ -240,7 +274,9 @@ async def transfer(body: TransferRequest, db: AsyncSession = Depends(get_db), us
 
 
 @router.post("/movements/adjust", response_model=dict)
-async def adjust(body: AdjustRequest, db: AsyncSession = Depends(get_db), user=Depends(require_admin)):
+async def adjust(
+    body: AdjustRequest, db: AsyncSession = Depends(get_db), user=Depends(require_admin)
+):
     service = StockService(db)
     try:
         m = await service.adjust(
@@ -256,7 +292,9 @@ async def adjust(body: AdjustRequest, db: AsyncSession = Depends(get_db), user=D
 
 
 @router.post("/movements/return", response_model=dict)
-async def return_goods(body: ReturnRequest, db: AsyncSession = Depends(get_db), user=Depends(require_user)):
+async def return_goods(
+    body: ReturnRequest, db: AsyncSession = Depends(get_db), user=Depends(require_user)
+):
     service = StockService(db)
     try:
         m = await service.return_goods(
@@ -274,7 +312,9 @@ async def return_goods(body: ReturnRequest, db: AsyncSession = Depends(get_db), 
 
 
 @router.post("/movements/scrap", response_model=dict)
-async def scrap(body: ScrapRequest, db: AsyncSession = Depends(get_db), user=Depends(require_admin)):
+async def scrap(
+    body: ScrapRequest, db: AsyncSession = Depends(get_db), user=Depends(require_admin)
+):
     service = StockService(db)
     try:
         m = await service.scrap(
@@ -320,6 +360,7 @@ async def list_movements(
 # Balance & reservation endpoints
 # ---------------------------------------------------------------------------
 
+
 @router.get("/balances/{sku_code}", response_model=dict)
 async def get_balance(
     sku_code: str,
@@ -331,7 +372,14 @@ async def get_balance(
     sku = await service.get_sku(sku_code)
     balance = await service.get_balance(sku.id, warehouse_id) if warehouse_id else None
     if not balance:
-        return {"sku_code": sku_code, "on_hand": "0", "reserved": "0", "available": "0", "blocked": "0", "in_transit": "0"}
+        return {
+            "sku_code": sku_code,
+            "on_hand": "0",
+            "reserved": "0",
+            "available": "0",
+            "blocked": "0",
+            "in_transit": "0",
+        }
     return {
         "sku_code": sku_code,
         "warehouse_id": balance.warehouse_id,
@@ -345,7 +393,9 @@ async def get_balance(
 
 
 @router.post("/reservations", response_model=dict)
-async def reserve_stock(body: ReservationRequest, db: AsyncSession = Depends(get_db), user=Depends(require_user)):
+async def reserve_stock(
+    body: ReservationRequest, db: AsyncSession = Depends(get_db), user=Depends(require_user)
+):
     service = StockService(db)
     try:
         sku = await service.get_sku(body.sku_code)
@@ -356,7 +406,9 @@ async def reserve_stock(body: ReservationRequest, db: AsyncSession = Depends(get
             reference_type=body.reference_type,
             reference_id=body.reference_id,
             reference_line_id=body.reference_line_id,
-            expires_at=__import__("datetime").datetime.fromisoformat(body.expires_at) if body.expires_at else None,
+            expires_at=__import__("datetime").datetime.fromisoformat(body.expires_at)
+            if body.expires_at
+            else None,
             created_by=_uid(user),
         )
     except EcoNojinException as e:
@@ -367,7 +419,9 @@ async def reserve_stock(body: ReservationRequest, db: AsyncSession = Depends(get
 @router.post("/reservations/{reservation_id}/consume")
 async def consume_reservation(
     reservation_id: int,
-    qty: Decimal | None = Query(default=None, description="Qty to consume (partial ok). If omitted, consumes all."),
+    qty: Decimal | None = Query(
+        default=None, description="Qty to consume (partial ok). If omitted, consumes all."
+    ),
     db: AsyncSession = Depends(get_db),
     user=Depends(require_user),
 ):
@@ -380,7 +434,9 @@ async def consume_reservation(
 
 
 @router.post("/reservations/{reservation_id}/release")
-async def release_reservation(reservation_id: int, db: AsyncSession = Depends(get_db), user=Depends(require_user)):
+async def release_reservation(
+    reservation_id: int, db: AsyncSession = Depends(get_db), user=Depends(require_user)
+):
     service = StockService(db)
     try:
         r = await service.release_reservation(reservation_id)
@@ -393,15 +449,22 @@ async def release_reservation(reservation_id: int, db: AsyncSession = Depends(ge
 # Stocktake endpoints
 # ---------------------------------------------------------------------------
 
+
 @router.post("/stocktakes", response_model=dict)
-async def create_stocktake(body: StocktakeCreate, db: AsyncSession = Depends(get_db), user=Depends(require_admin)):
+async def create_stocktake(
+    body: StocktakeCreate, db: AsyncSession = Depends(get_db), user=Depends(require_admin)
+):
     service = StockService(db)
-    st = await service.create_stocktake(body.warehouse_id, _uid(user), [l.model_dump() for l in body.lines])
+    st = await service.create_stocktake(
+        body.warehouse_id, _uid(user), [l.model_dump() for l in body.lines]
+    )
     return {"stocktake_id": st.id, "stocktake_number": st.stocktake_number, "status": st.status}
 
 
 @router.post("/stocktakes/{stocktake_id}/approve")
-async def approve_stocktake(stocktake_id: int, db: AsyncSession = Depends(get_db), user=Depends(require_admin)):
+async def approve_stocktake(
+    stocktake_id: int, db: AsyncSession = Depends(get_db), user=Depends(require_admin)
+):
     service = StockService(db)
     st = await service.approve_stocktake(stocktake_id, _uid(user))
     return {"stocktake_id": st.id, "status": st.status, "approved_by": st.approved_by}
@@ -410,6 +473,7 @@ async def approve_stocktake(stocktake_id: int, db: AsyncSession = Depends(get_db
 # ---------------------------------------------------------------------------
 # Reconciliation
 # ---------------------------------------------------------------------------
+
 
 @router.post("/reconcile", response_model=dict)
 async def reconcile_inventory(db: AsyncSession = Depends(get_db), user=Depends(require_admin)):

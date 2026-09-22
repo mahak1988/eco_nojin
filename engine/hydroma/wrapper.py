@@ -188,9 +188,45 @@ def compute_erosion(
         LS = _cpp.ls_factor(slope_length_m, slope_percent)
         A = _cpp.rusle_annual_soil_loss(R, K, LS, c_factor, p_factor)
     else:
-        R = 0.05 * annual_rainfall_mm
-        K = 0.3
-        LS = 1.0
+        # R factor: Renard & Freimund (1994) piecewise
+        if annual_rainfall_mm < 850.0:
+            R = 0.04830 * (annual_rainfall_mm ** 1.61)
+        else:
+            R = 587.8 - 1.219 * annual_rainfall_mm + 0.004105 * annual_rainfall_mm ** 2
+        
+        # K factor from USDA NRCS/RUSLE tables
+        k_table = {
+            "sand": 0.05,
+            "loamy_sand": 0.12,
+            "sandy_loam": 0.24,
+            "loam": 0.38,
+            "silt_loam": 0.45,
+            "clay_loam": 0.32,
+            "clay": 0.25,
+        }
+        K = k_table.get(texture, 0.3)
+        
+        # LS factor: McCool et al. 1987 slope steepness + RUSLE handbook length exponent
+        import math
+        slope_fraction = slope_percent / 100.0
+        theta = math.atan(slope_fraction)
+        
+        # Slope steepness factor S
+        if slope_fraction < 0.09:
+            S = 10.8 * math.sin(theta) + 0.03
+        else:
+            S = 16.8 * math.sin(theta) - 0.50
+        if S < 0.0:
+            S = 0.0
+        
+        # Slope length exponent m
+        sin_t = math.sin(theta)
+        beta = (sin_t / 0.0896) / (3.0 * (sin_t ** 0.8) + 0.56)
+        m = beta / (1.0 + beta)
+        
+        L = (slope_length_m / 22.13) ** m
+        LS = L * S
+        
         A = R * K * LS * c_factor * p_factor
 
     risk_level = "low" if A < 5 else "moderate" if A < 15 else "high" if A < 30 else "very high"
@@ -206,9 +242,9 @@ def compute_erosion(
 
     return {
         "annual_soil_loss_t_per_ha": round(A, 2),
-        "R_factor": round(R if _available else 0.05 * annual_rainfall_mm, 2),
-        "K_factor": round(K if _available else 0.3, 3),
-        "LS_factor": round(LS if _available else 1.0, 3),
+        "R_factor": round(R, 2),
+        "K_factor": round(K, 3),
+        "LS_factor": round(LS, 3),
         "C_factor": c_factor,
         "P_factor": p_factor,
         "risk_level": risk_level,
@@ -286,7 +322,7 @@ def route_flood(
         return {"error": "C++ not available"}
     try:
         result = _cpp.route_flood_wave(
-            hydrograph, channel_length, 50, manning_n, bed_slope, 10.0, channel_width
+            hydrograph, channel_length, bed_slope, manning_n, channel_width
         )
         return {
             "peak_inflow": max(hydrograph) if hydrograph else 0,

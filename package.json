@@ -1,48 +1,39 @@
 {
   "name": "eco-nojin-monorepo",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Eco Nojin Monorepo — Digital Twin for Landscape Restoration",
   "scripts": {
-    "dev": "pnpm -C frontend dev",
-    "build": "pnpm -C frontend build",
-    "start": "pnpm -C frontend start",
-    "lint": "pnpm -C frontend lint",
-    "test": "pnpm -C frontend test",
+    "dev": "pnpm -C apps/web dev",
+    "build": "pnpm -C apps/web build",
+    "start": "pnpm -C apps/web start",
+    "lint": "pnpm -C apps/web lint",
+    "format": "pnpm -C apps/web format",
+    "test": "pnpm -C apps/web test",
+    "test:e2e": "pnpm -C apps/web test:e2e",
+    "type-check": "pnpm -C apps/web type-check",
+    "generate:api": "pnpm -C apps/web generate:api",
     "backend:test": "python -m pytest -q",
-    "test:all": "pnpm test && pnpm backend:test",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "type-check": "pnpm -C frontend tsc --noEmit"
+    "test:all": "pnpm test && pnpm backend:test"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "^16.3.2",
-    "@types/node": "^26.2.0",
-    "@types/react": "^18.3.31",
-    "@types/react-dom": "^18.3.7",
-    "autoprefixer": "^10.5.4",
-    "eslint-config-prettier": "^9.1.0",
-    "postcss": "^8.5.26",
-    "prettier": "^3.3.3",
-    "prisma": "^7.9.1",
-    "rollup-plugin-visualizer": "^7.1.1",
+    "@biomejs/biome": "^2.5.14",
+    "@next/bundle-analyzer": "15.5.25",
+    "@types/node": "^22.15.0",
+    "@types/react": "19.0.0",
+    "@types/react-dom": "19.0.0",
+    "orval": "^8.35.0",
+    "turbo": "^2.5.4",
     "typescript": "^5.9.3"
-  },
-  "packageManager": "pnpm@11.4.0",
-  "pnpm": {
-    "overrides": {
-      "@types/react": "18.3.31",
-      "@types/react-dom": "18.3.1"
-    }
-  },
-  "engines": {
-    "node": ">=20.0.0",
-    "pnpm": ">=9.0.0"
   },
   "dependencies": {
     "clsx": "^2.1.1",
     "geotiff": "^3.0.5",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "tailwind-merge": "^3.6.0"
+  },
+  "packageManager": "pnpm@11.4.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
   }
 }

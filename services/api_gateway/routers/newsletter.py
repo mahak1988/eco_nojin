@@ -2,6 +2,7 @@
 newsletter is the project's own updates channel). Duplicate emails are
 handled gracefully: the endpoint answers ok with already=True.
 """
+
 from __future__ import annotations
 
 import logging
@@ -41,9 +42,7 @@ class NewsletterSubscribe(BaseModel):
 
 
 @router.post("/subscribe")
-def subscribe(
-    payload: NewsletterSubscribe, db: Session = Depends(get_db)
-) -> dict[str, Any]:
+def subscribe(payload: NewsletterSubscribe, db: Session = Depends(get_db)) -> dict[str, Any]:
     record = NewsletterSubscriber(email=payload.email, locale=payload.locale)
     db.add(record)
     try:

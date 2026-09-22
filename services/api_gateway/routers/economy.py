@@ -14,7 +14,9 @@ class EconomyRequest(BaseModel):
     lat: float
     lon: float
     area_ha: float = Field(default=100, gt=0)
-    intervention: str = "conservation_ag"  # conservation_ag|agroforestry|terrace|rotational_grazing|none
+    intervention: str = (
+        "conservation_ag"  # conservation_ag|agroforestry|terrace|rotational_grazing|none
+    )
     slope_pct: float = Field(default=10.0, gt=0)
     discount_rate: float = Field(default=0.10, ge=0, le=0.5)
     horizon_years: int = Field(default=20, ge=1, le=50)

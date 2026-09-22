@@ -11,10 +11,12 @@ import re
 from database.models import User, LandProfile, Base
 from database.hub import hub
 
+
 # Compatibility: get_db via hub
 def get_db():
     with hub.get_session() as session:
         yield session
+
 
 # ایجاد یک دیتابیس موقت در حافظه برای تست
 @pytest.fixture(scope="function")
@@ -26,15 +28,18 @@ def test_db_session():
     yield session
     session.close()
 
+
 # --- چالش 1: اعتبارسنجی ورودی ---
 class TestInputValidation:
     def test_name_cannot_be_empty_string(self, test_db_session):
         """چالش: نام زمین نباید یک رشته خالی باشد."""
-        user = User(email="test@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "pw"))
+        user = User(
+            email="test@example.com", hashed_password=os.environ.get("HASHED_PASSWORD", "pw")
+        )
         test_db_session.add(user)
         test_db_session.commit()
 
-        with pytest.raises((IntegrityError, DataError)): # بسته به نحوه اعمال محدودیت
+        with pytest.raises((IntegrityError, DataError)):  # بسته به نحوه اعمال محدودیت
             lp = LandProfile(name="", user_id=user.id)
             test_db_session.add(lp)
             test_db_session.commit()
@@ -42,7 +47,9 @@ class TestInputValidation:
 
     def test_area_ha_must_be_positive(self, test_db_session):
         """چالش: مساحت نباید منفی باشد."""
-        user = User(email="test@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "pw"))
+        user = User(
+            email="test@example.com", hashed_password=os.environ.get("HASHED_PASSWORD", "pw")
+        )
         test_db_session.add(user)
         test_db_session.commit()
 
@@ -66,19 +73,21 @@ class TestInputValidation:
 
     def test_coordinates_out_of_range(self, test_db_session):
         """چالش: مختصات باید در محدوده معتبر جغرافیایی باشند."""
-        user = User(email="test@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "pw"))
+        user = User(
+            email="test@example.com", hashed_password=os.environ.get("HASHED_PASSWORD", "pw")
+        )
         test_db_session.add(user)
         test_db_session.commit()
 
         # ایجاد یک مختصات نامعتبر
-        invalid_lat = 100.0 # بیشتر از 90
-        invalid_lon = -200.0 # کمتر از -180
+        invalid_lat = 100.0  # بیشتر از 90
+        invalid_lon = -200.0  # کمتر از -180
 
         lp = LandProfile(
             name="Invalid Coord Farm",
             location_lat=invalid_lat,
             location_lon=invalid_lon,
-            user_id=user.id
+            user_id=user.id,
         )
         test_db_session.add(lp)
         test_db_session.commit()
@@ -87,23 +96,27 @@ class TestInputValidation:
         # اگر ذخیره شود، یعنی کنترلی وجود ندارد.
         assert lp.location_lat == invalid_lat
         assert lp.location_lon == invalid_lon
-        logger.warning("Warning: Model allows out-of-range coordinates. Consider adding validation.")
+        logger.warning(
+            "Warning: Model allows out-of-range coordinates. Consider adding validation."
+        )
 
 
 # --- چالش 2: رفتارهای پیچیده رابطه و داده ---
 class TestComplexBehaviors:
     def test_unique_constraint_on_name_per_user(self, test_db_session):
         """چالش: یک کاربر نباید بتواند دو زمین با نام یکسان داشته باشد."""
-        user = User(email="farmer@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "pw"))
+        user = User(
+            email="farmer@example.com", hashed_password=os.environ.get("HASHED_PASSWORD", "pw")
+        )
         test_db_session.add(user)
         test_db_session.commit()
 
         lp1 = LandProfile(name="My Farm", user_id=user.id)
-        lp2 = LandProfile(name="My Farm", user_id=user.id) # نام تکراری
+        lp2 = LandProfile(name="My Farm", user_id=user.id)  # نام تکراری
 
         test_db_session.add(lp1)
         test_db_session.commit()
-        
+
         test_db_session.add(lp2)
         with pytest.raises(IntegrityError):
             test_db_session.commit()
@@ -111,7 +124,9 @@ class TestComplexBehaviors:
 
     def test_orphaned_profile_after_user_deletion(self, test_db_session):
         """چالش: بررسی وضعیت پروفایل زمین بعد از حذف کاربر."""
-        user = User(email="orphan@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "pw"))
+        user = User(
+            email="orphan@example.com", hashed_password=os.environ.get("HASHED_PASSWORD", "pw")
+        )
         test_db_session.add(user)
         test_db_session.commit()
 
@@ -126,13 +141,17 @@ class TestComplexBehaviors:
 
         orphaned_lp = test_db_session.query(LandProfile).filter(LandProfile.id == lp.id).first()
         assert orphaned_lp is not None
-        assert orphaned_lp.user_id is None # تأیید null شدن
-        assert orphaned_lp.user is None # تأیید عدم وجود رابطه
+        assert orphaned_lp.user_id is None  # تأیید null شدن
+        assert orphaned_lp.user is None  # تأیید عدم وجود رابطه
 
     def test_multiple_users_same_land_name_allowed(self, test_db_session):
         """چالش: کاربران مختلف می‌توانند زمین‌هایی با نام یکسان داشته باشند."""
-        u1 = User(email="user1@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "pw"))
-        u2 = User(email="user2@example.com", hashed_password = os.environ.get("HASHED_PASSWORD", "pw"))
+        u1 = User(
+            email="user1@example.com", hashed_password=os.environ.get("HASHED_PASSWORD", "pw")
+        )
+        u2 = User(
+            email="user2@example.com", hashed_password=os.environ.get("HASHED_PASSWORD", "pw")
+        )
         test_db_session.add(u1)
         test_db_session.add(u2)
         test_db_session.commit()
@@ -145,7 +164,10 @@ class TestComplexBehaviors:
         test_db_session.commit()
 
         # باید هر دو با موفقیت ذخیره شوند
-        assert test_db_session.query(LandProfile).filter(LandProfile.name == "Common Farm").count() == 2
+        assert (
+            test_db_session.query(LandProfile).filter(LandProfile.name == "Common Farm").count()
+            == 2
+        )
 
 
 # --- چالش 3: مدیریت خطا ---
@@ -162,6 +184,7 @@ class TestErrorHandling:
         assert lp.user_id == fake_user_id
         # تلاش برای دسترسی به رابطه باید None برگرداند
         assert lp.user is None
+
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

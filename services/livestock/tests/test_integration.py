@@ -1,4 +1,5 @@
 """Integration tests for Livestock Module"""
+
 from services.livestock.nutrition.forage_quality import ndvi_to_forage_quality
 from services.livestock.schemas import (
     AnimalType,

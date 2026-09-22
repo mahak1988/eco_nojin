@@ -2,6 +2,7 @@
 Integration layer between Telegram Bot and Hydroma scientific motors.
 Runs all 11 modules in a pipeline and returns structured results.
 """
+
 import structlog
 
 logger = structlog.get_logger()
@@ -57,7 +58,7 @@ class HydromaBotIntegration:
     ) -> dict[str, Any]:
         """
         Run complete land analysis pipeline.
-        
+
         Returns structured data for all modules.
         """
         self._ensure_imports()
@@ -77,15 +78,14 @@ class HydromaBotIntegration:
             # Phase 1: Satellite monitoring
             logger.info("  [BOT] Phase 1: Satellite monitoring")
             from services.scientific_motors.satellite_integration import SatelliteContext
+
             context = SatelliteContext(
                 latitude=latitude,
                 longitude=longitude,
                 bbox=bbox,
             )
 
-            sat_params = self._satellite.derive_parameters(
-                context, crop_id=crop_id, koppen="BSk"
-            )
+            sat_params = self._satellite.derive_parameters(context, crop_id=crop_id, koppen="BSk")
 
             results["satellite"] = {
                 "ndvi": sat_params.ndmi_value,  # Simplified
@@ -109,7 +109,7 @@ class HydromaBotIntegration:
                 start_date="2026-01-01",
                 end_date="2026-12-31",
                 time_step="daily",
-                scenario_name=f"bot_{int(latitude*100)}_{int(longitude*100)}",
+                scenario_name=f"bot_{int(latitude * 100)}_{int(longitude * 100)}",
                 custom_params={
                     "latitude": latitude,
                     "koppen_climate": "BSk",  # Simplified, could be detected
@@ -139,7 +139,7 @@ class HydromaBotIntegration:
                 start_date="2026-01-01",
                 end_date="2036-12-31",
                 time_step="yearly",
-                scenario_name=f"bot_mrv_{int(latitude*100)}",
+                scenario_name=f"bot_mrv_{int(latitude * 100)}",
                 custom_params={
                     "project_name": f"Bot Analysis {latitude:.2f},{longitude:.2f}",
                     "land_area_ha": area_ha,

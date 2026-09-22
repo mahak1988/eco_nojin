@@ -10,9 +10,13 @@ const configuredAccounts = (() => {
   }
   return undefined;
 })();
+
 const POLYGON_RPC_URL = process.env.POLYGON_RPC_URL || "https://polygon-rpc.com";
-const MUMBAI_RPC_URL = process.env.MUMBAI_RPC_URL || "https://rpc-mumbai.maticvigil.com";
+const AMOY_RPC_URL = process.env.AMOY_RPC_URL || "https://rpc-amoy.polygon.technology";
 const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY || "";
+
+const AMOY_CHAIN_ID = 80002;
+const POLYGON_CHAIN_ID = 137;
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -33,10 +37,10 @@ module.exports = {
     localhost: {
       url: "http://127.0.0.1:8545",
     },
-    mumbai: {
-      url: MUMBAI_RPC_URL,
+    amoy: {
+      url: AMOY_RPC_URL,
       ...(configuredAccounts ? { accounts: configuredAccounts } : {}),
-      chainId: 80001,
+      chainId: 80002,
       gasPrice: 35000000000,
     },
     polygon: {
@@ -49,8 +53,18 @@ module.exports = {
   etherscan: {
     apiKey: {
       polygon: POLYGONSCAN_API_KEY,
-      polygonMumbai: POLYGONSCAN_API_KEY,
+      polygonAmoy: POLYGONSCAN_API_KEY,
     },
+    customChains: [
+      {
+        network: "amoy",
+        chainId: 80002,
+        urls: {
+          apiURL: "https://api-amoy.polygonscan.com/api",
+          browserURL: "https://amoy.polygonscan.com",
+        },
+      },
+    ],
   },
   paths: {
     sources: "./src",
@@ -59,6 +73,6 @@ module.exports = {
     artifacts: "./artifacts",
   },
   mocha: {
-    timeout: 40000,
+    timeout: 60000,
   },
 };

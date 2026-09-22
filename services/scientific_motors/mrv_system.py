@@ -17,7 +17,9 @@ Outputs:
 - Additionality & permanence proof
 - Co-benefits quantification
 """
+
 from __future__ import annotations
+
 import structlog
 
 logger = structlog.get_logger()
@@ -47,6 +49,7 @@ from .satellite_integration import (
 
 class CarbonStandard(Enum):
     """Carbon credit standards."""
+
     VCS = ("Verified Carbon Standard", "VCS", 1.0, 0.85)
     GOLD_STANDARD = ("Gold Standard", "GS", 1.2, 0.95)
     CDM = ("Clean Development Mechanism", "CDM", 0.8, 0.90)
@@ -55,6 +58,7 @@ class CarbonStandard(Enum):
 
 class AdditionalityStatus(Enum):
     """Additionality verification status."""
+
     YES = ("Yes", "Project would not occur without carbon finance")
     NO = ("No", "Project is business-as-usual")
     PARTIAL = ("Partial", "Some components additional")
@@ -62,6 +66,7 @@ class AdditionalityStatus(Enum):
 
 class PermanenceRisk(Enum):
     """Risk of carbon reversal."""
+
     LOW = ("Low", "Biochar, long-term agroforestry")
     MEDIUM = ("Medium", "No-till, cover crops")
     HIGH = ("High", "Short-term practices, high disturbance risk")
@@ -70,6 +75,7 @@ class PermanenceRisk(Enum):
 @dataclass
 class MRVProjectInput:
     """User-provided project information."""
+
     project_name: str
     land_area_ha: float
     latitude: float
@@ -77,7 +83,7 @@ class MRVProjectInput:
     bbox: tuple  # (min_lon, min_lat, max_lon, max_lat)
     koppen_climate: str
     baseline_practice: str  # e.g., "conventional_tillage"
-    new_practice: str       # e.g., "no_till_biochar"
+    new_practice: str  # e.g., "no_till_biochar"
     crop_id: str
     project_start_date: str
     project_duration_years: int = 10
@@ -86,6 +92,7 @@ class MRVProjectInput:
 @dataclass
 class MRVVerification:
     """Verification evidence."""
+
     verification_hash: str
     timestamp: str
     standard_code: str
@@ -97,6 +104,7 @@ class MRVVerification:
 @dataclass
 class CarbonCredit:
     """A single carbon credit."""
+
     credit_id: str
     vintage_year: int
     amount_tCO2e: float
@@ -109,6 +117,7 @@ class CarbonCredit:
 @dataclass
 class MRVReport:
     """Complete MRV report output."""
+
     # Metadata
     report_id: str
     project_id: str
@@ -136,7 +145,7 @@ class MRVReport:
 class MRVSystemMotor(AbstractScientificMotor):
     """
     MRV System - Carbon Credit Generation Engine
-    
+
     Combines:
     - Sentinel-2 satellite monitoring
     - RothC carbon modeling
@@ -191,15 +200,11 @@ class MRVSystemMotor(AbstractScientificMotor):
 
             # === Phase 3: VERIFICATION ===
             logger.info("  [MRV] Phase 3: Verification (blockchain + standards)")
-            verification = self._verification_phase(
-                project, monitoring, carbon_seq
-            )
+            verification = self._verification_phase(project, monitoring, carbon_seq)
 
             # === Phase 4: CREDIT ISSUANCE ===
             logger.info("  [MRV] Phase 4: Carbon credit issuance")
-            credits = self._issue_credits(
-                project, carbon_seq, verification
-            )
+            credits = self._issue_credits(project, carbon_seq, verification)
 
             # === Build final report ===
             report = MRVReport(
@@ -247,6 +252,7 @@ class MRVSystemMotor(AbstractScientificMotor):
 
         except Exception as e:
             import traceback
+
             return MotorResult(
                 run_id=run_id,
                 motor_type=self.motor_type,
@@ -317,10 +323,21 @@ class MRVSystemMotor(AbstractScientificMotor):
         """Estimate baseline erosion rate (t/ha/yr)."""
         # Rough RUSLE baseline estimates by climate
         estimates = {
-            "BWh": 5.0, "BWk": 4.0, "BSh": 12.0, "BSk": 10.0,  # Arid
-            "Csa": 8.0, "Csb": 7.0, "Cfa": 10.0, "Cfb": 6.0,    # Temperate
-            "Dfa": 12.0, "Dfb": 10.0, "Dfc": 5.0, "Dwa": 15.0,  # Continental
-            "Af": 20.0, "Am": 18.0, "Aw": 15.0,                  # Tropical
+            "BWh": 5.0,
+            "BWk": 4.0,
+            "BSh": 12.0,
+            "BSk": 10.0,  # Arid
+            "Csa": 8.0,
+            "Csb": 7.0,
+            "Cfa": 10.0,
+            "Cfb": 6.0,  # Temperate
+            "Dfa": 12.0,
+            "Dfb": 10.0,
+            "Dfc": 5.0,
+            "Dwa": 15.0,  # Continental
+            "Af": 20.0,
+            "Am": 18.0,
+            "Aw": 15.0,  # Tropical
         }
         return estimates.get(koppen, 10.0)
 
@@ -356,10 +373,20 @@ class MRVSystemMotor(AbstractScientificMotor):
 
         # Climate adjustment (tropical faster, arid slower)
         climate_mult = {
-            "Af": 1.3, "Am": 1.2, "Aw": 1.2,
-            "BWh": 0.6, "BWk": 0.5, "BSh": 0.8, "BSk": 0.8,
-            "Csa": 1.0, "Csb": 1.0, "Cfa": 1.0, "Cfb": 0.9,
-            "Dfa": 0.9, "Dfb": 0.8, "Dfc": 0.6,
+            "Af": 1.3,
+            "Am": 1.2,
+            "Aw": 1.2,
+            "BWh": 0.6,
+            "BWk": 0.5,
+            "BSh": 0.8,
+            "BSk": 0.8,
+            "Csa": 1.0,
+            "Csb": 1.0,
+            "Cfa": 1.0,
+            "Cfb": 0.9,
+            "Dfa": 0.9,
+            "Dfb": 0.8,
+            "Dfc": 0.6,
         }.get(project.koppen_climate, 1.0)
 
         annual_soc_gain *= climate_mult
@@ -420,24 +447,28 @@ class MRVSystemMotor(AbstractScientificMotor):
         baseline_c = monitoring["baseline"]["c_factor"]
         erosion_reduction_pct = (baseline_c - project_c) / baseline_c * 100
 
-        items.append({
-            "category": "soil_health",
-            "name": "Soil erosion reduction",
-            "value": round(erosion_reduction_pct, 1),
-            "unit": "percent",
-            "description": f"Reduced erosion by {erosion_reduction_pct:.0f}%",
-            "sdg": [15],  # Life on Land
-        })
+        items.append(
+            {
+                "category": "soil_health",
+                "name": "Soil erosion reduction",
+                "value": round(erosion_reduction_pct, 1),
+                "unit": "percent",
+                "description": f"Reduced erosion by {erosion_reduction_pct:.0f}%",
+                "sdg": [15],  # Life on Land
+            }
+        )
 
         # 2. Water retention
-        items.append({
-            "category": "water",
-            "name": "Improved water retention",
-            "value": 15 + erosion_reduction_pct * 0.3,  # Empirical
-            "unit": "percent",
-            "description": "Improved soil water holding capacity",
-            "sdg": [6, 13],  # Clean Water, Climate Action
-        })
+        items.append(
+            {
+                "category": "water",
+                "name": "Improved water retention",
+                "value": 15 + erosion_reduction_pct * 0.3,  # Empirical
+                "unit": "percent",
+                "description": "Improved soil water holding capacity",
+                "sdg": [6, 13],  # Clean Water, Climate Action
+            }
+        )
 
         # 3. Biodiversity (based on practice)
         biodiversity_scores = {
@@ -449,35 +480,41 @@ class MRVSystemMotor(AbstractScientificMotor):
         }
         bio_score = biodiversity_scores.get(project.new_practice, 15)
 
-        items.append({
-            "category": "biodiversity",
-            "name": "Biodiversity enhancement",
-            "value": bio_score,
-            "unit": "score (0-100)",
-            "description": f"{project.new_practice} supports {bio_score}% biodiversity",
-            "sdg": [15],
-        })
+        items.append(
+            {
+                "category": "biodiversity",
+                "name": "Biodiversity enhancement",
+                "value": bio_score,
+                "unit": "score (0-100)",
+                "description": f"{project.new_practice} supports {bio_score}% biodiversity",
+                "sdg": [15],
+            }
+        )
 
         # 4. Farmer livelihood
-        items.append({
-            "category": "livelihood",
-            "name": "Farmer income improvement",
-            "value": round(carbon_seq["annual_tCO2e_ha"] * 30 / 100, 1),
-            "unit": "% of farm income",
-            "description": "Additional carbon revenue",
-            "sdg": [1, 2, 8],  # No poverty, Zero hunger, Decent work
-        })
+        items.append(
+            {
+                "category": "livelihood",
+                "name": "Farmer income improvement",
+                "value": round(carbon_seq["annual_tCO2e_ha"] * 30 / 100, 1),
+                "unit": "% of farm income",
+                "description": "Additional carbon revenue",
+                "sdg": [1, 2, 8],  # No poverty, Zero hunger, Decent work
+            }
+        )
 
         # 5. Reduced chemical use
         if project.new_practice in ["no_till_biochar", "cover_crops", "agroforestry"]:
-            items.append({
-                "category": "chemicals",
-                "name": "Reduced fertilizer use",
-                "value": 25,
-                "unit": "percent",
-                "description": "Less NPK fertilizer required",
-                "sdg": [12, 14],  # Responsible consumption, Life below water
-            })
+            items.append(
+                {
+                    "category": "chemicals",
+                    "name": "Reduced fertilizer use",
+                    "value": 25,
+                    "unit": "percent",
+                    "description": "Less NPK fertilizer required",
+                    "sdg": [12, 14],  # Responsible consumption, Life below water
+                }
+            )
 
         return {
             "items": items,
@@ -516,7 +553,7 @@ class MRVSystemMotor(AbstractScientificMotor):
             "timestamp": datetime.now().isoformat(),
         }
 
-        hash_input = json.dumps(audit_data, sort_keys=True).encode('utf-8')
+        hash_input = json.dumps(audit_data, sort_keys=True).encode("utf-8")
         verification_hash = hashlib.sha256(hash_input).hexdigest()
 
         # Audit trail
@@ -558,9 +595,7 @@ class MRVSystemMotor(AbstractScientificMotor):
         """Check if project is additional (would not happen without carbon finance)."""
 
         # Simple heuristic: if practice change is significant and profitable
-        high_additionality = [
-            "no_till_biochar", "agroforestry", "cover_crops"
-        ]
+        high_additionality = ["no_till_biochar", "agroforestry", "cover_crops"]
         low_additionality = ["no_till"]  # Already widespread in some regions
 
         if project.new_practice in high_additionality:
@@ -585,7 +620,9 @@ class MRVSystemMotor(AbstractScientificMotor):
     # =================================================================
 
     def _issue_credits(
-        self, project: MRVProjectInput, carbon_seq: dict,
+        self,
+        project: MRVProjectInput,
+        carbon_seq: dict,
         verification: MRVVerification,
     ) -> list[CarbonCredit]:
         """Issue annual carbon credits."""
@@ -603,7 +640,7 @@ class MRVSystemMotor(AbstractScientificMotor):
             year_tCO2e = annual_tCO2e * multiplier
 
             # Carbon price (increases over time)
-            price = self._carbon_price_usd * (1.02 ** year_idx)  # 2% annual increase
+            price = self._carbon_price_usd * (1.02**year_idx)  # 2% annual increase
             value = year_tCO2e * price
 
             credit = CarbonCredit(

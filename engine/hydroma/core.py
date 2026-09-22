@@ -15,6 +15,7 @@ Scientific Standards:
 - USDA LCC (Land Capability)
 - Köppen-Geiger (Climate Classification)
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -23,6 +24,7 @@ from enum import Enum
 
 class EngineVersion(Enum):
     """نسخه‌های موتور هسته"""
+
     V1_0 = "1.0.0"  # Initial release
     V1_1 = "1.1.0"  # Carbon calibration
     V1_2 = "1.2.0"  # Erosion calibration
@@ -31,6 +33,7 @@ class EngineVersion(Enum):
 @dataclass
 class EngineContext:
     """Context for engine computations."""
+
     latitude: float = 35.0
     longitude: float = 51.0
     altitude_m: float = 1000.0
@@ -46,7 +49,7 @@ class EngineContext:
 class HydromaCore:
     """
     Hydroma Nojin Core Engine
-    
+
     Provides unified scientific computations for:
     - Soil analysis
     - Water balance
@@ -70,7 +73,7 @@ class HydromaCore:
         texture_class: int,
     ) -> float:
         """Compute soil health score (0-100).
-        
+
         Based on USDA Soil Quality Index.
         """
         # pH score (optimal: 6.0-7.5)
@@ -96,17 +99,24 @@ class HydromaCore:
         else:
             clay_score = 60
 
-        return (ph_score * 0.25 + om_score * 0.30 +
-                tex_score * 0.25 + clay_score * 0.20)
+        return ph_score * 0.25 + om_score * 0.30 + tex_score * 0.25 + clay_score * 0.20
 
     @staticmethod
     def estimate_soil_erodibility(texture_class: int, organic_matter_pct: float) -> float:
         """Estimate K-factor (soil erodibility) for RUSLE."""
         texture_factors = {
-            1: 0.05, 2: 0.10, 3: 0.15,
-            4: 0.35, 5: 0.45, 6: 0.50,
-            7: 0.55, 8: 0.60,
-            9: 0.30, 10: 0.20, 11: 0.15, 12: 0.10,
+            1: 0.05,
+            2: 0.10,
+            3: 0.15,
+            4: 0.35,
+            5: 0.45,
+            6: 0.50,
+            7: 0.55,
+            8: 0.60,
+            9: 0.30,
+            10: 0.20,
+            11: 0.15,
+            12: 0.10,
         }
         k = texture_factors.get(texture_class, 0.30)
         # OM reduces erodibility
@@ -119,8 +129,13 @@ class HydromaCore:
     def compute_rainfall_erosivity(annual_rainfall_mm: float) -> float:
         """R-factor for RUSLE using FAO piecewise-linear method."""
         points = [
-            (100, 100), (400, 400), (800, 1200),
-            (1200, 2800), (1800, 5500), (2500, 8500), (3000, 11000),
+            (100, 100),
+            (400, 400),
+            (800, 1200),
+            (1200, 2800),
+            (1800, 5500),
+            (2500, 8500),
+            (3000, 11000),
         ]
         p = annual_rainfall_mm
 

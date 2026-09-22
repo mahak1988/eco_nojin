@@ -1,0 +1,36 @@
+{{- if and .Values.api-gateway.enabled .Values.api-gateway.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "eco-nojin.fullname" . }}-api-gateway-ingress
+  namespace: {{ include "eco-nojin.namespace" . }}
+  labels:
+    {{- include "eco-nojin.labels" . | nindent 4 }}
+    app: api-gateway
+  annotations:
+    {{- range $key, $value := .Values.api-gateway.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    kubernetes.io/ingress.class: {{ .Values.api-gateway.ingress.className }}
+spec:
+  ingressClassName: {{ .Values.api-gateway.ingress.className }}
+  {{- if .Values.api-gateway.ingress.tls }}
+  tls:
+    {{- toYaml .Values.api-gateway.ingress.tls | nindent 4 }}
+  {{- end }}
+  rules:
+    {{- range .Values.api-gateway.ingress.hosts }}
+    - host: {{ .host }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ include "eco-nojin.fullname" $ }}-api-gateway
+                port:
+                  number: {{ $.Values.api-gateway.service.port }}
+          {{- end }}
+    {{- end }}
+{{- end }}

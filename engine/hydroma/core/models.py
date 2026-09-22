@@ -53,6 +53,10 @@ class SoilProfile(Base):
     name: Mapped[str] = mapped_column(String(150), nullable=False, index=True)
     texture: Mapped[str] = mapped_column(String(50), nullable=False)
     ph: Mapped[float] = mapped_column(Float, nullable=False)
-    ec: Mapped[float] = mapped_column(Float, nullable=False, comment="Electrical conductivity (dS/m)")
-    organic_matter: Mapped[float] = mapped_column(Float, nullable=False, comment="Organic matter (%)")
+    ec: Mapped[float] = mapped_column(
+        Float, nullable=False, comment="Electrical conductivity (dS/m)"
+    )
+    organic_matter: Mapped[float] = mapped_column(
+        Float, nullable=False, comment="Organic matter (%)"
+    )
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))

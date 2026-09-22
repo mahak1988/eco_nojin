@@ -4,6 +4,7 @@ Optimization Engine.
 Finds optimal solutions for multi-objective problems like maximizing yield,
 profit, and sustainability while minimizing cost and risk.
 """
+
 import logging
 from collections.abc import Callable
 from typing import Any
@@ -20,7 +21,12 @@ logger = logging.getLogger(__name__)
 class MultiObjectiveOptimizer:
     """Generic optimizer for multi-objective problems."""
 
-    def __init__(self, objectives: list[tuple[Callable, bool]], constraints: list[Callable], bounds: list[tuple[float, float]]):
+    def __init__(
+        self,
+        objectives: list[tuple[Callable, bool]],
+        constraints: list[Callable],
+        bounds: list[tuple[float, float]],
+    ):
         """
         Args:
             objectives: List of tuples (objective_function, maximize_flag).
@@ -44,7 +50,9 @@ class MultiObjectiveOptimizer:
             total += weights[i] * (multiplier * val)
         return total
 
-    def optimize_weighted_sum(self, weights: list[float], method: str = 'differential_evolution') -> dict[str, Any]:
+    def optimize_weighted_sum(
+        self, weights: list[float], method: str = "differential_evolution"
+    ) -> dict[str, Any]:
         """
         Solves the optimization problem using a weighted sum approach.
 
@@ -61,14 +69,22 @@ class MultiObjectiveOptimizer:
             return self._scalarize_objectives(params, weights)
 
         # Define constraints for scipy (must be >= 0)
-        scipy_constraints = [{'type': 'ineq', 'fun': con} for con in self.constraints]
+        scipy_constraints = [{"type": "ineq", "fun": con} for con in self.constraints]
 
-        if method == 'differential_evolution':
-            result = differential_evolution(objective_to_minimize, self.bounds, seed=42, maxiter=1000)
-        elif method == 'minimize':
+        if method == "differential_evolution":
+            result = differential_evolution(
+                objective_to_minimize, self.bounds, seed=42, maxiter=1000
+            )
+        elif method == "minimize":
             # Need an initial guess for 'minimize'
             x0 = [(b[0] + b[1]) / 2.0 for b in self.bounds]
-            result = minimize(objective_to_minimize, x0, method='SLSQP', bounds=self.bounds, constraints=scipy_constraints)
+            result = minimize(
+                objective_to_minimize,
+                x0,
+                method="SLSQP",
+                bounds=self.bounds,
+                constraints=scipy_constraints,
+            )
         else:
             raise ValueError(f"Unknown method: {method}")
 
@@ -83,8 +99,10 @@ class MultiObjectiveOptimizer:
         return {
             "success": True,
             "solution": dict(zip([f"var_{i}" for i in range(self.num_vars)], solution)),
-            "objective_values": dict(zip(["obj_" + str(i) for i in range(len(objective_values))], objective_values)),
-            "optimization_details": result
+            "objective_values": dict(
+                zip(["obj_" + str(i) for i in range(len(objective_values))], objective_values)
+            ),
+            "optimization_details": result,
         }
 
     def find_pareto_front(self, num_points: int = 20) -> list[dict[str, Any]]:
@@ -108,25 +126,31 @@ class MultiObjectiveOptimizer:
                 w1 = i / (num_points - 1)
                 w2 = 1.0 - w1
                 weights = [w1, w2]
-                res = self.optimize_weighted_sum(weights, method='differential_evolution')
+                res = self.optimize_weighted_sum(weights, method="differential_evolution")
                 if res["success"]:
-                    front.append({
-                        "weights": weights,
-                        "solution": res["solution"],
-                        "objectives": res["objective_values"]
-                    })
+                    front.append(
+                        {
+                            "weights": weights,
+                            "solution": res["solution"],
+                            "objectives": res["objective_values"],
+                        }
+                    )
         else:
             logger.warning("Pareto front approximation is basic for >2 objectives.")
             # Implement a more robust sampler for general N objectives
             for _ in range(num_points):
-                weights = np.random.dirichlet([1]*len(self.objectives)) # Uniformly sample weight space
-                res = self.optimize_weighted_sum(weights.tolist(), method='differential_evolution')
+                weights = np.random.dirichlet(
+                    [1] * len(self.objectives)
+                )  # Uniformly sample weight space
+                res = self.optimize_weighted_sum(weights.tolist(), method="differential_evolution")
                 if res["success"]:
-                    front.append({
-                        "weights": weights.tolist(),
-                        "solution": res["solution"],
-                        "objectives": res["objective_values"]
-                    })
+                    front.append(
+                        {
+                            "weights": weights.tolist(),
+                            "solution": res["solution"],
+                            "objectives": res["objective_values"],
+                        }
+                    )
 
         logger.info(f"Found {len(front)} points on the Pareto front.")
         return front
@@ -145,39 +169,44 @@ def run_land_use_optimization(scenario_id: str, objective_weights: dict[str, flo
     """
     # Define decision variables (e.g., area for crop A, B, C; fertilizer rate)
     # Example: Optimize fertilizer rate for wheat
-    bounds = [(10, 200)] # Fertilizer rate kg/ha
+    bounds = [(10, 200)]  # Fertilizer rate kg/ha
 
     # Define objectives (functions of decision variables)
     def obj_yield(fert_rate):
         # This would call the simulation chain with different fert rates
         # and extract yield. For now, a dummy function.
         rate = fert_rate[0]
-        return 3.0 + 0.02 * rate - 0.0001 * rate**2 # Quadratic response
+        return 3.0 + 0.02 * rate - 0.0001 * rate**2  # Quadratic response
 
     def obj_profit(fert_rate):
         # Profit = Revenue(Yield) - Cost(FertRate)
         yield_val = obj_yield(fert_rate)
-        revenue = yield_val * 2000000 # Price per ton
-        cost = fert_rate[0] * 5 # Cost per kg
+        revenue = yield_val * 2000000  # Price per ton
+        cost = fert_rate[0] * 5  # Cost per kg
         return revenue - cost
 
     def obj_risk(fert_rate):
         # A proxy for risk, perhaps based on variance or a penalty for high rates
-        return fert_rate[0] * 0.01 # Higher rate = higher risk
+        return fert_rate[0] * 0.01  # Higher rate = higher risk
 
     objectives = [
         (obj_yield, True),  # Maximize yield
-        (obj_profit, True), # Maximize profit
-        (obj_risk, False)   # Minimize risk (so we minimize this term)
+        (obj_profit, True),  # Maximize profit
+        (obj_risk, False),  # Minimize risk (so we minimize this term)
     ]
 
     # Define constraints (e.g., total area <= available area, fert_rate <= max_rate)
     def con_area(fert_rate):
-        return 100 - 1 # Assuming 1 ha, area constraint. Dummy.
+        return 100 - 1  # Assuming 1 ha, area constraint. Dummy.
+
     constraints = [con_area]
 
     # Map weights from dict to list order
-    ordered_weights = [objective_weights.get('yield', 0), objective_weights.get('profit', 0), objective_weights.get('risk', 0)]
+    ordered_weights = [
+        objective_weights.get("yield", 0),
+        objective_weights.get("profit", 0),
+        objective_weights.get("risk", 0),
+    ]
     # Normalize weights
     total_w = sum(ordered_weights)
     if total_w > 0:
@@ -191,13 +220,18 @@ def run_land_use_optimization(scenario_id: str, objective_weights: dict[str, flo
         opt_result = OptimizationResultDB(
             scenario_id=scenario_id,
             optimization_type="fertilizer_rate_optimization",
-            objective_function=str(objective_weights), # Store as string for simplicity
-            constraints={"max_rate_kg_ha": 200}, # Stored constraints
+            objective_function=str(objective_weights),  # Store as string for simplicity
+            constraints={"max_rate_kg_ha": 200},  # Stored constraints
             optimal_solution={"fertilizer_rate_kg_ha_optimal": result["solution"]["var_0"]},
-            sensitivity_analysis={}, # Could run sensitivity here
-            pareto_front=[], # Could compute here
-            convergence_metrics={"nfev": result["optimization_details"].nfev, "nit": getattr(result["optimization_details"], 'nit', 0)},
-            computation_time_seconds=result["optimization_details"].execution_time if hasattr(result["optimization_details"], 'execution_time') else 0.0
+            sensitivity_analysis={},  # Could run sensitivity here
+            pareto_front=[],  # Could compute here
+            convergence_metrics={
+                "nfev": result["optimization_details"].nfev,
+                "nit": getattr(result["optimization_details"], "nit", 0),
+            },
+            computation_time_seconds=result["optimization_details"].execution_time
+            if hasattr(result["optimization_details"], "execution_time")
+            else 0.0,
         )
         db = SessionLocal()
         try:

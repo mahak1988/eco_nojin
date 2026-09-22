@@ -124,7 +124,13 @@ def classify(value: float) -> dict[str, Any]:
     return {"label": "خشکسالی فوق‌العاده", "level": "extreme"}
 
 
-def run_drought(lat: float, lon: float, timescale_months: int = 3, start: str = "2015-01-01", end: str = "2024-12-31") -> dict[str, Any]:
+def run_drought(
+    lat: float,
+    lon: float,
+    timescale_months: int = 3,
+    start: str = "2015-01-01",
+    end: str = "2024-12-31",
+) -> dict[str, Any]:
     data = _fetch_series(lat, lon, start, end)
     months = _monthly(data)
     precip = [m["precip"] for m in months]
@@ -159,14 +165,19 @@ def run_drought(lat: float, lon: float, timescale_months: int = 3, start: str = 
         "source": "Open-Meteo ERA5 archive (free, no registration)",
         "location": {"lat": lat, "lon": lon},
         "timescale_months": timescale_months,
-        "method": {"spi": "gamma CDF -> normal quantile", "spei": "Thornthwaite PET + water balance, normal fit (approximation)"},
+        "method": {
+            "spi": "gamma CDF -> normal quantile",
+            "spei": "Thornthwaite PET + water balance, normal fit (approximation)",
+        },
         "months_total": len(months),
         "latest": {
             "month": series[-1]["month"],
             "spi": latest_spi,
             "spi_class": classify(latest_spi) if latest_spi is not None else classify(float("nan")),
             "spei": latest_spei,
-            "spei_class": classify(latest_spei) if latest_spei is not None else classify(float("nan")),
+            "spei_class": classify(latest_spei)
+            if latest_spei is not None
+            else classify(float("nan")),
         },
         "summary": {
             "months_below_minus1": sum(1 for v in spi_vals if v <= -1.0),

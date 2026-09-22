@@ -1,0 +1,284 @@
+# GitHub Actions: C++ Build Pipeline for hydroma_core
+# ==================================================
+# Builds hydroma_core Python wheels for Linux (manylinux) and Windows (MSVC)
+# Runs on: push to main/develop, PR, workflow_dispatch
+# Matrix: OS (ubuntu-latest, windows-latest) × Python (3.11, 3.12)
+
+name: C++ Build Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'engine/cpp_core/**'
+      - 'engine/hydroma/cpp_bridge/**'
+      - '.github/workflows/cpp-build.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'engine/cpp_core/**'
+      - 'engine/hydroma/cpp_bridge/**'
+  workflow_dispatch:
+    inputs:
+      python_version:
+        description: 'Python version to build for'
+        required: false
+        default: '3.11,3.12'
+        type: string
+      skip_tests:
+        description: 'Skip running tests'
+        required: false
+        default: 'false'
+        type: boolean
+
+env:
+  CMAKE_BUILD_TYPE: Release
+  HYDROMA_BUILD_TESTS: ON
+  HYDROMA_BUILD_PYTHON_BINDINGS: ON
+  HYDROMA_BUILD_BENCHMARKS: OFF
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }}, Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            python: '3.11'
+            platform: manylinux2014_x86_64
+          - os: ubuntu-latest
+            python: '3.12'
+            platform: manylinux2014_x86_64
+          - os: windows-latest
+            python: '3.11'
+            platform: win_amd64
+          - os: windows-latest
+            python: '3.12'
+            platform: win_amd64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          architecture: x64
+
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake \
+            build-essential \
+            libopenmp-dev \
+            python3-dev \
+            python3-pip \
+            python3-venv \
+            ninja-build
+          python3 -m pip install --upgrade pip setuptools wheel auditwheel
+
+      - name: Install system dependencies (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' --version 3.28.0
+          choco install ninja
+        shell: pwsh
+
+      - name: Install Python build dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install pybind11==2.13.6 scikit-build-core==0.10.0
+          python -m pip install pytest pytest-asyncio hypothesis
+
+      - name: Configure CMake
+        working-directory: engine/cpp_core
+        run: |
+          cmake -B build -S . \
+            -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }} \
+            -DHYDROMA_BUILD_TESTS=${{ env.HYDROMA_BUILD_TESTS }} \
+            -DHYDROMA_BUILD_PYTHON_BINDINGS=${{ env.HYDROMA_BUILD_PYTHON_BINDINGS }} \
+            -DHYDROMA_BUILD_BENCHMARKS=${{ env.HYDROMA_BUILD_BENCHMARKS }} \
+            -G Ninja
+        shell: bash
+
+      - name: Build with CMake
+        working-directory: engine/cpp_core
+        run: |
+          cmake --build build --config ${{ env.CMAKE_BUILD_TYPE }} --parallel 4
+        shell: bash
+
+      - name: Run C++ tests
+        if: ${{ !inputs.skip_tests || false }}
+        working-directory: engine/cpp_core/build
+        run: |
+          ctest --output-on-failure --parallel 4
+        shell: bash
+
+      - name: Verify Python module loads
+        working-directory: engine/cpp_core/build
+        run: bash ${{ github.workspace }}/.github/workflows/scripts/verify_module.sh
+        shell: bash
+
+      - name: Package wheel (Linux)
+        if: runner.os == 'Linux'
+        env:
+          PYTHON_VERSION: ${{ matrix.python }}
+          PLATFORM: ${{ matrix.platform }}
+        working-directory: engine/cpp_core/build
+        run: bash ${{ github.workspace }}/.github/workflows/scripts/package_wheel_linux.sh
+        shell: bash
+
+      - name: Package wheel (Windows)
+        if: runner.os == 'Windows'
+        env:
+          PYTHON_VERSION: ${{ matrix.python }}
+          PLATFORM: ${{ matrix.platform }}
+        working-directory: engine/cpp_core/build
+        run: pwsh ${{ github.workspace }}/.github/workflows/scripts/package_wheel_windows.ps1
+        shell: pwsh
+
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hydroma_core-${{ matrix.python }}-${{ matrix.platform }}
+          path: |
+            hydroma_core-${{ matrix.python }}-${{ matrix.platform }}.whl
+            engine/cpp_core/build/hydroma_core*.so
+            engine/cpp_core/build/hydroma_core*.pyd
+          retention-days: 7
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpp-test-results-${{ matrix.os }}-${{ matrix.python }}
+          path: |
+            engine/cpp_core/build/Testing/**/*.xml
+            engine/cpp_core/build/Testing/**/*.log
+          retention-days: 7
+
+  parity-test:
+    name: Numba Parity Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: build
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          architecture: x64
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e . pytest pytest-asyncio hypothesis numpy numba
+
+      - name: Download built wheels
+        uses: actions/download-artifact@v4
+        with:
+          name: hydroma_core-3.11-manylinux2014_x86_64
+          path: wheels/
+
+      - name: Install built wheel
+        run: |
+          WHEEL=$(find wheels -name "*.whl" | head -1)
+          python -m pip install $WHEEL
+
+      - name: Run parity tests
+        working-directory: engine/hydroma/cpp_bridge/tests
+        run: |
+          python -m pytest test_parity.py -v --tb=short -x
+
+  benchmark:
+    name: Performance Benchmark
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          architecture: x64
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e . pytest numpy numba
+
+      - name: Download built wheels
+        uses: actions/download-artifact@v4
+        with:
+          name: hydroma_core-3.11-manylinux2014_x86_64
+          path: wheels/
+
+      - name: Install built wheel
+        run: |
+          WHEEL=$(find wheels -name "*.whl" | head -1)
+          python -m pip install $WHEEL
+
+      - name: Run benchmarks
+        working-directory: engine/hydroma/cpp_bridge/tests
+        run: |
+          python -m pytest test_benchmarks.py -v --tb=short --benchmark-only --benchmark-sort=mean
+
+      - name: Upload benchmark results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpp-benchmark-results
+          path: |
+            engine/hydroma/cpp_bridge/tests/benchmark_results.json
+          retention-days: 7
+
+  release:
+    name: Release to PyPI
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [build, parity-test]
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    environment: pypi
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Download all wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: hydroma_core-*-*.whl
+          path: dist/
+          merge-multiple: true
+
+      - name: Verify wheels
+        run: |
+          ls -la dist/
+          python -m pip install twine
+          python -m twine check dist/*
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/
+          verbose: true

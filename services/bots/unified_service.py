@@ -1,4 +1,5 @@
 """Unified BotService - orchestrates all bot platforms"""
+
 import structlog
 
 logger = structlog.get_logger()
@@ -16,11 +17,13 @@ class BotPlatform(str, Enum):
     WHATSAPP = "whatsapp"
     TELEGRAM = "telegram"
 
+
 class MessageType(str, Enum):
     TEXT = "text"
     IMAGE = "image"
     VOICE = "voice"
     DOCUMENT = "document"
+
 
 @dataclass
 class BotMessage:
@@ -35,16 +38,18 @@ class BotMessage:
         if self.timestamp is None:
             self.timestamp = datetime.now(UTC)
 
+
 @dataclass
 class BotResponse:
     success: bool
     message_id: str | None = None
     error: str | None = None
 
+
 class UnifiedBotService:
     """
     سرویس یکپارچه برای مدیریت تمام پلتفرم‌های bot
-    
+
     قابلیت‌ها:
     - ارسال پیام به چندین پلتفرم
     - مدیریت صف پیام‌ها
@@ -72,7 +77,7 @@ class UnifiedBotService:
             await self._log_message(message)
 
             # Send via adapter
-            if hasattr(adapter, 'send_message'):
+            if hasattr(adapter, "send_message"):
                 result = await adapter.send_message(
                     chat_id=message.chat_id,
                     content=message.content,
@@ -116,6 +121,7 @@ class UnifiedBotService:
         """دریافت مشاوره از AI"""
         try:
             from services.bots.core.ai import AdviceService
+
             advice_service = AdviceService(self.db)
             return await advice_service.get_advice(question, village_id)
         except Exception as e:

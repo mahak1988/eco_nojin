@@ -3,10 +3,11 @@
 Uses pyotp for TOTP generation and verification.
 Secret keys are stored per-user in the settings table.
 """
-import pyotp
-import secrets
+
 import logging
-from datetime import datetime, UTC, timedelta
+import secrets
+
+import pyotp
 
 logger = logging.getLogger("econojin.twofa")
 
@@ -44,4 +45,5 @@ def generate_recovery_codes(count: int = 8) -> list[str]:
 def hash_recovery_code(code: str) -> str:
     """Hash a recovery code for storage."""
     import hashlib
+
     return hashlib.sha256(code.encode()).hexdigest()

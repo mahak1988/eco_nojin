@@ -5,12 +5,12 @@ services/ai/nlg.py
 اصلاح‌شده: 2026-09-03 01:16:32
 """
 
-from typing import Dict, Any, List, Optional
+from typing import Any
+
 from . import rag
 
-
 # ── پایگاه دانش محلی ────────────────────────────────────────────
-_KNOWLEDGE_BASE: Dict[str, Dict[str, Any]] = {
+_KNOWLEDGE_BASE: dict[str, dict[str, Any]] = {
     "بندسار": {
         "category": "آبخیزداری",
         "description": (
@@ -41,10 +41,7 @@ _KNOWLEDGE_BASE: Dict[str, Dict[str, Any]] = {
     },
     "آبیاری قطره‌ای": {
         "category": "مدیریت آب",
-        "description": (
-            "آبیاری قطره‌ای می‌تواند مصرف آب را تا ۶۰٪ نسبت به آبیاری "
-            "غرقابی کاهش دهد."
-        ),
+        "description": ("آبیاری قطره‌ای می‌تواند مصرف آب را تا ۶۰٪ نسبت به آبیاری غرقابی کاهش دهد."),
         "benefits": ["صرفه‌جویی ۶۰٪ آب", "کاهش علف هرز", "بهبود عملکرد"],
         "keywords": ["آبیاری", "قطره‌ای", "آب", "راندمان"],
     },
@@ -59,15 +56,14 @@ _KNOWLEDGE_BASE: Dict[str, Dict[str, Any]] = {
     "ترانشه": {
         "category": "جذب آب",
         "description": (
-            "ترانشه‌های جذب آب سازه‌های خطی هستند که باعث جذب رواناب "
-            "و تغذیه سفره آب زیرزمینی می‌شوند."
+            "ترانشه‌های جذب آب سازه‌های خطی هستند که باعث جذب رواناب و تغذیه سفره آب زیرزمینی می‌شوند."
         ),
         "keywords": ["ترانشه", "جذب", "آب", "نفوذ"],
     },
 }
 
 
-def _extract_keywords(query: str) -> List[str]:
+def _extract_keywords(query: str) -> list[str]:
     """استخراج کلمات کلیدی از query"""
     keywords = []
     for key in _KNOWLEDGE_BASE:
@@ -76,7 +72,7 @@ def _extract_keywords(query: str) -> List[str]:
     return keywords
 
 
-def advise(query: str, metrics: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+def advise(query: str, metrics: dict[str, Any] | None = None) -> dict[str, Any]:
     """
     تولید توصیه مبتنی بر شواهد.
 
@@ -105,38 +101,44 @@ def advise(query: str, metrics: Optional[Dict[str, Any]] = None) -> Dict[str, An
     matched_topics = _extract_keywords(query)
 
     # ۳) تولید پاسخ و evidence
-    answer_parts: List[str] = []
-    evidence: List[Dict[str, Any]] = []
+    answer_parts: list[str] = []
+    evidence: list[dict[str, Any]] = []
 
     # افزودن نتایج RAG به evidence
     for i, r in enumerate(rag_results):
-        evidence.append({
-            "source": r.get("path", "rag"),
-            "type": "rag",
-            "content": r.get("content", "")[:200],
-            "rank": i + 1,
-        })
+        evidence.append(
+            {
+                "source": r.get("path", "rag"),
+                "type": "rag",
+                "content": r.get("content", "")[:200],
+                "rank": i + 1,
+            }
+        )
         if i == 0:
             answer_parts.append(r.get("content", ""))
 
     # افزودن تطبیق‌های پایگاه دانش
     for topic in matched_topics:
         info = _KNOWLEDGE_BASE[topic]
-        evidence.append({
-            "source": "knowledge_base/" + topic,
-            "type": "local_knowledge",
-            "content": info["description"],
-            "category": info["category"],
-        })
+        evidence.append(
+            {
+                "source": "knowledge_base/" + topic,
+                "type": "local_knowledge",
+                "content": info["description"],
+                "category": info["category"],
+            }
+        )
         answer_parts.append("**" + topic + "**: " + info["description"])
 
     # اگر هیچ evidence پیدا نشد، یک evidence پیش‌فرض بساز
     if not evidence:
-        evidence.append({
-            "source": "default",
-            "type": "system",
-            "content": "پاسخ عمومی برای: " + query,
-        })
+        evidence.append(
+            {
+                "source": "default",
+                "type": "system",
+                "content": "پاسخ عمومی برای: " + query,
+            }
+        )
         answer_parts.append("در حال تحلیل درخواست شما: " + query)
 
     # ۴) تطبیق با metrics
@@ -145,11 +147,13 @@ def advise(query: str, metrics: Optional[Dict[str, Any]] = None) -> Dict[str, An
         if "spi" in metrics and isinstance(metrics["spi"], (int, float)):
             if metrics["spi"] < -0.5:
                 metrics_context = "با توجه به شرایط خشکسالی (SPI منفی)، "
-                evidence.append({
-                    "source": "metrics",
-                    "type": "metric_alert",
-                    "content": "SPI=" + str(metrics["spi"]) + " - شرایط خشک",
-                })
+                evidence.append(
+                    {
+                        "source": "metrics",
+                        "type": "metric_alert",
+                        "content": "SPI=" + str(metrics["spi"]) + " - شرایط خشک",
+                    }
+                )
 
     # ۵) ساخت پاسخ نهایی
     answer = metrics_context + " ".join(answer_parts)
@@ -165,7 +169,7 @@ def advise(query: str, metrics: Optional[Dict[str, Any]] = None) -> Dict[str, An
     }
 
 
-def explain(topic: str) -> Dict[str, Any]:
+def explain(topic: str) -> dict[str, Any]:
     """توضیح یک موضوع با استفاده از پایگاه دانش"""
     if topic in _KNOWLEDGE_BASE:
         info = _KNOWLEDGE_BASE[topic]

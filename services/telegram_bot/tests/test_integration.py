@@ -1,4 +1,5 @@
 """Integration tests for Telegram Bot"""
+
 import pytest
 
 from services.telegram_bot.integration_service import (
@@ -14,9 +15,9 @@ class TestTelegramIntegration:
         """بررسی ایجاد service"""
         service = TelegramIntegrationService(db_session)
         assert service is not None
-        assert hasattr(service, 'process_message')
-        assert hasattr(service, 'send_notification')
-        assert hasattr(service, 'get_user_stats')
+        assert hasattr(service, "process_message")
+        assert hasattr(service, "send_notification")
+        assert hasattr(service, "get_user_stats")
 
     async def test_user_creation(self):
         """بررسی ایجاد TelegramUser با default values"""

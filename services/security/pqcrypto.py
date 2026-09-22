@@ -8,6 +8,7 @@ Uses the free `oqs` (liboqs) package:
 Honesty contract: if liboqs is not importable the module reports
 `status: unavailable` and the app degrades gracefully (classic crypto only).
 """
+
 import os
 
 try:
@@ -50,7 +51,10 @@ def status() -> dict:
 def hybrid_kem() -> dict:
     """Hybrid KEM: returns (ciphertext, shared_secret_hex, public_metadata)."""
     if not _OQS_AVAILABLE:
-        return {"status": "unavailable", "note": "پساکوانتوم نصب نیست؛ از رمزنگاری کلاسیک استفاده کنید."}
+        return {
+            "status": "unavailable",
+            "note": "پساکوانتوم نصب نیست؛ از رمزنگاری کلاسیک استفاده کنید.",
+        }
     try:
         with KeyEncapsulation("KYBER512") as kem:
             pub, _ = kem.generate_keypair()

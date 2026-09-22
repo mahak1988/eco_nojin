@@ -17,6 +17,7 @@ Models:
 Author: EcoNojin Scientific Council
 License: Proprietary
 """
+
 from .base import ScientificModel, ValidationResult
 from .ecsi import ECSI
 from .epia import EPIA

@@ -75,6 +75,7 @@ try:
         list_countries,
         list_regions,
     )
+
     _REFERENCE_AVAILABLE = True
 except ImportError:
     _REFERENCE_AVAILABLE = False
@@ -100,7 +101,6 @@ __all__ = [
     "CurvatureResult",
     "TerrainIndices",
     "StreamOrder",
-
     # Enums
     "TerrainType",
     "SlopeClass",
@@ -109,7 +109,6 @@ __all__ = [
     "ErosionRisk",
     "LandCapabilityClass",
     "LandformType",
-
     # Processors
     "DEMProcessor",
     "SlopeAspectAnalyzer",
@@ -118,7 +117,6 @@ __all__ = [
     "CapabilityAssessor",
     "estimate_erosion_risk",
     "SurfaceWaterAnalyzer",
-
     # Reference (when available)
     "Country",
     "Region",

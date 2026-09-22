@@ -30,10 +30,19 @@ from services.finance.ledger_service import LedgerService
 
 logger = logging.getLogger(__name__)
 
-VALID_MOVEMENT_TYPES = frozenset({
-    "receipt", "issue", "transfer", "adjustment",
-    "return", "scrap", "stocktake", "reservation", "release",
-})
+VALID_MOVEMENT_TYPES = frozenset(
+    {
+        "receipt",
+        "issue",
+        "transfer",
+        "adjustment",
+        "return",
+        "scrap",
+        "stocktake",
+        "reservation",
+        "release",
+    }
+)
 
 VALID_VALUATION_METHODS = frozenset({"fifo", "weighted_avg", "standard"})
 
@@ -58,11 +67,11 @@ class StockService:
         standard_cost: Decimal | None = None,
         warehouse_id: int | None = None,
     ) -> InvSKU:
-        existing = await self.db.execute(
-            select(InvSKU).where(InvSKU.sku_code == sku_code)
-        )
+        existing = await self.db.execute(select(InvSKU).where(InvSKU.sku_code == sku_code))
         if existing.scalar_one_or_none():
-            raise EcoNojinException(f"SKU {sku_code} already exists", code="SKU_EXISTS", status_code=409)
+            raise EcoNojinException(
+                f"SKU {sku_code} already exists", code="SKU_EXISTS", status_code=409
+            )
 
         sku = InvSKU(
             sku_code=sku_code,
@@ -78,11 +87,11 @@ class StockService:
         return sku
 
     async def create_warehouse(self, code: str, name: str, city: str | None = None) -> InvWarehouse:
-        existing = await self.db.execute(
-            select(InvWarehouse).where(InvWarehouse.code == code)
-        )
+        existing = await self.db.execute(select(InvWarehouse).where(InvWarehouse.code == code))
         if existing.scalar_one_or_none():
-            raise EcoNojinException(f"Warehouse {code} already exists", code="WH_EXISTS", status_code=409)
+            raise EcoNojinException(
+                f"Warehouse {code} already exists", code="WH_EXISTS", status_code=409
+            )
 
         wh = InvWarehouse(code=code, name=name, city=city, is_active=True)
         self.db.add(wh)
@@ -94,8 +103,12 @@ class StockService:
         self, warehouse_id: int, code: str, loc_type: str = "bin"
     ) -> InvLocation:
         loc = InvLocation(
-            warehouse_id=warehouse_id, code=code, location_type=loc_type,
-            is_active=True, is_pickable=True, is_receivable=True,
+            warehouse_id=warehouse_id,
+            code=code,
+            location_type=loc_type,
+            is_active=True,
+            is_pickable=True,
+            is_receivable=True,
         )
         self.db.add(loc)
         await self.db.commit()
@@ -106,17 +119,27 @@ class StockService:
         result = await self.db.execute(select(InvSKU).where(InvSKU.sku_code == sku_code))
         sku = result.scalar_one_or_none()
         if not sku:
-            raise EcoNojinException(f"SKU not found: {sku_code}", code="SKU_NOT_FOUND", status_code=404)
+            raise EcoNojinException(
+                f"SKU not found: {sku_code}", code="SKU_NOT_FOUND", status_code=404
+            )
         return sku
 
     async def get_sku_by_id(self, sku_id: int) -> InvSKU:
         result = await self.db.execute(select(InvSKU).where(InvSKU.id == sku_id))
         sku = result.scalar_one_or_none()
         if not sku:
-            raise EcoNojinException(f"SKU not found: {sku_id}", code="SKU_NOT_FOUND", status_code=404)
+            raise EcoNojinException(
+                f"SKU not found: {sku_id}", code="SKU_NOT_FOUND", status_code=404
+            )
         return sku
 
-    async def get_or_create_balance(self, sku_id: int, warehouse_id: int, location_id: int | None = None, lot_id: int | None = None) -> InvInventoryBalance:
+    async def get_or_create_balance(
+        self,
+        sku_id: int,
+        warehouse_id: int,
+        location_id: int | None = None,
+        lot_id: int | None = None,
+    ) -> InvInventoryBalance:
         """Get or create an inventory balance row."""
         result = await self.db.execute(
             select(InvInventoryBalance).where(
@@ -167,9 +190,15 @@ class StockService:
     ) -> InvStockMovement:
         """Create an immutable stock movement record."""
         if movement_type not in VALID_MOVEMENT_TYPES:
-            raise EcoNojinException(f"Invalid movement type: {movement_type}", code="INVALID_MOVEMENT_TYPE", status_code=400)
+            raise EcoNojinException(
+                f"Invalid movement type: {movement_type}",
+                code="INVALID_MOVEMENT_TYPE",
+                status_code=400,
+            )
         if qty <= 0:
-            raise EcoNojinException("Quantity must be positive", code="INVALID_QTY", status_code=400)
+            raise EcoNojinException(
+                "Quantity must be positive", code="INVALID_QTY", status_code=400
+            )
 
         movement = InvStockMovement(
             movement_type=movement_type,
@@ -210,9 +239,15 @@ class StockService:
         balance.last_movement_at = datetime.now(UTC)
 
         movement = await self._create_movement(
-            "receipt", sku_id, warehouse_id, qty, created_by,
-            to_location_id=location_id, lot_id=lot_id,
-            reference_type=reference_type, reference_id=reference_id,
+            "receipt",
+            sku_id,
+            warehouse_id,
+            qty,
+            created_by,
+            to_location_id=location_id,
+            lot_id=lot_id,
+            reference_type=reference_type,
+            reference_id=reference_id,
             unit_cost=unit_cost,
         )
         await self.db.commit()
@@ -240,9 +275,14 @@ class StockService:
         balance.last_movement_at = datetime.now(UTC)
 
         movement = await self._create_movement(
-            "issue", sku_id, warehouse_id, qty, created_by,
+            "issue",
+            sku_id,
+            warehouse_id,
+            qty,
+            created_by,
             from_location_id=location_id,
-            reference_type=reference_type, reference_id=reference_id,
+            reference_type=reference_type,
+            reference_id=reference_id,
         )
         await self.db.commit()
         return movement
@@ -259,7 +299,9 @@ class StockService:
     ) -> InvStockMovement:
         """Transfer stock between warehouses/locations."""
         # Lock source balance
-        src_balance = await self.get_or_create_balance(sku_id, from_warehouse_id, from_location_id, None)
+        src_balance = await self.get_or_create_balance(
+            sku_id, from_warehouse_id, from_location_id, None
+        )
         if src_balance.on_hand < qty:
             raise EcoNojinException(
                 f"Insufficient stock at source: {src_balance.on_hand} < {qty}",
@@ -269,16 +311,24 @@ class StockService:
         src_balance.on_hand -= qty
 
         # Create destination balance
-        dst_balance = await self.get_or_create_balance(sku_id, to_warehouse_id, to_location_id, None)
+        dst_balance = await self.get_or_create_balance(
+            sku_id, to_warehouse_id, to_location_id, None
+        )
         dst_balance.on_hand += qty
 
         src_balance.last_movement_at = datetime.now(UTC)
         dst_balance.last_movement_at = datetime.now(UTC)
 
         movement = await self._create_movement(
-            "transfer", sku_id, from_warehouse_id, qty, created_by,
-            from_location_id=from_location_id, to_location_id=to_location_id,
-            from_warehouse_id=from_warehouse_id, to_warehouse_id=to_warehouse_id,
+            "transfer",
+            sku_id,
+            from_warehouse_id,
+            qty,
+            created_by,
+            from_location_id=from_location_id,
+            to_location_id=to_location_id,
+            from_warehouse_id=from_warehouse_id,
+            to_warehouse_id=to_warehouse_id,
             reference_type="transfer",
         )
         await self.db.commit()
@@ -300,7 +350,11 @@ class StockService:
         balance.last_movement_at = datetime.now(UTC)
 
         movement = await self._create_movement(
-            movement_type, sku_id, warehouse_id, abs(qty), created_by,
+            movement_type,
+            sku_id,
+            warehouse_id,
+            abs(qty),
+            created_by,
             reference_type=adjustment_type,
             notes=f"Adjustment: {qty} - {reason or ''}",
         )
@@ -324,9 +378,14 @@ class StockService:
         balance.last_movement_at = datetime.now(UTC)
 
         movement = await self._create_movement(
-            "return", sku_id, warehouse_id, qty, created_by,
+            "return",
+            sku_id,
+            warehouse_id,
+            qty,
+            created_by,
             to_location_id=location_id,
-            reference_type=reference_type, reference_id=reference_id,
+            reference_type=reference_type,
+            reference_id=reference_id,
             unit_cost=unit_cost,
         )
         await self.db.commit()
@@ -353,7 +412,11 @@ class StockService:
         balance.last_movement_at = datetime.now(UTC)
 
         movement = await self._create_movement(
-            "scrap", sku_id, warehouse_id, qty, created_by,
+            "scrap",
+            sku_id,
+            warehouse_id,
+            qty,
+            created_by,
             reference_type="scrap",
             notes=reason,
         )
@@ -423,23 +486,34 @@ class StockService:
 
         # Record movement for audit
         await self._create_movement(
-            "reservation", sku_id, warehouse_id, qty, created_by,
+            "reservation",
+            sku_id,
+            warehouse_id,
+            qty,
+            created_by,
             lot_id=balance.lot_id or None,
-            reference_type=reference_type, reference_id=reference_id,
+            reference_type=reference_type,
+            reference_id=reference_id,
         )
 
         await self.db.commit()
         await self.db.refresh(reservation)
         return reservation
 
-    async def consume_reservation(self, reservation_id: int, qty: Decimal | None = None) -> InvStockMovement:
+    async def consume_reservation(
+        self, reservation_id: int, qty: Decimal | None = None
+    ) -> InvStockMovement:
         """Consume a reservation (convert to issue movement)."""
         result = await self.db.execute(
             select(InvReservation).where(InvReservation.id == reservation_id).with_for_update()
         )
         reservation = result.scalar_one_or_none()
         if not reservation:
-            raise EcoNojinException(f"Reservation not found: {reservation_id}", code="RESERVATION_NOT_FOUND", status_code=404)
+            raise EcoNojinException(
+                f"Reservation not found: {reservation_id}",
+                code="RESERVATION_NOT_FOUND",
+                status_code=404,
+            )
 
         if reservation.status != "active":
             raise EcoNojinException(
@@ -450,12 +524,16 @@ class StockService:
 
         consume_qty = qty or reservation.qty
         if consume_qty > reservation.qty - reservation.consumed_qty:
-            raise EcoNojinException("Cannot consume more than reserved", code="OVER_CONSUME", status_code=400)
+            raise EcoNojinException(
+                "Cannot consume more than reserved", code="OVER_CONSUME", status_code=400
+            )
 
         # Lock balance and deduct
         balance = await self.get_or_create_balance(
-            reservation.sku_id, reservation.warehouse_id,
-            reservation.location_id or 0 or None, reservation.lot_id or None,
+            reservation.sku_id,
+            reservation.warehouse_id,
+            reservation.location_id or 0 or None,
+            reservation.lot_id or None,
         )
         balance.on_hand -= consume_qty
         balance.reserved -= consume_qty
@@ -467,7 +545,10 @@ class StockService:
             reservation.consumed_at = datetime.now(UTC)
 
         movement = await self._create_movement(
-            "issue", reservation.sku_id, reservation.warehouse_id, consume_qty,
+            "issue",
+            reservation.sku_id,
+            reservation.warehouse_id,
+            consume_qty,
             reservation.created_by,
             from_location_id=reservation.location_id,
             reference_type=reservation.reference_type,
@@ -486,7 +567,11 @@ class StockService:
         )
         reservation = result.scalar_one_or_none()
         if not reservation:
-            raise EcoNojinException(f"Reservation not found: {reservation_id}", code="RESERVATION_NOT_FOUND", status_code=404)
+            raise EcoNojinException(
+                f"Reservation not found: {reservation_id}",
+                code="RESERVATION_NOT_FOUND",
+                status_code=404,
+            )
 
         if reservation.status != "active":
             raise EcoNojinException(
@@ -496,8 +581,10 @@ class StockService:
             )
 
         balance = await self.get_or_create_balance(
-            reservation.sku_id, reservation.warehouse_id,
-            reservation.location_id or 0 or None, reservation.lot_id or None,
+            reservation.sku_id,
+            reservation.warehouse_id,
+            reservation.location_id or 0 or None,
+            reservation.lot_id or None,
         )
         balance.reserved -= reservation.qty - reservation.consumed_qty
         balance.last_movement_at = datetime.now(UTC)
@@ -506,7 +593,9 @@ class StockService:
         reservation.released_at = datetime.now(UTC)
 
         await self._create_movement(
-            "release", reservation.sku_id, reservation.warehouse_id,
+            "release",
+            reservation.sku_id,
+            reservation.warehouse_id,
             reservation.qty - reservation.consumed_qty,
             reservation.created_by,
             from_location_id=reservation.location_id,
@@ -542,7 +631,12 @@ class StockService:
         await self.db.flush()
 
         for line_data in lines:
-            balance = await self.get_or_create_balance(line_data["sku_id"], warehouse_id, line_data.get("location_id"), line_data.get("lot_id"))
+            balance = await self.get_or_create_balance(
+                line_data["sku_id"],
+                warehouse_id,
+                line_data.get("location_id"),
+                line_data.get("lot_id"),
+            )
 
             stocktake_line = InvStocktakeLine(
                 stocktake_id=stocktake.id,
@@ -573,10 +667,14 @@ class StockService:
         )
         stocktake = result.scalar_one_or_none()
         if not stocktake:
-            raise EcoNojinException(f"Stocktake not found: {stocktake_id}", code="STOCKTAKE_NOT_FOUND", status_code=404)
+            raise EcoNojinException(
+                f"Stocktake not found: {stocktake_id}", code="STOCKTAKE_NOT_FOUND", status_code=404
+            )
 
         if stocktake.status != "draft":
-            raise EcoNojinException("Stocktake not in draft status", code="STOCKTAKE_INVALID_STATUS", status_code=400)
+            raise EcoNojinException(
+                "Stocktake not in draft status", code="STOCKTAKE_INVALID_STATUS", status_code=400
+            )
 
         # Get all lines
         lines_result = await self.db.execute(
@@ -589,15 +687,20 @@ class StockService:
                 variance = line.counted_qty - line.system_qty
                 if variance != 0:
                     balance = await self.get_or_create_balance(
-                        line.sku_id, line.warehouse_id,
-                        line.location_id or 0 or None, line.lot_id or None,
+                        line.sku_id,
+                        line.warehouse_id,
+                        line.location_id or 0 or None,
+                        line.lot_id or None,
                     )
                     balance.on_hand += variance
                     balance.last_movement_at = datetime.now(UTC)
 
                     line.status = "approved"
                     await self._create_movement(
-                        "adjustment", line.sku_id, line.warehouse_id, abs(variance),
+                        "adjustment",
+                        line.sku_id,
+                        line.warehouse_id,
+                        abs(variance),
                         approved_by,
                         from_location_id=line.location_id,
                         lot_id=line.lot_id,
@@ -613,7 +716,7 @@ class StockService:
 
         # Update the stocktake lines' status
         await self.db.execute(
-            text("UPDATE inv_stocktake_line SET status = 'approved' WHERE stocktake_id = :sid"),
+            text("UPDATE inv_stocktake_lines SET status = 'approved' WHERE stocktake_id = :sid"),
             {"sid": stocktake_id},
         )
 
@@ -625,7 +728,13 @@ class StockService:
     # Queries
     # ------------------------------------------------------------------
 
-    async def get_balance(self, sku_id: int, warehouse_id: int, location_id: int | None = None, lot_id: int | None = None) -> InvInventoryBalance:
+    async def get_balance(
+        self,
+        sku_id: int,
+        warehouse_id: int,
+        location_id: int | None = None,
+        lot_id: int | None = None,
+    ) -> InvInventoryBalance:
         """Get current inventory balance."""
         stmt = select(InvInventoryBalance).where(
             InvInventoryBalance.sku_id == sku_id,
@@ -671,7 +780,7 @@ class StockService:
                         SUM(CASE WHEN movement_type IN ('receipt', 'return', 'transfer') THEN qty ELSE 0 END) as qty_in,
                         SUM(CASE WHEN movement_type IN ('issue', 'scrap') THEN qty ELSE 0 END) as qty_out,
                         SUM(CASE WHEN movement_type = 'transfer' AND from_warehouse_id != warehouse_id THEN -qty ELSE 0 END) as transfer_out
-                    FROM inv_stock_movement
+                    FROM inv_stock_movements
                     GROUP BY sku_id, warehouse_id
                 )
                 SELECT
@@ -680,7 +789,7 @@ class StockService:
                     COALESCE(m.qty_out, 0) as total_out,
                     (COALESCE(m.qty_in, 0) - COALESCE(m.qty_out, 0)) as computed_balance,
                     b.on_hand - (COALESCE(m.qty_in, 0) - COALESCE(m.qty_out, 0)) as drift
-                FROM inv_inventory_balance b
+                FROM inv_inventory_balances b
                 LEFT JOIN movement_totals m ON b.sku_id = m.sku_id AND b.warehouse_id = m.warehouse_id
                 """
             )
@@ -690,13 +799,15 @@ class StockService:
         for row in rows:
             drift = Decimal(str(row.drift)) if row.drift else Decimal("0")
             if drift != 0:
-                discrepancies.append({
-                    "sku_id": row.sku_id,
-                    "warehouse_id": row.warehouse_id,
-                    "on_hand": str(row.on_hand),
-                    "computed_balance": str(row.computed_balance),
-                    "drift": str(drift),
-                })
+                discrepancies.append(
+                    {
+                        "sku_id": row.sku_id,
+                        "warehouse_id": row.warehouse_id,
+                        "on_hand": str(row.on_hand),
+                        "computed_balance": str(row.computed_balance),
+                        "drift": str(drift),
+                    }
+                )
 
         return {
             "checked_at": datetime.now(UTC).isoformat(),

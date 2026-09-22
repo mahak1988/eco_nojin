@@ -37,9 +37,7 @@ class RAGEngine:
             stop = "english"
         else:
             if lang not in _LANG_CORPUS:
-                raise ValueError(
-                    f"Unsupported language: {lang}. Valid: {sorted(_LANG_CORPUS)}"
-                )
+                raise ValueError(f"Unsupported language: {lang}. Valid: {sorted(_LANG_CORPUS)}")
             self.documents, stop = _LANG_CORPUS[lang]
             self.lang = lang
 

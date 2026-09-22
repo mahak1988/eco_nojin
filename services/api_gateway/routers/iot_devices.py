@@ -4,18 +4,13 @@ Endpoints for device provisioning, fleet management, and reading queries.
 """
 
 import logging
-from contextlib import suppress
-from datetime import datetime
-from typing import Any
 
-import httpx
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from services.api_gateway.auth import require_user
 from database.hub import hub
-from database.models import IoTDevice, MRVObservation
+from services.api_gateway.auth import require_user
 from services.business_modules.iot.device_manager import DeviceManager
 
 logger = logging.getLogger(__name__)
@@ -213,8 +208,4 @@ def iot_health():
 
 def _get_platform_id(request: Request) -> str | None:
     """Extract platform/tenant ID from request."""
-    return (
-        request.headers.get("X-Tenant-Id")
-        or request.headers.get("X-Platform-Id")
-        or None
-    )
+    return request.headers.get("X-Tenant-Id") or request.headers.get("X-Platform-Id") or None

@@ -21,7 +21,7 @@ class TestCapabilityAssessor:
             soil_depth_m=2.0,
             erosion_risk="low",
             drainage_class="well_drained",
-            climate_zone="temperate"
+            climate_zone="temperate",
         )
 
         assert assessment.capability_class == LandCapabilityClass.CLASS_I
@@ -34,7 +34,7 @@ class TestCapabilityAssessor:
             soil_depth_m=1.5,
             erosion_risk="low",
             drainage_class="well_drained",
-            climate_zone="temperate"
+            climate_zone="temperate",
         )
 
         assert assessment.capability_class == LandCapabilityClass.CLASS_II
@@ -46,7 +46,7 @@ class TestCapabilityAssessor:
             soil_depth_m=1.0,
             erosion_risk="moderate",
             drainage_class="well_drained",
-            climate_zone="temperate"
+            climate_zone="temperate",
         )
 
         assert assessment.capability_class == LandCapabilityClass.CLASS_III
@@ -59,7 +59,7 @@ class TestCapabilityAssessor:
             soil_depth_m=0.8,
             erosion_risk="high",
             drainage_class="well_drained",
-            climate_zone="temperate"
+            climate_zone="temperate",
         )
 
         assert assessment.capability_class == LandCapabilityClass.CLASS_IV
@@ -71,10 +71,13 @@ class TestCapabilityAssessor:
             soil_depth_m=0.5,
             erosion_risk="very_high",
             drainage_class="well_drained",
-            climate_zone="temperate"
+            climate_zone="temperate",
         )
 
-        assert assessment.capability_class in [LandCapabilityClass.CLASS_VII, LandCapabilityClass.CLASS_VIII]
+        assert assessment.capability_class in [
+            LandCapabilityClass.CLASS_VII,
+            LandCapabilityClass.CLASS_VIII,
+        ]
 
     def test_suitable_uses(self, assessor):
         """تست کاربری‌های مناسب"""
@@ -83,11 +86,14 @@ class TestCapabilityAssessor:
             soil_depth_m=1.5,
             erosion_risk="low",
             drainage_class="well_drained",
-            climate_zone="temperate"
+            climate_zone="temperate",
         )
 
         assert len(assessment.suitable_uses) > 0
-        assert "agriculture" in " ".join(assessment.suitable_uses) or "pasture" in assessment.suitable_uses
+        assert (
+            "agriculture" in " ".join(assessment.suitable_uses)
+            or "pasture" in assessment.suitable_uses
+        )
 
     def test_recommendations(self, assessor):
         """تست توصیه‌ها"""
@@ -96,7 +102,7 @@ class TestCapabilityAssessor:
             soil_depth_m=1.0,
             erosion_risk="moderate",
             drainage_class="well_drained",
-            climate_zone="temperate"
+            climate_zone="temperate",
         )
 
         assert len(assessment.recommendations) > 0
@@ -109,7 +115,7 @@ class TestCapabilityAssessor:
             soil_depth_m=1.5,
             erosion_risk="low",
             drainage_class="well_drained",
-            climate_zone="temperate"
+            climate_zone="temperate",
         )
 
         assert assessment.confidence_score > 0.7
@@ -120,7 +126,7 @@ class TestCapabilityAssessor:
             soil_depth_m=None,  # Missing
             erosion_risk="low",
             drainage_class="well_drained",
-            climate_zone="temperate"
+            climate_zone="temperate",
         )
 
         assert assessment.confidence_score < 0.9

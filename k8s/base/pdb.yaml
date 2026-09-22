@@ -1,0 +1,53 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: api-gateway-pdb
+  namespace: eco-nojin
+  labels:
+    app: api-gateway
+spec:
+  minAvailable: 50%
+  selector:
+    matchLabels:
+      app: api-gateway
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: frontend-pdb
+  namespace: eco-nojin
+  labels:
+    app: frontend
+spec:
+  minAvailable: 50%
+  selector:
+    matchLabels:
+      app: frontend
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: redis-pdb
+  namespace: eco-nojin
+  labels:
+    app: redis
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: redis
+      role: master
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: postgresql-pdb
+  namespace: eco-nojin
+  labels:
+    app: postgresql
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: postgresql
+      role: primary

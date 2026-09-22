@@ -21,10 +21,26 @@ from engine.land.models import (
 class LandService:
     """سرویس مدیریت زمین با استفاده از آداپتور موتور"""
 
-    def __init__(self, engine: EngineAdapter | None = None, db=None, session=None):
+    def __init__(
+        self,
+        engine: EngineAdapter | None = None,
+        db=None,
+        session=None,
+        persist: bool = True,
+    ):
+        if (
+            engine is not None
+            and not isinstance(engine, EngineAdapter)
+            and hasattr(engine, "execute")
+            and hasattr(engine, "commit")
+        ):
+            if db is None:
+                db = engine
+            engine = None
         self.engine = engine or EngineAdapter()
         self.db = db
         self.session = session
+        self.persist = persist
         self._profiles: dict[str, LandProfileModel] = {}
 
     def create_profile(
@@ -33,21 +49,21 @@ class LandService:
         location_lat: float = 0,
         location_lon: float = 0,
         area_ha: float | None = None,
-        **kwargs
+        **kwargs,
     ) -> LandProfileModel:
         """D1 fix: router passes area_hectares which used to collide in **kwargs."""
         router_area = kwargs.pop("area_hectares", None)
         if area_ha is None:
             area_ha = router_area
         profile = LandProfileModel(
-            id=str(__import__('uuid').uuid4()),
+            id=str(__import__("uuid").uuid4()),
             name=name,
             location_lat=location_lat,
             location_lon=location_lon,
             area_hectares=area_ha,
             created_at=datetime.now(UTC),
             updated_at=datetime.now(UTC),
-            **{k: v for k, v in kwargs.items() if k in LandProfileModel.model_fields}
+            **{k: v for k, v in kwargs.items() if k in LandProfileModel.model_fields},
         )
         self._profiles[profile.id] = profile
         self._persist_profile(profile)
@@ -56,8 +72,11 @@ class LandService:
     # ---- D5 fix: durable storage (DB with graceful in-memory fallback) ----
 
     def _db_session(self):
+        if not self.persist:
+            return None
         try:
             from database.hub import hub
+
             return hub.get_session()
         except Exception as e:
             logger.warning(f"LandService: DB unavailable ({e}); using in-memory store")
@@ -69,6 +88,7 @@ class LandService:
             return
         try:
             from database.models import LandProfile as LandProfileDB
+
             with cm as s:
                 row = s.get(LandProfileDB, profile.id)
                 if row is None:
@@ -109,6 +129,7 @@ class LandService:
         if cm is not None:
             try:
                 from database.models import LandProfile as LandProfileDB
+
                 with cm as s:
                     row = s.get(LandProfileDB, profile_id)
                     if row is not None:
@@ -126,8 +147,11 @@ class LandService:
         if cm is not None:
             try:
                 from database.models import LandProfile as LandProfileDB
+
                 with cm as s:
-                    for row in s.query(LandProfileDB).order_by(LandProfileDB.created_at.desc()).all():
+                    for row in (
+                        s.query(LandProfileDB).order_by(LandProfileDB.created_at.desc()).all()
+                    ):
                         pr = self._row_to_profile(row)
                         if pr is not None:
                             profiles[pr.id] = pr
@@ -144,6 +168,7 @@ class LandService:
         if cm is not None:
             try:
                 from database.models import LandProfile as LandProfileDB
+
                 with cm as s:
                     row = s.get(LandProfileDB, profile_id)
                     if row is not None:
@@ -171,7 +196,9 @@ class LandService:
         if not self._profile_exists(profile_id):
             raise ValueError("Profile not found")
 
-        logger.info(f"Delegating terrain analysis for profile {profile_id} to engine via interface.")
+        logger.info(
+            f"Delegating terrain analysis for profile {profile_id} to engine via interface."
+        )
         analysis = self.engine.analyze_terrain(dem_array, profile_id, resolution)
 
         self._profiles[profile_id].terrain_analysis = analysis
@@ -182,16 +209,16 @@ class LandService:
         profile_id: str,
         dem_array: Any,
         resolution: float = 30.0,
-        area_km2: float | None = None
+        area_km2: float | None = None,
     ) -> DrainageAnalysis:
         """تحلیل زهکشی با استفاده از موتور"""
         if not self._profile_exists(profile_id):
             raise ValueError("Profile not found")
 
-        logger.info(f"Delegating drainage analysis for profile {profile_id} to engine via interface.")
-        analysis = self.engine.analyze_drainage(
-            dem_array, profile_id, resolution, area_km2 or 1.0
+        logger.info(
+            f"Delegating drainage analysis for profile {profile_id} to engine via interface."
         )
+        analysis = self.engine.analyze_drainage(dem_array, profile_id, resolution, area_km2 or 1.0)
 
         self._profiles[profile_id].drainage_analysis = analysis
         return analysis
@@ -204,13 +231,15 @@ class LandService:
         erosion_risk: str = "low",
         drainage_class: str = "well_drained",
         climate_zone: str = "temperate",
-        soil_texture: str = "loam"
+        soil_texture: str = "loam",
     ) -> CapabilityAssessment:
         """ارزیابی قابلیت اراضی با استفاده از موتور"""
         if not self._profile_exists(profile_id):
             raise ValueError("Profile not found")
 
-        logger.info(f"Delegating capability assessment for profile {profile_id} to engine via interface.")
+        logger.info(
+            f"Delegating capability assessment for profile {profile_id} to engine via interface."
+        )
         assessment = self.engine.assess_capability(
             profile_id=profile_id,
             slope_degrees=slope_degrees,
@@ -218,7 +247,7 @@ class LandService:
             erosion_risk=erosion_risk,
             drainage_class=drainage_class,
             climate_zone=climate_zone,
-            soil_texture=soil_texture
+            soil_texture=soil_texture,
         )
 
         self._profiles[profile_id].capability_assessment = assessment

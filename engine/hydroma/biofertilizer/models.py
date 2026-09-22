@@ -19,7 +19,7 @@ from sqlalchemy import (
     Float,
     ForeignKey,
     Integer,
-    String, # String اضافه شده
+    String,  # String اضافه شده
     Text,
 )
 from sqlalchemy.sql import func
@@ -33,9 +33,11 @@ except ImportError as e:
     logger.warning(f"Could not import Base from database: {e}")
     try:
         from sqlalchemy.orm import declarative_base
+
         Base = declarative_base()
     except ImportError:
         from sqlalchemy.ext.declarative import declarative_base
+
         Base = declarative_base()
 
 
@@ -43,8 +45,10 @@ except ImportError as e:
 # PHASE 1: CORE MODELS (5 tables)
 # ═══════════════════════════════════════════════════════════════════
 
+
 class NojinStrain(Base):
     """Repository of bacterial strains (Phase 1)."""
+
     __tablename__ = "nojin_strains"
     __table_args__ = {"extend_existing": True}
 
@@ -72,6 +76,7 @@ class NojinStrain(Base):
 
 class NojinFormulation(Base):
     """Product formulations (Phase 1)."""
+
     __tablename__ = "nojin_formulations"
     __table_args__ = {"extend_existing": True}
 
@@ -99,12 +104,13 @@ class NojinFormulation(Base):
 
 class NojinApplicationPlan(Base):
     """Application plans (Phase 1)."""
+
     __tablename__ = "nojin_application_plans"
     __table_args__ = {"extend_existing": True}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     formulation_id = Column(Integer, ForeignKey("nojin_formulations.id"), nullable=False)
-    land_profile_id = Column(String, ForeignKey("land_profiles.id")) # تغییر از Integer به String
+    land_profile_id = Column(String, ForeignKey("land_profiles.id"))  # تغییر از Integer به String
     crop_type = Column(String(100), nullable=False)
     application_date = Column(Date, nullable=False)
     application_method = Column(String(100), nullable=False)
@@ -121,6 +127,7 @@ class NojinApplicationPlan(Base):
 
 class NojinFieldTrial(Base):
     """Field trial records (Phase 1)."""
+
     __tablename__ = "nojin_field_trials"
     __table_args__ = {"extend_existing": True}
 
@@ -145,6 +152,7 @@ class NojinFieldTrial(Base):
 
 class NojinCalibrationRecord(Base):
     """Calibration history (Phase 1)."""
+
     __tablename__ = "nojin_calibration_records"
     __table_args__ = {"extend_existing": True}
 
@@ -167,8 +175,10 @@ class NojinCalibrationRecord(Base):
 # PHASE 2: EXTENDED MODELS (7 tables)
 # ═══════════════════════════════════════════════════════════════════
 
+
 class NojinMaterial(Base):
     """Comprehensive material profile with 30+ scientific parameters (Phase 2)."""
+
     __tablename__ = "nojin_materials"
     __table_args__ = {"extend_existing": True}
 
@@ -236,6 +246,7 @@ class NojinMaterial(Base):
 
 class NojinSoilType(Base):
     """Soil type classification (Phase 2)."""
+
     __tablename__ = "nojin_soil_types"
     __table_args__ = {"extend_existing": True}
 
@@ -261,6 +272,7 @@ class NojinSoilType(Base):
 
 class NojinFormulationRecipe(Base):
     """Specific formulation for each soil type (Phase 2)."""
+
     __tablename__ = "nojin_formulation_recipes"
     __table_args__ = {"extend_existing": True}
 
@@ -291,6 +303,7 @@ class NojinFormulationRecipe(Base):
 
 class NojinMaterialComposition(Base):
     """Detailed chemical composition (Phase 2)."""
+
     __tablename__ = "nojin_material_composition"
     __table_args__ = {"extend_existing": True}
 
@@ -325,6 +338,7 @@ class NojinMaterialComposition(Base):
 
 class NojinApplicationGuide(Base):
     """Application guidance (Phase 2)."""
+
     __tablename__ = "nojin_application_guides"
     __table_args__ = {"extend_existing": True}
 
@@ -349,6 +363,7 @@ class NojinApplicationGuide(Base):
 
 class NojinCostBenefit(Base):
     """Cost-benefit analysis (Phase 2)."""
+
     __tablename__ = "nojin_cost_benefit"
     __table_args__ = {"extend_existing": True}
 
@@ -377,6 +392,7 @@ class NojinCostBenefit(Base):
 
 class NojinWaterSaving(Base):
     """Water-saving calculations (Phase 2)."""
+
     __tablename__ = "nojin_water_saving"
     __table_args__ = {"extend_existing": True}
 

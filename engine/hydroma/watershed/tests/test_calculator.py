@@ -24,7 +24,7 @@ class TestStrahlerOrdering:
                 {"id": "e1", "from_node": 1, "to_node": 3},
                 {"id": "e2", "from_node": 2, "to_node": 3},
                 {"id": "e3", "from_node": 3, "to_node": 4},
-            ]
+            ],
         }
 
         result = calculate_strahler_order(network)
@@ -43,7 +43,7 @@ class TestStrahlerOrdering:
             "edges": [
                 {"id": "e1", "from_node": 1, "to_node": 2},
                 {"id": "e2", "from_node": 2, "to_node": 3},
-            ]
+            ],
         }
 
         result = calculate_strahler_order(network)
@@ -71,8 +71,11 @@ class TestHortonRatios:
         }
 
         lengths = {
-            "e1": 1000, "e2": 1000, "e3": 1000,
-            "e4": 2000, "e5": 2000,
+            "e1": 1000,
+            "e2": 1000,
+            "e3": 1000,
+            "e4": 2000,
+            "e5": 2000,
             "e6": 4000,
         }
 

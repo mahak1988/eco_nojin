@@ -11,13 +11,19 @@ class AdminRepository:
         self.db = db
 
     async def write_audit_log(
-        self, action: str, actor_id: str | None = None,
-        resource_type: str | None = None, resource_id: str | None = None,
+        self,
+        action: str,
+        actor_id: str | None = None,
+        resource_type: str | None = None,
+        resource_id: str | None = None,
         details: dict | None = None,
     ) -> AuditLog:
         log = AuditLog(
-            actor_id=actor_id, action=action,
-            resource_type=resource_type, resource_id=resource_id, details=details,
+            actor_id=actor_id,
+            action=action,
+            resource_type=resource_type,
+            resource_id=resource_id,
+            details=details,
         )
         self.db.add(log)
         await self.db.commit()

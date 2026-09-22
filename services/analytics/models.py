@@ -1,4 +1,5 @@
 """Analytics SQLAlchemy models"""
+
 import uuid
 from datetime import UTC, datetime
 
@@ -18,6 +19,4 @@ class AnalyticsSnapshot(Base):
     data = Column(JSON, nullable=False)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
-    __table_args__ = (
-        Index("ix_analytics_snapshots_lookup", "snapshot_type", "village_id"),
-    )
+    __table_args__ = (Index("ix_analytics_snapshots_lookup", "snapshot_type", "village_id"),)

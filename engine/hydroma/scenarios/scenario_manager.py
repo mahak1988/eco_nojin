@@ -4,6 +4,7 @@ Scenario Management Engine.
 Orchestrates the definition, execution, and storage of various scenarios
 (e.g., climate, crop management, infrastructure).
 """
+
 import logging
 from dataclasses import dataclass
 from enum import Enum
@@ -31,13 +32,16 @@ class ScenarioType(Enum):
 @dataclass
 class ScenarioDefinition:
     """Defines a single scenario."""
+
     project_id: str
     scenario_name: str
     scenario_type: ScenarioType
     baseline_scenario_id: str | None = None
     description: str = ""
     assumptions: dict[str, Any] = None
-    parameters: dict[str, Any] = None # e.g., {"temp_change_degC": 2.0, "rainfall_change_percent": -10}
+    parameters: dict[str, Any] = (
+        None  # e.g., {"temp_change_degC": 2.0, "rainfall_change_percent": -10}
+    )
 
 
 class ScenarioManager:
@@ -52,7 +56,9 @@ class ScenarioManager:
 
     def create_scenario(self, definition: ScenarioDefinition) -> str:
         """Creates a new scenario record in the database."""
-        logger.info(f"Creating scenario '{definition.scenario_name}' for project {definition.project_id}")
+        logger.info(
+            f"Creating scenario '{definition.scenario_name}' for project {definition.project_id}"
+        )
         db_scenario = ScenarioDB(
             project_id=definition.project_id,
             scenario_name=definition.scenario_name,
@@ -91,7 +97,9 @@ class ScenarioManager:
 
             # --- Apply Scenario Modifications ---
             # This is a critical part where the scenario parameters modify the land profile or inputs
-            modified_inputs = self._apply_modifications(land_profile_data, scenario_type, scenario_params)
+            modified_inputs = self._apply_modifications(
+                land_profile_data, scenario_type, scenario_params
+            )
 
             # --- Execute Simulation Chain ---
             logger.info("Starting simulation chain for scenario...")
@@ -103,32 +111,43 @@ class ScenarioManager:
             # For simplicity, we use a placeholder.
             economic_analysis = calculate_agricultural_project_economics(
                 land_profile_data=modified_inputs,
-                crop_advisor_output={"top_recommendations": [{"name_en": "Wheat", "yield_t_ha": simulation_outputs.get("AquaCropOutput", {}).get("yield_t_ha", 3.0)}]},
+                crop_advisor_output={
+                    "top_recommendations": [
+                        {
+                            "name_en": "Wheat",
+                            "yield_t_ha": simulation_outputs.get("AquaCropOutput", {}).get(
+                                "yield_t_ha", 3.0
+                            ),
+                        }
+                    ]
+                },
                 biofertilizer_output={"recommendations": []},
                 market_data={"commodity_price_per_ton_irr": 2000000},
                 costing_params={"labor_cost_per_hour_irr": 20000, "bio_fert_cost_per_kg_irr": 1000},
                 roi_params={"discount_rate": 0.08, "projection_years": 10},
-                risk_params={"price_volatility": 0.15, "yield_std_dev": 0.3}
+                risk_params={"price_volatility": 0.15, "yield_std_dev": 0.3},
             )
 
             # --- Perform Risk Analysis ---
             logger.info("Performing risk analysis for scenario...")
-            risk_analysis = perform_comprehensive_risk_analysis(simulation_outputs, economic_analysis)
+            risk_analysis = perform_comprehensive_risk_analysis(
+                simulation_outputs, economic_analysis
+            )
 
             # --- Store Results ---
             result_data = {
                 "simulation_outputs": simulation_outputs,
                 "economic_analysis": economic_analysis,
-                "risk_analysis": risk_analysis
+                "risk_analysis": risk_analysis,
             }
 
             db_result = ScenarioResultDB(
                 scenario_id=scenario_id,
-                result_type="full_analysis", # More granular types possible
+                result_type="full_analysis",  # More granular types possible
                 result_data=result_data,
                 # Uncertainty could be derived from Monte Carlo or sensitivity analysis
                 uncertainty_data={},
-                confidence_level=0.9 # Placeholder
+                confidence_level=0.9,  # Placeholder
             )
             db.add(db_result)
             db.commit()
@@ -143,7 +162,9 @@ class ScenarioManager:
         finally:
             db.close()
 
-    def _apply_modifications(self, land_profile: dict[str, Any], scenario_type: ScenarioType, params: dict[str, Any]) -> dict[str, Any]:
+    def _apply_modifications(
+        self, land_profile: dict[str, Any], scenario_type: ScenarioType, params: dict[str, Any]
+    ) -> dict[str, Any]:
         """Applies scenario-specific modifications to the base land profile or input data."""
         modified = land_profile.copy()
 
@@ -155,7 +176,7 @@ class ScenarioManager:
             # For now, we'll add them to the modified profile for downstream use.
             modified["scenario_climate_shifts"] = {
                 "temp_change_degC": temp_shift,
-                "precip_change_percent": precip_change
+                "precip_change_percent": precip_change,
             }
         elif scenario_type == ScenarioType.CROP_MANAGEMENT:
             # Modify crop choice, irrigation, etc.
@@ -173,7 +194,9 @@ class ScenarioManager:
         for sid in scenario_ids:
             db = SessionLocal()
             try:
-                result = db.query(ScenarioResultDB).filter(ScenarioResultDB.scenario_id == sid).first()
+                result = (
+                    db.query(ScenarioResultDB).filter(ScenarioResultDB.scenario_id == sid).first()
+                )
                 if result:
                     # Extract key metrics for comparison (e.g., yield, NPV, risk score)
                     sim_out = result.result_data.get("simulation_outputs", {})

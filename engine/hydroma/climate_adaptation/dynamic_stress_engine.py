@@ -13,15 +13,15 @@ __version__ = "1.0.0"
 
 @dataclass
 class CropStressParams:
-    t_opt_night_c: float = 12.0          # H02: دمای بهینه شبانه
-    t_heat_threshold_c: float = 35.0     # H04: آستانه تنش گرمایی
-    heat_sensitivity_k: float = 0.5      # H04: شیب منحنی سیگموئید
-    vpd_threshold_kpa: float = 1.5       # H03: آستانه VPD
-    vpd_coeff: float = 0.05              # H03: ضریب تصحیح تبخیر
-    night_coeff_per_deg: float = 0.10    # H02: کاهش ۱۰٪ به ازای هر درجه
+    t_opt_night_c: float = 12.0  # H02: دمای بهینه شبانه
+    t_heat_threshold_c: float = 35.0  # H04: آستانه تنش گرمایی
+    heat_sensitivity_k: float = 0.5  # H04: شیب منحنی سیگموئید
+    vpd_threshold_kpa: float = 1.5  # H03: آستانه VPD
+    vpd_coeff: float = 0.05  # H03: ضریب تصحیح تبخیر
+    night_coeff_per_deg: float = 0.10  # H02: کاهش ۱۰٪ به ازای هر درجه
     max_night_penalty: float = 0.30
     max_heat_penalty: float = 0.35
-    compound_interaction: float = 0.85   # H08: ضریب رویداد ترکیبی
+    compound_interaction: float = 0.85  # H08: ضریب رویداد ترکیبی
 
 
 def es_kpa(t_c: float) -> float:
@@ -41,7 +41,6 @@ class DynamicStressEngine:
     def __init__(self, params: Optional[CropStressParams] = None):
         self.p = params or CropStressParams()
 
-
     @property
     def cfg(self):
         """ویژگی سازگاری با سایر ماژول‌ها (alias برای self.p)"""
@@ -58,9 +57,9 @@ class DynamicStressEngine:
             return 0.0
         return 1.0 / (1.0 + (rain_mm / 50.0) ** 1.5)
 
-    def h01_effective_rain_mm(self, rain_mm: float,
-                              infiltration: float = 0.8,
-                              stage_factor: float = 1.0) -> float:
+    def h01_effective_rain_mm(
+        self, rain_mm: float, infiltration: float = 0.8, stage_factor: float = 1.0
+    ) -> float:
         if rain_mm <= 0.0:
             return 0.0
         return rain_mm * infiltration * stage_factor * self.h01_intensity_discount(rain_mm)
@@ -81,13 +80,18 @@ class DynamicStressEngine:
     # ------------------------------------------------------------------ H04
     def h04_heat_ks(self, t_max_c: float) -> float:
         # پاسخ غیرخطی سیگموئید (جایگزین کاهش خطی فائو)
-        return 1.0 / (1.0 + math.exp(self.p.heat_sensitivity_k *
-                                     (t_max_c - self.p.t_heat_threshold_c)))
+        return 1.0 / (
+            1.0 + math.exp(self.p.heat_sensitivity_k * (t_max_c - self.p.t_heat_threshold_c))
+        )
 
     # ------------------------------------------------------------------ H08
-    def h08_combined_ks(self, ks_water: float, ks_temp: float,
-                        ks_salinity: float = 1.0,
-                        compound_event: bool = False) -> float:
+    def h08_combined_ks(
+        self,
+        ks_water: float,
+        ks_temp: float,
+        ks_salinity: float = 1.0,
+        compound_event: bool = False,
+    ) -> float:
         base = ks_water * ks_temp * ks_salinity
         return base * (self.p.compound_interaction if compound_event else 1.0)
 
@@ -99,22 +103,21 @@ class DynamicStressEngine:
         night_over = [max(0.0, t - self.p.t_opt_night_c) for t in tmin_daily]
         mean_over = sum(night_over) / len(night_over)
         heat_factor = 1.0 - min(self.p.max_heat_penalty, 0.02 * heat_days)
-        night_factor = 1.0 - min(self.p.max_night_penalty,
-                                 self.p.night_coeff_per_deg * mean_over)
+        night_factor = 1.0 - min(self.p.max_night_penalty, self.p.night_coeff_per_deg * mean_over)
         factor = heat_factor * night_factor
         result.yield_t_ha = round(result.yield_t_ha * factor, 2)
         result.biomass_t_ha = round(result.biomass_t_ha * factor, 2)
         try:
             result.warnings = list(result.warnings) + [
                 "Hydroma DSE x%.2f (heat_days=%d, night_over=%.1fC)"
-                % (factor, heat_days, mean_over)]
+                % (factor, heat_days, mean_over)
+            ]
         except Exception:
             pass
         return result
 
     # ------------------------------------------------- منحنی مقایسه‌ای بنچمارک
-    def benchmark_curves(self, t_start: float = 25.0, t_end: float = 45.0,
-                         step: float = 1.0):
+    def benchmark_curves(self, t_start: float = 25.0, t_end: float = 45.0, step: float = 1.0):
         temps, linear, sigmoid = [], [], []
         t = t_start
         while t <= t_end + 1e-9:

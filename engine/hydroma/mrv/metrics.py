@@ -27,24 +27,14 @@ SOC_DEPTH_M = 0.3
 DEFAULT_BULK_DENSITY_G_CM3 = 1.3
 
 EROSION_WARNING = (
-    "Inputs are simulated; the value is an estimate and must not be "
-    "reported as measured erosion."
+    "Inputs are simulated; the value is an estimate and must not be reported as measured erosion."
 )
-SOC_WARNING = (
-    "SOC change derived from simulated inputs; not verifiable against "
-    "field measurements."
-)
-AREA_WARNING = (
-    "Restored area is a simulated estimate; verify with ground survey."
-)
-INCOME_WARNING = (
-    "Household income is a simulated estimate; verify with field survey."
-)
+SOC_WARNING = "SOC change derived from simulated inputs; not verifiable against field measurements."
+AREA_WARNING = "Restored area is a simulated estimate; verify with ground survey."
+INCOME_WARNING = "Household income is a simulated estimate; verify with field survey."
 
 
-def _resolve_source(
-    observed_sources: list[str] | None, declared: str
-) -> str:
+def _resolve_source(observed_sources: list[str] | None, declared: str) -> str:
     """Resolve the effective provenance badge for a metric.
 
     Priority: simulated (any) > real (any observation) > declared.
@@ -134,18 +124,14 @@ def soc_change_pct(
 ) -> dict[str, Any]:
     """Relative SOC change (%) plus the absolute stock delta (t C/ha)."""
     rel_pct = (
-        (soc_after_pct - soc_before_pct) / soc_before_pct * 100.0
-        if soc_before_pct != 0
-        else None
+        (soc_after_pct - soc_before_pct) / soc_before_pct * 100.0 if soc_before_pct != 0 else None
     )
     source = _resolve_source(observed_sources, data_source)
     return {
         "soc_before_pct": soc_before_pct,
         "soc_after_pct": soc_after_pct,
         "soc_change_pct": round(rel_pct, 2) if rel_pct is not None else None,
-        "soc_delta_tha": round(
-            soc_stock_tha(soc_after_pct) - soc_stock_tha(soc_before_pct), 3
-        ),
+        "soc_delta_tha": round(soc_stock_tha(soc_after_pct) - soc_stock_tha(soc_before_pct), 3),
         "note": "SOC change is relative to baseline; verify with lab measurements.",
         **_badge(source, SOC_WARNING),
     }
@@ -226,7 +212,9 @@ def compute_dashboard(
     }
     if rusle_before_tha is not None and rusle_after_tha is not None and area_ha is not None:
         metrics["erosion_reduction_t_yr"] = erosion_reduction(
-            rusle_before_tha, rusle_after_tha, area_ha,
+            rusle_before_tha,
+            rusle_after_tha,
+            area_ha,
             observed_sources=observed_sources,
         )
     if soc_before_pct is not None and soc_after_pct is not None:
@@ -239,9 +227,7 @@ def compute_dashboard(
                 delta_tha, area_ha, observed_sources=observed_sources
             )
     if area_ha is not None:
-        metrics["restored_area_ha"] = restored_area_ha(
-            area_ha, observed_sources=observed_sources
-        )
+        metrics["restored_area_ha"] = restored_area_ha(area_ha, observed_sources=observed_sources)
     if households is not None and income_per_household_usd is not None:
         metrics["household_income_usd"] = household_income_usd(
             households, income_per_household_usd, observed_sources=observed_sources

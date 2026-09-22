@@ -1,4 +1,5 @@
 """Topographic Map Pipeline (M-TOP) - NumPy 2.x compatible."""
+
 from __future__ import annotations
 
 import time
@@ -7,7 +8,7 @@ from pathlib import Path
 import geopandas as gpd
 import matplotlib
 
-matplotlib.use('Agg')  # Non-interactive backend for headless
+matplotlib.use("Agg")  # Non-interactive backend for headless
 import numpy as np
 import xarray as xr
 from shapely.geometry import LineString
@@ -121,7 +122,7 @@ class TopographicPipeline(MapPipeline):
         grad_y, grad_x = np.gradient(dem.values, dy, dx, axis=(0, 1))
 
         # Slope in percent
-        slope = np.sqrt(grad_x ** 2 + grad_y ** 2) * 100
+        slope = np.sqrt(grad_x**2 + grad_y**2) * 100
 
         return xr.DataArray(
             slope.astype(np.float32),
@@ -159,16 +160,15 @@ class TopographicPipeline(MapPipeline):
 
         grad_y, grad_x = np.gradient(dem.values, dy, dx, axis=(0, 1))
 
-        slope = np.arctan(np.sqrt(grad_x ** 2 + grad_y ** 2))
+        slope = np.arctan(np.sqrt(grad_x**2 + grad_y**2))
         aspect = np.arctan2(-grad_x, grad_y)
 
         azimuth_rad = np.radians(azimuth)
         altitude_rad = np.radians(altitude)
 
-        hillshade = (
-            np.sin(altitude_rad) * np.cos(slope)
-            + np.cos(altitude_rad) * np.sin(slope) * np.cos(azimuth_rad - aspect)
-        )
+        hillshade = np.sin(altitude_rad) * np.cos(slope) + np.cos(altitude_rad) * np.sin(
+            slope
+        ) * np.cos(azimuth_rad - aspect)
 
         # Normalize to 0-255
         hillshade = ((hillshade + 1) / 2 * 255).clip(0, 255).astype(np.uint8)
@@ -190,9 +190,7 @@ class TopographicPipeline(MapPipeline):
         max_elev = float(dem.max())
 
         if max_elev - min_elev < interval:
-            return gpd.GeoDataFrame(
-                {"elevation": []}, geometry=[], crs=dem.rio.crs
-            )
+            return gpd.GeoDataFrame({"elevation": []}, geometry=[], crs=dem.rio.crs)
 
         elevations = []
         lines = []
@@ -214,9 +212,7 @@ class TopographicPipeline(MapPipeline):
             # Check 4 edges of each cell
             for i in range(data.shape[0] - 1):
                 for j in range(data.shape[1] - 1):
-                    cell_corners = [
-                        (i, j), (i, j + 1), (i + 1, j + 1), (i + 1, j)
-                    ]
+                    cell_corners = [(i, j), (i, j + 1), (i + 1, j + 1), (i + 1, j)]
 
                     states = [above[r, c] for r, c in cell_corners]
 
@@ -247,9 +243,7 @@ class TopographicPipeline(MapPipeline):
                                 pass
 
         if not lines:
-            return gpd.GeoDataFrame(
-                {"elevation": []}, geometry=[], crs=dem.rio.crs
-            )
+            return gpd.GeoDataFrame({"elevation": []}, geometry=[], crs=dem.rio.crs)
 
         return gpd.GeoDataFrame(
             {"elevation": elevations},

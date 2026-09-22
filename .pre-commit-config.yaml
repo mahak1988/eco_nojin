@@ -1,0 +1,76 @@
+repos:
+  # Ruff (replaces flake8, isort, black)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.0
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
+
+  # MyPy (type checking)
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.0
+    hooks:
+      - id: mypy
+        additional_dependencies: [pydantic>=2.13,<3.0, fastapi>=0.141,<1.0, sqlalchemy>=2.0,<3.0]
+        args: [--strict, --ignore-missing-imports]
+
+  # Bandit (security)
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.5
+    hooks:
+      - id: bandit
+        args: ["-ll", "-r", "."]
+
+  # Pip-audit (vulnerability scanning)
+  - repo: https://github.com/pypa/pip-audit
+    rev: v2.7.0
+    hooks:
+      - id: pip-audit
+
+  # Vulture (dead code detection)
+  - repo: https://github.com/jendrikseipp/vulture
+    rev: v2.11.1
+    hooks:
+      - id: vulture
+        args: ["--min-confidence", "80"]
+
+  # Conventional Commits
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.14.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+
+  # Markdown lint
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.43.0
+    hooks:
+      - id: markdownlint
+
+  # YAML lint
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+
+  # Check for merge conflicts
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+      - id: detect-private-key
+
+  # Check for large files
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=500"]

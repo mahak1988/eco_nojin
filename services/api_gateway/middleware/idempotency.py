@@ -1,11 +1,17 @@
 """Idempotency middleware for financial endpoints."""
+
 from __future__ import annotations
 
 import hashlib
+import json
 import logging
-from typing import Optional
+import re
+import uuid
+from datetime import UTC, datetime, timedelta
+from typing import Any
 
-from fastapi import Request, Response
+from fastapi import Request
+from sqlalchemy import select
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 
@@ -18,6 +24,14 @@ IDEMPOTENCY_TTL_HOURS = 24
 IDEMPOTENCY_HEADER = "Idempotency-Key"
 MUTATING_METHODS = {"POST", "PATCH", "PUT", "DELETE"}
 
+PROTECTED_PREFIXES = (
+    "/api/v1/health",
+    "/api/v1/ready",
+    "/api/v1/docs",
+    "/api/v1/openapi.json",
+    "/api/v1/redoc",
+)
+
 # Routes that require idempotency (exact paths)
 IDEMPOTENT_EXACT_ROUTES = {
     "/api/v1/ecowallet/earn",
@@ -26,11 +40,16 @@ IDEMPOTENT_EXACT_ROUTES = {
     "/api/v1/ledger/entries",
     "/api/v1/marketplace/orders",
     "/api/v1/marketplace/payments",
+    "/api/v1/marketplace/payments/callback",
+    "/api/v1/finance/wallet/earn",
+    "/api/v1/finance/wallet/redeem",
+    "/api/v1/finance/payments/intent",
 }
 
 # Parameterized routes that require idempotency
 IDEMPOTENT_PARAM_ROUTES = [
     "/api/v1/marketplace/orders/{order_id}/confirm",
+    "/api/v1/marketplace/orders/{order_id}",
     "/api/v1/marketplace/payments/{payment_id}/confirm",
 ]
 
@@ -40,6 +59,14 @@ class IdempotencyMiddleware(BaseHTTPMiddleware):
 
     def __init__(self, app) -> None:
         super().__init__(app)
+
+    def _body_hash(self, body: bytes) -> str:
+        """Generate SHA256 hash of body for idempotency key."""
+        return hashlib.sha256(body).hexdigest()
+
+    def _user_id(self, request: Request) -> str:
+        """Extract user_id from request state."""
+        return getattr(request.state, "user_id", "anonymous")
 
     def _requires_idempotency(self, path: str, method: str) -> bool:
         """Check if the route requires idempotency."""
@@ -51,6 +78,7 @@ class IdempotencyMiddleware(BaseHTTPMiddleware):
         # Check parameterized routes
         for route in IDEMPOTENT_PARAM_ROUTES:
             import re
+
             pattern = route.replace("{", "(?P<").replace("}", ">[^/]+)")
             if re.match(f"^{pattern}$", path):
                 return True
@@ -71,7 +99,6 @@ class IdempotencyMiddleware(BaseHTTPMiddleware):
             )
 
         # Validate key format (UUID v4)
-        import uuid
         try:
             uuid.UUID(idempotency_key)
         except ValueError:
@@ -92,18 +119,14 @@ class IdempotencyMiddleware(BaseHTTPMiddleware):
 
         # Check idempotency key in database
         async with hub.get_async_session() as db:
-            from sqlalchemy import select
-            from database.models import FinIdempotencyKey
-
             stmt = select(FinIdempotencyKey).where(
-                FinIdempotencyKey.key == idempotency_key,
-                FinIdempotencyKey.user_id == user_id
+                FinIdempotencyKey.key == idempotency_key, FinIdempotencyKey.user_id == user_id
             )
             result = await db.execute(stmt)
             existing = result.scalar_one_or_none()
 
             if existing:
-                if existing.request_hash != hashlib.sha256(await request.body()).hexdigest():
+                if existing.request_hash != request_hash:
                     return JSONResponse(
                         status_code=422,
                         content={
@@ -126,13 +149,13 @@ class IdempotencyMiddleware(BaseHTTPMiddleware):
                         },
                     )
 
-            # Create new idempotency key record
-            from datetime import datetime, timedelta, UTC
+        # Create new idempotency key record
+
             new_key = FinIdempotencyKey(
                 user_id=getattr(request.state, "user_id", "anonymous"),
                 key=idempotency_key,
                 route=str(request.url.path),
-                request_hash=hashlib.sha256(await request.body()).hexdigest(),
+                request_hash=request_hash,
                 status="pending",
                 created_at=datetime.now(UTC),
                 expires_at=datetime.now(UTC) + timedelta(hours=24),
@@ -146,22 +169,35 @@ class IdempotencyMiddleware(BaseHTTPMiddleware):
 
         # Cache successful responses
         if response.status_code < 400:
-            # We would store the response here in a real implementation
-            # For now, just update the idempotency key status
-            async with hub.get_async_session() as db:
-                from sqlalchemy import select
-                from database.models import FinIdempotencyKey
+            # Capture response body
+            response_body = b""
+            async for chunk in response.body_iterator:
+                response_body += chunk
 
+            # Reconstruct response with cached body
+            try:
+                cached_content = json.loads(response_body.decode())
+            except Exception:
+                cached_content = {"detail": "Response cached"}
+
+            # Update idempotency key with response
+            async with hub.get_async_session() as db:
                 stmt = select(FinIdempotencyKey).where(
-                    FinIdempotencyKey.key == request.headers.get("Idempotency-Key"),
-                    FinIdempotencyKey.user_id == getattr(request.state, "user_id", "anonymous")
+                    FinIdempotencyKey.key == idempotency_key, FinIdempotencyKey.user_id == user_id
                 )
                 result = await db.execute(stmt)
                 existing = result.scalar_one_or_none()
                 if existing:
                     existing.status = "completed"
                     existing.response_code = response.status_code
-                    # Note: response body caching would go here
+                    existing.response_body = cached_content
                     await db.commit()
+
+            # Return new response with cached body
+            return JSONResponse(
+                status_code=response.status_code,
+                content=cached_content,
+                headers=dict(response.headers),
+            )
 
         return response

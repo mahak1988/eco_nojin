@@ -20,6 +20,7 @@
 | Watershed | 2 | `/api/v1/watershed/` |
 | Benchmark | 2 | `/api/v1/benchmark/` |
 | Sync | 3 | `/api/v1/sync/` |
+| Realtime | 2 | `/api/v1/realtime/` |
 | USSD/SMS | 6 | `/api/v1/ussd/` |
 | Voice | 8 | `/api/v1/voice/` |
 | Blockchain | 15 | `/api/v1/blockchain/` |
@@ -184,3 +185,154 @@ All errors follow this format:
 - `404` - Not found
 - `422` - Validation error
 - `500` - Internal server error
+- `503` - Service unavailable (feature disabled or dependency down)
+
+---
+
+## Sync Endpoints (Local-First Cloud Synchronization)
+
+The sync endpoints implement the outbox pattern for reliable local-first data synchronization with Supabase cloud.
+
+### GET /api/v1/sync/status
+
+Get synchronization status including Supabase connectivity and pending events.
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "mode": "local-first",
+  "cloud": "supabase",
+  "local_pending_events": 0,
+  "supabase_connected": false,
+  "supabase_error": "[Errno 11001] getaddrinfo failed",
+  "note": "Local-first sync with Supabase cloud. Offline data syncs when connection restored."
+}
+```
+
+**Feature Flag:** `ENABLE_SUPABASE_SYNC` (default: true)
+
+---
+
+### POST /api/v1/sync/trigger
+
+Manually trigger synchronization of pending outbox events to Supabase.
+
+**Response (success):**
+```json
+{
+  "ok": true,
+  "synced": 0,
+  "failed": 0,
+  "total_pending": 0
+}
+```
+
+**Response (Supabase unavailable):**
+```json
+{
+  "detail": "Supabase not available"
+}
+```
+
+**Status Codes:**
+- `200` - Sync completed
+- `503` - Supabase unavailable or feature disabled
+
+---
+
+### GET /api/v1/sync/pending
+
+List pending outbox events awaiting synchronization.
+
+**Response:**
+```json
+{
+  "ok": true,
+  "count": 0,
+  "events": []
+}
+```
+
+**Event object:**
+```json
+{
+  "id": 1,
+  "event_type": "landscape_created",
+  "aggregate_id": "uuid-string",
+  "payload": { "key": "value" },
+  "retry_count": 0,
+  "created_at": "2026-01-15T10:30:00Z"
+}
+```
+
+---
+
+## Realtime Endpoints (Server-Sent Events)
+
+Real-time event streaming via Server-Sent Events (SSE) for live dashboard updates.
+
+### GET /api/v1/realtime/health
+
+Health check for realtime service.
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "service": "realtime-sse",
+  "enabled": true
+}
+```
+
+**Feature Flag:** `ENABLE_REALTIME_SSE` (default: true)
+
+---
+
+### GET /api/v1/realtime/stream
+
+Server-Sent Events stream for real-time updates.
+
+**Query Parameters:**
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `user_key` | string | Yes | - | Anonymous user key (8-64 chars, alphanumeric + `_` `-`) |
+| `events` | string | No | `model_runs,sync_status` | Comma-separated: `model_runs`, `sync_status` |
+| `interval` | float | No | `2.0` | Polling interval in seconds |
+
+**Example:**
+```
+GET /api/v1/realtime/stream?user_key=testuser123&events=model_runs,sync_status&interval=2.0
+```
+
+**Response (SSE stream):**
+```
+data: {"type": "model_run", "data": {"id": 1, "model_id": "hydroma-v1", "title": "Soil Analysis", "shared": false, "created_at": "2026-01-15T10:30:00Z"}}
+
+data: {"type": "sync_status", "data": {"pending_count": 3}}
+
+: heartbeat
+
+data: {"type": "error", "data": {"message": "Connection error"}}
+```
+
+**Event Types:**
+| Type | Description |
+|------|-------------|
+| `model_run` | New model run created for user |
+| `sync_status` | Pending sync count changed |
+| `error` | Stream error |
+| `heartbeat` | Keep-alive (every interval) |
+
+**Status Codes:**
+- `200` - Stream started
+- `400` - Invalid user key format
+- `503` - Realtime feature disabled
+
+**Headers:**
+```
+Content-Type: text/event-stream
+Cache-Control: no-cache
+Connection: keep-alive
+X-Accel-Buffering: no
+```

@@ -12,6 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class SoilTexture(str, Enum):
     """USDA Soil Texture Classes (12 classes)"""
+
     SAND = "sand"
     LOAMY_SAND = "loamy_sand"
     SANDY_LOAM = "sandy_loam"
@@ -28,7 +29,8 @@ class SoilTexture(str, Enum):
 
 class SalinityClass(str, Enum):
     """Soil Salinity Classes based on ECe (dS/m)"""
-    NON_SALINE = "non_saline"          # < 2 dS/m
+
+    NON_SALINE = "non_saline"  # < 2 dS/m
     SLIGHTLY_SALINE = "slightly_saline"  # 2-4 dS/m
     MODERATELY_SALINE = "moderately_saline"  # 4-8 dS/m
     STRONGLY_SALINE = "strongly_saline"  # 8-16 dS/m
@@ -37,6 +39,7 @@ class SalinityClass(str, Enum):
 
 class DrainageClass(str, Enum):
     """Soil Drainage Classes"""
+
     EXCESSIVE = "excessive"
     SOMEWHAT_EXCESSIVE = "somewhat_excessive"
     WELL = "well"
@@ -48,6 +51,7 @@ class DrainageClass(str, Enum):
 
 class SoilLayer(BaseModel):
     """Single soil layer (e.g., 0-5cm, 5-15cm, etc.)"""
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
@@ -65,7 +69,7 @@ class SoilLayer(BaseModel):
                 "theta_r": 0.08,
                 "theta_s": 0.45,
                 "alpha": 0.02,
-                "n": 1.5
+                "n": 1.5,
             }
         }
     )
@@ -111,6 +115,7 @@ class SoilLayer(BaseModel):
 
 class DeepSoilProfile(BaseModel):
     """Complete soil profile with 6 layers (0-200cm)"""
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
@@ -120,11 +125,11 @@ class DeepSoilProfile(BaseModel):
                     {"depth_min_cm": 15, "depth_max_cm": 30},
                     {"depth_min_cm": 30, "depth_max_cm": 60},
                     {"depth_min_cm": 60, "depth_max_cm": 100},
-                    {"depth_min_cm": 100, "depth_max_cm": 200}
+                    {"depth_min_cm": 100, "depth_max_cm": 200},
                 ],
                 "total_depth_cm": 200,
                 "dominant_texture": "loam",
-                "rooting_depth_cm": 120
+                "rooting_depth_cm": 120,
             }
         }
     )
@@ -146,6 +151,7 @@ class DeepSoilProfile(BaseModel):
 
 class SoilIntegrationResult(BaseModel):
     """Result of soil integration with land profile"""
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
@@ -153,7 +159,7 @@ class SoilIntegrationResult(BaseModel):
                 "success": True,
                 "soil_profile": {"total_depth_cm": 200},
                 "soil_health_score": 65.5,
-                "capabilities": {"suitable_for": ["wheat", "barley"]}
+                "capabilities": {"suitable_for": ["wheat", "barley"]},
             }
         }
     )

@@ -17,6 +17,7 @@ try:
 
     _RTL_OK = True
 except Exception:  # pragma: no cover
+
     def fa(text: str) -> str:
         return str(text)
 
@@ -73,7 +74,14 @@ def build_certificate_pdf(data: dict[str, Any]) -> bytes:
     pdf.cell(0, 12, fa("گواهی اعتبار کربن — اکو نوژین"), new_x="LMARGIN", new_y="NEXT", align="C")
     pdf.set_text_color(90, 90, 90)
     pdf.set_font("Persian", "", 10)
-    pdf.cell(0, 7, fa("سند دیجیتال راستی‌آزمایی‌شده — قابل استعلام با کد اعتبارسنجی"), new_x="LMARGIN", new_y="NEXT", align="C")
+    pdf.cell(
+        0,
+        7,
+        fa("سند دیجیتال راستی‌آزمایی‌شده — قابل استعلام با کد اعتبارسنجی"),
+        new_x="LMARGIN",
+        new_y="NEXT",
+        align="C",
+    )
     line(pdf.get_y() + 2)
 
     # credit code
@@ -87,27 +95,62 @@ def build_certificate_pdf(data: dict[str, Any]) -> bytes:
     pdf.ln(2)
     pdf.set_font("Persian", "", 12)
     pdf.set_text_color(60, 60, 60)
-    pdf.multi_cell(0, 8, fa(f"این گواهی تأیید می‌کند که پروژه «{proj.get('name', '—')}» به مساحت "
-                           f"{proj.get('area_ha', '—')} هکتار (نوع: {proj.get('project_type', '—')}) در چارچوب "
-                           f"پلتفرم اکو نوژین راستی‌آزمایی شده است."), align="C")
+    pdf.multi_cell(
+        0,
+        8,
+        fa(
+            f"این گواهی تأیید می‌کند که پروژه «{proj.get('name', '—')}» به مساحت "
+            f"{proj.get('area_ha', '—')} هکتار (نوع: {proj.get('project_type', '—')}) در چارچوب "
+            f"پلتفرم اکو نوژین راستی‌آزمایی شده است."
+        ),
+        align="C",
+    )
     pdf.ln(2)
     pdf.set_text_color(15, 118, 110)
     pdf.set_font("Persian", "B", 17)
-    pdf.cell(0, 12, fa(f"{credit.get('amount', '—')} تن معادل CO₂ (tCO2e)"), new_x="LMARGIN", new_y="NEXT", align="C")
+    pdf.cell(
+        0,
+        12,
+        fa(f"{credit.get('amount', '—')} تن معادل CO₂ (tCO2e)"),
+        new_x="LMARGIN",
+        new_y="NEXT",
+        align="C",
+    )
     pdf.set_text_color(60, 60, 60)
     pdf.set_font("Persian", "", 12)
-    pdf.multi_cell(0, 8, fa(f"مالک: {owner.get('display_name') or owner.get('email', '—')} — "
-                           f"شناسه پروژه: {str(proj.get('id', ''))[:8]} — تاریخ صدور: {credit.get('issued_at', '—')}"), align="C")
+    pdf.multi_cell(
+        0,
+        8,
+        fa(
+            f"مالک: {owner.get('display_name') or owner.get('email', '—')} — "
+            f"شناسه پروژه: {str(proj.get('id', ''))[:8]} — تاریخ صدور: {credit.get('issued_at', '—')}"
+        ),
+        align="C",
+    )
 
     # standard
     pdf.ln(3)
     pdf.set_font("Persian", "", 10)
     pdf.set_text_color(90, 90, 90)
-    pdf.multi_cell(0, 7, fa(f"مرجع: {meta.get('standard', 'IPCC 2019 Refinement')} — {meta.get('standard_link', '')}"), align="C")
+    pdf.multi_cell(
+        0,
+        7,
+        fa(
+            f"مرجع: {meta.get('standard', 'IPCC 2019 Refinement')} — {meta.get('standard_link', '')}"
+        ),
+        align="C",
+    )
 
     line(pdf.h - 42)
     pdf.set_y(pdf.h - 38)
     pdf.set_font("Persian", "", 9)
     pdf.set_text_color(130, 130, 130)
-    pdf.multi_cell(0, 5, fa("این سند با ابزار رایگان و داده‌های واقعی پلتفرم تولید شده است و جایگزین گواهی‌های رسمی نهادهای اعطاکننده نیست."), align="C")
+    pdf.multi_cell(
+        0,
+        5,
+        fa(
+            "این سند با ابزار رایگان و داده‌های واقعی پلتفرم تولید شده است و جایگزین گواهی‌های رسمی نهادهای اعطاکننده نیست."
+        ),
+        align="C",
+    )
     return bytes(pdf.output())

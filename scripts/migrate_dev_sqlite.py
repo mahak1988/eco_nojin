@@ -6,6 +6,7 @@ Safe to run multiple times. Only touches the local SQLite database
 Usage:
     python scripts/migrate_dev_sqlite.py [path-to-db]
 """
+
 from __future__ import annotations
 
 import os
@@ -35,7 +36,9 @@ TARGET_COLUMNS = {
 
 
 def main() -> int:
-    default_db = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "econojin.db"))
+    default_db = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "data", "econojin.db")
+    )
     db_path = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else default_db
     if not os.path.exists(db_path):
         print(f"database not found: {db_path}")

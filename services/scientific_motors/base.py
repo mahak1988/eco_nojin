@@ -1,4 +1,5 @@
 """Abstract base class for all scientific motors."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -11,6 +12,7 @@ from typing import Any
 
 class MotorType(str, Enum):
     """Supported scientific motor types."""
+
     SWAT_PLUS = "swat_plus"
     AQUACROP = "aquacrop"
     ROTH_C = "roth_c"
@@ -21,6 +23,7 @@ class MotorType(str, Enum):
 
 class MotorStatus(str, Enum):
     """Motor execution status."""
+
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"
@@ -30,6 +33,7 @@ class MotorStatus(str, Enum):
 @dataclass
 class MotorInput:
     """Input requirement for a motor."""
+
     name: str
     data_type: str  # "raster", "vector", "timeseries", "scalar"
     required: bool = True
@@ -39,6 +43,7 @@ class MotorInput:
 @dataclass
 class MotorOutput:
     """Output produced by a motor."""
+
     name: str
     data_type: str
     units: str
@@ -48,6 +53,7 @@ class MotorOutput:
 @dataclass
 class MotorParameters:
     """Parameters for motor execution."""
+
     start_date: str
     end_date: str
     time_step: str = "daily"
@@ -58,6 +64,7 @@ class MotorParameters:
 @dataclass
 class MotorResult:
     """Result of motor execution."""
+
     run_id: str
     motor_type: MotorType
     status: MotorStatus

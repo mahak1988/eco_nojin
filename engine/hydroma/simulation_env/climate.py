@@ -49,6 +49,7 @@ from engine.hydroma.soil.physics import available_water_capacity
 
 _BASE_SM = 0.5  # initial soil-moisture fraction of TAW
 
+
 def _soil_bucket(daily: pd.DataFrame, awc_mm: float, root_depth_mm: float = 600.0) -> pd.DataFrame:
     """Simple two-reservoir soil moisture bucket (mm).
 
@@ -117,7 +118,9 @@ class DroughtScenario:
             Severity.SEVERE.value: (0.3, 3.5),
             Severity.EXTREME.value: (0.15, 5.0),
         }
-        target_pref, target_toff = severity_map.get(self.severity, severity_map[Severity.MODERATE.value])
+        target_pref, target_toff = severity_map.get(
+            self.severity, severity_map[Severity.MODERATE.value]
+        )
         if self.flash_drought:
             target_pref = max(target_pref, 0.1)
 
@@ -246,18 +249,28 @@ def simulate_drought(
                 severity=_severity_from_sm(sm_frac),
             )
         )
-        drought_curve.append({"year": year, "precip_factor": round(pf, 3), "temp_offset_c": round(toff, 3)})
+        drought_curve.append(
+            {"year": year, "precip_factor": round(pf, 3), "temp_offset_c": round(toff, 3)}
+        )
         daily_frames.append(bucket)
 
     summary = {
         "cumulative_yield_loss_pct": round(
-            (1.0 - annual_impacts[-1].crop_yield_kg_ha / max(annual_impacts[0].crop_yield_kg_ha, 0.01)) * 100.0
-            if annual_impacts else 0.0,
+            (
+                1.0
+                - annual_impacts[-1].crop_yield_kg_ha
+                / max(annual_impacts[0].crop_yield_kg_ha, 0.01)
+            )
+            * 100.0
+            if annual_impacts
+            else 0.0,
             2,
         ),
         "ndvi_min": round(min(a.ndvi for a in annual_impacts), 3) if annual_impacts else 0.0,
         "ndvi_max": round(max(a.ndvi for a in annual_impacts), 3) if annual_impacts else 0.0,
-        "final_soil_moisture_fraction": annual_impacts[-1].soil_moisture_fraction if annual_impacts else 0.0,
+        "final_soil_moisture_fraction": annual_impacts[-1].soil_moisture_fraction
+        if annual_impacts
+        else 0.0,
     }
 
     daily_weather = pd.concat(daily_frames) if daily_frames else None
@@ -331,7 +344,11 @@ def simulate_monsoon(
         bump += np.exp(-0.5 * ((doy - (pm * 30.44)) / 25.0) ** 2)
     bump = bump / bump.max() if bump.max() > 0 else bump
     # Distribute seasonal_total across the year using the bump.
-    daily_mean = scenario.seasonal_total_mm * bump / bump.sum() if bump.sum() > 0 else np.full_like(doy, scenario.seasonal_total_mm / 365)
+    daily_mean = (
+        scenario.seasonal_total_mm * bump / bump.sum()
+        if bump.sum() > 0
+        else np.full_like(doy, scenario.seasonal_total_mm / 365)
+    )
 
     is_wet = rng.random(size=len(dates)) < np.clip(0.4 * bump, 0.0, 0.9)
     raw = rng.exponential(scale=1.0, size=len(dates))
@@ -351,7 +368,12 @@ def simulate_monsoon(
     tmean = 26.0 + 2.0 * np.cos(2 * np.pi * (doy - 200) / 365.0)
     tmin = tmean - 4.0
     tmax = tmean + 8.0
-    et0 = np.array([hargreaves_et0(float(tmin[i]), float(tmax[i]), lat, int(doy[i])) for i in range(len(dates))])
+    et0 = np.array(
+        [
+            hargreaves_et0(float(tmin[i]), float(tmax[i]), lat, int(doy[i]))
+            for i in range(len(dates))
+        ]
+    )
 
     df = pd.DataFrame(
         {"tmin": tmin, "tmax": tmax, "precip": precip, "et0": et0, "month": month, "year": 2024},
@@ -364,7 +386,9 @@ def simulate_monsoon(
     cn = scenario.curve_number
     s = 1000.0 / cn - 10.0
     total_p = float(df["precip"].sum())
-    runoff_depth = max(0.0, (total_p - 0.2 * s) ** 2 / (total_p + 0.8 * s)) if total_p > 0.2 * s else 0.0
+    runoff_depth = (
+        max(0.0, (total_p - 0.2 * s) ** 2 / (total_p + 0.8 * s)) if total_p > 0.2 * s else 0.0
+    )
     area_m2 = scenario.area_ha * 10000.0
     runoff_vol_m3 = runoff_depth * area_m2 / 1000.0
 
@@ -394,7 +418,11 @@ def simulate_monsoon(
 
     summary = {
         "flood_risk": "extreme" if flood_depth > 50 else "moderate" if flood_depth > 20 else "low",
-        "erosion_risk": "high" if sediment_yield_t > 5 else "moderate" if sediment_yield_t > 1 else "low",
+        "erosion_risk": "high"
+        if sediment_yield_t > 5
+        else "moderate"
+        if sediment_yield_t > 1
+        else "low",
         "runoff_volume_m3": round(runoff_vol_m3, 2),
     }
     return MonsoonResult(
@@ -466,15 +494,18 @@ def simulate_temperature_extremes(
     frost_mask = rng.random(size=len(dates)) < (frost_days / 365.0)
     tmin = np.where(frost_mask, frost_min_c, tmin)
 
-    annual = pd.DataFrame({"tmean": tmean, "tmin": tmin, "tmax": tmax, "year": year},
-                          index=pd.DatetimeIndex(dates)).rename_axis("date")
+    annual = pd.DataFrame(
+        {"tmean": tmean, "tmin": tmin, "tmax": tmax, "year": year}, index=pd.DatetimeIndex(dates)
+    ).rename_axis("date")
     agg = annual.groupby("year").agg(
         mean_temp=("tmean", "mean"),
         max_temp=("tmax", "max"),
         min_temp=("tmin", "min"),
     )
 
-    heat_wave_days = (annual["tmax"] > (baseline_temp_c + seasonal + heat_scenario.intensity_c + 5.0)).sum()
+    heat_wave_days = (
+        annual["tmax"] > (baseline_temp_c + seasonal + heat_scenario.intensity_c + 5.0)
+    ).sum()
     frost_events = (annual["tmin"] < -5.0).sum()
 
     growing_window = baseline_precip_mm * 0.55  # ~55% of annual in growing season
@@ -509,7 +540,11 @@ def simulate_temperature_extremes(
         "metadata": metadata.model_dump(),
         "summary": {
             "growing_season_shift_days": round((heat_scenario.intensity_c / 1.5) * 6),
-            "frost_risk": "high" if frost_events > 10 else "moderate" if frost_events > 0 else "low",
+            "frost_risk": "high"
+            if frost_events > 10
+            else "moderate"
+            if frost_events > 0
+            else "low",
         },
     }
 
@@ -532,7 +567,9 @@ def simulate_climate_change(
     Re-uses the existing SSP projection tables and Monte-Carlo yield engine so
     results stay consistent with the platform's scientific stack.
     """
-    projection = get_climate_projection(ssp, target_year, baseline_temp_c, baseline_precip_mm, 1500.0)
+    projection = get_climate_projection(
+        ssp, target_year, baseline_temp_c, baseline_precip_mm, 1500.0
+    )
     projected = apply_climate_change(baseline_temp_c, baseline_precip_mm, 1500.0, projection)
 
     # Multi-decadal vegetation shift: project yield under the new climate.
@@ -583,7 +620,9 @@ def simulate_climate_change(
         "projected_yield_kg_ha": projected_yield["actual_yield_kg_ha"],
         "yield_change_pct": round(
             (projected_yield["actual_yield_kg_ha"] - baseline_yield["actual_yield_kg_ha"])
-            / max(baseline_yield["actual_yield_kg_ha"], 1.0) * 100.0, 2
+            / max(baseline_yield["actual_yield_kg_ha"], 1.0)
+            * 100.0,
+            2,
         ),
         "ndvi_baseline": ndvi_baseline,
         "ndvi_projected": round(ndvi_projected, 3),

@@ -1,0 +1,1080 @@
+{
+  "timestamp": "20260919_002348",
+  "assessment": {
+    "total_attacks": 53,
+    "survived": 53,
+    "killed": 0,
+    "survival_rate": 100.0,
+    "kill_rate": 0.0,
+    "memory_leaks": [
+      "Connection Churn (500 connections): +69.8MB",
+      "Query Leak (200 heavy queries): +157.7MB",
+      "Carbon Credit Double-Issuance Race Condition: +46.7MB",
+      "Climate Motor All Scenarios (4 SSPs): +45.9MB",
+      "MapOrchestrator Registry Validation: +94.6MB"
+    ],
+    "critical_weaknesses": []
+  },
+  "results": [
+    {
+      "attack_name": "Rapid Allocation (100MB/s)",
+      "protocol": "P1_MEMORY",
+      "vector": "RESOURCE_LEAK",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 113.11600000044564,
+      "memory_delta_mb": 0.44140625,
+      "peak_memory_mb": 97.72508144378662,
+      "cpu_time_ms": 113.11600000044564,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 4,
+        "fds_used": 0,
+        "cpu_percent": 0.11611990010317252
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Connection Churn (500 connections)",
+      "protocol": "P1_MEMORY",
+      "vector": "RESOURCE_LEAK",
+      "severity": "EXTREME",
+      "passed": true,
+      "execution_time_ms": 6173.887199998717,
+      "memory_delta_mb": 69.7578125,
+      "peak_memory_mb": 108.05859375,
+      "cpu_time_ms": 6173.887199998717,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 7,
+        "fds_used": 0,
+        "cpu_percent": 0.33071397061196967
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 0.5
+    },
+    {
+      "attack_name": "Session Storm (200 sessions)",
+      "protocol": "P1_MEMORY",
+      "vector": "POOL_EXHAUSTION",
+      "severity": "EXTREME",
+      "passed": true,
+      "execution_time_ms": 11.80480000039097,
+      "memory_delta_mb": 0.18359375,
+      "peak_memory_mb": 108.58984375,
+      "cpu_time_ms": 11.80480000039097,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 7,
+        "fds_used": 0,
+        "cpu_percent": 0.3323398644052397
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Query Leak (200 heavy queries)",
+      "protocol": "P1_MEMORY",
+      "vector": "RESOURCE_LEAK",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 12612.524600001052,
+      "memory_delta_mb": 157.67578125,
+      "peak_memory_mb": 266.5234375,
+      "cpu_time_ms": 12612.524600001052,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.8156965699618512
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 0.15
+    },
+    {
+      "attack_name": "Memory Fragmentation",
+      "protocol": "P1_MEMORY",
+      "vector": "MEMORY_FRAGMENTATION",
+      "severity": "MEDIUM",
+      "passed": true,
+      "execution_time_ms": 1429.8364999995101,
+      "memory_delta_mb": 7.33203125,
+      "peak_memory_mb": 273.85546875,
+      "cpu_time_ms": 1429.8364999995101,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.8381362953292615
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Thread Explosion (500 threads)",
+      "protocol": "P2_THREAD",
+      "vector": "THREAD_STARVATION",
+      "severity": "EXTREME",
+      "passed": true,
+      "execution_time_ms": 1497.7929999986372,
+      "memory_delta_mb": 0.69921875,
+      "peak_memory_mb": 274.87890625,
+      "cpu_time_ms": 1497.7929999986372,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.8412685319015903
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Deadlock Scenario",
+      "protocol": "P2_THREAD",
+      "vector": "DEADLOCK",
+      "severity": "EXTREME",
+      "passed": true,
+      "execution_time_ms": 1023.4349999991537,
+      "memory_delta_mb": 0.03125,
+      "peak_memory_mb": 274.9140625,
+      "cpu_time_ms": 1023.4349999991537,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.8413761278143803
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Thread Starvation (50 heavy)",
+      "protocol": "P2_THREAD",
+      "vector": "THREAD_STARVATION",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 5807.0010999981605,
+      "memory_delta_mb": 9.02734375,
+      "peak_memory_mb": 283.94140625,
+      "cpu_time_ms": 5807.0010999981605,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.8690043671985491
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Race Condition (1000 threads)",
+      "protocol": "P2_THREAD",
+      "vector": "RACE_CONDITION",
+      "severity": "EXTREME",
+      "passed": true,
+      "execution_time_ms": 1717.6323999992746,
+      "memory_delta_mb": 5.23828125,
+      "peak_memory_mb": 289.50390625,
+      "cpu_time_ms": 1717.6323999992746,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.8860284316221996
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "File Descriptor Exhaustion (500 files)",
+      "protocol": "P3_RESOURCE",
+      "vector": "FD_LEAK",
+      "severity": "EXTREME",
+      "passed": true,
+      "execution_time_ms": 489.6527999990212,
+      "memory_delta_mb": 0.375,
+      "peak_memory_mb": 289.87890625,
+      "cpu_time_ms": 489.6527999990212,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.8871761213586256
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Temp File Bomb (200 files, 1MB each)",
+      "protocol": "P3_RESOURCE",
+      "vector": "RESOURCE_LEAK",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 379.11089999761316,
+      "memory_delta_mb": 0.00390625,
+      "peak_memory_mb": 289.88671875,
+      "cpu_time_ms": 379.11089999761316,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.8872000315614679
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Thread Pool Saturation",
+      "protocol": "P3_RESOURCE",
+      "vector": "POOL_EXHAUSTION",
+      "severity": "EXTREME",
+      "passed": true,
+      "execution_time_ms": 10136.785800001235,
+      "memory_delta_mb": 0.015625,
+      "peak_memory_mb": 289.90234375,
+      "cpu_time_ms": 10136.785800001235,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.8872478519671523
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "SQL Injection Attack",
+      "protocol": "P4_DATA",
+      "vector": "SQL_INJECTION",
+      "severity": "EXTREME",
+      "passed": true,
+      "execution_time_ms": 140.18249999935506,
+      "memory_delta_mb": 6.14453125,
+      "peak_memory_mb": 296.046875,
+      "cpu_time_ms": 140.18249999935506,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.9060532265025469
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Unicode Bomb (20 payloads)",
+      "protocol": "P4_DATA",
+      "vector": "UNICODE_BOMB",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 3114.9770000010903,
+      "memory_delta_mb": 0.01171875,
+      "peak_memory_mb": 296.07421875,
+      "cpu_time_ms": 3114.9770000010903,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.9061369122124947
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Null Byte Injection",
+      "protocol": "P4_DATA",
+      "vector": "NULL_INJECTION",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 9.724800002004486,
+      "memory_delta_mb": 0.33203125,
+      "peak_memory_mb": 296.40625,
+      "cpu_time_ms": 9.724800002004486,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.9071530958332885
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Malformed JSON",
+      "protocol": "P4_DATA",
+      "vector": "DATA_CORRUPTION",
+      "severity": "MEDIUM",
+      "passed": true,
+      "execution_time_ms": 0.9119000023929402,
+      "memory_delta_mb": 0.00390625,
+      "peak_memory_mb": 296.41015625,
+      "cpu_time_ms": 0.9119000023929402,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.9071650509347097
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Timeout Cascade (50 concurrent)",
+      "protocol": "P5_CASCADE",
+      "vector": "TIMING_ATTACK",
+      "severity": "EXTREME",
+      "passed": true,
+      "execution_time_ms": 5101.395599998796,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 296.41015625,
+      "cpu_time_ms": 5101.395599998796,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.9071650509347097
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Exception Propagation",
+      "protocol": "P5_CASCADE",
+      "vector": "RACE_CONDITION",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 21.563599999353755,
+      "memory_delta_mb": 0.00390625,
+      "peak_memory_mb": 296.4140625,
+      "cpu_time_ms": 21.563599999353755,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.9071770060361308
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Dependency Chain",
+      "protocol": "P5_CASCADE",
+      "vector": "DATA_CORRUPTION",
+      "severity": "MEDIUM",
+      "passed": true,
+      "execution_time_ms": 560.4500000008557,
+      "memory_delta_mb": 0.0546875,
+      "peak_memory_mb": 296.46875,
+      "cpu_time_ms": 560.4500000008557,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.9073443774560261
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Fuzzing Queries (100 random)",
+      "protocol": "P6_ENTROPY",
+      "vector": "DATA_CORRUPTION",
+      "severity": "MEDIUM",
+      "passed": true,
+      "execution_time_ms": 332.8569000004791,
+      "memory_delta_mb": 0.30859375,
+      "peak_memory_mb": 296.77734375,
+      "cpu_time_ms": 332.8569000004791,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.9082888304682932
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Extreme Numbers",
+      "protocol": "P6_ENTROPY",
+      "vector": "OVERFLOW",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 23.334800000156974,
+      "memory_delta_mb": 0.02734375,
+      "peak_memory_mb": 296.8203125,
+      "cpu_time_ms": 23.334800000156974,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.9084203365839254
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Random Payloads (50)",
+      "protocol": "P6_ENTROPY",
+      "vector": "UNICODE_BOMB",
+      "severity": "MEDIUM",
+      "passed": true,
+      "execution_time_ms": 90.3271000024688,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 296.82421875,
+      "cpu_time_ms": 90.3271000024688,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.9084322916853466
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Burst Requests (1000 sequential)",
+      "protocol": "P7_TIMING",
+      "vector": "TIMING_ATTACK",
+      "severity": "EXTREME",
+      "passed": true,
+      "execution_time_ms": 2352.018000001408,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 296.83984375,
+      "cpu_time_ms": 2352.018000001408,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.908480112091031
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Slowloris Attack",
+      "protocol": "P7_TIMING",
+      "vector": "POOL_EXHAUSTION",
+      "severity": "EXTREME",
+      "passed": true,
+      "execution_time_ms": 252.09869999889634,
+      "memory_delta_mb": 4.76953125,
+      "peak_memory_mb": 301.6171875,
+      "cpu_time_ms": 252.09869999889634,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.9231012011290398
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Concurrent Burst (100 workers)",
+      "protocol": "P7_TIMING",
+      "vector": "TIMING_ATTACK",
+      "severity": "EXTREME",
+      "passed": true,
+      "execution_time_ms": 1443.8278000015998,
+      "memory_delta_mb": -0.015625,
+      "peak_memory_mb": 301.94140625,
+      "cpu_time_ms": 1443.8278000015998,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 32,
+        "fds_used": 0,
+        "cpu_percent": 0.9240934745469912
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Multiprocess Storm (10 processes)",
+      "protocol": "P8_PROCESS",
+      "vector": "THREAD_STARVATION",
+      "severity": "CATASTROPHIC",
+      "passed": true,
+      "execution_time_ms": 2147.854799997731,
+      "memory_delta_mb": 0.05859375,
+      "peak_memory_mb": 302.0,
+      "cpu_time_ms": 2147.854799997731,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 29,
+        "fds_used": 0,
+        "cpu_percent": 0.9242728010683078
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Connection Pool Exhaustion (200 connections)",
+      "protocol": "P9_DATAHUB",
+      "vector": "POOL_EXHAUSTION",
+      "severity": "EXTREME",
+      "passed": true,
+      "execution_time_ms": 30669.498800001747,
+      "memory_delta_mb": 9.95703125,
+      "peak_memory_mb": 311.95703125,
+      "cpu_time_ms": 30669.498800001747,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 29,
+        "fds_used": 0,
+        "cpu_percent": 0.9547463545906992
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Concurrent Sessions with Transactions (100)",
+      "protocol": "P9_DATAHUB",
+      "vector": "RACE_CONDITION",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 283.7166999997862,
+      "memory_delta_mb": 1.7109375,
+      "peak_memory_mb": 300.7421875,
+      "cpu_time_ms": 283.7166999997862,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 29,
+        "fds_used": 0,
+        "cpu_percent": 0.9204232584107127
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Session Leak (300 sessions)",
+      "protocol": "P9_DATAHUB",
+      "vector": "RESOURCE_LEAK",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 47.95889999877545,
+      "memory_delta_mb": 0.0078125,
+      "peak_memory_mb": 300.75,
+      "cpu_time_ms": 47.95889999877545,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 29,
+        "fds_used": 0,
+        "cpu_percent": 0.920447168613555
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Transaction Rollback Stress",
+      "protocol": "P9_DATAHUB",
+      "vector": "DEADLOCK",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 164.3423999994411,
+      "memory_delta_mb": 0.015625,
+      "peak_memory_mb": 300.765625,
+      "cpu_time_ms": 164.3423999994411,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 29,
+        "fds_used": 0,
+        "cpu_percent": 0.9204949890192394
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Concurrent DuckDB Queries (30)",
+      "protocol": "P9_DATAHUB",
+      "vector": "THREAD_STARVATION",
+      "severity": "MEDIUM",
+      "passed": true,
+      "execution_time_ms": 36.629800000810064,
+      "memory_delta_mb": 0.09765625,
+      "peak_memory_mb": 300.86328125,
+      "cpu_time_ms": 36.629800000810064,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 29,
+        "fds_used": 0,
+        "cpu_percent": 0.9207938665547669
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "HydromaCore Extreme Values",
+      "protocol": "P10_ENGINE",
+      "vector": "OVERFLOW",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 4782.394800000475,
+      "memory_delta_mb": 15.26953125,
+      "peak_memory_mb": 316.1328125,
+      "cpu_time_ms": 4782.394800000475,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 29,
+        "fds_used": 0,
+        "cpu_percent": 0.9675263580098582
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "ET Calculator Extreme Weather",
+      "protocol": "P10_ENGINE",
+      "vector": "NUMERICAL_INSTABILITY",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 25.592100002540974,
+      "memory_delta_mb": 0.02734375,
+      "peak_memory_mb": 316.4921875,
+      "cpu_time_ms": 25.592100002540974,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 29,
+        "fds_used": 0,
+        "cpu_percent": 0.9686262273405997
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Phenology Extreme Temperatures",
+      "protocol": "P10_ENGINE",
+      "vector": "OVERFLOW",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 118.55980000109412,
+      "memory_delta_mb": 0.00390625,
+      "peak_memory_mb": 316.49609375,
+      "cpu_time_ms": 118.55980000109412,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 29,
+        "fds_used": 0,
+        "cpu_percent": 0.9686381824420208
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Wrapper Extreme Reflectance (vegetation indices)",
+      "protocol": "P10_ENGINE",
+      "vector": "NUMERICAL_INSTABILITY",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 37.2146999980032,
+      "memory_delta_mb": 0.35546875,
+      "peak_memory_mb": 316.8515625,
+      "cpu_time_ms": 37.2146999980032,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 29,
+        "fds_used": 0,
+        "cpu_percent": 0.9697260966713411
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Wrapper Extreme Soil Inputs",
+      "protocol": "P10_ENGINE",
+      "vector": "DATA_CORRUPTION",
+      "severity": "MEDIUM",
+      "passed": true,
+      "execution_time_ms": 1.6710999989300035,
+      "memory_delta_mb": 0.0859375,
+      "peak_memory_mb": 316.9375,
+      "cpu_time_ms": 1.6710999989300035,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 29,
+        "fds_used": 0,
+        "cpu_percent": 0.9699891089026055
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Carbon Credit Double-Issuance Race Condition",
+      "protocol": "P11_SERVICE",
+      "vector": "RACE_CONDITION",
+      "severity": "CATASTROPHIC",
+      "passed": true,
+      "execution_time_ms": 7392.7719999992405,
+      "memory_delta_mb": 46.671875,
+      "peak_memory_mb": 363.61328125,
+      "cpu_time_ms": 7392.7719999992405,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 29,
+        "fds_used": 0,
+        "cpu_percent": 1.1128406157833641
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Wallet Balance Race Condition (20 concurrent earns)",
+      "protocol": "P11_SERVICE",
+      "vector": "RACE_CONDITION",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 1156.1034000005748,
+      "memory_delta_mb": 1.3515625,
+      "peak_memory_mb": 365.296875,
+      "cpu_time_ms": 1156.1034000005748,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 29,
+        "fds_used": 0,
+        "cpu_percent": 1.1179932644958595
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Wallet Concurrent Redeem (20 concurrent, limited balance)",
+      "protocol": "P11_SERVICE",
+      "vector": "RACE_CONDITION",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 992.5898000001325,
+      "memory_delta_mb": 1.19921875,
+      "peak_memory_mb": 366.828125,
+      "cpu_time_ms": 992.5898000001325,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 29,
+        "fds_used": 0,
+        "cpu_percent": 1.1226796642529318
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Simulation Concurrent Runs (10 parallel)",
+      "protocol": "P11_SERVICE",
+      "vector": "THREAD_STARVATION",
+      "severity": "MEDIUM",
+      "passed": true,
+      "execution_time_ms": 414.14919999806443,
+      "memory_delta_mb": 1.01953125,
+      "peak_memory_mb": 368.17578125,
+      "cpu_time_ms": 414.14919999806443,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 30,
+        "fds_used": 0,
+        "cpu_percent": 1.1268041742432122
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "QuerySafe Identifier Bypass (11 payloads)",
+      "protocol": "P12_SECURITY",
+      "vector": "IDENTIFIER_INJECTION",
+      "severity": "EXTREME",
+      "passed": true,
+      "execution_time_ms": 0.8507999991707038,
+      "memory_delta_mb": 0.0078125,
+      "peak_memory_mb": 368.51953125,
+      "cpu_time_ms": 0.8507999991707038,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 30,
+        "fds_used": 0,
+        "cpu_percent": 1.1278562231682692
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "QuerySafe Where Clause Injection (5 payloads)",
+      "protocol": "P12_SECURITY",
+      "vector": "IDENTIFIER_INJECTION",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 0.6665000000793952,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 368.51953125,
+      "cpu_time_ms": 0.6665000000793952,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 30,
+        "fds_used": 0,
+        "cpu_percent": 1.1278562231682692
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "DataConnector SQL Injection (5 payloads)",
+      "protocol": "P12_SECURITY",
+      "vector": "SQL_INJECTION",
+      "severity": "EXTREME",
+      "passed": true,
+      "execution_time_ms": 3.8944000007177237,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 368.51953125,
+      "cpu_time_ms": 3.8944000007177237,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 30,
+        "fds_used": 0,
+        "cpu_percent": 1.1278562231682692
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "DataConnector Non-Whitelisted Tables (5 queries)",
+      "protocol": "P12_SECURITY",
+      "vector": "IDENTIFIER_INJECTION",
+      "severity": "EXTREME",
+      "passed": true,
+      "execution_time_ms": 4.0091000009852,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 368.51953125,
+      "cpu_time_ms": 4.0091000009852,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 30,
+        "fds_used": 0,
+        "cpu_percent": 1.1278562231682692
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Honeypot Trap Detection (7 trap paths)",
+      "protocol": "P12_SECURITY",
+      "vector": "DATA_CORRUPTION",
+      "severity": "MEDIUM",
+      "passed": true,
+      "execution_time_ms": 4.201899999316083,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 368.51953125,
+      "cpu_time_ms": 4.201899999316083,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 30,
+        "fds_used": 0,
+        "cpu_percent": 1.1278562231682692
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Rate Limiter Bypass (200 requests)",
+      "protocol": "P12_SECURITY",
+      "vector": "CACHE_POLLUTION",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 5.106699998577824,
+      "memory_delta_mb": -0.00390625,
+      "peak_memory_mb": 368.515625,
+      "cpu_time_ms": 5.106699998577824,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 30,
+        "fds_used": 0,
+        "cpu_percent": 1.1278442680668481
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Climate Motor All Scenarios (4 SSPs)",
+      "protocol": "P13_EXTERNAL",
+      "vector": "API_FAILURE",
+      "severity": "HIGH",
+      "passed": true,
+      "execution_time_ms": 43083.3240000029,
+      "memory_delta_mb": 45.91015625,
+      "peak_memory_mb": 414.49609375,
+      "cpu_time_ms": 43083.3240000029,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 27,
+        "fds_used": 0,
+        "cpu_percent": 1.2685677668946505
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Climate Motor Invalid Scenarios (6 payloads)",
+      "protocol": "P13_EXTERNAL",
+      "vector": "IDENTIFIER_INJECTION",
+      "severity": "MEDIUM",
+      "passed": true,
+      "execution_time_ms": 0.6398000004992355,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 414.78125,
+      "cpu_time_ms": 0.6398000004992355,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 27,
+        "fds_used": 0,
+        "cpu_percent": 1.269440489298391
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Climate Motor Extreme Coordinates (8 pairs)",
+      "protocol": "P13_EXTERNAL",
+      "vector": "OVERFLOW",
+      "severity": "MEDIUM",
+      "passed": true,
+      "execution_time_ms": 0.7673000000067987,
+      "memory_delta_mb": 0.0,
+      "peak_memory_mb": 414.78125,
+      "cpu_time_ms": 0.7673000000067987,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 27,
+        "fds_used": 0,
+        "cpu_percent": 1.269440489298391
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Cache Key Collision (50 files)",
+      "protocol": "P14_CACHE",
+      "vector": "CACHE_POLLUTION",
+      "severity": "MEDIUM",
+      "passed": true,
+      "execution_time_ms": 58.43029999959981,
+      "memory_delta_mb": 0.04296875,
+      "peak_memory_mb": 414.82421875,
+      "cpu_time_ms": 58.43029999959981,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 27,
+        "fds_used": 0,
+        "cpu_percent": 1.2695719954140232
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "MapOrchestrator Registry Validation",
+      "protocol": "P14_CACHE",
+      "vector": "DATA_CORRUPTION",
+      "severity": "MEDIUM",
+      "passed": true,
+      "execution_time_ms": 9219.338999999309,
+      "memory_delta_mb": 94.64453125,
+      "peak_memory_mb": 509.46875,
+      "cpu_time_ms": 9219.338999999309,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 30,
+        "fds_used": 0,
+        "cpu_percent": 1.5592321477459254
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 0.5
+    },
+    {
+      "attack_name": "SmartMapGenerator Extreme Arrays (5 operations)",
+      "protocol": "P14_CACHE",
+      "vector": "NUMERICAL_INSTABILITY",
+      "severity": "MEDIUM",
+      "passed": true,
+      "execution_time_ms": 49.694799999997485,
+      "memory_delta_mb": 0.06640625,
+      "peak_memory_mb": 509.859375,
+      "cpu_time_ms": 49.694799999997485,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 30,
+        "fds_used": 0,
+        "cpu_percent": 1.5604276578880356
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    },
+    {
+      "attack_name": "Cache Corruption & Recovery",
+      "protocol": "P14_CACHE",
+      "vector": "DATA_CORRUPTION",
+      "severity": "MEDIUM",
+      "passed": true,
+      "execution_time_ms": 10.914400001638569,
+      "memory_delta_mb": 0.0078125,
+      "peak_memory_mb": 510.07421875,
+      "cpu_time_ms": 10.914400001638569,
+      "failure_type": "",
+      "failure_message": "",
+      "resources_consumed": {
+        "threads_used": 30,
+        "fds_used": 0,
+        "cpu_percent": 1.5610851884661963
+      },
+      "breakpoint_hit": false,
+      "recovery_score": 1.0
+    }
+  ]
+}

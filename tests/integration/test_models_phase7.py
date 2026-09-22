@@ -1,4 +1,5 @@
 """Phase 7 tests: registry completeness + numeric conformance + API."""
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -36,7 +37,9 @@ class TestNumericConformance:
 
     def test_runoff_volume(self):
         # area 1000 m2, rain 50 mm, C=0.5 -> 25 m3
-        out = run_model("runoff_volume", {"area_m2": 1000, "rainfall_mm": 50, "runoff_coefficient": 0.5})
+        out = run_model(
+            "runoff_volume", {"area_m2": 1000, "rainfall_mm": 50, "runoff_coefficient": 0.5}
+        )
         assert out["result"] == pytest.approx(25.0, rel=1e-6)
 
     def test_ndvi_style_spectral(self):
@@ -91,7 +94,9 @@ class TestModelsApi:
         data = r.json()
         assert data["count"] == 22
         assert data["fidelity_counts"]["official"] >= 5
-        assert all(m["fidelity"] in {"official", "simplified", "experimental"} for m in data["models"])
+        assert all(
+            m["fidelity"] in {"official", "simplified", "experimental"} for m in data["models"]
+        )
 
     def test_detail(self):
         client = TestClient(app)

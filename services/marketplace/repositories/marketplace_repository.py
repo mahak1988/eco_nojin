@@ -1,7 +1,6 @@
 """Marketplace repositories — database-backed persistence for marketplaces and members."""
 
 from datetime import datetime
-from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -21,17 +20,17 @@ class MarketplaceRepository:
         self.db.refresh(marketplace)
         return marketplace
 
-    def get_marketplace(self, marketplace_id: str) -> Optional[Marketplace]:
+    def get_marketplace(self, marketplace_id: str) -> Marketplace | None:
         return self.db.query(Marketplace).filter(Marketplace.id == marketplace_id).first()
 
-    def get_marketplace_by_slug(self, slug: str) -> Optional[Marketplace]:
+    def get_marketplace_by_slug(self, slug: str) -> Marketplace | None:
         return self.db.query(Marketplace).filter(Marketplace.slug == slug).first()
 
     def list_marketplaces(
         self,
-        marketplace_type: Optional[str] = None,
-        village_id: Optional[str] = None,
-        status: Optional[str] = None,
+        marketplace_type: str | None = None,
+        village_id: str | None = None,
+        status: str | None = None,
         limit: int = 50,
     ):
         query = self.db.query(Marketplace)
@@ -43,7 +42,7 @@ class MarketplaceRepository:
             query = query.filter(Marketplace.status == status)
         return query.limit(limit).all()
 
-    def update_marketplace(self, marketplace_id: str, **kwargs) -> Optional[Marketplace]:
+    def update_marketplace(self, marketplace_id: str, **kwargs) -> Marketplace | None:
         marketplace = self.get_marketplace(marketplace_id)
         if not marketplace:
             return None
@@ -69,7 +68,7 @@ class MarketplaceMemberRepository:
         self.db.refresh(member)
         return member
 
-    def get_member(self, member_id: str) -> Optional[MarketplaceMember]:
+    def get_member(self, member_id: str) -> MarketplaceMember | None:
         return self.db.query(MarketplaceMember).filter(MarketplaceMember.id == member_id).first()
 
     def list_members(self, marketplace_id: str) -> list[MarketplaceMember]:
@@ -79,7 +78,7 @@ class MarketplaceMemberRepository:
             .all()
         )
 
-    def get_member_by_user(self, marketplace_id: str, user_id: str) -> Optional[MarketplaceMember]:
+    def get_member_by_user(self, marketplace_id: str, user_id: str) -> MarketplaceMember | None:
         return (
             self.db.query(MarketplaceMember)
             .filter(
@@ -111,7 +110,7 @@ class MarketplaceShopRepository:
             .all()
         )
 
-    def get_shop_by_user(self, marketplace_id: str, user_id: str) -> Optional[MarketplaceSeller]:
+    def get_shop_by_user(self, marketplace_id: str, user_id: str) -> MarketplaceSeller | None:
         return (
             self.db.query(MarketplaceSeller)
             .filter(

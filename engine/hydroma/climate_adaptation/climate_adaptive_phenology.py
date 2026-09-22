@@ -19,15 +19,15 @@ DAY_MS = 86400000  # میلی‌ثانیه در روز
 
 @dataclass
 class PhenologyConfig:
-    frost_buffer_days: int = 14          # فاصله ایمن پس از آخرین یخبندان
+    frost_buffer_days: int = 14  # فاصله ایمن پس از آخرین یخبندان
     soil_temp_threshold_c: float = 10.0  # آستانه دمای خاک برای جوانه‌زنی
-    soil_temp_window_days: int = 7       # بازه پایش دمای خاک
+    soil_temp_window_days: int = 7  # بازه پایش دمای خاک
     rain_onset_threshold_mm: float = 10.0  # حداقل بارش برای شروع دیم
-    rain_window_days: int = 30           # بازه جستجوی شروع بارش
+    rain_window_days: int = 30  # بازه جستجوی شروع بارش
     flash_drought_vpd_trend: float = 0.1  # kPa/day - استاندارد جهانی  # آستانه روند فشار بخار
     flash_drought_sm_trend: float = -0.02  # fraction/day - استاندارد جهانی  # آستانه روند رطوبت خاک
     flash_drought_horizon_days: int = 14  # افق هشدار
-    chilling_model: str = "utah"         # مدل ساعات سرمایی
+    chilling_model: str = "utah"  # مدل ساعات سرمایی
 
 
 # ------------------------------------------------------------------ ابزارها
@@ -56,11 +56,13 @@ class ClimateAdaptivePhenology:
         self.cfg = config or PhenologyConfig()
 
     # ------------------------------------------------------------------- H05
-    def h05_dynamic_planting_day(self,
-                                 last_frost_day_of_year: int,
-                                 soil_temp_series: Sequence[float],
-                                 rain_onset_day_of_year: Optional[int] = None,
-                                 target_day_of_year: Optional[int] = None) -> Dict:
+    def h05_dynamic_planting_day(
+        self,
+        last_frost_day_of_year: int,
+        soil_temp_series: Sequence[float],
+        rain_onset_day_of_year: Optional[int] = None,
+        target_day_of_year: Optional[int] = None,
+    ) -> Dict:
         """
         تعیین تاریخ کاشت پویا بر اساس:
         1. آخرین یخبندان + فاصله ایمن
@@ -76,18 +78,21 @@ class ClimateAdaptivePhenology:
             frost_safe = last_frost_day_of_year + self.cfg.frost_buffer_days
             if candidate < frost_safe:
                 candidate = frost_safe
-                reasons.append("تنظیم بر اساس آخرین یخبندان + %d روز ایمن"
-                               % self.cfg.frost_buffer_days)
+                reasons.append(
+                    "تنظیم بر اساس آخرین یخبندان + %d روز ایمن" % self.cfg.frost_buffer_days
+                )
 
         # 2. دمای خاک
         if soil_temp_series and len(soil_temp_series) >= 3:
-            mean_soil = safe_mean(soil_temp_series[-self.cfg.soil_temp_window_days:])
+            mean_soil = safe_mean(soil_temp_series[-self.cfg.soil_temp_window_days :])
             if mean_soil < self.cfg.soil_temp_threshold_c:
                 deficit = self.cfg.soil_temp_threshold_c - mean_soil
                 delay_days = int(math.ceil(deficit * 3))  # تقریب 3 روز به ازای هر درجه
                 candidate += delay_days
-                reasons.append("تأخیر %d روزه برای رسیدن دمای خاک به %.1f درجه"
-                               % (delay_days, self.cfg.soil_temp_threshold_c))
+                reasons.append(
+                    "تأخیر %d روزه برای رسیدن دمای خاک به %.1f درجه"
+                    % (delay_days, self.cfg.soil_temp_threshold_c)
+                )
             else:
                 reasons.append("دمای خاک مناسب است (%.1f درجه)" % mean_soil)
 
@@ -107,10 +112,12 @@ class ClimateAdaptivePhenology:
         }
 
     # ------------------------------------------------------------------- H06
-    def h06_flash_drought_risk(self,
-                               vpd_last_7d: Sequence[float],
-                               soil_moisture_fraction_last_14d: Sequence[float],
-                               forecast_rain_mm_next_14d: float) -> Dict:
+    def h06_flash_drought_risk(
+        self,
+        vpd_last_7d: Sequence[float],
+        soil_moisture_fraction_last_14d: Sequence[float],
+        forecast_rain_mm_next_14d: float,
+    ) -> Dict:
         """
         ریسک خشکسالی ناگهانی بر اساس:
         - روند فشار بخار (افزایش = تنش)
@@ -134,8 +141,9 @@ class ClimateAdaptivePhenology:
 
         if forecast_rain_mm_next_14d < 5.0:
             risk += 0.20
-            drivers.append("پیش‌بینی بارش ناچیز (%.1f میلی‌متر در ۱۴ روز)"
-                           % forecast_rain_mm_next_14d)
+            drivers.append(
+                "پیش‌بینی بارش ناچیز (%.1f میلی‌متر در ۱۴ روز)" % forecast_rain_mm_next_14d
+            )
 
         # نرمال‌سازی
         risk = min(1.0, risk)
@@ -164,8 +172,7 @@ class ClimateAdaptivePhenology:
         }
 
     # ------------------------------------------------------------------- H07
-    def h07_chilling_hours(self,
-                           hourly_temps_c: Sequence[float]) -> Dict:
+    def h07_chilling_hours(self, hourly_temps_c: Sequence[float]) -> Dict:
         """
         محاسبه ساعات سرمایی مؤثر با مدل یوتا:
         0-2.4: 1 واحد | 2.5-9.1: 0.5 | 9.2-12.4: 0 | 12.5-15.9: -0.5 | >=16: -1
@@ -204,9 +211,7 @@ class ClimateAdaptivePhenology:
         }
 
     # ------------------------------------------------------------------- H24
-    def h24_realtime_correction(self,
-                                ndvi_actual: float,
-                                ndvi_predicted: float) -> Dict:
+    def h24_realtime_correction(self, ndvi_actual: float, ndvi_predicted: float) -> Dict:
         """
         تصحیح بلادرنگ بر اساس تفاوت شاخص گیاهی مشاهده‌شده و پیش‌بینی‌شده
         خروجی: ضریب تصحیح عملکرد (0.5 تا 1.5)
@@ -229,19 +234,19 @@ class ClimateAdaptivePhenology:
         }
 
     # -------------------------------------------------- گزارش فصلی یکپارچه
-    def generate_season_advisory(self,
-                                 last_frost_day: int,
-                                 soil_temp_series: Sequence[float],
-                                 vpd_7d: Sequence[float],
-                                 sm_14d: Sequence[float],
-                                 forecast_rain: float,
-                                 winter_temps: Optional[Sequence[float]] = None) -> Dict:
+    def generate_season_advisory(
+        self,
+        last_frost_day: int,
+        soil_temp_series: Sequence[float],
+        vpd_7d: Sequence[float],
+        sm_14d: Sequence[float],
+        forecast_rain: float,
+        winter_temps: Optional[Sequence[float]] = None,
+    ) -> Dict:
         """تولید توصیه‌نامه فصلی کامل با ترکیب هر چهار الگوریتم"""
         advisory = {}
-        advisory["planting"] = self.h05_dynamic_planting_day(
-            last_frost_day, soil_temp_series)
-        advisory["flash_drought"] = self.h06_flash_drought_risk(
-            vpd_7d, sm_14d, forecast_rain)
+        advisory["planting"] = self.h05_dynamic_planting_day(last_frost_day, soil_temp_series)
+        advisory["flash_drought"] = self.h06_flash_drought_risk(vpd_7d, sm_14d, forecast_rain)
         if winter_temps:
             advisory["chilling"] = self.h07_chilling_hours(winter_temps)
         advisory["generated_by"] = "ClimateAdaptivePhenology v%s" % __version__

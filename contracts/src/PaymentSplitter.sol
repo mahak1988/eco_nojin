@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /**
  * @title PaymentSplitter - splits order value between seller, marketplace
@@ -24,7 +24,7 @@ contract PaymentSplitter is Ownable, ReentrancyGuard {
     error NothingDue();
     error TransferFailed();
 
-    constructor() Ownable(msg.sender) ReentrancyGuard() {}
+    constructor() {}
 
     function addPayee(address payee, uint256 sharesAmount) external onlyOwner {
         if (sharesAmount == 0) revert ZeroShares();

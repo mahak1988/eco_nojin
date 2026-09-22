@@ -18,7 +18,9 @@ def sample_uniform(n: int, lo: np.ndarray, hi: np.ndarray, rng: np.random.Genera
     return rng.uniform(lo, hi, size=(n, lo.size))
 
 
-def sample_normal(n: int, mu: np.ndarray, sigma: np.ndarray, rng: np.random.Generator) -> np.ndarray:
+def sample_normal(
+    n: int, mu: np.ndarray, sigma: np.ndarray, rng: np.random.Generator
+) -> np.ndarray:
     """Draw an (n, d) normal sample with the given means and stds."""
     return rng.normal(mu, sigma, size=(n, mu.size))
 

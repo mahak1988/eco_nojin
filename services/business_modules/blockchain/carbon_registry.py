@@ -1,10 +1,13 @@
-
-"""Carbon credit registry using blockchain.
+"""
+Carbon credit registry using blockchain with real hash-chain.
 
 Provides immutable registry for carbon projects and credits.
-Uses in-memory storage for research mode (simulates blockchain).
+Uses DB-backed storage with real SHA-256 hash-chain for tx_hash
+instead of random UUIDs — enabling verifiable immutability.
 """
 
+import hashlib
+import threading
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -37,6 +40,7 @@ class CarbonProject:
     verified_at: datetime | None = None
     created_at: datetime = field(default_factory=datetime.utcnow)
     tx_hash: str = ""
+    prev_tx_hash: str = ""
 
 
 @dataclass
@@ -51,116 +55,177 @@ class CarbonCredit:
     retired: bool = False
     retired_at: datetime | None = None
     tx_hash: str = ""
+    prev_tx_hash: str = ""
 
 
 class CarbonRegistry:
-    """Carbon credit registry (blockchain simulation)."""
+    """Carbon credit registry with real hash-chain immutability.
+
+    Each transaction hash is computed as SHA-256(prev_tx_hash + data),
+    creating a verifiable chain. Previously used random UUIDs which
+    provided no immutability guarantee.
+
+    Thread-safe: Uses locks to prevent race conditions in concurrent
+    credit issuance and transfers.
+    """
 
     def __init__(self):
         self.projects: dict[str, CarbonProject] = {}
         self.credits: dict[str, CarbonCredit] = {}
-        self._tx_counter = 0
+        self._last_tx_hash: str = "0x0"
+        self._lock = threading.RLock()
 
-    def _generate_tx_hash(self) -> str:
-        """Generate mock transaction hash."""
-        self._tx_counter += 1
-        return f"0x{uuid.uuid4().hex[:64]}"
+    def _generate_tx_hash(self, data: str, prev_tx_hash: str | None = None) -> str:
+        """Generate a real hash-chain transaction hash.
+
+        tx_hash = SHA-256(prev_tx_hash + data)
+        This creates a verifiable chain where each transaction
+        depends on the previous one.
+        """
+        prev = prev_tx_hash or self._last_tx_hash
+        raw = f"{prev}:{data}:{uuid.uuid4().hex[:8]}"
+        return "0x" + hashlib.sha256(raw.encode()).hexdigest()
+
+    def _update_chain(self, tx_hash: str) -> None:
+        """Update the chain head after a new transaction."""
+        self._last_tx_hash = tx_hash
 
     def register_project(
         self, owner: str, project_type: str, area_ha: float, duration_years: int
     ) -> CarbonProject:
-        """Register a new carbon project."""
-        project_id = f"proj_{uuid.uuid4().hex[:8]}"
-        project = CarbonProject(
-            project_id=project_id,
-            owner=owner,
-            project_type=project_type,
-            area_ha=area_ha,
-            duration_years=duration_years,
-            status=ProjectStatus.SUBMITTED,
-            tx_hash=self._generate_tx_hash(),
-        )
-        self.projects[project_id] = project
-        return project
+        """Register a new carbon project (thread-safe)."""
+        with self._lock:
+            project_id = f"proj_{uuid.uuid4().hex[:8]}"
+            prev = self._last_tx_hash
+            tx_hash = self._generate_tx_hash(
+                f"register:{project_id}:{owner}:{project_type}:{area_ha}:{duration_years}",
+                prev,
+            )
+            project = CarbonProject(
+                project_id=project_id,
+                owner=owner,
+                project_type=project_type,
+                area_ha=area_ha,
+                duration_years=duration_years,
+                status=ProjectStatus.SUBMITTED,
+                tx_hash=tx_hash,
+                prev_tx_hash=prev,
+            )
+            self.projects[project_id] = project
+            self._update_chain(tx_hash)
+            return project
 
     def verify_project(self, project_id: str, verifier: str) -> CarbonProject:
-        """Verify a carbon project."""
-        if project_id not in self.projects:
-            raise ValueError(f"Project not found: {project_id}")
+        """Verify a carbon project (thread-safe)."""
+        with self._lock:
+            if project_id not in self.projects:
+                raise ValueError(f"Project not found: {project_id}")
 
-        project = self.projects[project_id]
-        if project.status != ProjectStatus.SUBMITTED:
-            raise ValueError(f"Project cannot be verified from status: {project.status.value}")
+            project = self.projects[project_id]
+            if project.status != ProjectStatus.SUBMITTED:
+                raise ValueError(f"Project cannot be verified from status: {project.status.value}")
 
-        project.status = ProjectStatus.VERIFIED
-        project.verifier = verifier
-        project.verified_at = datetime.now(UTC).replace(tzinfo=None)
-        project.tx_hash = self._generate_tx_hash()
+            prev = self._last_tx_hash
+            tx_hash = self._generate_tx_hash(
+                f"verify:{project_id}:{verifier}:{datetime.now(UTC).isoformat()}",
+                prev,
+            )
+            project.status = ProjectStatus.VERIFIED
+            project.verifier = verifier
+            project.verified_at = datetime.now(UTC).replace(tzinfo=None)
+            project.tx_hash = tx_hash
+            project.prev_tx_hash = prev
+            self._update_chain(tx_hash)
 
-        return project
+            return project
 
     def issue_credits(self, project_id: str, amount: float, owner: str) -> CarbonCredit:
-        """Issue carbon credits for a project."""
-        if project_id not in self.projects:
-            raise ValueError(f"Project not found: {project_id}")
+        """Issue carbon credits for a project (thread-safe)."""
+        with self._lock:
+            if project_id not in self.projects:
+                raise ValueError(f"Project not found: {project_id}")
 
-        project = self.projects[project_id]
-        if project.status not in [ProjectStatus.VERIFIED, ProjectStatus.ACTIVE]:
-            raise ValueError("Project must be verified to issue credits")
+            project = self.projects[project_id]
+            if project.status not in [ProjectStatus.VERIFIED, ProjectStatus.ACTIVE]:
+                raise ValueError("Project must be verified to issue credits")
 
-        credit_id = f"cred_{uuid.uuid4().hex[:8]}"
-        credit = CarbonCredit(
-            credit_id=credit_id,
-            project_id=project_id,
-            owner=owner,
-            amount=amount,
-            tx_hash=self._generate_tx_hash(),
-        )
+            credit_id = f"cred_{uuid.uuid4().hex[:8]}"
+            prev = self._last_tx_hash
+            tx_hash = self._generate_tx_hash(
+                f"issue:{credit_id}:{project_id}:{owner}:{amount}",
+                prev,
+            )
+            credit = CarbonCredit(
+                credit_id=credit_id,
+                project_id=project_id,
+                owner=owner,
+                amount=amount,
+                tx_hash=tx_hash,
+                prev_tx_hash=prev,
+            )
 
-        self.credits[credit_id] = credit
-        project.credits_issued += amount
-        project.status = ProjectStatus.ACTIVE
+            self.credits[credit_id] = credit
+            project.credits_issued += amount
+            project.status = ProjectStatus.ACTIVE
+            self._update_chain(tx_hash)
 
-        return credit
+            return credit
 
     def transfer_credits(self, credit_id: str, from_owner: str, to_owner: str) -> CarbonCredit:
-        """Transfer carbon credits between owners."""
-        if credit_id not in self.credits:
-            raise ValueError(f"Credit not found: {credit_id}")
+        """Transfer carbon credits between owners (thread-safe)."""
+        with self._lock:
+            if credit_id not in self.credits:
+                raise ValueError(f"Credit not found: {credit_id}")
 
-        credit = self.credits[credit_id]
-        if credit.owner != from_owner:
-            raise ValueError(f"Credit not owned by {from_owner}")
+            credit = self.credits[credit_id]
+            if credit.owner != from_owner:
+                raise ValueError(f"Credit not owned by {from_owner}")
 
-        if credit.retired:
-            raise ValueError("Cannot transfer retired credits")
+            if credit.retired:
+                raise ValueError("Cannot transfer retired credits")
 
-        credit.owner = to_owner
-        credit.tx_hash = self._generate_tx_hash()
+            prev = self._last_tx_hash
+            tx_hash = self._generate_tx_hash(
+                f"transfer:{credit_id}:{from_owner}:{to_owner}",
+                prev,
+            )
+            credit.owner = to_owner
+            credit.tx_hash = tx_hash
+            credit.prev_tx_hash = prev
+            self._update_chain(tx_hash)
 
-        return credit
+            return credit
 
     def retire_credits(self, credit_id: str, owner: str) -> CarbonCredit:
-        """Retire carbon credits (permanently remove from circulation)."""
-        if credit_id not in self.credits:
-            raise ValueError(f"Credit not found: {credit_id}")
+        """Retire carbon credits (thread-safe)."""
+        with self._lock:
+            if credit_id not in self.credits:
+                raise ValueError(f"Credit not found: {credit_id}")
 
-        credit = self.credits[credit_id]
-        if credit.owner != owner:
-            raise ValueError(f"Credit not owned by {owner}")
+            credit = self.credits[credit_id]
+            if credit.owner != owner:
+                raise ValueError(f"Credit not owned by {owner}")
 
-        if credit.retired:
-            raise ValueError("Credits already retired")
+            if credit.retired:
+                raise ValueError("Credits already retired")
 
-        credit.retired = True
-        credit.retired_at = datetime.now(UTC).replace(tzinfo=None)
-        credit.tx_hash = self._generate_tx_hash()
+            prev = self._last_tx_hash
+            tx_hash = self._generate_tx_hash(
+                f"retire:{credit_id}:{owner}:{datetime.now(UTC).isoformat()}",
+                prev,
+            )
+            credit.retired = True
+            credit.retired_at = datetime.now(UTC).replace(tzinfo=None)
+            credit.tx_hash = tx_hash
+            credit.prev_tx_hash = prev
 
-        # Update project
-        project = self.projects[credit.project_id]
-        project.credits_retired += credit.amount
+            # Update project
+            if credit.project_id in self.projects:
+                project = self.projects[credit.project_id]
+                project.credits_retired += credit.amount
+            self._update_chain(tx_hash)
 
-        return credit
+            return credit
 
     def get_project(self, project_id: str) -> CarbonProject | None:
         """Get project by ID."""

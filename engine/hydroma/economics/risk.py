@@ -3,6 +3,7 @@ Economic Engine - Financial Risk Assessment Module.
 
 Evaluates potential financial risks associated with projects.
 """
+
 from typing import Any
 
 import numpy as np
@@ -11,9 +12,9 @@ from scipy.stats import norm
 
 def assess_market_price_risk(
     base_price: float,
-    volatility: float, # Standard deviation of price changes (e.g., 0.15 for 15%)
+    volatility: float,  # Standard deviation of price changes (e.g., 0.15 for 15%)
     time_horizon_years: int,
-    confidence_level: float = 0.05 # e.g., 0.05 for 5% VaR (95% confidence)
+    confidence_level: float = 0.05,  # e.g., 0.05 for 5% VaR (95% confidence)
 ) -> dict[str, Any]:
     """
     Assesses risk due to market price fluctuations using Value at Risk (VaR).
@@ -32,7 +33,7 @@ def assess_market_price_risk(
 
     # Calculate VaR: VaR = base_price * Z_alpha * sigma_T
     # Where Z_alpha is the inverse CDF of the standard normal distribution
-    z_score = norm.ppf(confidence_level) # e.g., norm.ppf(0.05) ~ -1.645
+    z_score = norm.ppf(confidence_level)  # e.g., norm.ppf(0.05) ~ -1.645
     var_absolute = base_price * abs(z_score) * adjusted_volatility
     var_percentage = (var_absolute / base_price) * 100
 
@@ -48,16 +49,16 @@ def assess_market_price_risk(
         "value_at_risk_irr": var_absolute,
         "value_at_risk_percentage": var_percentage,
         "expected_worst_case_price_irr": worst_case_price,
-        "notes": f"There is a {(confidence_level*100):.0f}% chance the price could drop by at least {var_absolute:.0f} IRR within {time_horizon_years} years."
+        "notes": f"There is a {(confidence_level * 100):.0f}% chance the price could drop by at least {var_absolute:.0f} IRR within {time_horizon_years} years.",
     }
 
 
 def assess_yield_risk(
     expected_yield: float,
-    yield_std_dev: float, # Standard deviation of yield
+    yield_std_dev: float,  # Standard deviation of yield
     area_hectares: float,
     price_per_unit: float,
-    confidence_level: float = 0.05
+    confidence_level: float = 0.05,
 ) -> dict[str, Any]:
     """
     Assesses risk due to yield variability.
@@ -92,14 +93,14 @@ def assess_yield_risk(
         "value_at_risk_revenue_irr": var_revenue,
         "expected_worst_case_yield_per_ha": worst_case_yield,
         "expected_worst_case_revenue_irr": worst_case_revenue,
-        "notes": f"There is a {(confidence_level*100):.0f}% chance revenue could drop by at least {var_revenue:.0f} IRR due to yield variability."
+        "notes": f"There is a {(confidence_level * 100):.0f}% chance revenue could drop by at least {var_revenue:.0f} IRR due to yield variability.",
     }
 
 
 def assess_combined_project_risk(
     revenue_streams_with_risks: list[dict[str, Any]],
     cost_streams_with_risks: list[dict[str, Any]],
-    correlation_matrix: np.ndarray = None # Correlation between different risks
+    correlation_matrix: np.ndarray = None,  # Correlation between different risks
 ) -> dict[str, Any]:
     """
     Performs a basic aggregation of different risks to estimate overall project risk.
@@ -115,7 +116,10 @@ def assess_combined_project_risk(
     # This is a simplified aggregation. A full Monte Carlo simulation would be more robust.
     # For now, we just summarize the individual risks identified.
 
-    total_revenue_var = sum(stream.get("value_at_risk_revenue_irr", stream.get("value_at_risk_irr", 0)) for stream in revenue_streams_with_risks)
+    total_revenue_var = sum(
+        stream.get("value_at_risk_revenue_irr", stream.get("value_at_risk_irr", 0))
+        for stream in revenue_streams_with_risks
+    )
     # Similar logic would apply for costs if cost risks were provided.
 
     # Placeholder for a combined metric (e.g., Net Revenue VaR)
@@ -125,9 +129,9 @@ def assess_combined_project_risk(
         "number_of_cost_risks_assessed": len(cost_streams_with_risks),
         "individual_risk_summaries": {
             "revenue_risks": [r for r in revenue_streams_with_risks],
-            "cost_risks": [c for c in cost_streams_with_risks]
+            "cost_risks": [c for c in cost_streams_with_risks],
         },
-        "notes": "This is a basic aggregation. A Monte Carlo simulation considering correlations would provide a more accurate combined risk assessment."
+        "notes": "This is a basic aggregation. A Monte Carlo simulation considering correlations would provide a more accurate combined risk assessment.",
     }
 
     return combined_risk_summary

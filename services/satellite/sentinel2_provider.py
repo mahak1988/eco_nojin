@@ -18,7 +18,9 @@ Scientific References:
 - Planetary Computer STAC API
 - Sentinel-2 L2A ATBD (Atmospheric Correction)
 """
+
 from __future__ import annotations
+
 import structlog
 
 logger = structlog.get_logger()
@@ -26,10 +28,10 @@ logger = structlog.get_logger()
 import warnings
 
 # Suppress noisy warnings from odc-stac and rasterio
-warnings.filterwarnings('ignore', category=UserWarning, module='odc')
-warnings.filterwarnings('ignore', category=UserWarning, module='rasterio')
-warnings.filterwarnings('ignore', message='.*non-nanosecond precision.*')
-warnings.filterwarnings('ignore', message='.*no geotransform.*')
+warnings.filterwarnings("ignore", category=UserWarning, module="odc")
+warnings.filterwarnings("ignore", category=UserWarning, module="rasterio")
+warnings.filterwarnings("ignore", message=".*non-nanosecond precision.*")
+warnings.filterwarnings("ignore", message=".*no geotransform.*")
 
 import hashlib
 import time
@@ -44,24 +46,34 @@ import numpy as np
 # Safe Unpickler - محدودسازی کلاس‌های مجاز برای امنیت
 # ═══════════════════════════════════════════════════════════════════════
 
+
 class SafeUnpickler(pickle.Unpickler):
     """Unpickler محدودشده که فقط کلاس‌های امن را بارگذاری می‌کند."""
 
     ALLOWED_MODULES = {
-        'builtins', 'collections', 'datetime',
-        'numpy', 'numpy.core', 'numpy.core.multiarray',
-        'numpy._core', 'numpy._core.multiarray',
-        'xarray', 'xarray.core', 'xarray.core.dataarray',
-        'xarray.core.dataset', 'xarray.core.variable',
-        'pandas', 'pandas.core', 'pandas.core.frame',
+        "builtins",
+        "collections",
+        "datetime",
+        "numpy",
+        "numpy.core",
+        "numpy.core.multiarray",
+        "numpy._core",
+        "numpy._core.multiarray",
+        "xarray",
+        "xarray.core",
+        "xarray.core.dataarray",
+        "xarray.core.dataset",
+        "xarray.core.variable",
+        "pandas",
+        "pandas.core",
+        "pandas.core.frame",
     }
 
     def find_class(self, module, name):
         if module in self.ALLOWED_MODULES:
             return super().find_class(module, name)
         raise pickle.UnpicklingError(
-            f"Forbidden class: {module}.{name}. "
-            f"Only whitelisted classes are allowed for security."
+            f"Forbidden class: {module}.{name}. Only whitelisted classes are allowed for security."
         )
 
 
@@ -73,6 +85,7 @@ def safe_pickle_load(file_obj):
 try:
     import rasterio
     import xarray as xr
+
     HAS_RASTERIO = True
 except ImportError:
     HAS_RASTERIO = False
@@ -81,12 +94,14 @@ except ImportError:
 
 class SentinelProduct(Enum):
     """Sentinel-2 product levels."""
+
     L1C = "Level-1C (TOA reflectance)"
     L2A = "Level-2A (Surface reflectance, atmospheric corrected)"
 
 
 class SpectralIndex(Enum):
     """Spectral vegetation/water indices."""
+
     NDVI = "Normalized Difference Vegetation Index"
     NDWI = "Normalized Difference Water Index (Gao 1996, NIR-SWIR)"
     NDMI = "Normalized Difference Moisture Index"
@@ -117,6 +132,7 @@ S2_BANDS = {
 @dataclass
 class SatelliteScene:
     """Metadata for a single satellite scene."""
+
     scene_id: str
     datetime: datetime
     cloud_cover_pct: float
@@ -130,7 +146,7 @@ class SatelliteScene:
 class Sentinel2Provider:
     """
     Sentinel-2 data provider with intelligent fallback.
-    
+
     Priority:
     1. Local cache (fastest)
     2. Planetary Computer STAC API (real data)
@@ -183,14 +199,14 @@ class Sentinel2Provider:
     ) -> SatelliteScene | None:
         """
         Find and retrieve best scene for bbox/date range.
-        
+
         Args:
             bbox: (min_lon, min_lat, max_lon, max_lat)
             date_from: Start date
             date_to: End date
             max_cloud_pct: Maximum cloud cover percentage
             product: L1C or L2A
-        
+
         Returns:
             SatelliteScene or None if no scene available
         """
@@ -252,9 +268,7 @@ class Sentinel2Provider:
     # Private Methods
     # =================================================================
 
-    def _check_cache(
-        self, bbox, date_from, date_to, max_cloud_pct
-    ) -> SatelliteScene | None:
+    def _check_cache(self, bbox, date_from, date_to, max_cloud_pct) -> SatelliteScene | None:
         """Check local cache for matching scene."""
         cache_key = self._bbox_date_key(bbox, date_from, date_to)
         cache_file = self.cache_dir / f"{cache_key}.json"
@@ -264,7 +278,8 @@ class Sentinel2Provider:
 
         try:
             import json
-            with open(cache_file, encoding='utf-8') as f:
+
+            with open(cache_file, encoding="utf-8") as f:
                 data = json.load(f)
             return SatelliteScene(**data)
         except Exception:
@@ -273,6 +288,7 @@ class Sentinel2Provider:
     def _save_to_cache(self, scene: SatelliteScene, bbox):
         """Save scene metadata to cache."""
         import json
+
         cache_key = self._bbox_date_key(bbox, datetime.now(), datetime.now())
         cache_file = self.cache_dir / f"{cache_key}.json"
 
@@ -287,7 +303,7 @@ class Sentinel2Provider:
             "source": scene.source,
         }
         try:
-            with open(cache_file, 'w', encoding='utf-8') as f:
+            with open(cache_file, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2)
         except Exception as e:
             logger.error(f"  [SENTINEL] Cache save error: {e}")
@@ -349,9 +365,7 @@ class Sentinel2Provider:
             logger.error(f"  [SENTINEL] PC search error: {e}")
             return None
 
-    def _generate_synthetic(
-        self, bbox, date_from, date_to
-    ) -> SatelliteScene:
+    def _generate_synthetic(self, bbox, date_from, date_to) -> SatelliteScene:
         """Generate synthetic scene for testing."""
         return SatelliteScene(
             scene_id=f"SYN_{int(time.time())}",
@@ -381,10 +395,10 @@ class Sentinel2Provider:
             logger.info("  [SENTINEL] Falling back to synthetic")
             return self._generate_synthetic_bands(scene, bbox)
 
-
     def _disk_cache_key(self, scene_id: str, bands: list[str], resolution: int, bbox) -> str:
         """Generate disk cache key."""
         import hashlib
+
         key_str = f"{scene_id}_{'_'.join(sorted(bands))}_{resolution}_{bbox}"
         return hashlib.sha256(key_str.encode()).hexdigest()
 
@@ -392,6 +406,7 @@ class Sentinel2Provider:
         """Save band data to disk cache."""
         try:
             import pickle
+
             cache_file = self.disk_cache_dir / f"{key}.pkl"
             # Convert to Integerizable format
             Integerizable = {}
@@ -402,7 +417,7 @@ class Sentinel2Provider:
                     "coords": {k: v.values for k, v in da.coords.items()},
                     "attrs": dict(da.attrs),
                 }
-            with open(cache_file, 'wb') as f:
+            with open(cache_file, "wb") as f:
                 pickle.dump(Integerizable, f)
         except Exception as e:
             logger.error(f"  [SENTINEL] Disk cache save error: {e}")
@@ -413,7 +428,7 @@ class Sentinel2Provider:
             cache_file = self.disk_cache_dir / f"{key}.pkl"
             if not cache_file.exists():
                 return None
-            with open(cache_file, 'rb') as f:
+            with open(cache_file, "rb") as f:
                 Integerizable = safe_pickle_load(f)
             result = {}
             for band_name, data in Integerizable.items():
@@ -454,7 +469,7 @@ class Sentinel2Provider:
     ) -> dict[str, xr.DataArray]:
         """
         Load real Sentinel-2 L2A data using odc-stac (optimized).
-        
+
         Optimizations:
         - Disk cache (pickle)
         - Selective band loading
@@ -498,12 +513,15 @@ class Sentinel2Provider:
                 items = list(search.items())
                 if items:
                     break
-                raise ValueError(f"Scene {scene.scene_id} not found (attempt {attempt+1})")
+                raise ValueError(f"Scene {scene.scene_id} not found (attempt {attempt + 1})")
             except Exception as e:
                 if attempt < max_retries - 1:
                     import time
-                    wait = 2 ** attempt  # 1s, 2s, 4s
-                    logger.info(f"  [SENTINEL] Search retry {attempt+1}/{max_retries} after {wait}s: {type(e).__name__}")
+
+                    wait = 2**attempt  # 1s, 2s, 4s
+                    logger.info(
+                        f"  [SENTINEL] Search retry {attempt + 1}/{max_retries} after {wait}s: {type(e).__name__}"
+                    )
                     time.sleep(wait)
                 else:
                     raise
@@ -513,7 +531,9 @@ class Sentinel2Provider:
 
         item = items[0]
 
-        logger.info(f"  [SENTINEL] Loading: {scene.scene_id[:30]}... res={target_res}m bands={len(bands_to_load)}")
+        logger.info(
+            f"  [SENTINEL] Loading: {scene.scene_id[:30]}... res={target_res}m bands={len(bands_to_load)}"
+        )
 
         # Load with odc-stac (lazy)
         data = odc.stac.load(
@@ -526,30 +546,12 @@ class Sentinel2Provider:
             fail_on_error=False,
         )
 
-        # Batch compute all bands at once (more efficient than per-band)
-        # Use dask to compute all arrays together
-        dask_arrays = {}
+        # Build result
+        bands = {}
         for band_name in bands_to_load:
             if band_name not in data.data_vars:
                 continue
             band_data = data[band_name].isel(time=0)
-            dask_arrays[band_name] = (band_data, band_data.coords)
-
-        # Compute all bands at once (single dask graph traversal)
-        if dask_arrays:
-            import dask
-            values_list = [da.values for da, _ in dask_arrays.values()]  # already computed by isel
-
-            # Force compute if dask arrays
-            try:
-                computed = dask.compute(*[da for da in data.data_vars.values()], scheduler='synchronous')
-            except Exception:
-                # Fallback: compute one by one
-                pass
-
-        # Build result
-        bands = {}
-        for band_name, (band_data, coords) in dask_arrays.items():
             try:
                 band_arr = band_data.compute()  # force compute with dask
             except Exception:
@@ -566,8 +568,8 @@ class Sentinel2Provider:
                 band_arr,
                 dims=["y", "x"],
                 coords={
-                    "y": coords["y"].values,
-                    "x": coords["x"].values,
+                    "y": band_data.coords["y"].values,
+                    "x": band_data.coords["x"].values,
                 },
                 attrs={
                     "band": band_name,
@@ -577,8 +579,10 @@ class Sentinel2Provider:
                 },
             )
 
-        logger.info(f"  [SENTINEL] Loaded {len(bands)} bands @ {target_res}m "
-              f"(shape: {next(iter(bands.values())).shape})")
+        logger.info(
+            f"  [SENTINEL] Loaded {len(bands)} bands @ {target_res}m "
+            f"(shape: {next(iter(bands.values())).shape})"
+        )
 
         # Save to disk cache
         if self.use_disk_cache and bands:
@@ -586,9 +590,7 @@ class Sentinel2Provider:
 
         return bands
 
-    def _apply_cloud_mask(
-        self, bands: dict[str, xr.DataArray]
-    ) -> dict[str, xr.DataArray]:
+    def _apply_cloud_mask(self, bands: dict[str, xr.DataArray]) -> dict[str, xr.DataArray]:
         """
         Apply cloud/shadow masking using SCL (Scene Classification Layer).
 
@@ -641,27 +643,32 @@ class Sentinel2Provider:
             if count > 0:
                 class_counts[cls] = count
 
-        logger.info(f"  [SENTINEL] Cloud mask: {valid}/{total} pixels valid "
-              f"({100*valid/total:.1f}%)")
+        logger.info(
+            f"  [SENTINEL] Cloud mask: {valid}/{total} pixels valid ({100 * valid / total:.1f}%)"
+        )
 
         # Show breakdown if significant masking occurred
         if valid / total < 0.95:
             class_names = {
-                2: "shadows", 3: "cloud_shadows", 4: "vegetation",
-                5: "bare_soil", 6: "water", 7: "unclassified",
-                8: "cloud_med", 9: "cloud_high", 10: "cirrus", 11: "snow"
+                2: "shadows",
+                3: "cloud_shadows",
+                4: "vegetation",
+                5: "bare_soil",
+                6: "water",
+                7: "unclassified",
+                8: "cloud_med",
+                9: "cloud_high",
+                10: "cirrus",
+                11: "snow",
             }
             breakdown = ", ".join(
-                f"{class_names.get(c, c)}={n}"
-                for c, n in sorted(class_counts.items())
+                f"{class_names.get(c, c)}={n}" for c, n in sorted(class_counts.items())
             )
             logger.info(f"  [SENTINEL] SCL breakdown: {breakdown}")
 
         return bands
 
-    def _generate_synthetic_bands(
-        self, scene, bbox
-    ) -> dict[str, xr.DataArray]:
+    def _generate_synthetic_bands(self, scene, bbox) -> dict[str, xr.DataArray]:
         """Generate realistic synthetic bands."""
         shape = (100, 100)
         if bbox:
@@ -678,21 +685,19 @@ class Sentinel2Provider:
 
         # Create spatially coherent noise using 2D patterns
         y_grid, x_grid = np.meshgrid(
-            np.linspace(0, 2 * np.pi, shape[0]),
-            np.linspace(0, 2 * np.pi, shape[1]),
-            indexing='ij'
+            np.linspace(0, 2 * np.pi, shape[0]), np.linspace(0, 2 * np.pi, shape[1]), indexing="ij"
         )
         base_pattern = (np.sin(x_grid) * np.cos(y_grid) + 1) / 2
 
         bands = {}
         # Realistic reflectance ranges (0-1 for surface reflectance)
         band_ranges = {
-            "B02": (0.03, 0.15),   # Blue
-            "B03": (0.04, 0.20),   # Green
-            "B04": (0.03, 0.18),   # Red
-            "B08": (0.15, 0.55),   # NIR (high for vegetation)
-            "B11": (0.10, 0.40),   # SWIR1
-            "B12": (0.05, 0.30),   # SWIR2
+            "B02": (0.03, 0.15),  # Blue
+            "B03": (0.04, 0.20),  # Green
+            "B04": (0.03, 0.18),  # Red
+            "B08": (0.15, 0.55),  # NIR (high for vegetation)
+            "B11": (0.10, 0.40),  # SWIR1
+            "B12": (0.05, 0.30),  # SWIR2
         }
 
         for band, (min_val, max_val) in band_ranges.items():
@@ -721,7 +726,7 @@ class Sentinel2Provider:
     ) -> dict[SpectralIndex, xr.DataArray]:
         """
         Compute multiple indices in a single optimized pass.
-        
+
         Strategy:
         - Load ALL essential bands (covers all indices)
         - Pre-extract numpy arrays (avoid repeated .values calls)
@@ -740,7 +745,9 @@ class Sentinel2Provider:
             if apply_cloud_mask and "SCL" in bands:
                 bands = self._apply_cloud_mask(bands)
             self._band_cache[cache_key] = bands
-            logger.info(f"  [SENTINEL] Cached {len(bands)} essential bands for {scene.scene_id[:20]}...")
+            logger.info(
+                f"  [SENTINEL] Cached {len(bands)} essential bands for {scene.scene_id[:20]}..."
+            )
         else:
             bands = self._band_cache[cache_key]
 
@@ -749,7 +756,7 @@ class Sentinel2Provider:
         for band_name in self._essential_bands:
             if band_name in bands:
                 arr = bands[band_name].values
-                if hasattr(arr, 'compute'):
+                if hasattr(arr, "compute"):
                     # Force dask computation
                     arr = arr.compute()
                 band_arrays[band_name] = arr
@@ -784,7 +791,7 @@ class Sentinel2Provider:
     ) -> np.ndarray | None:
         """
         Fast index calculation using pre-extracted numpy arrays.
-        
+
         No xarray overhead, no repeated .values calls.
         """
         eps = 1e-10
@@ -874,16 +881,15 @@ class Sentinel2Provider:
             term2 = np.sqrt(np.maximum(term1**2 - 8 * (nir - red), 0))
             msavi2 = (term1 - term2) / 2
 
-            # Adaptive composite
-            result = np.where(ndvi > 0.5, evi,
-                     np.where(ndvi > 0.2, savi, msavi2))
+            # Adaptive composite - ensure float32 dtype
+            result = np.where(ndvi > 0.5, evi, np.where(ndvi > 0.2, savi, msavi2))
+            result = result.astype(np.float32)
             result = np.clip(result, -1.0, 1.0)
 
         else:
             raise ValueError(f"Unknown index: {index}")
 
         return result
-
 
     def _calculate_index(
         self,
@@ -991,8 +997,7 @@ class Sentinel2Provider:
             msavi2 = (term1 - term2) / 2
 
             # Composite logic
-            result = np.where(ndvi > 0.5, evi,
-                     np.where(ndvi > 0.2, savi, msavi2))
+            result = np.where(ndvi > 0.5, evi, np.where(ndvi > 0.2, savi, msavi2))
             valid_range = (-1.0, 1.0)
             description = "COMPOSITE: Adaptive (EVI/SAVI/MSAVI2 based on vegetation density)"
 
@@ -1001,9 +1006,10 @@ class Sentinel2Provider:
 
         # Clip to valid range (NaN-aware)
         # Don't clip NaN values
-        with np.errstate(invalid='ignore'):
-            result = np.where(np.isnan(result), np.nan,
-                              np.clip(result, valid_range[0], valid_range[1]))
+        with np.errstate(invalid="ignore"):
+            result = np.where(
+                np.isnan(result), np.nan, np.clip(result, valid_range[0], valid_range[1])
+            )
 
         # Get one of the input bands for coords
         ref_band = next(iter(bands.values()))

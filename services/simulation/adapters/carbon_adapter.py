@@ -1,4 +1,5 @@
 """RothC Adapter - Soil organic carbon turnover"""
+
 from datetime import UTC, datetime
 
 from services.simulation.base import BaseSimulator, SimulatorRegistry

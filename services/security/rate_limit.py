@@ -7,6 +7,7 @@ Per-user: 300 req/min when a JWT subject is present.
 Upgrade path: uses Redis when available, falls back to in-memory for
 single-process deployments.
 """
+
 import logging
 import time
 from collections import defaultdict, deque

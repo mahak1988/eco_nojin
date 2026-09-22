@@ -16,10 +16,17 @@ from engine.hydroma.models.results import (
 try:
     from engine.hydroma.soil.salinity import classify_salinity as hydroma_classify_salinity
     from engine.hydroma.climate.et_calculator import calc_et0_hargreaves
-    from engine.hydroma.watershed.watershed_calculator import design_check_dam as hydroma_design_check_dam
+    from engine.hydroma.watershed.watershed_calculator import (
+        design_check_dam as hydroma_design_check_dam,
+    )
 except ImportError as e:
     logger.warning(f"Warning: Could not import from engine.hydroma: {e}")
-    hydroma_classify_salinity = lambda x: {"classification": "unknown", "description": "", "crop_recommendations": {}, "management": {}}
+    hydroma_classify_salinity = lambda x: {
+        "classification": "unknown",
+        "description": "",
+        "crop_recommendations": {},
+        "management": {},
+    }
     calc_et0_hargreaves = lambda t_min, t_max, t_mean, ra_mj: 0.0
     hydroma_design_check_dam = lambda slope_pct, area_m2, rainfall_mm: {"type": "not_implemented"}
 
@@ -53,7 +60,9 @@ class HydromaAdapter(IHydromaEngine):
             method="Hargreaves",
         )
 
-    def analyze_watershed(self, slope_pct: float, area_m2: float, rainfall_mm: float) -> WatershedAnalysisResult:
+    def analyze_watershed(
+        self, slope_pct: float, area_m2: float, rainfall_mm: float
+    ) -> WatershedAnalysisResult:
         """Implements watershed analysis by delegating to engine/hydroma."""
         design_result = hydroma_design_check_dam(slope_pct, area_m2, rainfall_mm)
         return WatershedAnalysisResult(

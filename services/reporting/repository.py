@@ -1,4 +1,5 @@
 """Reporting repository"""
+
 from datetime import UTC, datetime
 
 from sqlalchemy import select, update
@@ -29,9 +30,13 @@ class ReportingRepository:
         result = await self.db.execute(stmt)
         return list(result.scalars().all())
 
-    async def update_status(self, report_id: str, status: str,
-                           result_data: dict | None = None,
-                           file_path: str | None = None):
+    async def update_status(
+        self,
+        report_id: str,
+        status: str,
+        result_data: dict | None = None,
+        file_path: str | None = None,
+    ):
         values = {"status": status}
         if result_data is not None:
             values["result_data"] = result_data

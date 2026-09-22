@@ -3,7 +3,6 @@ Tests for Climate Integrator
 =============================
 """
 
-
 import pytest
 
 from engine.land.integration.climate_integrator import (
@@ -309,21 +308,13 @@ class TestClimateIntegration:
 
     def test_integration_success(self, integrator):
         """Integration should succeed"""
-        result = integrator.integrate_with_land(
-            profile_id="test-001",
-            lat=32.65,
-            lon=51.67
-        )
+        result = integrator.integrate_with_land(profile_id="test-001", lat=32.65, lon=51.67)
         assert result.success
         assert result.profile_id == "test-001"
 
     def test_integration_returns_profile(self, integrator):
         """Integration should return climate profile"""
-        result = integrator.integrate_with_land(
-            profile_id="test-001",
-            lat=32.65,
-            lon=51.67
-        )
+        result = integrator.integrate_with_land(profile_id="test-001", lat=32.65, lon=51.67)
         assert result.climate_profile is not None
         assert result.climate_profile.koppen is not None
 
@@ -332,42 +323,35 @@ class TestClimateIntegration:
         result = integrator.integrate_with_land(
             profile_id="test-001",
             lat=32.65,
-            lon=51.67  # Isfahan, Iran - arid
+            lon=51.67,  # Isfahan, Iran - arid
         )
         # Arid climates typically require irrigation
-        assert "water_scarcity" in result.limitations or "severe_water_scarcity" in result.limitations
+        assert (
+            "water_scarcity" in result.limitations or "severe_water_scarcity" in result.limitations
+        )
         assert result.irrigation_required
 
     def test_integration_recommendations_present(self, integrator):
         """Integration should return recommendations"""
-        result = integrator.integrate_with_land(
-            profile_id="test-001",
-            lat=32.65,
-            lon=51.67
-        )
+        result = integrator.integrate_with_land(profile_id="test-001", lat=32.65, lon=51.67)
         assert len(result.recommendations) > 0
 
     def test_integration_time_reasonable(self, integrator):
         """Integration should complete in reasonable time"""
-        result = integrator.integrate_with_land(
-            profile_id="test-001",
-            lat=32.65,
-            lon=51.67
-        )
+        result = integrator.integrate_with_land(profile_id="test-001", lat=32.65, lon=51.67)
         assert result.integration_time_ms < 5000  # 5 seconds
 
     def test_integration_different_locations(self, integrator):
         """Different locations should give different results"""
-        result_iran = integrator.integrate_with_land(
-            profile_id="iran", lat=32.65, lon=51.67
-        )
-        result_europe = integrator.integrate_with_land(
-            profile_id="europe", lat=48.0, lon=2.0
-        )
+        result_iran = integrator.integrate_with_land(profile_id="iran", lat=32.65, lon=51.67)
+        result_europe = integrator.integrate_with_land(profile_id="europe", lat=48.0, lon=2.0)
 
         assert result_iran.climate_profile.koppen != result_europe.climate_profile.koppen
         # Europe should have more precipitation than arid Iran
-        assert result_europe.climate_profile.annual_precip_mm > result_iran.climate_profile.annual_precip_mm
+        assert (
+            result_europe.climate_profile.annual_precip_mm
+            > result_iran.climate_profile.annual_precip_mm
+        )
 
 
 class TestKoppenDescriptions:

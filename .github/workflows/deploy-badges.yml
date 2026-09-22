@@ -1,0 +1,55 @@
+name: Deploy HyDroMa Badges
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'validation-results/*.json'
+      - 'badges/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  deploy-badges:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install pyyaml numpy
+
+      - name: Download validation results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: validation-*.json
+          path: validation-results/
+          merge-multiple: true
+
+      - name: Generate badges
+        run: python scripts/deploy_badges.py
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload badge artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./badges
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v3

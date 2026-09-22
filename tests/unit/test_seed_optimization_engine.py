@@ -3,19 +3,18 @@ import structlog
 logger = structlog.get_logger()
 import sys
 from pathlib import Path
+
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-from engine.hydroma.climate_adaptation.seed_optimization_engine import (
-    SeedOptimizationEngine)
+from engine.hydroma.climate_adaptation.seed_optimization_engine import SeedOptimizationEngine
+
 
 def main():
     engine = SeedOptimizationEngine()
 
     # H15: تطبیق ژنوتیپ-محیط
-    tolerances = {"drought": 0.8, "heat": 0.7, "salinity": 0.5,
-                  "frost": 0.6, "waterlogging": 0.4}
-    stresses = {"drought": 0.6, "heat": 0.7, "salinity": 0.3,
-                "frost": 0.4, "waterlogging": 0.2}
+    tolerances = {"drought": 0.8, "heat": 0.7, "salinity": 0.5, "frost": 0.6, "waterlogging": 0.4}
+    stresses = {"drought": 0.6, "heat": 0.7, "salinity": 0.3, "frost": 0.4, "waterlogging": 0.2}
     r1 = engine.h15_gxe_matching(tolerances, stresses)
     assert 0.0 <= r1["gxe_score"] <= 1.0
     assert r1["classification"] in ("تطبیق عالی", "تطبیق خوب", "تطبیق متوسط", "تطبیق ضعیف")
@@ -50,15 +49,18 @@ def main():
 
     # گزارش یکپارچه
     advisory = engine.generate_seed_advisory(
-        tolerances, stresses,
+        tolerances,
+        stresses,
         is_tissue_culture=True,
         local_adaptation_years=25,
         genetic_diversity=0.4,
-        soil_params={"soc_pct": 1.8, "ph": 7.2, "biology_index": 0.5, "organic_input": 0.4})
+        soil_params={"soc_pct": 1.8, "ph": 7.2, "biology_index": 0.5, "organic_input": 0.4},
+    )
     assert "overall_seed_suitability" in advisory
     assert 0.0 <= advisory["overall_seed_suitability"]["overall_score"] <= 1.0
 
     logger.info("ALL SEED OPTIMIZATION TESTS PASSED (H15-H21)")
+
 
 if __name__ == "__main__":
     main()

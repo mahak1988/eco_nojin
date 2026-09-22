@@ -30,9 +30,11 @@ logger = logging.getLogger(__name__)
 # Data Models
 # ============================================================
 
+
 @dataclass
 class WaterBalanceInput:
     """Input for water balance calculation"""
+
     precipitation_mm: float
     et0_mm: float
     crop_coefficient: float = 1.0
@@ -44,6 +46,7 @@ class WaterBalanceInput:
 @dataclass
 class WaterBalanceResult:
     """Water balance result (P - ET - R - dS = 0)"""
+
     precipitation_mm: float
     evapotranspiration_mm: float
     surface_runoff_mm: float
@@ -58,6 +61,7 @@ class WaterBalanceResult:
 @dataclass
 class RunoffInput:
     """Input for SCS-CN runoff"""
+
     precipitation_mm: float
     curve_number: float
     area_ha: float = 1.0
@@ -67,6 +71,7 @@ class RunoffInput:
 @dataclass
 class RunoffResult:
     """SCS-CN runoff result"""
+
     runoff_mm: float
     runoff_volume_m3: float
     peak_flow_m3s: float
@@ -79,6 +84,7 @@ class RunoffResult:
 @dataclass
 class GroundwaterInput:
     """Input for groundwater flow (Darcy)"""
+
     hydraulic_conductivity_m_day: float
     hydraulic_gradient: float
     aquifer_thickness_m: float
@@ -90,6 +96,7 @@ class GroundwaterInput:
 @dataclass
 class GroundwaterResult:
     """Groundwater flow result"""
+
     flow_rate_m3_day: float
     darcy_velocity_m_day: float
     seepage_velocity_m_day: float
@@ -101,10 +108,11 @@ class GroundwaterResult:
 # Water Balance Integrator
 # ============================================================
 
+
 class WaterBalanceIntegrator:
     """
     Water balance calculator: P - ET - R - dP - dS = 0
-    
+
     Uses engine/hydroma/soil/water_retention.py for AWC if available.
     """
 
@@ -119,6 +127,7 @@ class WaterBalanceIntegrator:
         """Load existing water retention module if available"""
         try:
             from engine.hydroma.soil import water_retention
+
             self._water_retention = water_retention
             logger.info("Loaded engine.hydroma.soil.water_retention")
         except ImportError as e:
@@ -148,18 +157,12 @@ class WaterBalanceIntegrator:
         runoff = max(0.0, remaining - deep_perc - self.MAX_STORAGE_MM)
 
         # Final storage
-        final_storage = max(0.0, min(
-            remaining - deep_perc - runoff,
-            self.MAX_STORAGE_MM
-        ))
+        final_storage = max(0.0, min(remaining - deep_perc - runoff, self.MAX_STORAGE_MM))
 
         storage_change = final_storage - inp.initial_storage_mm
 
         # Verify balance: P = ET + R + dP + dS
-        balance_check = (
-            inp.precipitation_mm - actual_et - runoff
-            - deep_perc - storage_change
-        )
+        balance_check = inp.precipitation_mm - actual_et - runoff - deep_perc - storage_change
         balance_error = abs(balance_check)
 
         return WaterBalanceResult(
@@ -176,7 +179,7 @@ class WaterBalanceIntegrator:
                 "water_deficit_mm": round(max(0, et_demand - actual_et), 2),
                 "potential_deficit_mm": round(max(0, et_demand - inp.precipitation_mm), 2),
                 "method": "thornthwaite_mather",
-            }
+            },
         )
 
 
@@ -184,12 +187,13 @@ class WaterBalanceIntegrator:
 # Watershed Integrator (SCS-CN)
 # ============================================================
 
+
 class WatershedIntegrator:
     """
     SCS-CN Runoff calculator.
-    
+
     Uses services/map_engine/pipelines/runoff.py if available.
-    
+
     Q = (P - Ia)^2 / (P - Ia + S)
     S = 25400/CN - 254
     Ia = 0.2 * S
@@ -209,6 +213,7 @@ class WatershedIntegrator:
         """
         try:
             from services.map_engine.pipelines.runoff import RunoffPipeline
+
             self._runoff_pipeline = RunoffPipeline
             logger.info("Loaded services.map_engine.pipelines.runoff.RunoffPipeline")
         except ImportError as e:
@@ -271,21 +276,28 @@ class WatershedIntegrator:
     ) -> float:
         """
         Estimate Curve Number from soil and land use.
-        
+
         Reference: USDA SCS TR-55
         """
         # Base CN by soil hydrologic group
         soil_cn = {
-            "sand": 60, "loamy_sand": 65, "sandy_loam": 70,
-            "loam": 75, "silt_loam": 78, "clay_loam": 82,
+            "sand": 60,
+            "loamy_sand": 65,
+            "sandy_loam": 70,
+            "loam": 75,
+            "silt_loam": 78,
+            "clay_loam": 82,
             "clay": 88,
         }
         base_cn = soil_cn.get(soil_type.lower(), 75)
 
         # Land use adjustment
         land_use_adj = {
-            "forest": -10, "pasture": -5, "agriculture": 0,
-            "urban": 10, "impervious": 25,
+            "forest": -10,
+            "pasture": -5,
+            "agriculture": 0,
+            "urban": 10,
+            "impervious": 25,
         }
         base_cn += land_use_adj.get(land_use.lower(), 0)
 
@@ -302,19 +314,24 @@ class WatershedIntegrator:
 # Groundwater Integrator (Darcy)
 # ============================================================
 
+
 class GroundwaterIntegrator:
     """
     Groundwater flow using Darcy's Law.
-    
+
     Uses engine/hydroma/groundwater/ if available.
-    
+
     Q = K * A * i
     """
 
     # Typical K values (m/day)
     K_VALUES = {
-        "clay": 0.001, "silt": 0.01, "fine_sand": 1.0,
-        "medium_sand": 10.0, "coarse_sand": 50.0, "gravel": 100.0,
+        "clay": 0.001,
+        "silt": 0.01,
+        "fine_sand": 1.0,
+        "medium_sand": 10.0,
+        "coarse_sand": 50.0,
+        "gravel": 100.0,
     }
 
     def __init__(self):
@@ -325,6 +342,7 @@ class GroundwaterIntegrator:
         """Load existing groundwater module if available"""
         try:
             from engine.hydroma.groundwater import service
+
             self._groundwater_service = service
             logger.info("Loaded engine.hydroma.groundwater.service")
         except ImportError as e:
@@ -354,9 +372,7 @@ class GroundwaterIntegrator:
         seepage_velocity = darcy_velocity / inp.porosity
 
         # Storage
-        storage_volume = (
-            area_m2 * inp.aquifer_width_m * inp.specific_yield
-        )
+        storage_volume = area_m2 * inp.aquifer_width_m * inp.specific_yield
 
         return GroundwaterResult(
             flow_rate_m3_day=round(flow_rate, 2),
@@ -379,9 +395,11 @@ class GroundwaterIntegrator:
 # Unified Water Analysis
 # ============================================================
 
+
 @dataclass
 class UnifiedWaterAnalysis:
     """Complete water analysis result"""
+
     water_balance: WaterBalanceResult | None = None
     runoff: RunoffResult | None = None
     groundwater: GroundwaterResult | None = None

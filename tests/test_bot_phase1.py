@@ -1,5 +1,6 @@
 from __future__ import annotations
 import os
+
 """Phase 1 tests: Eco Nojin Telegram bot (no network, no token required).
 
 Handlers are exercised directly with lightweight fakes; the AI service uses
@@ -36,9 +37,12 @@ def make_user(user_id: int = 42, lang: str | None = None) -> SimpleNamespace:
     )
 
 
-def make_message(text: str | None = None, lang: str | None = None,
-                 location: SimpleNamespace | None = None,
-                 user: SimpleNamespace | None = None) -> SimpleNamespace:
+def make_message(
+    text: str | None = None,
+    lang: str | None = None,
+    location: SimpleNamespace | None = None,
+    user: SimpleNamespace | None = None,
+) -> SimpleNamespace:
     return SimpleNamespace(
         text=text,
         from_user=user or make_user(lang=lang),
@@ -99,7 +103,7 @@ async def make_state(user_id: int = 42, chat_id: int = 1) -> FSMContext:
 
 
 def make_advice_service(ollama_available: bool = False) -> AdviceService:
-    cfg = BotConfig(bot_token = os.getenv("ACCESS_TOKEN", ""))
+    cfg = BotConfig(bot_token=os.getenv("ACCESS_TOKEN", ""))
     return AdviceService(cfg, ollama=FakeOllama(ollama_available))
 
 
@@ -236,6 +240,7 @@ def temp_farm_db(tmp_path):
 
 def _full_farm_wizard(session_factory):
     """Drive the whole wizard; returns the sent messages."""
+
     async def scenario():
         state = await make_state()
         sent = []

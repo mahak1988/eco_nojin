@@ -4,6 +4,7 @@ Converts numpy outputs to JSON-safe values and turns raw JSON parameter
 dicts into validated model keyword arguments. Used by the indices and soil
 routers so both share one behaviour contract.
 """
+
 from __future__ import annotations
 
 import datetime as _dt

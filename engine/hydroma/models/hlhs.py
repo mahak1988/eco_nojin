@@ -6,6 +6,7 @@ HLHS = Σ(w_i × (X_i - X_min) / (X_max - X_min))
 
 Reference: Shannon (1948), Nagendra (2002)
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -17,6 +18,7 @@ from .base import ScientificModel, ValidationResult
 @dataclass
 class LandscapeMetrics:
     """Input metrics for HLHS calculation"""
+
     ndvi_mean: float = 0.0
     ewsı_mean: float = 0.0
     soc_t_ha: float = 0.0
@@ -101,7 +103,9 @@ class HLHS(ScientificModel):
             "vegetation": self.normalize(metrics.ndvi_mean, b["vegetation"][0], b["vegetation"][1]),
             "water": self.normalize(1 - metrics.ewsı_mean, 0, 1),
             "soil": self.normalize(metrics.soc_t_ha, b["soil"][0], b["soil"][1]),
-            "biodiversity": self.normalize(metrics.shdi, b["biodiversity"][0], b["biodiversity"][1]),
+            "biodiversity": self.normalize(
+                metrics.shdi, b["biodiversity"][0], b["biodiversity"][1]
+            ),
             "carbon": self.normalize(metrics.ecsı_t_co2_ha_yr, b["carbon"][0], b["carbon"][1]),
             "topography": self.normalize(metrics.slope_stability, 0, 1),
             "connectivity": self.normalize(metrics.connectivity, 0, 1),
@@ -128,8 +132,11 @@ class HLHS(ScientificModel):
         }
 
     def validate_against_reference(
-        self, inputs: dict[str, Any], reference_output: float,
-        reference_source: str, tolerance: float = 10.0,
+        self,
+        inputs: dict[str, Any],
+        reference_output: float,
+        reference_source: str,
+        tolerance: float = 10.0,
     ) -> ValidationResult:
         """tolerance in HLHS points (0-100)"""
         result = self.compute(**inputs)

@@ -1,4 +1,5 @@
 """Fixtures for biofertilizer tests."""
+
 import sys
 from pathlib import Path
 

@@ -1,9 +1,11 @@
-"""Generate carbon compliance modules."""
-import os
+import logging
+from pathlib import Path
 
-BASE = "D:/eco_nojin/services/carbon/compliance"
+logger = logging.getLogger(__name__)
 
-os.makedirs(BASE, exist_ok=True)
+BASE = Path("D:/eco_nojin/services/carbon/compliance")
+
+BASE.mkdir(parents=True, exist_ok=True)
 
 # __init__.py
 init_content = '''"""Carbon credit compliance module.
@@ -33,6 +35,5 @@ __all__ = [
 ]
 '''
 
-with open(os.path.join(BASE, "__init__.py"), "w", encoding="utf-8") as f:
-    f.write(init_content)
-print("init.py done")
+(BASE / "__init__.py").write_text(init_content, encoding="utf-8")
+logger.info("init.py done")

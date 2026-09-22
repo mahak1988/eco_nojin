@@ -71,7 +71,11 @@ class MarketplaceSeller(Base):
     total_revenue = Column(Numeric(15, 2), default=Decimal("0.00"))
     rating = Column(Numeric(3, 2), default=Decimal("0.00"))
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), index=True)
-    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+    )
     products = relationship("MarketplaceProduct", back_populates="seller")
     marketplace = relationship("Marketplace", back_populates="shops")
 
@@ -99,7 +103,9 @@ class MarketplaceProduct(Base):
     unit = Column(String(50), default="piece")
     village_id = Column(String(100), nullable=False, index=True)
     uses_village_brand = Column(Boolean, default=True)
-    status = Column(SQLEnum(MarketplaceProductStatus), default=MarketplaceProductStatus.DRAFT, index=True)
+    status = Column(
+        SQLEnum(MarketplaceProductStatus), default=MarketplaceProductStatus.DRAFT, index=True
+    )
     approved_by = Column(String(36), nullable=True)
     approved_at = Column(DateTime(timezone=True), nullable=True)
     images = Column(JSON, default=list)
@@ -110,7 +116,11 @@ class MarketplaceProduct(Base):
     sales_count = Column(Integer, default=0)
     rating = Column(Numeric(3, 2), default=Decimal("0.00"))
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), index=True)
-    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+    )
     seller = relationship("MarketplaceSeller", back_populates="products")
 
 
@@ -158,7 +168,11 @@ class Marketplace(Base):
     marketing_enabled = Column(Boolean, default=True)
     branding_enabled = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), index=True)
-    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+    )
     shops = relationship("MarketplaceSeller", back_populates="marketplace")
 
 
@@ -198,7 +212,9 @@ class MarketplaceOrder(Base):
     landscape_fee = Column(Numeric(15, 2), default=Decimal("0.00"))
     total = Column(Numeric(15, 2), nullable=False)
     currency = Column(String(3), default="IRR")
-    status = Column(SQLEnum(MarketplaceOrderStatus), default=MarketplaceOrderStatus.PENDING, index=True)
+    status = Column(
+        SQLEnum(MarketplaceOrderStatus), default=MarketplaceOrderStatus.PENDING, index=True
+    )
     payment_status = Column(String(20), default="pending")
     shipping_address = Column(JSON)
     blockchain_tx_hash = Column(String(100), nullable=True)
@@ -207,7 +223,11 @@ class MarketplaceOrder(Base):
     tracking_code = Column(String(100), nullable=True)
     delivered_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), index=True)
-    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+    )
 
 
 class MarketplaceCommissionRule(Base):
@@ -249,6 +269,7 @@ class ProductCategory(Enum):
     FERTILIZER_ORGANIC = "fertilizer_organic"
     OTHER = "other"
 
+
 # Merged from models_legacy.py
 class CertificationType(Enum):
     """Available certifications for products and sellers."""
@@ -262,6 +283,7 @@ class CertificationType(Enum):
     WOMEN_PRODUCED = "women_produced"
     NOMADIC_PRODUCT = "nomadic_product"
 
+
 # Merged from models_legacy.py
 class OrderStatus(Enum):
     """Order lifecycle status."""
@@ -271,6 +293,7 @@ class OrderStatus(Enum):
     SHIPPED = "shipped"
     DELIVERED = "delivered"
     CANCELLED = "cancelled"
+
 
 # Merged from models_legacy.py
 @dataclass
@@ -403,7 +426,42 @@ class TraceRecord:
 
 
 # payments (plan v2.1 multi-gateway + escrow)
-from .marketplace_payment import MarketplaceEscrowEntry, MarketplacePayment  # noqa: E402,F401
-
 # founders (plan v2.0 phase 1.1-b)
-from .marketplace_founder import MarketplaceFounder  # noqa: E402,F401
+from .marketplace_founder import MarketplaceFounder  # noqa: E402
+from .marketplace_payment import MarketplaceEscrowEntry, MarketplacePayment  # noqa: E402
+
+# village development hub (village capabilities, opportunities, projects)
+from .village_hub import (  # noqa: E402
+    B2BDemand,
+    CapabilityCategory,
+    ConfidenceLevel,
+    EngagementRole,
+    EntrepreneurProfile,
+    EventStatus,
+    ExperienceType,
+    FestivalMode,
+    FestivalScope,
+    InvestmentStatus,
+    NeedPriority,
+    NomadicCommunity,
+    OpportunityCategory,
+    OpportunityMaturity,
+    OpportunityStatus,
+    ProjectStatus,
+    TourismServiceType,
+    VillageBrand,
+    VillageCapability,
+    VillageDestination,
+    VillageDevelopmentGap,
+    VillageEngagement,
+    VillageEvent,
+    VillageEventRegistration,
+    VillageExperience,
+    VillageFestival,
+    VillageInvestment,
+    VillageNeed,
+    VillageOpportunity,
+    VillageOpportunityInterest,
+    VillageProject,
+    VillageTourismService,
+)

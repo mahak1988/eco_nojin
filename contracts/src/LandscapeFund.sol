@@ -8,8 +8,8 @@ pragma solidity ^0.8.24;
  */
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/utils/Pausable.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract LandscapeFund is AccessControl, Pausable, ReentrancyGuard {
     string public constant VERSION = "2.0.0";

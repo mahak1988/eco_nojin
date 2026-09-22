@@ -12,10 +12,8 @@ falls back to mock synthesis with a logged warning.
 """
 
 import logging
-import os
-from dataclasses import dataclass
 
-from .tts_provider import VoiceLanguage, TTSResult, TTSProvider
+from .tts_provider import TTSProvider, TTSResult, VoiceLanguage
 
 logger = logging.getLogger(__name__)
 
@@ -29,16 +27,40 @@ class CoquiTTSProvider(TTSProvider):
 
     COQUI_VOICES = {
         VoiceLanguage.EN: {
-            "male": {"id": "en_male", "name": "English Male", "model": "tts_models/en/ljspeech/tacotron2-DDC"},
-            "female": {"id": "en_female", "name": "English Female", "model": "tts_models/en/ljspeech/tacotron2-DDC"},
+            "male": {
+                "id": "en_male",
+                "name": "English Male",
+                "model": "tts_models/en/ljspeech/tacotron2-DDC",
+            },
+            "female": {
+                "id": "en_female",
+                "name": "English Female",
+                "model": "tts_models/en/ljspeech/tacotron2-DDC",
+            },
         },
         VoiceLanguage.FA: {
-            "male": {"id": "fa_male", "name": "Persian Male", "model": "tts_models/fa/balam/accelerate"},
-            "female": {"id": "fa_female", "name": "Persian Female", "model": "tts_models/fa/balam/accelerate"},
+            "male": {
+                "id": "fa_male",
+                "name": "Persian Male",
+                "model": "tts_models/fa/balam/accelerate",
+            },
+            "female": {
+                "id": "fa_female",
+                "name": "Persian Female",
+                "model": "tts_models/fa/balam/accelerate",
+            },
         },
         VoiceLanguage.AR: {
-            "male": {"id": "ar_male", "name": "Arabic Male", "model": "tts_models/ar/balam/accelerate"},
-            "female": {"id": "ar_female", "name": "Arabic Female", "model": "tts_models/ar/balam/accelerate"},
+            "male": {
+                "id": "ar_male",
+                "name": "Arabic Male",
+                "model": "tts_models/ar/balam/accelerate",
+            },
+            "female": {
+                "id": "ar_female",
+                "name": "Arabic Female",
+                "model": "tts_models/ar/balam/accelerate",
+            },
         },
     }
 
@@ -69,7 +91,11 @@ class CoquiTTSProvider(TTSProvider):
                 "note": "Set TTS_PROVIDER=coqui for real synthesis",
             }
         if self._tts_engine:
-            return {"provider": "coqui", "model": self.model_name or "tacotron2-DDC", "mode": "local"}
+            return {
+                "provider": "coqui",
+                "model": self.model_name or "tacotron2-DDC",
+                "mode": "local",
+            }
         return {"provider": "unknown", "model": self.model_name or "default"}
 
     def _init_engine(self):
@@ -107,7 +133,9 @@ class CoquiTTSProvider(TTSProvider):
             model_name = selected_voice["model"]
 
             try:
-                self._tts_engine = __import__("TTS.api", fromlist=["TTS"]).TTS(model_name=model_name)
+                self._tts_engine = __import__("TTS.api", fromlist=["TTS"]).TTS(
+                    model_name=model_name
+                )
             except Exception:
                 pass
 

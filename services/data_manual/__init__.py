@@ -1,5 +1,5 @@
-from services.data_manual import loader as manual  # noqa: F401
-from services.data_manual.loader import (  # noqa: F401
+from services.data_manual import loader as manual
+from services.data_manual.loader import (
     climate_monthly,
     climate_normals,
     climate_projections,

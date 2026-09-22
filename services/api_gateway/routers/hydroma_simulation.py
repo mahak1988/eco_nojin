@@ -6,6 +6,7 @@ GET  /api/v1/hydroma/simulation          -> metadata
 GET  /api/v1/hydroma/simulation/{id}     -> one tool's metadata
 POST /api/v1/hydroma/simulation/{id}/run -> execute (pure compute)
 """
+
 from __future__ import annotations
 
 import math
@@ -24,7 +25,7 @@ _SPECS: list[dict[str, Any]] = [
         "id": "sim-calibration",
         "name_en": "Sensitivity & uncertainty",
         "description": "Saltelli sampling + Sobol first/total-order indices "
-                       "(validated on the Ishigami test function).",
+        "(validated on the Ishigami test function).",
         "reference": "Saltelli 2010 (Sobol)",
         "params": [
             {"name": "a", "label": "Ishigami a", "unit": "", "kind": "float", "default": 7.0},
@@ -49,7 +50,7 @@ def _run_sim_calibration(kw: dict[str, Any]) -> dict[str, Any]:
     a = kw["a"]
     b = kw["b"]
 
-    def metric(x):  # noqa: ANN001 - numpy array in/out
+    def metric(x):
         return ishigami(x, a=a, b=b)
 
     bounds = [(-math.pi, math.pi)] * 3
@@ -61,6 +62,7 @@ def _run_sim_scenarios(_kw: dict[str, Any]) -> dict[str, Any]:
     for name, sc in SCENARIOS.items():
         try:
             from dataclasses import asdict
+
             out[name] = asdict(sc)
         except TypeError:
             out[name] = {
@@ -71,9 +73,10 @@ def _run_sim_scenarios(_kw: dict[str, Any]) -> dict[str, Any]:
             }
     return {"scenarios": out, "count": len(out)}
 
+
 _RUNNERS = {
     "sim-scenarios": _run_sim_scenarios,
-"sim-calibration": _run_sim_calibration,
+    "sim-calibration": _run_sim_calibration,
 }
 
 
@@ -107,6 +110,6 @@ def run_simulation_tool(model_id: str, params: dict[str, Any]) -> dict[str, Any]
         result = _RUNNERS[model_id](kwargs)
     except (ValueError, TypeError, KeyError) as exc:
         raise HTTPException(status_code=422, detail=f"tool rejected inputs: {exc}") from exc
-    except Exception as exc:  # noqa: BLE001 - explicit failure, never silent
+    except Exception as exc:
         raise HTTPException(status_code=500, detail=f"tool execution failed: {exc}") from exc
     return {"id": model_id, "result": jsonable(result)}

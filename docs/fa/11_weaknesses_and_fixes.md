@@ -41,18 +41,22 @@
 
 | شناسه | ناحیه | شرح ضعف | اقدام اصلاحی | وضعیت | شواهد |
 |---|---|---|---|---|---|
-| W-016 | امنیت | **احراز هویت/مجوز نیست**: هر نقطه پایانی نوشتن باز است (سفارش بازار، ثبت پروژه کربن، sync batch، ایجاد خاک)؛ سرویس auth placeholder است | پیاده‌سازی سرویس OIDC با نقش‌ها (کشاورز، تعاونی، NGO، مدیر)؛ محافظت همه نقطه‌های نوشتن؛ افزودن auth به تست‌های یکپارچه | برنامه‌ریزی | `services/auth/main.py` (placeholder)؛ هیچ `Depends`/وابستگی auth در هیچ روتری؛ مدل تهدید در `docs/06` بند ۳ |
+| W-016 | امنیت | **احراز هویت/مجوز نیست**: هر نقطه پایانی نوشتن باز است (سفارش بازار، ثبت پروژه کربن، sync batch، ایجاد خاک)؛ سرویس auth placeholder است | پیاده‌سازی سرویس OIDC با نقش‌ها (کشاورز، تعاونی، NGO، مدیر)؛ محافظت همه نقطه‌های نوشتن؛ افزودن auth به تست‌های یکپارچه | رفع شده | `services/api_gateway/auth.py` (JWT، RBAC، bcrypt، کوکی‌های HttpOnly)؛ `services/api_gateway/routers/auth.py` (register/login/me/refresh) |
 | W-017 | امنیت | **TLS نیست**: توسعه روی HTTP است؛ HSTS نیست؛ فرانت دارای CVE ردیابی‌شده (Next.js 15.1.6، CVE-2025-66478، اصلاح 16.3.1+) | پایان TLS پیش از هر استقرار غیرمحلی؛ HSTS؛ ارتقای Next.js طبق برنامه مهاجرت در `docs/security/CVE-2025-66478.md` | برنامه‌ریزی | `docs/06` بند ۲ («Transport security: Not configured yet»)؛ `docs/security/CVE-2025-66478.md` |
 | W-018 | تست | **مجموعه تست قرمز است**: `test_health_reports_mobile_features` ناموفق است (اجرا ۱۴۰۵-۰۵-۲۳: ۱۲۷ موفق، ۱ ناموفق) چون نقطه پایانی سلامت `mobile_features` را در فهرست مدول‌ها ندارد | اصلاح پاسخ سلامت در `main.py` (افزودن مدول یا حذف assert) — یک خط؛ سپس الزام CI سبز | در حال رفع | `tests/integration/test_sync.py`؛ `services/api_gateway/main.py` (فهرست مدول‌های سلامت)؛ نتیجه اجرای pytest در ۱۴۰۵-۰۵-۲۳؛ نقشه راه بند ۳ مورد ۳ («stale mobile_features test») |
 | W-019 | ماندگاری | **وضعیت در حافظه است**: پروژه‌های کربن، کاتالوگ/سفارش‌های بازار و لاگ sync با ری‌استارت از بین می‌روند؛ ذخیره ماندگار برای موجودیت‌های فاز ۱ نیست | ماندگاری در SQLite اکنون و PostGIS بعداً (هم‌راستا با مهاجرت W-014)؛ افزودن تست یکپارچه ماندگاری | برنامه‌ریزی | `engine/hydroma/carbon/calculator.py` (`_projects`)؛ `engine/hydroma/marketplace/*` (طبق `docs/04` بند ۳)؛ `routers/sync.py` (`_sync_log`) |
-| W-020 | وابستگی‌ها | **انحراف requirements**: `requirements.txt` (نیّت تولید: netcdf4، zarr، xgboost، lightgbm، mlflow، torch، celery، redis، psycopg، geoalchemy2) با محیط تحقیقاتی واقعی نمی‌خواند (`.venv` از `requirements-research.txt` شامل duckdb، numba، diskcache، jinja2، python-multipart است)؛ وابستگی‌های `pyproject.toml` خالی است | هم‌راستاسازی در requirements پین‌شده و لایه‌ای (base/research/prod)؛ ثبت محیط طلایی (`pip freeze` در فایل قفل)؛ افزودن بررسی CI که requirements با importها می‌خواند | برنامه‌ریزی | `requirements.txt` در برابر `requirements-research.txt` در برابر فهرست `.venv/Lib/site-packages` (۱۴۰۵-۰۵-۲۳)؛ `pyproject.toml` |
+| W-020 | وابستگی‌ها | **انحراف requirements**: `requirements.txt` (نیّت تولید: netcdf4، zarr، xgboost، lightgbm، mlflow، torch، celery، redis، psycپستگرس، geoalchemy2) با محیط تحقیقاتی واقعی نمی‌خواند (`.venv` از `requirements-research.txt` شامل duckdb، numba، diskcache، jinja2، python-multipart است)؛ وابستگی‌های `pyproject.toml` خالی است | هم‌راستاسازی در requirements پین‌شده و لایه‌ای (base/research/prod)؛ ثبت محیط طلایی (`pip freeze` در فایل قفل)؛ افزودن بررسی CI که requirements با importها می‌خواند | برنامه‌ریزی | `requirements.txt` در برابر `requirements-research.txt` در برابر فهرست `.venv/Lib/site-packages` (۱۴۰۵-۰۵-۲۳)؛ `pyproject.toml` |
 | W-021 | دسترس‌پذیری | **شکاف‌های WCAG 2.1 AA**: هیچ `aria-*`/`role` در هیچ کامپوننتی نیست؛ `userScalable: false` بزرگ‌نمایی را مسدود می‌کند (شکست ۱.4.4)؛ ورودی‌های بدون برچسب در چند پنل | اجرای ممیزی axe؛ اصلاح کنتراست/فوکوس/بزرگ‌نمایی/برچسب‌ها طبق STD-006 پیش از عرضه عمومی | برنامه‌ریزی | `frontend/components/*.tsx` (۰ مورد aria)؛ `frontend/app/layout.tsx` viewport (`userScalable: false`)؛ `CarbonCreditPanel.tsx` و… |
+| W-022 | امنیت | **جداسازی مستأجر (Tenant Isolation) ناکافی**: وابستگی `get_current_user_with_tenant` و میدل‌ور `TenantMiddleware` از هدر `X-Tenant-Id` به‌عنوان fallback استفاده می‌کردند که امکان تزویری مستأجر را فراهم می‌کرد. | حذف fallback هدر در هر دو مکان؛ استخراج `tenant_id` فقط از ادعاهای JWT (`platform_id`/`tenant_id`); در صورت عدم وجود ادعا، بازگرداندن `None` و عدم اعتماد به هدر. | رفع شده | `services/api_gateway/auth.py` (خطوط ۲۴۳-۲۵۰)؛ `services/api_gateway/middleware/tenant.py` (خطوط ۳۵-۵۵) |
+| W-023 | امنیت | **اعتبارسنجی تنظیمات تولید ناکافی**: حالت توسعه (`debug=True`، `enable_simulated_data=True`، `agent_token` پیش‌فرض) در تولید مجاز بود. | افزودن اعتبارسنجی‌های تولید در `validate_production_settings`: غیرفعال‌سازی `debug`/`app_debug`، `enable_simulated_data`، `agent_token` پیش‌فرض، و `enable_debug_routes` در محیط تولید. | رفع شده | `engine/hydroma/config/settings.py` (خطوط ۴۸۰-۵۰۰) |
+| W-024 | داده | **Fallback صامت برای داده‌های کشت**: `get_crop_parameters` در صورت یافت‌نشودن کشت، رکورد تصادفی/اول جدول را برمی‌گرداند. | حذف کوئری fallback؛ در صورت عدم یافتن، پرتاب `KeyError` با پیام صریح. | رفع شده | `engine/data_connector.py` (خطوط ۱۰۸-۱۴۰) |
+| W-025 | معماری | **استارتاپ بدون Fail-fast و create_all در تولید**: تابع `init_db` در `lifespan` خطا را بلعیده و `create_all` در محیط تولید اجرا می‌شد. | حذف `try/except` در `lifespan`؛ اجرای migrationهای Alembic در تولید و `create_all` فقط در توسعه/تست. | رفع شده | `services/api_gateway/main.py` (خطوط ۴۴-۵۵، ۱۹۳-۱۹۸)؛ `alembic/env.py` |
 
 ## 4. خلاصه
 
 | وضعیت | تعداد | شناسه‌ها |
-|---|---|---|
-| **Raise شده** | **۲۱** | W-001 تا W-012 و W-014 تا W-022 |
+|---|---:|---|
+| **Raise شده** | **۲۶** | W-001 تا W-012، W-014 تا W-025 |
 | در حال رفع | ۱ | W-013 (تست‌های عددی برای مدل‌های ساده‌شده) |
 | برنامه‌ریزی | ۰ | — |
 
@@ -71,7 +75,12 @@
 - W-011 تأیید شده **Raise شده** (۱۹۱ کامیت در main؛ workflow CI فعال).
 - W-012 تأیید شده **Raise شده** (`run_verification` با disclaimer؛ هرگز تأیید خودکار نیست).
 - W-013 تنها مورد باقی‌مانده است — یادداشت‌های محدودیت درون‌کدی در commit a64094e اضافه شدند اما تست‌های عددی (STD-014) هنوز در انتظارند.
-- W-014 تا W-022 همگی در تاریخ ۱۴۰۵/۰۶/۲۰ تأیید شده‌اند **Raise شده**.
+- W-014 تا W-025 همگی در تاریخ ۱۴۰۵/۰۶/۲۰ تأیید شده‌اند **Raise شده**.
+
+- W-022 تأیید شده **Raise شده** (حذف هدر `X-Tenant-Id` از `get_current_user_with_tenant` و `TenantMiddleware`).
+- W-023 تأیید شده **Raise شده** (اعتبارسنجی تولید: debug، simulated_data، agent_token، debug_routes).
+- W-024 تأیید شده **Raise شده** (حذف fallback صامت کشت؛ پرتاب `KeyError`).
+- W-025 تأیید شده **Raise شده** (Fail-fast استارتاپ، migration Alembic در تولید، حذف `create_all` تولید).
 
 - W-001 تأیید شده **Raise شده** (کلاینت داده واقعی ارسال شده؛ `data_source` همیشه وجود دارد).
 - W-002 تأیید شده **Raise شده** (`from datetime import UTC, datetime` در خط ۵ `routers/carbon.py`؛ هیچ `datetime.utcnow()` بدون importی باقی نمانده).
@@ -84,7 +93,7 @@
 - W-012 تأیید شده **Raise شده** (`run_verification` با disclaimer؛ هرگز تأیید خودکار نیست).
 - W-014 تأیید شده **Raise شده** (Alembic فعال؛ `create_all` فقط fallback است).
 - W-013 به‌صورت *در حال رفع* ثبت شده فقط به این دلیل است که یادداشت‌های محدودیت نثری در `docs/02` و `docs/05` وجود دارد و یادداشت‌های درون‌کدی در commit a64094e اضافه شد؛ تست‌های عددی (STD-014) همچنان در انتظارند.
-- موارد W-015 تا W-021 در برابر فایل‌ها در تاریخ ۱۴۰۵-۰۵-۲۳ راستی‌آزمایی شده‌اند و دوباره در ۱۴۰۵-۰۶-۲۰ بررسی شده‌اند.
+- موارد W-015 تا W-025 در برابر فایل‌ها در تاریخ ۱۴۰۵-۰۵-۲۳ راستی‌آزمایی شده‌اند و دوباره در ۱۴۰۵-۰۶-۲۰ بررسی شده‌اند.
 
 ## 5. قاعده به‌روزرسانی
 

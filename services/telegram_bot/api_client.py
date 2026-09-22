@@ -1,4 +1,5 @@
 """HTTP client for Eco Nojin Platform API."""
+
 from __future__ import annotations
 
 import logging

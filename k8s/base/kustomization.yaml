@@ -1,0 +1,43 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: eco-nojin
+
+resources:
+  - namespace.yaml
+  - rbac.yaml
+  - configmaps.yaml
+  - secrets.yaml
+  - api-gateway-deployment.yaml
+  - api-gateway-service-hpa.yaml
+  - pdb.yaml
+  - network-policies.yaml
+  - ingress.yaml
+
+commonLabels:
+  app.kubernetes.io/name: eco-nojin
+  app.kubernetes.io/part-of: eco-nojin-platform
+  app.kubernetes.io/managed-by: kustomize
+
+commonAnnotations:
+  app.kubernetes.io/version: "1.0.0"
+
+configMapGenerator:
+  - name: api-gateway-config
+    behavior: merge
+    literals:
+      - ENVIRONMENT=production
+      - LOG_LEVEL=info
+
+secretGenerator:
+  - name: api-gateway-secrets
+    behavior: merge
+    literals: []
+
+images:
+  - name: ghcr.io/eco-nojin/api-gateway
+    newTag: latest
+
+patchesStrategicMerge: []
+
+vars: []

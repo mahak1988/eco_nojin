@@ -11,15 +11,14 @@
 import secrets
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Optional
 
-from sqlalchemy import select, insert
+from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from services.marketplace.models import (
     Marketplace,
-    MarketplaceMember,
     MarketplaceCommissionRule,
+    MarketplaceMember,
     MarketplaceOrder,
     MarketplaceOrderStatus,
     MarketplaceProduct,
@@ -148,10 +147,7 @@ class MarketplaceService:
         return product
 
     async def approve_product(
-        self,
-        product_id: str,
-        approved_by: str,
-        approve: bool = True
+        self, product_id: str, approved_by: str, approve: bool = True
     ) -> MarketplaceProduct:
         """تأیید یا رد محصول توسط مدیر منظر."""
         result = await self.db.execute(
@@ -294,24 +290,23 @@ class MarketplaceService:
 
         for founder_id in data.get("founder_ids", []):
             await self.db.execute(
-                insert(MarketplaceMember)
-                .values(marketplace_id=marketplace.id, user_id=founder_id, role="founder")
+                insert(MarketplaceMember).values(
+                    marketplace_id=marketplace.id, user_id=founder_id, role="founder"
+                )
             )
         await self.db.commit()
 
         return marketplace
 
-    async def get_marketplace(self, marketplace_id: str) -> Optional[Marketplace]:
-        result = await self.db.execute(
-            select(Marketplace).where(Marketplace.id == marketplace_id)
-        )
+    async def get_marketplace(self, marketplace_id: str) -> Marketplace | None:
+        result = await self.db.execute(select(Marketplace).where(Marketplace.id == marketplace_id))
         return result.scalar_one_or_none()
 
     async def list_marketplaces(
         self,
-        marketplace_type: Optional[str] = None,
-        village_id: Optional[str] = None,
-        status: Optional[str] = None,
+        marketplace_type: str | None = None,
+        village_id: str | None = None,
+        status: str | None = None,
         limit: int = 50,
     ) -> list[Marketplace]:
         stmt = select(Marketplace)
@@ -325,10 +320,10 @@ class MarketplaceService:
         result = await self.db.execute(stmt)
         return result.scalars().all()
 
-    async def verify_marketplace(self, marketplace_id: str, approved: bool, verified_by: str) -> Marketplace:
-        result = await self.db.execute(
-            select(Marketplace).where(Marketplace.id == marketplace_id)
-        )
+    async def verify_marketplace(
+        self, marketplace_id: str, approved: bool, verified_by: str
+    ) -> Marketplace:
+        result = await self.db.execute(select(Marketplace).where(Marketplace.id == marketplace_id))
         marketplace = result.scalar_one_or_none()
         if not marketplace:
             raise ValueError(f"بازارچه یافت نشد: {marketplace_id}")
@@ -341,7 +336,9 @@ class MarketplaceService:
         await self.db.refresh(marketplace)
         return marketplace
 
-    async def add_marketplace_member(self, marketplace_id: str, user_id: str, role: str = "member") -> MarketplaceMember:
+    async def add_marketplace_member(
+        self, marketplace_id: str, user_id: str, role: str = "member"
+    ) -> MarketplaceMember:
         existing = await self.db.execute(
             select(MarketplaceMember).where(
                 MarketplaceMember.marketplace_id == marketplace_id,
@@ -360,10 +357,10 @@ class MarketplaceService:
         await self.db.refresh(member)
         return member
 
-    async def create_marketplace_shop(self, marketplace_id: str, user_id: str, data: dict) -> MarketplaceSeller:
-        result = await self.db.execute(
-            select(Marketplace).where(Marketplace.id == marketplace_id)
-        )
+    async def create_marketplace_shop(
+        self, marketplace_id: str, user_id: str, data: dict
+    ) -> MarketplaceSeller:
+        result = await self.db.execute(select(Marketplace).where(Marketplace.id == marketplace_id))
         marketplace = result.scalar_one_or_none()
         if not marketplace:
             raise ValueError(f"بازارچه یافت نشد: {marketplace_id}")
@@ -392,7 +389,9 @@ class MarketplaceService:
         await self.db.refresh(shop)
         return shop
 
-    async def list_marketplace_shops(self, marketplace_id: str, limit: int = 50) -> list[MarketplaceSeller]:
+    async def list_marketplace_shops(
+        self, marketplace_id: str, limit: int = 50
+    ) -> list[MarketplaceSeller]:
         result = await self.db.execute(
             select(MarketplaceSeller)
             .where(MarketplaceSeller.marketplace_id == marketplace_id)
@@ -405,7 +404,7 @@ class MarketplaceService:
         result = await self.db.execute(
             select(MarketplaceCommissionRule).where(
                 MarketplaceCommissionRule.village_id == village_id,
-                MarketplaceCommissionRule.is_active == True
+                MarketplaceCommissionRule.is_active == True,
             )
         )
         rule = result.scalar_one_or_none()
@@ -414,7 +413,7 @@ class MarketplaceService:
             result = await self.db.execute(
                 select(MarketplaceCommissionRule).where(
                     MarketplaceCommissionRule.village_id == None,
-                    MarketplaceCommissionRule.is_active == True
+                    MarketplaceCommissionRule.is_active == True,
                 )
             )
             rule = result.scalar_one_or_none()
@@ -472,3 +471,20 @@ def get_marketplace_service(db=None) -> MarketplaceService:
     if _marketplace_service is None:
         _marketplace_service = MarketplaceService(db)
     return _marketplace_service
+
+
+# ===================================================================
+# Village Development Hub Service
+# ===================================================================
+
+from services.marketplace.hub_service import VillageDevelopmentHubService  # noqa: E402
+
+_hub_service: VillageDevelopmentHubService | None = None
+
+
+def get_hub_service(db=None) -> VillageDevelopmentHubService:
+    """Get or create singleton VillageDevelopmentHubService."""
+    global _hub_service
+    if _hub_service is None or db is not None:
+        _hub_service = VillageDevelopmentHubService(db)
+    return _hub_service

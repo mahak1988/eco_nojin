@@ -83,6 +83,7 @@ class TestEarthSearchProviderSearch:
     @patch("engine.hydroma.satellite.providers.earth_search.requests.post")
     def test_search_handles_network_error(self, mock_post):
         import requests
+
         mock_post.side_effect = requests.RequestException("network error")
         results = self.provider.search(36.0, 54.0, MagicMock(), MagicMock())
         assert results == []
@@ -207,7 +208,13 @@ class TestEarthSearchProviderFetchTile:
         mock_download_bands.return_value = (
             {"red": np.ones((64, 64))},
             "real",
-            {"downloaded_bands": ["red"], "fallback_bands": [], "real_download": True, "cloud_masked": False, "scl_available": False},
+            {
+                "downloaded_bands": ["red"],
+                "fallback_bands": [],
+                "real_download": True,
+                "cloud_masked": False,
+                "scl_available": False,
+            },
         )
         tile = self.provider.fetch_tile("test-id")
         assert tile is not None

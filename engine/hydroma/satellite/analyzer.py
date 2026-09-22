@@ -97,7 +97,8 @@ class SatelliteAnalyzer:
         evi_arr = calculate_evi(bands["red"], bands["nir"], bands["blue"])
         savi_arr = calculate_savi(bands["red"], bands["nir"])
         ndwi_arr = calculate_ndwi(bands["green"], bands["nir"])
-        nbr_arr = calculate_nbr(bands["nir"], bands.get("swir16", bands["nir"]))
+        swir_band = bands.get("swir16") or bands.get("swir22") or bands["nir"]
+        nbr_arr = calculate_nbr(bands["nir"], swir_band)
 
         # Aggregate to single values (median of valid pixels)
         ndvi = float(np.nanmedian(ndvi_arr))

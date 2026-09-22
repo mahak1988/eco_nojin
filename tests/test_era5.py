@@ -1,4 +1,5 @@
 """ERA5 fetch tests (mocked CDS job + real xarray NetCDF parse)."""
+
 import pathlib
 
 import io
@@ -23,13 +24,15 @@ def make_netcdf(vars_=("t2m", "tp")):
     t = np.array([0], dtype="datetime64[h]")
     data = {}
     if "t2m" in vars_:
-        data["t2m"] = (("time", "y", "x"), np.array([[[290.0, 291.0, 292.0],
-                                                       [289.0, 290.0, 291.0],
-                                                       [288.0, 289.0, 290.0]]]))
+        data["t2m"] = (
+            ("time", "y", "x"),
+            np.array([[[290.0, 291.0, 292.0], [289.0, 290.0, 291.0], [288.0, 289.0, 290.0]]]),
+        )
     if "tp" in vars_:
-        data["tp"] = (("time", "y", "x"), np.array([[[0.001, 0.002, 0.001],
-                                                      [0.000, 0.001, 0.002],
-                                                      [0.001, 0.001, 0.001]]]))
+        data["tp"] = (
+            ("time", "y", "x"),
+            np.array([[[0.001, 0.002, 0.001], [0.000, 0.001, 0.002], [0.001, 0.001, 0.001]]]),
+        )
     ds = xr.Dataset(
         data,
         coords={

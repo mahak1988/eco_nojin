@@ -3,6 +3,7 @@ Calibration Engine.
 
 Automatically adjusts model parameters to fit observed data.
 """
+
 import logging
 from collections.abc import Callable
 from datetime import date
@@ -31,7 +32,9 @@ class ModelCalibrator:
         self.bounds_list = list(param_bounds.values())
         self.param_names = list(param_bounds.keys())
 
-    def _objective_function(self, params: list[float], observed_data: np.ndarray, input_conditions: dict[str, Any]) -> float:
+    def _objective_function(
+        self, params: list[float], observed_data: np.ndarray, input_conditions: dict[str, Any]
+    ) -> float:
         """Objective function to minimize (e.g., RMSE)."""
         param_dict = dict(zip(self.param_names, params))
         predicted_data = self.model_function(input_conditions, param_dict)
@@ -39,7 +42,13 @@ class ModelCalibrator:
         logger.debug(f"Params: {param_dict}, RMSE: {rmse}")
         return rmse
 
-    def calibrate(self, initial_params: dict[str, float], observed_data: np.ndarray, input_conditions: dict[str, Any], method: str = 'L-BFGS-B') -> dict[str, Any]:
+    def calibrate(
+        self,
+        initial_params: dict[str, float],
+        observed_data: np.ndarray,
+        input_conditions: dict[str, Any],
+        method: str = "L-BFGS-B",
+    ) -> dict[str, Any]:
         """
         Performs the calibration.
 
@@ -62,7 +71,7 @@ class ModelCalibrator:
             x0=initial_values,
             args=(observed_array, input_conditions),
             bounds=self.bounds_list,
-            method=method
+            method=method,
         )
 
         if not result.success:
@@ -81,7 +90,7 @@ class ModelCalibrator:
             "rmse": final_rmse,
             "nash_sutcliffe_efficiency": nash_sutcliffe,
             "r_squared": r_squared,
-            "iterations": result.nit
+            "iterations": result.nit,
         }
 
         logger.info(f"Calibration completed successfully. Final RMSE: {final_rmse:.4f}")
@@ -90,7 +99,7 @@ class ModelCalibrator:
             "optimized_params": optimized_params,
             "initial_params": initial_params,
             "metrics": metrics,
-            "optimization_details": result
+            "optimization_details": result,
         }
 
     def _nash_sutcliffe_efficiency(self, observed: np.ndarray, predicted: np.ndarray) -> float:
@@ -110,7 +119,9 @@ class ModelCalibrator:
         return 1 - (ss_res / ss_tot)
 
 
-def run_soil_nutrient_calibration(observed_soil_data: list[dict[str, float]], input_conditions: dict[str, Any], model_version: str) -> str:
+def run_soil_nutrient_calibration(
+    observed_soil_data: list[dict[str, float]], input_conditions: dict[str, Any], model_version: str
+) -> str:
     """
     Runs a specific calibration for the soil nutrient model.
 
@@ -125,7 +136,7 @@ def run_soil_nutrient_calibration(observed_soil_data: list[dict[str, float]], in
     # Prepare data for the objective function
     # Example: Calibrate for Nitrogen over time
     observed_timeseries = [d["nitrogen_ppm"] for d in observed_soil_data]
-    input_conditions_for_model = input_conditions # Pass as-is or transform
+    input_conditions_for_model = input_conditions  # Pass as-is or transform
 
     # Define the model function and its parameters to calibrate
     def model_wrapper(conditions, params):
@@ -139,15 +150,9 @@ def run_soil_nutrient_calibration(observed_soil_data: list[dict[str, float]], in
         prediction = baseline * np.exp(-decay * time_factor)
         return prediction
 
-    param_bounds = {
-        "base_n_level": (50.0, 200.0),
-        "decay_rate": (0.01, 0.5)
-    }
+    param_bounds = {"base_n_level": (50.0, 200.0), "decay_rate": (0.01, 0.5)}
 
-    initial_guess = {
-        "base_n_level": 120.0,
-        "decay_rate": 0.1
-    }
+    initial_guess = {"base_n_level": 120.0, "decay_rate": 0.1}
 
     calibrator = ModelCalibrator(model_wrapper, param_bounds)
     result = calibrator.calibrate(initial_guess, observed_timeseries, input_conditions_for_model)
@@ -160,14 +165,16 @@ def run_soil_nutrient_calibration(observed_soil_data: list[dict[str, float]], in
             calibration_date=date.today(),
             calibration_data={
                 "observed_data_length": len(observed_timeseries),
-                "input_conditions_summary": str(input_conditions)[:200], # Truncate for DB
+                "input_conditions_summary": str(input_conditions)[:200],  # Truncate for DB
             },
             parameters_before=result["initial_params"],
             parameters_after=result["optimized_params"],
             calibration_metrics=result["metrics"],
-            calibration_quality_score=result["metrics"]["nash_sutcliffe_efficiency"], # Use NSE as quality score
-            validation_results={}, # Will be filled later by validator
-            calibrated_by="AutoCalibrator_v1"
+            calibration_quality_score=result["metrics"][
+                "nash_sutcliffe_efficiency"
+            ],  # Use NSE as quality score
+            validation_results={},  # Will be filled later by validator
+            calibrated_by="AutoCalibrator_v1",
         )
         db = SessionLocal()
         try:

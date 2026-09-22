@@ -1,4 +1,5 @@
 """AnalyticsService"""
+
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
@@ -30,10 +31,13 @@ class AnalyticsService:
         }[period]
 
     async def aggregate_sales(
-        self, village_id: str | None = None, period: PeriodType = PeriodType.MONTH,
+        self,
+        village_id: str | None = None,
+        period: PeriodType = PeriodType.MONTH,
     ) -> SalesSummary:
         try:
             from services.marketplace.models import MarketplaceOrder
+
             since = datetime.now(UTC) - self._period_delta(period)
             stmt = select(
                 func.count(MarketplaceOrder.id).label("total_orders"),
@@ -54,10 +58,13 @@ class AnalyticsService:
             return SalesSummary(period=period)
 
     async def aggregate_tourism(
-        self, village_id: str | None = None, period: PeriodType = PeriodType.MONTH,
+        self,
+        village_id: str | None = None,
+        period: PeriodType = PeriodType.MONTH,
     ) -> TourismMetrics:
         try:
             from services.tourism.models import TourismBooking
+
             since = datetime.now(UTC) - self._period_delta(period)
             stmt = select(
                 func.count(TourismBooking.id).label("total_bookings"),
@@ -83,9 +90,14 @@ class AnalyticsService:
                 LandscapeGovernanceMember,
                 LandscapeVillage,
             )
-            v = await self.db.execute(select(func.count(LandscapeVillage.id)).where(LandscapeVillage.is_active == True))
+
+            v = await self.db.execute(
+                select(func.count(LandscapeVillage.id)).where(LandscapeVillage.is_active == True)
+            )
             m = await self.db.execute(select(func.count(LandscapeGovernanceMember.id)))
-            f = await self.db.execute(select(func.coalesce(func.sum(LandscapeFund.pending_balance), 0)))
+            f = await self.db.execute(
+                select(func.coalesce(func.sum(LandscapeFund.pending_balance), 0))
+            )
             return LandscapeMetrics(
                 active_villages=v.scalar() or 0,
                 governance_members=m.scalar() or 0,
@@ -95,14 +107,19 @@ class AnalyticsService:
             return LandscapeMetrics()
 
     async def get_dashboard(
-        self, village_id: str | None = None, period: PeriodType = PeriodType.MONTH,
+        self,
+        village_id: str | None = None,
+        period: PeriodType = PeriodType.MONTH,
     ) -> AnalyticsDashboard:
         sales = await self.aggregate_sales(village_id, period)
         tourism = await self.aggregate_tourism(village_id, period)
         landscape = await self.aggregate_landscape()
         dashboard = AnalyticsDashboard(
-            village_id=village_id, period=period,
-            sales=sales, tourism=tourism, landscape=landscape,
+            village_id=village_id,
+            period=period,
+            sales=sales,
+            tourism=tourism,
+            landscape=landscape,
             generated_at=datetime.now(UTC),
         )
         await self.repo.save_snapshot(

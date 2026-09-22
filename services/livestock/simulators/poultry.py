@@ -1,4 +1,5 @@
 """Poultry Simulator - شبیه‌ساز طیور"""
+
 from services.livestock.schemas import (
     AnimalProduction,
     EconomicAnalysis,
@@ -59,7 +60,9 @@ class PoultrySimulator(BaseLivestockSimulator):
         )
 
         prices = request.market_prices or {
-            "eggs_usd_piece": 0.15, "meat_usd_kg": 5.0, "feed_usd_kg": 0.4,
+            "eggs_usd_piece": 0.15,
+            "meat_usd_kg": 5.0,
+            "feed_usd_kg": 0.4,
         }
 
         revenue = (

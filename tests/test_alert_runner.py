@@ -1,4 +1,5 @@
 """Tests: Phase 4 alert runner (real-data gating)."""
+
 from services.bots.core.alert_runner import evaluate_farm_alerts, latest_real_satellite_row
 
 

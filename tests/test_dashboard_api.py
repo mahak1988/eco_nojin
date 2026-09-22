@@ -1,6 +1,7 @@
 """
 Tests for the Dashboard API endpoints
 """
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -38,7 +39,6 @@ def test_get_recommendations_unauthenticated(client: TestClient):
     """Test getting recommendations without authentication (should fail)."""
     response = client.get("/dashboard/recommendations/farm-001")
     assert response.status_code == 401  # Unauthorized
-
 
 
 # def test_get_dashboard_data_authenticated(client: TestClient):

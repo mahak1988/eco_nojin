@@ -1,4 +1,5 @@
 """Bot configuration from environment variables."""
+
 import structlog
 
 logger = structlog.get_logger()
@@ -16,7 +17,9 @@ class BotConfig:
     """Telegram bot configuration."""
 
     BOT_TOKEN: str = os.getenv("TELEGRAM_BOT_TOKEN", "")
-    API_BASE_URL: str = os.getenv("BOT_API_BASE_URL", os.environ.get("API_BASE_URL", "http://localhost:8000"))
+    API_BASE_URL: str = os.getenv(
+        "BOT_API_BASE_URL", os.environ.get("API_BASE_URL", "http://localhost:8000")
+    )
 
     # Rate limiting
     MAX_REQUESTS_PER_MINUTE: int = int(os.getenv("BOT_RATE_LIMIT", "10"))

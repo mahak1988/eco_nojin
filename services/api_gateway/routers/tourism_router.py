@@ -5,6 +5,7 @@ bookings, token payments) but its database tables are not provisioned in
 Supabase yet. This endpoint reports requires_setup honestly and lists the
 capabilities so the frontend never pretends bookings exist.
 """
+
 from fastapi import APIRouter
 
 router = APIRouter(prefix="/api/v1/tourism", tags=["tourism"])

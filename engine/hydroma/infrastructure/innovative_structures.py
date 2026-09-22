@@ -3,6 +3,7 @@ Innovative Structure Design Engine.
 
 Develops concepts for advanced, sustainable, and resilient infrastructure solutions.
 """
+
 from dataclasses import dataclass
 from typing import Any
 
@@ -10,17 +11,18 @@ from typing import Any
 @dataclass
 class InnovationCriteria:
     """Criteria for innovative structure design."""
-    primary_function: str # e.g., "flood_control", "groundwater_recharge", "erosion_control"
-    environmental_goals: dict[str, float] # e.g., {"co2_reduction_tonnes": 100, "habitat_created_hectares": 0.5}
-    resilience_target: str # e.g., "50-year storm", "climate change adaptation"
-    cost_constraint: float # Maximum budget in USD
-    material_preference: str # e.g., "recycled", "local", "bio_based"
+
+    primary_function: str  # e.g., "flood_control", "groundwater_recharge", "erosion_control"
+    environmental_goals: dict[
+        str, float
+    ]  # e.g., {"co2_reduction_tonnes": 100, "habitat_created_hectares": 0.5}
+    resilience_target: str  # e.g., "50-year storm", "climate change adaptation"
+    cost_constraint: float  # Maximum budget in USD
+    material_preference: str  # e.g., "recycled", "local", "bio_based"
 
 
 def design_bioengineered_channel(
-    criteria: InnovationCriteria,
-    channel_length: float,
-    design_discharge: float
+    criteria: InnovationCriteria, channel_length: float, design_discharge: float
 ) -> dict[str, Any]:
     """
     Designs a bio-engineered channel incorporating vegetation and natural materials.
@@ -41,7 +43,7 @@ def design_bioengineered_channel(
         return {"error": "Bioengineered channel is primarily for erosion control."}
 
     # Estimate required reinforcement area based on discharge and assumed velocity
-    max_allowable_velocity = 1.5 # m/s for bio-stabilized banks
+    max_allowable_velocity = 1.5  # m/s for bio-stabilized banks
     required_cross_section_area = design_discharge / max_allowable_velocity
 
     # Conceptual design elements
@@ -49,7 +51,7 @@ def design_bioengineered_channel(
         "live_stakes": {
             "species": "Salix sp. (Willow)",
             "spacing_linear_meter": 1.0,
-            "estimated_installation_cost_USD": 2.0, # Per meter of bank
+            "estimated_installation_cost_USD": 2.0,  # Per meter of bank
         },
         "coir_logs": {
             "diameter_m": 0.3,
@@ -65,14 +67,18 @@ def design_bioengineered_channel(
         "native_grass_seed_mix": {
             "application_rate_kg_hectare": 20.0,
             "estimated_cost_USD_kg": 3.0,
-        }
+        },
     }
 
     # Cost estimation (conceptual)
-    reinforcement_length = channel_length * 2 # Both sides
-    cost_live_stakes = reinforcement_length * structure_elements["live_stakes"]["estimated_installation_cost_USD"]
+    reinforcement_length = channel_length * 2  # Both sides
+    cost_live_stakes = (
+        reinforcement_length * structure_elements["live_stakes"]["estimated_installation_cost_USD"]
+    )
     num_coir_logs = reinforcement_length / structure_elements["coir_logs"]["spacing_linear_meter"]
-    cost_coir_logs = num_coir_logs * structure_elements["coir_logs"]["estimated_installation_cost_USD_per_log"]
+    cost_coir_logs = (
+        num_coir_logs * structure_elements["coir_logs"]["estimated_installation_cost_USD_per_log"]
+    )
 
     # Assume a cross-sectional shape and estimate riprap volume
     # Example: Trapezoidal with 1m depth, 2m bottom width, 1:1 side slopes -> Top width = 4m
@@ -80,9 +86,13 @@ def design_bioengineered_channel(
     # Total wetted perimeter (sides only for protection) ~ 2 * 1.414 * length
     # Volume of rip-rap = WP * thickness
     estimated_riprap_wp = 2 * 1.414 * channel_length
-    estimated_riprap_volume_m3 = estimated_riprap_wp * 0.3 # thickness
-    estimated_riprap_mass_ton = estimated_riprap_volume_m3 * structure_elements["rock_riprap"]["density_kg_m3"] / 1000
-    cost_rock_riprap = estimated_riprap_mass_ton * structure_elements["rock_riprap"]["estimated_cost_USD_ton"]
+    estimated_riprap_volume_m3 = estimated_riprap_wp * 0.3  # thickness
+    estimated_riprap_mass_ton = (
+        estimated_riprap_volume_m3 * structure_elements["rock_riprap"]["density_kg_m3"] / 1000
+    )
+    cost_rock_riprap = (
+        estimated_riprap_mass_ton * structure_elements["rock_riprap"]["estimated_cost_USD_ton"]
+    )
 
     total_estimated_cost = cost_live_stakes + cost_coir_logs + cost_rock_riprap
 
@@ -98,14 +108,12 @@ def design_bioengineered_channel(
         "estimated_total_cost_USD": total_estimated_cost,
         "cost_within_constraint": total_estimated_cost <= criteria.cost_constraint,
         "material_preference_applied": criteria.material_preference,
-        "notes": "Conceptual design. Requires detailed geotechnical, hydraulic, and ecological assessment."
+        "notes": "Conceptual design. Requires detailed geotechnical, hydraulic, and ecological assessment.",
     }
 
 
 def design_permeable_checkdam(
-    criteria: InnovationCriteria,
-    dam_height: float,
-    catchment_area_ha: float
+    criteria: InnovationCriteria, dam_height: float, catchment_area_ha: float
 ) -> dict[str, Any]:
     """
     Designs a permeable checkdam for sediment trapping and groundwater recharge.
@@ -149,7 +157,7 @@ def design_permeable_checkdam(
             "type": "Angular stones",
             "thickness_m": 0.5,
             "estimated_cost_USD_m3": 40.0,
-        }
+        },
     }
 
     # Cost estimation (conceptual)
@@ -158,12 +166,16 @@ def design_permeable_checkdam(
     dam_bottom_width = 2 * dam_height
     dam_top_width = 4 * dam_height
     dam_cross_area = (dam_bottom_width + dam_top_width) / 2 * dam_height
-    dam_volume_m3 = dam_cross_area * 3.0 # Assume 3m wide dam structure
+    dam_volume_m3 = dam_cross_area * 3.0  # Assume 3m wide dam structure
 
     cost_core = dam_volume_m3 * structure_elements["core_material"]["estimated_cost_USD_m3"]
     # Filter and rip-rap costs are approximated based on dam footprint
-    cost_filter = dam_bottom_width * 1.0 * structure_elements["upstream_filter"]["estimated_cost_USD_m3"] # 1m deep filter
-    cost_rip_rap = dam_top_width * 1.0 * structure_elements["downstream_rip_rap"]["estimated_cost_USD_m3"] # 1m deep rip-rap
+    cost_filter = (
+        dam_bottom_width * 1.0 * structure_elements["upstream_filter"]["estimated_cost_USD_m3"]
+    )  # 1m deep filter
+    cost_rip_rap = (
+        dam_top_width * 1.0 * structure_elements["downstream_rip_rap"]["estimated_cost_USD_m3"]
+    )  # 1m deep rip-rap
 
     total_estimated_cost = cost_core + cost_filter + cost_rip_rap
 
@@ -178,5 +190,5 @@ def design_permeable_checkdam(
         "estimated_total_cost_USD": total_estimated_cost,
         "cost_within_constraint": total_estimated_cost <= criteria.cost_constraint,
         "material_preference_applied": criteria.material_preference,
-        "notes": "Conceptual design. Requires structural stability analysis, hydrological modeling for inflow, and scour assessment downstream."
+        "notes": "Conceptual design. Requires structural stability analysis, hydrological modeling for inflow, and scour assessment downstream.",
     }

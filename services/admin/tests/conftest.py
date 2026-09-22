@@ -1,4 +1,5 @@
 """Fixtures for admin integration tests (Phase 6C fix: missing fixture)."""
+
 import pytest
 
 from services.admin.service import AdminService

@@ -20,12 +20,14 @@ class TestConnectorInstantiation:
     def test_connector_singleton(self):
         """Connector should be available as singleton."""
         from engine.data_connector import connector, DataConnector
+
         assert connector is not None
         assert isinstance(connector, DataConnector)
 
     def test_connector_has_hub(self):
         """Connector should have hub reference."""
         from engine.data_connector import connector
+
         assert hasattr(connector, "hub")
         assert connector.hub is not None
 
@@ -85,24 +87,25 @@ class TestConnectorCropParameters:
     def test_get_crop_parameters(self, connector_instance):
         """Should get crop parameters."""
         pytest.importorskip("duckdb")
-        params = connector_instance.get_crop_parameters("wheat")
+        # Use a crop that exists in the database (scientific name for common wheat)
+        params = connector_instance.get_crop_parameters("triticum aestivum")
         assert isinstance(params, dict)
+        assert params  # not empty
 
     def test_get_crop_parameters_case_insensitive(self, connector_instance):
         """Should be case-insensitive."""
         pytest.importorskip("duckdb")
-        p1 = connector_instance.get_crop_parameters("WHEAT")
-        p2 = connector_instance.get_crop_parameters("wheat")
+        p1 = connector_instance.get_crop_parameters("TRITICUM AESTIVUM")
+        p2 = connector_instance.get_crop_parameters("triticum aestivum")
         assert isinstance(p1, dict)
         assert isinstance(p2, dict)
+        assert p1 == p2
 
     def test_get_crop_parameters_nonexistent(self, connector_instance):
-        """Should return empty dict for nonexistent crop."""
+        """Should raise KeyError for nonexistent crop."""
         pytest.importorskip("duckdb")
-        params = connector_instance.get_crop_parameters(
-            "nonexistent_crop_xyz123456789"
-        )
-        assert isinstance(params, dict)
+        with pytest.raises(KeyError):
+            connector_instance.get_crop_parameters("nonexistent_crop_xyz123456789")
 
 
 class TestConnectorManualData:
@@ -158,25 +161,19 @@ class TestConnectorEdgeCases:
     def test_unicode_in_queries(self, connector_instance):
         """Should handle Unicode/Persian text in queries."""
         pytest.importorskip("duckdb")
-        result = connector_instance.execute_analytics_query(
-            "SELECT 'سلام' AS greeting"
-        )
+        result = connector_instance.execute_analytics_query("SELECT 'سلام' AS greeting")
         assert result is not None
 
     def test_empty_result_handling(self, connector_instance):
         """Should handle empty results gracefully."""
         pytest.importorskip("duckdb")
-        result = connector_instance.execute_analytics_query(
-            "SELECT 1 WHERE 1=0"
-        )
+        result = connector_instance.execute_analytics_query("SELECT 1 WHERE 1=0")
         assert result is not None
 
     def test_null_values_handling(self, connector_instance):
         """Should handle NULL values."""
         pytest.importorskip("duckdb")
-        result = connector_instance.execute_analytics_query(
-            "SELECT NULL AS null_val"
-        )
+        result = connector_instance.execute_analytics_query("SELECT NULL AS null_val")
         assert result is not None
 
 

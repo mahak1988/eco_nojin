@@ -3,6 +3,7 @@ Hydraulic Design Engine - Water Structures.
 
 Calculates and designs basic water structures like weirs, spillways, culverts.
 """
+
 import math
 from dataclasses import dataclass
 from typing import Any
@@ -11,11 +12,12 @@ from typing import Any
 @dataclass
 class WeirDesignCriteria:
     """Criteria for weir design."""
+
     design_flow: float  # m3/s
-    weir_type: str = "broad_crested" # "sharp_crested", "broad_crested", "ogee"
+    weir_type: str = "broad_crested"  # "sharp_crested", "broad_crested", "ogee"
     crest_height: float = 1.0  # m (height of weir above bed)
     crest_length: float = 2.0  # m (width of weir perpendicular to flow)
-    upstream_water_level: float = 2.0 # m above weir crest
+    upstream_water_level: float = 2.0  # m above weir crest
 
 
 def design_broad_crested_weir(criteria: WeirDesignCriteria) -> dict[str, Any]:
@@ -38,14 +40,14 @@ def design_broad_crested_weir(criteria: WeirDesignCriteria) -> dict[str, Any]:
     if H <= 0:
         raise ValueError("Upstream water level must be higher than weir crest height.")
 
-    Cd = 0.86 # Discharge coefficient for broad-crested weir
+    Cd = 0.86  # Discharge coefficient for broad-crested weir
     g = 9.81
-    theoretical_Q = Cd * L * (2/3) * math.sqrt(2*g) * (H**(3/2))
+    theoretical_Q = Cd * L * (2 / 3) * math.sqrt(2 * g) * (H ** (3 / 2))
 
     # Note: The design flow is often the known parameter. This function checks if the proposed
     # dimensions can handle it, or calculates required dimensions if flow is fixed.
     # Let's assume we want to find the required length for a given H and Q.
-    required_length = Q_des / (Cd * (2/3) * math.sqrt(2*g) * (H**(3/2)))
+    required_length = Q_des / (Cd * (2 / 3) * math.sqrt(2 * g) * (H ** (3 / 2)))
 
     return {
         "type": "broad_crested",
@@ -57,19 +59,20 @@ def design_broad_crested_weir(criteria: WeirDesignCriteria) -> dict[str, Any]:
         "crest_height_m": criteria.crest_height,
         "upstream_water_level_m": criteria.upstream_water_level,
         "discharge_coefficient": Cd,
-        "can_handle_flow": theoretical_Q >= Q_des
+        "can_handle_flow": theoretical_Q >= Q_des,
     }
 
 
 @dataclass
 class CulvertDesignCriteria:
     """Criteria for culvert design."""
+
     design_flow: float  # m3/s
-    inlet_type: str = "headwall" # "headwall", "grove", "projecting"
-    outlet_control: bool = True # Flow controlled at outlet or inlet
-    barrel_slope: float = 0.01 # m/m
-    Manning_n: float = 0.012 # For concrete
-    max_headwater_depth: float = 2.0 # m above invert at inlet
+    inlet_type: str = "headwall"  # "headwall", "grove", "projecting"
+    outlet_control: bool = True  # Flow controlled at outlet or inlet
+    barrel_slope: float = 0.01  # m/m
+    Manning_n: float = 0.012  # For concrete
+    max_headwater_depth: float = 2.0  # m above invert at inlet
 
 
 def design_circular_culvert(criteria: CulvertDesignCriteria) -> dict[str, Any]:
@@ -98,7 +101,7 @@ def design_circular_culvert(criteria: CulvertDesignCriteria) -> dict[str, Any]:
     # This gives an initial estimate.
 
     numerator = Q_des * n
-    denominator = (math.pi / 4) * ((1 / 4) ** (2 / 3)) * (S ** 0.5)
+    denominator = (math.pi / 4) * ((1 / 4) ** (2 / 3)) * (S**0.5)
     if denominator <= 0:
         raise ValueError("Slope must be positive for culvert design.")
 
@@ -120,5 +123,5 @@ def design_circular_culvert(criteria: CulvertDesignCriteria) -> dict[str, Any]:
         "barrel_slope": S,
         "manning_n": n,
         "max_allowable_headwater_m": HW_max,
-        "note": "Design is preliminary. Detailed inlet/outlet control checks required using standard culvert design methods."
+        "note": "Design is preliminary. Detailed inlet/outlet control checks required using standard culvert design methods.",
     }

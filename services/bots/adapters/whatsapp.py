@@ -42,7 +42,9 @@ class WhatsAppAdapter:
             "type": "text",
             "text": {"body": text},
         }
-        resp = httpx.post(url, headers={"Authorization": f"Bearer {self.token}"}, json=payload, timeout=30)
+        resp = httpx.post(
+            url, headers={"Authorization": f"Bearer {self.token}"}, json=payload, timeout=30
+        )
         resp.raise_for_status()
         return resp.json()
 

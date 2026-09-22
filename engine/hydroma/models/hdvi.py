@@ -9,6 +9,7 @@ Multi-scale drought index combining:
 
 Reference: McKee et al. (1993), Vicente-Serrano (2010), Kogan (1995)
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -32,7 +33,11 @@ class HDVI(ScientificModel):
     }
 
     def validate_inputs(
-        self, spi_value, spei_value, vhi_value, smi_value,
+        self,
+        spi_value,
+        spei_value,
+        vhi_value,
+        smi_value,
     ) -> tuple[bool, list[str]]:
         errors = []
         if not (-5 <= spi_value <= 5):
@@ -51,7 +56,7 @@ class HDVI(ScientificModel):
         spi_values = np.full_like(precip_series, np.nan, dtype=float)
 
         for i in range(window, len(precip_series)):
-            window_data = precip_series[i - window:i]
+            window_data = precip_series[i - window : i]
             if np.any(window_data <= 0):
                 continue
             mu = np.mean(window_data)
@@ -61,21 +66,24 @@ class HDVI(ScientificModel):
         return spi_values
 
     @staticmethod
-    def vhi(ndvi: np.ndarray, lst: np.ndarray,
-            ndvi_min: float = 0.1, ndvi_max: float = 0.9,
-            lst_min: float = 270.0, lst_max: float = 330.0) -> np.ndarray:
+    def vhi(
+        ndvi: np.ndarray,
+        lst: np.ndarray,
+        ndvi_min: float = 0.1,
+        ndvi_max: float = 0.9,
+        lst_min: float = 270.0,
+        lst_max: float = 330.0,
+    ) -> np.ndarray:
         """Vegetation Health Index (Kogan 1995)"""
         vci = np.clip((ndvi - ndvi_min) / (ndvi_max - ndvi_min + 1e-9), 0, 1) * 100
         tci = np.clip((lst_max - lst) / (lst_max - lst_min + 1e-9), 0, 1) * 100
         return 0.5 * vci + 0.5 * tci
 
     @staticmethod
-    def smi(soil_moisture: np.ndarray, wilting_point: float,
-            field_capacity: float) -> np.ndarray:
+    def smi(soil_moisture: np.ndarray, wilting_point: float, field_capacity: float) -> np.ndarray:
         """Soil Moisture Index"""
         return np.clip(
-            (soil_moisture - wilting_point) / (field_capacity - wilting_point + 1e-9),
-            0, 1
+            (soil_moisture - wilting_point) / (field_capacity - wilting_point + 1e-9), 0, 1
         )
 
     def compute(
@@ -93,12 +101,7 @@ class HDVI(ScientificModel):
         vhi_norm = (vhi_value - 50) / 50 * 3
         smi_norm = (smi_value - 0.5) * 6
 
-        hdvi = (
-            w1 * spi_value +
-            w2 * spei_value +
-            w3 * vhi_norm +
-            w4 * smi_norm
-        )
+        hdvi = w1 * spi_value + w2 * spei_value + w3 * vhi_norm + w4 * smi_norm
 
         hdvi_clipped = np.clip(hdvi, -3, 3)
 
@@ -117,12 +120,15 @@ class HDVI(ScientificModel):
         return np.select(
             [hdvi > 0, hdvi > -1, hdvi > -2],
             ["normal", "mild_drought", "moderate_drought"],
-            default="severe_drought"
+            default="severe_drought",
         )
 
     def validate_against_reference(
-        self, inputs: dict[str, Any], reference_output: float,
-        reference_source: str, tolerance: float = 0.5,
+        self,
+        inputs: dict[str, Any],
+        reference_output: float,
+        reference_source: str,
+        tolerance: float = 0.5,
     ) -> ValidationResult:
         result = self.compute(**inputs)
         computed_value = float(np.mean(result["hdvi"]))

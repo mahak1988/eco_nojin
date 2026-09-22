@@ -27,6 +27,7 @@ class TestSafeMath:
     def test_safe_sqrt_valid(self):
         """Valid inputs should return correct results."""
         from engine.safe_math import safe_sqrt
+
         assert safe_sqrt(4) == 2.0
         assert safe_sqrt(0) == 0.0
         assert safe_sqrt(9) == 3.0
@@ -35,6 +36,7 @@ class TestSafeMath:
     def test_safe_sqrt_negative(self):
         """Negative inputs should return fallback."""
         from engine.safe_math import safe_sqrt
+
         assert safe_sqrt(-1) is None
         assert safe_sqrt(-1, fallback=0.0) == 0.0
         assert safe_sqrt(-100, fallback=-1.0) == -1.0
@@ -42,19 +44,22 @@ class TestSafeMath:
     def test_safe_sqrt_nan_inf(self):
         """NaN/Infinity inputs should return fallback."""
         from engine.safe_math import safe_sqrt
-        assert safe_sqrt(float('nan')) is None
-        assert safe_sqrt(float('inf')) is None
-        assert safe_sqrt(float('-inf')) is None
+
+        assert safe_sqrt(float("nan")) is None
+        assert safe_sqrt(float("inf")) is None
+        assert safe_sqrt(float("-inf")) is None
 
     def test_safe_sqrt_none(self):
         """None input should return fallback."""
         from engine.safe_math import safe_sqrt
+
         assert safe_sqrt(None) is None
         assert safe_sqrt(None, fallback=0.0) == 0.0
 
     def test_safe_log_valid(self):
         """Valid positive inputs should work."""
         from engine.safe_math import safe_log
+
         assert safe_log(math.e) == pytest.approx(1.0)
         assert safe_log(100, base=10) == pytest.approx(2.0)
         assert safe_log(1) == pytest.approx(0.0)
@@ -62,6 +67,7 @@ class TestSafeMath:
     def test_safe_log_negative(self):
         """Negative and zero inputs should return fallback."""
         from engine.safe_math import safe_log
+
         assert safe_log(-1) is None
         assert safe_log(0) is None
         assert safe_log(-1, fallback=-999.0) == -999.0
@@ -69,6 +75,7 @@ class TestSafeMath:
     def test_safe_divide_valid(self):
         """Valid division should work."""
         from engine.safe_math import safe_divide
+
         assert safe_divide(10, 2) == 5.0
         assert safe_divide(0, 5) == 0.0
         assert safe_divide(-10, 2) == -5.0
@@ -76,22 +83,25 @@ class TestSafeMath:
     def test_safe_divide_by_zero(self):
         """Division by zero should return fallback."""
         from engine.safe_math import safe_divide
+
         assert safe_divide(10, 0) is None
         assert safe_divide(10, 0, fallback=0.0) == 0.0
 
     def test_nan_guard(self):
         """nan_guard should filter NaN/Infinity."""
         from engine.safe_math import nan_guard
+
         assert nan_guard(5.0) == 5.0
         assert nan_guard(0.0) == 0.0
-        assert nan_guard(float('nan')) == 0.0
-        assert nan_guard(float('inf')) == 0.0
+        assert nan_guard(float("nan")) == 0.0
+        assert nan_guard(float("inf")) == 0.0
         assert nan_guard(None) == 0.0
         assert nan_guard(None, fallback=-1.0) == -1.0
 
     def test_validate_numeric(self):
         """validate_numeric should enforce ranges."""
         from engine.safe_math import validate_numeric
+
         assert validate_numeric(5, min_val=0, max_val=10) == 5.0
         assert validate_numeric(-5, min_val=0) is None
         assert validate_numeric(15, max_val=10) is None
@@ -111,6 +121,7 @@ class TestSafeMath:
     def test_recursion_protection(self):
         """Recursion depth should be set appropriately."""
         from engine.safe_math import MAX_RECURSION_DEPTH
+
         assert sys.getrecursionlimit() >= MAX_RECURSION_DEPTH
 
 
@@ -120,6 +131,7 @@ class TestResilience:
     def test_circuit_breaker_creation(self):
         """Circuit breaker should be created properly."""
         from engine.resilience import CircuitBreaker, CircuitState
+
         cb = CircuitBreaker(failure_threshold=3)
         assert cb.state == CircuitState.CLOSED
         assert cb.allow_request() is True
@@ -127,6 +139,7 @@ class TestResilience:
     def test_circuit_breaker_opens_on_failures(self):
         """Circuit should open after threshold failures."""
         from engine.resilience import CircuitBreaker, CircuitState
+
         cb = CircuitBreaker(failure_threshold=3, recovery_timeout=0.1)
 
         assert cb.state == CircuitState.CLOSED
@@ -140,6 +153,7 @@ class TestResilience:
     def test_circuit_breaker_recovery(self):
         """Circuit should recover after timeout."""
         from engine.resilience import CircuitBreaker, CircuitState
+
         cb = CircuitBreaker(failure_threshold=2, recovery_timeout=0.1)
 
         cb.record_failure()
@@ -177,9 +191,7 @@ class TestResilience:
         from engine.resilience import circuit_breaker
 
         @circuit_breaker(
-            failure_threshold=1,
-            recovery_timeout=0.1,
-            fallback=lambda: "fallback_value"
+            failure_threshold=1, recovery_timeout=0.1, fallback=lambda: "fallback_value"
         )
         def failing_func():
             raise ValueError("fail")
@@ -213,6 +225,7 @@ class TestResilience:
     def test_with_retry_decorator(self):
         """Retry decorator should retry on failure."""
         from engine.resilience import with_retry
+
         call_count = {"count": 0}
 
         @with_retry(max_retries=2, backoff_factor=0.01)
@@ -229,6 +242,7 @@ class TestResilience:
     def test_get_circuit_breaker_registry(self):
         """Registry should track breakers by name."""
         from engine.resilience import get_circuit_breaker, reset_all_breakers
+
         reset_all_breakers()
 
         cb1 = get_circuit_breaker("test_breaker_1")
@@ -245,6 +259,7 @@ class TestDuckDBPooling:
     def test_duckdb_pool_reuses_connection(self):
         """Pooled connections should be reused."""
         from database.hub import hub
+
         pytest.importorskip("duckdb")
 
         conn1 = hub.get_duckdb("master", pooled=True)
@@ -256,6 +271,7 @@ class TestDuckDBPooling:
     def test_duckdb_non_pooled_creates_new(self):
         """Non-pooled should create fresh connections."""
         from database.hub import hub
+
         pytest.importorskip("duckdb")
 
         conn1 = hub.get_duckdb("master", pooled=False)
@@ -272,6 +288,7 @@ class TestMRVTypeMismatch:
     def test_mrv_query_with_string_site_ids(self):
         """MRV query should handle string site IDs like 'SITE001'."""
         from engine.data_connector import connector
+
         pytest.importorskip("duckdb")
 
         # This should not raise an error

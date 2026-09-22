@@ -142,19 +142,29 @@ def _register_stress_wrappers(ctrl: SimulationController) -> None:
 
     def _run_index_robustness(cfg: _CorruptionParams) -> dict[str, Any]:
         from engine.hydroma.simulation_env.stress import CorruptionConfig, validate_index_robustness
-        corruptions = [CorruptionConfig(
-            cloud_cover_pct=cfg.cloud_cover_pct, sensor_noise_std=cfg.sensor_noise_std,
-            dead_pixels_pct=cfg.dead_pixels_pct, seed=cfg.seed)]
-        res = validate_index_robustness(grid_size=cfg.grid_size, seed=cfg.seed, corruptions=corruptions)
+
+        corruptions = [
+            CorruptionConfig(
+                cloud_cover_pct=cfg.cloud_cover_pct,
+                sensor_noise_std=cfg.sensor_noise_std,
+                dead_pixels_pct=cfg.dead_pixels_pct,
+                seed=cfg.seed,
+            )
+        ]
+        res = validate_index_robustness(
+            grid_size=cfg.grid_size, seed=cfg.seed, corruptions=corruptions
+        )
         return {"results": [r.model_dump() for r in res]}
 
     def _run_volume(cfg: _CorruptionParams) -> dict[str, Any]:
         from engine.hydroma.simulation_env.stress import run_volume_stress
+
         res = run_volume_stress(sizes=[64, 256, 512], seed=cfg.seed)
         return {"results": [r.__dict__ for r in res]}
 
     def _run_fallbacks(_: _CorruptionParams) -> dict[str, Any]:
         from engine.hydroma.simulation_env.stress import validate_fallbacks
+
         res = validate_fallbacks()
         return {"results": [r.model_dump() for r in res]}
 

@@ -1,5 +1,6 @@
 # services/satellite/openet_service.py
 
+
 class OpenETService:
     """
     دریافت داده‌های ET ماهواره‌ای برای بهینه‌سازی آبیاری

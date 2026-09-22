@@ -1,4 +1,5 @@
 """Redis-backed rate limiter with in-memory fallback."""
+
 from __future__ import annotations
 
 import logging
@@ -53,7 +54,9 @@ class RedisRateLimiter:
         results = pipe.execute()
         count = results[2]
 
-        is_credential = path.rstrip('/').endswith(('/login', '/register', '/forgot-password', '/reset-password', '/refresh'))
+        is_credential = path.rstrip("/").endswith(
+            ("/login", "/register", "/forgot-password", "/reset-password", "/refresh")
+        )
         if is_credential and count > auth_limit:
             return False, window
         if user_id and count > user_limit:
@@ -79,7 +82,9 @@ class RedisRateLimiter:
             while bucket and now - bucket[0] > window:
                 bucket.popleft()
 
-            is_credential = path.rstrip('/').endswith(('/login', '/register', '/forgot-password', '/reset-password', '/refresh'))
+            is_credential = path.rstrip("/").endswith(
+                ("/login", "/register", "/forgot-password", "/reset-password", "/refresh")
+            )
             if is_credential and len(bucket) >= auth_limit:
                 return False, window
             if user_id and len(bucket) >= user_limit:

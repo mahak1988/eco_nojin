@@ -8,8 +8,10 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from database.hub import DataHub, hub
 import structlog
+
+from database.hub import DataHub, hub
+
 logger = structlog.get_logger()
 
 
@@ -62,9 +64,7 @@ def test_sqlite():
         conn = hub.get_sqlite("manual")
         assert conn is not None
         cursor = conn.cursor()
-        cursor.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' LIMIT 1"
-        )
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' LIMIT 1")
         cursor.fetchone()
         conn.close()
         logger.info("PASS: SQLite test")

@@ -36,10 +36,12 @@ Usage:
     table = _safe_ident(user_supplied_table)
     query = "SELECT COUNT(*) FROM " + table
 """
+
 from __future__ import annotations
 
 import re
-from typing import Any, Sequence
+from collections.abc import Sequence
+from typing import Any
 
 _IDENT_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 

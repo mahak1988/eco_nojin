@@ -4,6 +4,7 @@ Anonymous POST /api/v1/pilot/apply — rate-limited by gateway middleware.
 Data minimization per the privacy policy: only the fields the visitor
 submits are stored (no IP, no user-agent). Consent is required.
 """
+
 from __future__ import annotations
 
 import logging
@@ -67,3 +68,27 @@ def apply_pilot(payload: PilotApply, db: Session = Depends(get_db)) -> dict[str,
     db.refresh(record)
     logger.info("pilot application stored: id=%s province=%s", record.id, payload.province)
     return {"ok": True, "id": record.id}
+
+
+@router.get("/stats")
+def pilot_stats(db: Session = Depends(get_db)) -> dict[str, Any]:
+    """Application aggregates, not verified participation or pilot outcomes."""
+    from datetime import UTC, datetime
+
+    from sqlalchemy import func, select
+
+    applications = select(
+        func.count(PilotApplication.id),
+        func.count(func.distinct(PilotApplication.province)),
+        func.coalesce(func.sum(PilotApplication.land_hectares), 0.0),
+    ).where(PilotApplication.consent.is_(True))
+    total, provinces, total_hectares = db.execute(applications).one()
+
+    return {
+        "applications": int(total),
+        "provinces": int(provinces),
+        "total_hectares": float(total_hectares),
+        "status": "applications_received" if total > 0 else "pending",
+        "outcomes_status": "awaiting_verified_data",
+        "generated_at": datetime.now(UTC).isoformat(),
+    }

@@ -92,15 +92,15 @@ def t(lang: str, key: str) -> str:
 def detect_language(text: str) -> str:
     """Simple language detection based on character ranges."""
     # Persian/Arabic characters
-    if any('\u0600' <= c <= '\u06FF' for c in text):
+    if any("\u0600" <= c <= "\u06ff" for c in text):
         # Distinguish Persian from Arabic
-        persian_chars = set('پچژکگی')
+        persian_chars = set("پچژکگی")
         if any(c in persian_chars for c in text):
             return "fa"
         return "ar"
 
     # Spanish characters
-    if any(c in text for c in 'áéíóúñ¿¡'):
+    if any(c in text for c in "áéíóúñ¿¡"):
         return "es"
 
     return "en"

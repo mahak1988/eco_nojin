@@ -24,6 +24,7 @@ def project_root() -> Path:
 def datahub_instance():
     """Provide DataHub singleton instance."""
     from database.hub import DataHub
+
     instance = DataHub()
     yield instance
     instance.close_all()
@@ -33,6 +34,7 @@ def datahub_instance():
 def connector_instance():
     """Provide DataConnector singleton instance."""
     from engine.data_connector import connector
+
     return connector
 
 
@@ -59,6 +61,7 @@ def fresh_sqlite_session():
 @pytest.fixture
 def benchmark_timer():
     """Context manager for precise timing."""
+
     class Timer:
         def __init__(self):
             self.start = None

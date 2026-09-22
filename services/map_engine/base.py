@@ -1,4 +1,5 @@
 """Base classes for Map Generation Engine."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -15,25 +16,27 @@ from shapely.geometry import Polygon
 
 class MapType(str, Enum):
     """Supported map types."""
-    M_TOP = "topographic"           # Base topographic map
-    M_SLP = "slope_aspect"          # Slope and aspect
-    M_RUN = "runoff_potential"      # SCS-CN runoff
-    M_RCH = "recharge_potential"    # Groundwater recharge
-    M_TEX = "soil_texture"          # Soil texture classification
-    M_SAL = "salinity"              # Soil salinity (EC)
-    M_OMC = "organic_carbon"        # Soil organic carbon
-    M_VEG = "vegetation"            # NDVI/EVI time series
-    M_ERS = "erosion_rusle"         # RUSLE erosion
-    M_HYD = "watershed"             # Watershed delineation
-    M_LULC = "land_use_cover"       # Land use/land cover
-    M_REG = "regional_context"      # Regional context map
-    M_GEO = "geology"               # Geology map
-    M_PRI = "priority"              # Implementation priority
+
+    M_TOP = "topographic"  # Base topographic map
+    M_SLP = "slope_aspect"  # Slope and aspect
+    M_RUN = "runoff_potential"  # SCS-CN runoff
+    M_RCH = "recharge_potential"  # Groundwater recharge
+    M_TEX = "soil_texture"  # Soil texture classification
+    M_SAL = "salinity"  # Soil salinity (EC)
+    M_OMC = "organic_carbon"  # Soil organic carbon
+    M_VEG = "vegetation"  # NDVI/EVI time series
+    M_ERS = "erosion_rusle"  # RUSLE erosion
+    M_HYD = "watershed"  # Watershed delineation
+    M_LULC = "land_use_cover"  # Land use/land cover
+    M_REG = "regional_context"  # Regional context map
+    M_GEO = "geology"  # Geology map
+    M_PRI = "priority"  # Implementation priority
 
 
 @dataclass
 class MapRequest:
     """Request to generate a map."""
+
     map_type: MapType
     region: Polygon  # Bounding polygon in WGS84 (EPSG:4326)
     target_crs: str = "auto"  # "auto" = UTM zone based on centroid
@@ -45,6 +48,7 @@ class MapRequest:
 @dataclass
 class MapResult:
     """Result of map generation."""
+
     map_id: str
     map_type: MapType
     cog_path: Path

@@ -7,10 +7,10 @@ Provides:
 - List active sessions
 - Auto-expiry (configurable TTL)
 """
+
 import logging
-import time
 import uuid
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 logger = logging.getLogger("econojin.sessions")
@@ -48,6 +48,7 @@ class SessionManager:
         if self._redis is not None:
             try:
                 import json
+
                 self._redis.setex(
                     self._key(session_id),
                     self._ttl,
@@ -66,6 +67,7 @@ class SessionManager:
         if self._redis is not None:
             try:
                 import json
+
                 raw = self._redis.get(self._key(session_id))
                 if raw:
                     data = json.loads(raw)
@@ -100,11 +102,12 @@ class SessionManager:
         count = 0
         if self._redis is not None:
             try:
-                keys = self._redis.keys(f"session:*")
+                keys = self._redis.keys("session:*")
                 for key in keys:
                     raw = self._redis.get(key)
                     if raw:
                         import json
+
                         data = json.loads(raw)
                         if data.get("user_id") == user_id and key != self._key(except_session):
                             self._redis.delete(key)
@@ -133,6 +136,7 @@ class SessionManager:
         if self._redis is not None:
             try:
                 import json
+
                 self._redis.setex(self._key(session_id), self._ttl, json.dumps(data))
             except Exception:
                 self._redis = None

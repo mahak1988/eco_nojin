@@ -4,6 +4,7 @@ Supabase database models for Eco Nojin.
 These models map to the platform_* tables in Supabase.
 They complement existing eco_nojin models without modifying them.
 """
+
 from dataclasses import dataclass
 from datetime import datetime
 from uuid import UUID
@@ -12,6 +13,7 @@ from uuid import UUID
 @dataclass
 class PlatformLandscape:
     """Landscape (village/region) in the platform."""
+
     id: UUID | None = None
     name: str = ""
     slug: str = ""
@@ -25,6 +27,7 @@ class PlatformLandscape:
 @dataclass
 class PlatformProfile:
     """User profile in the platform."""
+
     id: UUID | None = None
     phone: str | None = None
     display_name: str | None = None
@@ -40,6 +43,7 @@ class PlatformProfile:
 @dataclass
 class PlatformCarbonProject:
     """Carbon project in the platform."""
+
     id: UUID | None = None
     landscape_id: UUID | None = None
     owner_id: UUID | None = None
@@ -57,6 +61,7 @@ class PlatformCarbonProject:
 @dataclass
 class PlatformCarbonCredit:
     """Carbon credit in the platform."""
+
     id: UUID | None = None
     project_id: UUID | None = None
     owner_id: UUID | None = None

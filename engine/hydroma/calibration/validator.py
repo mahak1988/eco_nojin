@@ -3,6 +3,7 @@ Validation Engine.
 
 Validates model performance against independent datasets after calibration.
 """
+
 import logging
 from collections.abc import Callable
 from datetime import date
@@ -26,7 +27,12 @@ class ModelValidator:
         """
         self.model_function = model_function
 
-    def validate(self, calibrated_params: dict[str, float], validation_data: list[dict[str, Any]], input_conditions: dict[str, Any]) -> dict[str, float]:
+    def validate(
+        self,
+        calibrated_params: dict[str, float],
+        validation_data: list[dict[str, Any]],
+        input_conditions: dict[str, Any],
+    ) -> dict[str, float]:
         """
         Validates the model.
 
@@ -61,7 +67,7 @@ class ModelValidator:
             "nash_sutcliffe_efficiency": nash_sutcliffe,
             "r_squared": r_squared,
             "mean_error": np.mean(observed_vals - predicted_array),
-            "mae": np.mean(np.abs(observed_vals - predicted_array))
+            "mae": np.mean(np.abs(observed_vals - predicted_array)),
         }
 
         logger.info(f"Validation completed. RMSE: {rmse:.4f}, NSE: {nash_sutcliffe:.4f}")
@@ -84,7 +90,11 @@ class ModelValidator:
         return 1 - (ss_res / ss_tot)
 
 
-def run_validation_for_calibration(calibration_record_id: str, validation_data: list[dict[str, Any]], input_conditions: dict[str, Any]):
+def run_validation_for_calibration(
+    calibration_record_id: str,
+    validation_data: list[dict[str, Any]],
+    input_conditions: dict[str, Any],
+):
     """
     Performs validation for a specific calibration record.
 
@@ -98,7 +108,11 @@ def run_validation_for_calibration(calibration_record_id: str, validation_data: 
     # Retrieve calibrated parameters from DB
     db = SessionLocal()
     try:
-        cal_record = db.query(CalibrationRecordDB).filter(CalibrationRecordDB.id == calibration_record_id).first()
+        cal_record = (
+            db.query(CalibrationRecordDB)
+            .filter(CalibrationRecordDB.id == calibration_record_id)
+            .first()
+        )
         if not cal_record:
             logger.error(f"Calibration record {calibration_record_id} not found.")
             return
@@ -111,6 +125,7 @@ def run_validation_for_calibration(calibration_record_id: str, validation_data: 
         # This is a simplified dispatch. A factory pattern would be better for many models.
         if model_name == "soil_nutrient_model":
             from engine.hydroma.soil.nutrient_dynamic import run_nutrient_model  # hypothetical
+
             model_func = run_nutrient_model
         else:
             logger.error(f"Model {model_name} not recognized for validation.")
@@ -118,11 +133,15 @@ def run_validation_for_calibration(calibration_record_id: str, validation_data: 
 
         # Run validation
         validator = ModelValidator(model_func)
-        validation_metrics = validator.validate(calibrated_params, validation_data, input_conditions)
+        validation_metrics = validator.validate(
+            calibrated_params, validation_data, input_conditions
+        )
 
         # Update the calibration record in DB with validation results
         cal_record.validation_results = validation_metrics
-        cal_record.approved_at = date.today() # Consider this validated/approved upon successful validation
+        cal_record.approved_at = (
+            date.today()
+        )  # Consider this validated/approved upon successful validation
         db.commit()
         logger.info(f"Validation results added to calibration record {calibration_record_id}.")
 

@@ -9,13 +9,13 @@ RUBIKA_TOKEN). Telegram/Eitaa run concurrently on the same dispatcher.
 """
 
 from __future__ import annotations
+
 import structlog
 
 logger = structlog.get_logger()
 
 import asyncio
 import logging
-import sys
 
 from .adapters.bale import BaleGateway
 from .adapters.rubika import RubikaGateway
@@ -39,10 +39,9 @@ def runner_plan(config: BotConfig) -> list[str]:
 async def _run(config: BotConfig) -> None:
     plan = enabled_platforms(config)
     if not plan:
-        print(
-            "No platform configured. Set BOT_TOKEN in .env (Telegram), or\n"
-            "enable Eitaa/Bale/Rubika per docs/en/15_multiplatform_bots.md.",
-            file=sys.stderr,
+        logger.error(
+            "No platform configured. Set BOT_TOKEN in .env (Telegram), or "
+            "enable Eitaa/Bale/Rubika per docs/en/15_multiplatform_bots.md."
         )
         raise SystemExit(2)
 
@@ -68,7 +67,7 @@ async def _run(config: BotConfig) -> None:
             logger.error("Unknown platform kind %s", spec.kind)
 
     if not tasks:
-        logger.warning("No runnable platform (see warnings above).", file=sys.stderr)
+        logger.error("No runnable platform (see warnings above).")
         raise SystemExit(2)
 
     await asyncio.gather(*tasks)
@@ -78,10 +77,9 @@ def main() -> int:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
     config = BotConfig.from_env()
     if not config.has_token and not enabled_platforms(config):
-        print(
-            "BOT_TOKEN is missing. Set it in .env (get one from @BotFather).\n"
-            "See docs/en/14_telegram_bot.md for the quick start.",
-            file=sys.stderr,
+        logger.error(
+            "BOT_TOKEN is missing. Set it in .env (get one from @BotFather). "
+            "See docs/en/14_telegram_bot.md for the quick start."
         )
         return 2
     try:

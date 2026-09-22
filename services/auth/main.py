@@ -9,10 +9,9 @@ Implements the real auth backend used by the API gateway:
 
 import logging
 from datetime import UTC, datetime, timedelta
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, APIKeyHeader
+from fastapi.security import APIKeyHeader, OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
@@ -59,9 +58,11 @@ def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
-    expire = datetime.now(UTC) + (expires_delta or timedelta(minutes=_settings.jwt_access_token_minutes))
+    expire = datetime.now(UTC) + (
+        expires_delta or timedelta(minutes=_settings.jwt_access_token_minutes)
+    )
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, _settings.jwt_secret_key, algorithm=_settings.jwt_algorithm)
 
@@ -72,7 +73,7 @@ async def get_db() -> AsyncSession:
 
 
 async def get_current_user(
-    token: Optional[str] = Depends(oauth2_scheme),
+    token: str | None = Depends(oauth2_scheme),
     db: AsyncSession = Depends(get_db),
 ) -> User:
     """Strict authentication — returns the authenticated User or raises 401."""
@@ -104,7 +105,7 @@ def require_admin(user: User = Depends(get_current_user)) -> User:
 
 
 async def verify_api_key(
-    api_key: Optional[str] = Depends(api_key_header),
+    api_key: str | None = Depends(api_key_header),
 ) -> dict:
     """Verify telco webhook API key."""
     if not api_key or api_key != _settings.api_key:

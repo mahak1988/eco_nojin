@@ -24,9 +24,7 @@ class IoTReading(BaseModel):
     )
     value: float = Field(..., description="Measured value")
     unit: str = Field(..., min_length=1, max_length=50, description="Unit of the value")
-    ts: datetime = Field(
-        default_factory=datetime.utcnow, description="Observation timestamp (UTC)"
-    )
+    ts: datetime = Field(default_factory=datetime.utcnow, description="Observation timestamp (UTC)")
 
 
 class CitizenReport(BaseModel):

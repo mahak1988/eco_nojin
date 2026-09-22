@@ -66,10 +66,7 @@ class MemoryTracker:
             return ["Memory tracing not started"]
         snapshot = tracemalloc.take_snapshot()
         top_stats = snapshot.statistics("lineno")
-        return [
-            f"{stat.traceback}: {stat.size / 1024:.1f} KB"
-            for stat in top_stats[:limit]
-        ]
+        return [f"{stat.traceback}: {stat.size / 1024:.1f} KB" for stat in top_stats[:limit]]
 
     def summary(self) -> str:
         """Get human-readable summary."""
@@ -98,6 +95,7 @@ def track_memory(name: str, warn_threshold_mb: float = 10.0):
 
 def monitor_memory(warn_threshold_mb: float = 10.0):
     """Decorator to monitor memory usage of a function."""
+
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -106,7 +104,9 @@ def monitor_memory(warn_threshold_mb: float = 10.0):
             if tracker.is_leaking():
                 logger.warning(tracker.summary())
             return result
+
         return wrapper
+
     return decorator
 
 
@@ -124,11 +124,13 @@ class MemoryManager:
         is_leak = delta_mb > warn_threshold_mb
         if is_leak:
             self._leak_count += 1
-        self._history.append({
-            "name": name,
-            "delta_mb": delta_mb,
-            "is_leak": is_leak,
-        })
+        self._history.append(
+            {
+                "name": name,
+                "delta_mb": delta_mb,
+                "is_leak": is_leak,
+            }
+        )
         # Keep only last 100 operations
         if len(self._history) > 100:
             self._history = self._history[-100:]

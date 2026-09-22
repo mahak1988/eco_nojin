@@ -10,7 +10,9 @@ from .core.ai import AdviceService
 from .handlers import advice, farm, start
 
 
-def build_dispatcher(config: BotConfig | None = None, advice_service: AdviceService | None = None) -> Dispatcher:
+def build_dispatcher(
+    config: BotConfig | None = None, advice_service: AdviceService | None = None
+) -> Dispatcher:
     """Assemble the dispatcher with all routers and shared services."""
     config = config or BotConfig.from_env()
     dp = Dispatcher(storage=MemoryStorage())

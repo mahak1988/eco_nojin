@@ -1,4 +1,5 @@
 """Multi-Layer Cropping (Agroforestry) Adapter"""
+
 from datetime import UTC, datetime
 
 from services.simulation.base import BaseSimulator, SimulatorRegistry
@@ -13,6 +14,7 @@ from services.simulation.schemas import (
 @SimulatorRegistry.register
 class MultiLayerAdapter(BaseSimulator):
     """کشت چندلایه - Agroforestry & Multi-story cropping"""
+
     simulator_type = SimulationType.MULTI_LAYER
     name = "AgroforestryEngine"
     version = "1.0.0"
@@ -37,13 +39,15 @@ class MultiLayerAdapter(BaseSimulator):
         # لایه بالایی (canopy - درختان)
         if ml.canopy_layer:
             canopy_yield = self._estimate_yield(ml.canopy_layer, shade_provider=True)
-            layers.append({
-                "layer": "canopy",
-                "crop": ml.canopy_layer.crop_type,
-                "yield_estimate": canopy_yield,
-                "shade_provided_pct": 40,
-                "height_m": 8.0,
-            })
+            layers.append(
+                {
+                    "layer": "canopy",
+                    "crop": ml.canopy_layer.crop_type,
+                    "yield_estimate": canopy_yield,
+                    "shade_provided_pct": 40,
+                    "height_m": 8.0,
+                }
+            )
 
         # لایه میانی
         if ml.sub_canopy_layer:
@@ -51,13 +55,15 @@ class MultiLayerAdapter(BaseSimulator):
                 ml.sub_canopy_layer,
                 shade_tolerance=ml.shade_tolerance,
             )
-            layers.append({
-                "layer": "sub_canopy",
-                "crop": ml.sub_canopy_layer.crop_type,
-                "yield_estimate": sub_yield,
-                "shade_tolerance": ml.shade_tolerance,
-                "height_m": 2.5,
-            })
+            layers.append(
+                {
+                    "layer": "sub_canopy",
+                    "crop": ml.sub_canopy_layer.crop_type,
+                    "yield_estimate": sub_yield,
+                    "shade_tolerance": ml.shade_tolerance,
+                    "height_m": 2.5,
+                }
+            )
 
         # لایه زمینی
         if ml.ground_layer:
@@ -65,12 +71,14 @@ class MultiLayerAdapter(BaseSimulator):
                 ml.ground_layer,
                 shade_tolerance=ml.shade_tolerance * 0.8,
             )
-            layers.append({
-                "layer": "ground",
-                "crop": ml.ground_layer.crop_type,
-                "yield_estimate": ground_yield,
-                "height_m": 0.5,
-            })
+            layers.append(
+                {
+                    "layer": "ground",
+                    "crop": ml.ground_layer.crop_type,
+                    "yield_estimate": ground_yield,
+                    "height_m": 0.5,
+                }
+            )
 
         # مجموع عملکرد و مقایسه با monoculture
         total_yield = sum(l["yield_estimate"] for l in layers)
@@ -90,7 +98,9 @@ class MultiLayerAdapter(BaseSimulator):
                 "layers": layers,
                 "total_layers": len(layers),
                 "total_yield_ton_ha": round(total_yield, 2),
-                "land_equivalent_ratio": round(mono_equivalent / max(1, total_yield / len(layers)), 2),
+                "land_equivalent_ratio": round(
+                    mono_equivalent / max(1, total_yield / len(layers)), 2
+                ),
                 "biodiversity_score": biodiversity_score,
                 "water_use_efficiency_gain_pct": 30,
                 "pest_reduction_pct": pest_reduction,
@@ -102,10 +112,22 @@ class MultiLayerAdapter(BaseSimulator):
 
     def _estimate_yield(self, crop, shade_provider=False, shade_tolerance=1.0) -> float:
         base_yields = {
-            "wheat": 4.5, "barley": 4.0, "maize": 8.0, "rice": 6.0,
-            "tomato": 30.0, "potato": 25.0, "olive": 8.0, "pistachio": 2.5,
-            "walnut": 3.0, "almond": 2.0, "pomegranate": 12.0, "grape": 15.0,
-            "alfalfa": 12.0, "clover": 8.0, "mint": 3.0, "saffron": 0.01,
+            "wheat": 4.5,
+            "barley": 4.0,
+            "maize": 8.0,
+            "rice": 6.0,
+            "tomato": 30.0,
+            "potato": 25.0,
+            "olive": 8.0,
+            "pistachio": 2.5,
+            "walnut": 3.0,
+            "almond": 2.0,
+            "pomegranate": 12.0,
+            "grape": 15.0,
+            "alfalfa": 12.0,
+            "clover": 8.0,
+            "mint": 3.0,
+            "saffron": 0.01,
         }
         base = base_yields.get(crop.crop_type.lower(), 5.0)
         if shade_provider:

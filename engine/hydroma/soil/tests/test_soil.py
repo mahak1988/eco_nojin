@@ -12,6 +12,7 @@ Tests cover:
 Author: Eco Nojin Team
 Created: 2026-08-16
 """
+
 import pytest
 
 
@@ -24,30 +25,35 @@ class TestTaxonomy:
     def test_classify_loam(self):
         """Test classification of loam soil (20% clay, 40% silt, 40% sand)."""
         from engine.hydroma.soil.taxonomy import classify_usda_texture
+
         result = classify_usda_texture(clay=20, silt=40, sand=40)
 
-        assert 'texture' in result
-        assert result['texture'] == 'loam'
-        assert 'water_holding_capacity' in result
-        assert 'permeability' in result
+        assert "texture" in result
+        assert result["texture"] == "loam"
+        assert "water_holding_capacity" in result
+        assert "permeability" in result
 
     def test_classify_clay(self):
         """Test classification of clay soil."""
         from engine.hydroma.soil.taxonomy import classify_usda_texture
+
         result = classify_usda_texture(clay=50, silt=30, sand=20)
 
-        assert result['texture'] == 'clay'
-        assert result['water_holding_capacity']['value'] > 200  # Clay has high WHC
+        assert result["texture"] == "clay"
+        assert result["water_holding_capacity"]["value"] > 200  # Clay has high WHC
 
     def test_classify_sand(self):
         """Test classification of sandy soil."""
         from engine.hydroma.soil.taxonomy import classify_usda_texture
+
         # (5, 5, 90) is definitively in the 'sand' region of USDA texture triangle
         # Sand region: 0-10% clay, 0-15% silt, 85-100% sand
         result = classify_usda_texture(clay=5, silt=5, sand=90)
 
-        assert result['texture'] in ['sand', 'loamy_sand'], f"Expected 'sand' or 'loamy_sand', got '{result['texture']}'"
-        assert result['permeability'] in ['very_high', 'high']
+        assert result["texture"] in ["sand", "loamy_sand"], (
+            f"Expected 'sand' or 'loamy_sand', got '{result['texture']}'"
+        )
+        assert result["permeability"] in ["very_high", "high"]
 
     def test_invalid_percentages_sum(self):
         """Test that percentages not summing to 100 raise error."""
@@ -67,26 +73,33 @@ class TestTaxonomy:
         """Test complete taxonomy with chemical properties."""
         from engine.hydroma.soil.taxonomy import get_soil_taxonomy
 
-        result = get_soil_taxonomy(
-            clay=20, silt=40, sand=40,
-            organic_matter=2.5, ph=6.5
-        )
+        result = get_soil_taxonomy(clay=20, silt=40, sand=40, organic_matter=2.5, ph=6.5)
 
-        assert 'texture' in result
-        assert 'taxonomy' in result
-        assert 'interpretation' in result
-        assert result['taxonomy']['order'] in [
-            'Alfisol', 'Andisol', 'Aridisol', 'Entisol', 'Gelisol',
-            'Histosol', 'Inceptisol', 'Mollisol', 'Oxisol', 'Spodosol',
-            'Ultisol', 'Vertisol'
+        assert "texture" in result
+        assert "taxonomy" in result
+        assert "interpretation" in result
+        assert result["taxonomy"]["order"] in [
+            "Alfisol",
+            "Andisol",
+            "Aridisol",
+            "Entisol",
+            "Gelisol",
+            "Histosol",
+            "Inceptisol",
+            "Mollisol",
+            "Oxisol",
+            "Spodosol",
+            "Ultisol",
+            "Vertisol",
         ]
 
     def test_silt_loam_classification(self):
         """Test silt loam classification."""
         from engine.hydroma.soil.taxonomy import classify_usda_texture
+
         result = classify_usda_texture(clay=15, silt=65, sand=20)
 
-        assert result['texture'] == 'silt_loam'
+        assert result["texture"] == "silt_loam"
 
 
 # ============================================================================
@@ -101,22 +114,22 @@ class TestChemistry:
 
         result = calculate_cec(clay=30, organic_matter=2.5, ph=6.5)
 
-        assert 'cec' in result
-        assert result['cec'] > 0
-        assert result['unit'] == 'meq/100g'
-        assert 'components' in result
-        assert 'interpretation' in result
+        assert "cec" in result
+        assert result["cec"] > 0
+        assert result["unit"] == "meq/100g"
+        assert "components" in result
+        assert "interpretation" in result
 
         # Verify calculation: (30 * 0.5) + (2.5 * 2.0) + ph_factor
         expected_min = 15 + 5  # 20 minimum
-        assert result['cec'] >= expected_min
+        assert result["cec"] >= expected_min
 
     def test_cec_increases_with_clay(self):
         """Test that CEC increases with clay content."""
         from engine.hydroma.soil.chemistry import calculate_cec
 
-        cec_low = calculate_cec(clay=10, organic_matter=2, ph=6.5)['cec']
-        cec_high = calculate_cec(clay=40, organic_matter=2, ph=6.5)['cec']
+        cec_low = calculate_cec(clay=10, organic_matter=2, ph=6.5)["cec"]
+        cec_high = calculate_cec(clay=40, organic_matter=2, ph=6.5)["cec"]
 
         assert cec_high > cec_low, "CEC should increase with clay"
 
@@ -124,8 +137,8 @@ class TestChemistry:
         """Test that CEC increases with organic matter."""
         from engine.hydroma.soil.chemistry import calculate_cec
 
-        cec_low = calculate_cec(clay=20, organic_matter=1, ph=6.5)['cec']
-        cec_high = calculate_cec(clay=20, organic_matter=5, ph=6.5)['cec']
+        cec_low = calculate_cec(clay=20, organic_matter=1, ph=6.5)["cec"]
+        cec_high = calculate_cec(clay=20, organic_matter=5, ph=6.5)["cec"]
 
         assert cec_high > cec_low, "CEC should increase with OM"
 
@@ -134,14 +147,14 @@ class TestChemistry:
         from engine.hydroma.soil.chemistry import calculate_cec
 
         result = calculate_cec(clay=2, organic_matter=0.5, ph=5.0)
-        assert result['interpretation']['rating'] == 'very_low'
+        assert result["interpretation"]["rating"] == "very_low"
 
     def test_cec_interpretation_very_high(self):
         """Test CEC interpretation for very high values."""
         from engine.hydroma.soil.chemistry import calculate_cec
 
         result = calculate_cec(clay=60, organic_matter=8, ph=7.0)
-        assert result['interpretation']['rating'] == 'very_high'
+        assert result["interpretation"]["rating"] == "very_high"
 
     def test_calculate_esp_normal(self):
         """Test ESP calculation for normal soil."""
@@ -150,10 +163,11 @@ class TestChemistry:
         # ESP = 4/20 * 100 = 2% which is definitively 'normal'
         result = calculate_esp(exchangeable_na=0.4, cec=20)
 
-        assert result['esp'] == 2
-        assert result['unit'] == '%'
-        assert result['classification'] == 'normal', \
+        assert result["esp"] == 2
+        assert result["unit"] == "%"
+        assert result["classification"] == "normal", (
             f"Expected 'normal', got '{result['classification']}'"
+        )
 
     def test_esp_sodic_classification(self):
         """Test ESP classification for sodic soil."""
@@ -161,9 +175,9 @@ class TestChemistry:
 
         result = calculate_esp(exchangeable_na=4, cec=20)
 
-        assert result['esp'] == 20
-        assert result['classification'] == 'sodic'
-        assert result['needs_amendment'] is True
+        assert result["esp"] == 20
+        assert result["classification"] == "sodic"
+        assert result["needs_amendment"] is True
 
     def test_esp_invalid_cec(self):
         """Test ESP with invalid CEC raises error."""
@@ -178,9 +192,9 @@ class TestChemistry:
 
         result = calculate_sar(na=5, ca=10, mg=6)
 
-        assert result['sar'] > 0
-        assert result['unit'] == '(meq/L)^0.5'
-        assert result['suitable_for_irrigation'] is True
+        assert result["sar"] > 0
+        assert result["unit"] == "(meq/L)^0.5"
+        assert result["suitable_for_irrigation"] is True
 
     def test_sar_high_hazard(self):
         """Test SAR classification for high hazard."""
@@ -188,8 +202,8 @@ class TestChemistry:
 
         result = calculate_sar(na=50, ca=5, mg=3)
 
-        assert result['classification'] == 'very_high_sodium'
-        assert result['suitable_for_irrigation'] is False
+        assert result["classification"] == "very_high_sodium"
+        assert result["suitable_for_irrigation"] is False
 
     def test_sar_invalid_negative(self):
         """Test SAR with negative concentrations."""
@@ -204,9 +218,9 @@ class TestChemistry:
 
         result = calculate_ph_buffer(ph=5.5)
 
-        assert result['action'] == 'add_lime'
-        assert result['lime_requirement'] > 0
-        assert result['lime_unit'] == 'tons/ha'
+        assert result["action"] == "add_lime"
+        assert result["lime_requirement"] > 0
+        assert result["lime_unit"] == "tons/ha"
 
     def test_ph_buffer_optimal(self):
         """Test pH buffering for optimal pH."""
@@ -214,8 +228,8 @@ class TestChemistry:
 
         result = calculate_ph_buffer(ph=6.5)
 
-        assert result['action'] == 'no_amendment_needed'
-        assert result['ph_status'] == 'optimal'
+        assert result["action"] == "no_amendment_needed"
+        assert result["ph_status"] == "optimal"
 
     def test_ph_buffer_alkaline_needs_sulfur(self):
         """Test pH buffering recommends sulfur for alkaline soil."""
@@ -223,8 +237,8 @@ class TestChemistry:
 
         result = calculate_ph_buffer(ph=8.0)
 
-        assert result['action'] == 'add_sulfur'
-        assert result['sulfur_requirement'] > 0
+        assert result["action"] == "add_sulfur"
+        assert result["sulfur_requirement"] > 0
 
 
 # ============================================================================
@@ -238,10 +252,7 @@ class TestWaterRetention:
         from engine.hydroma.soil.water_retention import van_genuchten_retention
 
         # Loam parameters at h = -100 cm
-        theta = van_genuchten_retention(
-            theta_r=0.078, theta_s=0.463,
-            alpha=0.036, n=1.56, h=-100
-        )
+        theta = van_genuchten_retention(theta_r=0.078, theta_s=0.463, alpha=0.036, n=1.56, h=-100)
 
         # Water content should be between residual and saturated
         assert 0.078 < theta < 0.463
@@ -251,10 +262,7 @@ class TestWaterRetention:
         """Test that h=0 returns saturated water content."""
         from engine.hydroma.soil.water_retention import van_genuchten_retention
 
-        theta = van_genuchten_retention(
-            theta_r=0.078, theta_s=0.463,
-            alpha=0.036, n=1.56, h=0
-        )
+        theta = van_genuchten_retention(theta_r=0.078, theta_s=0.463, alpha=0.036, n=1.56, h=0)
 
         assert theta == 0.463
 
@@ -272,9 +280,7 @@ class TestWaterRetention:
         from engine.hydroma.soil.water_retention import van_genuchten_conductivity
 
         k = van_genuchten_conductivity(
-            theta_r=0.078, theta_s=0.463,
-            alpha=0.036, n=1.56,
-            k_s=100.0, h=-100
+            theta_r=0.078, theta_s=0.463, alpha=0.036, n=1.56, k_s=100.0, h=-100
         )
 
         assert 0 < k < 100.0, "Conductivity should be between 0 and Ks"
@@ -284,9 +290,7 @@ class TestWaterRetention:
         from engine.hydroma.soil.water_retention import van_genuchten_conductivity
 
         k = van_genuchten_conductivity(
-            theta_r=0.078, theta_s=0.463,
-            alpha=0.036, n=1.56,
-            k_s=100.0, h=0
+            theta_r=0.078, theta_s=0.463, alpha=0.036, n=1.56, k_s=100.0, h=0
         )
 
         assert k == 100.0
@@ -295,50 +299,51 @@ class TestWaterRetention:
         """Test getting parameters for known texture."""
         from engine.hydroma.soil.water_retention import get_vg_parameters
 
-        params = get_vg_parameters('loam')
+        params = get_vg_parameters("loam")
 
-        assert params['texture'] == 'loam'
-        assert params['theta_r'] == 0.078
-        assert params['theta_s'] == 0.463
-        assert params['alpha'] == 0.036
-        assert params['n'] == 1.56
-        assert 'm' in params
-        assert abs(params['m'] - (1 - 1/1.56)) < 0.01
+        assert params["texture"] == "loam"
+        assert params["theta_r"] == 0.078
+        # Carsel & Parrish (1988) loam: theta_s = 0.43. (0.463 is the
+        # Saxton & Rawls loam value and is inconsistent with the C&P
+        # alpha=0.036 / n=1.56 stored in the same record.)
+        assert params["theta_s"] == 0.43
+        assert params["alpha"] == 0.036
+        assert params["n"] == 1.56
+        assert "m" in params
+        assert abs(params["m"] - (1 - 1 / 1.56)) < 0.01
 
     def test_get_vg_parameters_unknown(self):
         """Test that unknown texture defaults to loam."""
         from engine.hydroma.soil.water_retention import get_vg_parameters
 
-        params = get_vg_parameters('unknown_texture')
+        params = get_vg_parameters("unknown_texture")
 
-        assert params['texture'] == 'loam'
+        assert params["texture"] == "loam"
 
     def test_calculate_water_retention_curve(self):
         """Test complete retention curve calculation."""
         from engine.hydroma.soil.water_retention import calculate_water_retention_curve
 
-        result = calculate_water_retention_curve('loam')
+        result = calculate_water_retention_curve("loam")
 
-        assert result['texture'] == 'loam'
-        assert 'curve' in result
-        assert len(result['curve']) > 0
+        assert result["texture"] == "loam"
+        assert "curve" in result
+        assert len(result["curve"]) > 0
 
         # Check that water content decreases with more negative h
-        curve = result['curve']
+        curve = result["curve"]
         for i in range(len(curve) - 1):
-            assert curve[i]['water_content'] >= curve[i+1]['water_content']
+            assert curve[i]["water_content"] >= curve[i + 1]["water_content"]
 
     def test_available_water_calculation(self):
         """Test available water capacity calculation."""
         from engine.hydroma.soil.water_retention import calculate_available_water
 
-        result = calculate_available_water(
-            theta_fc=0.25, theta_wp=0.10, root_depth=50
-        )
+        result = calculate_available_water(theta_fc=0.25, theta_wp=0.10, root_depth=50)
 
-        assert result['available_water_capacity'] == 0.15
-        assert result['total_available_water'] == 7.5  # 0.15 * 50
-        assert result['total_available_water_mm'] == 75.0
+        assert result["available_water_capacity"] == 0.15
+        assert result["total_available_water"] == 7.5  # 0.15 * 50
+        assert result["total_available_water_mm"] == 75.0
 
 
 # ============================================================================
@@ -352,91 +357,84 @@ class TestHealth:
         from engine.hydroma.soil.health import calculate_soil_health_index
 
         result = calculate_soil_health_index(
-            ph=6.5, organic_matter=3.0,
-            nitrogen=50, phosphorus=30, potassium=200
+            ph=6.5, organic_matter=3.0, nitrogen=50, phosphorus=30, potassium=200
         )
 
-        assert result['overall_score'] >= 70
-        assert result['max_score'] == 100
-        assert result['interpretation']['rating'] in ['excellent', 'good']
+        assert result["overall_score"] >= 70
+        assert result["max_score"] == 100
+        assert result["interpretation"]["rating"] in ["excellent", "good"]
 
     def test_health_index_poor(self):
         """Test health index for poor soil conditions."""
         from engine.hydroma.soil.health import calculate_soil_health_index
 
         result = calculate_soil_health_index(
-            ph=4.5, organic_matter=0.5,
-            nitrogen=10, phosphorus=5, potassium=50
+            ph=4.5, organic_matter=0.5, nitrogen=10, phosphorus=5, potassium=50
         )
 
-        assert result['overall_score'] < 50
-        assert result['interpretation']['rating'] in ['poor', 'fair']
+        assert result["overall_score"] < 50
+        assert result["interpretation"]["rating"] in ["poor", "fair"]
 
     def test_health_index_returns_all_components(self):
         """Test that health index returns all required components."""
         from engine.hydroma.soil.health import calculate_soil_health_index
 
         result = calculate_soil_health_index(
-            ph=6.5, organic_matter=2.5,
-            nitrogen=50, phosphorus=30, potassium=200
+            ph=6.5, organic_matter=2.5, nitrogen=50, phosphorus=30, potassium=200
         )
 
-        assert 'overall_score' in result
-        assert 'individual_scores' in result
-        assert 'weights' in result
-        assert 'interpretation' in result
-        assert 'limiting_factors' in result
-        assert 'recommendations' in result
+        assert "overall_score" in result
+        assert "individual_scores" in result
+        assert "weights" in result
+        assert "interpretation" in result
+        assert "limiting_factors" in result
+        assert "recommendations" in result
 
     def test_individual_scores_present(self):
         """Test that all indicator scores are present."""
         from engine.hydroma.soil.health import calculate_soil_health_index
 
         result = calculate_soil_health_index(
-            ph=6.5, organic_matter=2.5,
-            nitrogen=50, phosphorus=30, potassium=200
+            ph=6.5, organic_matter=2.5, nitrogen=50, phosphorus=30, potassium=200
         )
 
-        required_indicators = ['ph', 'organic_matter', 'nitrogen',
-                                'phosphorus', 'potassium']
+        required_indicators = ["ph", "organic_matter", "nitrogen", "phosphorus", "potassium"]
 
         for indicator in required_indicators:
-            assert indicator in result['individual_scores']
-            assert 0 <= result['individual_scores'][indicator] <= 100
+            assert indicator in result["individual_scores"]
+            assert 0 <= result["individual_scores"][indicator] <= 100
 
     def test_limiting_factors_identified(self):
         """Test that limiting factors are correctly identified."""
         from engine.hydroma.soil.health import calculate_soil_health_index
 
         result = calculate_soil_health_index(
-            ph=4.5, organic_matter=0.5,
-            nitrogen=10, phosphorus=5, potassium=50
+            ph=4.5, organic_matter=0.5, nitrogen=10, phosphorus=5, potassium=50
         )
 
-        assert len(result['limiting_factors']) > 0
+        assert len(result["limiting_factors"]) > 0
 
         # At least pH should be limiting
-        limiting_indicators = [f['indicator'] for f in result['limiting_factors']]
-        assert 'ph' in limiting_indicators or 'organic_matter' in limiting_indicators
+        limiting_indicators = [f["indicator"] for f in result["limiting_factors"]]
+        assert "ph" in limiting_indicators or "organic_matter" in limiting_indicators
 
     def test_assess_soil_quality_comprehensive(self):
         """Test comprehensive soil quality assessment."""
         from engine.hydroma.soil.health import assess_soil_quality
 
         result = assess_soil_quality(
-            ph=6.5, organic_matter=2.5,
-            nitrogen=50, phosphorus=30, potassium=200
+            ph=6.5, organic_matter=2.5, nitrogen=50, phosphorus=30, potassium=200
         )
 
-        assert 'health_index' in result
-        assert 'fertility' in result
-        assert 'overall_assessment' in result
+        assert "health_index" in result
+        assert "fertility" in result
+        assert "overall_assessment" in result
 
         # Fertility should have NPK assessments
-        assert 'nitrogen' in result['fertility']
-        assert 'phosphorus' in result['fertility']
-        assert 'potassium' in result['fertility']
-        assert 'overall' in result['fertility']
+        assert "nitrogen" in result["fertility"]
+        assert "phosphorus" in result["fertility"]
+        assert "potassium" in result["fertility"]
+        assert "overall" in result["fertility"]
 
 
 # ============================================================================
@@ -451,11 +449,11 @@ class TestSalinity:
 
         result = classify_salinity(ec=1.5)
 
-        assert result['ec'] == 1.5
-        assert result['unit'] == 'dS/m'
-        assert result['classification'] == 'non_saline'
-        assert 'crop_recommendations' in result
-        assert 'management' in result
+        assert result["ec"] == 1.5
+        assert result["unit"] == "dS/m"
+        assert result["classification"] == "non_saline"
+        assert "crop_recommendations" in result
+        assert "management" in result
 
     def test_classify_slightly_saline(self):
         """Test classification of slightly saline soil."""
@@ -463,7 +461,7 @@ class TestSalinity:
 
         result = classify_salinity(ec=3.0)
 
-        assert result['classification'] == 'slightly_saline'
+        assert result["classification"] == "slightly_saline"
 
     def test_classify_moderately_saline(self):
         """Test classification of moderately saline soil."""
@@ -471,7 +469,7 @@ class TestSalinity:
 
         result = classify_salinity(ec=6.0)
 
-        assert result['classification'] == 'moderately_saline'
+        assert result["classification"] == "moderately_saline"
 
     def test_classify_strongly_saline(self):
         """Test classification of strongly saline soil."""
@@ -479,7 +477,7 @@ class TestSalinity:
 
         result = classify_salinity(ec=12.0)
 
-        assert result['classification'] == 'strongly_saline'
+        assert result["classification"] == "strongly_saline"
 
     def test_classify_very_strongly_saline(self):
         """Test classification of very strongly saline soil."""
@@ -487,7 +485,7 @@ class TestSalinity:
 
         result = classify_salinity(ec=20.0)
 
-        assert result['classification'] == 'very_strongly_saline'
+        assert result["classification"] == "very_strongly_saline"
 
     def test_negative_ec_raises_error(self):
         """Test that negative EC raises error."""
@@ -502,9 +500,9 @@ class TestSalinity:
 
         result = calculate_leaching_requirement(ec_soil=8, ec_water=1)
 
-        assert result['leaching_required'] is True
-        assert 'leaching_fraction' in result
-        assert result['leaching_percentage'] > 0
+        assert result["leaching_required"] is True
+        assert "leaching_fraction" in result
+        assert result["leaching_percentage"] > 0
 
     def test_no_leaching_needed_for_low_salinity(self):
         """Test that no leaching needed for low salinity."""
@@ -512,7 +510,7 @@ class TestSalinity:
 
         result = calculate_leaching_requirement(ec_soil=3, ec_water=1)
 
-        assert result['leaching_required'] is False
+        assert result["leaching_required"] is False
 
     def test_leaching_fraction_reasonable(self):
         """Test that leaching fraction is in reasonable range."""
@@ -521,7 +519,7 @@ class TestSalinity:
         result = calculate_leaching_requirement(ec_soil=10, ec_water=2)
 
         # Should be between 10% and 50%
-        assert 0.1 <= result['leaching_fraction'] <= 0.5
+        assert 0.1 <= result["leaching_fraction"] <= 0.5
 
 
 # ============================================================================
@@ -534,124 +532,89 @@ class TestRecommendations:
         """Test basic recommendation generation."""
         from engine.hydroma.soil.recommendations import generate_recommendations
 
-        soil_data = {
-            'health_score': 55,
-            'ph': 5.5,
-            'organic_matter': 1.5,
-            'texture': 'sandy_loam'
-        }
+        soil_data = {"health_score": 55, "ph": 5.5, "organic_matter": 1.5, "texture": "sandy_loam"}
 
         result = generate_recommendations(soil_data)
 
-        assert 'generated_at' in result
-        assert 'priority_actions' in result
-        assert 'fertility_management' in result
-        assert 'physical_management' in result
-        assert 'biological_management' in result
-        assert 'monitoring_plan' in result
+        assert "generated_at" in result
+        assert "priority_actions" in result
+        assert "fertility_management" in result
+        assert "physical_management" in result
+        assert "biological_management" in result
+        assert "monitoring_plan" in result
 
     def test_acidic_soil_recommends_lime(self):
         """Test that acidic soil recommends lime."""
         from engine.hydroma.soil.recommendations import generate_recommendations
 
-        soil_data = {
-            'health_score': 60,
-            'ph': 5.0,
-            'organic_matter': 2.0,
-            'texture': 'loam'
-        }
+        soil_data = {"health_score": 60, "ph": 5.0, "organic_matter": 2.0, "texture": "loam"}
 
         result = generate_recommendations(soil_data)
 
-        fertility_actions = [r.get('action') for r in result['fertility_management']]
-        assert 'apply_lime' in fertility_actions
+        fertility_actions = [r.get("action") for r in result["fertility_management"]]
+        assert "apply_lime" in fertility_actions
 
     def test_alkaline_soil_recommends_sulfur(self):
         """Test that alkaline soil recommends sulfur."""
         from engine.hydroma.soil.recommendations import generate_recommendations
 
-        soil_data = {
-            'health_score': 60,
-            'ph': 8.0,
-            'organic_matter': 2.0,
-            'texture': 'loam'
-        }
+        soil_data = {"health_score": 60, "ph": 8.0, "organic_matter": 2.0, "texture": "loam"}
 
         result = generate_recommendations(soil_data)
 
-        fertility_actions = [r.get('action') for r in result['fertility_management']]
-        assert 'apply_sulfur' in fertility_actions
+        fertility_actions = [r.get("action") for r in result["fertility_management"]]
+        assert "apply_sulfur" in fertility_actions
 
     def test_low_om_recommends_compost(self):
         """Test that low organic matter recommends compost."""
         from engine.hydroma.soil.recommendations import generate_recommendations
 
-        soil_data = {
-            'health_score': 60,
-            'ph': 6.5,
-            'organic_matter': 1.0,
-            'texture': 'loam'
-        }
+        soil_data = {"health_score": 60, "ph": 6.5, "organic_matter": 1.0, "texture": "loam"}
 
         result = generate_recommendations(soil_data)
 
-        bio_actions = [r.get('action') for r in result['biological_management']]
-        assert 'add_compost' in bio_actions
+        bio_actions = [r.get("action") for r in result["biological_management"]]
+        assert "add_compost" in bio_actions
 
     def test_monitoring_plan_included(self):
         """Test that monitoring plan is always included."""
         from engine.hydroma.soil.recommendations import generate_recommendations
 
-        soil_data = {
-            'health_score': 80,
-            'ph': 6.5,
-            'organic_matter': 3.0,
-            'texture': 'loam'
-        }
+        soil_data = {"health_score": 80, "ph": 6.5, "organic_matter": 3.0, "texture": "loam"}
 
         result = generate_recommendations(soil_data)
 
-        assert len(result['monitoring_plan']) > 0
+        assert len(result["monitoring_plan"]) > 0
 
         # Basic monitoring should always include pH and OM
-        parameters = [m.get('parameter') for m in result['monitoring_plan']]
-        assert 'pH' in parameters or 'organic_matter' in parameters
+        parameters = [m.get("parameter") for m in result["monitoring_plan"]]
+        assert "pH" in parameters or "organic_matter" in parameters
 
     def test_texture_specific_recommendations(self):
         """Test that texture-specific recommendations are made."""
         from engine.hydroma.soil.recommendations import generate_recommendations
 
         # Sandy soil
-        soil_data = {
-            'health_score': 60,
-            'ph': 6.5,
-            'organic_matter': 2.0,
-            'texture': 'sand'
-        }
+        soil_data = {"health_score": 60, "ph": 6.5, "organic_matter": 2.0, "texture": "sand"}
 
         result = generate_recommendations(soil_data)
 
-        physical_issues = [r.get('issue') for r in result['physical_management']]
-        assert 'low_water_holding' in physical_issues
+        physical_issues = [r.get("issue") for r in result["physical_management"]]
+        assert "low_water_holding" in physical_issues
 
     def test_poor_health_high_priority(self):
         """Test that poor health triggers high priority action."""
         from engine.hydroma.soil.recommendations import generate_recommendations
 
-        soil_data = {
-            'health_score': 30,
-            'ph': 6.5,
-            'organic_matter': 2.0,
-            'texture': 'loam'
-        }
+        soil_data = {"health_score": 30, "ph": 6.5, "organic_matter": 2.0, "texture": "loam"}
 
         result = generate_recommendations(soil_data)
 
-        priority_actions = result['priority_actions']
+        priority_actions = result["priority_actions"]
         assert len(priority_actions) > 0
 
-        urgencies = [a.get('urgency') for a in priority_actions]
-        assert 'high' in urgencies
+        urgencies = [a.get("urgency") for a in priority_actions]
+        assert "high" in urgencies
 
 
 # ============================================================================
@@ -704,28 +667,27 @@ class TestSoilModuleIntegration:
 
         # Step 1: Classify texture
         texture_result = classify_usda_texture(clay=20, silt=40, sand=40)
-        assert texture_result['texture'] == 'loam'
+        assert texture_result["texture"] == "loam"
 
         # Step 2: Calculate CEC
         cec_result = calculate_cec(clay=20, organic_matter=2.5, ph=6.5)
-        assert cec_result['cec'] > 0
+        assert cec_result["cec"] > 0
 
         # Step 3: Calculate health index
         health_result = calculate_soil_health_index(
-            ph=6.5, organic_matter=2.5,
-            nitrogen=50, phosphorus=30, potassium=200
+            ph=6.5, organic_matter=2.5, nitrogen=50, phosphorus=30, potassium=200
         )
-        assert health_result['overall_score'] > 0
+        assert health_result["overall_score"] > 0
 
         # Step 4: Generate recommendations
         soil_data = {
-            'health_score': health_result['overall_score'],
-            'ph': 6.5,
-            'organic_matter': 2.5,
-            'texture': texture_result['texture']
+            "health_score": health_result["overall_score"],
+            "ph": 6.5,
+            "organic_matter": 2.5,
+            "texture": texture_result["texture"],
         }
         recommendations = generate_recommendations(soil_data)
-        assert 'priority_actions' in recommendations
+        assert "priority_actions" in recommendations
 
     def test_all_textures_classifiable(self):
         """Test that all standard textures can be classified."""
@@ -733,24 +695,24 @@ class TestSoilModuleIntegration:
 
         # Test compositions for each texture class
         texture_tests = [
-            (5, 10, 85, 'sand'),
-            (10, 15, 75, 'loamy_sand'),
-            (15, 25, 60, 'sandy_loam'),
-            (20, 40, 40, 'loam'),
-            (15, 65, 20, 'silt_loam'),
-            (5, 90, 5, 'silt'),
-            (25, 15, 60, 'sandy_clay_loam'),
-            (30, 35, 35, 'clay_loam'),
-            (30, 55, 15, 'silty_clay_loam'),
-            (40, 10, 50, 'sandy_clay'),
-            (45, 45, 10, 'silty_clay'),
-            (50, 30, 20, 'clay'),
+            (5, 10, 85, "sand"),
+            (10, 15, 75, "loamy_sand"),
+            (15, 25, 60, "sandy_loam"),
+            (20, 40, 40, "loam"),
+            (15, 65, 20, "silt_loam"),
+            (5, 90, 5, "silt"),
+            (25, 15, 60, "sandy_clay_loam"),
+            (30, 35, 35, "clay_loam"),
+            (30, 55, 15, "silty_clay_loam"),
+            (40, 10, 50, "sandy_clay"),
+            (45, 45, 10, "silty_clay"),
+            (50, 30, 20, "clay"),
         ]
 
         for clay, silt, sand, expected in texture_tests:
             result = classify_usda_texture(clay, silt, sand)
             # At minimum, classification should not error
-            assert 'texture' in result
+            assert "texture" in result
             # Note: Due to texture triangle complexity, exact matches may vary
             # The important thing is that a valid classification is returned
 

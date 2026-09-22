@@ -1,38 +1,38 @@
-from sqlalchemy.orm import Session
 from pydantic import BaseModel, validator
-from database.models import LandProfile as LandProfileModel, User
-from typing import Optional
+from sqlalchemy.orm import Session
+
+from database.models import LandProfile as LandProfileModel
 
 
 class LandProfileCreate(BaseModel):
     name: str
-    location_lat: Optional[float] = None
-    location_lon: Optional[float] = None
-    area_ha: Optional[float] = None
+    location_lat: float | None = None
+    location_lon: float | None = None
+    area_ha: float | None = None
     user_id: str
 
-    @validator('name')
+    @validator("name")
     def name_must_not_be_empty(cls, v):
-        if not v.strip(): # بررسی خالی یا فقط فضای خالی
-            raise ValueError('Name cannot be empty or just whitespace.')
-        return v.strip() # بازگرداندن نام بدون فضای اضافی
+        if not v.strip():  # بررسی خالی یا فقط فضای خالی
+            raise ValueError("Name cannot be empty or just whitespace.")
+        return v.strip()  # بازگرداندن نام بدون فضای اضافی
 
-    @validator('area_ha')
+    @validator("area_ha")
     def area_ha_must_be_positive(cls, v):
         if v is not None and v <= 0:
-            raise ValueError('Area must be positive.')
+            raise ValueError("Area must be positive.")
         return v
 
-    @validator('location_lat')
+    @validator("location_lat")
     def validate_latitude(cls, v):
         if v is not None and not -90 <= v <= 90:
-            raise ValueError('Latitude must be between -90 and 90 degrees.')
+            raise ValueError("Latitude must be between -90 and 90 degrees.")
         return v
 
-    @validator('location_lon')
+    @validator("location_lon")
     def validate_longitude(cls, v):
         if v is not None and not -180 <= v <= 180:
-            raise ValueError('Longitude must be between -180 and 180 degrees.')
+            raise ValueError("Longitude must be between -180 and 180 degrees.")
         return v
 
 

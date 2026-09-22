@@ -14,7 +14,6 @@ Usage:
 
 import logging
 import os
-
 from dataclasses import dataclass
 
 from .tts_provider import VoiceLanguage
@@ -25,6 +24,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class STTResult:
     """Result from STT transcription."""
+
     text: str
     language: VoiceLanguage
     confidence: float = 0.0
@@ -46,7 +46,9 @@ class STTProvider:
     def get_model_info(self) -> dict:
         return {"provider": "mock", "model": "mock", "mode": "base"}
 
-    def transcribe(self, audio_data: bytes, language: VoiceLanguage = VoiceLanguage.EN) -> STTResult:
+    def transcribe(
+        self, audio_data: bytes, language: VoiceLanguage = VoiceLanguage.EN
+    ) -> STTResult:
         raise NotImplementedError
 
     def detect_language(self, audio_data: bytes) -> VoiceLanguage:
@@ -55,6 +57,33 @@ class STTProvider:
 
 # Lazy singletons
 _stt_provider: STTProvider | None = None
+
+
+class _MockSTT(STTProvider):
+    """Working mock STT backend for tests and local dev."""
+
+    def transcribe(
+        self, audio_data: bytes, language: VoiceLanguage = VoiceLanguage.EN
+    ) -> STTResult:
+        mock_text = "how to make good compost"
+        if language == VoiceLanguage.FA:
+            mock_text = "چگونه کمپوست خوب بسازیم"
+        elif language == VoiceLanguage.AR:
+            mock_text = "كيفية عمل سماد عضوي جيد"
+
+        return STTResult(
+            text=mock_text,
+            language=language,
+            confidence=0.72,
+            duration_seconds=max(0.1, len(audio_data) / 16000 if audio_data else 0.1),
+            alternatives=[
+                {"text": mock_text, "confidence": 0.68},
+                {"text": "compost making guide", "confidence": 0.52},
+            ],
+        )
+
+    def detect_language(self, audio_data: bytes) -> VoiceLanguage:
+        return VoiceLanguage.EN
 
 
 def get_stt_provider() -> STTProvider:
@@ -68,6 +97,7 @@ def get_stt_provider() -> STTProvider:
     if provider_name == "whisper":
         try:
             from services.business_modules.voice.whisper_stt import WhisperSTTProvider
+
             _stt_provider = WhisperSTTProvider()
             logger.info("STT provider: Whisper")
             return _stt_provider
@@ -80,7 +110,6 @@ def get_stt_provider() -> STTProvider:
     if provider_name == "vosk":
         logger.warning("Vosk STT not yet implemented, using mock")
 
-    from services.business_modules.voice.stt_provider import STTProvider as _MockSTT
     _stt_provider = _MockSTT()
     logger.info("STT provider: mock (set %STT_PROVIDER=whisper for real transcription)")
     return _stt_provider

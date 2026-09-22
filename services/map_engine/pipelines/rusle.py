@@ -1,5 +1,7 @@
 """RUSLE Pipeline (M-ERS) - Soil Erosion Risk."""
+
 from __future__ import annotations
+
 import structlog
 
 logger = structlog.get_logger()
@@ -135,20 +137,17 @@ class RUSLEPipeline(MapPipeline):
         dx = float(np.abs(dem.x[1] - dem.x[0])) * 111000
 
         grad_y, grad_x = np.gradient(dem.values, dy, dx, axis=(0, 1))
-        slope_rad = np.arctan(np.sqrt(grad_x ** 2 + grad_y ** 2))
+        slope_rad = np.arctan(np.sqrt(grad_x**2 + grad_y**2))
         slope_pct = np.tan(slope_rad) * 100
 
         slope_length = 100.0  # typical field length in meters
 
-        m = np.where(slope_pct < 1, 0.2,
-            np.where(slope_pct < 3, 0.3,
-            np.where(slope_pct < 5, 0.4, 0.5)))
+        m = np.where(
+            slope_pct < 1, 0.2, np.where(slope_pct < 3, 0.3, np.where(slope_pct < 5, 0.4, 0.5))
+        )
 
         sin_b = np.sin(slope_rad)
-        ls = (
-            np.power(slope_length / 22.13, m)
-            * (65.41 * sin_b ** 2 + 4.56 * sin_b + 0.065)
-        )
+        ls = np.power(slope_length / 22.13, m) * (65.41 * sin_b**2 + 4.56 * sin_b + 0.065)
         ls = np.clip(ls, 0.1, 50.0)
 
         return xr.DataArray(

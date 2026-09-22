@@ -4,6 +4,7 @@ Hydraulic Design Engine - Open Channels.
 Calculates and designs stable open channels for water conveyance
 based on discharge, slope, and soil characteristics.
 """
+
 import math
 from dataclasses import dataclass
 from enum import Enum
@@ -22,6 +23,7 @@ class ChannelShape(Enum):
 @dataclass
 class ChannelDesignCriteria:
     """Criteria for channel design."""
+
     design_discharge: float  # m3/s
     longitudinal_slope: float  # m/m
     side_slope_horizontal: float = 1.0  # H:V (for trapezoidal/triangular)
@@ -55,13 +57,13 @@ def design_trapezoidal_channel(criteria: ChannelDesignCriteria) -> dict[str, Any
     # So, (b + z*y)*y = Q/V_min -> z*y^2 + b*y - Q/V_min = 0
     a_quad = z
     b_quad = b
-    c_quad = - Q_des / V_min
+    c_quad = -Q_des / V_min
 
-    discriminant = b_quad**2 - 4*a_quad*c_quad
+    discriminant = b_quad**2 - 4 * a_quad * c_quad
     if discriminant < 0:
         raise ValueError("No feasible depth found for min velocity constraint.")
 
-    y_estimated = (-b_quad + math.sqrt(discriminant)) / (2*a_quad)
+    y_estimated = (-b_quad + math.sqrt(discriminant)) / (2 * a_quad)
 
     # Iteratively adjust depth until calculated Q matches design Q within tolerance
     tolerance = 0.01
@@ -105,5 +107,5 @@ def design_trapezoidal_channel(criteria: ChannelDesignCriteria) -> dict[str, Any
         "longitudinal_slope": S,
         "manning_n": n,
         "freeboard_m": criteria.freeboard,
-        "excavation_volume_per_meter": A_final # Volume per unit length
+        "excavation_volume_per_meter": A_final,  # Volume per unit length
     }

@@ -1,4 +1,5 @@
 """CSRF protection middleware for state-changing requests."""
+
 from __future__ import annotations
 
 import logging
@@ -12,7 +13,33 @@ logger = logging.getLogger(__name__)
 SAFE_METHODS = {"GET", "HEAD", "OPTIONS", "TRACE"}
 CSRF_HEADER = "x-csrf-token"
 CSRF_COOKIE = "econojin_csrf"
-EXEMPT_PREFIXES = ("/api/v1/auth", "/api/v1/newsletter", "/api/v1/pilot", "/dashboard", "/api/v1/hydroma", "/api/v1/models", "/api/v1/hub", "/api/v1/automation", "/api/v1/satellite", "/api/v1/mrv")
+
+# H4 FIX: minimal public auth and operational endpoints that must validate
+# themselves without a CSRF token before any route logic executes.
+EXEMPT_PREFIXES = (
+    # Stateless public/API endpoints authenticate through their own payload,
+    # API key, or deliberately expose read/write simulation functionality.
+    "/api/v1/ai/chat",
+    "/api/v1/land/",
+    "/api/v1/satellite/analyze",
+    "/api/v1/simulation/",
+    "/api/v1/mrv/",
+    "/api/v1/sync/",
+    "/api/v1/insurance/",
+    "/api/v1/science/datasets/",
+    "/api/v1/marketplace/webhook",
+    "/api/v1/auth/webhook",
+    "/api/v1/auth/login",
+    "/api/v1/auth/register",
+    "/api/v1/auth/refresh",
+    "/api/v1/auth/logout",
+    "/api/v1/auth/forgot-password",
+    "/api/v1/auth/reset-password",
+    "/api/v1/auth/seed-demo",
+    "/api/v1/mrv/satellite-refresh",
+    "/api/v1/voice/",
+    "/api/v1/ussd/",
+)
 
 
 class CSRFMiddleware(BaseHTTPMiddleware):

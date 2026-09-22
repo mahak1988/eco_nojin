@@ -7,6 +7,7 @@ Crossref/OpenAlex comes in the full Phase 9 (external API, gated).
 
 Never fabricates: unknown slugs return a clear error.
 """
+
 from __future__ import annotations
 
 from typing import Any

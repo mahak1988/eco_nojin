@@ -4,6 +4,7 @@ Field Trial Manager for Nojin Biofertilizers.
 Handles the design, execution, and analysis of field trials
 to evaluate biofertilizer performance.
 """
+
 import structlog
 
 logger = structlog.get_logger()
@@ -17,11 +18,11 @@ from engine.hydroma.soil.health import calculate_soil_health_index
 
 def design_trial(
     application_plan_id: str,
-    trial_location: str, # 'lat,lng'
+    trial_location: str,  # 'lat,lng'
     plot_size_ha: float,
     replication_factor: int,
     control_plots: bool = True,
-    duration_months: int = 12
+    duration_months: int = 12,
 ) -> dict[str, Any]:
     """
     Designs a field trial layout based on an application plan.
@@ -39,7 +40,7 @@ def design_trial(
     """
     # Logic to generate plot IDs, assign treatments, randomize layout
     # This is a simplified representation
-    treatment_count = 1 # Assuming one main treatment from the plan
+    treatment_count = 1  # Assuming one main treatment from the plan
     if control_plots:
         treatment_count += 1
 
@@ -48,7 +49,7 @@ def design_trial(
         {
             "plot_id": f"TRIAL_{application_plan_id}_P{i}",
             "treatment_type": "control" if i >= replication_factor else "treated",
-            "location_offset": f"{i*10}m, {i*5}m" # Simplified spatial offset
+            "location_offset": f"{i * 10}m, {i * 5}m",  # Simplified spatial offset
         }
         for i in range(total_plots)
     ]
@@ -63,7 +64,7 @@ def design_trial(
         "layout": plot_layout,
         "duration_months": duration_months,
         "baseline_measurements": [],
-        "sampling_schedule": []
+        "sampling_schedule": [],
     }
 
 
@@ -79,12 +80,12 @@ def execute_trial(trial_design: dict[str, Any], baseline_data: dict[str, Any]):
     # This would involve actual data collection in the field
     # Here we just record the baseline
     trial_record = NojinFieldTrialDB(
-        application_plan_id=trial_design['application_plan_id'],
-        trial_location=trial_design['location'],
-        trial_date=date.today(), # Or start date of trial
-        crop_type=baseline_data.get('crop_type', 'unknown'),
-        plot_area_ha=trial_design['plot_size_ha'],
-        treatment_design=trial_design['layout'],
+        application_plan_id=trial_design["application_plan_id"],
+        trial_location=trial_design["location"],
+        trial_date=date.today(),  # Or start date of trial
+        crop_type=baseline_data.get("crop_type", "unknown"),
+        plot_area_ha=trial_design["plot_size_ha"],
+        treatment_design=trial_design["layout"],
         baseline_data=baseline_data,
         # Other fields remain null until post-application
     )
@@ -118,24 +119,24 @@ def analyze_trial_results(trial_id: str, post_app_data: dict[str, Any]) -> dict[
         post_data = post_app_data
 
         # Calculate differences
-        yield_impact = post_data.get('yield_t_ha', 0) - baseline.get('yield_t_ha', 0)
+        yield_impact = post_data.get("yield_t_ha", 0) - baseline.get("yield_t_ha", 0)
         soil_health_impact = calculate_soil_health_index(
-            ph=post_data.get('soil_ph', 7.0),
-            organic_matter=post_data.get('soil_om_pct', 1.0),
-            nitrogen=post_data.get('soil_n_kg_ha', 100),
-            phosphorus=post_data.get('soil_p_kg_ha', 50),
-            potassium=post_data.get('soil_k_kg_ha', 100),
+            ph=post_data.get("soil_ph", 7.0),
+            organic_matter=post_data.get("soil_om_pct", 1.0),
+            nitrogen=post_data.get("soil_n_kg_ha", 100),
+            phosphorus=post_data.get("soil_p_kg_ha", 50),
+            potassium=post_data.get("soil_k_kg_ha", 100),
         ) - calculate_soil_health_index(
-            ph=baseline.get('soil_ph', 7.0),
-            organic_matter=baseline.get('soil_om_pct', 1.0),
-            nitrogen=baseline.get('soil_n_kg_ha', 100),
-            phosphorus=baseline.get('soil_p_kg_ha', 50),
-            potassium=baseline.get('soil_k_kg_ha', 100),
+            ph=baseline.get("soil_ph", 7.0),
+            organic_matter=baseline.get("soil_om_pct", 1.0),
+            nitrogen=baseline.get("soil_n_kg_ha", 100),
+            phosphorus=baseline.get("soil_p_kg_ha", 50),
+            potassium=baseline.get("soil_k_kg_ha", 100),
         )
 
         # Perform basic statistical analysis (e.g., t-test for yield difference)
         # This is a placeholder for more complex stats
-        p_value = 0.05 # Placeholder
+        p_value = 0.05  # Placeholder
         significance = p_value < 0.05
 
         analysis_results = {
@@ -144,7 +145,7 @@ def analyze_trial_results(trial_id: str, post_app_data: dict[str, Any]) -> dict[
             "soil_health_impact": soil_health_impact,
             "statistical_significance": significance,
             "p_value": p_value,
-            "notes": "Preliminary analysis, requires more replicates for robustness."
+            "notes": "Preliminary analysis, requires more replicates for robustness.",
         }
 
         # Update the trial record in DB
@@ -152,7 +153,7 @@ def analyze_trial_results(trial_id: str, post_app_data: dict[str, Any]) -> dict[
         trial.yield_response = yield_impact
         trial.soil_improvement = {"health_index_change": soil_health_impact}
         trial.statistical_analysis = analysis_results
-        trial.observations = post_data.get('general_observations', '')
+        trial.observations = post_data.get("general_observations", "")
         db.commit()
 
         return analysis_results

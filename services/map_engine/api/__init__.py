@@ -1,4 +1,5 @@
 """Map Engine FastAPI router"""
+
 from typing import Dict, List
 
 from fastapi import APIRouter, Depends
@@ -7,10 +8,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.hub import hub
 
+
 # Compatibility: get_db via hub
 async def get_db():
     async with hub.get_async_session() as session:
         yield session
+
+
 from services.map_engine.smart_service import (
     MapLayer,
     MapRequest,
@@ -20,11 +24,13 @@ from services.map_engine.smart_service import (
 
 router = APIRouter(prefix="/maps", tags=["Maps"])
 
+
 class GenerateMapRequest(BaseModel):
     bbox: dict[str, float]
     layers: list[str]
     resolution: float = 30.0
     output_format: str = "geotiff"
+
 
 @router.post("/generate")
 async def generate_map(req: GenerateMapRequest, db: AsyncSession = Depends(get_db)):
@@ -42,9 +48,13 @@ async def generate_map(req: GenerateMapRequest, db: AsyncSession = Depends(get_d
         "processing_time_ms": result.processing_time_ms,
     }
 
+
 @router.get("/available-layers")
 async def get_available_layers(
-    north: float, south: float, east: float, west: float,
+    north: float,
+    south: float,
+    east: float,
+    west: float,
     db: AsyncSession = Depends(get_db),
 ):
     service = SmartMapService(db)

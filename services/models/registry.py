@@ -11,6 +11,7 @@ Every entry wraps a REAL implemented function (no stubs). Fidelity badges:
 ``{slug, fidelity, result, executed_at}`` — errors are explicit, never
 silent fallbacks.
 """
+
 from __future__ import annotations
 
 import time
@@ -102,7 +103,9 @@ def _apply_climate_wrapper(
     return _apply_climate_change(baseline_temp, baseline_precip, baseline_et0, proj)
 
 
-def _carbon_seq_wrapper(project_type: str, area_ha: float, duration_years: int = 10, region: str = "temperate") -> dict[str, Any]:
+def _carbon_seq_wrapper(
+    project_type: str, area_ha: float, duration_years: int = 10, region: str = "temperate"
+) -> dict[str, Any]:
     try:
         ptype = CarbonProjectType(project_type)
     except ValueError as exc:
@@ -119,8 +122,12 @@ def _carbon_seq_wrapper(project_type: str, area_ha: float, duration_years: int =
 
 REGISTRY: list[ModelSpec] = [
     ModelSpec(
-        "et0_hargreaves", "تبخیر و تعرق مرجع (هارگریوز)", "Reference ET0 (Hargreaves)",
-        "climate", "simplified", "FAO-56 Hargreaves",
+        "et0_hargreaves",
+        "تبخیر و تعرق مرجع (هارگریوز)",
+        "Reference ET0 (Hargreaves)",
+        "climate",
+        "simplified",
+        "FAO-56 Hargreaves",
         "محاسبه ET0 روزانه با روش هارگریوز — نیازمند Ra خورشیدی (MJ/m²/day).",
         calc_et0_hargreaves,
         [
@@ -131,8 +138,12 @@ REGISTRY: list[ModelSpec] = [
         ],
     ),
     ModelSpec(
-        "runoff_volume", "حجم رواناب سطحی", "Surface runoff volume",
-        "water", "simplified", "SCS-style rational",
+        "runoff_volume",
+        "حجم رواناب سطحی",
+        "Surface runoff volume",
+        "water",
+        "simplified",
+        "SCS-style rational",
         "حجم رواناب از مساحت، بارش و ضریب رواناب (m³).",
         calculate_runoff,
         [
@@ -142,8 +153,12 @@ REGISTRY: list[ModelSpec] = [
         ],
     ),
     ModelSpec(
-        "check_dam_design", "طراحی بند خاکی", "Check dam design",
-        "water", "simplified", "Watershed structures",
+        "check_dam_design",
+        "طراحی بند خاکی",
+        "Check dam design",
+        "water",
+        "simplified",
+        "Watershed structures",
         "ابعاد پیشنهادی بند خاکی بر اساس شیب، مساحت و بارش.",
         design_check_dam,
         [
@@ -153,8 +168,12 @@ REGISTRY: list[ModelSpec] = [
         ],
     ),
     ModelSpec(
-        "contour_trench_design", "طراحی ترانشه کانتوری", "Contour trench design",
-        "water", "simplified", "Watershed structures",
+        "contour_trench_design",
+        "طراحی ترانشه کانتوری",
+        "Contour trench design",
+        "water",
+        "simplified",
+        "Watershed structures",
         "ابعاد پیشنهادی ترانشه کانتوری برای جمعآوری رواناب.",
         design_contour_trench,
         [
@@ -164,8 +183,12 @@ REGISTRY: list[ModelSpec] = [
         ],
     ),
     ModelSpec(
-        "half_moon_design", "طراحی هلالی آبگیر", "Half-moon catchment design",
-        "water", "simplified", "Watershed structures",
+        "half_moon_design",
+        "طراحی هلالی آبگیر",
+        "Half-moon catchment design",
+        "water",
+        "simplified",
+        "Watershed structures",
         "ابعاد پیشنهادی هلالی آبگیر (banquette).",
         design_half_moon,
         [
@@ -175,8 +198,12 @@ REGISTRY: list[ModelSpec] = [
         ],
     ),
     ModelSpec(
-        "crop_yield", "پیشبینی عملکرد محصول", "Crop yield simulation",
-        "crop", "simplified", "AquaCrop-style",
+        "crop_yield",
+        "پیشبینی عملکرد محصول",
+        "Crop yield simulation",
+        "crop",
+        "simplified",
+        "AquaCrop-style",
         "شبیهسازی عملکرد (kg/ha) بر اساس آب، دما و CO₂ — رویکرد سادهشده AquaCrop.",
         simulate_crop_yield,
         [
@@ -189,8 +216,12 @@ REGISTRY: list[ModelSpec] = [
         ],
     ),
     ModelSpec(
-        "compare_crops", "مقایسه محصولات", "Compare crops",
-        "crop", "simplified", "AquaCrop-style",
+        "compare_crops",
+        "مقایسه محصولات",
+        "Compare crops",
+        "crop",
+        "simplified",
+        "AquaCrop-style",
         "مقایسه عملکرد و سوددهی چند محصول در شرایط یکسان.",
         compare_crops,
         [
@@ -200,8 +231,12 @@ REGISTRY: list[ModelSpec] = [
         ],
     ),
     ModelSpec(
-        "climate_projection", "پیشبینی اقلیمی", "Climate projection",
-        "climate", "simplified", "IPCC-style scenarios",
+        "climate_projection",
+        "پیشبینی اقلیمی",
+        "Climate projection",
+        "climate",
+        "simplified",
+        "IPCC-style scenarios",
         "پروژه اقلیمی (دما/بارش/ET0) برای سناریو و افق زمانی مشخص.",
         get_climate_projection,
         [
@@ -212,8 +247,12 @@ REGISTRY: list[ModelSpec] = [
         ],
     ),
     ModelSpec(
-        "apply_climate_change", "اثر تغییر اقلیم", "Apply climate change",
-        "climate", "simplified", "IPCC-style scenarios",
+        "apply_climate_change",
+        "اثر تغییر اقلیم",
+        "Apply climate change",
+        "climate",
+        "simplified",
+        "IPCC-style scenarios",
         "مقادیر اقلیمی جدید پس از اعمال سناریو بر دادههای پایه.",
         _apply_climate_wrapper,
         [
@@ -224,8 +263,12 @@ REGISTRY: list[ModelSpec] = [
         ],
     ),
     ModelSpec(
-        "biomass_aboveground", "زیستتوده هوایی", "Aboveground biomass",
-        "carbon", "official", "IPCC allometric (Chave et al.)",
+        "biomass_aboveground",
+        "زیستتوده هوایی",
+        "Aboveground biomass",
+        "carbon",
+        "official",
+        "IPCC allometric (Chave et al.)",
         "زیستتوده هوایی درخت از قطر و ارتفاع.",
         biomass_aboveground,
         [
@@ -235,15 +278,23 @@ REGISTRY: list[ModelSpec] = [
         ],
     ),
     ModelSpec(
-        "biomass_belowground", "زیستتوده زیرزمینی", "Belowground biomass",
-        "carbon", "official", "IPCC root:shoot ratio",
+        "biomass_belowground",
+        "زیستتوده زیرزمینی",
+        "Belowground biomass",
+        "carbon",
+        "official",
+        "IPCC root:shoot ratio",
         "زیستتوده ریشه از نسبت ریشه به ساقه.",
         biomass_belowground,
         [ParamSpec("AGB_kg", "زیستتوده هوایی", "kg")],
     ),
     ModelSpec(
-        "rothc_pools", "پولهای کربن RothC", "RothC carbon pools",
-        "carbon", "official", "RothC 5-pool model",
+        "rothc_pools",
+        "پولهای کربن RothC",
+        "RothC carbon pools",
+        "carbon",
+        "official",
+        "RothC 5-pool model",
         "توزیع کربن آلی خاک بین ۵ پول RothC (DPM/RPM/BIO/HUM/IOM).",
         rothc_carbon_pools,
         [
@@ -257,8 +308,12 @@ REGISTRY: list[ModelSpec] = [
         ],
     ),
     ModelSpec(
-        "farquhar_photosynthesis", "فتوسنتز فارکوهار", "Farquhar photosynthesis",
-        "carbon", "official", "Farquhar et al. 1980",
+        "farquhar_photosynthesis",
+        "فتوسنتز فارکوهار",
+        "Farquhar photosynthesis",
+        "carbon",
+        "official",
+        "Farquhar et al. 1980",
         "نرخ خالص فتوسنتز برگ (A) با مدل بیوشیمیایی فارکوهار.",
         farquhar_photosynthesis,
         [
@@ -268,27 +323,44 @@ REGISTRY: list[ModelSpec] = [
         ],
     ),
     ModelSpec(
-        "quantum_efficiency", "بازده کوانتومی", "Quantum efficiency",
-        "carbon", "experimental", "Exploratory",
+        "quantum_efficiency",
+        "بازده کوانتومی",
+        "Quantum efficiency",
+        "carbon",
+        "experimental",
+        "Exploratory",
         "بازده کوانتومی فتوسنتز بر اساس دما — تجربی، نیازمند اعتبارسنجی میدانی.",
         quantum_efficiency,
         [ParamSpec("T_C", "دما", "°C", 25.0)],
     ),
     ModelSpec(
-        "carbon_sequestration", "ترسیب کربن پروژه", "Project carbon sequestration",
-        "carbon", "simplified", "VM0042-aligned",
+        "carbon_sequestration",
+        "ترسیب کربن پروژه",
+        "Project carbon sequestration",
+        "carbon",
+        "simplified",
+        "VM0042-aligned",
         "ترسیب کربن سالانه و کل یک پروژه بر اساس نوع و مساحت.",
         _carbon_seq_wrapper,
         [
-            ParamSpec("project_type", "نوع پروژه (afforestation/reforestation/agroforestry)", "", kind="str"),
+            ParamSpec(
+                "project_type",
+                "نوع پروژه (afforestation/reforestation/agroforestry)",
+                "",
+                kind="str",
+            ),
             ParamSpec("area_ha", "مساحت", "ha"),
             ParamSpec("duration_years", "مدت", "year", 10, kind="int"),
             ParamSpec("region", "منطقه (temperate/tropical)", "", "temperate"),
         ],
     ),
     ModelSpec(
-        "soil_health_index", "شاخص سلامت خاک", "Soil health index",
-        "soil", "simplified", "FAO soil health",
+        "soil_health_index",
+        "شاخص سلامت خاک",
+        "Soil health index",
+        "soil",
+        "simplified",
+        "FAO soil health",
         "شاخص سلامت خاک از pH، ماده آلی، N، P و K.",
         calculate_soil_health_index,
         [
@@ -300,8 +372,12 @@ REGISTRY: list[ModelSpec] = [
         ],
     ),
     ModelSpec(
-        "soil_pedotransfer", "توابع انتقالی خاک", "Pedotransfer functions",
-        "soil", "official", "Saxton & Rawls PTF",
+        "soil_pedotransfer",
+        "توابع انتقالی خاک",
+        "Pedotransfer functions",
+        "soil",
+        "official",
+        "Saxton & Rawls PTF",
         "تخمین پارامترهای هیدرولیکی خاک از بافت (شن/رس/ماده آلی).",
         estimate_soil_parameters,
         [
@@ -311,15 +387,23 @@ REGISTRY: list[ModelSpec] = [
         ],
     ),
     ModelSpec(
-        "salinity_class", "طبقهبندی شوری خاک", "Soil salinity class",
-        "soil", "official", "FAO salinity classes",
+        "salinity_class",
+        "طبقهبندی شوری خاک",
+        "Soil salinity class",
+        "soil",
+        "official",
+        "FAO salinity classes",
         "کلاس شوری بر اساس هدایت الکتریکی (EC dS/m).",
         classify_salinity,
         [ParamSpec("ec", "EC خاک", "dS/m")],
     ),
     ModelSpec(
-        "leaching_requirement", "نیاز آبشویی", "Leaching requirement",
-        "soil", "official", "FAO 29",
+        "leaching_requirement",
+        "نیاز آبشویی",
+        "Leaching requirement",
+        "soil",
+        "official",
+        "FAO 29",
         "نیاز آبشویی برای کنترل شوری (LR).",
         calculate_leaching_requirement,
         [
@@ -328,8 +412,12 @@ REGISTRY: list[ModelSpec] = [
         ],
     ),
     ModelSpec(
-        "van_genuchten_theta", "منحنی نگهداشت آب (van Genuchten)", "van Genuchten water retention",
-        "soil", "official", "van Genuchten 1980",
+        "van_genuchten_theta",
+        "منحنی نگهداشت آب (van Genuchten)",
+        "van Genuchten water retention",
+        "soil",
+        "official",
+        "van Genuchten 1980",
         "رطوبت حجمی در پتانسیل ماتریک مشخص.",
         van_genuchten_theta,
         [
@@ -341,15 +429,23 @@ REGISTRY: list[ModelSpec] = [
         ],
     ),
     ModelSpec(
-        "soil_water_retention", "ظرفیت آب قابل استفاده", "Available water capacity",
-        "soil", "official", "Soil texture AWC classes",
+        "soil_water_retention",
+        "ظرفیت آب قابل استفاده",
+        "Available water capacity",
+        "soil",
+        "official",
+        "Soil texture AWC classes",
         "ظرفیت آب قابل استفاده خاک بر اساس بافت (mm/m).",
         available_water_capacity,
         [ParamSpec("texture", "بافت خاک (sand/loam/clay/...)", "", kind="str")],
     ),
     ModelSpec(
-        "erosion_usle", "فرسایش خاک (RUSLE)", "Soil erosion (RUSLE)",
-        "soil", "official", "RUSLE/USLE",
+        "erosion_usle",
+        "فرسایش خاک (RUSLE)",
+        "Soil erosion (RUSLE)",
+        "soil",
+        "official",
+        "RUSLE/USLE",
         "هدررفت خاک سالانه با معادله جهانی فرسایش.",
         compute_erosion,
         [
@@ -361,7 +457,6 @@ REGISTRY: list[ModelSpec] = [
         ],
     ),
 ]
-
 
 
 # ---------------------------------------------------------------------------

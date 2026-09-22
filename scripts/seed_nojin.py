@@ -7,6 +7,7 @@ Tables that already contain rows are left untouched.
 Usage:
     python scripts/seed_nojin.py
 """
+
 from __future__ import annotations
 
 import os

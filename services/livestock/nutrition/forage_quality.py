@@ -1,4 +1,5 @@
 """محاسبه کیفیت علوفه از NDVI ماهواره‌ای"""
+
 from services.livestock.schemas import ForageQuality
 
 

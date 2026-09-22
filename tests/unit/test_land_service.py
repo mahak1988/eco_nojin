@@ -8,7 +8,6 @@ import numpy as np
 
 
 class TestLandService(unittest.TestCase):
-
     def setUp(self):
         """Set up a LandService instance with mocked engine for each test."""
         self.mock_land_engine = Mock(spec=ILandEngine)
@@ -20,6 +19,7 @@ class TestLandService(unittest.TestCase):
         dem_array = np.array([[1, 2], [3, 4]])
 
         from engine.land.models import TerrainAnalysis
+
         mock_result = TerrainAnalysis(
             profile_id=profile.id,
             elevation_min=1.0,
@@ -42,6 +42,7 @@ class TestLandService(unittest.TestCase):
         dem_array = np.array([[1, 2], [3, 4]])
 
         from engine.land.models import DrainageAnalysis, DrainagePattern
+
         mock_result = DrainageAnalysis(
             profile_id=profile.id,
             drainage_pattern=DrainagePattern.DENDRITIC,
@@ -60,6 +61,7 @@ class TestLandService(unittest.TestCase):
         profile = self.service.create_profile(name="test", location_lat=0, location_lon=0)
 
         from engine.land.models import CapabilityAssessment, LandCapabilityClass
+
         mock_result = CapabilityAssessment(
             profile_id=profile.id,
             capability_class=LandCapabilityClass.CLASS_II,
@@ -81,5 +83,5 @@ class TestLandService(unittest.TestCase):
         self.assertEqual(result.capability_class, LandCapabilityClass.CLASS_II)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

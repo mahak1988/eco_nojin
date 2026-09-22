@@ -1,0 +1,71 @@
+name: i18n Layout Verification
+
+on:
+  push:
+    paths:
+      - 'src/paraglide/**'
+      - 'src/test/e2e/**'
+      - '.github/workflows/i18n-ci.yml'
+      - 'package.json'
+  pull_request:
+    paths:
+      - 'src/paraglide/**'
+      - 'src/test/e2e/**'
+      - '.github/workflows/i18n-ci.yml'
+      - 'package.json'
+
+jobs:
+  validate-locales:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: coreutils
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Validate i18n translations
+        run: pnpm i18n:validate
+      - name: Check RTL direction mapping
+        run: node scripts/check-rtl-mapping.js
+
+  playwright-tests:
+    needs: validate-locales
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build application
+        run: pnpm build
+      - name: Run RTL/LTR layout tests
+        run: pnpm test:e2e --project=RTL\ Chromium
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+  multi-language-tests:
+    needs: validate-locales
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        locale: [fa, ar, es, fr, hi, pt, en, zh]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build application
+        run: pnpm build
+      - name: Test locale ${{ matrix.locale }}
+        run: pnpm test:e2e --grep="${matrix.locale}"

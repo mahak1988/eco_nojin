@@ -4,6 +4,7 @@ Decision Support System (DSS) Engine.
 Synthesizes results from scenarios, optimization, and risk analysis
 to provide actionable recommendations.
 """
+
 import structlog
 
 logger = structlog.get_logger()
@@ -29,6 +30,7 @@ class RecommendationType(Enum):
 @dataclass
 class Recommendation:
     """Object representing a single recommendation."""
+
     project_id: str
     recommendation_type: RecommendationType
     title: str
@@ -37,10 +39,14 @@ class Recommendation:
     confidence_level: float
     risk_level: str  # "low", "medium", "high"
     economic_impact: dict[str, float]  # e.g., {"NPV_irr": 5000000, "IRR_fraction": 0.12}
-    environmental_impact: dict[str, float] # e.g., {"co2_reduction_tonnes": 100, "water_saved_m3": 5000}
-    social_impact: dict[str, float]       # e.g., {"jobs_created": 2.5, "income_increase_fraction": 0.15}
-    implementation_timeline: dict[str, str] # e.g., {"start_date": "2024-06-01", "end_date": "2024-10-30"}
-    monitoring_plan: dict[str, Any]       # e.g., {"checkpoints": [...], "kpis": [...]}
+    environmental_impact: dict[
+        str, float
+    ]  # e.g., {"co2_reduction_tonnes": 100, "water_saved_m3": 5000}
+    social_impact: dict[str, float]  # e.g., {"jobs_created": 2.5, "income_increase_fraction": 0.15}
+    implementation_timeline: dict[
+        str, str
+    ]  # e.g., {"start_date": "2024-06-01", "end_date": "2024-10-30"}
+    monitoring_plan: dict[str, Any]  # e.g., {"checkpoints": [...], "kpis": [...]}
 
 
 class DecisionSupportSystem:
@@ -49,7 +55,12 @@ class DecisionSupportSystem:
     def __init__(self):
         pass
 
-    def generate_recommendations(self, project_id: str, scenario_comparison: dict[str, Any], optimization_results: list[dict[str, Any]]) -> list[Recommendation]:
+    def generate_recommendations(
+        self,
+        project_id: str,
+        scenario_comparison: dict[str, Any],
+        optimization_results: list[dict[str, Any]],
+    ) -> list[Recommendation]:
         """
         Generates recommendations based on scenario comparison and optimization results.
 
@@ -79,18 +90,20 @@ class DecisionSupportSystem:
                 description=rec_desc,
                 data={"based_on_scenario_id": best_scenario_id},
                 confidence_level=0.8,
-                risk_level=self._map_risk_score_to_level(scenario_data.get('projected_risk_score', 0.5)),
-                economic_impact={"NPV_irr": scenario_data.get('npv_irr', 0)},
+                risk_level=self._map_risk_score_to_level(
+                    scenario_data.get("projected_risk_score", 0.5)
+                ),
+                economic_impact={"NPV_irr": scenario_data.get("npv_irr", 0)},
                 environmental_impact={},
                 social_impact={},
                 implementation_timeline={"start_date": "TBD", "end_date": "TBD"},
-                monitoring_plan={"kpis": ["yield", "profit", "risk"]}
+                monitoring_plan={"kpis": ["yield", "profit", "risk"]},
             )
             recommendations.append(recommendation)
 
         # 2. Incorporate optimization result (e.g., optimal fertilizer rate)
         if optimization_results:
-            opt_result = optimization_results[-1] # Take the last one for example
+            opt_result = optimization_results[-1]  # Take the last one for example
             opt_solution = opt_result.get("optimal_solution", {})
             fert_rate = opt_solution.get("fertilizer_rate_kg_ha_optimal")
             if fert_rate is not None:
@@ -103,12 +116,14 @@ class DecisionSupportSystem:
                     description=rec_desc,
                     data=opt_solution,
                     confidence_level=0.9,
-                    risk_level="medium", # Based on optimization constraints/risk analysis
-                    economic_impact={"potential_profit_increase_irr": "TBD"}, # Would need more calc
+                    risk_level="medium",  # Based on optimization constraints/risk analysis
+                    economic_impact={
+                        "potential_profit_increase_irr": "TBD"
+                    },  # Would need more calc
                     environmental_impact={"potential_emission_reduction_if_lower_rate": "TBD"},
                     social_impact={},
                     implementation_timeline={"start_date": "Next Season", "end_date": "Ongoing"},
-                    monitoring_plan={"kpis": ["yield", "soil_health", "cost_per_hectare"]}
+                    monitoring_plan={"kpis": ["yield", "soil_health", "cost_per_hectare"]},
                 )
                 recommendations.append(recommendation)
 
@@ -123,12 +138,12 @@ class DecisionSupportSystem:
     def _find_best_scenario(self, comparison: dict[str, Any]) -> str:
         """Simple logic to find the 'best' scenario (e.g., highest NPV, acceptable risk)."""
         best_id = None
-        best_score = float('-inf')
+        best_score = float("-inf")
         for sid, data in comparison.items():
             npv = data.get("npv_irr", 0)
             risk = data.get("projected_risk_score", 1.0)
             # Simple scoring: NPV - (risk_penalty * risk)
-            score = npv - (1000000 * risk) # Heuristic penalty
+            score = npv - (1000000 * risk)  # Heuristic penalty
             if score > best_score:
                 best_score = score
                 best_id = sid
@@ -155,7 +170,7 @@ class DecisionSupportSystem:
                     recommendation_data={
                         "title": rec.title,
                         "description": rec.description,
-                        "detailed_data": rec.data
+                        "detailed_data": rec.data,
                     },
                     confidence_level=rec.confidence_level,
                     risk_level=rec.risk_level,
@@ -167,7 +182,7 @@ class DecisionSupportSystem:
                     # approved_by, approved_at, implemented_at are set later
                 )
                 db.add(db_rec)
-                db.flush() # To get the ID before commit
+                db.flush()  # To get the ID before commit
                 ids.append(str(db_rec.id))
 
             db.commit()
@@ -188,9 +203,13 @@ def example_recommendation_generation(project_id: str, scenario_comparison_data:
     # Simulate an optimization result
     opt_results = [{"optimal_solution": {"fertilizer_rate_kg_ha_optimal": 125.5}}]
 
-    recommendations = dss.generate_recommendations(project_id, scenario_comparison_data, opt_results)
+    recommendations = dss.generate_recommendations(
+        project_id, scenario_comparison_data, opt_results
+    )
     persisted_ids = dss.persist_recommendations(recommendations)
 
     logger.info(f"Generated and persisted {len(persisted_ids)} recommendations: {persisted_ids}")
     for rec in recommendations:
-        logger.info(f"- {rec.title}: {rec.description} (Conf: {rec.confidence_level}, Risk: {rec.risk_level})")
+        logger.info(
+            f"- {rec.title}: {rec.description} (Conf: {rec.confidence_level}, Risk: {rec.risk_level})"
+        )

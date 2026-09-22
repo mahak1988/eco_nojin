@@ -15,6 +15,7 @@ Honesty contract (W-001)
   otherwise "simulated" with explicit labelling. Weather is always real
   NASA POWER data when the network is reachable, else an error.
 """
+
 import logging
 import random
 from datetime import date, datetime, timedelta
@@ -24,14 +25,16 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from sqlalchemy.orm import Session
 
-from database import models  # noqa: F401
+from database import models
 from database.hub import hub
-from database.hub import hub
+
 
 # Compatibility: get_db via hub
 def get_db():
     with hub.get_session() as session:
         yield session
+
+
 from services.analytics.duckdb_service import summarize_satellite_rows
 from services.satellite.copernicus import (
     CopernicusClient,
@@ -52,14 +55,16 @@ router = APIRouter(prefix="/api/v1/satellite", tags=["satellite"])
 # Request/Response Models
 # ============================================================================
 
+
 class SatelliteAnalyzeRequest(BaseModel):
     """Request model for satellite analysis."""
+
     lat: float = Field(..., ge=-90, le=90, description="Latitude (-90..90)")
     lon: float = Field(..., ge=-180, le=180, description="Longitude (-180..180)")
     analysis_date: str | None = Field(None, description="ISO date (YYYY-MM-DD)")
     farm_id: int | None = Field(None, description="Farm id to attach the stored row")
 
-    @field_validator('analysis_date')
+    @field_validator("analysis_date")
     @classmethod
     def validate_date_format(cls, v):
         if v is None:
@@ -68,11 +73,12 @@ class SatelliteAnalyzeRequest(BaseModel):
             date.fromisoformat(v)
             return v
         except ValueError:
-            raise ValueError('analysis_date must be in ISO format (YYYY-MM-DD)')
+            raise ValueError("analysis_date must be in ISO format (YYYY-MM-DD)")
 
 
 class SatelliteAnalyzeResponse(BaseModel):
     """Response model for satellite analysis."""
+
     lat: float
     lon: float
     ndvi: float = Field(..., ge=-1, le=1)
@@ -95,6 +101,7 @@ class RealLandResponse(BaseModel):
     The satellite block may be ``credentials_required`` until free CDSE
     credentials are configured — this endpoint never fabricates data.
     """
+
     lat: float
     lon: float
     analysis_date: str | None = None
@@ -106,6 +113,7 @@ class RealLandResponse(BaseModel):
 
 class SatelliteHistoryResponse(BaseModel):
     """One stored satellite analysis row."""
+
     id: int
     farm_id: int
     ndvi: float | None = None
@@ -120,8 +128,10 @@ class SatelliteHistoryResponse(BaseModel):
     analyzed_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
+
 class WeatherResponse(BaseModel):
     """Real weather summary (ERA5 primary, NASA POWER secondary)."""
+
     status: str
     source: str = "Open-Meteo ERA5"
     lat: float
@@ -135,6 +145,7 @@ class WeatherResponse(BaseModel):
 
 class StatsResponse(BaseModel):
     """DuckDB NDVI summary for a farm."""
+
     farm_id: int
     analyses: int
     ndvi_mean: float | None = None
@@ -147,6 +158,7 @@ class StatsResponse(BaseModel):
 
 class HealthResponse(BaseModel):
     """Health check response."""
+
     status: str = "operational"
     module: str = "satellite"
     supported_indices: list[str]
@@ -159,8 +171,17 @@ class HealthResponse(BaseModel):
 # ============================================================================
 
 SUPPORTED_INDICES = [
-    "NDVI", "EVI", "SAVI", "MSAVI", "NDWI", "NDBI", "GNDVI",
-    "RENDVI", "NDMI", "LAI", "ARVI",
+    "NDVI",
+    "EVI",
+    "SAVI",
+    "MSAVI",
+    "NDWI",
+    "NDBI",
+    "GNDVI",
+    "RENDVI",
+    "NDMI",
+    "LAI",
+    "ARVI",
 ]
 
 PROVIDERS = [
@@ -192,11 +213,15 @@ def _simulated_analysis(lat: float, lon: float) -> dict[str, Any]:
         recommendation = "Healthy vegetation. Maintain current management practices."
         vegetation_health = "good"
     return {
-        "ndvi": ndvi, "evi": evi, "savi": savi,
+        "ndvi": ndvi,
+        "evi": evi,
+        "savi": savi,
         "recommendation": recommendation,
         "vegetation_health": vegetation_health,
-        "data_source": "simulated", "scene_id": None,
-        "cloud_cover": None, "sensed_at": None,
+        "data_source": "simulated",
+        "scene_id": None,
+        "cloud_cover": None,
+        "sensed_at": None,
     }
 
 
@@ -211,6 +236,7 @@ def _recommendation_for(ndvi: float) -> str:
 # ============================================================================
 # Endpoints
 # ============================================================================
+
 
 @router.post("/era5/series")
 def era5_series(
@@ -265,20 +291,21 @@ async def satellite_health():
 async def analyze_satellite(request: SatelliteAnalyzeRequest, db: Session = Depends(get_db)):
     """Analyze satellite data for a location (real Copernicus when possible)."""
     from engine.hydroma.config.settings import get_settings
+
     settings = get_settings()
-    
+
     if not settings.enable_simulated_data and not _copernicus_client().configured:
         raise HTTPException(
             status_code=503,
             detail="Simulated data is disabled in production. Configure Copernicus CDSE credentials for real data.",
         )
-    
+
     logger.info(f"Analyzing satellite data for lat={request.lat}, lon={request.lon}")
 
     client = _copernicus_client()
     analysis = _simulated_analysis(request.lat, request.lon)
     warning = None
-    
+
     if client.configured:
         try:
             cop = await client.analyze_location(request.lat, request.lon, request.analysis_date)
@@ -296,7 +323,9 @@ async def analyze_satellite(request: SatelliteAnalyzeRequest, db: Session = Depe
                     "sensed_at": cop["sensed_at"],
                 }
             else:
-                warning = "Copernicus data unavailable; using simulated values for demonstration only."
+                warning = (
+                    "Copernicus data unavailable; using simulated values for demonstration only."
+                )
                 logger.warning(
                     "Copernicus path returned %s; labelled fallback",
                     cop.get("status"),
@@ -320,9 +349,7 @@ async def analyze_satellite(request: SatelliteAnalyzeRequest, db: Session = Depe
             ndvi=analysis["ndvi"],
             evi=analysis["evi"],
             savi=analysis["savi"],
-            satellite=(
-                "Sentinel-2" if analysis["data_source"] == "copernicus" else "simulated"
-            ),
+            satellite=("Sentinel-2" if analysis["data_source"] == "copernicus" else "simulated"),
             data_source=analysis["data_source"],
             scene_id=analysis.get("scene_id"),
             cloud_cover=analysis.get("cloud_cover"),
@@ -424,9 +451,7 @@ async def get_weather(
 def get_satellite_stats(farm_id: int, db: Session = Depends(get_db)):
     """DuckDB-powered NDVI summary for a farm (real stored rows only)."""
     rows = (
-        db.query(models.SatelliteAnalysis)
-        .filter(models.SatelliteAnalysis.farm_id == farm_id)
-        .all()
+        db.query(models.SatelliteAnalysis).filter(models.SatelliteAnalysis.farm_id == farm_id).all()
     )
     stats = summarize_satellite_rows(rows)
     return StatsResponse(farm_id=farm_id, **stats)

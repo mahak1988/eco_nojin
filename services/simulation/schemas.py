@@ -1,4 +1,5 @@
 """Pydantic schemas for unified simulation"""
+
 from datetime import date, datetime
 from enum import Enum
 from typing import Any
@@ -11,6 +12,7 @@ class SimulationStatus(str, Enum):
     RUNNING = "running"
     COMPLETED = "completed"
     FAILED = "failed"
+
 
 class SimulationType(str, Enum):
     CROP_GROWTH = "crop_growth"
@@ -26,11 +28,13 @@ class SimulationType(str, Enum):
     LIVESTOCK = "livestock"
     COMPREHENSIVE = "comprehensive"
 
+
 class BBox(BaseModel):
     north: float
     south: float
     east: float
     west: float
+
 
 class SoilProfile(BaseModel):
     texture: str  # sand, loam, clay, silt_loam, etc.
@@ -43,6 +47,7 @@ class SoilProfile(BaseModel):
     clay_pct: float = 20.0
     infiltration_rate_mm_hr: float = 15.0
 
+
 class WeatherData(BaseModel):
     temp_min_c: float = 5.0
     temp_max_c: float = 30.0
@@ -52,6 +57,7 @@ class WeatherData(BaseModel):
     humidity_pct: float = 50.0
     solar_radiation_mj_m2: float = 18.0
 
+
 class CropParameters(BaseModel):
     crop_type: str
     planting_date: date
@@ -60,8 +66,10 @@ class CropParameters(BaseModel):
     row_spacing_m: float = 0.75
     plant_density_per_m2: float = 8.0
 
+
 class WindbreakConfig(BaseModel):
     """بادشکن - Windbreak configuration"""
+
     tree_species: str = "cypress"
     height_m: float = 8.0
     row_spacing_m: float = 15.0
@@ -69,15 +77,19 @@ class WindbreakConfig(BaseModel):
     orientation_deg: float = 90.0  # عمود بر باد غالب
     length_m: float = 100.0
 
+
 class MultiLayerConfig(BaseModel):
     """کشت چندلایه - Multi-layer/Agroforestry"""
+
     canopy_layer: CropParameters  # لایه بالایی (درختان)
     sub_canopy_layer: CropParameters | None = None  # لایه میانی
     ground_layer: CropParameters | None = None  # لایه زمینی
     shade_tolerance: float = 0.6
 
+
 class SimulationContext(BaseModel):
     """Context جامع برای تمام شبیه‌سازی‌ها"""
+
     simulation_id: str
     simulation_type: SimulationType
     bbox: BBox | None = None
@@ -92,8 +104,10 @@ class SimulationContext(BaseModel):
     end_date: date | None = None
     parameters: dict[str, Any] = Field(default_factory=dict)
 
+
 class SimulationResult(BaseModel):
     """نتیجه استاندارد تمام شبیه‌سازی‌ها"""
+
     simulation_id: str
     simulation_type: SimulationType
     status: SimulationStatus

@@ -1,0 +1,179 @@
+{{- if .Values.api-gateway.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "eco-nojin.fullname" . }}-api-gateway
+  namespace: {{ include "eco-nojin.namespace" . }}
+  labels:
+    {{- include "eco-nojin.labels" . | nindent 4 }}
+    app: api-gateway
+    component: backend
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/configmap-api-gateway.yaml") . | sha256sum }}
+    checksum/secrets: {{ include (print $.Template.BasePath "/secret-api-gateway.yaml") . | sha256sum }}
+spec:
+  replicas: {{ .Values.api-gateway.replicas }}
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: api-gateway
+      release: {{ .Release.Name }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+        release: {{ .Release.Name }}
+        version: {{ .Chart.AppVersion }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-api-gateway.yaml") . | sha256sum }}
+        checksum/secrets: {{ include (print $.Template.BasePath "/secret-api-gateway.yaml") . | sha256sum }}
+    spec:
+      serviceAccountName: {{ include "eco-nojin.fullname" . }}-api-gateway
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - api-gateway
+                topologyKey: kubernetes.io/hostname
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: node-type
+                    operator: In
+                    values:
+                      - compute-optimized
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: api-gateway
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: api-gateway
+      containers:
+        - name: api-gateway
+          image: "{{ .Values.global.imageRegistry }}/{{ .Values.api-gateway.image.repository }}:{{ .Values.api-gateway.image.tag }}"
+          imagePullPolicy: {{ .Values.api-gateway.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+            - name: grpc
+              containerPort: 50051
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.api-gateway.resources | nindent 12 }}
+          env:
+            - name: ENVIRONMENT
+              value: {{ .Values.api-gateway.config.environment | quote }}
+            - name: LOG_LEVEL
+              value: {{ .Values.api-gateway.config.logLevel | quote }}
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: PYTHONDONTWRITEBYTECODE
+              value: "1"
+            - name: PROMETHEUS_MULTIPROC_DIR
+              value: "/tmp/prometheus_multiproc"
+            {{- if .Values.api-gateway.config.redis.enabled }}
+            - name: REDIS_HOST
+              value: {{ .Values.api-gateway.config.redis.host | quote }}
+            - name: REDIS_PORT
+              value: {{ .Values.api-gateway.config.redis.port | quote }}
+            {{- end }}
+            {{- if .Values.api-gateway.config.database.host }}
+            - name: DATABASE_HOST
+              value: {{ .Values.api-gateway.config.database.host | quote }}
+            - name: DATABASE_PORT
+              value: {{ .Values.api-gateway.config.database.port | quote }}
+            {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ include "eco-nojin.fullname" . }}-api-gateway-secrets
+            - configMapRef:
+                name: {{ include "eco-nojin.fullname" . }}-api-gateway-config
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+            successThreshold: 1
+          startupProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 30
+            successThreshold: 1
+          volumeMounts:
+            - name: tmp-prometheus
+              mountPath: /tmp/prometheus_multiproc
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 10"]
+      volumes:
+        - name: tmp-prometheus
+          emptyDir: {}
+      initContainers:
+        - name: init-db
+          image: "{{ .Values.global.imageRegistry }}/{{ .Values.api-gateway.image.repository }}:{{ .Values.api-gateway.image.tag }}"
+          imagePullPolicy: {{ .Values.api-gateway.image.pullPolicy }}
+          command: ["python", "-m", "alembic", "upgrade", "heads"]
+          envFrom:
+            - secretRef:
+                name: {{ include "eco-nojin.fullname" . }}-api-gateway-secrets
+            - configMapRef:
+                name: {{ include "eco-nojin.fullname" . }}-api-gateway-config
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+{{- end }}

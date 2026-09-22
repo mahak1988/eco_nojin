@@ -36,7 +36,7 @@ class RothCService:
 
         # محاسبه اعتبار کربن (هر تن CO2e = 1 credit)
         total_sequestered = result["SOC"][-1] - result["SOC"][0]
-        co2e = total_sequestered * 44/12  # تبدیل C به CO2
+        co2e = total_sequestered * 44 / 12  # تبدیل C به CO2
 
         return CarbonSequestrationForecast(
             total_tonnes_co2e=co2e,

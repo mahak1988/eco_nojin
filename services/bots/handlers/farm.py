@@ -24,9 +24,7 @@ router = Router(name="farm")
 
 _FARM_LABELS = {ui["farm_btn"] for ui in i18n.UI.values()}
 
-_LOCATION_RE = re.compile(
-    r"^\s*(-?\d{1,3}(?:\.\d+)?)\s*[,،]\s*(-?\d{1,3}(?:\.\d+)?)\s*$"
-)
+_LOCATION_RE = re.compile(r"^\s*(-?\d{1,3}(?:\.\d+)?)\s*[,،]\s*(-?\d{1,3}(?:\.\d+)?)\s*$")
 
 
 class FarmRegister(StatesGroup):
@@ -131,7 +129,9 @@ async def farm_soil(message: Message, state: FSMContext) -> None:
     await state.update_data(draft=draft)
 
     # Persist (blocking sync DB in a worker thread — fine for Phase 1).
-    saved = await asyncio.to_thread(_save_farm, draft, message.from_user.id, message.from_user.full_name)
+    saved = await asyncio.to_thread(
+        _save_farm, draft, message.from_user.id, message.from_user.full_name
+    )
     await state.clear()
     if saved:
         await message.answer(i18n.t(lang, "farm_saved").format(name=draft.name))

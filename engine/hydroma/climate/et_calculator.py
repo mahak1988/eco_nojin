@@ -11,6 +11,7 @@ API Compatibility:
 - Legacy signature: calc_et0_hargreaves(t_min, t_max, t_mean, ra_mj)
 - New signature: calc_et0_hargreaves(data: ClimateData)
 """
+
 from __future__ import annotations
 
 import math
@@ -20,20 +21,22 @@ from dataclasses import dataclass
 @dataclass
 class ClimateData:
     """داده‌های هواشناسی روزانه برای محاسبات FAO-56"""
-    tmin: float                            # °C
-    tmax: float                            # °C
-    rh_min: float | None = None         # %
-    rh_max: float | None = None         # %
-    wind_speed: float | None = None     # m/s at 2m
+
+    tmin: float  # °C
+    tmax: float  # °C
+    rh_min: float | None = None  # %
+    rh_max: float | None = None  # %
+    wind_speed: float | None = None  # m/s at 2m
     solar_radiation: float | None = None  # MJ/m2/day
-    elevation: float = 0.0                 # m
-    latitude: float = 0.0                  # degrees (+ = North)
-    doy: int = 1                           # day of year
+    elevation: float = 0.0  # m
+    latitude: float = 0.0  # degrees (+ = North)
+    doy: int = 1  # day of year
 
 
 # =============================================================================
 # توابع کمکی (FAO-56 Equations)
 # =============================================================================
+
 
 def calc_saturation_vapor_pressure(t: float) -> float:
     """فشار بخار اشباع (kPa) - معادله 11 FAO-56"""
@@ -62,9 +65,14 @@ def calc_extraterrestrial_radiation(latitude: float, doy: int) -> float:
     tan_product = math.tan(phi) * math.tan(delta_sun)
     ws = math.acos(max(-1.0, min(1.0, -tan_product)))
     gsc = 0.0820  # solar constant MJ/m2/min
-    ra = (24 * 60 / math.pi) * gsc * dr * (
-        ws * math.sin(phi) * math.sin(delta_sun)
-        + math.cos(phi) * math.cos(delta_sun) * math.sin(ws)
+    ra = (
+        (24 * 60 / math.pi)
+        * gsc
+        * dr
+        * (
+            ws * math.sin(phi) * math.sin(delta_sun)
+            + math.cos(phi) * math.cos(delta_sun) * math.sin(ws)
+        )
     )
     return max(0.0, ra)
 
@@ -72,6 +80,7 @@ def calc_extraterrestrial_radiation(latitude: float, doy: int) -> float:
 # =============================================================================
 # Hargreaves-Samani Method (معادله 52 FAO-56)
 # =============================================================================
+
 
 def _hargreaves_core(t_min: float, t_max: float, t_mean: float, ra_mj: float) -> float:
     """
@@ -139,6 +148,7 @@ def calc_et0_hargreaves(
 # Penman-Monteith Method (معادله 39 FAO-56)
 # =============================================================================
 
+
 def calc_et0_penman_monteith(data: ClimateData) -> float:
     """
     محاسبه ET0 با روش Penman-Monteith (استاندارد جهانی فائو).
@@ -162,9 +172,8 @@ def calc_et0_penman_monteith(data: ClimateData) -> float:
     # تابش خالص (Rn) - albedo grass = 0.23
     rn = data.solar_radiation * 0.77
 
-    numerator = (
-        0.408 * delta * rn
-        + gamma * (900 / (tmean + 273)) * data.wind_speed * (es_tmax - ea)
+    numerator = 0.408 * delta * rn + gamma * (900 / (tmean + 273)) * data.wind_speed * (
+        es_tmax - ea
     )
     denominator = delta + gamma * (1 + 0.34 * data.wind_speed)
     et0 = numerator / denominator

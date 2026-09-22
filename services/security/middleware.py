@@ -12,6 +12,7 @@ Order matters (cheapest checks first):
 The middleware never raises: any layer failure degrades to allow + log
 (fail-open is documented; the WAF/limiter still hard-block with 403/429).
 """
+
 import logging
 
 from starlette.responses import JSONResponse
@@ -38,7 +39,12 @@ def _client_ip(scope) -> str:
 
 
 class SpiderFirewallMiddleware:
-    def __init__(self, app, exempt_prefixes=("/health", "/ready", "/docs", "/openapi.json", "/redoc"), redis_client=None) -> None:
+    def __init__(
+        self,
+        app,
+        exempt_prefixes=("/health", "/ready", "/docs", "/openapi.json", "/redoc"),
+        redis_client=None,
+    ) -> None:
         self.app = app
         self.exempt = exempt_prefixes
         self._rate_limiter = RateLimiter(redis_client=redis_client)
@@ -61,7 +67,14 @@ class SpiderFirewallMiddleware:
             headers = dict(scope.get("headers") or [])
             ua = headers.get(b"user-agent", b"").decode(errors="ignore")
             honeypot.hit(ip, path, ua)
-            log_event("honeypot", ip, f"trap:{path}", "block", {"user_agent": ua[:120]}, severity="critical")
+            log_event(
+                "honeypot",
+                ip,
+                f"trap:{path}",
+                "block",
+                {"user_agent": ua[:120]},
+                severity="critical",
+            )
             resp = JSONResponse({"detail": "not found"}, status_code=404)
             await resp(scope, receive, send)
             return
@@ -90,9 +103,18 @@ class SpiderFirewallMiddleware:
         query = scope.get("query_string", b"").decode(errors="ignore")
 
         # --- WAF -------------------------------------------------------------
-        allowed, score, hits, reason = waf_engine.check(method, path, query, body_bytes.decode("utf-8", "ignore"), ua)
+        allowed, score, hits, reason = waf_engine.check(
+            method, path, query, body_bytes.decode("utf-8", "ignore"), ua
+        )
         if not allowed:
-            log_event("waf", ip, method + " " + path, "block", {"rules": hits, "score": score}, severity="high")
+            log_event(
+                "waf",
+                ip,
+                method + " " + path,
+                "block",
+                {"rules": hits, "score": score},
+                severity="high",
+            )
             circuit_breaker.report_block(ip)
             resp = JSONResponse({"detail": "blocked by WAF", "reason": reason}, status_code=403)
             await resp(scope, receive, send)
@@ -114,8 +136,19 @@ class SpiderFirewallMiddleware:
                 user_id = None
         ok, retry_after = self._rate_limiter.check(ip, path, user_id)
         if not ok:
-            log_event("rate", ip, method + " " + path, "block", {"retry_after": retry_after}, severity="medium")
-            resp = JSONResponse({"detail": "rate limit exceeded"}, status_code=429, headers={"Retry-After": str(retry_after)})
+            log_event(
+                "rate",
+                ip,
+                method + " " + path,
+                "block",
+                {"retry_after": retry_after},
+                severity="medium",
+            )
+            resp = JSONResponse(
+                {"detail": "rate limit exceeded"},
+                status_code=429,
+                headers={"Retry-After": str(retry_after)},
+            )
             await resp(scope, receive, send)
             return
 
@@ -144,4 +177,11 @@ class SpiderFirewallMiddleware:
         finally:
             score_a = anomaly_detector.score(ip, status_holder["code"], query, len(body_bytes))
             if score_a >= 80:
-                log_event("anomaly", ip, method + " " + path, "throttle", {"score": score_a}, severity="medium")
+                log_event(
+                    "anomaly",
+                    ip,
+                    method + " " + path,
+                    "throttle",
+                    {"score": score_a},
+                    severity="medium",
+                )

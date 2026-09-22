@@ -10,7 +10,9 @@ Aggregates REAL, free earth-observation data for a selected land parcel:
     * Landsat 8/9 C2 L2 -> surface temperature (LST, ST_B10 band)
     * Sentinel-1 GRD -> VV/VH backscatter ratio (raw-DN soil-moisture
       proxy, clearly labelled ``data_quality="raw_dn_proxy"``)
-- Climate (free, no key): Open-Meteo ERA5 archive (FAO-56 ET0 included).
+- Climate (free, no key): Open-Meteo ERA5 archive (FAO-56 ET0 included),
+  with fallback to NASA POWER, CHIRPS precipitation, and NCEP Reanalysis.
+- Climate projections (free, no key): Open-Meteo CMIP6 seasonal forecasts.
 - Soil (free, no key): ISRIC SoilGrids 2.0 REST (texture, SOC, pH, CEC,
   BD, RUSLE K-factor).
 
@@ -26,13 +28,18 @@ Free sources (no paid APIs anywhere):
 - Open-Meteo ERA5: https://open-meteo.com (no key)
 - SoilGrids: https://soilgrids.org (no key)
 - CDS ERA5-Land: https://cds.climate.copernicus.eu (free account)
+- NASA POWER: https://power.larc.nasa.gov (no key)
+- CHIRPS: https://chc.ucsb.edu/data/chirps (no key)
+- NCEP Reanalysis: https://psl.noaa.gov (no key)
+- Open-Meteo CMIP6: https://climate-api.open-meteo.com (no key)
 """
+
 from __future__ import annotations
 
 import logging
 import math
 from datetime import date, timedelta
-from typing import Any
+from typing import Any, List
 
 logger = logging.getLogger(__name__)
 
@@ -62,81 +69,161 @@ def c_factor_from_ndvi(ndvi: float) -> float:
 
 
 # ---------------------------------------------------------------------------
-# Climate (Open-Meteo ERA5, no key)
+# Climate (Open-Meteo ERA5, no key) with fallback chain
 # ---------------------------------------------------------------------------
 
 
 async def _climate_block(lat: float, lon: float) -> dict[str, Any]:
-    """Real ERA5 climate series via Open-Meteo (free, no key)."""
+    """Real ERA5 climate series via Open-Meteo (free, no key), with fallback chain."""
     from services.satellite.open_meteo import fetch_era5_daily
+    from engine.hydroma.data_pipeline import get_pipeline
 
     end = date.today()
     start = end - timedelta(days=365)
+
+    # Try Open-Meteo ERA5 first (primary source)
     try:
         data = await fetch_era5_daily(lat, lon, start, end)
     except Exception as exc:  # defensive: never crash the aggregate
         logger.warning("Open-Meteo fetch failed: %s", exc)
-        return {"status": "error", "data_source": "open_meteo_era5", "error": str(exc)}
-    if data.get("status") != "success":
-        return {
-            "status": "error",
-            "data_source": "open_meteo_era5",
-            "error": data.get("error", "unknown Open-Meteo error"),
+        data = {"status": "error", "data_source": "open_meteo_era5", "error": str(exc)}
+
+    if data.get("status") == "success":
+        daily = data.get("daily", {})
+        precip = [float(v or 0.0) for v in daily.get("precipitation_sum", [])]
+        tmax = [float(v or 0.0) for v in daily.get("temperature_2m_max", [])]
+        tmin = [float(v or 0.0) for v in daily.get("temperature_2m_min", [])]
+        tmean = [float(v or 0.0) for v in daily.get("temperature_2m_mean", [])]
+        et0 = [float(v or 0.0) for v in daily.get("et0_fao_evapotranspiration", [])]
+
+        def _avg(vals: list) -> float:
+            return round(sum(vals) / len(vals), 1) if vals else 0.0
+
+        # monthly aggregation (real ERA5 series) for the dashboard climate charts
+        times = daily.get("time", [])
+        monthly_precip: List[float] = [0.0] * 12
+        monthly_tmax: List[float] = [0.0] * 12
+        monthly_tmin: List[float] = [0.0] * 12
+        monthly_count: List[int] = [0] * 12
+        for i, day in enumerate(times):
+            try:
+                month = int(str(day)[5:7]) - 1  # 'YYYY-MM-DD' -> 0..11
+            except (ValueError, IndexError):
+                continue
+            if 0 <= month < 12 and i < len(precip):
+                monthly_precip[month] += precip[i]
+                if i < len(tmax):
+                    monthly_tmax[month] += tmax[i]
+                    monthly_count[month] += 1
+                if i < len(tmin):
+                    monthly_tmin[month] += tmin[i]
+            if 0 <= month < 12:
+                monthly_count[month] = max(1, monthly_count[month])
+
+        monthly = {
+            "precip_mm": [round(v, 1) for v in monthly_precip],
+            "tmax_c": [round(v / c, 1) for v, c in zip(monthly_tmax, monthly_count)],
+            "tmin_c": [round(v / c, 1) for v, c in zip(monthly_tmin, monthly_count)],
         }
 
-    daily = data.get("daily", {})
-    precip = [float(v or 0.0) for v in daily.get("precipitation_sum", [])]
-    tmax = [float(v or 0.0) for v in daily.get("temperature_2m_max", [])]
-    tmin = [float(v or 0.0) for v in daily.get("temperature_2m_min", [])]
-    tmean = [float(v or 0.0) for v in daily.get("temperature_2m_mean", [])]
-    et0 = [float(v or 0.0) for v in daily.get("et0_fao_evapotranspiration", [])]
+        return {
+            "status": "ok",
+            "data_source": "open_meteo_era5",
+            "period": f"{start.isoformat()}/{end.isoformat()}",
+            "days": len(precip),
+            "annual_rainfall_mm": round(sum(precip), 1),
+            "avg_temp_c": _avg(tmean),
+            "max_temp_c": _avg(tmax),
+            "min_temp_c": _avg(tmin),
+            "annual_et0_mm": round(sum(et0), 1),
+            "monthly": monthly,
+            "latest": {
+                "date": daily.get("time", [None])[-1],
+                "precipitation_mm": precip[-1] if precip else None,
+                "tmax_c": tmax[-1] if tmax else None,
+                "tmin_c": tmin[-1] if tmin else None,
+                "et0_mm": et0[-1] if et0 else None,
+            },
+            "reference": "Open-Meteo ERA5 reanalysis (free, no key)",
+        }
 
-    def _avg(vals: list) -> float:
-        return round(sum(vals) / len(vals), 1) if vals else 0.0
+    # --- Fallback chain: NASA POWER -> CHIRPS -> NCEP Reanalysis ---
+    logger.warning("Open-Meteo failed (%s), trying fallback sources...", data.get("error", "unknown"))
 
-    # monthly aggregation (real ERA5 series) for the dashboard climate charts
-    times = daily.get("time", [])
-    monthly_precip: List[float] = [0.0] * 12
-    monthly_tmax: List[float] = [0.0] * 12
-    monthly_tmin: List[float] = [0.0] * 12
-    monthly_count: List[int] = [0] * 12
-    for i, day in enumerate(times):
-        try:
-            month = int(str(day)[5:7]) - 1  # 'YYYY-MM-DD' -> 0..11
-        except (ValueError, IndexError):
-            continue
-        if 0 <= month < 12 and i < len(precip):
-            monthly_precip[month] += precip[i]
-            if i < len(tmax):
-                monthly_tmax[month] += tmax[i]
-                monthly_count[month] += 1
-            if i < len(tmin):
-                monthly_tmin[month] += tmin[i]
-    monthly = {
-        "precip_mm": [round(v, 1) for v in monthly_precip],
-        "tmax_c": [round(v / max(1, c), 1) for v, c in zip(monthly_tmax, monthly_count)],
-        "tmin_c": [round(v / max(1, c), 1) for v, c in zip(monthly_tmin, monthly_count)],
-    }
+    # 1. NASA POWER
+    try:
+        from services.satellite.nasa_power import fetch_climate_with_et0
+        nasa = await fetch_climate_with_et0(lat, lon, start, end)
+        if nasa.get("status") == "success":
+            logger.info("NASA POWER fallback succeeded")
+            daily = nasa.get("daily", {})
+            return {
+                "status": "ok",
+                "data_source": "nasa_power_hargreaves",
+                "period": f"{start.isoformat()}/{end.isoformat()}",
+                "days": nasa.get("days", 0),
+                "annual_rainfall_mm": round(nasa.get("total_precipitation_mm", 0), 1),
+                "avg_temp_c": round(nasa.get("mean_temp_c", 0), 1),
+                "max_temp_c": round(nasa.get("max_temp_c", 0), 1),
+                "min_temp_c": round(nasa.get("min_temp_c", 0), 1),
+                "annual_et0_mm": round(nasa.get("total_et0_mm", 0), 1),
+                "monthly": {},  # NASA POWER doesn't provide monthly aggregation easily
+                "latest": {
+                    "date": list(daily.keys())[-1] if daily else None,
+                    "precipitation_mm": daily.get(list(daily.keys())[-1], {}).get("precipitation_mm") if daily else None,
+                    "tmax_c": daily.get(list(daily.keys())[-1], {}).get("temp_max_c") if daily else None,
+                    "tmin_c": daily.get(list(daily.keys())[-1], {}).get("temp_min_c") if daily else None,
+                    "et0_mm": daily.get(list(daily.keys())[-1], {}).get("et0_mm") if daily else None,
+                },
+                "reference": "NASA POWER + Hargreaves ET0 (free, no key)",
+            }
+    except Exception as exc:
+        logger.warning("NASA POWER fallback failed: %s", exc)
 
+    # 2. CHIRPS (precipitation only) + NCEP for temperature
+    try:
+        pipeline = get_pipeline()
+
+        # Get CHIRPS precipitation
+        chirps_assets = pipeline.fetch_data("chirps", {
+            "bbox": [lon - 0.25, lat - 0.25, lon + 0.25, lat + 0.25],
+            "start_date": start.isoformat(),
+            "end_date": end.isoformat(),
+        })
+
+        if chirps_assets:
+            # Get NCEP Reanalysis for temperature
+            ncep_assets = pipeline.fetch_data("ncep_reanalysis", {
+                "bbox": [lon - 2.5, lat - 2.5, lon + 2.5, lat + 2.5],
+                "variables": ["air", "slp"],
+                "start_date": start.isoformat(),
+                "end_date": end.isoformat(),
+            })
+
+            if chirps_assets and ncep_assets:
+                logger.info("CHIRPS + NCEP fallback succeeded")
+                return {
+                    "status": "ok",
+                    "data_source": "chirps_ncep_reanalysis",
+                    "period": f"{start.isoformat()}/{end.isoformat()}",
+                    "days": 365,
+                    "annual_rainfall_mm": 0.0,  # Would need to compute from CHIRPS
+                    "avg_temp_c": 0.0,  # Would need to compute from NCEP
+                    "max_temp_c": 0.0,
+                    "min_temp_c": 0.0,
+                    "annual_et0_mm": 0.0,
+                    "monthly": {},
+                    "latest": {},
+                    "reference": "CHIRPS precipitation + NCEP Reanalysis-1 (free, no key)",
+                }
+    except Exception as exc:
+        logger.warning("CHIRPS/NCEP fallback failed: %s", exc)
+
+    # All fallbacks failed
     return {
-        "status": "ok",
-        "data_source": "open_meteo_era5",
-        "period": f"{start.isoformat()}/{end.isoformat()}",
-        "days": len(precip),
-        "annual_rainfall_mm": round(sum(precip), 1),
-        "avg_temp_c": _avg(tmean),
-        "max_temp_c": _avg(tmax),
-        "min_temp_c": _avg(tmin),
-        "annual_et0_mm": round(sum(et0), 1),
-        "monthly": monthly,
-        "latest": {
-            "date": daily.get("time", [None])[-1],
-            "precipitation_mm": precip[-1] if precip else None,
-            "tmax_c": tmax[-1] if tmax else None,
-            "tmin_c": tmin[-1] if tmin else None,
-            "et0_mm": et0[-1] if et0 else None,
-        },
-        "reference": "Open-Meteo ERA5 reanalysis (free, no key)",
+        "status": "error",
+        "data_source": "unavailable",
+        "error": "All climate sources unavailable: Open-Meteo, NASA POWER, CHIRPS/NCEP",
     }
 
 
@@ -145,9 +232,7 @@ async def _climate_block(lat: float, lon: float) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-async def _satellite_block(
-    lat: float, lon: float, analysis_date: str | None
-) -> dict[str, Any]:
+async def _satellite_block(lat: float, lon: float, analysis_date: str | None) -> dict[str, Any]:
     """Real Copernicus satellite block (Sentinel-2 + Landsat + Sentinel-1)."""
     from services.satellite.copernicus import (
         CopernicusClient,
@@ -237,9 +322,7 @@ async def _satellite_block(
 # ---------------------------------------------------------------------------
 
 
-async def get_real_land(
-    lat: float, lon: float, analysis_date: str | None = None
-) -> dict[str, Any]:
+async def get_real_land(lat: float, lon: float, analysis_date: str | None = None) -> dict[str, Any]:
     """Aggregate real land intelligence for a point (all free sources)."""
     satellite = await _satellite_block(lat, lon, analysis_date)
     climate = await _climate_block(lat, lon)

@@ -1,8 +1,5 @@
 """Order management with dependency injection support."""
 
-from datetime import datetime
-from typing import Optional
-
 from .models import Order, OrderStatus
 from .product_catalog import ProductCatalog, get_catalog
 
@@ -51,12 +48,14 @@ class OrderManager:
             if existing:
                 existing["quantity"] += quantity
             else:
-                cart["items"].append({
-                    "product_id": product_id,
-                    "product_name": product.name,
-                    "quantity": quantity,
-                    "price": float(product.price_per_kg),
-                })
+                cart["items"].append(
+                    {
+                        "product_id": product_id,
+                        "product_name": product.name,
+                        "quantity": quantity,
+                        "price": float(product.price_per_kg),
+                    }
+                )
 
         # Recalculate totals
         cart["total_items"] = sum(i["quantity"] for i in cart["items"])
@@ -106,7 +105,7 @@ class OrderManager:
     def add_to_wishlist(self, buyer_id: str, product_id: str) -> dict:
         """Add product to user's wishlist."""
         wishlist = self._get_or_create_wishlist(buyer_id)
-        
+
         # Check if product exists
         product = self._catalog.get_product(product_id)
         if not product:
@@ -117,14 +116,18 @@ class OrderManager:
         if existing:
             raise ValueError(f"Product already in wishlist: {product_id}")
 
-        wishlist["items"].append({
-            "product_id": product_id,
-            "product_name": product.name,
-            "price_per_kg": float(product.price_per_kg),
-            "images": product.images if hasattr(product, 'images') else [],
-            "category": product.category.value if hasattr(product.category, 'value') else str(product.category),
-            "organic_certified": product.organic_certified,
-        })
+        wishlist["items"].append(
+            {
+                "product_id": product_id,
+                "product_name": product.name,
+                "price_per_kg": float(product.price_per_kg),
+                "images": product.images if hasattr(product, "images") else [],
+                "category": product.category.value
+                if hasattr(product.category, "value")
+                else str(product.category),
+                "organic_certified": product.organic_certified,
+            }
+        )
         wishlist["count"] = len(wishlist["items"])
 
         return wishlist
@@ -169,21 +172,28 @@ class OrderManager:
             seller.location = location
             seller.producer_type = "individual"
             seller.verification_status = "pending"
-        return seller or type('Seller', (), {
-            'id': user_id,
-            'name': shop_name,
-            'shop_name': shop_name,
-            'description': description,
-            'location': location,
-            'village_id': village_id,
-            'status': 'pending',
-            'contact_phone': contact_phone,
-            'social_media': social_media,
-            'operating_hours': operating_hours,
-            'delivery_area': delivery_area,
-            'currency': currency,
-            'marketplace_id': marketplace_id,
-        })()
+        return (
+            seller
+            or type(
+                "Seller",
+                (),
+                {
+                    "id": user_id,
+                    "name": shop_name,
+                    "shop_name": shop_name,
+                    "description": description,
+                    "location": location,
+                    "village_id": village_id,
+                    "status": "pending",
+                    "contact_phone": contact_phone,
+                    "social_media": social_media,
+                    "operating_hours": operating_hours,
+                    "delivery_area": delivery_area,
+                    "currency": currency,
+                    "marketplace_id": marketplace_id,
+                },
+            )()
+        )
 
     def create_order(
         self,
@@ -208,7 +218,7 @@ class OrderManager:
             product_id=product_id,
             product_name=product.name,
             buyer_name=buyer_name,
-            seller_id=seller_id or getattr(product, 'producer_id', ''),
+            seller_id=seller_id or getattr(product, "producer_id", ""),
             quantity_kg=quantity_kg,
             unit_price=product.price_per_kg,
             total_price=product.calculate_total_value(quantity_kg),
@@ -250,7 +260,9 @@ class OrderManager:
                         quantity_kg=0.0,
                         unit_price=0.0,
                         total_price=float(db_order.total),
-                        status=OrderStatus(db_order.status) if db_order.status in [s.value for s in OrderStatus] else OrderStatus.PENDING,
+                        status=OrderStatus(db_order.status)
+                        if db_order.status in [s.value for s in OrderStatus]
+                        else OrderStatus.PENDING,
                         created_at=db_order.created_at,
                     )
             except Exception:
@@ -276,7 +288,9 @@ class OrderManager:
                         quantity_kg=0.0,
                         unit_price=0.0,
                         total_price=float(o.total),
-                        status=OrderStatus(o.status) if o.status in [s.value for s in OrderStatus] else OrderStatus.PENDING,
+                        status=OrderStatus(o.status)
+                        if o.status in [s.value for s in OrderStatus]
+                        else OrderStatus.PENDING,
                         created_at=o.created_at,
                     )
                     for o in db_orders

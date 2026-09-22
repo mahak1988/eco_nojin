@@ -1,4 +1,5 @@
 """OGC endpoints: OGC API — Features + WaterML 2.0 (subset)."""
+
 from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse, PlainTextResponse, Response
 
@@ -27,7 +28,9 @@ async def collections():
 @router.get("/features/v1/collections/{collection_id}/items")
 async def items(collection_id: str, limit: int = Query(100, ge=1, le=500), bbox: str | None = None):
     if collection_id != ogc_features.COLLECTION_ID:
-        return JSONResponse({"code": "NotFound", "detail": f"unknown collection: {collection_id}"}, status_code=404)
+        return JSONResponse(
+            {"code": "NotFound", "detail": f"unknown collection: {collection_id}"}, status_code=404
+        )
     result = ogc_features.items(limit=limit, bbox=bbox)
     if result.get("status") == "error":
         return JSONResponse(result, status_code=503)

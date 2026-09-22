@@ -50,7 +50,7 @@ logger = logging.getLogger(__name__)
 class NojinService:
     """
     Main service for Nojin biofertilizer operations.
-    
+
     Coordinates:
     - Calculator (scientific computations)
     - Repositories (data access)
@@ -105,7 +105,7 @@ class NojinService:
     ) -> NojinResult:
         """
         Get comprehensive Nojin application recommendation.
-        
+
         Args:
             land_profile_id: Land profile identifier
             crop_type: Crop type (wheat, rice, corn, etc.)
@@ -115,7 +115,7 @@ class NojinService:
             application_method: Application method
             season: Season (spring, summer, fall, winter)
             irrigation_available: Whether irrigation is available
-        
+
         Returns:
             NojinResult with comprehensive recommendation
         """
@@ -145,7 +145,9 @@ class NojinService:
             soil=soil,
             target_yield_t_ha=target_yield_t_ha,
             application_method=application_method,
-            formulation_type=FormulationType(formulation.formulation_type) if formulation else FormulationType.LIQUID,
+            formulation_type=FormulationType(formulation.formulation_type)
+            if formulation
+            else FormulationType.LIQUID,
             strains=strain_profiles,
             season=season,
             irrigation_available=irrigation_available,
@@ -154,8 +156,10 @@ class NojinService:
         # Calculate
         result = self.calculator.calculate(input_data)
 
-        logger.info(f"Recommendation generated: dosage={result.recommended_dosage_kg_ha} kg/ha, "
-                   f"suitability={result.suitability_score}")
+        logger.info(
+            f"Recommendation generated: dosage={result.recommended_dosage_kg_ha} kg/ha, "
+            f"suitability={result.suitability_score}"
+        )
 
         return result
 
@@ -233,12 +237,12 @@ class NojinService:
     ) -> NojinCalibrationRecord:
         """
         Calibrate model for a formulation based on field trials.
-        
+
         Args:
             formulation_id: Formulation ID
             model_version: Model version string
             calibrated_by: Calibrator name
-        
+
         Returns:
             Created calibration record
         """
@@ -254,13 +258,15 @@ class NojinService:
         trial_results = []
         for trial in trials:
             if trial.yield_response is not None:
-                trial_results.append({
-                    "trial_id": trial.id,
-                    "yield_response": trial.yield_response,
-                    "crop_type": trial.crop_type,
-                    "plot_area_ha": trial.plot_area_ha,
-                    "trial_date": trial.trial_date.isoformat() if trial.trial_date else None,
-                })
+                trial_results.append(
+                    {
+                        "trial_id": trial.id,
+                        "yield_response": trial.yield_response,
+                        "crop_type": trial.crop_type,
+                        "plot_area_ha": trial.plot_area_ha,
+                        "trial_date": trial.trial_date.isoformat() if trial.trial_date else None,
+                    }
+                )
 
         if not trial_results:
             raise ValueError(f"No trials with yield_response for formulation {formulation_id}")
@@ -271,6 +277,7 @@ class NojinService:
         # Calculate quality score based on trial count and variance
         yield_responses = [t["yield_response"] for t in trial_results]
         import numpy as np
+
         variance = np.var(yield_responses)
         quality_score = max(0, 100 - variance)  # Lower variance = higher quality
         quality_score = min(100, quality_score + len(trial_results) * 5)  # Bonus for more trials
@@ -282,17 +289,21 @@ class NojinService:
             calibration_data=json.dumps(calibration_data),
             model_version=model_version,
             parameters_updated=json.dumps({"trial_count": len(trial_results)}),
-            validation_results=json.dumps({
-                "avg_yield_response": float(np.mean(yield_responses)),
-                "std_yield_response": float(np.std(yield_responses)),
-                "trial_count": len(trial_results),
-            }),
+            validation_results=json.dumps(
+                {
+                    "avg_yield_response": float(np.mean(yield_responses)),
+                    "std_yield_response": float(np.std(yield_responses)),
+                    "trial_count": len(trial_results),
+                }
+            ),
             calibration_quality_score=quality_score,
             calibrated_by=calibrated_by,
         )
 
-        logger.info(f"Calibrated formulation {formulation_id} with {len(trial_results)} trials, "
-                   f"quality={quality_score:.1f}")
+        logger.info(
+            f"Calibrated formulation {formulation_id} with {len(trial_results)} trials, "
+            f"quality={quality_score:.1f}"
+        )
 
         return record
 
@@ -308,7 +319,7 @@ class NojinService:
     ) -> dict[str, Any] | None:
         """
         Integration with Phase 3 (Water Intelligence).
-        
+
         Calculates water efficiency improvement from Nojin application.
         """
         logger.info(f"Calculating water efficiency impact for {land_profile_id}")
@@ -337,7 +348,7 @@ class NojinService:
                 "soil_moisture_retention_improvement": "10-20%",
                 "irrigation_reduction_potential": "15%",
                 "notes": "PGPR improves root development and soil structure, "
-                        "leading to better water retention and use efficiency.",
+                "leading to better water retention and use efficiency.",
                 "calculated_at": datetime.now().isoformat(),
             }
         except Exception as e:
@@ -353,7 +364,7 @@ class NojinService:
     ) -> dict[str, Any] | None:
         """
         Integration with Phase 8 (MRV - Monitoring, Reporting, Verification).
-        
+
         Estimates carbon sequestration potential from Nojin application.
         """
         logger.info(f"Estimating carbon sequestration for {land_profile_id}")
@@ -395,7 +406,7 @@ class NojinService:
     ) -> dict[str, Any]:
         """
         Integration with CropAdvisor for combined recommendations.
-        
+
         Returns combined fertilizer + biofertilizer recommendation.
         """
         logger.info(f"Integrating with CropAdvisor for {crop_type}")
@@ -420,13 +431,17 @@ class NojinService:
             "crop_type": crop_type,
             "nojin_recommendation": {
                 "dosage_kg_ha": nojin_rec.recommended_dosage_kg_ha,
-                "application_method": nojin_rec.recommendations[0] if nojin_rec.recommendations else "standard",
+                "application_method": nojin_rec.recommendations[0]
+                if nojin_rec.recommendations
+                else "standard",
                 "suitability_score": nojin_rec.suitability_score,
             },
             "fertilizer_adjustments": {
                 "nitrogen_reduction_kg_ha": n_reduction_kg_ha,
                 "phosphorus_reduction_kg_ha": p_reduction_kg_ha,
-                "estimated_cost_saving_usd_ha": round((n_reduction_kg_ha + p_reduction_kg_ha) * 1.5, 2),
+                "estimated_cost_saving_usd_ha": round(
+                    (n_reduction_kg_ha + p_reduction_kg_ha) * 1.5, 2
+                ),
             },
             "integrated_benefits": {
                 "yield_increase_pct": nojin_rec.expected_yield_increase_pct,

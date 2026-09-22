@@ -7,7 +7,9 @@ from .dem_processor import DEMProcessor
 logger = logging.getLogger(__name__)
 
 
-def calculate_slope_aspect(dem_data: np.ndarray, cell_size_x: float, cell_size_y: float) -> tuple[np.ndarray, np.ndarray]:
+def calculate_slope_aspect(
+    dem_data: np.ndarray, cell_size_x: float, cell_size_y: float
+) -> tuple[np.ndarray, np.ndarray]:
     """
     Calculates slope and aspect from DEM data using a 3x3 neighborhood method.
 
@@ -27,13 +29,13 @@ def calculate_slope_aspect(dem_data: np.ndarray, cell_size_x: float, cell_size_y
 
     # Calculate slope and aspect for interior cells only (1:-1)
     z1 = dem_data[2:, :-2]  # z(i-1, j-1)
-    z2 = dem_data[2:, 1:-1] # z(i-1, j)
-    z3 = dem_data[2:, 2:]   # z(i-1, j+1)
-    z4 = dem_data[1:-1, :-2] # z(i, j-1)
+    z2 = dem_data[2:, 1:-1]  # z(i-1, j)
+    z3 = dem_data[2:, 2:]  # z(i-1, j+1)
+    z4 = dem_data[1:-1, :-2]  # z(i, j-1)
     z5 = dem_data[1:-1, 2:]  # z(i, j+1)
     z6 = dem_data[:-2, :-2]  # z(i+1, j-1)
-    z7 = dem_data[:-2, 1:-1] # z(i+1, j)
-    z8 = dem_data[:-2, 2:]   # z(i+1, j+1)
+    z7 = dem_data[:-2, 1:-1]  # z(i+1, j)
+    z8 = dem_data[:-2, 2:]  # z(i+1, j+1)
 
     # Partial derivatives dx (dz/dx) and dy (dz/dy) using central differences
     dz_dx = (z5 - z4) / (2 * cell_size_x)
@@ -67,9 +69,13 @@ class SlopeAspectAnalyzer:
         """
         self.dem_proc = dem_processor
         if self.dem_proc._data is None:
-            raise ValueError("DEMProcessor must have loaded data before initializing SlopeAspectAnalyzer.")
+            raise ValueError(
+                "DEMProcessor must have loaded data before initializing SlopeAspectAnalyzer."
+            )
 
-    def analyze(self, cell_size_meters: float = 30.0) -> tuple[np.ndarray, np.ndarray, float, float]:
+    def analyze(
+        self, cell_size_meters: float = 30.0
+    ) -> tuple[np.ndarray, np.ndarray, float, float]:
         """
         Performs the slope and aspect analysis on the loaded DEM.
 
@@ -101,7 +107,7 @@ class SlopeAspectAnalyzer:
             bins = np.arange(0, 361, 45)  # 8 directions: N, NE, E, SE, S, SW, W, NW
             hist, _ = np.histogram(flat_asp, bins=bins)
             dominant_bin_idx = np.argmax(hist)
-            dominant_aspect = float(bins[dominant_bin_idx] + 22.5) # Center of the bin
+            dominant_aspect = float(bins[dominant_bin_idx] + 22.5)  # Center of the bin
 
         logger.info("Slope and aspect calculation completed.")
         return slope_arr, aspect_arr, mean_slope, dominant_aspect

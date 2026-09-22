@@ -1,4 +1,5 @@
 """Support team API — named staff personas for user-facing support."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -9,12 +10,15 @@ from sqlalchemy.orm import Session
 
 from database.hub import hub
 
+
 # Compatibility: get_db via hub
 def get_db():
     with hub.get_session() as session:
         yield session
-from services.api_gateway.auth import get_current_user
+
+
 from services.ai.support_agent import ask_support, personas_list
+from services.api_gateway.auth import get_current_user
 
 router = APIRouter(prefix="/api/v1/support", tags=["support"])
 

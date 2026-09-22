@@ -8,6 +8,7 @@
   sources) of a public page; similarity >= threshold flags a possible clone.
   Unreachable pages report `requires_network` honestly.
 """
+
 import hashlib
 import os
 import re
@@ -49,6 +50,7 @@ def domain_squatting(host: str) -> dict:
         "verdict": "suspicious" if results else "ok",
     }
 
+
 def check_email_auth(domain: str) -> dict:
     """Live DNS checks. Requires dnspython; network failures are honest."""
     domain = domain.lower().strip()
@@ -81,7 +83,9 @@ def check_email_auth(domain: str) -> dict:
             "spf": spf or ["not_configured"],
             "dkim": dkim or ["not_configured"],
             "dmarc": dmarc or ["not_configured"],
-            "verdict": "protected" if (spf and dmarc and dkim) else ("partial" if (spf or dmarc or dkim) else "unprotected"),
+            "verdict": "protected"
+            if (spf and dmarc and dkim)
+            else ("partial" if (spf or dmarc or dkim) else "unprotected"),
             "note": "سوابق DNS به‌صورت زنده بررسی شد؛ برای ایمیل رسمی پروژه، SPF/DKIM/DMARC باید روی دامنه تنظیم شوند.",
         }
     except Exception as exc:  # pragma: no cover - network dependent
@@ -94,13 +98,19 @@ def page_clone_signature(url: str) -> dict:
         req = urllib.request.Request(url, headers=_UA)
         with urllib.request.urlopen(req, timeout=8) as resp:
             html = resp.read(200_000).decode("utf-8", "ignore")
-        title = (re.search(r"<title[^>]*>(.*?)</title>", html, re.I | re.S) or [None, ""])[1].strip()
-        metas = re.findall(r'<meta[^>]+name=["\'](?:description|keywords)["\'][^>]*>', html, re.I)[:3]
+        title = (re.search(r"<title[^>]*>(.*?)</title>", html, re.I | re.S) or [None, ""])[
+            1
+        ].strip()
+        metas = re.findall(r'<meta[^>]+name=["\'](?:description|keywords)["\'][^>]*>', html, re.I)[
+            :3
+        ]
         scripts = re.findall(r'<script[^>]+src=["\']([^"\']+)', html, re.I)[:8]
         sig_source = f"{title}|{'|'.join(metas)}|{'|'.join(scripts)}"
         digest = hashlib.sha256(sig_source.encode("utf-8")).hexdigest()
         return {
-            "url": url, "title": title[:120], "script_count": len(scripts),
+            "url": url,
+            "title": title[:120],
+            "script_count": len(scripts),
             "signature_sha256": digest,
             "note": "امضای ساختاری صفحه (title+meta+scripts)؛ مقایسه با نسخه رسمی برای تشخیص کلون.",
         }

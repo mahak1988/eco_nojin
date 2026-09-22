@@ -1,4 +1,5 @@
 """Integration tests for Bots"""
+
 import pytest
 
 from services.bots.unified_service import (

@@ -1,4 +1,5 @@
 """ReportingService"""
+
 import json
 from pathlib import Path
 
@@ -34,12 +35,15 @@ class ReportingService:
             result_data = await self._generate_data(report.report_type, report.parameters)
             file_path = await self._save_to_file(report.id, result_data)
             await self.repo.update_status(
-                report_id, ReportStatus.COMPLETED.value,
-                result_data=result_data, file_path=file_path,
+                report_id,
+                ReportStatus.COMPLETED.value,
+                result_data=result_data,
+                file_path=file_path,
             )
         except Exception as e:
             await self.repo.update_status(
-                report_id, ReportStatus.FAILED.value,
+                report_id,
+                ReportStatus.FAILED.value,
                 result_data={"error": str(e)},
             )
         report = await self.repo.get_report(report_id)
@@ -49,15 +53,22 @@ class ReportingService:
         try:
             from services.analytics.schemas import PeriodType
             from services.analytics.service import AnalyticsService
+
             analytics = AnalyticsService(self.db)
             if report_type == ReportType.SALES.value:
-                return (await analytics.aggregate_sales(period=PeriodType.MONTH)).model_dump(mode="json")
+                return (await analytics.aggregate_sales(period=PeriodType.MONTH)).model_dump(
+                    mode="json"
+                )
             elif report_type == ReportType.TOURISM.value:
-                return (await analytics.aggregate_tourism(period=PeriodType.MONTH)).model_dump(mode="json")
+                return (await analytics.aggregate_tourism(period=PeriodType.MONTH)).model_dump(
+                    mode="json"
+                )
             elif report_type == ReportType.LANDSCAPE.value:
                 return (await analytics.aggregate_landscape()).model_dump(mode="json")
             elif report_type == ReportType.COMPREHENSIVE.value:
-                return (await analytics.get_dashboard(period=PeriodType.MONTH)).model_dump(mode="json")
+                return (await analytics.get_dashboard(period=PeriodType.MONTH)).model_dump(
+                    mode="json"
+                )
             return {"report_type": report_type}
         except ImportError:
             return {"report_type": report_type, "message": "Analytics unavailable"}
@@ -66,7 +77,7 @@ class ReportingService:
         reports_dir = Path("data/reports")
         reports_dir.mkdir(parents=True, exist_ok=True)
         file_path = reports_dir / f"report_{report_id}.json"
-        file_path.write_text(json.dumps(data, default=str, indent=2), encoding='utf-8')
+        file_path.write_text(json.dumps(data, default=str, indent=2), encoding="utf-8")
         return str(file_path)
 
     async def get_report(self, report_id: str) -> ReportRead:
@@ -75,7 +86,9 @@ class ReportingService:
             raise ValueError(f"Report not found: {report_id}")
         return self._to_read(report)
 
-    async def list_reports(self, report_type: str | None = None, limit: int = 50) -> list[ReportRead]:
+    async def list_reports(
+        self, report_type: str | None = None, limit: int = 50
+    ) -> list[ReportRead]:
         reports = await self.repo.list_reports(report_type=report_type, limit=limit)
         return [self._to_read(r) for r in reports]
 

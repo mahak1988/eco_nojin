@@ -14,7 +14,6 @@ Usage:
 
 import logging
 import os
-
 from dataclasses import dataclass
 from enum import Enum
 
@@ -23,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 class VoiceLanguage(Enum):
     """Supported voice languages."""
+
     EN = "en"
     FA = "fa"
     AR = "ar"
@@ -31,6 +31,7 @@ class VoiceLanguage(Enum):
 @dataclass
 class TTSResult:
     """Result from TTS synthesis."""
+
     text: str
     language: VoiceLanguage
     audio_data: bytes | None = None
@@ -70,6 +71,7 @@ def get_tts_provider() -> TTSProvider:
     if provider_name == "coqui":
         try:
             from .coqui_tts import CoquiTTSProvider
+
             _tts_provider = CoquiTTSProvider()
             logger.info("TTS provider: Coqui")
             return _tts_provider
@@ -103,6 +105,14 @@ class _MockTTS(TTSProvider):
 
     def get_available_voices(self, language: VoiceLanguage) -> list:
         return [
-            {"id": f"voice_{language.value}_male", "name": f"Male ({language.value})", "engine": "mock"},
-            {"id": f"voice_{language.value}_female", "name": f"Female ({language.value})", "engine": "mock"},
+            {
+                "id": f"voice_{language.value}_male",
+                "name": f"Male ({language.value})",
+                "engine": "mock",
+            },
+            {
+                "id": f"voice_{language.value}_female",
+                "name": f"Female ({language.value})",
+                "engine": "mock",
+            },
         ]

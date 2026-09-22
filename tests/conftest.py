@@ -30,6 +30,7 @@ TEST_SESSION_FACTORY = hub.get_session_factory()
 
 # ── Project-level fixtures ───────────────────────────────────────
 
+
 @pytest.fixture(scope="session")
 def project_root():
     """Project root directory."""
@@ -46,7 +47,7 @@ def datahub():
 def db_session():
     """
     Provide a database session for tests.
-    
+
     Automatically rolls back after each test.
     """
     with hub.get_session() as session:
@@ -76,7 +77,7 @@ def sqlite_manual():
 def fresh_session():
     """
     Provide a fresh in-memory session for isolated tests.
-    
+
     Creates all tables in memory, runs test, then discards.
     """
     from sqlalchemy import create_engine
@@ -101,10 +102,18 @@ def fresh_session():
 @pytest.fixture
 def mock_request():
     """Mock FastAPI request for API tests."""
+
     class MockRequest:
         def __init__(self):
             self.state = type("State", (), {})()
+
     return MockRequest()
+
+
+@pytest.fixture
+def active_session_count():
+    """Get count of active database sessions."""
+    return hub.get_session_count()
 
 
 # ── Aliases for backward compatibility ─────────────────────────────
@@ -118,6 +127,7 @@ def datahub_instance():
 def connector_instance():
     """Provide DataConnector singleton instance."""
     from engine.data_connector import connector
+
     return connector
 
 
@@ -126,19 +136,19 @@ def connector_instance():
 def benchmark_timer():
     """Context manager for precise timing in benchmarks."""
     import time
-    
+
     class Timer:
         def __init__(self):
             self.start = None
             self.elapsed = None
-        
+
         def __enter__(self):
             self.start = time.perf_counter()
             return self
-        
+
         def __exit__(self, *args):
             self.elapsed = time.perf_counter() - self.start
-    
+
     return Timer()
 
 
@@ -146,6 +156,7 @@ def benchmark_timer():
 def app():
     """FastAPI app instance for API tests."""
     from services.api_gateway.main import app as api_app
+
     return api_app
 
 
@@ -153,5 +164,6 @@ def app():
 def client(app):
     """FastAPI TestClient for API integration tests."""
     from fastapi.testclient import TestClient
+
     with TestClient(app) as test_client:
         yield test_client

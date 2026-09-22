@@ -18,6 +18,7 @@ References
 - HEC-RAS 6.x: https://www.hec.usace.army.mil/software/hec-ras/
 - HEC-Commander (gpt-cmdr): Python automation of HEC-RAS projects.
 """
+
 from __future__ import annotations
 
 import math
@@ -101,9 +102,7 @@ class HECRASFloodMotor(AbstractScientificMotor):
             MotorOutput("engine", "scalar", "str", "hecras | manning_approximation"),
         ]
 
-    async def execute(
-        self, inputs: dict[str, Any], parameters: MotorParameters
-    ) -> MotorResult:
+    async def execute(self, inputs: dict[str, Any], parameters: MotorParameters) -> MotorResult:
         start_time = time.time()
         run_id = f"HECRAS_{int(time.time())}"
 
@@ -165,7 +164,8 @@ class HECRASFloodMotor(AbstractScientificMotor):
             )
         except Exception as exc:
             return MotorResult(
-                run_id=run_id, motor_type=self.motor_type,
+                run_id=run_id,
+                motor_type=self.motor_type,
                 status=MotorStatus.FAILED,
                 error_message=f"HEC-RAS motor failed: {exc}",
                 execution_time_seconds=round(time.time() - start_time, 3),

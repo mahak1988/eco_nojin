@@ -1,0 +1,26 @@
+{{- if and .Values.api-gateway.enabled .Values.api-gateway.monitoring.enabled .Values.api-gateway.monitoring.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "eco-nojin.fullname" . }}-api-gateway-monitor
+  namespace: {{ include "eco-nojin.namespace" . }}
+  labels:
+    {{- include "eco-nojin.labels" . | nindent 4 }}
+    app: api-gateway
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: api-gateway
+      release: {{ .Release.Name }}
+  endpoints:
+    - port: http
+      path: {{ .Values.api-gateway.monitoring.serviceMonitor.path | default "/metrics" }}
+      interval: {{ .Values.api-gateway.monitoring.serviceMonitor.interval | default "30s" }}
+      scheme: http
+      tlsConfig:
+        insecureSkipVerify: true
+  namespaceSelector:
+    matchNames:
+      - {{ include "eco-nojin.namespace" . }}
+{{- end }}

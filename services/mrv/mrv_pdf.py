@@ -18,6 +18,7 @@ try:
 
     _RTL_OK = True
 except Exception:  # pragma: no cover - fallback keeps PDF generation alive
+
     def fa(text: str) -> str:
         return str(text)
 
@@ -88,12 +89,24 @@ def build_mrv_pdf(data: dict[str, Any]) -> bytes:
     pdf.set_text_color(255, 255, 255)
     pdf.set_font("Persian", "B", 18)
     pdf.set_y(7)
-    pdf.cell(0, 10, fa("گزارش بودجه کربن خاک (MRV) — اکو نوژین"), new_x="LMARGIN", new_y="NEXT", align="C")
+    pdf.cell(
+        0,
+        10,
+        fa("گزارش بودجه کربن خاک (MRV) — اکو نوژین"),
+        new_x="LMARGIN",
+        new_y="NEXT",
+        align="C",
+    )
     pdf.set_font("Persian", "", 9)
     pdf.cell(
-        0, 7,
-        fa(f"موقعیت: {loc.get('lat', '—')}°N, {loc.get('lon', '—')}°E  ·  متد: {c.get('methodology', '—')}"),
-        new_x="LMARGIN", new_y="NEXT", align="C",
+        0,
+        7,
+        fa(
+            f"موقعیت: {loc.get('lat', '—')}°N, {loc.get('lon', '—')}°E  ·  متد: {c.get('methodology', '—')}"
+        ),
+        new_x="LMARGIN",
+        new_y="NEXT",
+        align="C",
     )
     pdf.set_y(32)
 
@@ -121,7 +134,11 @@ def build_mrv_pdf(data: dict[str, Any]) -> bytes:
             pdf.set_fill_color(15, 118, 110)
             pdf.set_text_color(255, 255, 255)
         else:
-            pdf.set_fill_color(255, 255, 255 if i % 2 else 240, )
+            pdf.set_fill_color(
+                255,
+                255,
+                255 if i % 2 else 240,
+            )
             pdf.set_text_color(30, 41, 59)
         pdf.set_font("Persian", "B" if i == 0 else "", 9.5)
         pdf.cell(90, 7, fa(k), border=1, fill=True, align="R")
@@ -166,7 +183,14 @@ def build_mrv_pdf(data: dict[str, Any]) -> bytes:
             pdf.set_font("Persian", "", 9.5)
             pdf.cell(58, 7, fa(str(sub.get("time", "—"))[:10]), border=1, fill=True, align="C")
             pdf.cell(58, 7, fa(f"{sub.get('soc_t_ha', '—')}"), border=1, fill=True, align="C")
-            pdf.cell(58, 7, fa(f"{sub.get('lat', '—')}, {sub.get('lon', '—')}"), border=1, fill=True, align="C")
+            pdf.cell(
+                58,
+                7,
+                fa(f"{sub.get('lat', '—')}, {sub.get('lon', '—')}"),
+                border=1,
+                fill=True,
+                align="C",
+            )
             pdf.ln()
     else:
         para(f"وضعیت: {kobo.get('status', '—')} — {kobo.get('hint', 'نمونه‌ای ثبت نشده')}")
@@ -175,7 +199,8 @@ def build_mrv_pdf(data: dict[str, Any]) -> bytes:
     para(
         "توضیح: برآورد مدل بر پایه زنجیره علمی واقعی (RothC-26.3 با اقلیم ERA5 و خاک SoilGrids) است. "
         "این گزارش گواهی رسمی Verra/Gold Standard نیست؛ ثبت در رجیستری نیازمند مستندات کامل متدولوژی است.",
-        size=8, color=(100, 116, 139),
+        size=8,
+        color=(100, 116, 139),
     )
 
     return bytes(pdf.output())

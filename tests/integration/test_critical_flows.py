@@ -8,6 +8,7 @@ because the auth router currently depends on a sync session generator
 (hub.get_session()) which is not thread-safe for async FastAPI test
 clients. Those unit tests cover auth end-to-end with async fixtures.
 """
+
 from __future__ import annotations
 
 import os

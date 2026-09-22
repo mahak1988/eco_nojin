@@ -1,10 +1,11 @@
 """Test Hydroma Nojin motors."""
+
 import structlog
 
 logger = structlog.get_logger()
 import sys
 
-sys.path.insert(0, '.')
+sys.path.insert(0, ".")
 
 import asyncio
 

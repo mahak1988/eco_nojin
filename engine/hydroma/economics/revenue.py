@@ -4,6 +4,7 @@ Economic Engine - Revenue Module.
 Calculates various types of revenue streams including agricultural yield,
 carbon credits, and other ecosystem services.
 """
+
 from typing import Any
 
 
@@ -11,8 +12,8 @@ def calculate_agricultural_revenue(
     area_hectares: float,
     yield_ton_per_ha: float,
     market_price_per_ton: float,
-    quality_factor: float = 1.0, # Premium for high quality produce
-    market_access_factor: float = 1.0 # Discount for poor access
+    quality_factor: float = 1.0,  # Premium for high quality produce
+    market_access_factor: float = 1.0,  # Discount for poor access
 ) -> dict[str, Any]:
     """
     Calculates revenue from agricultural produce sales.
@@ -40,14 +41,14 @@ def calculate_agricultural_revenue(
         "market_access_factor": market_access_factor,
         "base_revenue_irr": base_revenue,
         "adjusted_revenue_irr": adjusted_revenue,
-        "revenue_per_hectare_irr": adjusted_revenue / area_hectares if area_hectares > 0 else 0
+        "revenue_per_hectare_irr": adjusted_revenue / area_hectares if area_hectares > 0 else 0,
     }
 
 
 def calculate_carbon_credit_revenue(
     carbon_sequestered_tonnes: float,
     carbon_price_per_tonne: float,
-    verification_factor: float = 1.0 # Reduction due to verification/crediting rules
+    verification_factor: float = 1.0,  # Reduction due to verification/crediting rules
 ) -> dict[str, Any]:
     """
     Calculates revenue from selling carbon credits.
@@ -70,7 +71,7 @@ def calculate_carbon_credit_revenue(
         "verification_factor": verification_factor,
         "credited_tonnes_co2e": credited_tonnes,
         "carbon_price_per_tonne_irr": carbon_price_per_tonne,
-        "revenue_irr": revenue
+        "revenue_irr": revenue,
     }
 
 
@@ -78,7 +79,7 @@ def calculate_ecosystem_service_revenue(
     service_type: str,
     service_value_per_unit: float,
     service_units_provided: float,
-    sustainability_premium: float = 0.0 # Additional value for certified sustainable practices
+    sustainability_premium: float = 0.0,  # Additional value for certified sustainable practices
 ) -> dict[str, Any]:
     """
     Calculates revenue from other ecosystem services (e.g., pollination, water filtration).
@@ -102,7 +103,7 @@ def calculate_ecosystem_service_revenue(
         "service_value_per_unit_irr": service_value_per_unit,
         "sustainability_premium_fraction": sustainability_premium,
         "base_revenue_irr": base_revenue,
-        "adjusted_revenue_irr": adjusted_revenue
+        "adjusted_revenue_irr": adjusted_revenue,
     }
 
 
@@ -140,5 +141,5 @@ def aggregate_revenue_streams(revenue_streams: list[dict[str, Any]]) -> dict[str
         "total_revenue_irr": total_revenue,
         "revenue_breakdown_by_type": breakdown,
         "revenue_breakdown_by_category": categories,
-        "number_of_streams": len(revenue_streams)
+        "number_of_streams": len(revenue_streams),
     }

@@ -7,10 +7,7 @@ from services.land.land_profile import LandProfileCreateRequest, calculate_land_
 def test_calculate_land_profile():
     """Test the basic land profile calculation."""
     request = LandProfileCreateRequest(
-        project_id="test-project-123",
-        latitude=35.6892,
-        longitude=51.3890,
-        area_hectares=50.0
+        project_id="test-project-123", latitude=35.6892, longitude=51.3890, area_hectares=50.0
     )
 
     profile = calculate_land_profile(request)

@@ -9,7 +9,20 @@ they fall back to the English corpus with a clear note.
 from __future__ import annotations
 
 LANGUAGES: tuple[str, ...] = (
-    "ar", "bn", "de", "en", "es", "fa", "fr", "hi", "it", "ms", "pt", "ru", "ur", "zh",
+    "ar",
+    "bn",
+    "de",
+    "en",
+    "es",
+    "fa",
+    "fr",
+    "hi",
+    "it",
+    "ms",
+    "pt",
+    "ru",
+    "ur",
+    "zh",
 )
 
 LANGUAGE_NAMES: dict[str, str] = {
@@ -37,8 +50,8 @@ RTL_LANGUAGES: frozenset[str] = frozenset({"ar", "fa", "ur"})
 UI: dict[str, dict[str, str]] = {
     "fa": {
         "greeting": "🌱 به ربات «اکو نوژین» خوش آمدید!\n"
-                    "مشاوره علمی کشاورزی، آب و خاک — رایگان و بدون نیاز به اینترنت پرسرعت.\n"
-                    "زبان خود را انتخاب کنید:",
+        "مشاوره علمی کشاورزی، آب و خاک — رایگان و بدون نیاز به اینترنت پرسرعت.\n"
+        "زبان خود را انتخاب کنید:",
         "advice_btn": "💬 مشاوره",
         "farm_btn": "🌾 ثبت مزرعه",
         "about_btn": "ℹ️ درباره",
@@ -53,12 +66,12 @@ UI: dict[str, dict[str, str]] = {
         "ollama_offline_note": "\n\n📌 ترجمه محلی در دسترس نیست (Ollama خاموش است) — پاسخ به زبان انگلیسی ارائه شد.",
         "main_menu": "منوی اصلی:",
         "about": "«اکو نوژین» بستری دانش‌بنیان برای کشاورزی اقلیم‌هوشمند، آب، خاک و کربن است.\n"
-                 "پاسخ‌ها بر پایه منابع علمی (FAO و همکاران) و موتور مدل‌سازی HyDroMa ارائه می‌شود.",
+        "پاسخ‌ها بر پایه منابع علمی (FAO و همکاران) و موتور مدل‌سازی HyDroMa ارائه می‌شود.",
     },
     "en": {
         "greeting": "🌱 Welcome to the «Eco Nojin» bot!\n"
-                    "Scientific advisory for agriculture, water and soil — free.\n"
-                    "Choose your language:",
+        "Scientific advisory for agriculture, water and soil — free.\n"
+        "Choose your language:",
         "advice_btn": "💬 Advice",
         "farm_btn": "🌾 Register farm",
         "about_btn": "ℹ️ About",
@@ -73,12 +86,12 @@ UI: dict[str, dict[str, str]] = {
         "ollama_offline_note": "\n\n📌 Local translation is offline (Ollama not running) — answer provided in English.",
         "main_menu": "Main menu:",
         "about": "«Eco Nojin» is a knowledge-based platform for climate-smart agriculture, water, soil and carbon.\n"
-                 "Answers are grounded in scientific sources (FAO and partners) and the HyDroMa modeling engine.",
+        "Answers are grounded in scientific sources (FAO and partners) and the HyDroMa modeling engine.",
     },
     "ar": {
         "greeting": "🌱 مرحباً بك في بوت «إيكو نوجين»!\n"
-                    "استشارات علمية للزراعة والمياه والتربة — مجاناً.\n"
-                    "اختر لغتك:",
+        "استشارات علمية للزراعة والمياه والتربة — مجاناً.\n"
+        "اختر لغتك:",
         "advice_btn": "💬 استشارة",
         "farm_btn": "🌾 تسجيل مزرعة",
         "about_btn": "ℹ️ حول",
@@ -93,12 +106,12 @@ UI: dict[str, dict[str, str]] = {
         "ollama_offline_note": "\n\n📌 الترجمة المحلية غير متاحة (Ollama متوقف) — الإجابة بالإنجليزية.",
         "main_menu": "القائمة الرئيسية:",
         "about": "«إيكو نوجين» منصة معرفية للزراعة الذكية مناخياً والمياه والتربة والكربون.\n"
-                 "الإجابات مبنية على مصادر علمية (FAO وشركاء) ومحرك HyDroMa للنمذجة.",
+        "الإجابات مبنية على مصادر علمية (FAO وشركاء) ومحرك HyDroMa للنمذجة.",
     },
     "ur": {
         "greeting": "🌱 بوٹ «ایکو نوجین» میں خوش آمدید!\n"
-                    "زراعت، پانی اور مٹی کے لیے سائنسی مشورہ — مفت۔\n"
-                    "اپنی زبان منتخب کریں:",
+        "زراعت، پانی اور مٹی کے لیے سائنسی مشورہ — مفت۔\n"
+        "اپنی زبان منتخب کریں:",
         "advice_btn": "💬 مشورہ",
         "farm_btn": "🌾 فارم رجسٹر کریں",
         "about_btn": "ℹ️ تعارف",
@@ -113,12 +126,12 @@ UI: dict[str, dict[str, str]] = {
         "ollama_offline_note": "\n\n📌 مقامی ترجمہ دستیاب نہیں (Ollama بند ہے) — جواب انگریزی میں دیا گیا۔",
         "main_menu": "مرکزی مینیو:",
         "about": "«ایکو نوجین» موسمیاتی زراعت، پانی، مٹی اور کاربن کے لیے ایک علمی پلیٹ فارم ہے۔\n"
-                 "جوابات سائنسی ذرائع (FAO اور شراکت دار) اور HyDroMa انجن پر مبنی ہیں۔",
+        "جوابات سائنسی ذرائع (FAO اور شراکت دار) اور HyDroMa انجن پر مبنی ہیں۔",
     },
     "ru": {
         "greeting": "🌱 Добро пожаловать в бот «Эко Ноджин»!\n"
-                    "Научные консультации по сельскому хозяйству, воде и почве — бесплатно.\n"
-                    "Выберите язык:",
+        "Научные консультации по сельскому хозяйству, воде и почве — бесплатно.\n"
+        "Выберите язык:",
         "advice_btn": "💬 Консультация",
         "farm_btn": "🌾 Регистрация фермы",
         "about_btn": "ℹ️ О нас",
@@ -133,7 +146,7 @@ UI: dict[str, dict[str, str]] = {
         "ollama_offline_note": "\n\n📌 Локальный перевод недоступен (Ollama выключен) — ответ на английском.",
         "main_menu": "Главное меню:",
         "about": "«Эко Ноджин» — научная платформа для климатически умного сельского хозяйства, воды, почвы и углерода.\n"
-                 "Ответы основаны на научных источниках (FAO и партнёры) и движке моделирования HyDroMa.",
+        "Ответы основаны на научных источниках (FAO и партнёры) и движке моделирования HyDroMa.",
     },
     "zh": {
         "greeting": "🌱 欢迎使用「Eco Nojin」机器人！\n农业、水资源与土壤科学咨询 — 免费。\n请选择语言：",
@@ -319,13 +332,13 @@ def detect_language(lang_code: str | None, text: str = "") -> str:
             return "fa"
         if any(c in _ARABIC_SCRIPT for c in sample):
             return "ar"
-        if any("\u0900" <= c <= "\u097F" for c in sample):
+        if any("\u0900" <= c <= "\u097f" for c in sample):
             return "hi"
-        if any("\u0980" <= c <= "\u09FF" for c in sample):
+        if any("\u0980" <= c <= "\u09ff" for c in sample):
             return "bn"
-        if any("\u0400" <= c <= "\u04FF" for c in sample):
+        if any("\u0400" <= c <= "\u04ff" for c in sample):
             return "ru"
-        if any("\u4E00" <= c <= "\u9FFF" or "\u3040" <= c <= "\u30FF" for c in sample):
+        if any("\u4e00" <= c <= "\u9fff" or "\u3040" <= c <= "\u30ff" for c in sample):
             return "zh"
     return DEFAULT_LANGUAGE
 

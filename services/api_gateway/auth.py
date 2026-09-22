@@ -7,6 +7,7 @@ Fixes W-016: real auth with roles. Secret key comes from settings
 - ``require_roles`` RBAC dependency
 - API-key guard for telco webhooks (USSD/SMS/Voice)
 - Tenant-aware authentication for multi-tenant SaaS
+- httpOnly cookie support for secure token storage (C5 fix)
 
 Async version (Week 2 fix): uses async SQLAlchemy sessions to avoid
 thread-safety issues with SQLite in async FastAPI endpoints.
@@ -15,10 +16,10 @@ thread-safety issues with SQLite in async FastAPI endpoints.
 from datetime import UTC, datetime, timedelta
 from typing import NamedTuple
 
-from fastapi import Depends, Header, HTTPException, Request, status
+import bcrypt
+from fastapi import Depends, Header, HTTPException, Request, Response, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-import bcrypt
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -30,17 +31,34 @@ _settings = get_settings()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
 
+# Cookie names
+ACCESS_TOKEN_COOKIE = "econojin_access_token"
+REFRESH_TOKEN_COOKIE = "econojin_refresh_token"
+
 
 async def _get_async_db():
     """Dependency wrapper for async database session."""
     async with hub.get_async_session() as session:
         yield session
 
+
 # Well-known roles
 ROLE_FARMER = "farmer"
 ROLE_ADVISOR = "advisor"
 ROLE_ADMIN = "admin"
-ALL_ROLES = {ROLE_FARMER, ROLE_ADVISOR, ROLE_ADMIN}
+ROLE_SECURITY_ADMIN = "security_admin"
+ROLE_CONTENT_ADMIN = "content_admin"
+ROLE_USER_ADMIN = "user_admin"
+ALL_ROLES = {
+    ROLE_FARMER,
+    ROLE_ADVISOR,
+    ROLE_ADMIN,
+    ROLE_SECURITY_ADMIN,
+    ROLE_CONTENT_ADMIN,
+    ROLE_USER_ADMIN,
+}
+
+ADMIN_ROLES = {ROLE_ADMIN, ROLE_SECURITY_ADMIN, ROLE_CONTENT_ADMIN, ROLE_USER_ADMIN}
 
 
 def hash_password(password: str) -> str:
@@ -94,18 +112,60 @@ def create_refresh_token(
 
     Separate lifetime from access tokens so short-lived access tokens can be
     re-issued without re-authentication (token rotation on each refresh).
+
+    H12 FIX: Includes JTI (JWT ID) claim for refresh token tracking and rotation.
     """
+    import secrets
+
     to_encode = data.copy()
     if subject is not None:
         to_encode["sub"] = str(subject)
     to_encode["role"] = role
     to_encode["type"] = "refresh"
+    # H12 FIX: Add JTI for refresh token tracking and rotation
+    to_encode["jti"] = secrets.token_urlsafe(16)
     if tenant_id is not None:
         to_encode["platform_id"] = tenant_id
         to_encode["tenant_id"] = tenant_id
     expire = datetime.now(UTC) + timedelta(minutes=_settings.refresh_token_expire_minutes)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, _settings.secret_key, algorithm=_settings.jwt_algorithm)
+
+
+async def store_refresh_token(
+    jti: str, user_id: str, expires_at: datetime, db: AsyncSession
+) -> None:
+    """Store a refresh token JTI in the database for revocation tracking."""
+    from database.models import RefreshToken
+
+    refresh_record = RefreshToken(
+        jti=jti,
+        user_id=user_id,
+        revoked=False,
+        expires_at=datetime.now(UTC) + timedelta(minutes=_settings.refresh_token_expire_minutes),
+    )
+    db.add(
+        RefreshToken(
+            jti=jti,
+            user_id=user_id,
+            revoked=False,
+            expires_at=datetime.now(UTC)
+            + timedelta(minutes=_settings.refresh_token_expire_minutes),
+        )
+    )
+    # Note: caller must commit the session
+
+
+async def is_refresh_token_revoked(jti: str, db: AsyncSession) -> bool:
+    """Check if a refresh token JTI is revoked in the database."""
+    from database.models import RefreshToken
+
+    result = await db.execute(select(RefreshToken).where(RefreshToken.jti == jti))
+    token = result.scalar_one_or_none()
+    if token is None:
+        # Token not found in DB - treat as revoked for security
+        return True
+    return token.revoked
 
 
 def decode_refresh_token(token: str) -> dict | None:
@@ -125,10 +185,18 @@ async def _user_from_payload(payload: dict, db: AsyncSession) -> User | None:
 
 
 async def get_current_user_optional(
+    request: Request,
+    response: Response,
     token: str | None = Depends(oauth2_scheme),
     db: AsyncSession = Depends(_get_async_db),
 ) -> User | None:
-    """Return user for valid token, else None (public endpoints)."""
+    """Return user for valid token, else None (public endpoints).
+
+    Checks both Authorization header and httpOnly cookies.
+    """
+    # Try header first, then cookie
+    if not token:
+        token = request.cookies.get(ACCESS_TOKEN_COOKIE)
     if not token:
         return None
     payload = decode_token(token)
@@ -138,11 +206,16 @@ async def get_current_user_optional(
 
 
 async def get_current_user(
+    request: Request,
+    response: Response,
     token: str | None = Depends(oauth2_scheme),
     db: AsyncSession = Depends(_get_async_db),
 ) -> User:
-    """Strict auth: 401 when missing/invalid token or unknown user."""
-    user = await get_current_user_optional(token, db)
+    """Strict auth: 401 when missing/invalid token or unknown user.
+
+    Checks both Authorization header and httpOnly cookies.
+    """
+    user = await get_current_user_optional(request, response, token, db)
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -167,6 +240,61 @@ def require_roles(*roles: str):
 
 
 def require_admin(user: User = Depends(require_roles(ROLE_ADMIN))) -> User:
+    return user
+
+
+def require_security_admin(
+    user: User = Depends(require_roles(ROLE_ADMIN, ROLE_SECURITY_ADMIN)),
+) -> User:
+    return user
+
+
+def require_content_admin(
+    user: User = Depends(require_roles(ROLE_ADMIN, ROLE_CONTENT_ADMIN)),
+) -> User:
+    return user
+
+
+def require_user_admin(user: User = Depends(require_roles(ROLE_ADMIN, ROLE_USER_ADMIN))) -> User:
+    return user
+
+
+async def require_admin_with_mfa(
+    request: Request,
+    response: Response,
+    token: str | None = Depends(oauth2_scheme),
+    db: AsyncSession = Depends(_get_async_db),
+) -> User:
+    """Require admin role AND MFA enabled. Returns user if both conditions met."""
+    user = await get_current_user(request, response, token, db)
+
+    if user.role not in ADMIN_ROLES:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Admin role required. Current role: {user.role}",
+        )
+
+    # Check MFA enabled - look in user settings or dedicated field
+    # For now, check if user has two_factor_enabled attribute or check settings table
+    mfa_enabled = getattr(user, "two_factor_enabled", False)
+
+    # Also check in settings table for backward compatibility
+    if not mfa_enabled:
+        try:
+            from database.models import Setting
+
+            setting = db.query(Setting).filter(Setting.key == f"2fa_enabled_{user.id}").first()
+            if setting and setting.value == "true":
+                mfa_enabled = True
+        except Exception:
+            pass
+
+    if not mfa_enabled:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="MFA required for admin access. Enable 2FA in settings.",
+        )
+
     return user
 
 
@@ -197,36 +325,70 @@ def role_of(user: User) -> str:
 
 class UserWithTenant(NamedTuple):
     """Container for user and their tenant context."""
+
     user: User
     tenant_id: str | None
 
 
 async def get_current_user_with_tenant(
     request: Request,
+    response: Response,
     token: str | None = Depends(oauth2_scheme),
     db: AsyncSession = Depends(_get_async_db),
 ) -> UserWithTenant:
-    """Strict auth with tenant context: returns User and tenant_id from JWT or header.
-    
-    Extracts tenant_id from:
-    1. JWT payload (platform_id or tenant_id claim)
-    2. X-Tenant-Id header (for API key auth)
-    
-    Returns UserWithTenant(user, tenant_id) where tenant_id may be None.
+    """Strict auth with tenant context: returns User and tenant_id from JWT only.
+
+    Extracts tenant_id from JWT payload (platform_id or tenant_id claim).
+    Does NOT fall back to X-Tenant-Id header for authenticated users.
+
+    Returns UserWithTenant(user, tenant_id) where tenant_id may be None if not in JWT.
     """
-    user = await get_current_user(token, db)
-    
+    user = await get_current_user(request, response, token, db)
+
     tenant_id: str | None = None
     payload = decode_token(token) if token else None
     if payload:
         tenant_id = payload.get("platform_id") or payload.get("tenant_id")
-    
-    # Fallback to header for API key auth
-    if not tenant_id:
-        tenant_id = request.headers.get("X-Tenant-Id")
-    
+
     return UserWithTenant(user=user, tenant_id=tenant_id)
 
 
 # Backward-compatible alias: existing routers import `require_user`
 require_user = get_current_user
+
+
+def set_auth_cookies(response: Response, access_token: str, refresh_token: str) -> None:
+    """Set httpOnly secure cookies for access and refresh tokens.
+
+    C5 FIX: Moves JWT storage from localStorage to httpOnly cookies
+    to prevent XSS token theft.
+    """
+    is_production = _settings.is_production
+
+    # Access token - short lived
+    response.set_cookie(
+        key=ACCESS_TOKEN_COOKIE,
+        value=access_token,
+        httponly=True,
+        secure=is_production,  # HTTPS only in production
+        samesite="lax",  # CSRF protection
+        max_age=_settings.access_token_expire_minutes * 60,
+        path="/",
+    )
+
+    # Refresh token - long lived
+    response.set_cookie(
+        key=REFRESH_TOKEN_COOKIE,
+        value=refresh_token,
+        httponly=True,
+        secure=is_production,  # HTTPS only in production
+        samesite="lax",  # CSRF protection
+        max_age=_settings.refresh_token_expire_minutes * 60,
+        path="/",
+    )
+
+
+def clear_auth_cookies(response: Response) -> None:
+    """Clear auth cookies on logout."""
+    response.delete_cookie(ACCESS_TOKEN_COOKIE, path="/")
+    response.delete_cookie(REFRESH_TOKEN_COOKIE, path="/")

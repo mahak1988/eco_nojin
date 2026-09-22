@@ -4,6 +4,7 @@ Earthwork Calculation Engine.
 Calculates volumes of cut and fill for civil engineering projects
 like roads, canals, dams, and land grading based on terrain analysis.
 """
+
 from dataclasses import dataclass
 from typing import Any
 
@@ -13,6 +14,7 @@ import numpy as np
 @dataclass
 class CrossSection:
     """Represents a single cross-section along a route."""
+
     station: float  # Distance along the route (m)
     ground_levels: list[float]  # Elevations at sample points (m)
     formation_width: float  # Width of the structure at this point (m)
@@ -21,7 +23,9 @@ class CrossSection:
     formation_level: float  # Desired finished ground level (m)
 
 
-def calculate_area_cut_fill(ground_levels: np.ndarray, formation_level: float, width: float, side_slope: float) -> tuple[float, float]:
+def calculate_area_cut_fill(
+    ground_levels: np.ndarray, formation_level: float, width: float, side_slope: float
+) -> tuple[float, float]:
     """
     Calculates cut and fill area for a single cross-section.
 
@@ -77,16 +81,22 @@ def calculate_earthwork_volumes(cross_sections: list[CrossSection]) -> dict[str,
 
     for i in range(len(cross_sections) - 1):
         cs1 = cross_sections[i]
-        cs2 = cross_sections[i+1]
+        cs2 = cross_sections[i + 1]
 
         station_dist = cs2.station - cs1.station
 
         # Calculate areas for both sections
         cut_area_1, fill_area_1 = calculate_area_cut_fill(
-            np.array(cs1.ground_levels), cs1.formation_level, cs1.formation_width, cs1.side_slope_cut
+            np.array(cs1.ground_levels),
+            cs1.formation_level,
+            cs1.formation_width,
+            cs1.side_slope_cut,
         )
         cut_area_2, fill_area_2 = calculate_area_cut_fill(
-            np.array(cs2.ground_levels), cs2.formation_level, cs2.formation_width, cs2.side_slope_cut
+            np.array(cs2.ground_levels),
+            cs2.formation_level,
+            cs2.formation_width,
+            cs2.side_slope_cut,
         )
 
         # Average End Area Method: Vol = (A1 + A2) / 2 * L
@@ -96,17 +106,19 @@ def calculate_earthwork_volumes(cross_sections: list[CrossSection]) -> dict[str,
         total_cut_vol += cut_vol_seg
         total_fill_vol += fill_vol_seg
 
-        volumes.append({
-            "segment_start_station": cs1.station,
-            "segment_end_station": cs2.station,
-            "distance_m": station_dist,
-            "cut_area_start_m2": cut_area_1,
-            "cut_area_end_m2": cut_area_2,
-            "fill_area_start_m2": fill_area_1,
-            "fill_area_end_m2": fill_area_2,
-            "cut_volume_m3": cut_vol_seg,
-            "fill_volume_m3": fill_vol_seg
-        })
+        volumes.append(
+            {
+                "segment_start_station": cs1.station,
+                "segment_end_station": cs2.station,
+                "distance_m": station_dist,
+                "cut_area_start_m2": cut_area_1,
+                "cut_area_end_m2": cut_area_2,
+                "fill_area_start_m2": fill_area_1,
+                "fill_area_end_m2": fill_area_2,
+                "cut_volume_m3": cut_vol_seg,
+                "fill_volume_m3": fill_vol_seg,
+            }
+        )
 
     # Calculate shrinkage/swell factors if needed
     net_volume = total_cut_vol - total_fill_vol
@@ -116,5 +128,5 @@ def calculate_earthwork_volumes(cross_sections: list[CrossSection]) -> dict[str,
         "total_fill_volume_m3": total_fill_vol,
         "net_excess_or_shortage_m3": net_volume,
         "is_balanced": abs(net_volume) < 100,  # Arbitrary tolerance
-        "segments": volumes
+        "segments": volumes,
     }

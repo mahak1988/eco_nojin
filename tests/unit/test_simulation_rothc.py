@@ -9,8 +9,8 @@ from engine.hydroma.simulation.runners.rothc_runner import (
     HUM_FRAC,
     RATES,
     RESIDUE_SPLIT,
-    X_STAB,
     initial_pools,
+    stabilization_split,
     run_rothc,
     temp_factor,
     water_factor,
@@ -48,18 +48,24 @@ class TestRateModifiers:
 class TestRothC:
     def test_initial_pools_sum_to_soc(self):
         soc = 60.0
-        pools, iom = initial_pools(soc, 20.0)
-        assert iom == pytest.approx(0.049 * soc ** 1.139, abs=1e-6)
+        pools, iom = initial_pools(soc)
+        assert iom == pytest.approx(0.049 * soc**1.139, abs=1e-6)
         assert sum(pools.values()) + iom == pytest.approx(soc, abs=1e-6)
 
     def test_mass_balance_without_inputs(self):
         soc = 60.0
-        result = run_rothc(initial_soc_t_ha=soc, clay_pct=20.0, monthly=_climate(months=12), years=1)
-        total_after = sum(result["pools_t_ha"].values()) + result["iom_t_ha"] + result["co2_respired_t_ha"]
+        result = run_rothc(
+            initial_soc_t_ha=soc, clay_pct=20.0, monthly=_climate(months=12), years=1
+        )
+        total_after = (
+            sum(result["pools_t_ha"].values()) + result["iom_t_ha"] + result["co2_respired_t_ha"]
+        )
         assert total_after == pytest.approx(soc, abs=0.01)
 
     def test_soc_decays_without_inputs(self):
-        result = run_rothc(initial_soc_t_ha=60.0, clay_pct=20.0, monthly=_climate(months=12), years=1)
+        result = run_rothc(
+            initial_soc_t_ha=60.0, clay_pct=20.0, monthly=_climate(months=12), years=1
+        )
         assert result["soc_after_t_ha"] < result["soc_before_t_ha"]
         assert result["co2_respired_t_ha"] > 0.0
 
@@ -70,7 +76,9 @@ class TestRothC:
 
     def test_residue_input_supports_soc(self):
         no_input = run_rothc(40.0, 20.0, _climate(months=12), residue_c_t_ha_per_month=0.0, years=1)
-        with_input = run_rothc(40.0, 20.0, _climate(months=12), residue_c_t_ha_per_month=0.8, years=1)
+        with_input = run_rothc(
+            40.0, 20.0, _climate(months=12), residue_c_t_ha_per_month=0.8, years=1
+        )
         assert with_input["soc_after_t_ha"] > no_input["soc_after_t_ha"]
 
     def test_co2e_equals_delta_times_3_67(self):
@@ -91,8 +99,8 @@ class TestRothC:
 
         For the monthly-discrete scheme, pool_eq = in_pool / (1 - exp(-k_m))
         with k_m = RATE/12 * T * W * P. Total decomposition at steady state is
-        input_m / (1 - X_STAB) because the stabilized fraction recycles into
-        BIO/HUM until everything is respired.
+        input_m / (1 - stab) because the stabilized fraction (clay dependent in
+        RothC-26.3) recycles into BIO/HUM until everything is respired.
         """
         monthly = _climate(months=12)
         r = run_rothc(50.0, 25.0, monthly, residue_c_t_ha_per_month=0.4, years=3000)
@@ -100,6 +108,8 @@ class TestRothC:
         w = water_factor(30.0, 60.0)
         p = 0.6
         input_m = 0.4
+        # RothC-26.3 clay-dependent stabilization fraction for clay = 25%.
+        _co2_frac, X_STAB = stabilization_split(25.0)
         total_dec = input_m / (1.0 - X_STAB)
         stabilized = total_dec * X_STAB
         in_c = {

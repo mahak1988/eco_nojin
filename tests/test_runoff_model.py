@@ -1,35 +1,31 @@
 """Unit tests for RunoffCalculator."""
+
 import pytest
 from engine.hydroma.models.runoff_model import RunoffCalculator, RunoffInput
+
 
 def test_runoff_calculator_scs_cn():
     # Arrange
     calculator = RunoffCalculator()
-    input_data = RunoffInput(
-        precipitation_mm=50.0,
-        curve_number=70,
-        area_ha=10.0,
-        method="SCS-CN"
-    )
+    input_data = RunoffInput(precipitation_mm=50.0, curve_number=70, area_ha=10.0, method="SCS-CN")
 
     # Act
     result = calculator.execute(input_data)
 
     # Assert
-    assert result.volume_m3 >= 0 # Volume should be non-negative
-    # Expected volume calculation: S = (1000/70)-10 = 4.2857, Ia = 0.2*S = 0.8571
-    # P > Ia (50 > 0.8571), so Q = ((50-0.8571)^2) / (50 - 0.8571 + 4.2857) = 2371.9 / 53.4286 = 44.39 mm
-    # Volume = 44.39 mm * 10 ha * 10000 m2/ha * 1m/1000mm = 4439 m3
-    assert abs(result.volume_m3 - 4439) < 1 # Allow small rounding error
+    assert result.volume_m3 >= 0
+    # Expected volume (SI units): S = 25400/70 - 254 = 108.857 mm
+    # Ia = 0.2 * S = 21.771 mm
+    # Q = (P-Ia)^2/(P+0.8*S) = (50-21.771)^2/(50+87.086) = 5.813 mm
+    # Volume = Q * A * 10 = 5.813 * 10 * 10 = 581.3 m3
+    assert abs(result.volume_m3 - 581.3) < 1
+
 
 def test_runoff_calculator_rational():
     # Arrange
     calculator = RunoffCalculator()
     input_data = RunoffInput(
-        precipitation_mm=100.0,
-        area_ha=5.0,
-        method="Rational",
-        rational_coefficient=0.6
+        precipitation_mm=100.0, area_ha=5.0, method="Rational", rational_coefficient=0.6
     )
 
     # Act

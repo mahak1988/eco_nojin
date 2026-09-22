@@ -11,6 +11,7 @@ Usage:
       # OR
       TELEGRAM_PROXY=https://user:pass@host:port
 """
+
 import structlog
 
 logger = structlog.get_logger()
@@ -42,6 +43,7 @@ def create_proxy_aiohttp_session():
     if proxy_url.startswith("socks"):
         try:
             from aiohttp_socks import ProxyConnector
+
             connector = ProxyConnector.from_url(proxy_url)
             return aiohttp.ClientSession(connector=connector)
         except ImportError:

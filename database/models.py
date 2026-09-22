@@ -20,6 +20,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
 )
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from database.base import Base
@@ -27,6 +28,7 @@ from database.base import Base
 
 def _uuid():
     return str(uuid.uuid4())
+
 
 def generate_uuid():
     """Generate a UUID string for primary keys"""
@@ -49,6 +51,13 @@ class User(Base):
     language = Column(String, default="fa")
     platform_id = Column(String, nullable=True, index=True)
     is_email_verified = Column(Boolean, default=False)
+    # baseline repair: auth router (register/login/me) requires these columns
+    role = Column(String, default="regular")
+    two_factor_enabled = Column(Boolean, default=False, nullable=False)
+    two_factor_secret = Column(String, nullable=True)
+    avatar_url = Column(String, nullable=True)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=True)
 
     land_profiles = relationship("LandProfile", back_populates="user")
 
@@ -73,7 +82,9 @@ class Organization(Base):
     slug = Column(String, unique=True, index=True, nullable=False)
     country = Column(String, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    updated_at = Column(
+        DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC)
+    )
 
     members = relationship("OrganizationMembership", back_populates="organization")
 
@@ -88,7 +99,9 @@ class OrganizationMembership(Base):
     status = Column(Enum(OrganizationStatus), nullable=False, default=OrganizationStatus.INVITED)
     joined_at = Column(DateTime, default=lambda: datetime.now(UTC))
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    updated_at = Column(
+        DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC)
+    )
 
     organization = relationship("Organization", back_populates="members")
     user = relationship("User")
@@ -114,21 +127,23 @@ class LandProfile(Base):
     dem_resolution_m = Column(Float, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
-    user_id = Column(String, ForeignKey('users.id'), nullable=True)
+    user_id = Column(String, ForeignKey("users.id"), nullable=True)
     user = relationship("User", back_populates="land_profiles")
 
     # تعریف صحیح __table_args__ با چندین محدودیت
     __table_args__ = (
-        UniqueConstraint('user_id', 'name', name='_user_land_name_uc'),
-        CheckConstraint("name != ''", name='ck_land_profile_name_not_empty')
+        UniqueConstraint("user_id", "name", name="_user_land_name_uc"),
+        CheckConstraint("name != ''", name="ck_land_profile_name_not_empty"),
     )
 
 
 # --- مدل‌های دیگر مورد نیاز ---
 # ترتیب این مدل‌ها مهم است. مدل‌هایی که مورد ارجاع قرار می‌گیرند باید اول تعریف شوند.  # noqa: RUF003
 
+
 class AuditLog(Base):
     """Audit trail for data changes and security events."""
+
     __tablename__ = "auditlog"
 
     id = Column(Integer, primary_key=True)
@@ -144,6 +159,7 @@ class AuditLog(Base):
 
 class LedgerEntry(Base):
     """Double-entry ledger for carbon credits and ECO token movements."""
+
     __tablename__ = "ledgerentry"
 
     id = Column(Integer, primary_key=True)
@@ -159,6 +175,7 @@ class LedgerEntry(Base):
 
 class FinJournalBatch(Base):
     """Journal batch for double-entry accounting."""
+
     __tablename__ = "fin_journal_batch"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -175,6 +192,7 @@ class FinJournalBatch(Base):
 
 class FinJournalEntry(Base):
     """Individual journal entry within a batch."""
+
     __tablename__ = "fin_journal_entry"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -188,6 +206,7 @@ class FinJournalEntry(Base):
 
 class FinAccount(Base):
     """Chart of accounts."""
+
     __tablename__ = "fin_account"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -199,11 +218,16 @@ class FinAccount(Base):
     parent_id = Column(Integer, ForeignKey("fin_account.id"), nullable=True)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
-    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+    )
 
 
 class Notification(Base):
     """Multi-channel user notification record."""
+
     __tablename__ = "notification"
 
     id = Column(String, primary_key=True, default=generate_uuid)
@@ -216,6 +240,7 @@ class Notification(Base):
     created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
     read_at = Column(DateTime, nullable=True)
 
+
 class EcoWallet(Base):
     __tablename__ = "ecowallet"
     id = Column(Integer, primary_key=True)
@@ -224,8 +249,14 @@ class EcoWallet(Base):
     total_earned = Column(Numeric(19, 4), default=0.0)
     total_redeemed = Column(Numeric(19, 4), default=0.0)
     is_active = Column(Boolean, default=True)
+    version = Column(Integer, nullable=False, default=1)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
-    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+    )
+
 
 class PasswordResetToken(Base):
     __tablename__ = "password_reset_tokens"
@@ -262,11 +293,13 @@ class PasswordResetToken(Base):
             used=False,
         )
 
+
 class TopographyAnalysisResult(Base):
     __tablename__ = "topography_analysis_results"
     id = Column(Integer, primary_key=True)
     profile_id = Column(String)
     data = Column(String)
+
 
 class IoTDevice(Base):
     __tablename__ = "iot_devices"
@@ -280,8 +313,10 @@ class IoTDevice(Base):
     firmware_version = Column(String(50), nullable=True)
     last_seen = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
-    platform_id = Column(String(100), nullable=True, index=True)  # TTN device_id, etc.
+    updated_at = Column(
+        DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC)
+    )
+    platform_id = Column(String(100), nullable=True)  # TTN device_id, etc.
 
     __table_args__ = (
         Index("ix_iot_device_status_type", "status", "device_type"),
@@ -321,20 +356,26 @@ class MRVObservation(Base):
 
 class Setting(Base):
     """System-wide settings storage (key-value pairs)"""
+
     __tablename__ = "settings"
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     key = Column(String, unique=True, nullable=False, index=True)
     value = Column(Text, nullable=True)
     description = Column(String, nullable=True)
-    category = Column(String, default='general')
+    category = Column(String, default="general")
     is_secret = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
-    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+    )
 
 
 class FinIdempotencyKey(Base):
     """Idempotency key storage for financial operations."""
+
     __tablename__ = "fin_idempotency_key"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -359,20 +400,25 @@ class FinIdempotencyKey(Base):
 
 class AuditEvent(Base):
     """Immutable audit trail for financial and operational events."""
+
     __tablename__ = "audit_event"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     correlation_id = Column(String(64), nullable=False, index=True)
     actor_id = Column(String, nullable=False, index=True)
     action = Column(String, nullable=False)  # create, update, delete, earn, redeem, pay, etc.
-    resource_type = Column(String(50), nullable=False, index=True)  # wallet, order, payment, inventory, etc.
+    resource_type = Column(
+        String(50), nullable=False, index=True
+    )  # wallet, order, payment, inventory, etc.
     resource_id = Column(String(100), nullable=False, index=True)
     before_state = Column(JSON, nullable=True)
     after_state = Column(JSON, nullable=True)
     ip_address = Column(String(45), nullable=True)
     user_agent = Column(String(500), nullable=True)
     request_id = Column(String(64), nullable=True, index=True)
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False, index=True)
+    created_at = Column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False, index=True
+    )
 
     __table_args__ = (
         Index("ix_audit_event_correlation", "correlation_id"),
@@ -386,11 +432,12 @@ class AuditEvent(Base):
 
 
 def __repr__(self):
-        return f"<AuditEvent id={self.id} action={self.action} resource={self.resource_type}:{self.resource_id}>"
+    return f"<AuditEvent id={self.id} action={self.action} resource={self.resource_type}:{self.resource_id}>"
 
 
 class IntOutboxEvent(Base):
     """Outbox event for event-driven integration."""
+
     __tablename__ = "int_outbox_event"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -401,6 +448,8 @@ class IntOutboxEvent(Base):
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
     processed_at = Column(DateTime(timezone=True), nullable=True)
     retry_count = Column(Integer, default=0)
+    supabase_synced = Column(Boolean, default=False, nullable=False)
+    last_error = Column(Text, nullable=True)
 
     __table_args__ = (
         Index("ix_int_outbox_unprocessed", "created_at", postgresql_where="processed_at IS NULL"),
@@ -420,8 +469,10 @@ class ErrorLog(Base):
     acked = Column(Boolean, default=False)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
+
 class SimulationRun(Base):
     """Persisted result of a HyDroMa simulation chain run (RUSLE > AquaCrop > RothC)."""
+
     __tablename__ = "simulationrun"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -433,12 +484,11 @@ class SimulationRun(Base):
     message = Column(Text)
     executed_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
 
-    __table_args__ = (
-        Index("ix_simulationrun_site_executed", "site_id", "executed_at"),
-    )
+    __table_args__ = (Index("ix_simulationrun_site_executed", "site_id", "executed_at"),)
 
     def __repr__(self):
         return f"<SimulationRun id={self.id} site='{self.site_id}' status='{self.status}>"
+
 
 class Farm(Base):
     __tablename__ = "farms"
@@ -455,14 +505,13 @@ class Farm(Base):
     climate_zone = Column(String, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=True)
 
+
 class SoilAnalysis(Base):
     __tablename__ = "soil_analyses"
     id = Column(Integer, primary_key=True)
     farm_id = Column(String)
     analyzed_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=True)
-    __table_args__ = (
-        Index("ix_soil_analyses_farm_analyzed", "farm_id", "analyzed_at"),
-    )
+    __table_args__ = (Index("ix_soil_analyses_farm_analyzed", "farm_id", "analyzed_at"),)
 
 
 class SatelliteAnalysis(Base):
@@ -471,21 +520,21 @@ class SatelliteAnalysis(Base):
     farm_id = Column(String)
     ndvi = Column(Float)
     analyzed_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=True)
-    __table_args__ = (
-        Index("ix_satellite_analyses_farm_analyzed", "farm_id", "analyzed_at"),
-    )
+    __table_args__ = (Index("ix_satellite_analyses_farm_analyzed", "farm_id", "analyzed_at"),)
+
 
 class AIConversation(Base):
     __tablename__ = "ai_conversations"
     id = Column(Integer, primary_key=True)
     user_id = Column(String)
 
+
 class CarbonProject(Base):
     __tablename__ = "carbon_projects"
     id = Column(Integer, primary_key=True)
     name = Column(String)
     project_id = Column(String(64), unique=True, nullable=False, index=True)
-    user_id = Column(String, ForeignKey('users.id'), nullable=True)
+    user_id = Column(String, ForeignKey("users.id"), nullable=True)
     platform_id = Column(String, nullable=True, index=True)
     project_type = Column(String(80), nullable=True)
     area_hectares = Column(Float, nullable=True)
@@ -502,7 +551,12 @@ class CarbonProject(Base):
     estimated_revenue_usd = Column(Float, nullable=True)
     confidence = Column(String(32), nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(
+        DateTime,
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+        nullable=False,
+    )
     issued_at = Column(DateTime, nullable=True)
     verification_status = Column(String(32), nullable=True, default="unverified")
     field_verified = Column(Boolean, default=False, nullable=False)
@@ -514,10 +568,12 @@ class CarbonProject(Base):
         Index("ix_carbon_projects_lifecycle", "status", "verification_status"),
     )
 
+
 class Product(Base):
     __tablename__ = "product"
     id = Column(Integer, primary_key=True)
     name = Column(String)
+
 
 class EcoTransaction(Base):
     __tablename__ = "ecotransaction"
@@ -529,87 +585,98 @@ class EcoTransaction(Base):
     reference_id = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
 
+
 class CalibrationRecordDB(Base):
     __tablename__ = "calibrationrecorddb"
     id = Column(Integer, primary_key=True)
     user_id = Column(String)
     # Add other relevant fields
 
+
 # --- مدل‌های Placeholder با رابطه ---
 # توجه کنید که مدل‌هایی که از land_profiles یا users ارجاع می‌دهند، بعد از آن‌ها تعریف می‌شوند.  # noqa: RUF003
 
+
 class NojinApplicationPlanDB(Base):
-    __tablename__ = "nojin_application_plans" # احتمالاً اسم جدول از خطا تشخیص داده شده
+    __tablename__ = "nojin_application_plans"  # احتمالاً اسم جدول از خطا تشخیص داده شده
     id = Column(Integer, primary_key=True)
-    land_profile_id = Column(String, ForeignKey('land_profiles.id')) # اضافه کردن ForeignKey
+    land_profile_id = Column(String, ForeignKey("land_profiles.id"))  # اضافه کردن ForeignKey
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     # افزودن رابطه
     land_profile = relationship("LandProfile")
 
-    __table_args__ = (
-        Index("ix_nojin_app_plan_profile_created", "land_profile_id", "created_at"),
-    )
+    __table_args__ = (Index("ix_nojin_app_plan_profile_created", "land_profile_id", "created_at"),)
+
 
 class NojinCalibrationRecordDB(Base):
     __tablename__ = "nojincalibrationrecorddb"
     id = Column(Integer, primary_key=True)
-    user_id = Column(String, ForeignKey('users.id')) # اضافه کردن ForeignKey
+    user_id = Column(String, ForeignKey("users.id"))  # اضافه کردن ForeignKey
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     user = relationship("User")
+
 
 class ModelVersionDB(Base):
     __tablename__ = "modelversiondb"
     id = Column(Integer, primary_key=True)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
+
 class ScenarioResultDB(Base):
     __tablename__ = "scenarioresultdb"
     id = Column(Integer, primary_key=True)
-    scenario_run_id = Column(Integer, ForeignKey('scenariorun.id')) # نیاز به تعریف scenariorun اول
+    scenario_run_id = Column(Integer, ForeignKey("scenariorun.id"))  # نیاز به تعریف scenariorun اول
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     scenario_run = relationship("ScenarioRun")
+
 
 class ScenarioRun(Base):
     __tablename__ = "scenariorun"
     id = Column(Integer, primary_key=True)
-    user_id = Column(String, ForeignKey('users.id'))
+    user_id = Column(String, ForeignKey("users.id"))
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     user = relationship("User")
+
 
 class DecisionRecommendationDB(Base):
     __tablename__ = "decisionrecommendationdb"
     id = Column(Integer, primary_key=True)
-    user_id = Column(String, ForeignKey('users.id'))
+    user_id = Column(String, ForeignKey("users.id"))
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     user = relationship("User")
+
 
 class OptimizationResultDB(Base):
     __tablename__ = "optimizationresultdb"
     id = Column(Integer, primary_key=True)
-    user_id = Column(String, ForeignKey('users.id'))
+    user_id = Column(String, ForeignKey("users.id"))
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     user = relationship("User")
+
 
 class MonitoringDataDB(Base):
     __tablename__ = "monitoringdatadb"
     id = Column(Integer, primary_key=True)
-    user_id = Column(String, ForeignKey('users.id'))
+    user_id = Column(String, ForeignKey("users.id"))
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     user = relationship("User")
+
 
 class NojinFieldTrialDB(Base):
     __tablename__ = "nojinfieldtrialdb"
     id = Column(Integer, primary_key=True)
-    user_id = Column(String, ForeignKey('users.id'))
+    user_id = Column(String, ForeignKey("users.id"))
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     user = relationship("User")
+
 
 class ScenarioDB(Base):
     __tablename__ = "scenariodb"
     id = Column(Integer, primary_key=True)
-    user_id = Column(String, ForeignKey('users.id'))
+    user_id = Column(String, ForeignKey("users.id"))
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
     user = relationship("User")
+
 
 # Add other models similarly...
 # --- Public website contact messages (public site phase) ---
@@ -623,6 +690,8 @@ class ContactMessage(Base):
     message = Column(Text, nullable=False)
     locale = Column(String(8), nullable=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+
+
 # --- Pilot applications (public site phase) ---
 class PilotApplication(Base):
     __tablename__ = "pilot_applications"
@@ -647,6 +716,8 @@ class NewsletterSubscriber(Base):
     email = Column(String(200), nullable=False, unique=True, index=True)
     locale = Column(String(8), nullable=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+
+
 # --- HyDroMa data hub: per-user model runs (public dashboard aggregation) ---
 class ModelRun(Base):
     __tablename__ = "hydroma_model_runs"
@@ -667,30 +738,32 @@ class ModelRun(Base):
 
 class OAuthConnection(Base):
     """OAuth provider connection for a user (Google, GitHub, Microsoft, etc.)"""
+
     __tablename__ = "oauth_connections"
 
     id = Column(String, primary_key=True, default=_uuid)
-    user_id = Column(String, ForeignKey('users.id'), nullable=False)
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
     provider = Column(String, nullable=False)
     provider_user_id = Column(String, nullable=True)
     access_token_encrypted = Column(String, nullable=True)
     refresh_token_encrypted = Column(String, nullable=True)
     connected_at = Column(DateTime, default=lambda: datetime.now(UTC))
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    updated_at = Column(
+        DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC)
+    )
 
     user = relationship("User", lazy="selectin")
 
-    __table_args__ = (
-        UniqueConstraint('user_id', 'provider', name='uq_user_provider_oauth'),
-    )
+    __table_args__ = (UniqueConstraint("user_id", "provider", name="uq_user_provider_oauth"),)
 
 
 class ApiKey(Base):
     """API key for programmatic access."""
+
     __tablename__ = "api_keys"
 
     id = Column(String, primary_key=True, default=_uuid)
-    user_id = Column(String, ForeignKey('users.id'), nullable=False)
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
     name = Column(String, nullable=False)
     key_hash = Column(String, nullable=False)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
@@ -699,6 +772,7 @@ class ApiKey(Base):
     revoked_at = Column(DateTime, nullable=True)
 
     user = relationship("User", lazy="selectin")
+
 
 # === Carbon MRV credit ledger (Phase 8) ==============================
 # Sustainable & auditable carbon-credit issuance backed by the
@@ -732,7 +806,10 @@ class CarbonCredit(Base):
 
     id = Column(Integer, primary_key=True)
     credit_id = Column(
-        String(64), unique=True, nullable=False, index=True,
+        String(64),
+        unique=True,
+        nullable=False,
+        index=True,
         default=lambda: f"CR-{uuid.uuid4().hex}",
     )
     project_id = Column(
@@ -742,14 +819,19 @@ class CarbonCredit(Base):
         index=True,
     )
     serial = Column(
-        String(80), unique=True, nullable=False, index=True,
+        String(80),
+        unique=True,
+        nullable=False,
+        index=True,
         default=lambda: f"SER-{uuid.uuid4().hex}",
     )
     vintage_year = Column(Integer, nullable=False)
     methodology = Column(String(120), nullable=True)
     standard = Column(String(120), nullable=True)
     data_mode = Column(
-        String(32), nullable=False, default="modelled_estimate",
+        String(32),
+        nullable=False,
+        default="modelled_estimate",
     )  # modelled_estimate | field_verified
     mrv_documents = Column(JSON, nullable=True)
     total_amount = Column(Numeric(19, 4), nullable=False)
@@ -783,7 +865,9 @@ class CarbonCredit(Base):
     __table_args__ = (
         CheckConstraint("retired_amount >= 0", name="ck_carbon_credits_retired_non_negative"),
         CheckConstraint("available_amount >= 0", name="ck_carbon_credits_available_non_negative"),
-        CheckConstraint("retired_amount <= total_amount", name="ck_carbon_credits_retired_le_total"),
+        CheckConstraint(
+            "retired_amount <= total_amount", name="ck_carbon_credits_retired_le_total"
+        ),
         Index("ix_carbon_credits_project_state", "project_id", "state"),
         Index("ix_carbon_credits_holder_state", "holder_id", "state"),
     )
@@ -796,7 +880,10 @@ class CarbonEvent(Base):
 
     id = Column(Integer, primary_key=True)
     event_id = Column(
-        String(64), unique=True, nullable=False, index=True,
+        String(64),
+        unique=True,
+        nullable=False,
+        index=True,
         default=lambda: f"EVT-{uuid.uuid4().hex}",
     )
     aggregate_type = Column(String(32), nullable=False)  # credit | project
@@ -824,8 +911,18 @@ class CreditAuditLog(Base):
     __tablename__ = "carbon_audit_log"
 
     id = Column(Integer, primary_key=True)
+    event_id = Column(
+        String(64),
+        unique=True,
+        nullable=False,
+        index=True,
+        default=lambda: f"EVT-{uuid.uuid4().hex}",
+    )
     audit_id = Column(
-        String(64), unique=True, nullable=False, index=True,
+        String(64),
+        unique=True,
+        nullable=False,
+        index=True,
         default=lambda: f"AUD-{uuid.uuid4().hex}",
     )
     credit_id = Column(String(64), index=True, nullable=True)
@@ -863,3 +960,415 @@ class IdempotencyKey(Base):
     expires_at = Column(DateTime, nullable=True)
 
     __table_args__ = (Index("ix_idempotency_keys_action_status", "action", "status"),)
+
+
+class RefreshToken(Base):
+    """Refresh token storage for rotation tracking (H12 fix).
+    Each refresh token is tracked by its JTI (JWT ID) to enable
+    revocation of old tokens during rotation.
+    """
+
+    __tablename__ = "refresh_tokens"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    jti = Column(String(64), unique=True, nullable=False, index=True)
+    user_id = Column(String, ForeignKey("users.id"), nullable=False, index=True)
+    revoked = Column(Boolean, default=False, nullable=False)
+    revoked_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+
+    __table_args__ = (Index("ix_refresh_tokens_user_revoked", "user_id", "revoked"),)
+
+
+ORDER_STATE_MACHINE = {
+    "draft": {
+        "allowed": {"reserved", "cancelled"},
+        "requires": {"reserved": {}, "cancelled": {}},
+    },
+    "reserved": {
+        "allowed": {"paid", "cancelled"},
+        "requires": {"paid": {"payment": True}, "cancelled": {}},
+    },
+    "paid": {
+        "allowed": {"processing", "cancelled"},
+        "requires": {"processing": {}, "cancelled": {}},
+    },
+    "processing": {
+        "allowed": {"shipped", "cancelled"},
+        "requires": {"shipped": {"tracking_code": True}, "cancelled": {}},
+    },
+    "shipped": {
+        "allowed": {"delivered"},
+        "requires": {"delivered": {}},
+    },
+    "delivered": {
+        "allowed": {"settled"},
+        "requires": {"settled": {}},
+    },
+    "settled": {"allowed": set(), "requires": {}},
+    "cancelled": {"allowed": set(), "requires": {}},
+}
+
+
+class DailyEarnings(Base):
+    """Daily earnings records for farmer payouts."""
+
+    __tablename__ = "daily_earnings"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(String, nullable=False, index=True)
+    date = Column(Date, nullable=False, index=True)
+    earnings_type = Column(String(50), nullable=False)  # carbon | eco_token
+    amount = Column(Numeric(19, 4), nullable=False)
+    source = Column(String(100), nullable=True)  # farm, project, etc.
+    reference_id = Column(String(128), nullable=True, index=True)
+    status = Column(String(20), nullable=False, default="pending")  # pending, processed, failed
+    processed_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+
+    __table_args__ = (
+        Index("ix_daily_earnings_user_date_type", "user_id", "date", "earnings_type"),
+        Index("ix_daily_earnings_status", "status"),
+    )
+
+
+class ComOrder(Base):
+    """Commerce order record."""
+
+    __tablename__ = "com_order"
+
+    id = Column(String, primary_key=True)
+    order_number = Column(String(50), unique=True, nullable=False)
+    buyer_id = Column(String, nullable=False)
+    seller_id = Column(String, nullable=True)
+    status = Column(String(20), nullable=False, default="draft")
+    payment_status = Column(String(20), nullable=False, default="pending")
+    subtotal = Column(Numeric(18, 4), nullable=False, default=0)
+    platform_fee = Column(Numeric(18, 4), nullable=False, default=0)
+    landscape_fee = Column(Numeric(18, 4), nullable=False, default=0)
+    total = Column(Numeric(18, 4), nullable=False, default=0)
+    currency = Column(String(3), nullable=False, default="IRR")
+    shipping_address = Column(JSON, nullable=True)
+    tracking_code = Column(String(100), nullable=True)
+    shipped_at = Column(DateTime(timezone=True), nullable=True)
+    delivered_at = Column(DateTime(timezone=True), nullable=True)
+    paid_at = Column(DateTime(timezone=True), nullable=True)
+    cancelled_at = Column(DateTime(timezone=True), nullable=True)
+    cancel_reason = Column(Text, nullable=True)
+    idempotency_key = Column(String(64), nullable=True)
+    version = Column(Integer, nullable=False, default=0)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+
+    __table_args__ = (
+        Index("ix_com_order_status", "status"),
+        Index("ix_com_order_buyer", "buyer_id"),
+        Index("ix_com_order_seller_status", "seller_id", "status"),
+        Index("ix_com_order_idempotency_key", "idempotency_key", unique=True),
+    )
+
+
+class ComOrderItem(Base):
+    """Line items for commerce orders."""
+
+    __tablename__ = "com_order_item"
+
+    id = Column(String, primary_key=True)
+    order_id = Column(String, ForeignKey("com_order.id", ondelete="CASCADE"), nullable=False)
+    sku_id = Column(Integer, nullable=True)
+    sku_code = Column(String(50), nullable=False)
+    name = Column(String(200), nullable=False)
+    quantity = Column(Numeric(18, 4), nullable=False)
+    unit_price = Column(Numeric(18, 4), nullable=False)
+    line_total = Column(Numeric(18, 4), nullable=False)
+    warehouse_id = Column(Integer, nullable=True)
+    reservation_id = Column(Integer, nullable=True)
+    fulfilled_qty = Column(Numeric(18, 4), nullable=False, default=0)
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+
+    __table_args__ = (
+        Index("ix_com_order_item_order_id", "order_id"),
+        Index("ix_com_order_item_sku_id", "sku_id"),
+    )
+
+
+class ComPaymentIntent(Base):
+    """Payment intent for orders."""
+
+    __tablename__ = "com_payment_intent"
+
+    id = Column(String, primary_key=True)
+    order_id = Column(String, ForeignKey("com_order.id", ondelete="CASCADE"), nullable=False)
+    buyer_id = Column(String, nullable=False)
+    provider = Column(String(20), nullable=False, default="wallet")
+    amount = Column(Numeric(18, 4), nullable=False)
+    currency = Column(String(3), nullable=False, default="IRR")
+    status = Column(String(20), nullable=False, default="requires_action")
+    provider_reference = Column(String(255), nullable=True)
+    payment_metadata = Column(JSON, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    confirmed_at = Column(DateTime(timezone=True), nullable=True)
+    cancelled_at = Column(DateTime(timezone=True), nullable=True)
+    failure_reason = Column(Text, nullable=True)
+
+    __table_args__ = (
+        Index("ix_com_payment_order", "order_id"),
+        Index("ix_com_payment_buyer", "buyer_id"),
+        Index("ix_com_payment_provider", "provider"),
+        Index("ix_com_payment_status", "status"),
+    )
+
+
+class ComSettlement(Base):
+    """Order settlement record."""
+
+    __tablename__ = "com_settlement"
+
+    id = Column(String, primary_key=True)
+    order_id = Column(String, ForeignKey("com_order.id"), nullable=False)
+    seller_id = Column(String, nullable=False)
+    amount = Column(Numeric(18, 4), nullable=False)
+    currency = Column(String(3), nullable=False, default="IRR")
+    commission_fee = Column(Numeric(18, 4), nullable=False, default=0)
+    landscape_fee = Column(Numeric(18, 4), nullable=False, default=0)
+    status = Column(String(20), nullable=False, default="pending")
+    journal_batch_id = Column(Integer, nullable=True)
+    settled_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+
+    __table_args__ = (
+        Index("ix_com_settlement_seller", "seller_id"),
+        Index("ix_com_settlement_status", "status"),
+    )
+
+
+class InvSKU(Base):
+    """Inventory SKU/product definition."""
+
+    __tablename__ = "inv_sku"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    sku_code = Column(String(64), unique=True, nullable=False, index=True)
+    name = Column(String(200), nullable=False)
+    description = Column(Text, nullable=True)
+    uom = Column(String(32), nullable=False, default="kg")
+    category_id = Column(Integer, nullable=True, index=True)
+    standard_cost = Column(Numeric(19, 4), nullable=True)
+    default_warehouse_id = Column(Integer, nullable=True, index=True)
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+        nullable=True,
+    )
+
+    __table_args__ = (Index("ix_inv_sku_code_uom", "sku_code", "uom"),)
+
+
+class InvWarehouse(Base):
+    """Inventory warehouse location."""
+
+    __tablename__ = "inv_warehouses"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    code = Column(String(32), unique=True, nullable=False, index=True)
+    name = Column(String(200), nullable=False)
+    city = Column(String(100), nullable=True)
+    country = Column(String(100), nullable=True)
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+        nullable=True,
+    )
+
+
+class InvLocation(Base):
+    """Inventory location within warehouse (bin/shelf)."""
+
+    __tablename__ = "inv_locations"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    warehouse_id = Column(Integer, ForeignKey("inv_warehouses.id"), nullable=False, index=True)
+    code = Column(String(64), nullable=False)
+    location_type = Column(String(32), nullable=False, default="bin")
+    is_active = Column(Boolean, default=True)
+    is_pickable = Column(Boolean, default=True)
+    is_receivable = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+
+    __table_args__ = (Index("ix_inv_location_warehouse_code", "warehouse_id", "code", unique=True),)
+
+
+class InvReservation(Base):
+    """Stock reservation for order fulfillment."""
+
+    __tablename__ = "inv_reservations"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    sku_id = Column(Integer, ForeignKey("inv_sku.id"), nullable=False, index=True)
+    warehouse_id = Column(Integer, ForeignKey("inv_warehouses.id"), nullable=False)
+    location_id = Column(Integer, nullable=True, index=True)
+    lot_id = Column(Integer, nullable=True, index=True)
+    qty = Column(Numeric(19, 4), nullable=False)
+    consumed_qty = Column(Numeric(19, 4), nullable=False, default=0)
+    reserved_for = Column(String(64), nullable=True)  # order_id, etc.
+    reference_type = Column(String(32), nullable=False)  # order, etc.
+    reference_id = Column(String(128), nullable=False)
+    reference_line_id = Column(String(128), nullable=True)
+    status = Column(
+        String(20), nullable=False, default="active", index=True
+    )  # active, consumed, released
+    created_by = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    expires_at = Column(DateTime(timezone=True), nullable=True)
+    released_at = Column(DateTime(timezone=True), nullable=True)
+
+    __table_args__ = (
+        Index("ix_inv_reservation_sku_status", "sku_id", "status"),
+        Index("ix_inv_reservation_reference", "reference_type", "reference_id"),
+    )
+
+
+class InvStockMovement(Base):
+    """Stock movement record (receipt, issue, transfer, etc.)."""
+
+    __tablename__ = "inv_stock_movements"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    sku_id = Column(Integer, ForeignKey("inv_sku.id"), nullable=False, index=True)
+    warehouse_id = Column(Integer, ForeignKey("inv_warehouses.id"), nullable=False, index=True)
+    movement_type = Column(
+        String(32), nullable=False, index=True
+    )  # receipt, issue, transfer, adjustment, return, scrap
+    qty = Column(Numeric(19, 4), nullable=False)
+    from_location_id = Column(Integer, nullable=True, index=True)
+    to_location_id = Column(Integer, nullable=True, index=True)
+    from_warehouse_id = Column(Integer, nullable=True, index=True)
+    to_warehouse_id = Column(Integer, nullable=True, index=True)
+    lot_id = Column(Integer, nullable=True, index=True)
+    unit_cost = Column(Numeric(19, 4), nullable=True)
+    total_cost = Column(Numeric(19, 4), nullable=True)
+    reference_type = Column(String(32), nullable=True)  # order, stocktake, adjustment
+    reference_id = Column(String(128), nullable=True)
+    reason = Column(String(200), nullable=True)
+    created_by = Column(String, nullable=False)
+    location_id = Column(Integer, nullable=True, index=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+
+    __table_args__ = (
+        Index(
+            "ix_inv_stock_movements_sku_warehouse_type", "sku_id", "warehouse_id", "movement_type"
+        ),
+    )
+
+
+class InvInventoryBalance(Base):
+    """Current inventory balance per SKU/warehouse/location/lot."""
+
+    __tablename__ = "inv_inventory_balances"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    sku_id = Column(Integer, ForeignKey("inv_sku.id"), nullable=False, index=True)
+    warehouse_id = Column(
+        Integer, ForeignKey("inv_warehouses.id"), nullable=False, default=1, index=True
+    )
+    location_id = Column(Integer, nullable=False, default=0, index=True)
+    lot_id = Column(Integer, nullable=False, default=0, index=True)
+    on_hand = Column(Numeric(19, 4), nullable=False, default=0)
+    reserved = Column(Numeric(19, 4), nullable=False, default=0)
+    blocked = Column(Numeric(19, 4), nullable=False, default=0)
+    in_transit = Column(Numeric(19, 4), nullable=False, default=0)
+    fifo_cost = Column(Numeric(19, 4), nullable=True)
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+        nullable=False,
+    )
+
+    __table_args__ = (
+        Index(
+            "ix_inv_balance_sku_wh_loc_lot",
+            "sku_id",
+            "warehouse_id",
+            "location_id",
+            "lot_id",
+            unique=True,
+        ),
+    )
+
+    @hybrid_property
+    def available(self) -> Decimal:
+        """Available stock = on_hand - reserved - blocked."""
+        from decimal import Decimal
+
+        on_hand_val = self.on_hand or Decimal("0")
+        reserved_val = self.reserved or Decimal("0")
+        blocked_val = self.blocked or Decimal("0")
+        return on_hand_val - reserved_val - blocked_val
+
+
+class InvStocktake(Base):
+    """Physical inventory stocktake."""
+
+    __tablename__ = "inv_stocktakes"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    stocktake_number = Column(String(50), unique=True, nullable=False, index=True)
+    warehouse_id = Column(Integer, ForeignKey("inv_warehouses.id"), nullable=False, index=True)
+    stocktake_type = Column(String(32), nullable=False, default="full")  # full, cycle, partial
+    status = Column(String(32), nullable=False, default="draft", index=True)
+    created_by = Column(String, nullable=False)
+    approved_by = Column(String, nullable=True)
+    approved_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+        nullable=False,
+    )
+
+    __table_args__ = (Index("ix_inv_stocktake_warehouse_status", "warehouse_id", "status"),)
+
+
+class InvStocktakeLine(Base):
+    """Stocktake line items."""
+
+    __tablename__ = "inv_stocktake_lines"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    stocktake_id = Column(Integer, ForeignKey("inv_stocktakes.id"), nullable=False, index=True)
+    sku_id = Column(Integer, ForeignKey("inv_sku.id"), nullable=False, index=True)
+    warehouse_id = Column(Integer, ForeignKey("inv_warehouses.id"), nullable=False, index=True)
+    location_id = Column(Integer, nullable=True, index=True)
+    lot_id = Column(Integer, nullable=True, index=True)
+    system_qty = Column(Numeric(19, 4), nullable=True)
+    counted_qty = Column(Numeric(19, 4), nullable=False)
+    variance_qty = Column(Numeric(19, 4), nullable=False, default=0)
+    variance_value = Column(Numeric(19, 4), nullable=True)
+    counted_by = Column(String, nullable=True)
+    counted_at = Column(DateTime(timezone=True), nullable=True)
+    status = Column(
+        String(32), nullable=False, default="pending", index=True
+    )  # pending, approved, rejected
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+
+    __table_args__ = (Index("ix_inv_stocktake_line_stocktake_sku", "stocktake_id", "sku_id"),)
+
+
+class InvValuationMethod(str, PyEnum):
+    """Inventory valuation method."""
+
+    FIFO = "fifo"
+    WEIGHTED_AVG = "weighted_avg"
+    STANDARD = "standard"

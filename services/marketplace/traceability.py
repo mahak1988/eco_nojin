@@ -1,4 +1,3 @@
-
 """Supply chain traceability with QR code support."""
 
 import hashlib

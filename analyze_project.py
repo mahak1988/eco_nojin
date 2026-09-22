@@ -42,59 +42,139 @@ from collections import Counter, defaultdict
 # structlog اگر نصب بود استفاده می‌شود؛ وگرنه جایگزین استاندارد (بدون pip install)
 try:
     import structlog
+
     logger = structlog.get_logger()
 except ImportError:
+
     class _FallbackLogger:
-        def info(self, msg="", *a, **k): print(msg)
-        def warning(self, msg="", *a, **k): print(f"⚠️  {msg}")
-        def error(self, msg="", *a, **k): print(f"❌  {msg}")
+        def info(self, msg="", *a, **k):
+            print(msg)
+
+        def warning(self, msg="", *a, **k):
+            print(f"⚠️  {msg}")
+
+        def error(self, msg="", *a, **k):
+            print(f"❌  {msg}")
+
     logger = _FallbackLogger()
 
 # ---------------- تنظیمات ----------------
 SKIP_DIRS = {
-    ".git", ".venv", "venv", "env", "node_modules", "__pycache__",
-    ".idea", ".vscode", "dist", "build", ".next", ".nuxt", ".output",
-    "coverage", "htmlcov", ".pytest_cache", ".mypy_cache", ".ruff_cache",
-    "staticfiles", "media", "artifacts", ".cache", "target", "out",
-    "_one_shot_backup", ".kilo", "_quarantine", "_backups",
+    ".git",
+    ".venv",
+    "venv",
+    "env",
+    "node_modules",
+    "__pycache__",
+    ".idea",
+    ".vscode",
+    "dist",
+    "build",
+    ".next",
+    ".nuxt",
+    ".output",
+    "coverage",
+    "htmlcov",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+    "staticfiles",
+    "media",
+    "artifacts",
+    ".cache",
+    "target",
+    "out",
+    "_one_shot_backup",
+    ".kilo",
+    "_quarantine",
+    "_backups",
     "econojin.egg-info",
 }
 
-CODE_EXT = {".py", ".ts", ".tsx", ".js", ".jsx", ".css", ".scss",
-            ".less", ".html", ".htm", ".vue", ".svelte"}
+CODE_EXT = {
+    ".py",
+    ".ts",
+    ".tsx",
+    ".js",
+    ".jsx",
+    ".css",
+    ".scss",
+    ".less",
+    ".html",
+    ".htm",
+    ".vue",
+    ".svelte",
+}
 
 PY_FRAMEWORKS = {
-    "django": "Django", "flask": "Flask", "fastapi": "FastAPI",
-    "tornado": "Tornado", "pyramid": "Pyramid", "starlette": "Starlette",
-    "sanic": "Sanic", "aiohttp": "aiohttp", "celery": "Celery",
-    "sqlalchemy": "SQLAlchemy", "pydantic": "Pydantic", "pytest": "Pytest",
+    "django": "Django",
+    "flask": "Flask",
+    "fastapi": "FastAPI",
+    "tornado": "Tornado",
+    "pyramid": "Pyramid",
+    "starlette": "Starlette",
+    "sanic": "Sanic",
+    "aiohttp": "aiohttp",
+    "celery": "Celery",
+    "sqlalchemy": "SQLAlchemy",
+    "pydantic": "Pydantic",
+    "pytest": "Pytest",
 }
 
 CONFIG_FILES = {
-    "tailwind.config.js": "Tailwind CSS", "tailwind.config.ts": "Tailwind CSS",
-    "vite.config.js": "Vite", "vite.config.ts": "Vite", "vite.config.mts": "Vite",
-    "tsconfig.json": "TypeScript", "postcss.config.js": "PostCSS",
-    "next.config.js": "Next.js", "angular.json": "Angular",
-    "svelte.config.js": "Svelte", "webpack.config.js": "Webpack",
-    "vitest.config.ts": "Vitest", "jest.config.js": "Jest",
-    "eslint.config.js": "ESLint", "hardhat.config.js": "Hardhat (بلاکچین)",
+    "tailwind.config.js": "Tailwind CSS",
+    "tailwind.config.ts": "Tailwind CSS",
+    "vite.config.js": "Vite",
+    "vite.config.ts": "Vite",
+    "vite.config.mts": "Vite",
+    "tsconfig.json": "TypeScript",
+    "postcss.config.js": "PostCSS",
+    "next.config.js": "Next.js",
+    "angular.json": "Angular",
+    "svelte.config.js": "Svelte",
+    "webpack.config.js": "Webpack",
+    "vitest.config.ts": "Vitest",
+    "jest.config.js": "Jest",
+    "eslint.config.js": "ESLint",
+    "hardhat.config.js": "Hardhat (بلاکچین)",
 }
 
 JS_TECH_MAP = {
-    "react": "React", "react-dom": "React", "next": "Next.js",
-    "vue": "Vue.js", "nuxt": "Nuxt.js", "@angular/core": "Angular",
-    "svelte": "Svelte", "three": "Three.js",
-    "@react-three/fiber": "React Three Fiber", "@deck.gl/core": "Deck.gl",
-    "maplibre-gl": "MapLibre GL", "echarts": "ECharts", "recharts": "Recharts",
-    "d3": "D3.js", "tailwindcss": "Tailwind CSS", "bootstrap": "Bootstrap",
-    "ethers": "Ethers.js", "viem": "Viem", "wagmi": "Wagmi",
-    "@web3modal/wagmi": "Web3Modal", "zustand": "Zustand",
-    "@tanstack/react-query": "TanStack Query", "zod": "Zod",
-    "i18next": "i18next", "framer-motion": "Framer Motion", "gsap": "GSAP",
-    "antd": "Ant Design", "@mui/material": "MUI", "typescript": "TypeScript",
-    "vite": "Vite", "express": "Express.js",
-    "axios": "Axios", "@reduxjs/toolkit": "Redux Toolkit",
-    "react-router-dom": "React Router", "@playwright/test": "Playwright",
+    "react": "React",
+    "react-dom": "React",
+    "next": "Next.js",
+    "vue": "Vue.js",
+    "nuxt": "Nuxt.js",
+    "@angular/core": "Angular",
+    "svelte": "Svelte",
+    "three": "Three.js",
+    "@react-three/fiber": "React Three Fiber",
+    "@deck.gl/core": "Deck.gl",
+    "maplibre-gl": "MapLibre GL",
+    "echarts": "ECharts",
+    "recharts": "Recharts",
+    "d3": "D3.js",
+    "tailwindcss": "Tailwind CSS",
+    "bootstrap": "Bootstrap",
+    "ethers": "Ethers.js",
+    "viem": "Viem",
+    "wagmi": "Wagmi",
+    "@web3modal/wagmi": "Web3Modal",
+    "zustand": "Zustand",
+    "@tanstack/react-query": "TanStack Query",
+    "zod": "Zod",
+    "i18next": "i18next",
+    "framer-motion": "Framer Motion",
+    "gsap": "GSAP",
+    "antd": "Ant Design",
+    "@mui/material": "MUI",
+    "typescript": "TypeScript",
+    "vite": "Vite",
+    "express": "Express.js",
+    "axios": "Axios",
+    "@reduxjs/toolkit": "Redux Toolkit",
+    "react-router-dom": "React Router",
+    "@playwright/test": "Playwright",
 }
 
 CDN_PATTERNS = [
@@ -107,25 +187,56 @@ CDN_PATTERNS = [
 ]
 
 PY_DB_MAP = {
-    "sqlalchemy": "SQLAlchemy", "psycopg2": "PostgreSQL", "psycopg": "PostgreSQL",
-    "asyncpg": "PostgreSQL", "pymysql": "MySQL", "mysqlclient": "MySQL",
-    "pymongo": "MongoDB", "mongoengine": "MongoDB", "redis": "Redis",
-    "celery": "Celery (صف کار)", "tortoise": "Tortoise ORM", "peewee": "Peewee",
-    "alembic": "Alembic", "sqlite3": "SQLite", "django": "Django ORM",
+    "sqlalchemy": "SQLAlchemy",
+    "psycopg2": "PostgreSQL",
+    "psycopg": "PostgreSQL",
+    "asyncpg": "PostgreSQL",
+    "pymysql": "MySQL",
+    "mysqlclient": "MySQL",
+    "pymongo": "MongoDB",
+    "mongoengine": "MongoDB",
+    "redis": "Redis",
+    "celery": "Celery (صف کار)",
+    "tortoise": "Tortoise ORM",
+    "peewee": "Peewee",
+    "alembic": "Alembic",
+    "sqlite3": "SQLite",
+    "django": "Django ORM",
 }
+
 
 # --- مسیرهای غیرپروداکشن برای متریک‌ها (افزوده fix_v4) ---
 def _is_non_prod(rel):
-    if any(p in rel for p in (
-            "tests/", "scripts/", "docs/", "alembic/", "contracts/",
-            "migrations/", "e2e/", "__tests__/", "benchmarks/",
-            "_one_shot_backup/", ".kilo/", "_quarantine/", "_backups/",
-            "econojin.egg-info")):
+    if any(
+        p in rel
+        for p in (
+            "tests/",
+            "scripts/",
+            "docs/",
+            "alembic/",
+            "contracts/",
+            "migrations/",
+            "e2e/",
+            "__tests__/",
+            "benchmarks/",
+            "_one_shot_backup/",
+            ".kilo/",
+            "_quarantine/",
+            "_backups/",
+            "econojin.egg-info",
+        )
+    ):
         return True
     name = rel.rsplit("/", 1)[-1]
-    if name in ("conftest.py", "analyze_project.py", "one_shot_fix.py",
-                "final_fixes.py", "fix_v3.py", "fix_v4.py",
-                "eco_chaos_test_v2.py"):
+    if name in (
+        "conftest.py",
+        "analyze_project.py",
+        "one_shot_fix.py",
+        "final_fixes.py",
+        "fix_v3.py",
+        "fix_v4.py",
+        "eco_chaos_test_v2.py",
+    ):
         return True
     if name.startswith(("test_", "start_", "generate_", "run_", "fix_")):
         return True
@@ -135,16 +246,30 @@ def _is_non_prod(rel):
 # ---------------- قوانین امنیتی ----------------
 SECRET_PATTERNS = [
     (re.compile(r"AKIA[0-9A-Z]{16}"), "کلید دسترسی AWS (AKIA…)", "بالا"),
-    (re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH |PGP |DSA )?PRIVATE KEY-----"),
-     "کلید خصوصی داخل کد", "بالا"),
+    (
+        re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH |PGP |DSA )?PRIVATE KEY-----"),
+        "کلید خصوصی داخل کد",
+        "بالا",
+    ),
     (re.compile(r"AIza[0-9A-Za-z_\-]{35}"), "Google API Key", "بالا"),
     (re.compile(r"\bsk_(?:live|test)_[0-9a-zA-Z]{12,}"), "کلید مخفی Stripe", "بالا"),
     (re.compile(r"\bgh[pousr]_[0-9A-Za-z]{36,}"), "توکن GitHub", "بالا"),
-    (re.compile(r"(?i)\b(?:mysql|postgres(?:ql)?|mongodb(?:\+srv)?|redis|amqp)"
-                r"://[^/\s:\"']+:[^@\s\"']+@"), "رمز عبور داخل Connection String", "بالا"),
-    (re.compile(r"(?i)\b(SECRET_KEY|API_KEY|APIKEY|API_SECRET|AUTH_TOKEN|ACCESS_TOKEN|"
-                r"PASSWORD|PASSWD|DB_PASS(?:WORD)?|PRIVATE_KEY)\b\s*[:=]\s*[\"'][^\"']{6,}[\"']"),
-     "مقدار محرمانهٔ هاردکد", "متوسط"),
+    (
+        re.compile(
+            r"(?i)\b(?:mysql|postgres(?:ql)?|mongodb(?:\+srv)?|redis|amqp)"
+            r"://[^/\s:\"']+:[^@\s\"']+@"
+        ),
+        "رمز عبور داخل Connection String",
+        "بالا",
+    ),
+    (
+        re.compile(
+            r"(?i)\b(SECRET_KEY|API_KEY|APIKEY|API_SECRET|AUTH_TOKEN|ACCESS_TOKEN|"
+            r"PASSWORD|PASSWD|DB_PASS(?:WORD)?|PRIVATE_KEY)\b\s*[:=]\s*[\"'][^\"']{6,}[\"']"
+        ),
+        "مقدار محرمانهٔ هاردکد",
+        "متوسط",
+    ),
 ]
 
 SECURITY_RULES = [
@@ -152,24 +277,72 @@ SECURITY_RULES = [
     ((".py",), re.compile(r"\bexec\s*\("), "استفاده از exec()", "متوسط"),
     ((".py",), re.compile(r"shell\s*=\s*True"), "subprocess با shell=True", "بالا"),
     ((".py",), re.compile(r"verify\s*=\s*False"), "غیرفعال‌سازی تأیید SSL (verify=False)", "متوسط"),
-    ((".py",), re.compile(r"\bexecute\s*\(\s*f[\"']"), "کوئری SQL با f-string (خطر تزریق SQL)", "بالا"),
-    ((".py",), re.compile(r"(?im)^\s*DEBUG\s*=\s*True\b"), "DEBUG=True (افشای اطلاعات در پروداکشن)", "متوسط"),
-    ((".py",), re.compile(r"allow_origins\s*=\s*\[\s*[\"']\*[\"']"), "CORS باز برای همه ('*')", "متوسط"),
-    ((".py",), re.compile(r"ALLOWED_HOSTS\s*=\s*\[\s*[\"']\*[\"']"), "ALLOWED_HOSTS = ['*']", "متوسط"),
+    (
+        (".py",),
+        re.compile(r"\bexecute\s*\(\s*f[\"']"),
+        "کوئری SQL با f-string (خطر تزریق SQL)",
+        "بالا",
+    ),
+    (
+        (".py",),
+        re.compile(r"(?im)^\s*DEBUG\s*=\s*True\b"),
+        "DEBUG=True (افشای اطلاعات در پروداکشن)",
+        "متوسط",
+    ),
+    (
+        (".py",),
+        re.compile(r"allow_origins\s*=\s*\[\s*[\"']\*[\"']"),
+        "CORS باز برای همه ('*')",
+        "متوسط",
+    ),
+    (
+        (".py",),
+        re.compile(r"ALLOWED_HOSTS\s*=\s*\[\s*[\"']\*[\"']"),
+        "ALLOWED_HOSTS = ['*']",
+        "متوسط",
+    ),
     ((".py",), re.compile(r"\bpickle\.loads?\s*\("), "pickle (deserialization نامطمئن)", "کم"),
-    ((".py",), re.compile(r"\bhashlib\.(?:md5|sha1)\b(?![^\n]*usedforsecurity\s*=\s*False)"),
-     "هش ضعیف (md5/sha1)", "کم"),
-    ((".py",), re.compile(r"^\s*except\s*:\s*(?:pass|\.\.\.)\s*$", re.M), "except خام (بلع خطا)", "کم"),
-    ((".tsx", ".ts", ".jsx", ".js"), re.compile(r"dangerouslySetInnerHTML"),
-     "dangerouslySetInnerHTML (ریسک XSS)", "متوسط"),
-    ((".tsx", ".ts", ".jsx", ".js"),
-     re.compile(r"(?i)\blocalStorage\.setItem\(\s*[\"'][^\"']*(?:token|password|secret)"),
-     "ذخیرهٔ احتمالی توکن در localStorage", "کم"),
+    (
+        (".py",),
+        re.compile(r"\bhashlib\.(?:md5|sha1)\b(?![^\n]*usedforsecurity\s*=\s*False)"),
+        "هش ضعیف (md5/sha1)",
+        "کم",
+    ),
+    (
+        (".py",),
+        re.compile(r"^\s*except\s*:\s*(?:pass|\.\.\.)\s*$", re.M),
+        "except خام (بلع خطا)",
+        "کم",
+    ),
+    (
+        (".tsx", ".ts", ".jsx", ".js"),
+        re.compile(r"dangerouslySetInnerHTML"),
+        "dangerouslySetInnerHTML (ریسک XSS)",
+        "متوسط",
+    ),
+    (
+        (".tsx", ".ts", ".jsx", ".js"),
+        re.compile(r"(?i)\blocalStorage\.setItem\(\s*[\"'][^\"']*(?:token|password|secret)"),
+        "ذخیرهٔ احتمالی توکن در localStorage",
+        "کم",
+    ),
 ]
 
 COMPLEXITY_NODES = tuple(
-    n for n in (ast.If, ast.For, ast.While, ast.AsyncFor, ast.IfExp,
-                ast.With, ast.AsyncWith, getattr(ast, "Match", None)) if n)
+    n
+    for n in (
+        ast.If,
+        ast.For,
+        ast.While,
+        ast.AsyncFor,
+        ast.IfExp,
+        ast.With,
+        ast.AsyncWith,
+        getattr(ast, "Match", None),
+    )
+    if n
+)
+
 
 # ---------------- ابزارهای کمکی ----------------
 def human_size(n: float) -> str:
@@ -199,8 +372,14 @@ def walk_files(root: Path):
 
 def run_git(root: Path, args: list):
     try:
-        r = subprocess.run(["git"] + args, cwd=str(root), capture_output=True,
-                           text=True, errors="ignore", timeout=15)
+        r = subprocess.run(
+            ["git"] + args,
+            cwd=str(root),
+            capture_output=True,
+            text=True,
+            errors="ignore",
+            timeout=15,
+        )
         return r.stdout if r.returncode == 0 else None
     except Exception:
         return None
@@ -213,8 +392,9 @@ def git_info(root: Path) -> dict:
         return {}
     info = {}
     info["branch"] = (run_git(root, ["rev-parse", "--abbrev-ref", "HEAD"]) or "").strip()
-    info["last_commit"] = (run_git(root, ["log", "-1", "--format=%h | %ad | %an: %s",
-                                          "--date=short"]) or "").strip()
+    info["last_commit"] = (
+        run_git(root, ["log", "-1", "--format=%h | %ad | %an: %s", "--date=short"]) or ""
+    ).strip()
     info["total_commits"] = (run_git(root, ["rev-list", "--count", "HEAD"]) or "").strip()
     info["remote"] = (run_git(root, ["remote", "get-url", "origin"]) or "").strip()
     st = run_git(root, ["status", "--porcelain"]) or ""
@@ -222,8 +402,9 @@ def git_info(root: Path) -> dict:
     log = run_git(root, ["log", "--reverse", "--format=%ad", "--date=short"]) or ""
     lines = [l for l in log.splitlines() if l.strip()]
     info["first_commit"] = lines[0] if lines else ""
-    info["commits_30d"] = (run_git(root, ["rev-list", "--count",
-                                          "--since=30 days ago", "HEAD"]) or "?").strip()
+    info["commits_30d"] = (
+        run_git(root, ["rev-list", "--count", "--since=30 days ago", "HEAD"]) or "?"
+    ).strip()
     contrib = []
     short = run_git(root, ["shortlog", "-sn", "HEAD"]) or ""
     for l in short.splitlines():
@@ -237,10 +418,22 @@ def git_info(root: Path) -> dict:
 def git_tracked_bad(root: Path) -> dict:
     """پوشه/فایل‌هایی که نباید در گیت باشند ولی track شده‌اند"""
     out = {}
-    candidates = ["htmlcov", "node_modules", ".venv", "venv", "dist",
-                  "frontend/dist", "frontend/node_modules",
-                  ".env", ".env.local", ".env.production",
-                  "backend/.env", "frontend/.env", "*.pem", "*.key"]
+    candidates = [
+        "htmlcov",
+        "node_modules",
+        ".venv",
+        "venv",
+        "dist",
+        "frontend/dist",
+        "frontend/node_modules",
+        ".env",
+        ".env.local",
+        ".env.production",
+        "backend/.env",
+        "frontend/.env",
+        "*.pem",
+        "*.key",
+    ]
     for d in candidates:
         r = run_git(root, ["ls-files", "--", d])
         if r:
@@ -269,15 +462,17 @@ def build_tree(root: Path, max_depth: int = 3):
 
     def walk(d: Path, prefix: str, depth: int):
         try:
-            subdirs = sorted([e for e in d.iterdir()
-                              if e.is_dir() and e.name not in SKIP_DIRS],
-                             key=lambda e: e.name.lower())
+            subdirs = sorted(
+                [e for e in d.iterdir() if e.is_dir() and e.name not in SKIP_DIRS],
+                key=lambda e: e.name.lower(),
+            )
         except (PermissionError, OSError):
             return
         for i, e in enumerate(subdirs):
             last = i == len(subdirs) - 1
-            lines.append(f"{prefix}{'└── ' if last else '├── '}"
-                         f"{e.name}/ ({count_files_in(e)} فایل)")
+            lines.append(
+                f"{prefix}{'└── ' if last else '├── '}{e.name}/ ({count_files_in(e)} فایل)"
+            )
             if depth < max_depth:
                 walk(e, prefix + ("    " if last else "│   "), depth + 1)
             else:
@@ -330,15 +525,19 @@ def scan_sizes(root: Path):
             newest = (mtime, f.relative_to(root).as_posix())
         largest.append((size, f.relative_to(root).as_posix()))
     largest.sort(reverse=True)
-    extra = {"empty_files": empty_files, "empty_dirs": count_empty_dirs(root),
-             "fresh7": fresh7, "fresh30": fresh30, "newest": newest[1]}
+    extra = {
+        "empty_files": empty_files,
+        "empty_dirs": count_empty_dirs(root),
+        "fresh7": fresh7,
+        "fresh30": fresh30,
+        "newest": newest[1],
+    }
     return ext_count, ext_size, total_files, total_size, largest, extra
 
 
 # ---------------- ۴) اسکن عمیق کد ----------------
 def deep_scan(root: Path) -> dict:
-    lang = defaultdict(lambda: {"files": 0, "lines": 0, "code": 0,
-                                "comment": 0, "blank": 0})
+    lang = defaultdict(lambda: {"files": 0, "lines": 0, "code": 0, "comment": 0, "blank": 0})
     todo_total, todo_samples = 0, []
     console_files, print_files, localhost_files = Counter(), Counter(), Counter()
     endpoints, ws_endpoints = [], []
@@ -346,8 +545,14 @@ def deep_scan(root: Path) -> dict:
     cdn_techs = Counter()
     models_count = 0
     # لایهٔ کیفیت TypeScript/JS
-    ts_q = {"any": 0, "ts_skip": 0, "eslint_disable": 0,
-            "useEffect": 0, "useState": 0, "inline_style": 0}
+    ts_q = {
+        "any": 0,
+        "ts_skip": 0,
+        "eslint_disable": 0,
+        "useEffect": 0,
+        "useState": 0,
+        "inline_style": 0,
+    }
 
     for f in walk_files(root):
         if f.resolve() == Path(__file__).resolve():
@@ -369,8 +574,13 @@ def deep_scan(root: Path) -> dict:
             row["lines"] += 1
             if not s:
                 row["blank"] += 1
-            elif (is_py and s.startswith("#")) or s.startswith("//") \
-                    or s.startswith("/*") or s.startswith("*") or s.startswith("<!--"):
+            elif (
+                (is_py and s.startswith("#"))
+                or s.startswith("//")
+                or s.startswith("/*")
+                or s.startswith("*")
+                or s.startswith("<!--")
+            ):
                 row["comment"] += 1
             else:
                 row["code"] += 1
@@ -406,15 +616,19 @@ def deep_scan(root: Path) -> dict:
             n = len(re.findall(r"(?<![\w.])print\(", text))
             if n:
                 print_files[rel] += n
-            for m in re.finditer(r"@\w+\.(get|post|put|delete|patch|head|options)"
-                                 r"\(\s*[\"']([^\"']*)[\"']", text):
+            for m in re.finditer(
+                r"@\w+\.(get|post|put|delete|patch|head|options)"
+                r"\(\s*[\"']([^\"']*)[\"']",
+                text,
+            ):
                 endpoints.append((m.group(1).upper(), m.group(2) or "/", rel))
             for m in re.finditer(r"@\w+\.route\(\s*[\"']([^\"']*)[\"']", text):
                 endpoints.append(("ROUTE", m.group(1) or "/", rel))
             for m in re.finditer(r"@\w+\.websocket\(\s*[\"']([^\"']*)[\"']", text):
                 ws_endpoints.append((m.group(1), rel))
-            models_count += len(re.findall(
-                r"class\s+\w+\s*\(\s*(?:models\.Model|BaseModel|Base)\b[^)]*\):", text))
+            models_count += len(
+                re.findall(r"class\s+\w+\s*\(\s*(?:models\.Model|BaseModel|Base)\b[^)]*\):", text)
+            )
 
         # --- مسیرهای Django ---
         if "urls" in f.name and ext == ".py":
@@ -423,10 +637,13 @@ def deep_scan(root: Path) -> dict:
 
         # --- اندپوینت‌های Express (خارج از پوشهٔ frontend) ---
         if ext in {".js", ".ts"} and not rel.lower().startswith(
-                ("frontend/", "client/", "src/client")):
-            for m in re.finditer(r"\b(?:app|router|server|api)\."
-                                 r"(get|post|put|delete|patch|all)\(\s*[\"'`]([^\"'`\s]+)[\"'`]",
-                                 text):
+            ("frontend/", "client/", "src/client")
+        ):
+            for m in re.finditer(
+                r"\b(?:app|router|server|api)\."
+                r"(get|post|put|delete|patch|all)\(\s*[\"'`]([^\"'`\s]+)[\"'`]",
+                text,
+            ):
                 endpoints.append((m.group(1).upper(), m.group(2), rel))
 
         # --- localhost هاردکد ---
@@ -439,27 +656,49 @@ def deep_scan(root: Path) -> dict:
                 if pat.search(text):
                     cdn_techs[label] += 1
 
-    return {"lang": dict(lang), "todo_total": todo_total,
-            "todo_samples": todo_samples, "console_files": console_files,
-            "print_files": print_files, "localhost_files": localhost_files,
-            "endpoints": endpoints, "ws_endpoints": ws_endpoints,
-            "lazy_count": lazy_count, "suspense_count": suspense_count,
-            "route_count": route_count, "cdn_techs": cdn_techs,
-            "models_count": models_count, "ts": ts_q}
+    return {
+        "lang": dict(lang),
+        "todo_total": todo_total,
+        "todo_samples": todo_samples,
+        "console_files": console_files,
+        "print_files": print_files,
+        "localhost_files": localhost_files,
+        "endpoints": endpoints,
+        "ws_endpoints": ws_endpoints,
+        "lazy_count": lazy_count,
+        "suspense_count": suspense_count,
+        "route_count": route_count,
+        "cdn_techs": cdn_techs,
+        "models_count": models_count,
+        "ts": ts_q,
+    }
 
 
 # ---------------- ۵) امنیت ----------------
 def scan_secrets(root: Path) -> list:
     findings = []
-    scan_exts = {".py", ".ts", ".tsx", ".js", ".jsx", ".json", ".yml",
-                 ".yaml", ".html", ".htm", ".sh", ".cfg", ".ini", ".toml"}
+    scan_exts = {
+        ".py",
+        ".ts",
+        ".tsx",
+        ".js",
+        ".jsx",
+        ".json",
+        ".yml",
+        ".yaml",
+        ".html",
+        ".htm",
+        ".sh",
+        ".cfg",
+        ".ini",
+        ".toml",
+    }
     self_path = Path(__file__).resolve()
     for f in walk_files(root):
         if f.resolve() == self_path:
             continue
         name = f.name
-        if name in ("one_shot_fix.py", "final_fixes.py",
-                    "fix_v3.py", "fix_v4.py"):
+        if name in ("one_shot_fix.py", "final_fixes.py", "fix_v3.py", "fix_v4.py"):
             continue
         rel = f.relative_to(root).as_posix()
         if rel.startswith(("_one_shot_backup/", "docs/")):
@@ -467,13 +706,24 @@ def scan_secrets(root: Path) -> list:
         if name.startswith(".env"):
             # فقط «نام کلیدها» گزارش می‌شود، نه مقادیر
             text = read_safe(f, limit=200_000)
-            keys = sorted({m.group(1).upper()
-                           for m in re.finditer(r"(?m)^\s*([A-Za-z_][A-Za-z0-9_]{2,})\s*=", text)})
-            risky = [k for k in keys
-                     if re.search(r"SECRET|TOKEN|PASSWORD|PASSWD|_KEY|DSN|CREDENTIAL", k)]
+            keys = sorted(
+                {
+                    m.group(1).upper()
+                    for m in re.finditer(r"(?m)^\s*([A-Za-z_][A-Za-z0-9_]{2,})\s*=", text)
+                }
+            )
+            risky = [
+                k for k in keys if re.search(r"SECRET|TOKEN|PASSWORD|PASSWD|_KEY|DSN|CREDENTIAL", k)
+            ]
             if risky:
-                findings.append({"file": rel, "line": 0, "severity": "اطلاع",
-                                 "rule": "کلیدهای حساس در فایل env: " + ", ".join(risky[:8])})
+                findings.append(
+                    {
+                        "file": rel,
+                        "line": 0,
+                        "severity": "اطلاع",
+                        "rule": "کلیدهای حساس در فایل env: " + ", ".join(risky[:8]),
+                    }
+                )
             continue
         ext = f.suffix.lower()
         if ext not in scan_exts:
@@ -487,8 +737,7 @@ def scan_secrets(root: Path) -> list:
                 _ln = text.count("\n", 0, m.start()) + 1
                 if "# nosec" in text.splitlines()[_ln - 1]:
                     continue
-                findings.append({"file": rel, "severity": sev, "rule": label,
-                                 "line": _ln})
+                findings.append({"file": rel, "severity": sev, "rule": label, "line": _ln})
         for exts, pat, label, sev in SECURITY_RULES:
             if ext in exts:
                 m = pat.search(text)
@@ -496,17 +745,26 @@ def scan_secrets(root: Path) -> list:
                     _ln = text.count("\n", 0, m.start()) + 1
                     if "# nosec" in text.splitlines()[_ln - 1]:
                         continue
-                    findings.append({"file": rel, "severity": sev, "rule": label,
-                                     "line": _ln})
+                    findings.append({"file": rel, "severity": sev, "rule": label, "line": _ln})
     return findings
 
 
 # ---------------- ۶) کیفیت پایتون با AST ----------------
 def python_deep_scan(root: Path) -> dict:
-    st = {"files": 0, "parse_errors": [], "functions": 0, "classes": 0,
-          "max_args": (0, ""), "longest_func": (0, ""), "complexity_top": [],
-          "doc_present": 0, "doc_missing": 0, "typed": 0,
-          "imports": Counter(), "bare_except": 0}
+    st = {
+        "files": 0,
+        "parse_errors": [],
+        "functions": 0,
+        "classes": 0,
+        "max_args": (0, ""),
+        "longest_func": (0, ""),
+        "complexity_top": [],
+        "doc_present": 0,
+        "doc_missing": 0,
+        "typed": 0,
+        "imports": Counter(),
+        "bare_except": 0,
+    }
     for f in walk_files(root):
         if f.resolve() == Path(__file__).resolve():
             continue
@@ -574,8 +832,9 @@ def detect_database(root: Path, py_imports: Counter) -> dict:
             break
     migrations = 0
     for f in walk_files(root):
-        if f.suffix == ".py" and any(p in {"migrations", "alembic", "versions"}
-                                     for p in f.parts[:-1]):
+        if f.suffix == ".py" and any(
+            p in {"migrations", "alembic", "versions"} for p in f.parts[:-1]
+        ):
             migrations += 1
     return {"systems": sorted(dbs), "migrations": migrations}
 
@@ -589,17 +848,19 @@ def find_duplicates(root: Path, min_block: int = 8, max_windows: int = 800):
         text = read_safe(f)
         if not text:
             continue
-        kept = [l.strip() for l in text.splitlines()
-                if len(l.strip()) >= 6
-                and not l.strip().startswith(("#", "//", "import ", "from ",
-                                              "*", "<", "{", "}"))]
+        kept = [
+            l.strip()
+            for l in text.splitlines()
+            if len(l.strip()) >= 6
+            and not l.strip().startswith(("#", "//", "import ", "from ", "*", "<", "{", "}"))
+        ]
         if len(kept) < min_block:
             continue
         rel = f.relative_to(root).as_posix()
         step = max(1, min_block // 2)
         count = 0
         for s in range(0, len(kept) - min_block + 1, step):
-            h = hashlib.md5("\n".join(kept[s:s + min_block]).encode("utf-8")).hexdigest()
+            h = hashlib.md5("\n".join(kept[s : s + min_block]).encode("utf-8")).hexdigest()
             lst = window_map[h]
             if sum(1 for r, _ in lst if r == rel) < 2:
                 lst.append((rel, s + 1))
@@ -613,32 +874,54 @@ def find_duplicates(root: Path, min_block: int = 8, max_windows: int = 800):
 
 # ---------------- ۹) مستندات و لایسنس ----------------
 def analyze_docs(root: Path) -> dict:
-    out = {"readme": None, "license": None, "has_docs_dir": False,
-           "docs_files": 0, "changelog": False, "contributing": False}
-    for name in ("README.md", "readme.md", "Readme.md", "README.rst",
-                 "README.fa.md", "README.en.md"):
+    out = {
+        "readme": None,
+        "license": None,
+        "has_docs_dir": False,
+        "docs_files": 0,
+        "changelog": False,
+        "contributing": False,
+    }
+    for name in (
+        "README.md",
+        "readme.md",
+        "Readme.md",
+        "README.rst",
+        "README.fa.md",
+        "README.en.md",
+    ):
         p = root / name
         if p.exists():
             text = read_safe(p)
             out["readme"] = {
-                "file": name, "lines": len(text.splitlines()),
+                "file": name,
+                "lines": len(text.splitlines()),
                 "headings": len(re.findall(r"(?m)^#{1,6}\s+\S", text)),
                 "code_blocks": text.count("```") // 2,
-                "sections": [s for s, rx in
-                             (("نصب", r"(?im)^#+\s*.*(install|نصب|راه.?اندازی)"),
-                              ("اجرا", r"(?im)^#+\s*.*(usage|run|اجرا|شروع)"),
-                              ("تست", r"(?im)^#+\s*.*(test|تست)"),
-                              ("مشارکت", r"(?im)^#+\s*.*(contribut|مشارکت)"))
-                             if re.search(rx, text)],
+                "sections": [
+                    s
+                    for s, rx in (
+                        ("نصب", r"(?im)^#+\s*.*(install|نصب|راه.?اندازی)"),
+                        ("اجرا", r"(?im)^#+\s*.*(usage|run|اجرا|شروع)"),
+                        ("تست", r"(?im)^#+\s*.*(test|تست)"),
+                        ("مشارکت", r"(?im)^#+\s*.*(contribut|مشارکت)"),
+                    )
+                    if re.search(rx, text)
+                ],
             }
             break
     for name in ("LICENSE", "LICENSE.md", "LICENSE.txt", "LICENCE", "licence"):
         p = root / name
         if p.exists():
             head = read_safe(p, limit=4000).lower()
-            for lic, rx in (("MIT", r"\bmit license\b"), ("Apache-2.0", r"apache license"),
-                            ("GPL", r"gnu general public license"), ("BSD", r"\bbsd\b"),
-                            ("MPL", r"mozilla public license"), ("ISC", r"\bisc license\b")):
+            for lic, rx in (
+                ("MIT", r"\bmit license\b"),
+                ("Apache-2.0", r"apache license"),
+                ("GPL", r"gnu general public license"),
+                ("BSD", r"\bbsd\b"),
+                ("MPL", r"mozilla public license"),
+                ("ISC", r"\bisc license\b"),
+            ):
                 if re.search(rx, head):
                     out["license"] = lic
                     break
@@ -650,20 +933,37 @@ def analyze_docs(root: Path) -> dict:
         out["has_docs_dir"] = True
         out["docs_files"] = sum(1 for _ in walk_files(docs))
     out["changelog"] = any((root / n).exists() for n in ("CHANGELOG.md", "CHANGES.md"))
-    out["contributing"] = any((root / n).exists()
-                              for n in ("CONTRIBUTING.md", ".github/CONTRIBUTING.md"))
+    out["contributing"] = any(
+        (root / n).exists() for n in ("CONTRIBUTING.md", ".github/CONTRIBUTING.md")
+    )
     return out
 
 
 # ---------------- ۱۰) معماری و نقاط ورود ----------------
 def detect_entry_points(root: Path) -> list:
-    names = ["manage.py", "main.py", "app.py", "server.py", "wsgi.py", "asgi.py",
-             "run.py", "cli.py", "index.tsx", "index.ts", "index.js",
-             "server.js", "main.ts"]
+    names = [
+        "manage.py",
+        "main.py",
+        "app.py",
+        "server.py",
+        "wsgi.py",
+        "asgi.py",
+        "run.py",
+        "cli.py",
+        "index.tsx",
+        "index.ts",
+        "index.js",
+        "server.js",
+        "main.ts",
+    ]
     found = []
     for n in names:
-        for cand in (root / n, root / "backend" / n,
-                     root / "frontend" / "src" / n, root / "src" / n):
+        for cand in (
+            root / n,
+            root / "backend" / n,
+            root / "frontend" / "src" / n,
+            root / "src" / n,
+        ):
             if cand.exists():
                 found.append(cand.relative_to(root).as_posix())
                 break
@@ -672,8 +972,7 @@ def detect_entry_points(root: Path) -> list:
 
 def detect_architecture(root: Path) -> dict:
     try:
-        top_dirs = sorted(d.name for d in root.iterdir()
-                          if d.is_dir() and d.name not in SKIP_DIRS)
+        top_dirs = sorted(d.name for d in root.iterdir() if d.is_dir() and d.name not in SKIP_DIRS)
     except OSError:
         top_dirs = []
     s = set(top_dirs)
@@ -685,16 +984,14 @@ def detect_architecture(root: Path) -> dict:
         style = "میکروسرویس"
     else:
         style = "ساده / تک‌پوشه"
-    return {"style": style, "top_dirs": top_dirs,
-            "entry_points": detect_entry_points(root)}
+    return {"style": style, "top_dirs": top_dirs, "entry_points": detect_entry_points(root)}
 
 
 # ---------------- ۱۱) فناوری‌ها و وابستگی‌ها ----------------
 def detect_techs(root: Path) -> set:
     techs = set()
     text = ""
-    for name in ("requirements.txt", "pyproject.toml", "Pipfile",
-                 "backend/requirements.txt"):
+    for name in ("requirements.txt", "pyproject.toml", "Pipfile", "backend/requirements.txt"):
         p = root / name
         if p.exists():
             text += read_safe(p).lower() + "\n"
@@ -712,8 +1009,7 @@ def detect_techs(root: Path) -> set:
             techs.add("Node.js")
             try:
                 data = json.loads(read_safe(pkg))
-                deps = {**data.get("dependencies", {}),
-                        **data.get("devDependencies", {})}
+                deps = {**data.get("dependencies", {}), **data.get("devDependencies", {})}
             except Exception:
                 deps = {}
             for d, label in JS_TECH_MAP.items():
@@ -726,17 +1022,25 @@ def detect_techs(root: Path) -> set:
 
 
 def analyze_deps(root: Path) -> dict:
-    out = {"npm": None, "scripts": {}, "requirements": [], "unpinned": [],
-           "lockfile": None, "pyproject": False}
+    out = {
+        "npm": None,
+        "scripts": {},
+        "requirements": [],
+        "unpinned": [],
+        "lockfile": None,
+        "pyproject": False,
+    }
     pkg = root / "frontend" / "package.json"
     if not pkg.exists():
         pkg = root / "package.json"
     if pkg.exists():
         try:
             data = json.loads(pkg.read_text(encoding="utf-8", errors="ignore"))
-            out["npm"] = {"name": data.get("name", "?"),
-                          "dependencies": data.get("dependencies", {}),
-                          "devDependencies": data.get("devDependencies", {})}
+            out["npm"] = {
+                "name": data.get("name", "?"),
+                "dependencies": data.get("dependencies", {}),
+                "devDependencies": data.get("devDependencies", {}),
+            }
             out["scripts"] = data.get("scripts", {})
         except Exception:
             pass
@@ -752,8 +1056,9 @@ def analyze_deps(root: Path) -> dict:
                 s = line.strip()
                 if s and not s.startswith(("#", "-")):
                     out["requirements"].append(s)
-            out["unpinned"] = [s for s in out["requirements"]
-                               if not re.search(r"(==|>=|~=|<=|!=|\[)", s)]
+            out["unpinned"] = [
+                s for s in out["requirements"] if not re.search(r"(==|>=|~=|<=|!=|\[)", s)
+            ]
             break
     out["pyproject"] = (root / "pyproject.toml").exists()
     return out
@@ -762,13 +1067,19 @@ def analyze_deps(root: Path) -> dict:
 def analyze_devops(root: Path) -> list:
     found = []
     checks = [
-        ("Dockerfile", "Dockerfile"), ("backend/Dockerfile", "Dockerfile (backend)"),
+        ("Dockerfile", "Dockerfile"),
+        ("backend/Dockerfile", "Dockerfile (backend)"),
         ("frontend/Dockerfile", "Dockerfile (frontend)"),
-        ("docker-compose.yml", "Docker Compose"), ("docker-compose.yaml", "Docker Compose"),
-        ("alembic.ini", "Alembic (مهاجرت DB)"), ("backend/alembic.ini", "Alembic (مهاجرت DB)"),
-        ("Makefile", "Makefile"), ("nginx.conf", "Nginx"),
-        ("README.md", "README.md"), (".env.example", "نمونه .env"),
-        ("Procfile", "Procfile (Heroku/Railway)"), ("fly.toml", "Fly.io"),
+        ("docker-compose.yml", "Docker Compose"),
+        ("docker-compose.yaml", "Docker Compose"),
+        ("alembic.ini", "Alembic (مهاجرت DB)"),
+        ("backend/alembic.ini", "Alembic (مهاجرت DB)"),
+        ("Makefile", "Makefile"),
+        ("nginx.conf", "Nginx"),
+        ("README.md", "README.md"),
+        (".env.example", "نمونه .env"),
+        ("Procfile", "Procfile (Heroku/Railway)"),
+        ("fly.toml", "Fly.io"),
         ("contracts/hardhat.config.js", "Hardhat (قرارداد هوشمند)"),
     ]
     for path, label in checks:
@@ -785,9 +1096,13 @@ def analyze_devops(root: Path) -> list:
 
 
 def find_env_files(root: Path) -> list:
-    return sorted({f.relative_to(root).as_posix()
-                   for f in walk_files(root)
-                   if f.name == ".env" or f.name.startswith(".env.")})
+    return sorted(
+        {
+            f.relative_to(root).as_posix()
+            for f in walk_files(root)
+            if f.name == ".env" or f.name.startswith(".env.")
+        }
+    )
 
 
 def detect_tests(root: Path):
@@ -795,8 +1110,7 @@ def detect_tests(root: Path):
     for tname in ("tests", "backend/tests", "test", "app/tests"):
         d = root / tname
         if d.is_dir():
-            be = sum(1 for f in walk_files(d)
-                     if f.suffix == ".py" and f.name.startswith("test_"))
+            be = sum(1 for f in walk_files(d) if f.suffix == ".py" and f.name.startswith("test_"))
             break
     fe = 0
     fe_dir = root / "frontend"
@@ -820,11 +1134,11 @@ def check_gitignore(root: Path):
 def parse_args():
     ap = argparse.ArgumentParser(
         description="تحلیل جامع پروژه → PROJECT_REPORT.md + project_report.json",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
     ap.add_argument("path", nargs="?", default=".", help="مسیر پروژه")
     ap.add_argument("--depth", type=int, default=3, help="عمق درخت پوشه‌ها")
-    ap.add_argument("--no-dupes", action="store_true",
-                    help="غیرفعال‌کردن تحلیل تکرار کد")
+    ap.add_argument("--no-dupes", action="store_true", help="غیرفعال‌کردن تحلیل تکرار کد")
     ap.add_argument("--out", default=None, help="پیشوند نام فایل‌های خروجی")
     return ap.parse_args()
 
@@ -838,10 +1152,14 @@ def main():
         sys.exit(1)
 
     logger.info(f"🔍 در حال تحلیل: {root} ...")
-    data = {"meta": {"path": str(root),
-                     "generated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                     "python": platform.python_version(),
-                     "os": f"{platform.system()} {platform.release()}"}}
+    data = {
+        "meta": {
+            "path": str(root),
+            "generated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "python": platform.python_version(),
+            "os": f"{platform.system()} {platform.release()}",
+        }
+    }
 
     git = git_info(root)
     ext_count, ext_size, total_files, total_size, largest, sz_extra = scan_sizes(root)
@@ -877,6 +1195,7 @@ def main():
 
     # ---------- امتیاز سلامت ----------
     deductions = []
+
     def deduct(pts, reason):
         deductions.append((pts, reason))
 
@@ -906,8 +1225,10 @@ def main():
     if scan["todo_total"]:
         deduct(min(5, scan["todo_total"] // 20), f"TODO/FIXME ({scan['todo_total']} مورد)")
     if py["parse_errors"]:
-        deduct(min(10, 2 * len(py["parse_errors"])),
-               f"خطای parse پایتون ({len(py['parse_errors'])} فایل)")
+        deduct(
+            min(10, 2 * len(py["parse_errors"])),
+            f"خطای parse پایتون ({len(py['parse_errors'])} فایل)",
+        )
     if doc_total and doc_pct < 10:
         deduct(6, f"پوشش docstring خیلی پایین ({doc_pct}٪)")
     elif doc_total and doc_pct < 30:
@@ -916,44 +1237,83 @@ def main():
         deduct(3, "lockfile فرانت‌اند کامیت نشده")
 
     score = max(0, 100 - sum(p for p, _ in deductions))
-    grade = ("A" if score >= 90 else "B" if score >= 75 else
-             "C" if score >= 60 else "D" if score >= 40 else "F")
+    grade = (
+        "A"
+        if score >= 90
+        else "B"
+        if score >= 75
+        else "C"
+        if score >= 60
+        else "D"
+        if score >= 40
+        else "F"
+    )
     grade_emoji = {"A": "🟢", "B": "🟢", "C": "🟡", "D": "🟠", "F": "🔴"}[grade]
 
-    data.update({
-        "techs": sorted(techs), "git": git,
-        "stats": {"total_files": total_files, "total_size": total_size,
-                  "loc_code": loc_code, "endpoints": len(scan["endpoints"]),
-                  "models": scan["models_count"],
-                  "tests_backend": be_tests, "tests_frontend": fe_tests,
-                  "fresh7": sz_extra["fresh7"], "fresh30": sz_extra["fresh30"]},
-        "endpoints": scan["endpoints"],
-        "ws_endpoints": scan["ws_endpoints"],
-        "dependencies": deps, "devops": devops, "env_files": envs,
-        "langs": scan["lang"], "cdn_techs": dict(scan["cdn_techs"]),
-        "security": {"findings": findings, "high": len(sec_high),
-                     "medium": len(sec_med), "low": len(findings) - len(sec_high) - len(sec_med)},
-        "python_quality": {"parse_errors": py["parse_errors"],
-                           "functions": py["functions"], "classes": py["classes"],
-                           "docstring_pct": doc_pct, "typed_pct": typed_pct,
-                           "bare_except": py["bare_except"],
-                           "complexity_top": py["complexity_top"][:15],
-                           "longest_func": list(py["longest_func"]),
-                           "max_args": list(py["max_args"]),
-                           "imports": py["imports"].most_common(20)},
-        "ts_quality": scan["ts"],
-        "database": db, "docs": docs, "freshness": sz_extra,
-        "duplicates": {"groups": dupe_groups,
-                       "samples": [[{"file": r, "line": l} for r, l in locs[:4]]
-                                   for _, locs in dupes[:10]]},
-        "architecture": arch,
-        "health": {"score": score, "grade": grade, "deductions": deductions,
-                   "gitignore_missing": gi_missing if gi_ok else None,
-                   "tracked_build_dirs": tracked_bad,
-                   "todo_total": scan["todo_total"],
-                   "console_log_total": cl_total, "print_total": pr_total,
-                   "localhost_total": lh_total},
-    })
+    data.update(
+        {
+            "techs": sorted(techs),
+            "git": git,
+            "stats": {
+                "total_files": total_files,
+                "total_size": total_size,
+                "loc_code": loc_code,
+                "endpoints": len(scan["endpoints"]),
+                "models": scan["models_count"],
+                "tests_backend": be_tests,
+                "tests_frontend": fe_tests,
+                "fresh7": sz_extra["fresh7"],
+                "fresh30": sz_extra["fresh30"],
+            },
+            "endpoints": scan["endpoints"],
+            "ws_endpoints": scan["ws_endpoints"],
+            "dependencies": deps,
+            "devops": devops,
+            "env_files": envs,
+            "langs": scan["lang"],
+            "cdn_techs": dict(scan["cdn_techs"]),
+            "security": {
+                "findings": findings,
+                "high": len(sec_high),
+                "medium": len(sec_med),
+                "low": len(findings) - len(sec_high) - len(sec_med),
+            },
+            "python_quality": {
+                "parse_errors": py["parse_errors"],
+                "functions": py["functions"],
+                "classes": py["classes"],
+                "docstring_pct": doc_pct,
+                "typed_pct": typed_pct,
+                "bare_except": py["bare_except"],
+                "complexity_top": py["complexity_top"][:15],
+                "longest_func": list(py["longest_func"]),
+                "max_args": list(py["max_args"]),
+                "imports": py["imports"].most_common(20),
+            },
+            "ts_quality": scan["ts"],
+            "database": db,
+            "docs": docs,
+            "freshness": sz_extra,
+            "duplicates": {
+                "groups": dupe_groups,
+                "samples": [
+                    [{"file": r, "line": l} for r, l in locs[:4]] for _, locs in dupes[:10]
+                ],
+            },
+            "architecture": arch,
+            "health": {
+                "score": score,
+                "grade": grade,
+                "deductions": deductions,
+                "gitignore_missing": gi_missing if gi_ok else None,
+                "tracked_build_dirs": tracked_bad,
+                "todo_total": scan["todo_total"],
+                "console_log_total": cl_total,
+                "print_total": pr_total,
+                "localhost_total": lh_total,
+            },
+        }
+    )
 
     # ---------- ساخت مارک‌داون ----------
     md = []
@@ -1001,8 +1361,7 @@ def main():
         A(f"- تغییرات کامیت‌نشده: {git.get('uncommitted')} فایل")
         contrib = git.get("contributors") or []
         if contrib:
-            A("- مشارکت‌کنندگان اصلی: "
-              + ", ".join(f"{name} ({n})" for n, name in contrib[:5]))
+            A("- مشارکت‌کنندگان اصلی: " + ", ".join(f"{name} ({n})" for n, name in contrib[:5]))
     else:
         A("- ریپازیتوری Git یافت نشد.")
     A("")
@@ -1063,8 +1422,10 @@ def main():
         for r in deps["requirements"]:
             A(f"- {r}")
         if deps["unpinned"]:
-            A(f"- ⚠️ {len(deps['unpinned'])} پکیج بدون پین نسخه: "
-              + ", ".join(f"`{u}`" for u in deps["unpinned"][:10]))
+            A(
+                f"- ⚠️ {len(deps['unpinned'])} پکیج بدون پین نسخه: "
+                + ", ".join(f"`{u}`" for u in deps["unpinned"][:10])
+            )
     else:
         A("- یافت نشد")
     A(f"- pyproject.toml: {'✅ موجود' if deps['pyproject'] else '—'}")
@@ -1074,11 +1435,15 @@ def main():
     # ۷) بک‌اند
     A("## ۷) بک‌اند (API)")
     A("")
-    A(f"- تعداد اندپوینت‌ها: **{len(scan['endpoints'])}** — "
-      + " · ".join(f"{k}×{v}" for k, v in sorted(methods.items())))
+    A(
+        f"- تعداد اندپوینت‌ها: **{len(scan['endpoints'])}** — "
+        + " · ".join(f"{k}×{v}" for k, v in sorted(methods.items()))
+    )
     if scan["ws_endpoints"]:
-        A(f"- WebSocket: {len(scan['ws_endpoints'])} اندپوینت — "
-          + ", ".join(f"`{p}`" for p, _ in scan["ws_endpoints"][:5]))
+        A(
+            f"- WebSocket: {len(scan['ws_endpoints'])} اندپوینت — "
+            + ", ".join(f"`{p}`" for p, _ in scan["ws_endpoints"][:5])
+        )
     A("")
     A("| متد | مسیر | فایل |")
     A("|---|---|---|")
@@ -1096,9 +1461,13 @@ def main():
     if pages.is_dir():
         n_pages = sum(1 for f in walk_files(pages) if f.suffix in {".tsx", ".ts"})
         A(f"- صفحات (src/pages): {n_pages}")
-    A(f"- lazy(): {scan['lazy_count']} | Suspense: {scan['suspense_count']} | Route: {scan['route_count']}")
-    A(f"- کیفیت TS: `any`×{scan['ts']['any']} | ts-ignore×{scan['ts']['ts_skip']}"
-      f" | eslint-disable×{scan['ts']['eslint_disable']} | inline-style×{scan['ts']['inline_style']}")
+    A(
+        f"- lazy(): {scan['lazy_count']} | Suspense: {scan['suspense_count']} | Route: {scan['route_count']}"
+    )
+    A(
+        f"- کیفیت TS: `any`×{scan['ts']['any']} | ts-ignore×{scan['ts']['ts_skip']}"
+        f" | eslint-disable×{scan['ts']['eslint_disable']} | inline-style×{scan['ts']['inline_style']}"
+    )
     A(f"- هوک‌ها: useEffect×{scan['ts']['useEffect']} | useState×{scan['ts']['useState']}")
     A(f"- فایل‌های تست فرانت‌اند: {fe_tests}")
     A("")
@@ -1117,8 +1486,10 @@ def main():
         if len(findings) > 40:
             A(f"| … | و {len(findings) - 40} مورد دیگر | |")
         A("")
-        A("> 🔐 مقادیر محرمانه به متغیر محیطی منتقل و از تاریخچهٔ گیت پاک‌سازی شوند. "
-          "این اسکن جایگزین ابزارهای تخصصی (`gitleaks`, `bandit`, `trufflehog`) نیست.")
+        A(
+            "> 🔐 مقادیر محرمانه به متغیر محیطی منتقل و از تاریخچهٔ گیت پاک‌سازی شوند. "
+            "این اسکن جایگزین ابزارهای تخصصی (`gitleaks`, `bandit`, `trufflehog`) نیست."
+        )
     else:
         A("- ✅ الگوی مشکوک شناخته‌شده‌ای یافت نشد (جایگزین gitleaks/bandit نیست).")
     A("")
@@ -1176,8 +1547,10 @@ def main():
     A("")
     r = docs["readme"]
     if r:
-        A(f"- README (`{r['file']}`): {r['lines']} خط، {r['headings']} سرفصل، "
-          f"{r['code_blocks']} بلوک کد")
+        A(
+            f"- README (`{r['file']}`): {r['lines']} خط، {r['headings']} سرفصل، "
+            f"{r['code_blocks']} بلوک کد"
+        )
         if r["sections"]:
             A(f"- بخش‌های یافت‌شده: {', '.join(r['sections'])}")
         else:
@@ -1186,8 +1559,10 @@ def main():
         A("- ❌ README یافت نشد.")
     A(f"- لایسنس: {docs['license'] or '❌ یافت نشد'}")
     A(f"- پوشهٔ docs: {'✅ ' + str(docs['docs_files']) + ' فایل' if docs['has_docs_dir'] else '—'}")
-    A(f"- CHANGELOG: {'✅' if docs['changelog'] else '—'} | "
-      f"CONTRIBUTING: {'✅' if docs['contributing'] else '—'}")
+    A(
+        f"- CHANGELOG: {'✅' if docs['changelog'] else '—'} | "
+        f"CONTRIBUTING: {'✅' if docs['contributing'] else '—'}"
+    )
     A("")
 
     # ۱۴) فعالیت و تازگی
@@ -1213,15 +1588,13 @@ def main():
     if not gi_ok:
         A("- ❌ `.gitignore` وجود ندارد.")
     elif gi_missing:
-        A("- ⚠️ موارد جاافتاده در `.gitignore`: "
-          + ", ".join(f"`{x}`" for x in gi_missing))
+        A("- ⚠️ موارد جاافتاده در `.gitignore`: " + ", ".join(f"`{x}`" for x in gi_missing))
     else:
         A("- ✅ `.gitignore` کامل است.")
     for d, n in tracked_bad.items():
         A(f"- 🚨 `{d}` در گیت track شده ({n} فایل) → `git rm -r --cached {d}`")
     if envs:
-        A("- 📁 فایل‌های env (فقط نام کلیدها بررسی شد): "
-          + ", ".join(f"`{e}`" for e in envs))
+        A("- 📁 فایل‌های env (فقط نام کلیدها بررسی شد): " + ", ".join(f"`{e}`" for e in envs))
     if (root / "htmlcov").exists():
         A("- ⚠️ پوشه `htmlcov` (خروجی coverage) موجود است؛ پاک/ignore شود.")
     if scan["todo_total"]:
@@ -1262,8 +1635,9 @@ def main():
     A("")
     recs = []
     if findings:
-        recs.append("رسیدگی به یافته‌های امنیتی بخش ۹؛ انتقال کلیدها به متغیر محیطی "
-                    "و افزودن gitleaks به CI")
+        recs.append(
+            "رسیدگی به یافته‌های امنیتی بخش ۹؛ انتقال کلیدها به متغیر محیطی و افزودن gitleaks به CI"
+        )
     if fe_tests == 0 and has_fe:
         recs.append("افزودن Vitest و Testing Library برای تست فرانت‌اند")
     if be_tests == 0:
@@ -1290,8 +1664,10 @@ def main():
         recs.append("بازآرایی (refactor) بلوک‌های تکراری به توابع/ماژول مشترک")
     if not docs["license"]:
         recs.append("افزودن فایل LICENSE")
-    recs += ["اجرای `npx depcheck` برای یافتن وابستگی‌های بلااستفاده",
-             "اجرای `npx vite-bundle-visualizer` برای تحلیل حجم باندل"]
+    recs += [
+        "اجرای `npx depcheck` برای یافتن وابستگی‌های بلااستفاده",
+        "اجرای `npx vite-bundle-visualizer` برای تحلیل حجم باندل",
+    ]
     for i, r_item in enumerate(recs, 1):
         A(f"{i}. {r_item}")
     A("")
@@ -1301,18 +1677,22 @@ def main():
     json_name = f"{args.out}.json" if args.out else "project_report.json"
     (root / md_name).write_text("\n".join(md), encoding="utf-8")
     (root / json_name).write_text(
-        json.dumps(data, ensure_ascii=False, indent=2, default=str),
-        encoding="utf-8")
+        json.dumps(data, ensure_ascii=False, indent=2, default=str), encoding="utf-8"
+    )
 
     dur = (datetime.now() - t0).total_seconds()
     print()
     print("=" * 62)
     logger.info(f"✅ تحلیل کامل شد ({dur:.1f} ثانیه)")
-    print(f"   ⭐ امتیاز سلامت: {score}/100 ({grade}) | فناوری‌ها: {len(techs)} | "
-          f"فایل‌ها: {total_files:,}")
+    print(
+        f"   ⭐ امتیاز سلامت: {score}/100 ({grade}) | فناوری‌ها: {len(techs)} | "
+        f"فایل‌ها: {total_files:,}"
+    )
     print(f"   اندپوینت‌ها: {len(scan['endpoints'])} | خطوط کد: {loc_code:,}")
-    print(f"   امنیت: {len(sec_high)} بالا / {len(sec_med)} متوسط | "
-          f"TODO: {scan['todo_total']} | console.log: {cl_total}")
+    print(
+        f"   امنیت: {len(sec_high)} بالا / {len(sec_med)} متوسط | "
+        f"TODO: {scan['todo_total']} | console.log: {cl_total}"
+    )
     logger.info("-" * 62)
     logger.info(f"📄 گزارش کامل:   {md_name}")
     logger.info(f"🗂️ داده ساختاریافته: {json_name}")

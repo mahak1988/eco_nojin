@@ -14,6 +14,7 @@ Usage:
         water_inputs=WBIInputs(...),
     )
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -29,6 +30,7 @@ from .wbi import WBIInputs, WBIv3
 @dataclass
 class RegionAnalysis:
     """Result of a region analysis."""
+
     region_name: str
     kgc: dict[str, Any]
     wbi: dict[str, Any]

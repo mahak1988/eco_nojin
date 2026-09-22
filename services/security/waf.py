@@ -4,6 +4,7 @@ Scores each request against compiled patterns (SQLi, XSS, path traversal,
 command injection, SSRF-ish schemes, scanner user-agents). A request whose
 score crosses the threshold is blocked (403) and recorded as a security event.
 """
+
 import re
 import time
 
@@ -33,7 +34,12 @@ _RULES: list[tuple[str, "re.Pattern[str]", int, bool]] = [
     # SSRF-ish URL schemes
     ("ssrf-scheme", re.compile(r"(?i)\b(file|gopher|dict|ftp)://"), 30, True),
     # Scanner user-agents
-    ("scanner-ua", re.compile(r"(?i)(sqlmap|nikto|nmap|nessus|acunetix|openvas|burpsuite)"), 45, True),
+    (
+        "scanner-ua",
+        re.compile(r"(?i)(sqlmap|nikto|nmap|nessus|acunetix|openvas|burpsuite)"),
+        45,
+        True,
+    ),
 ]
 
 BLOCK_THRESHOLD = 40
@@ -45,7 +51,9 @@ class WafEngine:
     def __init__(self) -> None:
         self.events: list[dict] = []
 
-    def check(self, method: str, path: str, query: str, body: str, user_agent: str) -> tuple[bool, int, list[str], str]:
+    def check(
+        self, method: str, path: str, query: str, body: str, user_agent: str
+    ) -> tuple[bool, int, list[str], str]:
         """Evaluate one request. Returns (allowed, score, matched_rules, reason)."""
         payload = f"{path} {query} {body}"
         score = 0
@@ -55,17 +63,29 @@ class WafEngine:
                 score += weight
                 hits.append(name)
                 if block_when_hit and weight >= BLOCK_THRESHOLD:
-                    self.events.append({
-                        "ts": time.time(), "method": method, "path": path,
-                        "rule": name, "score": score, "decision": "block",
-                    })
+                    self.events.append(
+                        {
+                            "ts": time.time(),
+                            "method": method,
+                            "path": path,
+                            "rule": name,
+                            "score": score,
+                            "decision": "block",
+                        }
+                    )
                     return False, score, hits, f"waf:{name}"
         allowed = score < BLOCK_THRESHOLD
         if not allowed:
-            self.events.append({
-                "ts": time.time(), "method": method, "path": path,
-                "rule": ",".join(hits), "score": score, "decision": "block",
-            })
+            self.events.append(
+                {
+                    "ts": time.time(),
+                    "method": method,
+                    "path": path,
+                    "rule": ",".join(hits),
+                    "score": score,
+                    "decision": "block",
+                }
+            )
         return allowed, score, hits, ("" if allowed else "waf:score")
 
 

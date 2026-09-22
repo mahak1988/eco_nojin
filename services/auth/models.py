@@ -1,4 +1,5 @@
 """Auth SQLAlchemy models"""
+
 import uuid
 from datetime import UTC, datetime
 
@@ -18,8 +19,10 @@ class AuthUser(Base):
     failed_login_attempts = Column(Integer, default=0)
     last_login_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC),
-                       onupdate=lambda: datetime.now(UTC))
+    updated_at = Column(
+        DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC)
+    )
+
 
 class RefreshToken(Base):
     __tablename__ = "auth_refresh_tokens"

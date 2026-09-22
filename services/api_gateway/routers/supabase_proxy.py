@@ -33,14 +33,20 @@ async def _select(
     async with httpx.AsyncClient(timeout=20) as s:
         r = await s.get(
             f"{cfg['url']}/rest/v1/{table}?select={select}{extra}",
-            headers={"apikey": apikey, "Authorization": f"Bearer {bearer}", "Accept": "application/json"},
+            headers={
+                "apikey": apikey,
+                "Authorization": f"Bearer {bearer}",
+                "Accept": "application/json",
+            },
         )
         if r.status_code != 200:
             raise RuntimeError(f"Supabase {table}: HTTP {r.status_code} {r.text[:150]}")
         return r.json()
 
 
-async def _write(method: str, table: str, body: dict[str, Any], key: str, extra: str = "") -> dict[str, Any]:
+async def _write(
+    method: str, table: str, body: dict[str, Any], key: str, extra: str = ""
+) -> dict[str, Any]:
     """Write with apikey=anon (project identification) and Bearer=user JWT
     (RLS ownership). Service role is never used here."""
     cfg = _cfg()
@@ -56,7 +62,12 @@ async def _write(method: str, table: str, body: dict[str, Any], key: str, extra:
                 "Prefer": "return=representation",
             },
         )
-        return {"http": r.status_code, "body": r.json() if r.headers.get("content-type", "").startswith("application/json") else {"raw": r.text[:200]}}
+        return {
+            "http": r.status_code,
+            "body": r.json()
+            if r.headers.get("content-type", "").startswith("application/json")
+            else {"raw": r.text[:200]},
+        }
 
 
 async def _user_from_token(token: str) -> dict[str, Any]:
@@ -79,7 +90,9 @@ async def _user_from_token(token: str) -> dict[str, Any]:
 async def landscapes() -> dict[str, Any]:
     """Real platform_landscapes rows (21) with GeoJSON geo_boundary."""
     try:
-        rows = await _select("platform_landscapes", "id,name,slug,country,province,geo_boundary,created_at")
+        rows = await _select(
+            "platform_landscapes", "id,name,slug,country,province,geo_boundary,created_at"
+        )
         return {"status": "ok", "count": len(rows), "rows": rows}
     except Exception as exc:
         return {"status": "error", "error": str(exc)}
@@ -88,7 +101,11 @@ async def landscapes() -> dict[str, Any]:
 @router.get("/standards")
 async def standards() -> dict[str, Any]:
     try:
-        rows = await _select("standards", "id,name,organization,description,link,category,is_active", "&is_active=eq.true")
+        rows = await _select(
+            "standards",
+            "id,name,organization,description,link,category,is_active",
+            "&is_active=eq.true",
+        )
         return {"status": "ok", "count": len(rows), "rows": rows}
     except Exception as exc:
         return {"status": "error", "error": str(exc)}
@@ -97,7 +114,11 @@ async def standards() -> dict[str, Any]:
 @router.get("/marketplace")
 async def marketplace() -> dict[str, Any]:
     try:
-        standards_rows = await _select("standards", "id,name,organization,description,link,category,is_active", "&is_active=eq.true")
+        standards_rows = await _select(
+            "standards",
+            "id,name,organization,description,link,category,is_active",
+            "&is_active=eq.true",
+        )
         projects = await _select("platform_carbon_projects", "*", "&limit=50")
         return {
             "status": "ok",
@@ -110,7 +131,9 @@ async def marketplace() -> dict[str, Any]:
 
 
 @router.get("/geo/nearest")
-async def geo_nearest(lat: float, lon: float, limit: int = Query(default=5, ge=1, le=20)) -> dict[str, Any]:
+async def geo_nearest(
+    lat: float, lon: float, limit: int = Query(default=5, ge=1, le=20)
+) -> dict[str, Any]:
     """Nearest landscapes to a point — REAL PostGIS (RPC nearest_landscapes,
     ST_DWithin/<-> on geography), falls back to Haversine if the RPC is missing."""
     try:
@@ -119,7 +142,11 @@ async def geo_nearest(lat: float, lon: float, limit: int = Query(default=5, ge=1
             r = await s.post(
                 f"{cfg['url']}/rest/v1/rpc/nearest_landscapes",
                 json={"lat": lat, "lon": lon, "lim": limit},
-                headers={"apikey": cfg["anon"], "Authorization": f"Bearer {cfg['anon']}", "Content-Type": "application/json"},
+                headers={
+                    "apikey": cfg["anon"],
+                    "Authorization": f"Bearer {cfg['anon']}",
+                    "Content-Type": "application/json",
+                },
             )
         if r.status_code == 200:
             hits = r.json()
@@ -151,7 +178,12 @@ async def geo_nearest(lat: float, lon: float, limit: int = Query(default=5, ge=1
                     }
                 )
         hits.sort(key=lambda h: h["distance_km"])
-        return {"status": "ok", "count": len(hits), "nearest": hits[:limit], "engine": "haversine (fallback)"}
+        return {
+            "status": "ok",
+            "count": len(hits),
+            "nearest": hits[:limit],
+            "engine": "haversine (fallback)",
+        }
     except Exception as exc:
         return {"status": "error", "error": str(exc)}
 
@@ -168,7 +200,12 @@ async def profile(token: str) -> dict[str, Any]:
         rows = await _select("platform_profiles", "*", f"&id=eq.{u['id']}&limit=1", auth=token)
         wallet = {}
         try:
-            urows = await _select("users", "eco_balance,cct_balance,level,rank", f"&id=eq.{u['id']}&limit=1", auth=token)
+            urows = await _select(
+                "users",
+                "eco_balance,cct_balance,level,rank",
+                f"&id=eq.{u['id']}&limit=1",
+                auth=token,
+            )
             if urows:
                 wallet = urows[0]
         except Exception:
@@ -184,7 +221,9 @@ async def profile(token: str) -> dict[str, Any]:
 
 
 @router.put("/profile")
-async def put_profile(token: str, display_name: str | None = None, phone: str | None = None, bio: str | None = None) -> dict[str, Any]:
+async def put_profile(
+    token: str, display_name: str | None = None, phone: str | None = None, bio: str | None = None
+) -> dict[str, Any]:
     """Upsert own profile (writes carry the USER JWT -> RLS ownership applies)."""
     try:
         u = await _user_from_token(token)
@@ -235,7 +274,12 @@ async def list_carbon_projects(token: str) -> dict[str, Any]:
     """Own carbon projects (RLS: owner_id = auth.uid())."""
     try:
         u = await _user_from_token(token)
-        rows = await _select("platform_carbon_projects", "*", f"&owner_id=eq.{u['id']}&order=created_at.desc", auth=token)
+        rows = await _select(
+            "platform_carbon_projects",
+            "*",
+            f"&owner_id=eq.{u['id']}&order=created_at.desc",
+            auth=token,
+        )
         return {"status": "ok", "count": len(rows), "projects": rows}
     except Exception as exc:
         return {"status": "error", "error": str(exc)}
@@ -249,7 +293,12 @@ async def admin_users(token: str) -> dict[str, Any]:
     """All users — RLS decides: only admins see more than their own row."""
     try:
         await _user_from_token(token)
-        rows = await _select("users", "id,email,username,level,eco_balance,cct_balance", "&order=created_at.desc", auth=token)
+        rows = await _select(
+            "users",
+            "id,email,username,level,eco_balance,cct_balance",
+            "&order=created_at.desc",
+            auth=token,
+        )
         return {"status": "ok", "count": len(rows), "users": rows}
     except Exception as exc:
         return {"status": "error", "error": str(exc)}
@@ -266,7 +315,11 @@ async def admin_role(token: str, user_id: str, role: str) -> dict[str, Any]:
             r = await s.post(
                 f"{cfg['url']}/rest/v1/rpc/admin_set_role",
                 json={"target": user_id, "new_role": role},
-                headers={"apikey": cfg["anon"], "Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+                headers={
+                    "apikey": cfg["anon"],
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json",
+                },
             )
         if r.status_code == 200:
             return {"status": "ok", "changed": r.json(), "target": user_id, "role": role}

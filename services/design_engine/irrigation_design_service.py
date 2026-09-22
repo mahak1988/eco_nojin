@@ -1,4 +1,5 @@
 """Service for designing irrigation systems."""
+
 from __future__ import annotations
 
 import json
@@ -15,33 +16,47 @@ logger = logging.getLogger(__name__)
 
 IrrigationType = Literal["drip", "sprinkler", "furrow"]
 
+
 class IrrigationScheduleItem(BaseModel):
     """Represents a single irrigation event."""
+
     date: date
     duration_minutes: int
-    volume_liters_per_plant: float | None = None # For drip
-    depth_mm: float | None = None # For sprinkler/furrow
+    volume_liters_per_plant: float | None = None  # For drip
+    depth_mm: float | None = None  # For sprinkler/furrow
 
 
 class IrrigationDesignInput(BaseModel):
     """Input parameters for irrigation system design."""
+
     site_location_lat: float = Field(..., ge=-90, le=90, description="Latitude of the field")
     site_location_lon: float = Field(..., ge=-180, le=180, description="Longitude of the field")
     crop_type: str = Field(..., description="Type of crop to be irrigated")
     area_ha: float = Field(..., gt=0, description="Area of the field (hectares)")
     irrigation_type: IrrigationType = Field(..., description="Type of irrigation system")
-    water_source_flow_m3hr: float = Field(..., gt=0, description="Flow rate of the water source (m3/hour)")
+    water_source_flow_m3hr: float = Field(
+        ..., gt=0, description="Flow rate of the water source (m3/hour)"
+    )
     plant_spacing_m: float = Field(1.0, gt=0, description="Spacing between plants (meters)")
     row_spacing_m: float = Field(2.0, gt=0, description="Spacing between rows (meters)")
 
 
 class IrrigationDesignOutput(BaseModel):
     """Output results of the irrigation design."""
+
     design_id: str = Field(..., description="Unique identifier for this design")
-    layout_geojson: dict = Field(..., description="GeoJSON representation of pipes and emitters/sprinklers")
-    equipment_list: dict[str, int | float] = Field(..., description="List of required equipment (e.g., {'drippers': 500, 'valves': 10})")
-    irrigation_schedule: list[IrrigationScheduleItem] = Field(..., description="Recommended irrigation schedule")
-    design_summary: dict = Field(..., description="Key design parameters (e.g., pipe lengths, emitter specs)")
+    layout_geojson: dict = Field(
+        ..., description="GeoJSON representation of pipes and emitters/sprinklers"
+    )
+    equipment_list: dict[str, int | float] = Field(
+        ..., description="List of required equipment (e.g., {'drippers': 500, 'valves': 10})"
+    )
+    irrigation_schedule: list[IrrigationScheduleItem] = Field(
+        ..., description="Recommended irrigation schedule"
+    )
+    design_summary: dict = Field(
+        ..., description="Key design parameters (e.g., pipe lengths, emitter specs)"
+    )
 
 
 class IrrigationDesigner:
@@ -49,9 +64,8 @@ class IrrigationDesigner:
 
     def __init__(self):
         # Load equipment specs, hydraulic properties, crop Kc tables, etc.
-        self.emitter_specs = {"drip": {"flow_lhr": 2.0}} # Example
-        self.nozzle_specs = {"sprinkler": {"radius_m": 10, "flow_lpm": 5.0}} # Example
-
+        self.emitter_specs = {"drip": {"flow_lhr": 2.0}}  # Example
+        self.nozzle_specs = {"sprinkler": {"radius_m": 10, "flow_lpm": 5.0}}  # Example
 
     def _design_drip_system(self, input_data: IrrigationDesignInput) -> IrrigationDesignOutput:
         logger.info("Designing a drip irrigation system...")
@@ -59,17 +73,17 @@ class IrrigationDesigner:
         # Calculate number of plants and emitters
         area_m2 = input_data.area_ha * 10000
         plant_count = int(area_m2 / (input_data.plant_spacing_m * input_data.row_spacing_m))
-        emitter_count = plant_count # Assuming 1 emitter per plant
+        emitter_count = plant_count  # Assuming 1 emitter per plant
 
         # Estimate lateral and mainline lengths
-        row_length_m = input_data.area_ha * 100 / input_data.row_spacing_m # Approximation
+        row_length_m = input_data.area_ha * 100 / input_data.row_spacing_m  # Approximation
         row_count = int(input_data.area_ha * 10000 / (row_length_m * input_data.row_spacing_m))
         lateral_length_total_m = row_length_m * row_count
-        mainline_length_m = input_data.row_spacing_m * row_count * 0.8 # Approximation
+        mainline_length_m = input_data.row_spacing_m * row_count * 0.8  # Approximation
 
         # Estimate equipment
         dripper_count = emitter_count
-        valve_count = max(1, int(row_count / 10)) # One valve per 10 laterals
+        valve_count = max(1, int(row_count / 10))  # One valve per 10 laterals
         pressure_regulator_count = valve_count
 
         # Create a simple layout (lines for laterals, point for main inlet)
@@ -78,28 +92,33 @@ class IrrigationDesigner:
         lat_delta = 0.0001
         long_delta = 0.0005
         laterals = []
-        for i in range(min(5, row_count)): # Show first 5 for simplicity
+        for i in range(min(5, row_count)):  # Show first 5 for simplicity
             start_lat = center_point.y - (lat_delta * 2) + (i * lat_delta)
             end_lat = center_point.y - (lat_delta * 2) + (i * lat_delta)
             start_lon = center_point.x - long_delta / 2
             end_lon = center_point.x + long_delta / 2
             laterals.append(LineString([(start_lon, start_lat), (end_lon, end_lat)]))
 
-        gdf_lateral = gpd.GeoDataFrame([1]*len(laterals), geometry=laterals, crs="EPSG:4326")
+        gdf_lateral = gpd.GeoDataFrame([1] * len(laterals), geometry=laterals, crs="EPSG:4326")
         # Combine geometries into a single feature collection
         combined_geometry = {
             "type": "GeometryCollection",
-            "geometries": [json.loads(gdf_lateral.to_json())['features'][i]['geometry'] for i in range(len(laterals))]
+            "geometries": [
+                json.loads(gdf_lateral.to_json())["features"][i]["geometry"]
+                for i in range(len(laterals))
+            ],
         }
 
         # Create a simple schedule (example: every 3 days, 30 minutes)
         schedule = []
-        for day_offset in range(0, 90, 3): # Next 90 days, every 3 days
-            schedule.append(IrrigationScheduleItem(
-                date=date.today().replace(day=date.today().day + day_offset),
-                duration_minutes=30,
-                volume_liters_per_plant=10.0 # Example
-            ))
+        for day_offset in range(0, 90, 3):  # Next 90 days, every 3 days
+            schedule.append(
+                IrrigationScheduleItem(
+                    date=date.today().replace(day=date.today().day + day_offset),
+                    duration_minutes=30,
+                    volume_liters_per_plant=10.0,  # Example
+                )
+            )
 
         return IrrigationDesignOutput(
             design_id=f"DIP-{uuid4().hex[:8]}",
@@ -109,14 +128,150 @@ class IrrigationDesigner:
                 "valves": valve_count,
                 "pressure_regulators": pressure_regulator_count,
                 "lateral_pipe_m": round(lateral_length_total_m, 2),
-                "main_pipe_m": round(mainline_length_m, 2)
+                "main_pipe_m": round(mainline_length_m, 2),
             },
             irrigation_schedule=schedule,
             design_summary={
                 "total_plants": plant_count,
                 "emitter_flow_lhr": self.emitter_specs["drip"]["flow_lhr"],
-                "estimated_system_pressure_bar": 1.0 # Placeholder
-            }
+                "estimated_system_pressure_bar": 1.0,  # Placeholder
+            },
+        )
+
+    def _design_sprinkler_system(self, input_data: IrrigationDesignInput) -> IrrigationDesignOutput:
+        """Design a sprinkler irrigation system.
+
+        Calculates sprinkler spacing, lateral layout, pipe sizing, and
+        irrigation schedule based on crop water requirements and nozzle specs.
+        """
+        logger.info("Designing a sprinkler irrigation system...")
+
+        area_m2 = input_data.area_ha * 10000
+        # Sprinkler spacing: typical 10-15m spacing
+        sprinkler_spacing_m = 12.0
+        sprinkler_count = int(area_m2 / (sprinkler_spacing_m**2))
+
+        # Lateral pipe layout
+        row_count = int(area_m2 / (input_data.row_spacing_m * 100))
+        lateral_length_m = input_data.area_ha * 100 / input_data.row_spacing_m
+        mainline_length_m = input_data.row_spacing_m * row_count * 0.8
+
+        # Equipment
+        valve_count = max(1, int(row_count / 10))
+        lateral_pipe_m = lateral_length_m * row_count
+
+        # Layout geometry: sprinkler points in a grid
+        center_point = Point(input_data.site_location_lon, input_data.site_location_lat)
+        sprinkler_points = []
+        lat_delta = 0.0001
+        long_delta = 0.0005
+        for i in range(min(20, sprinkler_count)):
+            row = i // 5
+            col = i % 5
+            x = center_point.x - long_delta * 2 + col * long_delta
+            y = center_point.y - lat_delta * 2 + row * lat_delta
+            sprinkler_points.append(Point(x, y))
+
+        gdf = gpd.GeoDataFrame(
+            [1] * len(sprinkler_points), geometry=sprinkler_points, crs="EPSG:4326"
+        )
+        layout_geojson = json.loads(gdf.to_json())["features"][0]["geometry"]
+
+        # Schedule: every 5 days, based on crop water requirement
+        schedule = []
+        for day_offset in range(0, 90, 5):
+            schedule.append(
+                IrrigationScheduleItem(
+                    date=date.today().replace(day=date.today().day + day_offset),
+                    duration_minutes=60,
+                    depth_mm=15.0,
+                )
+            )
+
+        return IrrigationDesignOutput(
+            design_id=f"SPR-{uuid4().hex[:8]}",
+            layout_geojson=layout_geojson,
+            equipment_list={
+                "sprinklers": sprinkler_count,
+                "valves": valve_count,
+                "lateral_pipe_m": round(lateral_pipe_m, 2),
+                "main_pipe_m": round(mainline_length_m, 2),
+            },
+            irrigation_schedule=schedule,
+            design_summary={
+                "sprinkler_spacing_m": sprinkler_spacing_m,
+                "nozzle_flow_lpm": self.nozzle_specs["sprinkler"]["flow_lpm"],
+                "sprinkler_radius_m": self.nozzle_specs["sprinkler"]["radius_m"],
+                "estimated_system_pressure_bar": 2.0,
+            },
+        )
+
+    def _design_furrow_system(self, input_data: IrrigationDesignInput) -> IrrigationDesignOutput:
+        """Design a furrow irrigation system.
+
+        Calculates furrow dimensions, spacing, and flow rates based on
+        soil type and field slope.
+        """
+        logger.info("Designing a furrow irrigation system...")
+
+        area_m2 = input_data.area_ha * 10000
+        # Furrow spacing: 0.75-1.5m typical
+        furrow_spacing_m = 1.0
+        furrow_count = int(area_m2 / (input_data.row_spacing_m * 10))
+
+        # Furrow length based on field dimensions
+        furrow_length_m = input_data.area_ha * 100 / input_data.row_spacing_m
+
+        # Equipment
+        furrow_count_total = furrow_count
+        gate_valves = max(1, int(furrow_count / 20))
+
+        # Layout: parallel furrow lines
+        center_point = Point(input_data.site_location_lon, input_data.site_location_lat)
+        furrows = []
+        lat_delta = 0.0001
+        long_delta = 0.0005
+        for i in range(min(10, furrow_count)):
+            start_lat = center_point.y - (lat_delta * 5) + (i * lat_delta)
+            end_lat = start_lat
+            start_lon = center_point.x - long_delta * 2
+            end_lon = center_point.x + long_delta * 2
+            furrows.append(LineString([(start_lon, start_lat), (end_lon, end_lat)]))
+
+        gdf = gpd.GeoDataFrame([1] * len(furrows), geometry=furrows, crs="EPSG:4326")
+        layout_geojson = {
+            "type": "GeometryCollection",
+            "geometries": [
+                json.loads(gdf.to_json())["features"][i]["geometry"] for i in range(len(furrows))
+            ],
+        }
+
+        # Schedule: every 7 days, based on soil moisture depletion
+        schedule = []
+        for day_offset in range(0, 90, 7):
+            schedule.append(
+                IrrigationScheduleItem(
+                    date=date.today().replace(day=date.today().day + day_offset),
+                    duration_minutes=120,
+                    depth_mm=25.0,
+                )
+            )
+
+        return IrrigationDesignOutput(
+            design_id=f"FUR-{uuid4().hex[:8]}",
+            layout_geojson=layout_geojson,
+            equipment_list={
+                "furrows": furrow_count_total,
+                "gate_valves": gate_valves,
+                "furrow_pipe_m": round(furrow_length_m * furrow_count, 2),
+            },
+            irrigation_schedule=schedule,
+            design_summary={
+                "furrow_spacing_m": furrow_spacing_m,
+                "furrow_length_m": round(furrow_length_m, 2),
+                "furrow_depth_m": 0.15,
+                "flow_rate_lps": 1.5,
+            },
         )
 
     def execute(self, input_data: IrrigationDesignInput) -> IrrigationDesignOutput:
@@ -124,6 +279,11 @@ class IrrigationDesigner:
         logger.info(f"Starting design for irrigation type: {input_data.irrigation_type}")
         if input_data.irrigation_type == "drip":
             return self._design_drip_system(input_data)
-        # Add elif clauses for "sprinkler", "furrow"
+        elif input_data.irrigation_type == "sprinkler":
+            return self._design_sprinkler_system(input_data)
+        elif input_data.irrigation_type == "furrow":
+            return self._design_furrow_system(input_data)
         else:
-            raise ValueError(f"Design for irrigation type '{input_data.irrigation_type}' is not yet fully implemented.")
+            raise ValueError(
+                f"Design for irrigation type '{input_data.irrigation_type}' is not yet fully implemented."
+            )

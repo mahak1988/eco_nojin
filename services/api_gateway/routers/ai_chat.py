@@ -11,10 +11,13 @@ from sqlalchemy.orm import Session
 
 from database.hub import hub
 
+
 # Compatibility: get_db via hub
 def get_db():
     with hub.get_session() as session:
         yield session
+
+
 from database.models import AIConversation, Farm, SatelliteAnalysis, SoilAnalysis, User
 from services.api_gateway.auth import get_current_user, require_user
 

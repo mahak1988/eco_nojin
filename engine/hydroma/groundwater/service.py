@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 class AquiferType(str, Enum):
     """Classification of aquifer types."""
+
     UNCONFINED = "unconfined"
     CONFINED = "confined"
     SEMI_CONFINED = "semi_confined"
@@ -32,16 +33,18 @@ class AquiferType(str, Enum):
 
 class WaterQualityClass(str, Enum):
     """Water quality classification based on TDS."""
-    EXCELLENT = "excellent"      # < 300 mg/L
-    GOOD = "good"                # 300-600 mg/L
-    FAIR = "fair"                # 600-900 mg/L
-    POOR = "poor"                # 900-1200 mg/L
+
+    EXCELLENT = "excellent"  # < 300 mg/L
+    GOOD = "good"  # 300-600 mg/L
+    FAIR = "fair"  # 600-900 mg/L
+    POOR = "poor"  # 900-1200 mg/L
     UNACCEPTABLE = "unacceptable"  # > 1200 mg/L
 
 
 @dataclass
 class GroundwaterInput:
     """Input data for groundwater analysis."""
+
     land_profile_id: str
     well_depth_m: float
     water_table_depth_m: float
@@ -58,6 +61,7 @@ class GroundwaterInput:
 @dataclass
 class GroundwaterResult:
     """Result of groundwater analysis."""
+
     land_profile_id: str
 
     # Flow calculations
@@ -87,7 +91,7 @@ class GroundwaterResult:
 class GroundwaterService:
     """
     Groundwater analysis service implementing Darcy's Law and sustainability metrics.
-    
+
     Example:
         >>> service = GroundwaterService()
         >>> input_data = GroundwaterInput(
@@ -107,10 +111,10 @@ class GroundwaterService:
     def analyze(self, input_data: GroundwaterInput) -> GroundwaterResult:
         """
         Perform complete groundwater analysis.
-        
+
         Args:
             input_data: GroundwaterInput with all required parameters
-            
+
         Returns:
             GroundwaterResult with flow, sustainability, and quality metrics
         """
@@ -181,9 +185,9 @@ class GroundwaterService:
     def _calculate_darcy_flux(self, input_data: GroundwaterInput) -> float:
         """
         Calculate Darcy flux using Darcy's Law.
-        
+
         Q/A = -K * dh/dl
-        
+
         For simplicity, assume hydraulic gradient = water_table_depth / well_depth
         """
         hydraulic_gradient = input_data.water_table_depth_m / input_data.well_depth_m
@@ -193,9 +197,9 @@ class GroundwaterService:
     def _calculate_safe_yield(self, input_data: GroundwaterInput) -> float:
         """
         Calculate safe yield (80% of recharge to maintain sustainability).
-        
+
         Safe Yield = 0.8 * Recharge * Area
-        
+
         Assume 1 hectare = 10,000 m² for calculation
         """
         recharge_m_yr = input_data.recharge_rate_mm_yr / 1000.0
@@ -206,7 +210,7 @@ class GroundwaterService:
     def _calculate_sustainability(self, input_data: GroundwaterInput, safe_yield: float) -> float:
         """
         Calculate sustainability index.
-        
+
         Sustainability Index = Safe Yield / Abstraction
         - > 1.0: Sustainable
         - 0.7-1.0: Marginal
@@ -220,7 +224,7 @@ class GroundwaterService:
     def _calculate_reserve(self, input_data: GroundwaterInput) -> float:
         """
         Calculate groundwater reserve volume.
-        
+
         Reserve = Aquifer Volume * Porosity * Specific Yield
         """
         aquifer_volume = input_data.aquifer_thickness_m * 10000.0  # 1 hectare
@@ -260,11 +264,20 @@ class GroundwaterService:
         else:
             return "high"
 
-    def _determine_status(self, sustainability_index: float, water_quality: WaterQualityClass) -> str:
+    def _determine_status(
+        self, sustainability_index: float, water_quality: WaterQualityClass
+    ) -> str:
         """Determine overall aquifer status."""
-        if sustainability_index > 1.0 and water_quality in [WaterQualityClass.EXCELLENT, WaterQualityClass.GOOD]:
+        if sustainability_index > 1.0 and water_quality in [
+            WaterQualityClass.EXCELLENT,
+            WaterQualityClass.GOOD,
+        ]:
             return "healthy"
-        elif sustainability_index > 0.7 or water_quality in [WaterQualityClass.EXCELLENT, WaterQualityClass.GOOD, WaterQualityClass.FAIR]:
+        elif sustainability_index > 0.7 or water_quality in [
+            WaterQualityClass.EXCELLENT,
+            WaterQualityClass.GOOD,
+            WaterQualityClass.FAIR,
+        ]:
             return "stressed"
         else:
             return "depleted"

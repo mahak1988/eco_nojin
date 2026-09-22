@@ -4,6 +4,7 @@ Field Monitoring Service.
 Handles ingestion and processing of data from field sensors, surveys,
 and citizen science reports.
 """
+
 import structlog
 
 logger = structlog.get_logger()
@@ -38,6 +39,7 @@ class FieldDataType(Enum):
 @dataclass
 class FieldMonitoringReport:
     """Represents a single field monitoring data point."""
+
     project_id: str
     location: dict[str, float]  # {"lat": float, "lon": float}
     report_date: datetime
@@ -72,11 +74,11 @@ class FieldMonitoringService:
                 project_id=report.project_id,
                 monitoring_type="field",
                 monitoring_date=report.report_date.date(),
-                location=f"{report.location['lat']},{report.location['lon']}", # Simplified
+                location=f"{report.location['lat']},{report.location['lon']}",  # Simplified
                 data_source=report.reporter_id,
                 data_quality_score=self._score_quality(report.quality_flag),
                 measurement_data=processed_data,
-                quality_flags={"original_flag": report.quality_flag, "validation_passed": True}
+                quality_flags={"original_flag": report.quality_flag, "validation_passed": True},
             )
             db = SessionLocal()
             db.add(db_entry)
@@ -94,7 +96,11 @@ class FieldMonitoringService:
         for field in required_fields:
             if not hasattr(report, field) or getattr(report, field) is None:
                 return False
-        if not isinstance(report.location, dict) or 'lat' not in report.location or 'lon' not in report.location:
+        if (
+            not isinstance(report.location, dict)
+            or "lat" not in report.location
+            or "lon" not in report.location
+        ):
             return False
         return True
 
@@ -127,7 +133,7 @@ class FieldMonitoringService:
     def _score_quality(self, flag: str) -> float:
         """Converts a quality flag to a numerical score."""
         mapping = {"ok": 1.0, "suspect": 0.5, "error": 0.0}
-        return mapping.get(flag, 0.5) # Default to 0.5 if flag is unknown
+        return mapping.get(flag, 0.5)  # Default to 0.5 if flag is unknown
 
 
 # Example usage
@@ -137,10 +143,16 @@ def example_field_ingest():
         location={"lat": 36.0, "lon": 52.0},
         report_date=datetime.now(),
         data_type=FieldDataType.SOIL_NUTRIENTS,
-        data_payload={"ph": 6.8, "organic_matter_pct": 2.1, "nitrogen_ppm": 120, "phosphorus_ppm": 45, "potassium_ppm": 180},
+        data_payload={
+            "ph": 6.8,
+            "organic_matter_pct": 2.1,
+            "nitrogen_ppm": 120,
+            "phosphorus_ppm": 45,
+            "potassium_ppm": 180,
+        },
         reporter_id="SENSOR_SOIL_001",
         quality_flag="ok",
-        notes="Routine measurement"
+        notes="Routine measurement",
     )
 
     service = FieldMonitoringService()

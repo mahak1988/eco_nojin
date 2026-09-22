@@ -1,50 +1,97 @@
-"""C++20 parity tests (skip when hydroma_core.dll is missing)."""
+"""S1-4 acceptance tests: the numerical backend must be visible and consistent.
+
+Covers:
+  * the compiled extension is used when present (and reported as such),
+  * the double-import hazard that produced a misleading pybind11 error is gone,
+  * C++ <-> Python parity for the shared kernels,
+  * /health exposes the backend and can never silently hide a fallback.
+"""
+
+from __future__ import annotations
+
+import importlib
+
 import pytest
 
-from services.models import cpp_bridge
-from services.models.registry import run_model
+from engine.hydroma import cpp_bridge
+from engine.hydroma.cpp_bridge import backend_status
 
-NEEDS_CPP = pytest.mark.skipif(
-    not cpp_bridge.available(), reason="hydroma_core.dll not built"
-)
-
-
-def test_status_honest():
-    s = cpp_bridge.status()
-    assert "available" in s
-    assert isinstance(s["available"], bool)
-    assert "et0_hargreaves" in s["kernels"]
+PARITY_CASES = [
+    ("rusle_annual_soil_loss", (1000.0, 0.4, 5.0, 0.3, 1.0)),
+    ("ls_factor", (50.0, 9.0)),
+    ("ls_factor", (100.0, 25.0)),
+    ("estimate_rainfall_erosivity", (600.0,)),
+    ("estimate_rainfall_erosivity", (1000.0,)),
+    ("manning_normal_depth", (10.0, 5.0, 0.001, 0.03)),
+]
 
 
-@NEEDS_CPP
-def test_et0_parity_with_registry():
-    """C++ ET0 must match the Python registry implementation (1e-9 rel)."""
-    import math
+class TestBackendSurface:
+    def test_backend_is_explicit(self):
+        assert cpp_bridge.BACKEND in {"cpp", "python"}
 
-    case = {"t_min": 12.0, "t_max": 27.0, "t_mean": 19.5, "ra_mj": 28.4}
-    py = run_model("et0_hargreaves", dict(case))["result"]
-    cpp = cpp_bridge.et0_hargreaves_cpp(**case)
-    assert math.isclose(cpp, py, rel_tol=1e-9, abs_tol=1e-9)
+    def test_backend_status_shape(self):
+        status = backend_status()
+        assert set(status) == {"backend", "cpp_available", "import_error", "telemetry"}
+        assert isinstance(status["telemetry"], dict)
+        assert "fallback_calls" in status["telemetry"]
 
-
-@NEEDS_CPP
-def test_ra_sane_bounds():
-    ra = cpp_bridge.extraterrestrial_radiation_cpp(36.0, 172)
-    # FAO-56 Ra at mid-latitudes mid-year: roughly 35-45 MJ/m2/day
-    assert 20.0 < ra < 60.0
-
-
-@NEEDS_CPP
-def test_vg_parity_with_registry():
-    import math
-
-    case = {"h": 100.0, "theta_r": 0.05, "theta_s": 0.4, "alpha": 0.02, "n": 1.5}
-    py = run_model("van_genuchten_theta", dict(case))["result"]
-    cpp = cpp_bridge.vg_theta_cpp(**case)
-    assert math.isclose(cpp, py, rel_tol=1e-9, abs_tol=1e-9)
+    def test_status_matches_availability(self):
+        status = backend_status()
+        if status["cpp_available"]:
+            assert status["backend"] == "cpp"
+            assert status["import_error"] is None
+        else:
+            assert status["backend"] == "python"
 
 
-@NEEDS_CPP
-def test_vg_bounds():
-    theta = cpp_bridge.vg_theta_cpp(1e6, 0.05, 0.4, 0.02, 1.5)
-    assert 0.05 <= theta <= 0.4
+class TestDoubleImportHazard:
+    """Importing the submodule path must not reload the extension.
+
+    Previously ``from engine.hydroma.cpp_bridge import hydroma_core`` loaded the
+    same .pyd under a second module name and pybind11 raised
+    'generic_type: type "WaveParameters" is already registered!'.
+    """
+
+    def test_submodule_import_is_safe(self):
+        mod = importlib.import_module("engine.hydroma.cpp_bridge.hydroma_core")
+        assert mod is not None
+        assert hasattr(mod, "rusle_annual_soil_loss")
+
+    def test_repeated_import_is_stable(self):
+        for _ in range(3):
+            mod = importlib.import_module("engine.hydroma.cpp_bridge.hydroma_core")
+            assert hasattr(mod, "ls_factor")
+
+
+class TestCppPythonParity:
+    def test_rusle_is_exact_product(self):
+        assert cpp_bridge.rusle_annual_soil_loss(1000.0, 0.4, 5.0, 0.3, 1.0) == pytest.approx(600.0)
+
+    @pytest.mark.parametrize("fn,args", PARITY_CASES)
+    def test_kernel_parity(self, fn, args):
+        cpp_only = backend_status()["cpp_available"]
+        if not cpp_only:
+            pytest.skip("compiled core unavailable - parity is trivially satisfied by the fallback")
+        core = importlib.import_module("engine.hydroma.cpp_bridge.hydroma_core")
+        cpp_val = getattr(core, fn)(*args)
+        bridge_val = getattr(cpp_bridge, fn)(*args)
+        assert cpp_val == pytest.approx(bridge_val, rel=1e-9, abs=1e-9)
+
+
+class TestHealthEndpoint:
+    def test_health_reports_the_backend(self):
+        from fastapi.testclient import TestClient
+
+        from services.api_gateway.main import app
+
+        with TestClient(app) as client:
+            payload = client.get("/health").json()
+
+        checks = payload["checks"]
+        assert "cpp_core" in checks
+        assert checks["cpp_backend"] in {"cpp", "python", "unknown"}
+        assert "degraded_reasons" in payload
+        if checks["cpp_core"] == "fallback":
+            assert "cpp_core_fallback" in payload["degraded_reasons"]
+            assert payload["status"] == "degraded"

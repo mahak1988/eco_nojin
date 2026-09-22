@@ -9,10 +9,9 @@ Channels:
 
 import logging
 from datetime import UTC, datetime
-from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel, EmailStr
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -29,9 +28,9 @@ router = APIRouter(prefix="/api/v1/notifications", tags=["notifications"])
 class NotificationCreate(BaseModel):
     user_id: str
     channel: str  # email | sms | in_app | telegram
-    subject: Optional[str] = None
+    subject: str | None = None
     message: str
-    metadata: Optional[dict] = None
+    metadata: dict | None = None
 
 
 async def get_db() -> AsyncSession:
@@ -61,7 +60,7 @@ async def create_notification(
 
 @router.get("/")
 async def list_notifications(
-    user_id: Optional[str] = None,
+    user_id: str | None = None,
     limit: int = 50,
     db: AsyncSession = Depends(get_db),
 ):

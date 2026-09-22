@@ -6,10 +6,13 @@ from sqlalchemy.orm import Session
 
 from database.hub import hub
 
+
 # Compatibility: get_db via hub
 def get_db():
     with hub.get_session() as session:
         yield session
+
+
 from database.models import ScenarioRun
 
 router = APIRouter(prefix="/api/v1/scenarios", tags=["scenarios"])

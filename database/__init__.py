@@ -9,20 +9,20 @@ Allowed usage:
     from database.base import Base, engine, get_db     # facade (recommended)
 """
 
-from database.base import Base  # noqa: F401
+from database.base import Base
 
 try:
-    from database.config import (  # noqa: F401
-        engine,
+    from database.config import (
         SessionLocal,
+        engine,
         get_db,
     )
 except ImportError:
     pass
 
 try:
-    from database.config import init_db  # noqa: F401
+    from database.config import init_db
 except ImportError:
     pass
 
-__all__ = ['Base', 'engine', 'SessionLocal', 'get_db', 'init_db']
+__all__ = ["Base", "SessionLocal", "engine", "get_db", "init_db"]

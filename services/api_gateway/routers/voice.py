@@ -21,12 +21,12 @@ import base64
 import os
 from typing import Literal
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from pydantic import BaseModel
 
 from services.business_modules.voice.ivr_engine import (
-    IVRState,
     IVRSession,
+    IVRState,
     get_ivr_engine,
 )
 from services.business_modules.voice.stt_provider import get_stt_provider
@@ -260,7 +260,9 @@ async def voice_health() -> dict:
 
     return {
         "status": "operational",
-        "mode": "mock" if not (stt.is_real_provider or tts.is_real_provider or twilio.is_real_provider) else "mixed",
+        "mode": "mock"
+        if not (stt.is_real_provider or tts.is_real_provider or twilio.is_real_provider)
+        else "mixed",
         "features": {
             "ivr_menu": True,
             "tts": True,
@@ -280,9 +282,21 @@ async def voice_languages() -> dict:
 
     return {
         "languages": [
-            {"code": "en", "name": "English", "voices": [v["id"] for v in tts.get_available_voices(VoiceLanguage.EN)]},
-            {"code": "fa", "name": "Persian", "voices": [v["id"] for v in tts.get_available_voices(VoiceLanguage.FA)]},
-            {"code": "ar", "name": "Arabic", "voices": [v["id"] for v in tts.get_available_voices(VoiceLanguage.AR)]},
+            {
+                "code": "en",
+                "name": "English",
+                "voices": [v["id"] for v in tts.get_available_voices(VoiceLanguage.EN)],
+            },
+            {
+                "code": "fa",
+                "name": "Persian",
+                "voices": [v["id"] for v in tts.get_available_voices(VoiceLanguage.FA)],
+            },
+            {
+                "code": "ar",
+                "name": "Arabic",
+                "voices": [v["id"] for v in tts.get_available_voices(VoiceLanguage.AR)],
+            },
         ]
     }
 
@@ -358,7 +372,9 @@ async def voice_diagnostics() -> DiagnosticsOut:
             "is_real": twilio.is_real_provider,
             "healthy": twilio_healthy,
             "config": {
-                "phone_number": twilio.config.phone_number[:6] + "***" if twilio.config.phone_number else None,
+                "phone_number": twilio.config.phone_number[:6] + "***"
+                if twilio.config.phone_number
+                else None,
             },
         },
         environment={
@@ -403,4 +419,5 @@ async def twilio_dtmf_webhook(payload: dict) -> dict:
 </Response>"""
 
     from fastapi.responses import Response
+
     return Response(content=twiml, media_type="application/xml")

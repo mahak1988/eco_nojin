@@ -14,6 +14,7 @@ Checks are EXPLICIT criteria with real inputs, never rubber-stamps:
 A project passes only when every check passes; otherwise the failing
 checks are returned verbatim (no silent approval).
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -72,9 +73,7 @@ def check_permanence(commitment_years: int, risk_flag: bool) -> dict[str, Any]:
         "detail": (
             f"commitment {commitment_years}y >= {MIN_COMMITMENT_YEARS}y, no risk flag"
             if ok
-            else (
-                f"commitment {commitment_years}y < {MIN_COMMITMENT_YEARS}y, or risk flag set"
-            )
+            else (f"commitment {commitment_years}y < {MIN_COMMITMENT_YEARS}y, or risk flag set")
         ),
     }
 

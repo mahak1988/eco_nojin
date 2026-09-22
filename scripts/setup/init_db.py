@@ -1,4 +1,5 @@
 """Eco Nojin Database Initialization - Single Script."""
+
 from __future__ import annotations
 import structlog
 
@@ -35,7 +36,6 @@ TABLES = {
             updated_at TIMESTAMP DEFAULT current_timestamp
         )
     """,
-
     "projects": """
         CREATE TABLE IF NOT EXISTS projects (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -48,7 +48,6 @@ TABLES = {
             updated_at TIMESTAMP DEFAULT current_timestamp
         )
     """,
-
     "land_units": """
         CREATE TABLE IF NOT EXISTS land_units (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -68,7 +67,6 @@ TABLES = {
             updated_at TIMESTAMP DEFAULT current_timestamp
         )
     """,
-
     "watersheds": """
         CREATE TABLE IF NOT EXISTS watersheds (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -86,7 +84,6 @@ TABLES = {
             created_at TIMESTAMP DEFAULT current_timestamp
         )
     """,
-
     "soil_profiles": """
         CREATE TABLE IF NOT EXISTS soil_profiles (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -116,7 +113,6 @@ TABLES = {
             created_at TIMESTAMP DEFAULT current_timestamp
         )
     """,
-
     "climate_stations": """
         CREATE TABLE IF NOT EXISTS climate_stations (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -129,7 +125,6 @@ TABLES = {
             created_at TIMESTAMP DEFAULT current_timestamp
         )
     """,
-
     "climate_daily": """
         CREATE TABLE IF NOT EXISTS climate_daily (
             id BIGINT,
@@ -145,7 +140,6 @@ TABLES = {
             et0_mm DOUBLE
         )
     """,
-
     "satellite_observations": """
         CREATE TABLE IF NOT EXISTS satellite_observations (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -164,7 +158,6 @@ TABLES = {
             created_at TIMESTAMP DEFAULT current_timestamp
         )
     """,
-
     "crop_plans": """
         CREATE TABLE IF NOT EXISTS crop_plans (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -182,7 +175,6 @@ TABLES = {
             created_at TIMESTAMP DEFAULT current_timestamp
         )
     """,
-
     "simulation_runs": """
         CREATE TABLE IF NOT EXISTS simulation_runs (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -203,7 +195,6 @@ TABLES = {
             completed_at TIMESTAMP
         )
     """,
-
     "mrv_observations": """
         CREATE TABLE IF NOT EXISTS mrv_observations (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -221,7 +212,6 @@ TABLES = {
             created_at TIMESTAMP DEFAULT current_timestamp
         )
     """,
-
     "carbon_credits": """
         CREATE TABLE IF NOT EXISTS carbon_credits (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -257,6 +247,7 @@ INDEXES = [
 # ============================================================
 # MAIN FUNCTIONS
 # ============================================================
+
 
 def connect_db():
     """Connect to DuckDB and load spatial extension."""
@@ -316,7 +307,7 @@ def insert_test_data(conn):
     user_id = uuid4()
     conn.execute(
         "INSERT INTO users (id, email, password_hash, full_name, role) VALUES (?, ?, ?, ?, ?)",
-        [str(user_id), "admin@econojin.io", "hashed_pw", "Admin User", "admin"]
+        [str(user_id), "admin@econojin.io", "hashed_pw", "Admin User", "admin"],
     )
     logger.info("  [OK] User: admin@econojin.io")
 
@@ -324,62 +315,95 @@ def insert_test_data(conn):
     project_id = uuid4()
     conn.execute(
         "INSERT INTO projects (id, name, description, owner_id, region_name, area_ha) VALUES (?, ?, ?, ?, ?, ?)",
-        [str(project_id), "Test Pilot Project", "Development project",
-         str(user_id), "Test Region", 1000.0]
+        [
+            str(project_id),
+            "Test Pilot Project",
+            "Development project",
+            str(user_id),
+            "Test Region",
+            1000.0,
+        ],
     )
     logger.info(f"  [OK] Project: {project_id}")
 
     # Create land units
     land_units = [
-        ("Plot A - North Field", Polygon([
-            (51.0, 35.0), (51.1, 35.0), (51.1, 35.1), (51.0, 35.1), (51.0, 35.0)
-        ]), 123.45, "agriculture", "gentle"),
-        ("Plot B - South Rangeland", Polygon([
-            (51.2, 35.2), (51.3, 35.2), (51.3, 35.3), (51.2, 35.3), (51.2, 35.2)
-        ]), 87.6, "rangeland", "steep"),
+        (
+            "Plot A - North Field",
+            Polygon([(51.0, 35.0), (51.1, 35.0), (51.1, 35.1), (51.0, 35.1), (51.0, 35.0)]),
+            123.45,
+            "agriculture",
+            "gentle",
+        ),
+        (
+            "Plot B - South Rangeland",
+            Polygon([(51.2, 35.2), (51.3, 35.2), (51.3, 35.3), (51.2, 35.3), (51.2, 35.2)]),
+            87.6,
+            "rangeland",
+            "steep",
+        ),
     ]
 
     land_unit_ids = []
     for name, geom, area, use, slope in land_units:
         lu_id = uuid4()
-        conn.execute("""
+        conn.execute(
+            """
             INSERT INTO land_units (id, project_id, name, geom, area_ha, land_use, slope_class)
             VALUES (?, ?, ?, ST_GeomFromText(?), ?, ?, ?)
-        """, [
-            str(lu_id), str(project_id), name, geom.wkt, area, use, slope
-        ])
+        """,
+            [str(lu_id), str(project_id), name, geom.wkt, area, use, slope],
+        )
         land_unit_ids.append(lu_id)
         logger.info(f"  [OK] Land Unit: {name}")
 
     # Create soil profiles
     for lu_id in land_unit_ids:
         profile_id = uuid4()
-        conn.execute("""
+        conn.execute(
+            """
             INSERT INTO soil_profiles (
                 id, land_unit_id, sample_point, depth_cm,
                 sand_percent, silt_percent, clay_percent, texture_class,
                 ph, organic_carbon_percent, sample_date
             ) VALUES (?, ?, ST_GeomFromText(?), ?, ?, ?, ?, ?, ?, ?, ?)
-        """, [
-            str(profile_id), str(lu_id), Point(51.05, 35.05).wkt, 30.0,
-            40.0, 35.0, 25.0, "loam", 7.2, 1.5, "2026-01-15"
-        ])
+        """,
+            [
+                str(profile_id),
+                str(lu_id),
+                Point(51.05, 35.05).wkt,
+                30.0,
+                40.0,
+                35.0,
+                25.0,
+                "loam",
+                7.2,
+                1.5,
+                "2026-01-15",
+            ],
+        )
 
     logger.info(f"  [OK] Soil profiles: {len(land_unit_ids)}")
 
     # Create test simulation run
     sim_id = uuid4()
-    conn.execute("""
+    conn.execute(
+        """
         INSERT INTO simulation_runs (
             id, project_id, land_unit_id, model_name, scenario_name,
             parameters, status
         ) VALUES (?, ?, ?, ?, ?, ?, ?)
-    """, [
-        str(sim_id), str(project_id), str(land_unit_ids[0]),
-        "SWAT+", "Baseline_2026",
-        json.dumps({"time_step": "daily", "start": "2026-01-01"}),
-        "pending"
-    ])
+    """,
+        [
+            str(sim_id),
+            str(project_id),
+            str(land_unit_ids[0]),
+            "SWAT+",
+            "Baseline_2026",
+            json.dumps({"time_step": "daily", "start": "2026-01-01"}),
+            "pending",
+        ],
+    )
     logger.info("  [OK] Simulation run: SWAT+ Baseline_2026")
 
     return project_id, land_unit_ids
@@ -440,6 +464,7 @@ def main():
     except Exception as e:
         logger.error(f"\n[ERROR] {e}")
         import traceback
+
         traceback.print_exc()
         sys.exit(1)
 

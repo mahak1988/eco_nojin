@@ -48,12 +48,14 @@ def model_cards_endpoint(slug: str | None = None):
     out = []
     for slug in MODEL_CARDS:
         model = get_model(slug)
-        out.append({
-            "slug": slug,
-            "card": MODEL_CARDS[slug],
-            "fidelity": model.fidelity if model else None,
-            "domain": model.domain if model else None,
-        })
+        out.append(
+            {
+                "slug": slug,
+                "card": MODEL_CARDS[slug],
+                "fidelity": model.fidelity if model else None,
+                "domain": model.domain if model else None,
+            }
+        )
     return {"count": len(out), "cards": out}
 
 
@@ -112,6 +114,10 @@ def request_dataset_doi(slug: str):
             }
         }
         dep = client.create_deposition(meta)
-        return {"status": "deposition_created", "deposition_id": dep.get("id"), "links": dep.get("links")}
+        return {
+            "status": "deposition_created",
+            "deposition_id": dep.get("id"),
+            "links": dep.get("links"),
+        }
     except ZenodoError as exc:
         raise _HTTP(status_code=502, detail=str(exc)) from exc

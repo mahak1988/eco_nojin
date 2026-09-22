@@ -35,6 +35,7 @@ Contract stability: Public API paths are backward compatible.
 Internal refactoring: canonical AuditLog schema (JSON details column),
 UUID-aware user IDs, async endpoints where needed.
 """
+
 from __future__ import annotations
 
 import logging
@@ -47,15 +48,24 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
 
-from database import models  # noqa: F401
+from database import models
 from database.hub import hub
-from database.hub import hub
+
 
 # Compatibility: get_db via hub
 def get_db():
     with hub.get_session() as session:
         yield session
-from services.api_gateway.auth import get_current_user, require_roles
+
+
+from services.api_gateway.auth import (
+    get_current_user,
+    require_roles,
+    require_admin_with_mfa,
+    require_security_admin,
+    require_content_admin,
+    require_user_admin,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -64,9 +74,17 @@ router = APIRouter(tags=["admin"])
 # Guard against import failures
 try:
     require_admin = require_roles("admin")
+    require_admin_mfa = require_admin_with_mfa
+    require_sec_admin = require_security_admin
+    require_cont_admin = require_content_admin
+    require_usr_admin = require_user_admin
 except Exception:
-    logger.warning("require_roles('admin') not available; using get_current_user fallback")
+    logger.warning("require_roles not available; using get_current_user fallback")
     require_admin = get_current_user
+    require_admin_mfa = get_current_user
+    require_sec_admin = get_current_user
+    require_cont_admin = get_current_user
+    require_usr_admin = get_current_user
 
 
 # ============================================================================
@@ -85,10 +103,20 @@ KNOWN_SETTINGS = {
 }
 
 CONTENT_TRANSLATION_LANGUAGES = {
-    "fa": "ظپط§ط±ط³غŒ", "en": "English", "ar": "ط§ظ„ط¹ط±ط¨ظٹط©", "tr": "Tأ¼rkأ§e",
-    "ru": "ذ رƒرپرپذ؛ذ¸ذ¹", "zh": "ن¸­و–‡", "es": "Espaأ±ol", "fr": "Franأ§ais",
-    "de": "Deutsch", "ur": "ط§ط±ط¯ظˆ", "az": "Azة™rbaycanca", "ku": "Kurdأ®",
-    "hi": "à¤¹à¤؟à¤¨à¥چà¤¦à¥€", "ps": "ظ¾عڑطھظˆ",
+    "fa": "ظپط§ط±ط³غŒ",
+    "en": "English",
+    "ar": "ط§ظ„ط¹ط±ط¨ظٹط©",
+    "tr": "Tأ¼rkأ§e",
+    "ru": "ذ رƒرپرپذ؛ذ¸ذ¹",
+    "zh": "ن¸­و–‡",
+    "es": "Espaأ±ol",
+    "fr": "Franأ§ais",
+    "de": "Deutsch",
+    "ur": "ط§ط±ط¯ظˆ",
+    "az": "Azة™rbaycanca",
+    "ku": "Kurdأ®",
+    "hi": "à¤¹à¤؟à¤¨à¥چà¤¦à¥€",
+    "ps": "ظ¾عڑطھظˆ",
 }
 
 PROCESS_STARTED_AT = datetime.now(UTC)
@@ -97,6 +125,7 @@ PROCESS_STARTED_AT = datetime.now(UTC)
 # ============================================================================
 # Audit log helper (canonical schema)
 # ============================================================================
+
 
 def _write_audit_log(
     db: Session,
@@ -109,7 +138,7 @@ def _write_audit_log(
     extra: dict[str, Any] | None = None,
 ) -> models.AuditLog:
     """Persist an audit entry using canonical AuditLog schema.
-    
+
     The AuditLog model has: id, actor_id (String 100), action, resource_type,
     resource_id, details (JSON), ip_address, created_at. Auxiliary metadata
     (actor_email, detail, result) is stored inside JSON `details`.
@@ -156,8 +185,10 @@ def _extract_client_ip(request: Request | None) -> str | None:
 # Pydantic Models
 # ============================================================================
 
+
 class ChannelStatus(BaseModel):
     """Health status of a single platform channel."""
+
     channel: str
     status: str  # "ok" | "degraded" | "down" | "not_configured"
     detail: str
@@ -165,6 +196,7 @@ class ChannelStatus(BaseModel):
 
 class HealthResponse(BaseModel):
     """Aggregate health response."""
+
     status: str
     channels: list[ChannelStatus]
     checked_at: str
@@ -172,6 +204,7 @@ class HealthResponse(BaseModel):
 
 class AdminUserOut(BaseModel):
     """Public user representation for admin panel."""
+
     id: str  # UUID as string
     email: str
     full_name: str | None = None
@@ -185,6 +218,7 @@ class AdminUserOut(BaseModel):
 
 class AuditOut(BaseModel):
     """Audit log entry for public consumption."""
+
     id: str  # UUID as string
     actor_email: str | None = None
     action: str
@@ -205,19 +239,27 @@ class AuditOut(BaseModel):
             actor_email=details.get("actor_email"),
             action=getattr(obj, "action", ""),
             target=target,
-            detail=(f"ok: {details.get('email', 'unknown')}" if details.get('result') == 'success' else f"failed: {details.get('email', 'unknown')}" if details.get('result') == 'failed' else details.get("detail") or str(details)),
+            detail=(
+                f"ok: {details.get('email', 'unknown')}"
+                if details.get("result") == "success"
+                else f"failed: {details.get('email', 'unknown')}"
+                if details.get("result") == "failed"
+                else details.get("detail") or str(details)
+            ),
             created_at=getattr(obj, "created_at", None),
         )
 
 
 class ActionResponse(BaseModel):
     """Generic action response."""
+
     success: bool
     message: str
 
 
 class ContentCreate(BaseModel):
     """Content creation payload."""
+
     title: str
     body: str
     category: str = "general"
@@ -228,6 +270,7 @@ class ContentCreate(BaseModel):
 
 class ContentUpdate(BaseModel):
     """Content update payload (partial)."""
+
     title: str | None = None
     body: str | None = None
     category: str | None = None
@@ -238,6 +281,7 @@ class ContentUpdate(BaseModel):
 
 class ContentOut(BaseModel):
     """Content item representation."""
+
     id: int
     title: str
     body: str
@@ -255,6 +299,7 @@ class ContentOut(BaseModel):
 
 class BotOut(BaseModel):
     """Bot platform status."""
+
     key: str
     label: str
     kind: str
@@ -266,6 +311,7 @@ class BotOut(BaseModel):
 
 class ErrorOut(BaseModel):
     """API error log entry."""
+
     id: int
     path: str
     method: str
@@ -278,6 +324,7 @@ class ErrorOut(BaseModel):
 
 class SettingOut(BaseModel):
     """Platform setting."""
+
     key: str
     value: str
     description: str | None = None
@@ -287,12 +334,14 @@ class SettingOut(BaseModel):
 
 class SettingUpdate(BaseModel):
     """Setting update payload."""
+
     value: str
 
 
 # ============================================================================
 # Health Endpoint
 # ============================================================================
+
 
 @router.get("/health", response_model=HealthResponse)
 async def admin_health(
@@ -305,42 +354,61 @@ async def admin_health(
     # 1. Database
     try:
         from sqlalchemy import text
+
         db.execute(text("SELECT 1"))
         channels.append(ChannelStatus(channel="database", status="ok", detail="Database reachable"))
     except Exception as exc:
         channels.append(ChannelStatus(channel="database", status="down", detail=str(exc)[:200]))
 
     # 2. AI backend (Ollama)
-    ollama_base = os.environ.get("OLLAMA_BASE_URL", f"http://{os.environ.get('HOST', '127.0.0.1')}:11434")
+    ollama_base = os.environ.get(
+        "OLLAMA_BASE_URL", f"http://{os.environ.get('HOST', '127.0.0.1')}:11434"
+    )
     try:
         async with httpx.AsyncClient(timeout=4.0) as client:
             resp = await client.get(f"{ollama_base}/api/tags")
         if resp.status_code == 200:
-            channels.append(ChannelStatus(channel="ai_backend", status="ok", detail=f"Ollama at {ollama_base}"))
+            channels.append(
+                ChannelStatus(channel="ai_backend", status="ok", detail=f"Ollama at {ollama_base}")
+            )
         else:
-            channels.append(ChannelStatus(channel="ai_backend", status="down", detail=f"HTTP {resp.status_code}"))
+            channels.append(
+                ChannelStatus(
+                    channel="ai_backend", status="down", detail=f"HTTP {resp.status_code}"
+                )
+            )
     except Exception:
-        channels.append(ChannelStatus(channel="ai_backend", status="down", detail=f"unreachable at {ollama_base}"))
+        channels.append(
+            ChannelStatus(
+                channel="ai_backend", status="down", detail=f"unreachable at {ollama_base}"
+            )
+        )
 
     # 3. Satellite provider (CDSE credentials)
     try:
         from services.satellite.copernicus import CopernicusClient
+
         cdse = CopernicusClient()
-        channels.append(ChannelStatus(
-            channel="satellite",
-            status="ok" if cdse.configured else "not_configured",
-            detail="CDSE credentials set" if cdse.configured
-            else "CDSE credentials missing â€” real NDVI unavailable",
-        ))
+        channels.append(
+            ChannelStatus(
+                channel="satellite",
+                status="ok" if cdse.configured else "not_configured",
+                detail="CDSE credentials set"
+                if cdse.configured
+                else "CDSE credentials missing â€” real NDVI unavailable",
+            )
+        )
     except Exception as exc:
         channels.append(ChannelStatus(channel="satellite", status="down", detail=str(exc)[:200]))
 
     # 4. Weather sources
-    channels.append(ChannelStatus(
-        channel="weather",
-        status="ok",
-        detail="NASA POWER + Open-Meteo ERA5 (no credentials required)",
-    ))
+    channels.append(
+        ChannelStatus(
+            channel="weather",
+            status="ok",
+            detail="NASA POWER + Open-Meteo ERA5 (no credentials required)",
+        )
+    )
 
     # 5. Bot platforms
     bot_channels = [
@@ -353,7 +421,9 @@ async def admin_health(
         if os.environ.get(env_key):
             channels.append(ChannelStatus(channel=name, status="ok", detail=f"{env_key} set"))
         else:
-            channels.append(ChannelStatus(channel=name, status="not_configured", detail=f"{env_key} missing"))
+            channels.append(
+                ChannelStatus(channel=name, status="not_configured", detail=f"{env_key} missing")
+            )
 
     overall = "ok" if all(c.status == "ok" for c in channels) else "degraded"
     return HealthResponse(
@@ -367,25 +437,103 @@ async def admin_health(
 # User Management
 # ============================================================================
 
+
 @router.get("/users", response_model=list[AdminUserOut])
 def list_users(
     _: models.User = Depends(require_admin),
     db: Session = Depends(get_db),
     limit: int = 100,
+    search: str | None = Query(None, description="Search by email, name, or ID"),
+    role: str | None = Query(None, description="Filter by role"),
+    is_active: bool | None = Query(None, description="Filter by active status"),
+    offset: int = Query(0, ge=0, description="Pagination offset"),
 ) -> list[AdminUserOut]:
-    """List users (newest first)."""
-    rows = db.query(models.User).order_by(models.User.created_at.desc().nullslast(), models.User.id.desc()).limit(limit).all()
+    """List users with search and filter capabilities."""
+    query = db.query(models.User)
+
+    if search:
+        search_term = f"%{search}%"
+        query = query.filter(
+            (models.User.email.ilike(search_term))
+            | (models.User.full_name.ilike(search_term))
+            | (models.User.id.ilike(search_term))
+        )
+
+    if role:
+        query = query.filter(models.User.role == role)
+
+    if is_active is not None:
+        query = query.filter(models.User.is_active == is_active)
+
+    rows = (
+        query.order_by(models.User.created_at.desc().nullslast(), models.User.id.desc())
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
     return [AdminUserOut.model_validate(r) for r in rows]
+
+
+@router.post("/users/bulk-action", response_model=ActionResponse)
+def bulk_user_action(
+    user_ids: list[str] = Query(..., description="List of user IDs"),
+    action: str = Query(..., pattern="^(block|unblock|delete)$", description="Action to perform"),
+    request: Request = None,
+    admin: models.User = Depends(require_admin_mfa),
+    db: Session = Depends(get_db),
+) -> ActionResponse:
+    """Perform bulk action on multiple users (requires MFA)."""
+    if not user_ids:
+        raise HTTPException(status_code=400, detail="No user IDs provided")
+
+    if len(user_ids) > 100:
+        raise HTTPException(status_code=400, detail="Maximum 100 users per bulk action")
+
+    # Prevent admin from acting on themselves
+    if str(admin.id) in user_ids:
+        raise HTTPException(status_code=400, detail="Cannot perform bulk action on yourself")
+
+    users = db.query(models.User).filter(models.User.id.in_(user_ids)).all()
+    found_ids = {str(u.id) for u in users}
+    missing_ids = set(user_ids) - found_ids
+
+    if missing_ids:
+        raise HTTPException(status_code=404, detail=f"Users not found: {missing_ids}")
+
+    success_count = 0
+    for user in users:
+        if action == "block":
+            user.is_active = False
+        elif action == "unblock":
+            user.is_active = True
+        elif action == "delete":
+            db.delete(user)
+        success_count += 1
+
+    db.commit()
+
+    _write_audit_log(
+        db,
+        action=f"user.bulk_{action}",
+        actor=admin,
+        target=f"users:{','.join(user_ids)}",
+        ip_address=_extract_client_ip(request),
+        extra={"count": success_count, "action": action},
+    )
+
+    return ActionResponse(
+        success=True, message=f"Bulk {action} completed for {success_count} users"
+    )
 
 
 @router.post("/users/{user_id}/block", response_model=ActionResponse)
 def block_user(
     user_id: str,
     request: Request,
-    admin: models.User = Depends(require_admin),
+    admin: models.User = Depends(require_admin_mfa),
     db: Session = Depends(get_db),
 ) -> ActionResponse:
-    """Deactivate a user account (audited)."""
+    """Deactivate a user account (audited, requires MFA)."""
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if user is None:
         raise HTTPException(status_code=404, detail="user not found")
@@ -403,17 +551,19 @@ def block_user(
         ip_address=_extract_client_ip(request),
         extra={"target_email": getattr(user, "email", None)},
     )
-    return ActionResponse(success=True, message=f"ع©ط§ط±ط¨ط± {getattr(user, 'email', user_id)} ظ…ط³ط¯ظˆط¯ ط´ط¯")
+    return ActionResponse(
+        success=True, message=f"ع©ط§ط±ط¨ط± {getattr(user, 'email', user_id)} ظ…ط³ط¯ظˆط¯ ط´ط¯"
+    )
 
 
 @router.post("/users/{user_id}/unblock", response_model=ActionResponse)
 def unblock_user(
     user_id: str,
     request: Request,
-    admin: models.User = Depends(require_admin),
+    admin: models.User = Depends(require_admin_mfa),
     db: Session = Depends(get_db),
 ) -> ActionResponse:
-    """Reactivate a user account (audited)."""
+    """Reactivate a user account (audited, requires MFA)."""
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if user is None:
         raise HTTPException(status_code=404, detail="user not found")
@@ -429,7 +579,9 @@ def unblock_user(
         ip_address=_extract_client_ip(request),
         extra={"target_email": getattr(user, "email", None)},
     )
-    return ActionResponse(success=True, message=f"ع©ط§ط±ط¨ط± {getattr(user, 'email', user_id)} ظپط¹ط§ظ„ ط´ط¯")
+    return ActionResponse(
+        success=True, message=f"ع©ط§ط±ط¨ط± {getattr(user, 'email', user_id)} ظپط¹ط§ظ„ ط´ط¯"
+    )
 
 
 @router.get("/audit", response_model=list[AuditOut])
@@ -437,11 +589,48 @@ def list_audit(
     _: models.User = Depends(require_admin),
     db: Session = Depends(get_db),
     limit: int = 50,
+    offset: int = Query(0, ge=0, description="Pagination offset"),
+    search: str | None = Query(None, description="Search by actor email, action, or target"),
+    action: str | None = Query(None, description="Filter by action type"),
+    date_from: str | None = Query(None, description="Filter by date from (ISO format)"),
+    date_to: str | None = Query(None, description="Filter by date to (ISO format)"),
 ) -> list[AuditOut]:
-    """Recent audit-log entries."""
+    """Recent audit-log entries with search and filter capabilities."""
+    query = db.query(models.AuditLog)
+
+    if search:
+        search_term = f"%{search}%"
+        query = query.filter(
+            (models.AuditLog.actor_id.ilike(search_term))
+            | (models.AuditLog.action.ilike(search_term))
+            | (models.AuditLog.resource_type.ilike(search_term))
+            | (models.AuditLog.resource_id.ilike(search_term))
+        )
+
+    if action:
+        query = query.filter(models.AuditLog.action == action)
+
+    if date_from:
+        try:
+            from datetime import datetime
+
+            dt_from = datetime.fromisoformat(date_from.replace("Z", "+00:00"))
+            query = query.filter(models.AuditLog.created_at >= dt_from)
+        except ValueError:
+            pass
+
+    if date_to:
+        try:
+            from datetime import datetime
+
+            dt_to = datetime.fromisoformat(date_to.replace("Z", "+00:00"))
+            query = query.filter(models.AuditLog.created_at <= dt_to)
+        except ValueError:
+            pass
+
     rows = (
-        db.query(models.AuditLog)
-        .order_by(models.AuditLog.created_at.desc().nullslast())
+        query.order_by(models.AuditLog.created_at.desc().nullslast())
+        .offset(offset)
         .limit(limit)
         .all()
     )
@@ -451,6 +640,7 @@ def list_audit(
 # ============================================================================
 # Content Management
 # ============================================================================
+
 
 def _validate_category(category: str) -> None:
     """Validate content category against allowed set."""
@@ -466,15 +656,121 @@ def list_content(
     _: models.User = Depends(require_admin),
     db: Session = Depends(get_db),
     limit: int = 100,
+    offset: int = Query(0, ge=0, description="Pagination offset"),
+    search: str | None = Query(None, description="Search by title or body"),
+    category: str | None = Query(None, description="Filter by category"),
+    status: str | None = Query(None, description="Filter by status (draft/published/archived)"),
+    language: str | None = Query(None, description="Filter by language"),
+    generated_by_ai: bool | None = Query(None, description="Filter by AI-generated"),
+    date_from: str | None = Query(None, description="Filter by date from (ISO format)"),
+    date_to: str | None = Query(None, description="Filter by date to (ISO format)"),
 ) -> list[ContentOut]:
-    """List content items (newest first)."""
+    """List content items with search and filter capabilities."""
+    query = db.query(models.ContentItem)
+
+    if search:
+        search_term = f"%{search}%"
+        query = query.filter(
+            (models.ContentItem.title.ilike(search_term))
+            | (models.ContentItem.body.ilike(search_term))
+        )
+
+    if category:
+        query = query.filter(models.ContentItem.category == category)
+
+    if status:
+        query = query.filter(models.ContentItem.status == status)
+
+    if language:
+        query = query.filter(models.ContentItem.language == language)
+
+    if generated_by_ai is not None:
+        query = query.filter(models.ContentItem.generated_by_ai == generated_by_ai)
+
+    if date_from:
+        try:
+            from datetime import datetime
+
+            dt_from = datetime.fromisoformat(date_from.replace("Z", "+00:00"))
+            query = query.filter(models.ContentItem.created_at >= dt_from)
+        except ValueError:
+            pass
+
+    if date_to:
+        try:
+            from datetime import datetime
+
+            dt_to = datetime.fromisoformat(date_to.replace("Z", "+00:00"))
+            query = query.filter(models.ContentItem.created_at <= dt_to)
+        except ValueError:
+            pass
+
     rows = (
-        db.query(models.ContentItem)
-        .order_by(models.ContentItem.updated_at.desc().nullslast())
+        query.order_by(models.ContentItem.updated_at.desc().nullslast())
+        .offset(offset)
         .limit(limit)
         .all()
     )
     return [ContentOut.model_validate(r) for r in rows]
+
+
+@router.post("/content/bulk-action", response_model=ActionResponse)
+def bulk_content_action(
+    item_ids: list[int] = Query(..., description="List of content item IDs"),
+    action: str = Query(..., pattern="^(publish|archive|delete)$", description="Action to perform"),
+    request: Request = None,
+    admin: models.User = Depends(require_admin_mfa),
+    db: Session = Depends(get_db),
+) -> ActionResponse:
+    """Perform bulk action on multiple content items (requires MFA)."""
+    if not item_ids:
+        raise HTTPException(status_code=400, detail="No item IDs provided")
+
+    if len(item_ids) > 100:
+        raise HTTPException(status_code=400, detail="Maximum 100 items per bulk action")
+
+    items = db.query(models.ContentItem).filter(models.ContentItem.id.in_(item_ids)).all()
+    found_ids = {i.id for i in items}
+    missing_ids = set(item_ids) - found_ids
+
+    if missing_ids:
+        raise HTTPException(status_code=404, detail=f"Items not found: {missing_ids}")
+
+    success_count = 0
+    for item in items:
+        if action == "publish":
+            item.status = "published"
+            if item.published_at is None:
+                item.published_at = datetime.now(UTC)
+        elif action == "archive":
+            item.status = "archived"
+        elif action == "delete":
+            db.delete(item)
+        success_count += 1
+
+    db.commit()
+
+    # RAG sync for published items
+    if action == "publish":
+        try:
+            from services.content.rag_sync import sync_content_to_rag
+
+            sync_content_to_rag(db)
+        except Exception as exc:
+            logger.warning(f"RAG sync failed: {exc}")
+
+    _write_audit_log(
+        db,
+        action=f"content.bulk_{action}",
+        actor=admin,
+        target=f"content:{','.join(map(str, item_ids))}",
+        ip_address=_extract_client_ip(request),
+        extra={"count": success_count, "action": action},
+    )
+
+    return ActionResponse(
+        success=True, message=f"Bulk {action} completed for {success_count} content items"
+    )
 
 
 @router.post("/content", response_model=ContentOut)
@@ -500,11 +796,7 @@ def create_content(
     db.refresh(item)
 
     # Initial version snapshot
-    db.add(
-        models.ContentVersion(
-            content_id=item.id, version=1, title=item.title, body=item.body
-        )
-    )
+    db.add(models.ContentVersion(content_id=item.id, version=1, title=item.title, body=item.body))
     db.commit()
 
     _write_audit_log(
@@ -548,6 +840,7 @@ def update_content(
     # Snapshot version
     try:
         from services.content.rag_sync import snapshot_version
+
         snapshot_version(db, item)
     except Exception as exc:
         logger.warning(f"snapshot_version failed: {exc}")
@@ -587,6 +880,7 @@ def publish_content(
     synced = 0
     try:
         from services.content.rag_sync import sync_content_to_rag
+
         synced = sync_content_to_rag(db)
     except Exception as exc:
         logger.warning(f"RAG sync failed: {exc}")
@@ -595,6 +889,7 @@ def publish_content(
     dispatched = {"dispatched": 0, "reason": "disabled"}
     try:
         from services.content.bot_dispatch import dispatch_to_bots
+
         dispatched = dispatch_to_bots(db, item.title, item.body)
     except Exception as exc:
         logger.warning(f"Bot dispatch failed: {exc}")
@@ -817,14 +1112,15 @@ async def generate_ai_draft(
             text = await client.chat(
                 system,
                 f"ظ…ظˆط¶ظˆط¹ ظ…ظ‚ط§ظ„ظ‡: {topic}\nط¯ط³طھظ‡: {category}",
-                temperature=float(os.getenv('ADMIN_TEMP', '0.4')),
+                temperature=float(os.getenv("ADMIN_TEMP", "0.4")),
             )
     except Exception as exc:
         logger.warning(f"Ollama draft generation failed: {exc}")
 
     if not text:
         raise HTTPException(
-            status_code=503, detail="طھظˆظ„غŒط¯ ظ¾غŒط´â€Œظ†ظˆغŒط³ ظ…ظ…ع©ظ† ظ†ط´ط¯ â€” ط³ط±ظˆط± Ollama ط¯ط± ط¯ط³طھط±ط³ ظ†غŒط³طھ"
+            status_code=503,
+            detail="طھظˆظ„غŒط¯ ظ¾غŒط´â€Œظ†ظˆغŒط³ ظ…ظ…ع©ظ† ظ†ط´ط¯ â€” ط³ط±ظˆط± Ollama ط¯ط± ط¯ط³طھط±ط³ ظ†غŒط³طھ",
         )
 
     lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
@@ -844,11 +1140,7 @@ async def generate_ai_draft(
     db.commit()
     db.refresh(item)
 
-    db.add(
-        models.ContentVersion(
-            content_id=item.id, version=1, title=item.title, body=item.body
-        )
-    )
+    db.add(models.ContentVersion(content_id=item.id, version=1, title=item.title, body=item.body))
     db.commit()
 
     _write_audit_log(
@@ -894,7 +1186,8 @@ def schedule_content(
         extra={"scheduled_at": scheduled.isoformat()},
     )
     return ActionResponse(
-        success=True, message=f"ط§ظ†طھط´ط§ط± آ«{item.title}آ» ط¨ط±ط§غŒ {scheduled.isoformat()} ط²ظ…ط§ظ†â€Œط¨ظ†ط¯غŒ ط´ط¯"
+        success=True,
+        message=f"ط§ظ†طھط´ط§ط± آ«{item.title}آ» ط¨ط±ط§غŒ {scheduled.isoformat()} ط²ظ…ط§ظ†â€Œط¨ظ†ط¯غŒ ط´ط¯",
     )
 
 
@@ -926,6 +1219,7 @@ def cancel_schedule_content(
 # ============================================================================
 # Bots Management
 # ============================================================================
+
 
 @router.get("/bots", response_model=list[BotOut])
 def list_bots(
@@ -978,7 +1272,9 @@ def toggle_bot(
         raise HTTPException(status_code=404, detail="unknown platform")
 
     setting = db.get(models.Setting, f"bot_enabled_{key}")
-    current = setting.value == "true" if setting else bool(os.environ.get(PLATFORM_SPECS[key].token_env))
+    current = (
+        setting.value == "true" if setting else bool(os.environ.get(PLATFORM_SPECS[key].token_env))
+    )
     new_value = "false" if current else "true"
 
     if setting is None:
@@ -1003,27 +1299,120 @@ def toggle_bot(
     )
 
     state = "ظپط¹ط§ظ„" if new_value == "true" else "ط؛غŒط±ظپط¹ط§ظ„"
-    return ActionResponse(success=True, message=f"ط±ط¨ط§طھ {PLATFORM_SPECS[key].label} {state} ط´ط¯")
+    return ActionResponse(
+        success=True, message=f"ط±ط¨ط§طھ {PLATFORM_SPECS[key].label} {state} ط´ط¯"
+    )
 
 
 # ============================================================================
 # Errors Management
 # ============================================================================
 
+
 @router.get("/errors", response_model=list[ErrorOut])
 def list_errors(
     _: models.User = Depends(require_admin),
     db: Session = Depends(get_db),
     limit: int = 50,
+    offset: int = Query(0, ge=0, description="Pagination offset"),
+    search: str | None = Query(None, description="Search by path or message"),
+    method: str | None = Query(None, description="Filter by HTTP method"),
+    status_code: int | None = Query(None, description="Filter by status code"),
+    acked: bool | None = Query(None, description="Filter by acknowledged status"),
+    date_from: str | None = Query(None, description="Filter by date from (ISO format)"),
+    date_to: str | None = Query(None, description="Filter by date to (ISO format)"),
 ) -> list[ErrorOut]:
-    """Recent captured API errors (newest first)."""
+    """Recent captured API errors with search and filter capabilities."""
+    query = db.query(models.ErrorLog)
+
+    if search:
+        search_term = f"%{search}%"
+        query = query.filter(
+            (models.ErrorLog.path.ilike(search_term)) | (models.ErrorLog.message.ilike(search_term))
+        )
+
+    if method:
+        query = query.filter(models.ErrorLog.method == method.upper())
+
+    if status_code:
+        query = query.filter(models.ErrorLog.status == status_code)
+
+    if acked is not None:
+        query = query.filter(models.ErrorLog.acked == acked)
+
+    if date_from:
+        try:
+            from datetime import datetime
+
+            dt_from = datetime.fromisoformat(date_from.replace("Z", "+00:00"))
+            query = query.filter(models.ErrorLog.created_at >= dt_from)
+        except ValueError:
+            pass
+
+    if date_to:
+        try:
+            from datetime import datetime
+
+            dt_to = datetime.fromisoformat(date_to.replace("Z", "+00:00"))
+            query = query.filter(models.ErrorLog.created_at <= dt_to)
+        except ValueError:
+            pass
+
     rows = (
-        db.query(models.ErrorLog)
-        .order_by(models.ErrorLog.created_at.desc().nullslast())
+        query.order_by(models.ErrorLog.created_at.desc().nullslast())
+        .offset(offset)
         .limit(limit)
         .all()
     )
     return [ErrorOut.model_validate(r) for r in rows]
+
+
+@router.post("/errors/bulk-action", response_model=ActionResponse)
+def bulk_error_action(
+    error_ids: list[int] = Query(..., description="List of error IDs"),
+    action: str = Query(..., pattern="^(ack|unack|delete)$", description="Action to perform"),
+    request: Request = None,
+    admin: models.User = Depends(require_admin_mfa),
+    db: Session = Depends(get_db),
+) -> ActionResponse:
+    """Perform bulk action on multiple errors (requires MFA)."""
+    if not error_ids:
+        raise HTTPException(status_code=400, detail="No error IDs provided")
+
+    if len(error_ids) > 100:
+        raise HTTPException(status_code=400, detail="Maximum 100 errors per bulk action")
+
+    errors = db.query(models.ErrorLog).filter(models.ErrorLog.id.in_(error_ids)).all()
+    found_ids = {e.id for e in errors}
+    missing_ids = set(error_ids) - found_ids
+
+    if missing_ids:
+        raise HTTPException(status_code=404, detail=f"Errors not found: {missing_ids}")
+
+    success_count = 0
+    for err in errors:
+        if action == "ack":
+            err.acked = True
+        elif action == "unack":
+            err.acked = False
+        elif action == "delete":
+            db.delete(err)
+        success_count += 1
+
+    db.commit()
+
+    _write_audit_log(
+        db,
+        action=f"error.bulk_{action}",
+        actor=admin,
+        target=f"errors:{','.join(map(str, error_ids))}",
+        ip_address=_extract_client_ip(request),
+        extra={"count": success_count, "action": action},
+    )
+
+    return ActionResponse(
+        success=True, message=f"Bulk {action} completed for {success_count} errors"
+    )
 
 
 @router.post("/errors/{error_id}/ack", response_model=ActionResponse)
@@ -1049,12 +1438,15 @@ def ack_error(
         ip_address=_extract_client_ip(request),
         extra={"path": err.path},
     )
-    return ActionResponse(success=True, message="ط®ط·ط§ ط¨ظ‡â€Œط¹ظ†ظˆط§ظ† ط±ط³غŒط¯ع¯غŒâ€Œط´ط¯ظ‡ ط¹ظ„ط§ظ…طھ ط®ظˆط±ط¯")
+    return ActionResponse(
+        success=True, message="ط®ط·ط§ ط¨ظ‡â€Œط¹ظ†ظˆط§ظ† ط±ط³غŒط¯ع¯غŒâ€Œط´ط¯ظ‡ ط¹ظ„ط§ظ…طھ ط®ظˆط±ط¯"
+    )
 
 
 # ============================================================================
 # Settings Management
 # ============================================================================
+
 
 @router.get("/settings", response_model=list[SettingOut])
 def list_settings(
@@ -1083,9 +1475,7 @@ def update_setting(
 
     setting = db.get(models.Setting, key)
     if setting is None:
-        setting = models.Setting(
-            key=key, value=req.value.strip(), description=KNOWN_SETTINGS[key]
-        )
+        setting = models.Setting(key=key, value=req.value.strip(), description=KNOWN_SETTINGS[key])
         db.add(setting)
     else:
         setting.value = req.value.strip()
@@ -1107,6 +1497,7 @@ def update_setting(
 # ============================================================================
 # AI Models Management (Ollama)
 # ============================================================================
+
 
 def _ollama_base_url() -> str:
     return os.getenv("OLLAMA_BASE_URL", f"http://{os.environ.get('HOST', 'localhost')}:11434")
@@ -1208,6 +1599,7 @@ async def stop_model(
 # Overview & Security
 # ============================================================================
 
+
 @router.get("/overview", response_model=dict)
 def admin_overview(
     request: Request,
@@ -1224,14 +1616,14 @@ def admin_overview(
     errors_total = db.query(models.ErrorLog).count() if hasattr(models, "ErrorLog") else 0
     errors_open = (
         db.query(models.ErrorLog).filter(models.ErrorLog.acked.is_(False)).count()
-        if hasattr(models, "ErrorLog") else 0
+        if hasattr(models, "ErrorLog")
+        else 0
     )
     content_total = db.query(models.ContentItem).count() if hasattr(models, "ContentItem") else 0
     content_published = (
-        db.query(models.ContentItem)
-        .filter(models.ContentItem.status == "published")
-        .count()
-        if hasattr(models, "ContentItem") else 0
+        db.query(models.ContentItem).filter(models.ContentItem.status == "published").count()
+        if hasattr(models, "ContentItem")
+        else 0
     )
 
     recent_audit = (
@@ -1245,7 +1637,8 @@ def admin_overview(
         .order_by(models.ErrorLog.created_at.desc().nullslast())
         .limit(5)
         .all()
-        if hasattr(models, "ErrorLog") else []
+        if hasattr(models, "ErrorLog")
+        else []
     )
 
     return {
@@ -1289,15 +1682,13 @@ def admin_security(
         .limit(50)
         .all()
     )
-    return {
-        "events": [AuditOut.from_orm_instance(a).model_dump() for a in rows]
-    }
-
+    return {"events": [AuditOut.from_orm_instance(a).model_dump() for a in rows]}
 
 
 # ============================================================================
 # Admin AI assistant (local Ollama) â€” admin copilot
 # ============================================================================
+
 
 class AdminAIChatRequest(BaseModel):
     question: str
@@ -1346,4 +1737,3 @@ async def admin_ai_chat(
         extra={"question": question[:200], "provider": result.get("provider")},
     )
     return result
-

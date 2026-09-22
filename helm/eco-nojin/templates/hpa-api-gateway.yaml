@@ -1,0 +1,39 @@
+{{- if and .Values.api-gateway.enabled .Values.api-gateway.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "eco-nojin.fullname" . }}-api-gateway-hpa
+  namespace: {{ include "eco-nojin.namespace" . }}
+  labels:
+    {{- include "eco-nojin.labels" . | nindent 4 }}
+    app: api-gateway
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "eco-nojin.fullname" . }}-api-gateway
+  minReplicas: {{ .Values.api-gateway.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.api-gateway.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.api-gateway.autoscaling.targetCPUUtilization }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.api-gateway.autoscaling.targetMemoryUtilization }}
+    {{- if .Values.api-gateway.autoscaling.customMetrics }}
+    {{- range .Values.api-gateway.autoscaling.customMetrics }}
+    - type: {{ .type }}
+      {{ .type | lower }}:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- end }}
+  behavior:
+    {{- toYaml .Values.api-gateway.autoscaling.behavior | nindent 4 }}
+{{- end }}

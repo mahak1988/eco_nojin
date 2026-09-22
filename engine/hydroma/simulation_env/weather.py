@@ -86,9 +86,7 @@ def generate_daily_weather(cfg: WeatherConfig) -> pd.DataFrame:
 
     # Drought trajectory: per-year (precip_factor, temp_offset).
     if cfg.drought_trajectory is not None:
-        traj = np.array(
-            [cfg.drought_trajectory(int(y)) for y in year], dtype=object
-        )
+        traj = np.array([cfg.drought_trajectory(int(y)) for y in year], dtype=object)
         year_pmult = np.array([t[0] for t in traj], dtype=float)
         year_temp_off = np.array([t[1] for t in traj], dtype=float)
         tmean = tmean + year_temp_off
@@ -105,9 +103,11 @@ def generate_daily_weather(cfg: WeatherConfig) -> pd.DataFrame:
 
     # --- Precipitation -------------------------------------------------
     # Annual total decays/grows with trend + trajectory multiplier.
-    annual_target = cfg.baseline_precip_mm * (
-        (1.0 + cfg.precip_trend_pct_per_yr / 100.0) ** (year - base_year)
-    ) * year_pmult
+    annual_target = (
+        cfg.baseline_precip_mm
+        * ((1.0 + cfg.precip_trend_pct_per_yr / 100.0) ** (year - base_year))
+        * year_pmult
+    )
 
     month_idx = dates.month.to_numpy()
     monthly_frac_per_day = np.array([monthly[m - 1] for m in month_idx])
@@ -126,7 +126,10 @@ def generate_daily_weather(cfg: WeatherConfig) -> pd.DataFrame:
     precip = np.clip(raw, 0.0, None)
 
     et0 = np.array(
-        [hargreaves_et0(float(tmin[i]), float(tmax[i]), cfg.lat, int(doy[i])) for i in range(len(dates))]
+        [
+            hargreaves_et0(float(tmin[i]), float(tmax[i]), cfg.lat, int(doy[i]))
+            for i in range(len(dates))
+        ]
     )
 
     return pd.DataFrame(

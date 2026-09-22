@@ -1,4 +1,5 @@
 """LivestockService - لایه کسب‌وکار"""
+
 from services.livestock.schemas import (
     LivestockSimulationRequest,
     LivestockSimulationResult,

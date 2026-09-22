@@ -1,6 +1,5 @@
 """Tests for Land Intelligence models"""
 
-
 import pytest
 
 from engine.land.models import (
@@ -21,10 +20,7 @@ class TestSlopeAspectResult:
     def test_valid_slope_aspect(self):
         """تست شیب و جهت معتبر"""
         result = SlopeAspectResult(
-            slope_degrees=15.5,
-            slope_percent=27.7,
-            aspect_degrees=180.0,
-            aspect_cardinal="S"
+            slope_degrees=15.5, slope_percent=27.7, aspect_degrees=180.0, aspect_cardinal="S"
         )
 
         assert result.slope_degrees == 15.5
@@ -36,17 +32,25 @@ class TestSlopeAspectResult:
         """تست محدوده شیب"""
         # Valid
         SlopeAspectResult(slope_degrees=0, slope_percent=0, aspect_degrees=0, aspect_cardinal="N")
-        SlopeAspectResult(slope_degrees=90, slope_percent=10000, aspect_degrees=360, aspect_cardinal="N")
+        SlopeAspectResult(
+            slope_degrees=90, slope_percent=10000, aspect_degrees=360, aspect_cardinal="N"
+        )
 
         # Invalid
         with pytest.raises(ValueError):
-            SlopeAspectResult(slope_degrees=-1, slope_percent=0, aspect_degrees=0, aspect_cardinal="N")
+            SlopeAspectResult(
+                slope_degrees=-1, slope_percent=0, aspect_degrees=0, aspect_cardinal="N"
+            )
 
         with pytest.raises(ValueError):
-            SlopeAspectResult(slope_degrees=91, slope_percent=0, aspect_degrees=0, aspect_cardinal="N")
+            SlopeAspectResult(
+                slope_degrees=91, slope_percent=0, aspect_degrees=0, aspect_cardinal="N"
+            )
 
         with pytest.raises(ValueError):
-            SlopeAspectResult(slope_degrees=0, slope_percent=0, aspect_degrees=361, aspect_cardinal="N")
+            SlopeAspectResult(
+                slope_degrees=0, slope_percent=0, aspect_degrees=361, aspect_cardinal="N"
+            )
 
 
 class TestTerrainAnalysis:
@@ -64,7 +68,7 @@ class TestTerrainAnalysis:
             slope_max=25.0,
             aspect_dominant="S",
             roughness_index=0.15,
-            curvature_mean=-0.02
+            curvature_mean=-0.02,
         )
 
         assert analysis.terrain_type == TerrainType.ROLLING
@@ -84,7 +88,7 @@ class TestTerrainAnalysis:
                 slope_max=20,
                 aspect_dominant="N",
                 roughness_index=0.1,
-                curvature_mean=0
+                curvature_mean=0,
             )
             assert analysis.terrain_type == terrain_type
 
@@ -100,7 +104,7 @@ class TestDrainageAnalysis:
             drainage_density=2.5,
             stream_order=3,
             watershed_area_km2=15.5,
-            time_of_concentration_hours=4.2
+            time_of_concentration_hours=4.2,
         )
 
         assert analysis.drainage_pattern == DrainagePattern.DENDRITIC
@@ -122,7 +126,7 @@ class TestCapabilityAssessment:
             constraints={"slope_limitation": "moderate"},
             recommendations=["Use contour farming"],
             confidence_score=0.85,
-            assessed_by="automated_system"
+            assessed_by="automated_system",
         )
 
         assert assessment.capability_class == LandCapabilityClass.CLASS_III
@@ -140,7 +144,7 @@ class TestCapabilityAssessment:
                 suitable_uses=[],
                 constraints={},
                 recommendations=[],
-                confidence_score=0.8
+                confidence_score=0.8,
             )
             assert assessment.capability_class == capability_class
 
@@ -158,7 +162,7 @@ class TestLandProfile:
             location_lon=51.67,
             area_hectares=10.0,
             dem_source="SRTM_30m",
-            dem_resolution_m=30.0
+            dem_resolution_m=30.0,
         )
 
         assert profile.id == "test-profile"

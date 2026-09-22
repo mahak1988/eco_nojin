@@ -8,6 +8,7 @@ module imports cleanly and reports ``available=False`` (honest, no crash).
 Status: scaffold + toy training loop. Training a production surrogate for
 a specific model (e.g. crop yield vs AquaCrop) is the next work item.
 """
+
 from __future__ import annotations
 
 import logging
@@ -42,9 +43,7 @@ class PINNSurrogate:
 
     def __init__(self, n_inputs: int, n_outputs: int = 1, hidden: list[int] | None = None) -> None:
         if not TORCH_AVAILABLE:
-            raise RuntimeError(
-                "PyTorch is not installed — pip install torch to use PINNSurrogate"
-            )
+            raise RuntimeError("PyTorch is not installed — pip install torch to use PINNSurrogate")
         layers: list[nn.Module] = []
         sizes = [n_inputs, *(hidden or [32, 32]), n_outputs]
         for i in range(len(sizes) - 1):

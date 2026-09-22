@@ -15,15 +15,12 @@ DEPRECATED: Use database.hub directly instead:
 Author: Eco Nojin Architecture Team
 """
 
-from database.hub import hub
-from database.base import Base
 import os
 
+from database.base import Base
+from database.hub import hub
 
-SQLALCHEMY_DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    f"sqlite:///{hub.main_sqlite}"
-)
+SQLALCHEMY_DATABASE_URL = os.environ.get("DATABASE_URL", f"sqlite:///{hub.main_sqlite}")
 
 
 # Compatibility: engine & SessionLocal
@@ -34,9 +31,9 @@ SessionLocal = hub.get_session_factory()
 def get_db():
     """
     Get a database session.
-    
+
     DEPRECATED: Use hub.get_session() instead.
-    
+
     Usage:
         with hub.get_session() as session:
             # ...
@@ -48,7 +45,7 @@ def get_db():
 def init_db():
     """
     Initialize database tables.
-    
+
     Creates all tables defined in Base.metadata.
     """
     engine = hub.get_sqlalchemy_engine()
@@ -59,7 +56,7 @@ def init_db():
 def get_engine():
     """
     Get SQLAlchemy engine.
-    
+
     DEPRECATED: Use hub.get_sqlalchemy_engine() instead.
     """
     return hub.get_sqlalchemy_engine()
@@ -67,10 +64,10 @@ def get_engine():
 
 __all__ = [
     "SQLALCHEMY_DATABASE_URL",
+    "Base",
     "SessionLocal",
     "get_db",
-    "init_db",
     "get_engine",
     "hub",
-    "Base",
+    "init_db",
 ]

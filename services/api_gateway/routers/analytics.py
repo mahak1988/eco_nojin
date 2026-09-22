@@ -1,4 +1,3 @@
-
 """Analytics router - cross-module historical analysis."""
 
 from datetime import UTC, datetime, timedelta
@@ -9,10 +8,13 @@ from sqlalchemy.orm import Session
 
 from database.hub import hub
 
+
 # Compatibility: get_db via hub
 def get_db():
     with hub.get_session() as session:
         yield session
+
+
 from database.models import (
     CarbonProject,
     EcoTransaction,

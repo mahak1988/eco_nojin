@@ -95,16 +95,21 @@ class CarbonMrvMotor:
             # Verra VM0032-style permanence buffer (100-yr accounting, default 15%
             # uncertainty deduction — applied only to the certified figure, reported
             # separately so the raw number stays honest).
-            certified_delta = delta_co2e_total * permanence if delta_co2e_total > 0 else delta_co2e_total
+            certified_delta = (
+                delta_co2e_total * permanence if delta_co2e_total > 0 else delta_co2e_total
+            )
 
             if methodology == "gold_standard":
-                methodology_label = "Gold Standard Soil Organic Carbon Framework (v1.0) — simplified"
+                methodology_label = (
+                    "Gold Standard Soil Organic Carbon Framework (v1.0) — simplified"
+                )
                 extra: dict[str, Any] = {"monitoring": GS_MONITORING}
             else:
                 methodology = "vm0032"
                 methodology_label = "Verra VM0032 (soil carbon) — simplified accounting"
-                extra: dict[str, Any] = {"certification_note": "VM0032 registration requires full methodology docs"}
-
+                extra: dict[str, Any] = {
+                    "certification_note": "VM0032 registration requires full methodology docs"
+                }
 
             return MotorResult(
                 run_id=run_id,

@@ -42,7 +42,7 @@ contract IdentitySBT is Ownable {
     error AlreadyRevoked();
     error TokenNotFound();
 
-    constructor() Ownable(msg.sender) {}
+    constructor() {}
 
     function authorizeMarketplace(address marketplace, bool authorized) external onlyOwner {
         authorizedMarketplaces[marketplace] = authorized;

@@ -113,19 +113,35 @@ def run_climate(
         "scenario": scenario,
         "periods": {
             "baseline": {"start": baseline_start, "end": baseline_end},
-            "future": {"start": future_start, "end": future_end, "years": (int(future_end[:4]) - int(future_start[:4])) + 1},
+            "future": {
+                "start": future_start,
+                "end": future_end,
+                "years": (int(future_end[:4]) - int(future_start[:4])) + 1,
+            },
         },
-        "baseline": {"tmean_c": _stats(bt), "precip_mm_month": _stats(bp), "dry_months_pct": round(dry_months_base / len(bp) * 100, 1)},
-        "future": {"tmean_c": _stats(ft), "precip_mm_month": _stats(fp), "dry_months_pct": round(dry_months_fut / len(fp) * 100, 1)},
+        "baseline": {
+            "tmean_c": _stats(bt),
+            "precip_mm_month": _stats(bp),
+            "dry_months_pct": round(dry_months_base / len(bp) * 100, 1),
+        },
+        "future": {
+            "tmean_c": _stats(ft),
+            "precip_mm_month": _stats(fp),
+            "dry_months_pct": round(dry_months_fut / len(fp) * 100, 1),
+        },
         "delta": {
             "tmean_c": delta_t,
             "precip_mm_month": delta_p,
             "precip_change_pct": p_change_pct,
-            "dry_months_pct_point_change": round(dry_months_fut / len(fp) * 100 - dry_months_base / len(bp) * 100, 1),
+            "dry_months_pct_point_change": round(
+                dry_months_fut / len(fp) * 100 - dry_months_base / len(bp) * 100, 1
+            ),
         },
         "risk_30y": {
             "heat_risk": "high" if delta_t >= 3 else ("moderate" if delta_t >= 1.5 else "low"),
-            "drought_risk": "high" if (p_change_pct or 0) <= -15 else ("moderate" if (p_change_pct or 0) <= -5 else "low"),
+            "drought_risk": "high"
+            if (p_change_pct or 0) <= -15
+            else ("moderate" if (p_change_pct or 0) <= -5 else "low"),
             "note": "پیش‌بینی ساده مبتنی بر دلتای دما/بارش مدل CMIP6 — تحلیل قطعی نیازمند آبشار مدل‌های هیدرولوژیک است.",
         },
         "note": f"سناریوی {scenario} از CMIP6 (مدل CMCC-CM2-VHR4)؛ داده واقعی و رایگان بدون ثبت‌نام. "

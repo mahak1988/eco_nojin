@@ -11,6 +11,7 @@ Features:
 - Thread-safe
 - Production-ready (Instagram, WhatsApp, Firefox از SQLite استفاده می‌کنند)
 """
+
 from __future__ import annotations
 import structlog
 
@@ -27,7 +28,7 @@ from typing import Any
 class SQLiteCache:
     """
     SQLite-based cache for analysis results.
-    
+
     Usage:
         cache = SQLiteCache()  # default: cache.db in project root
         cache.store("Iran_Isfahan", "wheat", result_dict)
@@ -136,24 +137,30 @@ class SQLiteCache:
                      created_at, expires_at, warnings)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """
-                conn.execute(sql, (
-                    region_name, crop_type, lat, lon,
-                    self._Integerize(result.get("koppen")),
-                    self._Integerize(result.get("wbi")),
-                    self._Integerize(result.get("ewsi")),
-                    self._Integerize(result.get("hyrue")),
-                    self._Integerize(result.get("ecsi")),
-                    self._Integerize(result.get("hdvi")),
-                    self._Integerize(result.get("epia")),
-                    self._Integerize(result.get("hpheno")),
-                    self._Integerize(result.get("esri")),
-                    self._Integerize(result.get("hlhs")),
-                    result.get("execution_time_ms"),
-                    self.model_version,
-                    now.isoformat(),
-                    expires.isoformat(),
-                    self._Integerize(result.get("warnings", [])),
-                ))
+                conn.execute(
+                    sql,
+                    (
+                        region_name,
+                        crop_type,
+                        lat,
+                        lon,
+                        self._Integerize(result.get("koppen")),
+                        self._Integerize(result.get("wbi")),
+                        self._Integerize(result.get("ewsi")),
+                        self._Integerize(result.get("hyrue")),
+                        self._Integerize(result.get("ecsi")),
+                        self._Integerize(result.get("hdvi")),
+                        self._Integerize(result.get("epia")),
+                        self._Integerize(result.get("hpheno")),
+                        self._Integerize(result.get("esri")),
+                        self._Integerize(result.get("hlhs")),
+                        result.get("execution_time_ms"),
+                        self.model_version,
+                        now.isoformat(),
+                        expires.isoformat(),
+                        self._Integerize(result.get("warnings", [])),
+                    ),
+                )
                 conn.commit()
 
     def get(self, region_name: str, crop_type: str) -> dict[str, Any] | None:
@@ -161,11 +168,14 @@ class SQLiteCache:
         now = datetime.now(UTC)
 
         with self._connect() as conn:
-            cur = conn.execute("""
+            cur = conn.execute(
+                """
                 SELECT * FROM analysis_cache
                 WHERE region_name = ? AND crop_type = ? AND model_version = ?
                 LIMIT 1
-            """, (region_name, crop_type, self.model_version))
+            """,
+                (region_name, crop_type, self.model_version),
+            )
 
             row = cur.fetchone()
             if not row:
@@ -174,10 +184,7 @@ class SQLiteCache:
             # Check expiration
             expires_at = datetime.fromisoformat(row["expires_at"])
             if expires_at < now:
-                conn.execute(
-                    "DELETE FROM analysis_cache WHERE id = ?",
-                    (row["id"],)
-                )
+                conn.execute("DELETE FROM analysis_cache WHERE id = ?", (row["id"],))
                 conn.commit()
                 return None
 
@@ -207,8 +214,7 @@ class SQLiteCache:
         now = datetime.now(UTC)
         with self._lock, self._connect() as conn:
             cur = conn.execute(
-                "DELETE FROM analysis_cache WHERE expires_at < ?",
-                (now.isoformat(),)
+                "DELETE FROM analysis_cache WHERE expires_at < ?", (now.isoformat(),)
             )
             conn.commit()
             return cur.rowcount
@@ -224,18 +230,23 @@ class SQLiteCache:
         """Get cache statistics."""
         now = datetime.now(UTC)
         with self._connect() as conn:
-            cur = conn.execute("""
+            cur = conn.execute(
+                """
                 SELECT
                     COUNT(*) as total,
                     SUM(CASE WHEN expires_at < ? THEN 1 ELSE 0 END) as expired
                 FROM analysis_cache
-            """, (now.isoformat(),))
+            """,
+                (now.isoformat(),),
+            )
             row = cur.fetchone()
 
             return {
                 "backend": "sqlite",
                 "db_path": str(self.db_path),
-                "db_size_mb": round(self.db_path.stat().st_size / 1024 / 1024, 2) if self.db_path.exists() else 0,
+                "db_size_mb": round(self.db_path.stat().st_size / 1024 / 1024, 2)
+                if self.db_path.exists()
+                else 0,
                 "total_entries": row["total"],
                 "expired_entries": row["expired"],
                 "active_entries": row["total"] - row["expired"],
@@ -245,12 +256,15 @@ class SQLiteCache:
     def list_entries(self, limit: int = 100) -> list[dict[str, Any]]:
         """List all cache entries."""
         with self._connect() as conn:
-            cur = conn.execute("""
+            cur = conn.execute(
+                """
                 SELECT region_name, crop_type, model_version, created_at, expires_at
                 FROM analysis_cache
                 ORDER BY created_at DESC
                 LIMIT ?
-            """, (limit,))
+            """,
+                (limit,),
+            )
             return [dict(row) for row in cur.fetchall()]
 
 

@@ -1,0 +1,149 @@
+# Saint-Venant 1D - Test Cases
+# Reference: Toro 2001 (Riemann Solvers); Chow 1959 (Open Channel Hydraulics)
+# Equations: ∂U/∂t + ∂F(U)/∂x = S(U)
+# U = [A, Q], F = [Q, Q²/A + gA²/(2B)], S = [0, gA(S₀ - S_f)]
+# Rusanov flux, Manning friction, CFL condition
+
+model: saint_venant_1d
+reference: "Toro 2001 'Riemann Solvers and Numerical Methods for Fluid Dynamics'; Chow 1959"
+category: hydrology
+language: cpp
+status: validated
+
+tolerances:
+  rtol: 1e-4
+  atol: 1e-6
+  mass_balance_max: 1e-3
+  cfl_max: 0.9
+
+parameters:
+  g: 9.81  # m/s²
+  manning_n: 0.03  # s/m^(1/3)
+
+cases:
+  - name: dam_break_dry_bed
+    description: "Classic dam break over dry bed - analytical solution exists"
+    inputs:
+      nx: 200
+      dx: 10.0  # m
+      dt: 0.5  # seconds
+      n_steps: 200
+      channel_width: 10.0  # m
+      manning_n: 0.0
+      initial_conditions:
+        left:
+          depth: 10.0  # m
+          velocity: 0.0
+        right:
+          depth: 0.0  # dry
+          velocity: 0.0
+      boundary_conditions:
+        left: "wall"
+        right: "transmissive"
+    expected:
+      # Analytical solution: Ritter 1892
+      shock_position: "x = -2*sqrt(g*h_left)*t"
+      rarefaction_fan: "h = (2/3 - x/(3*sqrt(g*h_left)*t))^2 * h_left"
+      mass_balance_error: "< 1e-4"
+      shock_speed: "2*sqrt(g*h_left)"
+
+  - name: dam_break_wet_bed
+    description: "Dam break over wet bed - shock + rarefaction"
+    inputs:
+      nx: 300
+      dx: 5.0
+      dt: 0.25
+      n_steps: 400
+      channel_width: 5.0
+      manning_n: 0.0
+      initial_conditions:
+        left:
+          depth: 5.0
+          velocity: 0.0
+        right:
+          depth: 1.0
+          velocity: 0.0
+      boundary_conditions:
+        left: "wall"
+        right: "transmissive"
+    expected:
+      # Two shocks or shock + rarefaction depending on depth ratio
+      mass_balance_error: "< 1e-3"
+      shock_speed: "reference_profiles/sv_wetbed_shock.npy"
+
+  - name: steady_uniform_flow
+    description: "Steady uniform flow with Manning friction"
+    inputs:
+      nx: 100
+      dx: 10.0
+      dt: 1.0
+      n_steps: 1000
+      channel_width: 10.0
+      manning_n: 0.03
+      slope: 0.001
+      initial_conditions:
+        uniform:
+          depth: 2.0
+          velocity: 1.5
+      boundary_conditions:
+        left: "inflow"
+        right: "normal_depth"
+    expected:
+      # Normal depth should be maintained
+      depth_change: "< 1e-3"
+      velocity_change: "< 1e-3"
+      friction_slope: "~bed_slope"
+
+  - name: subcritical_flow_over_bump
+    description: "Subcritical flow over a smooth bump"
+    inputs:
+      nx: 200
+      dx: 5.0
+      dt: 0.5
+      n_steps: 500
+      channel_width: 5.0
+      manning_n: 0.0
+      bed_elevation: "bump(x) = 0.5 * exp(-(x-500)^2 / 5000)"  # m
+      initial_conditions:
+        uniform:
+          depth: 1.5
+          velocity: 0.8
+      boundary_conditions:
+        left: "subcritical_inflow"
+        right: "subcritical_outflow"
+    expected:
+      # Water surface rises over bump for subcritical flow
+      mass_balance_error: "< 1e-3"
+      depth_over_bump: "reference_profiles/sv_bump_depth.npy"
+
+  - name: supercritical_shock_capture
+    description: "Supercritical flow with hydraulic jump"
+    inputs:
+      nx: 200
+      dx: 5.0
+      dt: 0.25
+      n_steps: 800
+      channel_width: 10.0
+      manning_n: 0.02
+      slope: 0.01
+      initial_conditions:
+        left:
+          depth: 0.5
+          velocity: 5.0
+        right:
+          depth: 2.0
+          velocity: 1.0
+      boundary_conditions:
+        left: "supercritical_inflow"
+        right: "transmissive"
+    expected:
+      # Hydraulic jump should form and be captured
+      mass_balance_error: "< 1e-3"
+      jump_location: "reference_profiles/sv_jump_location.npy"
+      conjugate_depths: "Sequent depth formula: h2/h1 = 0.5*(sqrt(1+8*Fr1^2)-1)"
+
+# Metadata for CI matrix
+ci_matrix:
+  backends: ["cpp", "python"]
+  priority: high
+  estimated_time_seconds: 180

@@ -7,6 +7,7 @@ A = R × K × L × S × C × P
 Reference: Renard et al. (1997), "Predicting Soil Erosion by Water"
 Global standard for soil conservation planning.
 """
+
 from __future__ import annotations
 
 # =========================================================================
@@ -21,6 +22,7 @@ try:
         rusle_annual_soil_loss as _cpp_rusle,
         soil_erodibility_k as _cpp_soil_k,
     )
+
     _CPP_AVAILABLE = is_cpp_available()
 except ImportError:
     _CPP_AVAILABLE = False
@@ -46,6 +48,7 @@ from .base import (
 
 class ErosionRisk(Enum):
     """کلاس‌های ریسک فرسایش"""
+
     LOW = ("Low", 0, 5, "Acceptable - Normal farming allowed")
     MODERATE = ("Moderate", 5, 12, "Monitor - Consider conservation")
     HIGH = ("High", 12, 25, "Action needed - Conservation practices required")
@@ -59,28 +62,50 @@ C_FACTORS = {
     "bare_soil": 1.00,
     "fallow": 0.90,
     # Cereals
-    "wheat": 0.25, "wheat_autumn": 0.25, "wheat_spring": 0.25,
-    "barley": 0.25, "maize": 0.40, "rice_paddy": 0.10,
-    "sorghum": 0.35, "millet_pearl": 0.30,
+    "wheat": 0.25,
+    "wheat_autumn": 0.25,
+    "wheat_spring": 0.25,
+    "barley": 0.25,
+    "maize": 0.40,
+    "rice_paddy": 0.10,
+    "sorghum": 0.35,
+    "millet_pearl": 0.30,
     # Legumes
-    "chickpea": 0.20, "lentil": 0.20, "soybean": 0.25,
-    "common_bean": 0.20, "cowpea": 0.20, "mung_bean": 0.20,
+    "chickpea": 0.20,
+    "lentil": 0.20,
+    "soybean": 0.25,
+    "common_bean": 0.20,
+    "cowpea": 0.20,
+    "mung_bean": 0.20,
     # Tubers (high erosion risk due to soil disturbance)
-    "potato": 0.45, "cassava": 0.30, "sweet_potato": 0.30,
+    "potato": 0.45,
+    "cassava": 0.30,
+    "sweet_potato": 0.30,
     # Vegetables
-    "tomato": 0.35, "onion": 0.30,
+    "tomato": 0.35,
+    "onion": 0.30,
     # Oilseeds
-    "sunflower": 0.30, "rapeseed_canola": 0.25,
+    "sunflower": 0.30,
+    "rapeseed_canola": 0.25,
     # Industrial
-    "cotton": 0.40, "sugarcane": 0.20,
+    "cotton": 0.40,
+    "sugarcane": 0.20,
     # Perennials (low erosion)
-    "apple": 0.10, "olive": 0.08, "citrus_orange": 0.10,
-    "date_palm": 0.05, "pistachio": 0.05, "walnut": 0.08,
-    "mango": 0.08, "pomegranate": 0.08, "grape": 0.12,
+    "apple": 0.10,
+    "olive": 0.08,
+    "citrus_orange": 0.10,
+    "date_palm": 0.05,
+    "pistachio": 0.05,
+    "walnut": 0.08,
+    "mango": 0.08,
+    "pomegranate": 0.08,
+    "grape": 0.12,
     # Forages
-    "alfalfa": 0.05, "clover": 0.05,
+    "alfalfa": 0.05,
+    "clover": 0.05,
     # Medicinal
-    "saffron": 0.15, "damask_rose": 0.08,
+    "saffron": 0.15,
+    "damask_rose": 0.08,
     # Default
     "default": 0.30,
 }
@@ -88,23 +113,23 @@ C_FACTORS = {
 # P-factors (Conservation Practices)
 P_FACTORS = {
     "none": 1.00,
-    "contour_farming": 0.50,      # کشت روی خطوط تراز
-    "strip_cropping": 0.40,       # کشت نواری
-    "terracing": 0.25,            # تراس‌بندی
-    "grass_waterway": 0.60,       # آبراهه چمنی
-    "no_till": 0.30,              # بی‌خاک‌ورزی
-    "minimum_till": 0.60,         # کم‌خاک‌ورزی
-    "cover_crop": 0.50,           # کشت پوششی
-    "windbreak": 0.70,            # بادشکن
-    "check_dam": 0.40,            # سازه آبخیزداری
-    "gabion": 0.35,               # گابیون
+    "contour_farming": 0.50,  # کشت روی خطوط تراز
+    "strip_cropping": 0.40,  # کشت نواری
+    "terracing": 0.25,  # تراس‌بندی
+    "grass_waterway": 0.60,  # آبراهه چمنی
+    "no_till": 0.30,  # بی‌خاک‌ورزی
+    "minimum_till": 0.60,  # کم‌خاک‌ورزی
+    "cover_crop": 0.50,  # کشت پوششی
+    "windbreak": 0.70,  # بادشکن
+    "check_dam": 0.40,  # سازه آبخیزداری
+    "gabion": 0.35,  # گابیون
 }
 
 
 class RUSLEMotor(AbstractScientificMotor):
     """
     RUSLE Soil Erosion Risk Assessment
-    
+
     Calculates annual soil loss and recommends conservation practices.
     """
 
@@ -145,9 +170,12 @@ class RUSLEMotor(AbstractScientificMotor):
             soil_om = inputs.get("soil_organic_matter")
 
             if any(v is None for v in [dem, soil_texture, soil_om]):
-                return MotorResult(run_id=run_id, motor_type=self.motor_type,
-                                   status=MotorStatus.FAILED,
-                                   error_message="Missing required inputs (dem, soil_texture, soil_om)")
+                return MotorResult(
+                    run_id=run_id,
+                    motor_type=self.motor_type,
+                    status=MotorStatus.FAILED,
+                    error_message="Missing required inputs (dem, soil_texture, soil_om)",
+                )
 
             # Compute slope from DEM if not provided
             slope = inputs.get("slope")
@@ -202,16 +230,22 @@ class RUSLEMotor(AbstractScientificMotor):
 
             # Build output rasters
             loss_raster = xr.DataArray(
-                soil_loss, dims=dem.dims, coords=dem.coords,
-                attrs={"units": "t/ha/yr", "description": "Annual soil loss (RUSLE)"}
+                soil_loss,
+                dims=dem.dims,
+                coords=dem.coords,
+                attrs={"units": "t/ha/yr", "description": "Annual soil loss (RUSLE)"},
             )
             risk_raster = xr.DataArray(
-                risk_class, dims=dem.dims, coords=dem.coords,
-                attrs={"units": "class", "description": "Erosion risk (1-5)"}
+                risk_class,
+                dims=dem.dims,
+                coords=dem.coords,
+                attrs={"units": "class", "description": "Erosion risk (1-5)"},
             )
             T_raster = xr.DataArray(
-                T, dims=dem.dims, coords=dem.coords,
-                attrs={"units": "t/ha/yr", "description": "Soil loss tolerance"}
+                T,
+                dims=dem.dims,
+                coords=dem.coords,
+                attrs={"units": "t/ha/yr", "description": "Soil loss tolerance"},
             )
 
             # Risk distribution
@@ -282,12 +316,16 @@ class RUSLEMotor(AbstractScientificMotor):
             )
 
         except Exception as e:
-            return MotorResult(run_id=run_id, motor_type=self.motor_type,
-                               status=MotorStatus.FAILED, error_message=str(e))
+            return MotorResult(
+                run_id=run_id,
+                motor_type=self.motor_type,
+                status=MotorStatus.FAILED,
+                error_message=str(e),
+            )
 
     def _compute_slope(self, dem: xr.DataArray) -> xr.DataArray:
         """Compute slope % from DEM."""
-        if 'y' in dem.dims and 'x' in dem.dims:
+        if "y" in dem.dims and "x" in dem.dims:
             y_coord = dem.y.values
             x_coord = dem.x.values
         else:
@@ -309,14 +347,17 @@ class RUSLEMotor(AbstractScientificMotor):
         return xr.DataArray(slope_pct.astype(np.float32), dims=dem.dims, coords=dem.coords)
 
     def _align_to_grid(self, raster: xr.DataArray, target: xr.DataArray) -> xr.DataArray:
-        if raster is None: return None
-        if raster.shape == target.shape: return raster
+        if raster is None:
+            return None
+        if raster.shape == target.shape:
+            return raster
         try:
-            if hasattr(raster, 'rio') and hasattr(target, 'rio'):
+            if hasattr(raster, "rio") and hasattr(target, "rio"):
                 return raster.rio.reproject_match(target)
         except Exception:
             pass
         from scipy.ndimage import zoom
+
         zy = target.shape[0] / raster.shape[0]
         zx = target.shape[1] / raster.shape[1]
         resampled = zoom(raster.values, (zy, zx), order=1)
@@ -324,7 +365,7 @@ class RUSLEMotor(AbstractScientificMotor):
 
     def _compute_R_factor(self, annual_rainfall_mm: float) -> float:
         """Rainfall Erosivity Factor - piecewise linear (FAO validated).
-        
+
         Linear interpolation between observed global reference points:
         - 100mm → R=100  (Sahara desert)
         - 400mm → R=400  (Semi-arid steppe)
@@ -333,15 +374,20 @@ class RUSLEMotor(AbstractScientificMotor):
         - 1800mm → R=5500 (Subtropical)
         - 2500mm → R=8500 (Tropical)
         - 3000mm → R=11000 (Monsoon extreme)
-        
+
         Source: Morgan (2005) "Soil Erosion & Conservation"
         """
         P = annual_rainfall_mm
 
         # Reference points (P, R)
         points = [
-            (100, 100), (400, 400), (800, 1200),
-            (1200, 2800), (1800, 5500), (2500, 8500), (3000, 11000),
+            (100, 100),
+            (400, 400),
+            (800, 1200),
+            (1200, 2800),
+            (1800, 5500),
+            (2500, 8500),
+            (3000, 11000),
         ]
 
         # Linear interpolation
@@ -363,18 +409,24 @@ class RUSLEMotor(AbstractScientificMotor):
 
     def _compute_K_factor(self, texture: np.ndarray, om: np.ndarray) -> np.ndarray:
         """Soil Erodibility Factor (Wischmeier & Smith nomograph approximation).
-        
+
         Typical values: 0.01 (organic) to 0.69 (silt loam)
         """
         # Simplified nomograph: K depends on texture and OM
         # Higher K = more erodible
         texture_factors = {
             1: 0.05,  # Sand - low
-            2: 0.10, 3: 0.15,
-            4: 0.35, 5: 0.45, 6: 0.50,  # Loam - moderate
-            7: 0.55, 8: 0.60,  # Silt loam - high
-            9: 0.30, 10: 0.20,  # Clay - moderate
-            11: 0.15, 12: 0.10,
+            2: 0.10,
+            3: 0.15,
+            4: 0.35,
+            5: 0.45,
+            6: 0.50,  # Loam - moderate
+            7: 0.55,
+            8: 0.60,  # Silt loam - high
+            9: 0.30,
+            10: 0.20,  # Clay - moderate
+            11: 0.15,
+            12: 0.10,
         }
 
         K = np.ones_like(texture, dtype=np.float32) * 0.30
@@ -389,26 +441,20 @@ class RUSLEMotor(AbstractScientificMotor):
 
     def _compute_LS_factor(self, slope: np.ndarray, length_m: float) -> np.ndarray:
         """Slope Length-Steepness factor (USDA standard, conservative).
-        
+
         S = 10.8 × sinθ + 0.03  (for slope < 9%)
         S = 16.8 × sinθ - 0.50  (for slope ≥ 9%)
-        
+
         L = (λ/22.13)^m
         """
         slope_rad = np.arctan(slope / 100)
         sin_slope = np.sin(slope_rad)
 
         # S factor (two-part formula from USDA)
-        S_factor = np.where(
-            slope < 9,
-            10.8 * sin_slope + 0.03,
-            16.8 * sin_slope - 0.50
-        )
+        S_factor = np.where(slope < 9, 10.8 * sin_slope + 0.03, 16.8 * sin_slope - 0.50)
 
         # Length factor exponent m (varies with slope)
-        m = np.where(slope < 1, 0.2,
-            np.where(slope < 3, 0.3,
-            np.where(slope < 5, 0.4, 0.5)))
+        m = np.where(slope < 1, 0.2, np.where(slope < 3, 0.3, np.where(slope < 5, 0.4, 0.5)))
 
         L_factor = (length_m / 22.13) ** m
 
@@ -417,7 +463,7 @@ class RUSLEMotor(AbstractScientificMotor):
 
     def _compute_tolerance(self, texture: np.ndarray, om: np.ndarray) -> np.ndarray:
         """Soil loss tolerance (T) - standard values 5-11 t/ha/yr.
-        
+
         Deeper, higher-OM soils have higher T.
         """
         T = np.ones_like(texture, dtype=np.float32) * 7.0
@@ -438,7 +484,7 @@ class RUSLEMotor(AbstractScientificMotor):
 
     def _realistic_bound(self, soil_loss: np.ndarray) -> np.ndarray:
         """Apply realistic upper bound based on global observations.
-        
+
         Maximum observed erosion rates:
         - Himalaya: ~500 t/ha/yr (extreme)
         - Andes: ~400 t/ha/yr
@@ -450,7 +496,7 @@ class RUSLEMotor(AbstractScientificMotor):
     def _classify_risk(self, soil_loss: np.ndarray) -> np.ndarray:
         """Classify erosion risk."""
         risk = np.ones_like(soil_loss, dtype=np.int8)
-        risk[soil_loss >= 5] = 2   # Moderate
+        risk[soil_loss >= 5] = 2  # Moderate
         risk[soil_loss >= 12] = 3  # High
         risk[soil_loss >= 25] = 4  # Severe
         risk[soil_loss >= 50] = 5  # Critical
@@ -466,68 +512,82 @@ class RUSLEMotor(AbstractScientificMotor):
         # Priority 1: Reduce C-factor (change crop or add cover)
         if current_practice == "none":
             if mean_loss > 12:
-                advice.append({
-                    "priority": "URGENT",
-                    "practice": "cover_crop",
-                    "description": "Plant cover crops between seasons",
-                    "P_factor": 0.50,
-                    "expected_reduction_percent": 50,
-                })
+                advice.append(
+                    {
+                        "priority": "URGENT",
+                        "practice": "cover_crop",
+                        "description": "Plant cover crops between seasons",
+                        "P_factor": 0.50,
+                        "expected_reduction_percent": 50,
+                    }
+                )
 
             if mean_slope > 8:
-                advice.append({
-                    "priority": "HIGH",
-                    "practice": "contour_farming",
-                    "description": f"Farm along contour lines (slope {mean_slope:.1f}%)",
-                    "P_factor": 0.50,
-                    "expected_reduction_percent": 50,
-                })
+                advice.append(
+                    {
+                        "priority": "HIGH",
+                        "practice": "contour_farming",
+                        "description": f"Farm along contour lines (slope {mean_slope:.1f}%)",
+                        "P_factor": 0.50,
+                        "expected_reduction_percent": 50,
+                    }
+                )
 
             if mean_loss > 25:
-                advice.append({
-                    "priority": "URGENT",
-                    "practice": "terracing",
-                    "description": "Build terraces on slopes",
-                    "P_factor": 0.25,
-                    "expected_reduction_percent": 75,
-                })
+                advice.append(
+                    {
+                        "priority": "URGENT",
+                        "practice": "terracing",
+                        "description": "Build terraces on slopes",
+                        "P_factor": 0.25,
+                        "expected_reduction_percent": 75,
+                    }
+                )
 
             if mean_loss > 12:
-                advice.append({
-                    "priority": "HIGH",
-                    "practice": "no_till",
-                    "description": "Adopt conservation tillage",
-                    "P_factor": 0.30,
-                    "expected_reduction_percent": 70,
-                })
+                advice.append(
+                    {
+                        "priority": "HIGH",
+                        "practice": "no_till",
+                        "description": "Adopt conservation tillage",
+                        "P_factor": 0.30,
+                        "expected_reduction_percent": 70,
+                    }
+                )
 
         # Crop-specific advice
         high_risk_crops = ["potato", "cotton", "maize"]
         if crop_id in high_risk_crops and mean_loss > 8:
-            advice.append({
-                "priority": "HIGH",
-                "practice": "crop_rotation",
-                "description": f"Rotate {crop_id} with low-C crops (alfalfa, clover)",
-                "P_factor": 0.60,
-                "expected_reduction_percent": 40,
-            })
+            advice.append(
+                {
+                    "priority": "HIGH",
+                    "practice": "crop_rotation",
+                    "description": f"Rotate {crop_id} with low-C crops (alfalfa, clover)",
+                    "P_factor": 0.60,
+                    "expected_reduction_percent": 40,
+                }
+            )
 
         # General recommendations
-        advice.append({
-            "priority": "GENERAL",
-            "practice": "organic_amendments",
-            "description": "Add organic matter to improve soil structure",
-            "P_factor": 0.90,
-            "expected_reduction_percent": 10,
-        })
+        advice.append(
+            {
+                "priority": "GENERAL",
+                "practice": "organic_amendments",
+                "description": "Add organic matter to improve soil structure",
+                "P_factor": 0.90,
+                "expected_reduction_percent": 10,
+            }
+        )
 
         if mean_slope > 20 and mean_loss > 25:
-            advice.append({
-                "priority": "URGENT",
-                "practice": "land_use_change",
-                "description": "Convert to permanent pasture or forest",
-                "P_factor": 0.05,
-                "expected_reduction_percent": 95,
-            })
+            advice.append(
+                {
+                    "priority": "URGENT",
+                    "practice": "land_use_change",
+                    "description": "Convert to permanent pasture or forest",
+                    "P_factor": 0.05,
+                    "expected_reduction_percent": 95,
+                }
+            )
 
         return advice

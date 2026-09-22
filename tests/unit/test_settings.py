@@ -38,7 +38,7 @@ class TestSettingsDefaults:
 
 class TestProductionGuards:
     def test_production_default_secret_raises(self):
-        with pytest.raises(RuntimeError, match="secret"):
+        with pytest.raises(RuntimeError, match="TELEGRAM_BOT_TOKEN|secret"):
             Settings(_env_file=None, environment="production")
 
     def test_production_wildcard_credentials_raises(self):
@@ -58,6 +58,9 @@ class TestProductionGuards:
             secret_key="k" * 64,
             cors_origins=["https://app.econojin.org"],
             allow_credentials=True,
+            telegram_bot_token="dummy-token",
+            redis_url="redis://production-redis:6379/0",
+            database_url="postgresql://user:pass@host/db",
         )
         assert s.is_production
         assert s.is_secure_secret

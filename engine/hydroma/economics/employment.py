@@ -3,15 +3,16 @@ Economic Engine - Employment Generation Module.
 
 Estimates direct, indirect, and induced employment effects of projects.
 """
+
 from typing import Any
 
 
 def estimate_direct_employment(
     activity_type: str,
     scale_of_activity: float,
-    employment_intensity_per_unit: float, # Jobs per unit of activity (e.g., jobs per hectare, jobs per MLD water)
-    job_type: str = "full_time_equivalent", # e.g., "full_time", "part_time", "seasonal"
-    duration_months: float = 12.0 # Average duration of employment
+    employment_intensity_per_unit: float,  # Jobs per unit of activity (e.g., jobs per hectare, jobs per MLD water)
+    job_type: str = "full_time_equivalent",  # e.g., "full_time", "part_time", "seasonal"
+    duration_months: float = 12.0,  # Average duration of employment
 ) -> dict[str, Any]:
     """
     Estimates direct employment created by a specific activity.
@@ -35,7 +36,7 @@ def estimate_direct_employment(
         "job_type": job_type,
         "duration_months": duration_months,
         "direct_employment_person_months": direct_jobs * duration_months,
-        "direct_employment_full_time_equivalent": direct_jobs * (duration_months / 12.0)
+        "direct_employment_full_time_equivalent": direct_jobs * (duration_months / 12.0),
     }
 
 
@@ -43,7 +44,7 @@ def estimate_induced_employment(
     direct_employment_fte: float,
     household_size: float,
     income_spent_locally_fraction: float,
-    local_multiplier: float # Jobs created per unit of spending in the local economy
+    local_multiplier: float,  # Jobs created per unit of spending in the local economy
 ) -> dict[str, Any]:
     """
     Estimates induced employment (jobs created in local economy due to spending by direct employees).
@@ -59,21 +60,23 @@ def estimate_induced_employment(
     """
     # Simplified model: Induced jobs = Direct jobs * household_size * income_spent_locally_fraction * local_multiplier
     # The local multiplier itself is a complex economic indicator.
-    induced_jobs = direct_employment_fte * household_size * income_spent_locally_fraction * local_multiplier
+    induced_jobs = (
+        direct_employment_fte * household_size * income_spent_locally_fraction * local_multiplier
+    )
 
     return {
         "direct_employment_full_time_equivalent": direct_employment_fte,
         "household_size": household_size,
         "income_spent_locally_fraction": income_spent_locally_fraction,
         "local_multiplier": local_multiplier,
-        "induced_employment_full_time_equivalent": induced_jobs
+        "induced_employment_full_time_equivalent": induced_jobs,
     }
 
 
 def calculate_total_employment_impact(
     direct_employment_data: list[dict[str, Any]],
-    indirect_employment_data: list[dict[str, Any]], # e.g., from supply chain models
-    induced_employment_data: dict[str, Any] # Calculated from direct employment
+    indirect_employment_data: list[dict[str, Any]],  # e.g., from supply chain models
+    induced_employment_data: dict[str, Any],  # Calculated from direct employment
 ) -> dict[str, Any]:
     """
     Aggregates direct, indirect, and induced employment impacts.
@@ -86,8 +89,12 @@ def calculate_total_employment_impact(
     Returns:
         Dictionary containing total employment impact.
     """
-    total_direct_fte = sum(d.get("direct_employment_full_time_equivalent", 0) for d in direct_employment_data)
-    total_indirect_fte = sum(i.get("indirect_employment_full_time_equivalent", 0) for i in indirect_employment_data)
+    total_direct_fte = sum(
+        d.get("direct_employment_full_time_equivalent", 0) for d in direct_employment_data
+    )
+    total_indirect_fte = sum(
+        i.get("indirect_employment_full_time_equivalent", 0) for i in indirect_employment_data
+    )
     total_induced_fte = induced_employment_data.get("induced_employment_full_time_equivalent", 0)
 
     total_fte = total_direct_fte + total_indirect_fte + total_induced_fte
@@ -97,11 +104,11 @@ def calculate_total_employment_impact(
         "breakdown": {
             "direct_fte": total_direct_fte,
             "indirect_fte": total_indirect_fte,
-            "induced_fte": total_induced_fte
+            "induced_fte": total_induced_fte,
         },
         "details": {
             "direct": direct_employment_data,
             "indirect": indirect_employment_data,
-            "induced": induced_employment_data
-        }
+            "induced": induced_employment_data,
+        },
     }

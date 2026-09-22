@@ -62,15 +62,13 @@ class NojinStrainRepository:
 
     def get_by_code(self, strain_code: str) -> NojinStrain | None:
         """Get strain by code."""
-        return self.session.query(NojinStrain).filter(
-            NojinStrain.strain_code == strain_code
-        ).first()
+        return (
+            self.session.query(NojinStrain).filter(NojinStrain.strain_code == strain_code).first()
+        )
 
     def get_by_type(self, strain_type: str) -> list[NojinStrain]:
         """Get strains by type."""
-        return self.session.query(NojinStrain).filter(
-            NojinStrain.strain_type == strain_type
-        ).all()
+        return self.session.query(NojinStrain).filter(NojinStrain.strain_type == strain_type).all()
 
     def get_all(self, limit: int = 100) -> list[NojinStrain]:
         """Get all strains."""
@@ -79,10 +77,14 @@ class NojinStrainRepository:
     def search(self, query: str) -> list[NojinStrain]:
         """Search strains by species name or function."""
         search_pattern = f"%{query}%"
-        return self.session.query(NojinStrain).filter(
-            (NojinStrain.species_name.ilike(search_pattern)) |
-            (NojinStrain.function.ilike(search_pattern))
-        ).all()
+        return (
+            self.session.query(NojinStrain)
+            .filter(
+                (NojinStrain.species_name.ilike(search_pattern))
+                | (NojinStrain.function.ilike(search_pattern))
+            )
+            .all()
+        )
 
     def update(self, strain_id: int, **kwargs) -> NojinStrain | None:
         """Update a strain."""
@@ -144,28 +146,36 @@ class NojinFormulationRepository:
 
     def get_by_id(self, formulation_id: int) -> NojinFormulation | None:
         """Get formulation by ID."""
-        return self.session.query(NojinFormulation).filter(
-            NojinFormulation.id == formulation_id
-        ).first()
+        return (
+            self.session.query(NojinFormulation)
+            .filter(NojinFormulation.id == formulation_id)
+            .first()
+        )
 
     def get_by_code(self, formulation_code: str) -> NojinFormulation | None:
         """Get formulation by code."""
-        return self.session.query(NojinFormulation).filter(
-            NojinFormulation.formulation_code == formulation_code
-        ).first()
+        return (
+            self.session.query(NojinFormulation)
+            .filter(NojinFormulation.formulation_code == formulation_code)
+            .first()
+        )
 
     def get_by_type(self, formulation_type: str) -> list[NojinFormulation]:
         """Get formulations by type."""
-        return self.session.query(NojinFormulation).filter(
-            NojinFormulation.formulation_type == formulation_type
-        ).all()
+        return (
+            self.session.query(NojinFormulation)
+            .filter(NojinFormulation.formulation_type == formulation_type)
+            .all()
+        )
 
     def get_for_crop(self, crop_type: str) -> list[NojinFormulation]:
         """Get formulations suitable for a crop."""
         search_pattern = f"%{crop_type}%"
-        return self.session.query(NojinFormulation).filter(
-            NojinFormulation.target_crops.ilike(search_pattern)
-        ).all()
+        return (
+            self.session.query(NojinFormulation)
+            .filter(NojinFormulation.target_crops.ilike(search_pattern))
+            .all()
+        )
 
     def get_all(self, limit: int = 100) -> list[NojinFormulation]:
         """Get all formulations."""
@@ -231,30 +241,40 @@ class NojinApplicationPlanRepository:
 
     def get_by_id(self, plan_id: int) -> NojinApplicationPlan | None:
         """Get plan by ID."""
-        return self.session.query(NojinApplicationPlan).filter(
-            NojinApplicationPlan.id == plan_id
-        ).first()
+        return (
+            self.session.query(NojinApplicationPlan)
+            .filter(NojinApplicationPlan.id == plan_id)
+            .first()
+        )
 
     def get_by_formulation(self, formulation_id: int) -> list[NojinApplicationPlan]:
         """Get plans by formulation."""
-        return self.session.query(NojinApplicationPlan).filter(
-            NojinApplicationPlan.formulation_id == formulation_id
-        ).all()
+        return (
+            self.session.query(NojinApplicationPlan)
+            .filter(NojinApplicationPlan.formulation_id == formulation_id)
+            .all()
+        )
 
     def get_by_land_profile(self, land_profile_id: int) -> list[NojinApplicationPlan]:
         """Get plans by land profile."""
-        return self.session.query(NojinApplicationPlan).filter(
-            NojinApplicationPlan.land_profile_id == land_profile_id
-        ).all()
+        return (
+            self.session.query(NojinApplicationPlan)
+            .filter(NojinApplicationPlan.land_profile_id == land_profile_id)
+            .all()
+        )
 
     def get_upcoming(self, days_ahead: int = 30) -> list[NojinApplicationPlan]:
         """Get upcoming application plans."""
         today = date.today()
         end_date = today + timedelta(days=days_ahead)
-        return self.session.query(NojinApplicationPlan).filter(
-            NojinApplicationPlan.application_date >= today,
-            NojinApplicationPlan.application_date <= end_date,
-        ).all()
+        return (
+            self.session.query(NojinApplicationPlan)
+            .filter(
+                NojinApplicationPlan.application_date >= today,
+                NojinApplicationPlan.application_date <= end_date,
+            )
+            .all()
+        )
 
     def get_all(self, limit: int = 100) -> list[NojinApplicationPlan]:
         """Get all plans."""
@@ -315,30 +335,30 @@ class NojinFieldTrialRepository:
 
     def get_by_id(self, trial_id: int) -> NojinFieldTrial | None:
         """Get trial by ID."""
-        return self.session.query(NojinFieldTrial).filter(
-            NojinFieldTrial.id == trial_id
-        ).first()
+        return self.session.query(NojinFieldTrial).filter(NojinFieldTrial.id == trial_id).first()
 
     def get_by_application_plan(self, application_plan_id: int) -> list[NojinFieldTrial]:
         """Get trials by application plan."""
-        return self.session.query(NojinFieldTrial).filter(
-            NojinFieldTrial.application_plan_id == application_plan_id
-        ).all()
+        return (
+            self.session.query(NojinFieldTrial)
+            .filter(NojinFieldTrial.application_plan_id == application_plan_id)
+            .all()
+        )
 
     def get_for_formulation(self, formulation_id: int) -> list[NojinFieldTrial]:
         """Get all trials for a formulation."""
-        return self.session.query(NojinFieldTrial).join(
-            NojinApplicationPlan,
-            NojinFieldTrial.application_plan_id == NojinApplicationPlan.id
-        ).filter(
-            NojinApplicationPlan.formulation_id == formulation_id
-        ).all()
+        return (
+            self.session.query(NojinFieldTrial)
+            .join(
+                NojinApplicationPlan, NojinFieldTrial.application_plan_id == NojinApplicationPlan.id
+            )
+            .filter(NojinApplicationPlan.formulation_id == formulation_id)
+            .all()
+        )
 
     def get_with_positive_yield(self) -> list[NojinFieldTrial]:
         """Get trials with positive yield response (for calibration)."""
-        return self.session.query(NojinFieldTrial).filter(
-            NojinFieldTrial.yield_response > 0
-        ).all()
+        return self.session.query(NojinFieldTrial).filter(NojinFieldTrial.yield_response > 0).all()
 
     def get_all(self, limit: int = 100) -> list[NojinFieldTrial]:
         """Get all trials."""
@@ -399,21 +419,29 @@ class NojinCalibrationRecordRepository:
 
     def get_by_id(self, record_id: int) -> NojinCalibrationRecord | None:
         """Get record by ID."""
-        return self.session.query(NojinCalibrationRecord).filter(
-            NojinCalibrationRecord.id == record_id
-        ).first()
+        return (
+            self.session.query(NojinCalibrationRecord)
+            .filter(NojinCalibrationRecord.id == record_id)
+            .first()
+        )
 
     def get_latest_for_formulation(self, formulation_id: int) -> NojinCalibrationRecord | None:
         """Get latest calibration for a formulation."""
-        return self.session.query(NojinCalibrationRecord).filter(
-            NojinCalibrationRecord.formulation_id == formulation_id
-        ).order_by(desc(NojinCalibrationRecord.calibration_date)).first()
+        return (
+            self.session.query(NojinCalibrationRecord)
+            .filter(NojinCalibrationRecord.formulation_id == formulation_id)
+            .order_by(desc(NojinCalibrationRecord.calibration_date))
+            .first()
+        )
 
     def get_all_for_formulation(self, formulation_id: int) -> list[NojinCalibrationRecord]:
         """Get all calibrations for a formulation."""
-        return self.session.query(NojinCalibrationRecord).filter(
-            NojinCalibrationRecord.formulation_id == formulation_id
-        ).order_by(desc(NojinCalibrationRecord.calibration_date)).all()
+        return (
+            self.session.query(NojinCalibrationRecord)
+            .filter(NojinCalibrationRecord.formulation_id == formulation_id)
+            .order_by(desc(NojinCalibrationRecord.calibration_date))
+            .all()
+        )
 
     def get_all(self, limit: int = 100) -> list[NojinCalibrationRecord]:
         """Get all records."""
@@ -432,6 +460,7 @@ __all__ = [
 # ═══════════════════════════════════════════════════════════════════
 # PHASE 2: EXTENDED REPOSITORIES
 # ═══════════════════════════════════════════════════════════════════
+
 
 class NojinMaterialRepository:
     """CRUD operations for NojinMaterial (43 scientific materials)."""
@@ -465,28 +494,36 @@ class NojinMaterialRepository:
 
     def get_by_code(self, material_code: str) -> NojinMaterial | None:
         """Get material by code (e.g., MIN-011, CAR-021)."""
-        return self.session.query(NojinMaterial).filter(
-            NojinMaterial.material_code == material_code
-        ).first()
+        return (
+            self.session.query(NojinMaterial)
+            .filter(NojinMaterial.material_code == material_code)
+            .first()
+        )
 
     def get_by_category(self, category: str) -> list[NojinMaterial]:
         """Get materials by category (mineral, organic_plant, organic_animal, carbon, special)."""
-        return self.session.query(NojinMaterial).filter(
-            NojinMaterial.category == category
-        ).order_by(NojinMaterial.material_code).all()
+        return (
+            self.session.query(NojinMaterial)
+            .filter(NojinMaterial.category == category)
+            .order_by(NojinMaterial.material_code)
+            .all()
+        )
 
     def get_for_arid_regions(self, min_score: int = 8) -> list[NojinMaterial]:
         """Get materials suitable for arid regions with priority score."""
-        return self.session.query(NojinMaterial).filter(
-            NojinMaterial.is_suitable_for_arid == True,
-            NojinMaterial.arid_priority_score >= min_score
-        ).order_by(NojinMaterial.arid_priority_score.desc()).all()
+        return (
+            self.session.query(NojinMaterial)
+            .filter(
+                NojinMaterial.is_suitable_for_arid == True,
+                NojinMaterial.arid_priority_score >= min_score,
+            )
+            .order_by(NojinMaterial.arid_priority_score.desc())
+            .all()
+        )
 
     def get_locally_available(self, region: str = None) -> list[NojinMaterial]:
         """Get locally available materials, optionally filtered by region."""
-        query = self.session.query(NojinMaterial).filter(
-            NojinMaterial.is_locally_available == True
-        )
+        query = self.session.query(NojinMaterial).filter(NojinMaterial.is_locally_available == True)
         if region:
             query = query.filter(NojinMaterial.source_regions.ilike(f"%{region}%"))
         return query.all()
@@ -494,32 +531,43 @@ class NojinMaterialRepository:
     def search(self, query: str) -> list[NojinMaterial]:
         """Search materials by name, scientific name, or benefits."""
         search_pattern = f"%{query}%"
-        return self.session.query(NojinMaterial).filter(
-            (NojinMaterial.common_name.ilike(search_pattern)) |
-            (NojinMaterial.scientific_name.ilike(search_pattern)) |
-            (NojinMaterial.benefits.ilike(search_pattern)) |
-            (NojinMaterial.function.ilike(search_pattern) if hasattr(NojinMaterial, 'function') else False)
-        ).all()
+        return (
+            self.session.query(NojinMaterial)
+            .filter(
+                (NojinMaterial.common_name.ilike(search_pattern))
+                | (NojinMaterial.scientific_name.ilike(search_pattern))
+                | (NojinMaterial.benefits.ilike(search_pattern))
+                | (
+                    NojinMaterial.function.ilike(search_pattern)
+                    if hasattr(NojinMaterial, "function")
+                    else False
+                )
+            )
+            .all()
+        )
 
     def get_by_release_rate(self, rate: str) -> list[NojinMaterial]:
         """Get materials by release rate (fast, medium, slow, very_slow)."""
-        return self.session.query(NojinMaterial).filter(
-            NojinMaterial.release_rate == rate
-        ).all()
+        return self.session.query(NojinMaterial).filter(NojinMaterial.release_rate == rate).all()
 
     def get_by_ph_range(self, min_ph: float, max_ph: float) -> list[NojinMaterial]:
         """Get materials within pH range."""
-        return self.session.query(NojinMaterial).filter(
-            NojinMaterial.ph >= min_ph,
-            NojinMaterial.ph <= max_ph
-        ).all()
+        return (
+            self.session.query(NojinMaterial)
+            .filter(NojinMaterial.ph >= min_ph, NojinMaterial.ph <= max_ph)
+            .all()
+        )
 
     def get_cheap_materials(self, max_cost_usd: float = 50.0) -> list[NojinMaterial]:
         """Get affordable materials (for subsistence farmers)."""
-        return self.session.query(NojinMaterial).filter(
-            NojinMaterial.cost_per_ton_usd <= max_cost_usd,
-            NojinMaterial.cost_per_ton_usd > 0
-        ).order_by(NojinMaterial.cost_per_ton_usd).all()
+        return (
+            self.session.query(NojinMaterial)
+            .filter(
+                NojinMaterial.cost_per_ton_usd <= max_cost_usd, NojinMaterial.cost_per_ton_usd > 0
+            )
+            .order_by(NojinMaterial.cost_per_ton_usd)
+            .all()
+        )
 
     def get_all(self, limit: int = 100) -> list[NojinMaterial]:
         """Get all materials."""
@@ -555,9 +603,9 @@ class NojinMaterialRepository:
         """Count materials grouped by category."""
         result = {}
         for category in ["mineral", "organic_plant", "organic_animal", "carbon", "special"]:
-            result[category] = self.session.query(NojinMaterial).filter(
-                NojinMaterial.category == category
-            ).count()
+            result[category] = (
+                self.session.query(NojinMaterial).filter(NojinMaterial.category == category).count()
+            )
         return result
 
 
@@ -592,29 +640,32 @@ class NojinSoilTypeRepository:
 
     def get_by_code(self, soil_code: str) -> NojinSoilType | None:
         """Get soil type by code (e.g., SOIL-01, SOIL-02)."""
-        return self.session.query(NojinSoilType).filter(
-            NojinSoilType.soil_code == soil_code
-        ).first()
+        return (
+            self.session.query(NojinSoilType).filter(NojinSoilType.soil_code == soil_code).first()
+        )
 
     def get_by_category(self, category: str) -> list[NojinSoilType]:
         """Get soil types by category."""
-        return self.session.query(NojinSoilType).filter(
-            NojinSoilType.soil_category == category
-        ).all()
+        return (
+            self.session.query(NojinSoilType).filter(NojinSoilType.soil_category == category).all()
+        )
 
     def get_by_ph(self, ph: float) -> list[NojinSoilType]:
         """Get soil types where given pH falls in typical range."""
-        return self.session.query(NojinSoilType).filter(
-            NojinSoilType.typical_ph_min <= ph,
-            NojinSoilType.typical_ph_max >= ph
-        ).all()
+        return (
+            self.session.query(NojinSoilType)
+            .filter(NojinSoilType.typical_ph_min <= ph, NojinSoilType.typical_ph_max >= ph)
+            .all()
+        )
 
     def get_by_region(self, region: str) -> list[NojinSoilType]:
         """Get soil types common in a specific region."""
         search_pattern = f"%{region}%"
-        return self.session.query(NojinSoilType).filter(
-            NojinSoilType.common_regions.ilike(search_pattern)
-        ).all()
+        return (
+            self.session.query(NojinSoilType)
+            .filter(NojinSoilType.common_regions.ilike(search_pattern))
+            .all()
+        )
 
     def classify_soil(
         self,
@@ -685,21 +736,25 @@ class NojinFormulationRecipeRepository:
 
     def get_by_code(self, recipe_code: str) -> NojinFormulationRecipe | None:
         """Get recipe by code (e.g., NOJIN-ARID-1)."""
-        return self.session.query(NojinFormulationRecipe).filter(
-            NojinFormulationRecipe.recipe_code == recipe_code
-        ).first()
+        return (
+            self.session.query(NojinFormulationRecipe)
+            .filter(NojinFormulationRecipe.recipe_code == recipe_code)
+            .first()
+        )
 
     def get_for_soil(self, soil_type_id: int) -> list[NojinFormulationRecipe]:
         """Get all recipes for a specific soil type."""
-        return self.session.query(NojinFormulationRecipe).filter(
-            NojinFormulationRecipe.soil_type_id == soil_type_id
-        ).all()
+        return (
+            self.session.query(NojinFormulationRecipe)
+            .filter(NojinFormulationRecipe.soil_type_id == soil_type_id)
+            .all()
+        )
 
     def get_for_soil_code(self, soil_code: str) -> NojinFormulationRecipe | None:
         """Get recipe for a soil type code."""
-        soil = self.session.query(NojinSoilType).filter(
-            NojinSoilType.soil_code == soil_code
-        ).first()
+        soil = (
+            self.session.query(NojinSoilType).filter(NojinSoilType.soil_code == soil_code).first()
+        )
         if not soil:
             return None
         recipes = self.get_for_soil(soil.id)
@@ -707,27 +762,37 @@ class NojinFormulationRecipeRepository:
 
     def get_by_traditional_technique(self, technique: str) -> list[NojinFormulationRecipe]:
         """Get recipes integrated with a traditional technique."""
-        return self.session.query(NojinFormulationRecipe).filter(
-            NojinFormulationRecipe.traditional_technique.ilike(f"%{technique}%")
-        ).all()
+        return (
+            self.session.query(NojinFormulationRecipe)
+            .filter(NojinFormulationRecipe.traditional_technique.ilike(f"%{technique}%"))
+            .all()
+        )
 
     def get_affordable(self, max_cost_usd: float = 200.0) -> list[NojinFormulationRecipe]:
         """Get affordable formulations for subsistence farmers."""
-        return self.session.query(NojinFormulationRecipe).filter(
-            NojinFormulationRecipe.estimated_cost_usd_per_ha <= max_cost_usd
-        ).order_by(NojinFormulationRecipe.estimated_cost_usd_per_ha).all()
+        return (
+            self.session.query(NojinFormulationRecipe)
+            .filter(NojinFormulationRecipe.estimated_cost_usd_per_ha <= max_cost_usd)
+            .order_by(NojinFormulationRecipe.estimated_cost_usd_per_ha)
+            .all()
+        )
 
     def get_high_water_saving(self, min_saving_pct: float = 40.0) -> list[NojinFormulationRecipe]:
         """Get formulations with high water savings."""
-        return self.session.query(NojinFormulationRecipe).filter(
-            NojinFormulationRecipe.water_saving_pct >= min_saving_pct
-        ).order_by(NojinFormulationRecipe.water_saving_pct.desc()).all()
+        return (
+            self.session.query(NojinFormulationRecipe)
+            .filter(NojinFormulationRecipe.water_saving_pct >= min_saving_pct)
+            .order_by(NojinFormulationRecipe.water_saving_pct.desc())
+            .all()
+        )
 
     def get_all(self) -> list[NojinFormulationRecipe]:
         """Get all recipes."""
-        return self.session.query(NojinFormulationRecipe).order_by(
-            NojinFormulationRecipe.recipe_code
-        ).all()
+        return (
+            self.session.query(NojinFormulationRecipe)
+            .order_by(NojinFormulationRecipe.recipe_code)
+            .all()
+        )
 
     def scale_recipe(
         self,

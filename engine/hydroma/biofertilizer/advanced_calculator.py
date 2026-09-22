@@ -28,9 +28,11 @@ logger = logging.getLogger(__name__)
 # 1. FORMULATION OPTIMIZER (Linear Programming)
 # ═══════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class FormulationRequest:
     """Request for optimal formulation."""
+
     soil_code: str
     area_ha: float
     budget_per_ha_usd: float | None = None
@@ -45,6 +47,7 @@ class FormulationRequest:
 @dataclass
 class FormulationSolution:
     """Optimized formulation solution."""
+
     soil_code: str
     area_ha: float
     materials: dict[str, float]  # material_code -> kg/ha
@@ -64,10 +67,10 @@ class FormulationSolution:
 class FormulationOptimizer:
     """
     Optimal formulation generator using Linear Programming.
-    
+
     Optimizes material mix to meet soil requirements while
     minimizing cost or maximizing benefits.
-    
+
     Algorithm:
     - Minimize: Σ(costᵢ × Wᵢ)  subject to:
     - Σ(Nᵢ × Wᵢ) >= N_required
@@ -92,7 +95,7 @@ class FormulationOptimizer:
     def __init__(self, materials: list[dict], recipes: list[dict] = None):
         """
         Initialize optimizer with available materials.
-        
+
         Args:
             materials: List of material dicts with nutrient data
             recipes: Optional existing recipes for reference
@@ -111,7 +114,7 @@ class FormulationOptimizer:
     def optimize(self, request: FormulationRequest) -> FormulationSolution:
         """
         Optimize formulation for given request.
-        
+
         Strategy:
         1. If a pre-built recipe exists for soil, use it
         2. Otherwise, use greedy heuristic based on priorities
@@ -129,6 +132,7 @@ class FormulationOptimizer:
             composition = existing_recipe.get("material_composition", {})
             if isinstance(composition, str):
                 import json
+
                 composition = json.loads(composition)
 
             materials_kg = dict(composition)
@@ -168,7 +172,7 @@ class FormulationOptimizer:
     def _greedy_optimize(self, request: FormulationRequest) -> FormulationSolution:
         """
         Greedy heuristic optimizer.
-        
+
         Strategy:
         1. Include required materials
         2. Add high-priority arid materials until constraints met
@@ -188,11 +192,14 @@ class FormulationOptimizer:
 
         # Step 2: Add high-priority arid materials
         arid_materials = sorted(
-            [m for m in self.materials.values()
-             if m.get("is_suitable_for_arid") and
-             m["material_code"] not in request.excluded_materials],
+            [
+                m
+                for m in self.materials.values()
+                if m.get("is_suitable_for_arid")
+                and m["material_code"] not in request.excluded_materials
+            ],
             key=lambda x: x.get("arid_priority_score", 0),
-            reverse=True
+            reverse=True,
         )
 
         for mat in arid_materials[:5]:  # Top 5
@@ -222,11 +229,13 @@ class FormulationOptimizer:
 
         # Step 4: Budget check
         if request.budget_per_ha_usd and cost > request.budget_per_ha_usd:
-            warnings.append(f"Budget exceeded: ${cost:.0f}/ha vs ${request.budget_per_ha_usd:.0f}/ha")
+            warnings.append(
+                f"Budget exceeded: ${cost:.0f}/ha vs ${request.budget_per_ha_usd:.0f}/ha"
+            )
 
         # Check application rate
         if total_kg > self.DEFAULT_REQUIREMENTS["max_application_t_ha"] * 1000:
-            warnings.append(f"Application rate high: {total_kg/1000:.1f} t/ha")
+            warnings.append(f"Application rate high: {total_kg / 1000:.1f} t/ha")
 
         # Estimate water saving based on materials
         water_saving = self._estimate_water_saving(materials_kg)
@@ -292,7 +301,6 @@ class FormulationOptimizer:
                 total += cost_per_ton * tons
         return round(total, 2)
 
-
     def _estimate_om_increase(self, materials_kg: dict[str, float]) -> float:
         """Estimate organic matter increase percentage."""
         total_om_kg = 0
@@ -312,9 +320,11 @@ class FormulationOptimizer:
 # 2. COST-BENEFIT CALCULATOR
 # ═══════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class CostBenefitResult:
     """Cost-benefit analysis result (scientifically correct)."""
+
     total_investment_usd: float
     annual_benefit_usd: float
     annual_cost_usd: float  # Recurring annual costs (if any)
@@ -347,7 +357,7 @@ class CostBenefitResult:
 class CostBenefitCalculator:
     """
     Economic analysis calculator.
-    
+
     Uses standard agricultural economic formulas:
     - ROI = (Benefit - Cost) / Cost × 100
     - Payback = Investment / Annual Benefit
@@ -380,16 +390,16 @@ class CostBenefitCalculator:
     ) -> CostBenefitResult:
         """
         Perform scientifically correct cost-benefit analysis.
-        
+
         Formulas (per FAO 2020, World Bank 2019):
-        
+
         1. ROI Annual = (Annual Benefit / Initial Investment) × 100
         2. Simple Payback = Initial Investment / Annual Net Benefit (months)
         3. Discounted Payback = months until Σ[PV(Benefits)] ≥ Investment
         4. NPV = Σ[Bₜ/(1+r)ᵗ] - I₀  (t=1..n)
         5. IRR = r such that NPV = 0 (Newton-Raphson)
         6. BCR = Σ[PV(Benefits)] / Σ[PV(Costs)]
-        
+
         Args:
             formulation_materials: {material_code: kg_per_ha}
             area_ha: Total area in hectares
@@ -400,7 +410,7 @@ class CostBenefitCalculator:
             labor_rate_usd_day: Daily labor rate
             analysis_years: Analysis period (default 10)
             reinvestment_interval_years: Re-apply materials every N years
-        
+
         Returns:
             CostBenefitResult with all economic indicators
         """
@@ -447,15 +457,15 @@ class CostBenefitCalculator:
         # Soil health improvement value (indirect benefit)
         # Based on improved structure, microbial activity, water retention
         # Valued at ~$100/ha/year for degraded soils (FAO estimate)
-        soil_health_value_per_ha = self._calculate_soil_health_value(
-            formulation_materials
-        )
+        soil_health_value_per_ha = self._calculate_soil_health_value(formulation_materials)
 
         # Total gross annual benefit
         gross_annual_benefit_per_ha = (
-            yield_benefit_per_ha + water_benefit_per_ha +
-            fertilizer_savings_per_ha + carbon_benefit_per_ha +
-            soil_health_value_per_ha
+            yield_benefit_per_ha
+            + water_benefit_per_ha
+            + fertilizer_savings_per_ha
+            + carbon_benefit_per_ha
+            + soil_health_value_per_ha
         )
 
         # ═══════════════════════════════════════════════════════
@@ -524,14 +534,16 @@ class CostBenefitCalculator:
         # NPV = -I₀ + Σ[Bₜ/(1+r)ᵗ] for t=1..n
 
         yearly_cashflow = []
-        yearly_cashflow.append({
-            "year": 0,
-            "benefit": 0.0,
-            "cost": total_investment,
-            "net": -total_investment,
-            "cumulative": -total_investment,
-            "pv_net": -total_investment,
-        })
+        yearly_cashflow.append(
+            {
+                "year": 0,
+                "benefit": 0.0,
+                "cost": total_investment,
+                "net": -total_investment,
+                "cumulative": -total_investment,
+                "pv_net": -total_investment,
+            }
+        )
 
         npv = -total_investment
         cumulative = -total_investment
@@ -541,14 +553,16 @@ class CostBenefitCalculator:
             npv += pv_net_year
             cumulative += net_annual_benefit
 
-            yearly_cashflow.append({
-                "year": year,
-                "benefit": round(gross_annual_benefit, 2),
-                "cost": round(recurring_cost, 2),
-                "net": round(net_annual_benefit, 2),
-                "cumulative": round(cumulative, 2),
-                "pv_net": round(pv_net_year, 2),
-            })
+            yearly_cashflow.append(
+                {
+                    "year": year,
+                    "benefit": round(gross_annual_benefit, 2),
+                    "cost": round(recurring_cost, 2),
+                    "net": round(net_annual_benefit, 2),
+                    "cumulative": round(cumulative, 2),
+                    "pv_net": round(pv_net_year, 2),
+                }
+            )
 
         # ═══════════════════════════════════════════════════════
         # STEP 7: IRR (Internal Rate of Return) - Newton-Raphson
@@ -567,8 +581,7 @@ class CostBenefitCalculator:
             for t in range(1, analysis_years + 1)
         )
         pv_costs = total_investment + sum(
-            recurring_cost / ((1 + self.DISCOUNT_RATE) ** t)
-            for t in range(1, analysis_years + 1)
+            recurring_cost / ((1 + self.DISCOUNT_RATE) ** t) for t in range(1, analysis_years + 1)
         )
         bcr = pv_benefits / pv_costs if pv_costs > 0 else 0
 
@@ -616,12 +629,7 @@ class CostBenefitCalculator:
         viability_score = min(100, max(0, score))
 
         # Overall viability
-        is_viable = (
-            roi_annual > 0 and
-            payback_simple_months <= 60 and
-            bcr >= 1.0 and
-            npv > 0
-        )
+        is_viable = roi_annual > 0 and payback_simple_months <= 60 and bcr >= 1.0 and npv > 0
 
         # ═══════════════════════════════════════════════════════
         # STEP 10: Farmer Category & Recommendations
@@ -662,14 +670,18 @@ class CostBenefitCalculator:
             recommendations.append("🌱 Carbon credits: Register for voluntary market")
 
         if water_benefit_per_ha > 200:
-            recommendations.append(f"💧 Water savings significant: ${water_benefit_per_ha*area_ha:.0f}/year")
+            recommendations.append(
+                f"💧 Water savings significant: ${water_benefit_per_ha * area_ha:.0f}/year"
+            )
 
         if farmer_cat == "subsistence" and total_investment > 500:
             recommendations.append("🏛️  Consider government subsidies or micro-loan programs")
             warnings.append("High investment for subsistence farmer")
 
         if roi_annual < self.DISCOUNT_RATE * 100:
-            warnings.append(f"ROI ({roi_annual:.1f}%) below discount rate ({self.DISCOUNT_RATE*100}%)")
+            warnings.append(
+                f"ROI ({roi_annual:.1f}%) below discount rate ({self.DISCOUNT_RATE * 100}%)"
+            )
 
         # Environmental totals
         total_carbon_value = carbon_benefit_per_ha * area_ha * analysis_years
@@ -703,15 +715,15 @@ class CostBenefitCalculator:
     ) -> float:
         """
         Calculate soil health improvement value (indirect benefit).
-        
+
         Values improvements in:
         - Soil structure (aggregation)
         - Microbial diversity
         - Water retention
         - Disease suppression
-        
+
         Based on FAO estimates of ecosystem services.
-        
+
         Returns:
             Annual value in USD per hectare
         """
@@ -753,12 +765,12 @@ class CostBenefitCalculator:
     ) -> float:
         """
         Calculate IRR using Newton-Raphson method.
-        
+
         IRR is the discount rate r that makes NPV = 0.
-        
+
         NPV(r) = -I₀ + Σ[B/(1+r)ᵗ] for t=1..n
         dNPV/dr = -Σ[t·B/(1+r)ᵗ⁺¹]
-        
+
         Newton-Raphson: r_new = r - NPV(r) / dNPV(r)
         """
         if annual_benefit <= 0 or initial_investment <= 0:
@@ -857,11 +869,9 @@ class CostBenefitCalculator:
 
         return round(co2, 2)
 
-
-# ═══════════════════════════════════════════════════════════════════
-# 3. WATER SAVINGS CALCULATOR
-# ═══════════════════════════════════════════════════════════════════
-
+    # ═══════════════════════════════════════════════════════════════════
+    # 3. WATER SAVINGS CALCULATOR
+    # ═══════════════════════════════════════════════════════════════════
 
     def _calculate_annual_reinvestment(
         self,
@@ -870,28 +880,28 @@ class CostBenefitCalculator:
     ) -> float:
         """
         Calculate annual reinvestment based on each material's persistence.
-        
+
         Scientific principle:
         - Materials with persistence_years >= analysis_years: ONE-TIME cost
         - Materials with persistence_years < analysis_years: Reapply periodically
-        
+
         Formula:
         For each material i:
             if persistence_i >= analysis_years:
                 annual_cost_i = 0  # Already paid in initial investment
             else:
                 annual_cost_i = material_cost_i / persistence_i
-        
+
         Example:
         - Zeolite (100 yr persistence): $800 / 100 = $8/yr ≈ 0
         - Biochar (1000 yr): $600 / 1000 = $0.6/yr ≈ 0
         - Sheep manure (1 yr): $240 / 1 = $240/yr
         - Straw mulch (2 yr): $75 / 2 = $37.5/yr
-        
+
         Args:
             formulation_materials: {material_code: kg_per_ha}
             analysis_years: Analysis period (default 10)
-        
+
         Returns:
             Annual reinvestment cost per hectare
         """
@@ -922,9 +932,12 @@ class CostBenefitCalculator:
             total_annual_reinvest += annual_cost
 
         return round(total_annual_reinvest, 2)
+
+
 @dataclass
 class WaterSavingsResult:
     """Water savings analysis."""
+
     baseline_irrigation_m3_ha: float
     new_irrigation_m3_ha: float
     water_saved_m3_ha: float
@@ -941,7 +954,7 @@ class WaterSavingsResult:
 class WaterSavingsCalculator:
     """
     Water savings calculator using FAO-56 principles.
-    
+
     Factors:
     - Evaporation reduction (mulch, OM)
     - Soil water retention (zeolite, biochar, clay, vermiculite)
@@ -972,9 +985,9 @@ class WaterSavingsCalculator:
         # Combined savings (not simply additive - use multiplicative)
         # Each factor contributes independently
         remaining_fraction = (
-            (1 - evap_reduction / 100) *
-            (1 - retention_improvement / 300) *  # smaller effect
-            (1 - infiltration_gain / 200)  # smaller effect
+            (1 - evap_reduction / 100)
+            * (1 - retention_improvement / 300)  # smaller effect
+            * (1 - infiltration_gain / 200)  # smaller effect
         )
 
         water_saving_pct = (1 - remaining_fraction) * 100
@@ -1052,9 +1065,7 @@ class WaterSavingsCalculator:
             improvement += min(zeolite_tons * 3, 25)
 
         if "CAR-021" in materials or "CAR-022" in materials:
-            biochar_tons = (
-                materials.get("CAR-021", 0) + materials.get("CAR-022", 0)
-            ) / 1000
+            biochar_tons = (materials.get("CAR-021", 0) + materials.get("CAR-022", 0)) / 1000
             improvement += min(biochar_tons * 2, 15)
 
         if "MIN-013" in materials:  # Vermiculite
@@ -1097,9 +1108,11 @@ class WaterSavingsCalculator:
 # 4. SCALE CALCULATOR
 # ═══════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class ScaleResult:
     """Scale calculation result."""
+
     area_ha: float
     scale_category: str  # micro, small, medium, large, industrial, mega
     material_quantities: dict[str, dict[str, float]]  # code -> {kg, tons, cost}
@@ -1115,7 +1128,7 @@ class ScaleResult:
 class ScaleCalculator:
     """
     Scale calculator for 1-1000+ hectares.
-    
+
     Calculates:
     - Material quantities scaled to area
     - Logistics requirements
@@ -1144,7 +1157,7 @@ class ScaleCalculator:
     ) -> ScaleResult:
         """
         Scale formulation to given area.
-        
+
         Args:
             formulation_per_ha: {material_code: kg_per_ha}
             area_ha: Total area in hectares
@@ -1195,9 +1208,9 @@ class ScaleCalculator:
         total_tons = sum(q["tons"] for q in quantities.values())
 
         if total_tons > 100:
-            logistics.append(f"Requires ~{int(total_tons/20)} truck loads (20t each)")
+            logistics.append(f"Requires ~{int(total_tons / 20)} truck loads (20t each)")
         elif total_tons > 10:
-            logistics.append(f"Requires ~{int(total_tons/5)} small truck loads (5t each)")
+            logistics.append(f"Requires ~{int(total_tons / 5)} small truck loads (5t each)")
         else:
             logistics.append("Can use pickup trucks or trailers")
 
@@ -1234,9 +1247,19 @@ class ScaleCalculator:
         elif scale_cat == "medium":
             equipment = ["Tractor (50-100 HP)", "Manure spreader", "Plow", "Disc harrow"]
         elif scale_cat == "large":
-            equipment = ["Large tractor (100+ HP)", "Bulk spreader", "Deep plow", "Irrigation system"]
+            equipment = [
+                "Large tractor (100+ HP)",
+                "Bulk spreader",
+                "Deep plow",
+                "Irrigation system",
+            ]
         elif scale_cat == "industrial":
-            equipment = ["Multiple tractors", "Industrial spreaders", "GPS-guided equipment", "Trucks"]
+            equipment = [
+                "Multiple tractors",
+                "Industrial spreaders",
+                "GPS-guided equipment",
+                "Trucks",
+            ]
         elif scale_cat == "mega":
             equipment = ["Industrial fleet", "Bulldozers", "Multiple trucks", "Processing facility"]
 

@@ -1,4 +1,5 @@
 """Bots FastAPI router"""
+
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -7,10 +8,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.hub import hub
 
+
 # Compatibility: get_db via hub
 async def get_db():
     async with hub.get_async_session() as session:
         yield session
+
+
 from services.bots.unified_service import (
     BotMessage,
     BotPlatform,
@@ -20,20 +24,24 @@ from services.bots.unified_service import (
 
 router = APIRouter(prefix="/bots", tags=["Bots"])
 
+
 class SendMessageRequest(BaseModel):
     platform: str
     chat_id: str
     content: str
     message_type: str = "text"
 
+
 class BroadcastRequest(BaseModel):
     chat_id: str
     content: str
     platforms: list[str] | None = None
 
+
 class AdviceRequest(BaseModel):
     question: str
     village_id: str | None = None
+
 
 @router.post("/send")
 async def send_message(req: SendMessageRequest, db: AsyncSession = Depends(get_db)):
@@ -47,6 +55,7 @@ async def send_message(req: SendMessageRequest, db: AsyncSession = Depends(get_d
     result = await service.send_message(message)
     return {"success": result.success, "error": result.error}
 
+
 @router.post("/broadcast")
 async def broadcast(req: BroadcastRequest, db: AsyncSession = Depends(get_db)):
     service = UnifiedBotService(db)
@@ -58,10 +67,8 @@ async def broadcast(req: BroadcastRequest, db: AsyncSession = Depends(get_db)):
     )
     platforms = [BotPlatform(p) for p in req.platforms] if req.platforms else None
     results = await service.broadcast(message, platforms)
-    return {
-        p.value: {"success": r.success, "error": r.error}
-        for p, r in results.items()
-    }
+    return {p.value: {"success": r.success, "error": r.error} for p, r in results.items()}
+
 
 @router.post("/advice")
 async def get_advice(req: AdviceRequest, db: AsyncSession = Depends(get_db)):

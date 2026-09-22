@@ -1,10 +1,11 @@
 from sqlalchemy import select
+
 """API endpoints for Marketplace."""
 
 import contextlib
 import logging
-from datetime import datetime, timezone
-from typing import Optional
+import os
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from pydantic import BaseModel, Field
@@ -12,20 +13,24 @@ from sqlalchemy.orm import Session
 
 from database.hub import hub
 from database.models import User
-from services.api_gateway.auth import require_user, require_admin
+from services.api_gateway.auth import require_admin, require_user
+from services.business_modules.carbon import get_tokenization_service
 from services.marketplace.models import (
+    MarketplaceSeller,
     OrderStatus,
     Product,
     ProductCategory,
-    Marketplace,
-    MarketplaceMember,
-    MarketplaceSeller,
 )
 from services.marketplace.order_management import get_order_manager
+from services.marketplace.payments_service import (
+    EscrowService,
+    PaymentError,
+    PaymentGateways,
+    bank_instructions,
+)
 from services.marketplace.product_catalog import get_catalog
-from services.marketplace.traceability import get_traceability
 from services.marketplace.service import get_marketplace_service
-from services.business_modules.carbon import get_tokenization_service
+from services.marketplace.traceability import get_traceability
 
 logger = logging.getLogger(__name__)
 
@@ -54,9 +59,9 @@ class ProductCreateRequest(BaseModel):
     category: str = Field(..., min_length=2)
     price: float = Field(..., gt=0)
     village_id: str = Field(..., min_length=1)
-    description: str = Field(default='', max_length=2000)
+    description: str = Field(default="", max_length=2000)
     stock: int = Field(default=0, ge=0)
-    unit: str = Field(default='kg')
+    unit: str = Field(default="kg")
     images: list[str] = Field(default_factory=list)
 
 
@@ -89,16 +94,22 @@ def list_products(
             {
                 "id": p.id,
                 "name": p.name,
-                "slug": p.slug if hasattr(p, 'slug') else '',
-                "category": p.category.value if hasattr(p.category, 'value') else str(p.category),
-                "description": p.description if hasattr(p, 'description') else '',
-                "price_per_kg": p.price_per_kg if hasattr(p, 'price_per_kg') else getattr(p, 'price', 0),
-                "quantity_available_kg": p.quantity_available_kg if hasattr(p, 'quantity_available_kg') else getattr(p, 'stock', 0),
-                "organic_certified": p.organic_certified if hasattr(p, 'organic_certified') else False,
+                "slug": p.slug if hasattr(p, "slug") else "",
+                "category": p.category.value if hasattr(p.category, "value") else str(p.category),
+                "description": p.description if hasattr(p, "description") else "",
+                "price_per_kg": p.price_per_kg
+                if hasattr(p, "price_per_kg")
+                else getattr(p, "price", 0),
+                "quantity_available_kg": p.quantity_available_kg
+                if hasattr(p, "quantity_available_kg")
+                else getattr(p, "stock", 0),
+                "organic_certified": p.organic_certified
+                if hasattr(p, "organic_certified")
+                else False,
                 "producer_name": p.producer_name,
                 "origin_location": p.origin_location,
                 "traceability_code": p.traceability_code,
-                "images": p.images if hasattr(p, 'images') else [],
+                "images": p.images if hasattr(p, "images") else [],
             }
             for p in products
         ],
@@ -176,7 +187,7 @@ def get_product(product_id: str):
         "harvest_date": product.harvest_date.isoformat() if product.harvest_date else None,
         "batch_number": product.batch_number,
         "traceability_code": product.traceability_code,
-        "images": product.images if hasattr(product, 'images') else [],
+        "images": product.images if hasattr(product, "images") else [],
     }
 
 
@@ -232,7 +243,7 @@ async def upload_product_images(
         uploaded_urls.append(f"/uploads/products/{product_id}/{file.filename}")
 
     # Update product images (extend existing)
-    existing_images = getattr(product, 'images', [])
+    existing_images = getattr(product, "images", [])
     product.images = existing_images + uploaded_urls
 
     return {"product_id": product_id, "images": product.images}
@@ -315,7 +326,7 @@ def list_orders(status: str | None = None):
                 "id": o.id,
                 "product_name": o.product_name,
                 "buyer_name": o.buyer_name,
-                "seller_id": getattr(o, 'seller_id', ''),
+                "seller_id": getattr(o, "seller_id", ""),
                 "quantity_kg": o.quantity_kg,
                 "total_price": o.total_price,
                 "status": o.status.value,
@@ -356,41 +367,57 @@ def track_order(order_id: str):
     ]
 
     if order.status in ["confirmed", "shipped", "delivered"]:
-        timeline.append({
-            "timestamp": order.updated_at.isoformat() if hasattr(order, 'updated_at') else order.created_at.isoformat(),
-            "status": "confirmed",
-            "title": "سفارش تایید شد",
-            "description": "فروشنده سفارش را تایید کرد و در حال آماده‌سازی است",
-        })
+        timeline.append(
+            {
+                "timestamp": order.updated_at.isoformat()
+                if hasattr(order, "updated_at")
+                else order.created_at.isoformat(),
+                "status": "confirmed",
+                "title": "سفارش تایید شد",
+                "description": "فروشنده سفارش را تایید کرد و در حال آماده‌سازی است",
+            }
+        )
 
     if order.status in ["shipped", "delivered"]:
-        timeline.append({
-            "timestamp": order.updated_at.isoformat() if hasattr(order, 'updated_at') else order.created_at.isoformat(),
-            "status": "shipped",
-            "title": "ارسال شد",
-            "description": "سفارش توسط پست/باربری ارسال شد",
-        })
+        timeline.append(
+            {
+                "timestamp": order.updated_at.isoformat()
+                if hasattr(order, "updated_at")
+                else order.created_at.isoformat(),
+                "status": "shipped",
+                "title": "ارسال شد",
+                "description": "سفارش توسط پست/باربری ارسال شد",
+            }
+        )
 
     if order.status == "delivered":
-        timeline.append({
-            "timestamp": order.updated_at.isoformat() if hasattr(order, 'updated_at') else order.created_at.isoformat(),
-            "status": "delivered",
-            "title": "تحویل داده شد",
-            "description": "سفارش به مقصد تحویل داده شد",
-        })
+        timeline.append(
+            {
+                "timestamp": order.updated_at.isoformat()
+                if hasattr(order, "updated_at")
+                else order.created_at.isoformat(),
+                "status": "delivered",
+                "title": "تحویل داده شد",
+                "description": "سفارش به مقصد تحویل داده شد",
+            }
+        )
 
     if order.status == "cancelled":
-        timeline.append({
-            "timestamp": order.updated_at.isoformat() if hasattr(order, 'updated_at') else order.created_at.isoformat(),
-            "status": "cancelled",
-            "title": "لغو شد",
-            "description": "سفارش لغو گردید",
-        })
+        timeline.append(
+            {
+                "timestamp": order.updated_at.isoformat()
+                if hasattr(order, "updated_at")
+                else order.created_at.isoformat(),
+                "status": "cancelled",
+                "title": "لغو شد",
+                "description": "سفارش لغو گردید",
+            }
+        )
 
     return {
         "order_id": order.id,
-        "order_number": getattr(order, 'order_number', order.id),
-        "current_status": order.status.value if hasattr(order.status, 'value') else order.status,
+        "order_number": getattr(order, "order_number", order.id),
+        "current_status": order.status.value if hasattr(order.status, "value") else order.status,
         "timeline": timeline,
     }
 
@@ -728,9 +755,10 @@ async def apply_vendor(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+
 @router.get("/vendors")
 async def list_vendors(
-    location: Optional[str] = Query(None, max_length=100),
+    location: str | None = Query(None, max_length=100),
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
 ):
@@ -761,6 +789,7 @@ async def list_vendors(
     if location:
         vendors = [v for v in vendors if location.lower() in (v["location"] or "").lower()]
     return {"vendors": vendors, "offset": offset, "limit": limit}
+
 
 @router.get("/vendors/{vendor_id}")
 async def get_vendor(vendor_id: str):
@@ -798,7 +827,7 @@ async def vendor_products(
 @router.get("/vendors/{vendor_id}/orders")
 async def vendor_orders(
     vendor_id: str,
-    status: Optional[str] = Query(None),
+    status: str | None = Query(None),
 ):
     """Get orders for a vendor."""
     order_manager = get_order_manager()
@@ -839,7 +868,12 @@ async def admin_approve_product(
     product = catalog.get_product(product_id) if hasattr(catalog, "get_product") else None
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    return {"product_id": product_id, "approved": approve, "status": "approved" if approve else "rejected"}
+    return {
+        "product_id": product_id,
+        "approved": approve,
+        "status": "approved" if approve else "rejected",
+    }
+
 
 @router.patch("/admin/vendors/{vendor_id}/approve")
 async def admin_approve_vendor(
@@ -854,14 +888,14 @@ async def admin_approve_vendor(
             raise HTTPException(status_code=404, detail="Vendor not found")
         row.status = "active" if approve else "suspended"
         row.is_verified = bool(approve)
-        row.verified_at = datetime.now(timezone.utc) if approve else None
+        row.verified_at = datetime.now(UTC) if approve else None
         session.commit()
         return {"vendor_id": vendor_id, "approved": approve, "status": row.status}
 
 
 @router.get("/admin/orders")
 async def admin_orders(
-    status: Optional[str] = Query(None),
+    status: str | None = Query(None),
     user: User = Depends(require_admin),
 ):
     """Admin: list all orders."""
@@ -873,7 +907,7 @@ async def admin_orders(
                 "id": o.id,
                 "product_name": o.product_name,
                 "buyer_name": o.buyer_name,
-                "seller_id": getattr(o, 'seller_id', ''),
+                "seller_id": getattr(o, "seller_id", ""),
                 "quantity_kg": o.quantity_kg,
                 "total_price": o.total_price,
                 "status": o.status.value,
@@ -917,23 +951,25 @@ async def create_marketplace(
 
     service = get_marketplace_service(db)
     try:
-        marketplace = await service.register_marketplace({
-            "name": payload.name,
-            "slug": payload.name.lower().replace(" ", "-"),
-            "description": payload.description,
-            "marketplace_type": payload.marketplace_type,
-            "address": payload.address,
-            "postal_code": payload.postal_code,
-            "location": payload.location,
-            "village_id": payload.village_id,
-            "founder_ids": payload.founder_ids + [user.id],
-            "e_commerce_rules_accepted": payload.e_commerce_rules_accepted,
-            "buy_sell_rules_accepted": payload.buy_sell_rules_accepted,
-            "rules_document": payload.rules_document,
-            "contact_email": payload.contact_email,
-            "contact_phone": payload.contact_phone,
-            "status": "pending",
-        })
+        marketplace = await service.register_marketplace(
+            {
+                "name": payload.name,
+                "slug": payload.name.lower().replace(" ", "-"),
+                "description": payload.description,
+                "marketplace_type": payload.marketplace_type,
+                "address": payload.address,
+                "postal_code": payload.postal_code,
+                "location": payload.location,
+                "village_id": payload.village_id,
+                "founder_ids": payload.founder_ids + [user.id],
+                "e_commerce_rules_accepted": payload.e_commerce_rules_accepted,
+                "buy_sell_rules_accepted": payload.buy_sell_rules_accepted,
+                "rules_document": payload.rules_document,
+                "contact_email": payload.contact_email,
+                "contact_phone": payload.contact_phone,
+                "status": "pending",
+            }
+        )
         return {"marketplace_id": marketplace.id, "status": "pending"}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -941,9 +977,9 @@ async def create_marketplace(
 
 @router.get("/marketplaces")
 async def list_marketplaces(
-    marketplace_type: Optional[str] = Query(None),
-    village_id: Optional[str] = Query(None),
-    status: Optional[str] = Query(None),
+    marketplace_type: str | None = Query(None),
+    village_id: str | None = Query(None),
+    status: str | None = Query(None),
     limit: int = Query(50, ge=1, le=100),
 ):
     """List all marketplaces."""
@@ -1018,7 +1054,9 @@ async def approve_marketplace(
     """Admin: approve or reject a marketplace."""
     service = get_marketplace_service(db)
     try:
-        marketplace = await service.verify_marketplace(marketplace_id, approve=approve, verified_by=user.id)
+        marketplace = await service.verify_marketplace(
+            marketplace_id, approve=approve, verified_by=user.id
+        )
         return {"marketplace_id": marketplace.id, "approved": approve, "status": marketplace.status}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -1091,8 +1129,13 @@ async def create_marketplace_shop(
 
 class PaymentRequest(BaseModel):
     order_id: str = Field(..., min_length=1)
-    payment_method: str = Field(default="wallet")
+    payment_method: str = Field(default="bank")
     amount: float = Field(..., gt=0)
+    description: str = Field(default="", max_length=500)
+
+
+class PaymentConfirmRequest(BaseModel):
+    ref_id: str = Field(default="", max_length=120)  # bank tracking code / gateway ref
 
 
 @router.post("/payments")
@@ -1100,14 +1143,125 @@ async def create_payment(
     payload: PaymentRequest,
     user: User = Depends(require_user),
 ):
-    """Create a payment for an order."""
-    return {"payment_id": f"pay_{payload.order_id}", "status": "pending", "amount": payload.amount}
+    """Create a gateway payment for an order (real DB row + escrow-ready)."""
+    with hub.get_session() as session:
+        try:
+            gateways = PaymentGateways(session, base_url=os.getenv("PUBLIC_BASE_URL", ""))
+            payment = gateways.create(
+                order_id=payload.order_id,
+                user_id=str(user.id),
+                gateway=payload.payment_method,
+                amount=payload.amount,
+                description=payload.description,
+            )
+            out = payment.to_dict()
+            if payload.payment_method == "bank":
+                out["bank_instructions"] = bank_instructions()
+            return out
+        except PaymentError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 @router.post("/payments/{payment_id}/confirm")
 async def confirm_payment(
     payment_id: str,
+    payload: PaymentConfirmRequest,
     user: User = Depends(require_user),
 ):
-    """Confirm a payment."""
-    return {"payment_id": payment_id, "status": "confirmed"}
+    """Verify the gateway payment and place the amount into escrow hold."""
+    with hub.get_session() as session:
+        try:
+            payment = EscrowService(session).get_payment(payment_id)
+            payment = PaymentGateways(session).verify(payment, ref_id=payload.ref_id or None)
+            escrow_entries = EscrowService(session).by_order(payment.order_id)
+            return {
+                "payment": payment.to_dict(),
+                "escrow": "held",
+                "escrow_entries": [
+                    {
+                        "id": e.id,
+                        "entry_type": e.entry_type,
+                        "amount": float(e.amount) if e.amount is not None else None,
+                    }
+                    for e in escrow_entries
+                ],
+            }
+        except (PaymentError, LookupError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/payments/{payment_id}/escrow/release")
+async def release_escrow(
+    payment_id: str,
+    user: User = Depends(require_admin),
+):
+    """Admin: release escrowed funds to the seller (delivery confirmed)."""
+    with hub.get_session() as session:
+        try:
+            entry = EscrowService(session).release(payment_id, actor_id=str(user.id))
+            return {
+                "ok": True,
+                "entry": {
+                    "id": entry.id,
+                    "payment_id": entry.payment_id,
+                    "order_id": entry.order_id,
+                    "entry_type": entry.entry_type,
+                    "amount": float(entry.amount) if entry.amount is not None else None,
+                    "created_at": entry.created_at.isoformat() if entry.created_at else None,
+                },
+            }
+        except LookupError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except PaymentError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/payments/{payment_id}/escrow/refund")
+async def refund_escrow(
+    payment_id: str,
+    user: User = Depends(require_admin),
+):
+    """Admin: refund escrowed funds to the buyer (cancellation)."""
+    with hub.get_session() as session:
+        try:
+            entry = EscrowService(session).refund(payment_id, actor_id=str(user.id))
+            return {
+                "ok": True,
+                "entry": {
+                    "id": entry.id,
+                    "payment_id": entry.payment_id,
+                    "entry_type": entry.entry_type,
+                    "amount": float(entry.amount) if entry.amount is not None else None,
+                },
+            }
+        except LookupError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except PaymentError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.get("/payments/{payment_id}/escrow")
+async def escrow_status(
+    payment_id: str,
+    user: User = Depends(require_user),
+):
+    """Escrow ledger entries for a payment."""
+    with hub.get_session() as session:
+        try:
+            payment = EscrowService(session).get_payment(payment_id)
+            entries = EscrowService(session).by_order(payment.order_id)
+            return {
+                "payment_id": payment_id,
+                "payment_status": payment.status,
+                "escrow_status": payment.escrow_status,
+                "entries": [
+                    {
+                        "id": e.id,
+                        "entry_type": e.entry_type,
+                        "amount": float(e.amount) if e.amount is not None else None,
+                    }
+                    for e in entries
+                ],
+            }
+        except LookupError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc

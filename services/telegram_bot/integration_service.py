@@ -1,4 +1,5 @@
 """TelegramIntegrationService - advanced telegram bot features"""
+
 import structlog
 
 logger = structlog.get_logger()
@@ -19,6 +20,7 @@ class CommandType(str, Enum):
     MARKET = "/market"
     REPORT = "/report"
 
+
 @dataclass
 class TelegramUser:
     user_id: int
@@ -28,6 +30,7 @@ class TelegramUser:
     is_premium: bool = False
     registered_at: datetime = None
 
+
 @dataclass
 class TelegramMessage:
     message_id: int
@@ -36,10 +39,11 @@ class TelegramMessage:
     command: CommandType | None = None
     reply_to: int | None = None
 
+
 class TelegramIntegrationService:
     """
     سرویس یکپارچه ربات تلگرام
-    
+
     قابلیت‌ها:
     - مدیریت دستورات (/advisor, /weather, /crop)
     - یکپارچه‌سازی با scientific_motors
@@ -65,8 +69,8 @@ class TelegramIntegrationService:
     async def process_message(self, message: TelegramMessage) -> str:
         """پردازش پیام ورودی"""
         # تشخیص دستور
-        if message.text.startswith('/'):
-            cmd_str = message.text.split()[0].split('@')[0]
+        if message.text.startswith("/"):
+            cmd_str = message.text.split()[0].split("@")[0]
             try:
                 command = CommandType(cmd_str)
                 handler = self._handlers.get(command)
@@ -105,8 +109,9 @@ class TelegramIntegrationService:
         """مشاوره کشاورزی"""
         try:
             from services.bots.unified_service import UnifiedBotService
+
             bot_service = UnifiedBotService(self.db)
-            question = ' '.join(message.text.split()[1:]) or "وضعیت زمین من چطور است؟"
+            question = " ".join(message.text.split()[1:]) or "وضعیت زمین من چطور است؟"
             advice = await bot_service.get_advice(question, message.user.village_id)
             return f"🌾 مشاوره کشاورزی:\n\n{advice}"
         except Exception as e:
@@ -155,6 +160,7 @@ class TelegramIntegrationService:
         """پردازش متن آزاد با AI"""
         try:
             from services.bots.unified_service import UnifiedBotService
+
             bot_service = UnifiedBotService(self.db)
             advice = await bot_service.get_advice(message.text, message.user.village_id)
             return advice
@@ -162,7 +168,10 @@ class TelegramIntegrationService:
             return "متوجه نشدم. لطفاً از /help برای دیدن دستورات استفاده کنید."
 
     async def send_notification(
-        self, user_id: int, message: str, priority: str = "normal",
+        self,
+        user_id: int,
+        message: str,
+        priority: str = "normal",
     ) -> bool:
         """ارسال اعلان به کاربر"""
         # در production: استفاده از Telegram Bot API

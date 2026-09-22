@@ -46,7 +46,9 @@ class LandscapeVillage(Base):
     smart_contract_address = Column(String(100))
     blockchain_network = Column(String(50))
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    updated_at = Column(
+        DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC)
+    )
 
 
 class LandscapeGovernanceMember(Base):
@@ -79,7 +81,9 @@ class LandscapeFund(Base):
     currency = Column(String(3), default="IRR")
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    updated_at = Column(
+        DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC)
+    )
 
 
 class LandscapeFundDistribution(Base):

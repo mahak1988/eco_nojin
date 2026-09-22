@@ -12,6 +12,7 @@ Status contract:
   a full SWAT+ simulation needs the free SWAT+ rev60 executable
   (https://swat.tamu.edu/software/plus/). No fabricated runoff.
 """
+
 from __future__ import annotations
 
 import json
@@ -31,6 +32,7 @@ from .base import (
 
 try:
     import pySWATPlus
+
     PY_SWAT_AVAILABLE = True
 except Exception:  # pragma: no cover
     PY_SWAT_AVAILABLE = False
@@ -45,6 +47,7 @@ def _swat_version() -> str:
         except Exception:
             return "unknown"
     return str(v or "1.3.0")
+
 
 SWAT_PLUS_URL = "https://swat.tamu.edu/software/plus/"
 PROJECT_DIR = Path(__file__).resolve().parents[2] / "data" / "swat_projects"
@@ -65,7 +68,9 @@ class SWATPrepMotor(AbstractScientificMotor):
         return [
             MotorInput("lat", "scalar", description="Basin latitude"),
             MotorInput("lon", "scalar", description="Basin longitude"),
-            MotorInput("monthly_precipitation_mm", "timeseries", description="12 monthly precip sums"),
+            MotorInput(
+                "monthly_precipitation_mm", "timeseries", description="12 monthly precip sums"
+            ),
             MotorInput("monthly_temperature_c", "timeseries", description="12 monthly mean temps"),
             MotorInput("soil_texture", "scalar", description="SoilGrids texture"),
             MotorInput("land_use", "scalar", description="cropland/grassland/forest/..."),
@@ -74,18 +79,19 @@ class SWATPrepMotor(AbstractScientificMotor):
     def get_outputs(self) -> list[MotorOutput]:
         return [
             MotorOutput("project_path", "scalar", "path", "SWAT+ project descriptor path"),
-            MotorOutput("run_requires_executable", "scalar", "bool", "Full run needs the SWAT+ binary"),
+            MotorOutput(
+                "run_requires_executable", "scalar", "bool", "Full run needs the SWAT+ binary"
+            ),
         ]
 
-    async def execute(
-        self, inputs: dict[str, Any], parameters: MotorParameters
-    ) -> MotorResult:
+    async def execute(self, inputs: dict[str, Any], parameters: MotorParameters) -> MotorResult:
         start_time = time.time()
         run_id = f"SWAT_PREP_{int(time.time())}"
 
         if not PY_SWAT_AVAILABLE:
             return MotorResult(
-                run_id=run_id, motor_type=self.motor_type,
+                run_id=run_id,
+                motor_type=self.motor_type,
                 status=MotorStatus.FAILED,
                 error_message="pySWATPlus not installed (pip install pySWATPlus)",
             )
@@ -151,7 +157,8 @@ class SWATPrepMotor(AbstractScientificMotor):
             )
         except Exception as exc:
             return MotorResult(
-                run_id=run_id, motor_type=self.motor_type,
+                run_id=run_id,
+                motor_type=self.motor_type,
                 status=MotorStatus.FAILED,
                 error_message=f"SWAT+ prep failed: {exc}",
                 execution_time_seconds=round(time.time() - start_time, 3),

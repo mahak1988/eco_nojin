@@ -1,4 +1,5 @@
 """Goat Simulator - شبیه‌ساز بز"""
+
 from services.livestock.schemas import (
     AnimalProduction,
     EconomicAnalysis,
@@ -40,14 +41,24 @@ class GoatSimulator(BaseLivestockSimulator):
         )
 
         production = AnimalProduction(
-            milk_kg_day=round(self.MILK_YIELD_LITERS_DAY * herd.head_count * quality_factor * (herd.female_ratio_pct / 100), 2),
+            milk_kg_day=round(
+                self.MILK_YIELD_LITERS_DAY
+                * herd.head_count
+                * quality_factor
+                * (herd.female_ratio_pct / 100),
+                2,
+            ),
             meat_kg_year=round(self.MEAT_YIELD_KG * herd.head_count * 0.5 * quality_factor, 2),
-            offspring_per_year=round(herd.head_count * (herd.female_ratio_pct / 100) * self.KIDDING_RATE, 2),
+            offspring_per_year=round(
+                herd.head_count * (herd.female_ratio_pct / 100) * self.KIDDING_RATE, 2
+            ),
         )
 
         manure = self.calculate_manure(self.BODY_WEIGHT_KG, herd.head_count)
         methane = self.calculate_methane(daily_dmi, herd.head_count) * 0.25
-        carrying_capacity = int(request.land_area_ha * forage.dry_matter_ton_ha * 1000 / (daily_dmi * 365))
+        carrying_capacity = int(
+            request.land_area_ha * forage.dry_matter_ton_ha * 1000 / (daily_dmi * 365)
+        )
 
         environmental = EnvironmentalImpact(
             methane_kg_co2e_year=round(methane, 1),
@@ -63,7 +74,9 @@ class GoatSimulator(BaseLivestockSimulator):
         )
 
         prices = request.market_prices or {
-            "milk_usd_kg": 1.2, "meat_usd_kg": 9.0, "feed_usd_kg": 0.3,
+            "milk_usd_kg": 1.2,
+            "meat_usd_kg": 9.0,
+            "feed_usd_kg": 0.3,
         }
 
         revenue = (

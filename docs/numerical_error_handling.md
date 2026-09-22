@@ -48,6 +48,7 @@ FROM table
 ```python
 import math
 
+
 def safe_sqrt(x):
     """محاسبه امن ریشه دوم"""
     if x is None or math.isnan(x) or math.isinf(x):
@@ -55,6 +56,7 @@ def safe_sqrt(x):
     if x < 0:
         return None
     return math.sqrt(x)
+
 
 def safe_log(x, base=10):
     """محاسبه امن لگاریتم"""

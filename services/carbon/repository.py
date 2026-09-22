@@ -1,7 +1,6 @@
 """Carbon project repository — database-backed persistence for carbon projects."""
 
 from datetime import datetime
-from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -20,7 +19,7 @@ class CarbonProjectRepository:
         name: str,
         project_type: str = "afforestation",
         area_ha: float = 0.0,
-        user_id: Optional[str] = None,
+        user_id: str | None = None,
         status: str = "draft",
         credits_issued: float = 0.0,
         **kwargs,
@@ -34,7 +33,9 @@ class CarbonProjectRepository:
             area_hectares=area_ha,
             status=status,
             credits_issued=credits_issued,
-            registered_at=datetime.utcnow() if status in ("registered", "verified", "certified") else None,
+            registered_at=datetime.utcnow()
+            if status in ("registered", "verified", "certified")
+            else None,
             **kwargs,
         )
         self.db.add(project)
@@ -42,15 +43,15 @@ class CarbonProjectRepository:
         self.db.refresh(project)
         return project
 
-    def get_project(self, project_id: str) -> Optional[CarbonProject]:
+    def get_project(self, project_id: str) -> CarbonProject | None:
         """Get project by project_id."""
         return self.db.query(CarbonProject).filter(CarbonProject.project_id == project_id).first()
 
-    def get_project_by_db_id(self, db_id: int) -> Optional[CarbonProject]:
+    def get_project_by_db_id(self, db_id: int) -> CarbonProject | None:
         """Get project by database ID."""
         return self.db.query(CarbonProject).filter(CarbonProject.id == db_id).first()
 
-    def list_projects(self, user_id: Optional[str] = None, status: Optional[str] = None):
+    def list_projects(self, user_id: str | None = None, status: str | None = None):
         """List projects with optional filters."""
         query = self.db.query(CarbonProject)
         if user_id is not None:
@@ -59,7 +60,7 @@ class CarbonProjectRepository:
             query = query.filter(CarbonProject.status == status)
         return query.order_by(CarbonProject.registered_at.desc()).all()
 
-    def update_project(self, project_id: str, **kwargs) -> Optional[CarbonProject]:
+    def update_project(self, project_id: str, **kwargs) -> CarbonProject | None:
         """Update project fields."""
         project = self.get_project(project_id)
         if not project:

@@ -6,12 +6,12 @@ auditable "oracle report" (the migration target from econojin.com).
 The report is generated ONLY from real stored state (project + checks) —
 never fabricated; it can be rendered as a PDF certificate later.
 """
+
 from __future__ import annotations
 
 from typing import Any
 
-from database import models  # noqa: F401
-from database.hub import hub
+from database import models
 
 
 def build_oracle_report(project: models.CarbonProject) -> dict[str, Any]:

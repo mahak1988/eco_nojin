@@ -1,4 +1,5 @@
 """Phase 8 integration tests: register -> verify (honest) -> issue -> wallet."""
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -145,5 +146,5 @@ class TestVerification:
         from services.carbon.verification import check_permanence
 
         assert check_permanence(10, False)["passed"] is False  # too short
-        assert check_permanence(30, True)["passed"] is False   # risk flag
+        assert check_permanence(30, True)["passed"] is False  # risk flag
         assert check_permanence(30, False)["passed"] is True

@@ -7,6 +7,7 @@ GET  /api/v1/hydroma/economics          -> metadata
 GET  /api/v1/hydroma/economics/{id}     -> one tool's metadata
 POST /api/v1/hydroma/economics/{id}/run -> execute (pure compute)
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -30,9 +31,20 @@ _SPECS: list[dict[str, Any]] = [
         "description": "NPV (discounted cashflows) and simple payback period.",
         "reference": "FAO Investment Centre",
         "params": [
-            {"name": "cashflows", "label": "Cashflows (year 0 first)", "unit": "", "kind": "list_float",
-             "default": [-1000, 300, 400, 500, 600]},
-            {"name": "discount_rate", "label": "Discount rate", "unit": "", "kind": "float", "default": 0.1},
+            {
+                "name": "cashflows",
+                "label": "Cashflows (year 0 first)",
+                "unit": "",
+                "kind": "list_float",
+                "default": [-1000, 300, 400, 500, 600],
+            },
+            {
+                "name": "discount_rate",
+                "label": "Discount rate",
+                "unit": "",
+                "kind": "float",
+                "default": 0.1,
+            },
         ],
     },
     {
@@ -41,15 +53,63 @@ _SPECS: list[dict[str, Any]] = [
         "description": "Agricultural production cost breakdown per hectare and total.",
         "reference": "HyDroMa",
         "params": [
-            {"name": "area_hectares", "label": "Area", "unit": "ha", "kind": "float", "default": 10.0},
+            {
+                "name": "area_hectares",
+                "label": "Area",
+                "unit": "ha",
+                "kind": "float",
+                "default": 10.0,
+            },
             {"name": "crop_type", "label": "Crop", "unit": "", "kind": "str", "default": "wheat"},
-            {"name": "labor_hours_per_hectare", "label": "Labor hours/ha", "unit": "h", "kind": "float", "default": 80.0},
-            {"name": "labor_cost_per_hour", "label": "Labor cost/h", "unit": "", "kind": "float", "default": 0.5},
-            {"name": "seed_cost_per_hectare", "label": "Seed cost/ha", "unit": "", "kind": "float", "default": 500.0},
-            {"name": "fertilizer_cost_per_hectare", "label": "Fertilizer cost/ha", "unit": "", "kind": "float", "default": 800.0},
-            {"name": "machinery_cost_per_hectare", "label": "Machinery cost/ha", "unit": "", "kind": "float", "default": 600.0},
-            {"name": "land_rent_per_hectare", "label": "Land rent/ha", "unit": "", "kind": "float", "default": 0.0},
-            {"name": "other_variable_costs_per_hectare", "label": "Other variable costs/ha", "unit": "", "kind": "float", "default": 0.0},
+            {
+                "name": "labor_hours_per_hectare",
+                "label": "Labor hours/ha",
+                "unit": "h",
+                "kind": "float",
+                "default": 80.0,
+            },
+            {
+                "name": "labor_cost_per_hour",
+                "label": "Labor cost/h",
+                "unit": "",
+                "kind": "float",
+                "default": 0.5,
+            },
+            {
+                "name": "seed_cost_per_hectare",
+                "label": "Seed cost/ha",
+                "unit": "",
+                "kind": "float",
+                "default": 500.0,
+            },
+            {
+                "name": "fertilizer_cost_per_hectare",
+                "label": "Fertilizer cost/ha",
+                "unit": "",
+                "kind": "float",
+                "default": 800.0,
+            },
+            {
+                "name": "machinery_cost_per_hectare",
+                "label": "Machinery cost/ha",
+                "unit": "",
+                "kind": "float",
+                "default": 600.0,
+            },
+            {
+                "name": "land_rent_per_hectare",
+                "label": "Land rent/ha",
+                "unit": "",
+                "kind": "float",
+                "default": 0.0,
+            },
+            {
+                "name": "other_variable_costs_per_hectare",
+                "label": "Other variable costs/ha",
+                "unit": "",
+                "kind": "float",
+                "default": 0.0,
+            },
         ],
     },
     {
@@ -58,11 +118,41 @@ _SPECS: list[dict[str, Any]] = [
         "description": "Agricultural revenue with quality and market-access factors.",
         "reference": "HyDroMa",
         "params": [
-            {"name": "area_hectares", "label": "Area", "unit": "ha", "kind": "float", "default": 10.0},
-            {"name": "yield_ton_per_ha", "label": "Yield", "unit": "t/ha", "kind": "float", "default": 5.0},
-            {"name": "market_price_per_ton", "label": "Market price", "unit": "/t", "kind": "float", "default": 300.0},
-            {"name": "quality_factor", "label": "Quality factor", "unit": "", "kind": "float", "default": 1.0},
-            {"name": "market_access_factor", "label": "Market access", "unit": "", "kind": "float", "default": 1.0},
+            {
+                "name": "area_hectares",
+                "label": "Area",
+                "unit": "ha",
+                "kind": "float",
+                "default": 10.0,
+            },
+            {
+                "name": "yield_ton_per_ha",
+                "label": "Yield",
+                "unit": "t/ha",
+                "kind": "float",
+                "default": 5.0,
+            },
+            {
+                "name": "market_price_per_ton",
+                "label": "Market price",
+                "unit": "/t",
+                "kind": "float",
+                "default": 300.0,
+            },
+            {
+                "name": "quality_factor",
+                "label": "Quality factor",
+                "unit": "",
+                "kind": "float",
+                "default": 1.0,
+            },
+            {
+                "name": "market_access_factor",
+                "label": "Market access",
+                "unit": "",
+                "kind": "float",
+                "default": 1.0,
+            },
         ],
     },
     {
@@ -71,12 +161,41 @@ _SPECS: list[dict[str, Any]] = [
         "description": "Full financial metrics from investment, cashflows and lifetime.",
         "reference": "HyDroMa",
         "params": [
-            {"name": "initial_investment", "label": "Initial investment", "unit": "", "kind": "float", "default": 10000.0},
-            {"name": "cash_flows", "label": "Annual cashflows", "unit": "", "kind": "list_float",
-             "default": [3000, 3500, 4000, 4500]},
-            {"name": "discount_rate", "label": "Discount rate", "unit": "", "kind": "float", "default": 0.1},
-            {"name": "project_lifetime_years", "label": "Lifetime", "unit": "year", "kind": "int", "default": 4},
-            {"name": "salvage_value", "label": "Salvage value", "unit": "", "kind": "float", "default": 0.0},
+            {
+                "name": "initial_investment",
+                "label": "Initial investment",
+                "unit": "",
+                "kind": "float",
+                "default": 10000.0,
+            },
+            {
+                "name": "cash_flows",
+                "label": "Annual cashflows",
+                "unit": "",
+                "kind": "list_float",
+                "default": [3000, 3500, 4000, 4500],
+            },
+            {
+                "name": "discount_rate",
+                "label": "Discount rate",
+                "unit": "",
+                "kind": "float",
+                "default": 0.1,
+            },
+            {
+                "name": "project_lifetime_years",
+                "label": "Lifetime",
+                "unit": "year",
+                "kind": "int",
+                "default": 4,
+            },
+            {
+                "name": "salvage_value",
+                "label": "Salvage value",
+                "unit": "",
+                "kind": "float",
+                "default": 0.0,
+            },
         ],
     },
     {
@@ -85,12 +204,42 @@ _SPECS: list[dict[str, Any]] = [
         "description": "Direct employment estimate for an activity type and scale.",
         "reference": "HyDroMa",
         "params": [
-            {"name": "activity_type", "label": "Activity", "unit": "", "kind": "str", "default": "nursery"},
-            {"name": "scale_of_activity", "label": "Scale", "unit": "", "kind": "float", "default": 10.0},
-            {"name": "employment_intensity_per_unit", "label": "Jobs per unit", "unit": "", "kind": "float", "default": 0.5},
-            {"name": "job_type", "label": "Job type", "unit": "", "kind": "select",
-             "default": "full_time_equivalent", "options": ["full_time_equivalent", "seasonal", "part_time"]},
-            {"name": "duration_months", "label": "Duration", "unit": "month", "kind": "float", "default": 12.0},
+            {
+                "name": "activity_type",
+                "label": "Activity",
+                "unit": "",
+                "kind": "str",
+                "default": "nursery",
+            },
+            {
+                "name": "scale_of_activity",
+                "label": "Scale",
+                "unit": "",
+                "kind": "float",
+                "default": 10.0,
+            },
+            {
+                "name": "employment_intensity_per_unit",
+                "label": "Jobs per unit",
+                "unit": "",
+                "kind": "float",
+                "default": 0.5,
+            },
+            {
+                "name": "job_type",
+                "label": "Job type",
+                "unit": "",
+                "kind": "select",
+                "default": "full_time_equivalent",
+                "options": ["full_time_equivalent", "seasonal", "part_time"],
+            },
+            {
+                "name": "duration_months",
+                "label": "Duration",
+                "unit": "month",
+                "kind": "float",
+                "default": 12.0,
+            },
         ],
     },
     {
@@ -99,14 +248,62 @@ _SPECS: list[dict[str, Any]] = [
         "description": "Market-price risk (VaR-style) plus yield risk for a production area.",
         "reference": "HyDroMa",
         "params": [
-            {"name": "base_price", "label": "Base price", "unit": "", "kind": "float", "default": 300.0},
-            {"name": "volatility", "label": "Price volatility", "unit": "", "kind": "float", "default": 0.2},
-            {"name": "time_horizon_years", "label": "Horizon", "unit": "year", "kind": "int", "default": 5},
-            {"name": "confidence_level", "label": "Confidence level", "unit": "", "kind": "float", "default": 0.05},
-            {"name": "expected_yield", "label": "Expected yield", "unit": "t/ha", "kind": "float", "default": 5.0},
-            {"name": "yield_std_dev", "label": "Yield std dev", "unit": "t/ha", "kind": "float", "default": 0.8},
-            {"name": "area_hectares", "label": "Area", "unit": "ha", "kind": "float", "default": 10.0},
-            {"name": "price_per_unit", "label": "Price per unit", "unit": "", "kind": "float", "default": 300.0},
+            {
+                "name": "base_price",
+                "label": "Base price",
+                "unit": "",
+                "kind": "float",
+                "default": 300.0,
+            },
+            {
+                "name": "volatility",
+                "label": "Price volatility",
+                "unit": "",
+                "kind": "float",
+                "default": 0.2,
+            },
+            {
+                "name": "time_horizon_years",
+                "label": "Horizon",
+                "unit": "year",
+                "kind": "int",
+                "default": 5,
+            },
+            {
+                "name": "confidence_level",
+                "label": "Confidence level",
+                "unit": "",
+                "kind": "float",
+                "default": 0.05,
+            },
+            {
+                "name": "expected_yield",
+                "label": "Expected yield",
+                "unit": "t/ha",
+                "kind": "float",
+                "default": 5.0,
+            },
+            {
+                "name": "yield_std_dev",
+                "label": "Yield std dev",
+                "unit": "t/ha",
+                "kind": "float",
+                "default": 0.8,
+            },
+            {
+                "name": "area_hectares",
+                "label": "Area",
+                "unit": "ha",
+                "kind": "float",
+                "default": 10.0,
+            },
+            {
+                "name": "price_per_unit",
+                "label": "Price per unit",
+                "unit": "",
+                "kind": "float",
+                "default": 300.0,
+            },
         ],
     },
 ]
@@ -195,6 +392,6 @@ def run_economics_tool(model_id: str, params: dict[str, Any]) -> dict[str, Any]:
         result = _RUNNERS[model_id](kwargs)
     except (ValueError, TypeError, KeyError) as exc:
         raise HTTPException(status_code=422, detail=f"tool rejected inputs: {exc}") from exc
-    except Exception as exc:  # noqa: BLE001 - explicit failure, never silent
+    except Exception as exc:
         raise HTTPException(status_code=500, detail=f"tool execution failed: {exc}") from exc
     return {"id": model_id, "result": jsonable(result)}

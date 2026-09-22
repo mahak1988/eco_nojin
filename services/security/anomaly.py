@@ -5,6 +5,7 @@ Per-IP sliding profile: request volume, 4xx ratio, query-string entropy
 user-agent diversity. Score >= 80 flags the IP as anomalous; the middleware
 then throttles it (slower budget) and logs the event.
 """
+
 import math
 import threading
 import time

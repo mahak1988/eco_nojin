@@ -1,5 +1,7 @@
 """Vegetation Fetcher - Synthetic Sentinel-2 spectral data with phenology."""
+
 from __future__ import annotations
+
 import structlog
 
 logger = structlog.get_logger()
@@ -40,10 +42,10 @@ class VegetationFetcher(MapFetcher):
     # Phenology: NDVI by season for different land covers
     PHENOLOGY = {
         "cropland": {"spring": 0.65, "summer": 0.55, "autumn": 0.30, "winter": 0.15},
-        "forest":   {"spring": 0.75, "summer": 0.80, "autumn": 0.60, "winter": 0.55},
-        "grass":    {"spring": 0.60, "summer": 0.45, "autumn": 0.25, "winter": 0.10},
-        "shrub":    {"spring": 0.50, "summer": 0.40, "autumn": 0.30, "winter": 0.25},
-        "bare":     {"spring": 0.10, "summer": 0.08, "autumn": 0.08, "winter": 0.05},
+        "forest": {"spring": 0.75, "summer": 0.80, "autumn": 0.60, "winter": 0.55},
+        "grass": {"spring": 0.60, "summer": 0.45, "autumn": 0.25, "winter": 0.10},
+        "shrub": {"spring": 0.50, "summer": 0.40, "autumn": 0.30, "winter": 0.25},
+        "bare": {"spring": 0.10, "summer": 0.08, "autumn": 0.08, "winter": 0.05},
     }
 
     def __init__(self, cache_dir: Path = Path("data/maps/vegetation_cache")):
@@ -81,9 +83,7 @@ class VegetationFetcher(MapFetcher):
                 cache_path.unlink(missing_ok=True)
 
         # Generate synthetic Sentinel-2
-        s2_data = await self._generate_synthetic_s2(
-            region, resolution, season, cloud_cover_pct
-        )
+        s2_data = await self._generate_synthetic_s2(region, resolution, season, cloud_cover_pct)
 
         # Save to cache
         s2_data.rio.to_raster(str(cache_path), driver="GTiff", compress="lzw")
@@ -116,9 +116,7 @@ class VegetationFetcher(MapFetcher):
             if band == "SCL":
                 band_data = self._generate_scl(height, width, cloud_cover_pct)
             else:
-                band_data = self._generate_spectral_band(
-                    band, land_cover, season, height, width
-                )
+                band_data = self._generate_spectral_band(band, land_cover, season, height, width)
             bands_data.append(band_data)
 
         # Stack into 3D array (band, y, x)
@@ -198,10 +196,9 @@ class VegetationFetcher(MapFetcher):
 
             # Higher NDVI = more vegetation contribution
             veg_fraction = ndvi
-            base_reflectance = (
-                veg_fraction * np.random.uniform(veg_low, veg_high, (height, width))
-                + (1 - veg_fraction) * np.random.uniform(soil_low, soil_high, (height, width))
-            )
+            base_reflectance = veg_fraction * np.random.uniform(
+                veg_low, veg_high, (height, width)
+            ) + (1 - veg_fraction) * np.random.uniform(soil_low, soil_high, (height, width))
 
             # Add noise
             noise = np.random.normal(0, 100, (height, width))

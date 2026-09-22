@@ -1,6 +1,6 @@
 packages:
-  - frontend
   - apps/*
+  - mobile
   - packages/*
   - services/*
 autoInstallPeers: true
@@ -13,6 +13,23 @@ allowBuilds:
   prisma: false
   sharp: true
   msw: true
+  '@parcel/watcher': true
+  '@swc/core': true
 overrides:
   '@types/react': 19.0.0
   '@types/react-dom': 19.0.0
+minimumReleaseAgeExclude:
+  - '@orval/angular@8.35.0'
+  - '@orval/axios@8.35.0'
+  - '@orval/core@8.35.0'
+  - '@orval/effect@8.35.0'
+  - '@orval/fetch@8.35.0'
+  - '@orval/hono@8.35.0'
+  - '@orval/mcp@8.35.0'
+  - '@orval/mock@8.35.0'
+  - '@orval/pinia-colada@8.35.0'
+  - '@orval/query@8.35.0'
+  - '@orval/solid-start@8.35.0'
+  - '@orval/swr@8.35.0'
+  - '@orval/zod@8.35.0'
+  - orval@8.35.0

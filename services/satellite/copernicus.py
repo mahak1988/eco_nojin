@@ -26,6 +26,7 @@ References
 - CDSE OData: https://documentation.dataspace.copernicus.eu/APIs/OData.html
 - CDSE STAC: https://documentation.dataspace.copernicus.eu/APIs/STAC.html
 """
+
 from __future__ import annotations
 
 import logging
@@ -47,12 +48,8 @@ logger = logging.getLogger(__name__)
 # Configuration (env, read live at construction)
 # ---------------------------------------------------------------------------
 
-CDSE_STAC_URL = os.environ.get(
-    "CDSE_STAC_URL", "https://stac.dataspace.copernicus.eu"
-)
-CDSE_IDENTITY_URL = os.environ.get(
-    "CDSE_IDENTITY_URL", "https://identity.dataspace.copernicus.eu"
-)
+CDSE_STAC_URL = os.environ.get("CDSE_STAC_URL", "https://stac.dataspace.copernicus.eu")
+CDSE_IDENTITY_URL = os.environ.get("CDSE_IDENTITY_URL", "https://identity.dataspace.copernicus.eu")
 
 #: Credential styles: client_credentials OR password grant (cdse-public)
 CDSE_CLIENT_ID = os.environ.get("CDSE_CLIENT_ID", "")
@@ -70,6 +67,7 @@ S2_ASSET_SCL = "SCL"
 # ---------------------------------------------------------------------------
 # Domain errors
 # ---------------------------------------------------------------------------
+
 
 class CopernicusError(Exception):
     """Base error for the Copernicus client."""
@@ -90,6 +88,7 @@ class CopernicusBandError(CopernicusError):
 # ---------------------------------------------------------------------------
 # Pure spectral index math (unit-testable, no I/O)
 # ---------------------------------------------------------------------------
+
 
 def ndvi_from_bands(nir: float, red: float) -> float:
     """Normalised Difference Vegetation Index from NIR and RED reflectances.
@@ -114,8 +113,13 @@ def ndvi_from_bands(nir: float, red: float) -> float:
 
 
 def evi_from_bands(
-    nir: float, red: float, blue: float,
-    c1: float = 6.0, c2: float = 7.5, l: float = 1.0, g: float = 2.5,
+    nir: float,
+    red: float,
+    blue: float,
+    c1: float = 6.0,
+    c2: float = 7.5,
+    l: float = 1.0,
+    g: float = 2.5,
 ) -> float:
     """Enhanced Vegetation Index (Sentinel-2 variant), clamped to [-1, 1]."""
     for name, value in (("nir", nir), ("red", red), ("blue", blue)):
@@ -153,6 +157,7 @@ def _reflectance(raw: float, scale: float = 1.0 / 10000.0) -> float:
     """Sentinel-2 L2A COG values are scaled integer DN (0..10000)."""
     return max(0.0, min(1.0, float(raw) * scale))
 
+
 #: SCL (Scene Classification Layer) classes treated as CLEAR sky.
 #: 4 = vegetation, 5 = non-vegetated, 6 = water.
 SCL_CLEAR_CLASSES = frozenset({4, 5, 6})
@@ -182,9 +187,11 @@ def clear_ratio_from_scl(window: np.ndarray) -> float | None:
 # Models
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True)
 class Scene:
     """A Sentinel-2 L2A STAC item."""
+
     id: str
     datetime: str
     cloud_cover: float
@@ -198,6 +205,7 @@ class Scene:
 @dataclass(frozen=True)
 class BandSample:
     """Real reflectance sample for one band."""
+
     band: str
     reflectance: float
     crs: str
@@ -208,6 +216,7 @@ class BandSample:
 # ---------------------------------------------------------------------------
 # Client
 # ---------------------------------------------------------------------------
+
 
 class CopernicusClient:
     """Credential-gated CDSE client with real band sampling."""
@@ -223,22 +232,20 @@ class CopernicusClient:
         timeout: float = 30.0,
     ) -> None:
         # Read env at construction time so tests/settings apply live.
-        self.client_id = client_id if client_id is not None else os.environ.get("CDSE_CLIENT_ID", "")
+        self.client_id = (
+            client_id if client_id is not None else os.environ.get("CDSE_CLIENT_ID", "")
+        )
         self.client_secret = (
-            client_secret if client_secret is not None
-            else os.environ.get("CDSE_CLIENT_SECRET", "")
+            client_secret if client_secret is not None else os.environ.get("CDSE_CLIENT_SECRET", "")
         )
         self.username = username if username is not None else os.environ.get("CDSE_USERNAME", "")
         self.password = password if password is not None else os.environ.get("CDSE_PASSWORD", "")
         self.identity_url = (
-            identity_url or os.environ.get(
-                "CDSE_IDENTITY_URL", "https://identity.dataspace.copernicus.eu"
-            )
+            identity_url
+            or os.environ.get("CDSE_IDENTITY_URL", "https://identity.dataspace.copernicus.eu")
         ).rstrip("/")
         self.stac_url = (
-            stac_url or os.environ.get(
-                "CDSE_STAC_URL", "https://stac.dataspace.copernicus.eu"
-            )
+            stac_url or os.environ.get("CDSE_STAC_URL", "https://stac.dataspace.copernicus.eu")
         ).rstrip("/")
         self._timeout = timeout
         self._token: str | None = None
@@ -249,9 +256,7 @@ class CopernicusClient:
     @property
     def configured(self) -> bool:
         """True when a usable credential style is present."""
-        return bool(
-            (self.client_id and self.client_secret) or (self.username and self.password)
-        )
+        return bool((self.client_id and self.client_secret) or (self.username and self.password))
 
     # -- auth --------------------------------------------------------------
 
@@ -435,9 +440,7 @@ class CopernicusClient:
                     res = abs(src_r.transform.a) or 10.0
                     step = max(1, int(round(spacing_m / res)))
                     half = (n * step) // 2
-                    win = rasterio.windows.Window(
-                        col - half, row - half, n * step, n * step
-                    )
+                    win = rasterio.windows.Window(col - half, row - half, n * step, n * step)
                     red = src_r.read(1, window=win).astype(np.float64)
                     nir = src_n.read(1, window=win).astype(np.float64)
                     rows, cols = red.shape
@@ -464,9 +467,7 @@ class CopernicusClient:
             logger.warning("NDVI grid sampling failed: %s", exc)
         return out
 
-    def _sample_scl_window(
-        self, data: bytes, lon: float, lat: float, size: int = 5
-    ) -> np.ndarray:
+    def _sample_scl_window(self, data: bytes, lon: float, lat: float, size: int = 5) -> np.ndarray:
         """Read an SCL COG and return a size x size window around (lon, lat)."""
         try:
             with MemoryFile(data) as mem, mem.open() as src:
@@ -476,9 +477,7 @@ class CopernicusClient:
                 xs, ys = float(xs_arr[0]), float(ys_arr[0])
                 row, col = src.index(xs, ys)
                 half = size // 2
-                window = rasterio.windows.Window(
-                    col - half, row - half, size, size
-                )
+                window = rasterio.windows.Window(col - half, row - half, size, size)
                 arr = src.read(1, window=window)
                 return np.asarray(arr, dtype=np.uint8)
         except rasterio.errors.RasterioIOError as exc:
@@ -545,13 +544,14 @@ class CopernicusClient:
         if analysis_date:
             d = date.fromisoformat(analysis_date)
             scenes = self.search_stac(
-                latitude, longitude, start_date=d, end_date=d,
+                latitude,
+                longitude,
+                start_date=d,
+                end_date=d,
                 collection="landsat-8-9-c2-l2",
             )
         else:
-            scenes = self.search_stac(
-                latitude, longitude, collection="landsat-8-9-c2-l2"
-            )
+            scenes = self.search_stac(latitude, longitude, collection="landsat-8-9-c2-l2")
         usable = [s for s in scenes if s.is_usable]
         if not usable:
             return {"status": "no_scene", "data_source": "copernicus_landsat"}
@@ -559,7 +559,8 @@ class CopernicusClient:
         href = scene.assets.get("ST_B10")
         if not href:
             return {
-                "status": "band_error", "data_source": "copernicus_landsat",
+                "status": "band_error",
+                "data_source": "copernicus_landsat",
                 "error": "scene lacks ST_B10 asset",
             }
         token = self.get_token()
@@ -588,13 +589,14 @@ class CopernicusClient:
         if analysis_date:
             d = date.fromisoformat(analysis_date)
             scenes = self.search_stac(
-                latitude, longitude, start_date=d, end_date=d,
+                latitude,
+                longitude,
+                start_date=d,
+                end_date=d,
                 collection="sentinel-1-grd",
             )
         else:
-            scenes = self.search_stac(
-                latitude, longitude, collection="sentinel-1-grd"
-            )
+            scenes = self.search_stac(latitude, longitude, collection="sentinel-1-grd")
         if not scenes:
             return {"status": "no_scene", "data_source": "copernicus_sentinel1"}
         scene = scenes[0]
@@ -602,7 +604,8 @@ class CopernicusClient:
         vh_href = scene.assets.get("VH")
         if not vv_href or not vh_href:
             return {
-                "status": "band_error", "data_source": "copernicus_sentinel1",
+                "status": "band_error",
+                "data_source": "copernicus_sentinel1",
                 "error": "scene lacks VV/VH assets",
             }
         token = self.get_token()
@@ -625,7 +628,10 @@ class CopernicusClient:
     # -- end-to-end analysis -----------------------------------------------
 
     async def analyze_location(
-        self, latitude: float, longitude: float, analysis_date: str | None = None,
+        self,
+        latitude: float,
+        longitude: float,
+        analysis_date: str | None = None,
         with_grid: bool = False,
     ) -> dict[str, Any]:
         """Real scene-based analysis for a point (Phase 4 core path).
@@ -648,8 +654,13 @@ class CopernicusClient:
         if not usable:
             return {
                 "status": "no_scene",
-                "scene_id": None, "scene_name": None, "sensed_at": None,
-                "cloud_cover": None, "ndvi": None, "evi": None, "savi": None,
+                "scene_id": None,
+                "scene_name": None,
+                "sensed_at": None,
+                "cloud_cover": None,
+                "ndvi": None,
+                "evi": None,
+                "savi": None,
                 "data_source": "copernicus",
             }
         scene = usable[0]
@@ -658,10 +669,15 @@ class CopernicusClient:
         except CopernicusError as exc:
             return {
                 "status": "band_error",
-                "scene_id": scene.id, "scene_name": scene.id,
-                "sensed_at": scene.datetime, "cloud_cover": scene.cloud_cover,
-                "ndvi": None, "evi": None, "savi": None,
-                "data_source": "copernicus", "error": str(exc),
+                "scene_id": scene.id,
+                "scene_name": scene.id,
+                "sensed_at": scene.datetime,
+                "cloud_cover": scene.cloud_cover,
+                "ndvi": None,
+                "evi": None,
+                "savi": None,
+                "data_source": "copernicus",
+                "error": str(exc),
             }
         clear_ratio = bands.get("scl_clear_ratio")
         if clear_ratio is not None and clear_ratio < 0.5:
@@ -674,14 +690,14 @@ class CopernicusClient:
                 "sensed_at": scene.datetime,
                 "cloud_cover": scene.cloud_cover,
                 "scl_clear_ratio": clear_ratio,
-                "ndvi": None, "evi": None, "savi": None,
+                "ndvi": None,
+                "evi": None,
+                "savi": None,
                 "data_source": "copernicus",
                 "error": "sampled pixel is cloud-covered (SCL)",
             }
         ndvi = ndvi_from_bands(bands["nir"], bands["red"])
-        evi = evi_from_bands(
-            bands["nir"], bands["red"], bands.get("blue") or 0.1
-        )
+        evi = evi_from_bands(bands["nir"], bands["red"], bands.get("blue") or 0.1)
         savi = savi_from_bands(bands["nir"], bands["red"])
         result: dict[str, Any] = {
             "status": "ok",

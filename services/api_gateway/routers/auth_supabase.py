@@ -15,22 +15,17 @@ from typing import Any
 import httpx
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.hub import hub
 from database.models import User
 from services.api_gateway.auth import (
     create_access_token,
     create_refresh_token,
-    hash_password,
+    require_admin,
     role_of,
-    verify_password,
 )
 from services.api_gateway.routers.auth import (
-    RegisterRequest,
     get_async_db,
-    user_to_response,
 )
 
 router = APIRouter(prefix="/api/v1/auth/supabase", tags=["auth-supabase"])
@@ -72,6 +67,7 @@ async def _supabase_reachable() -> bool:
     try:
         cfg = _cfg()
         import socket
+
         host = cfg["url"].replace("https://", "").replace("http://", "").split("/")[0]
         socket.getaddrinfo(host, 443)
         return True
@@ -97,7 +93,9 @@ class SignupRequest(BaseModel):
     country: str | None = None
     city: str | None = None
     address: str | None = None
-    role: str = Field(default="regular", pattern="^(farmer|researcher|organization|tourist|regular)$")
+    role: str = Field(
+        default="regular", pattern="^(farmer|researcher|organization|tourist|regular)$"
+    )
     language: str = Field(default="fa", pattern="^(fa|en|ar|tr)$")
 
 
@@ -106,13 +104,24 @@ class LoginRequest(BaseModel):
     password: str
 
 
-async def _goto(session: httpx.AsyncClient, cfg: dict[str, str], path: str, body: dict[str, Any], key: str) -> dict[str, Any]:
+async def _goto(
+    session: httpx.AsyncClient, cfg: dict[str, str], path: str, body: dict[str, Any], key: str
+) -> dict[str, Any]:
     r = await session.post(
         f"{cfg['url']}{path}",
         json=body,
-        headers={"apikey": key, "Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+        headers={
+            "apikey": key,
+            "Authorization": f"Bearer {key}",
+            "Content-Type": "application/json",
+        },
     )
-    return {"http": r.status_code, "body": r.json() if r.headers.get("content-type", "").startswith("application/json") else {"raw": r.text[:200]}}
+    return {
+        "http": r.status_code,
+        "body": r.json()
+        if r.headers.get("content-type", "").startswith("application/json")
+        else {"raw": r.text[:200]},
+    }
 
 
 @router.post("/signup")
@@ -147,7 +156,11 @@ async def signup(req: SignupRequest, db: AsyncSession = Depends(get_async_db)) -
             res = await _goto(s, cfg, "/auth/v1/signup", payload, cfg["anon"])
         body = res["body"]
         if res["http"] not in (200, 201):
-            return {"status": "error", "error": body.get("msg") or body.get("error_description") or f"HTTP {res['http']}", "http": res["http"]}
+            return {
+                "status": "error",
+                "error": body.get("msg") or body.get("error_description") or f"HTTP {res['http']}",
+                "http": res["http"],
+            }
         user = body.get("user") or {}
         user_id = user.get("id")
         session = body.get("session")
@@ -171,15 +184,27 @@ async def signup(req: SignupRequest, db: AsyncSession = Depends(get_async_db)) -
                 await s2.put(
                     f"{cfg['url']}/auth/v1/admin/users/{user_id}",
                     json={"email_confirmed_at": "now()"},
-                    headers={"apikey": cfg["svc"], "Authorization": f"Bearer {cfg['svc']}", "Content-Type": "application/json"},
+                    headers={
+                        "apikey": cfg["svc"],
+                        "Authorization": f"Bearer {cfg['svc']}",
+                        "Content-Type": "application/json",
+                    },
                 )
                 # 2. Mint a session via password grant
                 tr = await s2.post(
                     f"{cfg['url']}/auth/v1/token?grant_type=password",
                     json={"email": req.email, "password": req.password},
-                    headers={"apikey": cfg["anon"], "Authorization": f"Bearer {cfg['anon']}", "Content-Type": "application/json"},
+                    headers={
+                        "apikey": cfg["anon"],
+                        "Authorization": f"Bearer {cfg['anon']}",
+                        "Content-Type": "application/json",
+                    },
                 )
-                tbody = tr.json() if tr.headers.get("content-type", "").startswith("application/json") else {}
+                tbody = (
+                    tr.json()
+                    if tr.headers.get("content-type", "").startswith("application/json")
+                    else {}
+                )
                 if tr.status_code == 200 and tbody.get("access_token"):
                     return {
                         "status": "ok",
@@ -214,6 +239,7 @@ async def signup(req: SignupRequest, db: AsyncSession = Depends(get_async_db)) -
 async def _local_signup(req: SignupRequest, db: AsyncSession) -> dict[str, Any]:
     """Fallback: create the user in the local SQLite auth router."""
     from sqlalchemy import select as _select
+
     from database.models import User as _User
     from services.api_gateway.auth import hash_password as _hash
 
@@ -264,10 +290,20 @@ async def login(req: LoginRequest, db: AsyncSession = Depends(get_async_db)) -> 
 
         cfg = _cfg()
         async with httpx.AsyncClient(timeout=20) as s:
-            res = await _goto(s, cfg, "/auth/v1/token?grant_type=password", {"email": req.email, "password": req.password}, cfg["anon"])
+            res = await _goto(
+                s,
+                cfg,
+                "/auth/v1/token?grant_type=password",
+                {"email": req.email, "password": req.password},
+                cfg["anon"],
+            )
         body = res["body"]
         if res["http"] != 200:
-            return {"status": "error", "error": body.get("msg") or body.get("error_description") or f"HTTP {res['http']}", "http": res["http"]}
+            return {
+                "status": "error",
+                "error": body.get("msg") or body.get("error_description") or f"HTTP {res['http']}",
+                "http": res["http"],
+            }
         return {
             "status": "ok",
             "access_token": body.get("access_token"),
@@ -285,6 +321,7 @@ async def login(req: LoginRequest, db: AsyncSession = Depends(get_async_db)) -> 
 async def _local_login(req: LoginRequest, db: AsyncSession) -> dict[str, Any]:
     """Fallback: verify the user against the local SQLite auth router."""
     from sqlalchemy import select as _select
+
     from database.models import User as _User
     from services.api_gateway.auth import verify_password as _verify
 
@@ -359,6 +396,7 @@ async def me(access_token: str, db: AsyncSession = Depends(get_async_db)) -> dic
 async def _local_me(access_token: str, db: AsyncSession) -> dict[str, Any]:
     """Fallback: decode the local JWT and look up the user in SQLite."""
     from sqlalchemy import select as _select
+
     from database.models import User as _User
     from services.api_gateway.auth import decode_token
 
@@ -398,7 +436,9 @@ async def _local_me(access_token: str, db: AsyncSession) -> dict[str, Any]:
 
 
 @router.put("/profile")
-async def update_profile(access_token: str, body: dict[str, Any], db: AsyncSession = Depends(get_async_db)) -> dict[str, Any]:
+async def update_profile(
+    access_token: str, body: dict[str, Any], db: AsyncSession = Depends(get_async_db)
+) -> dict[str, Any]:
     """Update the current user's profile via the admin users endpoint.
     Requires SUPABASE_SERVICE_ROLE_KEY (server-side only — never exposed
     to the frontend).
@@ -429,7 +469,11 @@ async def update_profile(access_token: str, body: dict[str, Any], db: AsyncSessi
             pr = await s.put(
                 f"{cfg['url']}/auth/v1/admin/users/{user_id}",
                 json={"user_metadata": new_meta},
-                headers={"apikey": cfg["svc"], "Authorization": f"Bearer {cfg['svc']}", "Content-Type": "application/json"},
+                headers={
+                    "apikey": cfg["svc"],
+                    "Authorization": f"Bearer {cfg['svc']}",
+                    "Content-Type": "application/json",
+                },
             )
         if pr.status_code not in (200, 201):
             return await _local_update_profile(access_token, body, db)
@@ -440,9 +484,12 @@ async def update_profile(access_token: str, body: dict[str, Any], db: AsyncSessi
         return {"status": "error", "error": str(exc)}
 
 
-async def _local_update_profile(access_token: str, body: dict[str, Any], db: AsyncSession) -> dict[str, Any]:
+async def _local_update_profile(
+    access_token: str, body: dict[str, Any], db: AsyncSession
+) -> dict[str, Any]:
     """Fallback: update the user's profile in the local SQLite auth router."""
     from sqlalchemy import select as _select
+
     from database.models import User as _User
     from services.api_gateway.auth import decode_token
 
@@ -487,8 +534,11 @@ async def _local_update_profile(access_token: str, body: dict[str, Any], db: Asy
 
 
 @router.post("/admin/delete-user")
-async def admin_delete_user(user_id: str) -> dict[str, Any]:
-    """Admin-only: delete a test user (service role). Never called from the frontend."""
+async def admin_delete_user(
+    user_id: str,
+    current_user: User = Depends(require_admin),
+) -> dict[str, Any]:
+    """Admin-only: delete a test user (service role). Requires admin role."""
     try:
         cfg = _cfg()
         if not cfg["svc"]:
@@ -511,7 +561,9 @@ SUPPORTED_OAUTH_PROVIDERS = ("google", "github", "microsoft")
 
 
 @router.get("/oauth/login")
-async def oauth_login(provider: str, redirect_uri: str = "http://localhost:5173/login") -> dict[str, Any]:
+async def oauth_login(
+    provider: str, redirect_uri: str = "http://localhost:5173/login"
+) -> dict[str, Any]:
     """Generate an OAuth authorization URL for the given provider.
 
     PRIMARY: Supabase GoTrue (real Google/GitHub/Microsoft OAuth).
@@ -524,15 +576,17 @@ async def oauth_login(provider: str, redirect_uri: str = "http://localhost:5173/
     if await _supabase_reachable():
         try:
             cfg = _cfg()
-            import secrets
-            import hashlib
             import base64
+            import hashlib
+            import secrets
             from urllib.parse import urlencode
 
             code_verifier = base64.urlsafe_b64encode(secrets.token_bytes(32)).decode().rstrip("=")
-            code_challenge = base64.urlsafe_b64encode(
-                hashlib.sha256(code_verifier.encode()).digest()
-            ).decode().rstrip("=")
+            code_challenge = (
+                base64.urlsafe_b64encode(hashlib.sha256(code_verifier.encode()).digest())
+                .decode()
+                .rstrip("=")
+            )
 
             params = {
                 "provider": provider,
@@ -547,7 +601,7 @@ async def oauth_login(provider: str, redirect_uri: str = "http://localhost:5173/
                 "provider": provider,
                 "code_verifier": code_verifier,
             }
-        except Exception as exc:
+        except Exception:
             # Fall through to the local mock if the real OAuth fails.
             pass
 
@@ -555,8 +609,8 @@ async def oauth_login(provider: str, redirect_uri: str = "http://localhost:5173/
     # Generate a deterministic mock code that the callback endpoint can
     # exchange for a local user account. The email is derived from the
     # provider so the same user always gets the same account.
-    import hashlib as _hashlib
     import secrets as _secrets
+
     mock_code = _secrets.token_urlsafe(16)
     return {
         "status": "ok",
@@ -604,9 +658,17 @@ async def oauth_callback(
                     "Content-Type": "application/json",
                 },
             )
-            tbody = tr.json() if tr.headers.get("content-type", "").startswith("application/json") else {}
+            tbody = (
+                tr.json()
+                if tr.headers.get("content-type", "").startswith("application/json")
+                else {}
+            )
             if tr.status_code != 200 or not tbody.get("access_token"):
-                return {"status": "error", "error": tbody.get("error_description") or "OAuth exchange failed", "http": tr.status_code}
+                return {
+                    "status": "error",
+                    "error": tbody.get("error_description") or "OAuth exchange failed",
+                    "http": tr.status_code,
+                }
 
             # 2. Get the user info
             ur = await s.get(
@@ -622,6 +684,7 @@ async def oauth_callback(
 
         # 3. Look up or create the user in the local SQLite auth router.
         from sqlalchemy import select as _select
+
         from database.models import User as _User
 
         result = await db.execute(_select(_User).where(_User.email == email))
@@ -675,9 +738,11 @@ async def _local_oauth_callback(
     """Mock OAuth fallback — create or look up a local user account for the
     given provider. The email is derived from the provider so the same user
     always gets the same account across sessions."""
-    from sqlalchemy import select as _select
-    from database.models import User as _User
     import hashlib as _hashlib
+
+    from sqlalchemy import select as _select
+
+    from database.models import User as _User
 
     # Derive a stable email from the code_verifier so the same provider
     # always maps to the same user.

@@ -1,0 +1,124 @@
+# Richards 1D Mixed Form - Test Cases
+# Reference: Celia et al. 1990; van Genuchten 1980
+# Equation: C(h)∂h/∂t = ∂/∂z[K(h)(∂h/∂z + 1)]
+# Mixed form, finite volume, backward Euler, Picard iteration
+
+model: richards_1d
+reference: "Celia et al. 1990; van Genuchten 1980; https://doi.org/10.1029/WR026i007p01483"
+category: hydrology
+language: cpp
+status: validated
+
+tolerances:
+  rtol: 1e-4
+  atol: 1e-6
+  mass_balance_max: 1e-3
+
+van_genuchten_params:
+  # Sandy loam from Carsel & Parrish 1988
+  theta_r: 0.065
+  theta_s: 0.410
+  alpha: 0.075
+  n: 1.89
+  Ks: 106.1  # cm/day
+
+cases:
+  - name: infiltration_sandy_loam_constant_flux
+    description: "Constant flux infiltration into initially dry sandy loam"
+    inputs:
+      soil_type: "sandy_loam"
+      nz: 100
+      dz: 1.0  # cm
+      dt: 3600.0  # seconds (1 hour)
+      n_steps: 24
+      initial_pressure_head: -100.0  # cm (dry)
+      top_boundary:
+        type: "flux"
+        value: 0.5  # cm/day
+      bottom_boundary:
+        type: "free_drainage"
+    expected:
+      # Reference from Celia et al. 1990 Table 1
+      pressure_head_profile: "reference_profiles/richards_sandy_loam_24h.npy"
+      mass_balance_error: "< 1e-3"
+      wetting_front_depth: "~45 cm"
+
+  - name: drainage_loam_initial_hydrostatic
+    description: "Drainage from initially hydrostatic loam profile"
+    inputs:
+      soil_type: "loam"
+      nz: 50
+      dz: 2.0  # cm
+      dt: 7200.0  # seconds (2 hours)
+      n_steps: 48
+      initial_pressure_head: 0.0  # cm (saturated at bottom, hydrostatic)
+      top_boundary:
+        type: "pressure"
+        value: -200.0  # cm (atmospheric)
+      bottom_boundary:
+        type: "free_drainage"
+    expected:
+      mass_balance_error: "< 1e-3"
+      drainage_volume: "reference_profiles/richards_loam_drainage.npy"
+
+  - name: infiltration_silty_clay_ponded
+    description: "Ponded infiltration into silty clay"
+    inputs:
+      soil_type: "silty_clay"
+      nz: 80
+      dz: 1.5  # cm
+      dt: 1800.0  # seconds (30 min)
+      n_steps: 96
+      initial_pressure_head: -500.0  # cm (very dry)
+      top_boundary:
+        type: "pressure"
+        value: 5.0  # cm (5 cm ponding)
+      bottom_boundary:
+        type: "free_drainage"
+    expected:
+      mass_balance_error: "< 1e-3"
+      cumulative_infiltration: "reference_profiles/richards_silty_clay_infil.npy"
+
+  - name: mass_conservation_synthetic
+    description: "Mass conservation test with synthetic uniform soil"
+    inputs:
+      soil_type: "sandy_loam"
+      nz: 100
+      dz: 1.0
+      dt: 3600.0
+      n_steps: 10
+      initial_pressure_head: -100.0
+      top_boundary:
+        type: "flux"
+        value: 1.0
+      bottom_boundary:
+        type: "pressure"
+        value: -50.0
+    expected:
+      mass_balance_error: "< 1e-6"
+      note: "Synthetic test - analytical solution exists for linearized case"
+
+  - name: picard_convergence_test
+    description: "Test Picard iteration convergence for nonlinear case"
+    inputs:
+      soil_type: "clay"
+      nz: 40
+      dz: 2.5
+      dt: 1800.0
+      n_steps: 20
+      initial_pressure_head: -1000.0
+      top_boundary:
+        type: "pressure"
+        value: 10.0
+      bottom_boundary:
+        type: "free_drainage"
+    expected:
+      picard_iterations_per_step: "< 10"
+      max_residual: "< 1e-4"
+      note: "Clay is highly nonlinear - tests convergence robustness"
+
+# Metadata for CI matrix
+ci_matrix:
+  backends: ["cpp", "python"]
+  priority: high
+  estimated_time_seconds: 120

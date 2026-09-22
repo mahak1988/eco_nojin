@@ -52,7 +52,9 @@ async def get_lang(state: FSMContext, message: Message | None = None) -> str:
     data = await state.get_data()
     if data.get("language"):
         return data["language"]
-    detected = i18n.detect_language(message.from_user.language_code if message and message.from_user else None)
+    detected = i18n.detect_language(
+        message.from_user.language_code if message and message.from_user else None
+    )
     await state.update_data(language=detected)
     return detected
 

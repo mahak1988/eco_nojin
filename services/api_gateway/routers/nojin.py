@@ -34,8 +34,10 @@ logger = logging.getLogger(__name__)
 # PYDANTIC MODELS (Request/Response schemas)
 # ═══════════════════════════════════════════════════════════════════
 
+
 class MaterialResponse(BaseModel):
     """Response schema for material."""
+
     material_code: str
     common_name: str
     scientific_name: str | None = None
@@ -61,6 +63,7 @@ class MaterialResponse(BaseModel):
 
 class SoilTypeResponse(BaseModel):
     """Response schema for soil type."""
+
     soil_code: str
     soil_name: str
     soil_category: str | None = None
@@ -78,6 +81,7 @@ class SoilTypeResponse(BaseModel):
 
 class RecipeResponse(BaseModel):
     """Response schema for formulation recipe."""
+
     recipe_code: str
     recipe_name: str
     soil_code: str
@@ -98,6 +102,7 @@ class RecipeResponse(BaseModel):
 
 class SoilClassificationRequest(BaseModel):
     """Request for soil classification."""
+
     ph: float = Field(..., ge=0, le=14, description="Soil pH (0-14)")
     ec_dsm: float = Field(..., ge=0, description="Electrical conductivity (dS/m)")
     om_pct: float = Field(..., ge=0, le=100, description="Organic matter %")
@@ -107,6 +112,7 @@ class SoilClassificationRequest(BaseModel):
 
 class SoilClassificationResponse(BaseModel):
     """Response for soil classification."""
+
     classified_as: str
     soil_code: str
     soil_name: str
@@ -118,6 +124,7 @@ class SoilClassificationResponse(BaseModel):
 
 class RecommendRequest(BaseModel):
     """Request for recommendation."""
+
     soil_code: str = Field(..., description="Soil type code (e.g., SOIL-01)")
     area_ha: float = Field(..., gt=0, le=10000, description="Area in hectares")
     budget_per_ha_usd: float | None = Field(None, gt=0, description="Budget constraint")
@@ -126,6 +133,7 @@ class RecommendRequest(BaseModel):
 
 class RecommendResponse(BaseModel):
     """Response for recommendation."""
+
     recipe_code: str
     recipe_name: str
     area_ha: float
@@ -139,6 +147,7 @@ class RecommendResponse(BaseModel):
 
 class OptimizeRequest(BaseModel):
     """Request for formulation optimization."""
+
     soil_code: str
     area_ha: float
     target_om_increase_pct: float = 3.0
@@ -150,6 +159,7 @@ class OptimizeRequest(BaseModel):
 
 class CostBenefitRequest(BaseModel):
     """Request for cost-benefit analysis."""
+
     formulation: dict[str, float] = Field(..., description="{material_code: kg_per_ha}")
     area_ha: float
     crop_type: str = "wheat"
@@ -160,6 +170,7 @@ class CostBenefitRequest(BaseModel):
 
 class CostBenefitResponse(BaseModel):
     """Response for cost-benefit analysis."""
+
     total_investment_usd: float
     annual_benefit_usd: float
     annual_cost_usd: float
@@ -179,6 +190,7 @@ class CostBenefitResponse(BaseModel):
 
 class WaterSavingsRequest(BaseModel):
     """Request for water savings calculation."""
+
     formulation: dict[str, float]
     area_ha: float
     baseline_irrigation_m3_ha: float = 8000.0
@@ -186,6 +198,7 @@ class WaterSavingsRequest(BaseModel):
 
 class WaterSavingsResponse(BaseModel):
     """Response for water savings."""
+
     baseline_irrigation_m3_ha: float
     new_irrigation_m3_ha: float
     water_saved_m3_ha: float
@@ -198,12 +211,14 @@ class WaterSavingsResponse(BaseModel):
 
 class ScaleRequest(BaseModel):
     """Request for scale calculation."""
+
     formulation: dict[str, float]
     area_ha: float
 
 
 class ScaleResponse(BaseModel):
     """Response for scale calculation."""
+
     area_ha: float
     scale_category: str
     material_quantities: dict[str, dict[str, float]]
@@ -217,6 +232,7 @@ class ScaleResponse(BaseModel):
 
 class FullAnalysisRequest(BaseModel):
     """Complete analysis request combining all calculators."""
+
     soil_code: str
     area_ha: float
     crop_type: str = "wheat"
@@ -228,6 +244,7 @@ class FullAnalysisRequest(BaseModel):
 
 class FullAnalysisResponse(BaseModel):
     """Complete analysis response."""
+
     recommendation: RecommendResponse
     cost_benefit: CostBenefitResponse
     water_savings: WaterSavingsResponse
@@ -237,6 +254,7 @@ class FullAnalysisResponse(BaseModel):
 
 class StatisticsResponse(BaseModel):
     """System statistics."""
+
     materials_count: int
     soil_types_count: int
     recipes_count: int
@@ -249,6 +267,7 @@ class StatisticsResponse(BaseModel):
 
 class HealthResponse(BaseModel):
     """Health check."""
+
     status: str
     version: str
     database_connected: bool
@@ -261,10 +280,12 @@ class HealthResponse(BaseModel):
 # DATABASE DEPENDENCY
 # ═══════════════════════════════════════════════════════════════════
 
+
 def get_db() -> Session:
     """Database session dependency."""
     try:
         from database import SessionLocal
+
         db = SessionLocal()
         try:
             yield db
@@ -274,10 +295,7 @@ def get_db() -> Session:
         raise
     except Exception as e:
         logger.error(f"Database connection failed: {e}")
-        raise HTTPException(
-            status_code=503,
-            detail="Database service unavailable"
-        )
+        raise HTTPException(status_code=503, detail="Database service unavailable")
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -290,7 +308,7 @@ router = APIRouter(
     responses={
         404: {"description": "Resource not found"},
         503: {"description": "Service unavailable"},
-    }
+    },
 )
 
 
@@ -298,11 +316,12 @@ router = APIRouter(
 # HEALTH & STATISTICS
 # ═══════════════════════════════════════════════════════════════════
 
+
 @router.get("/health", response_model=HealthResponse)
 def health_check(db: Session = Depends(get_db)):
     """
     Health check endpoint.
-    
+
     Returns system status, database connectivity, and data counts.
     """
     from datetime import datetime
@@ -336,7 +355,7 @@ def health_check(db: Session = Depends(get_db)):
 def get_statistics(db: Session = Depends(get_db)):
     """
     Get comprehensive system statistics.
-    
+
     Returns counts and averages for all Nojin entities.
     """
     from sqlalchemy import func
@@ -351,13 +370,13 @@ def get_statistics(db: Session = Depends(get_db)):
     soil_types_count = db.query(NojinSoilType).count()
     recipes_count = db.query(NojinFormulationRecipe).count()
 
-    arid_priority = db.query(NojinMaterial).filter(
-        NojinMaterial.arid_priority_score >= 9
-    ).count()
+    arid_priority = db.query(NojinMaterial).filter(NojinMaterial.arid_priority_score >= 9).count()
 
-    high_water = db.query(NojinFormulationRecipe).filter(
-        NojinFormulationRecipe.water_saving_pct >= 40
-    ).count()
+    high_water = (
+        db.query(NojinFormulationRecipe)
+        .filter(NojinFormulationRecipe.water_saving_pct >= 40)
+        .count()
+    )
 
     avg_roi = db.query(func.avg(NojinFormulationRecipe.yield_increase_pct)).scalar() or 0
     avg_water = db.query(func.avg(NojinFormulationRecipe.water_saving_pct)).scalar() or 0
@@ -378,6 +397,7 @@ def get_statistics(db: Session = Depends(get_db)):
 # MATERIALS ENDPOINTS
 # ═══════════════════════════════════════════════════════════════════
 
+
 @router.get("/materials", response_model=list[MaterialResponse])
 def list_materials(
     category: str | None = Query(None, description="Filter by category"),
@@ -388,7 +408,7 @@ def list_materials(
 ):
     """
     List all available materials.
-    
+
     Materials include minerals, organic materials, biochar, manures, etc.
     Each has scientifically-documented properties.
     """
@@ -415,29 +435,31 @@ def list_materials(
         except (json.JSONDecodeError, TypeError):
             benefits, risks = [], []
 
-        results.append(MaterialResponse(
-            material_code=m.material_code,
-            common_name=m.common_name,
-            scientific_name=m.scientific_name,
-            category=m.category,
-            nitrogen_pct=m.nitrogen_pct or 0,
-            phosphorus_pct=m.phosphorus_pct or 0,
-            potassium_pct=m.potassium_pct or 0,
-            calcium_pct=m.calcium_pct or 0,
-            organic_matter_pct=m.organic_matter_pct or 0,
-            cn_ratio=m.cn_ratio,
-            ph=m.ph,
-            cec_cmol_kg=m.cec_cmol_kg,
-            water_retention_pct=m.water_retention_pct,
-            release_rate=m.release_rate,
-            persistence_years=m.persistence_years,
-            cost_per_ton_usd=m.cost_per_ton_usd,
-            availability=m.availability,
-            is_suitable_for_arid=m.is_suitable_for_arid or False,
-            arid_priority_score=m.arid_priority_score,
-            benefits=benefits,
-            overuse_risks=risks,
-        ))
+        results.append(
+            MaterialResponse(
+                material_code=m.material_code,
+                common_name=m.common_name,
+                scientific_name=m.scientific_name,
+                category=m.category,
+                nitrogen_pct=m.nitrogen_pct or 0,
+                phosphorus_pct=m.phosphorus_pct or 0,
+                potassium_pct=m.potassium_pct or 0,
+                calcium_pct=m.calcium_pct or 0,
+                organic_matter_pct=m.organic_matter_pct or 0,
+                cn_ratio=m.cn_ratio,
+                ph=m.ph,
+                cec_cmol_kg=m.cec_cmol_kg,
+                water_retention_pct=m.water_retention_pct,
+                release_rate=m.release_rate,
+                persistence_years=m.persistence_years,
+                cost_per_ton_usd=m.cost_per_ton_usd,
+                availability=m.availability,
+                is_suitable_for_arid=m.is_suitable_for_arid or False,
+                arid_priority_score=m.arid_priority_score,
+                benefits=benefits,
+                overuse_risks=risks,
+            )
+        )
 
     return results
 
@@ -449,7 +471,7 @@ def list_arid_priority_materials(
 ):
     """
     List materials prioritized for arid regions.
-    
+
     These materials are specifically selected for the 2.5 billion people
     living in arid and semi-arid regions.
     """
@@ -457,10 +479,15 @@ def list_arid_priority_materials(
 
     from engine.hydroma.biofertilizer.models import NojinMaterial
 
-    materials = db.query(NojinMaterial).filter(
-        NojinMaterial.is_suitable_for_arid == True,
-        NojinMaterial.arid_priority_score >= min_score,
-    ).order_by(NojinMaterial.arid_priority_score.desc()).all()
+    materials = (
+        db.query(NojinMaterial)
+        .filter(
+            NojinMaterial.is_suitable_for_arid == True,
+            NojinMaterial.arid_priority_score >= min_score,
+        )
+        .order_by(NojinMaterial.arid_priority_score.desc())
+        .all()
+    )
 
     results = []
     for m in materials:
@@ -470,29 +497,31 @@ def list_arid_priority_materials(
         except (json.JSONDecodeError, TypeError):
             benefits, risks = [], []
 
-        results.append(MaterialResponse(
-            material_code=m.material_code,
-            common_name=m.common_name,
-            scientific_name=m.scientific_name,
-            category=m.category,
-            nitrogen_pct=m.nitrogen_pct or 0,
-            phosphorus_pct=m.phosphorus_pct or 0,
-            potassium_pct=m.potassium_pct or 0,
-            calcium_pct=m.calcium_pct or 0,
-            organic_matter_pct=m.organic_matter_pct or 0,
-            cn_ratio=m.cn_ratio,
-            ph=m.ph,
-            cec_cmol_kg=m.cec_cmol_kg,
-            water_retention_pct=m.water_retention_pct,
-            release_rate=m.release_rate,
-            persistence_years=m.persistence_years,
-            cost_per_ton_usd=m.cost_per_ton_usd,
-            availability=m.availability,
-            is_suitable_for_arid=True,
-            arid_priority_score=m.arid_priority_score,
-            benefits=benefits,
-            overuse_risks=risks,
-        ))
+        results.append(
+            MaterialResponse(
+                material_code=m.material_code,
+                common_name=m.common_name,
+                scientific_name=m.scientific_name,
+                category=m.category,
+                nitrogen_pct=m.nitrogen_pct or 0,
+                phosphorus_pct=m.phosphorus_pct or 0,
+                potassium_pct=m.potassium_pct or 0,
+                calcium_pct=m.calcium_pct or 0,
+                organic_matter_pct=m.organic_matter_pct or 0,
+                cn_ratio=m.cn_ratio,
+                ph=m.ph,
+                cec_cmol_kg=m.cec_cmol_kg,
+                water_retention_pct=m.water_retention_pct,
+                release_rate=m.release_rate,
+                persistence_years=m.persistence_years,
+                cost_per_ton_usd=m.cost_per_ton_usd,
+                availability=m.availability,
+                is_suitable_for_arid=True,
+                arid_priority_score=m.arid_priority_score,
+                benefits=benefits,
+                overuse_risks=risks,
+            )
+        )
 
     return results
 
@@ -501,22 +530,17 @@ def list_arid_priority_materials(
 def get_material(material_code: str, db: Session = Depends(get_db)):
     """
     Get detailed information about a specific material.
-    
+
     Example: /api/nojin/materials/MIN-011 (Zeolite)
     """
     import json
 
     from engine.hydroma.biofertilizer.models import NojinMaterial
 
-    material = db.query(NojinMaterial).filter(
-        NojinMaterial.material_code == material_code
-    ).first()
+    material = db.query(NojinMaterial).filter(NojinMaterial.material_code == material_code).first()
 
     if not material:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Material '{material_code}' not found"
-        )
+        raise HTTPException(status_code=404, detail=f"Material '{material_code}' not found")
 
     try:
         benefits = json.loads(material.benefits) if material.benefits else []
@@ -553,6 +577,7 @@ def get_material(material_code: str, db: Session = Depends(get_db)):
 # SOIL TYPES ENDPOINTS
 # ═══════════════════════════════════════════════════════════════════
 
+
 @router.get("/soils", response_model=list[SoilTypeResponse])
 def list_soil_types(db: Session = Depends(get_db)):
     """List all soil types."""
@@ -571,21 +596,23 @@ def list_soil_types(db: Session = Depends(get_db)):
         except (json.JSONDecodeError, TypeError):
             problems, deficiencies, regions = [], [], []
 
-        results.append(SoilTypeResponse(
-            soil_code=s.soil_code,
-            soil_name=s.soil_name,
-            soil_category=s.soil_category,
-            texture=s.texture,
-            typical_ph_min=s.typical_ph_min,
-            typical_ph_max=s.typical_ph_max,
-            typical_om_pct=s.typical_om_pct,
-            typical_cec_cmol_kg=s.typical_cec_cmol_kg,
-            water_holding_capacity=s.water_holding_capacity,
-            drainage=s.drainage,
-            common_problems=problems,
-            nutrient_deficiencies=deficiencies,
-            common_regions=regions,
-        ))
+        results.append(
+            SoilTypeResponse(
+                soil_code=s.soil_code,
+                soil_name=s.soil_name,
+                soil_category=s.soil_category,
+                texture=s.texture,
+                typical_ph_min=s.typical_ph_min,
+                typical_ph_max=s.typical_ph_max,
+                typical_om_pct=s.typical_om_pct,
+                typical_cec_cmol_kg=s.typical_cec_cmol_kg,
+                water_holding_capacity=s.water_holding_capacity,
+                drainage=s.drainage,
+                common_problems=problems,
+                nutrient_deficiencies=deficiencies,
+                common_regions=regions,
+            )
+        )
 
     return results
 
@@ -597,15 +624,10 @@ def get_soil_type(soil_code: str, db: Session = Depends(get_db)):
 
     from engine.hydroma.biofertilizer.models import NojinSoilType
 
-    soil = db.query(NojinSoilType).filter(
-        NojinSoilType.soil_code == soil_code
-    ).first()
+    soil = db.query(NojinSoilType).filter(NojinSoilType.soil_code == soil_code).first()
 
     if not soil:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Soil type '{soil_code}' not found"
-        )
+        raise HTTPException(status_code=404, detail=f"Soil type '{soil_code}' not found")
 
     try:
         problems = json.loads(soil.common_problems) if soil.common_problems else []
@@ -638,7 +660,7 @@ async def classify_soil(
 ):
     """
     Classify soil type based on laboratory test results.
-    
+
     Returns the best-matching soil type and recommended recipe.
     """
     from engine.hydroma.biofertilizer.repositories import (
@@ -705,6 +727,7 @@ async def classify_soil(
 # RECIPES ENDPOINTS
 # ═══════════════════════════════════════════════════════════════════
 
+
 @router.get("/recipes", response_model=list[RecipeResponse])
 def list_recipes(
     soil_code: str | None = None,
@@ -730,24 +753,26 @@ def list_recipes(
         if isinstance(composition, str):
             composition = json.loads(composition)
 
-        results.append(RecipeResponse(
-            recipe_code=r.recipe_code,
-            recipe_name=r.recipe_name,
-            soil_code=soil.soil_code if soil else "UNKNOWN",
-            soil_name=soil.soil_name if soil else "Unknown",
-            area_min_ha=r.area_min_ha,
-            area_max_ha=r.area_max_ha,
-            material_composition=composition,
-            total_kg_per_ha=r.total_kg_per_ha or 0,
-            total_tons_per_ha=(r.total_kg_per_ha or 0) / 1000,
-            estimated_cost_usd_per_ha=r.estimated_cost_usd_per_ha or 0,
-            cn_ratio_final=r.cn_ratio_final,
-            om_increase_pct=r.om_increase_pct,
-            water_saving_pct=r.water_saving_pct,
-            yield_increase_pct=r.yield_increase_pct,
-            restoration_years=r.restoration_years,
-            traditional_technique=r.traditional_technique,
-        ))
+        results.append(
+            RecipeResponse(
+                recipe_code=r.recipe_code,
+                recipe_name=r.recipe_name,
+                soil_code=soil.soil_code if soil else "UNKNOWN",
+                soil_name=soil.soil_name if soil else "Unknown",
+                area_min_ha=r.area_min_ha,
+                area_max_ha=r.area_max_ha,
+                material_composition=composition,
+                total_kg_per_ha=r.total_kg_per_ha or 0,
+                total_tons_per_ha=(r.total_kg_per_ha or 0) / 1000,
+                estimated_cost_usd_per_ha=r.estimated_cost_usd_per_ha or 0,
+                cn_ratio_final=r.cn_ratio_final,
+                om_increase_pct=r.om_increase_pct,
+                water_saving_pct=r.water_saving_pct,
+                yield_increase_pct=r.yield_increase_pct,
+                restoration_years=r.restoration_years,
+                traditional_technique=r.traditional_technique,
+            )
+        )
 
     return results
 
@@ -759,15 +784,14 @@ def get_recipe(recipe_code: str, db: Session = Depends(get_db)):
 
     from engine.hydroma.biofertilizer.models import NojinFormulationRecipe, NojinSoilType
 
-    recipe = db.query(NojinFormulationRecipe).filter(
-        NojinFormulationRecipe.recipe_code == recipe_code
-    ).first()
+    recipe = (
+        db.query(NojinFormulationRecipe)
+        .filter(NojinFormulationRecipe.recipe_code == recipe_code)
+        .first()
+    )
 
     if not recipe:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Recipe '{recipe_code}' not found"
-        )
+        raise HTTPException(status_code=404, detail=f"Recipe '{recipe_code}' not found")
 
     soil = db.query(NojinSoilType).filter(NojinSoilType.id == recipe.soil_type_id).first()
     composition = recipe.material_composition or {}
@@ -798,6 +822,7 @@ def get_recipe(recipe_code: str, db: Session = Depends(get_db)):
 # ANALYSIS ENDPOINTS
 # ═══════════════════════════════════════════════════════════════════
 
+
 def _load_calculators():
     """Load all calculators with materials from DB."""
     from engine.hydroma.biofertilizer.advanced_calculator import (
@@ -827,7 +852,7 @@ def get_recommendation(
 ):
     """
     Get Nojin recommendation for a specific soil type and area.
-    
+
     Returns complete formulation with material quantities and expected results.
     """
     from engine.hydroma.biofertilizer.models import NojinFormulationRecipe, NojinSoilType
@@ -837,18 +862,20 @@ def get_recommendation(
     if not soil:
         raise HTTPException(status_code=404, detail=f"Soil type '{request.soil_code}' not found")
 
-    recipe = db.query(NojinFormulationRecipe).filter(
-        NojinFormulationRecipe.soil_type_id == soil.id
-    ).first()
+    recipe = (
+        db.query(NojinFormulationRecipe)
+        .filter(NojinFormulationRecipe.soil_type_id == soil.id)
+        .first()
+    )
 
     if not recipe:
         raise HTTPException(
-            status_code=404,
-            detail=f"No recipe found for soil type '{request.soil_code}'"
+            status_code=404, detail=f"No recipe found for soil type '{request.soil_code}'"
         )
 
     # Scale recipe to area
     import json
+
     composition = recipe.material_composition or {}
     if isinstance(composition, str):
         composition = json.loads(composition)
@@ -860,7 +887,7 @@ def get_recommendation(
     if request.budget_per_ha_usd and cost_per_ha > request.budget_per_ha_usd:
         raise HTTPException(
             status_code=400,
-            detail=f"Budget exceeded: ${cost_per_ha:.2f}/ha > ${request.budget_per_ha_usd:.2f}/ha"
+            detail=f"Budget exceeded: ${cost_per_ha:.2f}/ha > ${request.budget_per_ha_usd:.2f}/ha",
         )
 
     # Scale composition
@@ -897,7 +924,7 @@ def get_recommendation(
 async def optimize_formulation(request: OptimizeRequest):
     """
     Optimize formulation using Linear Programming.
-    
+
     Finds the best material combination for the given soil and constraints.
     """
     from engine.hydroma.biofertilizer.advanced_calculator import (
@@ -941,7 +968,7 @@ async def optimize_formulation(request: OptimizeRequest):
 async def analyze_cost_benefit(request: CostBenefitRequest):
     """
     Perform scientific cost-benefit analysis.
-    
+
     Uses FAO/World Bank methodologies for:
     - ROI calculation
     - Payback period (simple + discounted)
@@ -986,7 +1013,7 @@ async def analyze_cost_benefit(request: CostBenefitRequest):
 async def calculate_water_savings(request: WaterSavingsRequest):
     """
     Calculate water savings using FAO-56 principles.
-    
+
     Considers:
     - Evaporation reduction
     - Water retention improvement
@@ -1019,7 +1046,7 @@ async def calculate_water_savings(request: WaterSavingsRequest):
 async def calculate_scale(request: ScaleRequest):
     """
     Scale formulation to given area.
-    
+
     Provides logistics, labor, equipment, and economies of scale.
     """
     from engine.hydroma.biofertilizer.advanced_calculator import ScaleCalculator
@@ -1049,7 +1076,7 @@ async def calculate_scale(request: ScaleRequest):
 def full_analysis(request: FullAnalysisRequest, db: Session = Depends(get_db)):
     """
     Complete analysis combining all calculators.
-    
+
     This is the main endpoint that provides:
     - Recommendation (material quantities)
     - Cost-benefit analysis (ROI, NPV, IRR)
@@ -1072,14 +1099,15 @@ def full_analysis(request: FullAnalysisRequest, db: Session = Depends(get_db)):
     if not soil:
         raise HTTPException(status_code=404, detail=f"Soil type '{request.soil_code}' not found")
 
-    recipe = db.query(NojinFormulationRecipe).filter(
-        NojinFormulationRecipe.soil_type_id == soil.id
-    ).first()
+    recipe = (
+        db.query(NojinFormulationRecipe)
+        .filter(NojinFormulationRecipe.soil_type_id == soil.id)
+        .first()
+    )
 
     if not recipe:
         raise HTTPException(
-            status_code=404,
-            detail=f"No recipe found for soil type '{request.soil_code}'"
+            status_code=404, detail=f"No recipe found for soil type '{request.soil_code}'"
         )
 
     # Get composition

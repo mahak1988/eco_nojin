@@ -1,8 +1,6 @@
-
 """Product catalog management for the marketplace."""
 
 from datetime import UTC, datetime, timedelta
-from typing import Optional
 
 from .models import CertificationType, Producer, Product, ProductCategory
 
@@ -160,12 +158,18 @@ class ProductCatalog:
 
         if self._product_repo is not None:
             try:
-                seller = self._seller_repo.get_seller_by_user(product.producer_id) if self._seller_repo else None
+                seller = (
+                    self._seller_repo.get_seller_by_user(product.producer_id)
+                    if self._seller_repo
+                    else None
+                )
                 seller_id = seller.id if seller else None
                 self._product_repo.create_product(
                     seller_id=seller_id or product.producer_id,
                     name=product.name,
-                    category=product.category.value if hasattr(product.category, 'value') else str(product.category),
+                    category=product.category.value
+                    if hasattr(product.category, "value")
+                    else str(product.category),
                     price=product.price_per_kg,
                     village_id="default",
                     description=product.description,
@@ -188,7 +192,9 @@ class ProductCatalog:
                     return Product(
                         id=db_product.id,
                         name=db_product.name,
-                        category=ProductCategory(db_product.category) if db_product.category in [c.value for c in ProductCategory] else ProductCategory.OTHER,
+                        category=ProductCategory(db_product.category)
+                        if db_product.category in [c.value for c in ProductCategory]
+                        else ProductCategory.OTHER,
                         description=db_product.description or "",
                         producer_id=db_product.seller_id,
                         producer_name=db_product.seller.shop_name if db_product.seller else "",
@@ -225,25 +231,31 @@ class ProductCatalog:
                 results = []
                 for db_product in db_products:
                     try:
-                        cat = ProductCategory(db_product.category) if db_product.category in [c.value for c in ProductCategory] else ProductCategory.OTHER
+                        cat = (
+                            ProductCategory(db_product.category)
+                            if db_product.category in [c.value for c in ProductCategory]
+                            else ProductCategory.OTHER
+                        )
                     except ValueError:
                         cat = ProductCategory.OTHER
-                    results.append(Product(
-                        id=db_product.id,
-                        name=db_product.name,
-                        category=cat,
-                        description=db_product.description or "",
-                        producer_id=db_product.seller_id,
-                        producer_name=db_product.seller.shop_name if db_product.seller else "",
-                        origin_location="",
-                        price_per_kg=float(db_product.price),
-                        quantity_available_kg=float(db_product.stock),
-                        minimum_order_kg=1.0,
-                        organic_certified=db_product.organic,
-                        carbon_footprint_kg_co2=0.0,
-                        water_footprint_liters=0.0,
-                        is_active=db_product.status == "active",
-                    ))
+                    results.append(
+                        Product(
+                            id=db_product.id,
+                            name=db_product.name,
+                            category=cat,
+                            description=db_product.description or "",
+                            producer_id=db_product.seller_id,
+                            producer_name=db_product.seller.shop_name if db_product.seller else "",
+                            origin_location="",
+                            price_per_kg=float(db_product.price),
+                            quantity_available_kg=float(db_product.stock),
+                            minimum_order_kg=1.0,
+                            organic_certified=db_product.organic,
+                            carbon_footprint_kg_co2=0.0,
+                            water_footprint_liters=0.0,
+                            is_active=db_product.status == "active",
+                        )
+                    )
                 return results
             except Exception:
                 pass

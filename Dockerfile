@@ -1,4 +1,4 @@
-# Hydroma Nojin Telegram Bot - Production Dockerfile
+# Eco Nojin API Gateway - Production Dockerfile
 FROM python:3.12-slim
 
 # Set working directory
@@ -33,7 +33,7 @@ USER botuser
 
 # Health check
 HEALTHCHECK --interval=60s --timeout=10s --start-period=30s --retries=3 \
-    CMD python -c "import sys; sys.exit(0)"
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')" || exit 1
 
-# Run the bot
-CMD ["python", "-m", "services.telegram_bot.main"]
+# Run the API gateway
+CMD ["python", "-m", "services.api_gateway.main"]

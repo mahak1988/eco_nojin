@@ -1,4 +1,5 @@
 """SmartMapService - intelligent map generation"""
+
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
@@ -14,11 +15,13 @@ class MapLayer(str, Enum):
     SOIL = "soil"
     VEGETATION = "vegetation"
 
+
 class OutputFormat(str, Enum):
     GEOTIFF = "geotiff"
     PNG = "png"
     GEOJSON = "geojson"
     MBTILES = "mbtiles"
+
 
 @dataclass
 class MapRequest:
@@ -26,6 +29,7 @@ class MapRequest:
     layers: list[MapLayer]
     resolution: float = 30.0  # meters per pixel
     output_format: OutputFormat = OutputFormat.GEOTIFF
+
 
 @dataclass
 class MapResult:
@@ -36,10 +40,11 @@ class MapResult:
     generated_at: datetime
     processing_time_ms: int
 
+
 class SmartMapService:
     """
     سرویس تولید نقشه‌های هوشمند
-    
+
     قابلیت‌ها:
     - ترکیب چندین لایه داده
     - تولید نقشه‌های DEM، Landcover، Rainfall
@@ -55,6 +60,7 @@ class SmartMapService:
     async def generate_map(self, request: MapRequest) -> MapResult:
         """تولید نقشه بر اساس درخواست"""
         import time
+
         start = time.time()
 
         # Cache key
@@ -83,6 +89,7 @@ class SmartMapService:
     async def _generate_file(self, map_id: str, request: MapRequest) -> str | None:
         """تولید فایل نقشه"""
         from pathlib import Path
+
         maps_dir = Path("data/maps")
         maps_dir.mkdir(parents=True, exist_ok=True)
 
@@ -102,6 +109,7 @@ class SmartMapService:
     def _make_cache_key(self, request: MapRequest) -> str:
         """ساخت کلید cache"""
         import hashlib
+
         data = f"{request.bbox}:{request.layers}:{request.resolution}"
         return hashlib.md5(data.encode(), usedforsecurity=False).hexdigest()
 
@@ -111,7 +119,9 @@ class SmartMapService:
         return list(MapLayer)
 
     async def combine_layers(
-        self, base_map: MapResult, overlay_layers: list[MapLayer],
+        self,
+        base_map: MapResult,
+        overlay_layers: list[MapLayer],
     ) -> MapResult:
         """ترکیب لایه‌ها"""
         # شبیه‌سازی ترکیب

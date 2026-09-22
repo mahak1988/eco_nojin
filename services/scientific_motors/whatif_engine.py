@@ -1,4 +1,5 @@
 """What-If Engine - Scenario Analysis and Monte Carlo Simulation."""
+
 from __future__ import annotations
 
 import time
@@ -175,11 +176,7 @@ class WhatIfMotor(AbstractScientificMotor):
         scores = {}
         for name, stats in mc_results.items():
             # Score = yield - water penalty + carbon bonus
-            score = (
-                stats["yield_mean"]
-                - 0.1 * stats["water_mean"]
-                + 0.2 * stats["carbon_mean"]
-            )
+            score = stats["yield_mean"] - 0.1 * stats["water_mean"] + 0.2 * stats["carbon_mean"]
             scores[name] = score
 
         return max(scores, key=scores.get)

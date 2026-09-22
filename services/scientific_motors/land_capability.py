@@ -2,6 +2,7 @@
 Hydroma Nojin - Land Capability Classification (LCC)
 USDA-based land capability classification for sustainable land use planning.
 """
+
 from __future__ import annotations
 
 import time
@@ -23,17 +24,18 @@ from .base import (
 # --- Hydroma Soil Degradation Model (auto-installed, Phase 3) ---
 try:
     from engine.hydroma.climate_adaptation.soil_degradation_model import (
-        SoilDegradationModel as _SDM_cls)
+        SoilDegradationModel as _SDM_cls,
+    )
+
     _HYDROMA_SDM = _SDM_cls()
 except Exception:
     _HYDROMA_SDM = None
 
 
-
 class LandCapabilityMotor(AbstractScientificMotor):
     """
     Land Capability Classification Motor (USDA standard)
-    
+
     Classifies land into 8 capability classes based on:
     - Slope gradient
     - Soil depth
@@ -119,17 +121,13 @@ class LandCapabilityMotor(AbstractScientificMotor):
             else:
                 # Estimate from slope
                 erosion_risk = np.clip(slope.values * 5, 0, 100)
-                erosion_risk = xr.DataArray(
-                    erosion_risk, dims=dem.dims, coords=dem.coords
-                )
+                erosion_risk = xr.DataArray(erosion_risk, dims=dem.dims, coords=dem.coords)
 
             if drainage is not None:
                 drainage = self._align_to_grid(drainage, dem)
             else:
                 # Assume moderate drainage
-                drainage = xr.DataArray(
-                    np.full(dem.shape, 4), dims=dem.dims, coords=dem.coords
-                )
+                drainage = xr.DataArray(np.full(dem.shape, 4), dims=dem.dims, coords=dem.coords)
 
             # Classify each pixel
             lcc_class, limiting_factor = self._classify_land(
@@ -142,13 +140,17 @@ class LandCapabilityMotor(AbstractScientificMotor):
 
             # Build output rasters
             lcc_raster = xr.DataArray(
-                lcc_class, dims=dem.dims, coords=dem.coords,
-                attrs={"units": "class", "description": "LCC class (1=best, 8=worst)"}
+                lcc_class,
+                dims=dem.dims,
+                coords=dem.coords,
+                attrs={"units": "class", "description": "LCC class (1=best, 8=worst)"},
             )
 
             limiting_raster = xr.DataArray(
-                limiting_factor, dims=dem.dims, coords=dem.coords,
-                attrs={"units": "code", "description": "Limiting factor code"}
+                limiting_factor,
+                dims=dem.dims,
+                coords=dem.coords,
+                attrs={"units": "code", "description": "Limiting factor code"},
             )
 
             # Summary statistics
@@ -175,9 +177,7 @@ class LandCapabilityMotor(AbstractScientificMotor):
                 summary={
                     "distribution": distribution,
                     "total_pixels": int(lcc_class.size),
-                    "cultivable_percent": float(
-                        np.sum(lcc_class <= 4) / lcc_class.size * 100
-                    ),
+                    "cultivable_percent": float(np.sum(lcc_class <= 4) / lcc_class.size * 100),
                 },
                 execution_time_seconds=time.time() - start_time,
             )
@@ -193,7 +193,7 @@ class LandCapabilityMotor(AbstractScientificMotor):
 
     def _compute_slope_from_dem(self, dem: xr.DataArray) -> xr.DataArray:
         """Compute slope percentage from DEM."""
-        if 'y' in dem.dims and 'x' in dem.dims:
+        if "y" in dem.dims and "x" in dem.dims:
             y_coord = dem.y.values
             x_coord = dem.x.values
         else:
@@ -214,8 +214,9 @@ class LandCapabilityMotor(AbstractScientificMotor):
 
         return xr.DataArray(
             slope_pct.astype(np.float32),
-            dims=dem.dims, coords=dem.coords,
-            attrs={"units": "percent", "description": "Slope percentage"}
+            dims=dem.dims,
+            coords=dem.coords,
+            attrs={"units": "percent", "description": "Slope percentage"},
         )
 
     def _align_to_grid(self, raster: xr.DataArray, target: xr.DataArray) -> xr.DataArray:
@@ -225,11 +226,12 @@ class LandCapabilityMotor(AbstractScientificMotor):
         if raster.shape == target.shape:
             return raster
         try:
-            if hasattr(raster, 'rio') and hasattr(target, 'rio'):
+            if hasattr(raster, "rio") and hasattr(target, "rio"):
                 return raster.rio.reproject_match(target)
         except Exception:
             pass
         from scipy.ndimage import zoom
+
         zy = target.shape[0] / raster.shape[0]
         zx = target.shape[1] / raster.shape[1]
         resampled = zoom(raster.values, (zy, zx), order=1)
@@ -244,7 +246,7 @@ class LandCapabilityMotor(AbstractScientificMotor):
         drainage: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray]:
         """Classify land using USDA LCC criteria.
-        
+
         Limiting factor codes:
         0 = No limitation
         1 = Slope
@@ -305,10 +307,9 @@ class LandCapabilityMotor(AbstractScientificMotor):
         drainage_class[(drainage <= 1) | (drainage >= 7)] = 5
 
         # Take the worst (maximum) class
-        all_classes = np.stack([
-            slope_class, depth_class, texture_class,
-            erosion_class, drainage_class
-        ], axis=0)
+        all_classes = np.stack(
+            [slope_class, depth_class, texture_class, erosion_class, drainage_class], axis=0
+        )
         lcc = np.max(all_classes, axis=0)
 
         # Determine primary limiting factor

@@ -1,4 +1,5 @@
 """کلاس پایه برای تمام شبیه‌سازهای دام"""
+
 from abc import ABC, abstractmethod
 
 from services.livestock.schemas import (
@@ -34,6 +35,7 @@ class BaseLivestockSimulator(ABC):
         """محاسبه CH4 - IPCC Tier 2"""
         # ۶.۵٪ انرژی دریافتی به CH4
         return daily_dmi_kg * head_count * 365 * 0.018 * 28  # CO2e
+
 
 def calculate_forage_quality_factor(forage) -> float:
     """تبدیل NDVI به کیفیت علوفه"""

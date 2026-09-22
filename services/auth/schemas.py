@@ -1,4 +1,5 @@
 """Pydantic schemas for Auth"""
+
 import re
 from datetime import datetime
 
@@ -18,9 +19,11 @@ class UserRegister(BaseModel):
             and bool(re.search(r"[0-9]", self.password))
         )
 
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
 
 class TokenResponse(BaseModel):
     access_token: str
@@ -28,8 +31,10 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
     expires_in: int
 
+
 class TokenRefresh(BaseModel):
     refresh_token: str
+
 
 class UserInfo(BaseModel):
     id: str

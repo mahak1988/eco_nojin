@@ -1,4 +1,5 @@
 """Phase 7: models API router (public — scientific models are open knowledge)."""
+
 from __future__ import annotations
 
 from typing import Any

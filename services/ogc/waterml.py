@@ -7,6 +7,7 @@ SPI/SPEI values produced by the real drought motor (ERA5 via Open-Meteo).
 Honesty: this is a subset (no SamplingFeatures / ComplexFeatures); the XML
 declares the namespaces and structure so standard clients can parse it.
 """
+
 import xml.etree.ElementTree as ET
 
 WML_NS = "http://www.opengis.net/waterml/2.0"
@@ -34,12 +35,21 @@ def build_timeseries(series: list[dict], index: str = "spi", title: str = "SPI")
     gml = "{%s}" % GML_NS
 
     obs = ET.Element(om + "OM_Observation")
-    obs.set("{%s}schemaLocation" % XSI_NS, f"{OM_NS} http://schemas.opengis.net/om/2.0/observation.xsd {WML_NS} http://schemas.opengis.net/waterml/2.0/waterml2.xsd")
+    obs.set(
+        "{%s}schemaLocation" % XSI_NS,
+        f"{OM_NS} http://schemas.opengis.net/om/2.0/observation.xsd {WML_NS} http://schemas.opengis.net/waterml/2.0/waterml2.xsd",
+    )
     ET.SubElement(obs, om + "phenomenonTime").set(gml + "id", "phenTime")
     ET.SubElement(obs, om + "resultTime").set(gml + "id", "resultTime")
-    ET.SubElement(obs, om + "procedure").set("{%s}href" % "{http://www.w3.org/1999/xlink}", "urn:ogc:def:procedure:EcoNojin:drought")
-    ET.SubElement(obs, om + "observedProperty").set("{%s}href" % "{http://www.w3.org/1999/xlink}", f"urn:ogc:def:property:OGC:{index}")
-    ET.SubElement(obs, om + "featureOfInterest").set("{%s}href" % "{http://www.w3.org/1999/xlink}", "urn:ogc:def:feature:EcoNojin:landscape")
+    ET.SubElement(obs, om + "procedure").set(
+        "{%s}href" % "{http://www.w3.org/1999/xlink}", "urn:ogc:def:procedure:EcoNojin:drought"
+    )
+    ET.SubElement(obs, om + "observedProperty").set(
+        "{%s}href" % "{http://www.w3.org/1999/xlink}", f"urn:ogc:def:property:OGC:{index}"
+    )
+    ET.SubElement(obs, om + "featureOfInterest").set(
+        "{%s}href" % "{http://www.w3.org/1999/xlink}", "urn:ogc:def:feature:EcoNojin:landscape"
+    )
 
     result = ET.SubElement(obs, om + "result")
     ts = ET.SubElement(result, wml2 + "MeasurementTimeseries")

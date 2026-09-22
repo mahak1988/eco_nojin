@@ -12,7 +12,7 @@ class TestLandService:
     @pytest.fixture
     def service(self):
         """ایجاد سرویس"""
-        return LandService()
+        return LandService(persist=False)
 
     @pytest.fixture
     def sample_dem(self):
@@ -29,7 +29,7 @@ class TestLandService:
             location_lat=32.65,
             location_lon=51.67,
             description="تست",
-            area_hectares=10.0
+            area_hectares=10.0,
         )
 
         assert profile.id is not None
@@ -39,11 +39,7 @@ class TestLandService:
 
     def test_get_profile(self, service):
         """تست دریافت پروفایل"""
-        profile = service.create_profile(
-            name="تست",
-            location_lat=0,
-            location_lon=0
-        )
+        profile = service.create_profile(name="تست", location_lat=0, location_lon=0)
 
         retrieved = service.get_profile(profile.id)
         assert retrieved is not None
@@ -63,16 +59,10 @@ class TestLandService:
 
     def test_analyze_terrain(self, service, sample_dem):
         """تست تحلیل توپوگرافی"""
-        profile = service.create_profile(
-            name="تست",
-            location_lat=0,
-            location_lon=0
-        )
+        profile = service.create_profile(name="تست", location_lat=0, location_lon=0)
 
         analysis = service.analyze_terrain(
-            profile_id=profile.id,
-            dem_array=sample_dem,
-            resolution=30.0
+            profile_id=profile.id, dem_array=sample_dem, resolution=30.0
         )
 
         assert analysis.profile_id == profile.id
@@ -84,17 +74,10 @@ class TestLandService:
 
     def test_analyze_drainage(self, service, sample_dem):
         """تست تحلیل زهکشی"""
-        profile = service.create_profile(
-            name="تست",
-            location_lat=0,
-            location_lon=0
-        )
+        profile = service.create_profile(name="تست", location_lat=0, location_lon=0)
 
         analysis = service.analyze_drainage(
-            profile_id=profile.id,
-            dem_array=sample_dem,
-            resolution=30.0,
-            area_km2=1.0
+            profile_id=profile.id, dem_array=sample_dem, resolution=30.0, area_km2=1.0
         )
 
         assert analysis.profile_id == profile.id
@@ -106,11 +89,7 @@ class TestLandService:
 
     def test_assess_capability(self, service):
         """تست ارزیابی قابلیت"""
-        profile = service.create_profile(
-            name="تست",
-            location_lat=0,
-            location_lon=0
-        )
+        profile = service.create_profile(name="تست", location_lat=0, location_lon=0)
 
         assessment = service.assess_capability(
             profile_id=profile.id,
@@ -118,7 +97,7 @@ class TestLandService:
             soil_depth_m=1.5,
             erosion_risk="low",
             drainage_class="well_drained",
-            climate_zone="temperate"
+            climate_zone="temperate",
         )
 
         assert assessment.profile_id == profile.id
@@ -131,11 +110,7 @@ class TestLandService:
 
     def test_delete_profile(self, service):
         """تست حذف پروفایل"""
-        profile = service.create_profile(
-            name="تست",
-            location_lat=0,
-            location_lon=0
-        )
+        profile = service.create_profile(name="تست", location_lat=0, location_lon=0)
 
         assert service.delete_profile(profile.id) is True
         assert service.get_profile(profile.id) is None
@@ -145,20 +120,13 @@ class TestLandService:
         """تست خطای پروفایل یافت نشد"""
         with pytest.raises(ValueError, match="Profile not found"):
             service.analyze_terrain(
-                profile_id="non-existent",
-                dem_array=sample_dem,
-                resolution=30.0
+                profile_id="non-existent", dem_array=sample_dem, resolution=30.0
             )
 
         with pytest.raises(ValueError, match="Profile not found"):
             service.analyze_drainage(
-                profile_id="non-existent",
-                dem_array=sample_dem,
-                resolution=30.0
+                profile_id="non-existent", dem_array=sample_dem, resolution=30.0
             )
 
         with pytest.raises(ValueError, match="Profile not found"):
-            service.assess_capability(
-                profile_id="non-existent",
-                slope_degrees=10.0
-            )
+            service.assess_capability(profile_id="non-existent", slope_degrees=10.0)

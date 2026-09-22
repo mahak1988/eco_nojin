@@ -7,6 +7,7 @@ Y = B × HI
 
 Reference: Monteith (1977), Steduto et al. (2009)
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -20,6 +21,7 @@ from .base import ScientificModel, ValidationResult
 @dataclass
 class HYRUEParams:
     """پارامترهای مدل HY-RUE"""
+
     epsilon: float = 2.5  # RUE (g/MJ IPAR)
     k: float = 0.65  # Extinction coefficient
     hi: float = 0.45  # Harvest index
@@ -81,12 +83,13 @@ class HYRUE(ScientificModel):
         return 1 - np.exp(-k * np.clip(lai, 0, 20))
 
     @staticmethod
-    def stress_temperature(t_mean: float, t_opt: float = 25.0,
-                           t_min: float = 5.0, t_max: float = 35.0) -> float:
+    def stress_temperature(
+        t_mean: float, t_opt: float = 25.0, t_min: float = 5.0, t_max: float = 35.0
+    ) -> float:
         """Temperature stress factor (Gaussian response)"""
         if t_mean < t_min or t_mean > t_max:
             return 0.0
-        return float(np.exp(-((t_mean - t_opt) / 8) ** 2))
+        return float(np.exp(-(((t_mean - t_opt) / 8) ** 2)))
 
     def compute_daily(
         self,
@@ -98,8 +101,9 @@ class HYRUE(ScientificModel):
         """محاسبه روزانه"""
         f_ipar = self.f_ipar(lai, self.params.k)
         f_water = 1 - ewsı
-        f_temp = self.stress_temperature(t_mean, self.params.t_opt,
-                                          self.params.t_min, self.params.t_max)
+        f_temp = self.stress_temperature(
+            t_mean, self.params.t_opt, self.params.t_min, self.params.t_max
+        )
 
         apár = par * f_ipar
         biomass = apár * self.params.epsilon * f_water * f_temp
@@ -129,8 +133,11 @@ class HYRUE(ScientificModel):
         }
 
     def validate_against_reference(
-        self, inputs: dict[str, Any], reference_output: float,
-        reference_source: str, tolerance: float = 0.2,
+        self,
+        inputs: dict[str, Any],
+        reference_output: float,
+        reference_source: str,
+        tolerance: float = 0.2,
     ) -> ValidationResult:
         result = self.compute(**inputs)
         computed_value = float(np.mean(result["yield_t_ha"]))

@@ -1,4 +1,3 @@
-
 """ECO Wallet Centralized Ledger.
 
 Phase 1: Centralized ledger (no blockchain needed).

@@ -12,7 +12,7 @@ return mock results with a logged warning.
 
 import logging
 import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +51,7 @@ class TwilioIVRIntegration:
         if self.config.is_configured:
             try:
                 from twilio.rest import Client
+
                 self._client = Client(self.config.account_sid, self.config.auth_token)
                 self._is_real = True
                 logger.info("Twilio client initialized")
@@ -66,13 +67,17 @@ class TwilioIVRIntegration:
     def get_config_info(self) -> dict:
         return {
             "configured": self.config.is_configured,
-            "phone_number": self.config.phone_number[:6] + "***" if self.config.phone_number else None,
+            "phone_number": self.config.phone_number[:6] + "***"
+            if self.config.phone_number
+            else None,
             "provider": "twilio" if self._is_real else "mock",
         }
 
     def _is_ready(self) -> bool:
         if not self.config.is_configured:
-            logger.warning("Twilio not configured — set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER")
+            logger.warning(
+                "Twilio not configured — set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER"
+            )
             return False
         if self._client is None:
             logger.warning("Twilio client not initialized — using mock mode")
@@ -181,7 +186,10 @@ class TwilioIVRIntegration:
             return []
         try:
             numbers = self._client.available_phone_numbers(country_code).local.list(limit=10)
-            return [{"phone_number": n.phone_number, "region": n.locality, "type": n.type} for n in numbers]
+            return [
+                {"phone_number": n.phone_number, "region": n.locality, "type": n.type}
+                for n in numbers
+            ]
         except Exception as exc:
             logger.warning("Twilio number lookup failed: %s", exc)
             return []

@@ -14,6 +14,7 @@ POST /api/v1/hydroma/soil/{id}/run -> execute one tool (pure compute)
 Pure, side-effect-free computations: nothing is written to the database and
 no personal data is accepted. Errors are explicit (no silent fallbacks).
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -83,9 +84,22 @@ _SPECS: list[dict[str, Any]] = [
             {"name": "clay", "label": "Clay", "unit": "%", "kind": "float", "default": 25.0},
             {"name": "silt", "label": "Silt", "unit": "%", "kind": "float", "default": 35.0},
             {"name": "sand", "label": "Sand", "unit": "%", "kind": "float", "default": 40.0},
-            {"name": "organic_matter", "label": "Organic matter", "unit": "%", "kind": "float", "default": 2.0},
+            {
+                "name": "organic_matter",
+                "label": "Organic matter",
+                "unit": "%",
+                "kind": "float",
+                "default": 2.0,
+            },
             {"name": "ph", "label": "pH", "unit": "", "kind": "float", "default": 6.5},
-            {"name": "cec", "label": "CEC", "unit": "meq/100g", "kind": "float", "default": 20.0, "optional": True},
+            {
+                "name": "cec",
+                "label": "CEC",
+                "unit": "meq/100g",
+                "kind": "float",
+                "default": 20.0,
+                "optional": True,
+            },
         ],
     },
     {
@@ -94,7 +108,14 @@ _SPECS: list[dict[str, Any]] = [
         "description": "van Genuchten water-retention curve and parameters.",
         "reference": "van Genuchten 1980; Mualem 1976",
         "params": [
-            {"name": "texture", "label": "Texture", "unit": "", "kind": "select", "default": "loam", "options": _TEXTURES},
+            {
+                "name": "texture",
+                "label": "Texture",
+                "unit": "",
+                "kind": "select",
+                "default": "loam",
+                "options": _TEXTURES,
+            },
         ],
     },
     {
@@ -105,7 +126,13 @@ _SPECS: list[dict[str, Any]] = [
         "params": [
             {"name": "sand_pct", "label": "Sand", "unit": "%", "kind": "float", "default": 40.0},
             {"name": "clay_pct", "label": "Clay", "unit": "%", "kind": "float", "default": 25.0},
-            {"name": "om_pct", "label": "Organic matter", "unit": "%", "kind": "float", "default": 1.5},
+            {
+                "name": "om_pct",
+                "label": "Organic matter",
+                "unit": "%",
+                "kind": "float",
+                "default": 1.5,
+            },
         ],
     },
     {
@@ -114,8 +141,21 @@ _SPECS: list[dict[str, Any]] = [
         "description": "Available water capacity and water content at a matric potential.",
         "reference": "Brooks-Corey 1964; Campbell 1974",
         "params": [
-            {"name": "texture", "label": "Texture", "unit": "", "kind": "select", "default": "loam", "options": _TEXTURES},
-            {"name": "matric_potential_cm", "label": "Matric potential", "unit": "cm", "kind": "float", "default": -33.0},
+            {
+                "name": "texture",
+                "label": "Texture",
+                "unit": "",
+                "kind": "select",
+                "default": "loam",
+                "options": _TEXTURES,
+            },
+            {
+                "name": "matric_potential_cm",
+                "label": "Matric potential",
+                "unit": "cm",
+                "kind": "float",
+                "default": -33.0,
+            },
         ],
     },
     {
@@ -125,12 +165,42 @@ _SPECS: list[dict[str, Any]] = [
         "reference": "Brady & Weil 2017",
         "params": [
             {"name": "clay", "label": "Clay", "unit": "%", "kind": "float", "default": 25.0},
-            {"name": "organic_matter", "label": "Organic matter", "unit": "%", "kind": "float", "default": 2.0},
+            {
+                "name": "organic_matter",
+                "label": "Organic matter",
+                "unit": "%",
+                "kind": "float",
+                "default": 2.0,
+            },
             {"name": "ph", "label": "pH", "unit": "", "kind": "float", "default": 6.5},
-            {"name": "exchangeable_na", "label": "Exchangeable Na", "unit": "meq/100g", "kind": "float", "default": 2.0},
-            {"name": "cec", "label": "CEC (for ESP)", "unit": "meq/100g", "kind": "float", "default": 20.0},
-            {"name": "na", "label": "Na (water)", "unit": "meq/L", "kind": "float", "default": 10.0},
-            {"name": "ca", "label": "Ca (water)", "unit": "meq/L", "kind": "float", "default": 20.0},
+            {
+                "name": "exchangeable_na",
+                "label": "Exchangeable Na",
+                "unit": "meq/100g",
+                "kind": "float",
+                "default": 2.0,
+            },
+            {
+                "name": "cec",
+                "label": "CEC (for ESP)",
+                "unit": "meq/100g",
+                "kind": "float",
+                "default": 20.0,
+            },
+            {
+                "name": "na",
+                "label": "Na (water)",
+                "unit": "meq/L",
+                "kind": "float",
+                "default": 10.0,
+            },
+            {
+                "name": "ca",
+                "label": "Ca (water)",
+                "unit": "meq/L",
+                "kind": "float",
+                "default": 20.0,
+            },
             {"name": "mg", "label": "Mg (water)", "unit": "meq/L", "kind": "float", "default": 5.0},
         ],
     },
@@ -141,11 +211,35 @@ _SPECS: list[dict[str, Any]] = [
         "reference": "USDA Handbook 60; FAO-29",
         "params": [
             {"name": "ec", "label": "Soil EC", "unit": "dS/m", "kind": "float", "default": 4.0},
-            {"name": "ec_soil", "label": "EC (leaching)", "unit": "dS/m", "kind": "float", "default": 4.0},
-            {"name": "ec_water", "label": "Irrigation EC", "unit": "dS/m", "kind": "float", "default": 1.0},
+            {
+                "name": "ec_soil",
+                "label": "EC (leaching)",
+                "unit": "dS/m",
+                "kind": "float",
+                "default": 4.0,
+            },
+            {
+                "name": "ec_water",
+                "label": "Irrigation EC",
+                "unit": "dS/m",
+                "kind": "float",
+                "default": 1.0,
+            },
             {"name": "esp", "label": "ESP", "unit": "%", "kind": "float", "default": 10.0},
-            {"name": "soil_depth", "label": "Soil depth", "unit": "m", "kind": "float", "default": 0.3},
-            {"name": "bulk_density", "label": "Bulk density", "unit": "g/cm3", "kind": "float", "default": 1.4},
+            {
+                "name": "soil_depth",
+                "label": "Soil depth",
+                "unit": "m",
+                "kind": "float",
+                "default": 0.3,
+            },
+            {
+                "name": "bulk_density",
+                "label": "Bulk density",
+                "unit": "g/cm3",
+                "kind": "float",
+                "default": 1.4,
+            },
         ],
     },
     {
@@ -155,12 +249,51 @@ _SPECS: list[dict[str, Any]] = [
         "reference": "USDA NRCS 2023",
         "params": [
             {"name": "ph", "label": "pH", "unit": "", "kind": "float", "default": 6.5},
-            {"name": "organic_matter", "label": "Organic matter", "unit": "%", "kind": "float", "default": 2.0},
-            {"name": "nitrogen", "label": "Nitrogen", "unit": "mg/kg", "kind": "float", "default": 50.0},
-            {"name": "phosphorus", "label": "Phosphorus", "unit": "mg/kg", "kind": "float", "default": 20.0},
-            {"name": "potassium", "label": "Potassium", "unit": "mg/kg", "kind": "float", "default": 150.0},
-            {"name": "cec", "label": "CEC", "unit": "meq/100g", "kind": "float", "default": 20.0, "optional": True},
-            {"name": "texture", "label": "Texture", "unit": "", "kind": "select", "default": "loam", "options": _TEXTURES, "optional": True},
+            {
+                "name": "organic_matter",
+                "label": "Organic matter",
+                "unit": "%",
+                "kind": "float",
+                "default": 2.0,
+            },
+            {
+                "name": "nitrogen",
+                "label": "Nitrogen",
+                "unit": "mg/kg",
+                "kind": "float",
+                "default": 50.0,
+            },
+            {
+                "name": "phosphorus",
+                "label": "Phosphorus",
+                "unit": "mg/kg",
+                "kind": "float",
+                "default": 20.0,
+            },
+            {
+                "name": "potassium",
+                "label": "Potassium",
+                "unit": "mg/kg",
+                "kind": "float",
+                "default": 150.0,
+            },
+            {
+                "name": "cec",
+                "label": "CEC",
+                "unit": "meq/100g",
+                "kind": "float",
+                "default": 20.0,
+                "optional": True,
+            },
+            {
+                "name": "texture",
+                "label": "Texture",
+                "unit": "",
+                "kind": "select",
+                "default": "loam",
+                "options": _TEXTURES,
+                "optional": True,
+            },
         ],
     },
     {
@@ -170,10 +303,34 @@ _SPECS: list[dict[str, Any]] = [
         "reference": "USDA NRCS 2023",
         "params": [
             {"name": "ph", "label": "pH", "unit": "", "kind": "float", "default": 6.5},
-            {"name": "organic_matter", "label": "Organic matter", "unit": "%", "kind": "float", "default": 2.0},
-            {"name": "nitrogen", "label": "Nitrogen", "unit": "mg/kg", "kind": "float", "default": 50.0},
-            {"name": "phosphorus", "label": "Phosphorus", "unit": "mg/kg", "kind": "float", "default": 20.0},
-            {"name": "potassium", "label": "Potassium", "unit": "mg/kg", "kind": "float", "default": 150.0},
+            {
+                "name": "organic_matter",
+                "label": "Organic matter",
+                "unit": "%",
+                "kind": "float",
+                "default": 2.0,
+            },
+            {
+                "name": "nitrogen",
+                "label": "Nitrogen",
+                "unit": "mg/kg",
+                "kind": "float",
+                "default": 50.0,
+            },
+            {
+                "name": "phosphorus",
+                "label": "Phosphorus",
+                "unit": "mg/kg",
+                "kind": "float",
+                "default": 20.0,
+            },
+            {
+                "name": "potassium",
+                "label": "Potassium",
+                "unit": "mg/kg",
+                "kind": "float",
+                "default": 150.0,
+            },
         ],
     },
 ]
@@ -184,6 +341,7 @@ _SPEC_BY_ID: dict[str, dict[str, Any]] = {s["id"]: s for s in _SPECS}
 # ---------------------------------------------------------------------------
 # Runners
 # ---------------------------------------------------------------------------
+
 
 def _run_soil_texture(kw: dict[str, Any]) -> dict[str, Any]:
     texture = classify_texture(kw["sand"], kw["silt"], kw["clay"])
@@ -232,7 +390,9 @@ def _run_soil_salinity(kw: dict[str, Any]) -> dict[str, Any]:
     return {
         "classification": classify_salinity(kw["ec"]),
         "leaching_requirement": calculate_leaching_requirement(kw["ec_soil"], kw["ec_water"]),
-        "sodic_amendment": calculate_sodic_soil_amendment(kw["esp"], kw["soil_depth"], kw["bulk_density"]),
+        "sodic_amendment": calculate_sodic_soil_amendment(
+            kw["esp"], kw["soil_depth"], kw["bulk_density"]
+        ),
     }
 
 
@@ -260,6 +420,7 @@ _RUNNERS = {
 # ---------------------------------------------------------------------------
 # Endpoints
 # ---------------------------------------------------------------------------
+
 
 @router.get("")
 def list_soil_tools() -> dict[str, Any]:
@@ -291,6 +452,6 @@ def run_soil_tool(model_id: str, params: dict[str, Any]) -> dict[str, Any]:
         result = _RUNNERS[model_id](kwargs)
     except (ValueError, TypeError, KeyError) as exc:
         raise HTTPException(status_code=422, detail=f"tool rejected inputs: {exc}") from exc
-    except Exception as exc:  # noqa: BLE001 - explicit failure, never silent
+    except Exception as exc:
         raise HTTPException(status_code=500, detail=f"tool execution failed: {exc}") from exc
     return {"id": model_id, "result": jsonable(result)}

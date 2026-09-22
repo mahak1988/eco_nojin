@@ -1,5 +1,7 @@
 """Runoff Pipeline (M-RUN) - SCS-CN Method."""
+
 from __future__ import annotations
+
 import structlog
 
 logger = structlog.get_logger()
@@ -86,9 +88,7 @@ class RunoffPipeline(MapPipeline):
         stack = xr.concat(
             [runoff, runoff_class.astype(np.float32), cn_adj, retention_s, peak_flow],
             dim="band",
-        ).assign_coords(
-            band=["runoff_mm", "runoff_class", "cn", "retention_s", "peak_flow_m3s"]
-        )
+        ).assign_coords(band=["runoff_mm", "runoff_class", "cn", "retention_s", "peak_flow_m3s"])
 
         if str(rainfall.rio.crs) != target_crs:
             stack = stack.rio.reproject(target_crs)
@@ -170,7 +170,8 @@ class RunoffPipeline(MapPipeline):
 
         return xr.DataArray(
             cn_adj.astype(np.float32),
-            coords=cn.coords, dims=cn.dims,
+            coords=cn.coords,
+            dims=cn.dims,
             attrs={"description": f"CN adjusted for AMC-{amc}"},
         ).rio.write_crs(cn.rio.crs)
 
@@ -183,7 +184,8 @@ class RunoffPipeline(MapPipeline):
 
         return xr.DataArray(
             s.astype(np.float32),
-            coords=cn.coords, dims=cn.dims,
+            coords=cn.coords,
+            dims=cn.dims,
             attrs={"description": "Retention parameter S (mm)"},
         ).rio.write_crs(cn.rio.crs)
 
@@ -205,7 +207,8 @@ class RunoffPipeline(MapPipeline):
 
         return xr.DataArray(
             q,
-            coords=p.coords, dims=p.dims,
+            coords=p.coords,
+            dims=p.dims,
             attrs={"description": "Runoff depth Q (mm)", "units": "mm"},
         ).rio.write_crs(p.rio.crs)
 
@@ -231,7 +234,8 @@ class RunoffPipeline(MapPipeline):
 
         return xr.DataArray(
             peak.astype(np.float32),
-            coords=runoff.coords, dims=runoff.dims,
+            coords=runoff.coords,
+            dims=runoff.dims,
             attrs={"description": "Estimated peak flow (m3/s)", "units": "m3/s"},
         ).rio.write_crs(runoff.rio.crs)
 
@@ -246,6 +250,7 @@ class RunoffPipeline(MapPipeline):
 
         return xr.DataArray(
             classified,
-            coords=runoff.coords, dims=runoff.dims,
+            coords=runoff.coords,
+            dims=runoff.dims,
             attrs={"description": "Runoff risk class"},
         )

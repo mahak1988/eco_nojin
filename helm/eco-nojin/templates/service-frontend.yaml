@@ -1,0 +1,77 @@
+{{- if .Values.frontend.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "eco-nojin.fullname" . }}-frontend
+  namespace: {{ include "eco-nojin.namespace" . }}
+  labels:
+    {{- include "eco-nojin.labels" . | nindent 4 }}
+    app: frontend
+spec:
+  type: {{ .Values.frontend.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.frontend.service.port }}
+      targetPort: http
+      protocol: TCP
+      appProtocol: http
+  selector:
+    app: frontend
+    release: {{ .Release.Name }}
+  sessionAffinity: None
+---
+{{- if and .Values.frontend.enabled .Values.frontend.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "eco-nojin.fullname" . }}-frontend-ingress
+  namespace: {{ include "eco-nojin.namespace" . }}
+  labels:
+    {{- include "eco-nojin.labels" . | nindent 4 }}
+    app: frontend
+  annotations:
+    {{- range $key, $value := .Values.frontend.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    kubernetes.io/ingress.class: {{ .Values.frontend.ingress.className }}
+spec:
+  ingressClassName: {{ .Values.frontend.ingress.className }}
+  {{- if .Values.frontend.ingress.tls }}
+  tls:
+    {{- toYaml .Values.frontend.ingress.tls | nindent 4 }}
+  {{- end }}
+  rules:
+    {{- range .Values.frontend.ingress.hosts }}
+    - host: {{ .host }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ include "eco-nojin.fullname" $ }}-frontend
+                port:
+                  number: {{ $.Values.frontend.service.port }}
+          {{- end }}
+    {{- end }}
+{{- end }}
+---
+{{- if and .Values.frontend.enabled .Values.frontend.podDisruptionBudget.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "eco-nojin.fullname" . }}-frontend-pdb
+  namespace: {{ include "eco-nojin.namespace" . }}
+  labels:
+    {{- include "eco-nojin.labels" . | nindent 4 }}
+    app: frontend
+spec:
+  minAvailable: {{ .Values.frontend.podDisruptionBudget.minAvailable | quote }}
+  selector:
+    matchLabels:
+      app: frontend
+      release: {{ .Release.Name }}
+{{- end }}
+{{- end }}

@@ -1,4 +1,5 @@
 """Cattle Simulator - شبیه‌ساز گاو (شیری و گوشتی)"""
+
 from services.livestock.schemas import (
     AnimalProduction,
     EconomicAnalysis,
@@ -33,20 +34,36 @@ class CattleSimulator(BaseLivestockSimulator):
         quality_factor = calculate_forage_quality_factor(forage)
 
         # نیاز غذایی (NRC)
-        daily_dmi = self.BODY_WEIGHT_KG * self.DAILY_DAILY_PCT if hasattr(self, 'DAILY_DAILY_PCT') else self.BODY_WEIGHT_KG * self.DAILY_DMI_PCT
+        daily_dmi = (
+            self.BODY_WEIGHT_KG * self.DAILY_DAILY_PCT
+            if hasattr(self, "DAILY_DAILY_PCT")
+            else self.BODY_WEIGHT_KG * self.DAILY_DMI_PCT
+        )
         feed_req = FeedRequirement(
             dry_matter_kg_day=round(daily_dmi * herd.head_count, 2),
             metabolizable_energy_mj_day=round(daily_dmi * 10.5 * herd.head_count, 2),
             water_liters_day=self.WATER_LITERS_DAY * herd.head_count,
-            supplement_kg_day=round(max(0, 2.0 - forage.crude_protein_pct * 0.1) * herd.head_count, 2),
+            supplement_kg_day=round(
+                max(0, 2.0 - forage.crude_protein_pct * 0.1) * herd.head_count, 2
+            ),
             grazing_hours=8.0 if quality_factor > 0.7 else 10.0,
         )
 
         # تولید
         production = AnimalProduction(
-            milk_kg_day=round(self.MILK_YIELD_LITERS_DAY * herd.head_count * quality_factor * (herd.female_ratio_pct / 100), 2),
-            meat_kg_year=round(self.MEAT_YIELD_KG * herd.head_count * 0.3 * quality_factor, 2),  # 30% کشتار سالانه
-            offspring_per_year=round(herd.head_count * (herd.female_ratio_pct / 100) * self.CALVING_RATE, 2),
+            milk_kg_day=round(
+                self.MILK_YIELD_LITERS_DAY
+                * herd.head_count
+                * quality_factor
+                * (herd.female_ratio_pct / 100),
+                2,
+            ),
+            meat_kg_year=round(
+                self.MEAT_YIELD_KG * herd.head_count * 0.3 * quality_factor, 2
+            ),  # 30% کشتار سالانه
+            offspring_per_year=round(
+                herd.head_count * (herd.female_ratio_pct / 100) * self.CALVING_RATE, 2
+            ),
         )
 
         # کود
@@ -54,7 +71,9 @@ class CattleSimulator(BaseLivestockSimulator):
 
         # اثرات زیست‌محیطی
         methane = self.calculate_methane(daily_dmi, herd.head_count)
-        carrying_capacity = int(request.land_area_ha * forage.dry_matter_ton_ha * 1000 / (daily_dmi * 365))
+        carrying_capacity = int(
+            request.land_area_ha * forage.dry_matter_ton_ha * 1000 / (daily_dmi * 365)
+        )
 
         environmental = EnvironmentalImpact(
             methane_kg_co2e_year=round(methane, 1),

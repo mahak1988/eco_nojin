@@ -144,10 +144,14 @@ class TestGroundwaterService:
         expected_index = safe_yield / healthy_input.abstraction_rate_m3_yr
 
         # Verify calculation matches
-        assert abs(result.sustainability_index - expected_index) < 0.01,             f"Expected {expected_index}, got {result.sustainability_index}"
+        assert abs(result.sustainability_index - expected_index) < 0.01, (
+            f"Expected {expected_index}, got {result.sustainability_index}"
+        )
 
         # Sanity check: should be sustainable (> 1.0) for healthy fixture
-        assert result.sustainability_index > 1.0,             f"Healthy aquifer should be sustainable, got {result.sustainability_index}"
+        assert result.sustainability_index > 1.0, (
+            f"Healthy aquifer should be sustainable, got {result.sustainability_index}"
+        )
 
     def test_recommendations_generated(self, service, healthy_input):
         """Test that recommendations are generated."""

@@ -1,0 +1,150 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Eco Nojin API Gateway",
+    "tags": ["eco-nojin", "api-gateway"],
+    "timezone": "browser",
+    "schemaVersion": 39,
+    "version": 1,
+    "refresh": "5s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Service Status",
+        "type": "stat",
+        "gridPos": { "x": 0, "y": 0, "w": 8, "h": 5 },
+        "targets": [
+          {
+            "expr": "api_gateway_info",
+            "legendFormat": "{{service}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green", "value": null }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "Uptime",
+        "type": "gauge",
+        "gridPos": { "x": 0, "y": 5, "w": 8, "h": 6 },
+        "targets": [
+          {
+            "expr": "uptime_seconds",
+            "legendFormat": "Uptime (seconds)",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "min": 0
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "C++ Core Availability",
+        "type": "stat",
+        "gridPos": { "x": 8, "y": 0, "w": 8, "h": 5 },
+        "targets": [
+          {
+            "expr": "cpp_core_available",
+            "legendFormat": "C++ Core {{if .Value \"1\"}}Available{{else}}Unavailable{{end}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "red", "value": null },
+                { "color": "green", "value": 0.5 }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 4,
+        "title": "C++ Performance",
+        "type": "graph",
+        "gridPos": { "x": 8, "y": 5, "w": 16, "h": 6 },
+        "targets": [
+          {
+            "expr": "rate(cpp_calls[1m])",
+            "legendFormat": "C++ calls/sec",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(cpp_fallback_calls[1m])",
+            "legendFormat": "Fallback calls/sec",
+            "refId": "B"
+          },
+          {
+            "expr": "rate(cpp_total_time_ms[1m])",
+            "legendFormat": "Total C++ time (ms/sec)",
+            "refId": "C"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "id": 5,
+        "title": "Feature Flags",
+        "type": "table",
+        "gridPos": { "x": 0, "y": 11, "w": 24, "h": 8 },
+        "targets": [
+          {
+            "expr": "feature_flags",
+            "legendFormat": "{{name}} - {{.Value}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "cellOptions": {
+                "type": "auto"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "templating": {
+      "list": []
+    },
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "hide": true,
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    }
+  },
+  "folderId": 0,
+  "overwrite": false
+}

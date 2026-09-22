@@ -1,6 +1,6 @@
 """AuthService - backward compatible with unified auth backend."""
+
 import hashlib
-import secrets
 from datetime import UTC, datetime, timedelta
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,7 +8,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from services.auth.compat import (
     create_access_token_compat,
     create_refresh_token_compat,
-    decode_refresh_token_compat,
     hash_password,
     password_hasher,
     verify_password,
@@ -60,16 +59,16 @@ class AuthService:
         access = create_access_token_compat(
             {"user_id": user.id}, subject=str(user.id), role="farmer"
         )
-        refresh = create_refresh_token_compat(
-            {}, subject=str(user.id), role="farmer"
-        )
+        refresh = create_refresh_token_compat({}, subject=str(user.id), role="farmer")
         await self.repo.save_refresh_token(
-            user.id, hashlib.sha256(refresh.encode()).hexdigest(),
+            user.id,
+            hashlib.sha256(refresh.encode()).hexdigest(),
             datetime.now(UTC) + timedelta(seconds=self.REFRESH_TOKEN_TTL),
         )
         await self.repo.update_last_login(user.id)
         return TokenResponse(
-            access_token=access, refresh_token=refresh,
+            access_token=access,
+            refresh_token=refresh,
             expires_in=self.ACCESS_TOKEN_TTL,
         )
 
@@ -78,7 +77,10 @@ class AuthService:
         if not user:
             raise ValueError("User not found")
         return UserInfo(
-            id=user.id, email=user.email, username=user.username,
-            is_active=user.is_active, is_verified=user.is_verified,
+            id=user.id,
+            email=user.email,
+            username=user.username,
+            is_active=user.is_active,
+            is_verified=user.is_verified,
             created_at=user.created_at,
         )

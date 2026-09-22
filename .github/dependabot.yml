@@ -1,0 +1,131 @@
+version: 2
+updates:
+  # Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "UTC"
+    labels:
+      - "dependencies"
+      - "python"
+    commit-message:
+      prefix: "deps(pip)"
+      prefix-development: "deps-dev(pip)"
+    groups:
+      dev-tools:
+        patterns:
+          - "ruff"
+          - "mypy"
+          - "pytest*"
+          - "bandit"
+          - "pip-audit"
+          - "vulture"
+      testing:
+        patterns:
+          - "pytest*"
+          - "hypothesis"
+          - "schemathesis"
+          - "pact*"
+      observability:
+        patterns:
+          - "opentelemetry*"
+          - "prometheus*"
+          - "structlog"
+          - "prometheus-client"
+      cache:
+        patterns:
+          - "redis*"
+          - "aiocache"
+      testing-contracts:
+        patterns:
+          - "schemathesis"
+          - "pact*"
+          - "hypothesis"
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    open-pull-requests-limit: 10
+
+  # Node.js dependencies (Frontend)
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:30"
+      timezone: "UTC"
+    labels:
+      - "dependencies"
+      - "frontend"
+      - "typescript"
+    commit-message:
+      prefix: "deps(npm)"
+      prefix-development: "deps-dev(npm)"
+    groups:
+      build-tools:
+        patterns:
+          - "@types/*"
+          - "typescript"
+          - "eslint*"
+          - "prettier"
+          - "@typescript-eslint/*"
+      react-ecosystem:
+        patterns:
+          - "react*"
+          - "@tanstack/*"
+          - "zustand"
+          - "react-hook-form"
+          - "@hookform/resolvers"
+          - "zod"
+      ui-components:
+        patterns:
+          - "@radix-ui/*"
+          - "lucide-react"
+          - "clsx"
+          - "tailwind-merge"
+          - "class-variance-authority"
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    open-pull-requests-limit: 10
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: "UTC"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "deps(gha)"
+    groups:
+      actions:
+        patterns:
+          - "*"
+    allow:
+      - dependency-type: "direct"
+    open-pull-requests-limit: 5
+
+  # Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:30"
+      timezone: "UTC"
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "deps(docker)"
+    allow:
+      - dependency-type: "direct"
+    open-pull-requests-limit: 5

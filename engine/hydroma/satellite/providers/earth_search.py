@@ -163,7 +163,9 @@ class EarthSearchProvider(SatelliteProvider):
         except requests.RequestException:
             return None
 
-    def _download_bands(self, assets: dict[str, Any], item_id: str) -> tuple[dict[str, np.ndarray] | None, str, dict[str, Any]]:
+    def _download_bands(
+        self, assets: dict[str, Any], item_id: str
+    ) -> tuple[dict[str, np.ndarray] | None, str, dict[str, Any]]:
         bands: dict[str, np.ndarray] = {}
         quality_flags: dict[str, Any] = {
             "downloaded_bands": [],
@@ -200,7 +202,11 @@ class EarthSearchProvider(SatelliteProvider):
         response.raise_for_status()
 
         content = response.content
-        if href.lower().endswith(".zip") or href.lower().endswith(".tar.gz") or href.lower().endswith(".tgz"):
+        if (
+            href.lower().endswith(".zip")
+            or href.lower().endswith(".tar.gz")
+            or href.lower().endswith(".tgz")
+        ):
             with zipfile.ZipFile(io.BytesIO(content)) as zf:
                 tiff_names = [n for n in zf.namelist() if n.lower().endswith((".tif", ".tiff"))]
                 if not tiff_names:
@@ -222,7 +228,9 @@ class EarthSearchProvider(SatelliteProvider):
         except Exception as exc:
             raise RuntimeError(f"TIFF decode failed: {exc}") from exc
 
-    def _build_cloud_mask(self, assets: dict[str, Any], bands: dict[str, np.ndarray]) -> np.ndarray | None:
+    def _build_cloud_mask(
+        self, assets: dict[str, Any], bands: dict[str, np.ndarray]
+    ) -> np.ndarray | None:
         scl_key = _BAND_KEYS.get("scl")
         asset = assets.get(scl_key, {})
         href = asset.get("href", "")
@@ -241,7 +249,9 @@ class EarthSearchProvider(SatelliteProvider):
             masked = np.where(cloud_mask, np.nan, array)
             bands[name] = masked
 
-    def _fill_missing_bands(self, bands: dict[str, np.ndarray], quality_flags: dict[str, Any], item_id: str) -> dict[str, np.ndarray]:
+    def _fill_missing_bands(
+        self, bands: dict[str, np.ndarray], quality_flags: dict[str, Any], item_id: str
+    ) -> dict[str, np.ndarray]:
         size = next(iter(bands.values())).shape if bands else (64, 64)
         np.random.seed(hash(item_id) % (2**32))
         defaults = {

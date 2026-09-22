@@ -4,6 +4,7 @@ Data models for soil module.
 This module contains Pydantic models and dataclasses
 for Soil analysis, classification, and health assessment
 """
+
 from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -22,14 +23,17 @@ class BaseSoil(BaseModel):
 
 class SoilCreate(BaseModel):
     """Model for creating soil."""
+
     pass
 
 
 class SoilRead(BaseModel):
     """Model for reading soil."""
+
     pass
 
 
 class SoilUpdate(BaseModel):
     """Model for updating soil."""
+
     pass

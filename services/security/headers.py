@@ -43,7 +43,9 @@ class SecurityHeadersMiddleware:
                 for name, value in _HEADERS.items():
                     headers.append((name.lower().encode(), value.encode()))
                 if scope.get("scheme") == "https":
-                    headers.append((b"strict-transport-security", b"max-age=31536000; includeSubDomains"))
+                    headers.append(
+                        (b"strict-transport-security", b"max-age=31536000; includeSubDomains")
+                    )
                 message["headers"] = headers
             await send(message)
 

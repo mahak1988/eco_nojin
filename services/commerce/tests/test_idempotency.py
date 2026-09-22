@@ -1,14 +1,14 @@
 """Commerce/marketplace idempotency tests."""
 
-import pytest
 import uuid
+
+import pytest
 from starlette.applications import Starlette
-from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 from starlette.testclient import TestClient
 
-from services.api_gateway.middleware.idempotency import IdempotencyMiddleware, PROTECTED_PREFIXES
+from services.api_gateway.middleware.idempotency import PROTECTED_PREFIXES, IdempotencyMiddleware
 
 
 def _scope(method: str, path: str, headers: dict = None) -> dict:
@@ -33,6 +33,7 @@ def _scope(method: str, path: str, headers: dict = None) -> dict:
 
 def _run_async(coro):
     import asyncio
+
     return asyncio.run(coro)
 
 
@@ -140,9 +141,7 @@ class TestIdempotencyMiddlewareDirect:
         ]
         m = IdempotencyMiddleware(app=None)
         for path, method, expected in protected_endpoints:
-            assert m._requires_idempotency(path, method) == expected, (
-                f"Failed: {method} {path}"
-            )
+            assert m._requires_idempotency(path, method) == expected, f"Failed: {method} {path}"
 
 
 class TestIdempotencyMiddlewareIntegration:

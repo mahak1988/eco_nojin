@@ -82,8 +82,10 @@ class AquaCropRunner(ModelRunner):
         sim_end = pd.Timestamp(harvest_date.replace("/", "-")) + pd.Timedelta(
             days=self._end_buffer_days
         )
-        weather_df = weather if weather is not None else synthetic_weather(
-            planting_date, sim_end.strftime("%Y/%m/%d")
+        weather_df = (
+            weather
+            if weather is not None
+            else synthetic_weather(planting_date, sim_end.strftime("%Y/%m/%d"))
         )
         missing = [c for c in WEATHER_COLUMNS if c not in weather_df.columns]
         if missing:

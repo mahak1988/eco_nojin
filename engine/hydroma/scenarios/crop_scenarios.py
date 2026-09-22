@@ -186,19 +186,25 @@ def simulate_crop_yield(
 
     # Apply stress factors
     actual_yield = potential_yield * temp_factor * water_factor * co2_factor
+    actual_yield_kg_ha = actual_yield * 10
 
     # Economic value
     gross_revenue = actual_yield * crop.price_per_kg
 
     # Water productivity of the system
     system_wp = actual_yield / available_water if available_water > 0 else 0
+    overall_factor = temp_factor * water_factor * co2_factor
 
     return {
         "crop": crop.name,
         "potential_yield_kg_ha": round(potential_yield * 10, 0),  # Convert to kg/ha
-        "actual_yield_kg_ha": round(actual_yield * 10, 0),
+        "actual_yield_kg_ha": round(actual_yield_kg_ha, 0),
+        "yield_kg_per_ha": round(actual_yield_kg_ha, 0),
         "yield_reduction_pct": round((1 - actual_yield / max(potential_yield, 0.01)) * 100, 1),
         "water_requirement_mm": round(crop_water_requirement, 0),
+        "water_factor": round(water_factor, 4),
+        "temp_factor": round(temp_factor, 4),
+        "overall_factor": round(overall_factor, 4),
         "water_stress_factor": round(water_factor, 2),
         "temp_stress_factor": round(temp_factor, 2),
         "co2_fertilization": round(co2_factor, 2),

@@ -1,0 +1,34 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: eco-nojin
+
+resources:
+  - ../../base
+
+commonLabels:
+  environment: dr
+  app.kubernetes.io/instance: eco-nojin-dr
+
+patchesStrategicMerge:
+  - dr-patch.yaml
+
+images:
+  - name: ghcr.io/eco-nojin/api-gateway
+    newTag: v1.0.0
+  - name: ghcr.io/eco-nojin/frontend
+    newTag: v1.0.0
+
+replicas:
+  - name: api-gateway
+    count: 1
+  - name: frontend
+    count: 1
+
+configMapGenerator:
+  - name: api-gateway-config
+    behavior: merge
+    literals:
+      - ENVIRONMENT=dr
+      - LOG_LEVEL=warn
+      - CORS_ORIGINS='["https://dr-app.eco-nojin.org", "https://dr-api.eco-nojin.org"]'

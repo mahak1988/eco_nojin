@@ -96,9 +96,7 @@ class AdviceService:
         source_lines = [
             f"[{i + 1}] {doc.title} ({doc.source})" for i, (doc, _s) in enumerate(retrieved)
         ]
-        context = "\n\n".join(
-            f"[{i + 1}] {doc.content}" for i, (doc, _s) in enumerate(retrieved)
-        )
+        context = "\n\n".join(f"[{i + 1}] {doc.content}" for i, (doc, _s) in enumerate(retrieved))
 
         if await self._ollama.available():
             translated = await self._ollama.chat(
@@ -111,9 +109,7 @@ class AdviceService:
                 user=f"Context:\n{context}\n\nQuestion: {query}",
             )
             if translated:
-                answer = (
-                    f"{translated.strip()}\n\n📚 منابع:\n" + "\n".join(source_lines)
-                )
+                answer = f"{translated.strip()}\n\n📚 منابع:\n" + "\n".join(source_lines)
                 return {
                     "answer": answer,
                     "sources": [d.id for d, _s in retrieved],
@@ -123,9 +119,8 @@ class AdviceService:
 
         # Offline fallback: honest English evidence + note.
         top_doc, _score = retrieved[0]
-        answer = (
-            f"📚 {top_doc.source}: {top_doc.title}\n\n{top_doc.content}"
-            + i18n.t(language, "ollama_offline_note")
+        answer = f"📚 {top_doc.source}: {top_doc.title}\n\n{top_doc.content}" + i18n.t(
+            language, "ollama_offline_note"
         )
         return {
             "answer": answer,

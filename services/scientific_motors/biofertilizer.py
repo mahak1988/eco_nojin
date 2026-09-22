@@ -2,6 +2,7 @@
 Hydroma Nojin - Biofertilizer Recommendation Engine
 Recommends optimal biofertilizers based on soil analysis and crop type.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -24,6 +25,7 @@ from .base import (
 
 class BiofertilizerType(Enum):
     """Types of biofertilizers."""
+
     NITROGEN_FIXER = "nitrogen_fixer"
     PHOSPHATE_SOLUBILIZER = "phosphate_solubilizer"
     POTASH_MOBILIZER = "potash_mobilizer"
@@ -35,6 +37,7 @@ class BiofertilizerType(Enum):
 @dataclass
 class BiofertilizerRecommendation:
     """Single biofertilizer recommendation."""
+
     name: str
     type: BiofertilizerType
     dosage_kg_ha: float
@@ -47,7 +50,7 @@ class BiofertilizerRecommendation:
 class BiofertilizerMotor(AbstractScientificMotor):
     """
     Biofertilizer Recommendation Motor
-    
+
     Analyzes soil properties and crop requirements to recommend
     optimal biofertilizer combinations for sustainable agriculture.
     """
@@ -85,6 +88,7 @@ class BiofertilizerMotor(AbstractScientificMotor):
     ) -> MotorResult:
         """Execute biofertilizer recommendation."""
         import time
+
         start_time = time.time()
         run_id = f"BIOFERT_{parameters.scenario_name}_{int(time.time())}"
 
@@ -122,9 +126,7 @@ class BiofertilizerMotor(AbstractScientificMotor):
             p_deficit = self._calculate_phosphorus_deficit(soil_p, soil_ph, crop_type)
 
             # Calculate soil health score
-            health_score = self._calculate_soil_health(
-                soil_ph, soil_n, soil_p, soil_k, soil_om
-            )
+            health_score = self._calculate_soil_health(soil_ph, soil_n, soil_p, soil_k, soil_om)
 
             return MotorResult(
                 run_id=run_id,
@@ -186,76 +188,88 @@ class BiofertilizerMotor(AbstractScientificMotor):
         # 1. Nitrogen fixers (if N is deficient)
         n_deficit = requirements["N"] - mean_n
         if n_deficit > 50:  # Significant deficit
-            recommendations.append(BiofertilizerRecommendation(
-                name="Rhizobium" if crop_type in ["soybean", "legumes"] else "Azotobacter",
-                type=BiofertilizerType.NITROGEN_FIXER,
-                dosage_kg_ha=10.0 if n_deficit > 100 else 5.0,
-                application_method="Seed treatment or soil application",
-                timing="At sowing or early vegetative stage",
-                expected_benefit=f"Fix {min(n_deficit, 80)} kg N/ha from atmosphere",
-                confidence=min(0.9, n_deficit / 150),
-            ))
+            recommendations.append(
+                BiofertilizerRecommendation(
+                    name="Rhizobium" if crop_type in ["soybean", "legumes"] else "Azotobacter",
+                    type=BiofertilizerType.NITROGEN_FIXER,
+                    dosage_kg_ha=10.0 if n_deficit > 100 else 5.0,
+                    application_method="Seed treatment or soil application",
+                    timing="At sowing or early vegetative stage",
+                    expected_benefit=f"Fix {min(n_deficit, 80)} kg N/ha from atmosphere",
+                    confidence=min(0.9, n_deficit / 150),
+                )
+            )
 
         # 2. Phosphate solubilizers (if P is low or pH is high)
         p_deficit = requirements["P"] - mean_p
         if p_deficit > 20 or mean_ph > 7.5:
-            recommendations.append(BiofertilizerRecommendation(
-                name="Pseudomonas fluorescens + Bacillus megaterium",
-                type=BiofertilizerType.PHOSPHATE_SOLUBILIZER,
-                dosage_kg_ha=8.0,
-                application_method="Soil application with FYM",
-                timing="Before sowing",
-                expected_benefit=f"Solubilize {min(p_deficit, 40)} kg P/ha from soil",
-                confidence=0.85 if mean_ph > 7.5 else 0.75,
-            ))
+            recommendations.append(
+                BiofertilizerRecommendation(
+                    name="Pseudomonas fluorescens + Bacillus megaterium",
+                    type=BiofertilizerType.PHOSPHATE_SOLUBILIZER,
+                    dosage_kg_ha=8.0,
+                    application_method="Soil application with FYM",
+                    timing="Before sowing",
+                    expected_benefit=f"Solubilize {min(p_deficit, 40)} kg P/ha from soil",
+                    confidence=0.85 if mean_ph > 7.5 else 0.75,
+                )
+            )
 
         # 3. Potash mobilizers (if K is deficient)
         k_deficit = requirements["K"] - mean_k
         if k_deficit > 15:
-            recommendations.append(BiofertilizerRecommendation(
-                name="Frateuria aurantia",
-                type=BiofertilizerType.POTASH_MOBILIZER,
-                dosage_kg_ha=6.0,
-                application_method="Soil application",
-                timing="At sowing",
-                expected_benefit=f"Mobilize {min(k_deficit, 30)} kg K/ha",
-                confidence=0.80,
-            ))
+            recommendations.append(
+                BiofertilizerRecommendation(
+                    name="Frateuria aurantia",
+                    type=BiofertilizerType.POTASH_MOBILIZER,
+                    dosage_kg_ha=6.0,
+                    application_method="Soil application",
+                    timing="At sowing",
+                    expected_benefit=f"Mobilize {min(k_deficit, 30)} kg K/ha",
+                    confidence=0.80,
+                )
+            )
 
         # 4. Mycorrhiza (if organic matter is low)
         if mean_om < 1.5:
-            recommendations.append(BiofertilizerRecommendation(
-                name="Glomus intraradices (AMF)",
-                type=BiofertilizerType.MYCORRHIZA,
-                dosage_kg_ha=5.0,
-                application_method="Root dip or soil application",
-                timing="At transplanting or sowing",
-                expected_benefit="Improve P uptake by 30-50%, enhance drought tolerance",
-                confidence=0.90 if mean_om < 1.0 else 0.75,
-            ))
+            recommendations.append(
+                BiofertilizerRecommendation(
+                    name="Glomus intraradices (AMF)",
+                    type=BiofertilizerType.MYCORRHIZA,
+                    dosage_kg_ha=5.0,
+                    application_method="Root dip or soil application",
+                    timing="At transplanting or sowing",
+                    expected_benefit="Improve P uptake by 30-50%, enhance drought tolerance",
+                    confidence=0.90 if mean_om < 1.0 else 0.75,
+                )
+            )
 
         # 5. PGPR (general plant growth promotion)
         if mean_ph < 6.0 or mean_ph > 8.0:
-            recommendations.append(BiofertilizerRecommendation(
-                name="Bacillus subtilis + Pseudomonas putida",
-                type=BiofertilizerType.PGPR,
-                dosage_kg_ha=4.0,
-                application_method="Seed treatment",
-                timing="Before sowing",
-                expected_benefit="Stress tolerance, disease suppression, growth promotion",
-                confidence=0.85,
-            ))
+            recommendations.append(
+                BiofertilizerRecommendation(
+                    name="Bacillus subtilis + Pseudomonas putida",
+                    type=BiofertilizerType.PGPR,
+                    dosage_kg_ha=4.0,
+                    application_method="Seed treatment",
+                    timing="Before sowing",
+                    expected_benefit="Stress tolerance, disease suppression, growth promotion",
+                    confidence=0.85,
+                )
+            )
 
         # 6. Biocontrol agents (preventive)
-        recommendations.append(BiofertilizerRecommendation(
-            name="Trichoderma harzianum",
-            type=BiofertilizerType.BIOCONTROL,
-            dosage_kg_ha=3.0,
-            application_method="Soil application or seed treatment",
-            timing="Before sowing",
-            expected_benefit="Control soil-borne diseases (Fusarium, Pythium)",
-            confidence=0.90,
-        ))
+        recommendations.append(
+            BiofertilizerRecommendation(
+                name="Trichoderma harzianum",
+                type=BiofertilizerType.BIOCONTROL,
+                dosage_kg_ha=3.0,
+                application_method="Soil application or seed treatment",
+                timing="Before sowing",
+                expected_benefit="Control soil-borne diseases (Fusarium, Pythium)",
+                confidence=0.90,
+            )
+        )
 
         return recommendations
 
@@ -267,8 +281,11 @@ class BiofertilizerMotor(AbstractScientificMotor):
     ) -> xr.DataArray:
         """Calculate nitrogen deficit map."""
         crop_requirements = {
-            "wheat": 150, "maize": 180, "barley": 120,
-            "cotton": 200, "tomato": 160,
+            "wheat": 150,
+            "maize": 180,
+            "barley": 120,
+            "cotton": 200,
+            "tomato": 160,
         }
         required_n = crop_requirements.get(crop_type, 150)
 
@@ -292,8 +309,11 @@ class BiofertilizerMotor(AbstractScientificMotor):
     ) -> xr.DataArray:
         """Calculate phosphorus deficit map."""
         crop_requirements = {
-            "wheat": 60, "maize": 70, "barley": 50,
-            "cotton": 80, "tomato": 90,
+            "wheat": 60,
+            "maize": 70,
+            "barley": 50,
+            "cotton": 80,
+            "tomato": 90,
         }
         required_p = crop_requirements.get(crop_type, 60)
 
@@ -321,9 +341,7 @@ class BiofertilizerMotor(AbstractScientificMotor):
         """Calculate overall soil health score (0-100)."""
         # pH score (optimal: 6.0-7.5)
         ph_score = np.where(
-            (soil_ph >= 6.0) & (soil_ph <= 7.5),
-            100,
-            100 - np.abs(soil_ph - 6.75) * 15
+            (soil_ph >= 6.0) & (soil_ph <= 7.5), 100, 100 - np.abs(soil_ph - 6.75) * 15
         )
         ph_score = np.clip(ph_score, 0, 100)
 
@@ -341,11 +359,7 @@ class BiofertilizerMotor(AbstractScientificMotor):
 
         # Weighted average
         health = (
-            ph_score * 0.20 +
-            n_score * 0.25 +
-            p_score * 0.20 +
-            k_score * 0.15 +
-            om_score * 0.20
+            ph_score * 0.20 + n_score * 0.25 + p_score * 0.20 + k_score * 0.15 + om_score * 0.20
         )
 
         return xr.DataArray(

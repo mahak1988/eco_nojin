@@ -4,6 +4,7 @@ Data models for ledger module.
 This module contains Pydantic models and dataclasses
 for Transaction ledger service
 """
+
 from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -22,14 +23,17 @@ class BaseLedger(BaseModel):
 
 class LedgerCreate(BaseModel):
     """Model for creating ledger."""
+
     pass
 
 
 class LedgerRead(BaseModel):
     """Model for reading ledger."""
+
     pass
 
 
 class LedgerUpdate(BaseModel):
     """Model for updating ledger."""
+
     pass

@@ -3,6 +3,7 @@ Economic Engine - Return on Investment (ROI) Module.
 
 Calculates financial performance indicators like NPV, IRR, ROI, Payback Period.
 """
+
 from typing import Any
 
 from scipy.optimize import newton
@@ -10,10 +11,10 @@ from scipy.optimize import newton
 
 def calculate_financial_metrics(
     initial_investment: float,
-    cash_flows: list[float], # Cash flows for years 1, 2, ..., n
+    cash_flows: list[float],  # Cash flows for years 1, 2, ..., n
     discount_rate: float,
     project_lifetime_years: int,
-    salvage_value: float = 0.0
+    salvage_value: float = 0.0,
 ) -> dict[str, Any]:
     """
     Calculates NPV, IRR, ROI, and Payback Period.
@@ -45,7 +46,7 @@ def calculate_financial_metrics(
     # Use scipy.optimize.newton to find the root of the NPV function
     def npv_func(rate):
         if rate <= -1:
-            return float('-inf') # Avoid division by zero or negative base
+            return float("-inf")  # Avoid division by zero or negative base
         npv_val = -initial_investment
         for t, cf in enumerate(cash_flows, 1):
             npv_val += cf / ((1 + rate) ** t)
@@ -59,9 +60,9 @@ def calculate_financial_metrics(
         # If not, IRR might not exist or be non-unique
         irr = newton(npv_func, initial_guess, maxiter=100, tol=1e-6)
         if irr <= -1:
-            irr = None # IRR is not meaningful if <= -100%
+            irr = None  # IRR is not meaningful if <= -100%
     except (RuntimeError, ValueError):
-        irr = None # Could not converge
+        irr = None  # Could not converge
 
     # Calculate simple ROI (Total Gain / Total Investment)
     total_gain = sum(cash_flows) + salvage_value - initial_investment
@@ -69,7 +70,7 @@ def calculate_financial_metrics(
 
     # Calculate Payback Period (Time to recover initial investment)
     cumulative_cash_flow = -initial_investment
-    payback_period_years = project_lifetime_years + 1.0 # Default if not recovered
+    payback_period_years = project_lifetime_years + 1.0  # Default if not recovered
     for t, cf in enumerate(cash_flows, 1):
         cumulative_cash_flow += cf
         if cumulative_cash_flow >= 0:
@@ -84,11 +85,13 @@ def calculate_financial_metrics(
         "irr_fraction": irr,
         "irr_percentage": irr * 100 if irr is not None else None,
         "roi_simple_percentage": roi_simple,
-        "payback_period_years": payback_period_years if payback_period_years <= project_lifetime_years else None,
+        "payback_period_years": payback_period_years
+        if payback_period_years <= project_lifetime_years
+        else None,
         "initial_investment_irr": initial_investment,
         "total_cash_inflows_irr": sum(cash_flows) + salvage_value,
         "project_lifetime_years": project_lifetime_years,
-        "salvage_value_irr": salvage_value
+        "salvage_value_irr": salvage_value,
     }
 
 
@@ -100,7 +103,7 @@ def calculate_agricultural_roi(
     discount_rate: float,
     years_operation: int,
     initial_land_prep_cost_irr: float = 0.0,
-    annual_operating_cost_multiplier: float = 1.0 # To account for cost changes over time
+    annual_operating_cost_multiplier: float = 1.0,  # To account for cost changes over time
 ) -> dict[str, Any]:
     """
     Calculates ROI specifically for an agricultural venture.
@@ -133,18 +136,20 @@ def calculate_agricultural_roi(
         initial_investment=initial_investment,
         cash_flows=cash_flows,
         discount_rate=discount_rate,
-        project_lifetime_years=years_operation
+        project_lifetime_years=years_operation,
     )
 
     # Add agricultural-specific details
-    metrics.update({
-        "area_hectares": area_hectares,
-        "yield_ton_per_ha_per_year": yield_ton_per_ha,
-        "total_yield_per_year_ton": total_yield_per_year,
-        "market_price_per_ton_irr": market_price_per_ton,
-        "revenue_per_year_irr": revenue_per_year,
-        "cost_per_year_irr": cost_per_year,
-        "gross_margin_per_year_irr": revenue_per_year - cost_per_year
-    })
+    metrics.update(
+        {
+            "area_hectares": area_hectares,
+            "yield_ton_per_ha_per_year": yield_ton_per_ha,
+            "total_yield_per_year_ton": total_yield_per_year,
+            "market_price_per_ton_irr": market_price_per_ton,
+            "revenue_per_year_irr": revenue_per_year,
+            "cost_per_year_irr": cost_per_year,
+            "gross_margin_per_year_irr": revenue_per_year - cost_per_year,
+        }
+    )
 
     return metrics

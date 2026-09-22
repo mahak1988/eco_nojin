@@ -1,4 +1,5 @@
 """Vegetation Pipeline (M-VEG) - NDVI, EVI, NDWI, NBR, LAI."""
+
 from __future__ import annotations
 
 import time
@@ -155,7 +156,8 @@ class VegetationPipeline(MapPipeline):
         ndvi = (nir - red) / (nir + red + eps)
         return xr.DataArray(
             ndvi.values.astype(np.float32),
-            coords=red.coords, dims=red.dims,
+            coords=red.coords,
+            dims=red.dims,
             attrs={"description": "NDVI", "range": "[-1, 1]"},
         ).rio.write_crs(red.rio.crs)
 
@@ -170,7 +172,8 @@ class VegetationPipeline(MapPipeline):
         evi = 2.5 * (nir - red) / (nir + 6 * red - 7.5 * blue + 1 + eps)
         return xr.DataArray(
             evi.values.astype(np.float32),
-            coords=red.coords, dims=red.dims,
+            coords=red.coords,
+            dims=red.dims,
             attrs={"description": "EVI", "range": "[-1, 1]"},
         ).rio.write_crs(red.rio.crs)
 
@@ -180,7 +183,8 @@ class VegetationPipeline(MapPipeline):
         ndwi = (green - nir) / (green + nir + eps)
         return xr.DataArray(
             ndwi.values.astype(np.float32),
-            coords=green.coords, dims=green.dims,
+            coords=green.coords,
+            dims=green.dims,
             attrs={"description": "NDWI (McFeeters)", "range": "[-1, 1]"},
         ).rio.write_crs(green.rio.crs)
 
@@ -190,7 +194,8 @@ class VegetationPipeline(MapPipeline):
         nbr = (nir - swir) / (nir + swir + eps)
         return xr.DataArray(
             nbr.values.astype(np.float32),
-            coords=nir.coords, dims=nir.dims,
+            coords=nir.coords,
+            dims=nir.dims,
             attrs={"description": "NBR (Normalized Burn Ratio)", "range": "[-1, 1]"},
         ).rio.write_crs(nir.rio.crs)
 
@@ -204,7 +209,8 @@ class VegetationPipeline(MapPipeline):
 
         return xr.DataArray(
             lai.astype(np.float32),
-            coords=ndvi.coords, dims=ndvi.dims,
+            coords=ndvi.coords,
+            dims=ndvi.dims,
             attrs={"description": "LAI (Leaf Area Index)", "units": "m2/m2"},
         ).rio.write_crs(ndvi.rio.crs)
 
@@ -220,6 +226,7 @@ class VegetationPipeline(MapPipeline):
 
         return xr.DataArray(
             classified,
-            coords=ndvi.coords, dims=ndvi.dims,
+            coords=ndvi.coords,
+            dims=ndvi.dims,
             attrs={"description": "Vegetation density class"},
         )

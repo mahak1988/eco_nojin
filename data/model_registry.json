@@ -1,0 +1,4105 @@
+{
+  "models": [
+    {
+      "model_id": "c0a2b9a7-aafe-4458-856e-56fab3dc7631",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-21T00:12:00.590853",
+      "updated_at": "2026-09-21T00:12:00.590853",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "4a509538-440f-4757-8f2e-c20879cbc83d",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-21T00:12:50.261809",
+      "updated_at": "2026-09-21T00:12:50.262809",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "7cd560b0-5190-44bb-b254-2936753cab60",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-21T00:12:50.277800",
+      "updated_at": "2026-09-21T00:12:50.277800",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "eeee09aa-0ceb-46e1-8550-508cfaa7fea0",
+      "name": "Heat Equation PINN",
+      "version": "1.0.0",
+      "domain": "climate",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Physics-Informed Neural Network for heat equation",
+      "references": [
+        "Raissi et al. (2019) Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations"
+      ],
+      "doi": "10.1016/j.jcp.2018.10.045",
+      "authors": [
+        "M. Raissi",
+        "P. Perdikaris",
+        "G. Karniadakis"
+      ],
+      "created_at": "2026-09-21T00:12:54.310345",
+      "updated_at": "2026-09-21T00:12:54.310345",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "pinn",
+        "heat",
+        "pde",
+        "deep_learning"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "2ae3193e-7c85-43f4-a4ae-d8b732b98526",
+      "name": "Richards Equation PINN",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Physics-Informed Neural Network for Richards equation",
+      "references": [
+        "Cai et al. (2021) Physics-informed neural networks for solving Richards equation"
+      ],
+      "doi": "10.1016/j.advwatres.2021.103977",
+      "authors": [
+        "Z. Cai",
+        "et al."
+      ],
+      "created_at": "2026-09-21T00:12:54.312345",
+      "updated_at": "2026-09-21T00:12:54.312345",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "pinn",
+        "richards",
+        "unsaturated_flow",
+        "deep_learning"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "9da617ba-d986-45ee-a886-f2ee5a6fe19d",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-21T00:19:24.672794",
+      "updated_at": "2026-09-21T00:19:24.673793",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "a6b31469-abd6-4ca7-90ce-5ac3d27f16af",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-21T00:19:24.681790",
+      "updated_at": "2026-09-21T00:19:24.681790",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "b9b35e53-08b8-489d-9a40-efd1e1a56e40",
+      "name": "Heat Equation PINN",
+      "version": "1.0.0",
+      "domain": "climate",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Physics-Informed Neural Network for heat equation",
+      "references": [
+        "Raissi et al. (2019) Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations"
+      ],
+      "doi": "10.1016/j.jcp.2018.10.045",
+      "authors": [
+        "M. Raissi",
+        "P. Perdikaris",
+        "G. Karniadakis"
+      ],
+      "created_at": "2026-09-21T00:19:28.189044",
+      "updated_at": "2026-09-21T00:19:28.189044",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "pinn",
+        "heat",
+        "pde",
+        "deep_learning"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "1c27933e-8f41-4585-a915-8ec4f1e4c806",
+      "name": "Richards Equation PINN",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Physics-Informed Neural Network for Richards equation",
+      "references": [
+        "Cai et al. (2021) Physics-informed neural networks for solving Richards equation"
+      ],
+      "doi": "10.1016/j.advwatres.2021.103977",
+      "authors": [
+        "Z. Cai",
+        "et al."
+      ],
+      "created_at": "2026-09-21T00:19:28.191043",
+      "updated_at": "2026-09-21T00:19:28.191043",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "pinn",
+        "richards",
+        "unsaturated_flow",
+        "deep_learning"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "29b0b924-3fa1-4037-8835-20b9666e6060",
+      "name": "Gaussian Process Surrogate",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Gaussian Process emulator for fast model approximation",
+      "references": [
+        "Rasmussen & Williams (2006) Gaussian Processes for Machine Learning",
+        "Kennedy & O'Hagan (2001) Bayesian calibration of computer models"
+      ],
+      "doi": "10.1111/1467-9868.00294",
+      "authors": [
+        "C. Rasmussen",
+        "C. Williams",
+        "M. Kennedy",
+        "A. O'Hagan"
+      ],
+      "created_at": "2026-09-21T00:19:28.208034",
+      "updated_at": "2026-09-21T00:19:28.208034",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "gp",
+        "surrogate",
+        "emulator",
+        "bayesian",
+        "uq"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "c384db22-da6c-416c-bd1a-31b6ec83c157",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-21T00:19:41.363929",
+      "updated_at": "2026-09-21T00:19:41.365928",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "7c276ed3-b422-4289-93c2-4c4c353fa447",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-21T00:19:41.375925",
+      "updated_at": "2026-09-21T00:19:41.376924",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "5aea1352-6725-496d-817e-b2f56f9f7a29",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-21T00:20:26.140249",
+      "updated_at": "2026-09-21T00:20:26.141249",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "73881d43-4ba5-4e06-bbe3-671039a4d58f",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-21T00:20:26.152243",
+      "updated_at": "2026-09-21T00:20:26.152243",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "9b517cb4-710c-4403-a42a-522e5f0ba950",
+      "name": "Heat Equation PINN",
+      "version": "1.0.0",
+      "domain": "climate",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Physics-Informed Neural Network for heat equation",
+      "references": [
+        "Raissi et al. (2019) Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations"
+      ],
+      "doi": "10.1016/j.jcp.2018.10.045",
+      "authors": [
+        "M. Raissi",
+        "P. Perdikaris",
+        "G. Karniadakis"
+      ],
+      "created_at": "2026-09-21T00:20:29.705973",
+      "updated_at": "2026-09-21T00:20:29.705973",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "pinn",
+        "heat",
+        "pde",
+        "deep_learning"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "7490e380-9a99-41bf-9246-7b8fd6a48204",
+      "name": "Richards Equation PINN",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Physics-Informed Neural Network for Richards equation",
+      "references": [
+        "Cai et al. (2021) Physics-informed neural networks for solving Richards equation"
+      ],
+      "doi": "10.1016/j.advwatres.2021.103977",
+      "authors": [
+        "Z. Cai",
+        "et al."
+      ],
+      "created_at": "2026-09-21T00:20:29.708972",
+      "updated_at": "2026-09-21T00:20:29.708972",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "pinn",
+        "richards",
+        "unsaturated_flow",
+        "deep_learning"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "3030d637-e575-40a4-8dc9-e9ad8690870c",
+      "name": "Gaussian Process Surrogate",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Gaussian Process emulator for fast model approximation",
+      "references": [
+        "Rasmussen & Williams (2006) Gaussian Processes for Machine Learning",
+        "Kennedy & O'Hagan (2001) Bayesian calibration of computer models"
+      ],
+      "doi": "10.1111/1467-9868.00294",
+      "authors": [
+        "C. Rasmussen",
+        "C. Williams",
+        "M. Kennedy",
+        "A. O'Hagan"
+      ],
+      "created_at": "2026-09-21T00:20:29.714968",
+      "updated_at": "2026-09-21T00:20:29.714968",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "gp",
+        "surrogate",
+        "emulator",
+        "bayesian",
+        "uq"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "ff916334-51a5-4a28-a13a-0a5c5b486360",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-21T00:22:39.462561",
+      "updated_at": "2026-09-21T00:22:39.464561",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "c0f13844-56c1-4672-a470-655df7e0cc1f",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-21T00:22:39.474556",
+      "updated_at": "2026-09-21T00:22:39.474556",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "541fb002-dbcb-43eb-9240-3dadb7671bc4",
+      "name": "Heat Equation PINN",
+      "version": "1.0.0",
+      "domain": "climate",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Physics-Informed Neural Network for heat equation",
+      "references": [
+        "Raissi et al. (2019) Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations"
+      ],
+      "doi": "10.1016/j.jcp.2018.10.045",
+      "authors": [
+        "M. Raissi",
+        "P. Perdikaris",
+        "G. Karniadakis"
+      ],
+      "created_at": "2026-09-21T00:22:42.975865",
+      "updated_at": "2026-09-21T00:22:42.975865",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "pinn",
+        "heat",
+        "pde",
+        "deep_learning"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "8df3161e-ccf2-4387-8ef9-c491a68c5c94",
+      "name": "Richards Equation PINN",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Physics-Informed Neural Network for Richards equation",
+      "references": [
+        "Cai et al. (2021) Physics-informed neural networks for solving Richards equation"
+      ],
+      "doi": "10.1016/j.advwatres.2021.103977",
+      "authors": [
+        "Z. Cai",
+        "et al."
+      ],
+      "created_at": "2026-09-21T00:22:42.979864",
+      "updated_at": "2026-09-21T00:22:42.979864",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "pinn",
+        "richards",
+        "unsaturated_flow",
+        "deep_learning"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "dbe192e3-0ff0-40a9-9800-a24b4f386b55",
+      "name": "Gaussian Process Surrogate",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Gaussian Process emulator for fast model approximation",
+      "references": [
+        "Rasmussen & Williams (2006) Gaussian Processes for Machine Learning",
+        "Kennedy & O'Hagan (2001) Bayesian calibration of computer models"
+      ],
+      "doi": "10.1111/1467-9868.00294",
+      "authors": [
+        "C. Rasmussen",
+        "C. Williams",
+        "M. Kennedy",
+        "A. O'Hagan"
+      ],
+      "created_at": "2026-09-21T00:22:42.989858",
+      "updated_at": "2026-09-21T00:22:42.989858",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "gp",
+        "surrogate",
+        "emulator",
+        "bayesian",
+        "uq"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "a1937103-7da9-4c8c-b678-3aef2861df40",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-21T00:32:27.097487",
+      "updated_at": "2026-09-21T00:32:27.098487",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "2ce0ad33-aee7-44df-ab18-0ea7100d4007",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-21T00:32:27.109481",
+      "updated_at": "2026-09-21T00:32:27.109481",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "e4d10666-9025-4b94-b492-680d50ef8f28",
+      "name": "Distributed PINN Trainer",
+      "version": "1.0.0",
+      "domain": "climate",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Distributed training infrastructure for PINN and GP models",
+      "references": [
+        "Li et al. (2020) PyTorch Distributed: Experiences on Accelerating Data Parallel Training"
+      ],
+      "doi": "10.1109/IPDPS51204.2020.00044",
+      "authors": [
+        "Pytorch Team"
+      ],
+      "created_at": "2026-09-21T00:32:27.115477",
+      "updated_at": "2026-09-21T00:32:27.115477",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "distributed",
+        "ddp",
+        "pinn",
+        "training",
+        "scaling"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "b1569409-4933-4265-93fd-0d6bb5db501b",
+      "name": "Farmer Knowledge RAG Engine",
+      "version": "1.0.0",
+      "domain": "socioeconomic",
+      "fidelity": "data_driven",
+      "status": "experimental",
+      "description": "RAG engine for multilingual farmer knowledge retrieval and advisory",
+      "references": [
+        "Lewis et al. (2020) Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"
+      ],
+      "doi": "10.18653/v1/2020.acl-main.449",
+      "authors": [
+        "P. Lewis",
+        "E. Perez",
+        "A. Piktus",
+        "et al."
+      ],
+      "created_at": "2026-09-21T00:32:27.145460",
+      "updated_at": "2026-09-21T00:32:27.145460",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "rag",
+        "llm",
+        "farmer_knowledge",
+        "multilingual",
+        "advisory"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "59946f04-b17b-483e-af9b-eb1f6562a966",
+      "name": "Model Calibration Assistant",
+      "version": "1.0.0",
+      "domain": "socioeconomic",
+      "fidelity": "data_driven",
+      "status": "experimental",
+      "description": "LLM-assisted model calibration guidance",
+      "references": [],
+      "doi": null,
+      "authors": [],
+      "created_at": "2026-09-21T00:32:27.151457",
+      "updated_at": "2026-09-21T00:32:27.151457",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "calibration",
+        "llm",
+        "assistant",
+        "sensitivity"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "870434f5-8c55-46d3-9bff-7b6af03925d3",
+      "name": "Voice/USSD Advisory Interface",
+      "version": "1.0.0",
+      "domain": "socioeconomic",
+      "fidelity": "data_driven",
+      "status": "experimental",
+      "description": "Voice and USSD interface for feature phone access",
+      "references": [],
+      "doi": null,
+      "authors": [],
+      "created_at": "2026-09-21T00:32:27.160451",
+      "updated_at": "2026-09-21T00:32:27.160451",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "voice",
+        "ussd",
+        "ivrs",
+        "feature_phone",
+        "inclusive"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "45dc5c16-a655-4d2e-877e-e084d4b90a56",
+      "name": "Ensemble Kalman Filter",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Ensemble Kalman Filter for sequential data assimilation",
+      "references": [
+        "Evensen (2009) Data Assimilation: The Ensemble Kalman Filter",
+        "Houtekamer & Zhang (2016) Review of the Ensemble Kalman Filter"
+      ],
+      "doi": "10.1007/978-3-642-03711-5",
+      "authors": [
+        "G. Evensen",
+        "P. Houtekamer",
+        "F. Zhang"
+      ],
+      "created_at": "2026-09-21T00:32:28.062239",
+      "updated_at": "2026-09-21T00:32:28.062239",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "enkf",
+        "data_assimilation",
+        "kalman_filter",
+        "ensemble"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "b35d4d28-9214-464e-8f5a-3027d687af2e",
+      "name": "4D-Var",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "4D-Var variational data assimilation",
+      "references": [
+        "Le Dimet & Talagrand (1986) Variational algorithms for analysis and assimilation of meteorological observations"
+      ],
+      "doi": "10.1002/qj.49711247302",
+      "authors": [
+        "F. Le Dimet",
+        "O. Talagrand"
+      ],
+      "created_at": "2026-09-21T00:32:28.067236",
+      "updated_at": "2026-09-21T00:32:28.067236",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "4dvar",
+        "variational",
+        "data_assimilation",
+        "optimization"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "fd8b3fe6-db57-4681-afd0-d9cf9b9954a5",
+      "name": "Particle Filter",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Particle filter for non-Gaussian data assimilation",
+      "references": [
+        "Doucet et al. (2001) Sequential Monte Carlo Methods in Practice"
+      ],
+      "doi": "10.1007/978-1-4757-3437-9",
+      "authors": [
+        "A. Doucet",
+        "N. de Freitas",
+        "N. Gordon"
+      ],
+      "created_at": "2026-09-21T00:32:28.074232",
+      "updated_at": "2026-09-21T00:32:28.074232",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "particle_filter",
+        "sequential_monte_carlo",
+        "data_assimilation",
+        "non_gaussian"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "2795b0ac-8cf8-4072-899e-9cd3d3556920",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-21T00:33:07.342314",
+      "updated_at": "2026-09-21T00:33:07.345310",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "0f3aa152-ef40-4b5c-8a71-8d80dcdccc64",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-21T00:33:07.360304",
+      "updated_at": "2026-09-21T00:33:07.360304",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "2b39bfb2-ef91-4242-9c1c-8ac303195f90",
+      "name": "Ensemble Kalman Filter",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Ensemble Kalman Filter for sequential data assimilation",
+      "references": [
+        "Evensen (2009) Data Assimilation: The Ensemble Kalman Filter",
+        "Houtekamer & Zhang (2016) Review of the Ensemble Kalman Filter"
+      ],
+      "doi": "10.1007/978-3-642-03711-5",
+      "authors": [
+        "G. Evensen",
+        "P. Houtekamer",
+        "F. Zhang"
+      ],
+      "created_at": "2026-09-21T00:33:07.369296",
+      "updated_at": "2026-09-21T00:33:07.369296",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "enkf",
+        "data_assimilation",
+        "kalman_filter",
+        "ensemble"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "537b7268-7475-4712-b70a-1ebb489aa400",
+      "name": "4D-Var",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "4D-Var variational data assimilation",
+      "references": [
+        "Le Dimet & Talagrand (1986) Variational algorithms for analysis and assimilation of meteorological observations"
+      ],
+      "doi": "10.1002/qj.49711247302",
+      "authors": [
+        "F. Le Dimet",
+        "O. Talagrand"
+      ],
+      "created_at": "2026-09-21T00:33:07.375293",
+      "updated_at": "2026-09-21T00:33:07.375293",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "4dvar",
+        "variational",
+        "data_assimilation",
+        "optimization"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "3a04e8a4-c82c-40ac-9b80-04e8cfef88fa",
+      "name": "Particle Filter",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Particle filter for non-Gaussian data assimilation",
+      "references": [
+        "Doucet et al. (2001) Sequential Monte Carlo Methods in Practice"
+      ],
+      "doi": "10.1007/978-1-4757-3437-9",
+      "authors": [
+        "A. Doucet",
+        "N. de Freitas",
+        "N. Gordon"
+      ],
+      "created_at": "2026-09-21T00:33:07.382289",
+      "updated_at": "2026-09-21T00:33:07.382289",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "particle_filter",
+        "sequential_monte_carlo",
+        "data_assimilation",
+        "non_gaussian"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "3fdcb79f-efe3-4081-9ce4-cdd1e667eff2",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-21T00:33:36.980272",
+      "updated_at": "2026-09-21T00:33:36.983270",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "2a000888-3d0a-4a56-8ec8-1c33b462774e",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-21T00:33:36.998262",
+      "updated_at": "2026-09-21T00:33:36.998262",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "6d4395e1-9d3e-48b2-a239-3ef1db5a2327",
+      "name": "Ensemble Kalman Filter",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Ensemble Kalman Filter for sequential data assimilation",
+      "references": [
+        "Evensen (2009) Data Assimilation: The Ensemble Kalman Filter",
+        "Houtekamer & Zhang (2016) Review of the Ensemble Kalman Filter"
+      ],
+      "doi": "10.1007/978-3-642-03711-5",
+      "authors": [
+        "G. Evensen",
+        "P. Houtekamer",
+        "F. Zhang"
+      ],
+      "created_at": "2026-09-21T00:33:37.013255",
+      "updated_at": "2026-09-21T00:33:37.013255",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "enkf",
+        "data_assimilation",
+        "kalman_filter",
+        "ensemble"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "9cf8142e-922f-4204-8248-73da5dca9f4b",
+      "name": "4D-Var",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "4D-Var variational data assimilation",
+      "references": [
+        "Le Dimet & Talagrand (1986) Variational algorithms for analysis and assimilation of meteorological observations"
+      ],
+      "doi": "10.1002/qj.49711247302",
+      "authors": [
+        "F. Le Dimet",
+        "O. Talagrand"
+      ],
+      "created_at": "2026-09-21T00:33:37.021248",
+      "updated_at": "2026-09-21T00:33:37.021248",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "4dvar",
+        "variational",
+        "data_assimilation",
+        "optimization"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "d8e1d2a1-5266-44f2-80b6-91b6c028f759",
+      "name": "Particle Filter",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Particle filter for non-Gaussian data assimilation",
+      "references": [
+        "Doucet et al. (2001) Sequential Monte Carlo Methods in Practice"
+      ],
+      "doi": "10.1007/978-1-4757-3437-9",
+      "authors": [
+        "A. Doucet",
+        "N. de Freitas",
+        "N. Gordon"
+      ],
+      "created_at": "2026-09-21T00:33:37.029244",
+      "updated_at": "2026-09-21T00:33:37.029244",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "particle_filter",
+        "sequential_monte_carlo",
+        "data_assimilation",
+        "non_gaussian"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "04a6b963-d7fb-457a-9f42-ca3c3feee9c3",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-21T00:40:58.120447",
+      "updated_at": "2026-09-21T00:40:58.127441",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "fbc9b010-b7d2-4fec-91c5-7438a2244be1",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-21T00:40:58.148431",
+      "updated_at": "2026-09-21T00:40:58.148431",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "49b8c6d5-0019-45a5-882a-cfce71b0a305",
+      "name": "Farmer Knowledge RAG Engine",
+      "version": "1.0.0",
+      "domain": "socioeconomic",
+      "fidelity": "data_driven",
+      "status": "experimental",
+      "description": "RAG engine for multilingual farmer knowledge retrieval and advisory",
+      "references": [
+        "Lewis et al. (2020) Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"
+      ],
+      "doi": "10.18653/v1/2020.acl-main.449",
+      "authors": [
+        "P. Lewis",
+        "E. Perez",
+        "A. Piktus",
+        "et al."
+      ],
+      "created_at": "2026-09-21T00:40:58.164421",
+      "updated_at": "2026-09-21T00:40:58.164421",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "rag",
+        "llm",
+        "farmer_knowledge",
+        "multilingual",
+        "advisory"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "dc96d2f8-9f41-401d-9984-6acf5cb980cc",
+      "name": "Model Calibration Assistant",
+      "version": "1.0.0",
+      "domain": "socioeconomic",
+      "fidelity": "data_driven",
+      "status": "experimental",
+      "description": "LLM-assisted model calibration guidance",
+      "references": [],
+      "doi": null,
+      "authors": [],
+      "created_at": "2026-09-21T00:40:58.176414",
+      "updated_at": "2026-09-21T00:40:58.176414",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "calibration",
+        "llm",
+        "assistant",
+        "sensitivity"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "e94c7528-963e-426c-b67d-873fd6ba4035",
+      "name": "Voice/USSD Advisory Interface",
+      "version": "1.0.0",
+      "domain": "socioeconomic",
+      "fidelity": "data_driven",
+      "status": "experimental",
+      "description": "Voice and USSD interface for feature phone access",
+      "references": [],
+      "doi": null,
+      "authors": [],
+      "created_at": "2026-09-21T00:40:58.184409",
+      "updated_at": "2026-09-21T00:40:58.184409",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "voice",
+        "ussd",
+        "ivrs",
+        "feature_phone",
+        "inclusive"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "4d117c5c-83f8-433f-a00b-914d5d8620cb",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-21T00:41:01.079868",
+      "updated_at": "2026-09-21T00:41:01.083866",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "6843654c-916d-41e7-a30e-96c4e0f55733",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-21T00:41:01.098856",
+      "updated_at": "2026-09-21T00:41:01.098856",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "e32f99d8-744a-402a-a27f-ad388968d3cb",
+      "name": "Heat Equation PINN",
+      "version": "1.0.0",
+      "domain": "climate",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Physics-Informed Neural Network for heat equation",
+      "references": [
+        "Raissi et al. (2019) Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations"
+      ],
+      "doi": "10.1016/j.jcp.2018.10.045",
+      "authors": [
+        "M. Raissi",
+        "P. Perdikaris",
+        "G. Karniadakis"
+      ],
+      "created_at": "2026-09-21T00:41:01.109852",
+      "updated_at": "2026-09-21T00:41:01.110850",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "pinn",
+        "heat",
+        "pde",
+        "deep_learning"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "8154c023-9b45-412c-b0ad-12c29317155b",
+      "name": "Richards Equation PINN",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Physics-Informed Neural Network for Richards equation",
+      "references": [
+        "Cai et al. (2021) Physics-informed neural networks for solving Richards equation"
+      ],
+      "doi": "10.1016/j.advwatres.2021.103977",
+      "authors": [
+        "Z. Cai",
+        "et al."
+      ],
+      "created_at": "2026-09-21T00:41:01.136834",
+      "updated_at": "2026-09-21T00:41:01.136834",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "pinn",
+        "richards",
+        "unsaturated_flow",
+        "deep_learning"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "558b7908-64df-4516-9c01-20a86ebe338d",
+      "name": "Gaussian Process Surrogate",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Gaussian Process emulator for fast model approximation",
+      "references": [
+        "Rasmussen & Williams (2006) Gaussian Processes for Machine Learning",
+        "Kennedy & O'Hagan (2001) Bayesian calibration of computer models"
+      ],
+      "doi": "10.1111/1467-9868.00294",
+      "authors": [
+        "C. Rasmussen",
+        "C. Williams",
+        "M. Kennedy",
+        "A. O'Hagan"
+      ],
+      "created_at": "2026-09-21T00:41:01.170815",
+      "updated_at": "2026-09-21T00:41:01.172814",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "gp",
+        "surrogate",
+        "emulator",
+        "bayesian",
+        "uq"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "3c412f21-d10f-405c-a94f-6d69b36e69fe",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-21T00:41:03.916231",
+      "updated_at": "2026-09-21T00:41:03.927225",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "7e5a751e-1521-4f60-ae82-3d61195f1b51",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-21T00:41:03.942216",
+      "updated_at": "2026-09-21T00:41:03.942216",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "c4a817a9-db3c-41ba-a465-c393dafade45",
+      "name": "Distributed PINN Trainer",
+      "version": "1.0.0",
+      "domain": "climate",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Distributed training infrastructure for PINN and GP models",
+      "references": [
+        "Li et al. (2020) PyTorch Distributed: Experiences on Accelerating Data Parallel Training"
+      ],
+      "doi": "10.1109/IPDPS51204.2020.00044",
+      "authors": [
+        "Pytorch Team"
+      ],
+      "created_at": "2026-09-21T00:41:03.952210",
+      "updated_at": "2026-09-21T00:41:03.952210",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "distributed",
+        "ddp",
+        "pinn",
+        "training",
+        "scaling"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "3ccd51e7-99df-4d8a-aae0-da0614a2f259",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-21T00:51:55.191860",
+      "updated_at": "2026-09-21T00:51:55.193859",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "19915600-74e2-4657-9103-2208130839a0",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-21T00:51:55.212849",
+      "updated_at": "2026-09-21T00:51:55.212849",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "5a03af10-ad59-40a0-8bbf-d12a9630aa6b",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-21T00:52:08.522520",
+      "updated_at": "2026-09-21T00:52:08.524519",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "52b28e0b-7bbc-4aca-a568-8d452e514fe3",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-21T00:52:08.536512",
+      "updated_at": "2026-09-21T00:52:08.536512",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "acb3172e-a86d-49cd-8772-5b4bc376da17",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-21T04:10:19.906354",
+      "updated_at": "2026-09-21T04:10:19.908353",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "2c00aa20-4fe7-4050-9b02-6e661dda763e",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-21T04:10:19.934338",
+      "updated_at": "2026-09-21T04:10:19.934338",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "1a89bdc2-5c68-4c25-a685-e0b8bfef06f3",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T02:33:07.110298",
+      "updated_at": "2026-09-22T02:33:07.124291",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "b127f703-0eac-4c2c-93cb-26e25c6985cb",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T02:33:07.157271",
+      "updated_at": "2026-09-22T02:33:07.157271",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "9393b099-86a8-4a04-a5e1-9f0879333c1f",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T02:33:26.072785",
+      "updated_at": "2026-09-22T02:33:26.076785",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "1e009432-c91d-477f-9b28-723c2eee192c",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T02:33:26.096773",
+      "updated_at": "2026-09-22T02:33:26.096773",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "f58bad4a-b961-41f6-80ea-03e3cfad02c5",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T02:36:00.162621",
+      "updated_at": "2026-09-22T02:36:00.164620",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "158d43ff-3a14-4b8a-90c1-3afc7e67823f",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T02:36:00.182609",
+      "updated_at": "2026-09-22T02:36:00.182609",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "ee315a02-f7a2-4eab-84e6-3a9a57c1fa42",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T02:42:26.712911",
+      "updated_at": "2026-09-22T02:42:26.714909",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "ac62b91b-0658-4602-96da-84f3b939efc3",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T02:42:26.732899",
+      "updated_at": "2026-09-22T02:42:26.732899",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "40c3945f-d93e-44fb-8da2-ab9a59073a88",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T03:04:39.379797",
+      "updated_at": "2026-09-22T03:04:39.394788",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "3104d4df-b668-44fe-b8e3-503abde9473f",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T03:04:39.413777",
+      "updated_at": "2026-09-22T03:04:39.413777",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "a926b935-72b9-4454-8903-8346abaff4f1",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T03:15:54.482170",
+      "updated_at": "2026-09-22T03:15:54.484169",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "d00103f0-18ce-4911-9a82-325c19493429",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T03:15:54.503159",
+      "updated_at": "2026-09-22T03:15:54.503159",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "5c0ec787-7e09-4d87-bcfd-17440e91fb66",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T03:17:46.609015",
+      "updated_at": "2026-09-22T03:17:46.617012",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "1031da49-f5bc-4d47-9249-36b74fb402d2",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T03:17:46.698015",
+      "updated_at": "2026-09-22T03:17:46.699013",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "b224f6fd-ebe0-47af-b259-bd6525e002ec",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T03:19:12.508399",
+      "updated_at": "2026-09-22T03:19:12.510398",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "87199769-7a6e-4441-ae38-9f5f724e151f",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T03:19:12.524390",
+      "updated_at": "2026-09-22T03:19:12.524390",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "f8abf466-fec8-4947-bd49-ac4fd8a06b13",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T03:20:41.780884",
+      "updated_at": "2026-09-22T03:20:41.781884",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "23c48161-d59b-44bb-8390-4cae54f42bf0",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T03:20:41.907617",
+      "updated_at": "2026-09-22T03:20:41.907617",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "ca0d144d-87c4-46ee-949d-f2dc66b37de6",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T03:21:14.249408",
+      "updated_at": "2026-09-22T03:21:14.255403",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "276bddb6-6983-4c69-ae3f-575a97a3a6d2",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T03:21:14.274392",
+      "updated_at": "2026-09-22T03:21:14.275391",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "1a1c9503-bbbe-44e0-a849-b1ace46866a8",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T03:24:20.457039",
+      "updated_at": "2026-09-22T03:24:20.459040",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "17dc1c4f-6983-49b8-ada7-1d18a6f691a5",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T03:24:20.477028",
+      "updated_at": "2026-09-22T03:24:20.477028",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "09ca8794-8cee-455d-86ca-0e6fd568b8f3",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T03:24:22.269290",
+      "updated_at": "2026-09-22T03:24:22.281283",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "74bcaa13-3d6e-43b5-9121-6affa1fe7509",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T03:24:22.300273",
+      "updated_at": "2026-09-22T03:24:22.300273",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "a70d9b85-9bb4-4b85-a95d-d4b2d7d3a193",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T03:26:33.102897",
+      "updated_at": "2026-09-22T03:26:33.105896",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "338c657d-d903-4224-beb0-9e5d115f4660",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T03:26:33.126944",
+      "updated_at": "2026-09-22T03:26:33.126944",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "ed48e362-ca1d-461b-bbcf-d0627ffad6a9",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T03:29:50.054441",
+      "updated_at": "2026-09-22T03:29:50.057438",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "cff428d0-accc-4e01-b6ed-ba51059357d6",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T03:29:50.074429",
+      "updated_at": "2026-09-22T03:29:50.074429",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "f648e3cc-97ad-449a-8a6f-721ba2971987",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T03:33:43.222409",
+      "updated_at": "2026-09-22T03:33:43.224408",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "e28b65c4-005d-4eda-98cf-4b7bc662e119",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T03:33:43.246396",
+      "updated_at": "2026-09-22T03:33:43.246396",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "be0e903d-0215-4c48-87e4-a7afb0505124",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T03:44:05.577928",
+      "updated_at": "2026-09-22T03:44:05.579927",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "aa5b1207-d591-4a60-a90c-0608b38d326f",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T03:44:05.594919",
+      "updated_at": "2026-09-22T03:44:05.594919",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "8eead9a2-eaeb-41ab-bd1f-cd003cfa92fe",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T03:44:56.737863",
+      "updated_at": "2026-09-22T03:44:56.739863",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "de7f5393-e878-4e1c-8c34-486195a9462b",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T03:44:56.751855",
+      "updated_at": "2026-09-22T03:44:56.751855",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "6aa4f145-c69a-42b3-b539-d34b373cae9d",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T03:56:46.166446",
+      "updated_at": "2026-09-22T03:56:46.169444",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "4c36974d-388f-478d-a058-653b6d66c031",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T03:56:46.188434",
+      "updated_at": "2026-09-22T03:56:46.188434",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "4cb9b232-870f-4b96-8e51-0412cabdbe84",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T03:57:00.302613",
+      "updated_at": "2026-09-22T03:57:00.308609",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "af73f4b8-b2a9-44b5-bf8d-4e59ccf9405e",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T03:57:00.333667",
+      "updated_at": "2026-09-22T03:57:00.333667",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "96d285a3-8a59-468b-887f-72cb6f0aac55",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T04:41:56.726930",
+      "updated_at": "2026-09-22T04:41:56.730928",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "827677be-d56b-4d19-9508-156f257376ba",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T04:41:56.743920",
+      "updated_at": "2026-09-22T04:41:56.743920",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "ae2e0c2b-a8e8-431f-8b56-d635ab687db6",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T04:43:02.364082",
+      "updated_at": "2026-09-22T04:43:02.368081",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "4bb6ffe9-e877-4216-b852-58c9b58531a4",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T04:43:02.381073",
+      "updated_at": "2026-09-22T04:43:02.381073",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "29f22ca3-0543-48e5-b330-2f26f168127e",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T04:43:15.147607",
+      "updated_at": "2026-09-22T04:43:15.150605",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "3d64ced3-63af-419a-8553-d181bd8fc2ff",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T04:43:15.166597",
+      "updated_at": "2026-09-22T04:43:15.166597",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "9c873bdf-3f75-4f79-9570-922eaac9bb03",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T04:46:23.231429",
+      "updated_at": "2026-09-22T04:46:23.235427",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "cce5002f-e384-4fab-a3ad-1257c7809cfd",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T04:46:23.252417",
+      "updated_at": "2026-09-22T04:46:23.252417",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "d51e822c-64c1-409d-aa98-d032a189571f",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T04:46:49.054119",
+      "updated_at": "2026-09-22T04:46:49.056118",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "451b5392-c4c3-4779-8045-fc0181e83ddb",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T04:46:49.072108",
+      "updated_at": "2026-09-22T04:46:49.072108",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "36f4215f-e38b-421b-a022-3b18d40e1fc3",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T04:47:34.425745",
+      "updated_at": "2026-09-22T04:47:34.428744",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "8c87d727-6b6c-44f5-bfe0-41eb85dfb929",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T04:47:34.444735",
+      "updated_at": "2026-09-22T04:47:34.444735",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "59f7503f-5fd8-4319-a8e4-26493febe00e",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T04:48:04.288219",
+      "updated_at": "2026-09-22T04:48:04.292217",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "781b4b0e-eedd-42a3-9834-3dbc44fff7b8",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T04:48:04.312206",
+      "updated_at": "2026-09-22T04:48:04.312206",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "356f2a0f-38cf-4fb0-af38-e4cd5a3ee1e4",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T04:51:56.202447",
+      "updated_at": "2026-09-22T04:51:56.205446",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "eee0b858-f9fd-43a1-a82d-efec0f11598f",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T04:51:56.218439",
+      "updated_at": "2026-09-22T04:51:56.218439",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "44b73ee0-8005-4a0e-80f3-0983ed294455",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T04:55:19.327655",
+      "updated_at": "2026-09-22T04:55:19.330653",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "76f6d822-61ed-4464-b68c-c0dacc8e7981",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T04:55:19.343647",
+      "updated_at": "2026-09-22T04:55:19.343647",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "779657e4-15eb-4932-b6af-6c09e3b194dc",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T04:58:57.109894",
+      "updated_at": "2026-09-22T04:58:57.112893",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "3ef74e5a-b91c-4872-8bb4-a67e468cac00",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T04:58:57.130882",
+      "updated_at": "2026-09-22T04:58:57.130882",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "802828b3-c411-4c2a-ab33-3126268aaa95",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T04:59:18.120762",
+      "updated_at": "2026-09-22T04:59:18.122760",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "eddee766-34a3-4780-a895-24d00b8a8c9d",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T04:59:18.135754",
+      "updated_at": "2026-09-22T04:59:18.135754",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "be6e9372-b52f-404f-849b-52503df2e4f0",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T04:59:34.370739",
+      "updated_at": "2026-09-22T04:59:34.373737",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "f78d9f36-ae34-47a6-801f-9304d02d611d",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T04:59:34.391728",
+      "updated_at": "2026-09-22T04:59:34.391728",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "c659f274-8747-4d1d-aa98-491ef551ee27",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T05:01:41.976712",
+      "updated_at": "2026-09-22T05:01:41.979711",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "af6d6453-394d-4792-aee2-c7943352c367",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T05:01:41.998700",
+      "updated_at": "2026-09-22T05:01:41.998700",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "c952a9a3-5016-4c32-aff7-e50275ebf4d5",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T11:09:27.713553",
+      "updated_at": "2026-09-22T11:09:27.715552",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "0e1b711c-a36f-4b1b-9538-58ceeb5b6044",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T11:09:27.730543",
+      "updated_at": "2026-09-22T11:09:27.730543",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "5d2f2239-1487-49c6-95ad-88600c5e20f5",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-22T11:12:25.221575",
+      "updated_at": "2026-09-22T11:12:25.223574",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "6a729f3c-739c-4fb2-8a1c-9eae524640f8",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-22T11:12:25.240564",
+      "updated_at": "2026-09-22T11:12:25.240564",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    }
+  ],
+  "updated_at": "2026-09-22T11:12:25.240564"
+}

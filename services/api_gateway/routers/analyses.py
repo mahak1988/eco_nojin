@@ -1,13 +1,17 @@
 """API Router for new analyses and designs."""
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from database.hub import hub
 
+
 # Compatibility: get_db via hub
 def get_db():
     with hub.get_session() as session:
         yield session  # Fixed import to get 'get_db' from the correct module
+
+
 from engine.hydroma.analyses.topography_analysis import TopographyAnalyzer, TopographyInput
 from engine.hydroma.calculations.crop_water_req_calc import (
     CropWaterReqInput,
@@ -26,6 +30,7 @@ from services.design_engine.water_structure_design_service import (
 
 router = APIRouter(prefix="/analyses", tags=["analyses"])
 
+
 @router.post("/topography/")
 def run_topography_analysis(input_data: TopographyInput, db: Session = Depends(get_db)):
     analyzer = TopographyAnalyzer(db_session=db)
@@ -36,6 +41,7 @@ def run_topography_analysis(input_data: TopographyInput, db: Session = Depends(g
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Analysis failed: {e!s}")
 
+
 @router.post("/runoff/")
 def run_runoff_calculation(input_data: RunoffInput):
     calculator = RunoffCalculator()
@@ -44,6 +50,7 @@ def run_runoff_calculation(input_data: RunoffInput):
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Calculation failed: {e!s}")
+
 
 @router.post("/groundwater/")
 def run_groundwater_model(input_data: GroundwaterInput):
@@ -54,6 +61,7 @@ def run_groundwater_model(input_data: GroundwaterInput):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Model run failed: {e!s}")
 
+
 @router.post("/crop-water-req/")
 def run_crop_water_req_calculation(input_data: CropWaterReqInput):
     calculator = CropWaterRequirementCalculator()
@@ -62,6 +70,7 @@ def run_crop_water_req_calculation(input_data: CropWaterReqInput):
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Calculation failed: {e!s}")
+
 
 @router.post("/structure-design/")
 def run_structure_design(input_data: StructureDesignInput):
@@ -72,6 +81,7 @@ def run_structure_design(input_data: StructureDesignInput):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Design failed: {e!s}")
 
+
 @router.post("/irrigation-design/")
 def run_irrigation_design(input_data: IrrigationDesignInput):
     designer = IrrigationDesigner()
@@ -80,6 +90,7 @@ def run_irrigation_design(input_data: IrrigationDesignInput):
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Design failed: {e!s}")
+
 
 # Note: Calibration requires a special runner instance, so its API might be more complex
 # @router.post("/calibrate-model/")

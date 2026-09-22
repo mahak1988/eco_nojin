@@ -10,6 +10,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from engine.data_connector import connector
 import structlog
+
 logger = structlog.get_logger()
 
 

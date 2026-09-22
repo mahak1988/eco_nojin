@@ -1,4 +1,5 @@
 """Tests: DuckDB analytics service + real NDVI alert rules (Phase 4)."""
+
 import pytest
 
 from services.analytics.duckdb_service import summarize_satellite_rows
@@ -22,6 +23,7 @@ class FakeSatRow:
 # ---------------------------------------------------------------------------
 # DuckDB summaries
 # ---------------------------------------------------------------------------
+
 
 def test_duckdb_summary_empty_rows():
     stats = summarize_satellite_rows([])
@@ -54,6 +56,7 @@ def test_duckdb_summary_ignores_none_ndvi():
 # ---------------------------------------------------------------------------
 # Real NDVI alert rules
 # ---------------------------------------------------------------------------
+
 
 def test_ndvi_rules_fire_on_real_data_only():
     rules = ndvi_alert_rules()

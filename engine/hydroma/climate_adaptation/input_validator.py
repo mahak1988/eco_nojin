@@ -2,6 +2,7 @@
 موتور اعتبارسنجی و پاک‌سازی ورودی‌ها
 رفع یافته‌های بحرانی: None, NaN, Infinity
 """
+
 import math
 from typing import Any, Optional
 
@@ -30,13 +31,13 @@ def sanitize(value: Any, key: str = None, default: float = 0.0) -> float:
     # مدیریت None
     if value is None:
         return default
-    
+
     # تبدیل به عدد
     try:
         value = float(value)
     except (TypeError, ValueError):
         return default
-    
+
     # مدیریت NaN و Infinity
     if math.isnan(value):
         return default
@@ -44,12 +45,12 @@ def sanitize(value: Any, key: str = None, default: float = 0.0) -> float:
         if key and key in PHYSICAL_BOUNDS:
             return PHYSICAL_BOUNDS[key]["max"] if value > 0 else PHYSICAL_BOUNDS[key]["min"]
         return default
-    
+
     # اعمال کران‌های فیزیکی
     if key and key in PHYSICAL_BOUNDS:
         bounds = PHYSICAL_BOUNDS[key]
         value = max(bounds["min"], min(bounds["max"], value))
-    
+
     return value
 
 
@@ -66,19 +67,19 @@ def sanitize_dict(data: dict, defaults: dict = None) -> dict:
 def validate_physical_consistency(data: dict) -> list:
     """بررسی سازگاری فیزیکی بین مقادیر"""
     issues = []
-    
+
     # بررسی دما و بارش
     temp = data.get("temp")
     rain = data.get("rain")
-    
+
     # اگر دما خیلی پایین است، بارش باید برف باشد
     if temp is not None and temp < -40 and rain is not None and rain > 5000:
         issues.append("بارش بسیار بالا در دمای بسیار پایین غیرمعمول است")
-    
+
     # بررسی شوری و ظرفیت آب
     ec = data.get("ec")
     awc = data.get("awc")
     if ec is not None and ec > 100 and awc is not None and awc > 200:
         issues.append("ظرفیت آب بالا با شوری بحرانی ناسازگار است")
-    
+
     return issues

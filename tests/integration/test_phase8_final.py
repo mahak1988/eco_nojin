@@ -1,4 +1,5 @@
 """Phase 8 finalization + Phase 9 kickoff tests."""
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -53,7 +54,12 @@ class TestDistribution:
         from services.ecowallet.distribution import distribute
 
         out = distribute(1000)
-        assert out["parts"] == {"producer": 700.0, "platform": 150.0, "ecosystem": 100.0, "governance": 50.0}
+        assert out["parts"] == {
+            "producer": 700.0,
+            "platform": 150.0,
+            "ecosystem": 100.0,
+            "governance": 50.0,
+        }
         assert out["sum"] == 1000.0
 
     def test_endpoint_and_invalid(self):

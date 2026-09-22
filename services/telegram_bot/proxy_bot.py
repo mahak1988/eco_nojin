@@ -11,6 +11,7 @@ Usage:
     1. Start your VPN (v2rayN, Clash, etc.)
     2. Run: python -m services.telegram_bot.proxy_bot
 """
+
 import asyncio
 import logging
 import os
@@ -20,10 +21,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("proxy_bot")
 
 
@@ -75,6 +73,7 @@ def detect_active_proxy() -> str | None:
 # Main Bot Function
 # =====================================================================
 
+
 async def main():
     """Run Telegram bot with proxy support."""
 
@@ -113,6 +112,7 @@ async def main():
         if proxy_url.startswith("socks"):
             try:
                 from aiohttp_socks import ProxyConnector
+
                 connector = ProxyConnector.from_url(proxy_url)
                 session = AiohttpSession()
                 # Patch the connector
@@ -133,6 +133,7 @@ async def main():
     # 5. Import integration
     try:
         from .integration import get_bot_integration
+
         integration = get_bot_integration()
         logger.info("✅ Scientific motors loaded")
     except Exception as e:
@@ -155,9 +156,7 @@ async def main():
         try:
             parts = message.text.split()
             if len(parts) < 4:
-                await message.answer(
-                    "❌ فرمت صحیح:\n/analyze 35.0 51.0 50"
-                )
+                await message.answer("❌ فرمت صحیح:\n/analyze 35.0 51.0 50")
                 return
 
             lat, lon, area = float(parts[1]), float(parts[2]), float(parts[3])
@@ -213,11 +212,13 @@ async def main():
         )
 
     # 7. Set bot commands
-    await bot.set_my_commands([
-        BotCommand(command="start", description="شروع"),
-        BotCommand(command="analyze", description="تحلیل زمین"),
-        BotCommand(command="help", description="راهنما"),
-    ])
+    await bot.set_my_commands(
+        [
+            BotCommand(command="start", description="شروع"),
+            BotCommand(command="analyze", description="تحلیل زمین"),
+            BotCommand(command="help", description="راهنما"),
+        ]
+    )
 
     # 8. Test connection
     logger.info("🔍 Testing Telegram API connection...")

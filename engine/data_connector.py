@@ -49,15 +49,14 @@ from database.hub import hub
 from services.security.query_safe import _safe_ident
 
 import logging
+
 logger = logging.getLogger(__name__)
-
-
 
 
 class DataConnector:
     """
     Unified data access for processing engines.
-    
+
     Provides domain-specific methods for scientific computations,
     abstracting away the underlying database complexity.
     """
@@ -67,15 +66,14 @@ class DataConnector:
 
     # ── DuckDB (Analytics) Methods ──────────────────────────────
 
-    def get_climate_data(self, station_id: Optional[int] = None,
-                        year: Optional[int] = None) -> Any:
+    def get_climate_data(self, station_id: Optional[int] = None, year: Optional[int] = None) -> Any:
         """
         Get climate data from master DuckDB.
-        
+
         Args:
             station_id: Optional station ID filter
             year: Optional year filter
-        
+
         Returns:
             pandas DataFrame with climate data
         """
@@ -92,11 +90,14 @@ class DataConnector:
 
         where_clause = " WHERE " + " AND ".join(conditions) if conditions else ""
 
-        query = """
+        query = (
+            """
             SELECT * FROM weather_daily
             %s
             LIMIT 10000
-        """ % where_clause
+        """
+            % where_clause
+        )
 
         try:
             return conn.execute(query, params).fetchdf()
@@ -108,23 +109,30 @@ class DataConnector:
     def get_crop_parameters(self, crop_name: str) -> Dict:
         """
         Get crop water parameters from master DuckDB.
-        
+
         Args:
             crop_name: Name of the crop
-        
+
         Returns:
             Dictionary with crop parameters
+
+        Raises:
+            KeyError: If crop not found in database.
         """
         conn = self.hub.get_duckdb("master")
-
-        # Try with parameterized query first, fallback to direct if columns differ
-        queries = [
-            ("SELECT * FROM crop_water_parameters WHERE LOWER(species_id) = LOWER(?)", [crop_name]),
-            ("SELECT * FROM crop_water_parameters WHERE LOWER(scientific_name) LIKE ?", [f"%{crop_name}%"]),
-            ("SELECT * FROM crop_water_parameters LIMIT 1", []),  # fallback: get any record
-        ]
-
         try:
+            # Try with parameterized query first, fallback to direct if columns differ
+            queries = [
+                (
+                    "SELECT * FROM crop_water_parameters WHERE LOWER(species_id) = LOWER(?)",
+                    [crop_name],
+                ),
+                (
+                    "SELECT * FROM crop_water_parameters WHERE LOWER(scientific_name) LIKE ?",
+                    [f"%{crop_name.lower()}%"],
+                ),
+            ]
+
             for query, params in queries:
                 result = conn.execute(query, params).fetchone()
                 if result:
@@ -133,10 +141,9 @@ class DataConnector:
                     # Convert Row tuple to dict using column names
                     cols = [desc[0] for desc in conn.description]
                     return dict(zip(cols, result))
-            return {}
-        except Exception as e:
-            logger.info(f"Warning: get_crop_parameters failed: {e}")
-            return {}
+
+            # No crop found
+            raise KeyError(f"Crop not found: {crop_name}")
         finally:
             conn.close()
 
@@ -145,17 +152,19 @@ class DataConnector:
         conn = self.hub.get_duckdb("master")
 
         try:
-            results = conn.execute("""
+            results = conn.execute(
+                """
                 SELECT * FROM climate_normals_monthly
                 WHERE site_id = ?
                 ORDER BY month
-            """, [station_id]).fetchall()
+            """,
+                [station_id],
+            ).fetchall()
             return [dict(r) if hasattr(r, "keys") else r for r in results]
         except Exception:
             return []
         finally:
             conn.close()
-
 
     def _extract_table_names(self, query: str) -> set[str]:
         """Extract table names referenced in a SELECT/WITH query (best-effort).
@@ -195,14 +204,29 @@ class DataConnector:
 
         # Block dangerous keywords (defence-in-depth on top of whitelist)
         dangerous_keywords = [
-            'DROP TABLE', 'DROP DATABASE', 'DELETE FROM',
-            'UPDATE ', 'INSERT INTO', 'ALTER TABLE',
-            'TRUNCATE', 'CREATE TABLE', 'CREATE DATABASE',
-            'GRANT', 'REVOKE', 'EXECUTE', 'EXEC(',
-            'XP_CMDSHELL', 'INFORMATION_SCHEMA',
-            'WAITFOR DELAY', 'UNION SELECT',
-            'SHUTDOWN', 'LOAD_FILE', 'INTO OUTFILE',
-            'INTO DUMPFILE', 'PG_SLEEP', 'PG_CATALOG',
+            "DROP TABLE",
+            "DROP DATABASE",
+            "DELETE FROM",
+            "UPDATE ",
+            "INSERT INTO",
+            "ALTER TABLE",
+            "TRUNCATE",
+            "CREATE TABLE",
+            "CREATE DATABASE",
+            "GRANT",
+            "REVOKE",
+            "EXECUTE",
+            "EXEC(",
+            "XP_CMDSHELL",
+            "INFORMATION_SCHEMA",
+            "WAITFOR DELAY",
+            "UNION SELECT",
+            "SHUTDOWN",
+            "LOAD_FILE",
+            "INTO OUTFILE",
+            "INTO DUMPFILE",
+            "PG_SLEEP",
+            "PG_CATALOG",
         ]
 
         for keyword in dangerous_keywords:
@@ -214,7 +238,7 @@ class DataConnector:
                 )
 
         # Block comment-based injection
-        if '--' in query or '/*' in query or ';' in query:
+        if "--" in query or "/*" in query or ";" in query:
             logger.warning("SQL injection attempt blocked: comment/semicolon detected")
             raise ValueError(
                 "SQL comments (;, --, /*) are not allowed in analytics queries. "
@@ -222,10 +246,8 @@ class DataConnector:
             )
 
         # Only SELECT/WITH allowed
-        if not query_upper.startswith('SELECT') and not query_upper.startswith('WITH'):
-            raise ValueError(
-                "Only SELECT/WITH queries are allowed in execute_analytics_query"
-            )
+        if not query_upper.startswith("SELECT") and not query_upper.startswith("WITH"):
+            raise ValueError("Only SELECT/WITH queries are allowed in execute_analytics_query")
 
         # Whitelist tables referenced in the query
         tables = self._extract_table_names(query)
@@ -263,19 +285,18 @@ class DataConnector:
         "v_drought_indices",
     }
 
-
     def execute_analytics_query(self, query: str) -> Any:
         """
         Execute arbitrary analytics query on master DuckDB.
-        
+
         Security:
         - Query is sanitized BEFORE execution to prevent SQL injection
         - Only SELECT/WITH statements allowed
         - Dangerous keywords (DROP, DELETE, etc.) are blocked
-        
+
         Args:
             query: SQL query (must be SELECT or WITH statement)
-        
+
         Returns:
             Query result as pandas DataFrame or list of tuples
         """
@@ -284,12 +305,13 @@ class DataConnector:
             query = self._sanitize_sql(query)
         except ValueError as e:
             import logging
+
             logging.getLogger(__name__).error(f"SQL injection attempt blocked: {e}")
             raise
-        
+
         # STEP 2: Get connection
         conn = self.hub.get_duckdb("master")
-        
+
         # STEP 3: Execute query
         try:
             return conn.execute(query).fetchdf()
@@ -299,35 +321,25 @@ class DataConnector:
                 return conn.execute(query).fetchall()
             except Exception as e2:
                 import logging
+
                 logging.getLogger(__name__).error(f"Query execution failed: {e2}")
                 raise
 
-
     def get_crop_calendar(self, province: Optional[str] = None) -> List[Dict]:
         """Get crop calendar data from manual SQLite."""
-
-        # SQL Injection Protection
-        try:
-            query = self._sanitize_sql(query)
-        except ValueError as e:
-            logger.error(f"SQL injection attempt blocked: {e}")
-            raise
-
         conn = self.hub.get_sqlite("manual")
 
         try:
             cursor = conn.cursor()
             if province:
-                cursor.execute(
-                    "SELECT * FROM crop_calendar_iran WHERE province = ?",
-                    (province,)
-                )
+                cursor.execute("SELECT * FROM crop_calendar_iran WHERE province = ?", (province,))
             else:
                 cursor.execute("SELECT * FROM crop_calendar_iran")
 
             rows = cursor.fetchall()
             return [dict(row) for row in rows]
-        except Exception:
+        except Exception as e:
+            logger.warning(f"get_crop_calendar failed: {e}")
             return []
         finally:
             conn.close()
@@ -339,10 +351,7 @@ class DataConnector:
         try:
             cursor = conn.cursor()
             if country:
-                cursor.execute(
-                    "SELECT * FROM climate_disasters WHERE country_fa = ?",
-                    (country,)
-                )
+                cursor.execute("SELECT * FROM climate_disasters WHERE country_fa = ?", (country,))
             else:
                 cursor.execute("SELECT * FROM climate_disasters")
 
@@ -365,6 +374,7 @@ class DataConnector:
         """Get user by ID from transactional database."""
         try:
             from database.models import User
+
             with self.hub.get_session() as session:
                 return session.query(User).filter_by(id=user_id).first()
         except Exception:
@@ -374,6 +384,7 @@ class DataConnector:
         """Get land profile by ID."""
         try:
             from database.models import LandProfile
+
             with self.hub.get_session() as session:
                 return session.query(LandProfile).filter_by(id=land_id).first()
         except Exception:
@@ -401,7 +412,11 @@ class DataConnector:
         """Get schema information for a table in master DuckDB."""
         conn = self.hub.get_duckdb("master")
         try:
-            columns = conn.execute("\n                SELECT column_name, data_type\n                FROM information_schema.columns\n                WHERE table_name = '{}'\n                ORDER BY ordinal_position\n            ".format(_safe_ident(table_name))).fetchall()
+            columns = conn.execute(
+                "\n                SELECT column_name, data_type\n                FROM information_schema.columns\n                WHERE table_name = '{}'\n                ORDER BY ordinal_position\n            ".format(
+                    _safe_ident(table_name)
+                )
+            ).fetchall()
 
             row_count = conn.execute(
                 'SELECT COUNT(*) FROM "{}"'.format(_safe_ident(table_name))
@@ -410,7 +425,7 @@ class DataConnector:
             return {
                 "table": table_name,
                 "columns": [{"name": c[0], "type": c[1]} for c in columns],
-                "rows": row_count
+                "rows": row_count,
             }
         except Exception as e:
             return {"table": table_name, "error": str(e)}

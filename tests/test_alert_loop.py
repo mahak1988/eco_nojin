@@ -1,4 +1,5 @@
 import os
+
 """Tests: run_all_farm_alerts (all-farm loop) + main.py import sanity."""
 import pytest
 
@@ -23,7 +24,7 @@ def _farm(db, name="مزرعه آزمایشی"):
     owner = db_models.User(
         email="owner@test.com",
         full_name="owner",
-        hashed_password = os.getenv("PASSWORD", ""),
+        hashed_password=os.getenv("PASSWORD", ""),
         role="farmer",
         is_active=True,
     )

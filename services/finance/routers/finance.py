@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
+from typing import Literal
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -38,6 +39,7 @@ async def get_db() -> AsyncSession:
 # ---------------------------------------------------------------------------
 # Pydantic schemas
 # ---------------------------------------------------------------------------
+
 
 class JournalEntryCreate(BaseModel):
     account_id: str
@@ -74,7 +76,9 @@ class WalletBalanceResponse(BaseModel):
 
 
 class EarnRequest(BaseModel):
-    category: str = Field(..., pattern=r"^(tree_planting|soil_health|water_saving|carbon_credit|education|community)$")
+    category: str = Field(
+        ..., pattern=r"^(tree_planting|soil_health|water_saving|carbon_credit|education|community)$"
+    )
     quantity: Decimal = Field(default=Decimal("1"), gt=0)
     idempotency_key: str | None = None
     reference_id: str | None = None
@@ -128,6 +132,7 @@ class ReconciliationResponse(BaseModel):
 # Chart of Accounts
 # ---------------------------------------------------------------------------
 
+
 @router.get("/accounts", response_model=list[AccountResponse])
 async def list_accounts(
     asset: str | None = None,
@@ -144,8 +149,13 @@ async def list_accounts(
     accounts = result.scalars().all()
     return [
         AccountResponse(
-            id=a.id, code=a.code, name=a.name, type=a.type,
-            asset=a.asset, currency=a.currency, is_active=a.is_active,
+            id=a.id,
+            code=a.code,
+            name=a.name,
+            type=a.type,
+            asset=a.asset,
+            currency=a.currency,
+            is_active=a.is_active,
         )
         for a in accounts
     ]
@@ -162,10 +172,20 @@ async def create_account(
     db: AsyncSession = Depends(get_db),
     user: dict = Depends(require_admin),
 ):
-    stmt = pg_insert(FinAccount).values(
-        code=code, name=name, type=type, asset=asset, currency=currency,
-        parent_id=parent_id, is_active=True,
-    ).on_conflict_do_nothing(index_elements=["code"]).returning(FinAccount)
+    stmt = (
+        pg_insert(FinAccount)
+        .values(
+            code=code,
+            name=name,
+            type=type,
+            asset=asset,
+            currency=currency,
+            parent_id=parent_id,
+            is_active=True,
+        )
+        .on_conflict_do_nothing(index_elements=["code"])
+        .returning(FinAccount)
+    )
     result = await db.execute(stmt)
     account = result.scalar_one_or_none()
     if not account:
@@ -173,14 +193,20 @@ async def create_account(
         account = result.scalar_one()
     await db.commit()
     return AccountResponse(
-        id=account.id, code=account.code, name=account.name, type=account.type,
-        asset=account.asset, currency=account.currency, is_active=account.is_active,
+        id=account.id,
+        code=account.code,
+        name=account.name,
+        type=account.type,
+        asset=account.asset,
+        currency=account.currency,
+        is_active=account.is_active,
     )
 
 
 # ---------------------------------------------------------------------------
 # Ledger (double-entry)
 # ---------------------------------------------------------------------------
+
 
 @router.post("/ledger/batch", response_model=JournalBatchResponse)
 async def create_journal_batch(
@@ -206,7 +232,7 @@ async def create_journal_batch(
             reference_id=body.reference_id or str(uuid4()),
             entries=entries_data,
             description=body.description,
-            created_by=str(user.id) if hasattr(user, 'id') else str(user.get('id')),
+            created_by=str(user.id) if hasattr(user, "id") else str(user.get("id")),
         )
     except EcoNojinException as e:
         raise HTTPException(status_code=400, detail=e.message)
@@ -232,7 +258,11 @@ async def post_journal_batch(
         batch = await service.post_journal_batch(batch_id)
     except EcoNojinException as e:
         raise HTTPException(status_code=404, detail=e.message)
-    return {"batch_id": batch.id, "is_posted": batch.is_posted, "posted_at": batch.posted_at.isoformat() if batch.posted_at else None}
+    return {
+        "batch_id": batch.id,
+        "is_posted": batch.is_posted,
+        "posted_at": batch.posted_at.isoformat() if batch.posted_at else None,
+    }
 
 
 @router.get("/ledger/accounts/{account_id}/balance", response_model=dict)
@@ -274,9 +304,109 @@ async def list_journal_entries(
     ]
 
 
+class TrialBalanceRow(BaseModel):
+    account_id: str
+    asset: str
+    debit_balance: str
+    credit_balance: str
+    total_debits: str
+    total_credits: str
+
+
+class TrialBalanceTotals(BaseModel):
+    asset: str
+    debit: str
+    credit: str
+    balanced: bool
+
+
+class TrialBalanceResponse(BaseModel):
+    as_of: str | None
+    rows: list[TrialBalanceRow]
+    totals: list[TrialBalanceTotals]
+
+
+VALID_TRIAL_BALANCE_ASSETS = {"IRR", "ECO", "CARBON_tCO2e", "USD"}
+
+
+# ---------------------------------------------------------------------------
+# Reporting — auditor's trial balance (admin only)
+# ---------------------------------------------------------------------------
+
+
+@router.get("/ledger/trial-balance", response_model=TrialBalanceResponse)
+async def get_trial_balance(
+    as_of: date | None = None,
+    asset: Literal["IRR", "ECO", "CARBON_tCO2e", "USD"] | None = None,
+    db: AsyncSession = Depends(get_db),
+    user: dict = Depends(require_admin),
+):
+    """تراز آزمایشی حسابداری (فقط ادمین): فقط اسناد posted؛ تفکیک بر اساس حساب و دارایی.
+
+    Auditor's trial balance over posted journal batches (admin only).
+    """
+    service = LedgerService(db)
+    report = await service.trial_balance(as_of=as_of, asset=asset)
+    return TrialBalanceResponse(
+        as_of=as_of.isoformat() if as_of else None,
+        rows=report["rows"],
+        totals=report["totals"],
+    )
+
+
+class ProfitAndLossLine(BaseModel):
+    account_id: str
+    account_code: str | None
+    account_name: str | None
+    asset: str
+    amount: str
+
+
+class ProfitAndLossTotals(BaseModel):
+    asset: str
+    income: str
+    expense: str
+    net: str
+    profitable: bool
+
+
+class ProfitAndLossResponse(BaseModel):
+    from_date: str | None
+    to_date: str | None
+    asset: str | None
+    income: list[ProfitAndLossLine]
+    expense: list[ProfitAndLossLine]
+    unclassified: list[dict]
+    totals: list[ProfitAndLossTotals]
+
+
+# ---------------------------------------------------------------------------
+# Reporting — profit & loss (admin only)
+# ---------------------------------------------------------------------------
+
+
+@router.get("/ledger/profit-and-loss", response_model=ProfitAndLossResponse)
+async def get_profit_and_loss(
+    from_date: date | None = None,
+    to_date: date | None = None,
+    asset: Literal["IRR", "ECO", "CARBON_tCO2e", "USD"] | None = None,
+    db: AsyncSession = Depends(get_db),
+    user: dict = Depends(require_admin),
+):
+    """گزارش سود و زیان (فقط ادمین): درآمد و هزینه از اسناد posted در بازه تاریخ.
+
+    Profit & loss over posted journal batches (admin only). Accounts referenced
+    by entries but missing from the chart of accounts are surfaced in
+    ``unclassified`` instead of being silently dropped.
+    """
+    service = LedgerService(db)
+    return await service.profit_and_loss(from_date=from_date, to_date=to_date, asset=asset)
+
+
 # ---------------------------------------------------------------------------
 # Wallet (uses finance service)
 # ---------------------------------------------------------------------------
+
 
 @router.get("/wallet", response_model=WalletBalanceResponse)
 async def get_wallet(
@@ -284,7 +414,9 @@ async def get_wallet(
     user: dict = Depends(require_user),
 ):
     service = WalletService(db)
-    state = await service.get_wallet_state(str(user.id) if hasattr(user, 'id') else str(user.get('id')))
+    state = await service.get_wallet_state(
+        str(user.id) if hasattr(user, "id") else str(user.get("id"))
+    )
     return WalletBalanceResponse(**state)
 
 
@@ -297,7 +429,7 @@ async def earn_tokens(
     service = WalletService(db)
     try:
         amount, balance = await service.earn(
-            user_id=str(user.id) if hasattr(user, 'id') else str(user.get('id')),
+            user_id=str(user.id) if hasattr(user, "id") else str(user.get("id")),
             category=body.category,
             quantity=body.quantity,
             idempotency_key=body.idempotency_key,
@@ -317,7 +449,7 @@ async def redeem_tokens(
     service = WalletService(db)
     try:
         amount, balance = await service.redeem(
-            user_id=str(user.id) if hasattr(user, 'id') else str(user.get('id')),
+            user_id=str(user.id) if hasattr(user, "id") else str(user.get("id")),
             category=body.category,
             idempotency_key=body.idempotency_key,
             reference_id=body.reference_id,
@@ -345,6 +477,7 @@ async def wallet_stats(
 # ---------------------------------------------------------------------------
 # Payment Provider
 # ---------------------------------------------------------------------------
+
 
 @router.post("/payments/intent", response_model=dict)
 async def create_payment_intent(
@@ -390,6 +523,7 @@ async def payment_webhook(
 # Reconciliation
 # ---------------------------------------------------------------------------
 
+
 @router.post("/reconciliation/wallet-ledger", response_model=dict)
 async def reconcile_wallet_ledger(
     db: AsyncSession = Depends(get_db),
@@ -411,6 +545,7 @@ async def full_reconciliation(
 # ---------------------------------------------------------------------------
 # Idempotency utility
 # ---------------------------------------------------------------------------
+
 
 @router.get("/idempotency/keys", response_model=list[dict])
 async def list_idempotency_keys(

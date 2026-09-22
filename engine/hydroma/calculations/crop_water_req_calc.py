@@ -1,4 +1,5 @@
 """Module for calculating crop water requirements."""
+
 from __future__ import annotations
 
 import logging
@@ -8,8 +9,10 @@ from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 
+
 class DailyWeather(BaseModel):
     """Represents daily weather data."""
+
     date: date
     t_max_c: float = Field(..., description="Maximum daily temperature (Celsius)")
     t_min_c: float = Field(..., description="Minimum daily temperature (Celsius)")
@@ -17,20 +20,27 @@ class DailyWeather(BaseModel):
     solar_radiation_mj_m2: float = Field(..., description="Daily solar radiation (MJ/m2)")
     humidity_mean_percent: float = Field(..., description="Mean daily humidity (%)")
 
+
 class CropWaterReqInput(BaseModel):
     """Input parameters for crop water requirement calculation."""
+
     crop_type: str = Field(..., description="Type of crop (e.g., wheat, corn)")
     planting_date: date = Field(..., description="Planting date")
     harvest_date: date = Field(..., description="Harvest date")
     daily_weather_data: list[DailyWeather] = Field(..., description="List of daily weather data")
-    kc_coefficients: list[float] = Field(..., description="List of daily Kc coefficients matching weather data")
+    kc_coefficients: list[float] = Field(
+        ..., description="List of daily Kc coefficients matching weather data"
+    )
     # Could also accept a path to a weather file or integrate with existing weather fetching
 
 
 class CropWaterReqOutput(BaseModel):
     """Output results of crop water requirement calculation."""
+
     daily_et_crop: list[float] = Field(..., description="Daily crop evapotranspiration (mm/day)")
-    seasonal_water_requirement: float = Field(..., description="Total seasonal water requirement (mm)")
+    seasonal_water_requirement: float = Field(
+        ..., description="Total seasonal water requirement (mm)"
+    )
     # Could include irrigation schedule
 
 
@@ -48,9 +58,9 @@ class CropWaterRequirementCalculator:
         t_mean = (weather.t_max_c + weather.t_min_c) / 2
         # Simplified formula (requires solar radiation Ra in MJ/m2/day)
         # ET0 ≈ 0.0023 * (Tmax - Tmin)^0.5 * (Tmean + 17.8) * Ra^0.5
-        ra = weather.solar_radiation_mj_m2 # Extraterrestrial radiation approximation
-        et0 = 0.0023 * ((weather.t_max_c - weather.t_min_c)**0.5) * (t_mean + 17.8) * (ra**0.5)
-        return max(0, et0) # Ensure non-negative
+        ra = weather.solar_radiation_mj_m2  # Extraterrestrial radiation approximation
+        et0 = 0.0023 * ((weather.t_max_c - weather.t_min_c) ** 0.5) * (t_mean + 17.8) * (ra**0.5)
+        return max(0, et0)  # Ensure non-negative
 
     def execute(self, input_data: CropWaterReqInput) -> CropWaterReqOutput:
         """Main execution function."""
@@ -71,5 +81,5 @@ class CropWaterRequirementCalculator:
 
         return CropWaterReqOutput(
             daily_et_crop=daily_et_crop_list,
-            seasonal_water_requirement=round(total_seasonal_req, 2)
+            seasonal_water_requirement=round(total_seasonal_req, 2),
         )

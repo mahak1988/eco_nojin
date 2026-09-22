@@ -22,6 +22,7 @@ def _safe_ident(name):
         raise ValueError("invalid SQL identifier: %r" % (name,))
     return str(name)
 
+
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -32,6 +33,7 @@ class TestDataHubSingleton:
     def test_singleton_identity(self):
         """Multiple instantiations should return same object."""
         from database.hub import DataHub
+
         h1 = DataHub()
         h2 = DataHub()
         h3 = DataHub()
@@ -43,6 +45,7 @@ class TestDataHubSingleton:
         """Singleton should work across different imports."""
         from database.hub import hub as hub1
         from database.hub.hub import DataHub
+
         hub2 = DataHub()
         assert hub1 is hub2
 
@@ -173,9 +176,7 @@ class TestDataHubSQLite:
         conn = datahub_instance.get_sqlite("manual")
         try:
             cursor = conn.cursor()
-            cursor.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' LIMIT 1"
-            )
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' LIMIT 1")
             row = cursor.fetchone()
             assert row is not None
             if hasattr(row, "keys"):
@@ -190,6 +191,7 @@ class TestDataHubConcurrency:
     def test_concurrent_sqlalchemy_sessions(self, datahub_instance):
         """Multiple concurrent sessions should work."""
         from sqlalchemy import text
+
         errors = []
 
         def use_session(idx):
@@ -217,7 +219,7 @@ class TestDataHubConcurrency:
             try:
                 conn = datahub_instance.get_duckdb("master")
                 try:
-                    result = conn.execute('SELECT {} AS val'.format(_safe_ident(idx))).fetchone()  # nosec (کد آزمایشی — بدون ورودی کاربر)
+                    result = conn.execute("SELECT {} AS val".format(_safe_ident(idx))).fetchone()  # nosec (کد آزمایشی — بدون ورودی کاربر)
                     results.append((idx, result[0]))
                 finally:
                     conn.close()

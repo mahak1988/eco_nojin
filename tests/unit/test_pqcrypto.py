@@ -18,10 +18,12 @@ class TestPQCStatus:
     def test_available_matches_liboqs(self):
         try:
             import oqs  # noqa: F401
+
             has_liboqs = True
         except Exception:
             try:
                 import liboqs  # noqa: F401
+
                 has_liboqs = True
             except Exception:
                 has_liboqs = False

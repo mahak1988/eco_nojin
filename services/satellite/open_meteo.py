@@ -13,6 +13,7 @@ Honesty contract
 
 Docs: https://open-meteo.com/en/docs/era5-api
 """
+
 from __future__ import annotations
 
 import logging
@@ -36,9 +37,7 @@ DAILY_VARS = [
 ]
 
 
-async def fetch_era5_daily(
-    lat: float, lon: float, start: date, end: date
-) -> dict[str, Any]:
+async def fetch_era5_daily(lat: float, lon: float, start: date, end: date) -> dict[str, Any]:
     """Fetch ERA5-Land daily series for a location.
 
     Returns:
@@ -92,9 +91,14 @@ def era5_to_daily_map(raw: dict[str, Any]) -> dict[str, dict[str, float]]:
     for i, day in enumerate(times):
         values: dict[str, float] = {}
         ok = True
-        for var in ("temperature_2m_max", "temperature_2m_min",
-                    "temperature_2m_mean", "precipitation_sum",
-                    "relative_humidity_2m_mean", "et0_fao_evapotranspiration"):
+        for var in (
+            "temperature_2m_max",
+            "temperature_2m_min",
+            "temperature_2m_mean",
+            "precipitation_sum",
+            "relative_humidity_2m_mean",
+            "et0_fao_evapotranspiration",
+        ):
             raw_val = daily.get(var, [None] * len(times))[i]
             if raw_val is None:
                 ok = False
@@ -105,18 +109,22 @@ def era5_to_daily_map(raw: dict[str, Any]) -> dict[str, dict[str, float]]:
     return out
 
 
-async def fetch_era5_summary(
-    lat: float, lon: float, start: date, end: date
-) -> dict[str, Any]:
+async def fetch_era5_summary(lat: float, lon: float, start: date, end: date) -> dict[str, Any]:
     """Complete ERA5 fetch with a summary block (recommended entry point)."""
     raw = await fetch_era5_daily(lat, lon, start, end)
     if raw.get("status") != "success":
-        return {"status": "error", "source": "Open-Meteo ERA5",
-                "message": raw.get("message", "unavailable")}
+        return {
+            "status": "error",
+            "source": "Open-Meteo ERA5",
+            "message": raw.get("message", "unavailable"),
+        }
     daily = era5_to_daily_map(raw)
     if not daily:
-        return {"status": "error", "source": "Open-Meteo ERA5",
-                "message": "no complete days in ERA5 response"}
+        return {
+            "status": "error",
+            "source": "Open-Meteo ERA5",
+            "message": "no complete days in ERA5 response",
+        }
     et0 = [d["et0_fao_evapotranspiration"] for d in daily.values()]
     precip = [d["precipitation_sum"] for d in daily.values()]
     tmean = [d["temperature_2m_mean"] for d in daily.values()]

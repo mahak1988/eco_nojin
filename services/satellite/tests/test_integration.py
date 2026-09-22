@@ -1,4 +1,5 @@
 """Integration tests for Satellite"""
+
 import pytest
 
 from services.satellite.monitoring_service import (

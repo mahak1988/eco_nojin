@@ -14,8 +14,8 @@ from services.scientific_motors.chain_runner import run_scientific_chain
 
 C_TO_CO2E = 3.667  # IPCC t C -> tCO2e
 DEFAULT_PRICES: dict[str, float] = {
-    "wheat_usd_t": 320.0,      # crop price ($/t)
-    "water_usd_m3": 0.25,      # water value ($/m3)
+    "wheat_usd_t": 320.0,  # crop price ($/t)
+    "water_usd_m3": 0.25,  # water value ($/m3)
     "carbon_usd_tco2e": 12.0,  # voluntary carbon price ($/tCO2e) — NOT certified
 }
 DEFAULT_DISCOUNT = 0.10
@@ -25,32 +25,43 @@ INTERVENTIONS: dict[str, dict[str, Any]] = {
     "conservation_ag": {
         "label": "کشاورزی حفاظتی",
         "practice": "conservation_ag",
-        "setup_cost_ha": 120.0, "maint_cost_ha_yr": 25.0,
-        "yield_mult": 1.08, "water_eff": 1.10,
+        "setup_cost_ha": 120.0,
+        "maint_cost_ha_yr": 25.0,
+        "yield_mult": 1.08,
+        "water_eff": 1.10,
     },
     "agroforestry": {
         "label": "آگروفارستری",
         "practice": "agroforestry",
-        "setup_cost_ha": 900.0, "maint_cost_ha_yr": 60.0,
-        "yield_mult": 1.15, "water_eff": 1.05,
+        "setup_cost_ha": 900.0,
+        "maint_cost_ha_yr": 60.0,
+        "yield_mult": 1.15,
+        "water_eff": 1.05,
     },
     "terrace": {
         "label": "تراسبندی",
         "practice": "conservation_ag",  # chain practice stays conservation-oriented
-        "setup_cost_ha": 1500.0, "maint_cost_ha_yr": 40.0,
-        "yield_mult": 1.10, "water_eff": 1.15, "slope_reduction_pct": 5.0,
+        "setup_cost_ha": 1500.0,
+        "maint_cost_ha_yr": 40.0,
+        "yield_mult": 1.10,
+        "water_eff": 1.15,
+        "slope_reduction_pct": 5.0,
     },
     "rotational_grazing": {
         "label": "چرای تناوبی",
         "practice": "rotational_grazing",
-        "setup_cost_ha": 80.0, "maint_cost_ha_yr": 15.0,
-        "yield_mult": 1.05, "water_eff": 1.02,
+        "setup_cost_ha": 80.0,
+        "maint_cost_ha_yr": 15.0,
+        "yield_mult": 1.05,
+        "water_eff": 1.02,
     },
     "none": {
         "label": "بدون مداخله",
         "practice": "none",
-        "setup_cost_ha": 0.0, "maint_cost_ha_yr": 0.0,
-        "yield_mult": 1.0, "water_eff": 1.0,
+        "setup_cost_ha": 0.0,
+        "maint_cost_ha_yr": 0.0,
+        "yield_mult": 1.0,
+        "water_eff": 1.0,
     },
 }
 
@@ -119,7 +130,12 @@ class EconomyMotor:
             cum = 0.0
             payback_year: int | None = None
             for t in range(1, horizon + 1):
-                cum += crop_benefit_yr + water_benefit_yr - maint_cost_yr + (carbon_benefit_once if t == 1 else 0.0)
+                cum += (
+                    crop_benefit_yr
+                    + water_benefit_yr
+                    - maint_cost_yr
+                    + (carbon_benefit_once if t == 1 else 0.0)
+                )
                 if cum > 0 and payback_year is None:
                     payback_year = t
 
@@ -192,8 +208,13 @@ class EconomyMotor:
 async def _run_chain(lat: float, lon: float, slope: float, practice: str) -> dict[str, Any]:
     """Run the real scientific chain and extract key outputs."""
     res = await run_scientific_chain(
-        lat=lat, lon=lon, crop="wheat", planting_date="2024-11-15",
-        years=20, slope_pct=slope, practice=practice,
+        lat=lat,
+        lon=lon,
+        crop="wheat",
+        planting_date="2024-11-15",
+        years=20,
+        slope_pct=slope,
+        practice=practice,
     )
     aquacrop = res.get("aquacrop") or {}
     water = res.get("water") or {}
@@ -210,7 +231,9 @@ async def _run_chain(lat: float, lon: float, slope: float, practice: str) -> dic
         soc_final = soc_initial
     return {
         "yield_ton_ha": float((aquacrop.get("outputs") or {}).get("yield_ton_ha", 5.0)),
-        "supply_mcm": float(sum(supply_series)) if supply_series else float((water.get("outputs") or {}).get("total_supply_mcm", 0.0)),
+        "supply_mcm": float(sum(supply_series))
+        if supply_series
+        else float((water.get("outputs") or {}).get("total_supply_mcm", 0.0)),
         "soc_initial_t_ha": soc_initial,
         "soc_final_t_ha": float(soc_final),
         "demand_mcm": demand_mcm,

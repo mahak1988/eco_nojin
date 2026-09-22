@@ -1,8 +1,9 @@
 """دیتابیس تست مشترک با StaticPool"""
+
 from sqlalchemy import create_engine
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.orm import sessionmaker
-from database.base import Base # از models import می‌کنیم
+from database.base import Base  # از models import می‌کنیم
 
 # import همه مدل‌ها
 import database.models
@@ -17,7 +18,7 @@ engine = create_engine(
     poolclass=StaticPool,
     connect_args={"check_same_thread": False},
 )
-Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine, checkfirst=True)
 
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 TEST_SESSION_FACTORY = SessionLocal

@@ -1,4 +1,5 @@
 """Tests for the public pilot and newsletter endpoints (isolated DB)."""
+
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
@@ -71,16 +72,12 @@ class TestPilotEndpoint:
 
     def test_blank_province_rejected(self, client):
         test_client, _ = client
-        response = test_client.post(
-            "/api/v1/pilot/apply", json=dict(VALID_PILOT, province="  ")
-        )
+        response = test_client.post("/api/v1/pilot/apply", json=dict(VALID_PILOT, province="  "))
         assert response.status_code == 422
 
     def test_negative_hectares_rejected(self, client):
         test_client, _ = client
-        response = test_client.post(
-            "/api/v1/pilot/apply", json=dict(VALID_PILOT, land_hectares=-1)
-        )
+        response = test_client.post("/api/v1/pilot/apply", json=dict(VALID_PILOT, land_hectares=-1))
         assert response.status_code == 422
 
 
@@ -110,7 +107,5 @@ class TestNewsletterEndpoint:
 
     def test_invalid_email_rejected(self, client):
         test_client, _ = client
-        response = test_client.post(
-            "/api/v1/newsletter/subscribe", json={"email": "broken"}
-        )
+        response = test_client.post("/api/v1/newsletter/subscribe", json={"email": "broken"})
         assert response.status_code == 422

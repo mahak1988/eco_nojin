@@ -30,6 +30,7 @@ Honesty contract
 - Texture class is an approximation of the USDA triangle, documented as
   ``texture_approx=true``.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -46,18 +47,18 @@ logger = logging.getLogger(__name__)
 
 WCS_BASE = "https://maps.isric.org/mapserv"
 SOILGRIDS_PROPS = ["sand", "silt", "clay", "soc", "phh2o", "cec", "bdod"]
-TILE_HALF_DEG = 0.25        # tile box is +-0.25 deg (~+-28 km)
-MAX_NEAREST_PX = 60         # max search distance inside the tile (px)
+TILE_HALF_DEG = 0.25  # tile box is +-0.25 deg (~+-28 km)
+MAX_NEAREST_PX = 60  # max search distance inside the tile (px)
 TIMEOUT = 60.0
 
 # Unit conversions (verified against the REST properties/query API)
 _UNIT = {
-    "sand": 10.0,   # g/kg -> %
+    "sand": 10.0,  # g/kg -> %
     "silt": 10.0,
     "clay": 10.0,
-    "soc": 10.0,    # dg/kg -> g/kg
+    "soc": 10.0,  # dg/kg -> g/kg
     "phh2o": 10.0,  # pH*10 -> pH
-    "cec": 10.0,    # mmol(c)/kg -> cmol(c)/kg
+    "cec": 10.0,  # mmol(c)/kg -> cmol(c)/kg
     "bdod": 100.0,  # cg/cm3 -> g/cm3
 }
 
@@ -65,6 +66,7 @@ _UNIT = {
 # ---------------------------------------------------------------------------
 # USDA texture approximation (nearest class of the LandProfile union)
 # ---------------------------------------------------------------------------
+
 
 def usda_texture_class(sand_pct: float, silt_pct: float, clay_pct: float) -> str:
     """Approximate USDA texture class from sand/silt/clay percentages.
@@ -89,6 +91,7 @@ def usda_texture_class(sand_pct: float, silt_pct: float, clay_pct: float) -> str
 # RUSLE K-factor (EPIC erodibility equation)
 # ---------------------------------------------------------------------------
 
+
 def rusle_k_factor(sand_pct: float, silt_pct: float, clay_pct: float, soc_g_kg: float) -> float:
     """RUSLE K-factor (t·ha·h / ha·MJ·mm) from texture + SOC (EPIC, 1996)."""
     sa = max(0.0, min(100.0, sand_pct))
@@ -110,6 +113,7 @@ def rusle_k_factor(sand_pct: float, silt_pct: float, clay_pct: float, soc_g_kg: 
 # ---------------------------------------------------------------------------
 # WCS tile access
 # ---------------------------------------------------------------------------
+
 
 def _coverage_url(prop: str, lon: float, lat: float, half_deg: float) -> str:
     return (
@@ -186,6 +190,7 @@ def _nearest_valid(
 # Public API
 # ---------------------------------------------------------------------------
 
+
 async def fetch_soil_profile(lat: float, lon: float) -> dict[str, Any]:
     """Fetch a REAL SoilGrids profile for (lon, lat), top layer 0-5cm.
 
@@ -216,8 +221,11 @@ async def fetch_soil_profile(lat: float, lon: float) -> dict[str, Any]:
         v = _value_at(arr, transform, pt[0], pt[1])
         values[prop] = v / _UNIT[prop] if v is not None else None
         offsets[prop] = round(
-            math.hypot((pt[0] - lon) * 111.32 * math.cos(math.radians(lat)),
-                       (pt[1] - lat) * 110.57), 1)
+            math.hypot(
+                (pt[0] - lon) * 111.32 * math.cos(math.radians(lat)), (pt[1] - lat) * 110.57
+            ),
+            1,
+        )
 
     sand, silt, clay = values["sand"], values["silt"], values["clay"]
     if sand is None or silt is None or clay is None:
@@ -242,12 +250,8 @@ async def fetch_soil_profile(lat: float, lon: float) -> dict[str, Any]:
         "soc_g_kg": round(soc, 1) if soc is not None else None,
         "soc_pct": round(soc / 10.0, 2) if soc is not None else None,
         "ph_h2o": round(values["phh2o"], 1) if values["phh2o"] is not None else None,
-        "cec_mmolc_kg": (
-            round(values["cec"] * 10.0, 1) if values["cec"] is not None else None
-        ),
-        "bulk_density_g_cm3": (
-            round(values["bdod"], 2) if values["bdod"] is not None else None
-        ),
+        "cec_mmolc_kg": (round(values["cec"] * 10.0, 1) if values["cec"] is not None else None),
+        "bulk_density_g_cm3": (round(values["bdod"], 2) if values["bdod"] is not None else None),
         "k_factor_rusle": k_factor,
         "depth_layer": "0-5cm",
         "sample_offset_km": max(offsets.values()) if offsets else 0.0,

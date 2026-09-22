@@ -22,6 +22,7 @@ Classification:
 - 60-80:  Water-Crisis
 - 80-100: Water-Bankruptcy
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -33,14 +34,15 @@ import numpy as np
 @dataclass
 class WBIInputs:
     """Input parameters for WBI calculation."""
+
     renewable_water_m3_per_capita: float  # Annual per capita
-    withdrawal_ratio: float               # Withdrawal / available (0-1+)
-    groundwater_depletion_mm_yr: float    # GRACE-based
-    water_quality_index: float            # 0-1 (1 = clean)
-    drought_frequency_events_yr: float    # Events per year (last 10y)
-    demand_growth_rate_pct: float         # % per year
-    infrastructure_leakage_pct: float     # 0-100
-    governance_score: float               # 0-1 (1 = strong)
+    withdrawal_ratio: float  # Withdrawal / available (0-1+)
+    groundwater_depletion_mm_yr: float  # GRACE-based
+    water_quality_index: float  # 0-1 (1 = clean)
+    drought_frequency_events_yr: float  # Events per year (last 10y)
+    demand_growth_rate_pct: float  # % per year
+    infrastructure_leakage_pct: float  # 0-100
+    governance_score: float  # 0-1 (1 = strong)
 
     def validate(self) -> tuple:
         """Validate inputs, return (is_valid, list_of_errors)."""
@@ -168,10 +170,7 @@ class WBIv3:
             "governance": cls._governance(inputs.governance_score),
         }
 
-        wbi = float(np.clip(
-            sum(cls.WEIGHTS[k] * scores[k] for k in scores),
-            0, 100
-        ))
+        wbi = float(np.clip(sum(cls.WEIGHTS[k] * scores[k] for k in scores), 0, 100))
 
         # Uncertainty bounds (±15% typical for composite indices)
         wbi_low = wbi * 0.85

@@ -1,4 +1,5 @@
 """SSRF protection for outbound HTTP requests."""
+
 from __future__ import annotations
 
 import ipaddress
@@ -9,6 +10,8 @@ from urllib.parse import urlparse
 logger = logging.getLogger(__name__)
 
 # Allowed domains for external API calls
+# NOTE: localhost and 127.0.0.1 are intentionally NOT in this allowlist.
+# They are blocked by BLOCKED_NETWORKS below to prevent SSRF attacks.
 ALLOWED_DOMAINS = {
     "power.larc.nasa.gov",
     "api.open-meteo.com",
@@ -18,8 +21,6 @@ ALLOWED_DOMAINS = {
     "ads.atmosphere.copernicus.eu",
     "ewds.climate.copernicus.eu",
     "sepal.io",
-    "localhost",
-    "127.0.0.1",
 }
 
 # Blocked IP ranges (private, loopback, link-local)
@@ -48,6 +49,7 @@ def _is_ip_blocked(ip_str: str) -> bool:
 def _resolve_hostname(hostname: str) -> list[str]:
     try:
         import socket
+
         return [ip[4].split(":")[0] for ip in socket.getaddrinfo(hostname, None)]
     except Exception:
         return []

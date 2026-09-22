@@ -9,11 +9,9 @@ Produces structured reports for:
 
 import logging
 from datetime import UTC, datetime
-from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.hub.hub import hub
@@ -27,9 +25,9 @@ router = APIRouter(prefix="/api/v1/reports", tags=["reports"])
 
 class ReportRequest(BaseModel):
     report_type: str  # farm | carbon | watershed | custom
-    start_date: Optional[str] = None
-    end_date: Optional[str] = None
-    filters: Optional[dict] = None
+    start_date: str | None = None
+    end_date: str | None = None
+    filters: dict | None = None
     format: str = "json"  # json | csv | pdf
 
 

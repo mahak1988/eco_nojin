@@ -1,5 +1,7 @@
 """Runoff Fetcher - Computes Curve Number from Land Cover and Soil."""
+
 from __future__ import annotations
+
 import structlog
 
 logger = structlog.get_logger()
@@ -29,15 +31,15 @@ class RunoffFetcher(MapFetcher):
     # CN values for AMC-II (normal conditions)
     # Source: USDA TR-55
     CN_TABLE = {
-        10: {"A": 36, "B": 60, "C": 73, "D": 79},   # Tree cover
-        20: {"A": 45, "B": 66, "C": 77, "D": 83},   # Shrubland
-        30: {"A": 39, "B": 61, "C": 74, "D": 80},   # Grassland
-        40: {"A": 64, "B": 76, "C": 84, "D": 88},   # Cropland
-        50: {"A": 98, "B": 98, "C": 98, "D": 98},   # Built-up
-        60: {"A": 77, "B": 86, "C": 91, "D": 94},   # Bare soil
-        70: {"A": 0,  "B": 0,  "C": 0,  "D": 0},    # Snow/ice
-        80: {"A": 100,"B": 100,"C": 100,"D": 100},  # Water
-        90: {"A": 100,"B": 100,"C": 100,"D": 100},  # Wetland
+        10: {"A": 36, "B": 60, "C": 73, "D": 79},  # Tree cover
+        20: {"A": 45, "B": 66, "C": 77, "D": 83},  # Shrubland
+        30: {"A": 39, "B": 61, "C": 74, "D": 80},  # Grassland
+        40: {"A": 64, "B": 76, "C": 84, "D": 88},  # Cropland
+        50: {"A": 98, "B": 98, "C": 98, "D": 98},  # Built-up
+        60: {"A": 77, "B": 86, "C": 91, "D": 94},  # Bare soil
+        70: {"A": 0, "B": 0, "C": 0, "D": 0},  # Snow/ice
+        80: {"A": 100, "B": 100, "C": 100, "D": 100},  # Water
+        90: {"A": 100, "B": 100, "C": 100, "D": 100},  # Wetland
         100: {"A": 63, "B": 77, "C": 85, "D": 89},  # Moss/lichen
     }
 
@@ -101,7 +103,7 @@ class RunoffFetcher(MapFetcher):
         if landcover is None:
             lc = self._generate_synthetic_lc(height, width)
         else:
-            lc = landcover.values if hasattr(landcover, 'values') else landcover
+            lc = landcover.values if hasattr(landcover, "values") else landcover
 
         # Generate synthetic soil texture if not provided
         if soil is None:
@@ -142,12 +144,12 @@ class RunoffFetcher(MapFetcher):
 
     def _soil_to_hsg(self, soil_k: xr.DataArray) -> np.ndarray:
         """Convert K-factor to Hydrologic Soil Group (approximate)."""
-        k = soil_k.values if hasattr(soil_k, 'values') else soil_k
+        k = soil_k.values if hasattr(soil_k, "values") else soil_k
         hsg = np.full_like(k, "B", dtype=object)
-        hsg[k < 0.15] = "A"      # Sandy, low erodibility
+        hsg[k < 0.15] = "A"  # Sandy, low erodibility
         hsg[(k >= 0.15) & (k < 0.25)] = "B"
         hsg[(k >= 0.25) & (k < 0.40)] = "C"
-        hsg[k >= 0.40] = "D"     # Clay, high erodibility
+        hsg[k >= 0.40] = "D"  # Clay, high erodibility
         return hsg
 
     def _generate_synthetic_lc(self, height: int, width: int) -> np.ndarray:

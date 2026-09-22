@@ -1,4 +1,5 @@
 """SWAT+ Adapter - Watershed hydrology & aquifer recharge"""
+
 from datetime import UTC, datetime
 
 from services.simulation.base import BaseSimulator, SimulatorRegistry
@@ -58,8 +59,13 @@ class SWATPlusAdapter(BaseSimulator):
     def _calculate_curve_number(self, soil) -> int:
         """SCS Curve Number based on soil texture"""
         texture_cn = {
-            "sand": 60, "loamy_sand": 65, "sandy_loam": 70,
-            "loam": 75, "silt_loam": 78, "silt": 80,
-            "clay_loam": 82, "clay": 88,
+            "sand": 60,
+            "loamy_sand": 65,
+            "sandy_loam": 70,
+            "loam": 75,
+            "silt_loam": 78,
+            "silt": 80,
+            "clay_loam": 82,
+            "clay": 88,
         }
         return texture_cn.get(soil.texture.lower(), 75)

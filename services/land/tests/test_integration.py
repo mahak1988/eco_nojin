@@ -1,13 +1,10 @@
 """Integration tests for Land Intelligence Service with real engine and database."""
 
-import json
 import numpy as np
 import pytest
 
-from services.land.service import LandService
 from adapters.engine_adapter import EngineAdapter
 from adapters.hydroma_adapter import HydromaAdapter
-from interfaces.hydroma_engine_interface import IHydromaEngine
 from engine.land.models import (
     CapabilityAssessment,
     DrainageAnalysis,
@@ -15,6 +12,7 @@ from engine.land.models import (
     TerrainAnalysis,
     TerrainType,
 )
+from services.land.service import LandService
 
 
 @pytest.fixture
@@ -146,7 +144,9 @@ class TestLandServiceEngineIntegration:
         )
 
         terrain = land_service.analyze_terrain(profile.id, sample_dem, resolution=30.0)
-        drainage = land_service.analyze_drainage(profile.id, sample_dem, resolution=30.0, area_km2=1.0)
+        drainage = land_service.analyze_drainage(
+            profile.id, sample_dem, resolution=30.0, area_km2=1.0
+        )
         capability = land_service.assess_capability(
             profile_id=profile.id,
             slope_degrees=8.0,
@@ -186,7 +186,9 @@ class TestLandServiceEngineIntegration:
         ]
 
         for slope, expected_class in test_cases:
-            profile = land_service.create_profile(name=f"test_{slope}", location_lat=0, location_lon=0)
+            profile = land_service.create_profile(
+                name=f"test_{slope}", location_lat=0, location_lon=0
+            )
             erosion = "very_high" if slope >= 50 else "low"
             assessment = land_service.assess_capability(
                 profile_id=profile.id,
@@ -194,7 +196,9 @@ class TestLandServiceEngineIntegration:
                 soil_depth_m=1.5,
                 erosion_risk=erosion,
             )
-            assert assessment.capability_class == expected_class, f"Slope {slope} should map to {expected_class}, got {assessment.capability_class}"
+            assert assessment.capability_class == expected_class, (
+                f"Slope {slope} should map to {expected_class}, got {assessment.capability_class}"
+            )
 
     def test_arid_climate_limitation(self, land_service):
         """تست محدودیت اقلیم خشک"""
@@ -222,11 +226,13 @@ class TestHydromaAdapterIntegration:
     def test_analyze_soil_returns_model(self, hydroma_adapter):
         """تست تحلیل خاک بازگرداندن مدل Pydantic"""
         result = hydroma_adapter.analyze_soil({"ec": 6.5})
-        assert isinstance(result, type(hydroma_adapter).analyze_soil.__annotations__['return'])
+        assert isinstance(result, type(hydroma_adapter).analyze_soil.__annotations__["return"])
 
     def test_analyze_climate_returns_model(self, hydroma_adapter):
         """تست تحلیل اقلیم بازگرداندن مدل Pydantic"""
-        result = hydroma_adapter.analyze_climate({"temp_mean_c": 25.0, "t_min_c": 20.0, "t_max_c": 30.0})
+        result = hydroma_adapter.analyze_climate(
+            {"temp_mean_c": 25.0, "t_min_c": 20.0, "t_max_c": 30.0}
+        )
         assert result.estimated_et0 >= 0
 
     def test_analyze_watershed_returns_model(self, hydroma_adapter):

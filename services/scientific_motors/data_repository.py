@@ -1,4 +1,3 @@
-
 """
 ============================================================================
 ScientificDataRepository - نسخه نهایی و کامل (Final Release)
@@ -12,6 +11,7 @@ ScientificDataRepository - نسخه نهایی و کامل (Final Release)
 """
 
 from __future__ import annotations
+
 import structlog
 
 logger = structlog.get_logger()
@@ -19,7 +19,7 @@ logger = structlog.get_logger()
 import logging
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 import duckdb
 import polars as pl
@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 class ScientificDataRepository:
     """
     مخزن مرکزی داده‌های علمی پلتفرم اکوژین - نسخه نهایی
-    
+
     این کلاس به صورت Singleton پیاده‌سازی شده و شامل ۲۵ متد تخصصی
     برای ۸ حوزه علمی است:
         1. رشد محصول و AquaCrop
@@ -43,10 +43,10 @@ class ScientificDataRepository:
         8. سایت‌ها و مکان‌یابی
     """
 
-    _instance: Optional[ScientificDataRepository] = None
-    _conn: Optional[duckdb.DuckDBPyConnection] = None
+    _instance: ScientificDataRepository | None = None
+    _conn: duckdb.DuckDBPyConnection | None = None
     _db_path: Path = Path(__file__).parent.parent.parent / "data" / "eco_nojin_master.duckdb"
-    
+
     # ستون‌های کلیدی شناسایی شده (تولید شده به صورت خودکار)
     SITE_ID_COL = "site_id"
     PRECIP_COL = "precip_mm"
@@ -54,7 +54,7 @@ class ScientificDataRepository:
 
     def __new__(cls) -> ScientificDataRepository:
         if cls._instance is None:
-            cls._instance = super(ScientificDataRepository, cls).__new__(cls)
+            cls._instance = super().__new__(cls)
             if not cls._db_path.exists():
                 raise FileNotFoundError(f"دیتابیس یافت نشد: {cls._db_path}")
             cls._conn = duckdb.connect(str(cls._db_path), read_only=True)
@@ -66,7 +66,7 @@ class ScientificDataRepository:
     # ========================================================================
 
     @lru_cache(maxsize=512)
-    def get_crop_parameters(self, species_id: str) -> Optional[Dict[str, Any]]:
+    def get_crop_parameters(self, species_id: str) -> dict[str, Any] | None:
         """دریافت پارامترهای کامل یک گونه برای موتورهای رشد"""
         query = "SELECT * FROM v_crop_climate_matrix WHERE species_id = ?"
         df = self._conn.execute(query, [species_id]).pl()
@@ -91,7 +91,6 @@ class ScientificDataRepository:
         query = "SELECT * FROM ref_yield_benchmarks WHERE species_id = ?"
         return self._conn.execute(query, [species_id]).pl()
 
-
     def get_yield_benchmark(self, species_id: str) -> pl.DataFrame:
         """دریافت بنچمارک عملکرد (نام جایگزین برای سازگاری)"""
         return self.get_yield_benchmarks(species_id)
@@ -101,7 +100,7 @@ class ScientificDataRepository:
     # ========================================================================
 
     @lru_cache(maxsize=128)
-    def get_soil_profile(self, wrb_group: str) -> Optional[Dict[str, Any]]:
+    def get_soil_profile(self, wrb_group: str) -> dict[str, Any] | None:
         """دریافت پروفایل خاک بر اساس گروه WRB"""
         query = """
             SELECT soil_id, WRB_group, USDA_texture, AWC_mm_m, bulk_density, organic_carbon_pct, pH
@@ -127,15 +126,14 @@ class ScientificDataRepository:
     # ========================================================================
 
     @lru_cache(maxsize=128)
-    def get_fertilizer_profile(self, fertilizer_query: str) -> Optional[Dict[str, Any]]:
+    def get_fertilizer_profile(self, fertilizer_query: str) -> dict[str, Any] | None:
         """دریافت مشخصات کامل یک کود بر اساس شناسه یا نام"""
         query = """
             SELECT * FROM ref_fertilizers
             WHERE fert_id = ? OR material ILIKE ? OR type ILIKE ?
         """
         df = self._conn.execute(
-            query, 
-            [fertilizer_query, f"%{fertilizer_query}%", f"%{fertilizer_query}%"]
+            query, [fertilizer_query, f"%{fertilizer_query}%", f"%{fertilizer_query}%"]
         ).pl()
         return df.row(0, named=True) if not df.is_empty() else None
 
@@ -173,19 +171,20 @@ class ScientificDataRepository:
         """
         return self._conn.execute(query, [site_id]).pl()
 
-    def get_weather_daily(self, site_id: str, start_date: Optional[str] = None, 
-                          end_date: Optional[str] = None) -> pl.DataFrame:
+    def get_weather_daily(
+        self, site_id: str, start_date: str | None = None, end_date: str | None = None
+    ) -> pl.DataFrame:
         """دریافت داده‌های روزانه هواشناسی"""
         query = "SELECT * FROM data_weather_daily WHERE site_id = ?"
         params = [site_id]
-        
+
         if start_date:
             query += " AND date >= ?"
             params.append(start_date)
         if end_date:
             query += " AND date <= ?"
             params.append(end_date)
-            
+
         query += " ORDER BY date ASC"
         return self._conn.execute(query, params).pl()
 
@@ -204,7 +203,7 @@ class ScientificDataRepository:
         """محاسبه شاخص بارش استاندارد شده (SPI)"""
         if self.PRECIP_COL is None:
             return pl.DataFrame()
-            
+
         query = f"""
             WITH monthly_rain AS (
                 SELECT 
@@ -262,7 +261,7 @@ class ScientificDataRepository:
     # ========================================================================
 
     @lru_cache(maxsize=256)
-    def get_economic_parameters(self, species_id: str) -> Optional[Dict[str, Any]]:
+    def get_economic_parameters(self, species_id: str) -> dict[str, Any] | None:
         """دریافت پارامترهای اقتصادی یک محصول"""
         query = """
             SELECT * FROM ref_economics
@@ -311,9 +310,10 @@ class ScientificDataRepository:
     # ========================================================================
 
     @lru_cache(maxsize=512)
-    def get_site_profile(self, site_id: str) -> Optional[Dict[str, Any]]:
+    def get_site_profile(self, site_id: str) -> dict[str, Any] | None:
         """دریافت پروفایل کامل یک سایت"""
         from services.security.query_safe import _safe_ident
+
         col = _safe_ident(self.SITE_ID_COL)
         query = "SELECT * FROM ref_sites WHERE " + col + " = ?"
         df = self._conn.execute(query, [site_id]).pl()
@@ -322,15 +322,13 @@ class ScientificDataRepository:
     def get_all_sites(self) -> pl.DataFrame:
         """دریافت لیست تمام سایت‌ها"""
         from services.security.query_safe import _safe_ident
+
         col = _safe_ident(self.SITE_ID_COL)
         return self._conn.execute(f"SELECT * FROM ref_sites ORDER BY {col}").pl()
 
     def get_sites_in_critical_plains(self) -> pl.DataFrame:
         """دریافت سایت‌های بحرانی (فعلاً تمام سایت‌ها)"""
         return self.get_all_sites()
-
-
-
 
     # ========================================================================
     # بخش جدید: مدل‌ها و شاخص‌های جامع
@@ -340,7 +338,7 @@ class ScientificDataRepository:
         """دریافت تمام مدل‌های تصمیم‌گیری (M001-M008)"""
         return self._conn.execute("SELECT * FROM ref_models_registry ORDER BY model_id").pl()
 
-    def get_model(self, model_id: str) -> Optional[Dict[str, Any]]:
+    def get_model(self, model_id: str) -> dict[str, Any] | None:
         """دریافت یک مدل خاص"""
         df = self._conn.execute(
             "SELECT * FROM ref_models_registry WHERE model_id = ?", [model_id]
@@ -354,8 +352,7 @@ class ScientificDataRepository:
     def get_indices_by_category(self, category: str) -> pl.DataFrame:
         """دریافت شاخص‌ها بر اساس دسته"""
         return self._conn.execute(
-            "SELECT * FROM ref_indices_registry WHERE category = ? ORDER BY index_id",
-            [category]
+            "SELECT * FROM ref_indices_registry WHERE category = ? ORDER BY index_id", [category]
         ).pl()
 
     def get_drought_indices(self) -> pl.DataFrame:
@@ -414,27 +411,28 @@ class ScientificDataRepository:
             return 0.0
         return ((potential - actual) / potential) * 100
 
-    def get_index_definition(self, index_id: str) -> Optional[Dict[str, Any]]:
+    def get_index_definition(self, index_id: str) -> dict[str, Any] | None:
         """دریافت تعریف کامل یک شاخص"""
         df = self._conn.execute(
             "SELECT * FROM ref_indices_registry WHERE index_id = ?", [index_id]
         ).pl()
         return df.row(0, named=True) if not df.is_empty() else None
 
-    def get_models_and_indices_summary(self) -> Dict[str, Any]:
+    def get_models_and_indices_summary(self) -> dict[str, Any]:
         """دریافت خلاصه جامع مدل‌ها و شاخص‌ها"""
         models = self._conn.execute("SELECT COUNT(*) FROM ref_models_registry").fetchone()[0]
         indices = self._conn.execute("SELECT COUNT(*) FROM ref_indices_registry").fetchone()[0]
         categories = self._conn.execute(
             "SELECT category, COUNT(*) as cnt FROM ref_indices_registry GROUP BY category"
         ).pl()
-        
+
         return {
             "total_models": models,
             "total_indices": indices,
-            "by_category": {row["category"]: row["cnt"] for row in categories.iter_rows(named=True)}
+            "by_category": {
+                row["category"]: row["cnt"] for row in categories.iter_rows(named=True)
+            },
         }
-
 
 
 def create_repository() -> ScientificDataRepository:
@@ -446,23 +444,23 @@ if __name__ == "__main__":
     logger.info("🔍 تست سریع نسخه نهایی ریپازیتوری...")
     try:
         repo = ScientificDataRepository()
-        
+
         # تست گونه
         crop = repo.get_crop_parameters("W001")
         logger.info(f"✅ گونه W001: {crop.get('name_fa', 'N/A') if crop else 'Not Found'}")
-        
+
         # تست قوانین
         rules = repo.get_critical_plain_rules()
         logger.info(f"✅ قوانین بحرانی: {len(rules)} رکورد")
-        
+
         # تست ماتریس تصمیم با سایت نمونه
         decision_sites = repo.get_all_decision_sites()
         if not decision_sites.is_empty():
             sample_site = decision_sites["site_id"][0]
             matrix = repo.get_decision_engine_matrix(sample_site)
             logger.info(f"✅ ماتریس تصمیم ({sample_site}): {len(matrix)} رکورد")
-        
+
         logger.info("\n🎉 نسخه نهایی ریپازیتوری آماده استفاده است!")
-        
+
     except Exception as e:
         logger.info(f"❌ خطا: {e}")

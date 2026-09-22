@@ -19,6 +19,7 @@ Outputs:
 - Economic value (USD)
 - MRV (Monitoring, Reporting, Verification) documentation
 """
+
 from __future__ import annotations
 
 # =========================================================================
@@ -30,6 +31,7 @@ try:
         is_cpp_available,
         simulate_richards as _cpp_richards,
     )
+
     _CPP_AVAILABLE = is_cpp_available()
 except ImportError:
     _CPP_AVAILABLE = False
@@ -61,6 +63,7 @@ try:
     from engine.hydroma.carbon.calculator import CarbonCalculator as CoreCarbonCalc
     from engine.hydroma.mrv.metrics import MRVMetrics as CoreMRV
     from engine.hydroma.simulation.runners.rothc_runner import RothCRunner as CoreRothC
+
     CORE_AVAILABLE = True
     CORE_ERROR = None
 except ImportError as e:
@@ -75,8 +78,10 @@ except ImportError as e:
 # Constants
 # =====================================================================
 
+
 class SequestrationMethod(Enum):
     """روش‌های ترسیب کربن - (name, min_tCO2e, max_tCO2e, carbon_price_usd)"""
+
     NO_TILL = ("No-Till Farming", 0.5, 0.8, 20)
     COVER_CROPS = ("Cover Crops", 0.8, 1.5, 25)
     BIOCHAR = ("Biochar Application", 2.5, 5.0, 80)
@@ -89,6 +94,7 @@ class SequestrationMethod(Enum):
 
 class CarbonStandard(Enum):
     """گواهینامه‌های کربن جهانی - (name, factor, verification_cost_ratio)"""
+
     VCS = ("Verified Carbon Standard", 1.0, 0.85)
     GOLD_STANDARD = ("Gold Standard", 1.2, 0.95)
     CDM = ("Clean Development Mechanism", 0.8, 0.90)
@@ -97,21 +103,22 @@ class CarbonStandard(Enum):
 
 # RothC-26.3 decomposition rates (per year)
 ROTHC_RATES = {
-    "DPM": 10.0,      # Decomposable Plant Material
-    "RPM": 0.3,       # Resistant Plant Material
-    "BIO": 0.66,      # Microbial Biomass
-    "HUM": 0.02,      # Humified Organic Matter
-    "IOM": 0.0,       # Inert Organic Matter (stable)
+    "DPM": 10.0,  # Decomposable Plant Material
+    "RPM": 0.3,  # Resistant Plant Material
+    "BIO": 0.66,  # Microbial Biomass
+    "HUM": 0.02,  # Humified Organic Matter
+    "IOM": 0.0,  # Inert Organic Matter (stable)
 }
 
 # Conversion factors
-CO2_TO_C = 44.0 / 12.0   # 1 tC = 3.67 tCO2e
+CO2_TO_C = 44.0 / 12.0  # 1 tC = 3.67 tCO2e
 C_TO_CO2 = 12.0 / 44.0
 
 
 @dataclass
 class CarbonPoolState:
     """وضعیت پنج پول کربن در مدل RothC"""
+
     dpm: float  # tC/ha - Decomposable Plant Material
     rpm: float  # tC/ha - Resistant Plant Material
     bio: float  # tC/ha - Microbial Biomass
@@ -133,10 +140,11 @@ class CarbonPoolState:
 # Main Motor Class
 # =====================================================================
 
+
 class CarbonSequestrationMotor(AbstractScientificMotor):
     """
     RothC-26.3 based Carbon Sequestration Calculator
-    
+
     Computes:
     - Annual carbon sequestration (tCO2e/ha/yr)
     - 10-30 year SOC projection
@@ -181,7 +189,9 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
 
     def get_outputs(self) -> list[MotorOutput]:
         return [
-            MotorOutput("annual_sequestration_co2e", "raster", "tCO2e/ha/yr", "Annual sequestration"),
+            MotorOutput(
+                "annual_sequestration_co2e", "raster", "tCO2e/ha/yr", "Annual sequestration"
+            ),
             MotorOutput("soc_projection_20y", "raster", "tC/ha", "SOC projection"),
             MotorOutput("carbon_credits", "json", "credits", "VCS/GS credits generated"),
             MotorOutput("economic_value", "json", "USD", "Carbon credit value"),
@@ -307,11 +317,14 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
                     "economic_value": {
                         "carbon_price_usd": carbon_price_usd,
                         "gross_revenue_usd_ha": round(total_credits * carbon_price_usd, 2),
-                        "verification_cost_usd_ha": round(total_credits * verification_cost_usd_per_t, 2),
+                        "verification_cost_usd_ha": round(
+                            total_credits * verification_cost_usd_per_t, 2
+                        ),
                         "net_revenue_usd_ha": round(net_credit_value, 2),
                         "revenue_per_year_usd_ha": (
                             round(net_credit_value / crediting_years, 2)
-                            if crediting_years > 0 else 0
+                            if crediting_years > 0
+                            else 0
                         ),
                         "method_cost_usd_ha": self._method_cost(method),
                     },
@@ -331,8 +344,7 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
                         "baseline_soc": [round(s, 3) for s in baseline_soc],
                         "sequestration_soc": [round(s, 3) for s in sequestration_soc],
                         "difference": [
-                            round(s - b, 3)
-                            for s, b in zip(sequestration_soc, baseline_soc)
+                            round(s - b, 3) for s, b in zip(sequestration_soc, baseline_soc)
                         ],
                     },
                     "core_integration": {
@@ -365,6 +377,7 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
 
         except Exception as e:
             import traceback
+
             return MotorResult(
                 run_id=run_id,
                 motor_type=self.motor_type,
@@ -393,7 +406,7 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
     def _compute_rate_modifier(self, rainfall_mm: float, temp_c: float) -> float:
         """
         RothC Decomposition Rate Modifier (DCM)
-        
+
         Combines temperature, moisture, and plant cover factors.
         Typical range: 0.2 (cold/dry) to 1.5 (warm/wet).
         """
@@ -418,7 +431,7 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
 
     def _baseline_c_input(self, initial_soc: float) -> float:
         """Estimate baseline annual C input from current SOC.
-        
+
         Steady-state assumption: input ≈ output at equilibrium.
         """
         return max(0.5, initial_soc * 0.1)
@@ -452,11 +465,11 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
         c_input_baseline: float,
     ) -> list[float]:
         """Run RothC-26.3 model simulation.
-        
+
         Returns: list of annual SOC values (tC/ha) from year 0 to year N.
         """
         # IOM estimation (Falloon et al., 1998): IOM = 0.049 × SOC^1.139
-        iom = 0.049 * (initial_soc ** 1.139) if initial_soc > 0 else 0.5
+        iom = 0.049 * (initial_soc**1.139) if initial_soc > 0 else 0.5
         active_soc = max(0.1, initial_soc - iom)
 
         # Initialize pool distribution
@@ -515,7 +528,7 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
         clay: float,
     ) -> dict[str, Any]:
         """Generate MRV (Monitoring, Reporting, Verification) report.
-        
+
         Output is compatible with engine/hydroma/blockchain/carbon_registry.py
         """
         return {
@@ -542,10 +555,7 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
                 "total_soc_gain_tC_ha": round(final_soc - init_soc, 3),
             },
             "additionality": adjusted_co2e > baseline_co2e * 1.1,
-            "permanence_risk": (
-                "low" if method.name in ["BIOCHAR", "AGROFORESTRY"]
-                else "medium"
-            ),
+            "permanence_risk": ("low" if method.name in ["BIOCHAR", "AGROFORESTRY"] else "medium"),
             "monitoring_requirements": [
                 "Annual soil sampling (0-30cm)",
                 "SOC analysis (dry combustion or Walkley-Black)",

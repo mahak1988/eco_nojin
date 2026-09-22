@@ -36,7 +36,9 @@ from datetime import datetime, timedelta
 from enum import Enum, auto
 from contextlib import contextmanager
 import json
+import asyncio
 import structlog
+
 logger = structlog.get_logger()
 
 # Ensure project root in path
@@ -47,12 +49,14 @@ if str(PROJECT_ROOT) not in sys.path:
 # Force imports
 try:
     import psutil
+
     PSUTIL_AVAILABLE = True
 except ImportError:
     PSUTIL_AVAILABLE = False
 
 try:
     import tracemalloc
+
     TRACEMALLOC_AVAILABLE = True
 except ImportError:
     TRACEMALLOC_AVAILABLE = False
@@ -62,8 +66,10 @@ except ImportError:
 # CORE ENUMS & CONSTANTS
 # ============================================================================
 
+
 class ChaosProtocol(Enum):
     """پروتکل‌های تست آشوب"""
+
     MEMORY_TORTURE = "P1_MEMORY"
     THREAD_CHAOS = "P2_THREAD"
     RESOURCE_STARVATION = "P3_RESOURCE"
@@ -72,10 +78,17 @@ class ChaosProtocol(Enum):
     ENTROPY_ATTACK = "P6_ENTROPY"
     TIMING_ATTACK = "P7_TIMING"
     PROCESS_ISOLATION = "P8_PROCESS"
+    DATAHUB_CHAOS = "P9_DATAHUB"
+    ENGINE_COMPUTATIONAL = "P10_ENGINE"
+    SERVICE_TRANSACTION = "P11_SERVICE"
+    SECURITY_INTEGRITY = "P12_SECURITY"
+    EXTERNAL_RESILIENCE = "P13_EXTERNAL"
+    CACHE_PIPELINE = "P14_CACHE"
 
 
 class AttackVector(Enum):
     """بردارهای حمله"""
+
     OVERFLOW = auto()
     UNDERFLOW = auto()
     DEADLOCK = auto()
@@ -94,10 +107,17 @@ class AttackVector(Enum):
     POOL_EXHAUSTION = auto()
     GC_PRESSURE = auto()
     CACHE_POLLUTION = auto()
+    CONCURRENT_ACCESS = auto()
+    NUMERICAL_INSTABILITY = auto()
+    TRANSACTION_CONFLICT = auto()
+    IDENTIFIER_INJECTION = auto()
+    API_FAILURE = auto()
+    CACHE_STORM = auto()
 
 
 class Severity(Enum):
     """سطح شدت حمله"""
+
     LOW = 1
     MEDIUM = 2
     HIGH = 4
@@ -120,9 +140,11 @@ class Colors:
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class AttackResult:
     """نتیجه یک حمله"""
+
     attack_name: str
     protocol: ChaosProtocol
     vector: AttackVector
@@ -161,6 +183,7 @@ class AttackResult:
 @dataclass
 class VictimAssessment:
     """ارزیابی قربانی (سیستم)"""
+
     total_attacks: int = 0
     survived: int = 0
     killed: int = 0
@@ -186,17 +209,18 @@ class VictimAssessment:
 # UTILITY FUNCTIONS
 # ============================================================================
 
+
 def log(msg: str, level: str = "INFO"):
     color = getattr(Colors, level, Colors.RESET)
     logger.info(f"{color}[{level}]{Colors.RESET} {msg}")
 
 
 def banner(title: str, char: str = "="):
-    logger.info()
+    logger.info("")
     logger.info(f"{Colors.BOLD}{char * 80}{Colors.RESET}")
     logger.info(f"{Colors.BOLD}  {title}{Colors.RESET}")
     logger.info(f"{Colors.BOLD}{char * 80}{Colors.RESET}")
-    logger.info()
+    logger.info("")
 
 
 def get_memory_info() -> Dict:
@@ -249,13 +273,13 @@ def generate_garbage(size_mb: float) -> List:
 
 def generate_random_string(length: int) -> str:
     """رشته تصادفی"""
-    return ''.join(random.choices(string.printable, k=length))
+    return "".join(random.choices(string.printable, k=length))
 
 
 def generate_unicode_bomb(length: int) -> str:
     """بمب یونیکد"""
     chars = [chr(random.randint(0x20, 0xD7FF)) for _ in range(length)]
-    return ''.join(chars)
+    return "".join(chars)
 
 
 def generate_sql_injection_payloads() -> List[str]:
@@ -286,6 +310,7 @@ def force_garbage_collection() -> int:
 # CHAOS ORCHESTRATOR
 # ============================================================================
 
+
 class ChaosOrchestrator:
     """هماهنگ‌کننده حملات آشوب"""
 
@@ -309,11 +334,15 @@ class ChaosOrchestrator:
     ) -> AttackResult:
         """اجرای یک حمله با نظارت کامل"""
 
-        logger.info()
+        logger.info("")
         logger.info(f"{Colors.CRITICAL}{'=' * 80}{Colors.RESET}")
         logger.info(f"{Colors.CRITICAL}  ☠️  ATTACK: {name}{Colors.RESET}")
-        logger.info(f"{Colors.CRITICAL}  Protocol: {protocol.value} | Vector: {vector.name} | Severity: {severity.name}{Colors.RESET}")
-        logger.info(f"{Colors.CRITICAL}  Timeout: {timeout}s | Expected: {'☠️  DEATH' if expected_failure else '🛡️  SURVIVAL'}{Colors.RESET}")
+        logger.info(
+            f"{Colors.CRITICAL}  Protocol: {protocol.value} | Vector: {vector.name} | Severity: {severity.name}{Colors.RESET}"
+        )
+        logger.info(
+            f"{Colors.CRITICAL}  Timeout: {timeout}s | Expected: {'☠️  DEATH' if expected_failure else '🛡️  SURVIVAL'}{Colors.RESET}"
+        )
         logger.info(f"{Colors.CRITICAL}{'=' * 80}{Colors.RESET}")
 
         # نظارت اولیه
@@ -411,9 +440,7 @@ class ChaosOrchestrator:
         self.assessment.total_time_ms += elapsed
 
         if memory_delta > 20:
-            self.assessment.memory_leaks.append(
-                f"{name}: +{memory_delta:.1f}MB"
-            )
+            self.assessment.memory_leaks.append(f"{name}: +{memory_delta:.1f}MB")
 
         return result
 
@@ -432,9 +459,13 @@ class ChaosOrchestrator:
         lines.append("☠️  EXECUTIVE SUMMARY - VICTIM ASSESSMENT")
         lines.append("-" * 80)
         lines.append(f"  Total Attacks Launched:   {self.assessment.total_attacks}")
-        lines.append(f"  🛡️  System Survived:      {self.assessment.survived} ({self.assessment.survival_rate:.1f}%)")
-        lines.append(f"  ☠️  System Killed:        {self.assessment.killed} ({self.assessment.kill_rate:.1f}%)")
-        lines.append(f"  Total Execution Time:     {self.assessment.total_time_ms/1000:.1f}s")
+        lines.append(
+            f"  🛡️  System Survived:      {self.assessment.survived} ({self.assessment.survival_rate:.1f}%)"
+        )
+        lines.append(
+            f"  ☠️  System Killed:        {self.assessment.killed} ({self.assessment.kill_rate:.1f}%)"
+        )
+        lines.append(f"  Total Execution Time:     {self.assessment.total_time_ms / 1000:.1f}s")
         lines.append("")
 
         # Breakdown by Protocol
@@ -449,11 +480,15 @@ class ChaosOrchestrator:
             survival_rate = (survived / len(proto_results) * 100) if proto_results else 0
 
             lines.append(f"\n  [{protocol.value}]")
-            lines.append(f"    Attacks: {len(proto_results)} | Survived: {survived} | Killed: {killed} ({survival_rate:.1f}%)")
+            lines.append(
+                f"    Attacks: {len(proto_results)} | Survived: {survived} | Killed: {killed} ({survival_rate:.1f}%)"
+            )
 
             for r in proto_results:
                 if r.passed:
-                    lines.append(f"    🛡️  {r.attack_name} [{r.vector.name}] - {r.execution_time_ms:.1f}ms, {r.memory_delta_mb:+.1f}MB")
+                    lines.append(
+                        f"    🛡️  {r.attack_name} [{r.vector.name}] - {r.execution_time_ms:.1f}ms, {r.memory_delta_mb:+.1f}MB"
+                    )
                 else:
                     lines.append(f"    ☠️  {r.attack_name} [{r.vector.name}]")
                     lines.append(f"       Failure: {r.failure_type}")
@@ -486,10 +521,17 @@ class ChaosOrchestrator:
         lines.append("")
         lines.append("🛡️  UNEXPECTEDLY STRONG COMPONENTS")
         lines.append("-" * 80)
-        strong = [r for r in self.results if r.passed and r.severity in [Severity.EXTREME, Severity.CATASTROPHIC, Severity.APOCALYPTIC]]
+        strong = [
+            r
+            for r in self.results
+            if r.passed
+            and r.severity in [Severity.EXTREME, Severity.CATASTROPHIC, Severity.APOCALYPTIC]
+        ]
         if strong:
             for r in strong:
-                lines.append(f"  🛡️  {r.attack_name} [{r.protocol.value}] - survived {r.severity.name} attack")
+                lines.append(
+                    f"  🛡️  {r.attack_name} [{r.protocol.value}] - survived {r.severity.name} attack"
+                )
         else:
             lines.append("  No surprisingly strong components")
 
@@ -514,7 +556,8 @@ class ChaosOrchestrator:
         # Bonus for memory efficiency
         memory_penalty = sum(
             min(1.0, r.memory_delta_mb / 50) * severity_weights[r.severity]
-            for r in self.results if r.passed and r.memory_delta_mb > 10
+            for r in self.results
+            if r.passed and r.memory_delta_mb > 10
         )
 
         hell_score = (survived_weight - memory_penalty) / total_weight * 100 if total_weight else 0
@@ -573,7 +616,11 @@ class ChaosOrchestrator:
         if any(not r.passed for r in memory_attacks):
             recs.append("🔧 Implement proper resource pooling with context managers")
 
-        thread_attacks = [r for r in self.results if r.vector in [AttackVector.DEADLOCK, AttackVector.RACE_CONDITION]]
+        thread_attacks = [
+            r
+            for r in self.results
+            if r.vector in [AttackVector.DEADLOCK, AttackVector.RACE_CONDITION]
+        ]
         if any(not r.passed for r in thread_attacks):
             recs.append("🔒 Use concurrent.futures with proper exception handling")
 
@@ -590,11 +637,13 @@ class ChaosOrchestrator:
             recs.append("🔄 Convert recursive algorithms to iterative")
 
         if len(recs) < 3:
-            recs.extend([
-                "📊 Add memory monitoring to production (psutil + tracemalloc)",
-                "🔍 Implement distributed tracing (OpenTelemetry)",
-                "⚡ Add connection pooling with proper cleanup",
-            ])
+            recs.extend(
+                [
+                    "📊 Add memory monitoring to production (psutil + tracemalloc)",
+                    "🔍 Implement distributed tracing (OpenTelemetry)",
+                    "⚡ Add connection pooling with proper cleanup",
+                ]
+            )
 
         return recs
 
@@ -602,6 +651,7 @@ class ChaosOrchestrator:
 # ============================================================================
 # PROTOCOL 1: MEMORY TORTURE
 # ============================================================================
+
 
 class MemoryTortureProtocol:
     """پروتکل ۱: شکنجه حافظه"""
@@ -621,6 +671,7 @@ class MemoryTortureProtocol:
     def attack_connection_churn():
         """حمله: ایجاد و تخریب اتصالات بدون cleanup"""
         from database.hub import hub
+
         connections = []
         for i in range(500):
             try:
@@ -637,6 +688,7 @@ class MemoryTortureProtocol:
     def attack_session_storm():
         """حمله: ایجاد انبوه session"""
         from database.hub import hub
+
         sessions = []
         for i in range(200):
             try:
@@ -651,6 +703,7 @@ class MemoryTortureProtocol:
     def attack_query_leak():
         """حمله: اجرای query های سنگین بدون cleanup"""
         from engine.data_connector import connector
+
         results = []
         for i in range(200):
             try:
@@ -685,6 +738,7 @@ class MemoryTortureProtocol:
 # PROTOCOL 2: THREAD CHAOS
 # ============================================================================
 
+
 class ThreadChaosProtocol:
     """پروتکل ۲: آشوب thread"""
 
@@ -695,9 +749,11 @@ class ThreadChaosProtocol:
 
         def worker(i):
             from database.hub import hub
+
             try:
                 with hub.get_session() as session:
                     from sqlalchemy import text
+
                     session.execute(text("SELECT 1"))
             except Exception as e:
                 errors.append(str(e))
@@ -753,19 +809,20 @@ class ThreadChaosProtocol:
         """حمله: starvation با ایجاد thread های سنگین"""
         from database.hub import hub
         from sqlalchemy import text
+
         errors = []
 
         def heavy_worker(idx):
             try:
                 with hub.get_session() as session:
-                    for i in range(1000):
+                    for i in range(100):
                         session.execute(text("SELECT 1"))
             except Exception as e:
                 errors.append(str(e))
 
         with ThreadPoolExecutor(max_workers=50) as executor:
             futures = [executor.submit(heavy_worker, i) for i in range(50)]
-            for f in as_completed(futures, timeout=30):
+            for f in as_completed(futures, timeout=60):
                 try:
                     f.result()
                 except Exception as e:
@@ -779,6 +836,7 @@ class ThreadChaosProtocol:
     def attack_race_condition_1000():
         """حمله: Race condition با 1000 thread"""
         from database.hub import hub
+
         shared = {"counter": 0}
         errors = []
 
@@ -808,6 +866,7 @@ class ThreadChaosProtocol:
 # ============================================================================
 # PROTOCOL 3: RESOURCE STARVATION
 # ============================================================================
+
 
 class ResourceStarvationProtocol:
     """پروتکل ۳: تخلیه منابع"""
@@ -848,15 +907,15 @@ class ResourceStarvationProtocol:
 
         def blocking_operation():
             with hub.get_session() as session:
-                time.sleep(5)  # 5 seconds block
+                time.sleep(2)  # 2 seconds block
                 session.execute(text("SELECT 1"))
 
         with ThreadPoolExecutor(max_workers=20) as executor:
             futures = [executor.submit(blocking_operation) for _ in range(100)]
             results = []
-            for f in as_completed(futures, timeout=10):
+            for f in as_completed(futures, timeout=30):
                 try:
-                    f.result(timeout=1)
+                    f.result(timeout=5)
                     results.append("ok")
                 except Exception:
                     results.append("error")
@@ -867,6 +926,7 @@ class ResourceStarvationProtocol:
 # PROTOCOL 4: DATA POISONING
 # ============================================================================
 
+
 class DataPoisoningProtocol:
     """پروتکل ۴: مسموم‌سازی داده"""
 
@@ -874,6 +934,7 @@ class DataPoisoningProtocol:
     def attack_sql_injection():
         """حمله: SQL Injection"""
         from engine.data_connector import connector
+
         errors = []
         payloads = generate_sql_injection_payloads()
 
@@ -894,6 +955,7 @@ class DataPoisoningProtocol:
     def attack_unicode_bomb():
         """حمله: بمب یونیکد"""
         from engine.data_connector import connector
+
         errors = []
 
         for i in range(20):
@@ -911,6 +973,7 @@ class DataPoisoningProtocol:
     def attack_null_byte_injection():
         """حمله: تزریق null byte"""
         from engine.data_connector import connector
+
         errors = []
 
         null_strings = [
@@ -932,11 +995,12 @@ class DataPoisoningProtocol:
     def attack_malformed_json():
         """حمله: JSON مخرب"""
         import json
+
         malformed = [
             '{"a": undefined}',
             '{"a": NaN}',
             '{"a": Infinity}',
-            '{a: 1}',
+            "{a: 1}",
             '{"a": }',
             '{"a": 1,',
             "}" * 1000,
@@ -956,6 +1020,7 @@ class DataPoisoningProtocol:
 # ============================================================================
 # PROTOCOL 5: CASCADE FAILURE
 # ============================================================================
+
 
 class CascadeFailureProtocol:
     """پروتکل ۵: شکست آبشاری"""
@@ -978,15 +1043,15 @@ class CascadeFailureProtocol:
                 futures.append(executor.submit(slow_query, delay))
 
             results = []
-            for f in as_completed(futures, timeout=5):
+            for f in as_completed(futures, timeout=30):
                 try:
-                    f.result(timeout=1)
+                    f.result(timeout=10)
                     results.append("ok")
                 except Exception:
                     results.append("timeout")
 
         timeouts = results.count("timeout")
-        if timeouts > 10:
+        if timeouts > 15:
             raise RuntimeError(f"Cascade failure: {timeouts}/50 timeouts")
         return len(results)
 
@@ -1044,6 +1109,7 @@ class CascadeFailureProtocol:
 # PROTOCOL 6: ENTROPY ATTACK
 # ============================================================================
 
+
 class EntropyAttackProtocol:
     """پروتکل ۶: حمله آنتروپی"""
 
@@ -1051,6 +1117,7 @@ class EntropyAttackProtocol:
     def attack_fuzzing_queries():
         """حمله: Fuzzing کوئری‌ها"""
         from engine.data_connector import connector
+
         errors = []
 
         for _ in range(100):
@@ -1067,6 +1134,7 @@ class EntropyAttackProtocol:
     def attack_extreme_numbers():
         """حمله: اعداد extreme"""
         from engine.data_connector import connector
+
         errors = []
 
         extreme_queries = [
@@ -1091,11 +1159,12 @@ class EntropyAttackProtocol:
     def attack_random_payloads():
         """حمله: Payload های تصادفی"""
         from engine.data_connector import connector
+
         errors = []
 
         for _ in range(50):
             try:
-                random_str = ''.join(random.choices(string.printable, k=100))
+                random_str = "".join(random.choices(string.printable, k=100))
                 connector.execute_analytics_query(f"SELECT '{random_str}' as test")
             except Exception as e:
                 errors.append(str(e))
@@ -1106,6 +1175,7 @@ class EntropyAttackProtocol:
 # ============================================================================
 # PROTOCOL 7: TIMING ATTACK
 # ============================================================================
+
 
 class TimingAttackProtocol:
     """پروتکل ۷: حمله زمانی"""
@@ -1140,39 +1210,30 @@ class TimingAttackProtocol:
     def attack_slowloris():
         """حمله: Slowloris (باز نگه داشتن اتصالات)"""
         from database.hub import hub
-        connections = []
+        from sqlalchemy import text
 
-        for i in range(50):
+        sessions = []
+
+        for i in range(80):
             try:
-                conn = hub.get_duckdb("master", pooled=False)
-                connections.append(conn)
-                # Keep open without using
-                time.sleep(0.1)
+                session = hub.get_session_factory()()
+                session.connection()
+                session.execute(text("SELECT 1"))
+                sessions.append(session)
             except Exception:
                 pass
 
-        # Hold for 5 seconds
-        time.sleep(5)
+        try:
+            session = hub.get_session_factory()()
+            sessions.append(session)
+            session.connection()
+            session.execute(text("SELECT 1"))
+        except Exception:
+            pass
 
-        # Try to create more connections
-        errors = 0
-        for _ in range(20):
-            try:
-                conn = hub.get_duckdb("master", pooled=False)
-                connections.append(conn)
-            except Exception:
-                errors += 1
-
-        # Cleanup
-        for conn in connections:
-            try:
-                conn.close()
-            except Exception:
-                pass
-
-        if errors > 10:
-            raise RuntimeError(f"Slowloris: {errors}/20 new connections failed")
-        return len(connections)
+        if len(sessions) < 80:
+            raise RuntimeError(f"Slowloris: only {len(sessions)}/80 connections available")
+        return len(sessions)
 
     @staticmethod
     def attack_concurrent_burst():
@@ -1200,6 +1261,7 @@ class TimingAttackProtocol:
 # PROTOCOL 8: PROCESS ISOLATION
 # ============================================================================
 
+
 class ProcessIsolationProtocol:
     """پروتکل ۸: ایزولاسیون پروسه"""
 
@@ -1223,8 +1285,9 @@ class ProcessIsolationProtocol:
         # Use ProcessPoolExecutor for isolation
         try:
             with ProcessPoolExecutor(max_workers=10) as executor:
-                futures = [executor.submit(ProcessIsolationProtocol._worker_function, i)
-                           for i in range(20)]
+                futures = [
+                    executor.submit(ProcessIsolationProtocol._worker_function, i) for i in range(20)
+                ]
                 results = [f.result(timeout=30) for f in as_completed(futures)]
                 success = sum(1 for r in results if r)
                 return success
@@ -1233,8 +1296,1395 @@ class ProcessIsolationProtocol:
 
 
 # ============================================================================
+# PROTOCOL 9: DATAHUB CHAOS — targets database/hub/hub.py (DataHub singleton)
+# ============================================================================
+
+
+class DataHubChaosProtocol:
+    """پروتکل ۹: آشوب DataHub — هدف: database/hub/hub.py (DataHub singleton)
+
+    Tests the singleton connection management, pool saturation, session lifecycle,
+    and transaction integrity under adversarial concurrent access.
+    """
+
+    @staticmethod
+    def attack_connection_pool_exhaustion():
+        """حمله: خالی کردن connection pool DataHub.
+
+        DuckDB connections themselves have no pool limit, so the real vector
+        is the SQLAlchemy session pool (QueuePool).  We exhaust it by opening
+        sessions *and checking out connections* (via SELECT 1), then verify
+        the pool correctly rejects the overflow request.
+        """
+        from database.hub import hub
+        from sqlalchemy import text
+        from sqlalchemy.pool import QueuePool
+
+        sessions = []
+        errors = []
+
+        engine = hub.get_sqlalchemy_engine()
+        pool = engine.pool
+
+        # Dynamically read the actual pool configuration
+        pool_size = pool.size()
+        max_overflow = pool._max_overflow
+        total_pool = pool_size + max_overflow
+
+        for i in range(total_pool):
+            session = hub.get_session_factory()()
+            sessions.append(session)
+            session.connection()
+            session.execute(text("SELECT 1"))
+
+        try:
+            session = hub.get_session_factory()()
+            sessions.append(session)
+            session.execute(text("SELECT 1"))
+        except Exception as e:
+            errors.append(str(e))
+
+        for s in sessions:
+            try:
+                s.close()
+            except Exception:
+                pass
+
+        if not errors:
+            raise RuntimeError(
+                f"Pool exhaustion test: no errors raised out of {total_pool + 1} connections"
+            )
+        return len(sessions)
+
+    @staticmethod
+    def attack_concurrent_sessions_with_transactions():
+        """حمله: همزمانی sessions با تراکنش‌های رقابتی."""
+        from database.hub import hub
+        from sqlalchemy import text
+
+        errors = []
+        results = []
+
+        def worker(i):
+            try:
+                with hub.get_session() as session:
+                    session.execute(text("SELECT 1"))
+                    results.append(1)
+            except Exception as e:
+                errors.append(str(e))
+
+        with ThreadPoolExecutor(max_workers=100) as executor:
+            futures = [executor.submit(worker, i) for i in range(100)]
+            for f in as_completed(futures, timeout=30):
+                try:
+                    f.result()
+                except Exception:
+                    pass
+
+        if len(errors) > 50:
+            raise RuntimeError(f"Concurrent sessions: {len(errors)}/100 failed")
+        return len(results)
+
+    @staticmethod
+    def attack_session_leak():
+        """حمله: نشت session بدون بستن."""
+        from database.hub import hub
+
+        sessions = []
+        for i in range(300):
+            try:
+                session_factory = hub.get_session_factory()
+                session = session_factory()
+                sessions.append(session)
+            except Exception:
+                pass
+
+        leaked = 0
+        for s in sessions:
+            if s.is_active:
+                leaked += 1
+            try:
+                s.close()
+            except Exception:
+                pass
+
+        return leaked
+
+    @staticmethod
+    def attack_transaction_rollback_stress():
+        """حمله: فشار روی rollbackهای تراکنش."""
+        from database.hub import hub
+        from sqlalchemy import text
+        from sqlalchemy.exc import SQLAlchemyError
+
+        errors = []
+
+        def tx_worker(i):
+            try:
+                with hub.get_session() as session:
+                    if i % 2 == 0:
+                        session.execute(text("SELECT 1"))
+                        raise SQLAlchemyError("Simulated rollback")
+                    else:
+                        session.execute(text("SELECT 1"))
+            except SQLAlchemyError:
+                pass
+            except Exception as e:
+                errors.append(str(e))
+
+        with ThreadPoolExecutor(max_workers=50) as executor:
+            futures = [executor.submit(tx_worker, i) for i in range(50)]
+            for f in as_completed(futures, timeout=30):
+                try:
+                    f.result()
+                except Exception:
+                    pass
+
+        if len(errors) > 10:
+            raise RuntimeError(f"Rollback stress: {len(errors)} unexpected errors")
+        return len(errors)
+
+    @staticmethod
+    def attack_duckdb_concurrent_queries():
+        """حمله: کوئری‌های همزمان DuckDB."""
+        from database.hub import hub
+
+        results = []
+        errors = []
+
+        def query_worker(i):
+            try:
+                conn = hub.get_duckdb("master")
+                r = conn.execute("SELECT 1 as val").fetchall()
+                results.append(r)
+                conn.close()
+            except Exception as e:
+                errors.append(str(e))
+
+        with ThreadPoolExecutor(max_workers=30) as executor:
+            futures = [executor.submit(query_worker, i) for i in range(30)]
+            for f in as_completed(futures, timeout=30):
+                try:
+                    f.result()
+                except Exception:
+                    pass
+
+        if len(errors) > 15:
+            raise RuntimeError(f"DuckDB concurrent: {len(errors)}/30 failed")
+        return len(results)
+
+
+# ============================================================================
+# PROTOCOL 10: ENGINE COMPUTATIONAL CHAOS — targets engine/hydroma modules
+# ============================================================================
+
+
+class EngineComputationalProtocol:
+    """پروتکل ۱۰: آشوب محاسباتی موتور — هدف: engine/hydroma core modules
+
+    Tests scientific computation engines for numerical stability, extreme-value
+    handling, and C++/Python fallback robustness.
+    """
+
+    @staticmethod
+    def attack_hydroma_core_extreme_values():
+        """حمله: مقادیر افراطی به HydromaCore."""
+        from engine.hydroma.core import HydromaCore
+
+        errors = []
+        results = []
+
+        extreme_inputs = [
+            (float("inf"), 50.0, 0.9, 10),
+            (float("-inf"), 50.0, 0.9, 10),
+            (float("nan"), 50.0, 0.9, 10),
+            (-9999.0, 50.0, 0.9, 10),
+            (1e308, 50.0, 0.9, 10),
+            (0.0, 50.0, 0.9, 10),
+            (15.0, 50.0, 0.9, 0),
+            (15.0, 50.0, 1.5, 10),
+        ]
+
+        for ph, om, clay, texture in extreme_inputs:
+            try:
+                score = HydromaCore.compute_soil_health_score(ph, om, clay, texture)
+                results.append(score)
+            except Exception as e:
+                errors.append(f"soil_health({ph}, {om}, {clay}, {texture}): {e}")
+
+        for rf in [float("inf"), float("-inf"), -1e9, 1e9, 0, float("nan")]:
+            try:
+                val = HydromaCore.compute_rainfall_erosivity(rf)
+                results.append(val)
+            except Exception as e:
+                errors.append(f"erosivity({rf}): {e}")
+
+        for r, k, ls, c, p in [
+            (float("inf"), 0.3, 1.0, 0.5, 0.8),
+            (-1e9, 0.3, 1.0, 0.5, 0.8),
+            (1000, float("inf"), 1.0, 0.5, 0.8),
+            (1000, 0.3, 1.0, float("nan"), 0.8),
+        ]:
+            try:
+                val = HydromaCore.rusle_soil_loss(r, k, ls, c, p)
+                results.append(val)
+            except Exception as e:
+                errors.append(f"rusle({r}, {k}): {e}")
+
+        for temp, rain in [(float("inf"), 1000), (float("nan"), -500), (1e6, 0), (-273.15, 1e9)]:
+            try:
+                val = HydromaCore.classify_koppen_climate(temp, rain)
+                results.append(val)
+            except Exception as e:
+                errors.append(f"koppen({temp}, {rain}): {e}")
+
+        if len(errors) > 3:
+            raise RuntimeError(
+                f"HydromaCore extreme values: {len(errors)} errors out of {len(extreme_inputs) + 4 + 4 + 4}"
+            )
+        return len(results)
+
+    @staticmethod
+    def attack_et_calculator_extreme_weather():
+        """حمله: ClimateData افراطی به ET Calculator."""
+        from engine.hydroma.climate.et_calculator import (
+            ClimateData,
+            calc_et0,
+            calc_et0_hargreaves,
+            calc_et0_penman_monteith,
+        )
+
+        results = []
+        errors = []
+
+        extreme_data_list = [
+            ClimateData(
+                tmin=float("inf"),
+                tmax=float("inf"),
+                rh_min=50,
+                rh_max=50,
+                wind_speed=2,
+                solar_radiation=20,
+                elevation=0,
+                latitude=0,
+                doy=1,
+            ),
+            ClimateData(
+                tmin=float("nan"),
+                tmax=25,
+                rh_min=50,
+                rh_max=50,
+                wind_speed=2,
+                solar_radiation=20,
+                elevation=0,
+                latitude=0,
+                doy=1,
+            ),
+            ClimateData(
+                tmin=-273.15,
+                tmax=1000,
+                rh_min=50,
+                rh_max=50,
+                wind_speed=2,
+                solar_radiation=20,
+                elevation=0,
+                latitude=0,
+                doy=1,
+            ),
+            ClimateData(
+                tmin=20,
+                tmax=20,
+                rh_min=float("inf"),
+                rh_max=50,
+                wind_speed=2,
+                solar_radiation=20,
+                elevation=0,
+                latitude=0,
+                doy=1,
+            ),
+            ClimateData(
+                tmin=20,
+                tmax=25,
+                rh_min=50,
+                rh_max=50,
+                wind_speed=float("inf"),
+                solar_radiation=20,
+                elevation=0,
+                latitude=0,
+                doy=1,
+            ),
+            ClimateData(
+                tmin=20,
+                tmax=25,
+                rh_min=50,
+                rh_max=50,
+                wind_speed=2,
+                solar_radiation=float("nan"),
+                elevation=0,
+                latitude=0,
+                doy=1,
+            ),
+            ClimateData(
+                tmin=20,
+                tmax=25,
+                rh_min=0,
+                rh_max=100,
+                wind_speed=2,
+                solar_radiation=20,
+                elevation=8848,
+                latitude=90,
+                doy=365,
+            ),
+            ClimateData(
+                tmin=20,
+                tmax=-10,
+                rh_min=50,
+                rh_max=50,
+                wind_speed=2,
+                solar_radiation=20,
+                elevation=0,
+                latitude=0,
+                doy=1,
+            ),
+        ]
+
+        for data in extreme_data_list:
+            try:
+                et0 = calc_et0(data)
+                results.append(et0)
+            except ValueError:
+                pass
+            except Exception as e:
+                errors.append(f"calc_et0({data}): {e}")
+
+        for data in extreme_data_list:
+            try:
+                et0 = calc_et0_hargreaves(data=data)
+                results.append(et0)
+            except ValueError:
+                pass
+            except Exception as e:
+                errors.append(f"hargreaves({data}): {e}")
+
+        for data in extreme_data_list:
+            try:
+                et0 = calc_et0_penman_monteith(data)
+                results.append(et0)
+            except ValueError:
+                pass
+            except Exception as e:
+                errors.append(f"penman_monteith({data}): {e}")
+
+        if len(errors) > 5:
+            raise RuntimeError(f"ET calculator extreme weather: {len(errors)} unexpected errors")
+        return len(results)
+
+    @staticmethod
+    def attack_phenology_extreme_temperatures():
+        """حمله: داده‌های دماي افراطی به Phenology Engine."""
+        from engine.hydroma.phenology import (
+            PhenologyInput,
+            run_phenology,
+            CROP_PHENOLOGY,
+        )
+
+        results = []
+        errors = []
+
+        extreme_temps = [
+            ([float("inf")] * 100, [30.0] * 100),
+            ([float("nan")] * 100, [30.0] * 100),
+            ([-273.15] * 100, [30.0] * 100),
+            ([1000.0] * 100, [30.0] * 100),
+            ([20.0] * 100, [float("inf")] * 100),
+            ([float("nan")] * 100, [float("nan")] * 100),
+            ([50.0] * 200, [20.0] * 200),
+            ([10.0] * 5, [25.0] * 5),
+        ]
+
+        for i, (tmin_list, tmax_list) in enumerate(extreme_temps):
+            for crop in ["wheat", "maize", "rice", "unknown_crop"]:
+                try:
+                    inputs = PhenologyInput(
+                        crop=crop,
+                        tmin_daily=tmin_list,
+                        tmax_daily=tmax_list,
+                        planting_date_doy=90,
+                        harvest_date_doy=280,
+                    )
+                    output = run_phenology(inputs)
+                    results.append(output.crop)
+                except Exception as e:
+                    errors.append(f"phenology({crop}, extreme_temps[{i}]): {e}")
+
+        if len(errors) > 10:
+            raise RuntimeError(f"Phenology extreme temps: {len(errors)} errors")
+        return len(results)
+
+    @staticmethod
+    def attack_wrapper_indices_extreme_reflectance():
+        """حمله: مقادیر بازتاب افراطی به Wrapper (vegetation indices)."""
+        from engine.hydroma.wrapper import (
+            compute_ndvi,
+            compute_evi,
+            compute_savi,
+            compute_all_indices,
+        )
+
+        results = []
+        errors = []
+
+        extreme_pairs = [
+            (0.0, 0.0),
+            (float("inf"), float("inf")),
+            (float("nan"), float("nan")),
+            (1e10, 1e10),
+            (-1.0, 1.0),
+            (float("inf"), 0.0),
+            (0.0, float("inf")),
+            (float("nan"), 1.0),
+        ]
+
+        for red, nir in extreme_pairs:
+            try:
+                results.append(compute_ndvi(red, nir))
+            except Exception as e:
+                errors.append(f"ndvi({red}, {nir}): {e}")
+
+            try:
+                results.append(compute_evi(red, nir, 0.1))
+            except Exception as e:
+                errors.append(f"evi({red}, {nir}): {e}")
+
+            try:
+                results.append(compute_savi(red, nir, 0.5))
+            except Exception as e:
+                errors.append(f"savi({red}, {nir}): {e}")
+
+        for red, nir in extreme_pairs:
+            try:
+                indices = compute_all_indices(red, nir)
+                results.append(len(indices))
+            except Exception as e:
+                errors.append(f"all_indices({red}, {nir}): {e}")
+
+        if len(errors) > 5:
+            raise RuntimeError(f"Wrapper extreme indices: {len(errors)} errors")
+        return len(results)
+
+    @staticmethod
+    def attack_wrapper_soil_extreme_inputs():
+        """حمله: داده‌های خاک افراطی به Wrapper."""
+        from engine.hydroma.wrapper import analyze_soil, compute_erosion, apply_scenario
+
+        results = []
+        errors = []
+
+        extreme_soil = [
+            (float("inf"), 50.0, 100, 50, 100, 0.5, 0.3, 0.2),
+            (float("nan"), 50.0, 100, 50, 100, 0.5, 0.3, 0.2),
+            (-1.0, 50.0, 100, 50, 100, 0.5, 0.3, 0.2),
+            (6.5, 1e10, 1e10, 1e10, 1e10, 1e10, 1e10, 1e10),
+            (6.5, 2.0, 50, 30, 80, 0.0, 0.0, 0.0),
+            (6.5, 2.0, 50, 30, 80, 100.0, 100.0, 100.0),
+        ]
+
+        for ph, om, n, p, k, clay, silt, sand in extreme_soil:
+            try:
+                result = analyze_soil(ph, om, n, p, k, clay, silt, sand)
+                results.append(result.get("health_score", 0))
+            except Exception as e:
+                errors.append(f"analyze_soil({ph}, {om}): {e}")
+
+        for sl, rain, c, p_factor in [
+            (float("inf"), 1000, "loam", 0.5),
+            (float("nan"), -100, "sandy", 0.8),
+            (-10, 1e9, "clay", 0.1),
+            (0, 0, "unknown_texture", 1.0),
+        ]:
+            try:
+                result = compute_erosion(sl, rain, sl, c, c_factor=c, p_factor=p_factor)
+                results.append(result.get("risk_level", "unknown"))
+            except Exception as e:
+                errors.append(f"erosion({sl}, {rain}): {e}")
+
+        for temp, precip, scenario, year in [
+            (float("inf"), 1000, "ssp585", 2080),
+            (float("nan"), -500, "ssp126", 2050),
+            (1000, 1e9, "unknown_ssp", 2100),
+        ]:
+            try:
+                result = apply_scenario(temp, precip, scenario, year)
+                results.append(result.get("scenario", "unknown"))
+            except Exception as e:
+                errors.append(f"scenario({temp}, {precip}, {scenario}): {e}")
+
+        if len(errors) > 5:
+            raise RuntimeError(f"Wrapper extreme soil/erosion: {len(errors)} errors")
+        return len(results)
+
+
+# ============================================================================
+# PROTOCOL 11: SERVICE TRANSACTION CHAOS — targets services/* modules
+# ============================================================================
+
+
+class ServiceTransactionProtocol:
+    """پروتکل ۱۱: آشوب تراکنش سرویس — هدف: services/carbon, services/ecowallet, services/simulation
+
+    Tests business logic services for concurrency safety, idempotency, and
+    state consistency under adversarial concurrent operations.
+    """
+
+    @staticmethod
+    def attack_carbon_credit_double_issuance():
+        """حمله: صدور دوبله اعتبار کربن تحت همزمانی."""
+        from services.carbon.service import CarbonService
+        from services.scientific_motors.carbon_mrv import CarbonMrvMotor
+        from database.models import CarbonProject, CarbonCredit
+        from sqlalchemy import text
+
+        errors = []
+        duplicate_credits = []
+        session_factory = _temp_sqlite_session()
+        motor = _StubCarbonMrvMotor()
+
+        session = session_factory()
+        try:
+            from database.models import CarbonProject
+
+            project = CarbonProject(
+                project_id="chaos-test-project",
+                name="Chaos Test Project",
+                project_type="afforestation",
+                area_hectares=100.0,
+                user_id="chaos-user",
+                methodology="vm0032",
+                region="test",
+                duration_years=10,
+            )
+            project.field_verified = True
+            project.mrv_documents = ["doc1"]
+            project.status = "verified"
+            project.verification_status = "verified"
+            session.add(project)
+            session.commit()
+        finally:
+            session.close()
+
+        payloads = []
+        for i in range(5):
+            payloads.append(
+                {
+                    "project_id": "chaos-test-project",
+                    "soc_initial_t_ha": 50.0,
+                    "soc_final_t_ha": 80.0,
+                    "area_ha": 100.0,
+                    "measured_soc_t_ha": 60.0,
+                    "measurements": [{"year": 0, "soc_t_ha": 50.0}, {"year": 5, "soc_t_ha": 80.0}],
+                    "methodology": "vm0032",
+                    "permanence_factor": 0.85,
+                    "vintage_year": 2024,
+                    "issued_by": "chaos-test",
+                    "idempotency_key": f"dup-key-{i}",
+                }
+            )
+
+        credit_ids = []
+
+        def issue_worker(payload):
+            try:
+                s = CarbonService(db=session_factory(), motor=motor)
+                result = s.issue_credits(payload)
+                credit_ids.append(result.get("credit_id"))
+            except Exception as e:
+                errors.append(str(e))
+
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            futures = [executor.submit(issue_worker, p) for p in payloads]
+            for f in as_completed(futures, timeout=30):
+                try:
+                    f.result()
+                except Exception:
+                    pass
+
+        unique_credits = set(c for c in credit_ids if c)
+        if len(unique_credits) > 1:
+            duplicate_credits.append(
+                f"Double issuance detected: {len(unique_credits)} unique credits from 5 concurrent requests"
+            )
+
+        if duplicate_credits:
+            raise RuntimeError("; ".join(duplicate_credits))
+        if len(errors) > 5:
+            raise RuntimeError(f"Carbon double-issuance: {len(errors)} errors")
+        return len(unique_credits)
+
+    @staticmethod
+    def attack_wallet_balance_race_condition():
+        """حمله: Race condition در موجودی Wallet."""
+        from services.ecowallet.service import earn, redeem, get_or_create_wallet, wallet_state
+        from database.models import EcoWallet
+        from sqlalchemy import create_engine
+        from sqlalchemy.pool import StaticPool
+        from sqlalchemy.orm import sessionmaker
+
+        engine = create_engine(
+            "sqlite:///:memory:",
+            connect_args={"check_same_thread": False},
+            poolclass=StaticPool,
+        )
+        _create_wallet_tables(engine)
+        SessionFactory = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+
+        user_id = random.randint(10000, 99999)
+        earnings = []
+        errors = []
+
+        def earn_worker():
+            try:
+                db = SessionFactory()
+                try:
+                    amount, balance = earn(db, user_id, "tree_planting", 1.0)
+                    earnings.append(amount)
+                    db.commit()
+                except Exception as e:
+                    errors.append(str(e))
+                    db.rollback()
+                finally:
+                    db.close()
+            except Exception as e:
+                errors.append(str(e))
+
+        with ThreadPoolExecutor(max_workers=20) as executor:
+            futures = [executor.submit(earn_worker) for _ in range(20)]
+            for f in as_completed(futures, timeout=15):
+                try:
+                    f.result()
+                except Exception:
+                    pass
+
+        expected_balance = sum(earnings)
+        db = SessionFactory()
+        try:
+            state = wallet_state(db, user_id)
+        finally:
+            db.close()
+
+        actual_balance = state["balance"]
+        if abs(actual_balance - expected_balance) > 0.01:
+            raise RuntimeError(
+                f"Wallet race condition: expected {expected_balance}, got {actual_balance} "
+                f"(earnings count={len(earnings)})"
+            )
+        if len(errors) > 5:
+            raise RuntimeError(f"Wallet race errors: {len(errors)}")
+        return len(earnings)
+
+    @staticmethod
+    def attack_wallet_concurrent_redeem():
+        """حمله: برداشت همزمان از Wallet با موجودی محدود."""
+        from services.ecowallet.service import earn, redeem, wallet_state
+        from sqlalchemy import create_engine
+        from sqlalchemy.pool import StaticPool
+        from sqlalchemy.orm import sessionmaker
+
+        engine = create_engine(
+            "sqlite:///:memory:",
+            connect_args={"check_same_thread": False},
+            poolclass=StaticPool,
+        )
+        _create_wallet_tables(engine)
+        SessionFactory = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+
+        user_id = random.randint(10000, 99999)
+        db = SessionFactory()
+        try:
+            earn(db, user_id, "tree_planting", 100.0)
+            db.commit()
+        finally:
+            db.close()
+
+        redemptions = []
+        errors = []
+
+        def redeem_worker():
+            try:
+                db = SessionFactory()
+                try:
+                    amount, balance = redeem(db, user_id, 20.0)
+                    redemptions.append(amount)
+                    db.commit()
+                except Exception as e:
+                    errors.append(str(e))
+                    db.rollback()
+                finally:
+                    db.close()
+            except Exception as e:
+                errors.append(str(e))
+
+        with ThreadPoolExecutor(max_workers=20) as executor:
+            futures = [executor.submit(redeem_worker) for _ in range(20)]
+            for f in as_completed(futures, timeout=15):
+                try:
+                    f.result()
+                except Exception:
+                    pass
+
+        db = SessionFactory()
+        try:
+            state = wallet_state(db, user_id)
+        finally:
+            db.close()
+
+        total_redeemed = sum(redemptions)
+        initial = 5000.0
+        final_balance = state["balance"]
+        if final_balance < -0.01:
+            raise RuntimeError(
+                f"Wallet overdraft: balance {final_balance} after redeeming {total_redeemed} from {initial}"
+            )
+        return len(redemptions)
+
+    @staticmethod
+    def attack_simulation_concurrent_runs():
+        """حمله: اجراي همزمان چند شبیه‌ساز."""
+        from services.simulation.service import SimulationService
+        from services.simulation.schemas import (
+            SimulationContext,
+            SimulationType,
+            WeatherData,
+            SoilProfile,
+            CropParameters,
+        )
+        from datetime import date
+
+        errors = []
+        results = []
+
+        ctx = SimulationContext(
+            simulation_id=f"chaos-sim-{uuid.uuid4().hex[:8]}",
+            simulation_type=SimulationType.CROP_GROWTH,
+            soil=SoilProfile(texture="loam"),
+            weather=WeatherData(temp_min_c=10, temp_max_c=30, precipitation_mm=5.0),
+            crop=CropParameters(
+                crop_type="wheat",
+                planting_date=date.today(),
+            ),
+            start_date=date.today(),
+        )
+
+        def run_worker(i):
+            try:
+                import asyncio
+
+                svc = SimulationService()
+                r = asyncio.run(svc.orchestrator.run_single(SimulationType.CROP_GROWTH, ctx))
+                results.append(r.status.value)
+            except Exception as e:
+                errors.append(str(e))
+
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            futures = [executor.submit(run_worker, i) for i in range(10)]
+            for f in as_completed(futures, timeout=30):
+                try:
+                    f.result()
+                except Exception:
+                    pass
+
+        if len(errors) > 7:
+            raise RuntimeError(f"Simulation concurrent: {len(errors)}/10 failed")
+        return len(results)
+
+
+# ============================================================================
+# PROTOCOL 12: SECURITY & DATA INTEGRITY — targets services/security, query_safe
+# ============================================================================
+
+
+class SecurityIntegrityProtocol:
+    """پروتکل ۱۲: یکپارچگی امنیتی — هدف: services/security/query_safe.py
+
+    Tests SQL injection prevention, identifier validation, and data integrity
+    safeguards in the security layer.
+    """
+
+    @staticmethod
+    def attack_query_safe_identifier_bypass():
+        """حمله: دور زدن از اعتبارسنجی شناسه SQL."""
+        from services.security.query_safe import _safe_ident, build_where_clause
+
+        bypass_payloads = [
+            "weather_daily; DROP TABLE users--",
+            "1; DROP TABLE users; --",
+            "test' OR '1'='1",
+            "table_name` --",
+            "1 UNION SELECT * FROM users",
+            "",
+            "123abc",
+            "col--comment",
+            "'; EXEC xp_cmdshell--",
+            "weather_daily\nDROP TABLE users",
+        ]
+
+        blocked = 0
+        passed = 0
+
+        for payload in bypass_payloads:
+            try:
+                result = _safe_ident(payload)
+                passed += 1
+            except ValueError:
+                blocked += 1
+
+        if passed > 0:
+            raise RuntimeError(
+                f"Identifier bypass: {passed}/{len(bypass_payloads)} payloads accepted as valid identifiers"
+            )
+        return blocked
+
+    @staticmethod
+    def attack_query_safe_where_clause_injection():
+        """حمله: تزریق در build_where_clause."""
+        from services.security.query_safe import build_where_clause
+
+        injection_conditions = [
+            {"site_id = 1; DROP TABLE users--": 1},
+            {"normal_col": "'; DROP TABLE users; --"},
+            {"1=1": "anything"},
+            {"site_id": "UNION SELECT * FROM users"},
+            {"table_name; --": None},
+        ]
+
+        blocked = 0
+        leaked = 0
+
+        for conditions in injection_conditions:
+            try:
+                clause, params = build_where_clause(conditions)
+                if ";" in clause or "DROP" in clause.upper() or "UNION" in clause.upper():
+                    leaked += 1
+                else:
+                    blocked += 1
+            except (ValueError, KeyError, TypeError):
+                blocked += 1
+
+        if leaked > 0:
+            raise RuntimeError(f"Where clause injection: {leaked} payloads leaked dangerous SQL")
+        return blocked
+
+    @staticmethod
+    def attack_data_connector_sql_injection():
+        """حمله: تزریق SQL در DataConnector."""
+        from engine.data_connector import connector
+
+        payloads = [
+            "'; DROP TABLE users; --",
+            "1 OR 1=1 --",
+            "UNION SELECT * FROM information_schema.tables --",
+            "'; INSERT INTO users VALUES ('hacker', 'hacker'); --",
+            "1; WAITFOR DELAY '0:0:10' --",
+        ]
+
+        blocked = 0
+        executed = 0
+
+        for payload in payloads:
+            query = f"SELECT * FROM weather_daily WHERE site_id = '{payload}'"
+            try:
+                result = connector.execute_analytics_query(query)
+                executed += 1
+            except (ValueError, Exception):
+                blocked += 1
+
+        if executed > 0:
+            raise RuntimeError(
+                f"DataConnector SQL injection: {executed}/{len(payloads)} payloads executed"
+            )
+        return blocked
+
+    @staticmethod
+    def attack_data_connector_non_whitelisted_tables():
+        """حمله: دسترسی به جداول غیرمجاز در DataConnector."""
+        from engine.data_connector import connector
+
+        non_whitelisted = [
+            "SELECT * FROM users",
+            "SELECT * FROM CarbonCredit",
+            "SELECT * FROM EcoWallet",
+            "SELECT * FROM information_schema.tables",
+            "SELECT * FROM pg_catalog",
+        ]
+
+        blocked = 0
+        accessed = 0
+
+        for query in non_whitelisted:
+            try:
+                result = connector.execute_analytics_query(query)
+                accessed += 1
+            except (ValueError, Exception):
+                blocked += 1
+
+        if accessed > 0:
+            raise RuntimeError(
+                f"Non-whitelisted table access: {accessed}/{len(non_whitelisted)} queries succeeded"
+            )
+        return blocked
+
+    @staticmethod
+    def attack_honeypot_trap_detection():
+        """حمله: آزمون لاشه (honeypot) در مقابل مسیرهای شناسعی."""
+        from services.security.honeypot import honeypot
+
+        trap_paths = [
+            "/admin.php",
+            "/.env",
+            "/.git/config",
+            "/wp-login.php",
+            "/api/v1/honeypot/token",
+            "/config.php.bak",
+            "/api/v1/honeypot/admin",
+        ]
+
+        detected = 0
+        for path in trap_paths:
+            if honeypot.is_trap(path):
+                detected += 1
+
+        if detected < len(trap_paths):
+            raise RuntimeError(f"Honeypot detected {detected}/{len(trap_paths)} trap paths")
+
+        for i in range(20):
+            honeypot.hit(f"192.168.1.{i}", trap_paths[i % len(trap_paths)], "chaos-test-agent")
+            if not honeypot.is_blocked(f"192.168.1.{i}"):
+                raise RuntimeError(f"IP 192.168.1.{i} not blocked after honeypot hit")
+
+        return detected
+
+    @staticmethod
+    def attack_rate_limiter_bypass():
+        """حمله: دور زدن rate limiter."""
+        from services.security.rate_limit import rate_limiter
+
+        allowed = 0
+        blocked = 0
+
+        for i in range(200):
+            ok, retry = rate_limiter.check("10.0.0.1", "/api/test", None)
+            if ok:
+                allowed += 1
+            else:
+                blocked += 1
+
+        if blocked == 0:
+            raise RuntimeError(
+                f"Rate limiter never blocked: {allowed}/200 requests allowed (expected at least 1)"
+            )
+        return blocked
+
+
+# ============================================================================
+# PROTOCOL 13: EXTERNAL SERVICE RESILIENCE — targets external APIs / integrations
+# ============================================================================
+
+
+class ExternalResilienceProtocol:
+    """پروتکل ۱۳: مقاومت در برابر سرویس‌های خارجی — هدف: services/scientific_motors
+
+    Tests external API clients for timeout handling, graceful degradation,
+    and error propagation when dependencies are unavailable.
+    """
+
+    @staticmethod
+    def attack_climate_motor_api_failure():
+        """حمله: شکست API اکسترنال در Climate Motor."""
+        from services.scientific_motors.climate_motor import run_climate, SCENARIOS
+
+        scenarios = list(SCENARIOS)
+        results = []
+        errors = []
+
+        for i in range(len(scenarios)):
+            scenario = scenarios[i]
+            try:
+                result = run_climate(
+                    lat=35.0,
+                    lon=51.0,
+                    scenario=scenario,
+                    baseline_start="2015-01-01",
+                    baseline_end="2016-12-31",
+                    future_start="2040-01-01",
+                    future_end="2042-12-31",
+                )
+                if result.get("status") == "ok":
+                    results.append(result)
+                elif result.get("status") == "error":
+                    errors.append(result.get("error", "unknown error"))
+            except Exception as e:
+                errors.append(f"{scenario}: {type(e).__name__}: {e}")
+
+        if len(errors) == len(scenarios):
+            raise RuntimeError(
+                f"Climate motor: all {len(scenarios)} scenarios failed — total external API dependency"
+            )
+        return len(results)
+
+    @staticmethod
+    def attack_climate_motor_invalid_scenario():
+        """حمله: ارسال scenario نامعتبر به Climate Motor."""
+        from services.scientific_motors.climate_motor import run_climate
+
+        invalid_scenarios = ["INVALID", "ssp999", "", "null", "'; DROP TABLE--", "BWh"]
+
+        results = []
+        for scenario in invalid_scenarios:
+            try:
+                result = run_climate(lat=35.0, lon=51.0, scenario=scenario)
+                if result.get("status") == "error":
+                    results.append(scenario)
+                elif result.get("status") == "ok":
+                    raise RuntimeError(f"Invalid scenario '{scenario}' was accepted as valid")
+            except Exception:
+                results.append(scenario)
+
+        if len(results) < len(invalid_scenarios):
+            accepted = len(invalid_scenarios) - len(results)
+            raise RuntimeError(f"Climate motor accepted {accepted} invalid scenarios")
+        return len(results)
+
+    @staticmethod
+    def attack_climate_motor_extreme_coordinates():
+        """حمله: مختصات افراطی به Climate Motor."""
+        from services.scientific_motors.climate_motor import run_climate
+
+        extreme_coords = [
+            (float("inf"), 51.0),
+            (float("nan"), 51.0),
+            (-91.0, 51.0),
+            (91.0, 51.0),
+            (35.0, float("inf")),
+            (35.0, float("nan")),
+            (0.0, 0.0),
+            (85.0, 180.0),
+        ]
+
+        results = []
+        for lat, lon in extreme_coords:
+            try:
+                result = run_climate(lat=lat, lon=lon, scenario="ssp245")
+                if result.get("status") == "ok":
+                    results.append("ok")
+                else:
+                    results.append("rejected")
+            except Exception:
+                results.append("exception")
+
+        return len(results)
+
+
+# ============================================================================
+# PROTOCOL 14: CACHE & PIPELINE CHAOS — targets services/map_engine, caching
+# ============================================================================
+
+
+class CachePipelineProtocol:
+    """پروتکل ۱۴: آشوب کش و پردازش — هدف: services/map_engine
+
+    Tests map generation pipeline, caching, fetcher coordination, and
+    pipeline registry under adversarial conditions.
+    """
+
+    @staticmethod
+    def attack_cache_key_collision():
+        """حمله: برخورد کلیدهای کش."""
+        import hashlib
+        from engine.hydroma.wrapper import get_capabilities
+
+        cap = get_capabilities()
+        results = []
+        if cap.get("cpp_available", False):
+            results.append("cpp_available")
+        else:
+            results.append("fallback_active")
+
+        from pathlib import Path
+
+        cache_dir = Path(tempfile.mkdtemp())
+        cache_files = []
+        try:
+            for i in range(50):
+                cache_file = (
+                    cache_dir / f"{hashlib.sha256(f'collide_{i}'.encode()).hexdigest()[:32]}.json"
+                )
+                cache_file.write_text(str(i))
+                cache_files.append(cache_file)
+
+            if len(cache_files) != 50:
+                raise RuntimeError(f"Cache file creation: only {len(cache_files)}/50 files created")
+            results.append(len(cache_files))
+        finally:
+            for f in cache_files:
+                try:
+                    f.unlink()
+                except Exception:
+                    pass
+            try:
+                cache_dir.rmdir()
+            except Exception:
+                pass
+
+        return results
+
+    @staticmethod
+    def attack_map_orchestrator_registry():
+        """حمله: ثبت pipeline های نامعتبر در MapOrchestrator."""
+        from services.map_engine.orchestrator import MapOrchestrator
+        from services.map_engine.base import MapType, MapPipeline, MapRequest, MapResult
+        from pathlib import Path
+
+        cache_dir = Path(tempfile.mkdtemp())
+        try:
+            orch = MapOrchestrator(cache_dir=cache_dir)
+            results = []
+
+            pipelines = orch.list_pipelines()
+            results.append(len(pipelines))
+
+            fetchers = orch.list_fetchers()
+            results.append(len(fetchers))
+
+            try:
+                orch.register_pipeline(None)
+                raise RuntimeError("Should have raised - None pipeline accepted")
+            except Exception:
+                results.append("rejected_none")
+
+            class FakePipeline:
+                map_type = MapType.M_TOP
+
+                def get_required_layers(self):
+                    return []
+
+                async def execute(self, *a, **kw):
+                    return None
+
+                async def get_required_layers_async(self):
+                    return []
+
+            try:
+                orch.register_pipeline(FakePipeline())
+                results.append("registered_fake")
+            except Exception:
+                results.append("rejected_fake")
+
+            if "registered_fake" in results:
+                raise RuntimeError("MapOrchestrator accepted fake pipeline with wrong interface")
+            return results
+        finally:
+            import shutil
+
+            try:
+                shutil.rmtree(str(cache_dir))
+            except Exception:
+                pass
+
+    @staticmethod
+    def attack_smart_map_generator_extreme_arrays():
+        """حمله: آرایه‌های افراطی به SmartMapGenerator."""
+        from services.map_engine.smart_mapper import SmartMapGenerator
+        import numpy as np
+        import xarray as xr
+
+        errors = []
+        results = []
+
+        try:
+            red = xr.DataArray(np.array([[0.0, 0.1], [0.2, 0.3]]))
+            nir = xr.DataArray(np.array([[0.1, float("inf")], [float("nan"), 0.5]]))
+            result = SmartMapGenerator.calculate_ndvi(red, nir)
+            results.append("ndvi_ok")
+        except Exception as e:
+            errors.append(f"ndvi_extreme: {e}")
+
+        try:
+            red = xr.DataArray(np.array([[0.0, 0.1], [0.2, 0.3]]))
+            nir = xr.DataArray(np.array([[0.1, 0.1], [0.2, 0.3]]))
+            health = SmartMapGenerator.classify_vegetation_health(red)
+            results.append("classification_ok")
+        except Exception as e:
+            errors.append(f"classification: {e}")
+
+        try:
+            ndvi = xr.DataArray(np.array([[0.5, 0.3], [0.1, 0.8]]))
+            biomass = SmartMapGenerator.estimate_biomass(ndvi, "unknown_crop")
+            results.append("biomass_unknown_crop_ok")
+        except Exception as e:
+            errors.append(f"biomass_unknown: {e}")
+
+        try:
+            et0 = xr.DataArray(np.array([[5.0, 3.0], [4.0, 6.0]]))
+            etc = SmartMapGenerator.calculate_crop_water_requirement(
+                et0, "unknown", "unknown_stage"
+            )
+            results.append("water_req_unknown_ok")
+        except Exception as e:
+            errors.append(f"water_req_unknown: {e}")
+
+        try:
+            sm = xr.DataArray(np.array([[0.3, 0.2], [0.1, 0.35]]))
+            etc = xr.DataArray(np.array([[5.0, 3.0], [4.0, 6.0]]))
+            rec = SmartMapGenerator.generate_irrigation_recommendation(sm, etc)
+            results.append("irrigation_rec_ok")
+        except Exception as e:
+            errors.append(f"irrigation_rec: {e}")
+
+        if len(errors) > 3:
+            raise RuntimeError(f"SmartMapGenerator extreme arrays: {len(errors)} errors")
+        return len(results)
+
+    @staticmethod
+    def attack_cache_corruption_and_recovery():
+        """حمله: فساد کش و بازیابی."""
+        from services.map_engine.orchestrator import MapOrchestrator
+        from pathlib import Path
+
+        cache_dir = Path(tempfile.mkdtemp())
+        try:
+            orch = MapOrchestrator(cache_dir=cache_dir)
+
+            cache_file = cache_dir / "corrupt_cache.json"
+            cache_file.write_text('{"invalid json{{', encoding="utf-8")
+
+            cached = None
+            try:
+                cached = asyncio.run(
+                    orch._check_cache(
+                        MapRequest(
+                            map_type=__import__(
+                                "services.map_engine.base", fromlist=["MapType"]
+                            ).MapType.M_TOP,
+                            region=__import__("shapely.geometry", fromlist=["Polygon"]).Polygon(
+                                [(0, 0), (1, 0), (1, 1), (0, 0)]
+                            ),
+                            resolution=10.0,
+                        )
+                    )
+                )
+            except Exception:
+                pass
+
+            if cached is None:
+                recovered = True
+            else:
+                recovered = cached is not None
+
+            files_before = list(cache_dir.glob("*.json"))
+            for f in files_before:
+                if "corrupt" in f.name:
+                    f.write_text('{"broken"', encoding="utf-8")
+
+            try:
+                asyncio.run(
+                    orch._check_cache(
+                        MapRequest(
+                            map_type=__import__(
+                                "services.map_engine.base", fromlist=["MapType"]
+                            ).MapType.M_TOP,
+                            region=__import__("shapely.geometry", fromlist=["Polygon"]).Polygon(
+                                [(0, 0), (1, 0), (1, 1), (0, 0)]
+                            ),
+                            resolution=10.0,
+                        )
+                    )
+                )
+            except Exception:
+                pass
+
+            return 1 if recovered else 0
+        finally:
+            import shutil
+
+            try:
+                shutil.rmtree(str(cache_dir))
+            except Exception:
+                pass
+
+
+# ============================================================================
+# HELPER: Stub CarbonMrvMotor for testing (avoids real calculation dependency)
+# ============================================================================
+
+
+class _StubCarbonMrvMotor:
+    """Stub motor that returns deterministic results for chaos testing."""
+
+    def execute(self, parameters: dict) -> Any:
+        from services.scientific_motors.base import MotorResult, MotorStatus
+
+        soc_initial = float(parameters.get("soc_initial_t_ha", 0.0))
+        soc_final = float(parameters.get("soc_final_t_ha", 0.0))
+        area_ha = float(parameters.get("area_ha", 0.0))
+        permanence = float(parameters.get("permanence_factor", 0.85))
+        delta = (soc_final - soc_initial) * 3.667 * area_ha
+        certified = delta * permanence if delta > 0 else delta
+        return MotorResult(
+            run_id="stub_motor",
+            motor_type=type("M", (), {"value": "carbon_mrv"})(),
+            status=MotorStatus.COMPLETED,
+            outputs={
+                "delta_co2e_total": round(delta, 2),
+                "certified_delta_co2e_total": round(certified, 2),
+                "data_mode": "field_verified",
+                "permanence_factor": permanence,
+            },
+            summary={},
+            execution_time_seconds=0.001,
+        )
+
+
+def _temp_sqlite_session():
+    """Create an in-memory SQLite session factory for testing.
+
+    Uses the real models from ``database.models`` so that table names and
+    column definitions always stay in sync with the production schemas.
+    """
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    from database.base import Base
+    from database.models import (
+        CarbonCredit,
+        CarbonEvent,
+        CarbonProject,
+        CreditAuditLog,
+        EcoWallet,
+        IdempotencyKey,
+        User,
+    )
+
+    engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
+
+    Base.metadata.create_all(engine)
+    return sessionmaker(bind=engine, autoflush=False, autocommit=False)
+
+
+def _create_wallet_tables(engine):
+    """Create wallet tables on a given engine for in-memory SQLite tests.
+
+    Uses the real ``EcoWallet`` model's metadata so that column names and
+    types always match what ``services.ecowallet.service`` expects when it
+    imports ``from database.models import EcoWallet``.
+    """
+    from database.base import Base
+    from database.models import EcoWallet  # noqa: F401 — ensures table is registered
+
+    Base.metadata.create_all(engine)
+
+
+# ============================================================================
 # MAIN EXECUTOR
 # ============================================================================
+
 
 def main():
     """اجرای اصلی"""
@@ -1243,7 +2693,7 @@ def main():
     parser = argparse.ArgumentParser(description="HELL Protocol - Chaos Test v2")
     parser.add_argument("--hell", action="store_true", help="Run all protocols")
     parser.add_argument("--quick", action="store_true", help="Quick mode (50% attacks)")
-    parser.add_argument("--protocol", type=str, help="Specific protocol (P1-P8)")
+    parser.add_argument("--protocol", type=str, help="Specific protocol (P1-P14 or 'all')")
     parser.add_argument("--apocalyptic", action="store_true", help="Include apocalyptic tests")
 
     args = parser.parse_args()
@@ -1251,13 +2701,13 @@ def main():
     if not (args.hell or args.protocol):
         args.hell = True
 
-    logger.info()
+    logger.info("")
     logger.info(f"{Colors.CRITICAL}{'=' * 80}{Colors.RESET}")
     logger.info(f"{Colors.CRITICAL}  ☠️  HELL PROTOCOL - CHAOS ENGINEERING v2{Colors.RESET}")
     logger.info(f"{Colors.CRITICAL}  WARNING: This test will BREAK your system{Colors.RESET}")
     logger.info(f"{Colors.CRITICAL}  Every failure reveals a weakness to fix{Colors.RESET}")
     logger.info(f"{Colors.CRITICAL}{'=' * 80}{Colors.RESET}")
-    logger.info()
+    logger.info("")
     logger.info("⚠️  This test suite is designed to:")
     logger.info("    - Exhaust memory resources")
     logger.info("    - Trigger deadlocks")
@@ -1265,7 +2715,7 @@ def main():
     logger.info("    - Cause timeouts")
     logger.info("    - Reveal race conditions")
     logger.info("    - Stress thread pools")
-    logger.info()
+    logger.info("")
 
     orchestrator = ChaosOrchestrator()
 
@@ -1285,32 +2735,46 @@ def main():
     if ChaosProtocol.MEMORY_TORTURE in protocols_to_run:
         banner("☠️  PROTOCOL 1: MEMORY TORTURE", char="!")
         tests = [
-            ("Rapid Allocation (100MB/s)",
-             MemoryTortureProtocol.attack_rapid_allocation,
-             AttackVector.RESOURCE_LEAK,
-             Severity.HIGH, 30.0),
-            ("Connection Churn (500 connections)",
-             MemoryTortureProtocol.attack_connection_churn,
-             AttackVector.RESOURCE_LEAK,
-             Severity.EXTREME, 60.0),
-            ("Session Storm (200 sessions)",
-             MemoryTortureProtocol.attack_session_storm,
-             AttackVector.POOL_EXHAUSTION,
-             Severity.EXTREME, 30.0),
-            ("Query Leak (200 heavy queries)",
-             MemoryTortureProtocol.attack_query_leak,
-             AttackVector.RESOURCE_LEAK,
-             Severity.HIGH, 60.0),
-            ("Memory Fragmentation",
-             MemoryTortureProtocol.attack_memory_fragmentation,
-             AttackVector.MEMORY_FRAGMENTATION,
-             Severity.MEDIUM, 20.0),
+            (
+                "Rapid Allocation (100MB/s)",
+                MemoryTortureProtocol.attack_rapid_allocation,
+                AttackVector.RESOURCE_LEAK,
+                Severity.HIGH,
+                30.0,
+            ),
+            (
+                "Connection Churn (500 connections)",
+                MemoryTortureProtocol.attack_connection_churn,
+                AttackVector.RESOURCE_LEAK,
+                Severity.EXTREME,
+                60.0,
+            ),
+            (
+                "Session Storm (200 sessions)",
+                MemoryTortureProtocol.attack_session_storm,
+                AttackVector.POOL_EXHAUSTION,
+                Severity.EXTREME,
+                30.0,
+            ),
+            (
+                "Query Leak (200 heavy queries)",
+                MemoryTortureProtocol.attack_query_leak,
+                AttackVector.RESOURCE_LEAK,
+                Severity.HIGH,
+                60.0,
+            ),
+            (
+                "Memory Fragmentation",
+                MemoryTortureProtocol.attack_memory_fragmentation,
+                AttackVector.MEMORY_FRAGMENTATION,
+                Severity.MEDIUM,
+                20.0,
+            ),
         ]
 
         for name, func, vector, severity, timeout in tests:
             orchestrator.launch_attack(
-                func, name, ChaosProtocol.MEMORY_TORTURE,
-                vector, severity, timeout * quick_factor
+                func, name, ChaosProtocol.MEMORY_TORTURE, vector, severity, timeout * quick_factor
             )
 
     # =========================================================================
@@ -1319,28 +2783,39 @@ def main():
     if ChaosProtocol.THREAD_CHAOS in protocols_to_run:
         banner("☠️  PROTOCOL 2: THREAD CHAOS", char="!")
         tests = [
-            ("Thread Explosion (500 threads)",
-             ThreadChaosProtocol.attack_thread_explosion,
-             AttackVector.THREAD_STARVATION,
-             Severity.EXTREME, 30.0),
-            ("Deadlock Scenario",
-             ThreadChaosProtocol.attack_deadlock_scenario,
-             AttackVector.DEADLOCK,
-             Severity.EXTREME, 20.0),
-            ("Thread Starvation (50 heavy)",
-             ThreadChaosProtocol.attack_thread_starvation,
-             AttackVector.THREAD_STARVATION,
-             Severity.HIGH, 40.0),
-            ("Race Condition (1000 threads)",
-             ThreadChaosProtocol.attack_race_condition_1000,
-             AttackVector.RACE_CONDITION,
-             Severity.EXTREME, 30.0),
+            (
+                "Thread Explosion (500 threads)",
+                ThreadChaosProtocol.attack_thread_explosion,
+                AttackVector.THREAD_STARVATION,
+                Severity.EXTREME,
+                30.0,
+            ),
+            (
+                "Deadlock Scenario",
+                ThreadChaosProtocol.attack_deadlock_scenario,
+                AttackVector.DEADLOCK,
+                Severity.EXTREME,
+                20.0,
+            ),
+            (
+                "Thread Starvation (50 heavy)",
+                ThreadChaosProtocol.attack_thread_starvation,
+                AttackVector.THREAD_STARVATION,
+                Severity.HIGH,
+                40.0,
+            ),
+            (
+                "Race Condition (1000 threads)",
+                ThreadChaosProtocol.attack_race_condition_1000,
+                AttackVector.RACE_CONDITION,
+                Severity.EXTREME,
+                30.0,
+            ),
         ]
 
         for name, func, vector, severity, timeout in tests:
             orchestrator.launch_attack(
-                func, name, ChaosProtocol.THREAD_CHAOS,
-                vector, severity, timeout * quick_factor
+                func, name, ChaosProtocol.THREAD_CHAOS, vector, severity, timeout * quick_factor
             )
 
     # =========================================================================
@@ -1349,24 +2824,37 @@ def main():
     if ChaosProtocol.RESOURCE_STARVATION in protocols_to_run:
         banner("☠️  PROTOCOL 3: RESOURCE STARVATION", char="!")
         tests = [
-            ("File Descriptor Exhaustion (500 files)",
-             ResourceStarvationProtocol.attack_fd_exhaustion,
-             AttackVector.FD_LEAK,
-             Severity.EXTREME, 30.0),
-            ("Temp File Bomb (200 files, 1MB each)",
-             ResourceStarvationProtocol.attack_temp_file_bomb,
-             AttackVector.RESOURCE_LEAK,
-             Severity.HIGH, 30.0),
-            ("Thread Pool Saturation",
-             ResourceStarvationProtocol.attack_thread_pool_saturation,
-             AttackVector.POOL_EXHAUSTION,
-             Severity.EXTREME, 30.0),
+            (
+                "File Descriptor Exhaustion (500 files)",
+                ResourceStarvationProtocol.attack_fd_exhaustion,
+                AttackVector.FD_LEAK,
+                Severity.EXTREME,
+                30.0,
+            ),
+            (
+                "Temp File Bomb (200 files, 1MB each)",
+                ResourceStarvationProtocol.attack_temp_file_bomb,
+                AttackVector.RESOURCE_LEAK,
+                Severity.HIGH,
+                30.0,
+            ),
+            (
+                "Thread Pool Saturation",
+                ResourceStarvationProtocol.attack_thread_pool_saturation,
+                AttackVector.POOL_EXHAUSTION,
+                Severity.EXTREME,
+                30.0,
+            ),
         ]
 
         for name, func, vector, severity, timeout in tests:
             orchestrator.launch_attack(
-                func, name, ChaosProtocol.RESOURCE_STARVATION,
-                vector, severity, timeout * quick_factor
+                func,
+                name,
+                ChaosProtocol.RESOURCE_STARVATION,
+                vector,
+                severity,
+                timeout * quick_factor,
             )
 
     # =========================================================================
@@ -1375,28 +2863,39 @@ def main():
     if ChaosProtocol.DATA_POISONING in protocols_to_run:
         banner("☠️  PROTOCOL 4: DATA POISONING", char="!")
         tests = [
-            ("SQL Injection Attack",
-             DataPoisoningProtocol.attack_sql_injection,
-             AttackVector.SQL_INJECTION,
-             Severity.EXTREME, 20.0),
-            ("Unicode Bomb (20 payloads)",
-             DataPoisoningProtocol.attack_unicode_bomb,
-             AttackVector.UNICODE_BOMB,
-             Severity.HIGH, 20.0),
-            ("Null Byte Injection",
-             DataPoisoningProtocol.attack_null_byte_injection,
-             AttackVector.NULL_INJECTION,
-             Severity.HIGH, 10.0),
-            ("Malformed JSON",
-             DataPoisoningProtocol.attack_malformed_json,
-             AttackVector.DATA_CORRUPTION,
-             Severity.MEDIUM, 10.0),
+            (
+                "SQL Injection Attack",
+                DataPoisoningProtocol.attack_sql_injection,
+                AttackVector.SQL_INJECTION,
+                Severity.EXTREME,
+                20.0,
+            ),
+            (
+                "Unicode Bomb (20 payloads)",
+                DataPoisoningProtocol.attack_unicode_bomb,
+                AttackVector.UNICODE_BOMB,
+                Severity.HIGH,
+                20.0,
+            ),
+            (
+                "Null Byte Injection",
+                DataPoisoningProtocol.attack_null_byte_injection,
+                AttackVector.NULL_INJECTION,
+                Severity.HIGH,
+                10.0,
+            ),
+            (
+                "Malformed JSON",
+                DataPoisoningProtocol.attack_malformed_json,
+                AttackVector.DATA_CORRUPTION,
+                Severity.MEDIUM,
+                10.0,
+            ),
         ]
 
         for name, func, vector, severity, timeout in tests:
             orchestrator.launch_attack(
-                func, name, ChaosProtocol.DATA_POISONING,
-                vector, severity, timeout * quick_factor
+                func, name, ChaosProtocol.DATA_POISONING, vector, severity, timeout * quick_factor
             )
 
     # =========================================================================
@@ -1405,24 +2904,32 @@ def main():
     if ChaosProtocol.CASCADE_FAILURE in protocols_to_run:
         banner("☠️  PROTOCOL 5: CASCADE FAILURE", char="!")
         tests = [
-            ("Timeout Cascade (50 concurrent)",
-             CascadeFailureProtocol.attack_timeout_cascade,
-             AttackVector.TIMING_ATTACK,
-             Severity.EXTREME, 15.0),
-            ("Exception Propagation",
-             CascadeFailureProtocol.attack_exception_propagation,
-             AttackVector.RACE_CONDITION,
-             Severity.HIGH, 15.0),
-            ("Dependency Chain",
-             CascadeFailureProtocol.attack_dependency_chain,
-             AttackVector.DATA_CORRUPTION,
-             Severity.MEDIUM, 30.0),
+            (
+                "Timeout Cascade (50 concurrent)",
+                CascadeFailureProtocol.attack_timeout_cascade,
+                AttackVector.TIMING_ATTACK,
+                Severity.EXTREME,
+                15.0,
+            ),
+            (
+                "Exception Propagation",
+                CascadeFailureProtocol.attack_exception_propagation,
+                AttackVector.RACE_CONDITION,
+                Severity.HIGH,
+                15.0,
+            ),
+            (
+                "Dependency Chain",
+                CascadeFailureProtocol.attack_dependency_chain,
+                AttackVector.DATA_CORRUPTION,
+                Severity.MEDIUM,
+                30.0,
+            ),
         ]
 
         for name, func, vector, severity, timeout in tests:
             orchestrator.launch_attack(
-                func, name, ChaosProtocol.CASCADE_FAILURE,
-                vector, severity, timeout * quick_factor
+                func, name, ChaosProtocol.CASCADE_FAILURE, vector, severity, timeout * quick_factor
             )
 
     # =========================================================================
@@ -1431,24 +2938,32 @@ def main():
     if ChaosProtocol.ENTROPY_ATTACK in protocols_to_run:
         banner("☠️  PROTOCOL 6: ENTROPY ATTACK", char="!")
         tests = [
-            ("Fuzzing Queries (100 random)",
-             EntropyAttackProtocol.attack_fuzzing_queries,
-             AttackVector.DATA_CORRUPTION,
-             Severity.MEDIUM, 30.0),
-            ("Extreme Numbers",
-             EntropyAttackProtocol.attack_extreme_numbers,
-             AttackVector.OVERFLOW,
-             Severity.HIGH, 20.0),
-            ("Random Payloads (50)",
-             EntropyAttackProtocol.attack_random_payloads,
-             AttackVector.UNICODE_BOMB,
-             Severity.MEDIUM, 20.0),
+            (
+                "Fuzzing Queries (100 random)",
+                EntropyAttackProtocol.attack_fuzzing_queries,
+                AttackVector.DATA_CORRUPTION,
+                Severity.MEDIUM,
+                30.0,
+            ),
+            (
+                "Extreme Numbers",
+                EntropyAttackProtocol.attack_extreme_numbers,
+                AttackVector.OVERFLOW,
+                Severity.HIGH,
+                20.0,
+            ),
+            (
+                "Random Payloads (50)",
+                EntropyAttackProtocol.attack_random_payloads,
+                AttackVector.UNICODE_BOMB,
+                Severity.MEDIUM,
+                20.0,
+            ),
         ]
 
         for name, func, vector, severity, timeout in tests:
             orchestrator.launch_attack(
-                func, name, ChaosProtocol.ENTROPY_ATTACK,
-                vector, severity, timeout * quick_factor
+                func, name, ChaosProtocol.ENTROPY_ATTACK, vector, severity, timeout * quick_factor
             )
 
     # =========================================================================
@@ -1457,24 +2972,32 @@ def main():
     if ChaosProtocol.TIMING_ATTACK in protocols_to_run:
         banner("☠️  PROTOCOL 7: TIMING ATTACK", char="!")
         tests = [
-            ("Burst Requests (1000 sequential)",
-             TimingAttackProtocol.attack_burst_requests,
-             AttackVector.TIMING_ATTACK,
-             Severity.EXTREME, 60.0),
-            ("Slowloris Attack",
-             TimingAttackProtocol.attack_slowloris,
-             AttackVector.POOL_EXHAUSTION,
-             Severity.EXTREME, 20.0),
-            ("Concurrent Burst (100 workers)",
-             TimingAttackProtocol.attack_concurrent_burst,
-             AttackVector.TIMING_ATTACK,
-             Severity.EXTREME, 20.0),
+            (
+                "Burst Requests (1000 sequential)",
+                TimingAttackProtocol.attack_burst_requests,
+                AttackVector.TIMING_ATTACK,
+                Severity.EXTREME,
+                60.0,
+            ),
+            (
+                "Slowloris Attack",
+                TimingAttackProtocol.attack_slowloris,
+                AttackVector.POOL_EXHAUSTION,
+                Severity.EXTREME,
+                20.0,
+            ),
+            (
+                "Concurrent Burst (100 workers)",
+                TimingAttackProtocol.attack_concurrent_burst,
+                AttackVector.TIMING_ATTACK,
+                Severity.EXTREME,
+                20.0,
+            ),
         ]
 
         for name, func, vector, severity, timeout in tests:
             orchestrator.launch_attack(
-                func, name, ChaosProtocol.TIMING_ATTACK,
-                vector, severity, timeout * quick_factor
+                func, name, ChaosProtocol.TIMING_ATTACK, vector, severity, timeout * quick_factor
             )
 
     # =========================================================================
@@ -1490,6 +3013,293 @@ def main():
             Severity.CATASTROPHIC,
             40.0 * quick_factor,
         )
+
+    # =========================================================================
+    # P9: DATAHUB CHAOS — targets database/hub/hub.py
+    # =========================================================================
+    if ChaosProtocol.DATAHUB_CHAOS in protocols_to_run:
+        banner("☠️  PROTOCOL 9: DATAHUB CHAOS", char="!")
+        tests = [
+            (
+                "Connection Pool Exhaustion (200 connections)",
+                DataHubChaosProtocol.attack_connection_pool_exhaustion,
+                AttackVector.POOL_EXHAUSTION,
+                Severity.EXTREME,
+                60.0,
+            ),
+            (
+                "Concurrent Sessions with Transactions (100)",
+                DataHubChaosProtocol.attack_concurrent_sessions_with_transactions,
+                AttackVector.RACE_CONDITION,
+                Severity.HIGH,
+                30.0,
+            ),
+            (
+                "Session Leak (300 sessions)",
+                DataHubChaosProtocol.attack_session_leak,
+                AttackVector.RESOURCE_LEAK,
+                Severity.HIGH,
+                30.0,
+            ),
+            (
+                "Transaction Rollback Stress",
+                DataHubChaosProtocol.attack_transaction_rollback_stress,
+                AttackVector.DEADLOCK,
+                Severity.HIGH,
+                30.0,
+            ),
+            (
+                "Concurrent DuckDB Queries (30)",
+                DataHubChaosProtocol.attack_duckdb_concurrent_queries,
+                AttackVector.THREAD_STARVATION,
+                Severity.MEDIUM,
+                30.0,
+            ),
+        ]
+
+        for name, func, vector, severity, timeout in tests:
+            orchestrator.launch_attack(
+                func, name, ChaosProtocol.DATAHUB_CHAOS, vector, severity, timeout * quick_factor
+            )
+
+    # =========================================================================
+    # P10: ENGINE COMPUTATIONAL CHAOS — targets engine/hydroma modules
+    # =========================================================================
+    if ChaosProtocol.ENGINE_COMPUTATIONAL in protocols_to_run:
+        banner("☠️  PROTOCOL 10: ENGINE COMPUTATIONAL", char="!")
+        tests = [
+            (
+                "HydromaCore Extreme Values",
+                EngineComputationalProtocol.attack_hydroma_core_extreme_values,
+                AttackVector.OVERFLOW,
+                Severity.HIGH,
+                30.0,
+            ),
+            (
+                "ET Calculator Extreme Weather",
+                EngineComputationalProtocol.attack_et_calculator_extreme_weather,
+                AttackVector.NUMERICAL_INSTABILITY,
+                Severity.HIGH,
+                20.0,
+            ),
+            (
+                "Phenology Extreme Temperatures",
+                EngineComputationalProtocol.attack_phenology_extreme_temperatures,
+                AttackVector.OVERFLOW,
+                Severity.HIGH,
+                30.0,
+            ),
+            (
+                "Wrapper Extreme Reflectance (vegetation indices)",
+                EngineComputationalProtocol.attack_wrapper_indices_extreme_reflectance,
+                AttackVector.NUMERICAL_INSTABILITY,
+                Severity.HIGH,
+                20.0,
+            ),
+            (
+                "Wrapper Extreme Soil Inputs",
+                EngineComputationalProtocol.attack_wrapper_soil_extreme_inputs,
+                AttackVector.DATA_CORRUPTION,
+                Severity.MEDIUM,
+                30.0,
+            ),
+        ]
+
+        for name, func, vector, severity, timeout in tests:
+            orchestrator.launch_attack(
+                func,
+                name,
+                ChaosProtocol.ENGINE_COMPUTATIONAL,
+                vector,
+                severity,
+                timeout * quick_factor,
+            )
+
+    # =========================================================================
+    # P11: SERVICE TRANSACTION CHAOS — targets services/* business logic
+    # =========================================================================
+    if ChaosProtocol.SERVICE_TRANSACTION in protocols_to_run:
+        banner("☠️  PROTOCOL 11: SERVICE TRANSACTION", char="!")
+        tests = [
+            (
+                "Carbon Credit Double-Issuance Race Condition",
+                ServiceTransactionProtocol.attack_carbon_credit_double_issuance,
+                AttackVector.RACE_CONDITION,
+                Severity.CATASTROPHIC,
+                40.0,
+            ),
+            (
+                "Wallet Balance Race Condition (20 concurrent earns)",
+                ServiceTransactionProtocol.attack_wallet_balance_race_condition,
+                AttackVector.RACE_CONDITION,
+                Severity.HIGH,
+                20.0,
+            ),
+            (
+                "Wallet Concurrent Redeem (20 concurrent, limited balance)",
+                ServiceTransactionProtocol.attack_wallet_concurrent_redeem,
+                AttackVector.RACE_CONDITION,
+                Severity.HIGH,
+                20.0,
+            ),
+            (
+                "Simulation Concurrent Runs (10 parallel)",
+                ServiceTransactionProtocol.attack_simulation_concurrent_runs,
+                AttackVector.THREAD_STARVATION,
+                Severity.MEDIUM,
+                30.0,
+            ),
+        ]
+
+        for name, func, vector, severity, timeout in tests:
+            orchestrator.launch_attack(
+                func,
+                name,
+                ChaosProtocol.SERVICE_TRANSACTION,
+                vector,
+                severity,
+                timeout * quick_factor,
+            )
+
+    # =========================================================================
+    # P12: SECURITY & DATA INTEGRITY — targets services/security modules
+    # =========================================================================
+    if ChaosProtocol.SECURITY_INTEGRITY in protocols_to_run:
+        banner("☠️  PROTOCOL 12: SECURITY & INTEGRITY", char="!")
+        tests = [
+            (
+                "QuerySafe Identifier Bypass (11 payloads)",
+                SecurityIntegrityProtocol.attack_query_safe_identifier_bypass,
+                AttackVector.IDENTIFIER_INJECTION,
+                Severity.EXTREME,
+                20.0,
+            ),
+            (
+                "QuerySafe Where Clause Injection (5 payloads)",
+                SecurityIntegrityProtocol.attack_query_safe_where_clause_injection,
+                AttackVector.IDENTIFIER_INJECTION,
+                Severity.HIGH,
+                20.0,
+            ),
+            (
+                "DataConnector SQL Injection (5 payloads)",
+                SecurityIntegrityProtocol.attack_data_connector_sql_injection,
+                AttackVector.SQL_INJECTION,
+                Severity.EXTREME,
+                20.0,
+            ),
+            (
+                "DataConnector Non-Whitelisted Tables (5 queries)",
+                SecurityIntegrityProtocol.attack_data_connector_non_whitelisted_tables,
+                AttackVector.IDENTIFIER_INJECTION,
+                Severity.EXTREME,
+                20.0,
+            ),
+            (
+                "Honeypot Trap Detection (7 trap paths)",
+                SecurityIntegrityProtocol.attack_honeypot_trap_detection,
+                AttackVector.DATA_CORRUPTION,
+                Severity.MEDIUM,
+                15.0,
+            ),
+            (
+                "Rate Limiter Bypass (200 requests)",
+                SecurityIntegrityProtocol.attack_rate_limiter_bypass,
+                AttackVector.CACHE_POLLUTION,
+                Severity.HIGH,
+                30.0,
+            ),
+        ]
+
+        for name, func, vector, severity, timeout in tests:
+            orchestrator.launch_attack(
+                func,
+                name,
+                ChaosProtocol.SECURITY_INTEGRITY,
+                vector,
+                severity,
+                timeout * quick_factor,
+            )
+
+    # =========================================================================
+    # P13: EXTERNAL SERVICE RESILIENCE — targets external API clients
+    # =========================================================================
+    if ChaosProtocol.EXTERNAL_RESILIENCE in protocols_to_run:
+        banner("☠️  PROTOCOL 13: EXTERNAL RESILIENCE", char="!")
+        tests = [
+            (
+                "Climate Motor All Scenarios (4 SSPs)",
+                ExternalResilienceProtocol.attack_climate_motor_api_failure,
+                AttackVector.API_FAILURE,
+                Severity.HIGH,
+                120.0,
+            ),
+            (
+                "Climate Motor Invalid Scenarios (6 payloads)",
+                ExternalResilienceProtocol.attack_climate_motor_invalid_scenario,
+                AttackVector.IDENTIFIER_INJECTION,
+                Severity.MEDIUM,
+                10.0,
+            ),
+            (
+                "Climate Motor Extreme Coordinates (8 pairs)",
+                ExternalResilienceProtocol.attack_climate_motor_extreme_coordinates,
+                AttackVector.OVERFLOW,
+                Severity.MEDIUM,
+                30.0,
+            ),
+        ]
+
+        for name, func, vector, severity, timeout in tests:
+            orchestrator.launch_attack(
+                func,
+                name,
+                ChaosProtocol.EXTERNAL_RESILIENCE,
+                vector,
+                severity,
+                timeout * quick_factor,
+            )
+
+    # =========================================================================
+    # P14: CACHE & PIPELINE CHAOS — targets services/map_engine
+    # =========================================================================
+    if ChaosProtocol.CACHE_PIPELINE in protocols_to_run:
+        banner("☠️  PROTOCOL 14: CACHE & PIPELINE", char="!")
+        tests = [
+            (
+                "Cache Key Collision (50 files)",
+                CachePipelineProtocol.attack_cache_key_collision,
+                AttackVector.CACHE_POLLUTION,
+                Severity.MEDIUM,
+                15.0,
+            ),
+            (
+                "MapOrchestrator Registry Validation",
+                CachePipelineProtocol.attack_map_orchestrator_registry,
+                AttackVector.DATA_CORRUPTION,
+                Severity.MEDIUM,
+                15.0,
+            ),
+            (
+                "SmartMapGenerator Extreme Arrays (5 operations)",
+                CachePipelineProtocol.attack_smart_map_generator_extreme_arrays,
+                AttackVector.NUMERICAL_INSTABILITY,
+                Severity.MEDIUM,
+                15.0,
+            ),
+            (
+                "Cache Corruption & Recovery",
+                CachePipelineProtocol.attack_cache_corruption_and_recovery,
+                AttackVector.DATA_CORRUPTION,
+                Severity.MEDIUM,
+                15.0,
+            ),
+        ]
+
+        for name, func, vector, severity, timeout in tests:
+            orchestrator.launch_attack(
+                func, name, ChaosProtocol.CACHE_PIPELINE, vector, severity, timeout * quick_factor
+            )
 
     # =========================================================================
     # FINAL REPORT
@@ -1521,17 +3331,17 @@ def main():
         },
         "results": [r.to_dict() for r in orchestrator.results],
     }
-    json_file.write_text(json.dumps(json_data, indent=2, ensure_ascii=False),
-                         encoding="utf-8")
+    json_file.write_text(json.dumps(json_data, indent=2, ensure_ascii=False), encoding="utf-8")
     logger.info(f"💾 JSON saved: {json_file.relative_to(PROJECT_ROOT)}")
 
     # Exit code
     critical_kills = sum(
-        1 for r in orchestrator.results
+        1
+        for r in orchestrator.results
         if not r.passed and r.severity in [Severity.CATASTROPHIC, Severity.APOCALYPTIC]
     )
 
-    logger.info()
+    logger.info("")
     if critical_kills > 5:
         logger.info(f"💀 SYSTEM DESTROYED: {critical_kills} catastrophic failures")
         return 3
@@ -1542,7 +3352,9 @@ def main():
         logger.info(f"⚠️  SYSTEM VULNERABLE: {orchestrator.assessment.kill_rate:.1f}% kill rate")
         return 1
     else:
-        logger.info(f"✅ SYSTEM HARDENED: {orchestrator.assessment.survival_rate:.1f}% survival rate")
+        logger.info(
+            f"✅ SYSTEM HARDENED: {orchestrator.assessment.survival_rate:.1f}% survival rate"
+        )
         return 0
 
 

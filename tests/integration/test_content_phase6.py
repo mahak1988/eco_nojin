@@ -1,4 +1,5 @@
 """Phase 6 backend tests: versions, translate, RAG sync, public search."""
+
 import asyncio
 
 import pytest
@@ -113,9 +114,7 @@ def test_translate_ok_with_mock_ollama(admin_client, monkeypatch):
     monkeypatch.setattr(ai_mod, "OllamaClient", lambda config: FakeOllama())
     r = admin_client.post(f"/api/v1/admin/content/{item['id']}/translate?language=en")
     assert r.status_code == 200, r.text
-    translations = admin_client.get(
-        f"/api/v1/admin/content/{item['id']}/translations"
-    ).json()
+    translations = admin_client.get(f"/api/v1/admin/content/{item['id']}/translations").json()
     assert len(translations) == 1
     assert translations[0]["language"] == "en"
     assert translations[0]["source"] == "ai"

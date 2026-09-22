@@ -10,6 +10,7 @@ points as GeoJSON through the standard resource tree:
 Data source: live Supabase `geo_points` (public select policy added in
 migration 0007). If Supabase env is missing the API honestly returns 503.
 """
+
 import os
 from typing import Any
 
@@ -23,7 +24,12 @@ _LANDING = {
     "title": "Eco Nojin — OGC API Features",
     "description": "نقاط منظره و پروژه‌های احیای زمین (داده واقعی، استاندارد باز OGC).",
     "links": [
-        {"href": "/ogc/features/v1/", "rel": "self", "type": "application/json", "title": "Landing page"},
+        {
+            "href": "/ogc/features/v1/",
+            "rel": "self",
+            "type": "application/json",
+            "title": "Landing page",
+        },
         {"href": "/ogc/features/v1/conformance", "rel": "conformance", "type": "application/json"},
         {"href": "/ogc/features/v1/collections", "rel": "data", "type": "application/json"},
     ],
@@ -47,7 +53,11 @@ _COLLECTIONS = {
             "itemType": "feature",
             "crs": ["http://www.opengis.net/def/crs/OGC/1.3/CRS84"],
             "links": [
-                {"href": f"/ogc/features/v1/collections/{COLLECTION_ID}/items", "rel": "items", "type": "application/geo+json"},
+                {
+                    "href": f"/ogc/features/v1/collections/{COLLECTION_ID}/items",
+                    "rel": "items",
+                    "type": "application/geo+json",
+                },
             ],
         }
     ]
@@ -63,12 +73,14 @@ def _items_from_supabase(limit: int = 100) -> list[dict[str, Any]]:
     resp.raise_for_status()
     features = []
     for row in resp.json():
-        features.append({
-            "type": "Feature",
-            "id": row.get("id"),
-            "geometry": {"type": "Point", "coordinates": [row.get("lon"), row.get("lat")]},
-            "properties": {"name": row.get("name")},
-        })
+        features.append(
+            {
+                "type": "Feature",
+                "id": row.get("id"),
+                "geometry": {"type": "Point", "coordinates": [row.get("lon"), row.get("lat")]},
+                "properties": {"name": row.get("name")},
+            }
+        )
     return features
 
 
@@ -101,7 +113,12 @@ def items(limit: int = 100, bbox: str | None = None) -> dict[str, Any]:
         try:
             b = [float(x) for x in bbox.split(",")]
             if len(b) == 4:
-                features = [f for f in features if b[0] <= f["geometry"]["coordinates"][0] <= b[2] and b[1] <= f["geometry"]["coordinates"][1] <= b[3]]
+                features = [
+                    f
+                    for f in features
+                    if b[0] <= f["geometry"]["coordinates"][0] <= b[2]
+                    and b[1] <= f["geometry"]["coordinates"][1] <= b[3]
+                ]
         except ValueError:
             pass
     return {"type": "FeatureCollection", "features": features}

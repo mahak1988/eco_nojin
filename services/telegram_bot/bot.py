@@ -9,6 +9,7 @@ Commands:
 /carbon lat lon area - Carbon potential
 /help - Command guide
 """
+
 import structlog
 
 logger = structlog.get_logger()
@@ -19,6 +20,7 @@ try:
     from aiogram import Bot, Dispatcher, F
     from aiogram.filters import Command, CommandStart
     from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+
     AIogram_AVAILABLE = True
 except ImportError:
     AIogram_AVAILABLE = False
@@ -118,13 +120,17 @@ class HydromaTelegramBot:
         async def cmd_crops(message: Message):
             """Handle /crops command."""
             lang = self.user_languages.get(message.from_user.id, "en")
-            await message.answer("🌾 Crop recommendations coming soon!\n\nUse /analyze for full analysis.")
+            await message.answer(
+                "🌾 Crop recommendations coming soon!\n\nUse /analyze for full analysis."
+            )
 
         @self.dp.message(Command("carbon"))
         async def cmd_carbon(message: Message):
             """Handle /carbon command."""
             lang = self.user_languages.get(message.from_user.id, "en")
-            await message.answer("🌱 Carbon potential analysis coming soon!\n\nUse /analyze for full analysis.")
+            await message.answer(
+                "🌱 Carbon potential analysis coming soon!\n\nUse /analyze for full analysis."
+            )
 
     def _format_analysis(self, results: dict, lang: str) -> str:
         """Format analysis results for Telegram message."""
@@ -144,32 +150,38 @@ class HydromaTelegramBot:
 
         # Satellite data
         if "error" not in sat:
-            lines.extend([
-                "🛰️ Satellite Analysis:",
-                f"   • Vegetation: {sat.get('vegetation_health', 'N/A')}",
-                f"   • Biomass: {sat.get('biomass_t_ha', 0):.1f} t/ha",
-                f"   • Soil moisture: {sat.get('soil_moisture', 0):.2f}",
-                "",
-            ])
+            lines.extend(
+                [
+                    "🛰️ Satellite Analysis:",
+                    f"   • Vegetation: {sat.get('vegetation_health', 'N/A')}",
+                    f"   • Biomass: {sat.get('biomass_t_ha', 0):.1f} t/ha",
+                    f"   • Soil moisture: {sat.get('soil_moisture', 0):.2f}",
+                    "",
+                ]
+            )
 
         # Crops
         if "error" not in crops:
-            lines.extend([
-                f"🌾 {t(lang, 'best_crops')}:",
-                f"   • {', '.join(crops.get('recommended', []))}",
-                "",
-            ])
+            lines.extend(
+                [
+                    f"🌾 {t(lang, 'best_crops')}:",
+                    f"   • {', '.join(crops.get('recommended', []))}",
+                    "",
+                ]
+            )
 
         # Carbon
         if "error" not in carbon:
-            lines.extend([
-                f"🌱 {t(lang, 'carbon_potential')}:",
-                f"   • Annual: {carbon.get('annual_tCO2e_ha', 0):.2f} tCO2e/ha/yr",
-                f"   • Total: {carbon.get('total_tCO2e', 0):.0f} tCO2e",
-                f"   • Value: ${carbon.get('total_value_usd', 0):,.0f}",
-                f"   • Additionality: {carbon.get('additionality', 'N/A')}",
-                "",
-            ])
+            lines.extend(
+                [
+                    f"🌱 {t(lang, 'carbon_potential')}:",
+                    f"   • Annual: {carbon.get('annual_tCO2e_ha', 0):.2f} tCO2e/ha/yr",
+                    f"   • Total: {carbon.get('total_tCO2e', 0):.0f} tCO2e",
+                    f"   • Value: ${carbon.get('total_value_usd', 0):,.0f}",
+                    f"   • Additionality: {carbon.get('additionality', 'N/A')}",
+                    "",
+                ]
+            )
 
         lines.append(f"💡 {t(lang, 'recommendations')}:")
         lines.append("   • Consider no-till practices")
@@ -183,16 +195,18 @@ class HydromaTelegramBot:
         logger.info("🚀 Starting Hydroma Telegram Bot...")
 
         # Set bot commands
-        await self.bot.set_my_commands([
-            ("start", "Welcome message"),
-            ("help", "Command guide"),
-            ("analyze", "Full land analysis"),
-            ("crops", "Crop recommendations"),
-            ("calendar", "Planting calendar"),
-            ("carbon", "Carbon potential"),
-            ("irrigate", "Irrigation schedule"),
-            ("erosion", "Erosion risk"),
-        ])
+        await self.bot.set_my_commands(
+            [
+                ("start", "Welcome message"),
+                ("help", "Command guide"),
+                ("analyze", "Full land analysis"),
+                ("crops", "Crop recommendations"),
+                ("calendar", "Planting calendar"),
+                ("carbon", "Carbon potential"),
+                ("irrigate", "Irrigation schedule"),
+                ("erosion", "Erosion risk"),
+            ]
+        )
 
         logger.info("✅ Bot commands registered")
 

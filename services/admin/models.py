@@ -1,4 +1,5 @@
 """Admin SQLAlchemy models"""
+
 import uuid
 from datetime import UTC, datetime
 

@@ -1,4 +1,5 @@
 """Utility functions for topographic calculations using xarray-spatial."""
+
 import structlog
 
 logger = structlog.get_logger()
@@ -26,17 +27,20 @@ def calculate_slope_aspect_xarray(dem: xr.DataArray) -> tuple[xr.DataArray, xr.D
 
     return slope_degrees, aspect_compass
 
+
 def calculate_curvature_xarray(dem: xr.DataArray) -> xr.DataArray:
     """Calculate curvature using xarray-spatial."""
     if xrspatial is None:
         raise ImportError("xarray-spatial is required for this function.")
     return xrspatial.curvature(dem)
 
+
 def calculate_flow_direction_xarray(dem: xr.DataArray) -> xr.DataArray:
     """Calculate flow direction using xarray-spatial (D8 algorithm)."""
     if xrspatial is None:
         raise ImportError("xarray-spatial is required for this function.")
     return xrspatial.flow_direction(dem)
+
 
 def calculate_flow_accumulation_xarray(flow_direction: xr.DataArray) -> xr.DataArray:
     """Calculate flow accumulation using xarray-spatial."""

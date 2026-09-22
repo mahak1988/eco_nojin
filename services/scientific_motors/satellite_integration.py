@@ -15,6 +15,7 @@ Scientific basis:
 - FAO: NDMI correlation with soil moisture
 - Rothamsted Research: NDVI-SOC relationships
 """
+
 from __future__ import annotations
 
 # =========================================================================
@@ -31,6 +32,7 @@ try:
         ndwi as _cpp_ndwi,
         savi as _cpp_savi,
     )
+
     _CPP_AVAILABLE = is_cpp_available()
 except ImportError:
     _CPP_AVAILABLE = False
@@ -51,6 +53,7 @@ from ..satellite.sentinel2_provider import (
 @dataclass
 class SatelliteContext:
     """Context for satellite-derived inputs."""
+
     latitude: float
     longitude: float
     bbox: tuple[float, float, float, float]  # min_lon, min_lat, max_lon, max_lat
@@ -61,6 +64,7 @@ class SatelliteContext:
 @dataclass
 class SatelliteDerivedParameters:
     """Parameters derived from satellite data for motors."""
+
     # For RUSLE
     c_factor: float  # 0-1, crop/management factor
 
@@ -85,7 +89,7 @@ class SatelliteDerivedParameters:
 class SatelliteIntegration:
     """
     High-level integration layer connecting Sentinel-2 with motors.
-    
+
     Usage:
         integration = SatelliteIntegration()
         params = integration.derive_parameters(
@@ -109,7 +113,7 @@ class SatelliteIntegration:
     ) -> SatelliteDerivedParameters:
         """
         Derive satellite-based parameters for all motors.
-        
+
         Returns a SatelliteDerivedParameters object ready for use.
         """
         # Get date range (last 30 days)
@@ -133,8 +137,13 @@ class SatelliteIntegration:
         # This ensures disk cache hit
         batch_results = self.provider.compute_indices_batch(
             scene,
-            [SpectralIndex.NDVI, SpectralIndex.EVI, SpectralIndex.NDMI,
-             SpectralIndex.COMPOSITE, SpectralIndex.SAVI],
+            [
+                SpectralIndex.NDVI,
+                SpectralIndex.EVI,
+                SpectralIndex.NDMI,
+                SpectralIndex.COMPOSITE,
+                SpectralIndex.SAVI,
+            ],
             bbox=context.bbox,
             apply_cloud_mask=True,
             resolution=10,
@@ -193,11 +202,11 @@ class SatelliteIntegration:
     def _compute_c_factor(self, indices: dict, koppen: str) -> float:
         """
         Compute C-factor from vegetation indices.
-        
+
         Van der Knijff et al. (2000):
             C = exp(-α × NDVI / β)
         where α=2, β=1 for European conditions
-        
+
         For arid/semi-arid: use adjusted formula
         """
         # Use best available index
@@ -231,7 +240,7 @@ class SatelliteIntegration:
     def _ndmi_to_soil_moisture(self, ndmi: float) -> float:
         """
         Convert NDMI to soil moisture proxy (0-1).
-        
+
         Empirical relationship (Ceccato et al. 2001):
         NDMI < -0.3 → very dry (0.1)
         NDMI -0.3 to 0 → dry (0.2-0.4)
@@ -254,12 +263,12 @@ class SatelliteIntegration:
     def _ndvi_to_soc(self, ndvi: float, koppen: str) -> float:
         """
         Estimate baseline SOC from NDVI (empirical).
-        
+
         Typical relationships:
         - Temperate grasslands: SOC = 20 + 80 × NDVI (tC/ha)
         - Forests: SOC = 50 + 150 × NDVI
         - Croplands: SOC = 15 + 60 × NDVI
-        
+
         This is a rough proxy; real SOC needs soil sampling.
         """
         ndvi = max(0.0, min(1.0, ndvi))
@@ -300,13 +309,13 @@ class SatelliteIntegration:
     def _evi_to_biomass(self, evi: float, crop_id: str) -> float:
         """
         Convert EVI to above-ground biomass (t/ha).
-        
+
         Empirical relationships (Gitelson et al. 2003):
         biomass = a × EVI + b
         """
         # Crop-specific coefficients
         coefficients = {
-            "wheat": (15.0, 0.5),      # a, b
+            "wheat": (15.0, 0.5),  # a, b
             "maize": (30.0, 1.0),
             "rice_paddy": (20.0, 0.8),
             "soybean": (12.0, 0.4),
@@ -319,7 +328,9 @@ class SatelliteIntegration:
 
         return max(0.0, a * evi + b)
 
-    def _default_parameters(self, context: SatelliteContext, crop_id: str) -> SatelliteDerivedParameters:
+    def _default_parameters(
+        self, context: SatelliteContext, crop_id: str
+    ) -> SatelliteDerivedParameters:
         """Default parameters when no satellite data is available."""
         return SatelliteDerivedParameters(
             c_factor=0.3,

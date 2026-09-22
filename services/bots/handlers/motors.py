@@ -1,4 +1,5 @@
 """Scientific Motors Bot Handlers."""
+
 from __future__ import annotations
 
 from aiogram import Router
@@ -11,19 +12,21 @@ router = Router(name="motors_bot")
 @router.message(Command("motors"))
 async def cmd_motors(message: Message):
     """List available scientific motors."""
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text="💧 SWAT+", callback_data="motor:swat_plus"),
-            InlineKeyboardButton(text="🌾 AquaCrop", callback_data="motor:aquacrop"),
-        ],
-        [
-            InlineKeyboardButton(text="🌍 RothC", callback_data="motor:rothc"),
-            InlineKeyboardButton(text="🌊 HEC-RAS", callback_data="motor:hecras"),
-        ],
-        [
-            InlineKeyboardButton(text="🎲 What-If", callback_data="motor:what_if"),
-        ],
-    ])
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="💧 SWAT+", callback_data="motor:swat_plus"),
+                InlineKeyboardButton(text="🌾 AquaCrop", callback_data="motor:aquacrop"),
+            ],
+            [
+                InlineKeyboardButton(text="🌍 RothC", callback_data="motor:rothc"),
+                InlineKeyboardButton(text="🌊 HEC-RAS", callback_data="motor:hecras"),
+            ],
+            [
+                InlineKeyboardButton(text="🎲 What-If", callback_data="motor:what_if"),
+            ],
+        ]
+    )
 
     await message.answer(
         "🔬 **Scientific Motors**\n\n"
@@ -70,7 +73,5 @@ async def cmd_mrv(message: Message):
 async def cmd_report(message: Message):
     """Generate PDF report."""
     await message.answer(
-        "📄 **Report Generation**\n\n"
-        "Generating PDF report...\n"
-        "This may take a few minutes."
+        "📄 **Report Generation**\n\nGenerating PDF report...\nThis may take a few minutes."
     )

@@ -1,0 +1,16 @@
+{{- if and .Values.api-gateway.enabled .Values.api-gateway.podDisruptionBudget.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "eco-nojin.fullname" . }}-api-gateway-pdb
+  namespace: {{ include "eco-nojin.namespace" . }}
+  labels:
+    {{- include "eco-nojin.labels" . | nindent 4 }}
+    app: api-gateway
+spec:
+  minAvailable: {{ .Values.api-gateway.podDisruptionBudget.minAvailable | quote }}
+  selector:
+    matchLabels:
+      app: api-gateway
+      release: {{ .Release.Name }}
+{{- end }}

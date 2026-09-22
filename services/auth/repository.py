@@ -1,4 +1,5 @@
 """Auth repository"""
+
 from datetime import UTC, datetime
 
 from sqlalchemy import select, update
@@ -28,7 +29,8 @@ class AuthRepository:
 
     async def update_last_login(self, user_id: str):
         stmt = (
-            update(AuthUser).where(AuthUser.id == user_id)
+            update(AuthUser)
+            .where(AuthUser.id == user_id)
             .values(last_login_at=datetime.now(UTC), failed_login_attempts=0)
         )
         await self.db.execute(stmt)
@@ -40,13 +42,17 @@ class AuthRepository:
             user.failed_login_attempts += 1
             await self.db.commit()
 
-    async def save_refresh_token(self, user_id: str, token_hash: str, expires_at: datetime) -> RefreshToken:
+    async def save_refresh_token(
+        self, user_id: str, token_hash: str, expires_at: datetime
+    ) -> RefreshToken:
         token = RefreshToken(user_id=user_id, token_hash=token_hash, expires_at=expires_at)
         self.db.add(token)
         await self.db.commit()
         return token
 
     async def revoke_refresh_token(self, token_hash: str):
-        stmt = update(RefreshToken).where(RefreshToken.token_hash == token_hash).values(revoked=True)
+        stmt = (
+            update(RefreshToken).where(RefreshToken.token_hash == token_hash).values(revoked=True)
+        )
         await self.db.execute(stmt)
         await self.db.commit()

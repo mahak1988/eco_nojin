@@ -3,6 +3,7 @@
 Skips gracefully when the server is not running — never fails the suite
 for a local dev setup.
 """
+
 import os
 
 import pytest
@@ -38,8 +39,17 @@ def test_security_firewall_active():
 def test_materials_compost_real():
     r = httpx.post(
         f"{BASE}/api/v1/materials/calculate-compost",
-        json={"materials": [{"name": "Straw", "mass_kg": 200, "carbon_content": 45, "nitrogen_content": 0.5},
-                            {"name": "Cow Manure", "mass_kg": 300, "carbon_content": 25, "nitrogen_content": 1.5}]},
+        json={
+            "materials": [
+                {"name": "Straw", "mass_kg": 200, "carbon_content": 45, "nitrogen_content": 0.5},
+                {
+                    "name": "Cow Manure",
+                    "mass_kg": 300,
+                    "carbon_content": 25,
+                    "nitrogen_content": 1.5,
+                },
+            ]
+        },
         timeout=10,
     )
     assert r.status_code == 200

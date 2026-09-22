@@ -1,4 +1,5 @@
 """Auth refresh token tests (rotation, rejection of misuse)."""
+
 from fastapi.testclient import TestClient
 
 from database.base import Base

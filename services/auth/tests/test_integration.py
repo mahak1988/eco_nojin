@@ -1,4 +1,5 @@
 """Integration tests for Auth"""
+
 import pytest
 
 from services.auth.schemas import UserLogin, UserRegister
@@ -7,13 +8,20 @@ from services.auth.schemas import UserLogin, UserRegister
 @pytest.mark.asyncio
 class TestAuthIntegration:
     async def test_register_and_login(self, auth_service):
-        user = await auth_service.register(UserRegister(
-            email="test@example.com", username="testuser", password="StrongPass1",  # nosec (مقدار ساختگی تست)
-        ))
+        user = await auth_service.register(
+            UserRegister(
+                email="test@example.com",
+                username="testuser",
+                password="StrongPass1",  # nosec (مقدار ساختگی تست)
+            )
+        )
         assert user.email == "test@example.com"
-        tokens = await auth_service.login(UserLogin(
-            email="test@example.com", password="StrongPass1",  # nosec (مقدار ساختگی تست)
-        ))
+        tokens = await auth_service.login(
+            UserLogin(
+                email="test@example.com",
+                password="StrongPass1",  # nosec (مقدار ساختگی تست)
+            )
+        )
         assert tokens.access_token
         assert tokens.refresh_token
 

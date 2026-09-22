@@ -20,7 +20,9 @@ logger = logging.getLogger(__name__)
 # --- Hydroma Soil Degradation Model (auto-installed, Phase 3) ---
 try:
     from engine.hydroma.climate_adaptation.soil_degradation_model import (
-        SoilDegradationModel as _SDM_cls)
+        SoilDegradationModel as _SDM_cls,
+    )
+
     _HYDROMA_SDM = _SDM_cls()
 except Exception:
     _HYDROMA_SDM = None
@@ -52,7 +54,7 @@ GLOBAL_MEAN_SOIL = {
 class SoilIntegrator:
     """
     Integrates soil data with land profiles.
-    
+
     Connects to engine/hydroma/soil/ modules:
     - taxonomy: USDA texture classification
     - chemistry: CEC, ESP, SAR, pH buffer
@@ -78,6 +80,7 @@ class SoilIntegrator:
                 taxonomy,
                 water_retention,
             )
+
             self._soil_modules = {
                 "taxonomy": taxonomy,
                 "chemistry": chemistry,
@@ -94,18 +97,20 @@ class SoilIntegrator:
     def classify_texture(self, sand_pct: float, silt_pct: float, clay_pct: float) -> SoilTexture:
         """
         Classify soil texture using USDA triangle.
-        
+
         Args:
             sand_pct: Sand percentage (0-100)
             silt_pct: Silt percentage (0-100)
             clay_pct: Clay percentage (0-100)
-            
+
         Returns:
             SoilTexture enum value
         """
         if self._soil_modules and "taxonomy" in self._soil_modules:
             try:
-                result = self._soil_modules["taxonomy"].classify_texture(sand_pct, silt_pct, clay_pct)
+                result = self._soil_modules["taxonomy"].classify_texture(
+                    sand_pct, silt_pct, clay_pct
+                )
                 # Map to our enum
                 texture_map = {
                     "sand": SoilTexture.SAND,
@@ -158,7 +163,7 @@ class SoilIntegrator:
     def estimate_van_genuchten(self, texture: SoilTexture) -> dict[str, float]:
         """
         Estimate van Genuchten parameters from texture.
-        
+
         Returns:
             Dict with theta_r, theta_s, alpha, n
         """
@@ -177,9 +182,19 @@ class SoilIntegrator:
             SoilTexture.LOAM: {"theta_r": 0.078, "theta_s": 0.463, "alpha": 0.036, "n": 1.56},
             SoilTexture.SILT_LOAM: {"theta_r": 0.065, "theta_s": 0.471, "alpha": 0.020, "n": 1.41},
             SoilTexture.SILT: {"theta_r": 0.060, "theta_s": 0.479, "alpha": 0.016, "n": 1.37},
-            SoilTexture.SANDY_CLAY_LOAM: {"theta_r": 0.067, "theta_s": 0.398, "alpha": 0.020, "n": 1.48},
+            SoilTexture.SANDY_CLAY_LOAM: {
+                "theta_r": 0.067,
+                "theta_s": 0.398,
+                "alpha": 0.020,
+                "n": 1.48,
+            },
             SoilTexture.CLAY_LOAM: {"theta_r": 0.095, "theta_s": 0.464, "alpha": 0.019, "n": 1.31},
-            SoilTexture.SILTY_CLAY_LOAM: {"theta_r": 0.089, "theta_s": 0.471, "alpha": 0.010, "n": 1.23},
+            SoilTexture.SILTY_CLAY_LOAM: {
+                "theta_r": 0.089,
+                "theta_s": 0.471,
+                "alpha": 0.010,
+                "n": 1.23,
+            },
             SoilTexture.SANDY_CLAY: {"theta_r": 0.100, "theta_s": 0.430, "alpha": 0.027, "n": 1.23},
             SoilTexture.SILTY_CLAY: {"theta_r": 0.070, "theta_s": 0.479, "alpha": 0.005, "n": 1.09},
             SoilTexture.CLAY: {"theta_r": 0.090, "theta_s": 0.468, "alpha": 0.008, "n": 1.09},
@@ -190,14 +205,14 @@ class SoilIntegrator:
     def build_default_profile(self, lat: float, lon: float) -> DeepSoilProfile:
         """
         Build a default soil profile using global mean values.
-        
+
         This is used when no real soil data is available.
         Data quality level: L0 (global model)
-        
+
         Args:
             lat: Latitude
             lon: Longitude
-            
+
         Returns:
             DeepSoilProfile with 6 layers
         """
@@ -248,10 +263,10 @@ class SoilIntegrator:
     def calculate_awc(self, profile: DeepSoilProfile) -> float:
         """
         Calculate Available Water Capacity (mm) for the profile.
-        
+
         Uses van Genuchten parameters to estimate field capacity
         and wilting point for each layer.
-        
+
         Returns:
             AWC in mm
         """
@@ -272,11 +287,11 @@ class SoilIntegrator:
             # van Genuchten equation: theta = theta_r + (theta_s - theta_r) / (1 + (alpha*h)^n)^(1-1/n)
             # Field capacity at h = 33 kPa (330 cm)
             h_fc = 330
-            theta_fc = theta_r + (theta_s - theta_r) / (1 + (alpha * h_fc) ** n) ** (1 - 1/n)
+            theta_fc = theta_r + (theta_s - theta_r) / (1 + (alpha * h_fc) ** n) ** (1 - 1 / n)
 
             # Wilting point at h = 1500 kPa (15000 cm)
             h_wp = 15000
-            theta_wp = theta_r + (theta_s - theta_r) / (1 + (alpha * h_wp) ** n) ** (1 - 1/n)
+            theta_wp = theta_r + (theta_s - theta_r) / (1 + (alpha * h_wp) ** n) ** (1 - 1 / n)
 
             # AWC for this layer (mm)
             thickness_mm = layer.depth_thickness_cm() * 10
@@ -301,12 +316,12 @@ class SoilIntegrator:
     def calculate_soil_health(self, profile: DeepSoilProfile) -> float:
         """
         Calculate soil health score (0-100).
-        
+
         Uses simplified scoring based on:
         - pH optimal range (6.0-7.5)
         - Organic carbon content
         - Texture balance
-        
+
         Returns:
             Score from 0-100
         """
@@ -365,14 +380,14 @@ class SoilIntegrator:
     ) -> SoilIntegrationResult:
         """
         Integrate soil data with land profile.
-        
+
         Args:
             profile_id: Land profile ID
             lat: Latitude
             lon: Longitude
             terrain_slope_deg: Terrain slope (from land analysis)
             climate_zone: Köppen climate zone
-            
+
         Returns:
             SoilIntegrationResult
         """
@@ -448,7 +463,10 @@ class SoilIntegrator:
         if profile.salinity_class == SalinityClass.MODERATELY_SALINE:
             crops = [c for c in crops if c in ["barley", "cotton", "dates"]]
             crops.append("salt_tolerant_crops")
-        elif profile.salinity_class in [SalinityClass.STRONGLY_SALINE, SalinityClass.VERY_STRONGLY_SALINE]:
+        elif profile.salinity_class in [
+            SalinityClass.STRONGLY_SALINE,
+            SalinityClass.VERY_STRONGLY_SALINE,
+        ]:
             crops = ["halophytes", "salt_tolerant_crops"]
 
         # Climate adjustment
@@ -480,7 +498,10 @@ class SoilIntegrator:
         # Salinity limitations
         if profile.salinity_class == SalinityClass.MODERATELY_SALINE:
             limitations.append("moderate_salinity")
-        elif profile.salinity_class in [SalinityClass.STRONGLY_SALINE, SalinityClass.VERY_STRONGLY_SALINE]:
+        elif profile.salinity_class in [
+            SalinityClass.STRONGLY_SALINE,
+            SalinityClass.VERY_STRONGLY_SALINE,
+        ]:
             limitations.append("high_salinity")
 
         # Organic carbon limitation

@@ -1,19 +1,206 @@
 """MRV / Carbon budget router — فاز ۴ (رایگان)."""
 
+from datetime import UTC, datetime
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
+from database.hub import hub
+from database.models import MRVObservation
+from engine.hydroma.mrv import satellite_cdse
+from engine.hydroma.mrv.iot_ingest import parse_ttn_v3, persist_iot_reading, webhook_key_ok
+from engine.hydroma.mrv.metrics import compute_dashboard
+from engine.hydroma.mrv.qa import validate_satellite_index
+from engine.hydroma.mrv.satellite_cdse import CdseUnavailable
+from engine.hydroma.mrv.schemas import CitizenBatch, CitizenReport, IoTReading, SatelliteIndex
 from services.mrv.kobo import average_measured_soc, fetch_kobo_submissions
 from services.mrv.mrv_pdf import build_mrv_pdf
 from services.scientific_motors.carbon_mrv import CarbonMrvMotor
 from services.scientific_motors.chain_runner import run_scientific_chain
-from engine.hydroma.mrv import satellite_cdse
-from engine.hydroma.mrv.satellite_cdse import CdseUnavailable
 
 router = APIRouter(prefix="/mrv", tags=["mrv"])
+
+
+def get_db():
+    with hub.get_session() as session:
+        yield session
+
+
+def _observation_json(row: MRVObservation) -> dict[str, Any]:
+    result = {
+        "id": row.id,
+        "site_id": row.site_id,
+        "level": row.level,
+        "source": row.source,
+        "sensor_type": row.sensor_type,
+        "value": row.value,
+        "unit": row.unit,
+        "payload": row.payload or {},
+        "data_source": row.data_source,
+        "qa_status": row.qa_status,
+        "qa": {"message": row.qa_message or ""},
+        "observed_at": row.observed_at.isoformat(),
+    }
+    if row.source == "citizen":
+        result["category"] = row.sensor_type
+    return result
+
+
+@router.post("/iot-reading")
+def store_iot_reading(reading: IoTReading, db: Session = Depends(get_db)) -> dict[str, Any]:
+    row = persist_iot_reading(db, reading)
+    return _observation_json(row)
+
+
+@router.get("/observations")
+def list_observations(
+    site_id: str,
+    level: int | None = Query(None, ge=1, le=3),
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
+    query = db.query(MRVObservation).filter(MRVObservation.site_id == site_id)
+    if level is not None:
+        query = query.filter(MRVObservation.level == level)
+    rows = query.order_by(MRVObservation.observed_at.desc()).all()
+    return {"count": len(rows), "observations": [_observation_json(row) for row in rows]}
+
+
+def _store_citizen(report: CitizenReport, db: Session) -> MRVObservation:
+    row = MRVObservation(
+        site_id=report.site_id,
+        level=3,
+        source="citizen",
+        sensor_type=report.category,
+        value=1.0,
+        unit="report",
+        payload=report.model_dump(mode="json"),
+        data_source="real",
+        qa_status="ok",
+        qa_message="Citizen report accepted",
+        observed_at=datetime.now(UTC),
+    )
+    db.add(row)
+    db.commit()
+    db.refresh(row)
+    return row
+
+
+@router.post("/citizen-report")
+def store_citizen_report(report: CitizenReport, db: Session = Depends(get_db)) -> dict[str, Any]:
+    return _observation_json(_store_citizen(report, db))
+
+
+@router.post("/citizen-reports/batch")
+def store_citizen_batch(batch: CitizenBatch, db: Session = Depends(get_db)) -> dict[str, Any]:
+    rows = [_store_citizen(report, db) for report in batch.reports]
+    return {"accepted": len(rows), "observations": [_observation_json(row) for row in rows]}
+
+
+@router.post("/satellite-index")
+def store_satellite_index(index: SatelliteIndex, db: Session = Depends(get_db)) -> dict[str, Any]:
+    report = validate_satellite_index(index.index, index.value)
+    row = MRVObservation(
+        site_id=index.site_id,
+        level=1,
+        source="satellite",
+        sensor_type=index.index,
+        value=index.value,
+        unit="index",
+        payload=index.model_dump(mode="json"),
+        data_source=index.data_source,
+        qa_status=report.qa_status,
+        qa_message=report.message,
+        observed_at=index.ts,
+    )
+    db.add(row)
+    db.commit()
+    db.refresh(row)
+    return _observation_json(row)
+
+
+@router.post("/lorawan-webhook")
+def lorawan_webhook(
+    payload: dict[str, Any],
+    x_webhook_key: str | None = Header(None, alias="X-Webhook-Key"),
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
+    from engine.hydroma.config.settings import get_settings
+
+    expected = get_settings().telco_webhook_key
+    if not expected or not webhook_key_ok(x_webhook_key, expected):
+        raise HTTPException(status_code=401, detail="Invalid webhook key")
+    readings = parse_ttn_v3(payload)
+    if not readings:
+        raise HTTPException(status_code=422, detail="Payload contains no readable observations")
+    rows = [persist_iot_reading(db, reading) for reading in readings]
+    return {"count": len(rows), "observations": [_observation_json(row) for row in rows]}
+
+
+@router.get("/dashboard-metrics")
+def dashboard_metrics(
+    site_id: str,
+    area_ha: float | None = Query(None, gt=0),
+    rusle_before_tha: float | None = Query(None),
+    rusle_after_tha: float | None = Query(None),
+    soc_before_pct: float | None = Query(None),
+    soc_after_pct: float | None = Query(None),
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
+    rows = (
+        db.query(MRVObservation)
+        .filter(
+            MRVObservation.site_id == site_id,
+            MRVObservation.qa_status.in_(["ok", "suspect"]),
+        )
+        .all()
+    )
+    observed_sources = sorted({row.data_source for row in rows})
+    result = compute_dashboard(
+        site_id=site_id,
+        area_ha=area_ha,
+        rusle_before_tha=rusle_before_tha,
+        rusle_after_tha=rusle_after_tha,
+        soc_before_pct=soc_before_pct,
+        soc_after_pct=soc_after_pct,
+        observed_sources=observed_sources,
+    )
+    result["observation_counts"] = {
+        source: sum(1 for row in rows if row.source == source)
+        for source in ("satellite", "iot", "citizen")
+    }
+    result["data_sources_observed"] = observed_sources
+    return result
+
+
+@router.get("/public/dashboard-summary")
+def public_dashboard_summary(db: Session = Depends(get_db)) -> dict[str, Any]:
+    rows = db.query(MRVObservation).filter(MRVObservation.qa_status.in_(["ok", "suspect"])).all()
+    latest_satellite: dict[str, MRVObservation] = {}
+    for row in rows:
+        if row.source == "satellite" and row.site_id not in latest_satellite:
+            latest_satellite[row.site_id] = row
+    return {
+        "total_observations": len(rows),
+        "by_level": {
+            str(level): sum(1 for row in rows if row.level == level) for level in (1, 2, 3)
+        },
+        "by_source": {
+            source: sum(1 for row in rows if row.source == source)
+            for source in ("satellite", "iot", "citizen")
+        },
+        "latest_satellite_per_site": [
+            {
+                "site_id": row.site_id,
+                "index": row.sensor_type,
+                "value": row.value,
+                "data_source": row.data_source,
+            }
+            for row in latest_satellite.values()
+        ],
+    }
 
 
 class CarbonBudgetRequest(BaseModel):
@@ -85,7 +272,9 @@ async def carbon_budget(req: CarbonBudgetRequest) -> dict[str, Any]:
             "soc_final": "RothC-26.3 (pyRothC) 20-year projection",
             "field_data": "KoboToolbox (free tier)" if req.use_kobo else "not requested",
             "conversion": "IPCC t C -> tCO2e × 3.667",
-            "methodology": "Gold Standard SOC Framework (simplified)" if req.methodology == "gold_standard" else "Verra VM0032 — simplified accounting (not a certification)",
+            "methodology": "Gold Standard SOC Framework (simplified)"
+            if req.methodology == "gold_standard"
+            else "Verra VM0032 — simplified accounting (not a certification)",
         },
         "error": result.error_message,
     }
@@ -114,8 +303,9 @@ class SatelliteRefreshRequest(BaseModel):
 @router.post("/satellite-refresh")
 async def satellite_refresh(req: SatelliteRefreshRequest) -> dict[str, Any]:
     """Refresh satellite NDVI data for a site."""
-    from engine.hydroma.config.settings import get_settings
     from fastapi import HTTPException
+
+    from engine.hydroma.config.settings import get_settings
 
     settings = get_settings()
     if str(getattr(settings, "enable_satellite_real", "false")).lower() == "false":

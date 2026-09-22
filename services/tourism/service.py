@@ -23,10 +23,10 @@ class TourismService:
     """سرویس مدیریت گردشگری روستایی و عشایری."""
 
     # کارمزدها (basis points)
-    PLATFORM_FEE_BPS = 800      # 8%
-    LANDSCAPE_FEE_BPS = 200     # 2%
-    INSURANCE_FEE_BPS = 200     # 2%
-    HOST_SHARE_BPS = 8800       # 88%
+    PLATFORM_FEE_BPS = 800  # 8%
+    LANDSCAPE_FEE_BPS = 200  # 2%
+    INSURANCE_FEE_BPS = 200  # 2%
+    HOST_SHARE_BPS = 8800  # 88%
 
     def __init__(self, db: AsyncSession):
         self.db = db
@@ -68,9 +68,7 @@ class TourismService:
 
     async def verify_guide(self, guide_id: str) -> TourismGuide:
         """تأیید راهنمای تور."""
-        result = await self.db.execute(
-            select(TourismGuide).where(TourismGuide.id == guide_id)
-        )
+        result = await self.db.execute(select(TourismGuide).where(TourismGuide.id == guide_id))
         guide = result.scalar_one_or_none()
 
         if not guide:
@@ -156,9 +154,7 @@ class TourismService:
 
     async def approve_tour(self, tour_id: str, approved_by: str) -> TourismTour:
         """تأیید تور توسط مدیر منظر."""
-        result = await self.db.execute(
-            select(TourismTour).where(TourismTour.id == tour_id)
-        )
+        result = await self.db.execute(select(TourismTour).where(TourismTour.id == tour_id))
         tour = result.scalar_one_or_none()
 
         if not tour:
@@ -189,9 +185,7 @@ class TourismService:
     ) -> TourismBooking:
         """ایجاد رزرو جدید با بررسی ظرفیت و محاسبه خودکار کارمزد."""
         # دریافت تور
-        result = await self.db.execute(
-            select(TourismTour).where(TourismTour.id == tour_id)
-        )
+        result = await self.db.execute(select(TourismTour).where(TourismTour.id == tour_id))
         tour = result.scalar_one_or_none()
 
         if not tour:
@@ -202,23 +196,17 @@ class TourismService:
 
         # بررسی حداقل شرکت‌کنندگان
         if participants_count < tour.min_participants:
-            raise ValueError(
-                f"حداقل {tour.min_participants} شرکت‌کننده نیاز است"
-            )
+            raise ValueError(f"حداقل {tour.min_participants} شرکت‌کننده نیاز است")
 
         # بررسی حداکثر شرکت‌کنندگان
         if participants_count > tour.max_participants:
-            raise ValueError(
-                f"حداکثر {tour.max_participants} شرکت‌کننده مجاز است"
-            )
+            raise ValueError(f"حداکثر {tour.max_participants} شرکت‌کننده مجاز است")
 
         # بررسی ظرفیت برد اکولوژیک
         if tour.ecological_capacity:
             if tour.current_bookings + participants_count > tour.ecological_capacity:
                 available = tour.ecological_capacity - tour.current_bookings
-                raise ValueError(
-                    f"ظرفیت برد اکولوژیک تکمیل است. فقط {available} نفر باقی مانده"
-                )
+                raise ValueError(f"ظرفیت برد اکولوژیک تکمیل است. فقط {available} نفر باقی مانده")
 
         # بررسی تاریخ
         if tour_date <= datetime.now(UTC):
@@ -321,9 +309,7 @@ class TourismService:
         booking.status = "cancelled"
 
         # کاهش آمار تور
-        result = await self.db.execute(
-            select(TourismTour).where(TourismTour.id == booking.tour_id)
-        )
+        result = await self.db.execute(select(TourismTour).where(TourismTour.id == booking.tour_id))
         tour = result.scalar_one_or_none()
         if tour:
             tour.current_bookings -= booking.participants_count
@@ -339,9 +325,7 @@ class TourismService:
 
     async def _update_tour_stats(self, tour_id: str):
         """به‌روزرسانی آمار تور."""
-        result = await self.db.execute(
-            select(TourismTour).where(TourismTour.id == tour_id)
-        )
+        result = await self.db.execute(select(TourismTour).where(TourismTour.id == tour_id))
         tour = result.scalar_one_or_none()
 
         if tour:

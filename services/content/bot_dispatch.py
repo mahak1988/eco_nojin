@@ -6,6 +6,7 @@ Honesty contract: without a bot token the dispatcher reports
 was sent. Telegram is the only wired channel today (Eitaa/Bale/Rubika
 arrive with their tokens via the same settings keys).
 """
+
 from __future__ import annotations
 
 import logging
@@ -14,8 +15,7 @@ from typing import Any
 import httpx
 from sqlalchemy.orm import Session
 
-from database import models  # noqa: F401
-from database.hub import hub
+from database import models
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,10 @@ def dispatch_to_bots(
 
     enabled = _setting(db, "content_auto_publish_bot", "false").lower() == "true"
     if not enabled:
-        return {"dispatched": 0, "reason": "publishing to bots is disabled (setting content_auto_publish_bot)"}
+        return {
+            "dispatched": 0,
+            "reason": "publishing to bots is disabled (setting content_auto_publish_bot)",
+        }
     token = os.getenv("BOT_TOKEN", "")
     if not token:
         return {"dispatched": 0, "reason": "no BOT_TOKEN configured"}

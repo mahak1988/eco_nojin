@@ -5,6 +5,7 @@ Savitzky-Golay smoothing + derivative analysis for NDVI time series.
 
 Reference: Zhang et al. (2003), White et al. (2009)
 """
+
 from __future__ import annotations
 
 from datetime import date
@@ -28,7 +29,9 @@ class HPheno(ScientificModel):
     }
 
     def validate_inputs(
-        self, ndvi_ts: np.ndarray, dates: list[date],
+        self,
+        ndvi_ts: np.ndarray,
+        dates: list[date],
     ) -> tuple[bool, list[str]]:
         errors = []
         if len(ndvi_ts) != len(dates):
@@ -44,9 +47,14 @@ class HPheno(ScientificModel):
         """Savitzky-Golay smoothing"""
         try:
             from scipy.signal import savgol_filter
-            return savgol_filter(ndvi, min(window, len(ndvi) - 1 if len(ndvi) % 2 == 0 else len(ndvi)), polyorder)
+
+            return savgol_filter(
+                ndvi, min(window, len(ndvi) - 1 if len(ndvi) % 2 == 0 else len(ndvi)), polyorder
+            )
         except ImportError:
-            return np.convolve(ndvi, np.ones(min(window, len(ndvi)))/min(window, len(ndvi)), mode='same')
+            return np.convolve(
+                ndvi, np.ones(min(window, len(ndvi))) / min(window, len(ndvi)), mode="same"
+            )
 
     @staticmethod
     def derivative(ndvi: np.ndarray, dt_days: float = 5.0) -> np.ndarray:
@@ -67,7 +75,7 @@ class HPheno(ScientificModel):
         # SOS: first positive zero-crossing with NDVI above threshold
         sos_idx = None
         for i in range(1, len(ndvi_prime)):
-            if ndvi_prime[i-1] <= 0 < ndvi_prime[i] and ndvi_smooth[i] > ndvi_threshold:
+            if ndvi_prime[i - 1] <= 0 < ndvi_prime[i] and ndvi_smooth[i] > ndvi_threshold:
                 sos_idx = i
                 break
 
@@ -77,7 +85,7 @@ class HPheno(ScientificModel):
         # EOS: first negative zero-crossing after POS
         eos_idx = None
         for i in range(pos_idx + 1, len(ndvi_prime)):
-            if ndvi_prime[i-1] >= 0 > ndvi_prime[i] and ndvi_smooth[i] > ndvi_threshold:
+            if ndvi_prime[i - 1] >= 0 > ndvi_prime[i] and ndvi_smooth[i] > ndvi_threshold:
                 eos_idx = i
                 break
 
@@ -98,8 +106,11 @@ class HPheno(ScientificModel):
         }
 
     def validate_against_reference(
-        self, inputs: dict[str, Any], reference_output: float,
-        reference_source: str, tolerance: float = 15.0,
+        self,
+        inputs: dict[str, Any],
+        reference_output: float,
+        reference_source: str,
+        tolerance: float = 15.0,
     ) -> ValidationResult:
         """tolerance in days for LOS"""
         result = self.compute(**inputs)

@@ -1,4 +1,5 @@
 """PINN surrogate tests (skip gracefully without torch)."""
+
 import pytest
 
 from services.models import pinn_surrogate

@@ -1,5 +1,7 @@
 """Soil Erodibility Fetcher - Computes K-factor from soil properties."""
+
 from __future__ import annotations
+
 import structlog
 
 logger = structlog.get_logger()

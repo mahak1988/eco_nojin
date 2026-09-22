@@ -49,7 +49,9 @@ class ZenodoClient:
         """Create an empty deposition. Raises ZenodoError on failure."""
         import httpx
 
-        resp = httpx.post(f"{self.base}/deposit/depositions", headers=self._headers(), json=metadata, timeout=30)
+        resp = httpx.post(
+            f"{self.base}/deposit/depositions", headers=self._headers(), json=metadata, timeout=30
+        )
         if resp.status_code not in (200, 201):
             raise ZenodoError(f"Zenodo API {resp.status_code}: {resp.text[:200]}")
         return resp.json()
@@ -72,7 +74,9 @@ class ZenodoError(RuntimeError):
     """Raised when the Zenodo API rejects a request."""
 
 
-def dataset_zenodo_metadata(slug: str, title: str, description: str, creators: list[str]) -> dict[str, Any]:
+def dataset_zenodo_metadata(
+    slug: str, title: str, description: str, creators: list[str]
+) -> dict[str, Any]:
     """Build Zenodo metadata payload from dataset fields."""
     return {
         "metadata": {

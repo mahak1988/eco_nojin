@@ -24,6 +24,7 @@ Build (MSVC, from engine/cpp_core):
     cl /nologo /std:c++20 /O2 /EHsc /LD /Iinclude bindings\\c_api.cpp ^
        src\\climate.cpp src\\soil.cpp /Fe:hydroma_core.dll
 """
+
 from __future__ import annotations
 
 import ctypes

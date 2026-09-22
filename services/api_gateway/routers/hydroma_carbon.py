@@ -6,6 +6,7 @@ GET  /api/v1/hydroma/carbon          -> metadata
 GET  /api/v1/hydroma/carbon/{id}     -> one tool's metadata
 POST /api/v1/hydroma/carbon/{id}/run -> execute (pure compute)
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -26,12 +27,30 @@ _SPECS: list[dict[str, Any]] = [
         "description": "Sequestration for afforestation, soil-carbon, biochar and agroforestry projects.",
         "reference": "Verra VCS, Gold Standard, IPCC",
         "params": [
-            {"name": "project_type", "label": "Project type", "unit": "", "kind": "select",
-             "default": "afforestation", "options": _PROJECT_TYPES},
+            {
+                "name": "project_type",
+                "label": "Project type",
+                "unit": "",
+                "kind": "select",
+                "default": "afforestation",
+                "options": _PROJECT_TYPES,
+            },
             {"name": "area_ha", "label": "Area", "unit": "ha", "kind": "float", "default": 100.0},
-            {"name": "duration_years", "label": "Duration", "unit": "year", "kind": "int", "default": 10},
-            {"name": "region", "label": "Region", "unit": "", "kind": "select",
-             "default": "temperate", "options": ["temperate", "tropical"]},
+            {
+                "name": "duration_years",
+                "label": "Duration",
+                "unit": "year",
+                "kind": "int",
+                "default": 10,
+            },
+            {
+                "name": "region",
+                "label": "Region",
+                "unit": "",
+                "kind": "select",
+                "default": "temperate",
+                "options": ["temperate", "tropical"],
+            },
         ],
     },
 ]
@@ -83,6 +102,6 @@ def run_carbon_tool(model_id: str, params: dict[str, Any]) -> dict[str, Any]:
         result = _RUNNERS[model_id](kwargs)
     except (ValueError, TypeError, KeyError) as exc:
         raise HTTPException(status_code=422, detail=f"tool rejected inputs: {exc}") from exc
-    except Exception as exc:  # noqa: BLE001 - explicit failure, never silent
+    except Exception as exc:
         raise HTTPException(status_code=500, detail=f"tool execution failed: {exc}") from exc
     return {"id": model_id, "result": jsonable(result)}

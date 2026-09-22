@@ -31,6 +31,7 @@ logger = logging.getLogger(__name__)
 
 class StrainType(str, Enum):
     """Classification of biofertilizer strains."""
+
     NITROGEN_FIXING = "nitrogen_fixing"
     PHOSPHORUS_SOLUBILIZING = "phosphorus_solubilizing"
     POTASSIUM_SOLUBILIZING = "potassium_solubilizing"
@@ -41,6 +42,7 @@ class StrainType(str, Enum):
 
 class FormulationType(str, Enum):
     """Types of biofertilizer formulations."""
+
     LIQUID = "liquid"
     POWDER = "powder"
     GRANULE = "granule"
@@ -49,6 +51,7 @@ class FormulationType(str, Enum):
 
 class ApplicationMethod(str, Enum):
     """Application methods for biofertilizers."""
+
     SOIL_APPLICATION = "soil_application"
     SEED_TREATMENT = "seed_treatment"
     FOLIAR_SPRAY = "foliar_spray"
@@ -59,6 +62,7 @@ class ApplicationMethod(str, Enum):
 @dataclass
 class SoilCondition:
     """Soil conditions for application planning."""
+
     ph: float
     organic_carbon_pct: float
     nitrogen_kg_ha: float
@@ -73,6 +77,7 @@ class SoilCondition:
 @dataclass
 class StrainProfile:
     """Profile of a single bacterial strain."""
+
     strain_type: StrainType
     efficacy_score: float  # 0-100
     persistence_days: int
@@ -82,6 +87,7 @@ class StrainProfile:
 @dataclass
 class NojinInput:
     """Input for Nojin application calculation."""
+
     land_profile_id: str
     crop_type: str
     soil: SoilCondition
@@ -97,6 +103,7 @@ class NojinInput:
 @dataclass
 class NojinResult:
     """Result of Nojin application calculation."""
+
     land_profile_id: str
 
     # Recommended dosage
@@ -141,7 +148,7 @@ class NojinResult:
 class NojinCalculator:
     """
     Advanced Nojin biofertilizer application calculator.
-    
+
     Features:
     - Multi-strain synergy calculation
     - Seasonal dynamics modeling
@@ -149,12 +156,12 @@ class NojinCalculator:
     - Long-term persistence modeling
     - Calibration from field trials
     - Cross-phase integration
-    
+
     Example:
         >>> calculator = NojinCalculator()
         >>> soil = SoilCondition(ph=6.8, organic_carbon_pct=1.2, ...)
         >>> strains = [StrainProfile(StrainType.NITROGEN_FIXING, 85, 120)]
-        >>> input_data = NojinInput(land_profile_id="test", crop_type="wheat", 
+        >>> input_data = NojinInput(land_profile_id="test", crop_type="wheat",
         ...                         soil=soil, strains=strains, ...)
         >>> result = calculator.calculate(input_data)
     """
@@ -200,10 +207,10 @@ class NojinCalculator:
     def calculate(self, input_data: NojinInput) -> NojinResult:
         """
         Calculate optimal Nojin application parameters.
-        
+
         Args:
             input_data: NojinInput with soil, crop, and strain information
-            
+
         Returns:
             NojinResult with comprehensive recommendations
         """
@@ -289,7 +296,7 @@ class NojinCalculator:
     def _analyze_multi_strain(self, strains: list[StrainProfile] | None) -> tuple[float, str]:
         """
         Analyze multi-strain synergy.
-        
+
         Returns:
             Tuple of (synergy_score, compatibility_rating)
         """
@@ -302,7 +309,7 @@ class NojinCalculator:
         # Calculate synergy
         synergy_multiplier = 1.0
         for i, strain1 in enumerate(strains):
-            for strain2 in strains[i+1:]:
+            for strain2 in strains[i + 1 :]:
                 pair = tuple(sorted([strain1.strain_type, strain2.strain_type]))
                 if pair in self.STRAIN_SYNERGY:
                     synergy_multiplier *= self.STRAIN_SYNERGY[pair]
@@ -326,8 +333,7 @@ class NojinCalculator:
 
     def _calculate_dosage(self, input_data: NojinInput, synergy_score: float) -> float:
         """Calculate recommended dosage."""
-        crop_info = self.CROP_FACTORS.get(input_data.crop_type.lower(),
-                                          self.CROP_FACTORS["wheat"])
+        crop_info = self.CROP_FACTORS.get(input_data.crop_type.lower(), self.CROP_FACTORS["wheat"])
 
         base_rate = 2.0 if input_data.formulation_type == FormulationType.LIQUID else 5.0
         crop_factor = crop_info["factor"]
@@ -397,7 +403,9 @@ class NojinCalculator:
         fixation = base_fixation * n_modifier * (1 + synergy_bonus)
         return round(fixation, 1)
 
-    def _predict_phosphorus_solubilization(self, input_data: NojinInput, synergy_score: float) -> float:
+    def _predict_phosphorus_solubilization(
+        self, input_data: NojinInput, synergy_score: float
+    ) -> float:
         """Predict phosphorus solubilization percentage."""
         base_solubilization = 25.0
 
@@ -432,18 +440,21 @@ class NojinCalculator:
         score = 100.0
 
         if not (self.OPTIMAL_PH[0] <= soil.ph <= self.OPTIMAL_PH[1]):
-            ph_deviation = min(abs(soil.ph - self.OPTIMAL_PH[0]),
-                               abs(soil.ph - self.OPTIMAL_PH[1]))
+            ph_deviation = min(abs(soil.ph - self.OPTIMAL_PH[0]), abs(soil.ph - self.OPTIMAL_PH[1]))
             score -= ph_deviation * 10
 
         if not (self.OPTIMAL_TEMP_C[0] <= soil.temperature_c <= self.OPTIMAL_TEMP_C[1]):
-            temp_deviation = min(abs(soil.temperature_c - self.OPTIMAL_TEMP_C[0]),
-                                 abs(soil.temperature_c - self.OPTIMAL_TEMP_C[1]))
+            temp_deviation = min(
+                abs(soil.temperature_c - self.OPTIMAL_TEMP_C[0]),
+                abs(soil.temperature_c - self.OPTIMAL_TEMP_C[1]),
+            )
             score -= temp_deviation * 2
 
         if not (self.OPTIMAL_MOISTURE_PCT[0] <= soil.moisture_pct <= self.OPTIMAL_MOISTURE_PCT[1]):
-            moisture_deviation = min(abs(soil.moisture_pct - self.OPTIMAL_MOISTURE_PCT[0]),
-                                     abs(soil.moisture_pct - self.OPTIMAL_MOISTURE_PCT[1]))
+            moisture_deviation = min(
+                abs(soil.moisture_pct - self.OPTIMAL_MOISTURE_PCT[0]),
+                abs(soil.moisture_pct - self.OPTIMAL_MOISTURE_PCT[1]),
+            )
             score -= moisture_deviation * 0.5
 
         if soil.organic_carbon_pct > 1.5:
@@ -504,7 +515,9 @@ class NojinCalculator:
 
         return 90  # Default
 
-    def _calculate_soil_health_improvement(self, input_data: NojinInput, synergy_score: float) -> float:
+    def _calculate_soil_health_improvement(
+        self, input_data: NojinInput, synergy_score: float
+    ) -> float:
         """Calculate soil health improvement score."""
         base_improvement = 10.0
 
@@ -531,7 +544,7 @@ class NojinCalculator:
     def _calculate_water_efficiency_impact(self, input_data: NojinInput) -> float | None:
         """
         Calculate water efficiency impact (Phase 3 integration).
-        
+
         PGPR can improve water use efficiency by 10-20%.
         """
         if input_data.irrigation_available:
@@ -545,10 +558,12 @@ class NojinCalculator:
 
         return None
 
-    def _estimate_carbon_sequestration(self, input_data: NojinInput, soil_health: float) -> float | None:
+    def _estimate_carbon_sequestration(
+        self, input_data: NojinInput, soil_health: float
+    ) -> float | None:
         """
         Estimate carbon sequestration potential (Phase 8 MRV integration).
-        
+
         PGPR can contribute to soil carbon sequestration.
         """
         base_sequestration = 0.2  # t CO2/ha/year
@@ -584,9 +599,13 @@ class NojinCalculator:
 
         # pH recommendations
         if input_data.soil.ph < self.OPTIMAL_PH[0]:
-            recommendations.append(f"Apply lime to raise pH from {input_data.soil.ph:.1f} to {self.OPTIMAL_PH[0]}")
+            recommendations.append(
+                f"Apply lime to raise pH from {input_data.soil.ph:.1f} to {self.OPTIMAL_PH[0]}"
+            )
         elif input_data.soil.ph > self.OPTIMAL_PH[1]:
-            recommendations.append(f"Apply sulfur to lower pH from {input_data.soil.ph:.1f} to {self.OPTIMAL_PH[1]}")
+            recommendations.append(
+                f"Apply sulfur to lower pH from {input_data.soil.ph:.1f} to {self.OPTIMAL_PH[1]}"
+            )
 
         # Organic matter
         if input_data.soil.organic_carbon_pct < 1.0:
@@ -615,7 +634,9 @@ class NojinCalculator:
 
         return recommendations
 
-    def _calculate_suitability(self, compatibility: float, risk: str, synergy_score: float) -> float:
+    def _calculate_suitability(
+        self, compatibility: float, risk: str, synergy_score: float
+    ) -> float:
         """Calculate overall suitability score."""
         base = compatibility
 
@@ -633,10 +654,10 @@ class NojinCalculator:
     def calibrate_from_trials(self, trial_results: list[dict]) -> dict:
         """
         Calibrate model parameters from field trial results.
-        
+
         Args:
             trial_results: List of trial result dictionaries
-            
+
         Returns:
             Updated calibration parameters
         """
@@ -652,7 +673,9 @@ class NojinCalculator:
         self.calibration_data["trial_count"] = len(trial_results)
         self.calibration_data["last_calibration"] = datetime.now().isoformat()
 
-        logger.info(f"Calibrated with {len(trial_results)} trials, avg yield response: {avg_yield_response:.1f}%")
+        logger.info(
+            f"Calibrated with {len(trial_results)} trials, avg yield response: {avg_yield_response:.1f}%"
+        )
 
         return self.calibration_data
 

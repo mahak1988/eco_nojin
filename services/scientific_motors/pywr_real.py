@@ -18,9 +18,11 @@ References
 - Pywr: Tomlinson et al. (2016), J. Open Source Software; pywr.org
 - Water allocation modelling best practice (WEAP-alike node-link).
 """
+
 from __future__ import annotations
 
 import time
+from datetime import timedelta
 from typing import Any
 
 import numpy as np
@@ -46,6 +48,7 @@ try:
     )
     from pywr.parameters import DataFrameParameter
     from pywr.recorders import NumpyArrayNodeRecorder
+
     PYRW_AVAILABLE = True
 except Exception:  # pragma: no cover - import guard
     PYRW_AVAILABLE = False
@@ -77,15 +80,14 @@ class PywrWaterAllocationMotor(AbstractScientificMotor):
             MotorOutput("supply_series", "timeseries", "MCM", "Monthly supply"),
         ]
 
-    async def execute(
-        self, inputs: dict[str, Any], parameters: MotorParameters
-    ) -> MotorResult:
+    async def execute(self, inputs: dict[str, Any], parameters: MotorParameters) -> MotorResult:
         start_time = time.time()
         run_id = f"PYWR_{int(time.time())}"
 
         if not PYRW_AVAILABLE:
             return MotorResult(
-                run_id=run_id, motor_type=self.motor_type,
+                run_id=run_id,
+                motor_type=self.motor_type,
                 status=MotorStatus.FAILED,
                 error_message="pywr not installed (pip install pywr)",
             )
@@ -117,7 +119,9 @@ class PywrWaterAllocationMotor(AbstractScientificMotor):
                 model, pd.DataFrame({"demand": demand}, index=period_starts)
             )
             inflow_node = PywrInput(model, "inflow", max_flow=inflow_param)
-            reservoir = PywrReservoir(model, "reservoir", max_volume=capacity, initial_volume=capacity * 0.7)
+            reservoir = PywrReservoir(
+                model, "reservoir", max_volume=capacity, initial_volume=capacity * 0.7
+            )
             demand_node = PywrOutput(model, "demand", max_flow=demand_param, cost=-10.0)
             env_node = PywrOutput(model, "environment", cost=0.0)
 
@@ -165,7 +169,8 @@ class PywrWaterAllocationMotor(AbstractScientificMotor):
             )
         except Exception as exc:
             return MotorResult(
-                run_id=run_id, motor_type=self.motor_type,
+                run_id=run_id,
+                motor_type=self.motor_type,
                 status=MotorStatus.FAILED,
                 error_message=f"Pywr execution failed: {exc}",
                 execution_time_seconds=round(time.time() - start_time, 3),

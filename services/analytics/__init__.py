@@ -1,4 +1,5 @@
 """Analytics Module - Dashboards, Aggregations"""
+
 from services.analytics.schemas import (
     AggregationRequest,
     AggregationResult,

@@ -1,0 +1,41 @@
+# HDVI - Hydro-Drought Vegetation Index - Test Cases
+# Reference: HDVI methodology
+
+model: hdvi
+reference: "HDVI methodology"
+category: satellite
+language: python
+status: experimental
+
+tolerances:
+  rtol: 1e-3
+  atol: 1e-4
+
+cases:
+  - name: standard_ndvi_input
+    description: "Standard HDVI calculation with NDVI input"
+    inputs:
+      ndvi: 0.65
+      ndwi: 0.35
+      lst: 305.0  # K
+      albedo: 0.23
+    expected:
+      hdvi_index: 0.45
+      rtol: 1e-1
+
+  - name: drought_conditions
+    description: "HDVI under drought conditions"
+    inputs:
+      ndvi: 0.30
+      ndwi: 0.15
+      lst: 315.0
+      albedo: 0.28
+    expected:
+      hdvi_index: 0.15
+      rtol: 1e-1
+
+# Metadata for CI matrix
+ci_matrix:
+  backends: ["python"]
+  priority: medium
+  estimated_time_seconds: 15

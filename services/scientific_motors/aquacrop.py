@@ -1,4 +1,5 @@
 """AquaCrop Motor - FAO Crop Yield Model (Daily Water Balance)."""
+
 from __future__ import annotations
 
 import time
@@ -24,7 +25,7 @@ CROP_DATABASE = {
         "kc_max": 1.1,
         "p_lower": 0.20,
         "p_upper": 0.55,
-        "wp": 15.0,          # g/m2 biomass per mm water
+        "wp": 15.0,  # g/m2 biomass per mm water
         "harvest_index": 0.45,
         "growing_days": 150,
         "water_requirement_mm": 450,  # typical seasonal requirement

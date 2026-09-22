@@ -1,4 +1,5 @@
 """HEC-RAS Motor - Simplified Flood Simulation."""
+
 from __future__ import annotations
 
 import time
@@ -192,7 +193,11 @@ class HECRASMOTOR(AbstractScientificMotor):
         if is_latlon and len(y_coord) > 1 and len(x_coord) > 1:
             lat_mean = float(np.mean(y_coord))
             dy_m = float(np.abs(y_coord[1] - y_coord[0])) * 111000
-            dx_m = float(np.abs(x_coord[1] - x_coord[0])) * 111000 * float(np.cos(np.radians(lat_mean)))
+            dx_m = (
+                float(np.abs(x_coord[1] - x_coord[0]))
+                * 111000
+                * float(np.cos(np.radians(lat_mean)))
+            )
         else:
             dy_m = float(np.abs(y_coord[1] - y_coord[0])) if len(y_coord) > 1 else 30.0
             dx_m = float(np.abs(x_coord[1] - x_coord[0])) if len(x_coord) > 1 else 30.0

@@ -10,6 +10,7 @@ The bot runner calls :func:`evaluate_farm_alerts` periodically; actual
 message dispatch to farmers requires the farm→chat mapping which is
 documented in docs/en/14_telegram_bot.md.
 """
+
 from __future__ import annotations
 
 import logging
@@ -17,8 +18,7 @@ from collections.abc import Sequence
 
 from sqlalchemy.orm import Session
 
-from database import models  # noqa: F401
-from database.hub import hub
+from database import models
 from services.bots.core.alerts import (
     AlertRule,
     evaluate_rules,
@@ -30,9 +30,7 @@ from services.bots.core.alerts import (
 logger = logging.getLogger(__name__)
 
 
-def latest_real_satellite_row(
-    db: Session, farm_id: int
-) -> models.SatelliteAnalysis | None:
+def latest_real_satellite_row(db: Session, farm_id: int) -> models.SatelliteAnalysis | None:
     """Newest REAL (copernicus) satellite analysis row for a farm."""
     return (
         db.query(models.SatelliteAnalysis)

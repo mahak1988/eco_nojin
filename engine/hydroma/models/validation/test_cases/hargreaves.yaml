@@ -1,0 +1,73 @@
+# Hargreaves ET0 - Test Cases
+# Reference: Hargreaves & Samani 1985; FAO-56
+# Equation: ET0 = 0.0023 * (Tmean + 17.8) * sqrt(Tmax - Tmin) * Ra * 0.408
+
+model: hargreaves
+reference: "Hargreaves & Samani 1985; FAO-56"
+category: climate
+language: python
+status: stable
+
+tolerances:
+  rtol: 1e-3
+  atol: 1e-4
+
+cases:
+  - name: standard_example
+    description: "Standard Hargreaves example with typical conditions"
+    inputs:
+      tmin: 10.0
+      tmax: 25.0
+      latitude: 40.0
+      doy: 172
+      elevation: 100.0
+    expected:
+      # Ra at 40°N, doy 172 ≈ 41.87 MJ/m2/day
+      # ET0 = 0.0023 * (17.5 + 17.8) * sqrt(15) * 41.87 * 0.408 ≈ 5.37 mm/day
+      et0_mm_day: 5.37
+      rtol: 1e-2
+
+  - name: tropical_conditions
+    description: "Hargreaves in tropical conditions"
+    inputs:
+      tmin: 22.0
+      tmax: 32.0
+      latitude: 10.0
+      doy: 100
+      elevation: 50.0
+    expected:
+      et0_mm_day: 4.85
+      rtol: 1e-2
+
+  - name: high_elevation
+    description: "Hargreaves at high elevation"
+    inputs:
+      tmin: 5.0
+      tmax: 18.0
+      latitude: 45.0
+      doy: 150
+      elevation: 2000.0
+    expected:
+      # Ra at 45°N, doy 150 ≈ 38.5 MJ/m2/day
+      # Adjusted for elevation
+      et0_mm_day: 3.85
+      rtol: 1e-2
+
+  - name: extreme_temperature_range
+    description: "Large temperature difference"
+    inputs:
+      tmin: 5.0
+      tmax: 35.0
+      latitude: 40.0
+      doy: 172
+      elevation: 100.0
+    expected:
+      # Large sqrt(Tmax-Tmin) = sqrt(30) ≈ 5.48
+      et0_mm_day: 7.2
+      rtol: 1e-2
+
+# Metadata for CI matrix
+ci_matrix:
+  backends: ["python"]
+  priority: high
+  estimated_time_seconds: 30

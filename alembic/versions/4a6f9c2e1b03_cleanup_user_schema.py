@@ -5,6 +5,7 @@ Revises: 300c2f07b568
 Create Date: 2026-09-09
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -22,6 +23,11 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     bind = op.get_bind()
     inspector = sa.inspect(bind)
+    tables = inspector.get_table_names()
+
+    if "users" not in tables:
+        return  # users table doesn't exist (e.g., village_hub branch), skip
+
     columns = [c["name"] for c in inspector.get_columns("users")]
 
     if "password_hash" in columns:
@@ -37,6 +43,11 @@ def upgrade() -> None:
 def downgrade() -> None:
     bind = op.get_bind()
     inspector = sa.inspect(bind)
+    tables = inspector.get_table_names()
+
+    if "users" not in tables:
+        return  # users table doesn't exist, skip
+
     columns = [c["name"] for c in inspector.get_columns("users")]
 
     if "address" in columns:

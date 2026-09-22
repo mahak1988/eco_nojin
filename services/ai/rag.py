@@ -8,9 +8,17 @@ Contract-aware version - تولید شده مطابق با test_security.py
 """
 
 import re
-from pathlib import Path
-from typing import List, Dict, Any
 from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
+
+# ── SLM (Small Language Model) support ──────────────────────────
+try:
+    from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+
+    HF_AVAILABLE = True
+except Exception:
+    HF_AVAILABLE = False
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -29,20 +37,21 @@ class Document:
     content: str
     language: str = "fa"
     chunk_index: int = 0
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
 class RAGIndex:
     """ایندکس سبک RAG با BM25 ساده"""
-    documents: List[Document] = field(default_factory=list)
-    inverted_index: Dict[str, List[str]] = field(default_factory=dict)
+
+    documents: list[Document] = field(default_factory=list)
+    inverted_index: dict[str, list[str]] = field(default_factory=dict)
 
     def _is_persian(self, text: str) -> bool:
-        persian_chars = sum(1 for ch in text if "\u0600" <= ch <= "\u06FF")
+        persian_chars = sum(1 for ch in text if "\u0600" <= ch <= "\u06ff")
         return persian_chars >= 3
 
-    def _chunk(self, text: str, chunk_size: int = 500) -> List[str]:
+    def _chunk(self, text: str, chunk_size: int = 500) -> list[str]:
         text = re.sub(r"\s+", " ", text.strip())
         if len(text) <= chunk_size:
             return [text] if text else []
@@ -59,7 +68,7 @@ class RAGIndex:
             chunks.append(current)
         return chunks
 
-    def _tokenize(self, text: str) -> List[str]:
+    def _tokenize(self, text: str) -> list[str]:
         text = text.lower()
         text = re.sub(r"[^\u0600-\u06FFa-zA-Z0-9\s]", " ", text)
         return [t for t in text.split() if len(t) >= 2]
@@ -73,12 +82,12 @@ class RAGIndex:
             if doc.id not in self.inverted_index[token]:
                 self.inverted_index[token].append(doc.id)
 
-    def search(self, query: str, k: int = 5) -> List[Document]:
+    def search(self, query: str, k: int = 5) -> list[Document]:
         """جستجو با پارامتر k (سازگار با تست)"""
         query_tokens = self._tokenize(query)
         if not query_tokens:
             return []
-        scores: Dict[str, int] = {}
+        scores: dict[str, int] = {}
         for token in query_tokens:
             if token in self.inverted_index:
                 for doc_id in self.inverted_index[token]:
@@ -98,30 +107,78 @@ class RAGIndex:
 
 # ── دانش پایه دامنه (fallback) ─────────────────────────────────
 _SYNTHETIC_DOCS = [
-    ("آبخیزداری", "آبخیزداری علم مدیریت حوضه‌های آبخیز است که شامل حفاظت از خاک و آب، کنترل فرسایش و مدیریت رواناب می‌شود. این علم در مناطق خشک و نیمه‌خشک اهمیت ویژه‌ای دارد."),
-    ("بندسار", "بندسار یک سازهٔ آبخیزداری است که برای کاهش رواناب سطحی، افزایش نفوذپذیری خاک و حفظ رطوبت در مناطق خشک و نیمه‌خشک استفاده می‌شود."),
-    ("رواناب", "رواناب سطحی در مناطق خشک می‌تواند تا ۴۰٪ بارندگی سالانه را هدر دهد. سازه‌های آبخیزداری مانند بندسار و گابیون می‌توانند این ضایعات را کاهش دهند."),
-    ("SPI", "شاخص SPI یا Standardized Precipitation Index برای ارزیابی خشکسالی هواشناسی استفاده می‌شود. مقادیر منفی SPI نشان‌دهنده شرایط خشک است."),
-    ("کاشت نهال", "کاشت نهال در مناطق خشک نیازمند انتخاب گونه‌های مقاوم به خشکی مانند بادام کوهی، ارس و بلوط ایرانی است."),
+    (
+        "آبخیزداری",
+        "آبخیزداری علم مدیریت حوضه‌های آبخیز است که شامل حفاظت از خاک و آب، کنترل فرسایش و مدیریت رواناب می‌شود. این علم در مناطق خشک و نیمه‌خشک اهمیت ویژه‌ای دارد.",
+    ),
+    (
+        "بندسار",
+        "بندسار یک سازهٔ آبخیزداری است که برای کاهش رواناب سطحی، افزایش نفوذپذیری خاک و حفظ رطوبت در مناطق خشک و نیمه‌خشک استفاده می‌شود.",
+    ),
+    (
+        "رواناب",
+        "رواناب سطحی در مناطق خشک می‌تواند تا ۴۰٪ بارندگی سالانه را هدر دهد. سازه‌های آبخیزداری مانند بندسار و گابیون می‌توانند این ضایعات را کاهش دهند.",
+    ),
+    (
+        "SPI",
+        "شاخص SPI یا Standardized Precipitation Index برای ارزیابی خشکسالی هواشناسی استفاده می‌شود. مقادیر منفی SPI نشان‌دهنده شرایط خشک است.",
+    ),
+    (
+        "کاشت نهال",
+        "کاشت نهال در مناطق خشک نیازمند انتخاب گونه‌های مقاوم به خشکی مانند بادام کوهی، ارس و بلوط ایرانی است.",
+    ),
     ("آبیاری قطره‌ای", "آبیاری قطره‌ای می‌تواند مصرف آب را تا ۶۰٪ نسبت به آبیاری غرقابی کاهش دهد."),
-    ("کود بیولوژیک", "بیوکودها شامل میکروارگانیسم‌های مفید مانند باکتری‌های تثبیت‌کننده نیتروژن، قارچ‌های میکوریزا و باکتری‌های حل‌کننده فسفات هستند."),
-    ("فرسایش خاک", "فرسایش بادی در مناطق خشک می‌تواند سالانه تا ۲۰ تن در هکتار خاک حاصلخیز را از بین ببرد."),
-    ("بیوچار", "بیوچار یک ماده کربنی پایدار است که از پیرولیز زیست‌توده تولید می‌شود و ظرفیت نگهداری آب خاک را تا ۳۰٪ افزایش می‌دهد."),
+    (
+        "کود بیولوژیک",
+        "بیوکودها شامل میکروارگانیسم‌های مفید مانند باکتری‌های تثبیت‌کننده نیتروژن، قارچ‌های میکوریزا و باکتری‌های حل‌کننده فسفات هستند.",
+    ),
+    (
+        "فرسایش خاک",
+        "فرسایش بادی در مناطق خشک می‌تواند سالانه تا ۲۰ تن در هکتار خاک حاصلخیز را از بین ببرد.",
+    ),
+    (
+        "بیوچار",
+        "بیوچار یک ماده کربنی پایدار است که از پیرولیز زیست‌توده تولید می‌شود و ظرفیت نگهداری آب خاک را تا ۳۰٪ افزایش می‌دهد.",
+    ),
     ("کربن خاک", "افزایش ۱٪ ماده آلی در خاک می‌تواند تا ۱۶۰ تن کربن در هر هکتار ذخیره کند."),
     ("اکوتوریسم", "اکوتوریسم روستایی می‌تواند درآمد پایدار برای جوامع محلی ایجاد کند."),
-    ("ظرفیت برد", "ظرفیت برد اکولوژیک حداکثر تعداد بازدیدکنندگانی است که می‌توانند بدون آسیب به محیط‌زیست از یک منطقه بازدید کنند."),
+    (
+        "ظرفیت برد",
+        "ظرفیت برد اکولوژیک حداکثر تعداد بازدیدکنندگانی است که می‌توانند بدون آسیب به محیط‌زیست از یک منطقه بازدید کنند.",
+    ),
     ("ترسیب کربن", "هر هکتار جنگل می‌تواند سالانه بین ۱۰ تا ۲۰ تن CO2 جذب کند."),
-    ("تطبیق با تغییر اقلیم", "تطبیق کشاورزی با تغییر اقلیم شامل استفاده از ارقام مقاوم، تغییر تاریخ کاشت و تنوع‌بخشی به محصولات است."),
+    (
+        "تطبیق با تغییر اقلیم",
+        "تطبیق کشاورزی با تغییر اقلیم شامل استفاده از ارقام مقاوم، تغییر تاریخ کاشت و تنوع‌بخشی به محصولات است.",
+    ),
     ("کشاورزی ارگانیک", "محصولات ارگانیک در بازارهای جهانی ۲۰-۵۰٪ گران‌تر از محصولات متعارف هستند."),
-    ("زنجیره تأمین", "شفافیت در زنجیره تأمین با استفاده از فناوری بلاکچین می‌تواند اعتماد مصرف‌کننده را افزایش دهد."),
+    (
+        "زنجیره تأمین",
+        "شفافیت در زنجیره تأمین با استفاده از فناوری بلاکچین می‌تواند اعتماد مصرف‌کننده را افزایش دهد.",
+    ),
     ("بیمه شاخص‌محور", "بیمه شاخص‌محور بر اساس شاخص‌های هواشناسی خسارت را پرداخت می‌کند."),
     ("گرده‌افشانی", "زنبورها و حشرات گرده‌افشان مسئول ۷۵٪ گرده‌افشانی محصولات غذایی جهان هستند."),
-    ("گابیون", "گابیون یک سازه حفاظتی از سیم و سنگ است که برای کنترل فرسایش و تثبیت شیب‌ها استفاده می‌شود."),
-    ("ترانشه", "ترانشه‌های جذب آب سازه‌های خطی هستند که باعث جذب رواناب و تغذیه سفره آب زیرزمینی می‌شوند."),
-    ("بادشکن", "بادشکن‌های بیولوژیک با کاشت درختان در جهت باد غالب، سرعت باد را کاهش داده و فرسایش بادی را کنترل می‌کنند."),
-    ("میکوریزا", "قارچ‌های میکوریزا همزیست با ریشه گیاهان هستند و جذب آب و مواد غذایی را افزایش می‌دهند."),
+    (
+        "گابیون",
+        "گابیون یک سازه حفاظتی از سیم و سنگ است که برای کنترل فرسایش و تثبیت شیب‌ها استفاده می‌شود.",
+    ),
+    (
+        "ترانشه",
+        "ترانشه‌های جذب آب سازه‌های خطی هستند که باعث جذب رواناب و تغذیه سفره آب زیرزمینی می‌شوند.",
+    ),
+    (
+        "بادشکن",
+        "بادشکن‌های بیولوژیک با کاشت درختان در جهت باد غالب، سرعت باد را کاهش داده و فرسایش بادی را کنترل می‌کنند.",
+    ),
+    (
+        "میکوریزا",
+        "قارچ‌های میکوریزا همزیست با ریشه گیاهان هستند و جذب آب و مواد غذایی را افزایش می‌دهند.",
+    ),
     ("تنوع زیستی", "تنوع زیستی اکوسیستم‌های کشاورزی پایداری آن‌ها را افزایش می‌دهد."),
-    ("آبخوان", "تغذیه مصنوعی آبخوان با هدایت رواناب به مناطق نفوذپذیر باعث افزایش ذخایر آب زیرزمینی می‌شود."),
+    (
+        "آبخوان",
+        "تغذیه مصنوعی آبخوان با هدایت رواناب به مناطق نفوذپذیر باعث افزایش ذخایر آب زیرزمینی می‌شود.",
+    ),
     ("خشکسالی", "خشکسالی هواشناسی با کاهش بارش نسبت به میانگین بلندمدت تعریف می‌شود."),
     ("ماده آلی خاک", "ماده آلی خاک نقش حیاتی در حاصلخیزی، ساختار و ظرفیت نگهداری آب دارد."),
     ("کمپوست", "کمپوست حاصل تجزیه هوازی مواد آلی است که به عنوان کود آلی استفاده می‌شود."),
@@ -133,8 +190,14 @@ _SYNTHETIC_DOCS = [
     ("منابع طبیعی", "مدیریت پایدار منابع طبیعی شامل حفاظت از خاک، آب، جنگل و مرتع است."),
     ("مرتع", "مراتع مناطق پوشیده از گیاهان علوفه‌ای طبیعی هستند که برای چرای دام استفاده می‌شوند."),
     ("جنگلداری", "جنگلداری پایدار شامل کاشت، داشت و برداشت اصولی درختان است."),
-    ("کشاورزی دقیق", "کشاورزی دقیق با استفاده از فناوری‌هایی مانند GPS و سنجش از دور ورودی‌ها را بهینه می‌کند."),
-    ("سنجش از دور", "سنجش از دور با تصاویر ماهواره‌ای پایش محصولات و منابع طبیعی را امکان‌پذیر می‌کند."),
+    (
+        "کشاورزی دقیق",
+        "کشاورزی دقیق با استفاده از فناوری‌هایی مانند GPS و سنجش از دور ورودی‌ها را بهینه می‌کند.",
+    ),
+    (
+        "سنجش از دور",
+        "سنجش از دور با تصاویر ماهواره‌ای پایش محصولات و منابع طبیعی را امکان‌پذیر می‌کند.",
+    ),
     ("NDVI", "شاخص NDVI یا Normalized Difference Vegetation Index وضعیت پوشش گیاهی را نشان می‌دهد."),
     ("بلاکچین", "بلاکچین یک فناوری دفتر کل توزیع‌شده است که شفافیت در تراکنش‌ها را تضمین می‌کند."),
     ("توکن", "توکن‌های دیجیتال می‌توانند نماینده دارایی‌های فیزیکی مانند اعتبار کربن باشند."),
@@ -225,11 +288,11 @@ class _IndexSingleton:
         self._built = True
         return count
 
-    def _doc_to_dict(self, doc: Document) -> Dict[str, Any]:
+    def _doc_to_dict(self, doc: Document) -> dict[str, Any]:
         """تبدیل Document به dict با کلیدهای contract-aware"""
         result = {
-            FILE_KEY: doc.file,      # کلید اصلی (file یا path)
-            CONTENT_KEY: doc.content, # کلید محتوا (content یا text)
+            FILE_KEY: doc.file,  # کلید اصلی (file یا path)
+            CONTENT_KEY: doc.content,  # کلید محتوا (content یا text)
             "id": doc.id,
             "language": doc.language,
             "chunk_index": doc.chunk_index,
@@ -246,7 +309,7 @@ class _IndexSingleton:
             result["text"] = doc.content
         return result
 
-    def search(self, query: str, k: int = 5) -> List[Dict[str, Any]]:
+    def search(self, query: str, k: int = 5) -> list[dict[str, Any]]:
         """جستجو با پارامتر k - سازگار با تست"""
         if not self._built:
             self.build()
@@ -260,12 +323,64 @@ class _IndexSingleton:
 # ── singleton سراسری ───────────────────────────────────────────
 index = _IndexSingleton()
 
+# ── SLM (Small Language Model) support ──────────────────────────
+if HF_AVAILABLE:
+    _slm_model = None
+    _slm_tokenizer = None
+    _slm_pipeline = None
+
+    def _init_slm(model_name: str = "microsoft/Phi-4-mini-instruct") -> None:
+        """Init SLM if not already initialised."""
+        global _slm_model, _slm_tokenizer, _slm_pipeline
+        if _slm_model is None:
+            try:
+                _slm_tokenizer = AutoTokenizer.from_pretrained(model_name)
+                _slm_model = AutoModelForCausalLM.from_pretrained(
+                    model_name,
+                    device_map="auto",
+                    trust_remote_code=True,
+                )
+                _slm_pipeline = pipeline(
+                    "text-generation",
+                    model=_slm_model,
+                    tokenizer=_slm_tokenizer,
+                    model_kwargs={"device_map": "auto"},
+                )
+            except Exception as e:
+                logger.warning(f"SLM init failed, falling back to mock: {e}")
+
+    def _run_slm(self, prompt: str, max_new_tokens: int = 512) -> str:
+        """Run SLM inference."""
+        if _slm_pipeline is None:
+            _init_slm()
+        if _slm_pipeline is not None:
+            try:
+                result = _slm_pipeline(
+                    prompt,
+                    max_new_tokens=max_new_tokens,
+                    temperature=0.7,
+                    do_sample=True,
+                    pad_token_id=_slm_tokenizer.eos_token_id,
+                )
+                return result[0]["generated_text"][len(prompt) :] if result else ""
+            except Exception:
+                return ""
+        return ""
+
+else:
+
+    def _init_slm(model_name: str = "microsoft/Phi-4-mini-instruct") -> None:
+        pass
+
+    def _run_slm(self, prompt: str, max_new_tokens: int = 512) -> str:
+        return ""
+
 
 def build() -> int:
     """تابع کمکی سازگار با import مستقیم"""
     return index.build()
 
 
-def search(query: str, k: int = 5) -> List[Dict[str, Any]]:
+def search(query: str, k: int = 5) -> list[dict[str, Any]]:
     """تابع کمکی جستجو"""
     return index.search(query, k=k)

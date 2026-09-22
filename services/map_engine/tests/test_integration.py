@@ -1,4 +1,5 @@
 """Integration tests for Map Engine"""
+
 import pytest
 
 from services.map_engine.smart_service import (

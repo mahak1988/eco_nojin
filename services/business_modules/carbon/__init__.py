@@ -19,7 +19,7 @@ from services.business_modules.carbon.verra_integration import (
 
 __all__ = [
     "CarbonTokenService",
-    "get_tokenization_service",
     "VerraService",
+    "get_tokenization_service",
     "get_verra_integration",
 ]

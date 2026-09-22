@@ -5,6 +5,7 @@
 - `circuit_breaker`: after N WAF blocks from an IP inside a window, the IP
   is auto-blocked for a cooldown (self-healing against scanners/brute force).
 """
+
 import logging
 import os
 import subprocess
@@ -116,5 +117,14 @@ class HealthWatchdog:
 
 
 watchdog = HealthWatchdog(
-    cmd=[sys.executable, "-m", "uvicorn", "services.api_gateway.main:app", "--port", "8011", "--host", os.environ.get("HOST", "127.0.0.1")]
+    cmd=[
+        sys.executable,
+        "-m",
+        "uvicorn",
+        "services.api_gateway.main:app",
+        "--port",
+        "8011",
+        "--host",
+        os.environ.get("HOST", "127.0.0.1"),
+    ]
 )

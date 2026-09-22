@@ -10,7 +10,7 @@ calibration is required for production use.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Optional
 
 import numpy as np
 
@@ -29,16 +29,86 @@ class CropPhenology:
 
 # Reference GDD parameters (FAO literature averages)
 CROP_PHENOLOGY: dict[str, CropPhenology] = {
-    "wheat": CropPhenology(name="wheat", t_base=10.0, gdd_emergence=120.0, gdd_tillering=350.0, gdd_flowering=650.0, gdd_maturity=950.0),
-    "maize": CropPhenology(name="maize", t_base=10.0, gdd_emergence=90.0, gdd_tillering=280.0, gdd_flowering=550.0, gdd_maturity=850.0),
-    "rice": CropPhenology(name="rice", t_base=10.0, gdd_emergence=80.0, gdd_tillering=250.0, gdd_flowering=500.0, gdd_maturity=800.0),
-    "soybean": CropPhenology(name="soybean", t_base=10.0, gdd_emergence=100.0, gdd_tillering=300.0, gdd_flowering=580.0, gdd_maturity=880.0),
-    "potato": CropPhenology(name="potato", t_base=7.0, gdd_emergence=110.0, gdd_tillering=320.0, gdd_flowering=600.0, gdd_maturity=900.0),
-    "tomato": CropPhenology(name="tomato", t_base=10.0, gdd_emergence=90.0, gdd_tillering=260.0, gdd_flowering=520.0, gdd_maturity=820.0),
-    "cotton": CropPhenology(name="cotton", t_base=15.0, gdd_emergence=100.0, gdd_tillering=300.0, gdd_flowering=580.0, gdd_maturity=880.0),
-    "sorghum": CropPhenology(name="sorghum", t_base=12.0, gdd_emergence=95.0, gdd_tillering=290.0, gdd_flowering=560.0, gdd_maturity=860.0),
-    "barley": CropPhenology(name="barley", t_base=10.0, gdd_emergence=115.0, gdd_tillering=340.0, gdd_flowering=640.0, gdd_maturity=940.0),
-    "default": CropPhenology(name="default", t_base=10.0, gdd_emergence=100.0, gdd_tillering=300.0, gdd_flowering=580.0, gdd_maturity=880.0),
+    "wheat": CropPhenology(
+        name="wheat",
+        t_base=10.0,
+        gdd_emergence=120.0,
+        gdd_tillering=350.0,
+        gdd_flowering=650.0,
+        gdd_maturity=950.0,
+    ),
+    "maize": CropPhenology(
+        name="maize",
+        t_base=10.0,
+        gdd_emergence=90.0,
+        gdd_tillering=280.0,
+        gdd_flowering=550.0,
+        gdd_maturity=850.0,
+    ),
+    "rice": CropPhenology(
+        name="rice",
+        t_base=10.0,
+        gdd_emergence=80.0,
+        gdd_tillering=250.0,
+        gdd_flowering=500.0,
+        gdd_maturity=800.0,
+    ),
+    "soybean": CropPhenology(
+        name="soybean",
+        t_base=10.0,
+        gdd_emergence=100.0,
+        gdd_tillering=300.0,
+        gdd_flowering=580.0,
+        gdd_maturity=880.0,
+    ),
+    "potato": CropPhenology(
+        name="potato",
+        t_base=7.0,
+        gdd_emergence=110.0,
+        gdd_tillering=320.0,
+        gdd_flowering=600.0,
+        gdd_maturity=900.0,
+    ),
+    "tomato": CropPhenology(
+        name="tomato",
+        t_base=10.0,
+        gdd_emergence=90.0,
+        gdd_tillering=260.0,
+        gdd_flowering=520.0,
+        gdd_maturity=820.0,
+    ),
+    "cotton": CropPhenology(
+        name="cotton",
+        t_base=15.0,
+        gdd_emergence=100.0,
+        gdd_tillering=300.0,
+        gdd_flowering=580.0,
+        gdd_maturity=880.0,
+    ),
+    "sorghum": CropPhenology(
+        name="sorghum",
+        t_base=12.0,
+        gdd_emergence=95.0,
+        gdd_tillering=290.0,
+        gdd_flowering=560.0,
+        gdd_maturity=860.0,
+    ),
+    "barley": CropPhenology(
+        name="barley",
+        t_base=10.0,
+        gdd_emergence=115.0,
+        gdd_tillering=340.0,
+        gdd_flowering=640.0,
+        gdd_maturity=940.0,
+    ),
+    "default": CropPhenology(
+        name="default",
+        t_base=10.0,
+        gdd_emergence=100.0,
+        gdd_tillering=300.0,
+        gdd_flowering=580.0,
+        gdd_maturity=880.0,
+    ),
 }
 
 
@@ -62,8 +132,8 @@ class PhenologyOutput:
     cumulative_gdd: list[float] = field(default_factory=list)
     stages: list[str] = field(default_factory=list)
     current_stage: str = "pre_planting"
-    days_to_flowering: int = -1
-    days_to_maturity: int = -1
+    days_to_flowering: Optional[int] = None
+    days_to_maturity: Optional[int] = None
     data_source: str = "simulated"
     model: str = "GDD phenology (FAO literature parameters)"
 
@@ -82,7 +152,12 @@ def _stage_from_gdd(gdd: float, pheno: CropPhenology) -> str:
     if gdd < pheno.gdd_flowering:
         return "vegetative"
     if gdd < pheno.gdd_maturity:
-        return "reproductive"
+        # Grain filling / yield formation spans the second half of the
+        # flowering -> maturity thermal window (AquaCrop/FAO-56 stage names).
+        flowering_to_maturity = pheno.gdd_maturity - pheno.gdd_flowering
+        if gdd < pheno.gdd_flowering + 0.5 * flowering_to_maturity:
+            return "flowering"
+        return "grain_fill"
     return "maturity"
 
 
@@ -105,8 +180,8 @@ def run_phenology(inputs: PhenologyInput) -> PhenologyOutput:
     stages: list[str] = []
     cumulative = 0.0
     stage = "pre_planting"
-    days_to_flowering = -1
-    days_to_maturity = -1
+    days_to_flowering: Optional[int] = None
+    days_to_maturity: Optional[int] = None
 
     for i in range(n):
         gdd = _daily_gdd(tmin[i], tmax[i], pheno.t_base)
@@ -117,9 +192,9 @@ def run_phenology(inputs: PhenologyInput) -> PhenologyOutput:
         cum_gdd.append(round(cumulative, 4))
         stages.append(stage)
 
-        if days_to_flowering == -1 and cumulative >= pheno.gdd_flowering:
+        if days_to_flowering is None and cumulative >= pheno.gdd_flowering:
             days_to_flowering = i + 1
-        if days_to_maturity == -1 and cumulative >= pheno.gdd_maturity:
+        if days_to_maturity is None and cumulative >= pheno.gdd_maturity:
             days_to_maturity = i + 1
 
     return PhenologyOutput(

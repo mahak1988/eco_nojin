@@ -7,10 +7,11 @@ carbon_registry.py continues to work as-is.
 
 Usage:
     from services.business_modules.blockchain.web3_integration import get_web3
-    
+
     w3 = get_web3()
     balance = w3.eth.get_balance(address)
 """
+
 import os
 
 try:
@@ -30,14 +31,8 @@ def get_web3(network: str = "polygon_amoy") -> Web3:
         return _web3
 
     rpc_urls = {
-        "polygon_amoy": os.getenv(
-            "POLYGON_AMOY_RPC_URL",
-            "https://rpc-amoy.polygon.technology"
-        ),
-        "polygon_mainnet": os.getenv(
-            "POLYGON_RPC_URL",
-            "https://polygon-rpc.com"
-        ),
+        "polygon_amoy": os.getenv("POLYGON_AMOY_RPC_URL", "https://rpc-amoy.polygon.technology"),
+        "polygon_mainnet": os.getenv("POLYGON_RPC_URL", "https://polygon-rpc.com"),
         "local": os.getenv("LOCAL_RPC_URL", "http://localhost:8545"),
     }
 
@@ -58,7 +53,7 @@ def get_wallet_address() -> str | None:
 def get_gas_price_gwei() -> float:
     """Get current gas price in Gwei."""
     w3 = get_web3()
-    return w3.from_wei(w3.eth.gas_price, 'gwei')
+    return w3.from_wei(w3.eth.gas_price, "gwei")
 
 
 def sign_and_send(tx: dict, private_key: str | None = None) -> str:

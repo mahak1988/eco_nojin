@@ -4,20 +4,21 @@ from datetime import datetime
 # موتور بهبودیافته محاسبه فرمول‌ها
 # این موتور به جای ارزیابی فرمول‌های پیچیده، از مقادیر پیش‌فرض علمی استفاده می‌کند
 
+
 def calculate_indicator_improved(indicator, region_data):
     """محاسبه بهبودیافته شاخص با استفاده از مقادیر پیش‌فرض"""
-    
+
     # اولویت ۱: مقدار پیش‌فرض تعریف‌شده
     if "default_value" in indicator:
         value = indicator["default_value"]
     # اولویت ۲: محاسبه ساده بر اساس داده‌های منطقه
     else:
         value = _simple_calculation(indicator["formula"], region_data)
-    
+
     # تعیین وضعیت
     threshold = indicator.get("threshold", {})
     status = _evaluate_status(value, threshold)
-    
+
     return {
         "specialty": indicator.get("specialty", ""),
         "indicator": indicator.get("name", ""),
@@ -32,12 +33,13 @@ def calculate_indicator_improved(indicator, region_data):
         "timestamp": datetime.now().isoformat(),
     }
 
+
 def _simple_calculation(formula, region_data):
     """محاسبه ساده بر اساس داده‌های منطقه"""
     # استخراج پارامترهای در دسترس
     temp = region_data.get("temp", 15)
     rain = region_data.get("rain", 300)
-    
+
     # فرمول‌های قابل محاسبه
     if "T_mean" in formula or "temp" in formula.lower():
         return temp
@@ -53,15 +55,16 @@ def _simple_calculation(formula, region_data):
         # برای فرمول‌های پیچیده، مقدار پیش‌فرض برگردان
         return 0.5
 
+
 def _evaluate_status(value, threshold):
     """تعیین وضعیت بر اساس محدوده"""
     if not threshold:
         return "نامشخص"
-    
-    min_val = threshold.get("min", -float('inf'))
+
+    min_val = threshold.get("min", -float("inf"))
     optimal = threshold.get("optimal", value)
-    max_val = threshold.get("max", float('inf'))
-    
+    max_val = threshold.get("max", float("inf"))
+
     if value < min_val:
         return "زیر حد"
     elif value > max_val:

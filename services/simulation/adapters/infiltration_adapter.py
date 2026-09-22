@@ -1,4 +1,5 @@
 """Infiltration Adapter - Water infiltration & soil moisture"""
+
 from datetime import UTC, datetime
 
 from services.simulation.base import BaseSimulator, SimulatorRegistry
@@ -13,6 +14,7 @@ from services.simulation.schemas import (
 @SimulatorRegistry.register
 class InfiltrationAdapter(BaseSimulator):
     """نفوذپذیری آب و رطوبت خاک - Green-Ampt Model"""
+
     simulator_type = SimulationType.INFILTRATION
     name = "Green-Ampt"
     version = "1.0.0"
@@ -42,12 +44,14 @@ class InfiltrationAdapter(BaseSimulator):
             cumulative += infiltrated
             runoff = max(0, rainfall - infiltrated)
 
-            time_series.append({
-                "hour": hour,
-                "infiltration_rate_mm_hr": round(f, 2),
-                "cumulative_mm": round(cumulative, 2),
-                "runoff_mm": round(runoff, 2),
-            })
+            time_series.append(
+                {
+                    "hour": hour,
+                    "infiltration_rate_mm_hr": round(f, 2),
+                    "cumulative_mm": round(cumulative, 2),
+                    "runoff_mm": round(runoff, 2),
+                }
+            )
 
         return SimulationResult(
             simulation_id=ctx.simulation_id,
@@ -61,8 +65,10 @@ class InfiltrationAdapter(BaseSimulator):
                 "total_infiltration_mm": round(cumulative, 2),
                 "total_runoff_mm": round(ctx.weather.precipitation_mm - cumulative, 2),
                 "infiltration_efficiency_pct": round(
-                    (cumulative / ctx.weather.precipitation_mm * 100) if ctx.weather.precipitation_mm > 0 else 100,
-                    1
+                    (cumulative / ctx.weather.precipitation_mm * 100)
+                    if ctx.weather.precipitation_mm > 0
+                    else 100,
+                    1,
                 ),
             },
             time_series=time_series,
@@ -71,15 +77,25 @@ class InfiltrationAdapter(BaseSimulator):
     def _suction_head(self, texture: str) -> float:
         """Suction head (mm) by soil texture"""
         return {
-            "sand": 50, "loamy_sand": 80, "sandy_loam": 120,
-            "loam": 200, "silt_loam": 280, "silt": 350,
-            "clay_loam": 300, "clay": 450,
+            "sand": 50,
+            "loamy_sand": 80,
+            "sandy_loam": 120,
+            "loam": 200,
+            "silt_loam": 280,
+            "silt": 350,
+            "clay_loam": 300,
+            "clay": 450,
         }.get(texture.lower(), 200)
 
     def _porosity(self, texture: str) -> float:
         """Porosity by soil texture"""
         return {
-            "sand": 0.40, "loamy_sand": 0.42, "sandy_loam": 0.44,
-            "loam": 0.46, "silt_loam": 0.48, "silt": 0.50,
-            "clay_loam": 0.48, "clay": 0.52,
+            "sand": 0.40,
+            "loamy_sand": 0.42,
+            "sandy_loam": 0.44,
+            "loam": 0.46,
+            "silt_loam": 0.48,
+            "silt": 0.50,
+            "clay_loam": 0.48,
+            "clay": 0.52,
         }.get(texture.lower(), 0.46)

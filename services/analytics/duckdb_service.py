@@ -15,6 +15,7 @@ Design
 
 DuckDB reference: https://duckdb.org/docs/
 """
+
 from __future__ import annotations
 
 from collections.abc import Sequence
@@ -59,7 +60,9 @@ def summarize_satellite_rows(rows: Sequence[Any]) -> dict[str, Any]:
     if not data:
         return {
             "analyses": 0,
-            "ndvi_mean": None, "ndvi_min": None, "ndvi_max": None,
+            "ndvi_mean": None,
+            "ndvi_min": None,
+            "ndvi_max": None,
             "ndvi_latest": None,
             "real_data_count": 0,
             "engine": "duckdb",
@@ -67,9 +70,7 @@ def summarize_satellite_rows(rows: Sequence[Any]) -> dict[str, Any]:
 
     # DuckDB in-process engine: load rows into a temp table, then run SQL.
     con = duckdb.connect()
-    con.execute(
-        "CREATE TEMP TABLE sat (ndvi DOUBLE, evi DOUBLE, savi DOUBLE, data_source VARCHAR)"
-    )
+    con.execute("CREATE TEMP TABLE sat (ndvi DOUBLE, evi DOUBLE, savi DOUBLE, data_source VARCHAR)")
     con.executemany(
         "INSERT INTO sat VALUES (?, ?, ?, ?)",
         [
@@ -82,14 +83,15 @@ def summarize_satellite_rows(rows: Sequence[Any]) -> dict[str, Any]:
         " FROM sat WHERE ndvi IS NOT NULL"
     ).fetchone()
     latest_row = con.execute(
-        "SELECT round(ndvi, 4) FROM sat WHERE ndvi IS NOT NULL"
-        " ORDER BY rowid DESC LIMIT 1"
+        "SELECT round(ndvi, 4) FROM sat WHERE ndvi IS NOT NULL ORDER BY rowid DESC LIMIT 1"
     ).fetchone()
 
     if agg is None or agg[0] == 0:
         return {
             "analyses": len(data),
-            "ndvi_mean": None, "ndvi_min": None, "ndvi_max": None,
+            "ndvi_mean": None,
+            "ndvi_min": None,
+            "ndvi_max": None,
             "ndvi_latest": None,
             "real_data_count": n_real,
             "engine": "duckdb",

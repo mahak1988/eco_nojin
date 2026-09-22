@@ -4,25 +4,14 @@ Endpoints for on-chain carbon credit management and Verra integration.
 """
 
 import logging
-from contextlib import suppress
-from datetime import UTC, datetime
-from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from services.api_gateway.auth import require_user
 from database.hub import hub
 from database.models import User
-from services.business_modules.carbon.tokenization import (
-    CarbonTokenService,
-    CreditType,
-)
-from services.business_modules.carbon.verra_integration import (
-    VerraService,
-    VerraConfig,
-)
+from services.api_gateway.auth import require_user
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +29,7 @@ class _LazyCarbonService:
     def __getattr__(self, name):
         if self._instance is None:
             from services.business_modules.carbon.tokenization import get_tokenization_service
+
             self._instance = get_tokenization_service()
         return getattr(self._instance, name)
 
@@ -50,6 +40,7 @@ class _LazyVerraService:
     def __getattr__(self, name):
         if self._instance is None:
             from services.business_modules.carbon.verra_integration import get_verra_integration
+
             self._instance = get_verra_integration()
         return getattr(self._instance, name)
 
@@ -184,40 +175,33 @@ def verify_credit(
 
 
 @router.get("/verra/standards")
-def list_standards(user: User = Depends(require_user)):
+async def list_standards(user: User = Depends(require_user)):
     """List available carbon credit standards."""
-    import asyncio
-    standards = asyncio.get_event_loop().run_until_complete(
-        _verra_service.list_standards()
-    )
+    standards = await _verra_service.list_standards()
     return {"standards": standards}
 
 
 @router.post("/verra/search")
-def search_verra(
+async def search_verra(
     payload: VerraSearchRequest | None = None,
     user: User = Depends(require_user),
 ):
     """Search Verra registry."""
-    import asyncio
     payload = payload or VerraSearchRequest()
-    results = asyncio.get_event_loop().run_until_complete(
-        _verra_service.search_projects(payload.country, payload.methodology, payload.page)
+    results = await _verra_service.search_projects(
+        payload.country, payload.methodology, payload.page
     )
     return {"results": results, "page": payload.page}
 
 
 @router.post("/verra/sync")
-def sync_verra_project(
+async def sync_verra_project(
     registry_id: str = Query(..., min_length=1),
     user: User = Depends(require_user),
 ):
     """Sync a Verra project into Eco Nojin."""
-    import asyncio
     try:
-        result = asyncio.get_event_loop().run_until_complete(
-            _verra_service.sync_project_from_verra(registry_id)
-        )
+        result = await _verra_service.sync_project_from_verra(registry_id)
     except Exception as exc:
         logger.error("Verra sync failed: %s", exc)
         raise HTTPException(status_code=400, detail=str(exc))
@@ -225,16 +209,13 @@ def sync_verra_project(
 
 
 @router.get("/verra/{registry_id}")
-def get_verra_project(
+async def get_verra_project(
     registry_id: str,
     user: User = Depends(require_user),
 ):
     """Get Verra project details."""
-    import asyncio
     try:
-        result = asyncio.get_event_loop().run_until_complete(
-            _verra_service.get_project(registry_id)
-        )
+        result = await _verra_service.get_project(registry_id)
     except Exception as exc:
         raise HTTPException(status_code=400, detail=str(exc))
     return result

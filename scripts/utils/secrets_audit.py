@@ -4,6 +4,7 @@
 Run this before committing to ensure no secrets are leaked.
 Scans Python, TypeScript, JavaScript, JSON, YAML, TOML, shell, and env files.
 """
+
 from __future__ import annotations
 
 import re
@@ -13,12 +14,18 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 SECRET_PATTERNS = [
-    (r'(?i)(api[_-]?key|apikey|api_secret|token|secret|password|passwd|pwd)\s*[=:]\s*["\'][^"\']{8,}["\']', "Hardcoded secret"),
-    (r'(?i)(postgresql|mysql|mongodb|redis)://[^:]+:[^@]+@', "Database credentials in URL"),
+    (
+        r'(?i)(api[_-]?key|apikey|api_secret|token|secret|password|passwd|pwd)\s*[=:]\s*["\'][^"\']{8,}["\']',
+        "Hardcoded secret",
+    ),
+    (r"(?i)(postgresql|mysql|mongodb|redis)://[^:]+:[^@]+@", "Database credentials in URL"),
     (r'(?i)jwt[_-]?secret\s*[=:]\s*["\'][^"\']{8,}["\']', "JWT secret"),
     (r'(?i)(private[_-]?key|privatekey)\s*[=:]\s*["\'][^"\']+["\']', "Private key"),
     (r'(?i)(oauth|bearer|auth)\s*token\s*[=:]\s*["\'][^"\']{8,}["\']', "OAuth token"),
-    (r'(?i)(aws_access_key|aws_secret|aws_session_token)\s*[=:]\s*["\'][^"\']+["\']', "AWS credential"),
+    (
+        r'(?i)(aws_access_key|aws_secret|aws_session_token)\s*[=:]\s*["\'][^"\']+["\']',
+        "AWS credential",
+    ),
     (r'["\'][A-Za-z0-9+/]{40,}={0,2}["\']', "Potential base64 secret"),
     (r'(?i)bot[_-]?token\s*[=:]\s*["\'][^"\']{10,}["\']', "Bot token"),
     (r'(?i)(access[_-]?token|refresh[_-]?token)\s*[=:]\s*["\']eyJ[^"\']+["\']', "JWT token"),
@@ -62,9 +69,25 @@ SKIP_DIRS = {
 }
 
 SCAN_EXTENSIONS = {
-    ".py", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs",
-    ".json", ".yaml", ".yml", ".toml", ".sh", ".bash",
-    ".env", ".cfg", ".ini", ".xml", ".vue", ".svelte",
+    ".py",
+    ".ts",
+    ".tsx",
+    ".js",
+    ".jsx",
+    ".mjs",
+    ".cjs",
+    ".json",
+    ".yaml",
+    ".yml",
+    ".toml",
+    ".sh",
+    ".bash",
+    ".env",
+    ".cfg",
+    ".ini",
+    ".xml",
+    ".vue",
+    ".svelte",
 }
 
 

@@ -1,4 +1,5 @@
 """Simulation Orchestrator - هماهنگ‌کننده چند شبیه‌ساز"""
+
 import uuid
 from datetime import UTC, datetime
 
@@ -55,7 +56,9 @@ class SimulationOrchestrator:
         return results
 
     async def run_single(
-        self, sim_type: SimulationType, ctx: SimulationContext,
+        self,
+        sim_type: SimulationType,
+        ctx: SimulationContext,
     ) -> SimulationResult:
         """اجرای یک شبیه‌ساز خاص"""
         simulator = self.registry.get(sim_type)

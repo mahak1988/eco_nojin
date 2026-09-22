@@ -14,10 +14,10 @@ Storage notes:
       this loader converts them back to float transparently.
     - override location with env var MANUAL_DATA_DB if needed.
 """
+
 from __future__ import annotations
 
 import os
-import re
 import sqlite3
 from pathlib import Path
 from typing import Any
@@ -28,16 +28,47 @@ _PROJECT = Path(__file__).resolve().parents[2]
 _DEFAULT_DB = _PROJECT / "data" / "manual" / "eco_manual_v1.sqlite"
 
 SCALED_X10 = {
-    "tmax_c", "tmin_c", "tmean_c", "precip_mm", "et0_mm", "gdd_base10",
-    "tmax_avg_c", "tmin_avg_c", "tavg_c", "rad_mj_m2", "rh_pct", "rh_mean_pct",
-    "wind_ms", "dtr_c", "sunshine_h_day", "aridity_index_p_et0",
-    "tmax_normal_c", "tmin_normal_c", "tmean_normal_c", "precip_normal_mm",
-    "et0_normal_mm", "kc_ini", "kc_mid", "kc_end", "root_depth_m",
-    "theta_fc_cm3cm3", "theta_wp_cm3cm3", "awc_cm3cm3", "ksat_mm_hr",
-    "bulk_density_gcm3", "organic_carbon_pct", "annual_rain_normal_mm",
-    "rain_cv_pct", "yield_t_ha", "pou_pct", "des_kcal_cap_day",
-    "protein_g_cap_day", "delta_t_deg_c", "delta_precip_pct",
-    "delta_t_extreme_deg", "elevation_m",
+    "tmax_c",
+    "tmin_c",
+    "tmean_c",
+    "precip_mm",
+    "et0_mm",
+    "gdd_base10",
+    "tmax_avg_c",
+    "tmin_avg_c",
+    "tavg_c",
+    "rad_mj_m2",
+    "rh_pct",
+    "rh_mean_pct",
+    "wind_ms",
+    "dtr_c",
+    "sunshine_h_day",
+    "aridity_index_p_et0",
+    "tmax_normal_c",
+    "tmin_normal_c",
+    "tmean_normal_c",
+    "precip_normal_mm",
+    "et0_normal_mm",
+    "kc_ini",
+    "kc_mid",
+    "kc_end",
+    "root_depth_m",
+    "theta_fc_cm3cm3",
+    "theta_wp_cm3cm3",
+    "awc_cm3cm3",
+    "ksat_mm_hr",
+    "bulk_density_gcm3",
+    "organic_carbon_pct",
+    "annual_rain_normal_mm",
+    "rain_cv_pct",
+    "yield_t_ha",
+    "pou_pct",
+    "des_kcal_cap_day",
+    "protein_g_cap_day",
+    "delta_t_deg_c",
+    "delta_precip_pct",
+    "delta_t_extreme_deg",
+    "elevation_m",
 }
 SCALED_X1000 = {"lat", "lon"}
 
@@ -64,6 +95,7 @@ def _query(table: str, where: str = "", params: tuple = (), order: str = "") -> 
     bound through ``params``.
     """
     from services.security.query_safe import _safe_ident
+
     safe_table = _safe_ident(table)
     sql = "SELECT * FROM " + safe_table
     if where:
@@ -90,6 +122,7 @@ def _where(conditions: dict[str, Any]) -> tuple[str, tuple]:
 
 
 # ----------------------------------------------------------------- accessors
+
 
 def sites() -> pd.DataFrame:
     return _query("sites", order="site_id")
@@ -190,17 +223,14 @@ def status() -> dict[str, Any]:
     try:
         tables = [
             r[0]
-            for r in con.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
-            )
+            for r in con.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
         ]
         from services.security.query_safe import _safe_ident
+
         counts = {}
         for t in tables:
             safe_t = _safe_ident(t)
-            counts[t] = con.execute(
-                "SELECT COUNT(*) FROM '" + safe_t + "'"
-            ).fetchone()[0]
+            counts[t] = con.execute("SELECT COUNT(*) FROM '" + safe_t + "'").fetchone()[0]
     finally:
         con.close()
     return {

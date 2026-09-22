@@ -192,8 +192,28 @@ FIX_CONTEXT.txt
 econojin.egg-info/
 .agent_baseline.json
 
+# Kilo governance/config is shared; runtime state remains local.
+!.kilo/
+!.kilo/kilo.json
+!.kilo/agent/
+!.kilo/agents/
+!.kilo/agent/*.md
+!.kilo/agents/*.md
+.kilo/.gitignore
+.kilo/agent-manager.json
+.kilo/memory/
+.kilo/plans/
+.kilo/skills/
+.kilo/worktrees/
+
 # off-site backup snapshots
 *.offgit
 
 # pnpm temp dirs (2026-09-07, Mahak)
 _nmb*/
+
+# --- backup/junk guard (added 2026-09-21) ---
+*.bak.*
+*mock_backup
+_quarantine_bak_*/
+_backup_*/

@@ -35,6 +35,7 @@ if sys.getrecursionlimit() < MAX_RECURSION_DEPTH + 100:
 
 class SafeMathError(Exception):
     """Custom exception for safe math operations."""
+
     pass
 
 
@@ -204,7 +205,7 @@ def safe_power(base: Any, exponent: Any, fallback: Optional[float] = None) -> Op
             return fallback
         if abs(base_float) < 1 and exp_float < -100:
             return fallback
-        result = base_float ** exp_float
+        result = base_float**exp_float
         if math.isinf(result) or math.isnan(result):
             return fallback
         return result
@@ -242,8 +243,9 @@ def nan_guard(value: Any, fallback: float = 0.0) -> float:
         return fallback
 
 
-def validate_numeric(value: Any, min_val: Optional[float] = None,
-                     max_val: Optional[float] = None) -> Optional[float]:
+def validate_numeric(
+    value: Any, min_val: Optional[float] = None, max_val: Optional[float] = None
+) -> Optional[float]:
     """
     Validate a numeric value within a range.
 
@@ -285,6 +287,7 @@ def with_safe_math(fallback: Any = None):
 
         # If any operation fails, returns 0.0
     """
+
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -293,10 +296,18 @@ def with_safe_math(fallback: Any = None):
                 if not _is_valid_number(result):
                     return fallback
                 return result
-            except (ValueError, OverflowError, TypeError, ZeroDivisionError,
-                    RecursionError, ArithmeticError):
+            except (
+                ValueError,
+                OverflowError,
+                TypeError,
+                ZeroDivisionError,
+                RecursionError,
+                ArithmeticError,
+            ):
                 return fallback
+
         return wrapper
+
     return decorator
 
 

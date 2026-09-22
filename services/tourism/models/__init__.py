@@ -62,7 +62,9 @@ class TourismGuide(Base):
     total_tours = Column(Integer, default=0)
     rating = Column(Numeric(3, 2), default=Decimal("0.00"))
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    updated_at = Column(
+        DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC)
+    )
 
 
 class TourismTour(Base):
@@ -101,7 +103,9 @@ class TourismTour(Base):
     total_bookings = Column(Integer, default=0)
     rating = Column(Numeric(3, 2), default=Decimal("0.00"))
     created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    updated_at = Column(
+        DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC)
+    )
 
 
 class TourismBooking(Base):
@@ -134,4 +138,6 @@ class TourismBooking(Base):
     regenerative_commitment = Column(Text)
     regenerative_completed = Column(Boolean, default=False)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    updated_at = Column(
+        DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC)
+    )

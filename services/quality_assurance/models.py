@@ -1,4 +1,5 @@
 """Quality inspection + certificate models."""
+
 from __future__ import annotations
 
 import uuid
@@ -18,7 +19,7 @@ def _now() -> datetime:
 
 
 class QualityInspection(Base):
-    __tablename__ = 'quality_inspections'
+    __tablename__ = "quality_inspections"
 
     id = Column(String(36), primary_key=True, default=_uid)
     product_id = Column(String(36), nullable=False, index=True)
@@ -27,17 +28,17 @@ class QualityInspection(Base):
 
     inspection_type = Column(String(30), nullable=False)  # harvest|packaging|delivery
     score = Column(Float)  # 0..100
-    status = Column(String(20), nullable=False, default='pending')  # pending|passed|failed
+    status = Column(String(20), nullable=False, default="pending")  # pending|passed|failed
 
     notes = Column(Text)
     created_at = Column(DateTime, default=_now)
     updated_at = Column(DateTime, onupdate=_now)
 
-    __table_args__ = (Index('idx_qi_product', 'product_id'),)
+    __table_args__ = (Index("idx_qi_product", "product_id"),)
 
 
 class QualityCertificate(Base):
-    __tablename__ = 'quality_certificates'
+    __tablename__ = "quality_certificates"
 
     id = Column(String(36), primary_key=True, default=_uid)
     inspection_id = Column(String(36), nullable=False, index=True)

@@ -1,4 +1,5 @@
 """Integration tests for Admin"""
+
 import pytest
 
 
@@ -11,7 +12,8 @@ class TestAdminIntegration:
 
     async def test_audit_logging(self, admin_service):
         log = await admin_service.log_action(
-            action="test_action", actor_id="admin_123",
+            action="test_action",
+            actor_id="admin_123",
         )
         assert log.action == "test_action"
         logs = await admin_service.get_audit_logs()

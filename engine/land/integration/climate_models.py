@@ -12,9 +12,10 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class KoppenClimate(str, Enum):
     """Köppen-Geiger climate classification (simplified main groups)"""
-    Af = "Af"    # Tropical rainforest
-    Am = "Am"    # Tropical monsoon
-    Aw = "Aw"    # Tropical savanna
+
+    Af = "Af"  # Tropical rainforest
+    Am = "Am"  # Tropical monsoon
+    Aw = "Aw"  # Tropical savanna
     BWh = "BWh"  # Hot desert
     BWk = "BWk"  # Cold desert
     BSh = "BSh"  # Hot semi-arid
@@ -40,21 +41,23 @@ class KoppenClimate(str, Enum):
     Dfb = "Dfb"  # Warm-summer humid continental
     Dfc = "Dfc"  # Subarctic
     Dfd = "Dfd"  # Extremely continental subarctic
-    ET = "ET"    # Tundra
-    EF = "EF"    # Ice cap
+    ET = "ET"  # Tundra
+    EF = "EF"  # Ice cap
 
 
 class AridityClass(str, Enum):
     """UNEP Aridity Index classification"""
-    HYPER_ARID = "hyper_arid"      # AI < 0.05
-    ARID = "arid"                   # 0.05 <= AI < 0.20
-    SEMI_ARID = "semi_arid"        # 0.20 <= AI < 0.50
+
+    HYPER_ARID = "hyper_arid"  # AI < 0.05
+    ARID = "arid"  # 0.05 <= AI < 0.20
+    SEMI_ARID = "semi_arid"  # 0.20 <= AI < 0.50
     DRY_SUBHUMID = "dry_subhumid"  # 0.50 <= AI < 0.65
-    HUMID = "humid"                # AI >= 0.65
+    HUMID = "humid"  # AI >= 0.65
 
 
 class MonthlyClimate(BaseModel):
     """Monthly climate data"""
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
@@ -82,6 +85,7 @@ class MonthlyClimate(BaseModel):
 
 class ClimateProfile(BaseModel):
     """Complete climate profile for a location"""
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
@@ -114,18 +118,12 @@ class ClimateProfile(BaseModel):
     annual_t_mean_c: float = Field(..., description="Annual mean temperature (°C)")
 
     # Aridity
-    aridity_index: float | None = Field(
-        None, ge=0, description="Aridity Index = P/PET"
-    )
+    aridity_index: float | None = Field(None, ge=0, description="Aridity Index = P/PET")
     aridity_class: AridityClass | None = None
 
     # Growing season
-    growing_season_days: int | None = Field(
-        None, ge=0, description="Growing season length (days)"
-    )
-    frost_free_days: int | None = Field(
-        None, ge=0, description="Frost-free days per year"
-    )
+    growing_season_days: int | None = Field(None, ge=0, description="Growing season length (days)")
+    frost_free_days: int | None = Field(None, ge=0, description="Frost-free days per year")
 
     # Monthly data
     monthly: list[MonthlyClimate] = Field(default_factory=list)
@@ -138,16 +136,14 @@ class ClimateProfile(BaseModel):
 
 class ClimateIntegrationResult(BaseModel):
     """Result of climate integration with land profile"""
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
                 "profile_id": "550e8400-e29b-41d4-a716-446655440000",
                 "success": True,
                 "climate_profile": {"koppen": "BWh"},
-                "capabilities": {
-                    "irrigation_required": True,
-                    "drought_tolerant_crops_only": True
-                }
+                "capabilities": {"irrigation_required": True, "drought_tolerant_crops_only": True},
             }
         }
     )

@@ -3,6 +3,7 @@
 Read-only access to data/manual/eco_manual_v1.sqlite via
 services.data_manual (the shared loader used by every model).
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -26,14 +27,27 @@ def manual_sites(
     df = manual.sites()
     if q:
         ql = q.lower()
-        mask = (
-            df["site_id"].astype(str).str.lower().str.contains(ql)
-            | df.get("country", df["site_id"]).astype(str).str.lower().str.contains(ql)
-        )
+        mask = df["site_id"].astype(str).str.lower().str.contains(ql) | df.get(
+            "country", df["site_id"]
+        ).astype(str).str.lower().str.contains(ql)
         if "province" in df.columns:
             mask = mask | df["province"].astype(str).str.lower().str.contains(ql)
         df = df[mask]
-    cols = [c for c in ("site_id", "country", "admin1_city", "province", "lat", "lon", "elevation_m", "koppen", "annual_rain_normal_mm") if c in df.columns]
+    cols = [
+        c
+        for c in (
+            "site_id",
+            "country",
+            "admin1_city",
+            "province",
+            "lat",
+            "lon",
+            "elevation_m",
+            "koppen",
+            "annual_rain_normal_mm",
+        )
+        if c in df.columns
+    ]
     return {"count": len(df), "sites": df[cols].to_dict("records")}
 
 

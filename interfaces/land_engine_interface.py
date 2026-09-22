@@ -32,7 +32,7 @@ class ILandEngine(ABC):
         erosion_risk: str = "low",
         drainage_class: str = "well_drained",
         climate_zone: str = "temperate",
-        soil_texture: str = "loam"
+        soil_texture: str = "loam",
     ) -> CapabilityAssessment:
         """Assesses land capability."""
         pass

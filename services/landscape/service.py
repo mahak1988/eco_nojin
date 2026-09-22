@@ -250,9 +250,7 @@ class LandscapeService:
 
         # بررسی موجودی
         if amount > fund.pending_balance:
-            raise ValueError(
-                f"موجودی کافی نیست. موجودی: {fund.pending_balance}, درخواست: {amount}"
-            )
+            raise ValueError(f"موجودی کافی نیست. موجودی: {fund.pending_balance}, درخواست: {amount}")
 
         distribution = LandscapeFundDistribution(
             fund_id=fund.id,
@@ -352,7 +350,7 @@ class LandscapeService:
         governance_result = await self.db.execute(
             select(LandscapeGovernanceMember).where(
                 LandscapeGovernanceMember.village_id == village_id,
-                LandscapeGovernanceMember.is_active == True
+                LandscapeGovernanceMember.is_active == True,
             )
         )
         governance_members = governance_result.scalars().all()

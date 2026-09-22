@@ -22,6 +22,7 @@ Features
 
 Honesty: every motor failure is reported as-is; no fabricated numbers.
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -55,17 +56,34 @@ RUSLE_CALIBRATION = 0.10
 # Cache helpers
 # ---------------------------------------------------------------------------
 
-def _cache_key(lat: float, lon: float, crop: str, planting_date: str,
-               years: int, slope_pct: float, practice: str,
-               irrigation_threshold_mm: float | None,
-               optimize: bool = False, catchment_km2: float = 10.0) -> str:
-    raw = json.dumps({
-        "lat": round(lat, 5), "lon": round(lon, 5), "crop": crop,
-        "planting_date": planting_date, "years": years,
-        "slope_pct": slope_pct, "practice": practice,
-        "threshold": irrigation_threshold_mm,
-        "optimize": optimize, "catchment_km2": catchment_km2,
-    }, sort_keys=True)
+
+def _cache_key(
+    lat: float,
+    lon: float,
+    crop: str,
+    planting_date: str,
+    years: int,
+    slope_pct: float,
+    practice: str,
+    irrigation_threshold_mm: float | None,
+    optimize: bool = False,
+    catchment_km2: float = 10.0,
+) -> str:
+    raw = json.dumps(
+        {
+            "lat": round(lat, 5),
+            "lon": round(lon, 5),
+            "crop": crop,
+            "planting_date": planting_date,
+            "years": years,
+            "slope_pct": slope_pct,
+            "practice": practice,
+            "threshold": irrigation_threshold_mm,
+            "optimize": optimize,
+            "catchment_km2": catchment_km2,
+        },
+        sort_keys=True,
+    )
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:24]
 
 
@@ -82,8 +100,7 @@ def _load_cache(key: str) -> dict[str, Any] | None:
 def _save_cache(key: str, payload: dict[str, Any]) -> None:
     path = CACHE_DIR / f"chain_{key}.json"
     try:
-        path.write_text(json.dumps(payload, ensure_ascii=False, default=str),
-                        encoding="utf-8")
+        path.write_text(json.dumps(payload, ensure_ascii=False, default=str), encoding="utf-8")
     except OSError as exc:
         logger.warning("cache write failed: %s", exc)
 
@@ -91,6 +108,7 @@ def _save_cache(key: str, payload: dict[str, Any]) -> None:
 # ---------------------------------------------------------------------------
 # RUSLE point estimate (real factors)
 # ---------------------------------------------------------------------------
+
 
 def rusle_point(
     annual_rainfall_mm: float,
@@ -112,9 +130,7 @@ def rusle_point(
     motor = RUSLEMotor()
     r = motor._compute_R_factor(annual_rainfall_mm)
     s_rad = math.radians(math.atan(slope_pct / 100.0))
-    ls = (slope_length_m / 22.13) ** 0.5 * (
-        0.065 + 0.045 * slope_pct + 0.0065 * slope_pct ** 2
-    )
+    ls = (slope_length_m / 22.13) ** 0.5 * (0.065 + 0.045 * slope_pct + 0.0065 * slope_pct**2)
     c = float(C_FACTORS.get(crop, C_FACTORS.get("default", 0.2)))
     p = float(P_FACTORS.get(practice, 1.0))
     loss = r * k_factor * ls * c * p * RUSLE_CALIBRATION
@@ -142,6 +158,7 @@ def rusle_point(
 # ---------------------------------------------------------------------------
 # KGE calibration metric (Kling–Gupta Efficiency)
 # ---------------------------------------------------------------------------
+
 
 def kge(observed: list[float], simulated: list[float]) -> dict[str, float]:
     """Kling–Gupta Efficiency = 1 - sqrt((r-1)^2 + (alpha-1)^2 + (beta-1)^2).
@@ -175,6 +192,7 @@ def kge(observed: list[float], simulated: list[float]) -> dict[str, float]:
 # Chain execution
 # ---------------------------------------------------------------------------
 
+
 async def run_scientific_chain(
     lat: float,
     lon: float,
@@ -190,14 +208,23 @@ async def run_scientific_chain(
     catchment_km2: float = 10.0,
 ) -> dict[str, Any]:
     """Run the real scientific chain for a point (all free data sources)."""
-    key = _cache_key(lat, lon, crop, planting_date, years, slope_pct, practice,
-                     irrigation_threshold_mm, optimize, catchment_km2)
+    key = _cache_key(
+        lat,
+        lon,
+        crop,
+        planting_date,
+        years,
+        slope_pct,
+        practice,
+        irrigation_threshold_mm,
+        optimize,
+        catchment_km2,
+    )
     if use_cache:
         cached = _load_cache(key)
         if cached is not None:
             cached["cache_hit"] = True
             return cached
-
 
     from services.satellite.open_meteo import fetch_era5_daily
     from services.satellite.soilgrids import fetch_soil_profile
@@ -208,19 +235,23 @@ async def run_scientific_chain(
     weather = await fetch_era5_daily(lat, lon, start, end)
     if weather.get("status") != "success":
         return {
-            "chain_id": key, "cache_hit": False, "status": "error",
+            "chain_id": key,
+            "cache_hit": False,
+            "status": "error",
             "error": f"climate unavailable: {weather.get('message')}",
         }
     daily = weather["daily"]
     rows: list[dict[str, Any]] = []
     for i, d in enumerate(daily.get("time", [])):
-        rows.append({
-            "datetime": d,
-            "tmin": float(daily["temperature_2m_min"][i] or 0.0),
-            "tmax": float(daily["temperature_2m_max"][i] or 0.0),
-            "precip": float(daily["precipitation_sum"][i] or 0.0),
-            "et0": float(daily["et0_fao_evapotranspiration"][i] or 0.0),
-        })
+        rows.append(
+            {
+                "datetime": d,
+                "tmin": float(daily["temperature_2m_min"][i] or 0.0),
+                "tmax": float(daily["temperature_2m_max"][i] or 0.0),
+                "precip": float(daily["precipitation_sum"][i] or 0.0),
+                "et0": float(daily["et0_fao_evapotranspiration"][i] or 0.0),
+            }
+        )
 
     # monthly aggregation (for RothC, SWAT prep, Pywr)
     monthly: dict[int, dict[str, float]] = {}
@@ -240,7 +271,9 @@ async def run_scientific_chain(
     soil = await fetch_soil_profile(lat, lon)
     if soil.get("status") != "ok":
         return {
-            "chain_id": key, "cache_hit": False, "status": "error",
+            "chain_id": key,
+            "cache_hit": False,
+            "status": "error",
             "error": f"soil unavailable: {soil.get('error')}",
         }
     clay_pct = float(soil.get("clay_pct", 23.4))
@@ -257,8 +290,10 @@ async def run_scientific_chain(
     # ---- 4. RothC-26.3 (pyRothC) -------------------------------------------
     rothc_motor = RealRothCMotor()
     rothc_params = MotorParameters(
-        start_date=start.isoformat(), end_date=end.isoformat(),
-        time_step="monthly", scenario_name="chain",
+        start_date=start.isoformat(),
+        end_date=end.isoformat(),
+        time_step="monthly",
+        scenario_name="chain",
         custom_params={"years": years},
     )
     rothc = await rothc_motor.execute(
@@ -279,14 +314,16 @@ async def run_scientific_chain(
     sim_start = _dt.strptime(planting_date, "%Y-%m-%d") - timedelta(days=30)
     sim_end = _dt.strptime(planting_date, "%Y-%m-%d") + timedelta(days=300)
     window_rows = [
-        r for r in rows
+        r
+        for r in rows
         if sim_start.strftime("%Y-%m-%d") <= r["datetime"] <= sim_end.strftime("%Y-%m-%d")
     ]
     aquacrop_motor = RealAquaCropMotor()
     aquacrop_params = MotorParameters(
         start_date=sim_start.date().isoformat(),
         end_date=sim_end.date().isoformat(),
-        time_step="daily", scenario_name="chain",
+        time_step="daily",
+        scenario_name="chain",
         custom_params={
             "sim_start": sim_start.date().isoformat(),
             "sim_end": sim_end.date().isoformat(),
@@ -306,8 +343,10 @@ async def run_scientific_chain(
     # ---- 6. SWAT+ prep (pySWATPlus, honest status) -------------------------
     swat_motor = SWATPrepMotor()
     swat_params = MotorParameters(
-        start_date=start.isoformat(), end_date=end.isoformat(),
-        time_step="monthly", scenario_name="chain",
+        start_date=start.isoformat(),
+        end_date=end.isoformat(),
+        time_step="monthly",
+        scenario_name="chain",
     )
     swat = await swat_motor.execute(
         {
@@ -336,8 +375,10 @@ async def run_scientific_chain(
     reservoir_capacity = round(sum(inflow_mcm) * 0.2, 2)
     pywr_motor = PywrWaterAllocationMotor()
     pywr_params = MotorParameters(
-        start_date="2025-10-01", end_date="2026-09-30",
-        time_step="monthly", scenario_name="chain",
+        start_date="2025-10-01",
+        end_date="2026-09-30",
+        time_step="monthly",
+        scenario_name="chain",
         custom_params={"start_date": "2025-10-01", "runoff_coefficient": runoff_coeff},
     )
     water = await pywr_motor.execute(
@@ -351,13 +392,13 @@ async def run_scientific_chain(
 
     # ---- 8. HEC-RAS flood (automation + labelled Manning fallback) ---------
     max_month_runoff_mm = max(precip_monthly) * runoff_coeff
-    peak_flow_m3s = round(
-        (max_month_runoff_mm * catchment_km2 * 1000.0) / (30 * 86400.0), 2
-    )
+    peak_flow_m3s = round((max_month_runoff_mm * catchment_km2 * 1000.0) / (30 * 86400.0), 2)
     flood_motor = HECRASFloodMotor()
     flood_params = MotorParameters(
-        start_date=start.isoformat(), end_date=end.isoformat(),
-        time_step="event", scenario_name="chain",
+        start_date=start.isoformat(),
+        end_date=end.isoformat(),
+        time_step="event",
+        scenario_name="chain",
         custom_params={"peak_flow_m3s": peak_flow_m3s, "slope": slope_pct / 100.0},
     )
     flood = await flood_motor.execute(
@@ -374,8 +415,10 @@ async def run_scientific_chain(
     if optimize:
         opt_motor = MultiObjectiveOptimizer()
         opt_params = MotorParameters(
-            start_date=start.isoformat(), end_date=end.isoformat(),
-            time_step="static", scenario_name="chain",
+            start_date=start.isoformat(),
+            end_date=end.isoformat(),
+            time_step="static",
+            scenario_name="chain",
             custom_params={"pop_size": 24, "n_gen": 40},
         )
         opt_res = await opt_motor.execute(
@@ -383,15 +426,18 @@ async def run_scientific_chain(
                 "erosion_ton_ha_yr": erosion.get("soil_loss_ton_ha_yr", 1.0),
                 "yield_ton_ha": (
                     aquacrop.outputs.get("yield_ton_ha", 5.0)
-                    if aquacrop.status == MotorStatus.COMPLETED else 5.0
+                    if aquacrop.status == MotorStatus.COMPLETED
+                    else 5.0
                 ),
                 "soc_change_t_ha_yr": (
                     rothc.outputs.get("soc_change_t_ha_yr", 0.0)
-                    if rothc.status == MotorStatus.COMPLETED else 0.0
+                    if rothc.status == MotorStatus.COMPLETED
+                    else 0.0
                 ),
                 "deficit_mcm": (
                     water.outputs.get("total_deficit_mcm", 5.0)
-                    if water.status == MotorStatus.COMPLETED else 5.0
+                    if water.status == MotorStatus.COMPLETED
+                    else 5.0
                 ),
             },
             opt_params,
@@ -412,8 +458,9 @@ async def run_scientific_chain(
                 calibration = {
                     "status": "ok",
                     "variable": "yield_ton_ha",
-                    **kge([float(observed["yield_ton_ha"])],
-                          [float(aquacrop.outputs["yield_ton_ha"])]),
+                    **kge(
+                        [float(observed["yield_ton_ha"])], [float(aquacrop.outputs["yield_ton_ha"])]
+                    ),
                     "note": "single-point KGE placeholder (needs time series)",
                 }
             else:
@@ -427,8 +474,11 @@ async def run_scientific_chain(
         "status": "ok" if aquacrop.status == MotorStatus.COMPLETED else "partial",
         "location": {"lat": lat, "lon": lon},
         "inputs": {
-            "crop": crop, "planting_date": planting_date, "years": years,
-            "slope_pct": slope_pct, "practice": practice,
+            "crop": crop,
+            "planting_date": planting_date,
+            "years": years,
+            "slope_pct": slope_pct,
+            "practice": practice,
             "annual_rainfall_mm": round(annual_rainfall, 1),
             "annual_runoff_mcm": round(sum(inflow_mcm), 3),
             "clay_pct": clay_pct,

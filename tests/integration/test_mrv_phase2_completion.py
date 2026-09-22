@@ -48,7 +48,11 @@ class TestLoRaWanWebhook:
 
     def test_decoded_payload_shape(self):
         site = _site()
-        payload = {"uplink_message": {"decoded_payload": {"site_id": site, "temp": 21.5, "soil_moisture": 42.0}}}
+        payload = {
+            "uplink_message": {
+                "decoded_payload": {"site_id": site, "temp": 21.5, "soil_moisture": 42.0}
+            }
+        }
         response = client.post(
             "/api/v1/mrv/lorawan-webhook",
             json=payload,
@@ -115,7 +119,12 @@ class TestPublicDashboard:
         site = _site()
         client.post(
             "/api/v1/mrv/citizen-report",
-            json={"site_id": site, "observer": "farmer-secret-99", "category": "pest", "note": "private note"},
+            json={
+                "site_id": site,
+                "observer": "farmer-secret-99",
+                "category": "pest",
+                "note": "private note",
+            },
         )
         client.post(
             "/api/v1/mrv/iot-reading",
@@ -145,7 +154,9 @@ class TestIotIngestHelpers:
     """Unit-level checks for the shared IoT ingest helpers."""
 
     def test_parse_ttn_direct(self):
-        readings = iot_ingest.parse_ttn_v3({"site_id": "s1", "sensor_type": "ec", "value": 2.1, "unit": "dS/m"})
+        readings = iot_ingest.parse_ttn_v3(
+            {"site_id": "s1", "sensor_type": "ec", "value": 2.1, "unit": "dS/m"}
+        )
         assert len(readings) == 1
         assert readings[0].sensor_type == "ec"
 
@@ -168,18 +179,18 @@ class TestIotIngestHelpers:
 
     def test_mqtt_on_message_persists(self):
         stored: list[IoTReading] = []
-        consumer = iot_ingest.MqttIotConsumer(
-            broker_host="unused.invalid", store=stored.append
+        consumer = iot_ingest.MqttIotConsumer(broker_host="unused.invalid", store=stored.append)
+        message = type(
+            "Msg",
+            (),
+            {"payload": b'{"site_id": "s1", "sensor_type": "flow", "value": 12.5, "unit": "L/s"}'},
         )
-        message = type("Msg", (), {"payload": b'{"site_id": "s1", "sensor_type": "flow", "value": 12.5, "unit": "L/s"}'})
         consumer._on_message(None, None, message)
         assert len(stored) == 1
         assert stored[0].sensor_type == "flow"
 
     def test_mqtt_on_message_drops_malformed(self):
         stored: list[IoTReading] = []
-        consumer = iot_ingest.MqttIotConsumer(
-            broker_host="unused.invalid", store=stored.append
-        )
+        consumer = iot_ingest.MqttIotConsumer(broker_host="unused.invalid", store=stored.append)
         consumer._on_message(None, None, type("Msg", (), {"payload": b"not-json"}))
         assert stored == []

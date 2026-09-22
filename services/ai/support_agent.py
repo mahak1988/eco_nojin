@@ -4,17 +4,17 @@ The personas present themselves as HyDroMa support staff (named, with roles).
 On a DIRECT question about being AI/human, they answer honestly (legal safety).
 Never expose internal architecture or other users' data.
 """
+
 from __future__ import annotations
 
 import json
+import os
 import re
 from pathlib import Path
 from typing import Any
 
 import httpx
 from sqlalchemy.orm import Session
-
-import os
 
 _THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
 
@@ -108,10 +108,13 @@ def _load_support_prompts(key: str) -> str:
 
 
 def _user_context(db: Session, user: Any) -> dict[str, Any]:
-    from database import models  # noqa: F401
-    from database.hub import hub
+    from database import models
 
-    ctx: dict[str, Any] = {"نام": getattr(user, "full_name", None) or getattr(user, "username", None) or getattr(user, "email", "")}
+    ctx: dict[str, Any] = {
+        "نام": getattr(user, "full_name", None)
+        or getattr(user, "username", None)
+        or getattr(user, "email", "")
+    }
     try:
         ctx["مزارع"] = db.query(models.Farm).filter(models.Farm.user_id == user.id).count()
     except Exception:
@@ -172,11 +175,7 @@ async def ask_support(
     user_ctx = _user_context(db, user)
     system = _load_support_prompts(key)
     ctx_json = json.dumps(user_ctx, ensure_ascii=False, default=str)
-    user_msg = (
-        f"اطلاعات کاربر (JSON):\n{ctx_json}\n\n"
-        f"صفحه: {page or 'نامشخص'}\n\n"
-        f"سوال کاربر: {q}"
-    )
+    user_msg = f"اطلاعات کاربر (JSON):\n{ctx_json}\n\nصفحه: {page or 'نامشخص'}\n\nسوال کاربر: {q}"
     model = persona["model"]
     provider = f"ollama:{model}"
     try:

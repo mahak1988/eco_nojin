@@ -1,4 +1,5 @@
 """Tests: admin overview (metrics) + security (login history) endpoints."""
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -65,9 +66,7 @@ def test_overview_counts_and_uptime(admin_client):
 def test_overview_error_counts_honest(admin_client):
     db = SessionLocal()
     db.add(
-        db_models.ErrorLog(
-            path="/api/v1/x", method="GET", status=500, message="boom", acked=False
-        )
+        db_models.ErrorLog(path="/api/v1/x", method="GET", status=500, message="boom", acked=False)
     )
     db.commit()
     db.close()
@@ -110,7 +109,5 @@ def test_security_requires_admin_role():
         json={"email": "farmer2@test.com", "password": "testpass123"},
     )
     token = r.json()["access_token"]
-    resp = client.get(
-        "/api/v1/admin/security", headers={"Authorization": f"Bearer {token}"}
-    )
+    resp = client.get("/api/v1/admin/security", headers={"Authorization": f"Bearer {token}"})
     assert resp.status_code == 403

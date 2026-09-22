@@ -6,6 +6,7 @@ be marked shared so outputs are publicly visible in the shared feed.
 This implements the "single aggregation center + shared outputs" requirement
 of the HyDroMa dashboard (report 64/65).
 """
+
 from __future__ import annotations
 
 import json

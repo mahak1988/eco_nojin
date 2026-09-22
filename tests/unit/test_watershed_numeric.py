@@ -134,9 +134,7 @@ class TestDesignFunctionNumeric:
 
     def test_design_check_dam(self):
         """design_watershed_structure should dispatch to check_dam."""
-        result = design_watershed_structure(
-            structure_type="check_dam", slope_pct=15, area_m2=10000
-        )
+        result = design_watershed_structure(structure_type="check_dam", slope_pct=15, area_m2=10000)
         assert result["structure_type"] == "check_dam"
         assert result["dam_height_m"] > 0
 
@@ -149,14 +147,10 @@ class TestDesignFunctionNumeric:
 
     def test_design_half_moon(self):
         """design_watershed_structure should dispatch to half_moon."""
-        result = design_watershed_structure(
-            structure_type="half_moon", slope_pct=8, area_m2=2500
-        )
+        result = design_watershed_structure(structure_type="half_moon", slope_pct=8, area_m2=2500)
         assert result["structure_type"] == "half_moon"
 
     def test_design_invalid_type_raises(self):
         """Unknown structure type should raise ValueError."""
         with pytest.raises(ValueError, match="Unknown structure type"):
-            design_watershed_structure(
-                structure_type="invalid_type", slope_pct=15, area_m2=10000
-            )
+            design_watershed_structure(structure_type="invalid_type", slope_pct=15, area_m2=10000)

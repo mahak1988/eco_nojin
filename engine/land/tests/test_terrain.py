@@ -23,8 +23,8 @@ class TestTerrainAnalyzer:
     @pytest.fixture
     def rolling_dem(self):
         """DEM با توپوگرافی rolling"""
-        x = np.linspace(0, 2*np.pi, 10)
-        y = np.linspace(0, 2*np.pi, 10)
+        x = np.linspace(0, 2 * np.pi, 10)
+        y = np.linspace(0, 2 * np.pi, 10)
         X, Y = np.meshgrid(x, y)
         return 1000 + 50 * np.sin(X) * np.cos(Y)
 

@@ -1,0 +1,223 @@
+# HyDroMa Engine Slaughterhouse — Continuous Validation Pipeline
+#
+# Runs on every push/PR touching engine/hydroma/models/**
+# Matrix: models × backends × test cases
+# Gates: blocks PR merge on validation failure
+
+name: HyDroMa Slaughterhouse
+
+on:
+  push:
+    paths:
+      - 'engine/hydroma/models/**'
+      - 'engine/hydroma/models/validation/test_cases/**'
+      - 'engine/cpp_core/**'
+  pull_request:
+    paths:
+      - 'engine/hydroma/models/**'
+      - 'engine/hydroma/models/validation/test_cases/**'
+      - 'engine/cpp_core/**'
+
+env:
+  PYTHON_VERSION: "3.12"
+  CMAKE_VERSION: "3.28"
+
+jobs:
+  # ============================================================================
+  # 1. DISCOVER — Find all models with test cases
+  # ============================================================================
+  discover:
+    name: Discover Models & Test Cases
+    runs-on: ubuntu-latest
+    outputs:
+      model_matrix: ${{ steps.discover.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Discover test cases
+        id: discover
+        run: |
+          import yaml, json, os
+          test_dir = "engine/hydroma/models/validation/test_cases"
+          models = []
+          for f in os.listdir(test_dir):
+              if f.endswith(".yaml") or f.endswith(".yml"):
+                  with open(os.path.join(test_dir, f)) as fp:
+                      data = yaml.safe_load(fp)
+                  model_id = f.replace(".yaml", "").replace(".yml", "")
+                  backends = data.get("ci_matrix", {}).get("backends", ["python"])
+                  priority = data.get("ci_matrix", {}).get("priority", "medium")
+                  models.append({
+                    "model_id": model_id,
+                    "backends": backends,
+                    "priority": priority,
+                    "file": f
+                  })
+          print(f"matrix={json.dumps(models)}")
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+              fh.write(f'matrix={json.dumps(models)}')
+
+  # ============================================================================
+  # 2. BUILD — Compile C++ core (if needed)
+  # ============================================================================
+  build-cpp:
+    name: Build C++ Core
+    runs-on: windows-latest
+    if: ${{ contains(needs.discover.outputs.matrix, 'cpp') }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+        with:
+          cmake-version: ${{ env.CMAKE_VERSION }}
+
+      - name: Configure C++ Core
+        run: |
+          cmake -B build -S engine/cpp_core -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=20
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hydroma-core-windows
+          path: build/Release/hydroma_core*.pyd
+          retention-days: 1
+
+  # ============================================================================
+  # 3. VALIDATE — Run test cases for each model × backend
+  # ============================================================================
+  validate:
+    name: Validate ${{ matrix.model_id }} (${{ matrix.backend }})
+    needs: [discover, build-cpp]
+    runs-on: ${{ matrix.backend == 'cpp' && 'windows-latest' || 'ubuntu-latest' }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        # Populated dynamically from discover step
+        include: ${{ fromJson(needs.discover.outputs.model_matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install -e ".[dev,test]"
+          pip install pyyaml numpy scipy
+
+      - name: Download C++ artifact
+        if: matrix.backend == 'cpp'
+        uses: actions/download-artifact@v4
+        with:
+          name: hydroma-core-windows
+          path: engine/hydroma/cpp_bridge/
+
+      - name: Run validation script
+        id: validate
+        run: |
+          python scripts/validate_model.py \
+            --model ${{ matrix.model_id }} \
+            --backend ${{ matrix.backend }} \
+            --test-file engine/hydroma/models/validation/test_cases/${{ matrix.model_id }}.yaml \
+            --output validation_${{ matrix.model_id }}_${{ matrix.backend }}.json
+
+      - name: Upload validation results
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-${{ matrix.model_id }}-${{ matrix.backend }}
+          path: validation_${{ matrix.model_id }}_${{ matrix.backend }}.json
+          retention-days: 7
+
+      - name: Generate badge
+        if: success()
+        run: |
+          python scripts/generate_badge.py \
+            --model ${{ matrix.model_id }} \
+            --backend ${{ matrix.backend }} \
+            --result validation_${{ matrix.model_id }}_${{ matrix.backend }}.json \
+            --output badges/${{ matrix.model_id }}-${{ matrix.backend }}.svg
+
+      - name: Upload badge
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: badge-${{ matrix.model_id }}-${{ matrix.backend }}
+          path: badges/${{ matrix.model_id }}-${{ matrix.backend }}.svg
+          retention-days: 30
+
+  # ============================================================================
+  # 4. GATE — Aggregate results and gate PR
+  # ============================================================================
+  gate:
+    name: Slaughterhouse Gate
+    needs: [discover, validate]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all validation results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: validation-*.json
+          path: validation-results/
+          merge-multiple: true
+
+      - name: Aggregate and gate
+        run: |
+          python scripts/slaughterhouse_gate.py \
+            --results-dir validation-results/ \
+            --matrix "${{ needs.discover.outputs.model_matrix }}" \
+            --pr-number ${{ github.event.pull_request.number }}
+
+      - name: Comment PR with summary
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('slaughterhouse_summary.md', 'utf8');
+            await github.rest.issues.createComment({
+              issue_number: ${{ github.event.pull_request.number }},
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            })
+
+  # ============================================================================
+  # 5. DEPLOY BADGES — Publish to GitHub Pages (optional)
+  # ============================================================================
+  deploy-badges:
+    name: Deploy Badges
+    needs: [validate]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download badges
+        uses: actions/download-artifact@v4
+        with:
+          pattern: badge-*.svg
+          path: badges/
+          merge-multiple: true
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./badges
+          destination_dir: hydroma-badges

@@ -1,4 +1,5 @@
 """ارزیابی قابلیت اراضی."""
+
 from typing import Any
 
 from engine.land.models import CapabilityAssessment, LandCapabilityClass
@@ -93,6 +94,7 @@ def assess_land_capability(
 
 class CapabilityAssessor:
     """کلاس ارزیابی قابلیت اراضی (برای سازگاری با engine/land/__init__.py)"""
+
     def __init__(self):
         pass
 

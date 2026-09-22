@@ -25,7 +25,9 @@ class IHydromaEngine(ABC):
         pass
 
     @abstractmethod
-    def analyze_watershed(self, slope_pct: float, area_m2: float, rainfall_mm: float) -> WatershedAnalysisResult:
+    def analyze_watershed(
+        self, slope_pct: float, area_m2: float, rainfall_mm: float
+    ) -> WatershedAnalysisResult:
         """Analyzes watershed and proposes structures."""
         pass
 

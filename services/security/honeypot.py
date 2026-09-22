@@ -4,6 +4,7 @@ Fake endpoints that real users never call (admin.php, .env, wp-login.php,
 legacy token paths). Any hit is almost certainly a scanner/attacker: the IP
 is auto-blocked for 15 minutes and the event is recorded.
 """
+
 import threading
 import time
 
@@ -30,10 +31,14 @@ class Honeypot:
     def hit(self, ip: str, path: str, user_agent: str) -> None:
         with self._lock:
             self._blocked[ip] = time.time() + 900  # 15 min block
-            self.hits.append({
-                "ts": time.time(), "ip": ip, "path": path,
-                "user_agent": user_agent[:120],
-            })
+            self.hits.append(
+                {
+                    "ts": time.time(),
+                    "ip": ip,
+                    "path": path,
+                    "user_agent": user_agent[:120],
+                }
+            )
 
     def is_blocked(self, ip: str) -> bool:
         with self._lock:

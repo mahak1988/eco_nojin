@@ -1,4 +1,5 @@
 """Reporting Module - Report generation"""
+
 from services.reporting.schemas import ReportCreate, ReportRead, ReportStatus, ReportType
 from services.reporting.service import ReportingService
 

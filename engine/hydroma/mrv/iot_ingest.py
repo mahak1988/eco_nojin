@@ -90,7 +90,9 @@ def parse_ttn_v3(payload: dict[str, Any], site_id: str | None = None) -> list[Io
         if isinstance(raw, (int, float)) and not isinstance(raw, bool):
             try:
                 readings.append(
-                    IoTReading(site_id=str(sid), sensor_type=field_name, value=float(raw), unit=unit)
+                    IoTReading(
+                        site_id=str(sid), sensor_type=field_name, value=float(raw), unit=unit
+                    )
                 )
             except ValueError:
                 continue
@@ -193,7 +195,12 @@ class MqttIotConsumer:
             client.subscribe(topic)
         client.loop_start()
         self._client = client
-        logger.info("MQTT consumer connected to %s:%s (topics=%s)", self._broker_host, self._broker_port, self._topics)
+        logger.info(
+            "MQTT consumer connected to %s:%s (topics=%s)",
+            self._broker_host,
+            self._broker_port,
+            self._topics,
+        )
         return self
 
     def stop(self) -> None:

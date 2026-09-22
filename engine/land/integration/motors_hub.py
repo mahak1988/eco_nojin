@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 class MotorStatus(str, Enum):
     """Motor availability status"""
+
     AVAILABLE = "available"
     UNAVAILABLE = "unavailable"
     ERROR = "error"
@@ -24,6 +25,7 @@ class MotorStatus(str, Enum):
 @dataclass
 class MotorResult:
     """Standard result from any scientific motor"""
+
     motor_name: str
     status: MotorStatus
     success: bool = False
@@ -36,6 +38,7 @@ class MotorResult:
 @dataclass
 class UnifiedLandAnalysis:
     """Complete unified analysis from all motors"""
+
     soil_analysis: MotorResult | None = None
     climate_analysis: MotorResult | None = None
     crop_recommendations: MotorResult | None = None
@@ -50,7 +53,7 @@ class UnifiedLandAnalysis:
 class ScientificMotorsHub:
     """
     Unified interface to all scientific motors.
-    
+
     Features:
     - Graceful degradation (motors can be unavailable)
     - Standard result format
@@ -67,7 +70,10 @@ class ScientificMotorsHub:
         """Load scientific motors with error handling"""
         motor_imports = {
             "crop_advisor": ("services.scientific_motors.crop_advisor", "CropAdvisorMotor"),
-            "irrigation_scheduler": ("services.scientific_motors.irrigation_scheduler", "IrrigationSchedulerMotor"),
+            "irrigation_scheduler": (
+                "services.scientific_motors.irrigation_scheduler",
+                "IrrigationSchedulerMotor",
+            ),
             "erosion_rusle": ("services.scientific_motors.erosion_rusle", "RUSLEMotor"),
             "rothc": ("services.scientific_motors.rothc", "RothCMotor"),
         }
@@ -75,6 +81,7 @@ class ScientificMotorsHub:
         for name, (module_path, class_name) in motor_imports.items():
             try:
                 import importlib
+
                 module = importlib.import_module(module_path)
                 motor_class = getattr(module, class_name)
                 self._motors[name] = motor_class()
@@ -89,8 +96,9 @@ class ScientificMotorsHub:
 
     def get_available_motors(self) -> list[str]:
         """Get list of available motor names"""
-        return [name for name, status in self._motor_status.items()
-                if status == MotorStatus.AVAILABLE]
+        return [
+            name for name, status in self._motor_status.items() if status == MotorStatus.AVAILABLE
+        ]
 
     def analyze_land(self, inputs: dict[str, Any]) -> UnifiedLandAnalysis:
         """Perform unified land analysis using all available motors."""
@@ -148,7 +156,9 @@ class ScientificMotorsHub:
                 status=MotorStatus.AVAILABLE,
                 success=True,
                 data=output if isinstance(output, dict) else {"result": str(output)},
-                recommendations=output.get("recommended_crops", []) if isinstance(output, dict) else [],
+                recommendations=output.get("recommended_crops", [])
+                if isinstance(output, dict)
+                else [],
                 confidence=0.8,
             )
 

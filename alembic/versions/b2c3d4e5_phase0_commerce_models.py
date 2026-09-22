@@ -5,6 +5,7 @@ Revises: a1b2c3d4_phase0_financial_schema
 Create Date: 2026-09-15 21:00:00.000000
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -20,7 +21,8 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.create_table("com_order",
+    op.create_table(
+        "com_order",
         sa.Column("id", sa.String(), nullable=False),
         sa.Column("order_number", sa.String(length=50), nullable=False),
         sa.Column("buyer_id", sa.String(), nullable=False),
@@ -50,9 +52,12 @@ def upgrade() -> None:
         batch_op.create_index("ix_com_order_status", ["status"])
         batch_op.create_index("ix_com_order_buyer", ["buyer_id"])
         batch_op.create_index("ix_com_order_seller_status", ["seller_id", "status"])
-        batch_op.create_index(batch_op.f("ix_com_order_idempotency_key"), ["idempotency_key"], unique=True)
+        batch_op.create_index(
+            batch_op.f("ix_com_order_idempotency_key"), ["idempotency_key"], unique=True
+        )
 
-    op.create_table("com_order_item",
+    op.create_table(
+        "com_order_item",
         sa.Column("id", sa.String(), nullable=False),
         sa.Column("order_id", sa.String(), nullable=False),
         sa.Column("sku_id", sa.Integer(), nullable=True),
@@ -76,7 +81,8 @@ def upgrade() -> None:
         batch_op.create_index("ix_com_order_item_order_id", ["order_id"])
         batch_op.create_index("ix_com_order_item_sku_id", ["sku_id"])
 
-    op.create_table("com_payment_intent",
+    op.create_table(
+        "com_payment_intent",
         sa.Column("id", sa.String(), nullable=False),
         sa.Column("order_id", sa.String(), nullable=False),
         sa.Column("buyer_id", sa.String(), nullable=False),
@@ -99,7 +105,8 @@ def upgrade() -> None:
         batch_op.create_index("ix_com_payment_provider", ["provider"])
         batch_op.create_index("ix_com_payment_status", ["status"])
 
-    op.create_table("com_settlement",
+    op.create_table(
+        "com_settlement",
         sa.Column("id", sa.String(), nullable=False),
         sa.Column("order_id", sa.String(), nullable=False),
         sa.Column("seller_id", sa.String(), nullable=False),
@@ -119,7 +126,8 @@ def upgrade() -> None:
         batch_op.create_index("ix_com_settlement_seller", ["seller_id"])
         batch_op.create_index("ix_com_settlement_status", ["status"])
 
-    op.create_table("com_invoice",
+    op.create_table(
+        "com_invoice",
         sa.Column("id", sa.String(), nullable=False),
         sa.Column("order_id", sa.String(), nullable=True),
         sa.Column("invoice_number", sa.String(length=50), nullable=False),
@@ -141,7 +149,8 @@ def upgrade() -> None:
         batch_op.create_index("ix_com_invoice_number", ["invoice_number"])
         batch_op.create_index("ix_com_invoice_seller", ["seller_id"])
 
-    op.create_table("com_invoice_line",
+    op.create_table(
+        "com_invoice_line",
         sa.Column("id", sa.String(), nullable=False),
         sa.Column("invoice_id", sa.String(), nullable=False),
         sa.Column("description", sa.Text(), nullable=False),

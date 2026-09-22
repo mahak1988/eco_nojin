@@ -4,6 +4,7 @@ Validation reference data for Hydroma models.
 Data compiled from peer-reviewed literature and field measurements.
 Used for model validation and quality assurance.
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -13,14 +14,20 @@ from typing import Any
 # ============================================================================
 EWSI_VALIDATION: dict[str, Any] = {
     "healthy_vegetation": {
-        "nir": 0.5, "swir": 0.2, "vpd": 1.5,
-        "soil_moisture": 0.30, "soil_field_capacity": 0.35,
+        "nir": 0.5,
+        "swir": 0.2,
+        "vpd": 1.5,
+        "soil_moisture": 0.30,
+        "soil_field_capacity": 0.35,
         "expected_ewsi_range": (0.0, 0.3),
         "reference": "Field measurements, Kermanshah 2024",
     },
     "stressed_vegetation": {
-        "nir": 0.35, "swir": 0.25, "vpd": 3.0,
-        "soil_moisture": 0.15, "soil_field_capacity": 0.35,
+        "nir": 0.35,
+        "swir": 0.25,
+        "vpd": 3.0,
+        "soil_moisture": 0.15,
+        "soil_field_capacity": 0.35,
         "expected_ewsi_range": (0.6, 0.9),
         "reference": "Drought stress experiment, ICARDA 2023",
     },

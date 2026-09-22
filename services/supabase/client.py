@@ -3,10 +3,11 @@ Supabase client for Eco Nojin.
 
 Usage:
     from services.supabase.client import get_supabase_client
-    
+
     client = get_supabase_client()
     data = client.table('platform_landscapes').select('*').execute()
 """
+
 import os
 from pathlib import Path
 
@@ -15,7 +16,7 @@ try:
     from dotenv import load_dotenv
 
     # Find .env in project root
-    env_file = Path(__file__).parent.parent.parent / '.env'
+    env_file = Path(__file__).parent.parent.parent / ".env"
     if env_file.exists():
         load_dotenv(env_file)
     else:
@@ -28,9 +29,7 @@ except ImportError:
 try:
     from supabase import Client, create_client
 except ImportError:
-    raise ImportError(
-        "supabase is required. Install with: pip install supabase python-dotenv"
-    )
+    raise ImportError("supabase is required. Install with: pip install supabase python-dotenv")
 
 
 _client: Client | None = None
@@ -44,9 +43,7 @@ def get_supabase_client() -> Client:
         key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_ANON_KEY")
 
         if not url:
-            raise ValueError(
-                "SUPABASE_URL not set. Check your .env file or environment variables."
-            )
+            raise ValueError("SUPABASE_URL not set. Check your .env file or environment variables.")
         if not key:
             raise ValueError(
                 "SUPABASE_ANON_KEY or SUPABASE_SERVICE_ROLE_KEY not set. Check your .env file."

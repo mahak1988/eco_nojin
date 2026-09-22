@@ -3,7 +3,7 @@
 builder = "NIXPACKS"
 
 [deploy]
-startCommand = "python scripts/run_with_watchdog.py"
+startCommand = "python -m services.api_gateway.main"
 healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"

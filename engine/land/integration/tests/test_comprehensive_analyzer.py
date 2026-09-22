@@ -54,17 +54,13 @@ class TestComprehensiveLandAnalyzer:
             erosion_risk="low",
         )
 
-    def test_good_land_high_score(
-        self, analyzer, good_soil, good_climate, good_terrain
-    ):
+    def test_good_land_high_score(self, analyzer, good_soil, good_climate, good_terrain):
         """Good land should have high suitability score"""
         result = analyzer.analyze(good_soil, good_climate, good_terrain)
         assert result.suitability_score >= 80
         assert result.land_use_recommendations[0] == LandUseCategory.INTENSIVE_AGRICULTURE
 
-    def test_poor_soil_reduces_score(
-        self, analyzer, good_climate, good_terrain
-    ):
+    def test_poor_soil_reduces_score(self, analyzer, good_climate, good_terrain):
         """Poor soil should reduce suitability score"""
         poor_soil = SoilSummary(
             ph=4.5,
@@ -84,9 +80,7 @@ class TestComprehensiveLandAnalyzer:
         assert "severe_salinity" in result.limiting_factors
         assert "soil_too_shallow" in result.limiting_factors
 
-    def test_poor_climate_reduces_score(
-        self, analyzer, good_soil, good_terrain
-    ):
+    def test_poor_climate_reduces_score(self, analyzer, good_soil, good_terrain):
         """Poor climate should reduce suitability score"""
         poor_climate = ClimateSummary(
             mean_temp_c=5,
@@ -101,9 +95,7 @@ class TestComprehensiveLandAnalyzer:
         assert result.suitability_score < 70
         assert "severe_drought" in result.limiting_factors
 
-    def test_steep_terrain_reduces_score(
-        self, analyzer, good_soil, good_climate
-    ):
+    def test_steep_terrain_reduces_score(self, analyzer, good_soil, good_climate):
         """Steep terrain should reduce suitability score"""
         steep_terrain = TerrainSummary(
             slope_pct=25.0,
@@ -121,9 +113,7 @@ class TestComprehensiveLandAnalyzer:
             LandUseCategory.RAINFED_AGRICULTURE,
         ]
 
-    def test_crop_suitability_scoring(
-        self, analyzer, good_soil, good_climate, good_terrain
-    ):
+    def test_crop_suitability_scoring(self, analyzer, good_soil, good_climate, good_terrain):
         """Should score all major crops"""
         result = analyzer.analyze(good_soil, good_climate, good_terrain)
         assert len(result.crop_suitabilities) == 6  # All 6 crops
@@ -132,17 +122,13 @@ class TestComprehensiveLandAnalyzer:
         scores = [cs.score for cs in result.crop_suitabilities]
         assert scores == sorted(scores, reverse=True)
 
-    def test_wheat_suitability_specific(
-        self, analyzer, good_soil, good_climate, good_terrain
-    ):
+    def test_wheat_suitability_specific(self, analyzer, good_soil, good_climate, good_terrain):
         """Wheat should score well on good land"""
         result = analyzer.analyze(good_soil, good_climate, good_terrain)
         wheat = next(cs for cs in result.crop_suitabilities if cs.crop == CropType.WHEAT)
         assert wheat.score >= 70
 
-    def test_rice_requires_water(
-        self, analyzer, good_soil, good_terrain
-    ):
+    def test_rice_requires_water(self, analyzer, good_soil, good_terrain):
         """Rice should score poorly in dry climate"""
         dry_climate = ClimateSummary(
             mean_temp_c=25,
@@ -156,9 +142,7 @@ class TestComprehensiveLandAnalyzer:
         assert rice.score <= 50  # Allow boundary case
         assert any("precipitation" in issue.lower() for issue in rice.limiting_factors)
 
-    def test_improvement_recommendations(
-        self, analyzer, good_climate, good_terrain
-    ):
+    def test_improvement_recommendations(self, analyzer, good_climate, good_terrain):
         """Should generate specific improvement recommendations"""
         acidic_soil = SoilSummary(
             ph=4.5,
@@ -181,17 +165,13 @@ class TestComprehensiveLandAnalyzer:
         assert result.land_use_recommendations == [LandUseCategory.CONSERVATION]
         assert len(result.limiting_factors) > 0
 
-    def test_confidence_calculation(
-        self, analyzer, good_soil, good_climate, good_terrain
-    ):
+    def test_confidence_calculation(self, analyzer, good_soil, good_climate, good_terrain):
         """Should calculate confidence"""
         result = analyzer.analyze(good_soil, good_climate, good_terrain)
         assert 0.0 <= result.confidence <= 1.0
         assert result.confidence >= 0.7
 
-    def test_land_use_conservation_for_class_viii(
-        self, analyzer, good_soil, good_climate
-    ):
+    def test_land_use_conservation_for_class_viii(self, analyzer, good_soil, good_climate):
         """Class VIII should recommend conservation"""
         class_viii = TerrainSummary(
             slope_pct=40.0,
@@ -240,12 +220,12 @@ class TestComprehensiveLandAnalyzer:
         )
         result = analyzer.analyze(saline_soil, good_climate, good_terrain)
         assert "severe_salinity" in result.limiting_factors  # EC > 6.0
-        assert any("leaching" in rec.lower() or "salt-tolerant" in rec.lower()
-                  for rec in result.improvement_recommendations)
+        assert any(
+            "leaching" in rec.lower() or "salt-tolerant" in rec.lower()
+            for rec in result.improvement_recommendations
+        )
 
-    def test_drought_tolerant_crops(
-        self, analyzer, good_soil, good_terrain
-    ):
+    def test_drought_tolerant_crops(self, analyzer, good_soil, good_terrain):
         """Drought-tolerant crops should score better in dry climate"""
         dry_climate = ClimateSummary(
             mean_temp_c=20,
@@ -260,9 +240,7 @@ class TestComprehensiveLandAnalyzer:
         rice = next(cs for cs in result.crop_suitabilities if cs.crop == CropType.RICE)
         assert barley.score > rice.score
 
-    def test_metadata_included(
-        self, analyzer, good_soil, good_climate, good_terrain
-    ):
+    def test_metadata_included(self, analyzer, good_soil, good_climate, good_terrain):
         """Should include component scores in metadata"""
         result = analyzer.analyze(good_soil, good_climate, good_terrain)
         assert "soil_score" in result.metadata

@@ -13,6 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class TerrainType(str, Enum):
     """Terrain type (USDA/FAO standard)"""
+
     FLAT = "flat"
     NEARLY_FLAT = "nearly_flat"
     GENTLE = "gentle"
@@ -25,6 +26,7 @@ class TerrainType(str, Enum):
 
 class SlopeClass(str, Enum):
     """USDA Slope Classes"""
+
     CLASS_0 = "0"  # 0-1%
     CLASS_1 = "1"  # 1-3%
     CLASS_2 = "2"  # 3-8%
@@ -36,6 +38,7 @@ class SlopeClass(str, Enum):
 
 class DrainagePattern(str, Enum):
     """Drainage patterns"""
+
     DENDRITIC = "dendritic"
     TRELLIS = "trellis"
     RADIAL = "radial"
@@ -48,6 +51,7 @@ class DrainagePattern(str, Enum):
 
 class DrainageDensityClass(str, Enum):
     """Drainage density classes"""
+
     VERY_LOW = "very_low"
     LOW = "low"
     MODERATE = "moderate"
@@ -57,6 +61,7 @@ class DrainageDensityClass(str, Enum):
 
 class ErosionRisk(str, Enum):
     """Erosion risk levels"""
+
     LOW = "low"
     MODERATE = "moderate"
     HIGH = "high"
@@ -65,6 +70,7 @@ class ErosionRisk(str, Enum):
 
 class LandCapabilityClass(str, Enum):
     """USDA Land Capability Classes"""
+
     CLASS_I = "I"
     CLASS_II = "II"
     CLASS_III = "III"
@@ -77,6 +83,7 @@ class LandCapabilityClass(str, Enum):
 
 class LandformType(str, Enum):
     """TPI-based landform types"""
+
     VALLEY = "valley"
     LOWER_SLOPE = "lower_slope"
     FLAT = "flat"
@@ -93,7 +100,7 @@ class SlopeAspectResult(BaseModel):
                 "slope_percent": 27.7,
                 "slope_class": "3",
                 "aspect_degrees": 180.0,
-                "aspect_cardinal": "S"
+                "aspect_cardinal": "S",
             }
         }
     )
@@ -110,7 +117,7 @@ class CurvatureResult(BaseModel):
             "example": {
                 "profile_curvature": -0.02,
                 "plan_curvature": 0.01,
-                "total_curvature": -0.01
+                "total_curvature": -0.01,
             }
         }
     )
@@ -123,12 +130,7 @@ class CurvatureResult(BaseModel):
 class TerrainIndices(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "example": {
-                "twi": 8.5,
-                "tpi": 12.3,
-                "roughness_index": 0.15,
-                "landform": "mid_slope"
-            }
+            "example": {"twi": 8.5, "tpi": 12.3, "roughness_index": 0.15, "landform": "mid_slope"}
         }
     )
     twi: float | None = None
@@ -146,7 +148,7 @@ class TerrainAnalysis(BaseModel):
                 "terrain_type": "rolling",
                 "elevation_min": 1200.0,
                 "elevation_max": 1350.0,
-                "slope_mean": 12.5
+                "slope_mean": 12.5,
             }
         }
     )
@@ -170,6 +172,7 @@ class TerrainAnalysis(BaseModel):
 
 class StreamOrder(BaseModel):
     """Strahler stream order"""
+
     order: int = Field(..., ge=1)
     count: int = Field(..., ge=0)
     length_km: float = Field(0, ge=0)
@@ -182,7 +185,7 @@ class DrainageAnalysis(BaseModel):
                 "profile_id": "550e8400-e29b-41d4-a716-446655440000",
                 "drainage_pattern": "dendritic",
                 "drainage_density": 2.5,
-                "stream_order_max": 3
+                "stream_order_max": 3,
             }
         }
     )
@@ -199,6 +202,7 @@ class DrainageAnalysis(BaseModel):
     main_channel_length_km: float | None = Field(None, ge=0)
     analyzed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
+
 class CapabilityAssessment(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
@@ -206,7 +210,7 @@ class CapabilityAssessment(BaseModel):
                 "profile_id": "550e8400-e29b-41d4-a716-446655440000",
                 "capability_class": "III",
                 "subclass": "e",
-                "limiting_factors": ["slope", "erosion_risk"]
+                "limiting_factors": ["slope", "erosion_risk"],
             }
         }
     )
@@ -231,7 +235,7 @@ class LandProfile(BaseModel):
                 "country": "Iran",
                 "region": "Isfahan",
                 "location_lat": 32.65,
-                "location_lon": 51.67
+                "location_lon": 51.67,
             }
         }
     )

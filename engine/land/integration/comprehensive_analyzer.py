@@ -13,6 +13,7 @@ from typing import Any
 
 class LandUseCategory(str, Enum):
     """Land use recommendation categories"""
+
     INTENSIVE_AGRICULTURE = "intensive_agriculture"
     RAINFED_AGRICULTURE = "rainfed_agriculture"
     PASTURE = "pasture"
@@ -22,6 +23,7 @@ class LandUseCategory(str, Enum):
 
 class CropType(str, Enum):
     """Major crop types for suitability scoring"""
+
     WHEAT = "wheat"
     CORN = "corn"
     RICE = "rice"
@@ -33,6 +35,7 @@ class CropType(str, Enum):
 @dataclass
 class SoilSummary:
     """Simplified soil profile summary"""
+
     ph: float = 6.5
     clay_pct: float = 25.0
     silt_pct: float = 40.0
@@ -47,6 +50,7 @@ class SoilSummary:
 @dataclass
 class ClimateSummary:
     """Simplified climate summary"""
+
     mean_temp_c: float = 20.0
     annual_precip_mm: float = 600.0
     frost_free_days: int = 200
@@ -57,6 +61,7 @@ class ClimateSummary:
 @dataclass
 class TerrainSummary:
     """Simplified terrain summary"""
+
     slope_pct: float = 3.0
     elevation_m: float = 1500.0
     capability_class: str = "II"
@@ -66,6 +71,7 @@ class TerrainSummary:
 @dataclass
 class CropSuitability:
     """Crop suitability result"""
+
     crop: CropType
     score: float  # 0-100
     suitability_class: str
@@ -76,6 +82,7 @@ class CropSuitability:
 @dataclass
 class ComprehensiveLandAnalysis:
     """Complete comprehensive land analysis result"""
+
     suitability_score: float  # 0-100
     land_use_recommendations: list[LandUseCategory] = field(default_factory=list)
     crop_suitabilities: list[CropSuitability] = field(default_factory=list)
@@ -88,7 +95,7 @@ class ComprehensiveLandAnalysis:
 class ComprehensiveLandAnalyzer:
     """
     Comprehensive land analyzer with STRICT scoring.
-    
+
     Weights (stricter):
     - Soil: 40% (but penalties are severe)
     - Climate: 35%
@@ -141,8 +148,14 @@ class ComprehensiveLandAnalyzer:
     }
 
     CAPABILITY_SCORES = {
-        "I": 100, "II": 85, "III": 70, "IV": 55,
-        "V": 40, "VI": 30, "VII": 20, "VIII": 10,
+        "I": 100,
+        "II": 85,
+        "III": 70,
+        "IV": 55,
+        "V": 40,
+        "VI": 30,
+        "VII": 20,
+        "VIII": 10,
     }
 
     def analyze(
@@ -158,11 +171,7 @@ class ComprehensiveLandAnalyzer:
             terrain_score, terrain_issues = self._evaluate_terrain(terrain)
 
             # Weighted average
-            suitability_score = (
-                soil_score * 0.40 +
-                climate_score * 0.35 +
-                terrain_score * 0.25
-            )
+            suitability_score = soil_score * 0.40 + climate_score * 0.35 + terrain_score * 0.25
 
             all_issues = soil_issues + climate_issues + terrain_issues
             land_use_recs = self._recommend_land_use(
@@ -393,13 +402,15 @@ class ComprehensiveLandAnalyzer:
             if not recs:
                 recs.append("Crop is well-suited")
 
-            results.append(CropSuitability(
-                crop=crop,
-                score=max(0.0, score),
-                suitability_class=suit_class,
-                limiting_factors=issues,
-                recommendations=recs,
-            ))
+            results.append(
+                CropSuitability(
+                    crop=crop,
+                    score=max(0.0, score),
+                    suitability_class=suit_class,
+                    limiting_factors=issues,
+                    recommendations=recs,
+                )
+            )
 
         results.sort(key=lambda x: x.score, reverse=True)
         return results

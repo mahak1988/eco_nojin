@@ -181,11 +181,7 @@ class TestSoilIntegration:
     def test_integration_success(self, integrator):
         """Integration should succeed"""
         result = integrator.integrate_with_land(
-            profile_id="test-001",
-            lat=32.65,
-            lon=51.67,
-            terrain_slope_deg=5.0,
-            climate_zone="BWh"
+            profile_id="test-001", lat=32.65, lon=51.67, terrain_slope_deg=5.0, climate_zone="BWh"
         )
         assert result.success
         assert result.profile_id == "test-001"
@@ -194,11 +190,7 @@ class TestSoilIntegration:
     def test_integration_returns_soil_profile(self, integrator):
         """Integration should return complete soil profile"""
         result = integrator.integrate_with_land(
-            profile_id="test-001",
-            lat=32.65,
-            lon=51.67,
-            terrain_slope_deg=5.0,
-            climate_zone="BWh"
+            profile_id="test-001", lat=32.65, lon=51.67, terrain_slope_deg=5.0, climate_zone="BWh"
         )
         assert result.soil_profile is not None
         assert len(result.soil_profile.layers) == 6
@@ -206,33 +198,21 @@ class TestSoilIntegration:
     def test_integration_returns_suitable_crops(self, integrator):
         """Integration should return suitable crops"""
         result = integrator.integrate_with_land(
-            profile_id="test-001",
-            lat=32.65,
-            lon=51.67,
-            terrain_slope_deg=5.0,
-            climate_zone="BWh"
+            profile_id="test-001", lat=32.65, lon=51.67, terrain_slope_deg=5.0, climate_zone="BWh"
         )
         assert len(result.suitable_crops) > 0
 
     def test_integration_returns_recommendations(self, integrator):
         """Integration should return recommendations"""
         result = integrator.integrate_with_land(
-            profile_id="test-001",
-            lat=32.65,
-            lon=51.67,
-            terrain_slope_deg=5.0,
-            climate_zone="BWh"
+            profile_id="test-001", lat=32.65, lon=51.67, terrain_slope_deg=5.0, climate_zone="BWh"
         )
         assert len(result.recommendations) > 0
 
     def test_integration_time_reasonable(self, integrator):
         """Integration should complete in reasonable time (<1s)"""
         result = integrator.integrate_with_land(
-            profile_id="test-001",
-            lat=32.65,
-            lon=51.67,
-            terrain_slope_deg=5.0,
-            climate_zone="BWh"
+            profile_id="test-001", lat=32.65, lon=51.67, terrain_slope_deg=5.0, climate_zone="BWh"
         )
         assert result.integration_time_ms < 1000
 

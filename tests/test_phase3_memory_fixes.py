@@ -22,6 +22,7 @@ class TestMemoryMonitor:
     def test_memory_tracker_creation(self):
         """MemoryTracker should be created properly."""
         from engine.memory_monitor import MemoryTracker
+
         tracker = MemoryTracker("test")
         assert tracker.name == "test"
         assert tracker.warn_threshold_mb == 10.0
@@ -29,6 +30,7 @@ class TestMemoryMonitor:
     def test_memory_tracker_context_manager(self):
         """track_memory context manager should work."""
         from engine.memory_monitor import track_memory
+
         with track_memory("test_op") as tracker:
             data = [i for i in range(1000)]
         assert tracker.delta_mb >= 0  # Memory increased or stable
@@ -36,6 +38,7 @@ class TestMemoryMonitor:
     def test_memory_manager(self):
         """MemoryManager should track operations."""
         from engine.memory_monitor import MemoryManager
+
         manager = MemoryManager()
         manager.track("op1", 5.0)
         manager.track("op2", 15.0)  # Leak
@@ -44,7 +47,7 @@ class TestMemoryMonitor:
         stats = manager.get_stats()
         assert stats["operations"] == 3
         assert stats["leaks"] == 1  # Only op2 was a leak
-        assert stats["leak_rate"] == pytest.approx(1/3)
+        assert stats["leak_rate"] == pytest.approx(1 / 3)
 
     def test_memory_monitor_decorator(self):
         """@monitor_memory decorator should work."""
@@ -64,6 +67,7 @@ class TestResourceManager:
     def test_managed_connection(self):
         """managed_connection should auto-close."""
         from engine.resource_manager import managed_connection
+
         pytest.importorskip("duckdb")
 
         with managed_connection("master") as conn:
@@ -77,6 +81,7 @@ class TestResourceManager:
 
         with managed_session() as session:
             from sqlalchemy import text
+
             result = session.execute(text("SELECT 1"))
             assert result is not None
 
@@ -94,6 +99,7 @@ class TestResourceManager:
     def test_get_memory_usage(self):
         """get_memory_usage_mb should return positive value."""
         from engine.resource_manager import get_memory_usage_mb
+
         pytest.importorskip("psutil")
 
         usage = get_memory_usage_mb()
@@ -113,6 +119,7 @@ class TestConnectionPooling:
     def test_pooled_connection_reuse(self):
         """Pooled connections should be reused."""
         from database.hub import hub
+
         pytest.importorskip("duckdb")
 
         if not hasattr(hub, "get_duckdb_pooled"):
@@ -130,6 +137,7 @@ class TestConnectionPooling:
     def test_pool_cleanup(self):
         """Pool cleanup should close all connections."""
         from database.hub import hub
+
         pytest.importorskip("duckdb")
 
         if not hasattr(hub, "get_duckdb_pooled"):

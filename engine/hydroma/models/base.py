@@ -7,6 +7,7 @@ All scientific models must inherit from ScientificModel and implement:
 - validate_against_reference()
 - uncertainty_quantification()
 """
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -19,6 +20,7 @@ import numpy as np
 @dataclass
 class ValidationResult:
     """نتیجه اعتبارسنجی یک مدل"""
+
     passed: bool
     metric_name: str
     computed_value: float
@@ -36,7 +38,7 @@ class ValidationResult:
 class ScientificModel(ABC):
     """
     کلاس پایه برای تمام مدل‌های علمی Hydroma.
-    
+
     الزامات:
     - تمام ورودی‌ها باید type-hinted باشند
     - تمام محاسبات باید vectorized باشند (numpy)
@@ -85,7 +87,7 @@ class ScientificModel(ABC):
     ) -> dict[str, Any]:
         """
         تحلیل حساسیت و عدم قطعیت با Monte Carlo
-        
+
         پارامترهای ورودی را با توزیع نرمال مختل می‌کند و
         توزیع خروجی را گزارش می‌دهد.
         """
@@ -123,7 +125,11 @@ class ScientificModel(ABC):
 
         outputs_arr = np.array(outputs)
         base_result = self.compute(**base_inputs)
-        base_value = float(np.mean(base_result)) if isinstance(base_result, np.ndarray) else float(base_result)
+        base_value = (
+            float(np.mean(base_result))
+            if isinstance(base_result, np.ndarray)
+            else float(base_result)
+        )
 
         self._uncertainty_estimate = {
             "mean": float(np.mean(outputs_arr)),
@@ -149,11 +155,15 @@ class ScientificModel(ABC):
     ) -> dict[str, float]:
         """
         Local sensitivity analysis: اثر تغییر هر پارامتر روی خروجی
-        
+
         Returns: {parameter_name: sensitivity_index}
         """
         base_result = self.compute(**base_inputs)
-        base_value = float(np.mean(base_result)) if isinstance(base_result, np.ndarray) else float(base_result)
+        base_value = (
+            float(np.mean(base_result))
+            if isinstance(base_result, np.ndarray)
+            else float(base_result)
+        )
 
         params = parameters_to_test or [
             k for k, v in base_inputs.items() if isinstance(v, (int, float))
@@ -167,9 +177,15 @@ class ScientificModel(ABC):
 
             try:
                 new_result = self.compute(**perturbed)
-                new_value = float(np.mean(new_result)) if isinstance(new_result, np.ndarray) else float(new_result)
+                new_value = (
+                    float(np.mean(new_result))
+                    if isinstance(new_result, np.ndarray)
+                    else float(new_result)
+                )
                 if abs(base_value) > 1e-9:
-                    sensitivity = (new_value - base_value) / base_value / (perturbation_percent / 100)
+                    sensitivity = (
+                        (new_value - base_value) / base_value / (perturbation_percent / 100)
+                    )
                 else:
                     sensitivity = 0.0
                 sensitivities[param] = float(sensitivity)

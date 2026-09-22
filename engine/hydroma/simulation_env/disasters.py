@@ -87,7 +87,9 @@ DEFAULT_FIRE_THRESHOLDS = {
 }
 
 
-def _synthetic_bands(grid: int, rng: np.random.Generator, ndvi_base: float) -> dict[str, np.ndarray]:
+def _synthetic_bands(
+    grid: int, rng: np.random.Generator, ndvi_base: float
+) -> dict[str, np.ndarray]:
     """Generate synthetic pre-fire NIR/Red/Green bands (0-1 reflectance)."""
     nir = rng.uniform(0.35, 0.65, size=(grid, grid)) + ndvi_base * 0.15
     red = rng.uniform(0.05, 0.12, size=(grid, grid))
@@ -107,7 +109,10 @@ def simulate_wildfire(scenario: FireScenario) -> FireResult:
     rng = np.random.default_rng(scenario.seed)
     grid = scenario.grid_size
     if scenario.fire_center is None:
-        cy, cx = int(rng.integers(grid // 4, 3 * grid // 4)), int(rng.integers(grid // 4, 3 * grid // 4))
+        cy, cx = (
+            int(rng.integers(grid // 4, 3 * grid // 4)),
+            int(rng.integers(grid // 4, 3 * grid // 4)),
+        )
     else:
         cy, cx = scenario.fire_center
 
@@ -154,15 +159,25 @@ def simulate_wildfire(scenario: FireScenario) -> FireResult:
         for y in range(scenario.recovery_years + 1)
     ]
 
-    metadata = _metadata("wildfire", scenario.seed, {
-        "site_id": "synth_wildfire",
-        "grid_size": grid,
-        "fire_radius_cells": scenario.fire_radius_cells,
-        "intensity": scenario.intensity,
-    })
+    metadata = _metadata(
+        "wildfire",
+        scenario.seed,
+        {
+            "site_id": "synth_wildfire",
+            "grid_size": grid,
+            "fire_radius_cells": scenario.fire_radius_cells,
+            "intensity": scenario.intensity,
+        },
+    )
     metadata.parameters["provenance"] = "simulated"
 
-    economic_loss_usd = burned_area_ha * 350.0 * {"low": 0.1, "moderate": 0.4, "high": 0.7, "extreme": 1.0, "unburned": 0.0}.get(burn_severity, 0.0)
+    economic_loss_usd = (
+        burned_area_ha
+        * 350.0
+        * {"low": 0.1, "moderate": 0.4, "high": 0.7, "extreme": 1.0, "unburned": 0.0}.get(
+            burn_severity, 0.0
+        )
+    )
 
     return FireResult(
         pre_nbr=round(pre_nbr, 4),
@@ -174,7 +189,12 @@ def simulate_wildfire(scenario: FireScenario) -> FireResult:
         recovery_curve=recovery_curve,
         post_fire_ndvi=round(post_ndvi, 4),
         metadata=metadata,
-        raster={"pre_nir": pre["nir"], "post_nir": post["nir"], "damage": damage, "burned_mask": mask.astype(np.uint8)},
+        raster={
+            "pre_nir": pre["nir"],
+            "post_nir": post["nir"],
+            "damage": damage,
+            "burned_mask": mask.astype(np.uint8),
+        },
     )
 
 
@@ -204,7 +224,9 @@ class FloodResult:
     raster: dict[str, np.ndarray]
 
 
-def _synthetic_dem(grid: int, rng: np.random.Generator, mean_m: float, valley_depth: float) -> np.ndarray:
+def _synthetic_dem(
+    grid: int, rng: np.random.Generator, mean_m: float, valley_depth: float
+) -> np.ndarray:
     """Procedurally generate a DEM with a central valley (Gaussian basin)."""
     yy, xx = np.mgrid[0:grid, 0:grid]
     center = grid / 2.0
@@ -249,13 +271,17 @@ def simulate_flood(scenario: FloodScenario) -> FloodResult:
 
     peak_flow_m3s = runoff_vol_m3 / (24.0 * 3600.0) if runoff_vol_m3 > 0 else 0.0
 
-    metadata = _metadata("flood_inundation", scenario.seed, {
-        "site_id": "synth_flood",
-        "grid_size": grid,
-        "rainfall_24h_mm": scenario.rainfall_24h_mm,
-        "curve_number": cn,
-        "area_ha": scenario.area_ha,
-    })
+    metadata = _metadata(
+        "flood_inundation",
+        scenario.seed,
+        {
+            "site_id": "synth_flood",
+            "grid_size": grid,
+            "rainfall_24h_mm": scenario.rainfall_24h_mm,
+            "curve_number": cn,
+            "area_ha": scenario.area_ha,
+        },
+    )
     metadata.parameters["provenance"] = "simulated"
     metadata.parameters["flood_severity"] = _severity_band(
         inundation_fraction, {"moderate": 0.05, "severe": 0.20, "extreme": 0.50}
@@ -268,7 +294,12 @@ def simulate_flood(scenario: FloodScenario) -> FloodResult:
         inundation_fraction=round(inundation_fraction, 4),
         sediment_deposition_t=round(sediment_deposition_t, 3),
         metadata=metadata,
-        raster={"dem": dem, "depth": depth, "inundated": inundated.astype(np.uint8), "slope_pct": slope_pct},
+        raster={
+            "dem": dem,
+            "depth": depth,
+            "inundated": inundated.astype(np.uint8),
+            "slope_pct": slope_pct,
+        },
     )
 
 
@@ -303,7 +334,11 @@ def simulate_storm(scenario: StormScenario) -> StormResult:
     # V = wind speed; damage ~ 1 - exp(-((V - V_thresh)/scale))
     v_thresh = 120.0
     scale = 45.0
-    wind_damage_index = float(np.clip(1.0 - math.exp(-(max(scenario.max_wind_speed_kmh - v_thresh, 0.0)) / scale), 0.0, 1.0))
+    wind_damage_index = float(
+        np.clip(
+            1.0 - math.exp(-(max(scenario.max_wind_speed_kmh - v_thresh, 0.0)) / scale), 0.0, 1.0
+        )
+    )
 
     # Coastal erosion via wind-wave setup ( Kamphuis 2010 simplified ).
     if scenario.coastal:
@@ -322,20 +357,26 @@ def simulate_storm(scenario: StormScenario) -> StormResult:
     affected_area_ha = scenario.radius_km * scenario.radius_km * 3.14159 * 100.0 * veg_damage_prob
 
     # Infrastructure fragility (log-normal style).
-    fragility = float(np.clip(1.0 - math.exp(-((scenario.max_wind_speed_kmh - 100.0) / 35.0)), 0.0, 1.0))
+    fragility = float(
+        np.clip(1.0 - math.exp(-((scenario.max_wind_speed_kmh - 100.0) / 35.0)), 0.0, 1.0)
+    )
     structures_destroyed = int(scenario.infrastructure_exposure * 1000.0 * fragility)
     crop_loss = affected_area_ha * 400.0
     struct_loss = structures_destroyed * 12000.0
     coastal_loss = coastal_eroding_m * 5000.0 if scenario.coastal else 0.0
     total_loss_usd = crop_loss + struct_loss + coastal_loss
 
-    metadata = _metadata("storm_hurricane", scenario.seed, {
-        "site_id": "synth_storm",
-        "max_wind_speed_kmh": scenario.max_wind_speed_kmh,
-        "coastal": scenario.coastal,
-        "radius_km": scenario.radius_km,
-        "duration_h": scenario.duration_h,
-    })
+    metadata = _metadata(
+        "storm_hurricane",
+        scenario.seed,
+        {
+            "site_id": "synth_storm",
+            "max_wind_speed_kmh": scenario.max_wind_speed_kmh,
+            "coastal": scenario.coastal,
+            "radius_km": scenario.radius_km,
+            "duration_h": scenario.duration_h,
+        },
+    )
     metadata.parameters["provenance"] = "simulated"
 
     return StormResult(
@@ -375,10 +416,16 @@ class LandslideResult:
     raster: dict[str, np.ndarray]
 
 
-def _infinite_slope_fs(slope_pct: float, cohesion_kpa: float, phi_deg: float,
-                       soil_depth_m: float, vegetation_reduction: float,
-                       rainfall_mm: float, gamma_sat: float = 18.0,
-                       gamma_w: float = 9.81) -> tuple[float, float]:
+def _infinite_slope_fs(
+    slope_pct: float,
+    cohesion_kpa: float,
+    phi_deg: float,
+    soil_depth_m: float,
+    vegetation_reduction: float,
+    rainfall_mm: float,
+    gamma_sat: float = 18.0,
+    gamma_w: float = 9.81,
+) -> tuple[float, float]:
     """Infinite-slope factor of safety after rainfall infiltration.
 
     FS = [c' + (gamma_sat - m*gamma_w) * z * cos(B) * tan(phi')] /
@@ -405,8 +452,12 @@ def simulate_landslide(scenario: LandslideScenario) -> LandslideResult:
     grid = scenario.grid_size
 
     fs, _m = _infinite_slope_fs(
-        scenario.slope_pct, scenario.cohesion_kpa, scenario.phi_deg,
-        scenario.soil_depth_m, scenario.vegetation_reduction, scenario.rainfall_24h_mm,
+        scenario.slope_pct,
+        scenario.cohesion_kpa,
+        scenario.phi_deg,
+        scenario.soil_depth_m,
+        scenario.vegetation_reduction,
+        scenario.rainfall_24h_mm,
     )
     # Spatial variability: perturb cohesion across the slope.
     cohesion_field = scenario.cohesion_kpa * (0.7 + 0.6 * rng.random(size=(grid, grid)))
@@ -416,9 +467,12 @@ def simulate_landslide(scenario: LandslideScenario) -> LandslideResult:
     for i in range(grid):
         for j in range(grid):
             fsi, _ = _infinite_slope_fs(
-                float(slope_field[i, j]), float(cohesion_field[i, j]),
-                scenario.phi_deg, scenario.soil_depth_m,
-                scenario.vegetation_reduction, scenario.rainfall_24h_mm,
+                float(slope_field[i, j]),
+                float(cohesion_field[i, j]),
+                scenario.phi_deg,
+                scenario.soil_depth_m,
+                scenario.vegetation_reduction,
+                scenario.rainfall_24h_mm,
             )
             fs_arr[i, j] = fsi
     fs = float(np.nanmedian(fs_arr))
@@ -427,22 +481,30 @@ def simulate_landslide(scenario: LandslideScenario) -> LandslideResult:
     failure_mask = fs_arr < 1.0
     affected_fraction = float(failure_mask.mean())
 
-    displaced_volume_m3 = float(np.count_nonzero(failure_mask)) * scenario.soil_depth_m * 25.0  # ~25 m2 per cell
+    displaced_volume_m3 = (
+        float(np.count_nonzero(failure_mask)) * scenario.soil_depth_m * 25.0
+    )  # ~25 m2 per cell
     # Sediment yield (t) = displaced volume * bulk density * affected fraction * erosion factor.
     bulk_density = 1.4
     sediment_yield_t = displaced_volume_m3 * bulk_density * 0.8 * (scenario.rainfall_24h_mm / 100.0)
 
-    metadata = _metadata("landslide_erosion", scenario.seed, {
-        "site_id": "synth_landslide",
-        "grid_size": grid,
-        "slope_pct": scenario.slope_pct,
-        "cohesion_kpa": scenario.cohesion_kpa,
-        "phi_deg": scenario.phi_deg,
-        "rainfall_24h_mm": scenario.rainfall_24h_mm,
-        "vegetation_reduction": scenario.vegetation_reduction,
-    })
+    metadata = _metadata(
+        "landslide_erosion",
+        scenario.seed,
+        {
+            "site_id": "synth_landslide",
+            "grid_size": grid,
+            "slope_pct": scenario.slope_pct,
+            "cohesion_kpa": scenario.cohesion_kpa,
+            "phi_deg": scenario.phi_deg,
+            "rainfall_24h_mm": scenario.rainfall_24h_mm,
+            "vegetation_reduction": scenario.vegetation_reduction,
+        },
+    )
     metadata.parameters["provenance"] = "simulated"
-    metadata.parameters["landslide_severity"] = _severity_band(fs, {"moderate": 1.3, "severe": 1.0, "extreme": 0.7})
+    metadata.parameters["landslide_severity"] = _severity_band(
+        fs, {"moderate": 1.3, "severe": 1.0, "extreme": 0.7}
+    )
 
     return LandslideResult(
         factor_of_safety=round(fs, 3),
@@ -451,7 +513,12 @@ def simulate_landslide(scenario: LandslideScenario) -> LandslideResult:
         sediment_yield_t=round(sediment_yield_t, 2),
         affected_area_fraction=round(affected_fraction, 4),
         metadata=metadata,
-        raster={"fs": fs_arr, "slope": slope_field, "cohesion": cohesion_field, "failure": failure_mask.astype(np.uint8)},
+        raster={
+            "fs": fs_arr,
+            "slope": slope_field,
+            "cohesion": cohesion_field,
+            "failure": failure_mask.astype(np.uint8),
+        },
     )
 
 

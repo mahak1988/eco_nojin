@@ -13,17 +13,13 @@ class BotConfig:
 
     bot_token: str = field(default_factory=lambda: os.getenv("BOT_TOKEN", ""))
     ollama_base_url: str = field(
-        default_factory=lambda: os.getenv("OLLAMA_BASE_URL", os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434"))
+        default_factory=lambda: os.getenv(
+            "OLLAMA_BASE_URL", os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
+        )
     )
-    ollama_model: str = field(
-        default_factory=lambda: os.getenv("OLLAMA_MODEL", "llama3.1:8b")
-    )
-    ollama_timeout: float = field(
-        default_factory=lambda: float(os.getenv("OLLAMA_TIMEOUT", "5.0"))
-    )
-    default_language: str = field(
-        default_factory=lambda: os.getenv("BOT_DEFAULT_LANGUAGE", "fa")
-    )
+    ollama_model: str = field(default_factory=lambda: os.getenv("OLLAMA_MODEL", "llama3.1:8b"))
+    ollama_timeout: float = field(default_factory=lambda: float(os.getenv("OLLAMA_TIMEOUT", "5.0")))
+    default_language: str = field(default_factory=lambda: os.getenv("BOT_DEFAULT_LANGUAGE", "fa"))
 
     @property
     def has_token(self) -> bool:

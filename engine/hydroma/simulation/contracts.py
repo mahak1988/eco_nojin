@@ -27,7 +27,9 @@ class ScenarioParams(BaseModel):
 
     name: Literal["Baseline", "Medium", "Intensive"]
     cn_change: float = Field(..., description="Curve-number change (negative = less runoff)")
-    c_factor_factor: float = Field(..., gt=0, le=1, description="Multiplier applied to the RUSLE C-factor")
+    c_factor_factor: float = Field(
+        ..., gt=0, le=1, description="Multiplier applied to the RUSLE C-factor"
+    )
     p_factor: float = Field(..., gt=0, le=1, description="RUSLE support-practice factor")
 
 
@@ -114,8 +116,10 @@ class ChainResult(BaseModel):
 # PHASE 3: WATER INTELLIGENCE CONTRACTS
 # ═══════════════════════════════════════════════════════════════════
 
+
 class GroundwaterInput(BaseModel):
     """Input contract for groundwater analysis."""
+
     land_profile_id: str
     well_depth_m: float
     water_table_depth_m: float
@@ -131,6 +135,7 @@ class GroundwaterInput(BaseModel):
 
 class GroundwaterOutput(BaseModel):
     """Output contract for groundwater analysis."""
+
     land_profile_id: str
     darcy_flux_m_s: float
     transmissivity_m2_s: float
@@ -147,6 +152,7 @@ class GroundwaterOutput(BaseModel):
 
 class WatershedInput(BaseModel):
     """Input contract for watershed analysis."""
+
     land_profile_id: str
     stream_network: dict
     stream_lengths: dict[str, float]
@@ -157,6 +163,7 @@ class WatershedInput(BaseModel):
 
 class WatershedOutput(BaseModel):
     """Output contract for watershed analysis."""
+
     land_profile_id: str
     strahler_max_order: int
     stream_count: int
@@ -169,6 +176,7 @@ class WatershedOutput(BaseModel):
 
 class WaterQualityInput(BaseModel):
     """Input contract for water quality analysis."""
+
     land_profile_id: str
     sample_date: str
     tds_mg_l: float
@@ -182,6 +190,7 @@ class WaterQualityInput(BaseModel):
 
 class WaterQualityOutput(BaseModel):
     """Output contract for water quality analysis."""
+
     land_profile_id: str
     sample_date: str
     quality_class: str
@@ -193,6 +202,7 @@ class WaterQualityOutput(BaseModel):
 
 class SWATInput:
     """Placeholder for compatibility with old tests."""
+
     def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -200,6 +210,7 @@ class SWATInput:
 
 class SWATOutput:
     """Placeholder for compatibility with old tests."""
+
     def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -210,6 +221,7 @@ class SWATOutput:
 
 class AquaCropInput:
     """Placeholder for compatibility with old tests."""
+
     def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -217,6 +229,7 @@ class AquaCropInput:
 
 class AquaCropOutput:
     """Placeholder for compatibility with old tests."""
+
     def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -224,6 +237,7 @@ class AquaCropOutput:
 
 class RothCInput:
     """Placeholder for compatibility with old tests."""
+
     def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -231,6 +245,7 @@ class RothCInput:
 
 class RothCOutput:
     """Placeholder for compatibility with old tests."""
+
     def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -238,6 +253,7 @@ class RothCOutput:
 
 class HECRASInput:
     """Placeholder for compatibility."""
+
     def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -245,6 +261,7 @@ class HECRASInput:
 
 class HECRASOutput:
     """Placeholder for compatibility."""
+
     def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -252,6 +269,7 @@ class HECRASOutput:
 
 class RUSLEInput:
     """Placeholder for compatibility."""
+
     def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -259,6 +277,7 @@ class RUSLEInput:
 
 class RUSLEOutput:
     """Placeholder for compatibility."""
+
     def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -266,6 +285,7 @@ class RUSLEOutput:
 
 class WEAPInput:
     """Placeholder for compatibility."""
+
     def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -273,6 +293,7 @@ class WEAPInput:
 
 class WEAPOutput:
     """Placeholder for compatibility."""
+
     def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)

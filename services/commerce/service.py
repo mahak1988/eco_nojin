@@ -90,8 +90,12 @@ class OrderService:
 
     @staticmethod
     def _compute_fees(subtotal: Decimal) -> tuple[Decimal, Decimal, Decimal]:
-        platform_fee = (subtotal * OrderService.PLATFORM_FEE_BPS / Decimal("10000")).quantize(Decimal("0.01"))
-        landscape_fee = (subtotal * OrderService.LANDSCAPE_FEE_BPS / Decimal("10000")).quantize(Decimal("0.01"))
+        platform_fee = (subtotal * OrderService.PLATFORM_FEE_BPS / Decimal("10000")).quantize(
+            Decimal("0.01")
+        )
+        landscape_fee = (subtotal * OrderService.LANDSCAPE_FEE_BPS / Decimal("10000")).quantize(
+            Decimal("0.01")
+        )
         total = subtotal + platform_fee + landscape_fee
         return platform_fee, landscape_fee, total
 
@@ -144,13 +148,15 @@ class OrderService:
                 reference_id=f"pending-order-{idempotency_key or str(uuid4())}",
                 created_by=buyer_id,
             )
-            reservations.append({
-                "sku": sku,
-                "qty": qty,
-                "warehouse_id": warehouse_id,
-                "unit_price": unit_price,
-                "reservation_id": reservation.id,
-            })
+            reservations.append(
+                {
+                    "sku": sku,
+                    "qty": qty,
+                    "warehouse_id": warehouse_id,
+                    "unit_price": unit_price,
+                    "reservation_id": reservation.id,
+                }
+            )
 
         # Compute totals
         subtotal = sum(r["qty"] * r["unit_price"] for r in reservations)
@@ -201,24 +207,28 @@ class OrderService:
         # Update reservation reference_id to actual order_id
         for r in reservations:
             await self.db.execute(
-                text("UPDATE inv_reservation SET reference_id = :oid, reference_line_id = :lid WHERE id = :rid"),
+                text(
+                    "UPDATE inv_reservations SET reference_id = :oid, reference_line_id = :lid WHERE id = :rid"
+                ),
                 {"oid": order_id, "lid": str(r["reservation_id"]), "rid": r["reservation_id"]},
             )
 
         # Audit event
-        self.db.add(AuditEvent(
-            correlation_id=order_id,
-            actor_id=buyer_id,
-            action="order_create",
-            resource_type="order",
-            resource_id=order_id,
-            after_state={
-                "status": "reserved",
-                "total": str(total),
-                "items_count": len(items),
-            },
-            created_at=datetime.now(UTC),
-        ))
+        self.db.add(
+            AuditEvent(
+                correlation_id=order_id,
+                actor_id=buyer_id,
+                action="order_create",
+                resource_type="order",
+                resource_id=order_id,
+                after_state={
+                    "status": "reserved",
+                    "total": str(total),
+                    "items_count": len(items),
+                },
+                created_at=datetime.now(UTC),
+            )
+        )
 
         await self.db.commit()
         await self.db.refresh(order)
@@ -234,7 +244,9 @@ class OrderService:
         result = await self.db.execute(select(ComOrder).where(ComOrder.id == order_id))
         order = result.scalar_one_or_none()
         if not order:
-            raise EcoNojinException(f"Order not found: {order_id}", code="ORDER_NOT_FOUND", status_code=404)
+            raise EcoNojinException(
+                f"Order not found: {order_id}", code="ORDER_NOT_FOUND", status_code=404
+            )
 
         if order.payment_status not in ("pending", "failed"):
             raise EcoNojinException(
@@ -265,15 +277,17 @@ class OrderService:
         )
         self.db.add(payment)
 
-        self.db.add(AuditEvent(
-            correlation_id=order_id,
-            actor_id=order.buyer_id,
-            action="payment_intent_create",
-            resource_type="payment_intent",
-            resource_id=payment.id,
-            after_state={"status": intent.status, "amount": str(intent.amount)},
-            created_at=datetime.now(UTC),
-        ))
+        self.db.add(
+            AuditEvent(
+                correlation_id=order_id,
+                actor_id=order.buyer_id,
+                action="payment_intent_create",
+                resource_type="payment_intent",
+                resource_id=payment.id,
+                after_state={"status": intent.status, "amount": str(intent.amount)},
+                created_at=datetime.now(UTC),
+            )
+        )
 
         await self.db.commit()
         await self.db.refresh(payment)
@@ -289,7 +303,9 @@ class OrderService:
         result = await self.db.execute(select(ComOrder).where(ComOrder.id == order_id))
         order = result.scalar_one_or_none()
         if not order:
-            raise EcoNojinException(f"Order not found: {order_id}", code="ORDER_NOT_FOUND", status_code=404)
+            raise EcoNojinException(
+                f"Order not found: {order_id}", code="ORDER_NOT_FOUND", status_code=404
+            )
 
         if payment_confirmed:
             order.payment_status = "paid"
@@ -298,26 +314,34 @@ class OrderService:
             order.status = "paid"
             order.version += 1
 
-            self.db.add(AuditEvent(
-                correlation_id=order_id,
-                actor_id=order.buyer_id,
-                action="payment_confirm",
-                resource_type="order",
-                resource_id=order_id,
-                after_state={"status": "paid", "payment_status": "paid"},
-                created_at=datetime.now(UTC),
-            ))
+            self.db.add(
+                AuditEvent(
+                    correlation_id=order_id,
+                    actor_id=order.buyer_id,
+                    action="payment_confirm",
+                    resource_type="order",
+                    resource_id=order_id,
+                    after_state={"status": "paid", "payment_status": "paid"},
+                    created_at=datetime.now(UTC),
+                )
+            )
         else:
             order.payment_status = "failed"
-            self.db.add(AuditEvent(
-                correlation_id=order_id,
-                actor_id=order.buyer_id,
-                action="payment_failed",
-                resource_type="order",
-                resource_id=order_id,
-                after_state={"status": order.status, "payment_status": "failed", "reason": failure_reason},
-                created_at=datetime.now(UTC),
-            ))
+            self.db.add(
+                AuditEvent(
+                    correlation_id=order_id,
+                    actor_id=order.buyer_id,
+                    action="payment_failed",
+                    resource_type="order",
+                    resource_id=order_id,
+                    after_state={
+                        "status": order.status,
+                        "payment_status": "failed",
+                        "reason": failure_reason,
+                    },
+                    created_at=datetime.now(UTC),
+                )
+            )
 
         await self.db.commit()
         await self.db.refresh(order)
@@ -325,24 +349,30 @@ class OrderService:
 
     async def process_order(self, order_id: str, processed_by: str = "system") -> ComOrder:
         """Transition order from paid to processing."""
-        result = await self.db.execute(select(ComOrder).where(ComOrder.id == order_id).with_for_update())
+        result = await self.db.execute(
+            select(ComOrder).where(ComOrder.id == order_id).with_for_update()
+        )
         order = result.scalar_one_or_none()
         if not order:
-            raise EcoNojinException(f"Order not found: {order_id}", code="ORDER_NOT_FOUND", status_code=404)
+            raise EcoNojinException(
+                f"Order not found: {order_id}", code="ORDER_NOT_FOUND", status_code=404
+            )
 
         OrderStateMachine.validate(order.status, "processing")
         order.status = "processing"
         order.version += 1
 
-        self.db.add(AuditEvent(
-            correlation_id=order_id,
-            actor_id=processed_by,
-            action="order_process",
-            resource_type="order",
-            resource_id=order_id,
-            after_state={"status": "processing"},
-            created_at=datetime.now(UTC),
-        ))
+        self.db.add(
+            AuditEvent(
+                correlation_id=order_id,
+                actor_id=processed_by,
+                action="order_process",
+                resource_type="order",
+                resource_id=order_id,
+                after_state={"status": "processing"},
+                created_at=datetime.now(UTC),
+            )
+        )
 
         await self.db.commit()
         await self.db.refresh(order)
@@ -355,10 +385,14 @@ class OrderService:
         shipped_by: str,
     ) -> ComOrder:
         """Mark order as shipped with tracking code."""
-        result = await self.db.execute(select(ComOrder).where(ComOrder.id == order_id).with_for_update())
+        result = await self.db.execute(
+            select(ComOrder).where(ComOrder.id == order_id).with_for_update()
+        )
         order = result.scalar_one_or_none()
         if not order:
-            raise EcoNojinException(f"Order not found: {order_id}", code="ORDER_NOT_FOUND", status_code=404)
+            raise EcoNojinException(
+                f"Order not found: {order_id}", code="ORDER_NOT_FOUND", status_code=404
+            )
 
         if order.status != "processing":
             raise EcoNojinException(
@@ -373,15 +407,17 @@ class OrderService:
         order.shipped_at = datetime.now(UTC)
         order.version += 1
 
-        self.db.add(AuditEvent(
-            correlation_id=order_id,
-            actor_id=shipped_by,
-            action="order_ship",
-            resource_type="order",
-            resource_id=order_id,
-            after_state={"status": "shipped", "tracking_code": tracking_code},
-            created_at=datetime.now(UTC),
-        ))
+        self.db.add(
+            AuditEvent(
+                correlation_id=order_id,
+                actor_id=shipped_by,
+                action="order_ship",
+                resource_type="order",
+                resource_id=order_id,
+                after_state={"status": "shipped", "tracking_code": tracking_code},
+                created_at=datetime.now(UTC),
+            )
+        )
 
         # Create stock movements (issue for shipped items)
         result = await self.db.execute(
@@ -401,22 +437,26 @@ class OrderService:
         result = await self.db.execute(select(ComOrder).where(ComOrder.id == order_id))
         order = result.scalar_one_or_none()
         if not order:
-            raise EcoNojinException(f"Order not found: {order_id}", code="ORDER_NOT_FOUND", status_code=404)
+            raise EcoNojinException(
+                f"Order not found: {order_id}", code="ORDER_NOT_FOUND", status_code=404
+            )
 
         OrderStateMachine.validate(order.status, "delivered")
         order.status = "delivered"
         order.delivered_at = datetime.now(UTC)
         order.version += 1
 
-        self.db.add(AuditEvent(
-            correlation_id=order_id,
-            actor_id="system",
-            action="order_delivered",
-            resource_type="order",
-            resource_id=order_id,
-            after_state={"status": "delivered"},
-            created_at=datetime.now(UTC),
-        ))
+        self.db.add(
+            AuditEvent(
+                correlation_id=order_id,
+                actor_id="system",
+                action="order_delivered",
+                resource_type="order",
+                resource_id=order_id,
+                after_state={"status": "delivered"},
+                created_at=datetime.now(UTC),
+            )
+        )
 
         await self.db.commit()
         await self.db.refresh(order)
@@ -429,7 +469,9 @@ class OrderService:
         )
         order = result.scalar_one_or_none()
         if not order:
-            raise EcoNojinException(f"Order not found: {order_id}", code="ORDER_NOT_FOUND", status_code=404)
+            raise EcoNojinException(
+                f"Order not found: {order_id}", code="ORDER_NOT_FOUND", status_code=404
+            )
 
         if order.status != "delivered":
             raise EcoNojinException(
@@ -490,26 +532,34 @@ class OrderService:
         )
         self.db.add(settlement)
 
-        self.db.add(AuditEvent(
-            correlation_id=order_id,
-            actor_id="system",
-            action="order_settled",
-            resource_type="order",
-            resource_id=order_id,
-            after_state={"status": "settled", "settlement_id": settlement.id},
-            created_at=datetime.now(UTC),
-        ))
+        self.db.add(
+            AuditEvent(
+                correlation_id=order_id,
+                actor_id="system",
+                action="order_settled",
+                resource_type="order",
+                resource_id=order_id,
+                after_state={"status": "settled", "settlement_id": settlement.id},
+                created_at=datetime.now(UTC),
+            )
+        )
 
         await self.db.commit()
         await self.db.refresh(settlement)
         return settlement
 
-    async def cancel_order(self, order_id: str, reason: str | None = None, cancelled_by: str = "system") -> ComOrder:
+    async def cancel_order(
+        self, order_id: str, reason: str | None = None, cancelled_by: str = "system"
+    ) -> ComOrder:
         """Cancel an order and release reservations."""
-        result = await self.db.execute(select(ComOrder).where(ComOrder.id == order_id).with_for_update())
+        result = await self.db.execute(
+            select(ComOrder).where(ComOrder.id == order_id).with_for_update()
+        )
         order = result.scalar_one_or_none()
         if not order:
-            raise EcoNojinException(f"Order not found: {order_id}", code="ORDER_NOT_FOUND", status_code=404)
+            raise EcoNojinException(
+                f"Order not found: {order_id}", code="ORDER_NOT_FOUND", status_code=404
+            )
 
         if order.status in ("settled", "cancelled", "refunded"):
             raise EcoNojinException(
@@ -536,15 +586,17 @@ class OrderService:
                 except EcoNojinException:
                     pass  # already released/consumed
 
-        self.db.add(AuditEvent(
-            correlation_id=order_id,
-            actor_id=cancelled_by,
-            action="order_cancelled",
-            resource_type="order",
-            resource_id=order_id,
-            after_state={"status": "cancelled", "cancel_reason": reason},
-            created_at=datetime.now(UTC),
-        ))
+        self.db.add(
+            AuditEvent(
+                correlation_id=order_id,
+                actor_id=cancelled_by,
+                action="order_cancelled",
+                resource_type="order",
+                resource_id=order_id,
+                after_state={"status": "cancelled", "cancel_reason": reason},
+                created_at=datetime.now(UTC),
+            )
+        )
 
         await self.db.commit()
         await self.db.refresh(order)
@@ -554,7 +606,9 @@ class OrderService:
         result = await self.db.execute(select(ComOrder).where(ComOrder.id == order_id))
         order = result.scalar_one_or_none()
         if not order:
-            raise EcoNojinException(f"Order not found: {order_id}", code="ORDER_NOT_FOUND", status_code=404)
+            raise EcoNojinException(
+                f"Order not found: {order_id}", code="ORDER_NOT_FOUND", status_code=404
+            )
         return order
 
     async def list_orders(

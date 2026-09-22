@@ -16,9 +16,10 @@ exact input contracts of the scientific motors, so they run fully offline:
 Every bundle also carries `site` (profile) and `provenance` (where each piece
 came from) so callers can log/audit the data source.
 """
+
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date
 from typing import Any
 
 import numpy as np
@@ -246,9 +247,19 @@ def planting_bundle(site_id: str, crops: list[str]) -> dict[str, Any]:
 
 # USDA texture index 1-12 (NRCS order) used by CropAdvisorMotor
 _FA_TEXTURE_TO_USDA_INDEX = {
-    "ط´ظ†غŒ": 1, "ط´ظ†غŒ ظ„ظˆظ…غŒ": 2, "ظ„ظˆظ… ط´ظ†غŒ": 3, "ط³غŒظ„طھغŒ ظ„ظˆظ…": 4, "ظ„ظˆظ… ط³غŒظ„طھغŒ": 4,
-    "ط³غŒظ„طھ": 5, "ط´ظ†غŒ ط±ط³غŒ ظ„ظˆظ…غŒ": 6, "ظ„ظˆظ… ط±ط³غŒ": 7, "ظ„ظˆظ… ط³غŒظ„طھغŒ ط±ط³غŒ": 8,
-    "ط´ظ†غŒ ط±ط³غŒ": 9, "ط³غŒظ„طھغŒ ط±ط³غŒ": 10, "ط±ط³غŒ": 11, "ظ„ظˆظ…": 3,
+    "ط´ظ†غŒ": 1,
+    "ط´ظ†غŒ ظ„ظˆظ…غŒ": 2,
+    "ظ„ظˆظ… ط´ظ†غŒ": 3,
+    "ط³غŒظ„طھغŒ ظ„ظˆظ…": 4,
+    "ظ„ظˆظ… ط³غŒظ„طھغŒ": 4,
+    "ط³غŒظ„طھ": 5,
+    "ط´ظ†غŒ ط±ط³غŒ ظ„ظˆظ…غŒ": 6,
+    "ظ„ظˆظ… ط±ط³غŒ": 7,
+    "ظ„ظˆظ… ط³غŒظ„طھغŒ ط±ط³غŒ": 8,
+    "ط´ظ†غŒ ط±ط³غŒ": 9,
+    "ط³غŒظ„طھغŒ ط±ط³غŒ": 10,
+    "ط±ط³غŒ": 11,
+    "ظ„ظˆظ…": 3,
 }
 
 
@@ -274,10 +285,10 @@ def crop_advisor_bundle(
             total_water_mm = float(ann["precip_mm"].mean())
 
     inputs = {
-        "soil_ph": None,       # motor default 7.0 (no pH in manual dataset yet)
+        "soil_ph": None,  # motor default 7.0 (no pH in manual dataset yet)
         "soil_texture": usda_index,
-        "slope": None,         # motor default 5.0
-        "lcc_class": None,     # motor default 3
+        "slope": None,  # motor default 5.0
+        "lcc_class": None,  # motor default 3
     }
     parameters = MotorParameters(
         start_date=date.today().isoformat(),
@@ -333,4 +344,3 @@ def rusle_bundle(site_id: str, soil_province: str | None = None) -> dict[str, An
             custom_params={"annual_rainfall_mm": annual_rainfall or 300},
         ),
     }
-

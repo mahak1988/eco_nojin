@@ -1,4 +1,5 @@
 import os
+
 """Phase 4 tests: Copernicus STAC + real band sampling (synthetic COG)."""
 import asyncio
 
@@ -27,6 +28,7 @@ def run(coro):
 # Spectral math
 # ---------------------------------------------------------------------------
 
+
 def test_ndvi_healthy_vegetation():
     assert ndvi_from_bands(0.6, 0.1) == pytest.approx(0.7143, abs=1e-3)
 
@@ -51,6 +53,7 @@ def test_evi_savi_range_and_health():
 # Credential gating
 # ---------------------------------------------------------------------------
 
+
 def test_unconfigured_raises_on_all_network_paths(monkeypatch):
     monkeypatch.delenv("CDSE_CLIENT_ID", raising=False)
     monkeypatch.delenv("CDSE_CLIENT_SECRET", raising=False)
@@ -67,6 +70,7 @@ def test_unconfigured_raises_on_all_network_paths(monkeypatch):
 # ---------------------------------------------------------------------------
 # STAC search (mocked HTTP)
 # ---------------------------------------------------------------------------
+
 
 class FakeSyncResponse:
     def __init__(self, status_code, json_data):
@@ -95,7 +99,10 @@ def test_stac_search_builds_request_and_parses_items(monkeypatch):
                     {
                         "id": "S2A_T39SWH_20260705",
                         "properties": {"datetime": "2026-07-05T06:00:00Z", "eo:cloud_cover": 5.0},
-                        "assets": {"B04": {"href": "https://x/B04.tif"}, "B08": {"href": "https://x/B08.tif"}},
+                        "assets": {
+                            "B04": {"href": "https://x/B04.tif"},
+                            "B08": {"href": "https://x/B08.tif"},
+                        },
                     },
                     {
                         "id": "S2A_T39SWH_20260706",
@@ -112,8 +119,10 @@ def test_stac_search_builds_request_and_parses_items(monkeypatch):
         lambda self, force=False: "tok123",
     )
     client = CopernicusClient(
-        client_id="cid", client_secret = os.environ.get("CLIENT_SECRET", "csecret"),
-        identity_url="https://identity.test", stac_url="https://stac.test",
+        client_id="cid",
+        client_secret=os.environ.get("CLIENT_SECRET", "csecret"),
+        identity_url="https://identity.test",
+        stac_url="https://stac.test",
     )
     scenes = client.search_stac(35.0, 51.0)
     assert captured["url"].endswith("/v1/search")
@@ -128,6 +137,7 @@ def test_stac_search_builds_request_and_parses_items(monkeypatch):
 # ---------------------------------------------------------------------------
 # Band sampling with a synthetic in-memory COG (EPSG:4326, deterministic)
 # ---------------------------------------------------------------------------
+
 
 def _make_cog_4326(red_value_dn: int, nir_value_dn: int) -> dict:
     """Build tiny single-band COGs in EPSG:4326 anchored at the sample point."""
@@ -176,17 +186,23 @@ class FakeAsyncClient:
 def test_sample_bands_computes_real_ndvi(monkeypatch):
     cogs = _make_cog_4326(red_value_dn=1000, nir_value_dn=6000)
     fake = FakeAsyncClient([FakeStreamResponse(cogs["red"]), FakeStreamResponse(cogs["nir"])])
-    monkeypatch.setattr("services.satellite.copernicus.httpx.AsyncClient", lambda timeout=None: fake)
+    monkeypatch.setattr(
+        "services.satellite.copernicus.httpx.AsyncClient", lambda timeout=None: fake
+    )
     monkeypatch.setattr(
         "services.satellite.copernicus.CopernicusClient.get_token",
         lambda self, force=False: "tok123",
     )
     client = CopernicusClient(
-        client_id="cid", client_secret = os.environ.get("CLIENT_SECRET", "csecret"),
-        identity_url="https://identity.test", stac_url="https://stac.test",
+        client_id="cid",
+        client_secret=os.environ.get("CLIENT_SECRET", "csecret"),
+        identity_url="https://identity.test",
+        stac_url="https://stac.test",
     )
     scene = Scene(
-        id="S2A_1", datetime="2026-07-05T06:00:00Z", cloud_cover=5.0,
+        id="S2A_1",
+        datetime="2026-07-05T06:00:00Z",
+        cloud_cover=5.0,
         assets={"B04": "https://x/B04.tif", "B08": "https://x/B08.tif"},
     )
     bands = run(client.sample_bands(scene, 35.218, 51.279))
@@ -199,8 +215,10 @@ def test_sample_bands_computes_real_ndvi(monkeypatch):
 
 def test_sample_bands_missing_asset_raises():
     client = CopernicusClient(
-        client_id="cid", client_secret = os.environ.get("CLIENT_SECRET", "csecret"),
-        identity_url="https://identity.test", stac_url="https://stac.test",
+        client_id="cid",
+        client_secret=os.environ.get("CLIENT_SECRET", "csecret"),
+        identity_url="https://identity.test",
+        stac_url="https://stac.test",
     )
     scene = Scene(id="S2A_1", datetime="2026-07-05T06:00:00Z", cloud_cover=5.0, assets={})
     with pytest.raises(CopernicusBandError):
@@ -208,16 +226,17 @@ def test_sample_bands_missing_asset_raises():
 
 
 def test_analyze_location_no_scene_is_honest(monkeypatch):
-    def fake_search(latitude, longitude, start_date=None, end_date=None,
-                    max_cloud_cover=20.0, max_records=5):
+    def fake_search(
+        latitude, longitude, start_date=None, end_date=None, max_cloud_cover=20.0, max_records=5
+    ):
         return []
 
-    monkeypatch.setattr(
-        "services.satellite.copernicus.CopernicusClient.search_stac", fake_search
-    )
+    monkeypatch.setattr("services.satellite.copernicus.CopernicusClient.search_stac", fake_search)
     client = CopernicusClient(
-        client_id="cid", client_secret = os.environ.get("CLIENT_SECRET", "csecret"),
-        identity_url="https://identity.test", stac_url="https://stac.test",
+        client_id="cid",
+        client_secret=os.environ.get("CLIENT_SECRET", "csecret"),
+        identity_url="https://identity.test",
+        stac_url="https://stac.test",
     )
     result = run(client.analyze_location(35.0, 51.0))
     assert result["status"] == "no_scene"

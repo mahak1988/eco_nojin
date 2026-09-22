@@ -2,62 +2,56 @@
 Soil Water Retention Modeling.
 
 Implements van Genuchten water retention model and hydraulic conductivity.
+Uses SOIL_PARAMETERS_VG from physics.py as the single source of truth
+for soil texture parameters (Carsel & Parrish, 1988).
 
 References:
-    [1] van Genuchten, M.Th., "A closed-form equation for predicting 
-        the hydraulic conductivity of unsaturated soils", 
+    [1] van Genuchten, M.Th., "A closed-form equation for predicting
+        the hydraulic conductivity of unsaturated soils",
         Soil Sci. Soc. Am. J., 44:892-898, 1980
-    [2] Mualem, Y., "A new model for predicting the hydraulic conductivity 
+    [2] Mualem, Y., "A new model for predicting the hydraulic conductivity
         of unsaturated porous media", Water Resources Research, 12:513-522, 1976
+    [3] Carsel, R.F. & Parrish, R.S. (1988). Developing joint probability
+        distributions of soil water retention characteristics. WRR 24:755-769.
 """
+
 import logging
+
+from .physics import SOIL_PARAMETERS_VG
 
 logger = logging.getLogger(__name__)
 
-# Default van Genuchten parameters for common soil textures
-# Format: (theta_r, theta_s, alpha, n)
-VG_PARAMETERS = {
-    'sand': (0.045, 0.437, 0.145, 2.68),
-    'loamy_sand': (0.057, 0.437, 0.124, 2.28),
-    'sandy_loam': (0.065, 0.453, 0.075, 1.89),
-    'loam': (0.078, 0.463, 0.036, 1.56),
-    'silt_loam': (0.065, 0.454, 0.020, 1.41),
-    'silt': (0.034, 0.464, 0.016, 1.37),
-    'sandy_clay_loam': (0.100, 0.398, 0.027, 1.48),
-    'clay_loam': (0.095, 0.464, 0.019, 1.31),
-    'silty_clay_loam': (0.089, 0.471, 0.010, 1.23),
-    'sandy_clay': (0.100, 0.382, 0.027, 1.23),
-    'silty_clay': (0.070, 0.479, 0.005, 1.09),
-    'clay': (0.068, 0.475, 0.008, 1.09),
-}
+# Re-export the canonical parameter table (single source of truth)
+VG_PARAMETERS = SOIL_PARAMETERS_VG
 
 
-def van_genuchten_retention(theta_r: float, theta_s: float,
-                              alpha: float, n: float, h: float) -> float:
+def van_genuchten_retention(
+    theta_r: float, theta_s: float, alpha: float, n: float, h: float
+) -> float:
     """Calculate water content using van Genuchten model.
-    
+
     The van Genuchten equation:
         θ(h) = θr + (θs - θr) / [1 + (α|h|)^n]^m
         where m = 1 - 1/n
-        
+
     Args:
         theta_r: Residual water content (cm³/cm³)
         theta_s: Saturated water content (cm³/cm³)
         alpha: van Genuchten alpha parameter (1/cm)
         n: van Genuchten n parameter (dimensionless)
         h: Pressure head (cm, negative for unsaturated)
-        
+
     Returns:
         float: Water content (cm³/cm³)
-        
+
     Raises:
         ValueError: If parameters are invalid
-        
+
     Example:
-        >>> theta = van_genuchten_retention(0.078, 0.463, 0.036, 1.56, -100)
+        >>> theta = van_genuchten_retention(0.078, 0.43, 0.036, 1.56, -100)
         >>> print(f"Water content: {theta:.3f}")
         Water content: 0.245
-        
+
     References:
         [1] van Genuchten, 1980
     """
@@ -68,7 +62,7 @@ def van_genuchten_retention(theta_r: float, theta_s: float,
         raise ValueError("Invalid van Genuchten parameters")
 
     # m parameter
-    m = 1 - 1/n
+    m = 1 - 1 / n
 
     # For saturated conditions (h >= 0)
     if h >= 0:
@@ -83,14 +77,14 @@ def van_genuchten_retention(theta_r: float, theta_s: float,
     return theta
 
 
-def van_genuchten_conductivity(theta_r: float, theta_s: float,
-                                alpha: float, n: float,
-                                k_s: float, h: float) -> float:
+def van_genuchten_conductivity(
+    theta_r: float, theta_s: float, alpha: float, n: float, k_s: float, h: float
+) -> float:
     """Calculate hydraulic conductivity using van Genuchten-Mualem model.
-    
+
     K(h) = Ks × Se^0.5 × [1 - (1 - Se^(1/m))^m]²
     where Se = (θ - θr) / (θs - θr)
-    
+
     Args:
         theta_r: Residual water content
         theta_s: Saturated water content
@@ -98,7 +92,7 @@ def van_genuchten_conductivity(theta_r: float, theta_s: float,
         n: van Genuchten n
         k_s: Saturated hydraulic conductivity (cm/day)
         h: Pressure head (cm)
-        
+
     Returns:
         float: Hydraulic conductivity (cm/day)
     """
@@ -113,11 +107,11 @@ def van_genuchten_conductivity(theta_r: float, theta_s: float,
         return k_s
 
     # m parameter
-    m = 1 - 1/n
+    m = 1 - 1 / n
 
     # Calculate conductivity
-    term1 = se ** 0.5
-    term2 = (1 - (1 - se ** (1/m)) ** m) ** 2
+    term1 = se**0.5
+    term2 = (1 - (1 - se ** (1 / m)) ** m) ** 2
 
     k = k_s * term1 * term2
 
@@ -126,39 +120,39 @@ def van_genuchten_conductivity(theta_r: float, theta_s: float,
 
 def get_vg_parameters(texture: str) -> dict:
     """Get van Genuchten parameters for a soil texture.
-    
+
     Args:
         texture: USDA texture class
-        
+
     Returns:
         Dict: van Genuchten parameters
     """
     if texture not in VG_PARAMETERS:
         # Default to loam
-        texture = 'loam'
+        texture = "loam"
         logger.warning(f"Unknown texture, using {texture}")
 
-    theta_r, theta_s, alpha, n = VG_PARAMETERS[texture]
+    p = VG_PARAMETERS[texture]
 
     return {
-        'texture': texture,
-        'theta_r': theta_r,
-        'theta_s': theta_s,
-        'alpha': alpha,
-        'n': n,
-        'm': 1 - 1/n,
-        'description': f'van Genuchten parameters for {texture}'
+        "texture": texture,
+        "theta_r": p["theta_r"],
+        "theta_s": p["theta_s"],
+        "alpha": p["alpha"],
+        "n": p["n"],
+        "m": 1 - 1 / p["n"],
+        "Ks": p.get("Ks", 25.0),
+        "description": f"van Genuchten parameters for {texture} (Carsel & Parrish, 1988)",
     }
 
 
-def calculate_water_retention_curve(texture: str,
-                                      h_values: list | None = None) -> dict:
+def calculate_water_retention_curve(texture: str, h_values: list | None = None) -> dict:
     """Calculate complete water retention curve.
-    
+
     Args:
         texture: USDA texture class
         h_values: List of pressure heads (optional)
-        
+
     Returns:
         Dict: Water retention curve data
     """
@@ -171,28 +165,23 @@ def calculate_water_retention_curve(texture: str,
     curve_data = []
     for h in h_values:
         theta = van_genuchten_retention(
-            params['theta_r'], params['theta_s'],
-            params['alpha'], params['n'], h
+            params["theta_r"], params["theta_s"], params["alpha"], params["n"], h
         )
-        curve_data.append({
-            'pressure_head': h,
-            'water_content': round(theta, 4),
-            'unit': 'cm³/cm³'
-        })
+        curve_data.append({"pressure_head": h, "water_content": round(theta, 4), "unit": "cm³/cm³"})
 
     return {
-        'texture': texture,
-        'parameters': params,
-        'curve': curve_data,
-        'field_capacity': _find_field_capacity(curve_data),
-        'wilting_point': _find_wilting_point(curve_data)
+        "texture": texture,
+        "parameters": params,
+        "curve": curve_data,
+        "field_capacity": _find_field_capacity(curve_data),
+        "wilting_point": _find_wilting_point(curve_data),
     }
 
 
 def _find_field_capacity(curve_data: list) -> dict | None:
     """Find field capacity (at -33 cm pressure head)."""
     for point in curve_data:
-        if point['pressure_head'] == -33:
+        if point["pressure_head"] == -33:
             return point
     return None
 
@@ -200,20 +189,19 @@ def _find_field_capacity(curve_data: list) -> dict | None:
 def _find_wilting_point(curve_data: list) -> dict | None:
     """Find permanent wilting point (at -15000 cm pressure head)."""
     for point in curve_data:
-        if point['pressure_head'] == -15000:
+        if point["pressure_head"] == -15000:
             return point
     return None
 
 
-def calculate_available_water(theta_fc: float, theta_wp: float,
-                                root_depth: float) -> dict:
+def calculate_available_water(theta_fc: float, theta_wp: float, root_depth: float) -> dict:
     """Calculate plant available water capacity.
-    
+
     Args:
         theta_fc: Water content at field capacity
         theta_wp: Water content at wilting point
         root_depth: Root zone depth (cm)
-        
+
     Returns:
         Dict: Available water calculations
     """
@@ -230,21 +218,21 @@ def calculate_available_water(theta_fc: float, theta_wp: float,
     total_aw_mm = total_aw * 10
 
     return {
-        'available_water_capacity': round(awc, 4),
-        'awc_unit': 'cm/cm',
-        'total_available_water': round(total_aw, 2),
-        'total_available_water_unit': 'cm',
-        'total_available_water_mm': round(total_aw_mm, 2),
-        'root_depth': root_depth,
-        'interpretation': _interpret_awc(awc)
+        "available_water_capacity": round(awc, 4),
+        "awc_unit": "cm/cm",
+        "total_available_water": round(total_aw, 2),
+        "total_available_water_unit": "cm",
+        "total_available_water_mm": round(total_aw_mm, 2),
+        "root_depth": root_depth,
+        "interpretation": _interpret_awc(awc),
     }
 
 
 def _interpret_awc(awc: float) -> dict:
     """Interpret available water capacity."""
     if awc < 0.10:
-        return {'rating': 'low', 'description': 'Low water holding capacity'}
+        return {"rating": "low", "description": "Low water holding capacity"}
     elif awc < 0.20:
-        return {'rating': 'moderate', 'description': 'Moderate water holding'}
+        return {"rating": "moderate", "description": "Moderate water holding"}
     else:
-        return {'rating': 'high', 'description': 'High water holding capacity'}
+        return {"rating": "high", "description": "High water holding capacity"}

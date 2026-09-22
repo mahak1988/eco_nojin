@@ -79,7 +79,9 @@ class TestSlopeAspectAnalyzer:
         valid = interior[~np.isnan(interior)]
 
         assert len(valid) > 0, "Should have valid (non-NaN) slope values"
-        assert np.allclose(valid, 0, atol=1e-3),             f"Expected near-zero slope in interior, got mean={np.mean(valid):.6f}"
+        assert np.allclose(valid, 0, atol=1e-3), (
+            f"Expected near-zero slope in interior, got mean={np.mean(valid):.6f}"
+        )
 
     def test_sloped_terrain(self, sloped_calculator):
         """Sloped DEM interior should have positive slope."""

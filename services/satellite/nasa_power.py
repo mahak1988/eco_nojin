@@ -18,6 +18,7 @@ Why this matters for Phase 4
 Ported from the Eco Nojin reference implementation (econojin.com) with
 Clean-Room structure; API docs: https://power.larc.nasa.gov/docs/
 """
+
 from __future__ import annotations
 
 import logging
@@ -34,10 +35,10 @@ DEFAULT_TIMEOUT = 30.0
 
 #: Daily parameters requested from NASA POWER
 NASA_PARAMETERS = [
-    "T2M",             # temperature at 2 m (C)
-    "T2M_MAX",         # max temperature (C)
-    "T2M_MIN",         # min temperature (C)
-    "PRECTOTCORR",     # corrected precipitation (mm/day)
+    "T2M",  # temperature at 2 m (C)
+    "T2M_MAX",  # max temperature (C)
+    "T2M_MIN",  # min temperature (C)
+    "PRECTOTCORR",  # corrected precipitation (mm/day)
     "ALLSKY_SFC_SW_DWN",  # all-sky insolation (MJ/m^2/day)
 ]
 
@@ -47,6 +48,7 @@ POWER_API_URL = "https://power.larc.nasa.gov/api/temporal/daily/point"
 # ---------------------------------------------------------------------------
 # Pure math
 # ---------------------------------------------------------------------------
+
 
 def hargreaves_et0(tmax: float, tmin: float, tmean: float, doy: int, lat: float) -> float:
     """Hargreaves reference evapotranspiration (mm/day).
@@ -75,9 +77,10 @@ def hargreaves_et0(tmax: float, tmin: float, tmean: float, doy: int, lat: float)
     cos_ws = max(-1.0, min(1.0, -math.tan(phi) * math.tan(delta)))
     ws = math.acos(cos_ws)
     ra = (
-        (24.0 * 60.0 / math.pi) * gsc * dr
-        * (ws * math.sin(phi) * math.sin(delta)
-           + math.cos(phi) * math.cos(delta) * math.sin(ws))
+        (24.0 * 60.0 / math.pi)
+        * gsc
+        * dr
+        * (ws * math.sin(phi) * math.sin(delta) + math.cos(phi) * math.cos(delta) * math.sin(ws))
     )
     if ra <= 0.0:
         return 0.0
@@ -115,6 +118,7 @@ def _valid_or_none(value: Any) -> Optional[float]:
 # ---------------------------------------------------------------------------
 # HTTP layer
 # ---------------------------------------------------------------------------
+
 
 async def fetch_nasa_power_data(
     lat: float, lon: float, start_date: str, end_date: str
@@ -174,9 +178,7 @@ async def get_daily_climate(
     tmin=tmean-3, precip=0) so downstream calculations never crash; the
     source stays "NASA POWER" and failures return {} (callers must handle).
     """
-    raw = await fetch_nasa_power_data(
-        lat, lon, start.strftime("%Y%m%d"), end.strftime("%Y%m%d")
-    )
+    raw = await fetch_nasa_power_data(lat, lon, start.strftime("%Y%m%d"), end.strftime("%Y%m%d"))
     if raw.get("status") != "success":
         logger.warning("NASA POWER unavailable, returning empty climate data")
         return {}
@@ -210,9 +212,7 @@ async def get_daily_climate(
     return out
 
 
-async def fetch_climate_with_et0(
-    lat: float, lon: float, start: date, end: date
-) -> dict[str, Any]:
+async def fetch_climate_with_et0(lat: float, lon: float, start: date, end: date) -> dict[str, Any]:
     """Complete real climate fetch with ET0 summary (recommended entry point).
 
     Returns status/data or an honest error dict; never synthetic values.

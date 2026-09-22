@@ -7,6 +7,7 @@ Phase 6 keeps RAG sync honest: publishing a content item marks it
 items). Real embedding/vector retrieval arrives in Phase 9 — until then
 no fake embeddings are claimed.
 """
+
 from __future__ import annotations
 
 import logging
@@ -14,8 +15,7 @@ import logging
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
-from database import models  # noqa: F401
-from database.hub import hub
+from database import models
 
 logger = logging.getLogger(__name__)
 
@@ -38,13 +38,9 @@ def sync_content_to_rag(db: Session) -> int:
     return len(pending)
 
 
-def search_published_content(
-    db: Session, q: str, limit: int = 10
-) -> list[models.ContentItem]:
+def search_published_content(db: Session, q: str, limit: int = 10) -> list[models.ContentItem]:
     """Keyword search over published content (title + body)."""
-    query = db.query(models.ContentItem).filter(
-        models.ContentItem.status == "published"
-    )
+    query = db.query(models.ContentItem).filter(models.ContentItem.status == "published")
     term = f"%{q.strip()}%"
     query = query.filter(
         or_(
@@ -52,11 +48,7 @@ def search_published_content(
             models.ContentItem.body.ilike(term),
         )
     )
-    return (
-        query.order_by(models.ContentItem.published_at.desc())
-        .limit(limit)
-        .all()
-    )
+    return query.order_by(models.ContentItem.published_at.desc()).limit(limit).all()
 
 
 def snapshot_version(db: Session, item: models.ContentItem) -> None:

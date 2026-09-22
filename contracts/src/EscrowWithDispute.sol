@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /**
  * @title EscrowWithDispute - escrow with the 3-stage dispute flow
@@ -11,10 +10,28 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
  *         Commissions are absolute wei amounts validated against the paid
  *         amount. Payouts use call{value} (no fixed-gas transfer).
  */
-contract EscrowWithDispute is ReentrancyGuard, Ownable {
+contract EscrowWithDispute is ReentrancyGuard {
+    address public owner;
+    uint256 public immutable chainId;
+    
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
+    }
+    
+    constructor() {
+        owner = msg.sender;
+        chainId = block.chainid;
+    }
+    
+    function transferOwnership(address newOwner) external {
+        require(msg.sender == owner, "Not owner");
+        owner = newOwner;
+    }
+    
     enum OrderStatus { Paid, Shipped, Disputed, Delivered, Refunded }
     enum DisputeStage { None, SellerResponse, MarketplaceReview, Resolved }
-
+    
     struct Order {
         address buyer;
         address seller;
@@ -23,7 +40,7 @@ contract EscrowWithDispute is ReentrancyGuard, Ownable {
         uint256 marketplaceCommission;
         uint256 platformCommission;
         OrderStatus status;
-        uint256 deliveryDeadline;
+uint256 deliveryDeadline;
         string trackingNumber;
     }
 
@@ -57,7 +74,7 @@ contract EscrowWithDispute is ReentrancyGuard, Ownable {
     uint256 public constant SELLER_RESPONSE_WINDOW = 48 hours;
     uint256 public constant MARKETPLACE_WINDOW = 72 hours;
 
-    error PaymentRequired();
+error PaymentRequired();
     error CommissionTooHigh();
     error OnlySeller();
     error OnlyBuyer();
@@ -66,8 +83,11 @@ contract EscrowWithDispute is ReentrancyGuard, Ownable {
     error NotInStage();
     error DeadlinePassed();
     error DeadlineNotPassed();
-
-    constructor() Ownable(msg.sender) ReentrancyGuard() {}
+    error NotRegistered();
+    error AlreadyRegistered();
+    error Inactive();
+    error BadScore();
+    error TransferFailed();
 
     function depositInsuranceFund() external payable {
         require(msg.value > 0, "no value");
@@ -196,12 +216,12 @@ contract EscrowWithDispute is ReentrancyGuard, Ownable {
         emit DisputeResolved(disputeId, refundToBuyer, o.amount);
     }
 
-    function _releasePayment(uint256 orderId) internal {
+function _releasePayment(uint256 orderId) internal {
         Order storage o = orders[orderId];
         uint256 sellerAmount = o.amount - o.marketplaceCommission - o.platformCommission;
         _send(payable(o.seller), sellerAmount);
         _send(payable(o.marketplace), o.marketplaceCommission);
-        _send(payable(owner()), o.platformCommission);
+        _send(payable(owner), o.platformCommission);
     }
 
     function _refundBuyer(uint256 orderId) internal {
@@ -216,7 +236,7 @@ contract EscrowWithDispute is ReentrancyGuard, Ownable {
         }
     }
 
-    function _send(address payable to, uint256 value) internal {
+function _send(address payable to, uint256 value) internal {
         (bool ok, ) = to.call{value: value}("");
         require(ok, "eth transfer failed");
     }

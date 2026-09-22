@@ -7,6 +7,7 @@ Fetches monthly temperature and precipitation data from real climate records.
 Source: Open-Meteo Archive API (ERA5 reanalysis, 1950-present)
 URL: https://open-meteo.com/
 """
+
 from __future__ import annotations
 import structlog
 
@@ -53,7 +54,8 @@ class ClimateFetcher:
             return None
 
         params = {
-            "latitude": lat, "longitude": lon,
+            "latitude": lat,
+            "longitude": lon,
             "start_date": f"{year}-01-01",
             "end_date": f"{year}-12-31",
             "daily": "temperature_2m_max,temperature_2m_min,precipitation_sum",

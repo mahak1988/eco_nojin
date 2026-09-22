@@ -1,4 +1,5 @@
 """Tests: AI draft generation, scheduling, due-publisher, bot dispatch."""
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -57,9 +58,7 @@ def test_ai_draft_generation_ok(admin_client, monkeypatch):
             return "مدیریت آب در خاکهای شور\n## مقدمه\n- نکته اول\n- نکته دوم"
 
     monkeypatch.setattr(ai_mod, "OllamaClient", lambda config: FakeOllama())
-    r = admin_client.post(
-        "/api/v1/admin/content/generate-draft?topic=آبیاری+قطرهای&category=water"
-    )
+    r = admin_client.post("/api/v1/admin/content/generate-draft?topic=آبیاری+قطرهای&category=water")
     assert r.status_code == 200, r.text
     item = r.json()
     assert item["generated_by_ai"] is True
@@ -80,17 +79,13 @@ def test_ai_draft_honest_503_when_ollama_offline(admin_client, monkeypatch):
             return None
 
     monkeypatch.setattr(ai_mod, "OllamaClient", lambda config: FakeOllama())
-    r = admin_client.post(
-        "/api/v1/admin/content/generate-draft?topic=test&category=water"
-    )
+    r = admin_client.post("/api/v1/admin/content/generate-draft?topic=test&category=water")
     assert r.status_code == 503
 
 
 def test_schedule_and_cancel(admin_client):
     item = _make(admin_client)
-    r = admin_client.post(
-        f"/api/v1/admin/content/{item['id']}/schedule?at=2030-01-01T00:00:00Z"
-    )
+    r = admin_client.post(f"/api/v1/admin/content/{item['id']}/schedule?at=2030-01-01T00:00:00Z")
     assert r.status_code == 200
     items = admin_client.get("/api/v1/admin/content").json()
     scheduled = [i for i in items if i["id"] == item["id"]][0]
@@ -104,9 +99,7 @@ def test_schedule_and_cancel(admin_client):
 
 def test_schedule_rejects_bad_datetime(admin_client):
     item = _make(admin_client)
-    r = admin_client.post(
-        f"/api/v1/admin/content/{item['id']}/schedule?at=not-a-date"
-    )
+    r = admin_client.post(f"/api/v1/admin/content/{item['id']}/schedule?at=not-a-date")
     assert r.status_code == 400
 
 

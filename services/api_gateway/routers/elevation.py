@@ -7,15 +7,16 @@ free Open-Meteo Elevation API (Copernicus DEM 90m, no key), bilinearly
 upsamples to the requested resolution and caches the result on disk
 (data/manual/elevation_cache/). Falls back with honest 503 on network errors.
 """
+
 from __future__ import annotations
 
 import json
 import math
 import time
 from pathlib import Path
+from typing import Any
 
 import httpx
-from typing import Any
 from fastapi import APIRouter, HTTPException, Query
 
 from services.data_manual import manual
@@ -54,7 +55,7 @@ def _sample_grid(lat: float, lon: float, span_m: int, step: int) -> list[list[fl
     BATCH = 100
     delays = [0, 6, 14, 30, 60]
     for b in range(0, len(points), BATCH):
-        chunk = points[b:b + BATCH]
+        chunk = points[b : b + BATCH]
         las = ",".join(f"{p[0]:.6f}" for p in chunk)
         los = ",".join(f"{p[1]:.6f}" for p in chunk)
         values = None
@@ -73,7 +74,9 @@ def _sample_grid(lat: float, lon: float, span_m: int, step: int) -> list[list[fl
                 continue
             resp.raise_for_status()
         if values is None:
-            raise HTTPException(502, "elevation API rate-limited after retries (try again in a minute)")
+            raise HTTPException(
+                502, "elevation API rate-limited after retries (try again in a minute)"
+            )
         if len(values) != len(chunk):
             raise HTTPException(502, f"elevation API returned {len(values)}/{len(chunk)} values")
         values = resp.json().get("elevation", [])
@@ -155,16 +158,20 @@ def datetime_now() -> str:
 # ============================================================================
 
 _OP_P_FACTOR = {
-    "terrace": 0.35,   # bench terraces cut LS effectiveness strongly
+    "terrace": 0.35,  # bench terraces cut LS effectiveness strongly
     "checkdam": 0.50,
     "gabion": 0.60,
     "spillway": 0.80,
-    "pond": 1.00,      # storage â€” no direct erosion change
-    "well": 1.00,      # water supply â€” groundwater effect instead
+    "pond": 1.00,  # storage â€” no direct erosion change
+    "well": 1.00,  # water supply â€” groundwater effect instead
 }
 _OP_FA = {
-    "terrace": "طھط±ط§ط³â€Œط¨ظ†ط¯غŒ", "checkdam": "ط¨ظ†ط¯ ط®ط§ع©غŒ", "gabion": "ع¯ط§ط¨غŒظˆظ†",
-    "spillway": "ط³ط±ط±غŒط²", "pond": "ط§ط³طھط®ط± ط¢ط¨", "well": "ع†ط§ظ‡",
+    "terrace": "طھط±ط§ط³â€Œط¨ظ†ط¯غŒ",
+    "checkdam": "ط¨ظ†ط¯ ط®ط§ع©غŒ",
+    "gabion": "ع¯ط§ط¨غŒظˆظ†",
+    "spillway": "ط³ط±ط±غŒط²",
+    "pond": "ط§ط³طھط®ط± ط¢ط¨",
+    "well": "ع†ط§ظ‡",
 }
 
 
@@ -218,7 +225,15 @@ def erosion_effect(
                 dzdy = (grid[y + 1][x] - grid[y - 1][x]) / (2 * cell)
                 slopes.append(math.degrees(math.atan(math.sqrt(dzdx**2 + dzdy**2))))
         mean_slope = sum(slopes) / len(slopes) if slopes else 3.0
-    ls_factor = round((slope_length_m / 22.13) ** 0.5 * (0.76 + 0.53 * math.sin(math.radians(mean_slope)) / math.sin(math.radians(5))), 3) if mean_slope > 0 else 0.5
+    ls_factor = (
+        round(
+            (slope_length_m / 22.13) ** 0.5
+            * (0.76 + 0.53 * math.sin(math.radians(mean_slope)) / math.sin(math.radians(5))),
+            3,
+        )
+        if mean_slope > 0
+        else 0.5
+    )
 
     # C â€” cover factor by crop (FAO-ish defaults)
     c_factor = {"wheat": 0.25, "maize": 0.35, "orchard": 0.18, "cover": 0.08}.get(crop.lower(), 0.3)
@@ -238,23 +253,34 @@ def erosion_effect(
         "op": op_type,
         "op_fa": _OP_FA[op_type],
         "rusle": {
-            "R": round(r_factor, 1), "K": k_factor, "LS": ls_factor,
-            "C": c_factor, "P_before": p_before, "P_after": p_after,
+            "R": round(r_factor, 1),
+            "K": k_factor,
+            "LS": ls_factor,
+            "C": c_factor,
+            "P_before": p_before,
+            "P_after": p_after,
         },
         "annual_rainfall_mm": round(annual_rain, 1),
         "mean_slope_deg": round(mean_slope, 2),
         "texture_fa": texture_fa,
         "organic_carbon_pct": om_pct,
         "A_before_t_ha_yr": a_before,
-        "A_after_t_ha_yr": a_after if op_type in ("terrace", "checkdam", "gabion", "spillway") else a_before,
+        "A_after_t_ha_yr": a_after
+        if op_type in ("terrace", "checkdam", "gabion", "spillway")
+        else a_before,
         "reduction_pct": reduction,
         "note_fa": "",
     }
     if op_type == "well":
-        result["note_fa"] = "ع†ط§ظ‡: طھط£ط«غŒط± ط§طµظ„غŒ ط¨ط± ظ„ط§غŒظ‡â€ŒغŒ ط¢ط¨ ط²غŒط±ط²ظ…غŒظ†غŒ ط§ط³طھ (طھط®ظ„غŒظ‡/ط´ط§ط±عک) â€” ط±طµط¯ ط§ط² ظ„ط§غŒظ‡â€ŒغŒ Groundwater"
+        result["note_fa"] = (
+            "ع†ط§ظ‡: طھط£ط«غŒط± ط§طµظ„غŒ ط¨ط± ظ„ط§غŒظ‡â€ŒغŒ ط¢ط¨ ط²غŒط±ط²ظ…غŒظ†غŒ ط§ط³طھ (طھط®ظ„غŒظ‡/ط´ط§ط±عک) â€” ط±طµط¯ ط§ط² ظ„ط§غŒظ‡â€ŒغŒ Groundwater"
+        )
     elif op_type == "pond":
-        result["note_fa"] = "ط§ط³طھط®ط±: ط°ط®غŒط±ظ‡â€ŒغŒ ط±ظˆط§ظ†ط§ط¨ ظˆ ع©ط§ظ‡ط´ ط§ظˆط¬ ط³غŒظ„ط§ط¨ â€” ط§ط«ط± ط¨ط± Water Budget"
+        result["note_fa"] = (
+            "ط§ط³طھط®ط±: ط°ط®غŒط±ظ‡â€ŒغŒ ط±ظˆط§ظ†ط§ط¨ ظˆ ع©ط§ظ‡ط´ ط§ظˆط¬ ط³غŒظ„ط§ط¨ â€” ط§ط«ط± ط¨ط± Water Budget"
+        )
     elif op_type in ("terrace", "checkdam", "gabion"):
-        result["note_fa"] = f"{_OP_FA[op_type]}: ع©ط§ظ‡ط´ ظپط±ط³ط§غŒط´ ({reduction}ظھ) ط±ظˆغŒ ظ„ط§غŒظ‡â€ŒغŒ Erosion ط§ط¹ظ…ط§ظ„ ظ…غŒâ€Œط´ظˆط¯"
+        result["note_fa"] = (
+            f"{_OP_FA[op_type]}: ع©ط§ظ‡ط´ ظپط±ط³ط§غŒط´ ({reduction}ظھ) ط±ظˆغŒ ظ„ط§غŒظ‡â€ŒغŒ Erosion ط§ط¹ظ…ط§ظ„ ظ…غŒâ€Œط´ظˆط¯"
+        )
     return result
-

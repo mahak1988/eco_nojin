@@ -10,16 +10,21 @@ Every carbon/eco payout is split transparently:
 ``distribute`` returns the exact split — the caller decides where each
 share is credited (wallet earn calls), so no fake accounting here.
 """
+
 from __future__ import annotations
 
+import yaml
+from pathlib import Path
 from typing import Any
 
-SHARES = {
-    "producer": 0.70,
-    "platform": 0.15,
-    "ecosystem": 0.10,
-    "governance": 0.05,
-}
+CONFIG_PATH = Path(__file__).parent.parent.parent / "config" / "distribution_constants.yaml"
+
+with open(CONFIG_PATH) as f:
+    _config = yaml.safe_load(f)
+
+SHARES = _config["DISTRIBUTION_PCT"]
+SHARES_BPS = _config["DISTRIBUTION_BPS"]
+BURN_RATE_BPS = _config["BURN_RATE_BPS"]
 
 
 def distribute(total: float) -> dict[str, Any]:
@@ -37,3 +42,23 @@ def distribute(total: float) -> dict[str, Any]:
         "sum": round(sum(parts.values()), 6),
         "rule": "70/15/10/5",
     }
+
+
+def distribute_bps(total: int) -> dict[str, int]:
+    """Split ``total`` ECO (in base units) by basis points (exact integer math)."""
+    if total <= 0:
+        raise ValueError("total must be positive")
+    parts = {name: (total * bps) // 10000 for name, bps in SHARES_BPS.items()}
+    # fix rounding drift
+    drift = total - sum(parts.values())
+    parts["governance"] += drift
+    return parts
+
+
+def apply_burn(total: int, burn_rate_bps: int = None) -> tuple[int, int]:
+    """Apply burn rate and return (burned_amount, net_amount)."""
+    if burn_rate_bps is None:
+        burn_rate_bps = BURN_RATE_BPS
+    burned = (total * burn_rate_bps) // 10000
+    net = total - burned
+    return burned, net

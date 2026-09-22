@@ -15,6 +15,7 @@ Honesty contract
   401 "operation not allowed" otherwise — surfaced as-is, never faked).
 - Network/parse failures are explicit errors.
 """
+
 from __future__ import annotations
 
 import logging
@@ -79,8 +80,14 @@ def fetch_era5_point(
         "month": months,
         "day": days,
         "time": [
-            "00:00", "03:00", "06:00", "09:00",
-            "12:00", "15:00", "18:00", "21:00",
+            "00:00",
+            "03:00",
+            "06:00",
+            "09:00",
+            "12:00",
+            "15:00",
+            "18:00",
+            "21:00",
         ],
         "data_format": "netcdf",
         # 0.25 deg box around the point so the nearest grid cell is included
@@ -134,10 +141,13 @@ def _parse_netcdf(data: bytes, lat: float, lon: float, vars_: list[str]) -> dict
     daily: dict[str, dict[str, Any]] = {}
     for row in series:
         date = row["datetime"][:10]
-        slot = daily.setdefault(date, {"date": date, "t2m_c_mean": None, "tp_mm_sum": 0.0, "samples": 0})
+        slot = daily.setdefault(
+            date, {"date": date, "t2m_c_mean": None, "tp_mm_sum": 0.0, "samples": 0}
+        )
         if "t2m_c" in row:
             slot["t2m_c_mean"] = (
-                row["t2m_c"] if slot["t2m_c_mean"] is None
+                row["t2m_c"]
+                if slot["t2m_c_mean"] is None
                 else (slot["t2m_c_mean"] * slot["samples"] + row["t2m_c"]) / (slot["samples"] + 1)
             )
         if "tp_mm" in row:
@@ -149,7 +159,9 @@ def _parse_netcdf(data: bytes, lat: float, lon: float, vars_: list[str]) -> dict
         slot = daily[date]
         entry: dict[str, Any] = {"date": date}
         if "t2m" in vars_:
-            entry["t2m_c"] = round(slot["t2m_c_mean"], 2) if slot["t2m_c_mean"] is not None else None
+            entry["t2m_c"] = (
+                round(slot["t2m_c_mean"], 2) if slot["t2m_c_mean"] is not None else None
+            )
         if "tp" in vars_:
             entry["tp_mm"] = round(slot["tp_mm_sum"], 3)
         result.append(entry)

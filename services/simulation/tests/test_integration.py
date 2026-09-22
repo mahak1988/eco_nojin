@@ -1,4 +1,5 @@
 """Integration tests for Simulation Framework"""
+
 from datetime import date
 
 import pytest
@@ -41,6 +42,7 @@ def base_context():
         ),
     )
 
+
 @pytest.mark.asyncio
 class TestSimulationFramework:
     async def test_list_simulators(self):
@@ -55,7 +57,8 @@ class TestSimulationFramework:
     async def test_crop_simulation(self, base_context):
         service = SimulationService()
         result = await service.run_simulation(
-            SimulationType.CROP_GROWTH, base_context,
+            SimulationType.CROP_GROWTH,
+            base_context,
         )
         assert result.status == SimulationStatus.COMPLETED, f"Error: {result.error}"
         assert "yield_ton_ha" in result.summary
@@ -64,7 +67,8 @@ class TestSimulationFramework:
     async def test_carbon_simulation(self, base_context):
         service = SimulationService()
         result = await service.run_simulation(
-            SimulationType.SOIL_CARBON, base_context,
+            SimulationType.SOIL_CARBON,
+            base_context,
         )
         assert result.status == SimulationStatus.COMPLETED
         assert result.summary["co2e_sequestered_t_ha"] > 0
@@ -73,7 +77,8 @@ class TestSimulationFramework:
     async def test_wind_erosion(self, base_context):
         service = SimulationService()
         result = await service.run_simulation(
-            SimulationType.WIND_EROSION, base_context,
+            SimulationType.WIND_EROSION,
+            base_context,
         )
         assert result.status == SimulationStatus.COMPLETED
         assert "erosion_ton_ha_year" in result.summary
@@ -88,7 +93,8 @@ class TestSimulationFramework:
         )
         service = SimulationService()
         result = await service.run_simulation(
-            SimulationType.WINDBREAK, base_context,
+            SimulationType.WINDBREAK,
+            base_context,
         )
         assert result.status == SimulationStatus.COMPLETED
         assert result.summary["wind_reduction_pct"] > 0
@@ -100,7 +106,8 @@ class TestSimulationFramework:
 
         # بدون بادشکن
         r1 = await service.run_simulation(
-            SimulationType.WIND_EROSION, base_context,
+            SimulationType.WIND_EROSION,
+            base_context,
         )
 
         # با بادشکن
@@ -112,7 +119,8 @@ class TestSimulationFramework:
             porosity_pct=40.0,
         )
         r2 = await service.run_simulation(
-            SimulationType.WIND_EROSION, ctx_with_wb,
+            SimulationType.WIND_EROSION,
+            ctx_with_wb,
         )
 
         e1 = r1.summary["erosion_ton_ha_year"]
@@ -123,7 +131,8 @@ class TestSimulationFramework:
     async def test_infiltration(self, base_context):
         service = SimulationService()
         result = await service.run_simulation(
-            SimulationType.INFILTRATION, base_context,
+            SimulationType.INFILTRATION,
+            base_context,
         )
         assert result.status == SimulationStatus.COMPLETED
         assert len(result.time_series) == 24
@@ -132,19 +141,23 @@ class TestSimulationFramework:
     async def test_multi_layer_cropping(self, base_context):
         base_context.multi_layer = MultiLayerConfig(
             canopy_layer=CropParameters(
-                crop_type="walnut", planting_date=date(2026, 3, 1),
+                crop_type="walnut",
+                planting_date=date(2026, 3, 1),
             ),
             sub_canopy_layer=CropParameters(
-                crop_type="alfalfa", planting_date=date(2026, 4, 1),
+                crop_type="alfalfa",
+                planting_date=date(2026, 4, 1),
             ),
             ground_layer=CropParameters(
-                crop_type="clover", planting_date=date(2026, 4, 15),
+                crop_type="clover",
+                planting_date=date(2026, 4, 15),
             ),
             shade_tolerance=0.7,
         )
         service = SimulationService()
         result = await service.run_simulation(
-            SimulationType.MULTI_LAYER, base_context,
+            SimulationType.MULTI_LAYER,
+            base_context,
         )
         assert result.status == SimulationStatus.COMPLETED
         assert result.summary["total_layers"] == 3
@@ -160,7 +173,8 @@ class TestSimulationFramework:
     async def test_watershed_with_bbox(self, base_context):
         service = SimulationService()
         result = await service.run_simulation(
-            SimulationType.WATERSHED, base_context,
+            SimulationType.WATERSHED,
+            base_context,
         )
         assert result.status == SimulationStatus.COMPLETED
         assert "aquifer_recharge_mm" in result.summary

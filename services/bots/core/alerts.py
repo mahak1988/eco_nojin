@@ -20,11 +20,11 @@ OPERATORS = {
 
 @dataclass(frozen=True)
 class AlertRule:
-    metric: str            # data key, e.g. "soil_moisture_pct"
-    op: str                # one of OPERATORS
+    metric: str  # data key, e.g. "soil_moisture_pct"
+    op: str  # one of OPERATORS
     threshold: float
-    severity: str          # "info" | "warning" | "critical"
-    label: str             # Persian label shown to the farmer
+    severity: str  # "info" | "warning" | "critical"
+    label: str  # Persian label shown to the farmer
 
 
 def evaluate_rules(rules: list[AlertRule], data: dict[str, float]) -> list[AlertRule]:
@@ -66,12 +66,9 @@ def ndvi_alert_rules() -> list[AlertRule]:
     against absent data).
     """
     return [
-        AlertRule("ndvi", "<=", 0.25, "critical",
-                  "پوشش گیاهی بسیار ضعیف است (NDVI واقعی)" ),
-        AlertRule("ndvi", "<=", 0.40, "warning",
-                  "پوشش گیاهی در حال تنش است (NDVI واقعی)"),
-        AlertRule("ndvi", ">=", 0.65, "info",
-                  "پوشش گیاهی خوب است (NDVI واقعی)"),
+        AlertRule("ndvi", "<=", 0.25, "critical", "پوشش گیاهی بسیار ضعیف است (NDVI واقعی)"),
+        AlertRule("ndvi", "<=", 0.40, "warning", "پوشش گیاهی در حال تنش است (NDVI واقعی)"),
+        AlertRule("ndvi", ">=", 0.65, "info", "پوشش گیاهی خوب است (NDVI واقعی)"),
     ]
 
 

@@ -6,6 +6,7 @@ ETc = ET0 × Kc × Ks
 
 Reference: Allen et al. (1998) FAO-56
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -28,7 +29,11 @@ class EPIA(ScientificModel):
     }
 
     def validate_inputs(
-        self, et0, lai, soil_moisture, rainfall_forecast_mm,
+        self,
+        et0,
+        lai,
+        soil_moisture,
+        rainfall_forecast_mm,
     ) -> tuple[bool, list[str]]:
         errors = []
         if not (0 <= et0 <= 20):
@@ -42,17 +47,16 @@ class EPIA(ScientificModel):
         return len(errors) == 0, errors
 
     @staticmethod
-    def kc_from_lai(lai: np.ndarray, lai_max: float = 6.0,
-                    kc_min: float = 0.1, kc_max: float = 1.2) -> np.ndarray:
+    def kc_from_lai(
+        lai: np.ndarray, lai_max: float = 6.0, kc_min: float = 0.1, kc_max: float = 1.2
+    ) -> np.ndarray:
         """Derive Kc from LAI"""
-        return np.clip(
-            kc_min + (kc_max - kc_min) * (lai / lai_max),
-            kc_min, kc_max
-        )
+        return np.clip(kc_min + (kc_max - kc_min) * (lai / lai_max), kc_min, kc_max)
 
     @staticmethod
-    def ks_water_stress(soil_moisture: float, depletion_fraction: float = 0.5,
-                        taw: float = 50.0) -> float:
+    def ks_water_stress(
+        soil_moisture: float, depletion_fraction: float = 0.5, taw: float = 50.0
+    ) -> float:
         """Water stress coefficient Ks (FAO-56)"""
         raw = depletion_fraction * taw
         dr = taw * (1 - soil_moisture / 0.4)  # Simplified
@@ -113,8 +117,11 @@ class EPIA(ScientificModel):
         }
 
     def validate_against_reference(
-        self, inputs: dict[str, Any], reference_output: float,
-        reference_source: str, tolerance: float = 0.2,
+        self,
+        inputs: dict[str, Any],
+        reference_output: float,
+        reference_source: str,
+        tolerance: float = 0.2,
     ) -> ValidationResult:
         result = self.compute(**inputs)
         computed_value = float(np.mean(result["etc"]))

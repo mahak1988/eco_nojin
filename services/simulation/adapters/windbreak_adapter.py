@@ -1,4 +1,5 @@
 """Windbreak Adapter - طراحی و ارزیابی بادشکن"""
+
 from datetime import UTC, datetime
 
 from services.simulation.base import BaseSimulator, SimulatorRegistry
@@ -13,6 +14,7 @@ from services.simulation.schemas import (
 @SimulatorRegistry.register
 class WindbreakAdapter(BaseSimulator):
     """بادشکن - Windbreak design and impact analysis"""
+
     simulator_type = SimulationType.WINDBREAK
     name = "WindbreakEngine"
     version = "1.0.0"
@@ -58,7 +60,9 @@ class WindbreakAdapter(BaseSimulator):
         # هزینه و بازگشت سرمایه
         cost_per_tree = 50  # USD
         total_cost = total_trees * cost_per_tree
-        annual_water_savings_m3 = (soil_moisture_gain / 100) * 500 * (wb.length_m * protection_distance_m / 10000)
+        annual_water_savings_m3 = (
+            (soil_moisture_gain / 100) * 500 * (wb.length_m * protection_distance_m / 10000)
+        )
 
         return SimulationResult(
             simulation_id=ctx.simulation_id,
@@ -72,9 +76,7 @@ class WindbreakAdapter(BaseSimulator):
                 "length_m": wb.length_m,
                 "total_trees": total_trees,
                 "protection_distance_m": protection_distance_m,
-                "protected_area_ha": round(
-                    (wb.length_m * protection_distance_m) / 10000, 3
-                ),
+                "protected_area_ha": round((wb.length_m * protection_distance_m) / 10000, 3),
                 "wind_reduction_pct": round(wind_reduction_pct, 1),
                 "evaporation_reduction_pct": round(evaporation_reduction, 1),
                 "soil_moisture_gain_pct": round(soil_moisture_gain, 1),

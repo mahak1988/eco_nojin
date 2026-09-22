@@ -1,4 +1,5 @@
 """Fixtures for auth integration tests (Phase 6C fix: missing fixture)."""
+
 import pytest
 
 from services.auth.service import AuthService

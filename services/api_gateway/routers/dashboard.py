@@ -20,12 +20,11 @@ Author: Eco Nojin Architecture Team
 Version: 4.0.0 (Final, Schema-Verified)
 """
 
-import os
 import logging
 from datetime import UTC, datetime
-from typing import Optional, Any
+from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
@@ -41,8 +40,10 @@ router = APIRouter(
 # Pydantic Models
 # ============================================================================
 
+
 class FarmData(BaseModel):
     """Project/Farm information."""
+
     id: str
     name: str
     location: str
@@ -53,6 +54,7 @@ class FarmData(BaseModel):
 
 class WeatherData(BaseModel):
     """Current weather conditions."""
+
     temperature: float
     humidity: float
     precipitation: float
@@ -61,6 +63,7 @@ class WeatherData(BaseModel):
 
 class SatelliteData(BaseModel):
     """Satellite-derived vegetation indices."""
+
     ndvi: float
     evi: float
     soil_moisture: float
@@ -69,6 +72,7 @@ class SatelliteData(BaseModel):
 
 class PredictionData(BaseModel):
     """AI predictions and recommendations."""
+
     yield_prediction: float = Field(..., description="tons/hectare")
     risk_level: str = Field(..., description="low, medium, high")
     recommendations: list[str]
@@ -76,6 +80,7 @@ class PredictionData(BaseModel):
 
 class CarbonData(BaseModel):
     """Carbon project data."""
+
     total_projects: int = 0
     total_credits_issued: int = 0
     total_co2_sequestered: float = 0.0
@@ -85,6 +90,7 @@ class CarbonData(BaseModel):
 
 class AnalyticsData(BaseModel):
     """Platform analytics overview."""
+
     total_projects: int = 0
     total_area_hectares: float = 0.0
     active_motors: int = 166
@@ -94,6 +100,7 @@ class AnalyticsData(BaseModel):
 
 class DashboardData(BaseModel):
     """Complete dashboard data."""
+
     farm: FarmData
     weather: WeatherData
     satellite: SatelliteData
@@ -107,14 +114,15 @@ class DashboardData(BaseModel):
 # Query Helpers
 # ============================================================================
 
+
 def _execute_parameterized(conn, query: str, params: tuple = ()) -> Any:
     """Execute a parameterized query safely.
-    
+
     Args:
         conn: DuckDB connection
         query: SQL query with ? placeholders
         params: Query parameters tuple
-    
+
     Returns:
         Query result
     """
@@ -127,12 +135,12 @@ def _execute_parameterized(conn, query: str, params: tuple = ()) -> Any:
 
 def _execute_parameterized_df(conn, query: str, params: tuple = ()) -> Any:
     """Execute a parameterized query and return DataFrame.
-    
+
     Args:
         conn: DuckDB connection
         query: SQL query with ? placeholders
         params: Query parameters tuple
-    
+
     Returns:
         pandas DataFrame
     """
@@ -147,18 +155,23 @@ def _execute_parameterized_df(conn, query: str, params: tuple = ()) -> Any:
 # Data Fetching Services (Real Schema)
 # ============================================================================
 
+
 def _get_carbon_summary() -> dict:
     """Fetch carbon data from carbon_credits table."""
     try:
         from database.hub import hub
+
         conn = hub.get_duckdb("master")
-        
+
         # Parameterized query (no user input currently, but safe pattern)
-        result = _execute_parameterized(conn, """
+        result = _execute_parameterized(
+            conn,
+            """
             SELECT COUNT(*) as total
             FROM carbon_credits
-        """)
-        
+        """,
+        )
+
         return {
             "total_credits": result[0] if result else 0,
             "status": "ok",
@@ -168,19 +181,22 @@ def _get_carbon_summary() -> dict:
         return {"total_credits": 0, "status": f"error: {type(e).__name__}"}
 
 
-def _get_weather_data(farm_id: Optional[str] = None) -> dict:
+def _get_weather_data(farm_id: str | None = None) -> dict:
     """Fetch current weather data from weather_daily.
-    
+
     Args:
         farm_id: Optional farm/project ID to filter by
     """
     try:
         from database.hub import hub
+
         conn = hub.get_duckdb("master")
-        
+
         # Parameterized query with optional filter
         if farm_id:
-            result = _execute_parameterized(conn, """
+            result = _execute_parameterized(
+                conn,
+                """
                 SELECT 
                     COUNT(*) as days,
                     AVG(tmax_c) as avg_temp_max,
@@ -190,9 +206,13 @@ def _get_weather_data(farm_id: Optional[str] = None) -> dict:
                     AVG(rh_pct) as avg_humidity
                 FROM weather_daily
                 WHERE farm_id = ?
-            """, (farm_id,))
+            """,
+                (farm_id,),
+            )
         else:
-            result = _execute_parameterized(conn, """
+            result = _execute_parameterized(
+                conn,
+                """
                 SELECT 
                     COUNT(*) as days,
                     AVG(tmax_c) as avg_temp_max,
@@ -201,8 +221,9 @@ def _get_weather_data(farm_id: Optional[str] = None) -> dict:
                     SUM(precip_mm) as total_rain,
                     AVG(rh_pct) as avg_humidity
                 FROM weather_daily
-            """)
-        
+            """,
+            )
+
         if result:
             return {
                 "days_recorded": result[0] or 0,
@@ -215,7 +236,7 @@ def _get_weather_data(farm_id: Optional[str] = None) -> dict:
             }
     except Exception as e:
         logger.warning(f"Weather data fetch failed: {e}")
-    
+
     return {
         "days_recorded": 0,
         "avg_temperature_c": 22.5,
@@ -224,19 +245,22 @@ def _get_weather_data(farm_id: Optional[str] = None) -> dict:
     }
 
 
-def _get_satellite_data(farm_id: Optional[str] = None) -> dict:
+def _get_satellite_data(farm_id: str | None = None) -> dict:
     """Fetch satellite-derived vegetation data.
-    
+
     Args:
         farm_id: Optional farm/project ID to filter by
     """
     try:
         from database.hub import hub
+
         conn = hub.get_duckdb("master")
-        
+
         # Parameterized query with optional filter
         if farm_id:
-            result = _execute_parameterized(conn, """
+            result = _execute_parameterized(
+                conn,
+                """
                 SELECT 
                     COUNT(*) as images,
                     AVG(ndvi) as avg_ndvi,
@@ -244,17 +268,22 @@ def _get_satellite_data(farm_id: Optional[str] = None) -> dict:
                     AVG(soil_moisture_index) as avg_moisture
                 FROM satellite_observations
                 WHERE farm_id = ?
-            """, (farm_id,))
+            """,
+                (farm_id,),
+            )
         else:
-            result = _execute_parameterized(conn, """
+            result = _execute_parameterized(
+                conn,
+                """
                 SELECT 
                     COUNT(*) as images,
                     AVG(ndvi) as avg_ndvi,
                     AVG(evi) as avg_evi,
                     AVG(soil_moisture_index) as avg_moisture
                 FROM satellite_observations
-            """)
-        
+            """,
+            )
+
         if result:
             return {
                 "total_images": result[0] or 0,
@@ -265,7 +294,7 @@ def _get_satellite_data(farm_id: Optional[str] = None) -> dict:
             }
     except Exception as e:
         logger.warning(f"Satellite data fetch failed: {e}")
-    
+
     return {
         "total_images": 0,
         "avg_ndvi": 0.0,
@@ -277,15 +306,19 @@ def _get_projects_data() -> dict:
     """Fetch projects data (not farms)."""
     try:
         from database.hub import hub
+
         conn = hub.get_duckdb("master")
-        
-        result = _execute_parameterized(conn, """
+
+        result = _execute_parameterized(
+            conn,
+            """
             SELECT 
                 COUNT(*) as cnt,
                 COALESCE(SUM(area_ha), 0) as total_area
             FROM projects
-        """)
-        
+        """,
+        )
+
         if result:
             return {
                 "total": result[0] or 0,
@@ -294,39 +327,47 @@ def _get_projects_data() -> dict:
             }
     except Exception as e:
         logger.warning(f"Projects data fetch failed: {e}")
-    
+
     return {"total": 0, "total_area_hectares": 0.0, "status": "error"}
 
 
-def _get_soil_data(farm_id: Optional[str] = None) -> dict:
+def _get_soil_data(farm_id: str | None = None) -> dict:
     """Fetch soil profiles data.
-    
+
     Args:
         farm_id: Optional farm/project ID to filter by
     """
     try:
         from database.hub import hub
+
         conn = hub.get_duckdb("master")
-        
+
         # Parameterized query with optional filter
         if farm_id:
-            result = _execute_parameterized(conn, """
+            result = _execute_parameterized(
+                conn,
+                """
                 SELECT 
                     COUNT(*) as profiles,
                     AVG(organic_carbon_percent) as avg_carbon,
                     AVG(ph) as avg_ph
                 FROM soil_profiles
                 WHERE farm_id = ?
-            """, (farm_id,))
+            """,
+                (farm_id,),
+            )
         else:
-            result = _execute_parameterized(conn, """
+            result = _execute_parameterized(
+                conn,
+                """
                 SELECT 
                     COUNT(*) as profiles,
                     AVG(organic_carbon_percent) as avg_carbon,
                     AVG(ph) as avg_ph
                 FROM soil_profiles
-            """)
-        
+            """,
+            )
+
         if result:
             return {
                 "total_profiles": result[0] or 0,
@@ -336,37 +377,45 @@ def _get_soil_data(farm_id: Optional[str] = None) -> dict:
             }
     except Exception as e:
         logger.warning(f"Soil data fetch failed: {e}")
-    
+
     return {"total_profiles": 0, "status": "no_data"}
 
 
-def _get_mrv_data(farm_id: Optional[str] = None) -> dict:
+def _get_mrv_data(farm_id: str | None = None) -> dict:
     """Fetch MRV observations.
-    
+
     Args:
         farm_id: Optional farm/project ID to filter by
     """
     try:
         from database.hub import hub
+
         conn = hub.get_duckdb("master")
-        
+
         # Parameterized query with optional filter
         if farm_id:
-            result = _execute_parameterized(conn, """
+            result = _execute_parameterized(
+                conn,
+                """
                 SELECT 
                     COUNT(*) as total,
                     COUNT(CASE WHEN verified = TRUE THEN 1 END) as verified
                 FROM mrv_observations
                 WHERE farm_id = ?
-            """, (farm_id,))
+            """,
+                (farm_id,),
+            )
         else:
-            result = _execute_parameterized(conn, """
+            result = _execute_parameterized(
+                conn,
+                """
                 SELECT 
                     COUNT(*) as total,
                     COUNT(CASE WHEN verified = TRUE THEN 1 END) as verified
                 FROM mrv_observations
-            """)
-        
+            """,
+            )
+
         if result:
             total = result[0] or 0
             verified = result[1] or 0
@@ -378,37 +427,45 @@ def _get_mrv_data(farm_id: Optional[str] = None) -> dict:
             }
     except Exception as e:
         logger.warning(f"MRV data fetch failed: {e}")
-    
+
     return {"total_observations": 0, "status": "no_data"}
 
 
-def _get_simulations_data(farm_id: Optional[str] = None) -> dict:
+def _get_simulations_data(farm_id: str | None = None) -> dict:
     """Fetch simulation runs.
-    
+
     Args:
         farm_id: Optional farm/project ID to filter by
     """
     try:
         from database.hub import hub
+
         conn = hub.get_duckdb("master")
-        
+
         # Parameterized query with optional filter
         if farm_id:
-            result = _execute_parameterized(conn, """
+            result = _execute_parameterized(
+                conn,
+                """
                 SELECT 
                     COUNT(*) as total,
                     COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed
                 FROM simulation_runs
                 WHERE farm_id = ?
-            """, (farm_id,))
+            """,
+                (farm_id,),
+            )
         else:
-            result = _execute_parameterized(conn, """
+            result = _execute_parameterized(
+                conn,
+                """
                 SELECT 
                     COUNT(*) as total,
                     COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed
                 FROM simulation_runs
-            """)
-        
+            """,
+            )
+
         if result:
             return {
                 "total_runs": result[0] or 0,
@@ -417,7 +474,7 @@ def _get_simulations_data(farm_id: Optional[str] = None) -> dict:
             }
     except Exception as e:
         logger.warning(f"Simulations data fetch failed: {e}")
-    
+
     return {"total_runs": 0, "status": "no_data"}
 
 
@@ -425,15 +482,19 @@ def _get_tourism_data() -> dict:
     """Fetch tourism bookings."""
     try:
         from database.hub import hub
+
         conn = hub.get_duckdb("master")
-        
-        result = _execute_parameterized(conn, """
+
+        result = _execute_parameterized(
+            conn,
+            """
             SELECT 
                 COUNT(*) as total_bookings,
                 COALESCE(SUM(total), 0) as total_revenue
             FROM tourism_bookings
-        """)
-        
+        """,
+        )
+
         if result:
             return {
                 "total_bookings": result[0] or 0,
@@ -442,7 +503,7 @@ def _get_tourism_data() -> dict:
             }
     except Exception as e:
         logger.warning(f"Tourism data fetch failed: {e}")
-    
+
     return {"total_bookings": 0, "total_revenue": 0.0, "status": "no_data"}
 
 
@@ -450,14 +511,15 @@ def _get_tourism_data() -> dict:
 # PUBLIC ENDPOINTS - No Authentication Required
 # ============================================================================
 
+
 @router.get("/public/full")
 async def public_full_dashboard(
-    farm_id: Optional[str] = Query(None, description="Filter by farm/project ID")
+    farm_id: str | None = Query(None, description="Filter by farm/project ID"),
 ):
     """
     Complete dashboard data - NO AUTHENTICATION REQUIRED.
     Returns aggregated statistics from all major data sources.
-    
+
     Args:
         farm_id: Optional farm/project ID to filter data
     """
@@ -494,30 +556,35 @@ async def public_full_dashboard(
 
 @router.get("/public/projects")
 async def public_projects(
-    limit: int = Query(50, ge=1, le=200, description="Maximum number of projects to return")
+    limit: int = Query(50, ge=1, le=200, description="Maximum number of projects to return"),
 ):
     """Projects list (replaces farms) - NO AUTH.
-    
+
     Args:
         limit: Maximum number of projects to return (1-200)
     """
     try:
         from database.hub import hub
+
         conn = hub.get_duckdb("master")
-        
+
         # Parameterized query with validated limit
-        projects = _execute_parameterized_df(conn, """
+        projects = _execute_parameterized_df(
+            conn,
+            """
             SELECT id, name, region_name, area_ha, created_at
             FROM projects
             ORDER BY created_at DESC
             LIMIT ?
-        """, (limit,))
-        
+        """,
+            (limit,),
+        )
+
         return {
             "status": "success",
             "auth_required": False,
             "count": len(projects) if projects is not None else 0,
-            "data": projects.to_dict('records') if projects is not None else [],
+            "data": projects.to_dict("records") if projects is not None else [],
             "timestamp": datetime.now(UTC).isoformat(),
         }
     except Exception as e:
@@ -555,10 +622,10 @@ async def public_analytics():
 
 @router.get("/public/weather")
 async def public_weather(
-    farm_id: Optional[str] = Query(None, description="Filter by farm/project ID")
+    farm_id: str | None = Query(None, description="Filter by farm/project ID"),
 ):
     """Weather summary - NO AUTH.
-    
+
     Args:
         farm_id: Optional farm/project ID to filter by
     """
@@ -572,10 +639,10 @@ async def public_weather(
 
 @router.get("/public/satellite")
 async def public_satellite(
-    farm_id: Optional[str] = Query(None, description="Filter by farm/project ID")
+    farm_id: str | None = Query(None, description="Filter by farm/project ID"),
 ):
     """Satellite observations - NO AUTH.
-    
+
     Args:
         farm_id: Optional farm/project ID to filter by
     """
@@ -588,11 +655,9 @@ async def public_satellite(
 
 
 @router.get("/public/soil")
-async def public_soil(
-    farm_id: Optional[str] = Query(None, description="Filter by farm/project ID")
-):
+async def public_soil(farm_id: str | None = Query(None, description="Filter by farm/project ID")):
     """Soil profiles - NO AUTH.
-    
+
     Args:
         farm_id: Optional farm/project ID to filter by
     """
@@ -605,11 +670,9 @@ async def public_soil(
 
 
 @router.get("/public/mrv")
-async def public_mrv(
-    farm_id: Optional[str] = Query(None, description="Filter by farm/project ID")
-):
+async def public_mrv(farm_id: str | None = Query(None, description="Filter by farm/project ID")):
     """MRV observations - NO AUTH.
-    
+
     Args:
         farm_id: Optional farm/project ID to filter by
     """
@@ -623,10 +686,10 @@ async def public_mrv(
 
 @router.get("/public/simulations")
 async def public_simulations(
-    farm_id: Optional[str] = Query(None, description="Filter by farm/project ID")
+    farm_id: str | None = Query(None, description="Filter by farm/project ID"),
 ):
     """Simulation runs - NO AUTH.
-    
+
     Args:
         farm_id: Optional farm/project ID to filter by
     """
@@ -682,14 +745,17 @@ async def public_test():
 # AUTHENTICATED ENDPOINTS - Authentication Required
 # ============================================================================
 
+
 def _get_current_user_optional(request: Request):
     """Try to extract user from request. Returns None if not authenticated."""
     auth_header = request.headers.get("authorization", "")
     if auth_header.startswith("Bearer "):
         token = auth_header[7:]
         try:
-            from services.auth import compat
-            return compat.decode_token_safe(token)
+            from services.api_gateway.auth import decode_token
+
+            payload = decode_token(token)
+            return payload.get("sub") if payload else None
         except Exception:
             return None
     return None
@@ -711,6 +777,7 @@ async def get_dashboard_data(request: Request):
 
     try:
         from database.hub import hub
+
         conn = hub.get_duckdb("master")
 
         weather = _get_weather_data(None)
@@ -755,6 +822,7 @@ async def refresh_dashboard_data(request: Request):
 
     try:
         from database.hub import hub
+
         conn = hub.get_duckdb("master")
 
         weather = _get_weather_data(None)
@@ -804,6 +872,7 @@ async def get_recommendations(farm_id: str, request: Request):
 
     try:
         from database.hub import hub
+
         conn = hub.get_duckdb("master")
 
         weather = _get_weather_data(farm_id)
@@ -815,32 +884,40 @@ async def get_recommendations(farm_id: str, request: Request):
         recommendations = []
 
         if soil.get("avg_organic_carbon_pct", 0) < 2.0:
-            recommendations.append({
-                "type": "soil_carbon",
-                "priority": "high",
-                "message": "Increase organic matter through compost application",
-            })
+            recommendations.append(
+                {
+                    "type": "soil_carbon",
+                    "priority": "high",
+                    "message": "Increase organic matter through compost application",
+                }
+            )
 
         if weather.get("avg_temperature_c", 0) > 30:
-            recommendations.append({
-                "type": "water_management",
-                "priority": "high",
-                "message": "Implement irrigation scheduling based on weather forecasts",
-            })
+            recommendations.append(
+                {
+                    "type": "water_management",
+                    "priority": "high",
+                    "message": "Implement irrigation scheduling based on weather forecasts",
+                }
+            )
 
         if satellite.get("avg_ndvi", 0) < 0.4:
-            recommendations.append({
-                "type": "vegetation_health",
-                "priority": "medium",
-                "message": "Monitor vegetation stress and consider fertilization",
-            })
+            recommendations.append(
+                {
+                    "type": "vegetation_health",
+                    "priority": "medium",
+                    "message": "Monitor vegetation stress and consider fertilization",
+                }
+            )
 
         if mrv.get("verification_rate_pct", 0) < 80:
-            recommendations.append({
-                "type": "data_quality",
-                "priority": "medium",
-                "message": "Increase MRV observation frequency for better verification",
-            })
+            recommendations.append(
+                {
+                    "type": "data_quality",
+                    "priority": "medium",
+                    "message": "Increase MRV observation frequency for better verification",
+                }
+            )
 
         return {
             "status": "success",

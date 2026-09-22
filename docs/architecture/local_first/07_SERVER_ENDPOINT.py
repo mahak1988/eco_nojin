@@ -9,6 +9,7 @@ Minimal Server Endpoint for Local-First Sync
 
 Deployment: Supabase Edge Functions / Cloudflare Workers (NO DOCKER)
 """
+
 from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
@@ -21,6 +22,7 @@ app = FastAPI(title="Hydroma Local-First Sync Server")
 # ============================================================================
 # Models
 # ============================================================================
+
 
 class RegisterRequest(BaseModel):
     email: str
@@ -57,6 +59,7 @@ class SyncPushRequest(BaseModel):
 # ============================================================================
 # Endpoints
 # ============================================================================
+
 
 @app.post("/api/v1/auth/register", response_model=AuthResponse)
 async def register(req: RegisterRequest):
@@ -97,7 +100,7 @@ async def sync_push(
         # We only store: id, user_id, encrypted_payload, iv, timestamp
         # We DO NOT know what's inside
         accepted.append(change.id)
-    
+
     return {
         "accepted": accepted,
         "rejected": [],

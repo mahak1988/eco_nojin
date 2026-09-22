@@ -1,4 +1,5 @@
 """Integration tests for Analytics"""
+
 import pytest
 
 from services.analytics.schemas import PeriodType

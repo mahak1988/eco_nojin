@@ -164,5 +164,6 @@ Or set it manually:
 
 ```python
 import os
+
 os.environ["DATABASE_URL"] = "sqlite:///data/econojin.db"
 ```

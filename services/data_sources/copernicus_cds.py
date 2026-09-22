@@ -20,6 +20,7 @@ Usage:
         variables=["2m_temperature", "total_precipitation"]
     )
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -43,7 +44,9 @@ class CopernicusCDSClient:
     def __init__(self, api_key: str | None = None, api_url: str | None = None):
         """Initialize CDS client with credentials."""
         self.api_key = api_key or os.getenv("COPERNICUS_CDS_API_KEY")
-        self.api_url = api_url or os.getenv("COPERNICUS_CDS_URL", "https://cds.climate.copernicus.eu/api")
+        self.api_url = api_url or os.getenv(
+            "COPERNICUS_CDS_URL", "https://cds.climate.copernicus.eu/api"
+        )
 
         if not self.api_key:
             logger.warning("COPERNICUS_CDS_API_KEY not set")
@@ -51,6 +54,7 @@ class CopernicusCDSClient:
         else:
             try:
                 import cdsapi
+
                 self._client = cdsapi.Client(
                     url=self.api_url,
                     key=self.api_key,
@@ -92,7 +96,7 @@ class CopernicusCDSClient:
     ) -> dict[str, Any] | None:
         """
         Fetch ERA5-Land data (9km resolution, highest quality).
-        
+
         Args:
             latitude: Center latitude
             longitude: Center longitude
@@ -100,7 +104,7 @@ class CopernicusCDSClient:
             end_date: End date (YYYY-MM-DD)
             variables: List of variables to fetch
             area: [north, west, south, east] bounding box (default: 0.5deg)
-        
+
         Returns:
             Dictionary with downloaded data or None on failure
         """
@@ -157,11 +161,7 @@ class CopernicusCDSClient:
             target_path = str(self._get_cache_path(cache_key))
             logger.info(f"Downloading ERA5-Land data for {len(dates)} days...")
 
-            self._client.retrieve(
-                "reanalysis-era5-land",
-                request_params,
-                target_path
-            )
+            self._client.retrieve("reanalysis-era5-land", request_params, target_path)
 
             logger.info(f"Downloaded to: {target_path}")
             return {
@@ -204,11 +204,7 @@ class CopernicusCDSClient:
 
         try:
             target_path = str(self._get_cache_path(cache_key))
-            self._client.retrieve(
-                "satellite-soil-moisture",
-                request_params,
-                target_path
-            )
+            self._client.retrieve("satellite-soil-moisture", request_params, target_path)
             return {"cache_path": target_path, "from_cache": False}
         except Exception as e:
             logger.error(f"Soil moisture download failed: {e}")
@@ -217,6 +213,7 @@ class CopernicusCDSClient:
 
 # Singleton instance
 _cds_client = None
+
 
 def get_cds_client() -> CopernicusCDSClient:
     """Get singleton CDS client."""

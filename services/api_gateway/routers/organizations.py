@@ -9,12 +9,12 @@ from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
-from sqlalchemy import select, and_
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from services.api_gateway.auth import require_user
 from database.hub import hub
-from database.models import User, Organization, OrganizationMembership
+from database.models import Organization, OrganizationMembership, User
+from services.api_gateway.auth import require_user
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +50,9 @@ def create_organization(
     db: Session = Depends(get_db),
 ):
     """Create a new organization."""
-    existing = db.execute(select(Organization).where(Organization.slug == payload.slug)).scalar_one_or_none()
+    existing = db.execute(
+        select(Organization).where(Organization.slug == payload.slug)
+    ).scalar_one_or_none()
     if existing:
         raise HTTPException(status_code=409, detail="Organization slug already exists")
 

@@ -17,7 +17,13 @@ class TestSyntheticWeather:
     def test_columns_and_length(self):
         weather = synthetic_weather("2020/03/01", "2020/07/15")
         # aquacrop reads values positionally: MinTemp, MaxTemp, Precip, ET0, Date
-        assert list(weather.columns) == ["MinTemp", "MaxTemp", "Precipitation", "ReferenceET", "Date"]
+        assert list(weather.columns) == [
+            "MinTemp",
+            "MaxTemp",
+            "Precipitation",
+            "ReferenceET",
+            "Date",
+        ]
         assert len(weather) >= 130
 
     def test_temperature_ramp(self):

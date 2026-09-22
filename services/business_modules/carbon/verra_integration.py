@@ -15,7 +15,7 @@ with a logged warning.
 
 import logging
 import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import httpx
 
@@ -200,9 +200,7 @@ class VerraService:
             "note": "Mock data — configure VERRA_API_KEY for real project data",
         }
 
-    def _mock_search(
-        self, country: str | None, methodology: str | None
-    ) -> list[dict]:
+    def _mock_search(self, country: str | None, methodology: str | None) -> list[dict]:
         return [
             {
                 "id": "MOCK-001",
@@ -223,6 +221,7 @@ class VerraService:
 
 def _now_iso() -> str:
     from datetime import UTC, datetime
+
     return datetime.now(UTC).isoformat()
 
 

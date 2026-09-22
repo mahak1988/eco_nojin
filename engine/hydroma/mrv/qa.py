@@ -41,9 +41,7 @@ PHYSICAL_RANGES: dict[str, dict] = {
 }
 
 
-def validate_reading(
-    sensor_type: str, value: float, unit: str | None = None
-) -> QAReport:
+def validate_reading(sensor_type: str, value: float, unit: str | None = None) -> QAReport:
     """Validate a reading against its physical plausibility band.
 
     Args:
@@ -56,9 +54,7 @@ def validate_reading(
     """
     band = PHYSICAL_RANGES.get(sensor_type)
     if band is None:
-        return QAReport(
-            "rejected", f"Unknown sensor_type '{sensor_type}'; cannot validate."
-        )
+        return QAReport("rejected", f"Unknown sensor_type '{sensor_type}'; cannot validate.")
     unit_str = unit or band["unit"]
     if band["max"] is None:
         hard_ok = value >= band["min"]
@@ -70,8 +66,7 @@ def validate_reading(
     if not hard_ok:
         return QAReport(
             "rejected",
-            f"{sensor_type}={value} {unit_str} outside physical range "
-            f"({bound_desc}); rejected.",
+            f"{sensor_type}={value} {unit_str} outside physical range ({bound_desc}); rejected.",
         )
     if value < band["ok_min"] or value > band["ok_max"]:
         return QAReport(

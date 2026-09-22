@@ -1,9 +1,10 @@
+"""Supply chain traceability using blockchain with real hash-chain.
 
-"""Supply chain traceability using blockchain.
-
-Provides immutable product traceability.
+Provides immutable product traceability with verifiable
+SHA-256 hash-chain instead of random UUIDs.
 """
 
+import hashlib
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -21,6 +22,7 @@ class TraceEvent:
     notes: str = ""
     timestamp: datetime = field(default_factory=datetime.utcnow)
     tx_hash: str = ""
+    prev_tx_hash: str = ""
 
 
 @dataclass
@@ -35,19 +37,25 @@ class TracedProduct:
     verified: bool = False
     verified_at: datetime | None = None
     tx_hash: str = ""
+    prev_tx_hash: str = ""
 
 
 class SupplyChainRegistry:
-    """Supply chain traceability registry."""
+    """Supply chain traceability registry with real hash-chain."""
 
     def __init__(self):
         self.products: dict[str, TracedProduct] = {}
-        self._tx_counter = 0
+        self._last_tx_hash: str = "0x0"
 
-    def _generate_tx_hash(self) -> str:
-        """Generate mock transaction hash."""
-        self._tx_counter += 1
-        return f"0x{uuid.uuid4().hex[:64]}"
+    def _generate_tx_hash(self, data: str, prev_tx_hash: str | None = None) -> str:
+        """Generate real hash-chain transaction hash."""
+        prev = prev_tx_hash or self._last_tx_hash
+        raw = f"{prev}:{data}:{uuid.uuid4().hex[:8]}"
+        return "0x" + hashlib.sha256(raw.encode()).hexdigest()
+
+    def _update_chain(self, tx_hash: str) -> None:
+        """Update the chain head."""
+        self._last_tx_hash = tx_hash
 
     def register_product(
         self,
@@ -59,15 +67,26 @@ class SupplyChainRegistry:
     ) -> TracedProduct:
         """Register a new product in supply chain."""
         product_id = f"prod_{uuid.uuid4().hex[:8]}"
+        prev = self._last_tx_hash
+        tx_hash = self._generate_tx_hash(
+            f"register:{product_id}:{producer}:{batch_number}",
+            prev,
+        )
 
         product = TracedProduct(
             product_id=product_id,
             producer=producer,
             batch_number=batch_number,
-            tx_hash=self._generate_tx_hash(),
+            tx_hash=tx_hash,
+            prev_tx_hash=prev,
         )
 
         # Add initial event
+        event_prev = tx_hash
+        event_tx = self._generate_tx_hash(
+            f"event:{initial_event}:{location}:{producer}:{notes}",
+            event_prev,
+        )
         event = TraceEvent(
             event_id=f"evt_{uuid.uuid4().hex[:8]}",
             product_id=product_id,
@@ -75,11 +94,13 @@ class SupplyChainRegistry:
             location=location,
             actor=producer,
             notes=notes,
-            tx_hash=self._generate_tx_hash(),
+            tx_hash=event_tx,
+            prev_tx_hash=event_prev,
         )
 
         product.events.append(event)
         self.products[product_id] = product
+        self._update_chain(event_tx)
 
         return product
 
@@ -91,6 +112,11 @@ class SupplyChainRegistry:
             raise ValueError(f"Product not found: {product_id}")
 
         product = self.products[product_id]
+        prev = self._last_tx_hash
+        tx_hash = self._generate_tx_hash(
+            f"event:{event_type}:{location}:{actor}:{notes}",
+            prev,
+        )
 
         event = TraceEvent(
             event_id=f"evt_{uuid.uuid4().hex[:8]}",
@@ -99,10 +125,12 @@ class SupplyChainRegistry:
             location=location,
             actor=actor,
             notes=notes,
-            tx_hash=self._generate_tx_hash(),
+            tx_hash=tx_hash,
+            prev_tx_hash=prev,
         )
 
         product.events.append(event)
+        self._update_chain(tx_hash)
 
         return event
 
@@ -112,8 +140,16 @@ class SupplyChainRegistry:
             raise ValueError(f"Product not found: {product_id}")
 
         product = self.products[product_id]
+        prev = self._last_tx_hash
+        tx_hash = self._generate_tx_hash(
+            f"verify:{product_id}:{datetime.now(UTC).isoformat()}",
+            prev,
+        )
         product.verified = True
         product.verified_at = datetime.now(UTC).replace(tzinfo=None)
+        product.tx_hash = tx_hash
+        product.prev_tx_hash = prev
+        self._update_chain(tx_hash)
 
         return product
 

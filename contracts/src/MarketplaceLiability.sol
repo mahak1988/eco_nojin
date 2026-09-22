@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /**
  * @title MarketplaceLiability - accountability of village/tribal marketplaces
@@ -36,7 +36,7 @@ contract MarketplaceLiability is Ownable, ReentrancyGuard {
     error BadScore();
     error TransferFailed();
 
-    constructor() Ownable(msg.sender) ReentrancyGuard() {}
+    constructor() {}
 
     modifier registeredAndActive(address marketplace) {
         if (accounts[marketplace].lastUpdate == 0) revert NotRegistered();

@@ -21,6 +21,7 @@ class TestSQLInjectionProtection:
     def test_dict_import(self):
         """Dict should be imported in data_connector."""
         from engine.data_connector import DataConnector
+
         # If import works, Dict is available
         dc = DataConnector.__dict__
         assert dc is not None
@@ -28,6 +29,7 @@ class TestSQLInjectionProtection:
     def test_select_query_allowed(self):
         """SELECT queries should be allowed."""
         from engine.data_connector import connector
+
         # This should not raise
         try:
             result = connector.execute_analytics_query("SELECT 1 as test")
@@ -39,38 +41,37 @@ class TestSQLInjectionProtection:
     def test_drop_table_blocked(self):
         """DROP TABLE should be blocked."""
         from engine.data_connector import connector
+
         with pytest.raises((ValueError, RuntimeError)):
             connector.execute_analytics_query("DROP TABLE users")
 
     def test_delete_blocked(self):
         """DELETE should be blocked."""
         from engine.data_connector import connector
+
         with pytest.raises((ValueError, RuntimeError)):
             connector.execute_analytics_query("DELETE FROM users WHERE 1=1")
 
     def test_union_injection_blocked(self):
         """UNION SELECT injection should be blocked."""
         from engine.data_connector import connector
+
         with pytest.raises((ValueError, RuntimeError)):
-            connector.execute_analytics_query(
-                "SELECT 1 UNION SELECT username, password FROM users"
-            )
+            connector.execute_analytics_query("SELECT 1 UNION SELECT username, password FROM users")
 
     def test_comment_injection_blocked(self):
         """Comment-based injection should be blocked."""
         from engine.data_connector import connector
+
         with pytest.raises((ValueError, RuntimeError)):
-            connector.execute_analytics_query(
-                "SELECT * FROM users WHERE id = 1 -- comment"
-            )
+            connector.execute_analytics_query("SELECT * FROM users WHERE id = 1 -- comment")
 
     def test_semicolon_injection_blocked(self):
         """Semicolon-based injection should be blocked."""
         from engine.data_connector import connector
+
         with pytest.raises((ValueError, RuntimeError)):
-            connector.execute_analytics_query(
-                "SELECT 1; DROP TABLE users"
-            )
+            connector.execute_analytics_query("SELECT 1; DROP TABLE users")
 
 
 class TestThreadPoolImprovements:
@@ -79,6 +80,7 @@ class TestThreadPoolImprovements:
     def test_pool_exists(self):
         """Hub should have session factory with pool."""
         from database.hub import hub
+
         assert hub.get_session is not None
 
     def test_concurrent_sessions(self):
@@ -114,6 +116,7 @@ class TestConnectionTimeout:
     def test_duckdb_connection_works(self):
         """DuckDB connections should still work."""
         from database.hub import hub
+
         pytest.importorskip("duckdb")
 
         conn = hub.get_duckdb("master")

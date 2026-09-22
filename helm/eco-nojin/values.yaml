@@ -1,0 +1,774 @@
+# Default values for Eco Nojin Helm Chart
+# Production-ready configuration with all components
+
+global:
+  namespace: eco-nojin
+  imageRegistry: ghcr.io
+  imagePullSecrets:
+    - ghcr-credentials
+  storageClass: gp3
+  domain: eco-nojin.org
+  tls:
+    enabled: true
+    clusterIssuer: letsencrypt-prod
+
+# API Gateway Service
+api-gateway:
+  enabled: true
+  replicas: 3
+  image:
+    repository: eco-nojin/api-gateway
+    tag: latest
+    pullPolicy: Always
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 50
+    targetCPUUtilization: 70
+    targetMemoryUtilization: 80
+    behavior:
+      scaleDown:
+        stabilizationWindowSeconds: 300
+        policies:
+          - type: Percent
+            value: 10
+            periodSeconds: 60
+      scaleUp:
+        stabilizationWindowSeconds: 60
+        policies:
+          - type: Percent
+            value: 100
+            periodSeconds: 30
+          - type: Pods
+            value: 4
+            periodSeconds: 30
+        selectPolicy: Max
+  service:
+    type: ClusterIP
+    port: 80
+    grpcPort: 50051
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/rate-limit: "100"
+      nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    hosts:
+      - host: api.eco-nojin.org
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: api-gateway-tls
+        hosts:
+          - api.eco-nojin.org
+  config:
+    environment: production
+    logLevel: info
+    redis:
+      enabled: true
+      host: redis-master
+      port: 6379
+    database:
+      host: postgresql
+      port: 5432
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 50%
+  networkPolicy:
+    enabled: true
+  monitoring:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+      path: /metrics
+  tracing:
+    enabled: true
+    otlpEndpoint: http://tempo.tracing.svc.cluster.local:4317
+
+# Frontend Service
+frontend:
+  enabled: true
+  replicas: 3
+  image:
+    repository: eco-nojin/frontend
+    tag: latest
+    pullPolicy: Always
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 20
+    targetCPUUtilization: 60
+    targetMemoryUtilization: 70
+  service:
+    type: ClusterIP
+    port: 3000
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/rate-limit: "200"
+    hosts:
+      - host: app.eco-nojin.org
+        paths:
+          - path: /
+            pathType: Prefix
+      - host: eco-nojin.org
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: frontend-tls
+        hosts:
+          - app.eco-nojin.org
+          - eco-nojin.org
+  config:
+    NEXT_PUBLIC_API_URL: https://api.eco-nojin.org
+    NEXT_PUBLIC_APP_URL: https://app.eco-nojin.org
+    NEXT_PUBLIC_WS_URL: wss://api.eco-nojin.org
+    NODE_ENV: production
+    NEXT_TELEMETRY_DISABLED: "1"
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 50%
+  networkPolicy:
+    enabled: true
+
+# Redis (using Bitnami chart)
+redis:
+  enabled: true
+  architecture: replication
+  auth:
+    enabled: true
+    existingSecret: redis-auth
+    existingSecretPasswordKey: redis-password
+  master:
+    persistence:
+      enabled: true
+      size: 20Gi
+      storageClass: gp3
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 1
+  replica:
+    replicaCount: 2
+    persistence:
+      enabled: true
+      size: 20Gi
+      storageClass: gp3
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+  networkPolicy:
+    enabled: true
+
+# PostgreSQL (using Bitnami chart)
+postgresql:
+  enabled: true
+  auth:
+    enabled: true
+    existingSecret: postgresql-auth
+    existingSecretPasswordKey: postgres-password
+    replicationPasswordKey: replication-password
+  primary:
+    persistence:
+      enabled: true
+      size: 100Gi
+      storageClass: gp3
+    resources:
+      requests:
+        cpu: 1000m
+        memory: 2Gi
+      limits:
+        cpu: 2000m
+        memory: 4Gi
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 1
+  readReplicas:
+    replicaCount: 2
+    persistence:
+      enabled: true
+      size: 100Gi
+      storageClass: gp3
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+  networkPolicy:
+    enabled: true
+  pgpool:
+    enabled: true
+    replicas: 2
+
+# n8n Workflow Engine
+n8n:
+  enabled: true
+  replicas: 2
+  image:
+    repository: n8nio/n8n
+    tag: latest
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+  service:
+    type: ClusterIP
+    port: 5678
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    hosts:
+      - host: workflows.eco-nojin.org
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: n8n-tls
+        hosts:
+          - workflows.eco-nojin.org
+  config:
+    DB_TYPE: postgresdb
+    DB_POSTGRESDB_HOST: postgresql
+    DB_POSTGRESDB_DATABASE: econojin
+    DB_POSTGRESDB_USER: econojin
+    DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD}
+    EXECUTIONS_MODE: queue
+    QUEUE_BULL_REDIS_HOST: redis-master
+    QUEUE_BULL_REDIS_PORT: 6379
+    QUEUE_BULL_REDIS_PASSWORD: ${REDIS_PASSWORD}
+    GENERIC_TIMEZONE: Asia/Tehran
+    N8N_SECURE_COOKIE: "true"
+    N8N_COOKIE_SAME_SITE_POLICY: "strict"
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+  networkPolicy:
+    enabled: true
+
+# Monitoring Stack (Prometheus, Grafana, Alertmanager)
+monitoring:
+  enabled: true
+  prometheus:
+    enabled: true
+    retention: 30d
+    retentionSize: 50GB
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: gp3
+          resources:
+            requests:
+              storage: 100Gi
+    resources:
+      requests:
+        cpu: 1000m
+        memory: 2Gi
+      limits:
+        cpu: 2000m
+        memory: 4Gi
+    serviceMonitor:
+      enabled: true
+    podMonitors:
+      enabled: true
+    rules:
+      enabled: true
+    alertmanager:
+      enabled: true
+      config:
+        global:
+          resolve_timeout: 5m
+        route:
+          group_by: ['alertname', 'cluster', 'service']
+          group_wait: 30s
+          group_interval: 5m
+          repeat_interval: 4h
+          receiver: 'slack'
+          routes:
+            - match:
+                severity: critical
+              receiver: 'slack-critical'
+              continue: true
+            - match:
+                severity: warning
+              receiver: 'slack-warning'
+        receivers:
+          - name: 'slack'
+            slack_configs:
+              - channel: '#alerts'
+                send_resolved: true
+                title: '{{ .GroupLabels.alertname }}'
+                text: '{{ range .Alerts }}{{ .Annotations.summary }}\n{{ .Annotations.description }}{{ end }}'
+          - name: 'slack-critical'
+            slack_configs:
+              - channel: '#alerts-critical'
+                send_resolved: true
+          - name: 'slack-warning'
+            slack_configs:
+              - channel: '#alerts-warning'
+                send_resolved: true
+  grafana:
+    enabled: true
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: gp3
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+    dashboards:
+      default:
+        api-gateway:
+          json: |
+            {{ .Files.Get "dashboards/api-gateway.json" | indent 10 }}
+        redis:
+          json: |
+            {{ .Files.Get "dashboards/redis.json" | indent 10 }}
+        postgresql:
+          json: |
+            {{ .Files.Get "dashboards/postgresql.json" | indent 10 }}
+        kubernetes:
+          json: |
+            {{ .Files.Get "dashboards/kubernetes.json" | indent 10 }}
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        datasources:
+          - name: Prometheus
+            type: prometheus
+            access: proxy
+            url: http://prometheus.monitoring.svc.cluster.local:9090
+            isDefault: true
+            editable: false
+          - name: Loki
+            type: loki
+            access: proxy
+            url: http://loki.logging.svc.cluster.local:3100
+            editable: false
+          - name: Tempo
+            type: tempo
+            access: proxy
+            url: http://tempo.tracing.svc.cluster.local:3200
+            editable: false
+  alertmanager:
+    enabled: true
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: gp3
+
+# Logging Stack (Loki, Promtail)
+logging:
+  enabled: true
+  loki:
+    enabled: true
+    persistence:
+      enabled: true
+      size: 50Gi
+      storageClass: gp3
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+    config:
+      auth_enabled: false
+      ingester:
+        chunk_idle_period: 5m
+        chunk_retain_period: 30s
+        max_chunk_age: 2h
+      schema_config:
+        configs:
+          - from: 2024-01-01
+            store: boltdb-shipper
+            object_store: filesystem
+            schema: v11
+            index:
+              prefix: index_
+              period: 24h
+      limits_config:
+        retention_period: 30d
+        ingestion_rate_mb: 10
+        ingestion_burst_size_mb: 20
+        per_stream_rate_limit: 3MB
+        per_stream_rate_limit_burst: 10MB
+    serviceMonitor:
+      enabled: true
+  promtail:
+    enabled: true
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 250m
+        memory: 256Mi
+    config:
+      clients:
+        - url: http://loki.logging.svc.cluster.local:3100/loki/api/v1/push
+          batchwait: 1s
+          batchsize: 102400
+      positions:
+        filename: /tmp/positions.yaml
+      scrape_configs:
+        - job_name: kubernetes-pods
+          kubernetes_sd_configs:
+            - role: pod
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              action: keep
+              regex: true
+            - source_labels: [__meta_kubernetes_pod_label_app]
+              action: replace
+              target_label: app
+            - source_labels: [__meta_kubernetes_namespace]
+              action: replace
+              target_label: namespace
+            - source_labels: [__meta_kubernetes_pod_name]
+              action: replace
+              target_label: pod
+
+# Distributed Tracing (Tempo)
+tracing:
+  enabled: true
+  tempo:
+    enabled: true
+    persistence:
+      enabled: true
+      size: 50Gi
+      storageClass: gp3
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+    config:
+      server:
+        http_listen_port: 3200
+        grpc_listen_port: 9095
+      distributor:
+        receivers:
+          otlp:
+            protocols:
+              grpc:
+                endpoint: 0.0.0.0:4317
+              http:
+                endpoint: 0.0.0.0:4318
+          jaeger:
+            protocols:
+              thrift_http:
+                endpoint: 0.0.0.0:14268
+      ingester:
+        trace_idle_period: 30s
+      compactor:
+        compaction:
+          block_retention: 720h
+      storage:
+        trace:
+          backend: local
+          local:
+            path: /var/tempo/traces
+      overrides:
+        defaults:
+          metrics_generator_processors:
+            - service-graphs
+            - span-metrics
+    serviceMonitor:
+      enabled: true
+  opentelemetry-collector:
+    enabled: true
+    config:
+      receivers:
+        otlp:
+          protocols:
+            grpc:
+              endpoint: 0.0.0.0:4317
+            http:
+              endpoint: 0.0.0.0:4318
+        prometheus:
+          config:
+            scrape_configs:
+              - job_name: 'otel-collector'
+                static_configs:
+                  - targets: ['localhost:8888']
+      processors:
+        batch:
+          timeout: 10s
+          send_batch_size: 1000
+        memory_limiter:
+          check_interval: 1s
+          limit_mib: 512
+        resource:
+          attributes:
+            - key: cluster
+              value: eco-nojin-prod
+              action: upsert
+      exporters:
+        tempo:
+          endpoint: tempo.tracing.svc.cluster.local:4317
+          tls:
+            insecure: true
+        prometheus:
+          endpoint: 0.0.0.0:8889
+      service:
+        pipelines:
+          traces:
+            receivers: [otlp]
+            processors: [batch, memory_limiter, resource]
+            exporters: [tempo]
+          metrics:
+            receivers: [prometheus]
+            processors: [batch, memory_limiter, resource]
+            exporters: [prometheus]
+
+# Disaster Recovery (Velero)
+velero:
+  enabled: true
+  image:
+    repository: velero/velero
+    tag: v1.13.0
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  configuration:
+    provider: aws
+    backupStorageLocation:
+      - name: default
+        provider: aws
+        bucket: eco-nojin-backups
+        prefix: velero
+        config:
+          region: us-east-1
+          s3ForcePathStyle: "false"
+    volumeSnapshotLocation:
+      - name: default
+        provider: aws
+        config:
+          region: us-east-1
+  schedule:
+    enabled: true
+    schedule: "0 2 * * *"
+    template:
+      ttl: 720h
+      includedNamespaces:
+        - eco-nojin
+        - monitoring
+        - logging
+        - tracing
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/managed-by: Helm
+      snapshotVolumes: true
+      storageLocation: default
+  restore:
+    enabled: true
+
+# Service Mesh (Istio)
+istio:
+  enabled: true
+  gateway:
+    enabled: true
+    replicas: 2
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+  virtualServices:
+    - name: api-gateway
+      hosts:
+        - api.eco-nojin.org
+      http:
+        - match:
+            - uri:
+                prefix: /api
+          route:
+            - destination:
+                host: api-gateway.eco-nojin.svc.cluster.local
+                port:
+                  number: 80
+          retries:
+            attempts: 3
+            perTryTimeout: 10s
+            retryOn: connect-failure,refused-stream,unavailable,cancelled,retriable-status-codes
+          timeout: 30s
+    - name: frontend
+      hosts:
+        - app.eco-nojin.org
+        - eco-nojin.org
+      http:
+        - match:
+            - uri:
+                prefix: /
+          route:
+            - destination:
+                host: frontend.eco-nojin.svc.cluster.local
+                port:
+                  number: 3000
+  destinationRules:
+    - name: api-gateway
+      host: api-gateway.eco-nojin.svc.cluster.local
+      trafficPolicy:
+        connectionPool:
+          tcp:
+            maxConnections: 1000
+          http:
+            h2UpgradePolicy: UPGRADE
+            http1MaxPendingRequests: 1000
+            http2MaxRequests: 1000
+        loadBalancer:
+          simple: LEAST_REQUEST
+        outlierDetection:
+          consecutive5xxErrors: 5
+          interval: 30s
+          baseEjectionTime: 30s
+          maxEjectionPercent: 50
+  peerAuthentication:
+    enabled: true
+    mode: STRICT
+  authorizationPolicy:
+    enabled: true
+    rules:
+      - from:
+          - source:
+              principals:
+                - cluster.local/ns/eco-nojin/sa/frontend
+                - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+        to:
+          - operation:
+              paths: ["/api/*", "/health/*", "/metrics"]
+              methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
+
+# Multi-region Configuration
+multiRegion:
+  enabled: true
+  primaryRegion: us-east-1
+  regions:
+    - name: us-east-1
+      primary: true
+      replicas: 5
+      weight: 50
+      healthCheck:
+        path: /health/ready
+        interval: 10s
+        timeout: 5s
+        healthyThreshold: 2
+        unhealthyThreshold: 3
+    - name: eu-west-1
+      primary: false
+      replicas: 3
+      weight: 30
+      healthCheck:
+        path: /health/ready
+        interval: 10s
+        timeout: 5s
+        healthyThreshold: 2
+        unhealthyThreshold: 3
+    - name: ap-southeast-1
+      primary: false
+      replicas: 2
+      weight: 20
+      healthCheck:
+        path: /health/ready
+        interval: 10s
+        timeout: 5s
+        healthyThreshold: 2
+        unhealthyThreshold: 3
+  failover:
+    enabled: true
+    threshold: 3
+    interval: 30s
+
+# Security
+security:
+  podSecurityPolicy:
+    enabled: true
+  networkPolicies:
+    enabled: true
+  rbac:
+    enabled: true
+  secrets:
+    externalSecretsOperator:
+      enabled: true
+  imageVerification:
+    cosign:
+      enabled: true
+      publicKey: "cosign.pub"
+
+# Backup and Restore
+backup:
+  enabled: true
+  velero:
+    enabled: true
+    schedule: "0 2 * * *"
+    retention: 720h
+  database:
+    enabled: true
+    schedule: "0 1 * * *"
+    retention: 30d
+  etcd:
+    enabled: false

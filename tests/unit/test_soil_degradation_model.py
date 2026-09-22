@@ -3,10 +3,11 @@ import structlog
 logger = structlog.get_logger()
 import sys
 from pathlib import Path
+
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-from engine.hydroma.climate_adaptation.soil_degradation_model import (
-    SoilDegradationModel)
+from engine.hydroma.climate_adaptation.soil_degradation_model import SoilDegradationModel
+
 
 def main():
     model = SoilDegradationModel()
@@ -44,12 +45,18 @@ def main():
 
     # گزارش یکپارچه
     report = model.generate_degradation_report(
-        soc_pct=2.0, erosion_rate_t_ha_yr=10.0, ec_ds_m=2.0,
-        ksat_mm_h=20.0, groundwater_extraction_mm_yr=300.0, soil_type="loam")
+        soc_pct=2.0,
+        erosion_rate_t_ha_yr=10.0,
+        ec_ds_m=2.0,
+        ksat_mm_h=20.0,
+        groundwater_extraction_mm_yr=300.0,
+        soil_type="loam",
+    )
     assert "overall_sustainability_score" in report
     assert 0 <= report["overall_sustainability_score"]["overall_score"] <= 100
 
     logger.info("ALL SOIL DEGRADATION TESTS PASSED (H09-H14)")
+
 
 if __name__ == "__main__":
     main()

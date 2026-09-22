@@ -1,9 +1,9 @@
 """Tests for finance module — double-entry ledger, wallet, reconciliation."""
 
-import pytest
 import uuid
-from datetime import UTC, datetime
 from decimal import Decimal
+
+import pytest
 from sqlalchemy import select
 
 pytestmark = pytest.mark.asyncio
@@ -16,24 +16,28 @@ def _unique_email(prefix: str) -> str:
 @pytest.fixture
 async def fresh_wallet_service(db_session):
     from services.finance.wallet_service import WalletService
+
     return WalletService(db_session)
 
 
 @pytest.fixture
 async def fresh_ledger_service(db_session):
     from services.finance.ledger_service import LedgerService
+
     return LedgerService(db_session)
 
 
 @pytest.fixture
 async def fresh_stock_service(db_session):
     from services.inventory.service import StockService
+
     return StockService(db_session)
 
 
 @pytest.fixture
 async def fresh_order_service(db_session):
     from services.commerce.service import OrderService
+
     return OrderService(db_session)
 
 
@@ -41,10 +45,13 @@ class TestLedgerService:
     """Tests for double-entry ledger validation."""
 
     async def test_create_balanced_batch(self, fresh_ledger_service, db_session):
-        from services.finance.ledger_service import LedgerService
         # Create test accounts
-        eco_asset = FinAccount(code="ECO_TEST_ASSET", name="ECO Asset", type="asset", asset="ECO", currency="ECO")
-        revenue = FinAccount(code="ECO_TEST_REV", name="Revenue", type="income", asset="ECO", currency="ECO")
+        eco_asset = FinAccount(
+            code="ECO_TEST_ASSET", name="ECO Asset", type="asset", asset="ECO", currency="ECO"
+        )
+        revenue = FinAccount(
+            code="ECO_TEST_REV", name="Revenue", type="income", asset="ECO", currency="ECO"
+        )
         db_session.add_all([eco_asset, revenue])
         await db_session.commit()
         await db_session.refresh(eco_asset)
@@ -54,17 +61,28 @@ class TestLedgerService:
             reference_type="test",
             reference_id=str(uuid.uuid4()),
             entries=[
-                {"account_id": str(eco_asset.id), "entry_type": "debit", "asset": "ECO", "amount": "100"},
-                {"account_id": str(revenue.id), "entry_type": "credit", "asset": "ECO", "amount": "100"},
+                {
+                    "account_id": str(eco_asset.id),
+                    "entry_type": "debit",
+                    "asset": "ECO",
+                    "amount": "100",
+                },
+                {
+                    "account_id": str(revenue.id),
+                    "entry_type": "credit",
+                    "asset": "ECO",
+                    "amount": "100",
+                },
             ],
         )
         assert batch.is_posted is False
 
     async def test_unbalanced_batch_raises(self, fresh_ledger_service, db_session):
-        from services.finance.ledger_service import LedgerService
         from services.api_gateway.exceptions import EcoNojinException
 
-        eco_asset = FinAccount(code="ECO_UNBAL", name="ECO Asset", type="asset", asset="ECO", currency="ECO")
+        eco_asset = FinAccount(
+            code="ECO_UNBAL", name="ECO Asset", type="asset", asset="ECO", currency="ECO"
+        )
         db_session.add(eco_asset)
         await db_session.commit()
         await db_session.refresh(eco_asset)
@@ -74,17 +92,30 @@ class TestLedgerService:
                 reference_type="test",
                 reference_id=str(uuid.uuid4()),
                 entries=[
-                    {"account_id": str(eco_asset.id), "entry_type": "debit", "asset": "ECO", "amount": "100"},
-                    {"account_id": str(eco_asset.id), "entry_type": "credit", "asset": "ECO", "amount": "99"},
+                    {
+                        "account_id": str(eco_asset.id),
+                        "entry_type": "debit",
+                        "asset": "ECO",
+                        "amount": "100",
+                    },
+                    {
+                        "account_id": str(eco_asset.id),
+                        "entry_type": "credit",
+                        "asset": "ECO",
+                        "amount": "99",
+                    },
                 ],
             )
         assert exc_info.value.code == "UNBALANCED_JOURNAL"
 
     async def test_get_account_balance(self, fresh_ledger_service, db_session):
-        from services.finance.ledger_service import LedgerService
 
-        account = FinAccount(code="ECO_BAL_TEST", name="Test", type="asset", asset="ECO", currency="ECO")
-        offset = FinAccount(code="ECO_BAL_OFFSET", name="Offset", type="income", asset="ECO", currency="ECO")
+        account = FinAccount(
+            code="ECO_BAL_TEST", name="Test", type="asset", asset="ECO", currency="ECO"
+        )
+        offset = FinAccount(
+            code="ECO_BAL_OFFSET", name="Offset", type="income", asset="ECO", currency="ECO"
+        )
         db_session.add_all([account, offset])
         await db_session.commit()
         await db_session.refresh(account)
@@ -94,18 +125,34 @@ class TestLedgerService:
             reference_type="test",
             reference_id=str(uuid.uuid4()),
             entries=[
-                {"account_id": str(account.id), "entry_type": "credit", "asset": "ECO", "amount": "100"},
-                {"account_id": str(account.id), "entry_type": "debit", "asset": "ECO", "amount": "30"},
-                {"account_id": str(offset.id), "entry_type": "debit", "asset": "ECO", "amount": "70"},
+                {
+                    "account_id": str(account.id),
+                    "entry_type": "credit",
+                    "asset": "ECO",
+                    "amount": "100",
+                },
+                {
+                    "account_id": str(account.id),
+                    "entry_type": "debit",
+                    "asset": "ECO",
+                    "amount": "30",
+                },
+                {
+                    "account_id": str(offset.id),
+                    "entry_type": "debit",
+                    "asset": "ECO",
+                    "amount": "70",
+                },
             ],
         )
         balance = await fresh_ledger_service.get_account_balance(str(account.id), "ECO")
         assert balance == Decimal("70")
 
     async def test_post_batch(self, fresh_ledger_service, db_session):
-        from services.finance.ledger_service import LedgerService
 
-        account = FinAccount(code="ECO_POST_TEST", name="Test", type="asset", asset="ECO", currency="ECO")
+        account = FinAccount(
+            code="ECO_POST_TEST", name="Test", type="asset", asset="ECO", currency="ECO"
+        )
         db_session.add(account)
         await db_session.commit()
         await db_session.refresh(account)
@@ -114,8 +161,18 @@ class TestLedgerService:
             reference_type="test",
             reference_id=str(uuid.uuid4()),
             entries=[
-                {"account_id": str(account.id), "entry_type": "debit", "asset": "ECO", "amount": "50"},
-                {"account_id": str(account.id), "entry_type": "credit", "asset": "ECO", "amount": "50"},
+                {
+                    "account_id": str(account.id),
+                    "entry_type": "debit",
+                    "asset": "ECO",
+                    "amount": "50",
+                },
+                {
+                    "account_id": str(account.id),
+                    "entry_type": "credit",
+                    "asset": "ECO",
+                    "amount": "50",
+                },
             ],
         )
         posted = await fresh_ledger_service.post_journal_batch(batch.id)
@@ -150,7 +207,9 @@ class TestWalletService:
         assert balance == Decimal("20.0")
 
     async def test_redeem_tokens(self, fresh_wallet_service, db_session):
-        await fresh_wallet_service.earn(user_id="test-user-4", category="community", quantity=Decimal("10"))
+        await fresh_wallet_service.earn(
+            user_id="test-user-4", category="community", quantity=Decimal("10")
+        )
         amount, balance = await fresh_wallet_service.redeem(
             user_id="test-user-4", category="consultation"
         )
@@ -164,6 +223,7 @@ class TestWalletService:
 
     async def test_daily_cap_enforced(self, fresh_wallet_service, db_session):
         from services.api_gateway.exceptions import EcoNojinException
+
         with pytest.raises(EcoNojinException) as exc_info:
             await fresh_wallet_service.earn(
                 user_id="test-user-6",
@@ -192,7 +252,9 @@ class TestReconciliation:
     """Tests for financial reconciliation."""
 
     async def test_wallet_ledger_reconciliation_ok(self, fresh_wallet_service, db_session):
-        await fresh_wallet_service.earn(user_id="test-user-9", category="community", quantity=Decimal("1"))
+        await fresh_wallet_service.earn(
+            user_id="test-user-9", category="community", quantity=Decimal("1")
+        )
         recon = ReconciliationService(db_session)
         result = await recon.reconcile_wallet_ledger()
         assert result["overall_ok"] is True
@@ -217,6 +279,7 @@ class TestBankTransferProvider:
 
     async def test_create_payment_intent(self, db_session):
         from services.finance.wallet_service import WalletService
+
         wallet_service = WalletService(db_session)
         provider = BankTransferProvider(db_session)
 
@@ -363,7 +426,7 @@ class TestBankTransferProvider:
 # Imports needed by tests
 # ---------------------------------------------------------------------------
 
-from database.models import FinAccount, FinJournalEntry, EcoWallet, DailyEarnings, ComPaymentIntent, AuditEvent
+from database.models import AuditEvent, ComPaymentIntent, FinAccount, FinJournalEntry
 from services.api_gateway.exceptions import EcoNojinException
-from services.finance.reconciliation import ReconciliationService
 from services.finance.payment_provider import BankTransferProvider
+from services.finance.reconciliation import ReconciliationService

@@ -15,8 +15,8 @@ Version: 1.0.0
 
 References:
     [1] USDA, "Keys to Soil Taxonomy", 13th Edition, 2017
-    [2] van Genuchten, M.Th., "A closed-form equation for predicting 
-        the hydraulic conductivity of unsaturated soils", 
+    [2] van Genuchten, M.Th., "A closed-form equation for predicting
+        the hydraulic conductivity of unsaturated soils",
         Soil Sci. Soc. Am. J., 44:892-898, 1980
     [3] Brady, N.C. and Weil, R.R., "The Nature and Properties of Soils",
         15th Edition, Pearson, 2017
@@ -35,17 +35,17 @@ from .water_retention import van_genuchten_conductivity, van_genuchten_retention
 
 # Module exports
 __all__ = [
-    'assess_soil_quality',
-    'calculate_cec',
-    'calculate_esp',
-    'calculate_leaching_requirement',
-    'calculate_ph_buffer',
-    'calculate_sar',
-    'calculate_soil_health_index',
-    'classify_salinity',
-    'classify_usda_texture',
-    'generate_recommendations',
-    'get_soil_taxonomy',
-    'van_genuchten_conductivity',
-    'van_genuchten_retention',
+    "assess_soil_quality",
+    "calculate_cec",
+    "calculate_esp",
+    "calculate_leaching_requirement",
+    "calculate_ph_buffer",
+    "calculate_sar",
+    "calculate_soil_health_index",
+    "classify_salinity",
+    "classify_usda_texture",
+    "generate_recommendations",
+    "get_soil_taxonomy",
+    "van_genuchten_conductivity",
+    "van_genuchten_retention",
 ]

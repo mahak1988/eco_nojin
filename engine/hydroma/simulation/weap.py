@@ -4,6 +4,7 @@ Water Evaluation And Planning (WEAP) Model Integration.
 This module provides functions to simulate water allocation using the
 WEAP model based on demand and supply data.
 """
+
 import numpy as np
 
 from contracts.simulation import WEAPInput, WEAPOutput
@@ -12,6 +13,7 @@ from contracts.simulation import WEAPInput, WEAPOutput
 # This would typically involve calling an external executable or API,
 # preparing input files, and parsing output files.
 # For now, we implement a simplified calculation.
+
 
 def simulate_weap(input_data: WEAPInput) -> WEAPOutput:
     """
@@ -44,5 +46,5 @@ def simulate_weap(input_data: WEAPInput) -> WEAPOutput:
             "total_demand_m3": total_demand,
             "total_supply_m3": float(np.sum(supply)),
         },
-        allocation_efficiency=efficiency
+        allocation_efficiency=efficiency,
     )

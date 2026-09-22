@@ -29,23 +29,40 @@ class PlatformSpec:
 
 PLATFORM_SPECS: dict[str, PlatformSpec] = {
     "telegram": PlatformSpec(
-        key="telegram", label="تلگرام", token_env="BOT_TOKEN",
-        api_base=None, enabled_env=None, kind="aiogram", verified=True,
+        key="telegram",
+        label="تلگرام",
+        token_env="BOT_TOKEN",
+        api_base=None,
+        enabled_env=None,
+        kind="aiogram",
+        verified=True,
     ),
     "eitaa": PlatformSpec(
-        key="eitaa", label="ایتا", token_env="EITAA_TOKEN",
-        api_base=EITAA_API_BASE, enabled_env="EITAA_ENABLED",
-        kind="aiogram", verified=False,  # needs a live token check (getMe)
+        key="eitaa",
+        label="ایتا",
+        token_env="EITAA_TOKEN",
+        api_base=EITAA_API_BASE,
+        enabled_env="EITAA_ENABLED",
+        kind="aiogram",
+        verified=False,  # needs a live token check (getMe)
     ),
     "bale": PlatformSpec(
-        key="bale", label="بله", token_env="BALE_TOKEN",
-        api_base=None, enabled_env="BALE_ENABLED",
-        kind="bale", verified=False,
+        key="bale",
+        label="بله",
+        token_env="BALE_TOKEN",
+        api_base=None,
+        enabled_env="BALE_ENABLED",
+        kind="bale",
+        verified=False,
     ),
     "rubika": PlatformSpec(
-        key="rubika", label="روبیکا", token_env="RUBIKA_TOKEN",
-        api_base=None, enabled_env="RUBIKA_ENABLED",
-        kind="rubika", verified=False,
+        key="rubika",
+        label="روبیکا",
+        token_env="RUBIKA_TOKEN",
+        api_base=None,
+        enabled_env="RUBIKA_ENABLED",
+        kind="rubika",
+        verified=False,
     ),
 }
 

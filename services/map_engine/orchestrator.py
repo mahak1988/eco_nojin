@@ -1,5 +1,7 @@
 """Map Generation Orchestrator - Coordinates pipelines and fetchers."""
+
 from __future__ import annotations
+
 import structlog
 
 logger = structlog.get_logger()
@@ -70,9 +72,8 @@ class MapOrchestrator:
         # Optional: Try to register SlopeAspectPipeline if available
         try:
             from .pipelines.slope_aspect import SlopeAspectPipeline
-            self.pipelines[MapType.M_SLP] = SlopeAspectPipeline(
-                cache_dir=self.cache_dir
-            )
+
+            self.pipelines[MapType.M_SLP] = SlopeAspectPipeline(cache_dir=self.cache_dir)
         except ImportError:
             pass  # SlopeAspectPipeline not yet implemented
 
@@ -100,14 +101,15 @@ class MapOrchestrator:
         if not pipeline:
             available = [m.value for m in self.pipelines.keys()]
             raise ValueError(
-                f"No pipeline for map type: {request.map_type.value}. "
-                f"Available: {available}"
+                f"No pipeline for map type: {request.map_type.value}. Available: {available}"
             )
 
         # 3. Fetch base layers
         required_layers = pipeline.get_required_layers()
         logger.info(f"[INFO] Fetching layers: {required_layers}")
-        base_layers = await self._fetch_layers(required_layers, request.region, **request.parameters)
+        base_layers = await self._fetch_layers(
+            required_layers, request.region, **request.parameters
+        )
 
         # 4. Execute pipeline
         logger.info(f"[INFO] Executing pipeline: {pipeline.map_type.value}")
@@ -119,10 +121,7 @@ class MapOrchestrator:
         # 6. Cache result
         await self._cache_result(request, result)
 
-        logger.info(
-            f"[OK] Map generated: {result.map_id} "
-            f"in {result.processing_time_seconds:.2f}s"
-        )
+        logger.info(f"[OK] Map generated: {result.map_id} in {result.processing_time_seconds:.2f}s")
         return result
 
     async def generate_batch(
@@ -169,9 +168,7 @@ class MapOrchestrator:
                 map_type=MapType(data["map_type"]),
                 cog_path=cog_path,
                 vector_tiles_path=(
-                    Path(data["vector_tiles_path"])
-                    if data.get("vector_tiles_path")
-                    else None
+                    Path(data["vector_tiles_path"]) if data.get("vector_tiles_path") else None
                 ),
                 metadata=data["metadata"],
                 # PATCH: Cache hits report near-zero time
@@ -200,9 +197,7 @@ class MapOrchestrator:
             fetcher = self.fetchers.get(name)
             if not fetcher:
                 available = list(self.fetchers.keys())
-                raise ValueError(
-                    f"No fetcher for layer: {name}. Available: {available}"
-                )
+                raise ValueError(f"No fetcher for layer: {name}. Available: {available}")
             return name, await fetcher.fetch(region, **kwargs)
 
         # Fetch concurrently
@@ -255,7 +250,23 @@ class MapOrchestrator:
         return hashlib.sha256(key_str.encode()).hexdigest()[:32]
 
     def register_pipeline(self, pipeline: MapPipeline) -> None:
-        """Register a new pipeline. Overrides existing for same map_type."""
+        """Register a new pipeline. Overrides existing for same map_type.
+
+        Args:
+            pipeline: A concrete ``MapPipeline`` instance.  Must be a subclass
+                instance of ``MapPipeline`` (i.e. pass ``isinstance`` check) so
+                that fake or duck-typed objects are rejected.
+
+        Raises:
+            TypeError: if *pipeline* is ``None`` or not a ``MapPipeline``
+                instance.
+        """
+        if pipeline is None:
+            raise TypeError("pipeline cannot be None")
+        if not isinstance(pipeline, MapPipeline):
+            raise TypeError(
+                f"pipeline must be a MapPipeline instance, got {type(pipeline).__name__}"
+            )
         self.pipelines[pipeline.map_type] = pipeline
         logger.info(f"[OK] Registered pipeline: {pipeline.map_type.value}")
 

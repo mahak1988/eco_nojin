@@ -136,11 +136,7 @@ class SmartMapGenerator:
         irrigation_need = deficit * 1000  # Convert to mm
 
         # Days until next irrigation
-        days_to_irrigate = np.where(
-            etc > 0,
-            (soil_moisture - wilting_point) / etc,
-            999
-        )
+        days_to_irrigate = np.where(etc > 0, (soil_moisture - wilting_point) / etc, 999)
         days_to_irrigate = np.clip(days_to_irrigate, 0, 30)
 
         return {

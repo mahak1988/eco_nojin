@@ -1,0 +1,47 @@
+{
+  "meta": { "machineTranslated": false, "fallbackLocale": null },
+  "brand": { "name": "HyDroMa Nojin" },
+  "cover": {
+    "subtitle": "Smart landscape management for restoring water, soil and livelihoods",
+    "slogan": "We walk this path together. For people. For the land. For the future.",
+    "quote": "“We built this project together… for people who can no longer bear hunger and poverty, and for an ecosystem that can no longer bear floods and soil erosion.”",
+    "enterPublic": "Enter public pages",
+    "enterMarketplace": "Enter the marketplace",
+    "languageLabel": "Language",
+    "comingSoon": "coming soon"
+  },
+  "statusLine": {
+    "beneficiaries": "Beneficiaries",
+    "markets": "Active markets",
+    "landProfiles": "Land profiles",
+    "carbonProjects": "Carbon projects",
+    "pilotProvince": "Pilot province",
+    "noData": "after pilot",
+    "realData": "Live data from the backend",
+    "unavailable": "Unavailable"
+  },
+  "statusPage": {
+    "title": "System status",
+    "subtitle": "This page reads directly from the real backend; no sample data is shown.",
+    "service": "Service",
+    "state": "State",
+    "cpp": "C++ numerical core",
+    "supabase": "Database connection (Supabase)",
+    "dbReachable": "Database connection",
+    "landscapes": "Land profiles",
+    "projects": "Projects",
+    "activeProjects": "Active projects",
+    "endpoint": "Endpoint",
+    "result": "Result",
+    "label": "Metric",
+    "rows": "rows",
+    "landProfileList": "Registered land profiles (live data)",
+    "noLandProfiles": "No land profile has been recorded in the database yet.",
+    "emptyDbNote": "The database is connected but has no real records yet, so every counter is zero — no placeholder value is substituted."
+  },
+  "common": {
+    "error": "Error",
+    "retry": "Retry",
+    "machineTranslatedNotice": "This language is currently shown via machine translation."
+  }
+}

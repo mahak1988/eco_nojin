@@ -24,6 +24,7 @@ from engine.land.integration.water_adapter import (
 # Water Balance Tests
 # ============================================================
 
+
 class TestWaterBalance:
     """Test Water Balance Integrator"""
 
@@ -101,15 +102,11 @@ class TestWaterBalance:
 
     def test_negative_precipitation_error(self, integrator):
         with pytest.raises(ValueError):
-            integrator.calculate_balance(
-                WaterBalanceInput(precipitation_mm=-10.0, et0_mm=50.0)
-            )
+            integrator.calculate_balance(WaterBalanceInput(precipitation_mm=-10.0, et0_mm=50.0))
 
     def test_negative_et_error(self, integrator):
         with pytest.raises(ValueError):
-            integrator.calculate_balance(
-                WaterBalanceInput(precipitation_mm=100.0, et0_mm=-10.0)
-            )
+            integrator.calculate_balance(WaterBalanceInput(precipitation_mm=100.0, et0_mm=-10.0))
 
     def test_zero_area_error(self, integrator):
         with pytest.raises(ValueError):
@@ -121,6 +118,7 @@ class TestWaterBalance:
 # ============================================================
 # SCS-CN Runoff Tests
 # ============================================================
+
 
 class TestSCSRunoff:
     """Test SCS-CN Runoff Integrator"""
@@ -143,9 +141,7 @@ class TestSCSRunoff:
         ia = 0.2 * s  # 12.7
         expected_q = ((p - ia) ** 2) / ((p - ia) + s)
 
-        result = integrator.calculate_runoff(
-            RunoffInput(precipitation_mm=p, curve_number=cn)
-        )
+        result = integrator.calculate_runoff(RunoffInput(precipitation_mm=p, curve_number=cn))
         assert abs(result.runoff_mm - expected_q) < 0.1
 
     def test_high_cn_more_runoff(self, integrator):
@@ -155,9 +151,7 @@ class TestSCSRunoff:
 
     def test_low_precipitation_no_runoff(self, integrator):
         """P < Ia means no runoff"""
-        result = integrator.calculate_runoff(
-            RunoffInput(precipitation_mm=5.0, curve_number=70)
-        )
+        result = integrator.calculate_runoff(RunoffInput(precipitation_mm=5.0, curve_number=70))
         assert result.runoff_mm == 0.0
 
     def test_volume_scales_with_area(self, integrator):
@@ -192,18 +186,15 @@ class TestSCSRunoff:
 
     def test_amc_adjustment(self, integrator):
         """Wet conditions (AMC III) produce more runoff"""
-        dry = integrator.calculate_runoff(
-            RunoffInput(100.0, 75, antecedent_moisture="I")
-        )
-        wet = integrator.calculate_runoff(
-            RunoffInput(100.0, 75, antecedent_moisture="III")
-        )
+        dry = integrator.calculate_runoff(RunoffInput(100.0, 75, antecedent_moisture="I"))
+        wet = integrator.calculate_runoff(RunoffInput(100.0, 75, antecedent_moisture="III"))
         assert wet.runoff_mm > dry.runoff_mm
 
 
 # ============================================================
 # Groundwater Tests
 # ============================================================
+
 
 class TestGroundwater:
     """Test Groundwater Integrator (Darcy)"""
@@ -228,22 +219,26 @@ class TestGroundwater:
         width = 1000.0
         expected_q = k * (a * width) * i
 
-        result = integrator.calculate_flow(GroundwaterInput(
-            hydraulic_conductivity_m_day=k,
-            hydraulic_gradient=i,
-            aquifer_thickness_m=a,
-            aquifer_width_m=width,
-        ))
+        result = integrator.calculate_flow(
+            GroundwaterInput(
+                hydraulic_conductivity_m_day=k,
+                hydraulic_gradient=i,
+                aquifer_thickness_m=a,
+                aquifer_width_m=width,
+            )
+        )
         assert abs(result.flow_rate_m3_day - expected_q) < 0.1
 
     def test_seepage_greater_than_darcy(self, integrator):
         """v_seepage = v_darcy / porosity"""
-        result = integrator.calculate_flow(GroundwaterInput(
-            hydraulic_conductivity_m_day=10.0,
-            hydraulic_gradient=0.01,
-            aquifer_thickness_m=50.0,
-            porosity=0.3,
-        ))
+        result = integrator.calculate_flow(
+            GroundwaterInput(
+                hydraulic_conductivity_m_day=10.0,
+                hydraulic_gradient=0.01,
+                aquifer_thickness_m=50.0,
+                porosity=0.3,
+            )
+        )
         assert result.seepage_velocity_m_day > result.darcy_velocity_m_day
 
     def test_higher_k_more_flow(self, integrator):
@@ -275,6 +270,7 @@ class TestGroundwater:
 # ============================================================
 # Unified Analysis Tests
 # ============================================================
+
 
 class TestUnifiedWaterAnalysis:
     """Test Unified Water Analyzer"""
@@ -308,8 +304,12 @@ class TestUnifiedWaterAnalysis:
             et0_mm=60.0,
         )
         assert result.overall_status in [
-            "balanced", "deficit", "critical_deficit",
-            "excess_runoff", "warning", "error",
+            "balanced",
+            "deficit",
+            "critical_deficit",
+            "excess_runoff",
+            "warning",
+            "error",
         ]
 
     def test_arid_scenario(self, analyzer):
@@ -328,8 +328,10 @@ class TestUnifiedWaterAnalysis:
             et0_mm=800.0,
             soil_type="loam",
         )
-        assert result.water_balance.surface_runoff_mm > 0 or \
-               result.water_balance.deep_percolation_mm > 0
+        assert (
+            result.water_balance.surface_runoff_mm > 0
+            or result.water_balance.deep_percolation_mm > 0
+        )
 
     def test_handles_error(self, analyzer):
         """Should handle errors gracefully"""

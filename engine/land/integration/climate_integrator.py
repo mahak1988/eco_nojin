@@ -30,64 +30,82 @@ logger = logging.getLogger(__name__)
 LATITUDE_CLIMATE_BANDS = {
     "tropical": {
         "lat_range": (-23.5, 23.5),
-        "t_min_jan": 22.0, "t_max_jan": 32.0,
-        "t_min_jul": 22.0, "t_max_jul": 32.0,
+        "t_min_jan": 22.0,
+        "t_max_jan": 32.0,
+        "t_min_jul": 22.0,
+        "t_max_jul": 32.0,
         "annual_precip": 2000.0,
         "koppen": KoppenClimate.Aw,
     },
     "subtropical_arid": {
         "lat_range": (23.5, 35.0),
-        "t_min_jan": 5.0, "t_max_jan": 18.0,
-        "t_min_jul": 22.0, "t_max_jul": 42.0,
+        "t_min_jan": 5.0,
+        "t_max_jan": 18.0,
+        "t_min_jul": 22.0,
+        "t_max_jul": 42.0,
         "annual_precip": 150.0,
         "koppen": KoppenClimate.BWh,
     },
     "subtropical_arid_south": {
         "lat_range": (-35.0, -23.5),
-        "t_min_jan": 22.0, "t_max_jan": 42.0,
-        "t_min_jul": 5.0, "t_max_jul": 18.0,
+        "t_min_jan": 22.0,
+        "t_max_jan": 42.0,
+        "t_min_jul": 5.0,
+        "t_max_jul": 18.0,
         "annual_precip": 150.0,
         "koppen": KoppenClimate.BWh,
     },
     "temperate": {
         "lat_range": (35.0, 50.0),
-        "t_min_jan": -2.0, "t_max_jan": 8.0,
-        "t_min_jul": 15.0, "t_max_jul": 28.0,
+        "t_min_jan": -2.0,
+        "t_max_jan": 8.0,
+        "t_min_jul": 15.0,
+        "t_max_jul": 28.0,
         "annual_precip": 700.0,
         "koppen": KoppenClimate.Cfb,
     },
     "temperate_south": {
         "lat_range": (-50.0, -35.0),
-        "t_min_jan": 15.0, "t_max_jan": 28.0,
-        "t_min_jul": -2.0, "t_max_jul": 8.0,
+        "t_min_jan": 15.0,
+        "t_max_jan": 28.0,
+        "t_min_jul": -2.0,
+        "t_max_jul": 8.0,
         "annual_precip": 700.0,
         "koppen": KoppenClimate.Cfb,
     },
     "continental": {
         "lat_range": (50.0, 66.5),
-        "t_min_jan": -15.0, "t_max_jan": -5.0,
-        "t_min_jul": 12.0, "t_max_jul": 24.0,
+        "t_min_jan": -15.0,
+        "t_max_jan": -5.0,
+        "t_min_jul": 12.0,
+        "t_max_jul": 24.0,
         "annual_precip": 500.0,
         "koppen": KoppenClimate.Dfb,
     },
     "continental_south": {
         "lat_range": (-66.5, -50.0),
-        "t_min_jan": 12.0, "t_max_jan": 24.0,
-        "t_min_jul": -15.0, "t_max_jul": -5.0,
+        "t_min_jan": 12.0,
+        "t_max_jan": 24.0,
+        "t_min_jul": -15.0,
+        "t_max_jul": -5.0,
         "annual_precip": 500.0,
         "koppen": KoppenClimate.Dfb,
     },
     "polar": {
         "lat_range": (66.5, 90.0),
-        "t_min_jan": -30.0, "t_max_jan": -15.0,
-        "t_min_jul": 0.0, "t_max_jul": 8.0,
+        "t_min_jan": -30.0,
+        "t_max_jan": -15.0,
+        "t_min_jul": 0.0,
+        "t_max_jul": 8.0,
         "annual_precip": 250.0,
         "koppen": KoppenClimate.ET,
     },
     "polar_south": {
         "lat_range": (-90.0, -66.5),
-        "t_min_jan": 0.0, "t_max_jan": 8.0,
-        "t_min_jul": -30.0, "t_max_jul": -15.0,
+        "t_min_jan": 0.0,
+        "t_max_jan": 8.0,
+        "t_min_jul": -30.0,
+        "t_max_jul": -15.0,
         "annual_precip": 250.0,
         "koppen": KoppenClimate.ET,
     },
@@ -97,7 +115,7 @@ LATITUDE_CLIMATE_BANDS = {
 class ClimateIntegrator:
     """
     Integrates climate data with land profiles.
-    
+
     Connects to:
     - engine/hydroma/climate/et_calculator.py (ET0)
     - engine/hydroma/models/global_watchdog/koppen.py (KGCv5)
@@ -118,6 +136,7 @@ class ClimateIntegrator:
                 calc_et0_hargreaves,
                 calc_extraterrestrial_radiation,
             )
+
             self._et_calculator = {
                 "hargreaves": calc_et0_hargreaves,
                 "radiation": calc_extraterrestrial_radiation,
@@ -129,6 +148,7 @@ class ClimateIntegrator:
         # Load Köppen classifier
         try:
             from engine.hydroma.models.global_watchdog.koppen import KGCv5
+
             self._koppen_classifier = KGCv5()
             logger.info("KGCv5 Köppen classifier loaded")
         except ImportError as e:
@@ -141,17 +161,12 @@ class ClimateIntegrator:
             if low <= lat < high:
                 return {"name": name, **band}
         # Default to temperate if not found
-        return {
-            "name": "temperate",
-            **LATITUDE_CLIMATE_BANDS["temperate"]
-        }
+        return {"name": "temperate", **LATITUDE_CLIMATE_BANDS["temperate"]}
 
-    def generate_synthetic_monthly_climate(
-        self, lat: float, lon: float
-    ) -> list[MonthlyClimate]:
+    def generate_synthetic_monthly_climate(self, lat: float, lon: float) -> list[MonthlyClimate]:
         """
         Generate synthetic monthly climate data based on latitude.
-        
+
         This is the L0 fallback when real data is not available.
         """
         band = self.get_latitude_band(lat)
@@ -190,13 +205,15 @@ class ClimateIntegrator:
             monthly_frac = (1 + 0.5 * math.cos(precip_phase)) / 12
             precip_mm = annual_precip * monthly_frac
 
-            monthly.append(MonthlyClimate(
-                month=month,
-                t_min_c=round(t_min, 1),
-                t_max_c=round(t_max, 1),
-                t_mean_c=round(t_mean, 1),
-                precipitation_mm=round(max(0, precip_mm), 1),
-            ))
+            monthly.append(
+                MonthlyClimate(
+                    month=month,
+                    t_min_c=round(t_min, 1),
+                    t_max_c=round(t_max, 1),
+                    t_mean_c=round(t_mean, 1),
+                    precipitation_mm=round(max(0, precip_mm), 1),
+                )
+            )
 
         return monthly
 
@@ -205,9 +222,9 @@ class ClimateIntegrator:
     ) -> list[MonthlyClimate]:
         """
         Calculate monthly ET0 using Hargreaves method.
-        
+
         ET0 = 0.0023 * Ra * (T_mean + 17.8) * (T_max - T_min)^0.5
-        
+
         Reference: Hargreaves & Samani (1985)
         """
         if not self._et_calculator:
@@ -241,12 +258,10 @@ class ClimateIntegrator:
 
         return monthly
 
-    def _extraterrestrial_radiation_monthly(
-        self, month: int, lat: float
-    ) -> float:
+    def _extraterrestrial_radiation_monthly(self, month: int, lat: float) -> float:
         """
         Calculate extraterrestrial radiation (MJ/m²/day).
-        
+
         Based on FAO-56 equation 21.
         """
         # Julian day (approximate for middle of month)
@@ -271,9 +286,14 @@ class ClimateIntegrator:
         ws = math.acos(cos_ws)
 
         # Extraterrestrial radiation
-        Ra = (24 * 60 / math.pi) * Gsc * dr * (
-            ws * math.sin(phi) * math.sin(delta)
-            + math.cos(phi) * math.cos(delta) * math.sin(ws)
+        Ra = (
+            (24 * 60 / math.pi)
+            * Gsc
+            * dr
+            * (
+                ws * math.sin(phi) * math.sin(delta)
+                + math.cos(phi) * math.cos(delta) * math.sin(ws)
+            )
         )
 
         return Ra
@@ -283,7 +303,7 @@ class ClimateIntegrator:
     ) -> tuple[KoppenClimate | None, str | None]:
         """
         Classify climate using Köppen-Geiger system.
-        
+
         Uses KGCv5 from engine/hydroma/models/global_watchdog/koppen.py
         """
         if self._koppen_classifier is None:
@@ -327,7 +347,7 @@ class ClimateIntegrator:
     ) -> tuple[float, AridityClass]:
         """
         Calculate UNEP Aridity Index = P / PET.
-        
+
         Reference: UNEP (1992) "World Atlas of Desertification"
         """
         if annual_et0_mm <= 0:
@@ -347,15 +367,13 @@ class ClimateIntegrator:
         else:
             return ai, AridityClass.HUMID
 
-    def calculate_growing_season(
-        self, monthly: list[MonthlyClimate]
-    ) -> tuple[int, int]:
+    def calculate_growing_season(self, monthly: list[MonthlyClimate]) -> tuple[int, int]:
         """
         Calculate growing season length and frost-free days.
-        
+
         Growing season: months with T_mean > 5°C (suitable for most crops)
         Frost-free days: days where T_min > 0°C
-        
+
         Returns:
             (growing_season_days, frost_free_days)
         """
@@ -385,11 +403,11 @@ class ClimateIntegrator:
     ) -> ClimateProfile:
         """
         Build complete climate profile for a location.
-        
+
         Priority:
         1. Try Open-Meteo (real data)
         2. Fall back to synthetic data
-        
+
         Returns:
             ClimateProfile with all derived metrics
         """
@@ -415,9 +433,7 @@ class ClimateIntegrator:
         annual_t_mean = sum(m.t_mean_c for m in monthly) / 12
 
         # Aridity index
-        aridity_index, aridity_class = self.calculate_aridity_index(
-            annual_precip, annual_et0
-        )
+        aridity_index, aridity_class = self.calculate_aridity_index(annual_precip, annual_et0)
 
         # Growing season
         growing_season_days, frost_free_days = self.calculate_growing_season(monthly)
@@ -447,7 +463,7 @@ class ClimateIntegrator:
     def _fetch_open_meteo(self, lat: float, lon: float) -> list[MonthlyClimate] | None:
         """
         Try to fetch climate data from Open-Meteo.
-        
+
         Open-Meteo provides free, no-API-key climate data.
         Endpoint: https://archive-api.open-meteo.com/v1/archive
         """
@@ -518,13 +534,15 @@ class ClimateIntegrator:
                 total_precip = sum(monthly_precip[m])
                 avg_monthly_precip = total_precip / years if years > 0 else 0
 
-                monthly.append(MonthlyClimate(
-                    month=m,
-                    t_min_c=round(t_min_mean, 1),
-                    t_max_c=round(t_max_mean, 1),
-                    t_mean_c=round((t_min_mean + t_max_mean) / 2, 1),
-                    precipitation_mm=round(avg_monthly_precip, 1),
-                ))
+                monthly.append(
+                    MonthlyClimate(
+                        month=m,
+                        t_min_c=round(t_min_mean, 1),
+                        t_max_c=round(t_max_mean, 1),
+                        t_mean_c=round((t_min_mean + t_max_mean) / 2, 1),
+                        precipitation_mm=round(avg_monthly_precip, 1),
+                    )
+                )
 
             return monthly if len(monthly) == 12 else None
 
@@ -543,7 +561,7 @@ class ClimateIntegrator:
     ) -> ClimateIntegrationResult:
         """
         Integrate climate data with land profile.
-        
+
         Args:
             profile_id: Land profile ID
             lat: Latitude
@@ -551,7 +569,7 @@ class ClimateIntegrator:
             elevation_m: Elevation (optional)
             terrain_type: Terrain type from land analysis (optional)
             soil_profile: Soil profile from Phase 2A (optional)
-            
+
         Returns:
             ClimateIntegrationResult
         """
@@ -570,9 +588,7 @@ class ClimateIntegrator:
             heat_stress = False
 
             # Aridity-based limitations
-            if climate_profile.aridity_class in [
-                AridityClass.HYPER_ARID, AridityClass.ARID
-            ]:
+            if climate_profile.aridity_class in [AridityClass.HYPER_ARID, AridityClass.ARID]:
                 limitations.append("severe_water_scarcity")
                 irrigation_required = True
                 drought_only = True

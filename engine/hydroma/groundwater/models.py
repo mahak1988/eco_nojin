@@ -1,4 +1,5 @@
 """Module for basic groundwater models and estimations."""
+
 import structlog
 
 logger = structlog.get_logger()
@@ -12,7 +13,10 @@ class GroundwaterBucketInput:
     """Inputs for simple linear-reservoir groundwater balance."""
 
     initial_storage_mm: float = 200.0
-    recharge_mm: float = 50.0
+    # Explicit monthly recharge [mm]. ``None`` (default) derives recharge
+    # from soil_water_mm x rcoeff; a supplied value (including 0.0) is used
+    # verbatim so callers can force a dry scenario.
+    recharge_mm: float | None = None
     pumping_mm: float = 0.0
     alpha: float = 0.03
     rcoeff: float = 0.15
@@ -49,7 +53,10 @@ def run_groundwater_bucket(inputs: GroundwaterBucketInput) -> GroundwaterBucketO
     total_pumping = 0.0
 
     for _ in range(inputs.months):
-        recharge = max(inputs.soil_water_mm * inputs.rcoeff, 0.0)
+        if inputs.recharge_mm is None:
+            recharge = max(inputs.soil_water_mm * inputs.rcoeff, 0.0)
+        else:
+            recharge = max(inputs.recharge_mm, 0.0)
         baseflow = max(storage * inputs.alpha, 0.0)
         pumping = max(inputs.pumping_mm, 0.0)
 
@@ -77,10 +84,12 @@ def run_groundwater_bucket(inputs: GroundwaterBucketInput) -> GroundwaterBucketO
     )
 
 
-def estimate_aquifer_properties(hydraulic_conductivity_m_s: float,
-                               specific_yield: float,
-                               area_m2: float,
-                               water_level_drop_m: float) -> dict[str, Any]:
+def estimate_aquifer_properties(
+    hydraulic_conductivity_m_s: float,
+    specific_yield: float,
+    area_m2: float,
+    water_level_drop_m: float,
+) -> dict[str, Any]:
     """
     Estimates basic aquifer properties and available volume.
 
@@ -110,17 +119,25 @@ def estimate_aquifer_properties(hydraulic_conductivity_m_s: float,
         "storage_coefficient": storage_coefficient,
         "volume_available_m3": round(volume_available_m3, 2),
         "volume_available_liters": round(volume_available_m3 * 1000, 2),
-        "notes": "This is a simplified estimation. A detailed hydrogeological survey is required for accurate values."
+        "notes": "This is a simplified estimation. A detailed hydrogeological survey is required for accurate values.",
     }
     return estimates
 
-def calculate_theis_drawdown(transmissivity_m2day: float,
-                             storativity: float,
-                             pumping_rate_m3day: float,
-                             distance_from_well_m: float,
-                             time_since_pumping_start_days: float) -> float | None:
+
+def calculate_theis_drawdown(
+    transmissivity_m2day: float,
+    storativity: float,
+    pumping_rate_m3day: float,
+    distance_from_well_m: float,
+    time_since_pumping_start_days: float,
+) -> float | None:
     """
     Calculates drawdown using the Theis equation for a confined aquifer.
+
+    All inputs use day-based units:
+    - transmissivity_m2day: m²/day
+    - pumping_rate_m3day: m³/day
+    - time_since_pumping_start_days: days
     """
     if storativity <= 0 or transmissivity_m2day <= 0:
         logger.info("Invalid parameters for Theis equation.")
@@ -128,25 +145,24 @@ def calculate_theis_drawdown(transmissivity_m2day: float,
 
     from scipy.special import expi  # Import here to avoid hard dependency
 
-    # Convert units to m2/s, m3/s, m, s if needed internally
-    # For simplicity, using days and m3/day here directly
-    T = transmissivity_m2day  # m2/day
-    S = storativity # dimensionless
-    Q = pumping_rate_m3day / 86400  # m3/s
-    r = distance_from_well_m # m
-    t = time_since_pumping_start_days * 86400 # seconds
+    T = transmissivity_m2day  # m²/day
+    S = storativity  # dimensionless
+    Q = pumping_rate_m3day  # m³/day (consistent with T)
+    r = distance_from_well_m  # m
+    t = time_since_pumping_start_days  # days
 
     if t <= 0:
         return 0.0
 
-    u = (r**2 * S) / (4 * T * time_since_pumping_start_days) # Using days for T
+    u = (r**2 * S) / (4 * T * t)
     if u <= 0:
         return 0.0
 
     # W(u) is approximated by the exponential integral -Ei(-u)
     W_u = -expi(-u)
-    s = (Q / (4 * math.pi * T)) * W_u # Result in m if units are consistent
+    s = (Q / (4 * math.pi * T)) * W_u  # Result in m (consistent day units)
     return s
+
 
 # Example usage
 if __name__ == "__main__":
@@ -156,7 +172,10 @@ if __name__ == "__main__":
     logger.info("Aquifer Properties:", props)
 
     drawdown = calculate_theis_drawdown(
-        transmissivity_m2day=100, storativity=0.0001, pumping_rate_m3day=1000,
-        distance_from_well_m=100, time_since_pumping_start_days=1
+        transmissivity_m2day=100,
+        storativity=0.0001,
+        pumping_rate_m3day=1000,
+        distance_from_well_m=100,
+        time_since_pumping_start_days=1,
     )
     logger.info(f"Theis Drawdown Estimate: {drawdown} m")

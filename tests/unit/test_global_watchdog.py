@@ -14,7 +14,11 @@ import pytest
 import numpy as np
 
 from engine.hydroma.models.global_watchdog import (
-    KGCv5, WBIv3, WBIInputs, GlobalWatchdog, reference_data,
+    KGCv5,
+    WBIv3,
+    WBIInputs,
+    GlobalWatchdog,
+    reference_data,
 )
 
 
@@ -269,12 +273,17 @@ class TestGlobalWatchdog:
         for i, wbi_value in enumerate([90.0, 10.0, 50.0, 30.0]):
             name = f"region_{i}"
             from engine.hydroma.models.global_watchdog.watchdog import RegionAnalysis
+
             analyses[name] = RegionAnalysis(
                 region_name=name,
                 kgc={"code": "Csa", "group": "C"},
-                wbi={"wbi": wbi_value, "wbi_low": wbi_value * 0.85,
-                     "wbi_high": wbi_value * 1.15,
-                     "classification": "test", "risk_level": "test"},
+                wbi={
+                    "wbi": wbi_value,
+                    "wbi_low": wbi_value * 0.85,
+                    "wbi_high": wbi_value * 1.15,
+                    "classification": "test",
+                    "risk_level": "test",
+                },
                 timestamp="2026-01-01T00:00:00Z",
             )
 

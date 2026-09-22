@@ -36,7 +36,9 @@ from engine.hydroma.simulation.weather_source import growing_season_window
 logger = structlog.get_logger()
 
 
-def _rusle(r_factor: float, k_factor: float, ls_factor: float, c_factor: float, p_factor: float) -> float:
+def _rusle(
+    r_factor: float, k_factor: float, ls_factor: float, c_factor: float, p_factor: float
+) -> float:
     """Annual soil loss A = R * K * LS * C * P (t/ha/yr).
 
     Prefers the compiled C++ binding; falls back to the analytic product of
@@ -56,7 +58,9 @@ def _rusle(r_factor: float, k_factor: float, ls_factor: float, c_factor: float, 
 def _default_monthly() -> list[MonthClimate]:
     """Placeholder 12-month climate used when the caller provides none."""
     return [
-        MonthClimate(year=2020, month=m, tmean_c=12.0 + 2.0 * ((m - 1) % 12), smd_mm=30.0, max_smd_mm=60.0)
+        MonthClimate(
+            year=2020, month=m, tmean_c=12.0 + 2.0 * ((m - 1) % 12), smd_mm=30.0, max_smd_mm=60.0
+        )
         for m in range(1, 13)
     ]
 
@@ -116,39 +120,45 @@ def _run_swat_plus(input_data: SWATInput) -> SWATOutput:
         groundwater_recharge_mm=[2.0] * num_days,
         sediment_yield_t=[0.1] * num_days,
         et_mm=[3.0] * num_days,
-        water_yield_m3=[800.0] * num_days
+        water_yield_m3=[800.0] * num_days,
     )
 
 
 def _run_weap(input_data: SWATOutput) -> WEAPOutput:
     """Placeholder for WEAP execution."""
     demand_data = [200.0] * len(input_data.water_yield_m3)
-    return simulate_weap(WEAPInput(
-        land_profile_id="default",
-        water_demand_data=demand_data,
-        water_supply_data=input_data.water_yield_m3,
-        allocation_rules=[{"priority": 1, "sector": "municipal"}],
-        start_date=input_data.start_date,
-        end_date=input_data.end_date
-    ))
+    return simulate_weap(
+        WEAPInput(
+            land_profile_id="default",
+            water_demand_data=demand_data,
+            water_supply_data=input_data.water_yield_m3,
+            allocation_rules=[{"priority": 1, "sector": "municipal"}],
+            start_date=input_data.start_date,
+            end_date=input_data.end_date,
+        )
+    )
 
 
 def _run_hecras(input_data: SWATOutput) -> HECRASOutput:
     """Placeholder for HEC-RAS execution."""
-    return simulate_hecras(HECRASInput(
-        land_profile_id="default",
-        channel_geometry={"length_km": 10.0, "width_avg_m": 20.0, "slope": 0.001},
-        boundary_conditions={
-            "upstream_flow_m3s": [r / (24 * 3600) for r in input_data.runoff_m3[:10]],
-            "downstream_stage_m": 95.0
-        },
-        initial_conditions={"water_surface_m": 96.0},
-        start_date=input_data.start_date,
-        end_date=input_data.start_date + timedelta(days=9)
-    ))
+    return simulate_hecras(
+        HECRASInput(
+            land_profile_id="default",
+            channel_geometry={"length_km": 10.0, "width_avg_m": 20.0, "slope": 0.001},
+            boundary_conditions={
+                "upstream_flow_m3s": [r / (24 * 3600) for r in input_data.runoff_m3[:10]],
+                "downstream_stage_m": 95.0,
+            },
+            initial_conditions={"water_surface_m": 96.0},
+            start_date=input_data.start_date,
+            end_date=input_data.start_date + timedelta(days=9),
+        )
+    )
 
 
-def run_chain(inputs: ChainInputs, progress_cb: Callable[[str, int], None] | None = None) -> ChainResult:
+def run_chain(
+    inputs: ChainInputs, progress_cb: Callable[[str, int], None] | None = None
+) -> ChainResult:
     """Execute the full simulation chain: SWAT+ -> RUSLE -> RothC -> AquaCrop -> WEAP -> HEC-RAS."""
     outputs: dict[str, Any] = {}
     status = "ok"
@@ -208,7 +218,9 @@ def run_chain(inputs: ChainInputs, progress_cb: Callable[[str, int], None] | Non
         if inputs.use_real_weather and inputs.lat is not None and inputs.lon is not None:
             try:
                 start_d, end_d = growing_season_window(inputs.planting_date, inputs.harvest_date)
-                weather = weather_source.fetch_daily_weather(inputs.lat, inputs.lon, start_d.isoformat(), end_d.isoformat())
+                weather = weather_source.fetch_daily_weather(
+                    inputs.lat, inputs.lon, start_d.isoformat(), end_d.isoformat()
+                )
             except Exception as exc:
                 logger.warning("Weather fetch failed: %s", exc)
                 weather_failed = True
@@ -223,7 +235,9 @@ def run_chain(inputs: ChainInputs, progress_cb: Callable[[str, int], None] | Non
             "open-meteo (real)" if weather is not None else "synthetic (fallback)"
         )
         if weather_failed:
-            aquacrop_out["weather_error"] = message or "Weather fetch failed; using synthetic weather"
+            aquacrop_out["weather_error"] = (
+                message or "Weather fetch failed; using synthetic weather"
+            )
         outputs["aquacrop"] = aquacrop_out
 
         # 5) WEAP

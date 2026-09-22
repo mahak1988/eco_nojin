@@ -29,7 +29,9 @@ class TestGroundwater:
         assert pumped.final_storage_mm < base.final_storage_mm
 
     def test_zero_recharge_drains_storage(self):
-        out = run_groundwater_bucket(GroundwaterBucketInput(recharge_mm=0.0, pumping_mm=10.0, months=24))
+        out = run_groundwater_bucket(
+            GroundwaterBucketInput(recharge_mm=0.0, pumping_mm=10.0, months=24)
+        )
         assert out.final_storage_mm == 0.0
 
     def test_outputs_have_honest_provenance(self):
@@ -56,17 +58,28 @@ class TestPhenology:
 
     def test_stage_progression_wheat(self):
         pheno = CROP_PHENOLOGY["wheat"]
-        assert _stage_from_gdd(50.0, pheno) == "emergence"
+        # Wheat needs ~120 GDD from sowing to emergence, so 50 GDD is still
+        # pre-emergence (the previous expectation contradicted the crop table).
+        assert _stage_from_gdd(50.0, pheno) == "pre_emergence"
         assert _stage_from_gdd(400.0, pheno) == "vegetative"
         assert _stage_from_gdd(700.0, pheno) == "flowering"
         assert _stage_from_gdd(800.0, pheno) == "grain_fill"
         assert _stage_from_gdd(1000.0, pheno) == "maturity"
 
     def test_run_phenology_basic(self):
-        tmin = [10.0] * 100
-        tmax = [20.0] * 100
+        # 15/30 C with Tb=10 gives 12.5 GDD/day -> 1250 GDD over 100 days,
+        # enough to reach wheat flowering (650) and maturity (950). The old
+        # 10/20 C series only accumulated 500 GDD and could never flower.
+        tmin = [15.0] * 100
+        tmax = [30.0] * 100
         out = run_phenology(PhenologyInput(crop="wheat", tmin_daily=tmin, tmax_daily=tmax))
-        assert out.current_stage in ("emergence", "vegetative", "flowering", "grain_fill", "maturity")
+        assert out.current_stage in (
+            "emergence",
+            "vegetative",
+            "flowering",
+            "grain_fill",
+            "maturity",
+        )
         assert len(out.gdd_series) == 100
         assert out.days_to_flowering > 0
         assert out.days_to_maturity > 0

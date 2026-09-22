@@ -1,4 +1,5 @@
 """Standard exception hierarchy for Eco Nojin services."""
+
 from __future__ import annotations
 
 
@@ -13,7 +14,9 @@ class EcoNojinException(Exception):
 
 
 class ServiceUnavailableException(EcoNojinException):
-    def __init__(self, message: str = "Service temporarily unavailable", *, code: str | None = None):
+    def __init__(
+        self, message: str = "Service temporarily unavailable", *, code: str | None = None
+    ):
         super().__init__(message, status_code=503, code=code)
 
 

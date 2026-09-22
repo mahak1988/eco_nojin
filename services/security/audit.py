@@ -5,6 +5,7 @@ Every security/authz decision is recorded. Writes go to the Supabase
 (Management API, free tier), otherwise to a local JSONL file under
 `data/security/` — the honest fallback is explicit in the record.
 """
+
 import json
 import os
 import time
@@ -22,7 +23,14 @@ def _local_write(kind: str, record: dict[str, Any]) -> None:
 
 
 def _supabase_write(table: str, row: dict[str, Any]) -> bool:
-    """Best-effort insert via Supabase Management API (parameterized, no DB password)."""
+    """Best-effort insert via Supabase Management API (parameterized, no DB password).
+
+    C3 FIX: Validates table name against allowlist to prevent SQL injection.
+    """
+    ALLOWED_TABLES = {"security_events", "audit_log"}
+    if table not in ALLOWED_TABLES:
+        raise ValueError(f"Table {table} not in allowlist")
+
     try:
         import httpx
 
@@ -37,8 +45,11 @@ def _supabase_write(table: str, row: dict[str, Any]) -> bool:
         payload = {
             "query": sql,
             "params": [
-                row.get("ip"), row.get("actor"), row.get("action"),
-                row.get("decision"), json.dumps(row.get("detail", {}), ensure_ascii=False),
+                row.get("ip"),
+                row.get("actor"),
+                row.get("action"),
+                row.get("decision"),
+                json.dumps(row.get("detail", {}), ensure_ascii=False),
                 row.get("severity", "info"),
             ],
         }

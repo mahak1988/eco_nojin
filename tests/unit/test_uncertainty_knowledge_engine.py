@@ -3,10 +3,13 @@ import structlog
 logger = structlog.get_logger()
 import sys
 from pathlib import Path
+
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from engine.hydroma.climate_adaptation.uncertainty_knowledge_engine import (
-    UncertaintyAndKnowledgeEngine)
+    UncertaintyAndKnowledgeEngine,
+)
+
 
 def main():
     engine = UncertaintyAndKnowledgeEngine()
@@ -34,6 +37,7 @@ def main():
     assert 0.0 <= report["overall_reliability"]["overall_score"] <= 1.0
 
     logger.info("ALL UNCERTAINTY & KNOWLEDGE TESTS PASSED (H22,H23,H25)")
+
 
 if __name__ == "__main__":
     main()

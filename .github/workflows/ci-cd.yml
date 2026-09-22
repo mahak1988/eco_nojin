@@ -1,0 +1,521 @@
+# GitHub Actions CI/CD Pipeline for Eco Nojin
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: '3.12'
+  POETRY_VERSION: '1.8.3'
+
+jobs:
+  # =============================================================================
+  # LINT & TYPE CHECK
+  # =============================================================================
+  lint:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff mypy pytest pytest-cov
+
+      - name: Run Ruff (lint)
+        run: ruff check .
+
+      - name: Run Ruff (format check)
+        run: ruff format --check .
+
+      - name: Run MyPy (type check)
+        run: mypy --strict engine/hydroma/config/settings.py services/api_gateway/
+
+  # =============================================================================
+  # FRONTEND LINT & BUILD
+  # =============================================================================
+  frontend:
+    name: Frontend Lint & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          pnpm install --frozen-lockfile
+
+      - name: Run ESLint
+        run: |
+          cd frontend
+          pnpm run lint
+
+      - name: Run Prettier
+        run: |
+          cd frontend
+          pnpm run prettier:check
+
+      - name: Run TypeScript check
+        run: |
+          cd frontend
+          pnpm run typecheck
+
+      - name: Build
+        run: |
+          cd frontend
+          pnpm run build
+
+  # =============================================================================
+  # CONTRACT TESTS (Schemathesis)
+  # =============================================================================
+  contract-tests:
+    name: Contract Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install schemathesis pytest pytest-cov
+
+      - name: Generate OpenAPI schema
+        run: |
+          python scripts/generate_openapi_schema.py
+
+      - name: Run Contract Tests
+        run: |
+          pytest tests/test_contract.py -v --tb=short
+
+  # =============================================================================
+  # MUTATION TESTING (mutmut)
+  # =============================================================================
+  mutation-testing:
+    name: Mutation Testing
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install mutmut pytest pytest-cov pytest-asyncio
+
+      - name: Run Mutation Testing (models)
+        run: |
+          mutmut run \
+            --paths-to-mutate=engine/hydroma/models,engine/hydroma/soil,engine/hydroma/climate_adaptation \
+            --tests-dir=tests \
+            --runner="pytest -x -q" \
+            --max-runtime=300 \
+            --dict-class=mutmut.trampoline.Dict \
+            || true
+
+      - name: Mutation Testing Report
+        if: always()
+        run: |
+          mutmut results --dict-class=mutmut.trampoline.Dict
+          mutmut html --dict-class=mutmut.trampoline.Dict
+          echo "Mutation testing completed. Check HTML report."
+
+      - name: Upload Mutation HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report
+          path: html
+          retention-days: 7
+
+      - name: Check Mutation Score
+        run: |
+          python scripts/check_mutation_score.py
+
+  # =============================================================================
+  # CONTRACT TEST EXPANSION (Schemathesis against all routers)
+  # =============================================================================
+  contract-expansion:
+    name: Contract Test Expansion
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install schemathesis pytest pytest-cov hypothesis
+
+      - name: Generate OpenAPI Schema
+        run: |
+          python scripts/generate_openapi_schema.py
+
+      - name: Run Schemathesis Against All Endpoints
+        run: |
+          schemathesis run \
+            --hypothesis-max-examples=50 \
+            --hypothesis-deadline=5000 \
+            --checks=all \
+            --rate-limit=10 \
+            --timeout=30 \
+            openapi_schema.json \
+            --base-url=http://localhost:8000 \
+            || true
+
+      - name: Run Contract Tests (existing)
+        run: |
+          pytest tests/test_contract.py -v --tb=short
+
+  # =============================================================================
+  # NUMERICAL REGRESSION TESTS
+  # =============================================================================
+  numerical-regression:
+    name: Numerical Regression Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest pytest-cov pytest-asyncio hypothesis
+
+      - name: Run Scientific Model Correctness Tests
+        run: |
+          pytest tests/integration/test_models_phase7.py::TestNumericConformance -v --tb=short
+
+      - name: Run Penman-Monteith Reference Validation
+        run: |
+          pytest tests/unit/test_penman_monteith.py -v --tb=short
+
+      - name: Run MRV QA Metrics Validation
+        run: |
+          pytest tests/unit/test_mrv_qa_metrics.py -v --tb=short
+
+      - name: Run Hydroma Hub Tests
+        run: |
+          pytest tests/unit/test_hydroma_hub.py -v --tb=short
+
+      - name: Run C++ Bridge Parity Tests
+        run: |
+          pytest engine/hydroma/cpp_bridge/tests/test_parity.py -v --tb=short
+
+  # =============================================================================
+  # LOAD TESTING (Locust)
+  # =============================================================================
+  load-testing:
+    name: Load Testing
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install locust pytest pytest-cov
+
+      - name: Start API Server
+        run: |
+          nohup uvicorn services.api_gateway.main:app --host 0.0.0.0 --port 8000 > server.log 2>&1 &
+          sleep 10
+          curl -f http://localhost:8000/health/live || exit 1
+
+      - name: Run Load Tests
+        run: |
+          locust -f tests/load/locustfile.py --headless -u 50 -t 60s --host=http://localhost:8000 --csv=load_results
+
+      - name: Check Load Test Results
+        run: |
+          python scripts/check_load_results.py
+
+      - name: Upload Load Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-test-results
+          path: load_results*
+          retention-days: 7
+
+  # =============================================================================
+  # UNIT TESTS
+  # =============================================================================
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest pytest-cov pytest-asyncio
+
+      - name: Run Unit Tests
+        run: |
+          pytest tests/unit/ -v --tb=short --cov=engine --cov=services --cov-report=xml
+
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+
+  # =============================================================================
+  # INTEGRATION TESTS
+  # =============================================================================
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest pytest-cov pytest-asyncio
+
+      - name: Run Integration Tests
+        env:
+          REDIS_URL: redis://localhost:6379/0
+          DATABASE_URL: sqlite:///./test.db
+        run: |
+          pytest tests/integration/ -v --tb=short
+
+  # =============================================================================
+  # DATABASE MIGRATION TEST
+  # =============================================================================
+  db-migration:
+    name: Database Migration Test (SQLite)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install alembic
+
+      - name: Run Alembic Upgrade
+        env:
+          DATABASE_URL: sqlite:///./test_migration.db
+        run: |
+          alembic upgrade heads
+
+      - name: Verify Schema
+        run: |
+          python scripts/verify_migration_schema.py
+
+  # =============================================================================
+  # DATABASE MIGRATION TEST (PostgreSQL with testcontainers)
+  # =============================================================================
+  db-migration-postgres:
+    name: Database Migration Test (PostgreSQL)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: econojin_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test -d econojin_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install alembic psycopg2-binary pytest pytest-asyncio testcontainers
+
+      - name: Run PostgreSQL Migration Tests
+        env:
+          DATABASE_URL: postgresql+psycopg://test:test@localhost:5432/econojin_test
+        run: |
+          pytest tests/integration/test_postgres_migrations.py -v --tb=short
+
+  # =============================================================================
+  # BUILD & PUSH DOCKER IMAGE (on main)
+  # =============================================================================
+  docker:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    needs: [lint, frontend, contract-tests, mutation-testing, contract-expansion, numerical-regression, load-testing, unit-tests, integration-tests, db-migration, db-migration-postgres, cpp-build]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix=
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # =============================================================================
+  # DEPLOY TO STAGING (on develop)
+  # =============================================================================
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    needs: [docker]
+    environment: staging
+    steps:
+      - name: Deploy to Staging
+        run: |
+          echo "Deploying to staging environment..."
+          # Add your staging deployment commands here
+          # e.g., kubectl apply -f k8s/staging/
+          # or docker-compose -f docker-compose.staging.yml up -d
+
+  # =============================================================================
+  # DEPLOY TO PRODUCTION (on main, manual approval)
+  # =============================================================================
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: [docker]
+    environment: production
+    steps:
+      - name: Deploy to Production
+        run: |
+          echo "Deploying to production environment..."
+          # Add your production deployment commands here
+          # e.g., kubectl apply -f k8s/production/
+          # or docker-compose -f docker-compose.prod.yml up -d

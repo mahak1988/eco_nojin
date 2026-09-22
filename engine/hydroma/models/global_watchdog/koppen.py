@@ -15,6 +15,7 @@ Known Limitations:
     - France Paris: Csa/Cfb borderline (2020 aridity threshold differs from 30yr normals)
     - Japan Tokyo: Cwa/Cfa borderline (monsoon vs humid subtropical)
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -35,33 +36,57 @@ class KGCv5:
 
     # Main groups
     GROUPS = {
-        "A": "Tropical", "B": "Arid", "C": "Temperate",
-        "D": "Continental", "E": "Polar",
+        "A": "Tropical",
+        "B": "Arid",
+        "C": "Temperate",
+        "D": "Continental",
+        "E": "Polar",
     }
 
     # Near-match pairs for validation (scientifically acceptable borders)
     NEAR_MATCHES = {
-        ("Cfb", "Dfb"), ("Dfb", "Cfb"),
-        ("BWh", "BSh"), ("BSh", "BWh"),
-        ("BWk", "BSk"), ("BSk", "BWk"),
-        ("Cfa", "Cfb"), ("Cfb", "Cfa"),
-        ("Csa", "Csb"), ("Csb", "Csa"),
-        ("Af", "Am"), ("Am", "Af"),
-        ("Aw", "As"), ("As", "Aw"),
-        ("ET", "EF"), ("EF", "ET"),
-        ("Dfa", "Dfb"), ("Dfb", "Dfa"),
-        ("Dwa", "Dwb"), ("Dwb", "Dwa"),
-        ("Am", "Aw"), ("Aw", "Am"),
-        ("BWh", "BWk"), ("BWk", "BWh"),
-        ("Dfc", "ET"), ("ET", "Dfc"),
-        ("Cfc", "ET"), ("ET", "Cfc"),
-        ("Cfb", "Cfa"), ("Cfa", "Cfb"),
-        ("Csa", "Cfa"), ("Cfa", "Csa"),
-        ("Csb", "Cfb"), ("Cfb", "Csb"),
-        ("BWh", "Csa"), ("Csa", "BWh"),
-        ("BWk", "Csa"), ("Csa", "BWk"),
-        ("BSk", "Dwb"), ("Dwb", "BSk"),
-        ("Cwa", "Cfa"), ("Cfa", "Cwa"),  # Tokyo
+        ("Cfb", "Dfb"),
+        ("Dfb", "Cfb"),
+        ("BWh", "BSh"),
+        ("BSh", "BWh"),
+        ("BWk", "BSk"),
+        ("BSk", "BWk"),
+        ("Cfa", "Cfb"),
+        ("Cfb", "Cfa"),
+        ("Csa", "Csb"),
+        ("Csb", "Csa"),
+        ("Af", "Am"),
+        ("Am", "Af"),
+        ("Aw", "As"),
+        ("As", "Aw"),
+        ("ET", "EF"),
+        ("EF", "ET"),
+        ("Dfa", "Dfb"),
+        ("Dfb", "Dfa"),
+        ("Dwa", "Dwb"),
+        ("Dwb", "Dwa"),
+        ("Am", "Aw"),
+        ("Aw", "Am"),
+        ("BWh", "BWk"),
+        ("BWk", "BWh"),
+        ("Dfc", "ET"),
+        ("ET", "Dfc"),
+        ("Cfc", "ET"),
+        ("ET", "Cfc"),
+        ("Cfb", "Cfa"),
+        ("Cfa", "Cfb"),
+        ("Csa", "Cfa"),
+        ("Cfa", "Csa"),
+        ("Csb", "Cfb"),
+        ("Cfb", "Csb"),
+        ("BWh", "Csa"),
+        ("Csa", "BWh"),
+        ("BWk", "Csa"),
+        ("Csa", "BWk"),
+        ("BSk", "Dwb"),
+        ("Dwb", "BSk"),
+        ("Cwa", "Cfa"),
+        ("Cfa", "Cwa"),  # Tokyo
     }
 
     @staticmethod
@@ -203,8 +228,9 @@ class KGCv5:
         return KGCv5._result("??", "Unknown", t_ann, t_hot, t_cold, p_ann)
 
     @staticmethod
-    def _result(code: str, desc: str, t_ann: float, t_hot: float,
-                t_cold: float, p_ann: float) -> dict[str, Any]:
+    def _result(
+        code: str, desc: str, t_ann: float, t_hot: float, t_cold: float, p_ann: float
+    ) -> dict[str, Any]:
         return {
             "code": code,
             "description": desc,
@@ -240,18 +266,28 @@ class KGCv5:
     def describe(code: str) -> str:
         """Human-readable description for any valid Köppen code."""
         descriptions = {
-            "Af": "Tropical rainforest", "Am": "Tropical monsoon",
-            "Aw": "Tropical savanna (dry winter)", "As": "Tropical savanna (dry summer)",
-            "BWh": "Hot desert", "BWk": "Cold desert",
-            "BSh": "Hot semi-arid", "BSk": "Cold semi-arid",
-            "Cfa": "Humid subtropical", "Cfb": "Oceanic (temperate)",
+            "Af": "Tropical rainforest",
+            "Am": "Tropical monsoon",
+            "Aw": "Tropical savanna (dry winter)",
+            "As": "Tropical savanna (dry summer)",
+            "BWh": "Hot desert",
+            "BWk": "Cold desert",
+            "BSh": "Hot semi-arid",
+            "BSk": "Cold semi-arid",
+            "Cfa": "Humid subtropical",
+            "Cfb": "Oceanic (temperate)",
             "Cfc": "Subpolar oceanic",
-            "Csa": "Hot-summer Mediterranean", "Csb": "Warm-summer Mediterranean",
-            "Cwa": "Humid subtropical (dry winter)", "Cwb": "Subtropical highland",
-            "Dfa": "Hot-summer continental", "Dfb": "Warm-summer continental",
-            "Dfc": "Subarctic", "Dfd": "Extremely cold subarctic",
+            "Csa": "Hot-summer Mediterranean",
+            "Csb": "Warm-summer Mediterranean",
+            "Cwa": "Humid subtropical (dry winter)",
+            "Cwb": "Subtropical highland",
+            "Dfa": "Hot-summer continental",
+            "Dfb": "Warm-summer continental",
+            "Dfc": "Subarctic",
+            "Dfd": "Extremely cold subarctic",
             "Dwa": "Monsoon-continental (hot summer)",
             "Dwb": "Monsoon-continental (warm summer)",
-            "ET": "Tundra", "EF": "Ice cap",
+            "ET": "Tundra",
+            "EF": "Ice cap",
         }
         return descriptions.get(code, f"Köppen {code}")

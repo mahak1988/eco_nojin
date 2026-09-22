@@ -3,6 +3,7 @@ Wind & Water Erosion Adapters
 - WEPS-style برای فرسایش بادی
 - RUSLE برای فرسایش آبی
 """
+
 from datetime import UTC, datetime
 
 from services.simulation.base import BaseSimulator, SimulatorRegistry
@@ -39,14 +40,17 @@ class WindErosionAdapter(BaseSimulator):
         # فرمول WEPS ساده‌شده
         if wind_speed > threshold:
             excess = wind_speed - threshold
-            erosion = K * (excess ** 3) * 0.5 * wb_factor
+            erosion = K * (excess**3) * 0.5 * wb_factor
         else:
             erosion = 0.0
 
         risk = "low"
-        if erosion >= 5: risk = "moderate"
-        if erosion >= 15: risk = "high"
-        if erosion >= 30: risk = "severe"
+        if erosion >= 5:
+            risk = "moderate"
+        if erosion >= 15:
+            risk = "high"
+        if erosion >= 30:
+            risk = "severe"
 
         return SimulationResult(
             simulation_id=ctx.simulation_id,
@@ -65,10 +69,16 @@ class WindErosionAdapter(BaseSimulator):
 
     def _soil_erodibility(self, texture: str) -> float:
         return {
-            "sand": 0.45, "loamy_sand": 0.35, "sandy_loam": 0.25,
-            "loam": 0.20, "silt_loam": 0.18, "silt": 0.15,
-            "clay_loam": 0.12, "clay": 0.08,
+            "sand": 0.45,
+            "loamy_sand": 0.35,
+            "sandy_loam": 0.25,
+            "loam": 0.20,
+            "silt_loam": 0.18,
+            "silt": 0.15,
+            "clay_loam": 0.12,
+            "clay": 0.08,
         }.get(texture.lower(), 0.20)
+
 
 @SimulatorRegistry.register
 class WaterErosionAdapter(BaseSimulator):
@@ -107,8 +117,13 @@ class WaterErosionAdapter(BaseSimulator):
 
     def _k_factor(self, soil) -> float:
         k = {
-            "sand": 0.15, "loamy_sand": 0.20, "sandy_loam": 0.25,
-            "loam": 0.30, "silt_loam": 0.35, "silt": 0.45,
-            "clay_loam": 0.30, "clay": 0.25,
+            "sand": 0.15,
+            "loamy_sand": 0.20,
+            "sandy_loam": 0.25,
+            "loam": 0.30,
+            "silt_loam": 0.35,
+            "silt": 0.45,
+            "clay_loam": 0.30,
+            "clay": 0.25,
         }.get(soil.texture.lower(), 0.30)
         return max(0.05, k * (1 - soil.organic_carbon_pct * 0.05))

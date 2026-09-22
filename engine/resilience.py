@@ -40,18 +40,20 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class CircuitState(Enum):
     """Circuit breaker states."""
-    CLOSED = "closed"      # Normal operation
-    OPEN = "open"          # Failing, reject calls
+
+    CLOSED = "closed"  # Normal operation
+    OPEN = "open"  # Failing, reject calls
     HALF_OPEN = "half_open"  # Testing recovery
 
 
 class CircuitOpenError(Exception):
     """Raised when circuit breaker is open."""
+
     pass
 
 
@@ -76,7 +78,7 @@ class CircuitBreaker:
         failure_threshold: int = 5,
         recovery_timeout: float = 60.0,
         success_threshold: int = 2,
-        name: str = "default"
+        name: str = "default",
     ):
         self.failure_threshold = failure_threshold
         self.recovery_timeout = recovery_timeout
@@ -133,9 +135,7 @@ class CircuitBreaker:
                 logger.warning(f"Circuit '{self.name}' re-OPENED (test failed)")
             elif self._failure_count >= self.failure_threshold:
                 self._state = CircuitState.OPEN
-                logger.warning(
-                    f"Circuit '{self.name}' OPENED after {self._failure_count} failures"
-                )
+                logger.warning(f"Circuit '{self.name}' OPENED after {self._failure_count} failures")
 
     def reset(self):
         """Reset circuit to closed state."""
@@ -212,6 +212,7 @@ def circuit_breaker(
         def call_with_fallback():
             # ...
     """
+
     def decorator(func):
         cb_name = name or f"{func.__module__}.{func.__name__}"
         breaker = get_circuit_breaker(
@@ -226,9 +227,7 @@ def circuit_breaker(
             if not breaker.allow_request():
                 if fallback is not None:
                     return fallback(*args, **kwargs)
-                raise CircuitOpenError(
-                    f"Circuit '{cb_name}' is open, request rejected"
-                )
+                raise CircuitOpenError(f"Circuit '{cb_name}' is open, request rejected")
 
             try:
                 result = func(*args, **kwargs)
@@ -240,6 +239,7 @@ def circuit_breaker(
 
         wrapper.circuit_breaker = breaker
         return wrapper
+
     return decorator
 
 
@@ -256,6 +256,7 @@ def with_timeout(timeout_seconds: float, fallback: Any = None):
         def slow_operation():
             time.sleep(10)  # Would timeout
     """
+
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -264,15 +265,13 @@ def with_timeout(timeout_seconds: float, fallback: Any = None):
                 try:
                     return future.result(timeout=timeout_seconds)
                 except FuturesTimeout:
-                    logger.warning(
-                        f"Timeout after {timeout_seconds}s in {func.__name__}"
-                    )
+                    logger.warning(f"Timeout after {timeout_seconds}s in {func.__name__}")
                     if fallback is not None:
                         return fallback
-                    raise TimeoutError(
-                        f"Function {func.__name__} exceeded {timeout_seconds}s"
-                    )
+                    raise TimeoutError(f"Function {func.__name__} exceeded {timeout_seconds}s")
+
         return wrapper
+
     return decorator
 
 
@@ -297,6 +296,7 @@ def with_retry(
             # ... might fail
             return result
     """
+
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -307,7 +307,7 @@ def with_retry(
                 except exceptions as e:
                     last_exception = e
                     if attempt < max_retries:
-                        wait_time = backoff_factor ** attempt
+                        wait_time = backoff_factor**attempt
                         logger.warning(
                             f"Retry {attempt + 1}/{max_retries} for "
                             f"{func.__name__} in {wait_time:.2f}s: {e}"
@@ -317,7 +317,9 @@ def with_retry(
             if fallback is not None:
                 return fallback
             raise last_exception
+
         return wrapper
+
     return decorator
 
 

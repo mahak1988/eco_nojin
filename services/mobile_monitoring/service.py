@@ -4,6 +4,7 @@ Mobile Monitoring Service.
 Handles data ingestion from mobile apps, including photos, GPS locations,
 and user-submitted observations.
 """
+
 import structlog
 
 logger = structlog.get_logger()
@@ -35,6 +36,7 @@ class MobileReportType(Enum):
 @dataclass
 class MobileMonitoringReport:
     """Represents a single mobile monitoring submission."""
+
     project_id: str
     location: dict[str, float]  # {"lat": float, "lon": float}
     report_timestamp: datetime
@@ -71,15 +73,17 @@ class MobileMonitoringService:
                 project_id=report.project_id,
                 monitoring_type="mobile",
                 monitoring_date=report.report_timestamp.date(),
-                location=f"{report.location['lat']},{report.location['lon']}", # Simplified
+                location=f"{report.location['lat']},{report.location['lon']}",  # Simplified
                 data_source=f"mobile_app_user_{report.user_id}",
-                data_quality_score=self._score_quality(report.quality_flag, report.geo_verification_confirmed),
+                data_quality_score=self._score_quality(
+                    report.quality_flag, report.geo_verification_confirmed
+                ),
                 measurement_data=processed_data,
                 quality_flags={
                     "original_flag": report.quality_flag,
                     "geo_verification_confirmed": report.geo_verification_confirmed,
-                    "photo_count": len(report.photo_urls)
-                }
+                    "photo_count": len(report.photo_urls),
+                },
             )
             db = SessionLocal()
             db.add(db_entry)
@@ -97,15 +101,23 @@ class MobileMonitoringService:
         for field in required_fields:
             if not hasattr(report, field) or getattr(report, field) is None:
                 return False
-        if not isinstance(report.location, dict) or 'lat' not in report.location or 'lon' not in report.location:
+        if (
+            not isinstance(report.location, dict)
+            or "lat" not in report.location
+            or "lon" not in report.location
+        ):
             return False
         # Check if photos exist if report type implies photos
-        if report.report_type in [
-            MobileReportType.CROP_CONDITION_PHOTO,
-            MobileReportType.SOIL_CONDITION_PHOTO,
-            MobileReportType.WATER_SOURCE_PHOTO,
-            MobileReportType.INFRASTRUCTURE_PHOTO
-        ] and not report.photo_urls:
+        if (
+            report.report_type
+            in [
+                MobileReportType.CROP_CONDITION_PHOTO,
+                MobileReportType.SOIL_CONDITION_PHOTO,
+                MobileReportType.WATER_SOURCE_PHOTO,
+                MobileReportType.INFRASTRUCTURE_PHOTO,
+            ]
+            and not report.photo_urls
+        ):
             return False
         return True
 
@@ -117,7 +129,7 @@ class MobileMonitoringService:
             "photo_hashes": [hashlib.sha256(url.encode()).hexdigest() for url in report.photo_urls],
             "additional_data": report.additional_data or {},
             "submitted_by_user_id": report.user_id,
-            "geo_verification_confirmed": report.geo_verification_confirmed
+            "geo_verification_confirmed": report.geo_verification_confirmed,
         }
         return processed
 
@@ -140,7 +152,7 @@ def example_mobile_ingest():
         text_description="Wheat field looks healthy, some weeds present.",
         geo_verification_confirmed=True,
         quality_flag="ok",
-        additional_data={"growth_stage": "flowering", "estimated_yield": "high"}
+        additional_data={"growth_stage": "flowering", "estimated_yield": "high"},
     )
 
     service = MobileMonitoringService()

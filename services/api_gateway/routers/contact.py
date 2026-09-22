@@ -6,6 +6,7 @@ only the fields the visitor submits plus a locale tag are stored; no IP and
 no user-agent are persisted. A hidden honeypot field silently drops bot
 submissions.
 """
+
 from __future__ import annotations
 
 import logging

@@ -23,6 +23,7 @@ behaviour around the baseline — labelled ``surrogate_based``.
 Reference: Blank & Deb (2020), "pymoo: Multi-objective Optimization in
 Python", IEEE Access.
 """
+
 from __future__ import annotations
 
 import time
@@ -44,6 +45,7 @@ try:
     from pymoo.algorithms.moo.nsga2 import NSGA2
     from pymoo.core.problem import ElementwiseProblem
     from pymoo.optimize import minimize
+
     PYMOO_AVAILABLE = True
 except Exception:  # pragma: no cover - import guard
     PYMOO_AVAILABLE = False
@@ -75,8 +77,8 @@ class _SurrogateProblem(ElementwiseProblem):
         out["F"] = [
             float(erosion),
             float(deficit),
-            float(-yield_t),      # maximize -> minimize negative
-            float(-soc_change),   # maximize -> minimize negative
+            float(-yield_t),  # maximize -> minimize negative
+            float(-soc_change),  # maximize -> minimize negative
         ]
 
 
@@ -100,15 +102,14 @@ class MultiObjectiveOptimizer(AbstractScientificMotor):
             MotorOutput("mode", "scalar", "str", "surrogate_based"),
         ]
 
-    async def execute(
-        self, inputs: dict[str, Any], parameters: MotorParameters
-    ) -> MotorResult:
+    async def execute(self, inputs: dict[str, Any], parameters: MotorParameters) -> MotorResult:
         start_time = time.time()
         run_id = f"NSGA2_{int(time.time())}"
 
         if not PYMOO_AVAILABLE:
             return MotorResult(
-                run_id=run_id, motor_type=self.motor_type,
+                run_id=run_id,
+                motor_type=self.motor_type,
                 status=MotorStatus.FAILED,
                 error_message="pymoo not installed (pip install pymoo)",
             )
@@ -129,15 +130,17 @@ class MultiObjectiveOptimizer(AbstractScientificMotor):
 
             front: list[dict[str, Any]] = []
             for x, f in zip(res.X, res.F):
-                front.append({
-                    "practice": round(float(x[0]), 3),
-                    "irrigation_threshold_mm": round(float(x[1]), 1),
-                    "input_carbon_t_ha_yr": round(float(x[2]), 2),
-                    "erosion_t_ha_yr": round(float(f[0]), 3),
-                    "deficit_mcm": round(float(f[1]), 3),
-                    "yield_ton_ha": round(float(-f[2]), 3),
-                    "soc_change_t_ha_yr": round(float(-f[3]), 4),
-                })
+                front.append(
+                    {
+                        "practice": round(float(x[0]), 3),
+                        "irrigation_threshold_mm": round(float(x[1]), 1),
+                        "input_carbon_t_ha_yr": round(float(x[2]), 2),
+                        "erosion_t_ha_yr": round(float(f[0]), 3),
+                        "deficit_mcm": round(float(f[1]), 3),
+                        "yield_ton_ha": round(float(-f[2]), 3),
+                        "soc_change_t_ha_yr": round(float(-f[3]), 4),
+                    }
+                )
 
             return MotorResult(
                 run_id=run_id,
@@ -167,7 +170,8 @@ class MultiObjectiveOptimizer(AbstractScientificMotor):
             )
         except Exception as exc:
             return MotorResult(
-                run_id=run_id, motor_type=self.motor_type,
+                run_id=run_id,
+                motor_type=self.motor_type,
                 status=MotorStatus.FAILED,
                 error_message=f"NSGA-II failed: {exc}",
                 execution_time_seconds=round(time.time() - start_time, 3),

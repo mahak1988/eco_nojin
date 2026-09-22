@@ -8,7 +8,6 @@ from sqlalchemy.engine import Connection
 from alembic import context
 
 from database.models import Base
-from database.config import engine
 from database import models  # noqa: F401  (populates Base.metadata)
 
 config = context.config
@@ -28,7 +27,7 @@ def _resolve_engine():
     # دریافت url از config یا متغیر محیطی
     url = config.get_main_option("sqlalchemy.url")
     if not url:
-        url = os.getenv("DATABASE_URL", "duckdb:///./data/eco_nojin.duckdb")
+        url = os.getenv("DATABASE_URL", "sqlite:///./data/econojin.db")
     cfg = config.get_section(config.config_ini_section, {})
     cfg["sqlalchemy.url"] = url
     return engine_from_config(cfg, prefix="sqlalchemy.", poolclass=NullPool)
@@ -37,8 +36,8 @@ def _resolve_engine():
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode."""
     url = config.get_main_option("sqlalchemy.url")
-    if url.startswith("driver://"):
-        url = app_engine.url.render_as_string(hide_password=False)
+    if not url:
+        url = "sqlite:///./data/econojin.db"
     context.configure(
         url=url,
         target_metadata=target_metadata,

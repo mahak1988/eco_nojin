@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 class AquaCropAdapter:
     """
     Adapter برای اتصال AquaCrop-OSPy به موتورهای علمی Eco Nojin
-    
+
     ورودی: Land Profile از services/land
     خروجی: پیش‌بینی عملکرد، نیاز آبی، تاریخ کاشت
     """
@@ -31,10 +31,7 @@ class AquaCropAdapter:
         irrigation = IrrigationManagement(irrigation_method=3)
 
         # اجرای شبیه‌سازی
-        model = AquaCropModel(
-            soil=soil, crop=crop, weather=weather_data,
-            irrigation=irrigation
-        )
+        model = AquaCropModel(soil=soil, crop=crop, weather=weather_data, irrigation=irrigation)
         model.run_model()
 
         # استخراج نتایج

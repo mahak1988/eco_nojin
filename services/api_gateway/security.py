@@ -1,27 +1,33 @@
-﻿"""Security middlewares for the Eco Nojin API gateway (plan v2.0, phase 0).
-
-Provides the four middlewares referenced by ``main.py``:
-
-- ``HTTPSRedirectMiddleware``  — redirects HTTP to HTTPS **only** when the
-  ``ECONOJIN_REQUIRE_HTTPS`` flag is enabled, so local HTTP development and
-  test runs are not broken.
-- ``RateLimitMiddleware``      — fixed-window rate limiting per client IP;
-  uses Redis when a client is injected, otherwise falls back to an
-  in-process window (single-worker deployments / tests).
-- ``SecurityHeadersMiddleware`` — adds hardened response headers.
-- ``RequestIDMiddleware``      — propagates/assigns ``X-Request-ID``.
-"""
 from __future__ import annotations
 
+"""Security middlewares for the Eco Nojin API gateway.
+
+Provides:
+- HTTPSRedirectMiddleware: redirect HTTP to HTTPS (opt-in)
+- RateLimitMiddleware: sliding-window per-IP rate limit (Redis/in-memory)
+- SecurityHeadersMiddleware: hardened response headers
+- RequestIDMiddleware: propagate/assign X-Request-ID + correlation context
+"""
+
+import hashlib
+import hmac
+import logging
 import os
 import time
 import uuid
 from collections import defaultdict, deque
-from typing import Any
+from typing import Any, ClassVar
 
+import structlog
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.responses import RedirectResponse, Response
+
+from services.api_gateway.observability.structured_logger import (
+    set_correlation_id,
+)
+
+logger = structlog.get_logger("econojin.security")
 
 
 def _flag(name: str, default: str = "0") -> bool:
@@ -29,13 +35,6 @@ def _flag(name: str, default: str = "0") -> bool:
 
 
 class HTTPSRedirectMiddleware(BaseHTTPMiddleware):
-    """Redirect plain-HTTP requests to HTTPS when explicitly required.
-
-    The redirect is opt-in via ``ECONOJIN_REQUIRE_HTTPS`` so that local
-    development (uvicorn on http://localhost) and the automated browser
-    tests keep working; production deployments set the flag.
-    """
-
     def __init__(self, app: Any) -> None:
         super().__init__(app)
         self._required = _flag("ECONOJIN_REQUIRE_HTTPS")
@@ -48,64 +47,131 @@ class HTTPSRedirectMiddleware(BaseHTTPMiddleware):
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
-    """Fixed-window per-IP rate limiter with Redis or in-memory backend."""
-
     DEFAULT_LIMIT = int(os.getenv("ECONOJIN_RATELIMIT_PER_MINUTE", "240"))
     WINDOW_SECONDS = 60
 
-    def __init__(self, app: Any, redis_client: Any = None) -> None:
+    def __init__(
+        self,
+        app: Any,
+        redis_client: Any = None,
+        limit: int | None = None,
+        window: int | None = None,
+        enabled: bool = True,
+        trusted_proxies: list[str] | None = None,
+    ) -> None:
         super().__init__(app)
         self.redis = redis_client
+        self.enabled = enabled
+        self.limit = int(limit) if limit is not None else self.DEFAULT_LIMIT
+        self.window_seconds = int(window) if window is not None else self.WINDOW_SECONDS
         self._hits: dict[str, deque[float]] = defaultdict(deque)
+        self.trusted_proxies = trusted_proxies or []
+        self._trusted_proxy_networks = []
+        if self.trusted_proxies:
+            import ipaddress
+
+            for proxy in self.trusted_proxies:
+                try:
+                    self._trusted_proxy_networks.append(ipaddress.ip_network(proxy, strict=False))
+                except ValueError:
+                    pass
 
     def _client_key(self, request: Request) -> str:
-        fwd = request.headers.get("x-forwarded-for")
-        if fwd:
-            return fwd.split(",")[0].strip()
-        return request.client.host if request.client else "unknown"
+        client_host = request.client.host if request.client else "unknown"
+        is_trusted = False
+        if self._trusted_proxy_networks:
+            import ipaddress
 
-    def _check_redis(self, key: str) -> bool:
+            try:
+                client_ip = ipaddress.ip_address(client_host)
+                for network in self._trusted_proxy_networks:
+                    if client_ip in network:
+                        is_trusted = True
+                        break
+            except ValueError:
+                pass
+
+        if is_trusted:
+            fwd = request.headers.get("x-forwarded-for")
+            if fwd:
+                forwarded_ip = fwd.split(",")[0].strip()
+                try:
+                    ipaddress.ip_address(forwarded_ip)
+                    return forwarded_ip
+                except ValueError:
+                    pass
+        return client_host
+
+    def _check_redis(self, key: str) -> tuple[bool, int, int]:
         assert self.redis is not None
-        bucket = f"ratelimit:{key}:{int(time.time() // self.WINDOW_SECONDS)}"
-        count = self.redis.incr(bucket)
-        if count == 1:
-            self.redis.expire(bucket, self.WINDOW_SECONDS)
-        return int(count) <= self.DEFAULT_LIMIT
-
-    def _check_memory(self, key: str) -> bool:
         now = time.time()
+        window_start = now - self.window_seconds
+        key_name = f"ratelimit:{key}"
+        pipe = self.redis.pipeline()
+        pipe.zremrangebyscore(key_name, 0, window_start)
+        pipe.zcard(key_name)
+        pipe.zadd(key_name, {str(time.time()): time.time()})
+        pipe.expire(key_name, self.window_seconds + 1)
+        results = pipe.execute()
+        current_count = results[1]
+        allowed = current_count < self.limit
+        remaining = max(0, self.limit - current_count - (1 if allowed else 0))
+        reset_time = int(now + self.window_seconds)
+        return allowed, remaining, reset_time
+
+    def _check_memory(self, key: str) -> tuple[bool, int, int]:
+        now = time.time()
+        window_start = now - self.window_seconds
         window = self._hits[key]
-        while window and now - window[0] > self.WINDOW_SECONDS:
+        while window and window[0] < window_start:
             window.popleft()
-        if len(window) >= self.DEFAULT_LIMIT:
-            return False
-        window.append(now)
-        return True
+        current_count = len(window)
+        allowed = current_count < self.limit
+        remaining = max(0, self.limit - current_count - (1 if allowed else 0))
+        reset_time = int(now + self.window_seconds)
+        if allowed:
+            window.append(now)
+        return allowed, remaining, reset_time
 
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+        if not self.enabled:
+            return await call_next(request)
         key = self._client_key(request)
         try:
-            allowed = self._check_redis(key) if self.redis is not None else self._check_memory(key)
-        except Exception:  # Redis outage must never take the API down
-            allowed = self._check_memory(key)
+            if self.redis is not None:
+                allowed, remaining, reset_time = self._check_redis(key)
+            else:
+                allowed, remaining, reset_time = self._check_memory(key)
+        except Exception:
+            allowed, remaining, reset_time = self._check_memory(key)
         if not allowed:
+            retry_after = max(1, self.window_seconds)
             return Response(
-                content='{"detail": "rate limit exceeded"}',
+                content='{"detail": "rate limit exceeded", "retry_after_seconds": %d}'
+                % retry_after,
                 status_code=429,
                 media_type="application/json",
-                headers={"Retry-After": str(self.WINDOW_SECONDS)},
+                headers={
+                    "Retry-After": str(retry_after),
+                    "X-RateLimit-Limit": str(self.limit),
+                    "X-RateLimit-Remaining": "0",
+                    "X-RateLimit-Reset": str(int(time.time() + self.window_seconds)),
+                },
             )
-        return await call_next(request)
+        response = await call_next(request)
+        response.headers["X-RateLimit-Limit"] = str(self.limit)
+        response.headers["X-RateLimit-Remaining"] = str(remaining)
+        response.headers["X-RateLimit-Reset"] = str(reset_time)
+        return response
 
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
-    """Attach hardened security headers to every response."""
-
-    HEADERS = {
+    HEADERS: ClassVar[dict[str, str]] = {
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "DENY",
         "Referrer-Policy": "strict-origin-when-cross-origin",
         "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
     }
 
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
@@ -116,18 +182,41 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 
 
 class RequestIDMiddleware(BaseHTTPMiddleware):
-    """Assign or propagate ``X-Request-ID`` for tracing."""
-
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         request_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())
+        request.state.request_id = request_id
+        set_correlation_id(request_id)
         response = await call_next(request)
         response.headers["X-Request-ID"] = request_id
         return response
 
 
+class APIKeyGuardMiddleware(BaseHTTPMiddleware):
+    """Middleware that validates X-API-Key for telco webhook endpoints."""
+
+    PROTECTED_PREFIXES = ("/api/v1/ussd", "/api/v1/voice", "/api/v1/sms")
+
+    def __init__(self, app: Any, api_key: str | None = None) -> None:
+        super().__init__(app)
+        self._api_key = api_key
+
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+        if self._api_key and any(request.url.path.startswith(p) for p in self.PROTECTED_PREFIXES):
+            provided = request.headers.get("X-API-Key")
+            if not provided or not hmac.compare_digest(provided, self._api_key):
+                return Response(
+                    content='{"detail": "Invalid API key"}',
+                    status_code=401,
+                    media_type="application/json",
+                    headers={"WWW-Authenticate": "ApiKey"},
+                )
+        return await call_next(request)
+
+
 __all__ = [
     "HTTPSRedirectMiddleware",
     "RateLimitMiddleware",
-    "SecurityHeadersMiddleware",
     "RequestIDMiddleware",
+    "SecurityHeadersMiddleware",
+    "APIKeyGuardMiddleware",
 ]

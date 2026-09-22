@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "eco-nojin.fullname" . }}-frontend-config
+  namespace: {{ include "eco-nojin.namespace" . }}
+  labels:
+    {{- include "eco-nojin.labels" . | nindent 4 }}
+    app: frontend
+data:
+  {{- range $key, $value := .Values.frontend.config }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}

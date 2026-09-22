@@ -1,4 +1,5 @@
 """SWAT+ Simplified Water Balance Model."""
+
 from __future__ import annotations
 
 import time
@@ -197,7 +198,7 @@ class SWATPlusMotor(AbstractScientificMotor):
             40: 76,  # Cropland
             50: 98,  # Built-up
             60: 86,  # Bare
-            80: 100, # Water
+            80: 100,  # Water
         }
 
         lc_values = landcover.values

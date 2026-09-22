@@ -25,14 +25,14 @@ from engine.land.slope_aspect import SlopeAspectAnalyzer
 
 class MockDEMProcessor:
     """Mock DEMProcessor for tests."""
+
     def __init__(self, data=None, resolution=30.0):
         import numpy as np
+
         self._data = data if data is not None else np.full((10, 10), 1000.0)
         self._dataset = None
         self.resolution = resolution
         self.dem_file_path = None
-
-
 
 
 class TestModels:
@@ -48,7 +48,7 @@ class TestModels:
             location_lat=32.65,
             location_lon=51.67,
             country="Iran",
-            region="Isfahan"
+            region="Isfahan",
         )
 
         assert profile.id == "test-001"
@@ -67,7 +67,7 @@ class TestModels:
             elevation_mean=1250,
             slope_mean=12.5,
             slope_max=25.0,
-            aspect_dominant="S"
+            aspect_dominant="S",
         )
 
         assert analysis.terrain_type == TerrainType.ROLLING
@@ -83,7 +83,7 @@ class TestModels:
             subclass="e",
             limiting_factors=["slope", "erosion_risk"],
             suitable_uses=["rainfed_agriculture"],
-            confidence_score=0.85
+            confidence_score=0.85,
         )
 
         assert assessment.capability_class == LandCapabilityClass.CLASS_III
@@ -192,11 +192,13 @@ class TestSlopeAspect:
 
         # CLASS_5: >40% (steep)
         assert classify_slope_usda(50.0) == SlopeClass.CLASS_5
+
     def analyzer(self):
         """Create analyzer with 30m resolution."""
         from engine.land.terrain_analysis import (
             TerrainAnalyzer,
         )
+
         return TerrainAnalyzer(resolution=30.0)
 
     @pytest.fixture
@@ -208,6 +210,7 @@ class TestSlopeAspect:
         X, Y = np.meshgrid(x, y)
         return 1000 + 50 * np.sin(X) * np.cos(Y)
 
+
 class TestDrainageAnalysis:
     """Test drainage analysis."""
 
@@ -215,6 +218,7 @@ class TestDrainageAnalysis:
     def analyzer(self):
         """Create drainage analyzer."""
         from engine.land.drainage import DrainageAnalyzer
+
         return DrainageAnalyzer(resolution=30.0)
 
     @pytest.fixture
@@ -250,6 +254,7 @@ class TestCapabilityAssessment:
     def assessor(self):
         """Create capability assessor."""
         from engine.land.capability import CapabilityAssessor
+
         return CapabilityAssessor()
 
     def test_flat_land_high_capability(self, assessor):
@@ -259,7 +264,7 @@ class TestCapabilityAssessment:
             soil_depth_m=1.5,
             erosion_risk="low",
             drainage_class="well_drained",
-            climate_zone="temperate"
+            climate_zone="temperate",
         )
 
         assert assessment.capability_class.value in ["I", "II"]
@@ -272,7 +277,7 @@ class TestCapabilityAssessment:
             soil_depth_m=0.3,
             erosion_risk="very_high",
             drainage_class="well_drained",
-            climate_zone="temperate"
+            climate_zone="temperate",
         )
 
         assert assessment.capability_class.value in ["V", "VI", "VII", "VIII"]
@@ -285,7 +290,7 @@ class TestCapabilityAssessment:
             erosion_risk="low",
             drainage_class="well_drained",
             climate_zone="arid",
-            profile_id="test"
+            profile_id="test",
         )
 
         assert "water_scarcity" in assessment.limiting_factors
@@ -370,21 +375,25 @@ class TestIntegration:
 
         # Basic assertions
         assert terrain.profile_id == "test"
-        assert hasattr(terrain, 'slope_mean')
-        assert hasattr(terrain, 'terrain_type')
+        assert hasattr(terrain, "slope_mean")
+        assert hasattr(terrain, "terrain_type")
 
-        logger.info(f"  ✅ Terrain analysis: slope_mean={terrain.slope_mean:.2f}, type={terrain.terrain_type}")
+        logger.info(
+            f"  ✅ Terrain analysis: slope_mean={terrain.slope_mean:.2f}, type={terrain.terrain_type}"
+        )
 
     @pytest.fixture
     def analyzer(self):
         """TerrainAnalyzer for terrain analysis tests."""
         from engine.land.terrain_analysis import TerrainAnalyzer
+
         return TerrainAnalyzer(resolution=30.0)
 
     @pytest.fixture
     def rolling_dem(self):
         """Rolling DEM for testing."""
         import numpy as np
+
         dem = np.zeros((15, 15))
         for i in range(15):
             for j in range(15):
@@ -400,7 +409,6 @@ class TestIntegration:
         assert 0 <= analysis.slope_mean <= 90
         assert analysis.aspect_dominant in ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
 
-
     def test_terrain_type_classification(self, analyzer):
         """Test terrain type classification."""
         from engine.land.models import TerrainType
@@ -409,4 +417,3 @@ class TestIntegration:
         flat_dem = np.full((10, 10), 1000.0)
         analysis = analyzer.analyze(flat_dem)
         assert analysis.terrain_type == TerrainType.FLAT
-

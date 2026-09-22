@@ -1,4 +1,5 @@
 """Fixtures for reporting integration tests (Phase 6C fix: missing fixture)."""
+
 import pytest
 
 from services.reporting.service import ReportingService

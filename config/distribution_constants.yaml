@@ -1,0 +1,29 @@
+# EcoCoin Distribution Constants
+# Single source of truth for distribution splits across Python and Solidity
+
+# Distribution split (basis points = 1/10000)
+# 70% producer, 15% platform, 10% ecosystem, 5% governance
+DISTRIBUTION_BPS:
+  producer: 7000      # 70%
+  platform: 1500      # 15%
+  ecosystem: 1000     # 10%
+  governance: 500     # 5%
+
+# Same as percentages (for readability)
+DISTRIBUTION_PCT:
+  producer: 0.70
+  platform: 0.15
+  ecosystem: 0.10
+  governance: 0.05
+
+# Validation: sum must equal 10000 bps = 1.0
+# 7000 + 1500 + 1000 + 500 = 10000 ✓
+
+# Burn rate (basis points)
+BURN_RATE_BPS: 200  # 2%
+
+# Hard cap
+HARD_CAP: "100_000_000_000"  # 100B ECO
+
+# Phase configuration
+PHASE_COUNT: 6

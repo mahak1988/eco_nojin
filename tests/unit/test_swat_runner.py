@@ -49,12 +49,16 @@ class TestParseOutputHru:
 
 class TestSwatRunner:
     def test_missing_executable_raises(self, tmp_path):
-        runner = SwatRunner(SwatConfig(executable=r"C:\nonexistent\swat.exe", project_dir=str(tmp_path)))
+        runner = SwatRunner(
+            SwatConfig(executable=r"C:\nonexistent\swat.exe", project_dir=str(tmp_path))
+        )
         with pytest.raises(SwatUnavailable, match="swat.tamu.edu"):
             runner.run()
 
     def test_missing_project_raises(self, tmp_path):
-        runner = SwatRunner(SwatConfig(executable=sys.executable, project_dir=str(tmp_path / "nope")))
+        runner = SwatRunner(
+            SwatConfig(executable=sys.executable, project_dir=str(tmp_path / "nope"))
+        )
         with pytest.raises(SwatUnavailable, match="project directory"):
             runner.run()
 

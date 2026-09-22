@@ -24,12 +24,13 @@ async def get_db() -> AsyncSession:
 
 
 def _uid(user) -> str:
-    return str(user.id) if hasattr(user, 'id') else str(user.get('id'))
+    return str(user.id) if hasattr(user, "id") else str(user.get("id"))
 
 
 # ---------------------------------------------------------------------------
 # Schemas
 # ---------------------------------------------------------------------------
+
 
 class OrderItemRequest(BaseModel):
     sku_code: str
@@ -59,8 +60,11 @@ class ShipRequest(BaseModel):
 # Order endpoints
 # ---------------------------------------------------------------------------
 
+
 @router.post("/orders", response_model=dict)
-async def create_order(body: OrderCreateRequest, db: AsyncSession = Depends(get_db), user=Depends(require_user)):
+async def create_order(
+    body: OrderCreateRequest, db: AsyncSession = Depends(get_db), user=Depends(require_user)
+):
     service = OrderService(db)
     try:
         order = await service.create_order(
@@ -70,11 +74,9 @@ async def create_order(body: OrderCreateRequest, db: AsyncSession = Depends(get_
             idempotency_key=body.idempotency_key,
         )
     except EcoNojinException as e:
-         raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
 
-    items_result = await db.execute(
-        select(ComOrderItem).where(ComOrderItem.order_id == order.id)
-    )
+    items_result = await db.execute(select(ComOrderItem).where(ComOrderItem.order_id == order.id))
     items = items_result.scalars().all()
     return {
         "order_id": order.id,
@@ -84,7 +86,10 @@ async def create_order(body: OrderCreateRequest, db: AsyncSession = Depends(get_
         "platform_fee": str(order.platform_fee),
         "landscape_fee": str(order.landscape_fee),
         "total": str(order.total),
-        "items": [{"sku_code": i.sku_code, "quantity": str(i.quantity), "unit_price": str(i.unit_price)} for i in items],
+        "items": [
+            {"sku_code": i.sku_code, "quantity": str(i.quantity), "unit_price": str(i.unit_price)}
+            for i in items
+        ],
         "allowed_transitions": list(OrderStateMachine.get_allowed_transitions(order.status)),
     }
 
@@ -96,9 +101,7 @@ async def get_order(order_id: str, db: AsyncSession = Depends(get_db), user=Depe
         order = await service.get_order(order_id)
     except EcoNojinException as e:
         raise HTTPException(status_code=e.status_code or 404, detail=e.message) from e
-    items_result = await db.execute(
-        select(ComOrderItem).where(ComOrderItem.order_id == order_id)
-    )
+    items_result = await db.execute(select(ComOrderItem).where(ComOrderItem.order_id == order_id))
     items = items_result.scalars().all()
     payments_result = await db.execute(
         select(ComPaymentIntent).where(ComPaymentIntent.order_id == order_id)
@@ -122,13 +125,19 @@ async def get_order(order_id: str, db: AsyncSession = Depends(get_db), user=Depe
         "created_at": order.created_at.isoformat(),
         "items": [
             {
-                "id": i.id, "sku_code": i.sku_code, "name": i.name,
-                "quantity": str(i.quantity), "unit_price": str(i.unit_price),
+                "id": i.id,
+                "sku_code": i.sku_code,
+                "name": i.name,
+                "quantity": str(i.quantity),
+                "unit_price": str(i.unit_price),
                 "fulfilled_qty": str(i.fulfilled_qty),
             }
             for i in items
         ],
-        "payments": [{"id": p.id, "provider": p.provider, "amount": str(p.amount), "status": p.status} for p in payments],
+        "payments": [
+            {"id": p.id, "provider": p.provider, "amount": str(p.amount), "status": p.status}
+            for p in payments
+        ],
         "allowed_transitions": list(OrderStateMachine.get_allowed_transitions(order.status)),
     }
 
@@ -150,8 +159,11 @@ async def list_orders(
     return {
         "orders": [
             {
-                "id": o.id, "order_number": o.order_number, "status": o.status,
-                "payment_status": o.payment_status, "total": str(o.total),
+                "id": o.id,
+                "order_number": o.order_number,
+                "status": o.status,
+                "payment_status": o.payment_status,
+                "total": str(o.total),
                 "created_at": o.created_at.isoformat() if o.created_at else None,
             }
             for o in orders
@@ -175,7 +187,7 @@ async def pay_order(
             idempotency_key=body.idempotency_key,
         )
     except EcoNojinException as e:
-         raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
     return {
         "payment_id": payment.id,
         "order_id": payment.order_id,
@@ -196,52 +208,70 @@ async def confirm_payment(
     try:
         order = await service.confirm_payment(order_id, payment_confirmed=True)
     except EcoNojinException as e:
-         raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
     return {"order_id": order.id, "status": order.status, "payment_status": order.payment_status}
 
 
 @router.post("/orders/{order_id}/ship", response_model=dict)
-async def ship_order(order_id: str, body: ShipRequest, db: AsyncSession = Depends(get_db), user=Depends(require_user)):
+async def ship_order(
+    order_id: str, body: ShipRequest, db: AsyncSession = Depends(get_db), user=Depends(require_user)
+):
     service = OrderService(db)
     try:
         order = await service.ship_order(order_id, body.tracking_code, _uid(user))
     except EcoNojinException as e:
-         raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
     return {"order_id": order.id, "status": order.status, "tracking_code": order.tracking_code}
 
 
 @router.post("/orders/{order_id}/mark-delivered", response_model=dict)
-async def mark_delivered(order_id: str, db: AsyncSession = Depends(get_db), user=Depends(require_user)):
+async def mark_delivered(
+    order_id: str, db: AsyncSession = Depends(get_db), user=Depends(require_user)
+):
     service = OrderService(db)
     try:
         order = await service.mark_delivered(order_id)
     except EcoNojinException as e:
-         raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
     return {"order_id": order.id, "status": order.status}
 
 
 @router.post("/orders/{order_id}/settle", response_model=dict)
-async def settle_order(order_id: str, db: AsyncSession = Depends(get_db), user=Depends(require_admin)):
+async def settle_order(
+    order_id: str, db: AsyncSession = Depends(get_db), user=Depends(require_admin)
+):
     service = OrderService(db)
     try:
         settlement = await service.settle_order(order_id)
     except EcoNojinException as e:
-         raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
-    return {"settlement_id": settlement.id, "amount": str(settlement.amount), "status": settlement.status, "journal_batch_id": settlement.journal_batch_id}
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
+    return {
+        "settlement_id": settlement.id,
+        "amount": str(settlement.amount),
+        "status": settlement.status,
+        "journal_batch_id": settlement.journal_batch_id,
+    }
 
 
 @router.post("/orders/{order_id}/cancel", response_model=dict)
-async def cancel_order(order_id: str, reason: str | None = Query(default=None), db: AsyncSession = Depends(get_db), user=Depends(require_user)):
+async def cancel_order(
+    order_id: str,
+    reason: str | None = Query(default=None),
+    db: AsyncSession = Depends(get_db),
+    user=Depends(require_user),
+):
     service = OrderService(db)
     try:
         order = await service.cancel_order(order_id, reason, _uid(user))
     except EcoNojinException as e:
-         raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
     return {"order_id": order.id, "status": order.status, "cancel_reason": order.cancel_reason}
 
 
 @router.get("/orders/{order_id}/transitions", response_model=list[str])
-async def get_transitions(order_id: str, db: AsyncSession = Depends(get_db), user=Depends(require_user)):
+async def get_transitions(
+    order_id: str, db: AsyncSession = Depends(get_db), user=Depends(require_user)
+):
     """Get allowed state transitions for an order."""
     result = await db.execute(select(ComOrder).where(ComOrder.id == order_id))
     order = result.scalar_one_or_none()
