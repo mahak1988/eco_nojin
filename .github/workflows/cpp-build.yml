@@ -62,13 +62,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
           fetch-depth: 0
 
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python }}
           architecture: x64
@@ -148,7 +148,7 @@ jobs:
         shell: pwsh
 
       - name: Upload wheel artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: hydroma_core-${{ matrix.python }}-${{ matrix.platform }}
           path: |
@@ -159,7 +159,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: cpp-test-results-${{ matrix.os }}-${{ matrix.python }}
           path: |
@@ -175,12 +175,12 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
           architecture: x64
@@ -191,7 +191,7 @@ jobs:
           python -m pip install -e . pytest pytest-asyncio hypothesis numpy numba
 
       - name: Download built wheels
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: hydroma_core-3.11-manylinux2014_x86_64
           path: wheels/
@@ -215,10 +215,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
           architecture: x64
@@ -229,7 +229,7 @@ jobs:
           python -m pip install -e . pytest numpy numba
 
       - name: Download built wheels
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: hydroma_core-3.11-manylinux2014_x86_64
           path: wheels/
@@ -246,7 +246,7 @@ jobs:
 
       - name: Upload benchmark results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: cpp-benchmark-results
           path: |
@@ -265,7 +265,7 @@ jobs:
 
     steps:
       - name: Download all wheels
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: hydroma_core-*-*.whl
           path: dist/
