@@ -32,10 +32,10 @@ jobs:
     outputs:
       model_matrix: ${{ steps.discover.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
@@ -73,7 +73,7 @@ jobs:
     runs-on: windows-latest
     if: ${{ contains(needs.discover.outputs.matrix, 'cpp') }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install CMake
         uses: lukka/get-cmake@latest
@@ -88,7 +88,7 @@ jobs:
         run: cmake --build build --config Release --parallel
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: hydroma-core-windows
           path: build/Release/hydroma_core*.pyd
@@ -108,10 +108,10 @@ jobs:
         # Populated dynamically from discover step
         include: ${{ fromJson(needs.discover.outputs.model_matrix) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
@@ -122,7 +122,7 @@ jobs:
 
       - name: Download C++ artifact
         if: matrix.backend == 'cpp'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: hydroma-core-windows
           path: engine/hydroma/cpp_bridge/
@@ -137,7 +137,7 @@ jobs:
             --output validation_${{ matrix.model_id }}_${{ matrix.backend }}.json
 
       - name: Upload validation results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: validation-${{ matrix.model_id }}-${{ matrix.backend }}
           path: validation_${{ matrix.model_id }}_${{ matrix.backend }}.json
@@ -154,7 +154,7 @@ jobs:
 
       - name: Upload badge
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: badge-${{ matrix.model_id }}-${{ matrix.backend }}
           path: badges/${{ matrix.model_id }}-${{ matrix.backend }}.svg
@@ -169,10 +169,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Download all validation results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: validation-*.json
           path: validation-results/
@@ -187,7 +187,7 @@ jobs:
 
       - name: Comment PR with summary
         if: always()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require('fs');
@@ -208,15 +208,15 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Download badges
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: badge-*.svg
           path: badges/
           merge-multiple: true
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./badges
