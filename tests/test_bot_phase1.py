@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import os
 
 """Phase 1 tests: Eco Nojin Telegram bot (no network, no token required).
@@ -19,9 +20,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from services.bots import i18n
 from services.bots.config import BotConfig
 from services.bots.core.ai import AdviceService
-from services.bots.handlers import advice as advice_mod
-from services.bots.handlers import farm as farm_mod
-from services.bots.handlers import start as start_mod
+from services.bots.handlers import advice as advice_mod, farm as farm_mod, start as start_mod
 
 
 # ---------------------------------------------------------------------------
@@ -144,7 +143,8 @@ def test_start_greeting_in_persian_by_default():
         return msg.sent
 
     sent = run(scenario())
-    assert sent and "اکو نوژین" in sent[0]
+    assert sent
+    assert "اکو نوژین" in sent[0]
 
 
 def test_language_callback_switches_to_english():
@@ -160,7 +160,8 @@ def test_language_callback_switches_to_english():
 
     lang, sent = run(scenario())
     assert lang == "en"
-    assert sent and "Main menu" in sent[0]
+    assert sent
+    assert "Main menu" in sent[0]
 
 
 def test_invalid_language_callback_falls_back():
@@ -201,7 +202,8 @@ def test_advice_with_ollama_translates_and_cites():
         return msg.sent
 
     sent = run(scenario())
-    assert sent and "پاسخ تستی" in sent[0]
+    assert sent
+    assert "پاسخ تستی" in sent[0]
 
 
 def test_advice_no_match_returns_honest_answer():
@@ -213,7 +215,8 @@ def test_advice_no_match_returns_honest_answer():
         return msg.sent
 
     sent = run(scenario())
-    assert sent and ("یافت نشد" in sent[0] or "⚠️" in sent[0])
+    assert sent
+    assert "یافت نشد" in sent[0] or "⚠️" in sent[0]
 
 
 # ---------------------------------------------------------------------------
@@ -222,10 +225,10 @@ def test_advice_no_match_returns_honest_answer():
 @pytest.fixture
 def temp_farm_db(tmp_path):
     """Point the farm handler at a temp SQLite DB and create the schema."""
+    import db.models  # noqa: F401  (register all tables on Base)
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
 
-    import db.models  # noqa: F401  (register all tables on Base)
     from database.base import Base
 
     db_path = tmp_path / "bot_farm_test.db"
@@ -271,10 +274,11 @@ def _full_farm_wizard(session_factory):
 
 
 def test_farm_wizard_persists_farm(temp_farm_db):
-    session_factory, db_path = temp_farm_db
+    session_factory, _db_path = temp_farm_db
     sent = _full_farm_wizard(session_factory)
 
-    assert sent and "ثبت شد" in sent[-1]
+    assert sent
+    assert "ثبت شد" in sent[-1]
 
     from db.models import Farm, User
 
@@ -314,7 +318,7 @@ def test_farm_wizard_reauthores_same_user(temp_farm_db):
 
 
 def test_farm_wizard_rejects_bad_area(temp_farm_db):
-    session_factory, _ = temp_farm_db
+    _session_factory, _ = temp_farm_db
 
     async def scenario():
         state = await make_state()
@@ -329,7 +333,8 @@ def test_farm_wizard_rejects_bad_area(temp_farm_db):
         return msg.sent, current, data
 
     sent, current_state, data = run(scenario())
-    assert sent and "⚠️" in sent[-1]  # re-prompt
+    assert sent
+    assert "⚠️" in sent[-1]
     assert current_state == farm_mod.FarmRegister.area  # stays in state
     assert data["draft"].area == 0.0
 

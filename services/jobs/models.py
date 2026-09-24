@@ -2,19 +2,18 @@
 
 import enum
 import uuid
-from datetime import datetime, UTC
-from typing import Optional
+from datetime import UTC, datetime
 
 from sqlalchemy import (
+    JSON,
     Column,
-    String,
-    Text,
     DateTime,
+    Enum as SQLEnum,
     ForeignKey,
     Index,
-    Enum as SQLEnum,
-    JSON,
     Integer,
+    String,
+    Text,
 )
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import relationship
@@ -22,7 +21,7 @@ from sqlalchemy.orm import relationship
 from database.base import Base
 
 
-class JobStatus(str, enum.Enum):
+class JobStatus(enum.StrEnum):
     """Job execution status."""
 
     PENDING = "pending"
@@ -34,7 +33,7 @@ class JobStatus(str, enum.Enum):
     TIMEOUT = "timeout"
 
 
-class JobPriority(str, enum.Enum):
+class JobPriority(enum.StrEnum):
     """Job priority levels."""
 
     LOW = "low"

@@ -6,9 +6,6 @@ Create Date: 2026-08-23 14:59:44
 
 """
 
-from alembic import op
-import sqlalchemy as sa
-
 # revision identifiers
 revision = "merge_heads_phase123"
 down_revision = ["phase1_2_3_complete_v2", "yyy_new_analysis_fixed"]

@@ -1,6 +1,7 @@
 """Eco Nojin Database Initialization - Single Script."""
 
 from __future__ import annotations
+
 import structlog
 
 logger = structlog.get_logger()
@@ -9,7 +10,6 @@ import json
 import sys
 from pathlib import Path
 from uuid import uuid4
-
 
 # ============================================================
 # CONFIGURATION
@@ -301,7 +301,7 @@ def insert_test_data(conn):
     """Insert test data."""
     logger.info("\n[2/3] Inserting test data...")
 
-    from shapely.geometry import Polygon, Point
+    from shapely.geometry import Point, Polygon
 
     # Create test user
     user_id = uuid4()

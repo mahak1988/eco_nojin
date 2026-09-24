@@ -1,11 +1,9 @@
 """Tests for EcoCoin Protocol Smart Contracts"""
 
 import pytest
-from decimal import Decimal
 from eth_tester import EthereumTester, PyEVMBackend
 from web3 import Web3
 from web3.providers.eth_tester import EthereumTesterProvider
-import pytest_asyncio
 
 
 @pytest.fixture

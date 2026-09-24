@@ -36,7 +36,7 @@ class ModelCalibrator:
         self, params: list[float], observed_data: np.ndarray, input_conditions: dict[str, Any]
     ) -> float:
         """Objective function to minimize (e.g., RMSE)."""
-        param_dict = dict(zip(self.param_names, params))
+        param_dict = dict(zip(self.param_names, params, strict=False))
         predicted_data = self.model_function(input_conditions, param_dict)
         rmse = np.sqrt(np.mean((observed_data - predicted_data) ** 2))
         logger.debug(f"Params: {param_dict}, RMSE: {rmse}")
@@ -78,7 +78,7 @@ class ModelCalibrator:
             logger.error(f"Calibration failed: {result.message}")
             return {"success": False, "error": result.message, "metrics": {}}
 
-        optimized_params = dict(zip(self.param_names, result.x))
+        optimized_params = dict(zip(self.param_names, result.x, strict=False))
         final_rmse = result.fun
 
         # Calculate other metrics

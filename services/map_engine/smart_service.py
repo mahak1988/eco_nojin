@@ -2,12 +2,12 @@
 
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from enum import Enum
+from enum import StrEnum
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class MapLayer(str, Enum):
+class MapLayer(StrEnum):
     DEM = "dem"
     LANDCOVER = "landcover"
     RAINFALL = "rainfall"
@@ -16,7 +16,7 @@ class MapLayer(str, Enum):
     VEGETATION = "vegetation"
 
 
-class OutputFormat(str, Enum):
+class OutputFormat(StrEnum):
     GEOTIFF = "geotiff"
     PNG = "png"
     GEOJSON = "geojson"

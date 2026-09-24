@@ -7,9 +7,9 @@ Uses centralized DataHub for database access.
 """
 
 import sys
-import os
-import pytest
 from pathlib import Path
+
+import pytest
 
 # Ensure project root is in path
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -17,9 +17,8 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 # Import DataHub
-from database.hub import hub
 from database.base import Base
-
+from database.hub import hub
 
 # ── Compatibility aliases ────────────────────────────────────────
 # For tests that still use old-style SessionLocal
@@ -43,7 +42,7 @@ def datahub():
     return hub
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def db_session():
     """
     Provide a database session for tests.
@@ -160,7 +159,7 @@ def app():
     return api_app
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def client(app):
     """FastAPI TestClient for API integration tests."""
     from fastapi.testclient import TestClient

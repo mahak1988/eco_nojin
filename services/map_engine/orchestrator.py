@@ -99,7 +99,7 @@ class MapOrchestrator:
         # 2. Get pipeline
         pipeline = self.pipelines.get(request.map_type)
         if not pipeline:
-            available = [m.value for m in self.pipelines.keys()]
+            available = [m.value for m in self.pipelines]
             raise ValueError(
                 f"No pipeline for map type: {request.map_type.value}. Available: {available}"
             )
@@ -173,7 +173,7 @@ class MapOrchestrator:
                 metadata=data["metadata"],
                 # PATCH: Cache hits report near-zero time
                 processing_time_seconds=0.001,
-                data_sources=data.get("data_sources", []) + ["[cached]"],
+                data_sources=[*data.get("data_sources", []), "[cached]"],
                 crs=data.get("crs", ""),
                 bounds=tuple(data.get("bounds", ())),
                 resolution=data.get("resolution", 0.0),
@@ -277,7 +277,7 @@ class MapOrchestrator:
 
     def list_pipelines(self) -> list[str]:
         """List available pipeline types."""
-        return [m.value for m in self.pipelines.keys()]
+        return [m.value for m in self.pipelines]
 
     def list_fetchers(self) -> list[str]:
         """List available fetchers."""

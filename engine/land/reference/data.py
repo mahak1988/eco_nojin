@@ -849,21 +849,21 @@ def get_city(name: str) -> City:
     raise ValueError(f"City not found: {name}")
 
 
-def list_countries(continent: str = None) -> list[Country]:
+def list_countries(continent: str | None = None) -> list[Country]:
     """List countries, optionally filtered by continent."""
     if continent is None:
         return COUNTRIES
     return [c for c in COUNTRIES if c.continent.value == continent]
 
 
-def list_regions(country_code: str = None) -> list[Region]:
+def list_regions(country_code: str | None = None) -> list[Region]:
     """List regions, optionally filtered by country."""
     if country_code is None:
         return REGIONS
     return [r for r in REGIONS if r.country_code.upper() == country_code.upper()]
 
 
-def list_cities(country_code: str = None, region_code: str = None) -> list[City]:
+def list_cities(country_code: str | None = None, region_code: str | None = None) -> list[City]:
     """List cities, optionally filtered."""
     result = CITIES
     if country_code:

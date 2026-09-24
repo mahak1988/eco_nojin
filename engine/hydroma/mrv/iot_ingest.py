@@ -8,6 +8,7 @@ persisted with ``qa_status="rejected"`` and never feed dashboard metrics.
 
 from __future__ import annotations
 
+import contextlib
 import hmac
 import json
 import logging
@@ -72,7 +73,7 @@ def parse_ttn_v3(payload: dict[str, Any], site_id: str | None = None) -> list[Io
         return readings
 
     if "sensor_type" in decoded and "value" in decoded:
-        try:
+        with contextlib.suppress(ValueError, TypeError):
             readings.append(
                 IoTReading(
                     site_id=str(sid),
@@ -81,8 +82,6 @@ def parse_ttn_v3(payload: dict[str, Any], site_id: str | None = None) -> list[Io
                     unit=str(decoded.get("unit") or "-"),
                 )
             )
-        except (ValueError, TypeError):
-            pass
         return readings
 
     for field_name, unit in TTN_UNIT_MAP.items():

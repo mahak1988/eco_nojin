@@ -1,22 +1,21 @@
 """Data Provenance API Router."""
 
-from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.hub import hub
-from services.provenance.service import ProvenanceService
 from services.provenance.schemas import (
-    ProvenanceCreate,
-    ProvenanceResponse,
-    ProvenanceListResponse,
     LineageQuery,
     LineageResponse,
     ModelVersionCreate,
     ModelVersionResponse,
+    ProvenanceCreate,
+    ProvenanceListResponse,
+    ProvenanceResponse,
     ProvenanceValidationRequest,
     ValidationResponse,
 )
+from services.provenance.service import ProvenanceService
 
 router = APIRouter(prefix="/api/v1/provenance", tags=["provenance"])
 
@@ -58,11 +57,11 @@ async def get_provenance(
 
 @router.get("", response_model=ProvenanceListResponse)
 async def list_provenance(
-    provenance_type: Optional[str] = Query(None, description="Filter by provenance type"),
-    output_type: Optional[str] = Query(None, description="Filter by output type"),
-    model_name: Optional[str] = Query(None, description="Filter by model name"),
-    model_version: Optional[str] = Query(None, description="Filter by model version"),
-    is_validated: Optional[bool] = Query(None, description="Filter by validation status"),
+    provenance_type: str | None = Query(None, description="Filter by provenance type"),
+    output_type: str | None = Query(None, description="Filter by output type"),
+    model_name: str | None = Query(None, description="Filter by model name"),
+    model_version: str | None = Query(None, description="Filter by model version"),
+    is_validated: bool | None = Query(None, description="Filter by validation status"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Page size"),
     service: ProvenanceService = Depends(get_provenance_service),
@@ -136,10 +135,10 @@ async def get_model_version(
     return record
 
 
-@router.get("/models", response_model=List[ModelVersionResponse])
+@router.get("/models", response_model=list[ModelVersionResponse])
 async def list_model_versions(
-    name: Optional[str] = Query(None, description="Filter by model name"),
-    is_active: Optional[bool] = Query(None, description="Filter by active status"),
+    name: str | None = Query(None, description="Filter by model name"),
+    is_active: bool | None = Query(None, description="Filter by active status"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     service: ProvenanceService = Depends(get_provenance_service),
@@ -155,7 +154,7 @@ async def deprecate_model_version(
     name: str,
     version: str,
     reason: str = Query(..., description="Reason for deprecation"),
-    superseded_by_id: Optional[str] = Query(
+    superseded_by_id: str | None = Query(
         None, description="ID of model version that supersedes this one"
     ),
     service: ProvenanceService = Depends(get_provenance_service),
@@ -180,11 +179,11 @@ async def create_lineage_edge(
     transformation_params: dict = Query(
         default_factory=dict, description="Transformation parameters"
     ),
-    transformation_code_version: Optional[str] = Query(
+    transformation_code_version: str | None = Query(
         None, description="Code version for transformation"
     ),
-    data_quality_score: Optional[str] = Query(None, description="Data quality score"),
-    transformation_notes: Optional[str] = Query(None, description="Notes about transformation"),
+    data_quality_score: str | None = Query(None, description="Data quality score"),
+    transformation_notes: str | None = Query(None, description="Notes about transformation"),
     service: ProvenanceService = Depends(get_provenance_service),
 ):
     """Create a lineage edge between two provenance records."""

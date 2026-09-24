@@ -129,7 +129,7 @@ def rusle_point(
     """
     motor = RUSLEMotor()
     r = motor._compute_R_factor(annual_rainfall_mm)
-    s_rad = math.radians(math.atan(slope_pct / 100.0))
+    math.radians(math.atan(slope_pct / 100.0))
     ls = (slope_length_m / 22.13) ** 0.5 * (0.065 + 0.045 * slope_pct + 0.0065 * slope_pct**2)
     c = float(C_FACTORS.get(crop, C_FACTORS.get("default", 0.2)))
     p = float(P_FACTORS.get(practice, 1.0))
@@ -370,7 +370,7 @@ async def run_scientific_chain(
     irrigated_km2 = 1.0
     demand_mcm = [
         round(max(0.0, 0.8 * e - p) * irrigated_km2 * 0.001, 3)
-        for p, e in zip(precip_monthly, et0_monthly)
+        for p, e in zip(precip_monthly, et0_monthly, strict=False)
     ]
     reservoir_capacity = round(sum(inflow_mcm) * 0.2, 2)
     pywr_motor = PywrWaterAllocationMotor()

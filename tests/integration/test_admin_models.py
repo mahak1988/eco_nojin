@@ -1,20 +1,18 @@
 """Tests for the Phase 5 models module (honest Ollama state)."""
 
-import os
-
 import pytest
 from fastapi.testclient import TestClient
 
+from database import models  # noqa: F401
 from database.base import Base
 from database.config import engine
-from tests.conftest import TEST_SESSION_FACTORY as SessionLocal
-from database import models  # noqa: F401
 from database.hub import hub as db_models
 from services.api_gateway.auth import hash_password
 from services.api_gateway.main import app
+from tests.conftest import TEST_SESSION_FACTORY as SessionLocal
 
 
-@pytest.fixture()
+@pytest.fixture
 def admin_client(monkeypatch):
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
@@ -41,7 +39,7 @@ def admin_client(monkeypatch):
     assert resp.status_code == 200
     token = resp.json()["access_token"]
     client.headers.update({"Authorization": f"Bearer {token}"})
-    yield client
+    return client
 
 
 def test_models_list_honest_when_ollama_down(admin_client):
@@ -51,7 +49,7 @@ def test_models_list_honest_when_ollama_down(admin_client):
     assert data["configured"] is False
     assert data["models"] == []
     assert data["loaded"] == []
-    assert "error" in data and data["error"]
+    assert data.get("error")
 
 
 def test_models_stop_honest_503_when_ollama_down(admin_client):

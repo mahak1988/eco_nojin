@@ -34,7 +34,7 @@ def step(ok, label):
 
 def _create_schema() -> None:
     import database.models  # noqa: F401  (register all platform tables)
-    import services.marketplace.models  # noqa: F401
+    import services.marketplace.models
     import services.notification.models_db  # noqa: F401
     from database.base import Base
 
@@ -124,7 +124,7 @@ def main():
     order = r.json() if ok else {}
     order_id = order.get("order_id", "")
     total = float(order.get("total_price") or 0)
-    step(ok and bool(order_id), "order created: %s total=%.0f IRR" % (order_id, total))
+    step(ok and bool(order_id), f"order created: {order_id} total={total:.0f} IRR")
 
     r = client.post(
         "/api/v1/marketplace/cart",
@@ -152,21 +152,21 @@ def main():
     )
 
     r = client.post(
-        "/api/v1/marketplace/payments/%s/confirm" % payment_id,
+        f"/api/v1/marketplace/payments/{payment_id}/confirm",
         json={"ref_id": "TRK-E2E-001"},
         headers=hdr(),
     )
     ok = r.status_code == 200 and r.json().get("escrow") == "held"
     step(ok, "payment verified -> escrow HELD")
 
-    r = client.post("/api/v1/marketplace/orders/%s/confirm" % order_id, headers=hdr())
+    r = client.post(f"/api/v1/marketplace/orders/{order_id}/confirm", headers=hdr())
     ok = r.status_code == 200 and int(r.json().get("escrow_released") or 0) >= 1
     step(ok, "delivery confirmed -> escrow RELEASED to seller")
 
     r = client.get("/api/v1/marketplace/notifications", headers=hdr())
     titles = " | ".join(n["title"] for n in r.json().get("notifications", []))
     ok = r.status_code == 200 and r.json().get("count", 0) >= 2
-    step(ok, "notifications for buyer: %s [%s]" % (r.json().get("count"), titles[:90]))
+    step(ok, "notifications for buyer: {} [{}]".format(r.json().get("count"), titles[:90]))
 
     failed = [lbl for okk, lbl in results if not okk]
     print("")

@@ -211,7 +211,7 @@ def _run_weather_source(kw: dict[str, Any]) -> dict[str, Any]:
     doy = start
     et0_values = []
     if tmin_c and tmax_c:
-        for tmin, tmax in zip(df[tmin_c].tolist(), df[tmax_c].tolist()):
+        for tmin, tmax in zip(df[tmin_c].tolist(), df[tmax_c].tolist(), strict=False):
             try:
                 et0_values.append(
                     round(

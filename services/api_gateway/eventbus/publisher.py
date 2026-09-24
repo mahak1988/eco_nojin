@@ -5,9 +5,8 @@ Provides high-level event publishing functions for critical domain events.
 """
 
 import logging
-import logging
-from typing import Any, Optional
 from datetime import UTC, datetime
+from typing import Any
 
 from services.api_gateway.eventbus.nats_client import get_nats_manager
 
@@ -18,7 +17,7 @@ async def publish_user_event(
     event_type: str,
     user_id: str,
     payload: dict[str, Any],
-    correlation_id: Optional[str] = None,
+    correlation_id: str | None = None,
 ) -> bool:
     """Publish user lifecycle events (registered, login, profile_updated, etc.)."""
     manager = get_nats_manager()
@@ -40,7 +39,7 @@ async def publish_sync_event(
     event_type: str,
     aggregate_id: str,
     payload: dict[str, Any],
-    correlation_id: Optional[str] = None,
+    correlation_id: str | None = None,
 ) -> bool:
     """Publish sync/outbox events for Supabase synchronization."""
     manager = get_nats_manager()
@@ -62,7 +61,7 @@ async def publish_realtime_event(
     event_type: str,
     user_key: str,
     payload: dict[str, Any],
-    correlation_id: Optional[str] = None,
+    correlation_id: str | None = None,
 ) -> bool:
     """Publish realtime events for SSE/WebSocket consumers."""
     manager = get_nats_manager()
@@ -84,7 +83,7 @@ async def publish_carbon_event(
     event_type: str,
     project_id: str,
     payload: dict[str, Any],
-    correlation_id: Optional[str] = None,
+    correlation_id: str | None = None,
 ) -> bool:
     """Publish carbon project events (credit_issued, verified, retired, etc.)."""
     manager = get_nats_manager()
@@ -106,7 +105,7 @@ async def publish_mrv_event(
     event_type: str,
     report_id: str,
     payload: dict[str, Any],
-    correlation_id: Optional[str] = None,
+    correlation_id: str | None = None,
 ) -> bool:
     """Publish MRV (Measurement/Reporting/Verification) events."""
     manager = get_nats_manager()
@@ -129,7 +128,7 @@ async def publish_marketplace_event(
     aggregate_type: str,
     aggregate_id: str,
     payload: dict[str, Any],
-    correlation_id: Optional[str] = None,
+    correlation_id: str | None = None,
 ) -> bool:
     """Publish marketplace events (order_placed, payment_completed, shop_created, etc.)."""
     manager = get_nats_manager()
@@ -151,7 +150,7 @@ async def publish_farm_event(
     event_type: str,
     farm_id: str,
     payload: dict[str, Any],
-    correlation_id: Optional[str] = None,
+    correlation_id: str | None = None,
 ) -> bool:
     """Publish farm/land events (created, updated, analysis_completed, etc.)."""
     manager = get_nats_manager()
@@ -173,7 +172,7 @@ async def publish_simulation_event(
     event_type: str,
     run_id: str,
     payload: dict[str, Any],
-    correlation_id: Optional[str] = None,
+    correlation_id: str | None = None,
 ) -> bool:
     """Publish simulation events (started, completed, failed, etc.)."""
     manager = get_nats_manager()
@@ -198,7 +197,7 @@ async def publish_event(
     aggregate_type: str,
     aggregate_id: str,
     payload: dict[str, Any],
-    correlation_id: Optional[str] = None,
+    correlation_id: str | None = None,
 ) -> bool:
     """Generic event publisher for any domain."""
     manager = get_nats_manager()

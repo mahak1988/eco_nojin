@@ -138,7 +138,7 @@ async def store_refresh_token(
     """Store a refresh token JTI in the database for revocation tracking."""
     from database.models import RefreshToken
 
-    refresh_record = RefreshToken(
+    RefreshToken(
         jti=jti,
         user_id=user_id,
         revoked=False,

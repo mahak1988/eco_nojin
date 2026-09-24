@@ -206,7 +206,7 @@ class ScientificDataRepository:
 
         query = f"""
             WITH monthly_rain AS (
-                SELECT 
+                SELECT
                     date_trunc('month', date) AS month,
                     SUM({self.PRECIP_COL}) AS monthly_precip
                 FROM data_weather_daily
@@ -214,23 +214,23 @@ class ScientificDataRepository:
                 GROUP BY date_trunc('month', date)
             ),
             rolling_stats AS (
-                SELECT 
+                SELECT
                     month,
                     monthly_precip,
                     AVG(monthly_precip) OVER (
-                        ORDER BY month 
+                        ORDER BY month
                         ROWS BETWEEN {window_months - 1} PRECEDING AND CURRENT ROW
                     ) AS rolling_mean,
                     STDDEV(monthly_precip) OVER (
-                        ORDER BY month 
+                        ORDER BY month
                         ROWS BETWEEN {window_months - 1} PRECEDING AND CURRENT ROW
                     ) AS rolling_std
                 FROM monthly_rain
             )
-            SELECT 
+            SELECT
                 month,
                 monthly_precip,
-                CASE 
+                CASE
                     WHEN rolling_std = 0 THEN 0
                     ELSE (monthly_precip - rolling_mean) / rolling_std
                 END AS spi_value
@@ -324,7 +324,9 @@ class ScientificDataRepository:
         from services.security.query_safe import _safe_ident
 
         col = _safe_ident(self.SITE_ID_COL)
-        return self._conn.execute(f"SELECT * FROM ref_sites ORDER BY {col}").pl()
+        # Use parameterized query for ORDER BY column via safe identifier
+        query = "SELECT * FROM ref_sites ORDER BY " + col
+        return self._conn.execute(query).pl()
 
     def get_sites_in_critical_plains(self) -> pl.DataFrame:
         """دریافت سایت‌های بحرانی (فعلاً تمام سایت‌ها)"""

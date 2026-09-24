@@ -11,9 +11,10 @@ This migration creates all missing tables for Phase 1-3:
 
 """
 
-from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
+
+from alembic import op
 
 # revision identifiers
 revision = "phase1_2_3_complete_v2"

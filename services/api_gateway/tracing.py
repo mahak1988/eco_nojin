@@ -27,7 +27,9 @@ def setup_tracing(app: Any) -> None:
             try:
                 from engine.hydroma.config.settings import get_settings
 
-                endpoint = (getattr(get_settings(), "otel_exporter_otlp_endpoint", "") or "").strip()
+                endpoint = (
+                    getattr(get_settings(), "otel_exporter_otlp_endpoint", "") or ""
+                ).strip()
             except Exception:  # settings unavailable -> stay disabled
                 endpoint = ""
 

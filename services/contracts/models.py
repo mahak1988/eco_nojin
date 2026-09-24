@@ -1,28 +1,26 @@
 """Database models for Contract Registry."""
 
+import enum
 import uuid
-from datetime import datetime, UTC
-from typing import Optional
+from datetime import UTC, datetime
 
 from sqlalchemy import (
+    JSON,
+    Boolean,
     Column,
-    String,
-    Text,
     DateTime,
     ForeignKey,
     Index,
-    Enum as SQLEnum,
-    JSON,
-    Boolean,
+    String,
+    Text,
 )
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import relationship
 
 from database.base import Base
-import enum
 
 
-class ContractType(str, enum.Enum):
+class ContractType(enum.StrEnum):
     OPENAPI = "openapi"
     GRAPHQL = "graphql"
     GRPC = "grpc"

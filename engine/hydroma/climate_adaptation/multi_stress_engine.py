@@ -3,10 +3,8 @@
 رفع یافته‌های بحرانی: ترکیب استرس‌ها
 """
 
-from typing import Dict
 
-
-def drought_heat_salinity_stress(temp: float, rain: float, ec: float) -> Dict:
+def drought_heat_salinity_stress(temp: float, rain: float, ec: float) -> dict:
     """ترکیب خشکسالی + گرما + شوری"""
     heat_stress = min(1.0, max(0.0, (temp - 35) / 15)) if temp > 35 else 0.0
     drought_stress = min(1.0, max(0.0, (50 - rain) / 50)) if rain < 50 else 0.0
@@ -26,7 +24,7 @@ def drought_heat_salinity_stress(temp: float, rain: float, ec: float) -> Dict:
     }
 
 
-def flood_slope_stress(rain: float, slope: float) -> Dict:
+def flood_slope_stress(rain: float, slope: float) -> dict:
     """ترکیب سیل + شیب تند"""
     flood_risk = min(1.0, max(0.0, (rain - 500) / 2000)) if rain > 500 else 0.0
     slope_risk = max(0.0, slope / 90)
@@ -43,7 +41,7 @@ def flood_slope_stress(rain: float, slope: float) -> Dict:
     }
 
 
-def frost_wind_stress(temp: float, wind: float) -> Dict:
+def frost_wind_stress(temp: float, wind: float) -> dict:
     """ترکیب یخبندان + باد شدید"""
     frost_stress = min(1.0, max(0.0, (-temp) / 40)) if temp < 0 else 0.0
     wind_chill_factor = 1 + wind / 100  # باد، سرمای موثر را افزایش می‌دهد
@@ -58,7 +56,7 @@ def frost_wind_stress(temp: float, wind: float) -> Dict:
     }
 
 
-def salinity_ph_stress(ec: float, ph: float) -> Dict:
+def salinity_ph_stress(ec: float, ph: float) -> dict:
     """ترکیب شوری بالا + قلیائیت"""
     salinity_stress = min(1.0, max(0.0, (ec - 4) / 16)) if ec > 4 else 0.0
     alkalinity_stress = min(1.0, max(0.0, (ph - 8.5) / 5.5)) if ph > 8.5 else 0.0

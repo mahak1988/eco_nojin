@@ -1,0 +1,77 @@
+{
+  "brand": {
+    "name": "HyDroMa Nojin"
+  },
+  "market": {
+    "title": "Marketplace",
+    "lead": "Producer marketplace with real prices and inventory",
+    "products": "Products",
+    "producers": "Producers",
+    "organic": "Organic",
+    "organicBadge": "Organic",
+    "empty": "No products found",
+    "discovery": {
+      "categories": {
+        "title": "Categories",
+        "lead": "Organic and local product categories",
+        "level1Categories": "Level 1 Categories",
+        "productsCount": "products",
+        "subcategories": "subcategories",
+        "empty": "No categories found",
+        "emptyDescription": "No categories have been added yet",
+        "error": {
+          "title": "Error loading categories",
+          "description": "An issue occurred while fetching data",
+          "retry": "Retry"
+        }
+      },
+      "search": {
+        "title": "Search",
+        "lead": "Find products with advanced search",
+        "placeholder": "Search products, producers, or categories...",
+        "filters": "Filters",
+        "sortBy": "Sort by",
+        "sortOptions": {
+          "relevance": "Relevance",
+          "price_asc": "Price: Low to High",
+          "price_desc": "Price: High to Low",
+          "newest": "Newest",
+          "popular": "Most Popular",
+          "rating": "Highest Rated"
+        },
+        "organicOnly": "Organic Only",
+        "certifications": "Certifications",
+        "priceRange": "Price Range",
+        "carbonFootprint": "Carbon Footprint",
+        "waterFootprint": "Water Footprint",
+        "location": "Location",
+        "radius": "Search Radius",
+        "noResults": "No results found",
+        "noResultsDescription": "Try searching with different keywords or adjust your filters",
+        "history": "Search History",
+        "clearHistory": "Clear History",
+        "suggestions": "Suggestions",
+        "recentSearches": "Recent Searches",
+        "popularSearches": "Popular Searches",
+        "visualSearch": "Visual Search",
+        "visualSearchDescription": "Upload an image to find similar products",
+        "voiceSearch": "Voice Search",
+        "voiceSearchDescription": "Hold the button and say what you're looking for",
+        "barcodeSearch": "Barcode Scan",
+        "barcodeSearchDescription": "Scan a product barcode",
+        "nfcSearch": "NFC Search",
+        "nfcSearchDescription": "Tap an NFC tag to your phone",
+        "advancedSearch": "Advanced Search",
+        "semanticSearch": "Semantic Search",
+        "semanticSearchDescription": "Search by meaning and concept"
+      }
+    }
+  },
+  "statusLine": {
+    "unavailable": "Data unavailable"
+  },
+  "meta": {
+    "machineTranslated": false,
+    "fallbackLocale": null
+  }
+}

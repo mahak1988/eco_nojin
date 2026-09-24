@@ -1,6 +1,281 @@
-﻿{
-    "meta":  {
-                 "machineTranslated":  true,
-                 "fallbackLocale":  "fa"
-             }
+{
+  "meta": { "machineTranslated": true, "fallbackLocale": "fa" },
+  "brand": {
+    "name": "HyDroMa Nojin",
+    "description": "Parte científica de Eco Nojin; acompañamiento para una mejor comprensión del agua, suelo, vegetación y clima."
+  },
+  "nav": {
+    "home": "Inicio",
+    "about": "Sobre nosotros",
+    "science": "Ciencia",
+    "market": "Mercado",
+    "status": "Estado"
+  },
+  "home": {
+    "title": "HyDroMa Nojin — Compañero de la tierra y los medios de vida",
+    "lead": "En esta página ve el estado registrado de tierras, proyectos y productos sin exageración. Cada número cobra sentido cuando su contexto y límites son claros.",
+    "landsTitle": "Tierras registradas",
+    "landsEmpty": "Aún no se ha registrado ninguna tierra.",
+    "productsTitle": "Productos del mercado",
+    "productsEmpty": "Aún no se ha registrado ningún producto.",
+    "marketCta": "Ver mercado",
+    "scienceCta": "Conocer herramientas científicas"
+  },
+  "science": {
+    "title": "Ciencia con límites claros",
+    "lead": "HyDroMa Nojin proporciona herramientas para comprender mejor el agua, el suelo, la vegetación y el clima; sin promesa de certeza y con respeto a la experiencia local.",
+    "modelsTitle": "Herramientas científicas",
+    "modelsEmpty": "Aún no hay herramientas para mostrar.",
+    "modelsPublicNote": "La lista pública de herramientas se publicará tras completar la documentación.",
+    "cppOk": "Las capacidades científicas están listas para usar.",
+    "cppMissing": "Las capacidades científicas no están disponibles actualmente.",
+    "kernels": "Capacidades científicas"
+  },
+  "market": {
+    "title": "Mercado",
+    "lead": "Productos de los productores, con precios y existencias registrados; sin exageración y sin promesa firme.",
+    "products": "Productos",
+    "producers": "Productores",
+    "organic": "Con sello ambiental",
+    "organicBadge": "Ecológico",
+    "empty": "No hay productos para mostrar."
+  },
+  "cover": {
+    "subtitle": "Juntos por el agua, la tierra y los medios de vida",
+    "slogan": "Recorremos este camino juntos. Por las personas. Por la tierra. Por el futuro.",
+    "quote": "«Construimos este proyecto juntos… para las personas que ya no soportan el hambre y la pobreza, y para un ecosistema que ya no soporta las inundaciones ni la erosión del suelo.»",
+    "enterPublic": "Entrar a las páginas públicas",
+    "enterMarketplace": "Entrar al mercado",
+    "languageLabel": "Idioma",
+    "comingSoon": "próximamente"
+  },
+  "statusLine": {
+    "beneficiaries": "Beneficiarios",
+    "markets": "Mercados activos",
+    "landProfiles": "Perfiles de terreno",
+    "carbonProjects": "Proyectos de carbono",
+    "pilotProvince": "Provincia piloto",
+    "noData": "tras el piloto",
+    "realData": "Datos reales del backend",
+    "unavailable": "No disponible"
+  },
+  "statusPage": {
+    "title": "Estado del sistema",
+    "subtitle": "Esta página lee directamente del backend real; no se muestran datos de ejemplo.",
+    "service": "Servicio",
+    "state": "Estado",
+    "science": "Núcleo numérico C++",
+    "storage": "Almacenamiento",
+    "landscapes": "Perfiles de terreno",
+    "projects": "Proyectos",
+    "activeProjects": "Proyectos activos",
+    "label": "Métrica",
+    "rows": "filas",
+    "landProfileList": "Perfiles de terreno registrados (datos reales)",
+    "noLandProfiles": "Aún no se ha registrado ningún perfil de terreno en la base de datos.",
+    "operational": "Operativo",
+    "available": "Disponible",
+    "requestUnavailable": "Solicitud general no disponible actualmente.",
+    "emptyDbNote": "La base de datos está conectada pero aún no tiene registros reales; por eso todos los contadores son cero y no se sustituyen por valores ficticios."
+  },
+  "common": {
+    "error": "Error",
+    "retry": "Reintentar",
+    "machineTranslatedNotice": "Este idioma se muestra actualmente mediante traducción automática.",
+    "whatLabel": "¿Qué es?",
+    "audienceLabel": "¿Para quién?",
+    "evidenceLabel": "Método y evidencias",
+    "limitsLabel": "Límites",
+    "nextLabel": "Próximo paso"
+  },
+  "a11y": {
+    "skipToContent": "Saltar al contenido principal"
+  },
+  "footer": {
+    "sitemap": "Mapa del sitio",
+    "techStack": "Construido para acceso amplio",
+    "navTitle": "Enlaces públicos"
+  },
+  "about": {
+    "title": "Sobre HyDroMa Nojin",
+    "lead": "Parte científica de Eco Nojin para una mejor comprensión del agua, suelo, vegetación y medios de vida rurales.",
+    "what": "HyDroMa Nojin une información ambiental y experiencia local para que las decisiones sobre agua, suelo y medios de vida se tomen con base más clara.",
+    "audience": "Productores y comunidades rurales, entidades de supervisión y ejecución, investigadores y socios técnicos.",
+    "evidence": [
+      "Métodos científicos con marcos internacionales reconocidos",
+      "Cada número se muestra con tiempo y estado de registro",
+      "La salida científica no sustituye la experiencia local ni la opinión de expertos"
+    ],
+    "limits": [
+      "El programa provincial aún no ha comenzado; los contadores se completarán tras el inicio del programa",
+      "Algunos servicios dependen de condiciones de acceso y configuración externa"
+    ],
+    "next": [
+      "Completar páginas públicas y rutas de aprendizaje",
+      "Iniciar programa provincial y publicar información registrada de socios"
+    ]
+  },
+  "statements": {
+    "title": "Declaraciones y textos aprobados",
+    "lead": "Textos oficiales de la plataforma, versionados y fechados; cada cambio aclara el camino de transformación.",
+    "missionTitle": "Declaración de misión",
+    "missionBody": "Revivir agua, suelo y medios de vida con ciencia verificable y mercado local justo; para personas que ya no soportan el hambre y la pobreza, y para un ecosistema que ya no soporta inundaciones ni erosión del suelo.",
+    "quoteLabel": "Texto aprobado",
+    "versionLabel": "Versión 1.0",
+    "transparencyTitle": "Transparencia responsable",
+    "transparencyBody": "Cada número en esta plataforma tiene historia y fecha; ante la falta de información, se escribe honestamente «próximamente» — ningún valor ficticio ocupa el lugar de la información registrada."
+  },
+  "platformOverview": {
+    "title": "Componentes de la plataforma",
+    "lead": "Cuatro puntos de entrada públicos; cada sección muestra su estado y límites con claridad.",
+    "itemHome": "Inicio público",
+    "itemHomeDesc": "Ver tierras, proyectos y productos registrados sin valores inventados.",
+    "itemScience": "Herramientas científicas",
+    "itemScienceDesc": "Mejor comprensión de agua, suelo, vegetación y clima con límites claros.",
+    "itemMarket": "Mercado",
+    "itemMarketDesc": "Productos de productores con precios y existencias registrados.",
+    "itemStatus": "Estado del sistema",
+    "itemStatusDesc": "Estado de servicios públicos e información registrada, de forma simple y oportuna.",
+    "cta": "Ver"
+  },
+  "services": {
+    "title": "Servicios y soluciones",
+    "lead": "Tres rutas de servicio para personas y contextos diferentes.",
+    "what": "Productor, institución e investigador cada uno tiene su ruta; todas las rutas avanzan con transparencia y respeto a la experiencia local.",
+    "audience": "Productores rurales, entidades de supervisión, investigadores y socios técnicos.",
+    "farmersTitle": "Productores y pueblos",
+    "farmersDesc": "Monitoreo de tierra, sugerencias de riego y fertilización, y posibilidad de ofertar producto; decisión final con experto y condiciones locales.",
+    "institutionsTitle": "Instituciones y supervisión",
+    "institutionsDesc": "Panel de seguimiento de impacto, informes legibles y ruta de rendición de cuentas; sin promesa de resultado definitivo.",
+    "researchersTitle": "Investigadores y socios técnicos",
+    "researchersDesc": "Herramientas científicas y documentación pública para examinar método, contexto y límites.",
+    "pilotCta": "Solicitar participación en programa provincial",
+    "pilotNote": "Registro del programa provincial comienza tras anuncio oficial.",
+    "limits": [
+      "Registro del programa provincial comienza tras anuncio oficial",
+      "Algunos servicios dependen de condiciones de acceso y configuración externa"
+    ],
+    "next": [
+      "Ejecutar programa provincial con instituciones locales",
+      "Publicar resultados del programa provincial"
+    ]
+  },
+  "evidence": {
+    "title": "Ciencia y evidencias",
+    "lead": "Cada respuesta científica debe mostrar su método, contexto y límites.",
+    "what": "Las salidas se presentan con explicación del método, tiempo y alcance de aplicación; el número solo no es juicio final.",
+    "audience": "Investigadores, instituciones científicas y expertos en validación.",
+    "refsTitle": "Referencias públicas",
+    "refs": [
+      "Marcos reconocidos para agua y suelo",
+      "Guías internacionales para clima y carbono",
+      "Estándares generales para información espacial"
+    ],
+    "limitsTitle": "Límites",
+    "limits": [
+      "La salida científica no sustituye medición de campo ni opinión de experto",
+      "Sin contexto local, el resultado debe leerse con precaución",
+      "El acceso a datos ambientales puede no estar siempre disponible"
+    ],
+    "nextTitle": "Próximo paso",
+    "next": [
+      "Publicar informes de revisión de cada herramienta en fases posteriores",
+      "Registrar tiempo y contexto de uso para cada visualización pública"
+    ]
+  },
+  "learn": {
+    "title": "Aprendizaje y contenidos",
+    "lead": "El conocimiento debe estar cerca del idioma y las condiciones de vida de la gente.",
+    "emptyTitle": "Contenido educativo aún no publicado",
+    "emptyDesc": "El primer paquete educativo, incluyendo glosario bilingüe y videos subtitulados, se completa en la fase 1."
+  },
+  "legal": {
+    "title": "Políticas y legal",
+    "lead": "Borrador para revisión legal; cada documento tiene versión y fecha.",
+    "version": "v1.0 — Borrador",
+    "termsTitle": "Condiciones de uso",
+    "termsBody": "Uso público de páginas y mercado permitido sin registro; toda acción financiera requiere aceptar contrato versionado.",
+    "privacyTitle": "Privacidad",
+    "privacyBody": "Se recopilan datos personales mínimos; derecho de acceso y supresión garantizado, y datos de investigación se anonimizan.",
+    "cookiesTitle": "Cookies e idioma",
+    "cookiesBody": "La elección de idioma se guarda en cookie para que la ruta idiomática sea estable; no hay seguimiento publicitario."
+  },
+  "ai": {
+    "title": "IA responsable",
+    "lead": "Respuesta rápida, con límites claros y juicio humano.",
+    "what": "El asistente científico está diseñado para encontrar y organizar información; toda afirmación debe referirse a contenidos publicados, y en temas sensibles se deriva al usuario a experto y observación de campo.",
+    "audience": "Productores, expertos e investigadores que necesitan respuestas rápidas y documentadas.",
+    "sourceRule": "Respuestas sin fuente se muestran con etiqueta «borrador».",
+    "limitsTitle": "Límites",
+    "limits": [
+      "La recomendación agrícola final no sustituye al experto",
+      "Las respuestas pueden ser incompletas; el contexto local y la observación de campo importan",
+      "Versión de audio en primera oleada cuatro idiomas (es/en/ar/ur)"
+    ],
+    "nextTitle": "Próximo paso",
+    "next": [
+      "Lanzar asistente con referencias en fases posteriores",
+      "Registrar retroalimentación humana para cada respuesta"
+    ]
+  },
+  "trust": {
+    "title": "Confianza y procedencia de datos",
+    "lead": "La confianza se construye con comportamientos pequeños y verificables.",
+    "what": "La procedencia de datos hace transparente el camino de registro y visualización de cada número en lenguaje simple.",
+    "audience": "Entidades de supervisión, compradores y quien valora la transparencia.",
+    "provenanceTitle": "Explorador de procedencia",
+    "provenanceDesc": "Para cada número en las páginas, vea la etiqueta de procedencia del registro; estado general de servicios en la página de estado del sistema.",
+    "registryTitle": "Registro de impacto ambiental",
+    "registryDesc": "Registro de proyectos de impacto ambiental se activa tras lanzar monitoreo de impacto; ahora «próximamente».",
+    "disclosureTitle": "Divulgación responsable",
+    "disclosureDesc": "Reportes de vulnerabilidad se reciben por canal seguro y se registran en historial de seguimiento.",
+    "statusCta": "Estado público de servicios",
+    "limits": [
+      "Registro de impacto ambiental se activa tras lanzar monitoreo de impacto",
+      "Explorador de procedencia muestra actualmente estado general de servicios y procedencia de cada visualización"
+    ],
+    "next": [
+      "Añadir tiempo y contexto a cada número mostrado",
+      "Publicar informe anual de transparencia"
+    ]
+  },
+  "developers": {
+    "title": "Colaboración técnica",
+    "lead": "La colaboración dura cuando los contratos son claros y los cambios rastreables.",
+    "what": "Documentación pública y versiones de contrato aclaran la coordinación entre sistema y aplicaciones externas; sin necesidad de adivinar comportamiento del servicio.",
+    "audience": "Desarrolladores de integración, equipos de datos y socios técnicos.",
+    "docsTitle": "Documentación pública",
+    "docsDesc": "Comportamiento de servicios, límites y ruta de reporte de errores en lenguaje simple.",
+    "toolsTitle": "Herramientas de integración",
+    "toolsDesc": "Herramientas de coordinación para construir apps compatibles y mantenibles.",
+    "changesTitle": "Cambios versionados",
+    "changesDesc": "Cada cambio importante se registra con versión y fecha y se anuncia en esta página.",
+    "publicNote": "La colaboración técnica comienza con docs claros, límites definidos y ruta de reporte de error.",
+    "limits": [
+      "Acceso a servicios limitado por política de tasa y permiso de acceso",
+      "Herramientas de integración en primer paso solo para web"
+    ],
+    "next": [
+      "Publicar navegador interactivo de docs con prueba controlada",
+      "Añadir guía de integración y más herramientas"
+    ]
+  },
+  "accessibility": {
+    "title": "Declaración de accesibilidad",
+    "lead": "La accesibilidad es la posibilidad de participación real de todos los usuarios.",
+    "what": "Teclado primero, foco visible, contraste suficiente y soporte RTL/LTR en todas las páginas.",
+    "audience": "Todos los usuarios, incluidos usuarios de lectores de pantalla y redes débiles.",
+    "standardTitle": "Estándar",
+    "standardDesc": "Objetivo: avanzar hacia WCAG 2.2 nivel AA y experiencia usable en dispositivos y redes diversos.",
+    "feedbackTitle": "Comentarios de accesibilidad",
+    "feedbackDesc": "Reporte problemas de accesibilidad vía canal de soporte de la app; reportes entran en cola de revisión.",
+    "limits": [
+      "Algunas experiencias visuales pesadas requieren navegadores más nuevos",
+      "Revisión de accesibilidad con herramientas y usuarios reales continúa"
+    ],
+    "next": [
+      "Revisar contraste en modo oscuro e impresión",
+      "Medir experiencia en red débil y herramientas diversas"
+    ]
+  }
 }

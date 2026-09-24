@@ -6,16 +6,17 @@ logger = structlog.get_logger()
 import pytest
 from fastapi.testclient import TestClient
 
+from database import (
+    get_db,
+    models,
+)
 from database.base import Base
-from services.api_gateway.main import app
-from database import get_db
-from tests.test_db import SessionLocal, engine as test_engine
-from database import models  # noqa: F401
-from database.hub import hub
 from services.api_gateway.auth import hash_password
+from services.api_gateway.main import app
+from tests.test_db import SessionLocal, engine as test_engine
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def db_session():
     """Create a fresh database for each test."""
     Base.metadata.drop_all(bind=test_engine)
@@ -27,7 +28,7 @@ def db_session():
         session.close()
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def client(db_session):
     """Create test client with DB override."""
 

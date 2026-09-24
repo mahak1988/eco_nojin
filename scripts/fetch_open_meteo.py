@@ -17,7 +17,7 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
-from engine.hydroma.data_pipeline.pipeline import DataPipeline, OpenMeteoConnector
+from engine.hydroma.data_pipeline.pipeline import OpenMeteoConnector
 
 
 def main() -> int:

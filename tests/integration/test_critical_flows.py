@@ -27,10 +27,9 @@ DataHub._instance = None  # type: ignore[attr-defined]
 import pytest
 from fastapi.testclient import TestClient
 
-from services.api_gateway.main import app
-
 from database.base import Base
 from database.hub import hub
+from services.api_gateway.main import app
 
 engine = hub.get_sqlalchemy_engine()
 Base.metadata.drop_all(bind=engine)

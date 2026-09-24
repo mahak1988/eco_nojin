@@ -32,7 +32,6 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Optional
 
 
 class CarbonProjectType(Enum):
@@ -63,7 +62,7 @@ class CarbonProject:
 
     # Verification
     status: str = "draft"  # draft, submitted, verified, certified
-    verification_date: Optional[datetime] = None
+    verification_date: datetime | None = None
     verifier: str = ""
 
     # Results
@@ -274,7 +273,7 @@ def register_project(project: CarbonProject) -> str:
     return project.id
 
 
-def get_project(project_id: str) -> Optional[CarbonProject]:
+def get_project(project_id: str) -> CarbonProject | None:
     """Get project by ID."""
     if _repository is not None:
         try:
@@ -296,7 +295,7 @@ def get_project(project_id: str) -> Optional[CarbonProject]:
     return _projects.get(project_id)
 
 
-def list_projects(status: Optional[str] = None) -> list:
+def list_projects(status: str | None = None) -> list:
     """List all projects with optional status filter."""
     if _repository is not None:
         try:

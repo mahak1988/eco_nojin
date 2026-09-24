@@ -3,16 +3,16 @@
 import pytest
 from fastapi.testclient import TestClient
 
+from database import models  # noqa: F401
 from database.base import Base
 from database.config import engine
-from tests.conftest import TEST_SESSION_FACTORY as SessionLocal
-from database import models  # noqa: F401
 from database.hub import hub as db_models
 from services.api_gateway.auth import hash_password
 from services.api_gateway.main import app
+from tests.conftest import TEST_SESSION_FACTORY as SessionLocal
 
 
-@pytest.fixture()
+@pytest.fixture
 def admin_client():
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
@@ -50,7 +50,7 @@ def admin_client():
     )
     token = ok.json()["access_token"]
     client.headers.update({"Authorization": f"Bearer {token}"})
-    yield client
+    return client
 
 
 def test_overview_counts_and_uptime(admin_client):
@@ -60,7 +60,8 @@ def test_overview_counts_and_uptime(admin_client):
     assert data["counts"]["users"] == 2
     assert data["counts"]["audit_entries"] >= 2  # 1 ok + 1 failed login
     assert data["uptime_seconds"] >= 0
-    assert "recent_audit" in data and isinstance(data["recent_audit"], list)
+    assert "recent_audit" in data
+    assert isinstance(data["recent_audit"], list)
 
 
 def test_overview_error_counts_honest(admin_client):

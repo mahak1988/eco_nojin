@@ -412,18 +412,18 @@ class NojinWaterSaving(Base):
 
 __all__ = [
     "Base",
-    # Phase 1 (5 models)
-    "NojinStrain",
-    "NojinFormulation",
+    "NojinApplicationGuide",
     "NojinApplicationPlan",
-    "NojinFieldTrial",
     "NojinCalibrationRecord",
+    "NojinCostBenefit",
+    "NojinFieldTrial",
+    "NojinFormulation",
+    "NojinFormulationRecipe",
     # Phase 2 (7 models)
     "NojinMaterial",
-    "NojinSoilType",
-    "NojinFormulationRecipe",
     "NojinMaterialComposition",
-    "NojinApplicationGuide",
-    "NojinCostBenefit",
+    "NojinSoilType",
+    # Phase 1 (5 models)
+    "NojinStrain",
     "NojinWaterSaving",
 ]

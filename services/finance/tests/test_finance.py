@@ -280,7 +280,7 @@ class TestBankTransferProvider:
     async def test_create_payment_intent(self, db_session):
         from services.finance.wallet_service import WalletService
 
-        wallet_service = WalletService(db_session)
+        WalletService(db_session)
         provider = BankTransferProvider(db_session)
 
         intent = await provider.create_payment_intent(

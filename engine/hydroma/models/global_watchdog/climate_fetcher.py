@@ -9,6 +9,7 @@ URL: https://open-meteo.com/
 """
 
 from __future__ import annotations
+
 import structlog
 
 logger = structlog.get_logger()

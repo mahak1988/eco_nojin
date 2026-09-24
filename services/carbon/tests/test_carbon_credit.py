@@ -172,7 +172,9 @@ async def test_submit_transitions_to_submitted(service, async_db_session):
 async def test_verify_without_field_data_passes_checks(service, async_db_session):
     await _register(service)
     await service.submit_project("P-001", "owner-1")
-    res = await service.verify_project({**SOC_PARAMS, "project_id": "P-001", "measured_soc_t_ha": None})
+    res = await service.verify_project(
+        {**SOC_PARAMS, "project_id": "P-001", "measured_soc_t_ha": None}
+    )
     assert res["methodology_checks"]["passed"] is True
     assert res["data_mode"] == "modelled_estimate"
     project = await async_db_session.scalar(
@@ -186,7 +188,9 @@ async def test_verify_without_field_data_passes_checks(service, async_db_session
 async def test_verify_with_field_data_marks_field_verified(service, async_db_session):
     await _register(service)
     await service.submit_project("P-001", "owner-1")
-    res = await service.verify_project({**SOC_PARAMS, "project_id": "P-001", "measured_soc_t_ha": 100.0})
+    res = await service.verify_project(
+        {**SOC_PARAMS, "project_id": "P-001", "measured_soc_t_ha": 100.0}
+    )
     assert res["data_mode"] == "field_verified"
     project = await async_db_session.scalar(
         select(CarbonProject).where(CarbonProject.project_id == "P-001")
@@ -252,9 +256,7 @@ async def test_issue_idempotent_same_key_no_double_mint(service, async_db_sessio
     assert first["credit_id"] == second["credit_id"]
     assert second["replay"] == "idempotent-replay"
     # only one credit row exists
-    total = (
-        await async_db_session.scalars(select(CarbonCredit))
-    ).all()
+    total = (await async_db_session.scalars(select(CarbonCredit))).all()
     assert len(total) == 1
 
 

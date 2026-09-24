@@ -1,25 +1,21 @@
 """Compute Job Service - Core business logic for job queue management."""
 
-import uuid
 import heapq
-import asyncio
-from datetime import datetime, UTC, timedelta
-from typing import Optional, List, Dict, Any, Set
-from contextlib import asynccontextmanager
+from datetime import UTC, datetime
+from typing import Any
 
-from sqlalchemy import select, func, and_, or_, desc
+from sqlalchemy import and_, desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from database.hub import hub
-from services.jobs.models import ComputeJob, JobEvent, JobStatus, JobPriority
+from services.jobs.models import ComputeJob, JobEvent, JobPriority, JobStatus
 from services.jobs.schemas import (
     JobCreate,
-    JobResponse,
-    JobListResponse,
-    JobStatusUpdate,
     JobEventResponse,
+    JobListResponse,
+    JobResponse,
     JobStatsResponse,
+    JobStatusUpdate,
 )
 
 
@@ -29,8 +25,8 @@ class ComputeJobService:
     def __init__(self, db: AsyncSession):
         self.db = db
         # In-memory priority queue for fast scheduling
-        self._queue: List[tuple[int, datetime, str]] = []  # (priority_score, created_at, job_id)
-        self._queue_set: Set[str] = set()
+        self._queue: list[tuple[int, datetime, str]] = []  # (priority_score, created_at, job_id)
+        self._queue_set: set[str] = set()
         self._initialized = False
 
     def _calculate_priority_score(self, job: ComputeJob) -> int:
@@ -77,7 +73,7 @@ class ComputeJobService:
         heapq.heappush(self._queue, (-score, job.created_at, str(job.id)))
         self._queue_set.add(str(job.id))
 
-    def _dequeue_job(self) -> Optional[str]:
+    def _dequeue_job(self) -> str | None:
         """Remove and return highest priority job ID."""
         while self._queue:
             _, _, job_id = heapq.heappop(self._queue)
@@ -90,11 +86,11 @@ class ComputeJobService:
     # Job CRUD
     # =========================================================================
 
-    async def create_job(self, data: JobCreate, user_id: Optional[str] = None) -> ComputeJob:
+    async def create_job(self, data: JobCreate, user_id: str | None = None) -> ComputeJob:
         """Create a new compute job."""
         # Calculate priority score
         priority_enum = JobPriority(data.priority)
-        job = ComputeJob(
+        ComputeJob(
             name=data.name,
             job_type=data.job_type,
             input_data=data.input_data,
@@ -123,7 +119,7 @@ class ComputeJobService:
         await self.db.refresh(data)
         return data
 
-    async def get_job(self, job_id: str) -> Optional[ComputeJob]:
+    async def get_job(self, job_id: str) -> ComputeJob | None:
         """Get a job by ID with events loaded."""
         result = await self.db.execute(
             select(ComputeJob)
@@ -132,7 +128,7 @@ class ComputeJobService:
         )
         return result.scalar_one_or_none()
 
-    async def get_job_response(self, job_id: str) -> Optional[JobResponse]:
+    async def get_job_response(self, job_id: str) -> JobResponse | None:
         """Get a job by ID as response schema."""
         job = await self.get_job(job_id)
         if job:
@@ -141,10 +137,10 @@ class ComputeJobService:
 
     async def list_jobs(
         self,
-        status: Optional[str] = None,
-        job_type: Optional[str] = None,
-        priority: Optional[str] = None,
-        created_by: Optional[str] = None,
+        status: str | None = None,
+        job_type: str | None = None,
+        priority: str | None = None,
+        created_by: str | None = None,
         page: int = 1,
         page_size: int = 20,
     ) -> JobListResponse:
@@ -194,7 +190,7 @@ class ComputeJobService:
         query = query.offset((page - 1) * 20).limit(page_size)
 
         result = await self.db.execute(query)
-        jobs = result.scalars().all()
+        result.scalars().all()
 
         items = [JobResponse.model_validate(j) for j in result.scalars().all()]
 
@@ -206,7 +202,7 @@ class ComputeJobService:
             total_pages=(total + page_size - 1) // page_size,
         )
 
-    async def update_job_status(self, job_id: str, update: JobStatusUpdate) -> Optional[ComputeJob]:
+    async def update_job_status(self, job_id: str, update: JobStatusUpdate) -> ComputeJob | None:
         """Update job status (called by workers)."""
         job = await self.get_job(job_id)
         if not job:
@@ -289,7 +285,7 @@ class ComputeJobService:
         await self.db.commit()
         return True
 
-    async def retry_job(self, job_id: str) -> Optional[ComputeJob]:
+    async def retry_job(self, job_id: str) -> ComputeJob | None:
         """Retry a failed/timeout/cancelled job."""
         job = await self.get_job(job_id)
         if not job:
@@ -332,7 +328,7 @@ class ComputeJobService:
         await self.db.refresh(job)
         return job
 
-    async def get_job_events(self, job_id: str) -> List[Dict[str, Any]]:
+    async def get_job_events(self, job_id: str) -> list[dict[str, Any]]:
         """Get all events for a job."""
         result = await self.db.execute(
             select(JobEvent).where(JobEvent.job_id == job_id).order_by(JobEvent.created_at)
@@ -340,7 +336,7 @@ class ComputeJobService:
         events = result.scalars().all()
         return [JobEventResponse.model_validate(e) for e in events]
 
-    async def get_queue_position(self, job_id: str) -> Optional[int]:
+    async def get_queue_position(self, job_id: str) -> int | None:
         """Get current queue position for a pending/queued job."""
         job = await self.get_job(job_id)
         if not job or job.status not in (JobStatus.PENDING, JobStatus.QUEUED):
@@ -365,7 +361,6 @@ class ComputeJobService:
 
     async def get_stats(self) -> JobStatsResponse:
         """Get job queue statistics."""
-        from sqlalchemy import case
 
         # Count by status
         status_counts = await self.db.execute(

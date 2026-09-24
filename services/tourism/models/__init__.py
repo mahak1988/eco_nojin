@@ -6,7 +6,7 @@ import uuid
 
 from datetime import UTC, date, datetime, timezone
 from decimal import Decimal
-from enum import Enum
+from enum import Enum, StrEnum
 
 from sqlalchemy import (
     JSON,
@@ -27,7 +27,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from database.base import Base
 
 
-class TourismTourType(str, Enum):
+class TourismTourType(StrEnum):
     ECOTOURISM = "ecotourism"
     NOMADIC = "nomadic"
     CULTURAL = "cultural"
@@ -38,7 +38,7 @@ class TourismTourType(str, Enum):
     CULINARY = "culinary"
 
 
-class TourismDifficultyLevel(str, Enum):
+class TourismDifficultyLevel(StrEnum):
     EASY = "easy"
     MODERATE = "moderate"
     CHALLENGING = "challenging"

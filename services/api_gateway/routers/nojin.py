@@ -421,7 +421,7 @@ def list_materials(
     if category:
         query = query.filter(NojinMaterial.category == category)
     if arid_only:
-        query = query.filter(NojinMaterial.is_suitable_for_arid == True)
+        query = query.filter(NojinMaterial.is_suitable_for_arid)
     if min_priority > 0:
         query = query.filter(NojinMaterial.arid_priority_score >= min_priority)
 
@@ -482,7 +482,7 @@ def list_arid_priority_materials(
     materials = (
         db.query(NojinMaterial)
         .filter(
-            NojinMaterial.is_suitable_for_arid == True,
+            NojinMaterial.is_suitable_for_arid,
             NojinMaterial.arid_priority_score >= min_score,
         )
         .order_by(NojinMaterial.arid_priority_score.desc())

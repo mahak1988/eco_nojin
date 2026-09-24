@@ -7,8 +7,9 @@ Shared fixtures for rigorous database tests.
 
 import sys
 import time
-import pytest
 from pathlib import Path
+
+import pytest
 
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -43,6 +44,7 @@ def fresh_sqlite_session():
     """Provide fresh SQLAlchemy session with rollback."""
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
+
     from database.base import Base
 
     engine = create_engine("sqlite:///:memory:", echo=False)

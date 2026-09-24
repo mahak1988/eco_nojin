@@ -1,11 +1,11 @@
 """Trust Score Service - Calculates and manages user trust scores based on activity history"""
 
 from __future__ import annotations
+
 from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Optional
-from sqlalchemy import select
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -69,10 +69,10 @@ class TrustScoreService:
             score += event.impact * weight
 
         # Apply time decay (older events matter less)
-        now = datetime.now(UTC)
+        datetime.now(UTC)
         for event in events:
             days_old = (datetime.now(UTC) - event.timestamp).days
-            decay = max(0.5, 1.0 - (days_old / 365) * 0.5)  # 50% decay after 1 year
+            max(0.5, 1.0 - (days_old / 365) * 0.5)  # 50% decay after 1 year
             # Apply decay to event impact (already applied above, this is conceptual)
 
         return max(self.MIN_SCORE, min(self.MAX_SCORE, score))
@@ -81,14 +81,14 @@ class TrustScoreService:
         self,
         user_id: str,
         event_type: str,
-        impact: float = None,
+        impact: float | None = None,
         description: str = "",
     ) -> bool:
         """Record a trust event for a user"""
         if event_type not in self.EVENT_WEIGHTS:
             return False
 
-        event = {
+        {
             "event_id": f"TRUST-{__import__('secrets').token_hex(8)}",
             "user_id": user_id,
             "event_type": event_type,
@@ -153,7 +153,7 @@ class TrustScoreService:
             "next_level": self._get_next_level(level),
         }
 
-    def _get_next_level(self, current: str) -> Optional[str]:
+    def _get_next_level(self, current: str) -> str | None:
         levels = ["New", "Bronze", "Silver", "Gold", "Diamond"]
         try:
             idx = levels.index(current)

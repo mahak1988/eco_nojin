@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 ============================================================================
 چالش سختگیرانه نسخه ۲: شکنجه علمی مدل هیدروما
@@ -10,22 +9,22 @@
 import structlog
 
 logger = structlog.get_logger()
-import sys
-import math
 import json
-from pathlib import Path
+import math
+import sys
 from datetime import datetime
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 try:
-    from engine.hydroma.climate_adaptation.dynamic_stress_engine import DynamicStressEngine
     from engine.hydroma.climate_adaptation.climate_adaptive_phenology import (
         ClimateAdaptivePhenology,
     )
-    from engine.hydroma.climate_adaptation.soil_degradation_model import SoilDegradationModel
+    from engine.hydroma.climate_adaptation.dynamic_stress_engine import DynamicStressEngine
     from engine.hydroma.climate_adaptation.seed_optimization_engine import SeedOptimizationEngine
+    from engine.hydroma.climate_adaptation.soil_degradation_model import SoilDegradationModel
     from engine.hydroma.climate_adaptation.uncertainty_knowledge_engine import (
         UncertaintyAndKnowledgeEngine,
     )
@@ -1135,7 +1134,7 @@ class StrictChallengeV2:
 
 def main():
     challenge = StrictChallengeV2()
-    results = challenge.run_all()
+    challenge.run_all()
     report = challenge.generate_report()
 
     logger.info("\n" + "=" * 70)

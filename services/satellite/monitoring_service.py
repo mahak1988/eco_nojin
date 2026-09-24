@@ -1,20 +1,20 @@
 """SatelliteMonitoringService - unified satellite data access"""
 
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timedelta
-from enum import Enum
+from datetime import UTC, datetime
+from enum import StrEnum
 from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class SatelliteSource(str, Enum):
+class SatelliteSource(StrEnum):
     SENTINEL_2 = "sentinel_2"
     LANDSAT_8 = "landsat_8"
     COPERNICUS = "copernicus"
 
 
-class BandType(str, Enum):
+class BandType(StrEnum):
     NDVI = "ndvi"
     NDWI = "ndwi"
     EVI = "evi"
@@ -96,10 +96,8 @@ class SatelliteMonitoringService:
         try:
             from services.satellite.copernicus import (
                 CopernicusClient,
-                CopernicusError,
-                ndvi_from_bands,
                 evi_from_bands,
-                savi_from_bands,
+                ndvi_from_bands,
             )
 
             client = CopernicusClient()
@@ -135,8 +133,10 @@ class SatelliteMonitoringService:
                     captured_at=scene.capture_date,
                 )
             elif index_type == BandType.NDWI:
-                from engine.hydroma.satellite.processors.indices import calculate_ndwi
                 import numpy as np
+
+                from engine.hydroma.satellite.processors.indices import calculate_ndwi
+
                 ndwi_arr = calculate_ndwi(
                     np.array([[bands.get("green", bands["nir"] * 0.5)]]),
                     np.array([[bands["nir"]]]),

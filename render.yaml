@@ -1,26 +1,138 @@
-# Render free-tier blueprint for Eco Nojin API (Phase 8-C free deploy)
+# Eco Nojin — Render Free Tier Deployment
+# Deploy: connect this repo to render.com, select "Web Service", use this file
+
 services:
   - type: web
-    name: eco-nojin-api
+    name: econojin-api
     runtime: python
+    region: frankfurt  # or oregon, ohio, virginia, singapore
     plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: python -m services.api_gateway.main
-    healthCheckPath: /health
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn services.api_gateway.main:app --host 0.0.0.0 --port $PORT"
+    autoDeploy: true
     envVars:
       - key: PYTHON_VERSION
-        value: 3.12.0
+        value: "3.12"
+      - key: ENVIRONMENT
+        value: "production"
       - key: APP_ENV
-        value: production
+        value: "production"
+      - key: LOG_LEVEL
+        value: "INFO"
+      - key: PORT
+        value: "10000"
+      
+      # === LLM Providers (set in Render Dashboard > Environment) ===
+      - key: GROQ_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: MISTRAL_API_KEY
+        sync: false
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      
+      # === Embedding ===
+      - key: JINA_API_KEY
+        sync: false
+      - key: CLOUDFLARE_API_TOKEN
+        sync: false
+      - key: CLOUDFLARE_ACCOUNT_ID
+        sync: false
+      - key: COHERE_API_KEY
+        sync: false
+      
+      # === Vector Store ===
+      - key: QDRANT_URL
+        sync: false
+      - key: QDRANT_API_KEY
+        sync: false
+      
+      # === Database (Supabase) ===
+      - key: DATABASE_URL
+        sync: false
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_ANON_KEY
         sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
       - key: SUPABASE_ACCESS_TOKEN
         sync: false
-      - key: AI_LLM_KEY
-        sync: false
+      
+      # === Auth & Security ===
       - key: SECRET_KEY
         sync: false
       - key: JWT_SECRET
+        sync: false
+      - key: JWT_ALGORITHM
+        value: "HS256"
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+      
+      # === Feature Flags ===
+      - key: ENABLE_SATELLITE_REAL
+        value: "true"
+      - key: ENABLE_AI_ASSISTANT
+        value: "true"
+      - key: ENABLE_MARKETPLACE
+        value: "true"
+      - key: ENABLE_BLOCKCHAIN
+        value: "false"
+      - key: ENABLE_REALTIME_SSE
+        value: "true"
+      - key: ENABLE_SUPABASE_SYNC
+        value: "false"
+      - key: ENABLE_EVENT_BUS
+        value: "false"
+      
+      # === CORS ===
+      - key: CORS_ORIGINS
+        value: '["https://econojin.vercel.app","https://econojin.ir","https://econojin.com"]'
+      
+      # === I18N ===
+      - key: DEFAULT_LANGUAGE
+        value: "fa"
+      - key: SUPPORTED_LANGUAGES
+        value: "fa,en,ar,tr,ur,ps,de,es,fr,hi,pt,zh,ms,it,bn"
+      - key: RTL_LANGUAGES
+        value: "fa,ar,ur,ps,he"
+      
+      # === External APIs (free, no key needed) ===
+      - key: NASA_POWER_BASE_URL
+        value: "https://power.larc.nasa.gov/api"
+      - key: OPEN_METEO_BASE_URL
+        value: "https://api.open-meteo.com/v1"
+      - key: CDSE_BASE_URL
+        value: "https://catalogue.dataspace.copernicus.eu"
+      
+      # === Optional: Copernicus (if you have keys) ===
+      - key: CDS_API_KEY
+        sync: false
+      - key: CDS_UID
+        sync: false
+      
+      # === Rate Limiting ===
+      - key: RATE_LIMIT_ENABLED
+        value: "true"
+      - key: RATE_LIMIT_REQUESTS
+        value: "300"
+      - key: RATE_LIMIT_WINDOW_SECONDS
+        value: "60"
+      
+      # === Logging ===
+      - key: LOG_LEVEL
+        value: "INFO"
+      - key: SENTRY_DSN
+        sync: false
+
+  # === Cron Job to prevent cold starts (optional) ===
+  - type: cron
+    name: econojin-keepalive
+    schedule: "*/14 * * * *"  # Every 14 minutes
+    command: "curl -s https://econojin-api.onrender.com/health/live > /dev/null"
+    envVars:
+      - key: RENDER_API_KEY
         sync: false

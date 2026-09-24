@@ -1,0 +1,22 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/icon.svg/route": "/icon.svg",
+  "/robots.txt/route": "/robots.txt",
+  "/sitemap.xml/route": "/sitemap.xml",
+  "/[locale]/about/page": "/[locale]/about",
+  "/[locale]/ai/page": "/[locale]/ai",
+  "/[locale]/accessibility/page": "/[locale]/accessibility",
+  "/[locale]/evidence/page": "/[locale]/evidence",
+  "/[locale]/developers/page": "/[locale]/developers",
+  "/[locale]/hydroma/page": "/[locale]/hydroma",
+  "/[locale]/learn/page": "/[locale]/learn",
+  "/[locale]/home/page": "/[locale]/home",
+  "/[locale]/legal/page": "/[locale]/legal",
+  "/[locale]/market/page": "/[locale]/market",
+  "/[locale]/page": "/[locale]",
+  "/[locale]/platform/page": "/[locale]/platform",
+  "/[locale]/services/page": "/[locale]/services",
+  "/[locale]/statements/page": "/[locale]/statements",
+  "/[locale]/trust/page": "/[locale]/trust",
+  "/[locale]/status/page": "/[locale]/status"
+}

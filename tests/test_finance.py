@@ -1,13 +1,13 @@
 """Tests for Finance/Wallet Services"""
 
-import pytest
-import pytest_asyncio
-from decimal import Decimal
 from datetime import UTC, datetime
-from unittest.mock import AsyncMock, MagicMock, patch
+from decimal import Decimal
+from unittest.mock import AsyncMock, MagicMock
+
+import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from services.finance.wallet_service import WalletService, LedgerService, TransactionType
+from services.finance.wallet_service import LedgerService, WalletService
 
 
 class TestWalletService:
@@ -40,7 +40,7 @@ class TestWalletService:
         # Mock daily earnings check
         service.db.execute.return_value.scalar.return_value = Decimal("0")
 
-        amount, balance = await service.earn("user_123", "tree_planting", Decimal("1"))
+        amount, _balance = await service.earn("user_123", "tree_planting", Decimal("1"))
         assert amount == Decimal("50.0")
 
     @pytest.mark.asyncio
@@ -67,7 +67,7 @@ class TestWalletService:
         service.db.commit = AsyncMock()
         service.db.refresh = AsyncMock()
 
-        amount, balance = await service.redeem("user_123", "consultation")
+        amount, _balance = await service.redeem("user_123", "consultation")
         assert amount == Decimal("20.0")
 
     @pytest.mark.asyncio

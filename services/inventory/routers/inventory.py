@@ -191,7 +191,7 @@ async def create_warehouse(
 async def list_warehouses(db: AsyncSession = Depends(get_db), user=Depends(require_user)):
     from sqlalchemy import select
 
-    result = await db.execute(select(InvWarehouse).where(InvWarehouse.is_active == True))
+    result = await db.execute(select(InvWarehouse).where(InvWarehouse.is_active))
     whs = result.scalars().all()
     return [{"id": w.id, "code": w.code, "name": w.name, "city": w.city} for w in whs]
 

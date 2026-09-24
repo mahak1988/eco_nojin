@@ -73,13 +73,19 @@ class TestFetch:
         assert df["ReferenceET"].iloc[0] > 0.0
         assert df["Date"].iloc[0] == pytest.importorskip("pandas").Timestamp("2026-06-01")
 
-    @patch("engine.hydroma.simulation.weather_source._fetch_chirps_ncep", side_effect=WeatherUnavailable("disabled"))
+    @patch(
+        "engine.hydroma.simulation.weather_source._fetch_chirps_ncep",
+        side_effect=WeatherUnavailable("disabled"),
+    )
     def test_http_error_raises(self, mock_fallback):
         session = FakeSession(FakeResponse(500, {}))
         with pytest.raises(WeatherUnavailable):
             fetch_daily_weather(36.5, 54.0, "2026-06-01", "2026-06-03", session=session)
 
-    @patch("engine.hydroma.simulation.weather_source._fetch_chirps_ncep", side_effect=WeatherUnavailable("disabled"))
+    @patch(
+        "engine.hydroma.simulation.weather_source._fetch_chirps_ncep",
+        side_effect=WeatherUnavailable("disabled"),
+    )
     def test_missing_arrays_raises(self, mock_fallback):
         session = FakeSession(FakeResponse(200, {"daily": {}}))
         with pytest.raises(WeatherUnavailable):

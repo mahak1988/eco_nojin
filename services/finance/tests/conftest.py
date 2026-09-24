@@ -46,7 +46,7 @@ async def fresh_stock_service(db_session):
     from services.inventory.service import StockService
 
     service = StockService(db_session)
-    existing = await service._get_or_create_wallet  # no-op, just to ensure import
+    await service._get_or_create_wallet  # no-op, just to ensure import
     wh = await service.create_warehouse("DEFAULT", "Default Warehouse", city="Tehran")
     service._default_wh = wh
     return service

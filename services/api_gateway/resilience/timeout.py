@@ -8,9 +8,10 @@ import asyncio
 import contextvars
 import logging
 import time
+from collections.abc import Callable
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
-from typing import Any, Callable, Optional, TypeVar
+from typing import Any, TypeVar
 
 from engine.hydroma.config.settings import get_settings
 
@@ -19,7 +20,7 @@ logger = logging.getLogger("econojin.resilience.timeout")
 T = TypeVar("T")
 
 # Context variable for deadline propagation
-_deadline_var: contextvars.ContextVar[Optional[float]] = contextvars.ContextVar(
+_deadline_var: contextvars.ContextVar[float | None] = contextvars.ContextVar(
     "deadline", default=None
 )
 
@@ -27,6 +28,7 @@ _deadline_var: contextvars.ContextVar[Optional[float]] = contextvars.ContextVar(
 @dataclass
 class TimeoutConfig:
     """Configuration for timeout policy."""
+
     default_timeout: float = 30.0  # seconds
     connect_timeout: float = 5.0
     read_timeout: float = 30.0
@@ -39,17 +41,17 @@ class TimeoutManager:
 
     def __init__(self, config: TimeoutConfig):
         self.config = config
-        self._local_deadline: Optional[float] = None
+        self._local_deadline: float | None = None
 
     @property
-    def current_deadline(self) -> Optional[float]:
+    def current_deadline(self) -> float | None:
         """Get current deadline from context or local."""
         ctx_deadline = _deadline_var.get()
         if ctx_deadline is not None:
             return ctx_deadline
         return self._local_deadline
 
-    def set_deadline(self, deadline: Optional[float]) -> contextvars.Token:
+    def set_deadline(self, deadline: float | None) -> contextvars.Token:
         """Set deadline in context variable."""
         return _deadline_var.set(deadline)
 
@@ -58,7 +60,7 @@ class TimeoutManager:
         _deadline_var.reset(token)
 
     @asynccontextmanager
-    async def deadline(self, timeout: Optional[float] = None):
+    async def deadline(self, timeout: float | None = None):
         """Context manager for setting a deadline."""
         if timeout is None:
             timeout = self.config.default_timeout
@@ -72,7 +74,7 @@ class TimeoutManager:
             self.reset_deadline(token)
             self._local_deadline = None
 
-    def get_remaining_time(self) -> Optional[float]:
+    def get_remaining_time(self) -> float | None:
         """Get remaining time until deadline."""
         deadline = self.current_deadline
         if deadline is None:
@@ -86,23 +88,23 @@ class TimeoutManager:
         if remaining is not None and remaining <= 0:
             raise TimeoutError(f"Deadline exceeded for {self.config.name}")
 
-    async def with_timeout(self, coro, timeout: Optional[float] = None) -> Any:
+    async def with_timeout(self, coro, timeout: float | None = None) -> Any:
         """Execute coroutine with timeout."""
         if timeout is None:
             timeout = self.config.default_timeout
 
         try:
             return await asyncio.wait_for(coro, timeout=timeout)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.warning(f"Timeout ({timeout}s) exceeded for {self.config.name}")
             raise TimeoutError(f"Operation timed out after {timeout}s")
 
 
 # Global timeout manager
-_timeout_manager: Optional[TimeoutManager] = None
+_timeout_manager: TimeoutManager | None = None
 
 
-def get_timeout_manager(config: Optional[TimeoutConfig] = None) -> TimeoutManager:
+def get_timeout_manager(config: TimeoutConfig | None = None) -> TimeoutManager:
     """Get or create the global timeout manager."""
     global _timeout_manager
     if _timeout_manager is None:
@@ -118,12 +120,12 @@ def get_timeout_manager(config: Optional[TimeoutConfig] = None) -> TimeoutManage
     return _timeout_manager
 
 
-def get_deadline() -> Optional[float]:
+def get_deadline() -> float | None:
     """Get current deadline from context."""
     return _deadline_var.get()
 
 
-def set_deadline(deadline: Optional[float]) -> contextvars.Token:
+def set_deadline(deadline: float | None) -> contextvars.Token:
     """Set deadline in context."""
     return _deadline_var.set(deadline)
 
@@ -144,7 +146,7 @@ async def deadline_context(timeout: float):
         _deadline_var.reset(token)
 
 
-async def with_timeout(coro, timeout: Optional[float] = None) -> Any:
+async def with_timeout(coro, timeout: float | None = None) -> Any:
     """Execute coroutine with timeout using global manager."""
     manager = get_timeout_manager()
     return await manager.with_timeout(coro, timeout)
@@ -152,10 +154,13 @@ async def with_timeout(coro, timeout: Optional[float] = None) -> Any:
 
 def timeout_decorator(timeout: float):
     """Decorator to apply timeout to async function."""
+
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         async def wrapper(*args, **kwargs) -> Any:
             return await with_timeout(func(*args, **kwargs), timeout)
+
         return wrapper
+
     return decorator
 
 
@@ -185,11 +190,8 @@ def get_blockchain_timeout() -> float:
 
 
 # Convenience functions
-async def call_with_timeout(
-    func: Callable[..., T],
-    *args,
-    timeout: Optional[float] = None,
-    **kwargs
+async def call_with_timeout[T](
+    func: Callable[..., T], *args, timeout: float | None = None, **kwargs
 ) -> T:
     """Call function with timeout."""
     manager = get_timeout_manager()

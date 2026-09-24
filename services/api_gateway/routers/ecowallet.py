@@ -1,19 +1,19 @@
 """EcoCoin Wallet API Routes - FastAPI endpoints for wallet operations"""
 
 from __future__ import annotations
+
+from datetime import datetime
+from decimal import Decimal
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
-from typing import Optional, List
-from decimal import Decimal
-from datetime import datetime
-
 from sqlalchemy import func, select
 
 from database.models import EcoWallet
-from services.api_gateway.auth import get_current_user, require_user
+from services.api_gateway.auth import require_user
 from services.api_gateway.exceptions import EcoNojinException
 from services.api_gateway.routers.auth import get_async_db
-from services.finance.wallet_service import WalletService, LedgerService, TransactionType
+from services.finance.wallet_service import WalletService
 
 router = APIRouter(prefix="/api/v1/ecowallet", tags=["ecowallet"])
 
@@ -36,7 +36,7 @@ class EarnRequest(BaseModel):
         pattern=r"^(tree_planting|soil_restoration|water_conservation|biodiversity|cleanup|regenerative_farming|carbon_verification|education|community|satellite_verification|mrv_submission)$",
     )
     quantity: Decimal = Field(default=Decimal("1"), gt=0)
-    reference_id: Optional[str] = None
+    reference_id: str | None = None
 
 
 class EarnResponse(BaseModel):
@@ -50,7 +50,7 @@ class RedeemRequest(BaseModel):
         ...,
         pattern=r"^(consultation|satellite_report|marketplace_discount|training|certification)$",
     )
-    reference_id: Optional[str] = None
+    reference_id: str | None = None
 
 
 class RedeemResponse(BaseModel):
@@ -87,7 +87,7 @@ class EarningsHistory(BaseModel):
     amount: str
     source: str
     status: str
-    processed_at: Optional[str] = None
+    processed_at: str | None = None
 
 
 class DailyCapStatus(BaseModel):
@@ -100,8 +100,8 @@ class UssdRequest(BaseModel):
     """USSD wallet action payload (feature-phone channel)."""
 
     action: str = Field(default="balance", pattern="^(balance)$")
-    language: Optional[str] = Field(default="fa", pattern="^(fa|en|ar|tr)$")
-    user_id: Optional[str] = None  # ignored: the token identity is authoritative
+    language: str | None = Field(default="fa", pattern="^(fa|en|ar|tr)$")
+    user_id: str | None = None  # ignored: the token identity is authoritative
 
 
 # ============================================================================
@@ -215,7 +215,7 @@ async def get_wallet_state(
     return WalletState(**state)
 
 
-@router.get("/earnings", response_model=List[EarningsHistory])
+@router.get("/earnings", response_model=list[EarningsHistory])
 async def list_earnings(
     user_id: str = Query(..., min_length=1),
     limit: int = Query(50, ge=1, le=200),
@@ -242,9 +242,6 @@ async def get_daily_cap(
     service: WalletService = Depends(get_wallet_service),
 ):
     """Get daily earning cap status"""
-    from datetime import UTC, date
-    from sqlalchemy import select, func
-    from database.models import DailyEarnings
 
     # This would be implemented in the service
     # For now, return mock

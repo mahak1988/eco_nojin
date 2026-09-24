@@ -58,7 +58,7 @@ class HYRUE(ScientificModel):
         "Steduto2009": "Steduto et al. (2009). AquaCrop-The FAO crop model. Agronomy Journal, 101(3), 426-437.",
     }
 
-    def __init__(self, params: HYRUEParams = None, crop: str = None, **config):
+    def __init__(self, params: HYRUEParams = None, crop: str | None = None, **config):
         super().__init__(**config)
         if crop:
             self.params = HYRUEParams.for_crop(crop)

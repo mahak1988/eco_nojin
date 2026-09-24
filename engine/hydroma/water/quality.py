@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 
 def assess_water_quality(ph: float, ec: float, tds: float) -> str:
     """Classify irrigation water quality from basic parameters.

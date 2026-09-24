@@ -1,21 +1,20 @@
 """Unit tests for new climate data connectors (offline, mocked)."""
 
-import pytest
 import json
 import os
 import tempfile
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
 
 import numpy as np
+import pytest
 
 from engine.hydroma.data_pipeline import (
     CHIRPSConnector,
-    WorldClimConnector,
+    DataAsset,
+    DataPipeline,
     NCEPReanalysisConnector,
     OpenMeteoSeasonalConnector,
-    DataPipeline,
-    DataAsset,
+    WorldClimConnector,
 )
 
 
@@ -42,23 +41,26 @@ class TestCHIRPSConnector:
     def test_validate_success(self):
         """Test validation with valid NetCDF."""
         connector = CHIRPSConnector()
-        
+
         # Create a minimal valid NetCDF with precip variable
         import xarray as xr
+
         with tempfile.NamedTemporaryFile(suffix=".nc", delete=False) as tmp:
-            ds = xr.Dataset({
-                "precip": xr.DataArray(
-                    np.random.rand(10, 10),
-                    dims=["latitude", "longitude"],
-                    coords={
-                        "latitude": np.linspace(-50, 50, 10),
-                        "longitude": np.linspace(-180, 180, 10),
-                    }
-                )
-            })
+            ds = xr.Dataset(
+                {
+                    "precip": xr.DataArray(
+                        np.random.rand(10, 10),
+                        dims=["latitude", "longitude"],
+                        coords={
+                            "latitude": np.linspace(-50, 50, 10),
+                            "longitude": np.linspace(-180, 180, 10),
+                        },
+                    )
+                }
+            )
             ds.to_netcdf(tmp.name)
             tmp_path = tmp.name
-        
+
         try:
             asset = DataAsset(
                 asset_id="test_chirps",
@@ -112,10 +114,11 @@ class TestWorldClimConnector:
     def test_validate_success(self):
         """Test validation with valid GeoTIFF."""
         connector = WorldClimConnector()
-        
+
         # Create a minimal valid GeoTIFF
         import rasterio
         from rasterio.transform import from_bounds
+
         with tempfile.NamedTemporaryFile(suffix=".tif", delete=False) as tmp:
             profile = {
                 "driver": "GTiff",
@@ -129,7 +132,7 @@ class TestWorldClimConnector:
             with rasterio.open(tmp.name, "w", **profile) as dst:
                 dst.write(np.random.rand(10, 10).astype(np.float32), 1)
             tmp_path = tmp.name
-        
+
         try:
             asset = DataAsset(
                 asset_id="test_worldclim",
@@ -176,23 +179,26 @@ class TestNCEPReanalysisConnector:
     def test_validate_success(self):
         """Test validation with valid NetCDF."""
         connector = NCEPReanalysisConnector()
-        
+
         import xarray as xr
+
         with tempfile.NamedTemporaryFile(suffix=".nc", delete=False) as tmp:
-            ds = xr.Dataset({
-                "air": xr.DataArray(
-                    np.random.rand(5, 10, 10),
-                    dims=["time", "lat", "lon"],
-                    coords={
-                        "time": np.arange(5),
-                        "lat": np.linspace(90, -90, 10),
-                        "lon": np.linspace(0, 360, 10),
-                    }
-                )
-            })
+            ds = xr.Dataset(
+                {
+                    "air": xr.DataArray(
+                        np.random.rand(5, 10, 10),
+                        dims=["time", "lat", "lon"],
+                        coords={
+                            "time": np.arange(5),
+                            "lat": np.linspace(90, -90, 10),
+                            "lon": np.linspace(0, 360, 10),
+                        },
+                    )
+                }
+            )
             ds.to_netcdf(tmp.name)
             tmp_path = tmp.name
-        
+
         try:
             asset = DataAsset(
                 asset_id="test_ncep",
@@ -238,14 +244,17 @@ class TestOpenMeteoSeasonalConnector:
     def test_validate_success(self):
         """Test validation with valid JSON response."""
         connector = OpenMeteoSeasonalConnector()
-        
+
         with tempfile.NamedTemporaryFile(suffix=".json", delete=False, mode="w") as tmp:
-            json.dump({
-                "daily": {"time": ["2020-01-01"], "temperature_2m": [20.0]},
-                "daily_units": {"temperature_2m": "°C"},
-            }, tmp)
+            json.dump(
+                {
+                    "daily": {"time": ["2020-01-01"], "temperature_2m": [20.0]},
+                    "daily_units": {"temperature_2m": "°C"},
+                },
+                tmp,
+            )
             tmp_path = tmp.name
-        
+
         try:
             asset = DataAsset(
                 asset_id="test_seasonal",
@@ -264,11 +273,11 @@ class TestOpenMeteoSeasonalConnector:
     def test_validate_failure_invalid_json(self):
         """Test validation fails for invalid JSON."""
         connector = OpenMeteoSeasonalConnector()
-        
+
         with tempfile.NamedTemporaryFile(suffix=".json", delete=False, mode="w") as tmp:
             tmp.write("not valid json")
             tmp_path = tmp.name
-        
+
         try:
             asset = DataAsset(
                 asset_id="test_seasonal",
@@ -291,7 +300,7 @@ class TestDataPipelineIntegration:
     def test_all_connectors_registered(self):
         """Test all new connectors are registered in DataPipeline."""
         pipeline = DataPipeline()
-        
+
         expected_connectors = [
             "chirps",
             "worldclim",
@@ -304,14 +313,14 @@ class TestDataPipelineIntegration:
             "aws_earth_search",
             "cdse",
         ]
-        
+
         for conn_id in expected_connectors:
             assert conn_id in pipeline.connectors, f"Missing connector: {conn_id}"
 
     def test_chirps_fetch_structure(self):
         """Test CHIRPS fetch returns correct asset structure."""
         pipeline = DataPipeline()
-        
+
         # Test that connector exists and has fetch method
         chirps = pipeline.connectors["chirps"]
         assert hasattr(chirps, "fetch")
@@ -346,7 +355,7 @@ class TestProvenanceTracking:
         """Test CHIRPS asset includes required provenance fields."""
         pipeline = DataPipeline()
         chirps = pipeline.connectors["chirps"]
-        
+
         # Check source metadata
         assert chirps.source.source_id == "chirps"
         assert "citation" in chirps.source.properties or hasattr(chirps, "_monthly_url")

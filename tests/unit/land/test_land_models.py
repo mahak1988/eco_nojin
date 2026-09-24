@@ -1,13 +1,13 @@
 """Unit tests for Land Intelligence models"""
 
 import pytest
+
 from engine.land.models import (
+    CapabilityAssessment,
+    LandCapabilityClass,
     LandProfile,
     TerrainAnalysis,
     TerrainType,
-    DrainageAnalysis,
-    CapabilityAssessment,
-    LandCapabilityClass,
 )
 
 

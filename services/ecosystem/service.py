@@ -1,26 +1,15 @@
 """EcoCoin Ecosystem Service - Core business logic for activity registration and verification"""
 
 from __future__ import annotations
+
 import hashlib
 import json
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from decimal import Decimal
 from enum import Enum
-from typing import Optional
-from uuid import UUID
 
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from database.models import (
-    EcoWallet,
-    FinAccount,
-    FinJournalBatch,
-    FinJournalEntry,
-    DailyEarnings,
-)
 
 
 class ActivityType(Enum):
@@ -74,8 +63,8 @@ class Activity:
     impact_score: float  # calculated by oracle
     created_at: datetime
     updated_at: datetime
-    verified_at: Optional[datetime] = None
-    challenge_deadline: Optional[datetime] = None
+    verified_at: datetime | None = None
+    challenge_deadline: datetime | None = None
 
 
 class EcosystemService:
@@ -164,7 +153,7 @@ class EcosystemService:
         user_id: str,
         evidence_type: str,
         data: dict,
-        metadata: dict = None,
+        metadata: dict | None = None,
     ) -> str:
         """Add additional evidence to existing activity"""
         # Verify ownership
@@ -236,7 +225,7 @@ class EcosystemService:
         # In production: query database
         return []
 
-    async def get_evidence(self, evidence_id: str, requester_id: str) -> Optional[ActivityEvidence]:
+    async def get_evidence(self, evidence_id: str, requester_id: str) -> ActivityEvidence | None:
         """Retrieve evidence with access control"""
         evidence = self._privacy_vault.get(evidence_id)
         if not evidence:
@@ -293,7 +282,7 @@ class EcosystemService:
     async def calculate_impact_score(self, activity: Activity) -> float:
         """Calculate ecological impact score for an activity"""
         # This would integrate with satellite data, soil models, etc.
-        base = activity.confidence / 100.0
+        activity.confidence / 100.0
 
         # Factor in activity type
         type_multipliers = {

@@ -5,10 +5,10 @@ import pytest
 
 from services.satellite.cds import (
     CDS_API_URL,
+    DATA_STORES,
     CdsClient,
     CdsNotConfigured,
     CdsRequestError,
-    DATA_STORES,
     DataStoreClient,
     DataStoreNotConfigured,
     all_stores_status,
@@ -92,7 +92,7 @@ class TestJobFlow:
 class TestDataStores:
     def test_all_stores_registered(self):
         assert set(DATA_STORES) == {"cds", "ewds", "ads"}
-        for name, spec in DATA_STORES.items():
+        for _name, spec in DATA_STORES.items():
             assert spec["key_url"].startswith("https://")
             assert spec["key_url"].endswith("how-to-api")
 

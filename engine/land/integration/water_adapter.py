@@ -240,10 +240,7 @@ class WatershedIntegrator:
 
         # Runoff
         p = inp.precipitation_mm
-        if p <= ia_mm:
-            runoff_mm = 0.0
-        else:
-            runoff_mm = ((p - ia_mm) ** 2) / ((p - ia_mm) + s_mm)
+        runoff_mm = 0.0 if p <= ia_mm else (p - ia_mm) ** 2 / (p - ia_mm + s_mm)
 
         # Volume
         area_m2 = inp.area_ha * 10000.0

@@ -1,18 +1,17 @@
 """Alerting API Router."""
 
-from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.hub import hub
-from services.alerting.service import AlertService
 from services.alerting.schemas import (
-    AlertRuleCreate,
-    AlertRuleUpdate,
-    AlertRuleResponse,
     AlertResponse,
+    AlertRuleCreate,
+    AlertRuleResponse,
+    AlertRuleUpdate,
     AlertSummary,
 )
+from services.alerting.service import AlertService
 
 router = APIRouter(prefix="/api/v1/alerts", tags=["alerts"])
 
@@ -40,11 +39,11 @@ async def create_alert_rule(
     return await service.create_rule(data)
 
 
-@router.get("/rules", response_model=List[AlertRuleResponse])
+@router.get("/rules", response_model=list[AlertRuleResponse])
 async def list_alert_rules(
-    severity: Optional[str] = Query(None, description="Filter by severity"),
-    enabled: Optional[bool] = Query(None, description="Filter by enabled status"),
-    owner: Optional[str] = Query(None, description="Filter by owner"),
+    severity: str | None = Query(None, description="Filter by severity"),
+    enabled: bool | None = Query(None, description="Filter by enabled status"),
+    owner: str | None = Query(None, description="Filter by owner"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Page size"),
     service: AlertService = Depends(get_alert_service),
@@ -100,13 +99,13 @@ async def delete_alert_rule(
 # =============================================================================
 
 
-@router.get("", response_model=List[AlertResponse])
+@router.get("", response_model=list[AlertResponse])
 async def list_alerts(
-    status: Optional[str] = Query(
+    status: str | None = Query(
         None, description="Filter by status (firing, resolved, acknowledged, suppressed)"
     ),
-    severity: Optional[str] = Query(None, description="Filter by severity"),
-    rule_id: Optional[str] = Query(None, description="Filter by rule ID"),
+    severity: str | None = Query(None, description="Filter by severity"),
+    rule_id: str | None = Query(None, description="Filter by rule ID"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Page size"),
     service: AlertService = Depends(get_alert_service),
@@ -137,7 +136,7 @@ async def get_alert(
 async def acknowledge_alert(
     alert_id: str,
     user_id: str = Query(..., description="ID of user acknowledging"),
-    note: Optional[str] = Query(None, description="Acknowledgment note"),
+    note: str | None = Query(None, description="Acknowledgment note"),
     service: AlertService = Depends(get_alert_service),
 ):
     """Acknowledge an alert."""

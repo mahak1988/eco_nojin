@@ -1,37 +1,33 @@
 """Data Provenance Service - Core business logic for provenance tracking."""
 
-import uuid
 import hashlib
 import json
-from datetime import datetime, UTC
-from typing import Optional, List, Dict, Any, Set
-from contextlib import asynccontextmanager
+import uuid
+from datetime import UTC, datetime
+from typing import Any
 
-from sqlalchemy import select, func, and_, or_
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
-from database.hub import hub
-from services.provenance.models import ProvenanceRecord, ModelVersion, DataLineage, ProvenanceType
+from services.provenance.models import (
+    DataLineage as LineageModel,
+    ModelVersion as ModelVersionModel,
+    ProvenanceRecord as ProvenanceModel,
+    ProvenanceType as ProvenanceTypeEnum,
+)
 from services.provenance.schemas import (
-    ProvenanceCreate,
-    ProvenanceResponse,
-    ProvenanceListResponse,
+    LineageEdge,
+    LineageNode,
     LineageQuery,
     LineageResponse,
-    LineageNode,
-    LineageEdge,
     ModelVersionCreate,
     ModelVersionResponse,
+    ProvenanceCreate,
+    ProvenanceListResponse,
+    ProvenanceResponse,
     ProvenanceValidationRequest,
     ValidationResponse,
 )
-from services.provenance.models import (
-    ProvenanceRecord as ProvenanceModel,
-    ModelVersion as ModelVersionModel,
-    DataLineage as LineageModel,
-)
-from services.provenance.models import ProvenanceType as ProvenanceTypeEnum
 
 
 class ProvenanceService:
@@ -45,7 +41,7 @@ class ProvenanceService:
     # =========================================================================
 
     async def create_provenance(
-        self, data: ProvenanceCreate, user_id: Optional[str] = None
+        self, data: ProvenanceCreate, user_id: str | None = None
     ) -> ProvenanceResponse:
         """Create a new provenance record."""
         # Generate content hash for the output
@@ -56,14 +52,12 @@ class ProvenanceService:
             "model_version": data.model_version,
             "algorithm_parameters": data.algorithm_parameters,
         }
-        content_hash = hashlib.sha256(
-            json.dumps(output_content, sort_keys=True).encode()
-        ).hexdigest()
+        hashlib.sha256(json.dumps(output_content, sort_keys=True).encode()).hexdigest()
 
         # Parse execution_id or generate new
         execution_id = data.execution_id or str(uuid.uuid4())
 
-        record = ProvenanceModel(
+        ProvenanceModel(
             provenance_type=ProvenanceTypeEnum(data.provenance_type),
             output_id=data.output_id,
             output_type=data.output_type,
@@ -92,7 +86,7 @@ class ProvenanceService:
 
         return ProvenanceResponse.model_validate(data)
 
-    async def get_provenance(self, provenance_id: str) -> Optional[ProvenanceResponse]:
+    async def get_provenance(self, provenance_id: str) -> ProvenanceResponse | None:
         """Get a provenance record by ID."""
         result = await self.db.execute(
             select(ProvenanceModel).where(ProvenanceModel.id == provenance_id)
@@ -104,11 +98,11 @@ class ProvenanceService:
 
     async def list_provenance(
         self,
-        provenance_type: Optional[str] = None,
-        output_type: Optional[str] = None,
-        model_name: Optional[str] = None,
-        model_version: Optional[str] = None,
-        is_validated: Optional[bool] = None,
+        provenance_type: str | None = None,
+        output_type: str | None = None,
+        model_name: str | None = None,
+        model_version: str | None = None,
+        is_validated: bool | None = None,
         page: int = 1,
         page_size: int = 20,
     ) -> ProvenanceListResponse:
@@ -183,9 +177,9 @@ class ProvenanceService:
 
     async def get_lineage(self, query: LineageQuery) -> LineageResponse:
         """Traverse data lineage upstream/downstream."""
-        visited: Set[str] = set()
-        nodes: List[LineageNode] = []
-        edges: List[LineageEdge] = []
+        visited: set[str] = set()
+        nodes: list[LineageNode] = []
+        edges: list[LineageEdge] = []
 
         async def traverse_upstream(prov_id: str, depth: int):
             if depth > query.max_depth or prov_id in visited:
@@ -321,7 +315,7 @@ class ProvenanceService:
 
         return ModelVersionResponse.model_validate(record)
 
-    async def get_model_version(self, name: str, version: str) -> Optional[ModelVersionResponse]:
+    async def get_model_version(self, name: str, version: str) -> ModelVersionResponse | None:
         """Get a specific model version."""
         result = await self.db.execute(
             select(ModelVersionModel).where(
@@ -338,11 +332,11 @@ class ProvenanceService:
 
     async def list_model_versions(
         self,
-        name: Optional[str] = None,
-        is_active: Optional[bool] = None,
+        name: str | None = None,
+        is_active: bool | None = None,
         page: int = 1,
         page_size: int = 20,
-    ) -> List[ModelVersionResponse]:
+    ) -> list[ModelVersionResponse]:
         """List model versions with filters."""
         query = select(ModelVersionModel)
 
@@ -360,7 +354,7 @@ class ProvenanceService:
         return [ModelVersionResponse.model_validate(r) for r in records]
 
     async def deprecate_model_version(
-        self, name: str, version: str, reason: str, superseded_by_id: Optional[str] = None
+        self, name: str, version: str, reason: str, superseded_by_id: str | None = None
     ) -> ModelVersionResponse:
         """Deprecate a model version."""
         result = await self.db.execute(
@@ -396,10 +390,10 @@ class ProvenanceService:
         input_provenance_id: str,
         output_provenance_id: str,
         transformation_type: str,
-        transformation_params: Dict[str, Any],
-        transformation_code_version: Optional[str] = None,
-        data_quality_score: Optional[str] = None,
-        transformation_notes: Optional[str] = None,
+        transformation_params: dict[str, Any],
+        transformation_code_version: str | None = None,
+        data_quality_score: str | None = None,
+        transformation_notes: str | None = None,
     ) -> LineageModel:
         """Create a lineage edge between two provenance records."""
         # Verify both records exist
@@ -432,7 +426,7 @@ class ProvenanceService:
 
         return edge
 
-    async def get_lineage_edges(self, provenance_id: str) -> List[LineageModel]:
+    async def get_lineage_edges(self, provenance_id: str) -> list[LineageModel]:
         """Get all lineage edges for a provenance record."""
         result = await self.db.execute(
             select(LineageModel).where(

@@ -92,7 +92,7 @@ class AnalyticsService:
             )
 
             v = await self.db.execute(
-                select(func.count(LandscapeVillage.id)).where(LandscapeVillage.is_active == True)
+                select(func.count(LandscapeVillage.id)).where(LandscapeVillage.is_active)
             )
             m = await self.db.execute(select(func.count(LandscapeGovernanceMember.id)))
             f = await self.db.execute(

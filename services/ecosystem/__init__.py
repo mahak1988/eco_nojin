@@ -1,16 +1,15 @@
 """EcoCoin Ecosystem Services Package"""
 
-from .service import EcosystemService, Activity, ActivityType, VerificationStatus, ActivityEvidence
-from .trust_score import TrustScoreService, TrustEventType, TrustEvent
-from .service import EcosystemService
+from .service import Activity, ActivityEvidence, ActivityType, EcosystemService, VerificationStatus
+from .trust_score import TrustEvent, TrustEventType, TrustScoreService
 
 __all__ = [
-    "EcosystemService",
     "Activity",
-    "ActivityType",
-    "VerificationStatus",
     "ActivityEvidence",
-    "TrustScoreService",
-    "TrustEventType",
+    "ActivityType",
+    "EcosystemService",
     "TrustEvent",
+    "TrustEventType",
+    "TrustScoreService",
+    "VerificationStatus",
 ]

@@ -175,7 +175,7 @@ class RothCMotor(AbstractScientificMotor):
         total_co2 = xr.zeros_like(soil_water, dtype=np.float32)
         yearly_soc = []
 
-        for year in range(self.years):
+        for _year in range(self.years):
             # Decomposition: bounded by pool size
             dpm_loss = np.minimum(dpm * ROTHC_RATES["dpm"] * rate_modifier, dpm)
             rpm_loss = np.minimum(rpm * ROTHC_RATES["rpm"] * rate_modifier, rpm)
@@ -193,7 +193,7 @@ class RothCMotor(AbstractScientificMotor):
             rpm_to_bio = rpm_loss * 0.46
             rpm_to_hum = rpm_loss * 0.54
             bio_to_hum = bio_loss * 0.46
-            bio_to_co2 = bio_loss * 0.54
+            bio_loss * 0.54
             hum_to_bio = hum_loss * 0.46  # recirculation
 
             # Update pools with non-negative constraint

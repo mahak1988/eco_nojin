@@ -27,9 +27,13 @@ def main() -> int:
     ap.add_argument("--catalog", required=True, help="STAC API base URL")
     ap.add_argument("--source-id", default="stac_custom", help="Source identifier")
     ap.add_argument("--name", default="STAC Catalog", help="Human-readable name")
-    ap.add_argument("--collections", default="sentinel-2-l2a", help="Comma-separated collection IDs")
+    ap.add_argument(
+        "--collections", default="sentinel-2-l2a", help="Comma-separated collection IDs"
+    )
     ap.add_argument("--bbox", required=True, help="minx,miny,maxx,maxy")
-    ap.add_argument("--datetime", required=True, help="ISO-8601 datetime range, e.g. 2024-01-01/2024-12-31")
+    ap.add_argument(
+        "--datetime", required=True, help="ISO-8601 datetime range, e.g. 2024-01-01/2024-12-31"
+    )
     ap.add_argument("--limit", type=int, default=10, help="Max items to fetch")
     ap.add_argument("--out", default="data/raw/stac_items.json", help="Output JSON path")
     ap.add_argument("--cache-dir", default="data/cache/stac", help="Cache directory")

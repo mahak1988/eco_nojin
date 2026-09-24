@@ -11,40 +11,39 @@ from services.api_gateway.resilience.circuit_breaker import (
     CircuitBreakerConfig,
     CircuitBreakerOpenError,
     CircuitState,
-    get_circuit_breaker,
     get_all_circuit_breaker_stats,
+    get_circuit_breaker,
     reset_all_circuit_breakers,
 )
-
 from services.api_gateway.resilience.retry import (
-    RetryPolicy,
     RetryConfig,
+    RetryPolicy,
     create_retry_policy,
+    get_blockchain_retry_policy,
     get_cdse_retry_policy,
+    get_default_retry_policy,
     get_nasa_power_retry_policy,
     get_supabase_retry_policy,
-    get_blockchain_retry_policy,
-    get_default_retry_policy,
-    with_retry,
     with_cdse_retry,
+    with_retry,
 )
-
 from services.api_gateway.resilience.timeout import (
-    TimeoutManager,
     TimeoutConfig,
-    get_timeout_manager,
-    get_deadline,
-    set_deadline,
-    reset_deadline,
+    TimeoutManager,
+    call_with_timeout,
     deadline_context,
-    with_timeout,
+    get_blockchain_timeout,
     get_cdse_timeout,
+    get_deadline,
     get_nasa_power_timeout,
     get_supabase_timeout,
-    get_blockchain_timeout,
-    call_with_timeout,
+    get_timeout_manager,
+    reset_deadline,
+    set_deadline,
     timeout_decorator,
+    with_timeout,
 )
+
 
 # Unified resilience decorator
 def with_resilience(
@@ -52,7 +51,7 @@ def with_resilience(
     circuit_breaker: bool = True,
     retry: bool = True,
     timeout: bool = True,
-    fallback: Optional[Callable] = None,
+    fallback: Callable | None = None,
 ):
     """
     Unified decorator applying circuit breaker, retry, and timeout.
@@ -64,6 +63,7 @@ def with_resilience(
         timeout: Enable timeout
         fallback: Optional fallback function when all resilience mechanisms fail
     """
+
     def decorator(func: Callable) -> Callable:
         # Get resilience components for this service
         cb = get_circuit_breaker(service_name) if circuit_breaker else None
@@ -91,11 +91,12 @@ async def _execute_with_resilience(
     func: Callable,
     args: tuple,
     kwargs: dict,
-    circuit_breaker: Optional[CircuitBreaker],
-    retry_policy: Optional[RetryPolicy],
-    fallback: Optional[Callable],
+    circuit_breaker: CircuitBreaker | None,
+    retry_policy: RetryPolicy | None,
+    fallback: Callable | None,
 ) -> Any:
     """Execute function with circuit breaker and retry."""
+
     async def _call():
         if asyncio.iscoroutinefunction(func):
             return await func(*args, **kwargs)
@@ -123,7 +124,8 @@ async def _execute_with_resilience(
 # Import for use in _execute_with_resilience
 import asyncio
 import logging
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from typing import Any, Optional
 
 logger = logging.getLogger("econojin.resilience")
 
@@ -134,35 +136,35 @@ __all__ = [
     "CircuitBreakerConfig",
     "CircuitBreakerOpenError",
     "CircuitState",
-    "get_circuit_breaker",
-    "get_all_circuit_breaker_stats",
-    "reset_all_circuit_breakers",
+    "RetryConfig",
     # Retry
     "RetryPolicy",
-    "RetryConfig",
-    "create_retry_policy",
-    "get_cdse_retry_policy",
-    "get_nasa_power_retry_policy",
-    "get_supabase_retry_policy",
-    "get_blockchain_retry_policy",
-    "get_default_retry_policy",
-    "with_retry",
-    "with_cdse_retry",
+    "TimeoutConfig",
     # Timeout
     "TimeoutManager",
-    "TimeoutConfig",
-    "get_timeout_manager",
-    "get_deadline",
-    "set_deadline",
-    "reset_deadline",
-    "deadline_context",
-    "with_timeout",
-    "get_cdse_timeout",
-    "get_nasa_power_timeout",
-    "get_supabase_timeout",
-    "get_blockchain_timeout",
     "call_with_timeout",
+    "create_retry_policy",
+    "deadline_context",
+    "get_all_circuit_breaker_stats",
+    "get_blockchain_retry_policy",
+    "get_blockchain_timeout",
+    "get_cdse_retry_policy",
+    "get_cdse_timeout",
+    "get_circuit_breaker",
+    "get_deadline",
+    "get_default_retry_policy",
+    "get_nasa_power_retry_policy",
+    "get_nasa_power_timeout",
+    "get_supabase_retry_policy",
+    "get_supabase_timeout",
+    "get_timeout_manager",
+    "reset_all_circuit_breakers",
+    "reset_deadline",
+    "set_deadline",
     "timeout_decorator",
+    "with_cdse_retry",
     # Unified
     "with_resilience",
+    "with_retry",
+    "with_timeout",
 ]

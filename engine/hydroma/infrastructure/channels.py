@@ -49,7 +49,6 @@ def design_trapezoidal_channel(criteria: ChannelDesignCriteria) -> dict[str, Any
     n = criteria.Manning_n
     z = criteria.side_slope_horizontal
     b = criteria.bottom_width
-    V_max = criteria.max_velocity
     V_min = criteria.min_velocity
 
     # Estimate depth based on minimum velocity requirement
@@ -76,7 +75,7 @@ def design_trapezoidal_channel(criteria: ChannelDesignCriteria) -> dict[str, Any
         P = b + 2 * depth * math.sqrt(1 + z**2)
         R = A / P if P > 0 else 0
         Q_calc = calculate_open_channel_flow(A, R, S, n)
-        V_calc = Q_calc / A if A > 0 else 0
+        Q_calc / A if A > 0 else 0
 
         if abs(Q_calc - Q_des) < tolerance:
             break

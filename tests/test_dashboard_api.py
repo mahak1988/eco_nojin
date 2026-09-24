@@ -7,9 +7,8 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from services.api_gateway.main import app
 from database.config import SQLALCHEMY_DATABASE_URL
-
+from services.api_gateway.main import app
 
 # Create a test database session
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})

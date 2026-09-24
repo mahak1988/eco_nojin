@@ -2,12 +2,11 @@
 موتور محاسبه بهبودیافته با اعتبارسنجی علمی
 """
 
+import ast as _ast
 import math
-import re
-from typing import Dict, Any, Optional
-
-
-import ast as _ast, math as _math, operator as _operator
+import math as _math
+import operator as _operator
+from typing import Any
 
 _ALLOWED_FUNCS = {
     f: getattr(_math, f)
@@ -104,7 +103,7 @@ class ScientificCalculator:
             "e": math.e,
         }
 
-    def evaluate_formula(self, formula: str, variables: Dict[str, Any]) -> float:
+    def evaluate_formula(self, formula: str, variables: dict[str, Any]) -> float:
         """ارزیابی ایمن یک فرمول با متغیرهای داده‌شده"""
         try:
             # جایگزینی متغیرها
@@ -128,13 +127,13 @@ class ScientificCalculator:
             else:
                 return 0.0
 
-        except Exception as e:
+        except Exception:
             # در صورت خطا، از مقدار پیش‌فرض استفاده کن
             return 0.0
 
     def calculate_with_validation(
-        self, formula: str, variables: Dict[str, Any], threshold: Dict[str, float]
-    ) -> Dict[str, Any]:
+        self, formula: str, variables: dict[str, Any], threshold: dict[str, float]
+    ) -> dict[str, Any]:
         """محاسبه با اعتبارسنجی بر اساس محدوده"""
         value = self.evaluate_formula(formula, variables)
 

@@ -11,12 +11,13 @@ Measures:
   - Large data handling
 """
 
+import statistics
 import sys
 import time
-import statistics
-import pytest
-from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
+
+import pytest
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -45,7 +46,7 @@ class TestQueryLatency:
         p99 = sorted(latencies)[99]
         avg = statistics.mean(latencies)
 
-        print(f"\n  Simple query latency (100 iterations):")
+        print("\n  Simple query latency (100 iterations):")
         print(f"    avg:  {avg:.2f} ms")
         print(f"    p50:  {p50:.2f} ms")
         print(f"    p95:  {p95:.2f} ms")
@@ -65,7 +66,7 @@ class TestQueryLatency:
             try:
                 with benchmark_timer as t:
                     conn.execute("""
-                        SELECT 
+                        SELECT
                             COUNT(*) as total,
                             AVG(tmin_c) as avg_min,
                             MAX(tmax_c) as max_max
@@ -79,7 +80,7 @@ class TestQueryLatency:
             p50 = statistics.median(latencies)
             p95_idx = int(len(latencies) * 0.95)
             p95 = sorted(latencies)[p95_idx]
-            print(f"\n  Complex aggregation latency (50 iterations):")
+            print("\n  Complex aggregation latency (50 iterations):")
             print(f"    avg:  {statistics.mean(latencies):.2f} ms")
             print(f"    p50:  {p50:.2f} ms")
             print(f"    p95:  {p95:.2f} ms")
@@ -90,8 +91,9 @@ class TestThroughput:
 
     def test_sqlalchemy_session_throughput(self, benchmark_timer):
         """Measure session creation throughput."""
-        from database.hub import hub
         from sqlalchemy import text
+
+        from database.hub import hub
 
         count = 0
         start = time.perf_counter()
@@ -104,7 +106,7 @@ class TestThroughput:
         elapsed = time.perf_counter() - start
         ops_per_sec = count / elapsed
 
-        print(f"\n  SQLAlchemy session throughput:")
+        print("\n  SQLAlchemy session throughput:")
         print(f"    {ops_per_sec:.2f} ops/sec")
         print(f"    {elapsed * 1000 / count:.2f} ms/op")
 
@@ -130,7 +132,7 @@ class TestThroughput:
         elapsed = time.perf_counter() - start
         ops_per_sec = count / elapsed
 
-        print(f"\n  DuckDB query throughput:")
+        print("\n  DuckDB query throughput:")
         print(f"    {ops_per_sec:.2f} ops/sec")
         print(f"    {elapsed * 1000 / count:.2f} ms/op")
 
@@ -140,8 +142,9 @@ class TestConcurrentPerformance:
 
     def test_concurrent_sessions_throughput(self):
         """Measure concurrent session throughput."""
-        from database.hub import hub
         from sqlalchemy import text
+
+        from database.hub import hub
 
         def work(i):
             with hub.get_session() as session:
@@ -157,7 +160,7 @@ class TestConcurrentPerformance:
         elapsed = time.perf_counter() - start
         ops_per_sec = len(results) / elapsed
 
-        print(f"\n  Concurrent sessions (20 workers, 100 ops):")
+        print("\n  Concurrent sessions (20 workers, 100 ops):")
         print(f"    {ops_per_sec:.2f} ops/sec")
         print(f"    total: {elapsed:.2f} s")
 
@@ -185,7 +188,7 @@ class TestConcurrentPerformance:
         elapsed = time.perf_counter() - start
         ops_per_sec = len(results) / elapsed
 
-        print(f"\n  Concurrent DuckDB (20 workers, 100 ops):")
+        print("\n  Concurrent DuckDB (20 workers, 100 ops):")
         print(f"    {ops_per_sec:.2f} ops/sec")
         print(f"    total: {elapsed:.2f} s")
 
@@ -207,7 +210,7 @@ class TestLargeDataHandling:
             finally:
                 conn.close()
 
-        print(f"\n  Large result set (10000 rows):")
+        print("\n  Large result set (10000 rows):")
         print(f"    time: {t.elapsed * 1000:.2f} ms")
         print(f"    rows: {len(result)}")
         print(f"    throughput: {len(result) / t.elapsed:.0f} rows/sec")
@@ -227,7 +230,7 @@ class TestLargeDataHandling:
             finally:
                 conn.close()
 
-        print(f"\n  DataFrame conversion (1000 rows):")
+        print("\n  DataFrame conversion (1000 rows):")
         print(f"    time: {t.elapsed * 1000:.2f} ms")
         print(f"    rows: {len(df)}")
         print(f"    columns: {len(df.columns)}")

@@ -68,7 +68,9 @@ class TestContourTrenchFao:
             assert 5.0 <= d["vertical_interval_m"] <= 30.0
 
     def test_cross_section_geometry(self):
-        d = design_contour_trench(12.0, 20_000.0, depth_m=0.4, bottom_width_m=0.3, side_slope_hv=0.5)
+        d = design_contour_trench(
+            12.0, 20_000.0, depth_m=0.4, bottom_width_m=0.3, side_slope_hv=0.5
+        )
         # trapezoid: (0.3 + (0.3 + 2*0.5*0.4))/2 * 0.4 = 0.2 m2
         assert d["cross_section_m2"] == pytest.approx(0.2, abs=1e-6)
 
@@ -85,7 +87,9 @@ class TestContourTrenchFao:
 class TestDispatcher:
     def test_retention_years_reach_the_check_dam(self):
         a = design_watershed_structure("check_dam", 12.0, 50_000.0, 120.0, target_retention_years=5)
-        b = design_watershed_structure("check_dam", 12.0, 50_000.0, 120.0, target_retention_years=25)
+        b = design_watershed_structure(
+            "check_dam", 12.0, 50_000.0, 120.0, target_retention_years=25
+        )
         assert b["storage_required_m3"] > a["storage_required_m3"]
 
     def test_unknown_structure_rejected(self):

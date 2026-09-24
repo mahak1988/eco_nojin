@@ -3,16 +3,16 @@
 import pytest
 from fastapi.testclient import TestClient
 
+from database import models  # noqa: F401
 from database.base import Base
 from database.config import engine
-from tests.conftest import TEST_SESSION_FACTORY as SessionLocal
-from database import models  # noqa: F401
 from database.hub import hub as db_models
 from services.api_gateway.auth import hash_password
 from services.api_gateway.main import app
+from tests.conftest import TEST_SESSION_FACTORY as SessionLocal
 
 
-@pytest.fixture()
+@pytest.fixture
 def admin_client():
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
@@ -35,7 +35,7 @@ def admin_client():
     )
     assert r.status_code == 200
     client.headers.update({"Authorization": f"Bearer {r.json()['access_token']}"})
-    yield client
+    return client
 
 
 def _make(client, title="مقاله", body="متن مقاله"):
@@ -88,12 +88,12 @@ def test_schedule_and_cancel(admin_client):
     r = admin_client.post(f"/api/v1/admin/content/{item['id']}/schedule?at=2030-01-01T00:00:00Z")
     assert r.status_code == 200
     items = admin_client.get("/api/v1/admin/content").json()
-    scheduled = [i for i in items if i["id"] == item["id"]][0]
+    scheduled = next(i for i in items if i["id"] == item["id"])
     assert scheduled["scheduled_at"] is not None
     r2 = admin_client.post(f"/api/v1/admin/content/{item['id']}/cancel-schedule")
     assert r2.status_code == 200
     items = admin_client.get("/api/v1/admin/content").json()
-    cancelled = [i for i in items if i["id"] == item["id"]][0]
+    cancelled = next(i for i in items if i["id"] == item["id"])
     assert cancelled["scheduled_at"] is None
 
 
@@ -104,7 +104,7 @@ def test_schedule_rejects_bad_datetime(admin_client):
 
 
 def test_due_publisher_publishes_past_schedule(admin_client):
-    from datetime import datetime, timedelta, UTC
+    from datetime import UTC, datetime, timedelta
 
     item = _make(admin_client)
     db = SessionLocal()
@@ -119,7 +119,7 @@ def test_due_publisher_publishes_past_schedule(admin_client):
     db.close()
     assert item["id"] in ids
     items = admin_client.get("/api/v1/admin/content").json()
-    published = [i for i in items if i["id"] == item["id"]][0]
+    published = next(i for i in items if i["id"] == item["id"])
     assert published["status"] == "published"
     assert published["rag_synced"] is True
 

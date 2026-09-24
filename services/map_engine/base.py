@@ -5,7 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
@@ -14,7 +14,7 @@ import xarray as xr
 from shapely.geometry import Polygon
 
 
-class MapType(str, Enum):
+class MapType(StrEnum):
     """Supported map types."""
 
     M_TOP = "topographic"  # Base topographic map

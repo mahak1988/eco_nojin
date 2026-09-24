@@ -232,30 +232,38 @@ def _fetch_chirps_ncep(
 
     # Get CHIRPS precipitation
     bbox = [longitude - 0.25, latitude - 0.25, longitude + 0.25, latitude + 0.25]
-    chirps_assets = pipeline.fetch_data("chirps", {
-        "bbox": bbox,
-        "start_date": start,
-        "end_date": end,
-    })
+    chirps_assets = pipeline.fetch_data(
+        "chirps",
+        {
+            "bbox": bbox,
+            "start_date": start,
+            "end_date": end,
+        },
+    )
 
     if not chirps_assets:
         raise WeatherUnavailable("CHIRPS returned no data")
 
     # Get NCEP Reanalysis for temperature
     ncep_bbox = [longitude - 2.5, latitude - 2.5, longitude + 2.5, latitude + 2.5]
-    ncep_assets = pipeline.fetch_data("ncep_reanalysis", {
-        "bbox": ncep_bbox,
-        "variables": ["air"],
-        "start_date": start,
-        "end_date": end,
-    })
+    ncep_assets = pipeline.fetch_data(
+        "ncep_reanalysis",
+        {
+            "bbox": ncep_bbox,
+            "variables": ["air"],
+            "start_date": start,
+            "end_date": end,
+        },
+    )
 
     if not ncep_assets:
         raise WeatherUnavailable("NCEP Reanalysis returned no data")
 
     # For simplicity, return a basic dataframe structure
     # In production, this would properly merge CHIRPS precip with NCEP temps
-    raise WeatherUnavailable("CHIRPS/NCEP merger not fully implemented - use Open-Meteo or NASA POWER")
+    raise WeatherUnavailable(
+        "CHIRPS/NCEP merger not fully implemented - use Open-Meteo or NASA POWER"
+    )
 
 
 def _build_dataframe(dates, tmin, tmax, precip, latitude) -> pd.DataFrame:
@@ -267,13 +275,15 @@ def _build_dataframe(dates, tmin, tmax, precip, latitude) -> pd.DataFrame:
         max_c = float(tmax[i])
         pr = float(precip[i]) if i < len(precip) else 0.0
         et0 = hargreaves_et0(min_c, max_c, latitude, dt.timetuple().tm_yday)
-        rows.append({
-            "MinTemp": min_c,
-            "MaxTemp": max_c,
-            "Precipitation": pr,
-            "ReferenceET": round(et0, 2),
-            "Date": dt,
-        })
+        rows.append(
+            {
+                "MinTemp": min_c,
+                "MaxTemp": max_c,
+                "Precipitation": pr,
+                "ReferenceET": round(et0, 2),
+                "Date": dt,
+            }
+        )
     df = pd.DataFrame(rows, columns=WEATHER_COLUMNS)
     df["Date"] = pd.to_datetime(df["Date"])
     return df

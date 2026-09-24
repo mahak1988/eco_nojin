@@ -1,0 +1,167 @@
+# gitleaks configuration for Eco Nojin
+# Run: gitleaks detect --source . --config .gitleaks.toml --verbose
+
+[general]
+  title = "Eco Nojin gitleaks config"
+  exit_code = 1
+
+# Allowlist paths
+[allowlist]
+  paths = [
+    "*.md",
+    "*.txt",
+    "*.example",
+    "*.template",
+    ".gitignore",
+    "LICENSE",
+    "README*",
+    "CHANGELOG*",
+    "CONTRIBUTING*",
+    ".env.example",
+    ".env.template",
+    "contracts/.env.example",
+    "apps/web/.env.example",
+    "packages/**/*.json",
+    "tests/**/*.py",
+    "docs/**/*.md",
+  ]
+  regexes = [
+    # Allow example/placeholder values
+    '''(?i)(example|placeholder|your_|your-|change_me|changeme|dev-|test_|fake_|dummy_|sample_|xxx|yyy|zzz)''',
+    # Allow known safe patterns
+    '''(?i)sk-[a-zA-Z0-9]{32,}''',  # OpenAI-like keys in example files
+  ]
+
+# Custom rules for Eco Nojin specific patterns
+[[rules]]
+  id = "eco-nojin-private-key"
+  description = "Ethereum/Polygon private key"
+  regex = '''(?i)(PRIVATE_KEY|private_key)\s*[:=]\s*["']?(0x)?[a-fA-F0-9]{64}["']?'''
+  tags = ["key", "crypto"]
+  entropy = 4.5
+
+[[rules]]
+  id = "eco-nojin-jwt-secret"
+  description = "JWT Secret Key"
+  regex = '''(?i)(JWT_SECRET|SECRET_KEY|JWT_SECRET_KEY)\s*[:=]\s*["']?[a-zA-Z0-9\-_=]{32,}["']?'''
+  tags = ["key", "jwt"]
+  entropy = 4.0
+
+[[rules]]
+  id = "eco-nojin-groq-api-key"
+  description = "Groq API Key"
+  regex = '''(?i)(GROQ_API_KEY)\s*[:=]\s*["']?gsk_[a-zA-Z0-9]{32,}["']?'''
+  tags = ["key", "api", "groq"]
+  entropy = 4.5
+
+[[rules]]
+  id = "eco-nojin-openai-api-key"
+  description = "OpenAI API Key"
+  regex = '''(?i)(OPENAI_API_KEY)\s*[:=]\s*["']?sk-[a-zA-Z0-9]{48,}["']?'''
+  tags = ["key", "api", "openai"]
+  entropy = 4.5
+
+[[rules]]
+  id = "eco-nojin-jina-api-key"
+  description = "Jina AI API Key"
+  regex = '''(?i)(JINA_API_KEY)\s*[:=]\s*["']?jina_[a-zA-Z0-9]{32,}["']?'''
+  tags = ["key", "api", "jina"]
+  entropy = 4.5
+
+[[rules]]
+  id = "eco-nojin-qdrant-api-key"
+  description = "Qdrant API Key"
+  regex = '''(?i)(QDRANT_API_KEY)\s*[:=]\s*["']?[a-zA-Z0-9\-_]{20,}["']?'''
+  tags = ["key", "api", "qdrant"]
+  entropy = 4.0
+
+[[rules]]
+  id = "eco-nojin-supabase-key"
+  description = "Supabase Service Role Key"
+  regex = '''(?i)(SUPABASE_SERVICE_ROLE_KEY|SUPABASE_ANON_KEY)\s*[:=]\s*["']?eyJ[a-zA-Z0-9\-_]{20,}\.[a-zA-Z0-9\-_]{20,}\.[a-zA-Z0-9\-_]{20,}["']?'''
+  tags = ["key", "api", "supabase"]
+  entropy = 4.5
+
+[[rules]]
+  id = "eco-nojin-telegram-bot-token"
+  description = "Telegram Bot Token"
+  regex = '''(?i)(TELEGRAM_BOT_TOKEN|BOT_TOKEN)\s*[:=]\s*["']?[0-9]{8,10}:[a-zA-Z0-9\-_]{35}["']?'''
+  tags = ["key", "api", "telegram"]
+  entropy = 4.5
+
+[[rules]]
+  id = "eco-nojin-copernicus-credentials"
+  description = "Copernicus CDS/EWDS/ADS Credentials"
+  regex = '''(?i)(CDS_API_KEY|EWDS_API_KEY|ADS_API_KEY|CDSE_CLIENT_SECRET)\s*[:=]\s*["']?[a-zA-Z0-9\-_]{16,}["']?'''
+  tags = ["key", "api", "copernicus"]
+  entropy = 4.0
+
+[[rules]]
+  id = "eco-nojin-polygon-private-key"
+  description = "Polygon/Mumbai Private Key"
+  regex = '''(?i)(PRIVATE_KEY)\s*[:=]\s*["']?(0x)?[a-fA-F0-9]{64}["']?'''
+  tags = ["key", "crypto", "polygon"]
+  entropy = 4.5
+
+[[rules]]
+  id = "eco-nojin-alchemy-api-key"
+  description = "Alchemy API Key"
+  regex = '''(?i)(ALCHEMY_API_KEY)\s*[:=]\s*["']?[a-zA-Z0-9\-_]{32,}["']?'''
+  tags = ["key", "api", "alchemy"]
+  entropy = 4.0
+
+[[rules]]
+  id = "eco-nojin-polygonscan-api-key"
+  description = "Polygonscan API Key"
+  regex = '''(?i)(POLYGONSCAN_API_KEY)\s*[:=]\s*["']?[A-Z0-9]{30,}["']?'''
+  tags = ["key", "api", "polygonscan"]
+  entropy = 4.0
+
+[[rules]]
+  id = "eco-nojin-database-url"
+  description = "Database URL with credentials"
+  regex = '''(?i)(DATABASE_URL|POSTGRES_PASSWORD|POSTGRES_USER)\s*[:=]\s*["']?[a-zA-Z0-9\-_:@/.]{16,}["']?'''
+  tags = ["key", "database"]
+  entropy = 3.5
+
+[[rules]]
+  id = "eco-nojin-cloudflare-token"
+  description = "Cloudflare API Token"
+  regex = '''(?i)(CLOUDFLARE_API_TOKEN|CLOUDFLARE_R2_TOKEN)\s*[:=]\s*["']?[a-zA-Z0-9\-_]{32,}["']?'''
+  tags = ["key", "api", "cloudflare"]
+  entropy = 4.0
+
+[[rules]]
+  id = "eco-nojin-cohere-api-key"
+  description = "Cohere API Key"
+  regex = '''(?i)(COHERE_API_KEY)\s*[:=]\s*["']?[a-zA-Z0-9\-_]{32,}["']?'''
+  tags = ["key", "api", "cohere"]
+  entropy = 4.0
+
+[[rules]]
+  id = "eco-nojin-mistral-api-key"
+  description = "Mistral API Key"
+  regex = '''(?i)(MISTRAL_API_KEY)\s*[:=]\s*["']?[a-zA-Z0-9\-_]{32,}["']?'''
+  tags = ["key", "api", "mistral"]
+  entropy = 4.0
+
+[[rules]]
+  id = "eco-nojin-deepseek-api-key"
+  description = "DeepSeek API Key"
+  regex = '''(?i)(DEEPSEEK_API_KEY)\s*[:=]\s*["']?sk-[a-zA-Z0-9]{32,}["']?'''
+  tags = ["key", "api", "deepseek"]
+  entropy = 4.5
+
+[[rules]]
+  id = "eco-nojin-google-api-key"
+  description = "Google AI API Key"
+  regex = '''(?i)(GOOGLE_API_KEY)\s*[:=]\s*["']?[a-zA-Z0-9\-_]{32,}["']?'''
+  tags = ["key", "api", "google"]
+  entropy = 4.0
+
+[[rules]]
+  id = "eco-nojin-openrouter-api-key"
+  description = "OpenRouter API Key"
+  regex = '''(?i)(OPENROUTER_API_KEY)\s*[:=]\s*["']?sk-or-[a-zA-Z0-9\-_]{32,}["']?'''
+  tags = ["key", "api", "openrouter"]
+  entropy = 4.5

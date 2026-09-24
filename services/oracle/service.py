@@ -1,17 +1,14 @@
 """Impact Oracle Service - Multi-source verification for ecosystem restoration"""
 
 from __future__ import annotations
-import asyncio
-import hashlib
-import json
+
 import secrets
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
-from typing import Optional
 from enum import Enum
 
+from services.ecosystem.service import EcosystemService
 from services.privacy.vault import PrivacyVault
-from services.ecosystem.service import EcosystemService, Activity, VerificationStatus
 
 
 class DataSource(Enum):
@@ -92,7 +89,7 @@ class OracleService:
             raise ValueError("Confidence exceeds maximum")
 
         attestation_id = f"ATT-{secrets.token_hex(8)}"
-        attestation = {
+        {
             "attestation_id": attestation_id,
             "activity_id": activity_id,
             "node_id": node_id,
@@ -174,7 +171,7 @@ class OracleService:
             del self._challenges[activity_id]
         return True
 
-    async def finalize_impact_metrics(self, activity_id: str) -> Optional[dict]:
+    async def finalize_impact_metrics(self, activity_id: str) -> dict | None:
         """Finalize impact metrics after challenge window"""
         if activity_id not in self._pending_reports:
             return None

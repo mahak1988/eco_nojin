@@ -40,7 +40,7 @@
 ### 🔴 D1 — SCS-CN: اختلاط واحد اینچ/میلی‌متر ⇒ بیش‌برآورد ~۸ برابری رواناب
 **فایل:** `engine/hydroma/models/runoff_model.py:102-122`
 ```python
-s = (1000 / cn) - 10                 # ← فرم اینچی
+s = (1000 / cn) - 10  # ← فرم اینچی
 initial_abstraction = 0.2 * s
 runoff_depth_mm = (precipitation_mm - initial_abstraction) ** 2 / (precipitation_mm + 0.8 * s)
 ```
@@ -87,7 +87,7 @@ from engine.hydroma.cpp_bridge import hydroma_core
 ### 🟠 D6 — مدل آب زیرزمینی: ورودی `recharge_mm` هیچ اثری ندارد
 **فایل:** `engine/hydroma/groundwater/models.py:53`
 ```python
-recharge = max(inputs.soil_water_mm * inputs.rcoeff, 0.0)   # inputs.recharge_mm استفاده نمی‌شود
+recharge = max(inputs.soil_water_mm * inputs.rcoeff, 0.0)  # inputs.recharge_mm استفاده نمی‌شود
 ```
 - تست `test_zero_recharge_drains_storage` با `recharge_mm=0` انتظار تهی‌شدن مخزن دارد؛ اما مدل همیشه از `soil_water×rcoeff` شارژ می‌سازد ⇒ **پارامتر مرده/گمراه‌کننده**.
 - اصلاح: `recharge_mm` به‌عنوان شارژ صریح اولویت بگیرد و `soil_water×rcoeff` فقط به‌عنوان fallback (یا حذف فیلد از API).

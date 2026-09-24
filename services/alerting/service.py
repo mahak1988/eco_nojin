@@ -1,24 +1,15 @@
 """Alerting Service - Core business logic for alert management."""
 
-import uuid
-import hashlib
-import json
-from datetime import datetime, UTC, timedelta
-from typing import Optional, List, Dict, Any, Set
-from contextlib import asynccontextmanager
+from datetime import UTC, datetime, timedelta
+from typing import Any
 
-from sqlalchemy import select, func, and_, or_, desc
+from sqlalchemy import desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
-from database.hub import hub
-from services.alerting.models import AlertRule, Alert, AlertNotification
+from services.alerting.models import Alert, AlertRule
 from services.alerting.schemas import (
     AlertRuleCreate,
     AlertRuleUpdate,
-    AlertRuleResponse,
-    AlertResponse,
-    AlertSummary,
 )
 
 
@@ -33,8 +24,8 @@ class AlertService:
     # =========================================================================
 
     async def create_rule(
-        self, data: AlertRuleCreate, user_id: Optional[str] = None
-    ) -> Dict[str, Any]:
+        self, data: AlertRuleCreate, user_id: str | None = None
+    ) -> dict[str, Any]:
         """Create a new alert rule."""
         rule = AlertRule(
             name=data.name,
@@ -65,7 +56,7 @@ class AlertService:
 
         return self._rule_to_dict(rule)
 
-    async def get_rule(self, rule_id: str) -> Optional[Dict[str, Any]]:
+    async def get_rule(self, rule_id: str) -> dict[str, Any] | None:
         """Get an alert rule by ID."""
         result = await self.db.execute(select(AlertRule).where(AlertRule.id == rule_id))
         rule = result.scalar_one_or_none()
@@ -75,12 +66,12 @@ class AlertService:
 
     async def list_rules(
         self,
-        severity: Optional[str] = None,
-        enabled: Optional[bool] = None,
-        owner: Optional[str] = None,
+        severity: str | None = None,
+        enabled: bool | None = None,
+        owner: str | None = None,
         page: int = 1,
         page_size: int = 20,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """List alert rules with filters."""
         query = select(AlertRule)
 
@@ -99,7 +90,7 @@ class AlertService:
 
         return [self._rule_to_dict(r) for r in rules]
 
-    async def update_rule(self, rule_id: str, data: AlertRuleUpdate) -> Optional[Dict[str, Any]]:
+    async def update_rule(self, rule_id: str, data: AlertRuleUpdate) -> dict[str, Any] | None:
         """Update an alert rule."""
         rule = await self.get_rule(rule_id)
         if not rule:
@@ -165,7 +156,7 @@ class AlertService:
     # Alert Management
     # =========================================================================
 
-    async def get_alert(self, alert_id: str) -> Optional[Dict[str, Any]]:
+    async def get_alert(self, alert_id: str) -> dict[str, Any] | None:
         """Get an alert by ID."""
         result = await self.db.execute(select(Alert).where(Alert.id == alert_id))
         alert = result.scalar_one_or_none()
@@ -175,12 +166,12 @@ class AlertService:
 
     async def list_alerts(
         self,
-        status: Optional[str] = None,
-        severity: Optional[str] = None,
-        rule_id: Optional[str] = None,
+        status: str | None = None,
+        severity: str | None = None,
+        rule_id: str | None = None,
         page: int = 1,
         page_size: int = 20,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """List alerts with filters."""
         query = select(Alert)
 
@@ -199,9 +190,7 @@ class AlertService:
 
         return [self._alert_to_dict(a) for a in alerts]
 
-    async def acknowledge_alert(
-        self, alert_id: str, user_id: str, note: Optional[str] = None
-    ) -> bool:
+    async def acknowledge_alert(self, alert_id: str, user_id: str, note: str | None = None) -> bool:
         """Acknowledge an alert."""
         result = await self.db.execute(select(Alert).where(Alert.id == alert_id))
         alert = result.scalar_one_or_none()
@@ -249,15 +238,13 @@ class AlertService:
     # Summary & Stats
     # =========================================================================
 
-    async def get_summary(self) -> Dict[str, Any]:
+    async def get_summary(self) -> dict[str, Any]:
         """Get alert summary statistics."""
-        from sqlalchemy import func, case
 
         # Rule counts
         total_rules = await self.db.scalar(select(func.count(AlertRule.id))) or 0
         enabled_rules = (
-            await self.db.scalar(select(func.count(AlertRule.id)).where(AlertRule.enabled == True))
-            or 0
+            await self.db.scalar(select(func.count(AlertRule.id)).where(AlertRule.enabled)) or 0
         )
 
         # Alert counts by status
@@ -299,7 +286,7 @@ class AlertService:
     # Evaluation (called by background worker)
     # =========================================================================
 
-    async def evaluate_rules(self) -> Dict[str, int]:
+    async def evaluate_rules(self) -> dict[str, int]:
         """Evaluate all enabled rules and fire/resolve alerts.
 
         This should be called periodically by a background worker.
@@ -316,7 +303,7 @@ class AlertService:
     # Helpers
     # =========================================================================
 
-    def _rule_to_dict(self, rule: AlertRule) -> Dict[str, Any]:
+    def _rule_to_dict(self, rule: AlertRule) -> dict[str, Any]:
         return {
             "id": str(rule.id),
             "name": rule.name,
@@ -339,7 +326,7 @@ class AlertService:
             "updated_at": rule.updated_at,
         }
 
-    def _alert_to_dict(self, alert: Alert) -> Dict[str, Any]:
+    def _alert_to_dict(self, alert: Alert) -> dict[str, Any]:
         return {
             "id": str(alert.id),
             "rule_id": str(alert.rule_id),

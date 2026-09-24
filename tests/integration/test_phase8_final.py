@@ -1,6 +1,5 @@
 """Phase 8 finalization + Phase 9 kickoff tests."""
 
-import pytest
 from fastapi.testclient import TestClient
 
 from database.base import Base
@@ -99,7 +98,7 @@ class TestOracle:
         assert body["credits_issued"] > 0
 
     def test_oracle_ownership(self):
-        h, pid = self._verified_issued()
+        _h, pid = self._verified_issued()
         r = client.post(
             "/api/v1/auth/register",
             json={

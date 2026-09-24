@@ -143,17 +143,16 @@ def advise(query: str, metrics: dict[str, Any] | None = None) -> dict[str, Any]:
 
     # ۴) تطبیق با metrics
     metrics_context = ""
-    if metrics:
-        if "spi" in metrics and isinstance(metrics["spi"], (int, float)):
-            if metrics["spi"] < -0.5:
-                metrics_context = "با توجه به شرایط خشکسالی (SPI منفی)، "
-                evidence.append(
-                    {
-                        "source": "metrics",
-                        "type": "metric_alert",
-                        "content": "SPI=" + str(metrics["spi"]) + " - شرایط خشک",
-                    }
-                )
+    if metrics and "spi" in metrics and isinstance(metrics["spi"], (int, float)):
+        if metrics["spi"] < -0.5:
+            metrics_context = "با توجه به شرایط خشکسالی (SPI منفی)، "
+            evidence.append(
+                {
+                    "source": "metrics",
+                    "type": "metric_alert",
+                    "content": "SPI=" + str(metrics["spi"]) + " - شرایط خشک",
+                }
+            )
 
     # ۵) ساخت پاسخ نهایی
     answer = metrics_context + " ".join(answer_parts)

@@ -1,14 +1,13 @@
 """Scientific Validation API Router."""
 
 from fastapi import APIRouter, Query
-from typing import Optional
 
 router = APIRouter(prefix="/api/v1/hydroma/validation", tags=["validation"])
 
 
 @router.get("/run")
 async def run_validation(
-    check_id: Optional[str] = Query(None, description="Run specific check ID, or all if omitted"),
+    check_id: str | None = Query(None, description="Run specific check ID, or all if omitted"),
 ):
     """Run formula verification checks."""
     from services.validation.formula_checks import run_all
@@ -55,5 +54,5 @@ async def get_reference_data():
     if not path.exists():
         return {"error": "Reference data file not found"}
 
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)

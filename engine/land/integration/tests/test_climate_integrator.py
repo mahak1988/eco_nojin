@@ -156,14 +156,14 @@ class TestKoppenClassification:
     def test_koppen_classify_tropical(self, integrator):
         """Tropical latitudes should classify as A group"""
         monthly = integrator.generate_synthetic_monthly_climate(0.0, 0.0)
-        koppen, description = integrator.classify_koppen(monthly, 0.0)
+        koppen, _description = integrator.classify_koppen(monthly, 0.0)
         assert koppen is not None
         assert koppen.value.startswith("A") or koppen.value.startswith("B")
 
     def test_koppen_classify_arid(self, integrator):
         """Iran should classify as arid"""
         monthly = integrator.generate_synthetic_monthly_climate(32.65, 51.67)
-        koppen, description = integrator.classify_koppen(monthly, 32.65)
+        koppen, _description = integrator.classify_koppen(monthly, 32.65)
         assert koppen is not None
         # Arid climates start with B
         assert koppen.value.startswith("B") or koppen.value.startswith("C")
@@ -171,14 +171,14 @@ class TestKoppenClassification:
     def test_koppen_classify_temperate(self, integrator):
         """European latitudes should be C or D group"""
         monthly = integrator.generate_synthetic_monthly_climate(48.0, 2.0)
-        koppen, description = integrator.classify_koppen(monthly, 48.0)
+        koppen, _description = integrator.classify_koppen(monthly, 48.0)
         assert koppen is not None
         assert koppen.value[0] in ["C", "D"]
 
     def test_koppen_has_description(self, integrator):
         """Köppen should have a description"""
         monthly = integrator.generate_synthetic_monthly_climate(32.65, 51.67)
-        koppen, description = integrator.classify_koppen(monthly, 32.65)
+        _koppen, description = integrator.classify_koppen(monthly, 32.65)
         assert description is not None
         assert len(description) > 0
 
@@ -198,27 +198,27 @@ class TestAridityIndex:
 
     def test_arid(self, integrator):
         """AI 0.05-0.20 should be arid"""
-        ai, cls = integrator.calculate_aridity_index(200, 1500)
+        _ai, cls = integrator.calculate_aridity_index(200, 1500)
         assert cls == AridityClass.ARID
 
     def test_semi_arid(self, integrator):
         """AI 0.20-0.50 should be semi-arid"""
-        ai, cls = integrator.calculate_aridity_index(500, 1500)
+        _ai, cls = integrator.calculate_aridity_index(500, 1500)
         assert cls == AridityClass.SEMI_ARID
 
     def test_dry_subhumid(self, integrator):
         """AI 0.50-0.65 should be dry subhumid"""
-        ai, cls = integrator.calculate_aridity_index(800, 1500)
+        _ai, cls = integrator.calculate_aridity_index(800, 1500)
         assert cls == AridityClass.DRY_SUBHUMID
 
     def test_humid(self, integrator):
         """AI >= 0.65 should be humid"""
-        ai, cls = integrator.calculate_aridity_index(1200, 1500)
+        _ai, cls = integrator.calculate_aridity_index(1200, 1500)
         assert cls == AridityClass.HUMID
 
     def test_zero_et0_handled(self, integrator):
         """Zero ET0 should not crash"""
-        ai, cls = integrator.calculate_aridity_index(1000, 0)
+        _ai, cls = integrator.calculate_aridity_index(1000, 0)
         assert cls == AridityClass.HUMID
 
 
@@ -239,19 +239,19 @@ class TestGrowingSeason:
     def test_growing_season_tropical_long(self, integrator):
         """Tropical should have long growing season"""
         monthly = integrator.generate_synthetic_monthly_climate(0.0, 0.0)
-        growing, frost_free = integrator.calculate_growing_season(monthly)
+        growing, _frost_free = integrator.calculate_growing_season(monthly)
         assert growing > 300  # Almost year-round
 
     def test_growing_season_polar_short(self, integrator):
         """Polar should have short growing season"""
         monthly = integrator.generate_synthetic_monthly_climate(75.0, 0.0)
-        growing, frost_free = integrator.calculate_growing_season(monthly)
+        growing, _frost_free = integrator.calculate_growing_season(monthly)
         assert growing < 150  # Short summer
 
     def test_frost_free_leq_365(self, integrator):
         """Frost-free days should not exceed 365"""
         monthly = integrator.generate_synthetic_monthly_climate(32.65, 51.67)
-        growing, frost_free = integrator.calculate_growing_season(monthly)
+        _growing, frost_free = integrator.calculate_growing_season(monthly)
         assert frost_free <= 365
 
 
@@ -364,7 +364,7 @@ class TestKoppenDescriptions:
 
     def test_descriptions_not_empty(self):
         """Descriptions should not be empty"""
-        for koppen, desc in KOPPEN_DESCRIPTIONS.items():
+        for _koppen, desc in KOPPEN_DESCRIPTIONS.items():
             assert len(desc) > 0
 
 
@@ -381,7 +381,7 @@ class TestLatitudeClimateBands:
 
     def test_bands_have_required_fields(self):
         """Bands should have required fields"""
-        for name, band in LATITUDE_CLIMATE_BANDS.items():
+        for _name, band in LATITUDE_CLIMATE_BANDS.items():
             assert "lat_range" in band
             assert "koppen" in band
             assert "annual_precip" in band

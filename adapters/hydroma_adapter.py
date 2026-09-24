@@ -3,38 +3,44 @@
 import structlog
 
 logger = structlog.get_logger()
-from typing import Dict, Any
+from typing import Any
 
-from interfaces.hydroma_engine_interface import IHydromaEngine
 from engine.hydroma.models.results import (
     ClimateAnalysisResult,
     GroundwaterAnalysisResult,
     SoilAnalysisResult,
     WatershedAnalysisResult,
 )
+from interfaces.hydroma_engine_interface import IHydromaEngine
 
 try:
-    from engine.hydroma.soil.salinity import classify_salinity as hydroma_classify_salinity
     from engine.hydroma.climate.et_calculator import calc_et0_hargreaves
+    from engine.hydroma.soil.salinity import classify_salinity as hydroma_classify_salinity
     from engine.hydroma.watershed.watershed_calculator import (
         design_check_dam as hydroma_design_check_dam,
     )
 except ImportError as e:
     logger.warning(f"Warning: Could not import from engine.hydroma: {e}")
-    hydroma_classify_salinity = lambda x: {
-        "classification": "unknown",
-        "description": "",
-        "crop_recommendations": {},
-        "management": {},
-    }
-    calc_et0_hargreaves = lambda t_min, t_max, t_mean, ra_mj: 0.0
-    hydroma_design_check_dam = lambda slope_pct, area_m2, rainfall_mm: {"type": "not_implemented"}
+
+    def hydroma_classify_salinity(x):
+        return {
+            "classification": "unknown",
+            "description": "",
+            "crop_recommendations": {},
+            "management": {},
+        }
+
+    def calc_et0_hargreaves(t_min, t_max, t_mean, ra_mj):
+        return 0.0
+
+    def hydroma_design_check_dam(slope_pct, area_m2, rainfall_mm):
+        return {"type": "not_implemented"}
 
 
 class HydromaAdapter(IHydromaEngine):
     """Concrete adapter that uses the existing engine/hydroma modules."""
 
-    def analyze_soil(self, soil_data: Dict[str, Any]) -> SoilAnalysisResult:
+    def analyze_soil(self, soil_data: dict[str, Any]) -> SoilAnalysisResult:
         """Implements soil analysis by delegating to engine/hydroma."""
         ec = soil_data.get("ec", 0.0)
         result = hydroma_classify_salinity(ec)
@@ -47,7 +53,7 @@ class HydromaAdapter(IHydromaEngine):
             management=result.get("management", {}),
         )
 
-    def analyze_climate(self, climate_data: Dict[str, Any]) -> ClimateAnalysisResult:
+    def analyze_climate(self, climate_data: dict[str, Any]) -> ClimateAnalysisResult:
         """Implements climate analysis by delegating to engine/hydroma."""
         temp_mean = climate_data.get("temp_mean_c", 20.0)
         t_min = climate_data.get("t_min_c", temp_mean - 5)
@@ -70,7 +76,7 @@ class HydromaAdapter(IHydromaEngine):
             input_data={"slope_pct": slope_pct, "area_m2": area_m2, "rainfall_mm": rainfall_mm},
         )
 
-    def analyze_groundwater(self, gw_data: Dict[str, Any]) -> GroundwaterAnalysisResult:
+    def analyze_groundwater(self, gw_data: dict[str, Any]) -> GroundwaterAnalysisResult:
         """Implements groundwater analysis (placeholder)."""
         estimated_depth = gw_data.get("estimated_water_table_depth_m", 10.0)
         quality_class = "Fresh"

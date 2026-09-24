@@ -1,9 +1,11 @@
 """Unit tests for TopographyAnalyzer."""
 
-import pytest
 from unittest.mock import Mock, patch
-from engine.hydroma.analyses.topography_analysis import TopographyAnalyzer, TopographyInput
+
+import pytest
 from sqlalchemy.orm import Session
+
+from engine.hydroma.analyses.topography_analysis import TopographyAnalyzer, TopographyInput
 
 
 @pytest.fixture

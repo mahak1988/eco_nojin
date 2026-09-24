@@ -16,7 +16,6 @@ except ImportError:
 
 from .config import EventBusConfig
 
-
 logger = logging.getLogger(__name__)
 EventHandler = Callable[..., Awaitable[None] | None]
 
@@ -136,7 +135,7 @@ class EventConsumer:
     def jetstream(self) -> Any:
         return self._jetstream
 
-    async def connect(self) -> "EventConsumer":
+    async def connect(self) -> EventConsumer:
         """Connect to NATS and obtain a JetStream context."""
         if self._client is not None and not bool(getattr(self._client, "is_closed", False)):
             if self._jetstream is None:

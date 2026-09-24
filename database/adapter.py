@@ -63,7 +63,7 @@ class DuckDBAdapter(DatabaseAdapter):
             return self.conn.execute(query).fetchall()
 
         # DuckDB accepts list/tuple/dict for parameters
-        if isinstance(params, dict) or isinstance(params, (list, tuple)):
+        if isinstance(params, (dict, list, tuple)):
             return self.conn.execute(query, params).fetchall()
         else:
             return self.conn.execute(query, [params]).fetchall()

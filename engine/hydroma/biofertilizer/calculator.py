@@ -22,14 +22,14 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 
 import numpy as np
 
 logger = logging.getLogger(__name__)
 
 
-class StrainType(str, Enum):
+class StrainType(StrEnum):
     """Classification of biofertilizer strains."""
 
     NITROGEN_FIXING = "nitrogen_fixing"
@@ -40,7 +40,7 @@ class StrainType(str, Enum):
     MULTI_TRAIT = "multi_trait"
 
 
-class FormulationType(str, Enum):
+class FormulationType(StrEnum):
     """Types of biofertilizer formulations."""
 
     LIQUID = "liquid"
@@ -49,7 +49,7 @@ class FormulationType(str, Enum):
     SEED_COATING = "seed_coating"
 
 
-class ApplicationMethod(str, Enum):
+class ApplicationMethod(StrEnum):
     """Application methods for biofertilizers."""
 
     SOIL_APPLICATION = "soil_application"

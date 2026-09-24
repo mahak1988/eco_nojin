@@ -208,6 +208,7 @@ class IssueCreditsRequest(BaseModel):
             if not isinstance(m, dict) or "year" not in m or "soc_t_ha" not in m:
                 raise ValueError("each measurement must have 'year' and 'soc_t_ha'")
         return v
+
     # Optional: retained for callers that record who issued the credit.
     issued_by: str | None = None
 
@@ -236,6 +237,7 @@ class RetireRequest(BaseModel):
         if self.amount is not None and self.amount <= 0:
             raise ValueError("retire amount must be positive")
         return self
+
     # Optional legacy aliases.
     holder_id: str | None = None
     retirement_reason: str | None = None

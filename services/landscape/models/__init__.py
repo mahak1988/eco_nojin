@@ -6,7 +6,7 @@ import uuid
 
 from datetime import UTC, datetime, timezone
 from decimal import Decimal
-from enum import Enum
+from enum import Enum, StrEnum
 
 from sqlalchemy import JSON, Boolean, Column, Date, DateTime, Index, Integer, Numeric, String, Text
 from sqlalchemy.dialects.postgresql import UUID
@@ -14,7 +14,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from database.base import Base
 
 
-class LandscapeGovernanceRole(str, Enum):
+class LandscapeGovernanceRole(StrEnum):
     COUNCIL_MEMBER = "council_member"
     LANDSCAPE_MANAGER = "landscape_manager"
     MARKETPLACE_REP = "marketplace_rep"

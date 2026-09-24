@@ -1,0 +1,22 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/icon.svg/route": "app/icon.svg/route.js",
+  "/robots.txt/route": "app/robots.txt/route.js",
+  "/sitemap.xml/route": "app/sitemap.xml/route.js",
+  "/[locale]/about/page": "app/[locale]/about/page.js",
+  "/[locale]/ai/page": "app/[locale]/ai/page.js",
+  "/[locale]/accessibility/page": "app/[locale]/accessibility/page.js",
+  "/[locale]/evidence/page": "app/[locale]/evidence/page.js",
+  "/[locale]/developers/page": "app/[locale]/developers/page.js",
+  "/[locale]/hydroma/page": "app/[locale]/hydroma/page.js",
+  "/[locale]/learn/page": "app/[locale]/learn/page.js",
+  "/[locale]/home/page": "app/[locale]/home/page.js",
+  "/[locale]/legal/page": "app/[locale]/legal/page.js",
+  "/[locale]/market/page": "app/[locale]/market/page.js",
+  "/[locale]/page": "app/[locale]/page.js",
+  "/[locale]/platform/page": "app/[locale]/platform/page.js",
+  "/[locale]/services/page": "app/[locale]/services/page.js",
+  "/[locale]/statements/page": "app/[locale]/statements/page.js",
+  "/[locale]/trust/page": "app/[locale]/trust/page.js",
+  "/[locale]/status/page": "app/[locale]/status/page.js"
+}

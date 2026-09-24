@@ -26,7 +26,7 @@ class EventBusConfig:
     enabled: bool = True
 
     @classmethod
-    def from_settings(cls, settings: Any = None) -> "EventBusConfig":
+    def from_settings(cls, settings: Any = None) -> EventBusConfig:
         """Build configuration from the shared application settings."""
         if settings is None:
             from engine.hydroma.config.settings import get_settings
@@ -46,11 +46,7 @@ class EventBusConfig:
 
         servers_value = value("nats_servers", "") or value("nats_url", "nats://localhost:4222")
         if isinstance(servers_value, str):
-            servers = tuple(
-                server.strip()
-                for server in servers_value.split(",")
-                if server.strip()
-            )
+            servers = tuple(server.strip() for server in servers_value.split(",") if server.strip())
         else:
             servers = tuple(str(server).strip() for server in servers_value if str(server).strip())
 
@@ -65,7 +61,9 @@ class EventBusConfig:
             token=value("nats_token", "") or None,
             stream=value("nats_stream", "ECONOJIN"),
             subject_prefix=value("nats_subject_prefix", "econojin.events"),
-            durable_consumer=value("nats_durable_consumer", value("nats_durable", "econojin-workers")),
+            durable_consumer=value(
+                "nats_durable_consumer", value("nats_durable", "econojin-workers")
+            ),
             consumer_queue=value("nats_consumer_queue", value("nats_queue", "")),
             max_retries=max_retries,
             retry_base_delay=retry_base_delay,
@@ -75,7 +73,7 @@ class EventBusConfig:
         )
 
     @classmethod
-    def from_env(cls) -> "EventBusConfig":
+    def from_env(cls) -> EventBusConfig:
         """Build configuration from the current process environment."""
         return cls.from_settings()
 

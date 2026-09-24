@@ -68,7 +68,7 @@ class TestCppPythonParity:
     def test_rusle_is_exact_product(self):
         assert cpp_bridge.rusle_annual_soil_loss(1000.0, 0.4, 5.0, 0.3, 1.0) == pytest.approx(600.0)
 
-    @pytest.mark.parametrize("fn,args", PARITY_CASES)
+    @pytest.mark.parametrize(("fn", "args"), PARITY_CASES)
     def test_kernel_parity(self, fn, args):
         cpp_only = backend_status()["cpp_available"]
         if not cpp_only:

@@ -1,30 +1,28 @@
 """Database models for Backup/Restore Service."""
 
+import enum
 import uuid
-from datetime import datetime, UTC
-from typing import Optional
+from datetime import UTC, datetime
 
 from sqlalchemy import (
+    JSON,
+    BigInteger,
+    Boolean,
     Column,
-    String,
-    Text,
     DateTime,
     ForeignKey,
     Index,
-    Enum as SQLEnum,
-    JSON,
-    Boolean,
     Integer,
-    BigInteger,
+    String,
+    Text,
 )
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import relationship
 
 from database.base import Base
-import enum
 
 
-class BackupType(str, enum.Enum):
+class BackupType(enum.StrEnum):
     FULL = "full"
     INCREMENTAL = "incremental"
     DIFFERENTIAL = "differential"
@@ -32,7 +30,7 @@ class BackupType(str, enum.Enum):
     PHYSICAL = "physical"
 
 
-class BackupJobStatus(str, enum.Enum):
+class BackupJobStatus(enum.StrEnum):
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"
@@ -41,7 +39,7 @@ class BackupJobStatus(str, enum.Enum):
     EXPIRED = "expired"
 
 
-class RestoreStatus(str, enum.Enum):
+class RestoreStatus(enum.StrEnum):
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"

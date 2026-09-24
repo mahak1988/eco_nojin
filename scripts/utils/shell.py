@@ -11,7 +11,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import Optional, Tuple
+
 from . import console
 
 _CMD_RE = re.compile(r"^[a-zA-Z0-9_.-]+$")
@@ -19,11 +19,11 @@ _CMD_RE = re.compile(r"^[a-zA-Z0-9_.-]+$")
 
 def run(
     cmd: str,
-    cwd: Optional[Path] = None,
+    cwd: Path | None = None,
     check: bool = True,
     capture: bool = True,
     silent: bool = False,
-) -> Tuple[int, str, str]:
+) -> tuple[int, str, str]:
     """
     اجرای دستور shell.
 
@@ -75,7 +75,7 @@ def run(
 def command_exists(cmd: str) -> bool:
     """بررسی وجود یک دستور در سیستم"""
     if not _CMD_RE.match(cmd):
-        raise ValueError("Invalid command name: %r" % (cmd,))
+        raise ValueError(f"Invalid command name: {cmd!r}")
     if sys.platform == "win32":
         check_cmd = "where " + cmd
     else:

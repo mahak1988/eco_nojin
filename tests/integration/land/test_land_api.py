@@ -2,8 +2,8 @@
 
 import pytest
 from fastapi.testclient import TestClient
+
 from services.api_gateway.main import app
-import numpy as np
 
 
 @pytest.fixture

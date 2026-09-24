@@ -6,6 +6,7 @@ import structlog
 
 logger = structlog.get_logger()
 
+import contextlib
 import hashlib
 from pathlib import Path
 
@@ -169,10 +170,8 @@ class DEMFetcher(MapFetcher):
             dem = dem.squeeze()
 
         # Ensure spatial dims are set
-        try:
+        with contextlib.suppress(Exception):
             dem.rio.set_spatial_dims(x_dim="x", y_dim="y")
-        except Exception:
-            pass
 
         # Save
         dem.rio.to_raster(str(path), driver="GTiff", compress="lzw")

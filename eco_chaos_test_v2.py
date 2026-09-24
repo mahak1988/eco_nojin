@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 eco_chaos_test_v2.py
 ====================
@@ -13,30 +12,27 @@ Version: 2.0.0 - Hell Protocol
 Severity: MAXIMUM
 """
 
-import sys
-import os
+import asyncio
+import contextlib
 import gc
-import time
+import hashlib
+import json
 import random
 import string
-import threading
-import multiprocessing
-import traceback
-import statistics
-import hashlib
-import math
-import uuid
+import sys
 import tempfile
-import struct
-from pathlib import Path
-from typing import List, Dict, Any, Callable, Optional, Tuple
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
+import threading
+import time
+import traceback
+import uuid
+from collections.abc import Callable
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum, auto
-from contextlib import contextmanager
-import json
-import asyncio
+from pathlib import Path
+from typing import Any
+
 import structlog
 
 logger = structlog.get_logger()
@@ -156,12 +152,12 @@ class AttackResult:
     cpu_time_ms: float
     failure_type: str = ""
     failure_message: str = ""
-    resources_consumed: Dict = field(default_factory=dict)
+    resources_consumed: dict = field(default_factory=dict)
     stack_trace: str = ""
     breakpoint_hit: bool = False
     recovery_score: float = 0.0  # 0-1
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         return {
             "attack_name": self.attack_name,
             "protocol": self.protocol.value,
@@ -188,8 +184,8 @@ class VictimAssessment:
     survived: int = 0
     killed: int = 0
     total_time_ms: float = 0.0
-    memory_leaks: List[str] = field(default_factory=list)
-    critical_weaknesses: List[str] = field(default_factory=list)
+    memory_leaks: list[str] = field(default_factory=list)
+    critical_weaknesses: list[str] = field(default_factory=list)
     recovery_attempts: int = 0
     successful_recoveries: int = 0
     data_corruptions: int = 0
@@ -223,7 +219,7 @@ def banner(title: str, char: str = "="):
     logger.info("")
 
 
-def get_memory_info() -> Dict:
+def get_memory_info() -> dict:
     """گرفتن اطلاعات حافظه دقیق"""
     info = {
         "rss_mb": 0.0,
@@ -261,7 +257,7 @@ def get_memory_info() -> Dict:
     return info
 
 
-def generate_garbage(size_mb: float) -> List:
+def generate_garbage(size_mb: float) -> list:
     """تولید garbage برای تست"""
     garbage = []
     chunk_size = 1024 * 1024  # 1MB
@@ -282,7 +278,7 @@ def generate_unicode_bomb(length: int) -> str:
     return "".join(chars)
 
 
-def generate_sql_injection_payloads() -> List[str]:
+def generate_sql_injection_payloads() -> list[str]:
     """تولید payload های SQL injection"""
     return [
         "'; DROP TABLE users; --",
@@ -315,7 +311,7 @@ class ChaosOrchestrator:
     """هماهنگ‌کننده حملات آشوب"""
 
     def __init__(self):
-        self.results: List[AttackResult] = []
+        self.results: list[AttackResult] = []
         self.assessment = VictimAssessment()
         self.start_time = time.time()
 
@@ -607,7 +603,7 @@ class ChaosOrchestrator:
 
         return "\n".join(lines)
 
-    def _generate_recommendations(self) -> List[str]:
+    def _generate_recommendations(self) -> list[str]:
         """تولید توصیه‌های استحکام‌سازی"""
         recs = []
 
@@ -690,7 +686,7 @@ class MemoryTortureProtocol:
         from database.hub import hub
 
         sessions = []
-        for i in range(200):
+        for _i in range(200):
             try:
                 session = hub.get_session_factory()()
                 sessions.append(session)
@@ -775,9 +771,11 @@ class ThreadChaosProtocol:
     @staticmethod
     def attack_deadlock_scenario():
         """حمله: شبیه‌سازی deadlock"""
-        from database.hub import hub
-        from sqlalchemy import text
         import threading
+
+        from sqlalchemy import text
+
+        from database.hub import hub
 
         barrier = threading.Barrier(10)
         errors = []
@@ -807,15 +805,16 @@ class ThreadChaosProtocol:
     @staticmethod
     def attack_thread_starvation():
         """حمله: starvation با ایجاد thread های سنگین"""
-        from database.hub import hub
         from sqlalchemy import text
+
+        from database.hub import hub
 
         errors = []
 
         def heavy_worker(idx):
             try:
                 with hub.get_session() as session:
-                    for i in range(100):
+                    for _i in range(100):
                         session.execute(text("SELECT 1"))
             except Exception as e:
                 errors.append(str(e))
@@ -835,7 +834,6 @@ class ThreadChaosProtocol:
     @staticmethod
     def attack_race_condition_1000():
         """حمله: Race condition با 1000 thread"""
-        from database.hub import hub
 
         shared = {"counter": 0}
         errors = []
@@ -875,7 +873,7 @@ class ResourceStarvationProtocol:
     def attack_fd_exhaustion():
         """حمله: تخلیه file descriptors"""
         files = []
-        for i in range(500):
+        for _i in range(500):
             try:
                 f = tempfile.NamedTemporaryFile(delete=False)
                 f.write(b"x" * 1024)
@@ -902,8 +900,9 @@ class ResourceStarvationProtocol:
     @staticmethod
     def attack_thread_pool_saturation():
         """حمله: اشباع thread pool"""
-        from database.hub import hub
         from sqlalchemy import text
+
+        from database.hub import hub
 
         def blocking_operation():
             with hub.get_session() as session:
@@ -940,7 +939,7 @@ class DataPoisoningProtocol:
 
         for payload in payloads:
             try:
-                result = connector.execute_analytics_query(f"""
+                connector.execute_analytics_query(f"""
                     SELECT * FROM weather_daily WHERE site_id = '{payload}'
                 """)
                 errors.append(f"Payload executed: {payload[:30]}")
@@ -958,10 +957,10 @@ class DataPoisoningProtocol:
 
         errors = []
 
-        for i in range(20):
+        for _i in range(20):
             try:
                 unicode_str = generate_unicode_bomb(10000)
-                result = connector.execute_analytics_query(f"""
+                connector.execute_analytics_query(f"""
                     SELECT '{unicode_str}' as test
                 """)
             except Exception as e:
@@ -1028,8 +1027,9 @@ class CascadeFailureProtocol:
     @staticmethod
     def attack_timeout_cascade():
         """حمله: آبشار timeout"""
-        from database.hub import hub
         from sqlalchemy import text
+
+        from database.hub import hub
 
         def slow_query(delay):
             with hub.get_session() as session:
@@ -1183,8 +1183,9 @@ class TimingAttackProtocol:
     @staticmethod
     def attack_burst_requests():
         """حمله: درخواست‌های انفجاری"""
-        from database.hub import hub
         from sqlalchemy import text
+
+        from database.hub import hub
 
         start = time.perf_counter()
         results = []
@@ -1209,12 +1210,13 @@ class TimingAttackProtocol:
     @staticmethod
     def attack_slowloris():
         """حمله: Slowloris (باز نگه داشتن اتصالات)"""
-        from database.hub import hub
         from sqlalchemy import text
+
+        from database.hub import hub
 
         sessions = []
 
-        for i in range(80):
+        for _i in range(80):
             try:
                 session = hub.get_session_factory()()
                 session.connection()
@@ -1238,8 +1240,9 @@ class TimingAttackProtocol:
     @staticmethod
     def attack_concurrent_burst():
         """حمله: Burst همزمان"""
-        from database.hub import hub
         from sqlalchemy import text
+
+        from database.hub import hub
 
         def burst_worker(i):
             with hub.get_session() as session:
@@ -1269,8 +1272,9 @@ class ProcessIsolationProtocol:
     def _worker_function(args):
         """تابع worker برای multiprocessing"""
         try:
-            from database.hub import hub
             from sqlalchemy import text
+
+            from database.hub import hub
 
             with hub.get_session() as session:
                 for _ in range(10):
@@ -1316,9 +1320,9 @@ class DataHubChaosProtocol:
         sessions *and checking out connections* (via SELECT 1), then verify
         the pool correctly rejects the overflow request.
         """
-        from database.hub import hub
         from sqlalchemy import text
-        from sqlalchemy.pool import QueuePool
+
+        from database.hub import hub
 
         sessions = []
         errors = []
@@ -1331,7 +1335,7 @@ class DataHubChaosProtocol:
         max_overflow = pool._max_overflow
         total_pool = pool_size + max_overflow
 
-        for i in range(total_pool):
+        for _i in range(total_pool):
             session = hub.get_session_factory()()
             sessions.append(session)
             session.connection()
@@ -1345,10 +1349,8 @@ class DataHubChaosProtocol:
             errors.append(str(e))
 
         for s in sessions:
-            try:
+            with contextlib.suppress(Exception):
                 s.close()
-            except Exception:
-                pass
 
         if not errors:
             raise RuntimeError(
@@ -1359,8 +1361,9 @@ class DataHubChaosProtocol:
     @staticmethod
     def attack_concurrent_sessions_with_transactions():
         """حمله: همزمانی sessions با تراکنش‌های رقابتی."""
-        from database.hub import hub
         from sqlalchemy import text
+
+        from database.hub import hub
 
         errors = []
         results = []
@@ -1376,10 +1379,8 @@ class DataHubChaosProtocol:
         with ThreadPoolExecutor(max_workers=100) as executor:
             futures = [executor.submit(worker, i) for i in range(100)]
             for f in as_completed(futures, timeout=30):
-                try:
+                with contextlib.suppress(Exception):
                     f.result()
-                except Exception:
-                    pass
 
         if len(errors) > 50:
             raise RuntimeError(f"Concurrent sessions: {len(errors)}/100 failed")
@@ -1391,7 +1392,7 @@ class DataHubChaosProtocol:
         from database.hub import hub
 
         sessions = []
-        for i in range(300):
+        for _i in range(300):
             try:
                 session_factory = hub.get_session_factory()
                 session = session_factory()
@@ -1403,19 +1404,18 @@ class DataHubChaosProtocol:
         for s in sessions:
             if s.is_active:
                 leaked += 1
-            try:
+            with contextlib.suppress(Exception):
                 s.close()
-            except Exception:
-                pass
 
         return leaked
 
     @staticmethod
     def attack_transaction_rollback_stress():
         """حمله: فشار روی rollbackهای تراکنش."""
-        from database.hub import hub
         from sqlalchemy import text
         from sqlalchemy.exc import SQLAlchemyError
+
+        from database.hub import hub
 
         errors = []
 
@@ -1435,10 +1435,8 @@ class DataHubChaosProtocol:
         with ThreadPoolExecutor(max_workers=50) as executor:
             futures = [executor.submit(tx_worker, i) for i in range(50)]
             for f in as_completed(futures, timeout=30):
-                try:
+                with contextlib.suppress(Exception):
                     f.result()
-                except Exception:
-                    pass
 
         if len(errors) > 10:
             raise RuntimeError(f"Rollback stress: {len(errors)} unexpected errors")
@@ -1464,10 +1462,8 @@ class DataHubChaosProtocol:
         with ThreadPoolExecutor(max_workers=30) as executor:
             futures = [executor.submit(query_worker, i) for i in range(30)]
             for f in as_completed(futures, timeout=30):
-                try:
+                with contextlib.suppress(Exception):
                     f.result()
-                except Exception:
-                    pass
 
         if len(errors) > 15:
             raise RuntimeError(f"DuckDB concurrent: {len(errors)}/30 failed")
@@ -1685,7 +1681,6 @@ class EngineComputationalProtocol:
         from engine.hydroma.phenology import (
             PhenologyInput,
             run_phenology,
-            CROP_PHENOLOGY,
         )
 
         results = []
@@ -1725,10 +1720,10 @@ class EngineComputationalProtocol:
     def attack_wrapper_indices_extreme_reflectance():
         """حمله: مقادیر بازتاب افراطی به Wrapper (vegetation indices)."""
         from engine.hydroma.wrapper import (
-            compute_ndvi,
-            compute_evi,
-            compute_savi,
             compute_all_indices,
+            compute_evi,
+            compute_ndvi,
+            compute_savi,
         )
 
         results = []
@@ -1775,7 +1770,7 @@ class EngineComputationalProtocol:
     @staticmethod
     def attack_wrapper_soil_extreme_inputs():
         """حمله: داده‌های خاک افراطی به Wrapper."""
-        from engine.hydroma.wrapper import analyze_soil, compute_erosion, apply_scenario
+        from engine.hydroma.wrapper import analyze_soil, apply_scenario, compute_erosion
 
         results = []
         errors = []
@@ -1839,10 +1834,9 @@ class ServiceTransactionProtocol:
     @staticmethod
     def attack_carbon_credit_double_issuance():
         """حمله: صدور دوبله اعتبار کربن تحت همزمانی."""
+
+        from database.models import CarbonProject
         from services.carbon.service import CarbonService
-        from services.scientific_motors.carbon_mrv import CarbonMrvMotor
-        from database.models import CarbonProject, CarbonCredit
-        from sqlalchemy import text
 
         errors = []
         duplicate_credits = []
@@ -1903,12 +1897,10 @@ class ServiceTransactionProtocol:
         with ThreadPoolExecutor(max_workers=5) as executor:
             futures = [executor.submit(issue_worker, p) for p in payloads]
             for f in as_completed(futures, timeout=30):
-                try:
+                with contextlib.suppress(Exception):
                     f.result()
-                except Exception:
-                    pass
 
-        unique_credits = set(c for c in credit_ids if c)
+        unique_credits = {c for c in credit_ids if c}
         if len(unique_credits) > 1:
             duplicate_credits.append(
                 f"Double issuance detected: {len(unique_credits)} unique credits from 5 concurrent requests"
@@ -1923,11 +1915,11 @@ class ServiceTransactionProtocol:
     @staticmethod
     def attack_wallet_balance_race_condition():
         """حمله: Race condition در موجودی Wallet."""
-        from services.ecowallet.service import earn, redeem, get_or_create_wallet, wallet_state
-        from database.models import EcoWallet
         from sqlalchemy import create_engine
-        from sqlalchemy.pool import StaticPool
         from sqlalchemy.orm import sessionmaker
+        from sqlalchemy.pool import StaticPool
+
+        from services.ecowallet.service import earn, wallet_state
 
         engine = create_engine(
             "sqlite:///:memory:",
@@ -1945,7 +1937,7 @@ class ServiceTransactionProtocol:
             try:
                 db = SessionFactory()
                 try:
-                    amount, balance = earn(db, user_id, "tree_planting", 1.0)
+                    amount, _balance = earn(db, user_id, "tree_planting", 1.0)
                     earnings.append(amount)
                     db.commit()
                 except Exception as e:
@@ -1959,10 +1951,8 @@ class ServiceTransactionProtocol:
         with ThreadPoolExecutor(max_workers=20) as executor:
             futures = [executor.submit(earn_worker) for _ in range(20)]
             for f in as_completed(futures, timeout=15):
-                try:
+                with contextlib.suppress(Exception):
                     f.result()
-                except Exception:
-                    pass
 
         expected_balance = sum(earnings)
         db = SessionFactory()
@@ -1984,10 +1974,11 @@ class ServiceTransactionProtocol:
     @staticmethod
     def attack_wallet_concurrent_redeem():
         """حمله: برداشت همزمان از Wallet با موجودی محدود."""
-        from services.ecowallet.service import earn, redeem, wallet_state
         from sqlalchemy import create_engine
-        from sqlalchemy.pool import StaticPool
         from sqlalchemy.orm import sessionmaker
+        from sqlalchemy.pool import StaticPool
+
+        from services.ecowallet.service import earn, redeem, wallet_state
 
         engine = create_engine(
             "sqlite:///:memory:",
@@ -2012,7 +2003,7 @@ class ServiceTransactionProtocol:
             try:
                 db = SessionFactory()
                 try:
-                    amount, balance = redeem(db, user_id, 20.0)
+                    amount, _balance = redeem(db, user_id, 20.0)
                     redemptions.append(amount)
                     db.commit()
                 except Exception as e:
@@ -2026,10 +2017,8 @@ class ServiceTransactionProtocol:
         with ThreadPoolExecutor(max_workers=20) as executor:
             futures = [executor.submit(redeem_worker) for _ in range(20)]
             for f in as_completed(futures, timeout=15):
-                try:
+                with contextlib.suppress(Exception):
                     f.result()
-                except Exception:
-                    pass
 
         db = SessionFactory()
         try:
@@ -2049,15 +2038,16 @@ class ServiceTransactionProtocol:
     @staticmethod
     def attack_simulation_concurrent_runs():
         """حمله: اجراي همزمان چند شبیه‌ساز."""
-        from services.simulation.service import SimulationService
+        from datetime import date
+
         from services.simulation.schemas import (
+            CropParameters,
             SimulationContext,
             SimulationType,
-            WeatherData,
             SoilProfile,
-            CropParameters,
+            WeatherData,
         )
-        from datetime import date
+        from services.simulation.service import SimulationService
 
         errors = []
         results = []
@@ -2087,10 +2077,8 @@ class ServiceTransactionProtocol:
         with ThreadPoolExecutor(max_workers=10) as executor:
             futures = [executor.submit(run_worker, i) for i in range(10)]
             for f in as_completed(futures, timeout=30):
-                try:
+                with contextlib.suppress(Exception):
                     f.result()
-                except Exception:
-                    pass
 
         if len(errors) > 7:
             raise RuntimeError(f"Simulation concurrent: {len(errors)}/10 failed")
@@ -2112,7 +2100,7 @@ class SecurityIntegrityProtocol:
     @staticmethod
     def attack_query_safe_identifier_bypass():
         """حمله: دور زدن از اعتبارسنجی شناسه SQL."""
-        from services.security.query_safe import _safe_ident, build_where_clause
+        from services.security.query_safe import _safe_ident
 
         bypass_payloads = [
             "weather_daily; DROP TABLE users--",
@@ -2132,7 +2120,7 @@ class SecurityIntegrityProtocol:
 
         for payload in bypass_payloads:
             try:
-                result = _safe_ident(payload)
+                _safe_ident(payload)
                 passed += 1
             except ValueError:
                 blocked += 1
@@ -2161,7 +2149,7 @@ class SecurityIntegrityProtocol:
 
         for conditions in injection_conditions:
             try:
-                clause, params = build_where_clause(conditions)
+                clause, _params = build_where_clause(conditions)
                 if ";" in clause or "DROP" in clause.upper() or "UNION" in clause.upper():
                     leaked += 1
                 else:
@@ -2192,7 +2180,7 @@ class SecurityIntegrityProtocol:
         for payload in payloads:
             query = f"SELECT * FROM weather_daily WHERE site_id = '{payload}'"
             try:
-                result = connector.execute_analytics_query(query)
+                connector.execute_analytics_query(query)
                 executed += 1
             except (ValueError, Exception):
                 blocked += 1
@@ -2221,7 +2209,7 @@ class SecurityIntegrityProtocol:
 
         for query in non_whitelisted:
             try:
-                result = connector.execute_analytics_query(query)
+                connector.execute_analytics_query(query)
                 accessed += 1
             except (ValueError, Exception):
                 blocked += 1
@@ -2270,8 +2258,8 @@ class SecurityIntegrityProtocol:
         allowed = 0
         blocked = 0
 
-        for i in range(200):
-            ok, retry = rate_limiter.check("10.0.0.1", "/api/test", None)
+        for _i in range(200):
+            ok, _retry = rate_limiter.check("10.0.0.1", "/api/test", None)
             if ok:
                 allowed += 1
             else:
@@ -2299,7 +2287,7 @@ class ExternalResilienceProtocol:
     @staticmethod
     def attack_climate_motor_api_failure():
         """حمله: شکست API اکسترنال در Climate Motor."""
-        from services.scientific_motors.climate_motor import run_climate, SCENARIOS
+        from services.scientific_motors.climate_motor import SCENARIOS, run_climate
 
         scenarios = list(SCENARIOS)
         results = []
@@ -2398,7 +2386,6 @@ class CachePipelineProtocol:
     @staticmethod
     def attack_cache_key_collision():
         """حمله: برخورد کلیدهای کش."""
-        import hashlib
         from engine.hydroma.wrapper import get_capabilities
 
         cap = get_capabilities()
@@ -2425,23 +2412,20 @@ class CachePipelineProtocol:
             results.append(len(cache_files))
         finally:
             for f in cache_files:
-                try:
+                with contextlib.suppress(Exception):
                     f.unlink()
-                except Exception:
-                    pass
-            try:
+            with contextlib.suppress(Exception):
                 cache_dir.rmdir()
-            except Exception:
-                pass
 
         return results
 
     @staticmethod
     def attack_map_orchestrator_registry():
         """حمله: ثبت pipeline های نامعتبر در MapOrchestrator."""
-        from services.map_engine.orchestrator import MapOrchestrator
-        from services.map_engine.base import MapType, MapPipeline, MapRequest, MapResult
         from pathlib import Path
+
+        from services.map_engine.base import MapType
+        from services.map_engine.orchestrator import MapOrchestrator
 
         cache_dir = Path(tempfile.mkdtemp())
         try:
@@ -2484,17 +2468,16 @@ class CachePipelineProtocol:
         finally:
             import shutil
 
-            try:
+            with contextlib.suppress(Exception):
                 shutil.rmtree(str(cache_dir))
-            except Exception:
-                pass
 
     @staticmethod
     def attack_smart_map_generator_extreme_arrays():
         """حمله: آرایه‌های افراطی به SmartMapGenerator."""
-        from services.map_engine.smart_mapper import SmartMapGenerator
         import numpy as np
         import xarray as xr
+
+        from services.map_engine.smart_mapper import SmartMapGenerator
 
         errors = []
         results = []
@@ -2502,7 +2485,7 @@ class CachePipelineProtocol:
         try:
             red = xr.DataArray(np.array([[0.0, 0.1], [0.2, 0.3]]))
             nir = xr.DataArray(np.array([[0.1, float("inf")], [float("nan"), 0.5]]))
-            result = SmartMapGenerator.calculate_ndvi(red, nir)
+            SmartMapGenerator.calculate_ndvi(red, nir)
             results.append("ndvi_ok")
         except Exception as e:
             errors.append(f"ndvi_extreme: {e}")
@@ -2510,14 +2493,14 @@ class CachePipelineProtocol:
         try:
             red = xr.DataArray(np.array([[0.0, 0.1], [0.2, 0.3]]))
             nir = xr.DataArray(np.array([[0.1, 0.1], [0.2, 0.3]]))
-            health = SmartMapGenerator.classify_vegetation_health(red)
+            SmartMapGenerator.classify_vegetation_health(red)
             results.append("classification_ok")
         except Exception as e:
             errors.append(f"classification: {e}")
 
         try:
             ndvi = xr.DataArray(np.array([[0.5, 0.3], [0.1, 0.8]]))
-            biomass = SmartMapGenerator.estimate_biomass(ndvi, "unknown_crop")
+            SmartMapGenerator.estimate_biomass(ndvi, "unknown_crop")
             results.append("biomass_unknown_crop_ok")
         except Exception as e:
             errors.append(f"biomass_unknown: {e}")
@@ -2534,7 +2517,7 @@ class CachePipelineProtocol:
         try:
             sm = xr.DataArray(np.array([[0.3, 0.2], [0.1, 0.35]]))
             etc = xr.DataArray(np.array([[5.0, 3.0], [4.0, 6.0]]))
-            rec = SmartMapGenerator.generate_irrigation_recommendation(sm, etc)
+            SmartMapGenerator.generate_irrigation_recommendation(sm, etc)
             results.append("irrigation_rec_ok")
         except Exception as e:
             errors.append(f"irrigation_rec: {e}")
@@ -2546,8 +2529,9 @@ class CachePipelineProtocol:
     @staticmethod
     def attack_cache_corruption_and_recovery():
         """حمله: فساد کش و بازیابی."""
-        from services.map_engine.orchestrator import MapOrchestrator
         from pathlib import Path
+
+        from services.map_engine.orchestrator import MapOrchestrator
 
         cache_dir = Path(tempfile.mkdtemp())
         try:
@@ -2557,7 +2541,7 @@ class CachePipelineProtocol:
             cache_file.write_text('{"invalid json{{', encoding="utf-8")
 
             cached = None
-            try:
+            with contextlib.suppress(Exception):
                 cached = asyncio.run(
                     orch._check_cache(
                         MapRequest(
@@ -2571,20 +2555,15 @@ class CachePipelineProtocol:
                         )
                     )
                 )
-            except Exception:
-                pass
 
-            if cached is None:
-                recovered = True
-            else:
-                recovered = cached is not None
+            recovered = True if cached is None else cached is not None
 
             files_before = list(cache_dir.glob("*.json"))
             for f in files_before:
                 if "corrupt" in f.name:
                     f.write_text('{"broken"', encoding="utf-8")
 
-            try:
+            with contextlib.suppress(Exception):
                 asyncio.run(
                     orch._check_cache(
                         MapRequest(
@@ -2598,17 +2577,13 @@ class CachePipelineProtocol:
                         )
                     )
                 )
-            except Exception:
-                pass
 
             return 1 if recovered else 0
         finally:
             import shutil
 
-            try:
+            with contextlib.suppress(Exception):
                 shutil.rmtree(str(cache_dir))
-            except Exception:
-                pass
 
 
 # ============================================================================
@@ -2651,16 +2626,8 @@ def _temp_sqlite_session():
     """
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
+
     from database.base import Base
-    from database.models import (
-        CarbonCredit,
-        CarbonEvent,
-        CarbonProject,
-        CreditAuditLog,
-        EcoWallet,
-        IdempotencyKey,
-        User,
-    )
 
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
 

@@ -37,6 +37,8 @@ from engine.hydroma.config.settings import get_settings
 
 # Module-level settings handle used by the refresh-token expiry logic.
 _settings = get_settings()
+import contextlib
+
 from services.api_gateway.auth import (
     clear_auth_cookies,
     create_access_token,
@@ -44,11 +46,10 @@ from services.api_gateway.auth import (
     decode_refresh_token,
     get_current_user,
     hash_password,
+    is_refresh_token_revoked,
     role_of,
     set_auth_cookies,
     verify_password,
-    store_refresh_token,
-    is_refresh_token_revoked,
 )
 from services.api_gateway.eventbus import publish_user_event
 
@@ -78,7 +79,7 @@ async def _write_auth_audit(
     result: str,
     ip_address: str = "unknown",
     user_agent: str = "unknown",
-    actor_id: str = None,
+    actor_id: str | None = None,
 ):
     """Persist authentication events to AuditLog table."""
     try:
@@ -95,10 +96,8 @@ async def _write_auth_audit(
         await db.commit()
     except Exception as e:
         logger.error(f"[AUDIT ERROR] {e}")
-        try:
+        with contextlib.suppress(Exception):
             await db.rollback()
-        except Exception:
-            pass
 
 
 # ============================================================================
@@ -290,7 +289,7 @@ async def register(
 
     # Publish user_registered event to NATS
     try:
-        request_id = request.headers.get("X-Request-ID") if 'request' in locals() else None
+        request_id = request.headers.get("X-Request-ID") if "request" in locals() else None
         await publish_user_event(
             "registered",
             str(user.id),
@@ -450,7 +449,7 @@ async def forgot_password(
     # Invalidate old tokens
     await db.execute(
         update(PasswordResetToken)
-        .where(PasswordResetToken.user_id == user.id, PasswordResetToken.used == False)
+        .where(PasswordResetToken.user_id == user.id, not PasswordResetToken.used)
         .values(used=True)
     )
 
@@ -802,7 +801,7 @@ async def list_oauth_connections(
     result = await db.execute(
         select(OAuthConnection).where(
             OAuthConnection.user_id == current_user.id,
-            OAuthConnection.revoked == False if hasattr(OAuthConnection, "revoked") else None,
+            not OAuthConnection.revoked if hasattr(OAuthConnection, "revoked") else None,
         )
     )
     connections = result.scalars().all()
@@ -895,7 +894,7 @@ async def list_api_keys(
     result = await db.execute(
         select(ApiKey).where(
             ApiKey.user_id == current_user.id,
-            ApiKey.revoked == False,
+            not ApiKey.revoked,
         )
     )
     keys = result.scalars().all()
@@ -1366,7 +1365,7 @@ async def get_assets(
 
     # API keys
     api_result = await db.execute(
-        select(ApiKey).where(ApiKey.user_id == current_user.id, ApiKey.revoked == False)
+        select(ApiKey).where(ApiKey.user_id == current_user.id, not ApiKey.revoked)
     )
     api_keys = api_result.scalars().all()
 
@@ -1686,10 +1685,8 @@ async def get_public_profile(
     bio_setting = await db.execute(select(Setting).where(Setting.key == "profile_bio"))
     bio_row = bio_setting.scalar_one_or_none()
     if bio_row and bio_row.value:
-        try:
+        with contextlib.suppress(json.JSONDecodeError, TypeError):
             bio_data = json.loads(bio_row.value)
-        except (json.JSONDecodeError, TypeError):
-            pass
 
     return {
         "status": "success",

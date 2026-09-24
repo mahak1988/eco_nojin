@@ -1,14 +1,13 @@
-# -*- coding: utf-8 -*-
 # ============================================================================
 # Hydroma Uncertainty Quantification & Local Knowledge Engine - Phase 5
 # Algorithms: H22 Monte Carlo Uncertainty | H23 Multi-scale Data Fusion
 #             H25 Local Knowledge Integration
 # References: IPCC AR6 WG1 (2021); Altieri 2018; FAO Participatory Methods
 # ============================================================================
+import contextlib
 import math
 import random
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
 
 __version__ = "1.0.0"
 
@@ -17,17 +16,17 @@ __version__ = "1.0.0"
 class UncertaintyConfig:
     # H22: مونت‌کارلو
     default_simulations: int = 500
-    random_seed: Optional[int] = 42
+    random_seed: int | None = 42
 
     # H23: تلفیق داده
-    fusion_weights: Dict = field(
+    fusion_weights: dict = field(
         default_factory=lambda: {"satellite": 0.40, "station": 0.35, "model": 0.15, "local": 0.10}
     )
     satellite_resolution_m: int = 30
     station_radius_km: float = 50.0
 
     # H25: دانش بومی
-    knowledge_confidence_weights: Dict = field(
+    knowledge_confidence_weights: dict = field(
         default_factory=lambda: {
             "experience_years": 0.30,
             "consistency": 0.25,
@@ -41,7 +40,7 @@ class UncertaintyConfig:
 # ============================================================================
 class UncertaintyAndKnowledgeEngine:
     # ------------------------------------------------------------------ init
-    def __init__(self, config: Optional[UncertaintyConfig] = None):
+    def __init__(self, config: UncertaintyConfig | None = None):
         self.cfg = config or UncertaintyConfig()
         if self.cfg.random_seed is not None:
             random.seed(self.cfg.random_seed)
@@ -50,11 +49,11 @@ class UncertaintyAndKnowledgeEngine:
     def h22_monte_carlo_uncertainty(
         self,
         base_yield_t_ha: float,
-        n_simulations: Optional[int] = None,
+        n_simulations: int | None = None,
         climate_variability: float = 0.15,
         soil_variability: float = 0.10,
         pest_variability: float = 0.08,
-    ) -> Dict:
+    ) -> dict:
         """
         تحلیل عدم قطعیت مونت‌کارلو (Monte Carlo Uncertainty Analysis)
         اجرای شبیه‌سازی با پارامترهای تصادفی و محاسبه بازه اطمینان
@@ -129,10 +128,10 @@ class UncertaintyAndKnowledgeEngine:
         satellite_value: float,
         station_value: float,
         model_value: float,
-        local_value: Optional[float] = None,
+        local_value: float | None = None,
         satellite_quality: float = 0.8,
         station_density: float = 0.7,
-    ) -> Dict:
+    ) -> dict:
         """
         تلفیق داده چندمقیاسی (Multi-scale Data Fusion)
         ترکیب داده‌های ماهواره‌ای، ایستگاهی، مدل و محلی با وزن‌دهی دینامیک
@@ -203,7 +202,7 @@ class UncertaintyAndKnowledgeEngine:
         traditional_calendar_reliability: float,
         community_agreement_level: float,
         scientific_alignment: float,
-    ) -> Dict:
+    ) -> dict:
         """
         ادغام دانش بومی (Local Knowledge Integration)
         تبدیل دانش سنتی و تجربی کشاورزان به پارامترهای کمّی قابل استفاده در مدل
@@ -271,7 +270,7 @@ class UncertaintyAndKnowledgeEngine:
         station_data: float,
         farmer_experience: int = 20,
         calendar_reliability: float = 0.6,
-    ) -> Dict:
+    ) -> dict:
         """تولید گزارش جامع عدم قطعیت با ترکیب هر سه الگوریتم"""
 
         report = {"model_version": __version__}
@@ -294,7 +293,7 @@ class UncertaintyAndKnowledgeEngine:
 
         return report
 
-    def _calculate_overall_reliability(self, report: Dict) -> Dict:
+    def _calculate_overall_reliability(self, report: dict) -> dict:
         scores = []
 
         if "h22_uncertainty" in report:
@@ -320,7 +319,7 @@ class UncertaintyAndKnowledgeEngine:
         }
 
     # ------------------------------------------------- تصحیح خروجی مدل‌ها
-    def apply_uncertainty_corrections(self, result, uncertainty_params: Dict) -> object:
+    def apply_uncertainty_corrections(self, result, uncertainty_params: dict) -> object:
         """اعمال تصحیحات عدم قطعیت به خروجی مدل‌های رشد"""
 
         # دریافت ضریب اطمینان
@@ -341,12 +340,10 @@ class UncertaintyAndKnowledgeEngine:
         p10 = uncertainty_params.get("p10_t_ha", 0)
         p90 = uncertainty_params.get("p90_t_ha", 0)
 
-        try:
-            result.warnings = list(result.warnings) + [
-                "Uncertainty correction x%.2f (P10=%.2f, P90=%.2f, confidence=%.2f)"
-                % (correction_factor, p10, p90, confidence)
+        with contextlib.suppress(Exception):
+            result.warnings = [
+                *list(result.warnings),
+                f"Uncertainty correction x{correction_factor:.2f} (P10={p10:.2f}, P90={p90:.2f}, confidence={confidence:.2f})",
             ]
-        except Exception:
-            pass
 
         return result

@@ -9,20 +9,18 @@ Allowed usage:
     from database.base import Base, engine, get_db     # facade (recommended)
 """
 
+import contextlib
+
 from database.base import Base
 
-try:
+with contextlib.suppress(ImportError):
     from database.config import (
         SessionLocal,
         engine,
         get_db,
     )
-except ImportError:
-    pass
 
-try:
+with contextlib.suppress(ImportError):
     from database.config import init_db
-except ImportError:
-    pass
 
 __all__ = ["Base", "SessionLocal", "engine", "get_db", "init_db"]

@@ -35,20 +35,24 @@ Author: Eco Nojin Architecture Team
 """
 
 import sys
-import re
 from pathlib import Path
-from typing import Optional, Any, Dict, List
-from contextlib import contextmanager
+from typing import Any, Optional
 
 # Ensure project root is in path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from database.hub import hub
-from services.security.query_safe import _safe_ident
-
 import logging
+import pandas as pd
+
+from database.hub import hub
+from services.security.query_safe import (
+    safe_execute,
+    safe_dynamic_select,
+    build_where_clause,
+    _safe_ident,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -66,360 +70,300 @@ class DataConnector:
 
     # ── DuckDB (Analytics) Methods ──────────────────────────────
 
-    def get_climate_data(self, station_id: Optional[int] = None, year: Optional[int] = None) -> Any:
+    def get_climate_data(
+        self,
+        station_id: int | None = None,
+        year: int | None = None,
+        limit: int = 10000,
+    ) -> Any:
         """
         Get climate data from master DuckDB.
 
         Args:
             station_id: Optional station ID filter
             year: Optional year filter
+            limit: Maximum rows to return
 
         Returns:
             pandas DataFrame with climate data
         """
         conn = self.hub.get_duckdb("master")
 
-        conditions = []
-        params = []
+        conditions = {}
         if station_id is not None:
-            conditions.append("site_id = ?")
-            params.append(station_id)
+            conditions["site_id"] = station_id
         if year is not None:
-            conditions.append("year = ?")
-            params.append(year)
+            conditions["year"] = year
 
-        where_clause = " WHERE " + " AND ".join(conditions) if conditions else ""
-
-        query = (
-            """
-            SELECT * FROM weather_daily
-            %s
-            LIMIT 10000
-        """
-            % where_clause
-        )
+        query = "SELECT * FROM weather_daily"
+        clause, params = self._build_where_clause(conditions)
+        query += clause + " LIMIT ?"
+        params.append(limit)
 
         try:
-            return conn.execute(query, params).fetchdf()
-        except Exception:
-            return conn.execute(query, params).fetchall()
+            result = conn.execute(query, params)
+            return result.fetchdf()
+        except Exception as e:
+            logger.error(f"get_climate_data failed: {e}")
+            raise
         finally:
             conn.close()
 
-    def get_crop_parameters(self, crop_name: str) -> Dict:
+    def get_crop_parameters(self, crop_name: str) -> dict:
         """
-        Get crop water parameters from master DuckDB.
+        Get crop parameters from master DuckDB.
 
         Args:
-            crop_name: Name of the crop
+            crop_name: Crop name to lookup
 
         Returns:
             Dictionary with crop parameters
-
-        Raises:
-            KeyError: If crop not found in database.
         """
         conn = self.hub.get_duckdb("master")
         try:
-            # Try with parameterized query first, fallback to direct if columns differ
-            queries = [
-                (
-                    "SELECT * FROM crop_water_parameters WHERE LOWER(species_id) = LOWER(?)",
-                    [crop_name],
-                ),
-                (
-                    "SELECT * FROM crop_water_parameters WHERE LOWER(scientific_name) LIKE ?",
-                    [f"%{crop_name.lower()}%"],
-                ),
-            ]
-
-            for query, params in queries:
-                result = conn.execute(query, params).fetchone()
-                if result:
-                    if hasattr(result, "keys"):
-                        return dict(result)
-                    # Convert Row tuple to dict using column names
-                    cols = [desc[0] for desc in conn.description]
-                    return dict(zip(cols, result))
-
-            # No crop found
-            raise KeyError(f"Crop not found: {crop_name}")
+            result = conn.execute(
+                "SELECT * FROM crop_parameters WHERE crop_name = ? LIMIT 1",
+                [crop_name],
+            ).fetchone()
+            if result:
+                return dict(result)
+            return {}
+        except Exception as e:
+            logger.error(f"get_crop_parameters failed: {e}")
+            return {}
         finally:
             conn.close()
 
-    def get_climate_normals(self, station_id: int) -> List[Dict]:
-        """Get monthly climate normals for a station."""
-        conn = self.hub.get_duckdb("master")
-
-        try:
-            results = conn.execute(
-                """
-                SELECT * FROM climate_normals_monthly
-                WHERE site_id = ?
-                ORDER BY month
-            """,
-                [station_id],
-            ).fetchall()
-            return [dict(r) if hasattr(r, "keys") else r for r in results]
-        except Exception:
-            return []
-        finally:
-            conn.close()
-
-    def _extract_table_names(self, query: str) -> set[str]:
-        """Extract table names referenced in a SELECT/WITH query (best-effort).
-
-        Uses a simple regex to identify tokens following FROM and JOIN keywords.
-        This is not a full SQL parser but is sufficient for whitelist checks
-        when combined with a strict identifier allowlist.
+    def get_soil_parameters(self, soil_type: str) -> dict:
         """
-        text = query
-        pattern = re.compile(
-            r"\b(?:FROM|JOIN)\s+(?:`?\"?([A-Za-z_][A-Za-z0-9_]*)\`?\"?\.)?(?:`?\"?([A-Za-z_][A-Za-z0-9_]*)\`?\"?|\`?\"?([A-Za-z_][A-Za-z0-9_]*)\`?\"?)",
-            re.IGNORECASE,
-        )
-        names: set[str] = set()
-        for match in pattern.finditer(text):
-            for group in match.groups():
-                if group:
-                    names.add(group.lower())
-        return names
-
-    def _sanitize_sql(self, query: str) -> str:
-        """
-        Sanitize SQL query to prevent injection attacks.
-
-        Security measures:
-        - Only SELECT/WITH statements allowed
-        - Dangerous keywords (DROP, DELETE, etc.) are blocked
-        - SQL comments (--, /*, ;) are not allowed
-        - Table names MUST appear in the analytics whitelist
-          (defence-in-depth on top of the keyword blacklist)
-        """
-        if not isinstance(query, str):
-            raise ValueError("query must be a string")
-        if len(query) > 10_000:
-            raise ValueError("query too long")
-        query_upper = query.upper().strip()
-
-        # Block dangerous keywords (defence-in-depth on top of whitelist)
-        dangerous_keywords = [
-            "DROP TABLE",
-            "DROP DATABASE",
-            "DELETE FROM",
-            "UPDATE ",
-            "INSERT INTO",
-            "ALTER TABLE",
-            "TRUNCATE",
-            "CREATE TABLE",
-            "CREATE DATABASE",
-            "GRANT",
-            "REVOKE",
-            "EXECUTE",
-            "EXEC(",
-            "XP_CMDSHELL",
-            "INFORMATION_SCHEMA",
-            "WAITFOR DELAY",
-            "UNION SELECT",
-            "SHUTDOWN",
-            "LOAD_FILE",
-            "INTO OUTFILE",
-            "INTO DUMPFILE",
-            "PG_SLEEP",
-            "PG_CATALOG",
-        ]
-
-        for keyword in dangerous_keywords:
-            if keyword in query_upper:
-                logger.warning("SQL injection attempt blocked: %s in query", keyword)
-                raise ValueError(
-                    f"Dangerous SQL statement detected: {keyword}. "
-                    "Only SELECT queries are allowed in analytics."
-                )
-
-        # Block comment-based injection
-        if "--" in query or "/*" in query or ";" in query:
-            logger.warning("SQL injection attempt blocked: comment/semicolon detected")
-            raise ValueError(
-                "SQL comments (;, --, /*) are not allowed in analytics queries. "
-                "Use parameterized queries instead."
-            )
-
-        # Only SELECT/WITH allowed
-        if not query_upper.startswith("SELECT") and not query_upper.startswith("WITH"):
-            raise ValueError("Only SELECT/WITH queries are allowed in execute_analytics_query")
-
-        # Whitelist tables referenced in the query
-        tables = self._extract_table_names(query)
-        unknown = tables - self.ALLOWED_ANALYTICS_TABLES
-        if unknown:
-            logger.warning(
-                "Analytics query references non-whitelisted tables: %s",
-                ", ".join(sorted(unknown)),
-            )
-            raise ValueError(
-                f"Table(s) not in analytics whitelist: {sorted(unknown)}. "
-                "Allowed: " + ", ".join(sorted(self.ALLOWED_ANALYTICS_TABLES))
-            )
-
-        return query
-
-    # Whitelist of tables available to ad-hoc analytics queries on master DuckDB.
-    # Restricting to these is safer than a keyword blacklist alone.
-    ALLOWED_ANALYTICS_TABLES: set[str] = {
-        "weather_daily",
-        "climate_normals_monthly",
-        "crop_water_parameters",
-        "ref_sites",
-        "ref_soils",
-        "ref_species",
-        "ref_climate_requirements",
-        "ref_crop_calendar",
-        "ref_indices_registry",
-        "ref_decision_engine",
-        "data_weather_daily",
-        "data_weather_history_annual",
-        "climate_disasters",
-        "v_all_indices",
-        "v_crop_climate_matrix",
-        "v_drought_indices",
-    }
-
-    def execute_analytics_query(self, query: str) -> Any:
-        """
-        Execute arbitrary analytics query on master DuckDB.
-
-        Security:
-        - Query is sanitized BEFORE execution to prevent SQL injection
-        - Only SELECT/WITH statements allowed
-        - Dangerous keywords (DROP, DELETE, etc.) are blocked
+        Get soil parameters from master DuckDB.
 
         Args:
-            query: SQL query (must be SELECT or WITH statement)
+            soil_type: Soil type to lookup
 
         Returns:
-            Query result as pandas DataFrame or list of tuples
+            Dictionary with soil parameters
         """
-        # STEP 1: SQL Injection Protection (BEFORE getting connection)
-        try:
-            query = self._sanitize_sql(query)
-        except ValueError as e:
-            import logging
-
-            logging.getLogger(__name__).error(f"SQL injection attempt blocked: {e}")
-            raise
-
-        # STEP 2: Get connection
         conn = self.hub.get_duckdb("master")
-
-        # STEP 3: Execute query
         try:
-            return conn.execute(query).fetchdf()
+            result = conn.execute(
+                "SELECT * FROM soil_parameters WHERE soil_type = ? LIMIT 1",
+                [soil_type],
+            ).fetchone()
+            if result:
+                return dict(result)
+            return {}
         except Exception as e:
-            # Fallback to fetchall for non-SELECT queries
-            try:
-                return conn.execute(query).fetchall()
-            except Exception as e2:
-                import logging
+            logger.error(f"get_soil_parameters failed: {e}")
+            return {}
+        finally:
+            conn.close()
 
-                logging.getLogger(__name__).error(f"Query execution failed: {e2}")
-                raise
+    def get_elevation_data(self, lat: float, lon: float, radius_km: float = 5.0) -> list:
+        """
+        Get elevation data around a point.
 
-    def get_crop_calendar(self, province: Optional[str] = None) -> List[Dict]:
-        """Get crop calendar data from manual SQLite."""
-        conn = self.hub.get_sqlite("manual")
+        Args:
+            lat: Latitude
+            lon: Longitude
+            radius_km: Search radius in kilometers
 
+        Returns:
+            List of elevation points
+        """
+        conn = self.hub.get_duckdb("master")
         try:
-            cursor = conn.cursor()
-            if province:
-                cursor.execute("SELECT * FROM crop_calendar_iran WHERE province = ?", (province,))
-            else:
-                cursor.execute("SELECT * FROM crop_calendar_iran")
-
-            rows = cursor.fetchall()
-            return [dict(row) for row in rows]
+            result = conn.execute(
+                """
+                SELECT lat, lon, elevation
+                FROM elevation_grid
+                WHERE lat BETWEEN ? - ?/111.0 AND ? + ?/111.0
+                  AND lon BETWEEN ? - ?/(111.0 * COS(RADIANS(?))) AND ? + ?/(111.0 * COS(RADIANS(?)))
+                LIMIT 10000
+                """,
+                [lat, lat, radius_km, radius_km, lon, lon, radius_km, radius_km, lat, lat],
+            ).fetchall()
+            return [dict(row) for row in result]
         except Exception as e:
-            logger.warning(f"get_crop_calendar failed: {e}")
+            logger.error(f"get_elevation_data failed: {e}")
             return []
         finally:
             conn.close()
 
-    def get_climate_disasters(self, country: Optional[str] = None) -> List[Dict]:
-        """Get climate disaster records from manual SQLite."""
-        conn = self.hub.get_sqlite("manual")
+    # ── SQLite (Transactional) Methods ──────────────────────────
 
+    def get_user(self, user_id: str) -> dict | None:
+        """
+        Get user from transactional SQLite.
+
+        Args:
+            user_id: User ID
+
+        Returns:
+            User dict or None
+        """
+        conn = self.hub.get_sqlite()
         try:
-            cursor = conn.cursor()
-            if country:
-                cursor.execute("SELECT * FROM climate_disasters WHERE country_fa = ?", (country,))
-            else:
-                cursor.execute("SELECT * FROM climate_disasters")
+            result = conn.execute(
+                "SELECT * FROM users WHERE id = ? LIMIT 1",
+                [user_id],
+            ).fetchone()
+            return dict(result) if result else None
+        except Exception as e:
+            logger.error(f"get_user failed: {e}")
+            return None
+        finally:
+            conn.close()
 
-            rows = cursor.fetchall()
-            return [dict(row) for row in rows]
-        except Exception:
+    def get_farm(self, farm_id: int) -> dict | None:
+        """
+        Get farm from transactional SQLite.
+
+        Args:
+            farm_id: Farm ID
+
+        Returns:
+            Farm dict or None
+        """
+        conn = self.hub.get_sqlite()
+        try:
+            result = conn.execute(
+                "SELECT * FROM farms WHERE id = ? LIMIT 1",
+                [farm_id],
+            ).fetchone()
+            return dict(result) if result else None
+        except Exception as e:
+            logger.error(f"get_farm failed: {e}")
+            return None
+        finally:
+            conn.close()
+
+    def list_farms(self, user_id: str) -> list[dict]:
+        """
+        List farms for a user.
+
+        Args:
+            user_id: User ID
+
+        Returns:
+            List of farm dicts
+        """
+        conn = self.hub.get_sqlite()
+        try:
+            result = conn.execute(
+                "SELECT * FROM farms WHERE user_id = ?",
+                [user_id],
+            ).fetchall()
+            return [dict(row) for row in result]
+        except Exception as e:
+            logger.error(f"list_farms failed: {e}")
             return []
         finally:
             conn.close()
 
-    # ── SQLAlchemy (Transactional) Methods ──────────────────────
+    # ── Reference Data (Manual) Methods ─────────────────────────
 
-    @contextmanager
-    def get_session(self):
-        """Get a database session for transactional operations."""
-        with self.hub.get_session() as session:
-            yield session
+    def get_crop_parameters_manual(self, crop_name: str) -> dict:
+        """
+        Get crop parameters from manual reference SQLite.
 
-    def get_user(self, user_id: str) -> Optional[Any]:
-        """Get user by ID from transactional database."""
+        Args:
+            crop_name: Crop name
+
+        Returns:
+            Dictionary with crop parameters
+        """
+        conn = self.hub.get_sqlite("manual")
         try:
-            from database.models import User
+            result = conn.execute(
+                "SELECT * FROM crop_parameters WHERE crop_name = ? LIMIT 1",
+                [crop_name],
+            ).fetchone()
+            return dict(result) if result else {}
+        except Exception as e:
+            logger.error(f"get_crop_parameters_manual failed: {e}")
+            return {}
+        finally:
+            conn.close()
 
-            with self.hub.get_session() as session:
-                return session.query(User).filter_by(id=user_id).first()
-        except Exception:
-            return None
+    def get_soil_parameters_manual(self, soil_type: str) -> dict:
+        """
+        Get soil parameters from manual reference SQLite.
 
-    def get_land_profile(self, land_id: str) -> Optional[Any]:
-        """Get land profile by ID."""
+        Args:
+            soil_type: Soil type
+
+        Returns:
+            Dictionary with soil parameters
+        """
+        conn = self.hub.get_sqlite("manual")
         try:
-            from database.models import LandProfile
+            result = conn.execute(
+                "SELECT * FROM soil_parameters WHERE soil_type = ? LIMIT 1",
+                [soil_type],
+            ).fetchone()
+            return dict(result) if result else {}
+        except Exception as e:
+            logger.error(f"get_soil_parameters_manual failed: {e}")
+            return {}
+        finally:
+            conn.close()
 
-            with self.hub.get_session() as session:
-                return session.query(LandProfile).filter_by(id=land_id).first()
-        except Exception:
-            return None
+    # ── DataHub Methods ─────────────────────────────────────────
 
-    # ── Metadata Methods ───────────────────────────────────────
+    def get_table_list(self, db_key: str = "master") -> list[str]:
+        """
+        List tables in a DataHub database.
 
-    def list_master_tables(self) -> List[str]:
-        """List all tables in master DuckDB."""
-        conn = self.hub.get_duckdb("master")
+        Args:
+            db_key: Database key (master, transactional, manual)
+
+        Returns:
+            List of table names
+        """
+        conn = self.hub.get_duckdb(db_key)
         try:
-            result = conn.execute("""
-                SELECT table_name 
+            result = conn.execute(
+                """
+                SELECT table_name
                 FROM information_schema.tables
                 WHERE table_schema = 'main'
                 ORDER BY table_name
-            """).fetchall()
+                """
+            ).fetchall()
             return [row[0] for row in result]
-        except Exception:
+        except Exception as e:
+            logger.error(f"get_table_list failed: {e}")
             return []
         finally:
             conn.close()
 
-    def get_table_info(self, table_name: str) -> Dict:
-        """Get schema information for a table in master DuckDB."""
-        conn = self.hub.get_duckdb("master")
+    def get_table_info(self, table_name: str, db_key: str = "master") -> dict:
+        """
+        Get schema information for a table.
+
+        Args:
+            table_name: Table name
+            db_key: Database key
+
+        Returns:
+            Dictionary with table info
+        """
+        conn = self.hub.get_duckdb(db_key)
         try:
+            safe_table = _safe_ident(table_name)
             columns = conn.execute(
-                "\n                SELECT column_name, data_type\n                FROM information_schema.columns\n                WHERE table_name = '{}'\n                ORDER BY ordinal_position\n            ".format(
-                    _safe_ident(table_name)
-                )
+                """
+                SELECT column_name, data_type
+                FROM information_schema.columns
+                WHERE table_name = ?
+                ORDER BY ordinal_position
+                """,
+                [table_name],
             ).fetchall()
 
             row_count = conn.execute(
-                'SELECT COUNT(*) FROM "{}"'.format(_safe_ident(table_name))
+                'SELECT COUNT(*) FROM "' + _safe_ident(table_name) + '"'
             ).fetchone()[0]
 
             return {
@@ -428,7 +372,58 @@ class DataConnector:
                 "rows": row_count,
             }
         except Exception as e:
+            logger.error(f"get_table_info failed: {e}")
             return {"table": table_name, "error": str(e)}
+        finally:
+            conn.close()
+
+    def query_master(
+        self,
+        query: str,
+        params: list | None = None,
+    ) -> list[dict]:
+        """
+        Execute a parameterized query on master DuckDB.
+
+        Args:
+            query: SQL query with ? placeholders
+            params: Parameters to bind
+
+        Returns:
+            List of result dicts
+        """
+        conn = self.hub.get_duckdb("master")
+        try:
+            result = conn.execute(query, params or []).fetchall()
+            return [dict(row) for row in result]
+        except Exception as e:
+            logger.error(f"query_master failed: {e}")
+            raise
+        finally:
+            conn.close()
+
+    def query_transactional(
+        self,
+        query: str,
+        params: list | None = None,
+    ) -> list[dict]:
+        """
+        Execute a parameterized query on transactional SQLite.
+
+        Args:
+            query: SQL query with ? placeholders
+            params: Parameters to bind
+
+        Returns:
+            List of result dicts
+        """
+        conn = self.hub.get_sqlite()
+        try:
+            result = conn.execute(query, params or []).fetchall()
+            return [dict(row) for row in result]
+        except Exception as e:
+            logger.error(f"query_transactional failed: {e}")
+            raise
         finally:
             conn.close()
 

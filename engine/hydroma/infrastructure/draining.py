@@ -79,7 +79,7 @@ def design_rectangular_drain(criteria: DrainDesignCriteria, channel_slope: float
         P = criteria.bottom_width + 2 * depth
         R = A / P if P > 0 else 0
         Q_calc = calculate_open_channel_flow(A, R, channel_slope, criteria.Manning_n)
-        V_calc = Q_calc / A if A > 0 else 0
+        Q_calc / A if A > 0 else 0
 
         if abs(Q_calc - criteria.max_flow_rate) < tolerance:
             break

@@ -197,7 +197,7 @@ def _get_weather_data(farm_id: str | None = None) -> dict:
             result = _execute_parameterized(
                 conn,
                 """
-                SELECT 
+                SELECT
                     COUNT(*) as days,
                     AVG(tmax_c) as avg_temp_max,
                     AVG(tmin_c) as avg_temp_min,
@@ -213,7 +213,7 @@ def _get_weather_data(farm_id: str | None = None) -> dict:
             result = _execute_parameterized(
                 conn,
                 """
-                SELECT 
+                SELECT
                     COUNT(*) as days,
                     AVG(tmax_c) as avg_temp_max,
                     AVG(tmin_c) as avg_temp_min,
@@ -261,7 +261,7 @@ def _get_satellite_data(farm_id: str | None = None) -> dict:
             result = _execute_parameterized(
                 conn,
                 """
-                SELECT 
+                SELECT
                     COUNT(*) as images,
                     AVG(ndvi) as avg_ndvi,
                     AVG(evi) as avg_evi,
@@ -275,7 +275,7 @@ def _get_satellite_data(farm_id: str | None = None) -> dict:
             result = _execute_parameterized(
                 conn,
                 """
-                SELECT 
+                SELECT
                     COUNT(*) as images,
                     AVG(ndvi) as avg_ndvi,
                     AVG(evi) as avg_evi,
@@ -312,7 +312,7 @@ def _get_projects_data() -> dict:
         result = _execute_parameterized(
             conn,
             """
-            SELECT 
+            SELECT
                 COUNT(*) as cnt,
                 COALESCE(SUM(area_ha), 0) as total_area
             FROM projects
@@ -347,7 +347,7 @@ def _get_soil_data(farm_id: str | None = None) -> dict:
             result = _execute_parameterized(
                 conn,
                 """
-                SELECT 
+                SELECT
                     COUNT(*) as profiles,
                     AVG(organic_carbon_percent) as avg_carbon,
                     AVG(ph) as avg_ph
@@ -360,7 +360,7 @@ def _get_soil_data(farm_id: str | None = None) -> dict:
             result = _execute_parameterized(
                 conn,
                 """
-                SELECT 
+                SELECT
                     COUNT(*) as profiles,
                     AVG(organic_carbon_percent) as avg_carbon,
                     AVG(ph) as avg_ph
@@ -397,7 +397,7 @@ def _get_mrv_data(farm_id: str | None = None) -> dict:
             result = _execute_parameterized(
                 conn,
                 """
-                SELECT 
+                SELECT
                     COUNT(*) as total,
                     COUNT(CASE WHEN verified = TRUE THEN 1 END) as verified
                 FROM mrv_observations
@@ -409,7 +409,7 @@ def _get_mrv_data(farm_id: str | None = None) -> dict:
             result = _execute_parameterized(
                 conn,
                 """
-                SELECT 
+                SELECT
                     COUNT(*) as total,
                     COUNT(CASE WHEN verified = TRUE THEN 1 END) as verified
                 FROM mrv_observations
@@ -447,7 +447,7 @@ def _get_simulations_data(farm_id: str | None = None) -> dict:
             result = _execute_parameterized(
                 conn,
                 """
-                SELECT 
+                SELECT
                     COUNT(*) as total,
                     COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed
                 FROM simulation_runs
@@ -459,7 +459,7 @@ def _get_simulations_data(farm_id: str | None = None) -> dict:
             result = _execute_parameterized(
                 conn,
                 """
-                SELECT 
+                SELECT
                     COUNT(*) as total,
                     COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed
                 FROM simulation_runs
@@ -488,7 +488,7 @@ def _get_tourism_data() -> dict:
         result = _execute_parameterized(
             conn,
             """
-            SELECT 
+            SELECT
                 COUNT(*) as total_bookings,
                 COALESCE(SUM(total), 0) as total_revenue
             FROM tourism_bookings
@@ -778,7 +778,7 @@ async def get_dashboard_data(request: Request):
     try:
         from database.hub import hub
 
-        conn = hub.get_duckdb("master")
+        hub.get_duckdb("master")
 
         weather = _get_weather_data(None)
         satellite = _get_satellite_data(None)
@@ -823,7 +823,7 @@ async def refresh_dashboard_data(request: Request):
     try:
         from database.hub import hub
 
-        conn = hub.get_duckdb("master")
+        hub.get_duckdb("master")
 
         weather = _get_weather_data(None)
         satellite = _get_satellite_data(None)
@@ -873,7 +873,7 @@ async def get_recommendations(farm_id: str, request: Request):
     try:
         from database.hub import hub
 
-        conn = hub.get_duckdb("master")
+        hub.get_duckdb("master")
 
         weather = _get_weather_data(farm_id)
         satellite = _get_satellite_data(farm_id)

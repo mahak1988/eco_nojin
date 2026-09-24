@@ -3,7 +3,6 @@ and the smart-alert engine. All offline and deterministic."""
 
 from __future__ import annotations
 
-
 import os
 
 import pytest

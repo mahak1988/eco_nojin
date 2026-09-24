@@ -119,7 +119,6 @@ def run_validation_for_calibration(
 
         calibrated_params = cal_record.parameters_after
         model_name = cal_record.model_name
-        model_version = cal_record.model_version
 
         # Define the model function based on the model name
         # This is a simplified dispatch. A factory pattern would be better for many models.

@@ -35,8 +35,14 @@ DEFAULT_P_FACTOR = 1.0  # Unitless — no conservation practice
 
 # D8 direction offsets: 1=N, 2=NE, 3=E, 4=SE, 5=S, 6=SW, 7=W, 8=NW
 _DIR_OFFSETS: dict[int, tuple[int, int]] = {
-    1: (-1, 0), 2: (-1, 1), 3: (0, 1), 4: (1, 1),
-    5: (1, 0), 6: (1, -1), 7: (0, -1), 8: (-1, -1),
+    1: (-1, 0),
+    2: (-1, 1),
+    3: (0, 1),
+    4: (1, 1),
+    5: (1, 0),
+    6: (1, -1),
+    7: (0, -1),
+    8: (-1, -1),
 }
 _CARDINAL_DIRS = {1, 3, 5, 7}
 _DIAG_DIRS = {2, 4, 6, 8}
@@ -57,11 +63,18 @@ def _d8_flow_direction(dem: np.ndarray) -> np.ndarray:
             if not np.isfinite(center):
                 continue
 
-            neighbors_vals = np.array([
-                dem[i - 1, j - 1], dem[i - 1, j],     dem[i - 1, j + 1],
-                dem[i,     j - 1],                      dem[i,     j + 1],
-                dem[i + 1, j - 1], dem[i + 1, j],     dem[i + 1, j + 1],
-            ])
+            neighbors_vals = np.array(
+                [
+                    dem[i - 1, j - 1],
+                    dem[i - 1, j],
+                    dem[i - 1, j + 1],
+                    dem[i, j - 1],
+                    dem[i, j + 1],
+                    dem[i + 1, j - 1],
+                    dem[i + 1, j],
+                    dem[i + 1, j + 1],
+                ]
+            )
             directions = np.array([1, 2, 3, 4, 5, 6, 7, 8], dtype=float)
 
             valid_mask = np.isfinite(neighbors_vals) & (neighbors_vals < center)
@@ -106,7 +119,7 @@ def _d8_flow_accumulation(flow_dir: np.ndarray) -> np.ndarray:
         di, dj = _DIR_OFFSETS[d]
         ni, nj = i + di, j + dj
         if 0 <= ni < rows and 0 <= nj < cols:
-            downstream = _propagate(ni, nj)
+            _propagate(ni, nj)
             acc[ni, nj] += acc[i, j]
 
         return acc[i, j]
@@ -150,6 +163,7 @@ def _d8_flow_accumulation_iterative(flow_dir: np.ndarray) -> np.ndarray:
 
     # Topological sort: start from cells with no upstream (sources)
     from collections import deque
+
     queue = deque()
     for i in range(rows):
         for j in range(cols):
@@ -184,12 +198,14 @@ def calculate_slope_degrees(dem: np.ndarray, cell_size: float = 30.0) -> np.ndar
 
     for i in range(1, rows - 1):
         for j in range(1, cols - 1):
-            z = dem[i - 1:i + 2, j - 1:j + 2]
+            z = dem[i - 1 : i + 2, j - 1 : j + 2]
 
-            dz_dx = ((z[2, 2] + 2 * z[1, 2] + z[0, 2]) -
-                     (z[2, 0] + 2 * z[1, 0] + z[0, 0])) / (8.0 * cell_size)
-            dz_dy = ((z[2, 2] + 2 * z[2, 1] + z[2, 0]) -
-                     (z[0, 2] + 2 * z[0, 1] + z[0, 0])) / (8.0 * cell_size)
+            dz_dx = ((z[2, 2] + 2 * z[1, 2] + z[0, 2]) - (z[2, 0] + 2 * z[1, 0] + z[0, 0])) / (
+                8.0 * cell_size
+            )
+            dz_dy = ((z[2, 2] + 2 * z[2, 1] + z[2, 0]) - (z[0, 2] + 2 * z[0, 1] + z[0, 0])) / (
+                8.0 * cell_size
+            )
 
             slope_rad = np.arctan(np.sqrt(dz_dx**2 + dz_dy**2))
             slope_deg[i, j] = np.degrees(slope_rad)
@@ -252,8 +268,8 @@ def calculate_ls_factor(
     slope_length_m = np.maximum(slope_length_m, cell_size_m)
 
     # m exponent: β = (sinθ / cos²θ) * (λ / 300)^0.5  →  m = β / (1 + β)
-    with np.errstate(divide='ignore', invalid='ignore'):
-        beta = (sin_slope / (cos_slope ** 2)) * np.sqrt(slope_length_m / 300.0)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        beta = (sin_slope / (cos_slope**2)) * np.sqrt(slope_length_m / 300.0)
         beta = np.nan_to_num(beta, nan=0.5, posinf=10.0, neginf=0.0)
         m = beta / (1 + beta)
         m = np.clip(m, 0.0, 1.0)
@@ -266,7 +282,7 @@ def calculate_ls_factor(
     s_factor = np.where(
         slope_pct < 9.0,
         10.8 * sin_slope + 0.03,
-        16.8 * sin_slope - 0.045 * (cos_slope ** 2),
+        16.8 * sin_slope - 0.045 * (cos_slope**2),
     )
 
     # Combine

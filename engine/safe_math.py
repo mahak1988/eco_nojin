@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 engine.safe_math
 ================
@@ -24,8 +23,8 @@ Version: 2.0.0
 
 import math
 import sys
-from typing import Optional, Union, Any
 from functools import wraps
+from typing import Any
 
 # Recursion protection
 MAX_RECURSION_DEPTH = 1000
@@ -52,7 +51,7 @@ def _is_valid_number(value: Any) -> bool:
         return False
 
 
-def safe_sqrt(x: Any, fallback: Optional[float] = None) -> Optional[float]:
+def safe_sqrt(x: Any, fallback: float | None = None) -> float | None:
     """
     Safe square root with NaN/Infinity/negative protection.
 
@@ -84,7 +83,7 @@ def safe_sqrt(x: Any, fallback: Optional[float] = None) -> Optional[float]:
         return fallback
 
 
-def safe_log(x: Any, base: float = math.e, fallback: Optional[float] = None) -> Optional[float]:
+def safe_log(x: Any, base: float = math.e, fallback: float | None = None) -> float | None:
     """
     Safe logarithm with NaN/Infinity/non-positive protection.
 
@@ -119,7 +118,7 @@ def safe_log(x: Any, base: float = math.e, fallback: Optional[float] = None) -> 
         return fallback
 
 
-def safe_divide(a: Any, b: Any, fallback: Optional[float] = None) -> Optional[float]:
+def safe_divide(a: Any, b: Any, fallback: float | None = None) -> float | None:
     """
     Safe division with zero/NaN/Infinity protection.
 
@@ -154,7 +153,7 @@ def safe_divide(a: Any, b: Any, fallback: Optional[float] = None) -> Optional[fl
         return fallback
 
 
-def safe_exp(x: Any, fallback: Optional[float] = None, max_value: float = 700.0) -> Optional[float]:
+def safe_exp(x: Any, fallback: float | None = None, max_value: float = 700.0) -> float | None:
     """
     Safe exponential with overflow protection.
 
@@ -183,7 +182,7 @@ def safe_exp(x: Any, fallback: Optional[float] = None, max_value: float = 700.0)
         return fallback
 
 
-def safe_power(base: Any, exponent: Any, fallback: Optional[float] = None) -> Optional[float]:
+def safe_power(base: Any, exponent: Any, fallback: float | None = None) -> float | None:
     """
     Safe power operation with overflow protection.
 
@@ -244,8 +243,8 @@ def nan_guard(value: Any, fallback: float = 0.0) -> float:
 
 
 def validate_numeric(
-    value: Any, min_val: Optional[float] = None, max_val: Optional[float] = None
-) -> Optional[float]:
+    value: Any, min_val: float | None = None, max_val: float | None = None
+) -> float | None:
     """
     Validate a numeric value within a range.
 
@@ -312,14 +311,14 @@ def with_safe_math(fallback: Any = None):
 
 
 __all__ = [
+    "MAX_RECURSION_DEPTH",
     "SafeMathError",
-    "safe_sqrt",
-    "safe_log",
+    "nan_guard",
     "safe_divide",
     "safe_exp",
+    "safe_log",
     "safe_power",
-    "nan_guard",
+    "safe_sqrt",
     "validate_numeric",
     "with_safe_math",
-    "MAX_RECURSION_DEPTH",
 ]

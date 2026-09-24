@@ -1,7 +1,5 @@
 """Phase 1 security tests - H1: CORS hardening."""
 
-import os
-
 from fastapi.testclient import TestClient
 
 from services.api_gateway.main import app

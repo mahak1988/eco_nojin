@@ -138,7 +138,7 @@ def run_drought(
 
     spi_raw = _gamma_spi(_rolling(precip, timescale_months))
     pet = [_thornthwaite_pet(t, lat) for t in tmean]
-    wb = [p - e for p, e in zip(precip, pet)]
+    wb = [p - e for p, e in zip(precip, pet, strict=False)]
     spei_raw = _normal_std(_rolling(wb, timescale_months))
 
     series = []

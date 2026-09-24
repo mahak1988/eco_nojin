@@ -1,35 +1,26 @@
 """Backup/Restore Service - Core business logic for backup automation."""
 
-import uuid
 import asyncio
 import hashlib
-import subprocess
-import os
-import shutil
-from datetime import datetime, UTC, timedelta
-from typing import Optional, List, Dict, Any
+from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
-from sqlalchemy import select, func, and_, or_, desc
+from sqlalchemy import and_, desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from database.hub import hub
 from services.backup.models import (
     BackupConfig,
     BackupJob,
-    RestoreJob,
     BackupJobStatus,
+    RestoreJob,
     RestoreStatus,
 )
 from services.backup.schemas import (
     BackupConfigCreate,
     BackupConfigUpdate,
-    BackupConfigResponse,
-    BackupJobResponse,
     RestoreRequest,
-    RestoreResponse,
-    BackupSummary,
 )
 
 
@@ -38,14 +29,14 @@ class BackupService:
 
     def __init__(self, db: AsyncSession):
         self.db = db
-        self._running_jobs: Dict[str, asyncio.Task] = {}
+        self._running_jobs: dict[str, asyncio.Task] = {}
 
     # =========================================================================
     # Backup Config CRUD
     # =========================================================================
 
     async def create_config(
-        self, data: BackupConfigCreate, user_id: Optional[str] = None
+        self, data: BackupConfigCreate, user_id: str | None = None
     ) -> BackupConfig:
         """Create a new backup configuration."""
         config = BackupConfig(
@@ -83,17 +74,17 @@ class BackupService:
         await self.db.refresh(config)
         return config
 
-    async def get_config(self, config_id: str) -> Optional[BackupConfig]:
+    async def get_config(self, config_id: str) -> BackupConfig | None:
         """Get a backup configuration by ID."""
         result = await self.db.execute(select(BackupConfig).where(BackupConfig.id == config_id))
         return result.scalar_one_or_none()
 
     async def list_configs(
         self,
-        enabled: Optional[bool] = None,
+        enabled: bool | None = None,
         page: int = 1,
         page_size: int = 20,
-    ) -> List[BackupConfig]:
+    ) -> list[BackupConfig]:
         """List backup configurations."""
         query = select(BackupConfig)
 
@@ -106,9 +97,7 @@ class BackupService:
         result = await self.db.execute(query)
         return result.scalars().all()
 
-    async def update_config(
-        self, config_id: str, data: BackupConfigUpdate
-    ) -> Optional[BackupConfig]:
+    async def update_config(self, config_id: str, data: BackupConfigUpdate) -> BackupConfig | None:
         """Update a backup configuration."""
         config = await self.get_config(config_id)
         if not config:
@@ -180,12 +169,12 @@ class BackupService:
         await self.db.refresh(job)
         return job
 
-    async def get_job(self, job_id: str) -> Optional[BackupJob]:
+    async def get_job(self, job_id: str) -> BackupJob | None:
         """Get a backup job by ID."""
         result = await self.db.execute(select(BackupJob).where(BackupJob.id == job_id))
         return result.scalar_one_or_none()
 
-    async def get_job_with_config(self, job_id: str) -> Optional[BackupJob]:
+    async def get_job_with_config(self, job_id: str) -> BackupJob | None:
         """Get a backup job with config loaded."""
         result = await self.db.execute(
             select(BackupJob).options(selectinload(BackupJob.config)).where(BackupJob.id == job_id)
@@ -194,11 +183,11 @@ class BackupService:
 
     async def list_jobs(
         self,
-        config_id: Optional[str] = None,
-        status: Optional[str] = None,
+        config_id: str | None = None,
+        status: str | None = None,
         page: int = 1,
         page_size: int = 20,
-    ) -> List[BackupJob]:
+    ) -> list[BackupJob]:
         """List backup jobs."""
         query = select(BackupJob).options(selectinload(BackupJob.config))
 
@@ -213,7 +202,7 @@ class BackupService:
         result = await self.db.execute(query)
         return result.scalars().all()
 
-    async def get_recent_jobs(self, limit: int = 10) -> List[BackupJob]:
+    async def get_recent_jobs(self, limit: int = 10) -> list[BackupJob]:
         """Get recent backup jobs."""
         result = await self.db.execute(
             select(BackupJob)
@@ -223,9 +212,8 @@ class BackupService:
         )
         return result.scalars().all()
 
-    async def get_job_stats(self) -> Dict[str, Any]:
+    async def get_job_stats(self) -> dict[str, Any]:
         """Get backup job statistics."""
-        from sqlalchemy import func
 
         # Status counts
         status_counts = await self.db.execute(
@@ -279,14 +267,14 @@ class BackupService:
         )
 
         # Next scheduled
-        next_scheduled = await self.db.scalar(
-            select(func.min(BackupConfig.schedule_cron)).where(BackupConfig.enabled == True)
+        await self.db.scalar(
+            select(func.min(BackupConfig.schedule_cron)).where(BackupConfig.enabled)
         )
 
         return {
             "total_configs": await self.db.scalar(select(func.count(BackupConfig.id))) or 0,
             "enabled_configs": await self.db.scalar(
-                select(func.count(BackupConfig.id)).where(BackupConfig.enabled == True)
+                select(func.count(BackupConfig.id)).where(BackupConfig.enabled)
             )
             or 0,
             "total_jobs": sum(status_counts.values()) if status_counts else 0,
@@ -376,9 +364,7 @@ class BackupService:
     # Restore
     # =========================================================================
 
-    async def create_restore(
-        self, data: RestoreRequest, user_id: Optional[str] = None
-    ) -> RestoreJob:
+    async def create_restore(self, data: RestoreRequest, user_id: str | None = None) -> RestoreJob:
         """Create a restore job."""
         backup_job = await self.get_job(data.backup_job_id)
         if not backup_job:
@@ -410,7 +396,7 @@ class BackupService:
         await self.db.refresh(restore_job)
         return restore_job
 
-    async def get_restore(self, restore_id: str) -> Optional[RestoreJob]:
+    async def get_restore(self, restore_id: str) -> RestoreJob | None:
         """Get a restore job by ID."""
         result = await self.db.execute(select(RestoreJob).where(RestoreJob.id == restore_id))
         return result.scalar_one_or_none()
@@ -458,7 +444,7 @@ class BackupService:
     # Backup Execution Helpers
     # =========================================================================
 
-    async def _run_logical_backup(self, job: BackupJob, config: BackupConfig) -> Dict[str, Any]:
+    async def _run_logical_backup(self, job: BackupJob, config: BackupConfig) -> dict[str, Any]:
         """Run pg_dump logical backup."""
         # This is a placeholder - actual implementation would use pg_dump
         # For now, create a mock backup file
@@ -466,7 +452,7 @@ class BackupService:
         backup_dir = Path(config.storage_path)
         backup_dir.mkdir(parents=True, exist_ok=True)
 
-        timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
+        datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
         filename = f"{job.config_id}_{job.backup_type}_{job.id}_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}.sql"
         if config.compression == "gzip":
             filename += ".gz"
@@ -506,7 +492,7 @@ class BackupService:
             "verification_details": verification_details,
         }
 
-    async def _run_physical_backup(self, job: BackupJob, config: BackupConfig) -> Dict[str, Any]:
+    async def _run_physical_backup(self, job: BackupJob, config: BackupConfig) -> dict[str, Any]:
         """Run pg_basebackup physical backup."""
         # Placeholder for pg_basebackup implementation
         return await self._run_logical_backup(job, config)

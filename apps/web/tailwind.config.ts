@@ -1,0 +1,87 @@
+import type { Config } from 'tailwindcss';
+
+const config: Config = {
+  theme: {
+    extend: {
+      colors: {
+        water: 'oklch(0.62 0.11 235)',
+        forest: 'oklch(0.55 0.12 150)',
+        soil: 'oklch(0.45 0.06 70)',
+        paper: 'oklch(0.97 0.005 90)',
+        ink: 'oklch(0.24 0.01 250)',
+        copper: 'oklch(0.60 0.14 45)',
+        chart: {
+          1: 'oklch(0.62 0.11 235)',
+          2: 'oklch(0.55 0.12 150)',
+          3: 'oklch(0.60 0.14 45)',
+          4: 'oklch(0.58 0.12 25)',
+          5: 'oklch(0.52 0.13 300)',
+          6: 'oklch(0.65 0.15 30)',
+          7: 'oklch(0.55 0.10 190)',
+          8: 'oklch(0.45 0.06 70)',
+        },
+      },
+      fontFamily: {
+        sans: ['Vazirmatn', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['Markazi Text', 'Vazirmatn', 'ui-serif', 'serif'],
+        mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+      },
+      spacing: {
+        '0': '0px',
+        '1': '4px',
+        '2': '8px',
+        '3': '12px',
+        '4': '16px',
+        '5': '20px',
+        '6': '24px',
+        '7': '28px',
+        '8': '32px',
+        '9': '36px',
+        '10': '40px',
+        '11': '44px',
+        '12': '48px',
+        '13': '52px',
+        '14': '56px',
+        '15': '60px',
+        '16': '64px',
+        '17': '68px',
+        '18': '72px',
+        '19': '76px',
+        '20': '80px',
+        '24': '96px',
+        '28': '112px',
+        '32': '128px',
+        '36': '144px',
+        '40': '160px',
+        '44': '176px',
+        '48': '192px',
+        '52': '208px',
+        '56': '224px',
+        '60': '240px',
+        '64': '256px',
+        '72': '288px',
+        '80': '320px',
+        '96': '384px',
+      },
+      maxWidth: {
+        container: '1280px',
+      },
+      borderRadius: {
+        '2': '2px',
+        '8': '8px',
+        '16': '16px',
+      },
+      transitionDuration: {
+        '120': '120ms',
+        '240': '240ms',
+        '480': '480ms',
+      },
+      transitionTimingFunction: {
+        'ease-out-quart': 'cubic-bezier(0.25, 1, 0.5, 1)',
+      },
+    },
+  },
+  plugins: [],
+};
+
+export default config;

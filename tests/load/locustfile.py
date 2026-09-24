@@ -10,16 +10,15 @@ Run: locust -f tests/load/locustfile.py --headless -u 50 -t 60s --host=http://lo
 """
 
 import random
-import json
-from locust import HttpUser, task, between, tag, events
-from locust.exception import RescheduleTask
+
+from locust import HttpUser, between, events, tag, task
 
 
 class EcoNojinUser(HttpUser):
     """Simulated user for Eco Nojin API."""
-    
+
     wait_time = between(1, 3)
-    
+
     def on_start(self):
         """Initialize user session."""
         self.user_key = f"testuser_{random.randint(10000, 99999)}"
@@ -27,7 +26,7 @@ class EcoNojinUser(HttpUser):
             "X-Request-ID": f"load-test-{random.randint(100000, 999999)}",
             "Content-Type": "application/json",
         }
-    
+
     @tag("health")
     @task(10)
     def health_check(self):
@@ -41,12 +40,14 @@ class EcoNojinUser(HttpUser):
                     response.failure(f"Unexpected liveness status: {data.get('status')}")
             else:
                 response.failure(f"Liveness check failed: {response.status_code}")
-    
+
     @tag("health")
     @task(5)
     def health_ready(self):
         """Test /health/ready endpoint."""
-        with self.client.get("/health/ready", headers=self.headers, catch_response=True) as response:
+        with self.client.get(
+            "/health/ready", headers=self.headers, catch_response=True
+        ) as response:
             if response.status_code == 200:
                 data = response.json()
                 if data.get("status") == "ready":
@@ -55,7 +56,7 @@ class EcoNojinUser(HttpUser):
                     response.failure(f"Not ready: {data.get('status')}")
             else:
                 response.failure(f"Readiness check failed: {response.status_code}")
-    
+
     @tag("health")
     @task(3)
     def health_full(self):
@@ -69,17 +70,19 @@ class EcoNojinUser(HttpUser):
                     response.failure(f"Unexpected health status: {data.get('status')}")
             else:
                 response.failure(f"Health check failed: {response.status_code}")
-    
+
     @tag("health")
     @task(2)
     def health_v1(self):
         """Test /api/v1/health endpoint."""
-        with self.client.get("/api/v1/health", headers=self.headers, catch_response=True) as response:
+        with self.client.get(
+            "/api/v1/health", headers=self.headers, catch_response=True
+        ) as response:
             if response.status_code == 200:
                 response.success()
             else:
                 response.failure(f"Health v1 failed: {response.status_code}")
-    
+
     @tag("realtime")
     @task(3)
     def realtime_stream(self):
@@ -90,7 +93,7 @@ class EcoNojinUser(HttpUser):
             "interval": 1.0,
         }
         headers = {**self.headers, "Accept": "text/event-stream"}
-        
+
         with self.client.get(
             "/api/v1/realtime/stream",
             params=params,
@@ -121,12 +124,14 @@ class EcoNojinUser(HttpUser):
                 response.success()
             else:
                 response.failure(f"Realtime stream failed: {response.status_code}")
-    
+
     @tag("realtime")
     @task(2)
     def realtime_health(self):
         """Test realtime health endpoint."""
-        with self.client.get("/api/v1/realtime/health", headers=self.headers, catch_response=True) as response:
+        with self.client.get(
+            "/api/v1/realtime/health", headers=self.headers, catch_response=True
+        ) as response:
             if response.status_code == 200:
                 data = response.json()
                 if "service" in data:
@@ -135,7 +140,7 @@ class EcoNojinUser(HttpUser):
                     response.failure("Missing service field")
             else:
                 response.failure(f"Realtime health failed: {response.status_code}")
-    
+
     @tag("scientific")
     @task(2)
     def soil_analysis(self):
@@ -163,7 +168,7 @@ class EcoNojinUser(HttpUser):
                 response.success()  # Validation error
             else:
                 response.failure(f"Soil analysis unexpected: {response.status_code}")
-    
+
     @tag("scientific")
     @task(2)
     def carbon_calculation(self):
@@ -180,13 +185,11 @@ class EcoNojinUser(HttpUser):
             headers=self.headers,
             catch_response=True,
         ) as response:
-            if response.status_code in (401, 403):
-                response.success()
-            elif response.status_code == 422:
+            if response.status_code in (401, 403) or response.status_code == 422:
                 response.success()
             else:
                 response.failure(f"Carbon calculation unexpected: {response.status_code}")
-    
+
     @tag("scientific")
     @task(1)
     def land_capability(self):
@@ -206,18 +209,18 @@ class EcoNojinUser(HttpUser):
             headers=self.headers,
             catch_response=True,
         ) as response:
-            if response.status_code in (401, 403):
-                response.success()
-            elif response.status_code == 422:
+            if response.status_code in (401, 403) or response.status_code == 422:
                 response.success()
             else:
                 response.failure(f"Land capability unexpected: {response.status_code}")
-    
+
     @tag("sync")
     @task(1)
     def sync_status(self):
         """Test sync status endpoint."""
-        with self.client.get("/api/v1/sync/status", headers=self.headers, catch_response=True) as response:
+        with self.client.get(
+            "/api/v1/sync/status", headers=self.headers, catch_response=True
+        ) as response:
             if response.status_code == 200:
                 data = response.json()
                 if "status" in data and "mode" in data:
@@ -230,20 +233,20 @@ class EcoNojinUser(HttpUser):
 
 class ReadOnlyUser(HttpUser):
     """Read-only user - only GET requests."""
-    
+
     wait_time = between(2, 5)
-    
+
     def on_start(self):
         self.headers = {"X-Request-ID": f"ro-{random.randint(100000, 999999)}"}
-    
+
     @task(5)
     def health(self):
         self.client.get("/health", headers=self.headers)
-    
+
     @task(3)
     def docs(self):
         self.client.get("/docs", headers=self.headers)
-    
+
     @task(2)
     def openapi(self):
         self.client.get("/openapi.json", headers=self.headers)
@@ -252,8 +255,9 @@ class ReadOnlyUser(HttpUser):
 # Configuration for different test scenarios
 class StressTestUser(EcoNojinUser):
     """High-frequency user for stress testing."""
+
     wait_time = between(0.1, 0.5)
-    
+
     @task(20)
     def health_check(self):
         super().health_check()
@@ -285,4 +289,7 @@ def on_test_stop(environment, **kwargs):
 
 if __name__ == "__main__":
     import os
-    os.system("locust -f tests/load/locustfile.py --headless -u 10 -t 30s --host=http://localhost:8000")
+
+    os.system(
+        "locust -f tests/load/locustfile.py --headless -u 10 -t 30s --host=http://localhost:8000"
+    )

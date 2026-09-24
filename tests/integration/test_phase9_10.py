@@ -7,9 +7,9 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from fastapi.testclient import TestClient  # noqa: E402
+from fastapi.testclient import TestClient
 
-from services.api_gateway.main import app  # noqa: E402
+from services.api_gateway.main import app
 
 client = TestClient(app)
 

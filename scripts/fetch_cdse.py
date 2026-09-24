@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -70,7 +69,9 @@ def main() -> int:
         "fetched_at": datetime.now(UTC).isoformat(),
     }
     out_path.write_text(json.dumps(manifest, indent=2, default=str))
-    print(f"OK: wrote {out_path} (NDVI={result['value']:.4f}, scene={result['payload']['scene_id']})")
+    print(
+        f"OK: wrote {out_path} (NDVI={result['value']:.4f}, scene={result['payload']['scene_id']})"
+    )
     return 0
 
 

@@ -7,16 +7,6 @@ import { getLocaleMeta } from '@/lib/i18n/messages';
 // Live backend data: always rendered per request, never prerendered.
 export const dynamic = 'force-dynamic';
 
-function Stat({ label, value, note }: { label: string; value: string; note?: string }) {
-  return (
-    <div className="rounded-[var(--radius-card)] border border-line bg-surface px-5 py-4">
-      <div className="text-sm text-ink-soft">{label}</div>
-      <div className="num mt-1 text-3xl font-semibold text-ink">{value}</div>
-      {note ? <div className="mt-1 text-xs text-ink-soft">{note}</div> : null}
-    </div>
-  );
-}
-
 export default async function CoverPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -25,66 +15,102 @@ export default async function CoverPage({ params }: { params: Promise<{ locale: 
 
   const stats = await apiGet<PlatformStats>('/api/v1/platform/stats');
   const nf = new Intl.NumberFormat(locale === 'fa' ? 'fa-IR' : 'en');
-  const num = (v: number | null | undefined) =>
-    v === null || v === undefined ? '—' : nf.format(v);
+  const num = (value: number | null | undefined) =>
+    value === null || value === undefined ? '—' : nf.format(value);
 
   return (
     <main className="min-h-dvh">
-      <div className="contour">
-        <header className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-6">
-          <span className="font-semibold tracking-tight text-ink">{t('brand.name')}</span>
+      <header className="site-header">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-5 py-3">
+          <img
+            src="/brand/platform-logo-transparent.png"
+            alt={t('brand.logoAlt')}
+            className="h-9 w-auto"
+          />
           <LocaleSwitcher current={locale} label={t('cover.languageLabel')} />
-        </header>
-
-        <section className="mx-auto max-w-5xl px-6 pb-16 pt-10">
-          <h1 className="display text-5xl font-bold leading-tight text-ink sm:text-6xl">
-            {t('brand.name')}
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg text-ink-soft">{t('cover.subtitle')}</p>
-          <p className="mt-6 max-w-2xl text-base text-ink">{t('cover.slogan')}</p>
-          <blockquote className="mt-8 max-w-2xl border-s-2 border-water/60 ps-4 text-sm text-ink-soft">
-            {t('cover.quote')}
-          </blockquote>
-          {meta.machineTranslated ? (
-            <p className="mt-4 inline-block rounded-full border border-line px-3 py-1 text-xs text-ink-soft">
-              {t('common.machineTranslatedNotice')}
-            </p>
-          ) : null}
-
-          <div className="mt-10 flex flex-wrap gap-3">
-            <Link
-              href="/status"
-              className="rounded-[var(--radius-card)] bg-water px-5 py-3 text-sm font-semibold text-white hover:opacity-90"
-            >
-              {t('cover.enterPublic')}
-            </Link>
-            <span className="rounded-[var(--radius-card)] border border-line px-5 py-3 text-sm text-ink-soft">
-              {t('cover.enterMarketplace')} · {t('cover.comingSoon')}
-            </span>
-          </div>
-        </section>
-      </div>
-
-      <section className="mx-auto max-w-5xl px-6 py-10">
-        <h2 className="text-sm font-semibold text-ink-soft">{t('statusLine.realData')}</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-3">
-          <Stat
-            label={t('statusLine.landProfiles')}
-            value={stats.ok ? num(stats.data.total_landscapes) : '—'}
-            note={stats.ok ? t('statusLine.realData') : t('statusLine.unavailable')}
-          />
-          <Stat
-            label={t('statusLine.carbonProjects')}
-            value={stats.ok ? num(stats.data.total_projects) : '—'}
-            note={stats.ok ? t('statusLine.realData') : t('statusLine.unavailable')}
-          />
-          <Stat label={t('statusLine.pilotProvince')} value={t('statusLine.noData')} />
         </div>
-        {!stats.ok ? (
-          <p className="mt-3 text-xs text-copper">
-            /api/v1/platform/stats — {stats.error}
-          </p>
-        ) : null}
+      </header>
+
+      <section className="contour relative overflow-hidden border-b border-[var(--line)]">
+        <div className="mx-auto grid max-w-6xl items-start gap-14 px-5 py-14 lg:grid-cols-12 lg:py-24">
+          <div className="lg:col-span-7">
+            <span className="chip rise">
+              <span
+                className="status-dot"
+                data-state={stats.ok ? 'ok' : 'warn'}
+                aria-hidden="true"
+              />
+              {t('statusLine.realData')}
+            </span>
+
+            <h1 className="display rise rise-2 mt-7 text-balance text-4xl leading-[1.18] text-[var(--ink)] sm:text-5xl lg:text-6xl">
+              {t('cover.subtitle')}
+            </h1>
+
+            <p className="rise rise-3 mt-6 max-w-xl text-lg text-[var(--ink-soft)]">
+              {t('cover.slogan')}
+            </p>
+
+            <blockquote className="rise rise-3 mt-8 max-w-xl border-s-2 border-[var(--water)] ps-4 text-sm text-[var(--ink-soft)]">
+              {t('cover.quote')}
+            </blockquote>
+
+            <div className="rise rise-3 mt-10 flex flex-wrap gap-3">
+              <Link href="/home" className="btn btn-primary">
+                {t('cover.enterPublic')}
+              </Link>
+              <Link href="/market" className="btn btn-ghost">
+                {t('cover.enterMarketplace')}
+              </Link>
+            </div>
+
+            {meta.machineTranslated ? (
+              <p className="chip mt-8">{t('common.machineTranslatedNotice')}</p>
+            ) : null}
+          </div>
+
+          <aside className="lg:col-span-5">
+            <div className="panel p-5">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-sm font-semibold text-[var(--ink-soft)]">
+                  {t('statusLine.realData')}
+                </h2>
+                <span
+                  className="status-dot"
+                  data-state={stats.ok ? 'ok' : 'warn'}
+                  aria-hidden="true"
+                />
+              </div>
+
+              <dl className="mt-4 grid grid-cols-2 gap-3">
+                <div className="card p-4">
+                  <dt className="text-xs text-[var(--ink-soft)]">{t('statusLine.landProfiles')}</dt>
+                  <dd className="num mt-1 text-3xl font-semibold text-[var(--ink)]">
+                    {stats.ok ? num(stats.data.total_landscapes) : '—'}
+                  </dd>
+                </div>
+                <div className="card p-4">
+                  <dt className="text-xs text-[var(--ink-soft)]">
+                    {t('statusLine.carbonProjects')}
+                  </dt>
+                  <dd className="num mt-1 text-3xl font-semibold text-[var(--ink)]">
+                    {stats.ok ? num(stats.data.total_projects) : '—'}
+                  </dd>
+                </div>
+              </dl>
+
+              <p className="mt-4 text-xs text-[var(--ink-faint)]">
+                {t('statusLine.pilotProvince')}: {t('statusLine.noData')}
+              </p>
+
+              {!stats.ok ? (
+                <p className="mt-2 text-xs text-[var(--copper)]">
+                  /api/v1/platform/stats — {stats.error}
+                </p>
+              ) : null}
+            </div>
+          </aside>
+        </div>
       </section>
     </main>
   );

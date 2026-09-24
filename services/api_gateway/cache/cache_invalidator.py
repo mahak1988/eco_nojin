@@ -7,16 +7,18 @@ Supports tag-based, pattern-based, and key-based invalidation.
 """
 
 import asyncio
+import contextlib
 import json
-import logging
 import time
-from typing import Optional, Set, Callable, Awaitable, List, Dict, Any
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
+
 import redis.asyncio as redis
 from redis.asyncio.connection import ConnectionPool
 
-from services.api_gateway.cache.redis_cache import CacheConfig, RedisCache
+from services.api_gateway.cache.redis_cache import CacheConfig
 from services.api_gateway.observability.structured_logger import get_logger
 
 logger = get_logger(__name__)
@@ -55,24 +57,24 @@ class CacheInvalidator:
 
     def __init__(
         self,
-        config: Optional[CacheConfig] = None,
-        instance_id: Optional[str] = None,
+        config: CacheConfig | None = None,
+        instance_id: str | None = None,
     ):
         self.config = config or CacheConfig()
         self.instance_id = instance_id or f"instance-{id(self)}"
-        self._pool: Optional[ConnectionPool] = None
-        self._client: Optional[redis.Redis] = None
-        self._pubsub: Optional[redis.client.PubSub] = None
+        self._pool: ConnectionPool | None = None
+        self._client: redis.Redis | None = None
+        self._pubsub: redis.client.PubSub | None = None
         self._channel = f"{self.config.key_prefix}invalidation"
         self._running = False
-        self._listener_task: Optional[asyncio.Task] = None
-        self._handlers: Dict[InvalidationType, List[Callable[[str], Awaitable[None]]]] = {
+        self._listener_task: asyncio.Task | None = None
+        self._handlers: dict[InvalidationType, list[Callable[[str], Awaitable[None]]]] = {
             InvalidationType.KEY: [],
             InvalidationType.TAG: [],
             InvalidationType.PATTERN: [],
             InvalidationType.ALL: [],
         }
-        self._l1_caches: List[Any] = []  # Registered L1 caches
+        self._l1_caches: list[Any] = []  # Registered L1 caches
 
     @property
     def client(self) -> redis.Redis | None:
@@ -99,27 +101,25 @@ class CacheInvalidator:
             await self._pubsub.subscribe(self._channel)
             self._running = True
             self._listener_task = asyncio.create_task(self._listen())
-            logger.info("Cache invalidator started", instance=self.instance_id, channel=self._channel)
+            logger.info(
+                "Cache invalidator started", instance=self.instance_id, channel=self._channel
+            )
         except Exception as exc:
-            logger.warning("Cache invalidator start failed, continuing without Redis", error=str(exc))
+            logger.warning(
+                "Cache invalidator start failed, continuing without Redis", error=str(exc)
+            )
             await self._close_connections()
 
     async def _close_connections(self) -> None:
         if self._pubsub:
-            try:
+            with contextlib.suppress(Exception):
                 await self._pubsub.close()
-            except Exception:
-                pass
         if self._client:
-            try:
+            with contextlib.suppress(Exception):
                 await self._client.close()
-            except Exception:
-                pass
         if self._pool:
-            try:
+            with contextlib.suppress(Exception):
                 await self._pool.disconnect()
-            except Exception:
-                pass
         self._pubsub = None
         self._client = None
         self._pool = None
@@ -129,10 +129,8 @@ class CacheInvalidator:
         self._running = False
         if self._listener_task:
             self._listener_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await self._listener_task
-            except asyncio.CancelledError:
-                pass
             self._listener_task = None
         await self._close_connections()
         logger.info("Cache invalidator stopped", instance=self.instance_id)
@@ -292,7 +290,7 @@ class CacheInvalidator:
 
     # --- Utility Methods ---
 
-    async def get_stats(self) -> Dict[str, Any]:
+    async def get_stats(self) -> dict[str, Any]:
         """Get invalidator statistics."""
         return {
             "instance_id": self.instance_id,
@@ -322,12 +320,12 @@ class CacheWarmer:
 
     async def warm(
         self,
-        keys: List[str],
+        keys: list[str],
         loader: Callable[[str], Awaitable[Any]],
-        ttl: Optional[int] = None,
-        tags: Optional[Set[str]] = None,
+        ttl: int | None = None,
+        tags: set[str] | None = None,
         skip_existing: bool = True,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Warm cache for multiple keys concurrently.
 
@@ -364,11 +362,11 @@ class CacheWarmer:
 class CacheHealthChecker:
     """Health checker for cache system."""
 
-    def __init__(self, cache: Any, invalidator: Optional[CacheInvalidator] = None):
+    def __init__(self, cache: Any, invalidator: CacheInvalidator | None = None):
         self.cache = cache
         self.invalidator = invalidator
 
-    async def check_health(self) -> Dict[str, Any]:
+    async def check_health(self) -> dict[str, Any]:
         """Check health of cache system."""
         results = {
             "healthy": True,

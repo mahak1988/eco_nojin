@@ -352,7 +352,7 @@ class MRVSystemMotor(AbstractScientificMotor):
 
         baseline_c_factor = monitoring["baseline"]["c_factor"]
         project_c_factor = monitoring["project_practice"]["c_factor"]
-        baseline_soc = monitoring["baseline"]["soc_tC_ha"]
+        monitoring["baseline"]["soc_tC_ha"]
 
         # === Carbon sequestration calculation ===
         # Based on practice change + soil carbon dynamics (RothC-inspired)
@@ -405,7 +405,6 @@ class MRVSystemMotor(AbstractScientificMotor):
         total_annual_tCO2e_ha = annual_tCO2e_ha + avoided_tCO2e_ha
 
         # Apply standard conservatism factor
-        standard_name = project.project_name  # Will be overridden in test
         conservative_factor = 0.90  # 10% buffer for uncertainty
 
         final_annual_tCO2e_ha = total_annual_tCO2e_ha * conservative_factor
@@ -442,7 +441,7 @@ class MRVSystemMotor(AbstractScientificMotor):
         items = []
 
         # 1. Soil health improvement
-        baseline_erosion = monitoring["baseline"]["estimated_annual_loss_t_ha"]
+        monitoring["baseline"]["estimated_annual_loss_t_ha"]
         project_c = monitoring["project_practice"]["c_factor"]
         baseline_c = monitoring["baseline"]["c_factor"]
         erosion_reduction_pct = (baseline_c - project_c) / baseline_c * 100
@@ -518,8 +517,8 @@ class MRVSystemMotor(AbstractScientificMotor):
 
         return {
             "items": items,
-            "sdgs_addressed": sorted(set(sdg for item in items for sdg in item["sdg"])),
-            "categories": list(set(item["category"] for item in items)),
+            "sdgs_addressed": sorted({sdg for item in items for sdg in item["sdg"]}),
+            "categories": list({item["category"] for item in items}),
             "total_score": sum(item["value"] for item in items),
         }
 

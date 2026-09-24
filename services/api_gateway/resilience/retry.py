@@ -8,9 +8,10 @@ Based on tenacity with custom configuration.
 import asyncio
 import logging
 import random
-from contextlib import asynccontextmanager
+from collections.abc import Callable
+from contextlib import asynccontextmanager, suppress
 from dataclasses import dataclass
-from typing import Any, Callable, Optional, Tuple, Type, TypeVar, Union
+from typing import TypeVar
 
 from engine.hydroma.config.settings import get_settings
 
@@ -22,15 +23,16 @@ T = TypeVar("T")
 @dataclass
 class RetryConfig:
     """Configuration for retry policy."""
+
     max_attempts: int = 3
     base_delay: float = 1.0  # seconds
     max_delay: float = 60.0  # seconds
     exponential_base: float = 2.0
     jitter: bool = True
     jitter_factor: float = 0.1  # 10% jitter
-    retry_exceptions: Tuple[Type[Exception], ...] = (Exception,)
-    stop_exceptions: Tuple[Type[Exception], ...] = ()
-    before_retry: Optional[Callable[[int, Exception], None]] = None
+    retry_exceptions: tuple[type[Exception], ...] = (Exception,)
+    stop_exceptions: tuple[type[Exception], ...] = ()
+    before_retry: Callable[[int, Exception], None] | None = None
     name: str = "default"
 
 
@@ -43,8 +45,7 @@ class RetryPolicy:
     def _calculate_delay(self, attempt: int) -> float:
         """Calculate delay with exponential backoff and optional jitter."""
         delay = min(
-            self.config.base_delay * (self.config.exponential_base ** attempt),
-            self.config.max_delay
+            self.config.base_delay * (self.config.exponential_base**attempt), self.config.max_delay
         )
         if self.config.jitter:
             # Add jitter: delay * (1 +/- jitter_factor)
@@ -104,7 +105,6 @@ class RetryPolicy:
             except self.config.stop_exceptions:
                 raise
             except self.config.retry_exceptions as e:
-                last_exception = e
                 attempt += 1
                 if attempt >= self.config.max_attempts:
                     logger.error(
@@ -117,19 +117,17 @@ class RetryPolicy:
                     f"Retrying in {delay:.2f}s..."
                 )
                 if self.config.before_retry:
-                    try:
+                    with suppress(Exception):
                         self.config.before_retry(attempt, e)
-                    except Exception:
-                        pass
                 await asyncio.sleep(delay)
 
 
 def create_retry_policy(
     name: str,
-    max_attempts: Optional[int] = None,
-    base_delay: Optional[float] = None,
-    max_delay: Optional[float] = None,
-    **kwargs
+    max_attempts: int | None = None,
+    base_delay: float | None = None,
+    max_delay: float | None = None,
+    **kwargs,
 ) -> RetryPolicy:
     """Create retry policy from settings or explicit params."""
     settings = get_settings()
@@ -138,7 +136,7 @@ def create_retry_policy(
         max_attempts=max_attempts or getattr(settings, f"retry_{name}_max_attempts", 3),
         base_delay=base_delay or getattr(settings, f"retry_{name}_base_delay", 1.0),
         max_delay=max_delay or getattr(settings, f"retry_{name}_max_delay", 60.0),
-        **kwargs
+        **kwargs,
     )
     return RetryPolicy(config)
 
@@ -206,29 +204,37 @@ def with_retry(policy_name: str = "default", **policy_kwargs):
     def decorator(func: Callable[..., T]) -> Callable[..., T]:
         async def wrapper(*args, **kwargs) -> T:
             return await policy.execute(func, *args, **kwargs)
+
         return wrapper
+
     return decorator
 
 
-def with_cdse_retry(func: Callable[..., T]) -> Callable[..., T]:
+def with_cdse_retry[T](func: Callable[..., T]) -> Callable[..., T]:
     """Decorator for CDSE API calls."""
     policy = get_cdse_retry_policy()
+
     async def wrapper(*args, **kwargs) -> T:
         return await policy.execute(func, *args, **kwargs)
+
     return wrapper
 
 
-def get_supabase_retry(func: Callable[..., T]) -> Callable[..., T]:
+def get_supabase_retry[T](func: Callable[..., T]) -> Callable[..., T]:
     """Decorator for Supabase API calls."""
     policy = get_supabase_retry_policy()
+
     async def wrapper(*args, **kwargs) -> T:
         return await policy.execute(func, *args, **kwargs)
+
     return wrapper
 
 
-def get_blockchain_retry(func: Callable[..., T]) -> Callable[..., T]:
+def get_blockchain_retry[T](func: Callable[..., T]) -> Callable[..., T]:
     """Decorator for Blockchain RPC calls."""
     policy = get_blockchain_retry_policy()
+
     async def wrapper(*args, **kwargs) -> T:
         return await policy.execute(func, *args, **kwargs)
+
     return wrapper

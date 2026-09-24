@@ -1,7 +1,8 @@
+from pathlib import Path
+
 from pybind11 import get_cmake_dir
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 from setuptools import setup
-from pathlib import Path
 
 # Get the directory of this setup.py
 THIS_DIR = Path(__file__).resolve().parent

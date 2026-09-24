@@ -5,13 +5,13 @@ import structlog
 logger = structlog.get_logger()
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class CommandType(str, Enum):
+class CommandType(StrEnum):
     START = "/start"
     HELP = "/help"
     ADVISOR = "/advisor"

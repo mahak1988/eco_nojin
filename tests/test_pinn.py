@@ -19,7 +19,7 @@ def test_toy_training_reduces_loss():
     # y = sin(x) toy target
     xs = [[i / 50.0] for i in range(0, 100)]
     ys = [math.sin(x[0] * 4) for x in xs]
-    before = float(model.net[0].weight.abs().mean())
+    float(model.net[0].weight.abs().mean())
     result = model.fit(xs, ys, epochs=300, lr=1e-2)
     assert result["final_loss"] < 0.5
     # surrogate approximates sin(pi/2)=1 reasonably after training

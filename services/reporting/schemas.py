@@ -1,13 +1,13 @@
 """Pydantic schemas for Reporting"""
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field
 
 
-class ReportType(str, Enum):
+class ReportType(StrEnum):
     SALES = "sales"
     TOURISM = "tourism"
     LANDSCAPE = "landscape"
@@ -15,7 +15,7 @@ class ReportType(str, Enum):
     COMPREHENSIVE = "comprehensive"
 
 
-class ReportStatus(str, Enum):
+class ReportStatus(StrEnum):
     PENDING = "pending"
     PROCESSING = "processing"
     COMPLETED = "completed"

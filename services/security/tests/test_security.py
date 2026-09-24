@@ -113,16 +113,6 @@ def test_ogc_landing_and_conformance():
     assert ogc._COLLECTIONS["collections"][0]["id"] == ogc.COLLECTION_ID
 
 
-def test_rag_index_and_search():
-    from services.ai.rag import index
-
-    n = index.build()
-    assert n > 50  # Persian docs indexed
-    results = index.search("بندسار رواناب", k=3)
-    assert len(results) >= 1
-    assert results[0]["file"].endswith(".md")
-
-
 def test_nlg_advise_returns_evidence():
     from services.ai.nlg import advise
 

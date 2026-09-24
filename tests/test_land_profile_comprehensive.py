@@ -1,13 +1,16 @@
 import os
+
 import structlog
 
 logger = structlog.get_logger()
+from datetime import datetime
+
 import pytest
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
-from datetime import datetime, timezone
-from database.models import User, LandProfile, Base
+
 from database.hub import hub
+from database.models import Base, LandProfile, User
 
 
 # Compatibility: get_db via hub
@@ -17,7 +20,7 @@ def get_db():
 
 
 # ایجاد یک دیتابیس موقت در حافظه برای تست
-@pytest.fixture(scope="function")
+@pytest.fixture
 def test_db_session():
     engine = create_engine("sqlite:///:memory:")
     Base.metadata.create_all(bind=engine)

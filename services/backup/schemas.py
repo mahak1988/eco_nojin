@@ -1,14 +1,13 @@
 """Schemas for Backup/Restore Service."""
 
-import uuid
 from datetime import datetime
-from typing import Optional, List, Dict, Any, Literal
-from enum import Enum
+from enum import StrEnum
+from typing import Any, Literal
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
-class BackupType(str, Enum):
+class BackupType(StrEnum):
     FULL = "full"
     INCREMENTAL = "incremental"
     DIFFERENTIAL = "differential"
@@ -16,7 +15,7 @@ class BackupType(str, Enum):
     PHYSICAL = "physical"  # pg_basebackup style
 
 
-class BackupStatus(str, Enum):
+class BackupStatus(StrEnum):
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"
@@ -31,17 +30,17 @@ class BackupConfigCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     name: str = Field(..., min_length=1, max_length=200)
-    description: Optional[str] = Field(None, max_length=1000)
+    description: str | None = Field(None, max_length=1000)
 
     # Backup type and scope
     backup_type: Literal["full", "incremental", "differential", "logical", "physical"] = "full"
-    databases: List[str] = Field(
+    databases: list[str] = Field(
         default_factory=list, description="Database names to backup (empty = all)"
     )
-    include_schemas: List[str] = Field(
+    include_schemas: list[str] = Field(
         default_factory=list, description="Specific schemas to include"
     )
-    exclude_tables: List[str] = Field(default_factory=list, description="Tables to exclude")
+    exclude_tables: list[str] = Field(default_factory=list, description="Tables to exclude")
 
     # Schedule
     schedule_cron: str = Field("0 2 * * *", description="Cron expression for schedule (UTC)")
@@ -54,14 +53,14 @@ class BackupConfigCreate(BaseModel):
     # Storage
     storage_backend: Literal["local", "s3", "gcs", "azure"] = "local"
     storage_path: str = Field("./backups", description="Local path or S3 bucket path")
-    storage_config: Dict[str, Any] = Field(
+    storage_config: dict[str, Any] = Field(
         default_factory=dict, description="Backend-specific config"
     )
 
     # Compression & Encryption
     compression: Literal["none", "gzip", "zstd", "lz4"] = "gzip"
     encryption_enabled: bool = False
-    encryption_key_id: Optional[str] = Field(None, max_length=255)
+    encryption_key_id: str | None = Field(None, max_length=255)
 
     # Verification
     verify_after_backup: bool = True
@@ -70,8 +69,8 @@ class BackupConfigCreate(BaseModel):
     # Notifications
     notify_on_success: bool = False
     notify_on_failure: bool = True
-    notification_channels: List[str] = Field(default_factory=list)
-    notification_config: Dict[str, Any] = Field(default_factory=dict)
+    notification_channels: list[str] = Field(default_factory=list)
+    notification_config: dict[str, Any] = Field(default_factory=dict)
 
     # Advanced
     parallel_jobs: int = Field(1, ge=1, le=8, description="Parallel backup jobs")
@@ -85,33 +84,31 @@ class BackupConfigUpdate(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    name: Optional[str] = Field(None, min_length=1, max_length=200)
-    description: Optional[str] = None
-    backup_type: Optional[Literal["full", "incremental", "differential", "logical", "physical"]] = (
-        None
-    )
-    databases: Optional[List[str]] = None
-    include_schemas: Optional[List[str]] = None
-    exclude_tables: Optional[List[str]] = None
-    schedule_cron: Optional[str] = None
-    timezone: Optional[str] = None
-    retention_days: Optional[int] = Field(None, ge=1, le=3650)
-    max_backups: Optional[int] = Field(None, ge=1, le=1000)
-    storage_backend: Optional[Literal["local", "s3", "gcs", "azure"]] = None
-    storage_path: Optional[str] = None
-    storage_config: Optional[Dict[str, Any]] = None
-    compression: Optional[Literal["none", "gzip", "zstd", "lz4"]] = None
-    encryption_enabled: Optional[bool] = None
-    encryption_key_id: Optional[str] = None
-    verify_after_backup: Optional[bool] = None
-    verify_checksum: Optional[bool] = None
-    notify_on_success: Optional[bool] = None
-    notify_on_failure: Optional[bool] = None
-    notification_channels: Optional[List[str]] = None
-    notification_config: Optional[Dict[str, Any]] = None
-    parallel_jobs: Optional[int] = Field(None, ge=1, le=8)
-    timeout_seconds: Optional[int] = Field(None, ge=60)
-    enabled: Optional[bool] = None
+    name: str | None = Field(None, min_length=1, max_length=200)
+    description: str | None = None
+    backup_type: Literal["full", "incremental", "differential", "logical", "physical"] | None = None
+    databases: list[str] | None = None
+    include_schemas: list[str] | None = None
+    exclude_tables: list[str] | None = None
+    schedule_cron: str | None = None
+    timezone: str | None = None
+    retention_days: int | None = Field(None, ge=1, le=3650)
+    max_backups: int | None = Field(None, ge=1, le=1000)
+    storage_backend: Literal["local", "s3", "gcs", "azure"] | None = None
+    storage_path: str | None = None
+    storage_config: dict[str, Any] | None = None
+    compression: Literal["none", "gzip", "zstd", "lz4"] | None = None
+    encryption_enabled: bool | None = None
+    encryption_key_id: str | None = None
+    verify_after_backup: bool | None = None
+    verify_checksum: bool | None = None
+    notify_on_success: bool | None = None
+    notify_on_failure: bool | None = None
+    notification_channels: list[str] | None = None
+    notification_config: dict[str, Any] | None = None
+    parallel_jobs: int | None = Field(None, ge=1, le=8)
+    timeout_seconds: int | None = Field(None, ge=60)
+    enabled: bool | None = None
 
 
 class BackupConfigResponse(BaseModel):
@@ -119,9 +116,9 @@ class BackupConfigResponse(BaseModel):
 
     id: str
     name: str
-    description: Optional[str]
+    description: str | None
     backup_type: str
-    databases: List[str]
+    databases: list[str]
     schedule_cron: str
     timezone: str
     retention_days: int
@@ -139,7 +136,7 @@ class BackupConfigResponse(BaseModel):
     updated_at: datetime
 
 
-class BackupJobStatus(str, Enum):
+class BackupJobStatus(StrEnum):
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"
@@ -157,14 +154,14 @@ class BackupJobResponse(BaseModel):
     backup_type: str
     status: str
     started_at: datetime
-    completed_at: Optional[datetime]
-    duration_seconds: Optional[int]
-    size_bytes: Optional[int]
-    checksum: Optional[str]
-    file_path: Optional[str]
-    error_message: Optional[str]
-    databases: List[str]
-    verification_status: Optional[str]
+    completed_at: datetime | None
+    duration_seconds: int | None
+    size_bytes: int | None
+    checksum: str | None
+    file_path: str | None
+    error_message: str | None
+    databases: list[str]
+    verification_status: str | None
     created_at: datetime
 
 
@@ -177,9 +174,7 @@ class RestoreRequest(BaseModel):
     target_database: str = Field(
         ..., min_length=1, max_length=100, description="Target database name"
     )
-    target_schema: Optional[str] = Field(
-        None, max_length=100, description="Target schema (optional)"
-    )
+    target_schema: str | None = Field(None, max_length=100, description="Target schema (optional)")
 
     # Restore options
     clean_before_restore: bool = Field(False, description="Drop existing objects before restore")
@@ -189,9 +184,9 @@ class RestoreRequest(BaseModel):
     no_privileges: bool = Field(False, description="Skip privilege restoration")
 
     # Point-in-time recovery (for physical backups)
-    recovery_target_time: Optional[datetime] = None
-    recovery_target_xid: Optional[str] = None
-    recovery_target_lsn: Optional[str] = None
+    recovery_target_time: datetime | None = None
+    recovery_target_xid: str | None = None
+    recovery_target_lsn: str | None = None
 
     # Safety
     confirm: bool = Field(True, description="Confirmation required")
@@ -205,10 +200,10 @@ class RestoreResponse(BaseModel):
     target_database: str
     status: str
     started_at: datetime
-    completed_at: Optional[datetime]
-    duration_seconds: Optional[int]
+    completed_at: datetime | None
+    duration_seconds: int | None
     restored_objects: int
-    error_message: Optional[str]
+    error_message: str | None
     created_at: datetime
 
 
@@ -223,6 +218,6 @@ class BackupSummary(BaseModel):
     completed_today: int
     failed_today: int
     total_storage_bytes: int
-    last_backup_at: Optional[datetime]
-    next_scheduled_at: Optional[datetime]
-    storage_used_percent: Optional[float]
+    last_backup_at: datetime | None
+    next_scheduled_at: datetime | None
+    storage_used_percent: float | None

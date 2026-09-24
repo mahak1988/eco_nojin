@@ -1,7 +1,7 @@
 """Abstract interface for the Land Analysis Engine."""
 
 from abc import ABC, abstractmethod
-from typing import Optional
+
 import numpy as np
 
 from engine.land.models import (
@@ -28,7 +28,7 @@ class ILandEngine(ABC):
     def assess_capability(
         self,
         slope_degrees: float,
-        soil_depth_m: Optional[float] = None,
+        soil_depth_m: float | None = None,
         erosion_risk: str = "low",
         drainage_class: str = "well_drained",
         climate_zone: str = "temperate",

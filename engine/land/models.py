@@ -5,13 +5,13 @@ Complete data structures for land analysis.
 """
 
 from datetime import UTC, datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class TerrainType(str, Enum):
+class TerrainType(StrEnum):
     """Terrain type (USDA/FAO standard)"""
 
     FLAT = "flat"
@@ -24,7 +24,7 @@ class TerrainType(str, Enum):
     VERY_STEEP = "very_steep"
 
 
-class SlopeClass(str, Enum):
+class SlopeClass(StrEnum):
     """USDA Slope Classes"""
 
     CLASS_0 = "0"  # 0-1%
@@ -36,7 +36,7 @@ class SlopeClass(str, Enum):
     CLASS_6 = "6"  # >45%
 
 
-class DrainagePattern(str, Enum):
+class DrainagePattern(StrEnum):
     """Drainage patterns"""
 
     DENDRITIC = "dendritic"
@@ -49,7 +49,7 @@ class DrainagePattern(str, Enum):
     CENTRIPETAL = "centripetal"
 
 
-class DrainageDensityClass(str, Enum):
+class DrainageDensityClass(StrEnum):
     """Drainage density classes"""
 
     VERY_LOW = "very_low"
@@ -59,7 +59,7 @@ class DrainageDensityClass(str, Enum):
     VERY_HIGH = "very_high"
 
 
-class ErosionRisk(str, Enum):
+class ErosionRisk(StrEnum):
     """Erosion risk levels"""
 
     LOW = "low"
@@ -68,7 +68,7 @@ class ErosionRisk(str, Enum):
     VERY_HIGH = "very_high"
 
 
-class LandCapabilityClass(str, Enum):
+class LandCapabilityClass(StrEnum):
     """USDA Land Capability Classes"""
 
     CLASS_I = "I"
@@ -81,7 +81,7 @@ class LandCapabilityClass(str, Enum):
     CLASS_VIII = "VIII"
 
 
-class LandformType(str, Enum):
+class LandformType(StrEnum):
     """TPI-based landform types"""
 
     VALLEY = "valley"

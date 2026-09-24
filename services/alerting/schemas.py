@@ -1,27 +1,26 @@
 """Schemas for Alerting Service."""
 
-import uuid
 from datetime import datetime
-from typing import Optional, List, Dict, Any, Literal
-from enum import Enum
+from enum import StrEnum
+from typing import Any, Literal
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
-class AlertSeverity(str, Enum):
+class AlertSeverity(StrEnum):
     INFO = "info"
     WARNING = "warning"
     CRITICAL = "critical"
 
 
-class AlertStatus(str, Enum):
+class AlertStatus(StrEnum):
     FIRING = "firing"
     RESOLVED = "resolved"
     ACKNOWLEDGED = "acknowledged"
     SUPPRESSED = "suppressed"
 
 
-class NotificationChannel(str, Enum):
+class NotificationChannel(StrEnum):
     EMAIL = "email"
     SLACK = "slack"
     WEBHOOK = "webhook"
@@ -51,17 +50,17 @@ class AlertRuleCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     name: str = Field(..., min_length=1, max_length=200)
-    description: Optional[str] = Field(None, max_length=1000)
+    description: str | None = Field(None, max_length=1000)
     severity: Literal["info", "warning", "critical"] = "warning"
     condition: AlertRuleCondition
-    labels: Dict[str, str] = Field(default_factory=dict, description="Labels for routing")
-    annotations: Dict[str, str] = Field(default_factory=dict, description="Additional info")
+    labels: dict[str, str] = Field(default_factory=dict, description="Labels for routing")
+    annotations: dict[str, str] = Field(default_factory=dict, description="Additional info")
 
     # Notification settings
-    notification_channels: List[Literal["email", "slack", "webhook", "pagerduty", "sms"]] = Field(
+    notification_channels: list[Literal["email", "slack", "webhook", "pagerduty", "sms"]] = Field(
         default_factory=list, description="Notification channels"
     )
-    notification_config: Dict[str, Any] = Field(
+    notification_config: dict[str, Any] = Field(
         default_factory=dict, description="Channel-specific config"
     )
 
@@ -72,13 +71,13 @@ class AlertRuleCreate(BaseModel):
 
     # Suppression
     suppress_duration_seconds: int = Field(0, ge=0, description="Suppress after firing")
-    max_firing_duration_seconds: Optional[int] = Field(
+    max_firing_duration_seconds: int | None = Field(
         None, description="Auto-resolve after max duration"
     )
 
     # Ownership
-    owner: Optional[str] = Field(None, max_length=255)
-    runbook_url: Optional[str] = Field(None, max_length=500)
+    owner: str | None = Field(None, max_length=255)
+    runbook_url: str | None = Field(None, max_length=500)
 
 
 class AlertRuleUpdate(BaseModel):
@@ -86,24 +85,24 @@ class AlertRuleUpdate(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    name: Optional[str] = Field(None, min_length=1, max_length=200)
-    description: Optional[str] = None
-    severity: Optional[Literal["info", "warning", "critical"]] = None
-    condition: Optional[Dict[str, Any]] = None
-    labels: Optional[Dict[str, str]] = None
-    annotations: Optional[Dict[str, str]] = None
-    notification_channels: Optional[
-        List[Literal["email", "slack", "webhook", "pagerduty", "sms"]]
-    ] = None
-    notification_config: Optional[Dict[str, Any]] = None
-    evaluation_interval_seconds: Optional[int] = Field(None, ge=10)
-    pending_duration_seconds: Optional[int] = Field(None, ge=0)
-    resolved_duration_seconds: Optional[int] = Field(None, ge=0)
-    suppress_duration_seconds: Optional[int] = Field(None, ge=0)
-    max_firing_duration_seconds: Optional[int] = None
-    owner: Optional[str] = None
-    runbook_url: Optional[str] = None
-    enabled: Optional[bool] = None
+    name: str | None = Field(None, min_length=1, max_length=200)
+    description: str | None = None
+    severity: Literal["info", "warning", "critical"] | None = None
+    condition: dict[str, Any] | None = None
+    labels: dict[str, str] | None = None
+    annotations: dict[str, str] | None = None
+    notification_channels: list[Literal["email", "slack", "webhook", "pagerduty", "sms"]] | None = (
+        None
+    )
+    notification_config: dict[str, Any] | None = None
+    evaluation_interval_seconds: int | None = Field(None, ge=10)
+    pending_duration_seconds: int | None = Field(None, ge=0)
+    resolved_duration_seconds: int | None = Field(None, ge=0)
+    suppress_duration_seconds: int | None = Field(None, ge=0)
+    max_firing_duration_seconds: int | None = None
+    owner: str | None = None
+    runbook_url: str | None = None
+    enabled: bool | None = None
 
 
 class AlertRuleResponse(BaseModel):
@@ -111,20 +110,20 @@ class AlertRuleResponse(BaseModel):
 
     id: str
     name: str
-    description: Optional[str]
+    description: str | None
     severity: str
-    condition: Dict[str, Any]
-    labels: Dict[str, str]
-    annotations: Dict[str, str]
-    notification_channels: List[str]
-    notification_config: Dict[str, Any]
+    condition: dict[str, Any]
+    labels: dict[str, str]
+    annotations: dict[str, str]
+    notification_channels: list[str]
+    notification_config: dict[str, Any]
     evaluation_interval_seconds: int
     pending_duration_seconds: int
     resolved_duration_seconds: int
     suppress_duration_seconds: int
-    max_firing_duration_seconds: Optional[int]
-    owner: Optional[str]
-    runbook_url: Optional[str]
+    max_firing_duration_seconds: int | None
+    owner: str | None
+    runbook_url: str | None
     enabled: bool
     created_at: datetime
     updated_at: datetime
@@ -138,15 +137,15 @@ class AlertResponse(BaseModel):
     rule_name: str
     severity: str
     status: str
-    labels: Dict[str, str]
-    annotations: Dict[str, str]
+    labels: dict[str, str]
+    annotations: dict[str, str]
     value: float
     threshold: float
     started_at: datetime
-    acknowledged_at: Optional[datetime]
-    resolved_at: Optional[datetime]
-    acknowledged_by: Optional[str]
-    acknowledged_note: Optional[str]
+    acknowledged_at: datetime | None
+    resolved_at: datetime | None
+    acknowledged_by: str | None
+    acknowledged_note: str | None
 
 
 class AlertSummary(BaseModel):
@@ -159,4 +158,4 @@ class AlertSummary(BaseModel):
     critical_firing: int
     warning_firing: int
     info_firing: int
-    last_evaluation: Optional[datetime]
+    last_evaluation: datetime | None

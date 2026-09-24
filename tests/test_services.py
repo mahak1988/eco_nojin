@@ -1,25 +1,19 @@
 """Tests for EcoCoin Protocol - Python Services"""
 
-import pytest
-import pytest_asyncio
-from decimal import Decimal
 from datetime import UTC, datetime
-from unittest.mock import AsyncMock, MagicMock, patch
-import uuid
+from unittest.mock import MagicMock
+
+import pytest
 
 from services.ecosystem.service import (
-    EcosystemService,
     ActivityType,
+    EcosystemService,
     VerificationStatus,
-    ActivityEvidence,
 )
-from services.ecosystem.trust_score import TrustScoreService, TrustEventType
+from services.ecosystem.trust_score import TrustScoreService
+from services.oracle.service import OracleService
 from services.privacy.vault import PrivacyVault
-from services.oracle.service import OracleService, DataSource
-from services.satellite.service import SatelliteService, SatelliteSource
-from services.finance.wallet_service import WalletService, LedgerService, TransactionType
-from services.carbon.service import CarbonService
-from services.carbon.schemas import RegisterProjectRequest, VerifyProjectRequest
+from services.satellite.service import SatelliteService
 
 
 class TestEcosystemService:
@@ -74,7 +68,6 @@ class TestEcosystemService:
     @pytest.mark.asyncio
     async def test_calculate_impact_score(self, service):
         """Test impact score calculation"""
-        from services.ecosystem.service import Activity
 
         activity = MagicMock()
         activity.activity_type = ActivityType.TREE_PLANTING
@@ -101,7 +94,7 @@ class TestTrustScoreService:
         # Mock database events
         service._get_user_events = MagicMock(return_value=[])
         score = await service.calculate_score("user_123")
-        assert service.BASE_SCORE == score
+        assert score == service.BASE_SCORE
 
     @pytest.mark.asyncio
     async def test_record_event(self, service):
@@ -146,7 +139,7 @@ class TestPrivacyVault:
 
     def test_commitment_verification(self, vault):
         """Test commitment hash verification"""
-        entry_id = vault.store("user_123", {"key": "value"})
+        vault.store("user_123", {"key": "value"})
         # Would verify commitment hash
         assert True
 

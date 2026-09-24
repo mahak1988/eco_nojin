@@ -7,13 +7,13 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
-from database.hub import hub
 from database.base import Base
+from database.hub import hub
+from engine.hydroma.biofertilizer.data.materials_data import MATERIALS, SOIL_TYPES
 from engine.hydroma.biofertilizer.models import (
     NojinMaterial,
     NojinSoilType,
 )
-from engine.hydroma.biofertilizer.data.materials_data import MATERIALS, SOIL_TYPES
 
 
 @pytest.fixture(scope="session", autouse=True)

@@ -16,7 +16,7 @@ in-memory simulation with a logged warning.
 import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from enum import Enum
+from enum import StrEnum
 
 from services.business_modules.blockchain.carbon_registry import (
     CarbonProject,
@@ -28,14 +28,14 @@ from services.business_modules.blockchain.web3_integration import get_web3
 logger = logging.getLogger(__name__)
 
 
-class CreditType(str, Enum):
+class CreditType(StrEnum):
     VCS = "VCS"
     GOLD_STANDARD = "Gold Standard"
     CARBON_OFFSET = "Carbon Offset"
     CCS = "CCS"
 
 
-class TokenStatus(str, Enum):
+class TokenStatus(StrEnum):
     ACTIVE = "active"
     RETIRED = "retired"
     TRANSFERRED = "transferred"

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 analyze_project.py — تحلیل جامع پروژه و تولید گزارش کامل (نسخهٔ ۲)
 
@@ -25,19 +24,19 @@ analyze_project.py — تحلیل جامع پروژه و تولید گزارش �
 نیازمندی: فقط کتابخانهٔ استاندارد پایتون (structlog اختیاری است)
 """
 
-import os
-import re
-import ast
-import sys
-import json
-import time
 import argparse
+import ast
 import hashlib
+import json
+import os
 import platform
+import re
 import subprocess
-from pathlib import Path
-from datetime import datetime
+import sys
+import time
 from collections import Counter, defaultdict
+from datetime import datetime
+from pathlib import Path
 
 # structlog اگر نصب بود استفاده می‌شود؛ وگرنه جایگزین استاندارد (بدون pip install)
 try:
@@ -373,7 +372,7 @@ def walk_files(root: Path):
 def run_git(root: Path, args: list):
     try:
         r = subprocess.run(
-            ["git"] + args,
+            ["git", *args],
             cwd=str(root),
             capture_output=True,
             text=True,
@@ -489,7 +488,7 @@ def build_tree(root: Path, max_depth: int = 3):
 # ---------------- ۳) آمار حجم و تازگی فایل‌ها ----------------
 def count_empty_dirs(root: Path) -> int:
     n = 0
-    for dirpath, dirnames, filenames in os.walk(root):
+    for _dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS]
         if not dirnames and not filenames:
             n += 1

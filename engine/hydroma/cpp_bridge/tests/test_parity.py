@@ -5,37 +5,33 @@ Tests that C++ implementations match Python/Numba reference implementations
 within acceptable numerical tolerance.
 """
 
-import pytest
 import numpy as np
-from hypothesis import given, strategies as st, settings
+import pytest
+from hypothesis import given, settings, strategies as st
 from hypothesis.extra.numpy import arrays
 
 # Import both backends
-from engine.hydroma.cpp_bridge import (
-    is_cpp_available,
-    BACKEND,
-    ndvi,
-    evi,
-    savi,
-    nbr,
-    ndwi,
-    get_telemetry,
-    reset_telemetry,
-)
-
 # Import Python reference implementations
 from engine.hydroma.cpp_bridge import (
-    _py_ndvi,
+    BACKEND,
     _py_evi,
-    _py_savi,
     _py_nbr,
+    _py_ndvi,
     _py_ndwi,
+    _py_savi,
+    evi,
+    get_telemetry,
+    is_cpp_available,
+    nbr,
+    ndvi,
+    ndwi,
+    reset_telemetry,
+    savi,
 )
 
 # Skip all tests if C++ is not available
 pytestmark = pytest.mark.skipif(
-    not is_cpp_available(),
-    reason="C++ hydroma_core not available - skipping parity tests"
+    not is_cpp_available(), reason="C++ hydroma_core not available - skipping parity tests"
 )
 
 
@@ -48,15 +44,17 @@ def assert_close(cpp_result, py_result, rtol=RTOL, atol=ATOL, msg=""):
     """Assert that C++ and Python results are close."""
     cpp_arr = np.asarray(cpp_result)
     py_arr = np.asarray(py_result)
-    
+
     # Check shape
     assert cpp_arr.shape == py_arr.shape, f"{msg} Shape mismatch: {cpp_arr.shape} vs {py_arr.shape}"
-    
+
     # Check values
     np.testing.assert_allclose(
-        cpp_arr, py_arr,
-        rtol=rtol, atol=atol,
-        err_msg=f"{msg} Values differ: cpp={cpp_arr}, py={py_arr}"
+        cpp_arr,
+        py_arr,
+        rtol=rtol,
+        atol=atol,
+        err_msg=f"{msg} Values differ: cpp={cpp_arr}, py={py_arr}",
     )
 
 
@@ -79,12 +77,12 @@ class TestIndicesParity:
         red=arrays(
             dtype=np.float64,
             shape=st.integers(min_value=1, max_value=100),
-            elements=st.floats(min_value=0.0, max_value=1.0, allow_nan=False, allow_infinity=False)
+            elements=st.floats(min_value=0.0, max_value=1.0, allow_nan=False, allow_infinity=False),
         ),
         nir=arrays(
             dtype=np.float64,
             shape=st.integers(min_value=1, max_value=100),
-            elements=st.floats(min_value=0.0, max_value=1.0, allow_nan=False, allow_infinity=False)
+            elements=st.floats(min_value=0.0, max_value=1.0, allow_nan=False, allow_infinity=False),
         ),
     )
     @settings(max_examples=20, deadline=None)
@@ -95,7 +93,7 @@ class TestIndicesParity:
         min_len = min(len(red), len(nir))
         red = red[:min_len]
         nir = nir[:min_len]
-        
+
         cpp_result = ndvi(red, nir)
         py_result = _py_ndvi(red, nir)
         assert_close(cpp_result, py_result, msg="NDVI array")
@@ -104,13 +102,13 @@ class TestIndicesParity:
         """Test NDVI edge cases."""
         # Zero denominator
         assert_close(ndvi(0.0, 0.0), _py_ndvi(0.0, 0.0), msg="NDVI(0,0)")
-        
+
         # Equal values (NDVI = 0)
         assert_close(ndvi(0.5, 0.5), _py_ndvi(0.5, 0.5), msg="NDVI(0.5, 0.5)")
-        
+
         # Pure vegetation (nir=1, red=0)
         assert_close(ndvi(0.0, 1.0), _py_ndvi(0.0, 1.0), msg="NDVI(0, 1)")
-        
+
         # Bare soil (nir=0, red=1)
         assert_close(ndvi(1.0, 0.0), _py_ndvi(1.0, 0.0), msg="NDVI(1, 0)")
 
@@ -190,12 +188,12 @@ class TestTelemetry:
         """Test that C++ calls are counted."""
         reset_telemetry()
         initial = get_telemetry()["cpp_calls"]
-        
+
         # Make some C++ calls
         ndvi(0.3, 0.7)
         ndvi(0.4, 0.6)
         ndvi(0.5, 0.5)
-        
+
         telemetry = get_telemetry()
         assert telemetry["cpp_calls"] == initial + 3
         assert telemetry["total_cpp_time_ms"] >= 0
@@ -229,10 +227,10 @@ class TestArrayOperations:
         """Test NDVI with broadcasting."""
         red = np.array([[0.1, 0.2], [0.3, 0.4]])
         nir = np.array([[0.7, 0.8], [0.9, 0.8]])
-        
+
         cpp_result = ndvi(red, nir)
         py_result = _py_ndvi(red, nir)
-        
+
         assert_close(cpp_result, py_result, msg="NDVI 2D array")
         assert cpp_result.shape == (2, 2)
 
@@ -241,10 +239,10 @@ class TestArrayOperations:
         size = 1000
         red = np.random.uniform(0, 1, size)
         nir = np.random.uniform(0, 1, size)
-        
+
         cpp_result = ndvi(red, nir)
         py_result = _py_ndvi(red, nir)
-        
+
         assert_close(cpp_result, py_result, msg="NDVI large array")
         assert len(cpp_result) == size
 
@@ -295,10 +293,10 @@ class TestPerformance:
         """Benchmark NDVI performance."""
         red = np.random.uniform(0, 1, 10000)
         nir = np.random.uniform(0, 1, 10000)
-        
+
         def run_ndvi():
             return ndvi(red, nir)
-        
+
         result = benchmark(run_ndvi)
         assert len(result) == 10000
 
@@ -308,10 +306,10 @@ class TestPerformance:
         red = np.random.uniform(0, 1, 10000)
         nir = np.random.uniform(0, 1, 10000)
         blue = np.random.uniform(0, 1, 10000)
-        
+
         def run_evi():
             return evi(red, nir, blue)
-        
+
         result = benchmark(run_evi)
         assert len(result) == 10000
 

@@ -24,6 +24,8 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 # ── Import Base ─────────────────────────────────────────────────
+import contextlib
+
 from database.base import Base
 
 
@@ -61,12 +63,10 @@ def _import_all_models():
             # همچنین schema‌ها و repository‌ها ممکن است مدل تعریف کنند
             for extra in ("schemas", "repository", "service"):
                 extra_py = child / f"{extra}.py"
-                extra_init = child / extra / "__init__.py"
+                child / extra / "__init__.py"
                 if extra_py.exists():
-                    try:
+                    with contextlib.suppress(Exception):
                         importlib.import_module(f"services.{child.name}.{extra}")
-                    except Exception:
-                        pass
 
     # 2) database/models.py  یا  database/models/__init__.py
     db_dir = PROJECT_ROOT / "database"
@@ -120,7 +120,7 @@ async def db_session(async_engine):
         await session.rollback()
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def sync_engine():
     engine = create_engine("sqlite:///:memory:", echo=False)
     Base.metadata.create_all(engine)
@@ -129,7 +129,7 @@ def sync_engine():
     engine.dispose()
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def sync_db_session(sync_engine):
     Session = sessionmaker(bind=sync_engine, expire_on_commit=False)
     session = Session()

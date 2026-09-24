@@ -33,3 +33,4 @@ minimumReleaseAgeExclude:
   - '@orval/swr@8.35.0'
   - '@orval/zod@8.35.0'
   - orval@8.35.0
+  - jsdom@30.1.1

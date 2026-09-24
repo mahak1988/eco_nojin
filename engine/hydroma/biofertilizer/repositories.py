@@ -514,16 +514,16 @@ class NojinMaterialRepository:
         return (
             self.session.query(NojinMaterial)
             .filter(
-                NojinMaterial.is_suitable_for_arid == True,
+                NojinMaterial.is_suitable_for_arid,
                 NojinMaterial.arid_priority_score >= min_score,
             )
             .order_by(NojinMaterial.arid_priority_score.desc())
             .all()
         )
 
-    def get_locally_available(self, region: str = None) -> list[NojinMaterial]:
+    def get_locally_available(self, region: str | None = None) -> list[NojinMaterial]:
         """Get locally available materials, optionally filtered by region."""
-        query = self.session.query(NojinMaterial).filter(NojinMaterial.is_locally_available == True)
+        query = self.session.query(NojinMaterial).filter(NojinMaterial.is_locally_available)
         if region:
             query = query.filter(NojinMaterial.source_regions.ilike(f"%{region}%"))
         return query.all()
@@ -672,7 +672,7 @@ class NojinSoilTypeRepository:
         ph: float,
         ec_dsm: float,
         om_pct: float,
-        texture: str = None,
+        texture: str | None = None,
     ) -> NojinSoilType | None:
         """
         Classify soil based on test results.

@@ -34,7 +34,7 @@ def main() -> int:
     try:
         with urllib.request.urlopen(req, timeout=120) as resp:
             data = json.loads(resp.read().decode())
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         print(f"[agent] FAILED: {exc}", file=sys.stderr)
         return 1
 

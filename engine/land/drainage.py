@@ -6,8 +6,8 @@ import numpy as np
 
 from engine.land.models import (
     DrainageAnalysis,
-    DrainagePattern,
     DrainageDensityClass,
+    DrainagePattern,
 )
 
 
@@ -27,11 +27,18 @@ def _d8_flow_direction(dem: np.ndarray) -> np.ndarray:
     for i in range(1, rows - 1):
         for j in range(1, cols - 1):
             center = dem[i, j]
-            neighbors = np.array([
-                dem[i - 1, j - 1], dem[i - 1, j],     dem[i - 1, j + 1],
-                dem[i, j - 1],                         dem[i, j + 1],
-                dem[i + 1, j - 1], dem[i + 1, j],     dem[i + 1, j + 1],
-            ])
+            neighbors = np.array(
+                [
+                    dem[i - 1, j - 1],
+                    dem[i - 1, j],
+                    dem[i - 1, j + 1],
+                    dem[i, j - 1],
+                    dem[i, j + 1],
+                    dem[i + 1, j - 1],
+                    dem[i + 1, j],
+                    dem[i + 1, j + 1],
+                ]
+            )
             directions = np.array([1, 2, 3, 4, 5, 6, 7, 8], dtype=float)
             # انتخاب steepest descent (بیشترین شیب به سمت پایین)
             valid_mask = neighbors < center
@@ -62,13 +69,13 @@ def _d8_flow_accumulation(flow_dir: np.ndarray) -> np.ndarray:
     # نگاشت جهت به افست
     # D8 directions: 1=N, 2=NE, 3=E, 4=SE, 5=S, 6=SW, 7=W, 8=NW
     dir_offsets = {
-        1: (-1, 0),   # شمال
-        2: (-1, 1),   # شمال-شرق
-        3: (0, 1),    # شرق
-        4: (1, 1),    # جنوب-شرق
-        5: (1, 0),    # جنوب
-        6: (1, -1),   # جنوب-غرب
-        7: (0, -1),   # غرب
+        1: (-1, 0),  # شمال
+        2: (-1, 1),  # شمال-شرق
+        3: (0, 1),  # شرق
+        4: (1, 1),  # جنوب-شرق
+        5: (1, 0),  # جنوب
+        6: (1, -1),  # جنوب-غرب
+        7: (0, -1),  # غرب
         8: (-1, -1),  # شمال-غرب
     }
 
@@ -81,7 +88,7 @@ def _d8_flow_accumulation(flow_dir: np.ndarray) -> np.ndarray:
     flat_order = np.argsort(flow_dir.flatten())
 
     # ایجاد لیست سلول‌ها به ترتیب ارتفاع
-    cell_indices = [(idx // cols, idx % cols) for idx in flat_order]
+    [(idx // cols, idx % cols) for idx in flat_order]
 
     # محاسبه انباشت جریان با پردازش سلول‌ها از بالا به پایین
     for i in range(rows):
@@ -99,7 +106,9 @@ def _d8_flow_accumulation(flow_dir: np.ndarray) -> np.ndarray:
     return acc
 
 
-def _calculate_strahler_order(flow_acc: np.ndarray, flow_dir: np.ndarray, threshold: float = 10.0) -> tuple[np.ndarray, int]:
+def _calculate_strahler_order(
+    flow_acc: np.ndarray, flow_dir: np.ndarray, threshold: float = 10.0
+) -> tuple[np.ndarray, int]:
     """
     محاسبه شماره ترتیب Strahler برای شبکه‌های آبری.
 
@@ -117,8 +126,14 @@ def _calculate_strahler_order(flow_acc: np.ndarray, flow_dir: np.ndarray, thresh
     # اگر یکی به سلول وصل شود: سطح همان‌جا
     # اگر دو یا چند شاخه ورودی باشد: سطح + 1
     dir_offsets = {
-        1: (-1, 0), 2: (-1, 1), 3: (0, 1), 4: (1, 1),
-        5: (1, 0), 6: (1, -1), 7: (0, -1), 8: (-1, -1),
+        1: (-1, 0),
+        2: (-1, 1),
+        3: (0, 1),
+        4: (1, 1),
+        5: (1, 0),
+        6: (1, -1),
+        7: (0, -1),
+        8: (-1, -1),
     }
 
     max_iter = 50
@@ -130,13 +145,16 @@ def _calculate_strahler_order(flow_acc: np.ndarray, flow_dir: np.ndarray, thresh
                     continue
                 # شناسایی همسایه‌های بالادست
                 upstream_orders = []
-                for d, (di, dj) in dir_offsets.items():
+                for _d, (di, dj) in dir_offsets.items():
                     ni, nj = i + di, j + dj
                     if 0 <= ni < rows and 0 <= nj < cols:
                         # آیا این سلول به (i,j) جریان دارد؟
                         d_target = int(flow_dir[ni, nj])
                         if d_target > 0:
-                            target_i, target_j = ni + dir_offsets[d_target][0], nj + dir_offsets[d_target][1]
+                            target_i, target_j = (
+                                ni + dir_offsets[d_target][0],
+                                nj + dir_offsets[d_target][1],
+                            )
                             if (target_i, target_j) == (i, j):
                                 if strahler[ni, nj] > 0:
                                     upstream_orders.append(strahler[ni, nj])
@@ -159,10 +177,14 @@ def _calculate_strahler_order(flow_acc: np.ndarray, flow_dir: np.ndarray, thresh
     return strahler, max_order
 
 
-def _classify_drainage_pattern(flow_dir: np.ndarray, flow_acc: np.ndarray, dem: np.ndarray) -> DrainagePattern:
+def _classify_drainage_pattern(
+    flow_dir: np.ndarray, flow_acc: np.ndarray, dem: np.ndarray
+) -> DrainagePattern:
     """طبقه‌بندی الگوی زهکشی بر اساس توزیع جریان و توپوگرافی."""
     # تحلیل گیج شدن شبکه‌های جریان
-    stream_mask = flow_acc > np.percentile(flow_acc[flow_acc > 0], 90) if np.any(flow_acc > 0) else None
+    stream_mask = (
+        flow_acc > np.percentile(flow_acc[flow_acc > 0], 90) if np.any(flow_acc > 0) else None
+    )
 
     # بررسی یکنواختی جریان
     if stream_mask is not None and np.any(stream_mask):
@@ -236,17 +258,13 @@ def _calculate_time_of_concentration(
 
     حتی اگر slope_degrees=0 باشد، حداقل مقدار معنادار برمی‌گرداند.
     """
-    rows, cols = flow_accumulation.shape
+    _rows, _cols = flow_accumulation.shape
 
     # یافتن طول مسیر جریان (از بالا به پایین در جهت جریان)
     # استفاده از آرگاه مجموعی جریان برای یافتن طولانی‌ترین مسیر
     max_flow_path_length = 0.0
 
     # محاسبه طول مسیر برای سلول‌های پایین‌دست
-    dir_offsets = {
-        1: (-1, 0), 2: (-1, 1), 3: (0, 1), 4: (1, 1),
-        5: (1, 0), 6: (1, -1), 7: (0, -1), 8: (-1, -1),
-    }
 
     # استفاده از جریان تجمعی برای تخمین طول مسیر
     if np.any(flow_accumulation > 1):
@@ -263,7 +281,7 @@ def _calculate_time_of_concentration(
     if max_flow_path_length <= 0:
         max_flow_path_length = cell_size_m
 
-    tc = 0.0195 * (max_flow_path_length ** 0.77) * (max(slope_pct, 0.001) ** (-0.385))
+    tc = 0.0195 * (max_flow_path_length**0.77) * (max(slope_pct, 0.001) ** (-0.385))
 
     # تبدیل به ساعت و clamp
     return max(0.1, min(float(tc), 24.0))
@@ -303,7 +321,7 @@ def calculate_drainage_metrics(
     stream_mask = flow_acc >= acc_threshold
 
     # شمارش طول شبکه‌های آبری (به کیلومتر)
-    cell_area_ha = (resolution ** 2) / 10000.0  # متر مربع به هکتار
+    (resolution**2) / 10000.0  # متر مربع به هکتار
     stream_length_m = float(np.sum(stream_mask)) * resolution
     stream_length_km = stream_length_m / 1000.0
 
@@ -312,7 +330,7 @@ def calculate_drainage_metrics(
     drainage_density = stream_length_km / max(watershed_area, 0.001)
 
     # شناسایی سلول‌های جریان
-    valid_flow = flow_acc[np.isfinite(flow_acc)]
+    flow_acc[np.isfinite(flow_acc)]
     slope_mean = float(np.nanmean(np.tan(np.radians(45.0)) * 100))  # placeholder
 
     # محاسبه شیب متوسط ساده برای TC
@@ -335,8 +353,10 @@ def calculate_drainage_metrics(
     tc = _calculate_time_of_concentration(flow_acc, flow_dir, resolution, slope_mean)
 
     # شبکه‌های آبری با شماره‌گذاری
-    stream_cells = flow_acc[flow_acc >= acc_threshold]
-    stream_orders_present = sorted(set(strahler[stream_mask].astype(int).tolist())) if np.any(stream_mask) else [1]
+    flow_acc[flow_acc >= acc_threshold]
+    stream_orders_present = (
+        sorted(set(strahler[stream_mask].astype(int).tolist())) if np.any(stream_mask) else [1]
+    )
 
     return {
         "drainage_pattern": pattern.value,
@@ -378,7 +398,7 @@ class DrainageAnalyzer:
         stream_mask = flow_acc >= acc_threshold
 
         # محاسبه مساحت حوض آبخیز
-        cell_area_km2 = (self.resolution ** 2) / 1e6
+        cell_area_km2 = (self.resolution**2) / 1e6
         watershed_area = float(np.sum(np.isfinite(dem))) * cell_area_km2
         if watershed_area <= 0:
             watershed_area = area_km2 if area_km2 > 0 else 1.0
@@ -408,7 +428,11 @@ class DrainageAnalyzer:
         tc = _calculate_time_of_concentration(flow_acc, flow_dir, self.resolution, slope_mean)
 
         # لیست شماره‌های آبری
-        stream_orders_present = sorted(set(strahler[stream_mask].astype(int).tolist())) if np.any(stream_mask) else [1, 2, 3]
+        stream_orders_present = (
+            sorted(set(strahler[stream_mask].astype(int).tolist()))
+            if np.any(stream_mask)
+            else [1, 2, 3]
+        )
 
         return DrainageAnalysis(
             profile_id=profile_id or "default",

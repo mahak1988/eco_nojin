@@ -39,7 +39,7 @@ class BlockchainLedger:
         """Get deployed contract by name."""
         return self.contracts.get(name)
 
-    def get_block_info(self, block_number: int = None) -> dict[str, Any]:
+    def get_block_info(self, block_number: int | None = None) -> dict[str, Any]:
         """Get block information."""
         if block_number is None:
             block_number = self.w3.eth.block_number

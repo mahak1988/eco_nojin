@@ -30,25 +30,27 @@ def _timestamp(month: str) -> str:
 def build_timeseries(series: list[dict], index: str = "spi", title: str = "SPI") -> str:
     """Build a WaterML 2.0 MeasurementTimeseries XML string from the motor series."""
     _register_ns()
-    wml2 = "{%s}" % WML_NS
-    om = "{%s}" % OM_NS
-    gml = "{%s}" % GML_NS
+    wml2 = f"{{{WML_NS}}}"
+    om = f"{{{OM_NS}}}"
+    gml = f"{{{GML_NS}}}"
 
     obs = ET.Element(om + "OM_Observation")
     obs.set(
-        "{%s}schemaLocation" % XSI_NS,
+        f"{{{XSI_NS}}}schemaLocation",
         f"{OM_NS} http://schemas.opengis.net/om/2.0/observation.xsd {WML_NS} http://schemas.opengis.net/waterml/2.0/waterml2.xsd",
     )
     ET.SubElement(obs, om + "phenomenonTime").set(gml + "id", "phenTime")
     ET.SubElement(obs, om + "resultTime").set(gml + "id", "resultTime")
     ET.SubElement(obs, om + "procedure").set(
-        "{%s}href" % "{http://www.w3.org/1999/xlink}", "urn:ogc:def:procedure:EcoNojin:drought"
+        "{{{}}}href".format("{http://www.w3.org/1999/xlink}"),
+        "urn:ogc:def:procedure:EcoNojin:drought",
     )
     ET.SubElement(obs, om + "observedProperty").set(
-        "{%s}href" % "{http://www.w3.org/1999/xlink}", f"urn:ogc:def:property:OGC:{index}"
+        "{{{}}}href".format("{http://www.w3.org/1999/xlink}"), f"urn:ogc:def:property:OGC:{index}"
     )
     ET.SubElement(obs, om + "featureOfInterest").set(
-        "{%s}href" % "{http://www.w3.org/1999/xlink}", "urn:ogc:def:feature:EcoNojin:landscape"
+        "{{{}}}href".format("{http://www.w3.org/1999/xlink}"),
+        "urn:ogc:def:feature:EcoNojin:landscape",
     )
 
     result = ET.SubElement(obs, om + "result")

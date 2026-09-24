@@ -129,7 +129,7 @@ class MultiObjectiveOptimizer(AbstractScientificMotor):
             res = minimize(problem, algorithm, ("n_gen", n_gen), seed=1, verbose=False)
 
             front: list[dict[str, Any]] = []
-            for x, f in zip(res.X, res.F):
+            for x, f in zip(res.X, res.F, strict=False):
                 front.append(
                     {
                         "practice": round(float(x[0]), 3),

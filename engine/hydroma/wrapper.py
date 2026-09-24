@@ -190,10 +190,10 @@ def compute_erosion(
     else:
         # R factor: Renard & Freimund (1994) piecewise
         if annual_rainfall_mm < 850.0:
-            R = 0.04830 * (annual_rainfall_mm ** 1.61)
+            R = 0.04830 * (annual_rainfall_mm**1.61)
         else:
-            R = 587.8 - 1.219 * annual_rainfall_mm + 0.004105 * annual_rainfall_mm ** 2
-        
+            R = 587.8 - 1.219 * annual_rainfall_mm + 0.004105 * annual_rainfall_mm**2
+
         # K factor from USDA NRCS/RUSLE tables
         k_table = {
             "sand": 0.05,
@@ -205,28 +205,26 @@ def compute_erosion(
             "clay": 0.25,
         }
         K = k_table.get(texture, 0.3)
-        
+
         # LS factor: McCool et al. 1987 slope steepness + RUSLE handbook length exponent
         import math
+
         slope_fraction = slope_percent / 100.0
         theta = math.atan(slope_fraction)
-        
+
         # Slope steepness factor S
-        if slope_fraction < 0.09:
-            S = 10.8 * math.sin(theta) + 0.03
-        else:
-            S = 16.8 * math.sin(theta) - 0.50
+        S = 10.8 * math.sin(theta) + 0.03 if slope_fraction < 0.09 else 16.8 * math.sin(theta) - 0.5
         if S < 0.0:
             S = 0.0
-        
+
         # Slope length exponent m
         sin_t = math.sin(theta)
-        beta = (sin_t / 0.0896) / (3.0 * (sin_t ** 0.8) + 0.56)
+        beta = (sin_t / 0.0896) / (3.0 * (sin_t**0.8) + 0.56)
         m = beta / (1.0 + beta)
-        
+
         L = (slope_length_m / 22.13) ** m
         LS = L * S
-        
+
         A = R * K * LS * c_factor * p_factor
 
     risk_level = "low" if A < 5 else "moderate" if A < 15 else "high" if A < 30 else "very high"

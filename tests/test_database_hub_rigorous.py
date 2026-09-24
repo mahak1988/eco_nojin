@@ -5,21 +5,20 @@ tests/test_database_hub_rigorous.py
 Rigorous tests for database.hub.DataHub.
 """
 
-import sys
-import time
-import threading
-import pytest
-from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, as_completed
-
-
 import re as _re_ident
+import sys
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
+
+import pytest
 
 
 def _safe_ident(name):
     """فقط identifier معتبر SQL عبور می‌کند (ضد تزریق برای نام جدول/ستون)."""
     if not _re_ident.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", str(name)):
-        raise ValueError("invalid SQL identifier: %r" % (name,))
+        raise ValueError(f"invalid SQL identifier: {name!r}")
     return str(name)
 
 
@@ -98,9 +97,9 @@ class TestDataHubConnections:
 
     def test_session_rollback_on_error(self):
         """Session should rollback on exception."""
-        from sqlalchemy import create_engine
+        from sqlalchemy import create_engine, text
         from sqlalchemy.orm import sessionmaker
-        from sqlalchemy import text
+
         from database.base import Base
 
         engine = create_engine("sqlite:///:memory:")
@@ -180,7 +179,7 @@ class TestDataHubSQLite:
             row = cursor.fetchone()
             assert row is not None
             if hasattr(row, "keys"):
-                assert "name" in row.keys()
+                assert "name" in row
         finally:
             conn.close()
 
@@ -204,7 +203,7 @@ class TestDataHubConcurrency:
 
         with ThreadPoolExecutor(max_workers=20) as executor:
             futures = [executor.submit(use_session, i) for i in range(20)]
-            for future in as_completed(futures):
+            for _future in as_completed(futures):
                 pass
 
         assert len(errors) == 0, f"Concurrent errors: {errors}"
@@ -219,7 +218,7 @@ class TestDataHubConcurrency:
             try:
                 conn = datahub_instance.get_duckdb("master")
                 try:
-                    result = conn.execute("SELECT {} AS val".format(_safe_ident(idx))).fetchone()  # nosec (کد آزمایشی — بدون ورودی کاربر)
+                    result = conn.execute(f"SELECT {_safe_ident(idx)} AS val").fetchone()  # nosec (کد آزمایشی — بدون ورودی کاربر)
                     results.append((idx, result[0]))
                 finally:
                     conn.close()
@@ -228,7 +227,7 @@ class TestDataHubConcurrency:
 
         with ThreadPoolExecutor(max_workers=10) as executor:
             futures = [executor.submit(query_duckdb, i) for i in range(10)]
-            for future in as_completed(futures):
+            for _future in as_completed(futures):
                 pass
 
         assert len(errors) == 0, f"Errors: {errors}"

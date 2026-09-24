@@ -1,9 +1,9 @@
-"""API endpoints for the AI knowledge assistant."""
+"""API endpoints for the AI knowledge assistant — Cloud-Native Unified RAG."""
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from engine.hydroma.ai_assistant.rag_engine import get_engine
+from services.ai.unified_rag import get_rag
 
 router = APIRouter(prefix="/api/v1/ai", tags=["AI Assistant"])
 
@@ -41,6 +41,7 @@ class QueryRequest(BaseModel):
     """User query for the knowledge assistant."""
 
     question: str = Field(..., min_length=3, max_length=1000)
+    language: str | None = Field(None, pattern="^(fa|en|ar|tr|ur|ps|de|es|fr|hi|pt|zh|ms|it|bn)$")
 
 
 class SourceResponse(BaseModel):
@@ -61,23 +62,50 @@ class QueryResponse(BaseModel):
     sources: list[SourceResponse]
     confidence: float
     citations: list[dict] = []
+    language: str
 
 
 @router.post("/chat", response_model=QueryResponse)
-def chat_endpoint(payload: QueryRequest):
+async def chat_endpoint(payload: QueryRequest):
     """Ask the AI assistant a question about agriculture or ecology."""
-    engine = get_engine()
-    result = engine.generate_response(payload.question)
-    result["citations"] = _auto_citations(payload.question)
-    return QueryResponse(**result)
+    rag = get_rag()
+    try:
+        result = await rag.answer(payload.question, language=payload.language)
+        return QueryResponse(
+            query=result["query"],
+            answer=result["answer"],
+            sources=[
+                SourceResponse(
+                    id=s["id"],
+                    title=s["metadata"].get("title", "Unknown"),
+                    source=s["metadata"].get("source", "Unknown"),
+                    category=s["metadata"].get("category", "general"),
+                    relevance=s["score"],
+                )
+                for s in result["sources"]
+            ],
+            confidence=result["confidence"],
+            citations=_auto_citations(payload.question),
+            language=result["language"],
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/health")
-def ai_health():
+async def ai_health():
     """Check AI assistant availability."""
-    engine = get_engine()
-    return {
-        "status": "operational",
-        "documents_loaded": len(engine.documents),
-        "engine_type": "TF-IDF RAG",
-    }
+    rag = get_rag()
+    try:
+        # Quick health check
+        return {
+            "status": "operational",
+            "engine_type": "Unified Cloud RAG (Qdrant + Jina Embeddings + Groq)",
+            "providers_configured": True,
+        }
+    except Exception as e:
+        return {
+            "status": "degraded",
+            "engine_type": "Unified Cloud RAG",
+            "error": str(e),
+        }

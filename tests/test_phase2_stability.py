@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 tests/test_phase2_stability.py
 ==============================
@@ -11,11 +10,12 @@ Tests for Phase 2 stability modules:
     - MRV type mismatch fix
 """
 
+import math
 import sys
 import time
-import math
-import pytest
 from pathlib import Path
+
+import pytest
 
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -170,7 +170,7 @@ class TestResilience:
 
     def test_circuit_breaker_decorator(self):
         """Circuit breaker decorator should work."""
-        from engine.resilience import circuit_breaker, CircuitOpenError
+        from engine.resilience import CircuitOpenError, circuit_breaker
 
         @circuit_breaker(failure_threshold=2, recovery_timeout=0.1)
         def failing_func():

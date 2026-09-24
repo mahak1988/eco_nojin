@@ -59,7 +59,7 @@ def _sample_grid(lat: float, lon: float, span_m: int, step: int) -> list[list[fl
         las = ",".join(f"{p[0]:.6f}" for p in chunk)
         los = ",".join(f"{p[1]:.6f}" for p in chunk)
         values = None
-        for attempt, wait in enumerate(delays):
+        for _attempt, wait in enumerate(delays):
             if wait:
                 time.sleep(wait)
             resp = httpx.get(
@@ -82,7 +82,7 @@ def _sample_grid(lat: float, lon: float, span_m: int, step: int) -> list[list[fl
         values = resp.json().get("elevation", [])
         if len(values) != len(chunk):
             raise HTTPException(502, f"elevation API returned {len(values)}/{len(chunk)} values")
-        for (la, lo, i, j), v in zip(chunk, values):
+        for (_la, _lo, i, j), v in zip(chunk, values, strict=False):
             grid[i][j] = float(v) if v is not None else 0.0
     return grid
 

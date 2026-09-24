@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 engine.resource_manager
 =======================
@@ -22,8 +21,7 @@ Version: 3.0.1 (Python 3.9+ compatible)
 
 import gc
 import logging
-from contextlib import contextmanager
-from typing import Any, Optional
+from contextlib import contextmanager, suppress
 
 logger = logging.getLogger(__name__)
 
@@ -59,10 +57,8 @@ def managed_connection(database: str = "master", pooled: bool = True):
             try:
                 yield conn
             finally:
-                try:
+                with suppress(Exception):
                     conn.close()
-                except Exception:
-                    pass
     except Exception as e:
         logger.error(f"Error in managed connection: {e}")
         raise
@@ -121,8 +117,8 @@ def get_memory_usage_mb() -> float:
 
 
 __all__ = [
-    "managed_connection",
-    "managed_session",
     "cleanup_resources",
     "get_memory_usage_mb",
+    "managed_connection",
+    "managed_session",
 ]

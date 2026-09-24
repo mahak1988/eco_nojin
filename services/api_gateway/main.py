@@ -41,11 +41,11 @@ from services.api_gateway.middleware.tenant import TenantMiddleware
 
 # Compatibility: init_db via hub
 def init_db():
-    from database.base import Base
     import database.models  # noqa: F401
-    import engine.land.models  # noqa: F401
-    import engine.hydroma.core.models  # noqa: F401
-    import engine.hydroma.biofertilizer.models  # noqa: F401
+    import engine.hydroma.biofertilizer.models
+    import engine.hydroma.core.models
+    import engine.land.models
+    from database.base import Base
 
     engine = hub.get_sqlalchemy_engine()
     Base.metadata.create_all(bind=engine)
@@ -60,9 +60,17 @@ from services.inventory.routers import inventory as inventory_router
 # Import all routers
 # Import individual routers that are used later with app.include_router
 from .routers import (  # Import the new router
-    admin,
+    admin_users,
+    admin_content,
+    admin_bots,
+    admin_errors,
+    admin_settings,
+    admin_models,
+    admin_overview,
+    admin_security,
     ai,
     ai_chat,
+    ai_analysis,
     analyses,
     analytics,
     auth,
@@ -89,15 +97,15 @@ from .routers import (  # Import the new router
     hydroma_simulation,
     hydroma_soil,
     hydroma_water,
-    iot_devices,
     insurance,
+    iot_devices,
     land,
+    legal_texts,
     logistics,
     manual_data,
     marketplace,
     materials,
     models as models_router,
-    motors,
     mrv,
     newsletter,
     nojin,
@@ -113,9 +121,10 @@ from .routers import (  # Import the new router
     soil,
     support,
     sync,
+    tool_registry,
     ussd,
-    voice,
     village_hub,
+    voice,
     watershed,
 )
 
@@ -131,7 +140,14 @@ app = FastAPI(title="Eco Nojin API Gateway")
 
 # Include existing routers (prefixes are defined in each router)
 app.include_router(platform.router)
-app.include_router(admin.router, prefix="/api/v1/admin", tags=["admin"])
+app.include_router(admin_users.router, prefix="/api/v1/admin", tags=["admin"])
+app.include_router(admin_content.router, prefix="/api/v1/admin", tags=["admin"])
+app.include_router(admin_bots.router, prefix="/api/v1/admin", tags=["admin"])
+app.include_router(admin_errors.router, prefix="/api/v1/admin", tags=["admin"])
+app.include_router(admin_settings.router, prefix="/api/v1/admin", tags=["admin"])
+app.include_router(admin_models.router, prefix="/api/v1/admin", tags=["admin"])
+app.include_router(admin_overview.router, prefix="/api/v1/admin", tags=["admin"])
+app.include_router(admin_security.router, prefix="/api/v1/admin", tags=["admin"])
 app.include_router(auth.router)
 app.include_router(analyses.router)
 app.include_router(auth_supabase.router)
@@ -143,7 +159,6 @@ app.include_router(organizations.router)
 import structlog
 
 from services.api_gateway.observability.structured_logger import (
-    set_correlation_id,
     setup_structured_logging,
 )
 
@@ -167,7 +182,7 @@ try:
         should_instrument_requests_inprogress=True,
         excluded_handlers=["/health", "/favicon.ico", "/health/live", "/health/ready"],
     )
-    
+
     instrumentator.instrument(app).expose(app, endpoint="/metrics")
     logger.info("✅ Prometheus metrics instrumentation enabled (with custom metrics)")
 except ImportError:
@@ -217,9 +232,9 @@ async def lifespan(app: FastAPI):
         )
 
         with hub.get_session() as session:
-            marketplace_repo = MarketplaceRepository(session)
-            member_repo = MarketplaceMemberRepository(session)
-            shop_repo = MarketplaceShopRepository(session)
+            MarketplaceRepository(session)
+            MarketplaceMemberRepository(session)
+            MarketplaceShopRepository(session)
 
         # Initialize with actual repositories (placeholder for now - will be replaced with proper repositories)
         init_catalog(seller_repo=None, product_repo=None)
@@ -295,6 +310,7 @@ app.add_middleware(
 # RATE LIMITING + REQUEST ID + SECURITY HEADERS MIDDLEWARES
 # ============================================================================
 # Rate limit + request ID + security headers middlewares
+from services.api_gateway.middleware import IdempotencyMiddleware, LocaleMiddleware
 from services.api_gateway.security import (
     HTTPSRedirectMiddleware,
     RateLimitMiddleware,
@@ -302,7 +318,6 @@ from services.api_gateway.security import (
     SecurityHeadersMiddleware,
 )
 from services.security.csrf import CSRFMiddleware
-from services.api_gateway.middleware import IdempotencyMiddleware, LocaleMiddleware
 
 app.add_middleware(UploadSizeMiddleware)
 app.add_middleware(TenantMiddleware)
@@ -405,6 +420,7 @@ app.include_router(scenarios.router)
 # AI & Assistant
 app.include_router(ai.router)
 app.include_router(ai_chat.router)
+app.include_router(ai_analysis.router)
 
 # Economy & Marketplace
 app.include_router(ecowallet.router)
@@ -441,6 +457,10 @@ app.include_router(dashboard.router)
 app.include_router(contact.router, tags=["contact"])
 app.include_router(pilot.router, tags=["pilot"])
 app.include_router(newsletter.router, tags=["newsletter"])
+
+# Legal & Registry (Phase 2)
+app.include_router(legal_texts.router)
+app.include_router(tool_registry.router)
 app.include_router(hydroma_hub.router, tags=["hydroma-hub"])
 app.include_router(hydroma_dashboard.router, tags=["hydroma-dashboard"])
 app.include_router(hydroma_indices.router, tags=["hydroma-indices"])
@@ -592,6 +612,7 @@ async def health_ready():
     checks = {"database": "ok"}
     try:
         from sqlalchemy import text
+
         engine = hub.get_sqlalchemy_engine()
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))

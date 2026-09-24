@@ -597,76 +597,76 @@ class VillageDossierRead(HubBase):
 
 
 __all__ = [
+    "AIOpportunityRecommendations",
+    # B2B
+    "B2BDemandCreate",
+    "B2BDemandRead",
+    "B2BMatchResponse",
+    "BrandRead",
+    # Brand
+    "BrandUpdate",
     # Capabilities
     "CapabilityBase",
     "CapabilityCreate",
-    "CapabilityUpdate",
     "CapabilityRead",
-    # Opportunities
-    "OpportunityBase",
-    "OpportunityCreate",
-    "OpportunityUpdate",
-    "OpportunityRead",
-    "OpportunityInterestCreate",
-    "OpportunityInterestRead",
-    # Projects
-    "ProjectBase",
-    "ProjectCreate",
-    "ProjectUpdate",
-    "ProjectProgressUpdate",
-    "ProjectRead",
-    "ProjectInvestorRead",
+    "CapabilityUpdate",
+    "DestinationRead",
+    # Destination
+    "DestinationUpdate",
+    # Engagement
+    "EngagementCreate",
+    "EngagementListResponse",
+    "EngagementRead",
     # Entrepreneurs
     "EntrepreneurProfileBase",
     "EntrepreneurProfileCreate",
-    "EntrepreneurProfileUpdate",
     "EntrepreneurProfileRead",
+    "EntrepreneurProfileUpdate",
     "EntrepreneurSearchResponse",
-    # Investments
-    "InvestmentCreate",
-    "InvestmentStatusUpdate",
-    "InvestmentRead",
-    # Tourism
-    "TourismServiceCreate",
-    "TourismServiceRead",
     # Events
     "EventCreate",
     "EventRead",
     "EventRegistrationCreate",
     "EventRegistrationRead",
-    # Needs
-    "NeedCreate",
-    "NeedRead",
-    # Brand
-    "BrandUpdate",
-    "BrandRead",
-    # Profile & Dashboard
-    "VillageProfileRead",
-    "VillageDashboardRead",
-    "AIOpportunityRecommendations",
     # Experiences
     "ExperienceCreate",
     "ExperienceRead",
-    # Destination
-    "DestinationUpdate",
-    "DestinationRead",
-    # B2B
-    "B2BDemandCreate",
-    "B2BDemandRead",
-    "B2BMatchResponse",
-    # Engagement
-    "EngagementCreate",
-    "EngagementRead",
-    "EngagementListResponse",
-    # Gaps
-    "VillageDevelopmentGapCreate",
-    "VillageDevelopmentGapRead",
     # Festival
     "FestivalCreate",
     "FestivalRead",
+    # Investments
+    "InvestmentCreate",
+    "InvestmentRead",
+    "InvestmentStatusUpdate",
+    # Needs
+    "NeedCreate",
+    "NeedRead",
     # Nomadic
     "NomadicCommunityCreate",
     "NomadicCommunityRead",
+    # Opportunities
+    "OpportunityBase",
+    "OpportunityCreate",
+    "OpportunityInterestCreate",
+    "OpportunityInterestRead",
+    "OpportunityRead",
+    "OpportunityUpdate",
+    # Projects
+    "ProjectBase",
+    "ProjectCreate",
+    "ProjectInvestorRead",
+    "ProjectProgressUpdate",
+    "ProjectRead",
+    "ProjectUpdate",
+    # Tourism
+    "TourismServiceCreate",
+    "TourismServiceRead",
+    "VillageDashboardRead",
+    # Gaps
+    "VillageDevelopmentGapCreate",
+    "VillageDevelopmentGapRead",
     # Dossier
     "VillageDossierRead",
+    # Profile & Dashboard
+    "VillageProfileRead",
 ]

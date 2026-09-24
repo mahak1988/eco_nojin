@@ -1,16 +1,14 @@
 """دیتابیس تست مشترک با StaticPool"""
 
 from sqlalchemy import create_engine
-from sqlalchemy.pool import StaticPool
 from sqlalchemy.orm import sessionmaker
-from database.base import Base  # از models import می‌کنیم
+from sqlalchemy.pool import StaticPool
 
 # import همه مدل‌ها
-import database.models
-import services.auth.models
-import engine.land.models
-import engine.hydroma.core.models
 import engine.hydroma.biofertilizer.models
+import engine.hydroma.core.models
+import engine.land.models
+from database.base import Base  # از models import می‌کنیم
 
 engine = create_engine(
     "sqlite:///:memory:",

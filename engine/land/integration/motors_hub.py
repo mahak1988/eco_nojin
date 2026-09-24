@@ -8,13 +8,13 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-class MotorStatus(str, Enum):
+class MotorStatus(StrEnum):
     """Motor availability status"""
 
     AVAILABLE = "available"

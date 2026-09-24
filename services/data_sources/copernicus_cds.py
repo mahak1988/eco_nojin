@@ -143,9 +143,9 @@ class CopernicusCDSClient:
 
         request_params = {
             "variable": variables,
-            "year": list(set(d.split("-")[0] for d in dates)),
-            "month": list(set(d.split("-")[1] for d in dates)),
-            "day": list(set(d.split("-")[2] for d in dates)),
+            "year": list({d.split("-")[0] for d in dates}),
+            "month": list({d.split("-")[1] for d in dates}),
+            "day": list({d.split("-")[2] for d in dates}),
             "time": [f"{h:02d}:00" for h in range(0, 24, 6)],  # Every 6 hours
             "data_format": "netcdf",
             "area": area,

@@ -10,9 +10,6 @@ calibration is required for production use.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Optional
-
-import numpy as np
 
 
 @dataclass
@@ -132,8 +129,8 @@ class PhenologyOutput:
     cumulative_gdd: list[float] = field(default_factory=list)
     stages: list[str] = field(default_factory=list)
     current_stage: str = "pre_planting"
-    days_to_flowering: Optional[int] = None
-    days_to_maturity: Optional[int] = None
+    days_to_flowering: int | None = None
+    days_to_maturity: int | None = None
     data_source: str = "simulated"
     model: str = "GDD phenology (FAO literature parameters)"
 
@@ -180,8 +177,8 @@ def run_phenology(inputs: PhenologyInput) -> PhenologyOutput:
     stages: list[str] = []
     cumulative = 0.0
     stage = "pre_planting"
-    days_to_flowering: Optional[int] = None
-    days_to_maturity: Optional[int] = None
+    days_to_flowering: int | None = None
+    days_to_maturity: int | None = None
 
     for i in range(n):
         gdd = _daily_gdd(tmin[i], tmax[i], pheno.t_base)

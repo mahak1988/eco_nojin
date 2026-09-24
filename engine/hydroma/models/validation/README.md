@@ -98,6 +98,7 @@ Reference profiles are stored as `.npy` files in `reference_profiles/`. To gener
 
 ```python
 import numpy as np
+
 # Run model with known inputs
 output = run_model(...)
 np.save("engine/hydroma/models/validation/reference_profiles/my_reference.npy", output)

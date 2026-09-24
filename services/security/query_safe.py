@@ -68,7 +68,7 @@ def _safe_ident(name: str) -> str:
         ValueError: invalid SQL identifier: '1; DROP TABLE'
     """
     if not _IDENT_RE.fullmatch(str(name)):
-        raise ValueError("invalid SQL identifier: %r" % (name,))
+        raise ValueError(f"invalid SQL identifier: {name!r}")
     return str(name)
 
 
@@ -145,7 +145,7 @@ def build_where_clause(
             ph = placeholder % safe_col
         else:
             ph = placeholder
-        clauses.append("%s = %s" % (safe_col, ph))
+        clauses.append(f"{safe_col} = {ph}")
         params.append(val)
         i += 1
 
@@ -178,11 +178,8 @@ def safe_dynamic_select(
         Direct result of ``conn.execute(query, params)``.
     """
     safe_table = _safe_ident(table)
-    if columns:
-        safe_cols = ", ".join(_safe_ident(c) for c in columns)
-    else:
-        safe_cols = "*"
-    query = "SELECT %s FROM %s" % (safe_cols, safe_table)
+    safe_cols = ", ".join(_safe_ident(c) for c in columns) if columns else "*"
+    query = f"SELECT {safe_cols} FROM {safe_table}"
 
     params: list[Any] = []
     if where:

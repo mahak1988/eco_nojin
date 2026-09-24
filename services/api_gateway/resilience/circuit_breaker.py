@@ -8,10 +8,10 @@ Based on pybreaker with custom configuration.
 import asyncio
 import logging
 import time
-from contextlib import asynccontextmanager
-from dataclasses import dataclass, field
+from collections.abc import Callable
+from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Callable, Optional, TypeVar
+from typing import TypeVar
 
 from engine.hydroma.config.settings import get_settings
 
@@ -21,14 +21,15 @@ T = TypeVar("T")
 
 
 class CircuitState(Enum):
-    CLOSED = "closed"      # Normal operation, requests go through
-    OPEN = "open"          # Failing, requests blocked
+    CLOSED = "closed"  # Normal operation, requests go through
+    OPEN = "open"  # Failing, requests blocked
     HALF_OPEN = "half_open"  # Testing if service recovered
 
 
 @dataclass
 class CircuitBreakerConfig:
     """Configuration for circuit breaker."""
+
     failure_threshold: int = 5
     success_threshold: int = 2
     recovery_timeout: float = 30.0  # seconds
@@ -39,15 +40,16 @@ class CircuitBreakerConfig:
 @dataclass
 class CircuitBreakerStats:
     """Statistics for circuit breaker monitoring."""
+
     name: str = "default"
     total_calls: int = 0
     successful_calls: int = 0
     failed_calls: int = 0
     rejected_calls: int = 0
     state_changes: int = 0
-    last_failure_time: Optional[float] = None
-    last_success_time: Optional[float] = None
-    last_state_change: Optional[float] = None
+    last_failure_time: float | None = None
+    last_success_time: float | None = None
+    last_state_change: float | None = None
     current_state: CircuitState = CircuitState.CLOSED
 
 
@@ -64,7 +66,7 @@ class CircuitBreaker:
         self._state = CircuitState.CLOSED
         self._failure_count = 0
         self._success_count = 0
-        self._last_failure_time: Optional[float] = None
+        self._last_failure_time: float | None = None
         self._lock = asyncio.Lock()
         self.stats = CircuitBreakerStats(name=config.name)
 
@@ -79,8 +81,10 @@ class CircuitBreaker:
             return True
         if self._state == CircuitState.OPEN:
             # Check if recovery timeout has passed
-            if self._last_failure_time and \
-               time.time() - self._last_failure_time >= self.config.recovery_timeout:
+            if (
+                self._last_failure_time
+                and time.time() - self._last_failure_time >= self.config.recovery_timeout
+            ):
                 return True  # Will transition to HALF_OPEN on next call
             return False
         return True  # HALF_OPEN allows test requests
@@ -93,9 +97,7 @@ class CircuitBreaker:
             if not self.is_available:
                 self.stats.rejected_calls += 1
                 logger.warning(f"Circuit breaker '{self.config.name}' OPEN, rejecting call")
-                raise CircuitBreakerOpenError(
-                    f"Circuit breaker '{self.config.name}' is OPEN"
-                )
+                raise CircuitBreakerOpenError(f"Circuit breaker '{self.config.name}' is OPEN")
 
             # Transition to HALF_OPEN if recovering
             if self._state == CircuitState.OPEN:
@@ -112,7 +114,7 @@ class CircuitBreaker:
 
         except self.config.excluded_exceptions:
             raise
-        except Exception as e:
+        except Exception:
             await self._on_failure()
             raise
 
@@ -151,7 +153,9 @@ class CircuitBreaker:
             self.stats.state_changes += 1
             self.stats.last_state_change = time.time()
             self.stats.current_state = CircuitState.OPEN
-            logger.warning(f"Circuit breaker '{self.config.name}' opened after {self._failure_count} failures")
+            logger.warning(
+                f"Circuit breaker '{self.config.name}' opened after {self._failure_count} failures"
+            )
 
     def _transition_to_half_open(self) -> None:
         """Transition to HALF_OPEN state."""
@@ -204,6 +208,7 @@ class CircuitBreaker:
 
 class CircuitBreakerOpenError(Exception):
     """Raised when circuit breaker is open and rejecting calls."""
+
     pass
 
 
@@ -211,7 +216,7 @@ class CircuitBreakerOpenError(Exception):
 _circuit_breakers: dict[str, CircuitBreaker] = {}
 
 
-def get_circuit_breaker(name: str, config: Optional[CircuitBreakerConfig] = None) -> CircuitBreaker:
+def get_circuit_breaker(name: str, config: CircuitBreakerConfig | None = None) -> CircuitBreaker:
     """Get or create a circuit breaker by name."""
     if name not in _circuit_breakers:
         if config is None:

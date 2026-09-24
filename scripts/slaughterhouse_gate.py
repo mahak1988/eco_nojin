@@ -13,10 +13,10 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Any
 
 
-def load_results(results_dir: Path) -> Dict[str, Dict]:
+def load_results(results_dir: Path) -> dict[str, dict]:
     """Load all validation result JSON files."""
     results = {}
     for f in results_dir.glob("validation_*.json"):
@@ -27,20 +27,24 @@ def load_results(results_dir: Path) -> Dict[str, Dict]:
     return results
 
 
-def determine_status(result: Dict) -> str:
+def determine_status(result: dict) -> str:
     """Determine overall status for a model-backend pair."""
     if result.get("errors", 0) > 0:
         return "error"
     if result.get("failed", 0) > 0:
         return "failed"
-    if result.get("passed", 0) > 0 and result.get("failed", 0) == 0 and result.get("errors", 0) == 0:
+    if (
+        result.get("passed", 0) > 0
+        and result.get("failed", 0) == 0
+        and result.get("errors", 0) == 0
+    ):
         return "passed"
     if result.get("skipped", 0) > 0:
         return "skipped"
     return "unknown"
 
 
-def gate_check(results: Dict[str, Dict], matrix: List[Dict]) -> Dict[str, Any]:
+def gate_check(results: dict[str, dict], matrix: list[dict]) -> dict[str, Any]:
     """Perform gate checks and return summary."""
     total_tests = 0
     total_passed = 0
@@ -51,7 +55,7 @@ def gate_check(results: Dict[str, Dict], matrix: List[Dict]) -> Dict[str, Any]:
     model_status = {}
     backend_status = {}
 
-    for key, result in results.items():
+    for _key, result in results.items():
         status = determine_status(result)
         model = result.get("model", "unknown")
         backend = result.get("backend", "unknown")
@@ -102,7 +106,7 @@ def gate_check(results: Dict[str, Dict], matrix: List[Dict]) -> Dict[str, Any]:
     }
 
 
-def generate_markdown_summary(gate_result: Dict, pr_number: int) -> str:
+def generate_markdown_summary(gate_result: dict, pr_number: int) -> str:
     """Generate markdown summary for PR comment."""
     summary = gate_result["summary"]
     gate_passed = gate_result["gate_passed"]
@@ -116,11 +120,11 @@ def generate_markdown_summary(gate_result: Dict, pr_number: int) -> str:
 
 | Metric | Count |
 |--------|-------|
-| Total Tests | {summary['total_tests']} |
-| ✅ Passed | {summary['passed']} |
-| ❌ Failed | {summary['failed']} |
-| 💥 Errors | {summary['errors']} |
-| ⏭️ Skipped | {summary['skipped']} |
+| Total Tests | {summary["total_tests"]} |
+| ✅ Passed | {summary["passed"]} |
+| ❌ Failed | {summary["failed"]} |
+| 💥 Errors | {summary["errors"]} |
+| ⏭️ Skipped | {summary["skipped"]} |
 
 ### Model Status
 
@@ -151,8 +155,14 @@ def generate_markdown_summary(gate_result: Dict, pr_number: int) -> str:
     md += "| Model | Backend | Status | Passed | Failed | Errors | Skipped |\n"
     md += "|-------|---------|--------|--------|--------|--------|----------|\n"
 
-    for key, result in sorted(gate_result["individual_results"].items()):
-        status_emoji = {"passed": "✅", "failed": "❌", "error": "💥", "skipped": "⏭️", "unknown": "❓"}
+    for _key, result in sorted(gate_result["individual_results"].items()):
+        status_emoji = {
+            "passed": "✅",
+            "failed": "❌",
+            "error": "💥",
+            "skipped": "⏭️",
+            "unknown": "❓",
+        }
         md += f"| {result['model']} | {result['backend']} | {status_emoji.get(result['status'], '❓')} {result['status']} | {result['passed']} | {result['failed']} | {result['errors']} | {result['skipped']} |\n"
 
     if not gate_passed:
@@ -165,10 +175,14 @@ def generate_markdown_summary(gate_result: Dict, pr_number: int) -> str:
 
 def main():
     parser = argparse.ArgumentParser(description="HyDroMa Slaughterhouse Gate")
-    parser.add_argument("--results-dir", required=True, help="Directory with validation result JSON files")
+    parser.add_argument(
+        "--results-dir", required=True, help="Directory with validation result JSON files"
+    )
     parser.add_argument("--matrix", required=True, help="JSON matrix of models × backends")
     parser.add_argument("--pr-number", type=int, required=True, help="Pull request number")
-    parser.add_argument("--output", default="slaughterhouse_summary.md", help="Output markdown file")
+    parser.add_argument(
+        "--output", default="slaughterhouse_summary.md", help="Output markdown file"
+    )
     args = parser.parse_args()
 
     results_dir = Path(args.results_dir)
@@ -191,7 +205,7 @@ def main():
     md = generate_markdown_summary(gate_result, args.pr_number)
 
     # Write output
-    with open(args.output, 'w') as f:
+    with open(args.output, "w") as f:
         f.write(md)
 
     print(f"Gate result: {'PASSED' if gate_result['gate_passed'] else 'FAILED'}")

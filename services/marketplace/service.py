@@ -404,7 +404,7 @@ class MarketplaceService:
         result = await self.db.execute(
             select(MarketplaceCommissionRule).where(
                 MarketplaceCommissionRule.village_id == village_id,
-                MarketplaceCommissionRule.is_active == True,
+                MarketplaceCommissionRule.is_active,
             )
         )
         rule = result.scalar_one_or_none()
@@ -412,8 +412,8 @@ class MarketplaceService:
         if not rule:
             result = await self.db.execute(
                 select(MarketplaceCommissionRule).where(
-                    MarketplaceCommissionRule.village_id == None,
-                    MarketplaceCommissionRule.is_active == True,
+                    MarketplaceCommissionRule.village_id is None,
+                    MarketplaceCommissionRule.is_active,
                 )
             )
             rule = result.scalar_one_or_none()

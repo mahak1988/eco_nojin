@@ -8,9 +8,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from database.base import Base
-from database.models import ContactMessage  # noqa: F401 — registers the model
+from database.models import ContactMessage
 from services.api_gateway.routers import contact
-
 
 VALID_PAYLOAD = {
     "name": "Hassan Sadeghi",
@@ -21,7 +20,7 @@ VALID_PAYLOAD = {
 }
 
 
-@pytest.fixture()
+@pytest.fixture
 def client():
     # Shared in-memory database: StaticPool keeps one connection for all sessions.
     engine = create_engine(

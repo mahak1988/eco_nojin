@@ -1,15 +1,16 @@
 import os
+
 import structlog
 
 logger = structlog.get_logger()
+
 import pytest
-from sqlalchemy import create_engine, inspect, and_, or_
+from sqlalchemy import create_engine
+from sqlalchemy.exc import DataError, IntegrityError
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import IntegrityError, DataError
-from datetime import datetime, timezone
-import re
-from database.models import User, LandProfile, Base
+
 from database.hub import hub
+from database.models import Base, LandProfile, User
 
 
 # Compatibility: get_db via hub
@@ -19,7 +20,7 @@ def get_db():
 
 
 # ایجاد یک دیتابیس موقت در حافظه برای تست
-@pytest.fixture(scope="function")
+@pytest.fixture
 def test_db_session():
     engine = create_engine("sqlite:///:memory:")
     Base.metadata.create_all(bind=engine)

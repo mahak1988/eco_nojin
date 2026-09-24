@@ -5,7 +5,6 @@ Tests NATS connection, publish/subscribe, and JetStream functionality using test
 """
 
 import asyncio
-import json
 import os
 
 import pytest
@@ -19,7 +18,7 @@ from services.api_gateway.eventbus.nats_client import NATSConfig, NATSManager
 pytestmark = pytest.mark.skipif(
     os.environ.get("ECO_RUN_NATS_INTEGRATION", "").lower() not in {"1", "true", "yes"},
     reason="NATS integration tests require Docker/testcontainers "
-           "(set ECO_RUN_NATS_INTEGRATION=1 to enable)",
+    "(set ECO_RUN_NATS_INTEGRATION=1 to enable)",
 )
 
 try:  # pragma: no cover - optional dependency
@@ -113,7 +112,9 @@ async def test_publish_and_consume(nats_manager):
 
     # Publish a test message
     test_payload = {"message": "hello", "value": 42}
-    success = await nats_manager.publish("test.publish", test_payload, correlation_id="test-correlation-123")
+    success = await nats_manager.publish(
+        "test.publish", test_payload, correlation_id="test-correlation-123"
+    )
     assert success
 
     # Wait for message to be received

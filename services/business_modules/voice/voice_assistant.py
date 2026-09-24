@@ -1,11 +1,12 @@
 """Voice Assistant: Integration of IVR + AI Assistant (RAG).
 
-Provides voice-based Q&A using the existing RAG engine.
+Provides voice-based Q&A using the cloud-native unified RAG.
 """
 
 from dataclasses import dataclass
 
-from engine.hydroma.ai_assistant.rag_engine import get_engine
+from services.ai.unified_rag import get_rag
+from services.ai.llm_router import get_router
 
 from .stt_provider import get_stt_provider
 from .tts_provider import VoiceLanguage, get_tts_provider
@@ -32,14 +33,15 @@ class VoiceAssistant:
     def __init__(self):
         self.tts = get_tts_provider()
         self.stt = get_stt_provider()
-        self.rag = get_engine()
+        self.rag = get_rag()
+        self.llm_router = get_router()
 
-    def answer_question(
+    async def answer_question(
         self, question: str, language: VoiceLanguage = VoiceLanguage.EN
     ) -> VoiceResponse:
         """Answer a question using RAG and return voice response."""
         # Get answer from RAG
-        rag_result = self.rag.generate_response(question)
+        rag_result = await self.rag.answer(question, language=language.value)
 
         # Generate TTS audio
         tts_result = self.tts.synthesize(rag_result["answer"], language)
@@ -52,7 +54,7 @@ class VoiceAssistant:
             sources=rag_result.get("sources", []),
         )
 
-    def process_voice_input(
+    async def process_voice_input(
         self, audio_data: bytes, language: VoiceLanguage = VoiceLanguage.EN
     ) -> VoiceResponse:
         """Process voice input: STT -> RAG -> TTS."""
@@ -60,7 +62,7 @@ class VoiceAssistant:
         stt_result = self.stt.transcribe(audio_data, language)
 
         # Step 2: Get answer from RAG
-        rag_result = self.rag.generate_response(stt_result.text)
+        rag_result = await self.rag.answer(stt_result.text, language=language.value)
 
         # Step 3: Text-to-Speech
         tts_result = self.tts.synthesize(rag_result["answer"], language)

@@ -2,10 +2,10 @@
 
 from fastapi.testclient import TestClient
 
+from services.api_gateway.main import app
 from services.business_modules.voice.ivr_engine import IVRState, get_ivr_engine
 from services.business_modules.voice.stt_provider import get_stt_provider
 from services.business_modules.voice.tts_provider import VoiceLanguage, get_tts_provider
-from services.api_gateway.main import app
 
 client = TestClient(app)
 

@@ -1049,7 +1049,7 @@ class CGLSConnector(DataConnector):
 
         for tile in tiles[:5]:  # Limit to first 5 tiles for testing
             try:
-                prefix = f"{prod_info['bucket']}/{tile}/"
+                f"{prod_info['bucket']}/{tile}/"
 
                 # List all files in this tile
                 paginator = s3.get_paginator("list_objects_v2")
@@ -1069,7 +1069,6 @@ class CGLSConnector(DataConnector):
                             continue
 
                         # Download
-                        url = f"https://{self.s3_bucket}.s3.{self.region}.amazonaws.com/{key}"
 
                         resp = requests.get(
                             f"https://{self.s3_bucket}.s3.{self.region}.amazonaws.com/{key}",
@@ -1102,7 +1101,7 @@ class CGLSConnector(DataConnector):
                                 checksum=hashlib.md5(file_path.read_bytes()).hexdigest(),
                                 metadata={
                                     "product": product,
-                                    "variable": [v for v in variables if v in key][0]
+                                    "variable": next(v for v in variables if v in key)
                                     if any(v in key for v in variables)
                                     else "unknown",
                                     "tile": key.split("/")[2]

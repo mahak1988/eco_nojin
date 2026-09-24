@@ -13,9 +13,10 @@ share is credited (wallet earn calls), so no fake accounting here.
 
 from __future__ import annotations
 
-import yaml
 from pathlib import Path
 from typing import Any
+
+import yaml
 
 CONFIG_PATH = Path(__file__).parent.parent.parent / "config" / "distribution_constants.yaml"
 
@@ -55,7 +56,7 @@ def distribute_bps(total: int) -> dict[str, int]:
     return parts
 
 
-def apply_burn(total: int, burn_rate_bps: int = None) -> tuple[int, int]:
+def apply_burn(total: int, burn_rate_bps: int | None = None) -> tuple[int, int]:
     """Apply burn rate and return (burned_amount, net_amount)."""
     if burn_rate_bps is None:
         burn_rate_bps = BURN_RATE_BPS

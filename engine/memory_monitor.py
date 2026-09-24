@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 engine.memory_monitor
 =====================
@@ -19,12 +18,10 @@ Version: 3.0.0
 """
 
 import gc
-import sys
+import logging
 import tracemalloc
-from typing import Optional, List, Dict
 from contextlib import contextmanager
 from functools import wraps
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -55,12 +52,12 @@ class MemoryTracker:
         gc.collect()
         self.gc_after = gc.get_stats()[0]["collected"]
         if tracemalloc.is_tracing():
-            current, peak = tracemalloc.get_traced_memory()
+            current, _peak = tracemalloc.get_traced_memory()
             self.end_mb = current / (1024 * 1024)
             self.delta_mb = self.end_mb - self.start_mb
         return self
 
-    def get_snapshot(self, limit: int = 10) -> List[str]:
+    def get_snapshot(self, limit: int = 10) -> list[str]:
         """Get top memory-consuming locations."""
         if not tracemalloc.is_tracing():
             return ["Memory tracing not started"]
@@ -135,7 +132,7 @@ class MemoryManager:
         if len(self._history) > 100:
             self._history = self._history[-100:]
 
-    def get_stats(self) -> Dict:
+    def get_stats(self) -> dict:
         """Get overall memory statistics."""
         if not self._history:
             return {"operations": 0, "leaks": 0, "leak_rate": 0.0}
@@ -161,9 +158,9 @@ memory_monitor = MemoryManager()
 
 
 __all__ = [
-    "MemoryTracker",
-    "track_memory",
-    "monitor_memory",
     "MemoryManager",
+    "MemoryTracker",
     "memory_monitor",
+    "monitor_memory",
+    "track_memory",
 ]

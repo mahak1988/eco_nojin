@@ -210,6 +210,7 @@ def run_all() -> dict[str, Any]:
     # 8 — RothC temperature modifier identity
     # Uses the canonical RothC-26.3 formulation: 47.9/(1+exp(106.06/(T+18.27)))
     from engine.hydroma.simulation.runners.rothc_runner import temp_factor as rothc_temp_factor
+
     checks.append(
         _run(
             "rothc_temp_factor",

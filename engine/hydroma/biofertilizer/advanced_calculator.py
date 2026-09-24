@@ -92,7 +92,7 @@ class FormulationOptimizer:
         "max_application_t_ha": 40.0,
     }
 
-    def __init__(self, materials: list[dict], recipes: list[dict] = None):
+    def __init__(self, materials: list[dict], recipes: list[dict] | None = None):
         """
         Initialize optimizer with available materials.
 
@@ -373,7 +373,7 @@ class CostBenefitCalculator:
 
     DISCOUNT_RATE = 0.08  # 8%
 
-    def __init__(self, materials: list[dict] = None):
+    def __init__(self, materials: list[dict] | None = None):
         self.materials = {m["material_code"]: m for m in (materials or [])}
 
     def analyze(
@@ -500,10 +500,7 @@ class CostBenefitCalculator:
         # ROI = (Annual Net Benefit / Total Investment) × 100
         # This is the annual rate of return AFTER payback
 
-        if total_investment > 0:
-            roi_annual = (net_annual_benefit / total_investment) * 100
-        else:
-            roi_annual = 0.0
+        roi_annual = net_annual_benefit / total_investment * 100 if total_investment > 0 else 0.0
 
         # ═══════════════════════════════════════════════════════
         # STEP 5: Payback Period (Simple & Discounted)
@@ -964,7 +961,7 @@ class WaterSavingsCalculator:
 
     WATER_COST_USD_M3 = 0.10
 
-    def __init__(self, materials: list[dict] = None):
+    def __init__(self, materials: list[dict] | None = None):
         self.materials = {m["material_code"]: m for m in (materials or [])}
 
     def calculate(
@@ -972,7 +969,7 @@ class WaterSavingsCalculator:
         formulation_materials: dict[str, float],
         area_ha: float,
         baseline_irrigation_m3_ha: float = 8000.0,
-        water_cost_usd_m3: float = None,
+        water_cost_usd_m3: float | None = None,
     ) -> WaterSavingsResult:
         """Calculate water savings for a formulation."""
         cost = water_cost_usd_m3 or self.WATER_COST_USD_M3
@@ -1146,7 +1143,7 @@ class ScaleCalculator:
         (1000, float("inf")): "mega",
     }
 
-    def __init__(self, materials: list[dict] = None):
+    def __init__(self, materials: list[dict] | None = None):
         self.materials = {m["material_code"]: m for m in (materials or [])}
 
     def scale(
@@ -1310,10 +1307,7 @@ class ScaleCalculator:
         person_days = labor["person_days"]
         workers = labor["workers_needed"]
 
-        if workers > 0:
-            days = person_days / workers
-        else:
-            days = person_days
+        days = person_days / workers if workers > 0 else person_days
 
         return max(1, int(days))
 

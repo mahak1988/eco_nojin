@@ -10,12 +10,12 @@ Base models for geographic reference data:
 - Drainage Standard (استاندارد زهکشی)
 """
 
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class Continent(str, Enum):
+class Continent(StrEnum):
     """Continents"""
 
     AFRICA = "africa"

@@ -70,7 +70,9 @@ class CropWaterRequirementCalculator:
             raise ValueError("Length of weather data and Kc coefficients must match.")
 
         daily_et_crop_list = []
-        for weather, kc in zip(input_data.daily_weather_data, input_data.kc_coefficients):
+        for weather, kc in zip(
+            input_data.daily_weather_data, input_data.kc_coefficients, strict=False
+        ):
             # Get ET0 (could come from another module or be passed in)
             et0 = self._calculate_et0_hargreaves(weather)
             # ETc = Kc * ET0

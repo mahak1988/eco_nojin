@@ -258,7 +258,7 @@ async def platform_health():
         with hub.get_session() as session:
             session.query(LandProfile).limit(1).all()
         db_ok = True
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:
         logger.error(f"Database health check failed: {e}")
 
     return {
@@ -287,7 +287,7 @@ async def list_landscapes():
                 )
                 for r in rows
             ]
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:
         logger.exception("Failed to list land profiles")
         raise HTTPException(status_code=503, detail=f"database unavailable: {e}") from e
 
@@ -315,7 +315,7 @@ async def create_landscape(data: LandscapeCreate, user: User = Depends(require_u
                 area_ha=obj.area_ha,
                 created_at=obj.created_at.isoformat() if obj.created_at else None,
             )
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:
         logger.exception("Failed to create land profile")
         raise HTTPException(status_code=503, detail=f"database unavailable: {e}") from e
 
@@ -551,7 +551,7 @@ async def platform_stats():
                 session.query(CarbonProject).filter(CarbonProject.status == "active").count()
             )
         stats["db_reachable"] = True
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:
         logger.exception("Failed to read platform statistics")
         stats["error"] = str(e)
 
@@ -579,8 +579,8 @@ def _py_ndvi_array(red, nir):
         # Pure Python fallback
         if isinstance(red, (list, tuple)):
             return [
-                [(n - r) / (n + r + 1e-10) for r, n in zip(row_r, row_n)]
-                for row_r, row_n in zip(red, nir)
+                [(n - r) / (n + r + 1e-10) for r, n in zip(row_r, row_n, strict=False)]
+                for row_r, row_n in zip(red, nir, strict=False)
             ]
         return (nir - red) / (nir + red + 1e-10)
 

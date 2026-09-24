@@ -10,11 +10,12 @@ Minimal Server Endpoint for Local-First Sync
 Deployment: Supabase Edge Functions / Cloudflare Workers (NO DOCKER)
 """
 
-from fastapi import FastAPI, HTTPException, Header
-from pydantic import BaseModel, Field
-from typing import List, Optional, Dict, Any
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+from typing import Any
+
+from fastapi import FastAPI, Header
+from pydantic import BaseModel, Field
 
 app = FastAPI(title="Hydroma Local-First Sync Server")
 
@@ -27,7 +28,7 @@ app = FastAPI(title="Hydroma Local-First Sync Server")
 class RegisterRequest(BaseModel):
     email: str
     password: str = Field(..., min_length=12)
-    display_name: Optional[str] = None
+    display_name: str | None = None
 
 
 class LoginRequest(BaseModel):
@@ -53,7 +54,7 @@ class SyncChange(BaseModel):
 
 
 class SyncPushRequest(BaseModel):
-    changes: List[SyncChange]
+    changes: list[SyncChange]
 
 
 # ============================================================================
@@ -104,7 +105,7 @@ async def sync_push(
     return {
         "accepted": accepted,
         "rejected": [],
-        "server_time": datetime.now(timezone.utc).isoformat(),
+        "server_time": datetime.now(UTC).isoformat(),
     }
 
 
@@ -119,7 +120,7 @@ async def sync_pull(
     """
     return {
         "changes": [],
-        "server_time": datetime.now(timezone.utc).isoformat(),
+        "server_time": datetime.now(UTC).isoformat(),
         "vector_clock": {},
     }
 
@@ -127,8 +128,8 @@ async def sync_pull(
 @app.post("/api/v1/telemetry")
 async def post_telemetry(
     event_type: str,
-    event_data: Optional[Dict[str, Any]] = None,
-    country_code: Optional[str] = None,
+    event_data: dict[str, Any] | None = None,
+    country_code: str | None = None,
 ):
     """Anonymous telemetry. NO user ID stored."""
     return {"received": True}

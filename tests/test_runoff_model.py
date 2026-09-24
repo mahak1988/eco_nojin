@@ -1,6 +1,5 @@
 """Unit tests for RunoffCalculator."""
 
-import pytest
 from engine.hydroma.models.runoff_model import RunoffCalculator, RunoffInput
 
 

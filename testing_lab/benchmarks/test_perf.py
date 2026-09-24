@@ -3,7 +3,9 @@
 import structlog
 
 logger = structlog.get_logger()
-import pytest, time, statistics
+import time
+
+import pytest
 
 
 class TestPerformance:
@@ -21,6 +23,6 @@ class TestPerformance:
     def test_dict_operations(self):
         t0 = time.perf_counter()
         for _ in range(1000):
-            d = {i: i * 2 for i in range(500)}
+            {i: i * 2 for i in range(500)}
         t1 = time.perf_counter()
         logger.info(f"\n  Dict Time: {(t1 - t0) * 1000:.2f}ms")

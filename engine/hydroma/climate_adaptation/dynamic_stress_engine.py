@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
 # ============================================================================
 # Hydroma Dynamic Stress Engine - Phase 1
 # Algorithms: H01 Effective Rain | H02 Night Temp | H03 VPD-ET | H04 Heat Ks | H08 Interaction
 # References: IPCC AR6 (2021); Yuan et al. 2019; Zhang et al. 2020; Zscheischler et al. 2018
 # ============================================================================
+import contextlib
 import math
 from dataclasses import dataclass
-from typing import Optional
 
 __version__ = "1.0.0"
 
@@ -38,7 +37,7 @@ def vpd_kpa(t_max_c: float, t_min_c: float, rh_pct: float = 50.0) -> float:
 class DynamicStressEngine:
     """موتور تنش پویای هیدروما - جایگزین پاسخ‌های خطی فائو"""
 
-    def __init__(self, params: Optional[CropStressParams] = None):
+    def __init__(self, params: CropStressParams | None = None):
         self.p = params or CropStressParams()
 
     @property
@@ -107,13 +106,12 @@ class DynamicStressEngine:
         factor = heat_factor * night_factor
         result.yield_t_ha = round(result.yield_t_ha * factor, 2)
         result.biomass_t_ha = round(result.biomass_t_ha * factor, 2)
-        try:
-            result.warnings = list(result.warnings) + [
+        with contextlib.suppress(Exception):
+            result.warnings = [
+                *list(result.warnings),
                 "Hydroma DSE x%.2f (heat_days=%d, night_over=%.1fC)"
-                % (factor, heat_days, mean_over)
+                % (factor, heat_days, mean_over),
             ]
-        except Exception:
-            pass
         return result
 
     # ------------------------------------------------- منحنی مقایسه‌ای بنچمارک

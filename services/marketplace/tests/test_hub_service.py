@@ -747,7 +747,7 @@ async def test_get_opportunity_team(service_with_village, db_session):
         "v-1", {"name": "test", "category": "processing"}, "user-1"
     )
     eng1 = await service.create_engagement({"opportunity_id": opp.id, "role": "executor"}, "user-2")
-    eng2 = await service.create_engagement({"opportunity_id": opp.id, "role": "investor"}, "user-3")
+    await service.create_engagement({"opportunity_id": opp.id, "role": "investor"}, "user-3")
     # Accept one
     eng1.status = "accepted"
     await db_session.commit()

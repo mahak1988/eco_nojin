@@ -48,7 +48,7 @@ _bridge_dir = str(Path(__file__).parent.absolute())
 if _bridge_dir not in sys.path:
     sys.path.insert(0, _bridge_dir)
 
-_cpp_import_error: Optional[str] = None
+_cpp_import_error: str | None = None
 
 try:
     import hydroma_core as _hydroma_core
@@ -237,14 +237,18 @@ def _py_penman_monteith_et0(tmin, tmax, rh_mean, rs, u2, z, lat, doy):
     dr = 1.0 + 0.033 * _np.cos(2.0 * _np.pi * doy / 365.0)
     decl = 0.409 * _np.sin(2.0 * _np.pi * doy / 365.0 - 1.39)
     ws = _np.arccos(_np.clip(-_np.tan(phi) * _np.tan(decl), -1.0, 1.0))
-    ra = (24.0 * 60.0 / _np.pi) * 0.0820 * dr * (
-        ws * _np.sin(phi) * _np.sin(decl) + _np.cos(phi) * _np.cos(decl) * _np.sin(ws)
+    ra = (
+        (24.0 * 60.0 / _np.pi)
+        * 0.0820
+        * dr
+        * (ws * _np.sin(phi) * _np.sin(decl) + _np.cos(phi) * _np.cos(decl) * _np.sin(ws))
     )
     rso = (0.75 + 2e-5 * z) * ra
     rns = (1.0 - 0.23) * rs
     rnl = (
         4.903e-9
-        * ((tmax + 273.16) ** 4 + (tmin + 273.16) ** 4) / 2.0
+        * ((tmax + 273.16) ** 4 + (tmin + 273.16) ** 4)
+        / 2.0
         * (0.34 - 0.14 * _np.sqrt(_np.maximum(ea, 0.0)))
         * _np.clip(1.35 * rs / _np.maximum(rso, 1e-6) - 0.35, 0.05, 1.0)
     )
@@ -668,10 +672,6 @@ yield_ensemble_lhs = _with_telemetry(
 # Public API
 # =============================================================================
 __all__ = [
-    # Status
-    "is_cpp_available",
-    "get_telemetry",
-    "reset_telemetry",
     # Functions
     "BottomBoundary",
     "CropWaterParams",
@@ -693,8 +693,11 @@ __all__ = [
     "evi_array",
     "extraterrestrial_radiation",
     "fao56_net_radiation",
+    "get_telemetry",
     "hargreaves_et0",
     "hydraulic_conductivity",
+    # Status
+    "is_cpp_available",
     "latin_hypercube",
     "ls_factor",
     "manning_normal_depth",
@@ -707,6 +710,7 @@ __all__ = [
     "ndwi",
     "ndwi_array",
     "penman_monteith_et0",
+    "reset_telemetry",
     "route_flood_wave",
     "route_multi_reach",
     "rusle_annual_soil_loss",

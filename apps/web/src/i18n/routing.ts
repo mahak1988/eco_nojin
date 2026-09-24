@@ -2,7 +2,20 @@ import { defineRouting } from 'next-intl/routing';
 
 // The 14 official platform languages (aligned with docs/en/07_i18n_localization.md).
 export const locales = [
-  'fa', 'en', 'ar', 'ur', 'de', 'es', 'fr', 'hi', 'it', 'ms', 'pt', 'ru', 'zh', 'bn',
+  'fa',
+  'en',
+  'ar',
+  'ur',
+  'de',
+  'es',
+  'fr',
+  'hi',
+  'it',
+  'ms',
+  'pt',
+  'ru',
+  'zh',
+  'bn',
 ] as const;
 
 export type AppLocale = (typeof locales)[number];

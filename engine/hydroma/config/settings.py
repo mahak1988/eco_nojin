@@ -4,7 +4,6 @@ Safe, robust configuration using pydantic-settings.
 """
 
 import os
-
 from typing import Literal
 
 from pydantic import field_validator, model_validator
@@ -463,10 +462,7 @@ class Settings(BaseSettings):
             return True
 
         # Secondary: app_env field (legacy)
-        if app_env_val in ("production", "prod"):
-            return True
-
-        return False
+        return app_env_val in ("production", "prod")
 
     @field_validator("cors_origins", mode="after")
     @classmethod
@@ -510,10 +506,7 @@ class Settings(BaseSettings):
             return False
 
         # Must be 64+ chars
-        if len(secret) < 64:
-            return False
-
-        return True
+        return not len(secret) < 64
 
     # C4 FIX: Validate JWT secret is not default
     @property
@@ -529,9 +522,7 @@ class Settings(BaseSettings):
             "secret",
             "demo123",
         }
-        if not jwt_secret or jwt_secret in insecure or len(jwt_secret) < 64:
-            return False
-        return True
+        return not (not jwt_secret or jwt_secret in insecure or len(jwt_secret) < 64)
 
     @property
     def cors_allow_all(self) -> bool:
@@ -572,9 +563,7 @@ class Settings(BaseSettings):
 
         # CHECK 1: CORS wildcard with credentials (MUST be first)
         # Test: production_wildcard_credentials_raises expects "CORS" in message
-        cors_origins_list = (
-            self.cors_origins if isinstance(self.cors_origins, list) else [self.cors_origins]
-        )
+        (self.cors_origins if isinstance(self.cors_origins, list) else [self.cors_origins])
         has_wildcard = "*" in self.cors_origins
         if has_wildcard and self.allow_credentials:
             raise RuntimeError(
@@ -688,7 +677,9 @@ class Settings(BaseSettings):
 
         # CHECK 13: NATS must be configured when the event bus is enabled
         if self.enable_event_bus and not (self.nats_url or self.nats_servers):
-            raise RuntimeError("NATS_URL or NATS_SERVERS must be configured when ENABLE_EVENT_BUS=True")
+            raise RuntimeError(
+                "NATS_URL or NATS_SERVERS must be configured when ENABLE_EVENT_BUS=True"
+            )
 
         # CHECK 14: CORS origins must be explicit (no wildcards) - already checked above
         # CHECK 15: Sentry DSN recommended for production error tracking
@@ -696,7 +687,9 @@ class Settings(BaseSettings):
             import warnings
 
             warnings.warn(
-                "SENTRY_DSN not configured - error tracking disabled in production", RuntimeWarning
+                "SENTRY_DSN not configured - error tracking disabled in production",
+                RuntimeWarning,
+                stacklevel=2,
             )
 
         return self

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ============================================================================
 # Hydroma Seed Optimization & Genotype-Environment Matching Engine - Phase 4
 # Algorithms: H15 GxE Matching | H16 Field Hardiness | H17 Native Resilience
@@ -6,9 +5,8 @@
 #             H20 Ecozone Matching | H21 Microbiome Compatibility
 # References: Altieri 2018; Philippot et al. 2019; Rani et al. 2019
 # ============================================================================
-import math
+import contextlib
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
 
 __version__ = "1.0.0"
 
@@ -16,7 +14,7 @@ __version__ = "1.0.0"
 @dataclass
 class SeedOptimizationConfig:
     # H15: تطبیق ژنوتیپ-محیط
-    stress_tolerance_weights: Dict = field(
+    stress_tolerance_weights: dict = field(
         default_factory=lambda: {
             "drought": 0.30,
             "heat": 0.25,
@@ -27,12 +25,12 @@ class SeedOptimizationConfig:
     )
 
     # H16: سازگاری میدانی
-    hardiness_weights: Dict = field(
+    hardiness_weights: dict = field(
         default_factory=lambda: {"acclimatization": 0.35, "root_quality": 0.30, "defense": 0.35}
     )
 
     # H17: مقاومت ارقام بومی
-    native_weights: Dict = field(
+    native_weights: dict = field(
         default_factory=lambda: {
             "local_adaptation": 0.30,
             "drought_history": 0.25,
@@ -48,12 +46,12 @@ class SeedOptimizationConfig:
     vulnerability_threshold: float = 0.7
 
     # H20: تطبیق اکولوژیک
-    ecozone_weights: Dict = field(
+    ecozone_weights: dict = field(
         default_factory=lambda: {"koppen": 0.35, "soil": 0.25, "altitude": 0.20, "native": 0.20}
     )
 
     # H21: سازگاری میکروبیوم
-    microbiome_weights: Dict = field(
+    microbiome_weights: dict = field(
         default_factory=lambda: {"soc": 0.30, "ph": 0.25, "biology": 0.25, "organic_input": 0.20}
     )
 
@@ -61,13 +59,13 @@ class SeedOptimizationConfig:
 # ============================================================================
 class SeedOptimizationEngine:
     # ------------------------------------------------------------------ init
-    def __init__(self, config: Optional[SeedOptimizationConfig] = None):
+    def __init__(self, config: SeedOptimizationConfig | None = None):
         self.cfg = config or SeedOptimizationConfig()
 
     # ------------------------------------------------------------------- H15
     def h15_gxe_matching(
-        self, variety_tolerances: Dict[str, float], site_stress_profile: Dict[str, float]
-    ) -> Dict:
+        self, variety_tolerances: dict[str, float], site_stress_profile: dict[str, float]
+    ) -> dict:
         """
         تطبیق ژنوتیپ-محیط (GxE Matching)
         مقایسه تحمل‌های رقم با شرایط تنش سایت
@@ -113,7 +111,7 @@ class SeedOptimizationEngine:
             "recommendation": self._gxe_recommendation(score, mismatches),
         }
 
-    def _gxe_recommendation(self, score: float, mismatches: List[str]) -> str:
+    def _gxe_recommendation(self, score: float, mismatches: list[str]) -> str:
         if score >= 0.8:
             return "رقم مناسب برای این محیط است"
         elif score >= 0.6:
@@ -126,7 +124,7 @@ class SeedOptimizationEngine:
     # ------------------------------------------------------------------- H16
     def h16_field_hardiness(
         self, acclimatization_score: float, root_quality_score: float, defense_score: float
-    ) -> Dict:
+    ) -> dict:
         """
         امتیاز سازگاری میدانی (Field Hardiness Score)
         برای نهال‌های کشت بافت و بذور آزمایشگاهی
@@ -175,7 +173,7 @@ class SeedOptimizationEngine:
         drought_survival_history: float,
         pest_resistance_score: float,
         genetic_diversity_index: float,
-    ) -> Dict:
+    ) -> dict:
         """
         شاخص مقاومت ارقام بومی (Native Resilience Index)
         ارزیابی ارقام بومی در مقابل ارقام اصلاح‌شده
@@ -232,7 +230,7 @@ class SeedOptimizationEngine:
         temp_window_days: int,
         stress_onset_day: int,
         base_duration_days: int,
-    ) -> Dict:
+    ) -> dict:
         """
         بهینه‌ساز دوره رشد (Growth Duration Optimizer)
         تعیین دوره رشد بهینه بر اساس پنجره‌های اقلیمی
@@ -277,7 +275,7 @@ class SeedOptimizationEngine:
         genetic_diversity_index: float,
         monoculture_area_percent: float,
         number_of_varieties: int,
-    ) -> Dict:
+    ) -> dict:
         """
         ارزیابی آسیب‌پذیری ژنتیکی (Genetic Vulnerability Assessment)
         هشدار در مورد یکنواختی ژنتیکی و کشت تک‌رقمی
@@ -326,7 +324,7 @@ class SeedOptimizationEngine:
     # ------------------------------------------------------------------- H20
     def h20_ecozone_matching(
         self, koppen_fit: float, soil_fit: float, altitude_fit: float, native_presence: float
-    ) -> Dict:
+    ) -> dict:
         """
         تطبیق بذر با منطقه اکولوژیک (Ecozone Seed Matching)
         جلوگیری از واردات بذر نامناسب
@@ -373,7 +371,7 @@ class SeedOptimizationEngine:
     # ------------------------------------------------------------------- H21
     def h21_microbiome_compatibility(
         self, soc_pct: float, ph: float, biology_index: float, organic_input_history: float
-    ) -> Dict:
+    ) -> dict:
         """
         سازگاری میکروبیوم (Microbiome Compatibility Score)
         ارزیابی سازگاری بذر/نهال با میکروبیوم خاک
@@ -384,10 +382,7 @@ class SeedOptimizationEngine:
         soc_score = min(1.0, soc_pct / 3.0)
 
         # امتیاز pH (بهینه: 6-7.5)
-        if 6.0 <= ph <= 7.5:
-            ph_score = 1.0
-        else:
-            ph_score = max(0.0, 1.0 - abs(ph - 6.75) / 3.0)
+        ph_score = 1.0 if 6.0 <= ph <= 7.5 else max(0.0, 1.0 - abs(ph - 6.75) / 3.0)
 
         score = (
             w["soc"] * soc_score
@@ -425,13 +420,13 @@ class SeedOptimizationEngine:
     # ------------------------------------------------- گزارش یکپارچه بذر
     def generate_seed_advisory(
         self,
-        variety_tolerances: Dict[str, float],
-        site_stress_profile: Dict[str, float],
+        variety_tolerances: dict[str, float],
+        site_stress_profile: dict[str, float],
         is_tissue_culture: bool = False,
         local_adaptation_years: int = 0,
         genetic_diversity: float = 0.5,
-        soil_params: Optional[Dict] = None,
-    ) -> Dict:
+        soil_params: dict | None = None,
+    ) -> dict:
         """تولید توصیه‌نامه جامع بذر با ترکیب هر هفت الگوریتم"""
 
         advisory = {"model_version": __version__}
@@ -468,7 +463,7 @@ class SeedOptimizationEngine:
 
         return advisory
 
-    def _calculate_overall_suitability(self, advisory: Dict) -> Dict:
+    def _calculate_overall_suitability(self, advisory: dict) -> dict:
         scores = []
 
         if "h15_gxe" in advisory:
@@ -500,7 +495,7 @@ class SeedOptimizationEngine:
         }
 
     # ------------------------------------------------- تصحیح خروجی مدل‌ها
-    def apply_seed_corrections(self, result, seed_params: Dict) -> object:
+    def apply_seed_corrections(self, result, seed_params: dict) -> object:
         """اعمال تصحیحات بذر به خروجی مدل‌های رشد"""
         correction_factor = 1.0
 
@@ -526,17 +521,15 @@ class SeedOptimizationEngine:
         if hasattr(result, "biomass_t_ha"):
             result.biomass_t_ha = round(result.biomass_t_ha * correction_factor, 2)
 
-        try:
-            result.warnings = list(result.warnings) + [
-                "Seed correction x%.2f (GxE=%.2f, hardiness=%.2f, microbiome=%.2f)"
-                % (
+        with contextlib.suppress(Exception):
+            result.warnings = [
+                *list(result.warnings),
+                "Seed correction x{:.2f} (GxE={:.2f}, hardiness={:.2f}, microbiome={:.2f})".format(
                     correction_factor,
                     seed_params.get("gxe_score", 0.7),
                     seed_params.get("hardiness_score", 0.5),
                     seed_params.get("microbiome_score", 0.5),
-                )
+                ),
             ]
-        except Exception:
-            pass
 
         return result

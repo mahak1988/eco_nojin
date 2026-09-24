@@ -29,13 +29,16 @@ from engine.land.terrain_analysis import (
 @pytest.fixture
 def simple_dem():
     """Simple DEM with a depression and a slope."""
-    dem = np.array([
-        [10, 12, 14, 16, 18],
-        [12, 14, 16, 18, 20],
-        [14, 16, 18, 20, 22],
-        [16, 18, 20, 22, 24],
-        [18, 20, 22, 24, 26],
-    ], dtype=float)
+    dem = np.array(
+        [
+            [10, 12, 14, 16, 18],
+            [12, 14, 16, 18, 20],
+            [14, 16, 18, 20, 22],
+            [16, 18, 20, 22, 24],
+            [18, 20, 22, 24, 26],
+        ],
+        dtype=float,
+    )
     return dem
 
 
@@ -61,7 +64,7 @@ def curved_dem():
     dem = np.zeros((10, 10))
     for i in range(10):
         for j in range(10):
-            dem[i, j] = 1000.0 + (i - 4.5)**2 + (j - 4.5)**2
+            dem[i, j] = 1000.0 + (i - 4.5) ** 2 + (j - 4.5) ** 2
     return dem
 
 
@@ -81,7 +84,7 @@ class TestRusleErosion:
 
     def test_ls_factor_with_sloped_dem(self, sloped_dem):
         """LS factor should handle sloped terrain."""
-        slope_deg, _ = calculate_slope_aspect(sloped_dem, 30.0)
+        _slope_deg, _ = calculate_slope_aspect(sloped_dem, 30.0)
         ls = calculate_ls_factor(dem=sloped_dem, cell_size_m=30.0)
         assert ls.shape == sloped_dem.shape
         assert np.all(np.isfinite(ls))
@@ -119,14 +122,22 @@ class TestRusleErosion:
 
     def test_erosion_risk_with_custom_factors(self, simple_dem):
         """Custom RUSLE factors should be reflected in output."""
-        loss, risk_level, components = estimate_erosion_risk(
-            dem=simple_dem, cell_size_m=30.0,
-            r_factor=500.0, k_factor=0.4, c_factor=0.8, p_factor=0.5,
+        loss, _risk_level, _components = estimate_erosion_risk(
+            dem=simple_dem,
+            cell_size_m=30.0,
+            r_factor=500.0,
+            k_factor=0.4,
+            c_factor=0.8,
+            p_factor=0.5,
         )
         # Higher R, K, C should give higher loss
         loss_default, _, _ = estimate_erosion_risk(
-            dem=simple_dem, cell_size_m=30.0,
-            r_factor=150.0, k_factor=0.25, c_factor=0.3, p_factor=1.0,
+            dem=simple_dem,
+            cell_size_m=30.0,
+            r_factor=150.0,
+            k_factor=0.25,
+            c_factor=0.3,
+            p_factor=1.0,
         )
         assert np.mean(loss) > np.mean(loss_default)
 
@@ -203,13 +214,13 @@ class TestSlopeAspect:
 
     def test_flat_zero_slope(self, flat_dem):
         """Flat DEM should have near-zero slope."""
-        slope, aspect = calculate_slope_aspect(flat_dem, 30.0)
+        slope, _aspect = calculate_slope_aspect(flat_dem, 30.0)
         interior_slope = slope[1:-1, 1:-1]
         assert np.allclose(interior_slope, 0, atol=1e-10)
 
     def test_sloped_positive_slope(self, sloped_dem):
         """Sloped DEM should have positive slope in interior."""
-        slope, aspect = calculate_slope_aspect(sloped_dem, 30.0)
+        slope, _aspect = calculate_slope_aspect(sloped_dem, 30.0)
         interior_slope = slope[1:-1, 1:-1]
         assert np.all(interior_slope > 0)
 
@@ -237,7 +248,6 @@ class TestTerrainAnalysisModel:
 
     def test_analyzer_includes_curvature(self, simple_dem):
         """TerrainAnalysis should include curvature data."""
-        from engine.land.models import TerrainType
 
         analyzer = TerrainAnalyzer(resolution=30.0)
         result = analyzer.analyze(simple_dem, profile_id="test")

@@ -3,8 +3,8 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from services.models.registry import REGISTRY, list_models, run_model
 from services.api_gateway.main import app
+from services.models.registry import REGISTRY, run_model
 
 
 class TestRegistry:
@@ -19,11 +19,15 @@ class TestRegistry:
         for m in REGISTRY:
             assert m.fidelity in {"official", "simplified", "experimental"}
         counts = {m.fidelity for m in REGISTRY}
-        assert "official" in counts and "simplified" in counts
+        assert "official" in counts
+        assert "simplified" in counts
 
     def test_all_models_have_references_and_descriptions(self):
         for m in REGISTRY:
-            assert m.reference and m.description and m.name_fa and m.name_en
+            assert m.reference
+            assert m.description
+            assert m.name_fa
+            assert m.name_en
 
 
 class TestNumericConformance:
@@ -68,16 +72,19 @@ class TestNumericConformance:
         pools = result.get("pools") or {}
         assert len(pools) >= 5, f"expected 5 RothC pools, got {list(pools.keys())}"
         for v in pools.values():
-            assert isinstance(v, (int, float)) and v >= 0
+            assert isinstance(v, (int, float))
+            assert v >= 0
 
     def test_salinity_class_boundaries(self):
         non_saline = run_model("salinity_class", {"ec": 1.0}).get("result")
         severe = run_model("salinity_class", {"ec": 20.0}).get("result")
-        assert isinstance(non_saline, dict) and isinstance(severe, dict)
+        assert isinstance(non_saline, dict)
+        assert isinstance(severe, dict)
 
     def test_soil_pedotransfer_returns_params(self):
         out = run_model("soil_pedotransfer", {"sand_pct": 40, "clay_pct": 30})
-        assert isinstance(out["result"], dict) and len(out["result"]) >= 3
+        assert isinstance(out["result"], dict)
+        assert len(out["result"]) >= 3
 
     def test_run_errors_are_explicit(self):
         with pytest.raises(ValueError):

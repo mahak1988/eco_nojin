@@ -47,7 +47,8 @@ def test_bank_flow_holds_escrow(db_session):
     with pytest.raises(PaymentError):
         svc.verify(payment)  # no tracking code
     payment = svc.verify(payment, ref_id="TRK-123456")
-    assert payment.status == "verified" and payment.escrow_status == "held"
+    assert payment.status == "verified"
+    assert payment.escrow_status == "held"
     entries = EscrowService(db_session).by_order("o-2")
     assert [e.entry_type for e in entries] == ["hold"]
 
@@ -58,7 +59,8 @@ def test_escrow_release_then_no_double(db_session):
     payment = svc.verify(payment, ref_id="TRK-1")
     esc = EscrowService(db_session)
     entry = esc.release(payment.id, actor_id="admin-1")
-    assert entry.entry_type == "release" and payment.escrow_status == "released"
+    assert entry.entry_type == "release"
+    assert payment.escrow_status == "released"
     with pytest.raises(PaymentError):
         esc.release(payment.id)
     with pytest.raises(PaymentError):

@@ -2,9 +2,11 @@
 
 import unittest
 from unittest.mock import Mock
-from services.land.service import LandService
-from interfaces.land_engine_interface import ILandEngine
+
 import numpy as np
+
+from interfaces.land_engine_interface import ILandEngine
+from services.land.service import LandService
 
 
 class TestLandService(unittest.TestCase):
@@ -33,8 +35,8 @@ class TestLandService(unittest.TestCase):
         result = self.service.analyze_terrain(profile.id, dem_array, resolution=30.0)
 
         self.mock_land_engine.analyze_terrain.assert_called_once()
-        self.assertEqual(result.profile_id, profile.id)
-        self.assertEqual(result.slope_mean, 10.0)
+        assert result.profile_id == profile.id
+        assert result.slope_mean == 10.0
 
     def test_analyze_drainage_delegates_to_engine(self):
         """Test that analyze_drainage calls the injected engine."""
@@ -53,8 +55,8 @@ class TestLandService(unittest.TestCase):
         result = self.service.analyze_drainage(profile.id, dem_array, resolution=30.0, area_km2=1.0)
 
         self.mock_land_engine.analyze_drainage.assert_called_once()
-        self.assertEqual(result.profile_id, profile.id)
-        self.assertEqual(result.drainage_pattern, DrainagePattern.DENDRITIC)
+        assert result.profile_id == profile.id
+        assert result.drainage_pattern == DrainagePattern.DENDRITIC
 
     def test_assess_capability_delegates_to_engine(self):
         """Test that assess_capability calls the injected engine."""
@@ -79,8 +81,8 @@ class TestLandService(unittest.TestCase):
         )
 
         self.mock_land_engine.assess_capability.assert_called_once()
-        self.assertEqual(result.profile_id, profile.id)
-        self.assertEqual(result.capability_class, LandCapabilityClass.CLASS_II)
+        assert result.profile_id == profile.id
+        assert result.capability_class == LandCapabilityClass.CLASS_II
 
 
 if __name__ == "__main__":

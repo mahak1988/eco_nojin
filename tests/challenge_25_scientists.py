@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 چالش ۲۵ دانشمند × ۲۵ منطقه
 تمام کد (مناطق + تست‌ها) در یک فایل واحد
@@ -7,22 +6,21 @@
 import structlog
 
 logger = structlog.get_logger()
-import sys
-import math
 import json
-from pathlib import Path
+import sys
 from datetime import datetime
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 try:
-    from engine.hydroma.climate_adaptation.dynamic_stress_engine import DynamicStressEngine
     from engine.hydroma.climate_adaptation.climate_adaptive_phenology import (
         ClimateAdaptivePhenology,
     )
-    from engine.hydroma.climate_adaptation.soil_degradation_model import SoilDegradationModel
+    from engine.hydroma.climate_adaptation.dynamic_stress_engine import DynamicStressEngine
     from engine.hydroma.climate_adaptation.seed_optimization_engine import SeedOptimizationEngine
+    from engine.hydroma.climate_adaptation.soil_degradation_model import SoilDegradationModel
     from engine.hydroma.climate_adaptation.uncertainty_knowledge_engine import (
         UncertaintyAndKnowledgeEngine,
     )
@@ -966,7 +964,7 @@ class Scientist25Challenge:
     def test_geneticist(self, region_id, region):
         scientist = "ژنتیک‌دان"
         crops = region.get("dominant_crops", [])
-        challenges = region.get("challenges", [])
+        region.get("challenges", [])
 
         if len(crops) <= 1:
             self.add_result(
@@ -1085,7 +1083,7 @@ class Scientist25Challenge:
 
     def test_irrigation_expert(self, region_id, region):
         scientist = "متخصص آبیاری"
-        irrigation = region.get("irrigation_available", False)
+        region.get("irrigation_available", False)
 
         if self.cap:
             try:
@@ -1171,7 +1169,7 @@ class Scientist25Challenge:
 
 def main():
     challenge = Scientist25Challenge()
-    results = challenge.run_all()
+    challenge.run_all()
     report = challenge.generate_report()
 
     logger.info("\n" + "=" * 70)

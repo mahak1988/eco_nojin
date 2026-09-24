@@ -1,20 +1,19 @@
 """Backup/Restore API Router."""
 
-from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.hub import hub
-from services.backup.service import BackupService
 from services.backup.schemas import (
     BackupConfigCreate,
-    BackupConfigUpdate,
     BackupConfigResponse,
+    BackupConfigUpdate,
     BackupJobResponse,
+    BackupSummary,
     RestoreRequest,
     RestoreResponse,
-    BackupSummary,
 )
+from services.backup.service import BackupService
 
 router = APIRouter(prefix="/api/v1/backup", tags=["backup"])
 
@@ -43,9 +42,9 @@ async def create_backup_config(
     return BackupConfigResponse.model_validate(config)
 
 
-@router.get("/configs", response_model=List[BackupConfigResponse])
+@router.get("/configs", response_model=list[BackupConfigResponse])
 async def list_backup_configs(
-    enabled: Optional[bool] = Query(None, description="Filter by enabled status"),
+    enabled: bool | None = Query(None, description="Filter by enabled status"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Page size"),
     service: BackupService = Depends(get_backup_service),
@@ -138,10 +137,10 @@ async def create_backup_job(
     return BackupJobResponse.model_validate(job)
 
 
-@router.get("/jobs", response_model=List[BackupJobResponse])
+@router.get("/jobs", response_model=list[BackupJobResponse])
 async def list_backup_jobs(
-    config_id: Optional[str] = Query(None, description="Filter by config ID"),
-    status: Optional[str] = Query(None, description="Filter by status"),
+    config_id: str | None = Query(None, description="Filter by config ID"),
+    status: str | None = Query(None, description="Filter by status"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Page size"),
     service: BackupService = Depends(get_backup_service),
@@ -153,7 +152,7 @@ async def list_backup_jobs(
     return [BackupJobResponse.model_validate(j) for j in jobs]
 
 
-@router.get("/jobs/recent", response_model=List[BackupJobResponse])
+@router.get("/jobs/recent", response_model=list[BackupJobResponse])
 async def get_recent_backup_jobs(
     limit: int = Query(10, ge=1, le=50, description="Number of recent jobs"),
     service: BackupService = Depends(get_backup_service),

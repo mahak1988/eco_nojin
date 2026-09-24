@@ -7,11 +7,11 @@ Stricter scoring with proper weight distribution.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 
-class LandUseCategory(str, Enum):
+class LandUseCategory(StrEnum):
     """Land use recommendation categories"""
 
     INTENSIVE_AGRICULTURE = "intensive_agriculture"
@@ -21,7 +21,7 @@ class LandUseCategory(str, Enum):
     CONSERVATION = "conservation"
 
 
-class CropType(str, Enum):
+class CropType(StrEnum):
     """Major crop types for suitability scoring"""
 
     WHEAT = "wheat"

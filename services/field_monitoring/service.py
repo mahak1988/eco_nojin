@@ -96,13 +96,11 @@ class FieldMonitoringService:
         for field in required_fields:
             if not hasattr(report, field) or getattr(report, field) is None:
                 return False
-        if (
+        return not (
             not isinstance(report.location, dict)
             or "lat" not in report.location
             or "lon" not in report.location
-        ):
-            return False
-        return True
+        )
 
     def _process_data(self, report: FieldMonitoringReport) -> dict[str, Any]:
         """Applies calculations or enrichments to raw data."""

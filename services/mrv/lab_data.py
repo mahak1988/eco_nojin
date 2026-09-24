@@ -131,9 +131,9 @@ async def compare_model() -> dict[str, Any]:
     mean_m = sum(meas) / n
     mean_mod = sum(mod) / n
     bias = mean_m - mean_mod
-    rmse = math.sqrt(sum((m - o) ** 2 for m, o in zip(meas, mod)) / n)
-    mape = sum(abs(m - o) / abs(m) * 100 for m, o in zip(meas, mod) if m != 0) / n
-    ss_res = sum((m - o) ** 2 for m, o in zip(meas, mod))
+    rmse = math.sqrt(sum((m - o) ** 2 for m, o in zip(meas, mod, strict=False)) / n)
+    mape = sum(abs(m - o) / abs(m) * 100 for m, o in zip(meas, mod, strict=False) if m != 0) / n
+    ss_res = sum((m - o) ** 2 for m, o in zip(meas, mod, strict=False))
     ss_tot = sum((m - mean_m) ** 2 for m in meas)
     r2 = round(1 - ss_res / ss_tot, 4) if ss_tot > 0 else None
     status = "comparison_ready" if n >= 2 else "low_sample_warning"

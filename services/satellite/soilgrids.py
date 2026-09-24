@@ -143,7 +143,7 @@ async def _fetch_coverage(
 
 def _pixel_at(transform: Any, lon: float, lat: float) -> tuple[int, int]:
     col, row = ~transform * (lon, lat)
-    return int(round(row)), int(round(col))
+    return round(row), round(col)
 
 
 def _lonlat_at(transform: Any, row: int, col: int) -> tuple[float, float]:
@@ -270,4 +270,4 @@ async def _fetch_all_tiles(
             return prop, await _fetch_coverage(client, prop, lon, lat)
 
     results = await asyncio.gather(*[_one(p) for p in SOILGRIDS_PROPS])
-    return {prop: tile for prop, tile in results}
+    return dict(results)

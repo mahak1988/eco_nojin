@@ -1,14 +1,13 @@
 """Pydantic schemas for Data Provenance API."""
 
-import uuid
 from datetime import datetime
-from typing import Optional, List, Dict, Any, Literal
-from enum import Enum
+from enum import StrEnum
+from typing import Any, Literal
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
-class ProvenanceType(str, Enum):
+class ProvenanceType(StrEnum):
     SCIENTIFIC_OUTPUT = "scientific_output"
     DATA_TRANSFORMATION = "data_transformation"
     DATA_SOURCE = "data_source"
@@ -38,10 +37,10 @@ class ProvenanceCreate(BaseModel):
     )
 
     # Input lineage
-    input_hashes: List[str] = Field(
+    input_hashes: list[str] = Field(
         default_factory=list, description="List of input content hashes (SHA256)"
     )
-    input_sources: List[Dict[str, Any]] = Field(
+    input_sources: list[dict[str, Any]] = Field(
         default_factory=list, description="List of source identifiers"
     )
 
@@ -52,36 +51,36 @@ class ProvenanceCreate(BaseModel):
     model_name: str = Field(
         ..., min_length=1, max_length=100, description="Name of model/algorithm"
     )
-    algorithm_parameters: Dict[str, Any] = Field(
+    algorithm_parameters: dict[str, Any] = Field(
         default_factory=dict, description="Frozen algorithm parameters"
     )
 
     # Execution context
-    execution_id: Optional[str] = Field(None, description="Execution correlation ID")
-    executed_by: Optional[str] = Field(None, max_length=255, description="User/system identifier")
-    execution_environment: Dict[str, Any] = Field(
+    execution_id: str | None = Field(None, description="Execution correlation ID")
+    executed_by: str | None = Field(None, max_length=255, description="User/system identifier")
+    execution_environment: dict[str, Any] = Field(
         default_factory=dict, description="Runtime environment info"
     )
 
     # Uncertainty quantification
-    uncertainty: Dict[str, Any] = Field(
+    uncertainty: dict[str, Any] = Field(
         default_factory=dict, description="Uncertainty quantification results"
     )
-    confidence_level: Optional[str] = Field(
+    confidence_level: str | None = Field(
         None, max_length=50, description="Confidence level (e.g., '95%', 'high')"
     )
 
     # Quality
     is_validated: bool = Field(False, description="Whether output has been validated")
-    validation_notes: Optional[str] = Field(None, description="Validation notes")
-    quality_score: Optional[Literal["high", "medium", "low"]] = Field(
+    validation_notes: str | None = Field(None, description="Validation notes")
+    quality_score: Literal["high", "medium", "low"] | None = Field(
         None, description="Quality assessment"
     )
 
     # Reproducibility
     is_reproducible: bool = Field(True, description="Whether result is reproducible")
-    reproducibility_notes: Optional[str] = Field(None, description="Reproducibility notes")
-    docker_image_digest: Optional[str] = Field(
+    reproducibility_notes: str | None = Field(None, description="Reproducibility notes")
+    docker_image_digest: str | None = Field(
         None, max_length=255, description="Docker image digest for reproducibility"
     )
 
@@ -95,7 +94,7 @@ class ProvenanceResponse(ProvenanceCreate):
     execution_id: str
     executed_at: datetime
     is_validated: bool
-    quality_score: Optional[str]
+    quality_score: str | None
     is_reproducible: bool
     created_at: datetime
     updated_at: datetime
@@ -104,7 +103,7 @@ class ProvenanceResponse(ProvenanceCreate):
 class ProvenanceListResponse(BaseModel):
     """Paginated provenance records."""
 
-    items: List[ProvenanceResponse]
+    items: list[ProvenanceResponse]
     total: int
     page: int
     page_size: int
@@ -143,14 +142,14 @@ class LineageEdge(BaseModel):
     from_id: str
     to_id: str
     transformation_type: str
-    transformation_params: Dict[str, Any]
+    transformation_params: dict[str, Any]
 
 
 class LineageResponse(BaseModel):
     """Lineage graph response."""
 
-    nodes: List[LineageNode]
-    edges: List[LineageEdge]
+    nodes: list[LineageNode]
+    edges: list[LineageEdge]
     max_depth_reached: bool
 
 
@@ -163,16 +162,16 @@ class ModelVersionCreate(BaseModel):
     version: str = Field(
         ..., min_length=1, max_length=50, pattern=r"^\d+\.\d+\.\d+(-[a-zA-Z0-9.-]+)?$"
     )
-    description: Optional[str] = None
-    algorithm_class: Optional[str] = Field(None, max_length=200)
-    framework: Optional[str] = Field(None, max_length=50)
-    git_commit: Optional[str] = Field(None, max_length=40, pattern=r"^[a-f0-9]{40}$")
-    docker_image: Optional[str] = Field(None, max_length=255)
-    dependencies: Dict[str, str] = Field(default_factory=dict)
-    validation_dataset_hash: Optional[str] = Field(None, max_length=64)
-    validation_metrics: Dict[str, Any] = Field(default_factory=dict)
-    tolerance_config: Dict[str, Any] = Field(default_factory=dict)
-    created_by: Optional[str] = None
+    description: str | None = None
+    algorithm_class: str | None = Field(None, max_length=200)
+    framework: str | None = Field(None, max_length=50)
+    git_commit: str | None = Field(None, max_length=40, pattern=r"^[a-f0-9]{40}$")
+    docker_image: str | None = Field(None, max_length=255)
+    dependencies: dict[str, str] = Field(default_factory=dict)
+    validation_dataset_hash: str | None = Field(None, max_length=64)
+    validation_metrics: dict[str, Any] = Field(default_factory=dict)
+    tolerance_config: dict[str, Any] = Field(default_factory=dict)
+    created_by: str | None = None
 
 
 class ModelVersionResponse(ModelVersionCreate):
@@ -181,10 +180,10 @@ class ModelVersionResponse(ModelVersionCreate):
     id: str
     is_active: bool
     is_deprecated: bool
-    deprecated_at: Optional[datetime]
-    superseded_by_id: Optional[str]
+    deprecated_at: datetime | None
+    superseded_by_id: str | None
     created_at: datetime
-    deprecated_at: Optional[datetime]
+    deprecated_at: datetime | None
 
 
 class ProvenanceValidationRequest(BaseModel):
@@ -195,8 +194,8 @@ class ProvenanceValidationRequest(BaseModel):
     provenance_id: str
     is_valid: bool
     validator_id: str
-    notes: Optional[str] = None
-    quality_score: Optional[Literal["high", "medium", "low"]] = None
+    notes: str | None = None
+    quality_score: Literal["high", "medium", "low"] | None = None
 
 
 class ValidationResponse(BaseModel):

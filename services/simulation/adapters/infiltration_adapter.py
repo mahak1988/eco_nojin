@@ -36,10 +36,7 @@ class InfiltrationAdapter(BaseSimulator):
         for hour in range(1, 25):
             rainfall = ctx.weather.precipitation_mm / 24
             # Green-Ampt equation
-            if cumulative > 0:
-                f = Ks * (1 + (suction * delta_theta) / cumulative)
-            else:
-                f = Ks
+            f = Ks * (1 + suction * delta_theta / cumulative) if cumulative > 0 else Ks
             infiltrated = min(f, rainfall)
             cumulative += infiltrated
             runoff = max(0, rainfall - infiltrated)

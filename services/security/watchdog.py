@@ -6,6 +6,7 @@
   is auto-blocked for a cooldown (self-healing against scanners/brute force).
 """
 
+import contextlib
 import logging
 import os
 import subprocess
@@ -109,10 +110,8 @@ class HealthWatchdog:
                 logger.warning("worker unhealthy (alive=%s healthy=%s); restarting", alive, healthy)
                 self.restarts += 1
                 if self.proc:
-                    try:
+                    with contextlib.suppress(Exception):
                         self.proc.kill()
-                    except Exception:
-                        pass
                 self.start()
 
 

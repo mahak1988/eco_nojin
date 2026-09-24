@@ -26,7 +26,7 @@ def _rmse(observed: list[float], modelled: list[float]) -> float:
         return float("inf")
     n = len(observed)
     s = 0.0
-    for o, m in zip(observed, modelled):
+    for o, m in zip(observed, modelled, strict=False):
         s += (o - m) ** 2
     return math.sqrt(s / n)
 
@@ -69,7 +69,6 @@ def run_calibration(
     best_rmse = rmse_before
     factor = 0.25
     for _ in range(iterations):
-        improved = False
         for k in keys:
             for direction in (-1, 1):
                 trial = best.copy()
@@ -81,7 +80,6 @@ def run_calibration(
                 if trial_rmse < best_rmse:
                     best = trial.copy()
                     best_rmse = trial_rmse
-                    improved = True
         factor *= 0.5
         if factor < 0.001:
             break

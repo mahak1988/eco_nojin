@@ -3,13 +3,13 @@
 import pytest
 from fastapi.testclient import TestClient
 
+from services.api_gateway.main import app
 from services.business_modules.blockchain.carbon_registry import (
     CarbonRegistry,
     ProjectStatus,
 )
 from services.business_modules.blockchain.supply_chain import SupplyChainRegistry
 from services.business_modules.blockchain.web3_provider import get_web3_provider
-from services.api_gateway.main import app
 
 client = TestClient(app)
 
@@ -28,9 +28,7 @@ def _auth_headers(
         },
     )
     if resp.status_code != 200:
-        resp = client.post(
-            "/api/v1/auth/login", json={"email": email, "password": password}
-        )
+        resp = client.post("/api/v1/auth/login", json={"email": email, "password": password})
     assert resp.status_code == 200, resp.text
     token = resp.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
@@ -232,11 +230,15 @@ class TestSupplyChainRegistry:
 class TestBlockchainAPIEndpoints:
     """Test blockchain API endpoints."""
 
-    @pytest.mark.skip(reason="Endpoint /api/v1/blockchain/carbon/projects not implemented in current router")
+    @pytest.mark.skip(
+        reason="Endpoint /api/v1/blockchain/carbon/projects not implemented in current router"
+    )
     def test_register_carbon_project_endpoint(self):
         pass
 
-    @pytest.mark.skip(reason="Endpoint /api/v1/blockchain/carbon/projects/{id}/verify not implemented")
+    @pytest.mark.skip(
+        reason="Endpoint /api/v1/blockchain/carbon/projects/{id}/verify not implemented"
+    )
     def test_verify_carbon_project_endpoint(self):
         pass
 

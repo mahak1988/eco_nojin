@@ -15,6 +15,7 @@ Provides the four middlewares referenced by ``main.py``:
 - ``RequestIDMiddleware``      — propagates/assigns ``X-Request-ID``.
 """
 
+import contextlib
 import os
 import time
 import uuid
@@ -86,10 +87,8 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             import ipaddress
 
             for proxy in self.trusted_proxies:
-                try:
+                with contextlib.suppress(ValueError):
                     self._trusted_proxy_networks.append(ipaddress.ip_network(proxy, strict=False))
-                except ValueError:
-                    pass
 
     def _client_key(self, request: Request) -> str:
         """Extract client IP with trusted proxy validation."""

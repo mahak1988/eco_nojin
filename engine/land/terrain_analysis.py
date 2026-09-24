@@ -5,9 +5,7 @@ from typing import Any
 import numpy as np
 
 from engine.land.models import (
-    CapabilityAssessment,
     CurvatureResult,
-    LandCapabilityClass,
     LandformType,
     SlopeClass,
     TerrainAnalysis,
@@ -21,10 +19,22 @@ def aspect_to_cardinal(degrees: float) -> str:
     if np.isnan(degrees):
         return "unknown"
     directions = [
-        "N", "NNE", "NE", "ENE",
-        "E", "ESE", "SE", "SSE",
-        "S", "SSW", "SW", "WSW",
-        "W", "WNW", "NW", "NNW",
+        "N",
+        "NNE",
+        "NE",
+        "ENE",
+        "E",
+        "ESE",
+        "SE",
+        "SSE",
+        "S",
+        "SSW",
+        "SW",
+        "WSW",
+        "W",
+        "WNW",
+        "NW",
+        "NNW",
     ]
     idx = int((degrees + 11.25) / 22.5) % 16
     return directions[idx]
@@ -84,17 +94,17 @@ def calculate_slope_aspect(
 
     for i in range(1, rows - 1):
         for j in range(1, cols - 1):
-            z = dem[i - 1:i + 2, j - 1:j + 2]
+            z = dem[i - 1 : i + 2, j - 1 : j + 2]
 
             # Horn's finite difference (central differences)
-            dz_dx = ((z[2, 2] + 2 * z[1, 2] + z[0, 2]) -
-                     (z[2, 0] + 2 * z[1, 0] + z[0, 0])) / (8.0 * resolution)
-            dz_dy = ((z[2, 2] + 2 * z[2, 1] + z[2, 0]) -
-                     (z[0, 2] + 2 * z[0, 1] + z[0, 0])) / (8.0 * resolution)
-
-            slope_rad[i, j] = np.arctan2(
-                np.sqrt(dz_dx**2 + dz_dy**2), 1.0
+            dz_dx = ((z[2, 2] + 2 * z[1, 2] + z[0, 2]) - (z[2, 0] + 2 * z[1, 0] + z[0, 0])) / (
+                8.0 * resolution
             )
+            dz_dy = ((z[2, 2] + 2 * z[2, 1] + z[2, 0]) - (z[0, 2] + 2 * z[0, 1] + z[0, 0])) / (
+                8.0 * resolution
+            )
+
+            slope_rad[i, j] = np.arctan2(np.sqrt(dz_dx**2 + dz_dy**2), 1.0)
             # Aspect: arctan2(-dz_dy, dz_dx) gives direction of steepest descent
             aspect_rad[i, j] = np.arctan2(-dz_dy, dz_dx)
 
@@ -117,11 +127,18 @@ def _d8_flow_direction(dem: np.ndarray) -> np.ndarray:
             if not np.isfinite(center):
                 continue
 
-            neighbors_vals = np.array([
-                dem[i - 1, j - 1], dem[i - 1, j],     dem[i - 1, j + 1],
-                dem[i,     j - 1],                      dem[i,     j + 1],
-                dem[i + 1, j - 1], dem[i + 1, j],     dem[i + 1, j + 1],
-            ])
+            neighbors_vals = np.array(
+                [
+                    dem[i - 1, j - 1],
+                    dem[i - 1, j],
+                    dem[i - 1, j + 1],
+                    dem[i, j - 1],
+                    dem[i, j + 1],
+                    dem[i + 1, j - 1],
+                    dem[i + 1, j],
+                    dem[i + 1, j + 1],
+                ]
+            )
             directions = np.array([1, 2, 3, 4, 5, 6, 7, 8], dtype=float)
 
             valid_mask = np.isfinite(neighbors_vals) & (neighbors_vals < center)
@@ -142,8 +159,14 @@ def _d8_flow_accumulation(flow_dir: np.ndarray) -> np.ndarray:
     acc = np.ones((rows, cols), dtype=np.float64)
 
     _DIR_OFFSETS = {
-        1: (-1, 0), 2: (-1, 1), 3: (0, 1), 4: (1, 1),
-        5: (1, 0), 6: (1, -1), 7: (0, -1), 8: (-1, -1),
+        1: (-1, 0),
+        2: (-1, 1),
+        3: (0, 1),
+        4: (1, 1),
+        5: (1, 0),
+        6: (1, -1),
+        7: (0, -1),
+        8: (-1, -1),
     }
 
     downstream = np.full((rows, cols, 2), -1, dtype=np.int32)
@@ -162,6 +185,7 @@ def _d8_flow_accumulation(flow_dir: np.ndarray) -> np.ndarray:
                 upstream_count[ni, nj] += 1
 
     from collections import deque
+
     queue = deque()
     for i in range(rows):
         for j in range(cols):
@@ -201,23 +225,28 @@ def calculate_curvature(dem: np.ndarray, resolution: float = 30.0) -> dict[str, 
 
     for i in range(1, rows - 1):
         for j in range(1, cols - 1):
-            z = dem[i - 1:i + 2, j - 1:j + 2]
+            z = dem[i - 1 : i + 2, j - 1 : j + 2]
 
             # First derivatives
-            dz_dx = ((z[0, 2] + 2 * z[1, 2] + z[2, 2]) -
-                     (z[0, 0] + 2 * z[1, 0] + z[2, 0])) / (8.0 * resolution)
-            dz_dy = ((z[2, 0] + 2 * z[2, 1] + z[2, 2]) -
-                     (z[0, 0] + 2 * z[0, 1] + z[0, 2])) / (8.0 * resolution)
+            dz_dx = ((z[0, 2] + 2 * z[1, 2] + z[2, 2]) - (z[0, 0] + 2 * z[1, 0] + z[2, 0])) / (
+                8.0 * resolution
+            )
+            dz_dy = ((z[2, 0] + 2 * z[2, 1] + z[2, 2]) - (z[0, 0] + 2 * z[0, 1] + z[0, 2])) / (
+                8.0 * resolution
+            )
 
             # Second derivatives
-            d2z_dx2 = ((z[0, 0] + 2 * z[0, 1] + z[0, 2]) -
-                       2 * (z[1, 0] + 2 * z[1, 1] + z[1, 2]) +
-                       (z[2, 0] + 2 * z[2, 1] + z[2, 2])) / (4.0 * resolution**2)
-            d2z_dy2 = ((z[0, 0] + 2 * z[1, 0] + z[2, 0]) -
-                       2 * (z[0, 1] + 2 * z[1, 1] + z[2, 1]) +
-                       (z[0, 2] + 2 * z[1, 2] + z[2, 2])) / (4.0 * resolution**2)
-            d2z_dxdy = ((z[2, 2] - z[2, 0] - z[0, 2] + z[0, 0]) /
-                        (4.0 * resolution**2))
+            d2z_dx2 = (
+                (z[0, 0] + 2 * z[0, 1] + z[0, 2])
+                - 2 * (z[1, 0] + 2 * z[1, 1] + z[1, 2])
+                + (z[2, 0] + 2 * z[2, 1] + z[2, 2])
+            ) / (4.0 * resolution**2)
+            d2z_dy2 = (
+                (z[0, 0] + 2 * z[1, 0] + z[2, 0])
+                - 2 * (z[0, 1] + 2 * z[1, 1] + z[2, 1])
+                + (z[0, 2] + 2 * z[1, 2] + z[2, 2])
+            ) / (4.0 * resolution**2)
+            d2z_dxdy = (z[2, 2] - z[2, 0] - z[0, 2] + z[0, 0]) / (4.0 * resolution**2)
 
             # Gradient magnitude
             slope_mag = np.sqrt(dz_dx**2 + dz_dy**2)
@@ -234,16 +263,22 @@ def calculate_curvature(dem: np.ndarray, resolution: float = 30.0) -> dict[str, 
             denom = slope_mag * (dz_dx**2 + dz_dy**2)
 
             # Profile curvature (along slope direction)
-            profile_c[i, j] = (d2z_dx2 * dz_dx**2 +
-                               2 * d2z_dxdy * dz_dx * dz_dy +
-                               d2z_dy2 * dz_dy**2) / (denom**1.5 * resolution) if denom > 0 else 0.0
+            profile_c[i, j] = (
+                (d2z_dx2 * dz_dx**2 + 2 * d2z_dxdy * dz_dx * dz_dy + d2z_dy2 * dz_dy**2)
+                / (denom**1.5 * resolution)
+                if denom > 0
+                else 0.0
+            )
 
             # Plan curvature (perpendicular to slope)
-            plan_c[i, j] = (d2z_dx2 * dz_dy**2 -
-                            2 * d2z_dxdy * dz_dx * dz_dy +
-                            d2z_dy2 * dz_dx**2) / (denom**0.5 * resolution**2) if denom > 0 else 0.0
+            plan_c[i, j] = (
+                (d2z_dx2 * dz_dy**2 - 2 * d2z_dxdy * dz_dx * dz_dy + d2z_dy2 * dz_dx**2)
+                / (denom**0.5 * resolution**2)
+                if denom > 0
+                else 0.0
+            )
 
-            total_c[i, j] = np.sqrt(profile_c[i, j]**2 + plan_c[i, j]**2)
+            total_c[i, j] = np.sqrt(profile_c[i, j] ** 2 + plan_c[i, j] ** 2)
 
             # Convergence index: positive = divergent, negative = convergent
             convergence[i, j] = plan_c[i, j] * slope_mag
@@ -267,7 +302,7 @@ def calculate_twi(dem: np.ndarray, resolution: float = 30.0) -> np.ndarray:
     Reference: Beven & Kirkby (1975) - LISEM model.
     """
     dem = np.asarray(dem, dtype=float)
-    rows, cols = dem.shape
+    _rows, _cols = dem.shape
 
     # Flow accumulation
     flow_dir = _d8_flow_direction(dem)
@@ -326,8 +361,10 @@ def calculate_tpi(dem: np.ndarray, resolution: float = 30.0, scale_m: float = 90
     # Simple moving average approach
     for i in range(neighborhood_radius, rows - neighborhood_radius):
         for j in range(neighborhood_radius, cols - neighborhood_radius):
-            window = dem_filled[i - neighborhood_radius:i + neighborhood_radius + 1,
-                                j - neighborhood_radius:j + neighborhood_radius + 1]
+            window = dem_filled[
+                i - neighborhood_radius : i + neighborhood_radius + 1,
+                j - neighborhood_radius : j + neighborhood_radius + 1,
+            ]
             mean_elev = np.mean(window)
             tpi[i, j] = dem_filled[i, j] - mean_elev
 
@@ -390,7 +427,9 @@ def calculate_terrain_metrics(dem_array: Any, resolution: float = 30.0) -> dict[
 
     # Dominant aspect
     valid_aspects = aspect_deg[valid_mask]
-    aspect_median = float(np.nanmedian(valid_aspects)) if np.any(np.isfinite(valid_aspects)) else 0.0
+    aspect_median = (
+        float(np.nanmedian(valid_aspects)) if np.any(np.isfinite(valid_aspects)) else 0.0
+    )
 
     # Stream order / landform
     valid_tpi = tpi[valid_mask] if np.any(valid_mask) else np.array([0.0])
@@ -410,9 +449,15 @@ def calculate_terrain_metrics(dem_array: Any, resolution: float = 30.0) -> dict[
         "slope_std": float(np.nanstd(slope_deg[valid_mask])) if np.any(valid_mask) else 0.0,
         "aspect_dominant": aspect_to_cardinal(aspect_median),
         "aspect_median": aspect_median,
-        "curvature_mean": float(np.nanmean(curvature["total"][valid_mask])) if np.any(valid_mask) else 0.0,
-        "profile_curvature_mean": float(np.nanmean(curvature["profile"][valid_mask])) if np.any(valid_mask) else 0.0,
-        "plan_curvature_mean": float(np.nanmean(curvature["plan"][valid_mask])) if np.any(valid_mask) else 0.0,
+        "curvature_mean": float(np.nanmean(curvature["total"][valid_mask]))
+        if np.any(valid_mask)
+        else 0.0,
+        "profile_curvature_mean": float(np.nanmean(curvature["profile"][valid_mask]))
+        if np.any(valid_mask)
+        else 0.0,
+        "plan_curvature_mean": float(np.nanmean(curvature["plan"][valid_mask]))
+        if np.any(valid_mask)
+        else 0.0,
         "twi_mean": float(np.nanmean(twi[valid_mask])) if np.any(valid_mask) else 0.0,
         "tpi_mean": tpi_mean,
         "roughness_index": roughness,
@@ -481,7 +526,7 @@ class TerrainAnalyzer:
         elevation_mean = float(np.mean(valid_dem))
         elevation_range = elevation_max - elevation_min
 
-        aspect_median = float(np.nanmedian(valid_aspect))
+        float(np.nanmedian(valid_aspect))
         aspect_dominant = _get_dominant_aspect(valid_aspect)
 
         # Curvature results
@@ -494,7 +539,9 @@ class TerrainAnalyzer:
             profile_curvature=float(np.nanmean(valid_profile_c)),
             plan_curvature=float(np.nanmean(valid_plan_c)),
             total_curvature=float(np.nanmean(valid_total_c)),
-            convergence_index=float(np.nanmean(valid_conv)) if np.any(np.isfinite(valid_conv)) else None,
+            convergence_index=float(np.nanmean(valid_conv))
+            if np.any(np.isfinite(valid_conv))
+            else None,
         )
 
         # Landform classification
@@ -537,9 +584,13 @@ class TerrainAnalyzer:
         # Use actual USDA classification by slope percent
         slope_pct = np.tan(np.radians(valid_slope)) * 100.0
         slope_dist: dict[str, float] = {}
-        for pct, cls in [(2, SlopeClass.CLASS_0), (5, SlopeClass.CLASS_1),
-                         (10, SlopeClass.CLASS_2), (20, SlopeClass.CLASS_3),
-                         (40, SlopeClass.CLASS_4)]:
+        for pct, cls in [
+            (2, SlopeClass.CLASS_0),
+            (5, SlopeClass.CLASS_1),
+            (10, SlopeClass.CLASS_2),
+            (20, SlopeClass.CLASS_3),
+            (40, SlopeClass.CLASS_4),
+        ]:
             slope_dist[str(cls.value)] = float(np.mean(slope_pct < pct))
         slope_dist[str(SlopeClass.CLASS_5.value)] = float(np.mean(slope_pct >= 40))
 

@@ -278,7 +278,7 @@ async def voice_health() -> dict:
 async def voice_languages() -> dict:
     """Return supported voice languages."""
     tts = get_tts_provider()
-    voices = tts.get_available_voices(VoiceLanguage.EN)  # Get sample voices
+    tts.get_available_voices(VoiceLanguage.EN)  # Get sample voices
 
     return {
         "languages": [

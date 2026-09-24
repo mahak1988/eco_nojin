@@ -9,6 +9,7 @@
   Unreachable pages report `requires_network` honestly.
 """
 
+import contextlib
 import hashlib
 import os
 import re
@@ -64,19 +65,13 @@ def check_email_auth(domain: str) -> dict:
         spf: list[str] = []
         dmarc: list[str] = []
         dkim: list[str] = []
-        try:
+        with contextlib.suppress(Exception):
             spf = [str(r) for r in resolver.resolve(domain, "TXT") if "v=spf1" in str(r)]
-        except Exception:
-            pass
-        try:
+        with contextlib.suppress(Exception):
             dmarc = [str(r) for r in resolver.resolve(f"_dmarc.{domain}", "TXT")]
-        except Exception:
-            pass
         for selector in ("default", "selector1", "k1"):
-            try:
+            with contextlib.suppress(Exception):
                 dkim += [str(r) for r in resolver.resolve(f"{selector}._domainkey.{domain}", "TXT")]
-            except Exception:
-                pass
 
         return {
             "domain": domain,

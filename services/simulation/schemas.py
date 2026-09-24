@@ -1,20 +1,20 @@
 """Pydantic schemas for unified simulation"""
 
 from datetime import date, datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field
 
 
-class SimulationStatus(str, Enum):
+class SimulationStatus(StrEnum):
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"
     FAILED = "failed"
 
 
-class SimulationType(str, Enum):
+class SimulationType(StrEnum):
     CROP_GROWTH = "crop_growth"
     SOIL_CARBON = "soil_carbon"
     WATERSHED = "watershed"

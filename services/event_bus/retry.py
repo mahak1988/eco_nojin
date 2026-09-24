@@ -5,12 +5,12 @@ from __future__ import annotations
 import asyncio
 import inspect
 import random
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
-from typing import Any, Awaitable, Callable, TypeVar
+from typing import Any, TypeVar
 
 from .config import EventBusConfig
 from .consumer import decode_message
-
 
 T = TypeVar("T")
 Operation = Callable[..., T | Awaitable[T]]
@@ -34,7 +34,7 @@ class RetryPolicy:
             raise ValueError("max_delay cannot be lower than base_delay")
 
     @classmethod
-    def from_settings(cls, settings: Any = None) -> "RetryPolicy":
+    def from_settings(cls, settings: Any = None) -> RetryPolicy:
         config = EventBusConfig.from_settings(settings)
         return cls(
             max_retries=config.max_retries,
@@ -55,13 +55,12 @@ class RetryPolicy:
         return max(0, int(delivery_attempt) - 1) < self.max_retries
 
 
-async def execute_with_retry(
+async def execute_with_retry[T](
     operation: Operation[T],
-    *,
+    *args: Any,
     policy: RetryPolicy | None = None,
     on_error: Callable[[Exception, int], Any] | None = None,
     sleep: Callable[[float], Any] = asyncio.sleep,
-    *args: Any,
     **kwargs: Any,
 ) -> T:
     """Execute an operation with exponential backoff."""
@@ -169,10 +168,13 @@ async def retry_or_term(
         try:
             event_type, payload = decode_message(message)
         except Exception:
-            event_type, payload = "event_bus.dead_letter", {
-                "subject": getattr(message, "subject", ""),
-                "error": str(error),
-            }
+            event_type, payload = (
+                "event_bus.dead_letter",
+                {
+                    "subject": getattr(message, "subject", ""),
+                    "error": str(error),
+                },
+            )
         publisher_config = getattr(publisher, "config", None)
         prefix = getattr(publisher_config, "subject_prefix", "econojin.events")
         target = dead_letter_subject or f"{prefix}.dead_letter"

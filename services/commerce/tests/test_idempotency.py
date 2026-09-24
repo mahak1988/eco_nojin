@@ -11,7 +11,7 @@ from starlette.testclient import TestClient
 from services.api_gateway.middleware.idempotency import PROTECTED_PREFIXES, IdempotencyMiddleware
 
 
-def _scope(method: str, path: str, headers: dict = None) -> dict:
+def _scope(method: str, path: str, headers: dict | None = None) -> dict:
     raw_headers = []
     for k, v in (headers or {}).items():
         raw_headers.append((k.lower().encode(), v.encode()))
@@ -149,7 +149,13 @@ class TestIdempotencyMiddlewareIntegration:
 
     @pytest.fixture
     def app_with_middleware(self):
+        from database.base import Base
+        from database.hub import hub
         from services.api_gateway.middleware.idempotency import IdempotencyMiddleware
+
+        # Ensure idempotency table exists (the middleware queries it)
+        engine = hub.get_sqlalchemy_engine()
+        Base.metadata.create_all(engine)
 
         app = Starlette()
         app.add_middleware(IdempotencyMiddleware)

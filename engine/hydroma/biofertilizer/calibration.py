@@ -48,7 +48,6 @@ def calibrate_formulation_model(formulation_id: str, trial_data_ids: list[str], 
                 # Example features: soil pH, OM, N, P, K, dosage, climate factor
                 # Example target: yield_response
                 baseline = trial.baseline_data
-                post = trial.post_application_data
                 X_inputs.append(
                     [
                         baseline.get("soil_ph", 7.0),
@@ -121,7 +120,7 @@ def calibrate_formulation_model(formulation_id: str, trial_data_ids: list[str], 
         db.close()
 
 
-def load_calibrated_model(formulation_id: str, target_date: date = None) -> dict[str, Any]:
+def load_calibrated_model(formulation_id: str, target_date: date | None = None) -> dict[str, Any]:
     """
     Loads the most recent (or date-specific) calibrated parameters for a model.
 

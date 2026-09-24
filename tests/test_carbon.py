@@ -1,18 +1,16 @@
 """Tests for Carbon Credit Service"""
 
-import pytest
-import pytest_asyncio
 from decimal import Decimal
-from datetime import UTC, datetime
-from unittest.mock import AsyncMock, MagicMock, patch
-from sqlalchemy.ext.asyncio import AsyncSession
+from unittest.mock import AsyncMock, MagicMock
 
-from services.carbon.service import CarbonService, ProjectNotFoundError, ProjectNotVerifiedError
+import pytest
+
 from services.carbon.schemas import (
+    IssueCreditsRequest,
     RegisterProjectRequest,
     VerifyProjectRequest,
-    IssueCreditsRequest,
 )
+from services.carbon.service import CarbonService
 
 
 class TestCarbonService:

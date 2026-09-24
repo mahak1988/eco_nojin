@@ -36,6 +36,7 @@ from engine.hydroma.simulation.runners.rothc_runner import (
     temp_factor,
     water_factor,
 )
+
 from .base import ScientificModel, ValidationResult
 
 
@@ -168,7 +169,7 @@ class ECSI(ScientificModel):
 
         input_m = carbon_input_t_ha / 12.0
         total_decomposition = 0.0
-        months = max(1, int(round(12 * max(dt_years, 1e-9))))
+        months = max(1, round(12 * max(dt_years, 1e-9)))
         for _ in range(months):
             rate = {p: RATES[p] / 12.0 * f_T * f_M * f_P for p in pools}
             decomposed = {p: pools[p] * (1.0 - np.exp(-rate[p])) for p in pools}

@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 موتور ارزیابی فرمول هیدروما - نسخه نهایی
 """
 
+import ast as _ast
 import math
+import math as _math
+import operator as _operator
 import re
-
-
-import ast as _ast, math as _math, operator as _operator
 
 _ALLOWED_FUNCS = {
     f: getattr(_math, f)

@@ -7,11 +7,11 @@ Provides connection management, publish/subscribe helpers, and reconnection logi
 import asyncio
 import json
 import logging
-import os
-from contextlib import asynccontextmanager
+from collections.abc import Callable
+from contextlib import asynccontextmanager, suppress
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from typing import Any, Callable, Optional
+from typing import Any
 
 # NATS is an optional dependency (eventbus extra). The gateway must import
 # cleanly without it; the failure is raised at connection time, never at import
@@ -46,6 +46,7 @@ def _require_nats() -> Any:
         )
     return nats
 
+
 from engine.hydroma.config.settings import get_settings
 
 logger = logging.getLogger("econojin.eventbus")
@@ -54,6 +55,7 @@ logger = logging.getLogger("econojin.eventbus")
 @dataclass
 class NATSConfig:
     """NATS connection configuration from settings."""
+
     url: str
     servers: str
     user: str
@@ -91,20 +93,20 @@ class NATSConfig:
 class NATSManager:
     """Manages NATS connection, JetStream context, and stream/consumer setup."""
 
-    def __init__(self, config: Optional[NATSConfig] = None):
+    def __init__(self, config: NATSConfig | None = None):
         self.config = config or NATSConfig.from_settings()
-        self._nc: Optional[NATSClient] = None
-        self._js: Optional[JetStreamContext] = None
+        self._nc: NATSClient | None = None
+        self._js: JetStreamContext | None = None
         self._connected = False
-        self._reconnect_task: Optional[asyncio.Task] = None
+        self._reconnect_task: asyncio.Task | None = None
         self._subscriptions: list = []
 
     @property
-    def nc(self) -> Optional[NATSClient]:
+    def nc(self) -> NATSClient | None:
         return self._nc
 
     @property
-    def js(self) -> Optional[JetStreamContext]:
+    def js(self) -> JetStreamContext | None:
         return self._js
 
     @property
@@ -211,7 +213,7 @@ class NATSManager:
                     max_deliver=self.config.max_retries,
                     replay_policy="instant",
                     deliver_policy="all",
-                )
+                ),
             )
             logger.info(f"✅ Durable consumer '{self.config.durable_consumer}' created")
         except Exception as e:
@@ -222,16 +224,12 @@ class NATSManager:
         self._connected = False
         if self._reconnect_task:
             self._reconnect_task.cancel()
-            try:
+            with suppress(asyncio.CancelledError):
                 await self._reconnect_task
-            except asyncio.CancelledError:
-                pass
 
         for sub in self._subscriptions:
-            try:
+            with suppress(Exception):
                 await sub.unsubscribe()
-            except Exception:
-                pass
         self._subscriptions.clear()
 
         if self._nc and not self._nc.is_closed:
@@ -242,8 +240,8 @@ class NATSManager:
         self,
         subject: str,
         payload: dict[str, Any],
-        headers: Optional[dict[str, str]] = None,
-        correlation_id: Optional[str] = None,
+        headers: dict[str, str] | None = None,
+        correlation_id: str | None = None,
     ) -> bool:
         """Publish a message to JetStream with acknowledgment."""
         if not self.is_connected:
@@ -267,9 +265,7 @@ class NATSManager:
                 json.dumps(payload, ensure_ascii=False).encode("utf-8"),
                 headers=message_headers,
             )
-            logger.debug(
-                f"Published to {full_subject}: stream={ack.stream}, seq={ack.seq}"
-            )
+            logger.debug(f"Published to {full_subject}: stream={ack.stream}, seq={ack.seq}")
             return True
         except Exception as e:
             logger.error(f"Failed to publish to {full_subject}: {e}")
@@ -279,8 +275,8 @@ class NATSManager:
         self,
         subject: str,
         payload: dict[str, Any],
-        headers: Optional[dict[str, str]] = None,
-        correlation_id: Optional[str] = None,
+        headers: dict[str, str] | None = None,
+        correlation_id: str | None = None,
         max_retries: int = 3,
     ) -> bool:
         """Publish with exponential backoff retry."""
@@ -294,7 +290,9 @@ class NATSManager:
                     self.config.retry_base_delay * (2**attempt),
                     self.config.retry_max_delay,
                 )
-                logger.warning(f"Publish retry {attempt + 1}/{max_retries} after {delay}s: {last_error}")
+                logger.warning(
+                    f"Publish retry {attempt + 1}/{max_retries} after {delay}s: {last_error}"
+                )
                 await asyncio.sleep(delay)
         logger.error(f"Publish failed after {max_retries} attempts: {last_error}")
         return False
@@ -303,8 +301,8 @@ class NATSManager:
         self,
         subject: str,
         callback: Callable[[dict[str, Any], dict[str, str]], None],
-        durable_name: Optional[str] = None,
-        queue: Optional[str] = None,
+        durable_name: str | None = None,
+        queue: str | None = None,
     ) -> None:
         """Subscribe to a subject with a callback."""
         if not self.is_connected:
@@ -347,7 +345,7 @@ class NATSManager:
         subject: str,
         payload: dict[str, Any],
         timeout: float = 5.0,
-    ) -> Optional[dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         """Send a request and wait for response (request-reply pattern)."""
         if not self.is_connected:
             raise RuntimeError("NATS not connected")
@@ -367,7 +365,7 @@ class NATSManager:
 
 
 # Global NATS manager instance
-_nats_manager: Optional[NATSManager] = None
+_nats_manager: NATSManager | None = None
 
 
 def get_nats_manager() -> NATSManager:

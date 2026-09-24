@@ -5,12 +5,12 @@ Models for climate data integration with land profiles.
 """
 
 from datetime import UTC, datetime
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class KoppenClimate(str, Enum):
+class KoppenClimate(StrEnum):
     """Köppen-Geiger climate classification (simplified main groups)"""
 
     Af = "Af"  # Tropical rainforest
@@ -45,7 +45,7 @@ class KoppenClimate(str, Enum):
     EF = "EF"  # Ice cap
 
 
-class AridityClass(str, Enum):
+class AridityClass(StrEnum):
     """UNEP Aridity Index classification"""
 
     HYPER_ARID = "hyper_arid"  # AI < 0.05

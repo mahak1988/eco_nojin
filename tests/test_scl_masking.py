@@ -105,7 +105,7 @@ class TestSclWindowSampling:
             result = await client.analyze_location(36.0, 51.0)
             return bands, result
 
-        bands, result = asyncio.run(run())
+        _bands, result = asyncio.run(run())
         assert result["status"] == "cloudy"
         assert result["ndvi"] is None
         assert result["scl_clear_ratio"] == pytest.approx(1 / 25)
@@ -140,7 +140,8 @@ class TestSclWindowSampling:
 
         result = asyncio.run(run())
         assert result["status"] == "ok"
-        assert result["ndvi"] is not None and result["ndvi"] > 0.2
+        assert result["ndvi"] is not None
+        assert result["ndvi"] > 0.2
         assert result["scl_clear_ratio"] == 1.0
 
     def test_scl_missing_means_no_masking(self, monkeypatch):

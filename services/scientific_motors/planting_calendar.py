@@ -508,11 +508,9 @@ class PlantingCalendarMotor(AbstractScientificMotor):
         start_month = min(window.planting_months_local)
 
         stages = []
-        cumulative_gdd = 0
         for stage_name, fraction in crop_stages:
             stage_gdd = int(window.gdd_required * fraction)
             stage_days = int(total_days * fraction)
-            cumulative_gdd = stage_gdd
 
             # Estimate calendar month
             days_from_start = stage_days

@@ -114,7 +114,7 @@ class TestOrderService:
         assert order1.id == order2.id
 
     async def test_create_order_reserves_stock(self, order_service, sku):
-        order = await order_service.create_order(
+        await order_service.create_order(
             buyer_id="test-buyer-3",
             items=[
                 {

@@ -6,9 +6,10 @@ Rigorous tests for engine.data_connector.DataConnector.
 """
 
 import sys
-import pytest
-from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
+
+import pytest
 
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -19,7 +20,7 @@ class TestConnectorInstantiation:
 
     def test_connector_singleton(self):
         """Connector should be available as singleton."""
-        from engine.data_connector import connector, DataConnector
+        from engine.data_connector import DataConnector, connector
 
         assert connector is not None
         assert isinstance(connector, DataConnector)
@@ -195,7 +196,7 @@ class TestConnectorConcurrency:
 
         with ThreadPoolExecutor(max_workers=10) as executor:
             futures = [executor.submit(query, i) for i in range(10)]
-            for future in as_completed(futures):
+            for _future in as_completed(futures):
                 pass
 
         assert len(errors) == 0, f"Errors: {errors}"
@@ -212,7 +213,7 @@ class TestConnectorConcurrency:
 
         with ThreadPoolExecutor(max_workers=10) as executor:
             futures = [executor.submit(list_tables) for _ in range(10)]
-            for future in as_completed(futures):
+            for _future in as_completed(futures):
                 pass
 
         assert len(results) == 10

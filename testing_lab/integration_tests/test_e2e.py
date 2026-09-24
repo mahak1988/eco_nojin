@@ -4,10 +4,8 @@ Skips gracefully when the server is not running — never fails the suite
 for a local dev setup.
 """
 
-import os
-
-import pytest
 import httpx
+import pytest
 
 BASE = "http://os.environ.get('HOST', '127.0.0.1'):8011"
 

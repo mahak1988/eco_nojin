@@ -38,10 +38,7 @@ BLOCKED_NETWORKS = [
 def _is_ip_blocked(ip_str: str) -> bool:
     try:
         ip = ipaddress.ip_address(ip_str)
-        for network in BLOCKED_NETWORKS:
-            if ip in network:
-                return True
-        return False
+        return any(ip in network for network in BLOCKED_NETWORKS)
     except ValueError:
         return True
 

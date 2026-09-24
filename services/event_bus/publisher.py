@@ -73,7 +73,7 @@ class EventPublisher:
     def jetstream(self) -> Any:
         return self._jetstream
 
-    async def connect(self) -> "EventPublisher":
+    async def connect(self) -> EventPublisher:
         """Connect to NATS and obtain a JetStream context."""
         if self._client is not None and not bool(getattr(self._client, "is_closed", False)):
             if self._jetstream is None:
@@ -153,7 +153,7 @@ class EventPublisher:
         if inspect.isawaitable(result):
             await result
 
-    async def __aenter__(self) -> "EventPublisher":
+    async def __aenter__(self) -> EventPublisher:
         await self.connect()
         return self
 

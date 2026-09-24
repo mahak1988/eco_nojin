@@ -1,7 +1,5 @@
 """ERA5 fetch tests (mocked CDS job + real xarray NetCDF parse)."""
 
-import pathlib
-
 import io
 
 import pytest

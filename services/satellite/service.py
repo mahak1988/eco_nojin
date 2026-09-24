@@ -1,15 +1,12 @@
 """Satellite Integration Service - Connects to Copernicus/Sentinel-2 for NDVI/EVI data"""
 
 from __future__ import annotations
-import asyncio
-import hashlib
-import secrets
+
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
-from typing import Optional
 from enum import Enum
+
 import aiohttp
-import json
 
 
 class SatelliteSource(Enum):
@@ -44,7 +41,7 @@ class SatelliteService:
     for NDVI, EVI, SAVI, NDWI, NBR vegetation indices.
     """
 
-    def __init__(self, cdse_client_id: str = None, cdse_client_secret: str = None):
+    def __init__(self, cdse_client_id: str | None = None, cdse_client_secret: str | None = None):
         self.client_id = cdse_client_id
         self.client_secret = cdse_client_secret
         self.base_url = "https://catalogue.dataspace.copernicus.eu/odata/v1/Products"
@@ -91,7 +88,6 @@ class SatelliteService:
         await self._ensure_token()
 
         # Convert lat/lon to bbox (small buffer around point)
-        buffer = 0.01  # ~1km
         bbox = f"{lon - 0.01},{lat - 0.01},{lon + 0.01},{lat + 0.01}"
 
         params = {
@@ -210,7 +206,7 @@ class SatelliteService:
 
         # Get current period (at least 3 months after planting)
         current_start = planting_date + timedelta(days=90)
-        current_end = datetime.now(UTC)
+        datetime.now(UTC)
 
         change = await self.detect_vegetation_change(
             lat, lon, baseline_start, baseline_end, current_start, datetime.now(UTC)

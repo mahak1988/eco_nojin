@@ -10,7 +10,7 @@ from pathlib import Path
 class CoreIntegration:
     """سرویس ادغام با محاسبه واقعی"""
 
-    def __init__(self, kb_path: str = None):
+    def __init__(self, kb_path: str | None = None):
         if kb_path is None:
             kb_path = (
                 Path(__file__).parent.parent.parent

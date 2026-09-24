@@ -14,7 +14,6 @@ from fastapi.testclient import TestClient
 from engine.hydroma.config.settings import get_settings
 from engine.hydroma.mrv import iot_ingest
 from engine.hydroma.mrv.schemas import IoTReading
-
 from services.api_gateway.main import app
 
 client = TestClient(app)

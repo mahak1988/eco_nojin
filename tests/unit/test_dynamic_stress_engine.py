@@ -6,6 +6,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
+import itertools
+
 from engine.hydroma.climate_adaptation.dynamic_stress_engine import DynamicStressEngine, vpd_kpa
 
 
@@ -25,7 +27,7 @@ def main():
     assert e.h03_et_correction_factor(1.0) == 1.0
     # H04
     ks = [e.h04_heat_ks(t) for t in range(25, 46)]
-    assert all(a >= b for a, b in zip(ks, ks[1:])), "H04 must be monotonic decreasing"
+    assert all(a >= b for a, b in itertools.pairwise(ks)), "H04 must be monotonic decreasing"
     assert abs(e.h04_heat_ks(35.0) - 0.5) < 1e-9
     # H08
     assert e.h08_combined_ks(0.5, 0.5, 1.0, True) < e.h08_combined_ks(0.5, 0.5, 1.0, False)

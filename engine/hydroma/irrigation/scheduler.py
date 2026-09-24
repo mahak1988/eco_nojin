@@ -22,7 +22,7 @@ def calculate_interval(etc_mm_per_day: float, raw_mm: float, allowable_depletion
     if etc_mm_per_day <= 0:
         return 0
     interval = (raw_mm * allowable_depletion) / etc_mm_per_day
-    return max(1, int(round(interval)))
+    return max(1, round(interval))
 
 
 def calculate_application_depth(

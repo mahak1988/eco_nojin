@@ -1,6 +1,5 @@
 """Tests for groundwater and phenology modules."""
 
-import numpy as np
 import pytest
 
 from engine.hydroma.groundwater.models import (
@@ -10,9 +9,9 @@ from engine.hydroma.groundwater.models import (
 from engine.hydroma.phenology import (
     CROP_PHENOLOGY,
     PhenologyInput,
-    run_phenology,
     _daily_gdd,
     _stage_from_gdd,
+    run_phenology,
 )
 
 

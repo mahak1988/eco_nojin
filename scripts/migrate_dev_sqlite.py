@@ -10,8 +10,17 @@ Usage:
 from __future__ import annotations
 
 import os
+import re
 import sqlite3
 import sys
+
+_IDENT_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
+
+def _safe_ident(name: str) -> str:
+    """Validate a SQL identifier."""
+    if not _IDENT_RE.fullmatch(str(name)):
+        raise ValueError(f"invalid SQL identifier: {name!r}")
+    return str(name)
 
 TARGET_COLUMNS = {
     "farms": [
@@ -47,15 +56,17 @@ def main() -> int:
     con = sqlite3.connect(db_path)
     cur = con.cursor()
     for table, columns in TARGET_COLUMNS.items():
-        existing = {row[1] for row in cur.execute(f"PRAGMA table_info({table})")}
+        safe_table = _safe_ident(table)
+        existing = {row[1] for row in cur.execute("PRAGMA table_info({})".format(safe_table))}
         if not existing:
             print(f"skip {table}: table not found (create_all will build it)")
             continue
         for name, ddl_type in columns:
+            safe_name = _safe_ident(name)
             if name in existing:
                 print(f"ok    {table}.{name} already exists")
             else:
-                cur.execute(f"ALTER TABLE {table} ADD COLUMN {name} {ddl_type}")
+                cur.execute("ALTER TABLE {} ADD COLUMN {} {}".format(safe_table, safe_name, ddl_type))
                 print(f"added {table}.{name} {ddl_type}")
     con.commit()
     con.close()

@@ -95,10 +95,7 @@ def should_skip(path: Path) -> bool:
     for skip_dir in SKIP_DIRS:
         if skip_dir in str(path):
             return True
-    for skip_file in SKIP_FILES:
-        if path.name == skip_file or path.match(skip_file):
-            return True
-    return False
+    return any(path.name == skip_file or path.match(skip_file) for skip_file in SKIP_FILES)
 
 
 def scan_file(path: Path) -> list[tuple[int, str, str]]:

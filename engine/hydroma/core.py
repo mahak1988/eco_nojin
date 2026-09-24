@@ -77,10 +77,7 @@ class HydromaCore:
         Based on USDA Soil Quality Index.
         """
         # pH score (optimal: 6.0-7.5)
-        if 6.0 <= ph <= 7.5:
-            ph_score = 100
-        else:
-            ph_score = max(0, 100 - abs(ph - 6.75) * 15)
+        ph_score = 100 if 6.0 <= ph <= 7.5 else max(0, 100 - abs(ph - 6.75) * 15)
 
         # Organic matter score (optimal: >2%)
         om_score = min(100, organic_matter_pct * 40)
@@ -94,10 +91,7 @@ class HydromaCore:
             tex_score = 40
 
         # Clay balance (optimal: 15-35%)
-        if 0.15 <= clay_fraction <= 0.35:
-            clay_score = 100
-        else:
-            clay_score = 60
+        clay_score = 100 if 0.15 <= clay_fraction <= 0.35 else 60
 
         return ph_score * 0.25 + om_score * 0.30 + tex_score * 0.25 + clay_score * 0.20
 

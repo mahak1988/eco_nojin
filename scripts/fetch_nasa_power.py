@@ -17,7 +17,7 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
-from engine.hydroma.data_pipeline.pipeline import DataPipeline, NASA_POWER_Connector
+from engine.hydroma.data_pipeline.pipeline import NASA_POWER_Connector
 
 
 def main() -> int:

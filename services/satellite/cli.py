@@ -28,14 +28,13 @@ from engine.hydroma.mrv.satellite_cdse import (
     build_bbox,
     retrieve_ndvi,
 )
-from engine.hydroma.data_pipeline.pipeline import DataPipeline
 
 logger = logging.getLogger(__name__)
 
 
 def cmd_fetch_scenes(args: argparse.Namespace) -> int:
     """Fetch Sentinel-2 L2A scenes via CDSE STAC."""
-    settings = get_settings()
+    get_settings()
     try:
         cfg = CdseConfig.from_env()
     except CdseUnavailable as exc:
@@ -141,6 +140,7 @@ def cmd_load_db(args: argparse.Namespace) -> int:
 
     try:
         import pandas as pd
+
         from database.hub import hub
         from database.models import SatelliteAnalysis
     except ImportError as exc:

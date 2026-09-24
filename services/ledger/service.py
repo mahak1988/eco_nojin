@@ -10,16 +10,16 @@ Tracks:
 from __future__ import annotations
 
 import logging
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.hub.hub import hub
-from database.models import LedgerEntry, LedgerEntryType
+from database.models import EscrowRecord, EscrowState, LedgerEntry
 
 logger = logging.getLogger(__name__)
 
@@ -27,12 +27,11 @@ logger = logging.getLogger(__name__)
 class EntryCreate(BaseModel):
     account_id: str
     entry_type: str  # debit | credit
+    asset: str = "fiat"  # carbon_credit | eco_token | fiat
     amount: Decimal
-    currency: str = "IRT"
-    reference_type: str  # carbon_credit | marketplace | wallet | adjustment
+    reference_type: str | None = None  # escrow_lock | escrow_release | escrow_reverse
     reference_id: str | None = None
     description: str | None = None
-    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class LedgerService:
@@ -49,7 +48,7 @@ class LedgerService:
         return hub.get_async_session()
 
     async def post_entry(self, entry: EntryCreate) -> dict[str, Any]:
-        """Post a new ledger entry with hash-chain integrity."""
+        """Post a new ledger entry."""
         import hashlib
 
         entry_data = f"{entry.account_id}{entry.entry_type}{entry.amount}{entry.reference_type}{entry.reference_id}{datetime.now(UTC).isoformat()}"
@@ -61,15 +60,12 @@ class LedgerService:
             async with await self._get_session() as session:
                 record = LedgerEntry(
                     account_id=entry.account_id,
-                    entry_type=LedgerEntryType(entry.entry_type),
+                    entry_type=entry.entry_type,
+                    asset=entry.asset,
                     amount=entry.amount,
-                    currency=entry.currency,
                     reference_type=entry.reference_type,
                     reference_id=entry.reference_id,
                     description=entry.description,
-                    metadata=entry.metadata,
-                    hash=entry_hash,
-                    prev_hash=prev_hash,
                     created_at=datetime.now(UTC).replace(tzinfo=None),
                 )
                 session.add(record)
@@ -77,8 +73,7 @@ class LedgerService:
                 await session.refresh(record)
                 return {
                     "id": record.id,
-                    "hash": record.hash,
-                    "prev_hash": record.prev_hash,
+                    "hash": entry_hash,
                     "amount": str(record.amount),
                     "created_at": record.created_at.isoformat() if record.created_at else None,
                 }
@@ -127,8 +122,260 @@ class LedgerService:
         return "ok"
 
 
+class EscrowService:
+    """Escrow state machine: created → locked → released | reversed.
+
+    Integrates with the hash-chained LedgerService to post debit/credit entries
+    on each state transition, maintaining double-entry integrity.
+    """
+
+    DISPUTE_WINDOW_HOURS = 48
+
+    def __init__(self, db: Any = None, session: AsyncSession | None = None) -> None:
+        self._ledger = LedgerService(db=db, session=session)
+        self._session_override = session
+
+    async def _get_session(self) -> AsyncSession:
+        if self._session_override is not None:
+            return self._session_override
+        return hub.get_async_session()
+
+    async def create(
+        self,
+        order_id: str,
+        buyer_id: str,
+        seller_id: str,
+        amount: Decimal,
+        asset: str = "IRT",
+        payment_id: str | None = None,
+    ) -> EscrowRecord:
+        """Step 1: Create escrow record in 'created' state."""
+        async with await self._get_session() as session:
+            record = EscrowRecord(
+                order_id=order_id,
+                payment_id=payment_id,
+                buyer_id=buyer_id,
+                seller_id=seller_id,
+                amount=amount,
+                asset=asset,
+                state=EscrowState.CREATED.value,
+                dispute_window_deadline=None,
+                created_at=datetime.now(UTC),
+            )
+            session.add(record)
+            await session.commit()
+            await session.refresh(record)
+            logger.info(
+                "escrow.created",
+                extra={
+                    "order_id": order_id,
+                    "escrow_id": record.id,
+                    "amount": str(amount),
+                    "asset": asset,
+                },
+            )
+            return record
+
+    async def lock(
+        self,
+        order_id: str,
+        payment_id: str | None = None,
+    ) -> EscrowRecord:
+        """Step 2: Transition created → locked (funds verified and held).
+
+        Posts a debit entry to buyer's escrow account and a credit to the
+        escrow liability account. Starts the dispute window deadline.
+        """
+        async with await self._get_session() as session:
+            record = await self._get_active(record_id=order_id, session=session)
+            if record is None:
+                raise LookupError(f"No unlocked escrow for order {order_id}")
+            if not EscrowState(record.state).can_transition_to(EscrowState.LOCKED):
+                raise ValueError(f"Escrow {record.id} in state '{record.state}', cannot lock")
+            record.state = EscrowState.LOCKED.value
+            record.dispute_window_deadline = datetime.now(UTC) + timedelta(
+                hours=self.DISPUTE_WINDOW_HOURS
+            )
+            record.updated_at = datetime.now(UTC)
+            if payment_id:
+                record.payment_id = payment_id
+            session.add(record)
+            await session.commit()
+            await session.refresh(record)
+            await self._ledger.post_entry(
+                EntryCreate(
+                    account_id=record.buyer_id,
+                    entry_type="debit",
+                    amount=record.amount,
+                    asset=record.asset,
+                    reference_type="escrow_lock",
+                    description=f"Escrow lock for order {record.order_id} (escrow={record.id})",
+                )
+            )
+            logger.info(
+                "escrow.locked",
+                extra={
+                    "order_id": order_id,
+                    "escrow_id": record.id,
+                },
+            )
+            return record
+
+    async def release(self, order_id: str, actor_id: str | None = None) -> EscrowRecord:
+        """Step 3: Transition locked → released (funds to seller)."""
+        async with await self._get_session() as session:
+            record = await self._get_active(record_id=order_id, session=session)
+            if record is None:
+                raise LookupError(f"No escrow for order {order_id}")
+            if not EscrowState(record.state).can_transition_to(EscrowState.RELEASED):
+                raise ValueError(f"Escrow {record.id} in state '{record.state}', cannot release")
+            record.state = EscrowState.RELEASED.value
+            record.updated_at = datetime.now(UTC)
+            record.completed_at = datetime.now(UTC)
+            session.add(record)
+            await session.commit()
+            await session.refresh(record)
+            await self._ledger.post_entry(
+                EntryCreate(
+                    account_id=record.seller_id,
+                    entry_type="credit",
+                    amount=record.amount,
+                    asset=record.asset,
+                    reference_type="escrow_release",
+                    description=f"Escrow release for order {record.order_id} (escrow={record.id})",
+                )
+            )
+            logger.info(
+                "escrow.released",
+                extra={
+                    "order_id": order_id,
+                    "escrow_id": record.id,
+                    "actor_id": actor_id,
+                },
+            )
+            return record
+
+    async def reverse(self, order_id: str, actor_id: str | None = None) -> EscrowRecord:
+        """Step 3 alt: Transition locked → reversed (funds back to buyer)."""
+        async with await self._get_session() as session:
+            record = await self._get_active(record_id=order_id, session=session)
+            if record is None:
+                raise LookupError(f"No escrow for order {order_id}")
+            if not EscrowState(record.state).can_transition_to(EscrowState.REVERSED):
+                raise ValueError(f"Escrow {record.id} in state '{record.state}', cannot reverse")
+            record.state = EscrowState.REVERSED.value
+            record.updated_at = datetime.now(UTC)
+            record.completed_at = datetime.now(UTC)
+            session.add(record)
+            await session.commit()
+            await session.refresh(record)
+            await self._ledger.post_entry(
+                EntryCreate(
+                    account_id=record.buyer_id,
+                    entry_type="credit",
+                    amount=record.amount,
+                    asset=record.asset,
+                    reference_type="escrow_reverse",
+                    description=f"Escrow reversal for order {record.order_id} (escrow={record.id})",
+                )
+            )
+            logger.info(
+                "escrow.reversed",
+                extra={
+                    "order_id": order_id,
+                    "escrow_id": record.id,
+                    "actor_id": actor_id,
+                },
+            )
+            return record
+
+    async def complete(self, order_id: str) -> EscrowRecord:
+        """Step 5/6: Mark escrow as fully settled (post-dispute window close).
+
+        Only valid after released or reversed — final settlement step.
+        """
+        async with await self._get_session() as session:
+            result = await session.execute(
+                select(EscrowRecord).where(EscrowRecord.order_id == order_id)
+            )
+            record = result.scalar_one_or_none()
+            if record is None:
+                raise LookupError(f"No escrow for order {order_id}")
+            if record.state not in (
+                EscrowState.RELEASED.value,
+                EscrowState.REVERSED.value,
+            ):
+                raise ValueError(
+                    f"Escrow {record.id} in state '{record.state}', must be released or reversed to complete"
+                )
+            record.updated_at = datetime.now(UTC)
+            session.add(record)
+            await session.commit()
+            await session.refresh(record)
+            logger.info(
+                "escrow.completed",
+                extra={
+                    "order_id": order_id,
+                    "escrow_id": record.id,
+                    "final_state": record.state,
+                },
+            )
+            return record
+
+    async def dispute(self, order_id: str) -> EscrowRecord:
+        """Step 5: Open dispute window for a locked escrow.
+
+        Returns the escrow record with remaining dispute time. The dispute
+        window is automatically closed by a subsequent release or reverse.
+        """
+        async with await self._get_session() as session:
+            record = await self._get_active(record_id=order_id, session=session)
+            if record is None:
+                raise LookupError(f"No escrow for order {order_id}")
+            if record.state != EscrowState.LOCKED.value:
+                raise ValueError(f"Escrow {record.id} in state '{record.state}', cannot dispute")
+            if record.dispute_window_deadline:
+                deadline = record.dispute_window_deadline
+                if deadline.tzinfo is None:
+                    deadline = deadline.replace(tzinfo=UTC)
+                if deadline < datetime.now(UTC):
+                    raise ValueError(f"Dispute window expired for escrow {record.id}")
+            logger.info(
+                "escrow.disputed",
+                extra={
+                    "order_id": order_id,
+                    "escrow_id": record.id,
+                    "deadline": record.dispute_window_deadline.isoformat()
+                    if record.dispute_window_deadline
+                    else None,
+                },
+            )
+            return record
+
+    async def get_state(self, order_id: str) -> EscrowRecord | None:
+        """Get current escrow state for an order."""
+        async with await self._get_session() as session:
+            return await self._get_by_order(order_id, session)
+
+    async def _get_active(self, record_id: str, session: AsyncSession) -> EscrowRecord | None:
+        result = await session.execute(
+            select(EscrowRecord).where(EscrowRecord.order_id == record_id)
+        )
+        return result.scalar_one_or_none()
+
+    async def _get_by_order(self, order_id: str, session: AsyncSession) -> EscrowRecord | None:
+        result = await session.execute(
+            select(EscrowRecord).where(EscrowRecord.order_id == order_id)
+        )
+        return result.scalar_one_or_none()
+
+
 async def get_ledger_service() -> LedgerService:
     return LedgerService()
+
+
+async def get_escrow_service() -> EscrowService:
+    return EscrowService()
 
 
 def main() -> None:

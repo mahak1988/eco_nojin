@@ -133,7 +133,7 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
 
             # 2. Soil water balance
             awc = field_capacity - wilting_point  # Available Water Capacity
-            mad = awc * 0.5  # Management Allowed Depletion (50%)
+            awc * 0.5  # Management Allowed Depletion (50%)
 
             mean_moisture = (
                 float(np.mean(soil_moisture.values))
@@ -310,10 +310,7 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
             else:
                 sys_type = IrrigationSystem.CENTER_PIVOT
         elif etc_season > 500:
-            if crop_id in row_crops:
-                sys_type = IrrigationSystem.DRIP
-            else:
-                sys_type = IrrigationSystem.SPRINKLER
+            sys_type = IrrigationSystem.DRIP if crop_id in row_crops else IrrigationSystem.SPRINKLER
         else:
             sys_type = IrrigationSystem.SPRINKLER
 

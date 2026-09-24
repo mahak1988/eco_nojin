@@ -108,7 +108,7 @@ class MobileMonitoringService:
         ):
             return False
         # Check if photos exist if report type implies photos
-        if (
+        return not (
             report.report_type
             in [
                 MobileReportType.CROP_CONDITION_PHOTO,
@@ -117,9 +117,7 @@ class MobileMonitoringService:
                 MobileReportType.INFRASTRUCTURE_PHOTO,
             ]
             and not report.photo_urls
-        ):
-            return False
-        return True
+        )
 
     def _process_data(self, report: MobileMonitoringReport) -> dict[str, Any]:
         """Processes raw mobile data, e.g., generating hashes for images."""

@@ -6,17 +6,14 @@ The live-refresh endpoint is tested for its disabled and failure paths only.
 """
 
 import io
-from uuid import uuid4
 
 import numpy as np
 import pytest
 import rasterio
 from fastapi.testclient import TestClient
 
-from engine.hydroma.config.settings import get_settings
 from engine.hydroma.mrv import satellite_cdse
 from engine.hydroma.mrv.satellite_cdse import CdseConfig, CdseUnavailable
-
 from services.api_gateway.main import app
 
 client = TestClient(app)
@@ -69,12 +66,12 @@ class FakeSession:
 
 
 def _cfg(**overrides) -> CdseConfig:
-    base = dict(
-        base_url="https://catalogue.example",
-        identity_url="https://identity.example",
-        client_id="cid",
-        client_secret="csec",
-    )
+    base = {
+        "base_url": "https://catalogue.example",
+        "identity_url": "https://identity.example",
+        "client_id": "cid",
+        "client_secret": "csec",
+    }
     base.update(overrides)
     return CdseConfig(**base)
 
@@ -82,7 +79,7 @@ def _cfg(**overrides) -> CdseConfig:
 def _band_bytes(value: float, nodata: float | None = None) -> bytes:
     """Write a 4x4 float64 GeoTIFF band into a BytesIO and return bytes."""
     buf = io.BytesIO()
-    profile = dict(driver="GTiff", height=4, width=4, count=1, dtype="float64")
+    profile = {"driver": "GTiff", "height": 4, "width": 4, "count": 1, "dtype": "float64"}
     if nodata is not None:
         profile["nodata"] = nodata
     with rasterio.open(buf, "w", **profile) as ds:
@@ -194,14 +191,19 @@ class TestRetrieve:
     def test_build_bbox_shape(self):
         bbox = satellite_cdse.build_bbox(36.0, 54.0, half_side_km=0.5)
         assert len(bbox) == 4
-        assert bbox[0] < bbox[2] and bbox[1] < bbox[3]
+        assert bbox[0] < bbox[2]
+        assert bbox[1] < bbox[3]
 
 
 class TestRefreshEndpoint:
-    @pytest.mark.skip(reason="Prometheus middleware bug: 'Histogram' object is not callable - pre-existing infra issue")
+    @pytest.mark.skip(
+        reason="Prometheus middleware bug: 'Histogram' object is not callable - pre-existing infra issue"
+    )
     def test_disabled_returns_503(self, monkeypatch):
         pass
 
-    @pytest.mark.skip(reason="Prometheus middleware bug: 'Histogram' object is not callable - pre-existing infra issue")
+    @pytest.mark.skip(
+        reason="Prometheus middleware bug: 'Histogram' object is not callable - pre-existing infra issue"
+    )
     def test_cdse_failure_returns_502(self, monkeypatch):
         pass

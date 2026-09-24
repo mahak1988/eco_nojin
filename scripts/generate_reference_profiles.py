@@ -4,8 +4,9 @@ Creates .npy files with expected outputs for test cases.
 These reference values serve as the "ground truth" for validation.
 """
 
-import numpy as np
 from pathlib import Path
+
+import numpy as np
 
 REF_DIR = Path("engine/hydroma/models/validation/reference_profiles")
 REF_DIR.mkdir(parents=True, exist_ok=True)

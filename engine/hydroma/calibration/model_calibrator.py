@@ -59,7 +59,7 @@ class Calibrator:
             raise ValueError(
                 "Simulated and observed data must have the same length for error calculation."
             )
-        diffs = [(s - o) ** 2 for s, o in zip(simulated, observed)]
+        diffs = [(s - o) ** 2 for s, o in zip(simulated, observed, strict=False)]
         mse = sum(diffs) / len(diffs)
         return mse**0.5
 

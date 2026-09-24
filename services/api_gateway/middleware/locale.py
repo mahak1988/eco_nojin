@@ -5,9 +5,8 @@ Detects user locale from Accept-Language header and sets request.state.locale.
 """
 
 import logging
-from typing import List
 
-from fastapi import Request, Response
+from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from engine.hydroma.config.settings import get_settings
@@ -20,13 +19,13 @@ class LocaleMiddleware(BaseHTTPMiddleware):
 
     def __init__(self, app):
         super().__init__(app)
-        self._rtl_languages_cache: Optional[List[str]] = None
+        self._rtl_languages_cache: Optional[list[str]] = None
 
     def _get_settings(self):
         """Get current settings (allows for testing with overridden settings)."""
         return get_settings()
 
-    def _parse_accept_language(self, header: str) -> List[tuple]:
+    def _parse_accept_language(self, header: str) -> list[tuple]:
         """
         Parse Accept-Language header into list of (language, quality) tuples.
         Example: "fa-IR,fa;q=0.9,en-US;q=0.8,en;q=0.7"
@@ -60,7 +59,9 @@ class LocaleMiddleware(BaseHTTPMiddleware):
     def _get_best_match(self, accept_lang: str) -> str:
         """Get best matching supported language from Accept-Language header."""
         settings = self._get_settings()
-        supported = [lang.strip() for lang in settings.supported_languages.split(",") if lang.strip()]
+        supported = [
+            lang.strip() for lang in settings.supported_languages.split(",") if lang.strip()
+        ]
         default = settings.default_language
 
         parsed = self._parse_accept_language(accept_lang)
@@ -71,7 +72,7 @@ class LocaleMiddleware(BaseHTTPMiddleware):
 
         return default
 
-    def _get_rtl_languages(self) -> List[str]:
+    def _get_rtl_languages(self) -> list[str]:
         """Get RTL languages from settings (cached)."""
         if self._rtl_languages_cache is None:
             settings = self._get_settings()

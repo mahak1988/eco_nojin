@@ -1,0 +1,77 @@
+{
+  "brand": {
+    "name": "هیدروما نوژین"
+  },
+  "market": {
+    "title": "بازارگاه",
+    "lead": "بازارگاه محصولات تولیدکنندگان با قیمت و موجودی واقعی",
+    "products": "محصولات",
+    "producers": "تولیدکنندگان",
+    "organic": "ارگانیک",
+    "organicBadge": "ارگانیک",
+    "empty": "محصولی یافت نشد",
+    "discovery": {
+      "categories": {
+        "title": "دسته‌بندی‌ها",
+        "lead": "دسته‌بندی‌های محصولات ارگانیک و بومی",
+        "level1Categories": "دسته‌بندی‌های سطح اول",
+        "productsCount": "محصول",
+        "subcategories": "زیرمجموعه",
+        "empty": "دسته‌بندی‌ای یافت نشد",
+        "emptyDescription": "هنوز دسته‌بندی‌ای اضافه نشده است",
+        "error": {
+          "title": "خطا در بارگذاری دسته‌بندی‌ها",
+          "description": "مشکلی در دریافت داده‌ها پیش آمده",
+          "retry": "تلاش مجدد"
+        }
+      },
+      "search": {
+        "title": "جستجو",
+        "lead": "یافتن محصولات با جستجوی پیشرفته",
+        "placeholder": "جستجوی محصولات، تولیدکنندگان، یا دسته‌بندی‌ها...",
+        "filters": "فیلترها",
+        "sortBy": "مرتب‌سازی",
+        "sortOptions": {
+          "relevance": "مربوطیت",
+          "price_asc": "قیمت: کم به زیاد",
+          "price_desc": "قیمت: زیاد به کم",
+          "newest": "جدیدترین",
+          "popular": "محبوب‌ترین",
+          "rating": "بیشترین امتیاز"
+        },
+        "organicOnly": "فقط ارگانیک",
+        "certifications": "گواهینامه‌ها",
+        "priceRange": "محدوده قیمت",
+        "carbonFootprint": "پا ی 카ربن",
+        "waterFootprint": "پا ی آب",
+        "location": "موقعیت",
+        "radius": "شعاع جستجو",
+        "noResults": "نتیجه‌ای یافت نشد",
+        "noResultsDescription": "تلاش کنید با کلمات کلیدی دیگر جستجو کنید یا فیلترها را تغییر دهید",
+        "history": "تاریخچه جستجو",
+        "clearHistory": "پاک کردن تاریخچه",
+        "suggestions": "پیشنهادها",
+        "recentSearches": "جستجوهای اخیر",
+        "popularSearches": "جستجوهای محبوب",
+        "visualSearch": "جستجوی بصری",
+        "visualSearchDescription": "تصویری آپلود کنید تا محصولات مشابه یابید",
+        "voiceSearch": "جستجوی صوتی",
+        "voiceSearchDescription": "دکمه را نگه دارید و بگویید چه می‌خواهید",
+        "barcodeSearch": "اسکن بارکد",
+        "barcodeSearchDescription": "بارکد محصول را اسکن کنید",
+        "nfcSearch": "جستجوی NFC",
+        "nfcSearchDescription": "برچسب NFC را به گوشی نزدیک کنید",
+        "advancedSearch": "جستجوی پیشرفته",
+        "semanticSearch": "جستجوی معنایی",
+        "semanticSearchDescription": "جستجو بر اساس معنا و مفهوم"
+      }
+    }
+  },
+  "statusLine": {
+    "unavailable": "داده‌ها در دسترس نیستند"
+  },
+  "meta": {
+    "machineTranslated": false,
+    "fallbackLocale": null
+  }
+}

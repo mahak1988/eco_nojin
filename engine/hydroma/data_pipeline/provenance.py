@@ -15,11 +15,10 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 from uuid import uuid4
 
 logger = logging.getLogger(__name__)
@@ -38,15 +37,15 @@ class ProvenanceRecord:
     source_id: str
     source_url: str
     captured_at: str
-    temporal_start: Optional[str] = None
-    temporal_end: Optional[str] = None
-    spatial_bbox: Optional[list[float]] = None
+    temporal_start: str | None = None
+    temporal_end: str | None = None
+    spatial_bbox: list[float] | None = None
     processing_steps: list[str] = field(default_factory=list)
     quality_status: str = "unknown"  # ok | suspect | rejected | unknown
-    quality_score: Optional[float] = None  # 0.0 to 1.0
-    checksum: Optional[str] = None
-    size_bytes: Optional[int] = None
-    format: Optional[str] = None
+    quality_score: float | None = None  # 0.0 to 1.0
+    checksum: str | None = None
+    size_bytes: int | None = None
+    format: str | None = None
     data_mode: str = "real"  # real | simulated | modelled_estimate
     lineage: list[str] = field(default_factory=list)  # parent record_ids
     tags: list[str] = field(default_factory=list)
@@ -126,9 +125,9 @@ class ProvenanceTracker:
 
     def query(
         self,
-        asset_id: Optional[str] = None,
-        source_id: Optional[str] = None,
-        event_type: Optional[str] = None,
+        asset_id: str | None = None,
+        source_id: str | None = None,
+        event_type: str | None = None,
         limit: int = 100,
     ) -> list[ProvenanceRecord]:
         """Query provenance records with optional filters."""
@@ -187,7 +186,7 @@ class ProvenanceTracker:
 
 
 # Global tracker instance
-_tracker: Optional[ProvenanceTracker] = None
+_tracker: ProvenanceTracker | None = None
 
 
 def get_tracker(store_path: Path = DEFAULT_STORE_PATH) -> ProvenanceTracker:

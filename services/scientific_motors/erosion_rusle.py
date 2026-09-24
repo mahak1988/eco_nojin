@@ -255,7 +255,7 @@ class RUSLEMotor(AbstractScientificMotor):
                     "pixels": int(n),
                     "percent": float(n / risk_class.size * 100),
                 }
-                for c, n in zip(unique, counts)
+                for c, n in zip(unique, counts, strict=False)
             }
 
             # Conservation recommendations

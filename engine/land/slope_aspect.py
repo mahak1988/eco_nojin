@@ -23,19 +23,19 @@ def calculate_slope_aspect(
                  Slope and aspect are calculated for the interior cells.
                  Border cells (first/last row/column) are filled with NaN.
     """
-    rows, cols = dem_data.shape
+    _rows, _cols = dem_data.shape
     slope_radians = np.full_like(dem_data, np.nan, dtype=np.float64)
     aspect_radians = np.full_like(dem_data, np.nan, dtype=np.float64)
 
     # Calculate slope and aspect for interior cells only (1:-1)
-    z1 = dem_data[2:, :-2]  # z(i-1, j-1)
+    dem_data[2:, :-2]  # z(i-1, j-1)
     z2 = dem_data[2:, 1:-1]  # z(i-1, j)
-    z3 = dem_data[2:, 2:]  # z(i-1, j+1)
+    dem_data[2:, 2:]  # z(i-1, j+1)
     z4 = dem_data[1:-1, :-2]  # z(i, j-1)
     z5 = dem_data[1:-1, 2:]  # z(i, j+1)
-    z6 = dem_data[:-2, :-2]  # z(i+1, j-1)
+    dem_data[:-2, :-2]  # z(i+1, j-1)
     z7 = dem_data[:-2, 1:-1]  # z(i+1, j)
-    z8 = dem_data[:-2, 2:]  # z(i+1, j+1)
+    dem_data[:-2, 2:]  # z(i+1, j+1)
 
     # Partial derivatives dx (dz/dx) and dy (dz/dy) using central differences
     dz_dx = (z5 - z4) / (2 * cell_size_x)

@@ -98,9 +98,15 @@ class MultiObjectiveOptimizer:
         logger.info(f"Optimization completed. Solution: {solution}, Objectives: {objective_values}")
         return {
             "success": True,
-            "solution": dict(zip([f"var_{i}" for i in range(self.num_vars)], solution)),
+            "solution": dict(
+                zip([f"var_{i}" for i in range(self.num_vars)], solution, strict=False)
+            ),
             "objective_values": dict(
-                zip(["obj_" + str(i) for i in range(len(objective_values))], objective_values)
+                zip(
+                    ["obj_" + str(i) for i in range(len(objective_values))],
+                    objective_values,
+                    strict=False,
+                )
             ),
             "optimization_details": result,
         }

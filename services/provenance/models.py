@@ -2,19 +2,18 @@
 
 import enum
 import uuid
-from datetime import datetime, UTC
-from typing import Optional
+from datetime import UTC, datetime
 
 from sqlalchemy import (
-    Column,
-    String,
-    Text,
-    DateTime,
-    ForeignKey,
-    Index,
-    Enum as SQLEnum,
     JSON,
     Boolean,
+    Column,
+    DateTime,
+    Enum as SQLEnum,
+    ForeignKey,
+    Index,
+    String,
+    Text,
 )
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import relationship
@@ -22,7 +21,7 @@ from sqlalchemy.orm import relationship
 from database.base import Base
 
 
-class ProvenanceType(str, enum.Enum):
+class ProvenanceType(enum.StrEnum):
     """Type of provenance record."""
 
     SCIENTIFIC_OUTPUT = "scientific_output"  # Model computation result

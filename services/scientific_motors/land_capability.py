@@ -161,7 +161,7 @@ class LandCapabilityMotor(AbstractScientificMotor):
                     "percent": float(n / lcc_class.size * 100),
                     "description": self.LCC_DESCRIPTIONS[int(c)],
                 }
-                for c, n in zip(unique, counts)
+                for c, n in zip(unique, counts, strict=False)
             }
 
             return MotorResult(

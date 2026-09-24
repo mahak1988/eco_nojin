@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Generator
-from typing import Any, Generic, TypeVar
+from typing import Any, TypeVar
 
 from fastapi import APIRouter
 from pydantic import BaseModel
@@ -33,7 +33,7 @@ class BaseRouter(APIRouter):
         super().__init__(*args, **kwargs)
 
 
-class BaseService(Generic[M]):
+class BaseService[M]:
     """Base service with common CRUD patterns and standardized exceptions."""
 
     def __init__(self, db: Session) -> None:

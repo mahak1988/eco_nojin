@@ -1372,3 +1372,214 @@ class InvValuationMethod(str, PyEnum):
     FIFO = "fifo"
     WEIGHTED_AVG = "weighted_avg"
     STANDARD = "standard"
+
+
+class InvValuationMethod(str, PyEnum):
+    """Inventory valuation method."""
+
+    FIFO = "fifo"
+    WEIGHTED_AVG = "weighted_avg"
+    STANDARD = "standard"
+
+
+class ToolRegistryEntry(Base):
+    """Tool registry mapping 62 tools/services to their implementations (Phase 2 prerequisite)."""
+
+    __tablename__ = "tool_registry"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    tool_id = Column(String(32), nullable=False, unique=True, index=True)  # H01-H25, M01-M22, etc.
+    name_fa = Column(String(200), nullable=False)
+    name_en = Column(String(200), nullable=False)
+    domain = Column(
+        String(50), nullable=False, index=True
+    )  # climate, water, soil, carbon, crop, seed, modeling
+    category = Column(String(50), nullable=False)  # algorithm, model, dataset, service
+    fidelity = Column(String(20), nullable=True)  # official, simplified, experimental
+    reference = Column(String(300), nullable=True)
+    description = Column(Text, nullable=True)
+    formula = Column(Text, nullable=True)
+    service_slug = Column(
+        String(100), nullable=True
+    )  # e.g., "models/et0_hargreaves", "science/citations"
+    endpoint_path = Column(String(200), nullable=True)  # e.g., "/api/v1/models/et0_hargreaves/run"
+    phase = Column(Integer, nullable=True)  # 1-5 per innovation_registry.json phases
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+        nullable=False,
+    )
+
+    __table_args__ = (
+        Index("ix_tool_registry_domain_category", "domain", "category"),
+        Index("ix_tool_registry_service_slug", "service_slug"),
+    )
+
+
+class LegalText(Base):
+    """Versioned legal texts per locale (terms, privacy, cookies, e-commerce rules, buy-sell rules)."""
+
+    __tablename__ = "legal_texts"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    locale = Column(String(8), nullable=False, index=True)
+    slug = Column(
+        String(64), nullable=False, index=True
+    )  # terms, privacy, cookies, ecommerce_rules, buy_sell_rules
+    title = Column(String(200), nullable=False)
+    body = Column(Text, nullable=False)
+    version = Column(Integer, nullable=False, default=1)
+    status = Column(String(20), nullable=False, default="draft")  # draft, published, archived
+    effective_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+        nullable=False,
+    )
+
+    __table_args__ = (
+        UniqueConstraint("locale", "slug", "version", name="uq_legal_text_locale_slug_version"),
+        Index("ix_legal_text_locale_slug_status", "locale", "slug", "status"),
+    )
+
+
+class ContentItem(Base):
+    """Editorial content items for the knowledge hub / editorial platform."""
+
+    __tablename__ = "content_items"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String(300), nullable=False)
+    body = Column(Text, nullable=False)
+    category = Column(String(50), nullable=False, default="general", index=True)
+    language = Column(String(8), nullable=False, default="fa", index=True)
+    status = Column(String(20), nullable=False, default="draft", index=True)  # draft, published, archived
+    source = Column(String(50), nullable=True)  # ai-generated, manual, imported
+    generated_by_ai = Column(Boolean, default=False, nullable=False)
+    rag_synced = Column(Boolean, default=False, nullable=False)
+    published_at = Column(DateTime(timezone=True), nullable=True)
+    scheduled_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+        nullable=False,
+    )
+
+    # Relationships
+    versions = relationship("ContentVersion", back_populates="content", order_by="ContentVersion.version.desc()")
+    translations = relationship("ContentTranslation", back_populates="content")
+
+    __table_args__ = (
+        Index("ix_content_item_status_language", "status", "language"),
+        Index("ix_content_item_category_status", "category", "status"),
+    )
+
+
+class ContentVersion(Base):
+    """Version history for content items (snapshot before each update)."""
+
+    __tablename__ = "content_versions"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    content_id = Column(Integer, ForeignKey("content_items.id", ondelete="CASCADE"), nullable=False, index=True)
+    version = Column(Integer, nullable=False)
+    title = Column(String(300), nullable=False)
+    body = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+
+    # Relationships
+    content = relationship("ContentItem", back_populates="versions")
+
+    __table_args__ = (
+        UniqueConstraint("content_id", "version", name="uq_content_version"),
+        Index("ix_content_version_content_id_version", "content_id", "version"),
+    )
+
+
+class ContentTranslation(Base):
+    """Translations of content items into different languages."""
+
+    __tablename__ = "content_translations"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    content_id = Column(Integer, ForeignKey("content_items.id", ondelete="CASCADE"), nullable=False, index=True)
+    locale = Column(String(8), nullable=False, index=True)
+    title = Column(String(300), nullable=False)
+    body = Column(Text, nullable=False)
+    source = Column(String(20), nullable=True, default="manual")  # manual, ai
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+
+    # Relationships
+    content = relationship("ContentItem", back_populates="translations")
+
+    __table_args__ = (
+        UniqueConstraint("content_id", "locale", name="uq_content_translation_locale"),
+        Index("ix_content_translation_content_locale", "content_id", "locale"),
+    )
+
+
+class EscrowState(str, PyEnum):
+    """Escrow state machine states."""
+
+    CREATED = "created"
+    LOCKED = "locked"
+    RELEASED = "released"
+    REVERSED = "reversed"
+    COMPLETED = "completed"
+
+    def can_transition_to(self, to_state: "EscrowState") -> bool:
+        """Check if state transition is valid from this state."""
+        valid_transitions = {
+            EscrowState.CREATED: {EscrowState.LOCKED},
+            EscrowState.LOCKED: {EscrowState.RELEASED, EscrowState.REVERSED},
+            EscrowState.RELEASED: {EscrowState.COMPLETED},
+            EscrowState.REVERSED: {EscrowState.COMPLETED},
+        }
+        return to_state in valid_transitions.get(self, set())
+
+    @classmethod
+    def can_transition_from(cls, from_state: "EscrowState", to_state: "EscrowState") -> bool:
+        """Check if state transition is valid from a given state."""
+        valid_transitions = {
+            EscrowState.CREATED: {EscrowState.LOCKED},
+            EscrowState.LOCKED: {EscrowState.RELEASED, EscrowState.REVERSED},
+            EscrowState.RELEASED: {EscrowState.COMPLETED},
+            EscrowState.REVERSED: {EscrowState.COMPLETED},
+        }
+        return to_state in valid_transitions.get(from_state, set())
+
+
+class EscrowRecord(Base):
+    """Escrow record for marketplace order payments."""
+
+    __tablename__ = "escrow_records"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    order_id = Column(String, nullable=False, index=True, unique=True)
+    payment_id = Column(String, nullable=True, index=True)
+    buyer_id = Column(String, ForeignKey("users.id"), nullable=False, index=True)
+    seller_id = Column(String, ForeignKey("users.id"), nullable=False, index=True)
+    amount = Column(Numeric(precision=18, scale=2), nullable=False)
+    asset = Column(String(16), nullable=False, default="IRT")
+    state = Column(String(20), nullable=False, default=EscrowState.CREATED.value)
+    dispute_window_deadline = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(DateTime(timezone=True), nullable=True)
+    completed_at = Column(DateTime(timezone=True), nullable=True)
+
+    # Relationships
+    buyer = relationship("User", foreign_keys=[buyer_id])
+    seller = relationship("User", foreign_keys=[seller_id])
+
+    __table_args__ = (
+        Index("ix_escrow_record_state", "state"),
+        Index("ix_escrow_record_buyer", "buyer_id"),
+        Index("ix_escrow_record_seller", "seller_id"),
+    )

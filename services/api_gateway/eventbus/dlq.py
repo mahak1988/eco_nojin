@@ -4,17 +4,14 @@ Dead Letter Queue Handler for NATS
 Handles failed message processing with retry logic and DLQ storage.
 """
 
-import asyncio
 import json
 import logging
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
-from typing import Any, Optional
-
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Any
 
 from database.hub import hub
+from services.security.query_safe import _safe_ident
 
 logger = logging.getLogger("econojin.eventbus.dlq")
 
@@ -22,7 +19,8 @@ logger = logging.getLogger("econojin.eventbus.dlq")
 @dataclass
 class DeadLetter:
     """Dead letter entry for failed message processing."""
-    id: Optional[int]
+
+    id: int | None
     subject: str
     payload: dict[str, Any]
     headers: dict[str, str]
@@ -37,14 +35,15 @@ class DLQHandler:
 
     def __init__(self, max_retries: int = 3, dlq_table: str = "nats_dead_letter"):
         self.max_retries = max_retries
-        self.dlq_table = dlq_table
+        self.dlq_table = _safe_ident(dlq_table)  # Validate table name at init
         self._ensure_table_exists()
 
     def _ensure_table_exists(self) -> None:
         """Ensure DLQ table exists in SQLite."""
         try:
             conn = hub.get_sqlite("manual")
-            conn.execute(f"""
+            conn.execute(
+                f"""
                 CREATE TABLE IF NOT EXISTS {self.dlq_table} (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     subject TEXT NOT NULL,
@@ -55,7 +54,8 @@ class DLQHandler:
                     created_at TEXT NOT NULL,
                     last_attempt_at TEXT NOT NULL
                 )
-            """)
+                """
+            )
             conn.commit()
         except Exception as e:
             logger.warning(f"Could not ensure DLQ table: {e}")
@@ -115,6 +115,7 @@ class DLQHandler:
 
             # Re-publish to NATS
             from services.api_gateway.eventbus import get_nats_manager
+
             nats_manager = get_nats_manager()
 
             success = await nats_manager.publish_with_retry(
@@ -161,16 +162,20 @@ class DLQHandler:
 
             entries = []
             for row in rows:
-                entries.append(DeadLetter(
-                    id=row[0],
-                    subject=row[1],
-                    payload=json.loads(row[2]),
-                    headers=json.loads(row[3]),
-                    error=row[4],
-                    retry_count=row[5],
-                    created_at=datetime.fromisoformat(row[6]) if row[6] else datetime.now(UTC),
-                    last_attempt_at=datetime.fromisoformat(row[7]) if row[7] else datetime.now(UTC),
-                ))
+                entries.append(
+                    DeadLetter(
+                        id=row[0],
+                        subject=row[1],
+                        payload=json.loads(row[2]),
+                        headers=json.loads(row[3]),
+                        error=row[4],
+                        retry_count=row[5],
+                        created_at=datetime.fromisoformat(row[6]) if row[6] else datetime.now(UTC),
+                        last_attempt_at=datetime.fromisoformat(row[7])
+                        if row[7]
+                        else datetime.now(UTC),
+                    )
+                )
             return entries
         except Exception as e:
             logger.error(f"Failed to get DLQ entries: {e}")
@@ -193,7 +198,7 @@ class DLQHandler:
 
 
 # Global DLQ handler
-_dlq_handler: Optional[DLQHandler] = None
+_dlq_handler: DLQHandler | None = None
 
 
 def get_dlq_handler() -> DLQHandler:

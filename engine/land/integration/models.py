@@ -5,12 +5,12 @@ Deep soil profile models for 6 layers (0-200cm).
 """
 
 from datetime import UTC, datetime
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class SoilTexture(str, Enum):
+class SoilTexture(StrEnum):
     """USDA Soil Texture Classes (12 classes)"""
 
     SAND = "sand"
@@ -27,7 +27,7 @@ class SoilTexture(str, Enum):
     CLAY = "clay"
 
 
-class SalinityClass(str, Enum):
+class SalinityClass(StrEnum):
     """Soil Salinity Classes based on ECe (dS/m)"""
 
     NON_SALINE = "non_saline"  # < 2 dS/m
@@ -37,7 +37,7 @@ class SalinityClass(str, Enum):
     VERY_STRONGLY_SALINE = "very_strongly_saline"  # > 16 dS/m
 
 
-class DrainageClass(str, Enum):
+class DrainageClass(StrEnum):
     """Soil Drainage Classes"""
 
     EXCESSIVE = "excessive"

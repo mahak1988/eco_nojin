@@ -1,7 +1,5 @@
 """Tests for post-quantum cryptography module."""
 
-import os
-
 import pytest
 
 from services.security.pqcrypto import available, hybrid_kem, hybrid_sign, status

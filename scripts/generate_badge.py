@@ -11,10 +11,8 @@ Usage:
 
 import argparse
 import json
-import sys
 from pathlib import Path
-from typing import Dict, Any
-
+from typing import Any
 
 # Color schemes for different statuses
 STATUS_COLORS = {
@@ -43,7 +41,7 @@ def generate_shields_badge(
     color: str,
     label_color: str = "#555",
     style: str = "flat",
-    logo: str = None,
+    logo: str | None = None,
     logo_color: str = "white",
     cache_seconds: int = 300,
 ) -> str:
@@ -55,14 +53,10 @@ def generate_shields_badge(
 
     # Badge colors
     label_bg = "#555"
-    message_bg = color
     text_color = "white"
 
     # For partial/unvalidated, use dark text
-    if color in ["#ffc107"]:
-        message_text_color = "#212529"
-    else:
-        message_text_color = "white"
+    message_text_color = "#212529" if color in ["#ffc107"] else "white"
 
     # SVG template
     svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{total_width}" height="20" role="img" aria-label="{label}: {message}">
@@ -87,20 +81,24 @@ def generate_shields_badge(
     return svg
 
 
-def determine_overall_status(result: Dict) -> str:
+def determine_overall_status(result: dict) -> str:
     """Determine overall badge status from validation result."""
     if result.get("errors", 0) > 0:
         return "error"
     if result.get("failed", 0) > 0:
         return "failed"
-    if result.get("passed", 0) > 0 and result.get("failed", 0) == 0 and result.get("errors", 0) == 0:
+    if (
+        result.get("passed", 0) > 0
+        and result.get("failed", 0) == 0
+        and result.get("errors", 0) == 0
+    ):
         return "passed"
     if result.get("skipped", 0) > 0:
         return "skipped"
     return "unknown"
 
 
-def generate_detailed_badge(result: Dict, model: str, backend: str) -> str:
+def generate_detailed_badge(result: dict, model: str, backend: str) -> str:
     """Generate a detailed badge with more information."""
     status = determine_overall_status(result)
     colors = STATUS_COLORS.get(status, STATUS_COLORS["unknown"])
@@ -131,7 +129,7 @@ def generate_detailed_badge(result: Dict, model: str, backend: str) -> str:
     )
 
 
-def generate_compact_badge(result: Dict, model: str, backend: str) -> str:
+def generate_compact_badge(result: dict, model: str, backend: str) -> str:
     """Generate a compact badge (just status)."""
     status = determine_overall_status(result)
     colors = STATUS_COLORS.get(status, STATUS_COLORS["unknown"])
@@ -147,13 +145,15 @@ def generate_compact_badge(result: Dict, model: str, backend: str) -> str:
     )
 
 
-def generate_matrix_badge(all_results: Dict[str, Dict[str, Any]]) -> str:
+def generate_matrix_badge(all_results: dict[str, dict[str, Any]]) -> str:
     """Generate a matrix badge showing all model statuses."""
     # This would generate a more complex badge showing multiple models
     # For now, return a summary badge
     total_models = len(all_results)
     passed_models = sum(1 for r in all_results.values() if determine_overall_status(r) == "passed")
-    failed_models = sum(1 for r in all_results.values() if determine_overall_status(r) in ["failed", "error"])
+    failed_models = sum(
+        1 for r in all_results.values() if determine_overall_status(r) in ["failed", "error"]
+    )
 
     if failed_models > 0:
         message = f"{passed_models}/{total_models} passing"
@@ -178,21 +178,24 @@ def main():
     parser.add_argument("--backend", required=True, help="Backend (python, numba, cpp, wasm)")
     parser.add_argument("--result", required=True, help="Path to validation result JSON")
     parser.add_argument("--output", required=True, help="Output SVG file path")
-    parser.add_argument("--type", choices=["detailed", "compact", "matrix"], default="detailed",
-                        help="Badge type")
-    parser.add_argument("--all-results-dir", help="Directory with all validation results (for matrix badge)")
+    parser.add_argument(
+        "--type", choices=["detailed", "compact", "matrix"], default="detailed", help="Badge type"
+    )
+    parser.add_argument(
+        "--all-results-dir", help="Directory with all validation results (for matrix badge)"
+    )
 
     args = parser.parse_args()
 
     # Load validation result
-    with open(args.result, 'r') as f:
+    with open(args.result) as f:
         result = json.load(f)
 
     if args.type == "matrix" and args.all_results_dir:
         # Load all results
         all_results = {}
         for f in Path(args.all_results_dir).glob("validation_*.json"):
-            with open(f) as fp:
+            with open(f):
                 data = json.load(f)
                 key = f"{data['model']}-{data['backend']}"
                 all_results[key] = data
@@ -204,7 +207,7 @@ def main():
 
     # Write output
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
-    with open(args.output, 'w') as f:
+    with open(args.output, "w") as f:
         f.write(svg)
 
     print(f"Badge written to {args.output}")

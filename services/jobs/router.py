@@ -1,19 +1,18 @@
 """Compute Jobs API Router."""
 
-from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.hub import hub
-from services.jobs.service import ComputeJobService
 from services.jobs.schemas import (
     JobCreate,
-    JobResponse,
-    JobListResponse,
-    JobStatusUpdate,
     JobEventResponse,
+    JobListResponse,
+    JobResponse,
     JobStatsResponse,
+    JobStatusUpdate,
 )
+from services.jobs.service import ComputeJobService
 
 router = APIRouter(prefix="/api/v1/jobs", tags=["jobs"])
 
@@ -47,10 +46,10 @@ async def get_job_stats(
 
 @router.get("", response_model=JobListResponse)
 async def list_jobs(
-    status: Optional[str] = Query(None, description="Filter by status"),
-    job_type: Optional[str] = Query(None, description="Filter by job type"),
-    priority: Optional[str] = Query(None, description="Filter by priority"),
-    created_by: Optional[str] = Query(None, description="Filter by creator"),
+    status: str | None = Query(None, description="Filter by status"),
+    job_type: str | None = Query(None, description="Filter by job type"),
+    priority: str | None = Query(None, description="Filter by priority"),
+    created_by: str | None = Query(None, description="Filter by creator"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Page size"),
     service: ComputeJobService = Depends(get_compute_job_service),
@@ -78,7 +77,7 @@ async def get_job(
     return JobResponse.model_validate(job)
 
 
-@router.get("/{job_id}/events", response_model=List[JobEventResponse])
+@router.get("/{job_id}/events", response_model=list[JobEventResponse])
 async def get_job_events(
     job_id: str,
     service: ComputeJobService = Depends(get_compute_job_service),

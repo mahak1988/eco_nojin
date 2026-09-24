@@ -21,12 +21,11 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Optional
 
 import numpy as np
 
 from .signals import ElectricalSignalProcessor, SignalFeatures
-from .voc import VOCAnalyzer, VOCProfile, StressSignature
+from .voc import StressSignature, VOCAnalyzer, VOCProfile
 
 
 class StressLevel(Enum):
@@ -43,17 +42,17 @@ class StressLevel(Enum):
 class StressAssessment:
     """Comprehensive plant stress assessment from multiple modalities."""
 
-    electrical_stress_type: Optional[str] = None
+    electrical_stress_type: str | None = None
     electrical_confidence: float = 0.0
     electrical_severity: float = 0.0
-    voc_stress_type: Optional[str] = None
+    voc_stress_type: str | None = None
     voc_confidence: float = 0.0
     voc_severity: float = 0.0
     integrated_stress_level: StressLevel = StressLevel.HEALTHY
     integrated_severity_score: float = 0.0
     timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
-    signal_features: Optional[SignalFeatures] = None
-    stress_signature: Optional[StressSignature] = None
+    signal_features: SignalFeatures | None = None
+    stress_signature: StressSignature | None = None
     recommendations: list[str] = field(default_factory=list)
 
 
@@ -127,7 +126,7 @@ class PlantNeuroEngine:
         "healthy": [],
     }
 
-    def __init__(self, config: Optional[PlantNeuroConfig] = None):
+    def __init__(self, config: PlantNeuroConfig | None = None):
         self.config = config or PlantNeuroConfig()
         self.signal_processor = ElectricalSignalProcessor(
             sampling_rate_hz=self.config.sampling_rate_hz,
@@ -198,8 +197,8 @@ class PlantNeuroEngine:
 
     def analyze_combined(
         self,
-        signal_mv: Optional[np.ndarray] = None,
-        voc_profile: Optional[VOCProfile] = None,
+        signal_mv: np.ndarray | None = None,
+        voc_profile: VOCProfile | None = None,
     ) -> StressAssessment:
         """Fused analysis from both electrical signals and VOC profiles.
 
@@ -215,8 +214,8 @@ class PlantNeuroEngine:
         if signal_mv is None and voc_profile is None:
             raise ValueError("At least one of signal_mv or voc_profile must be provided")
 
-        electrical_assessment: Optional[StressAssessment] = None
-        voc_assessment: Optional[StressAssessment] = None
+        electrical_assessment: StressAssessment | None = None
+        voc_assessment: StressAssessment | None = None
 
         if signal_mv is not None:
             electrical_assessment = self.analyze_from_signals(signal_mv)
@@ -248,7 +247,7 @@ class PlantNeuroEngine:
         stress_level = self._map_severity_to_level(integrated_severity)
 
         # Combine stress types
-        combined_type, combined_confidence = self._combine_stress_types(
+        combined_type, _combined_confidence = self._combine_stress_types(
             electrical_assessment, voc_assessment
         )
 
@@ -292,8 +291,8 @@ class PlantNeuroEngine:
 
     def _integrate_severity(
         self,
-        electrical: Optional[StressAssessment],
-        voc: Optional[StressAssessment],
+        electrical: StressAssessment | None,
+        voc: StressAssessment | None,
     ) -> float:
         """Weighted integration of severity from both modalities."""
         if electrical and voc:
@@ -309,8 +308,8 @@ class PlantNeuroEngine:
 
     def _combine_stress_types(
         self,
-        electrical: Optional[StressAssessment],
-        voc: Optional[StressAssessment],
+        electrical: StressAssessment | None,
+        voc: StressAssessment | None,
     ) -> tuple[str, float]:
         """Select the stress type with highest weighted confidence."""
         candidates: list[tuple[str, float]] = []
@@ -347,8 +346,8 @@ class PlantNeuroEngine:
 
     def _generate_recommendations(
         self,
-        electrical: Optional[StressAssessment],
-        voc: Optional[StressAssessment],
+        electrical: StressAssessment | None,
+        voc: StressAssessment | None,
         combined_type: str,
     ) -> list[str]:
         """Generate combined recommendations from both modalities."""

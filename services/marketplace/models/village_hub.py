@@ -18,7 +18,7 @@
 import uuid
 from datetime import UTC, datetime
 from decimal import Decimal
-from enum import Enum
+from enum import StrEnum
 
 from sqlalchemy import (
     JSON,
@@ -42,7 +42,7 @@ from database.base import Base
 # ============================================================================
 
 
-class CapabilityCategory(str, Enum):
+class CapabilityCategory(StrEnum):
     """دسته‌های ظرفیت‌های اقتصادی روستا."""
 
     AGRICULTURE = "agriculture"
@@ -55,7 +55,7 @@ class CapabilityCategory(str, Enum):
     ENERGY = "energy"
 
 
-class OpportunityCategory(str, Enum):
+class OpportunityCategory(StrEnum):
     """دسته‌های فرصت‌های توسعه."""
 
     PROCESSING = "processing"
@@ -70,7 +70,7 @@ class OpportunityCategory(str, Enum):
     TRANSPORT = "transport"
 
 
-class OpportunityMaturity(str, Enum):
+class OpportunityMaturity(StrEnum):
     """سطوح بالغیت فرصت توسعه."""
 
     IDEA = "idea"
@@ -80,7 +80,7 @@ class OpportunityMaturity(str, Enum):
     SCALE = "scale"
 
 
-class OpportunityStatus(str, Enum):
+class OpportunityStatus(StrEnum):
     """وضعیت یک فرصت توسعه."""
 
     DRAFT = "draft"
@@ -91,7 +91,7 @@ class OpportunityStatus(str, Enum):
     ARCHIVED = "archived"
 
 
-class ProjectStatus(str, Enum):
+class ProjectStatus(StrEnum):
     """وضعیت پروژهٔ توسعه."""
 
     PLANNED = "planned"
@@ -101,7 +101,7 @@ class ProjectStatus(str, Enum):
     CANCELLED = "cancelled"
 
 
-class InvestmentStatus(str, Enum):
+class InvestmentStatus(StrEnum):
     """وضعیت درخواست سرمایه‌گذاری."""
 
     PENDING = "pending"
@@ -110,7 +110,7 @@ class InvestmentStatus(str, Enum):
     FUNDED = "funded"
 
 
-class TourismServiceType(str, Enum):
+class TourismServiceType(StrEnum):
     """انواع سرویس‌های گردشگيری."""
 
     ACCOMMODATION = "accommodation"
@@ -120,7 +120,7 @@ class TourismServiceType(str, Enum):
     FOOD = "food"
 
 
-class EventStatus(str, Enum):
+class EventStatus(StrEnum):
     """وضعیت رویداد."""
 
     DRAFT = "draft"
@@ -132,7 +132,7 @@ class EventStatus(str, Enum):
     CANCELLED = "cancelled"
 
 
-class NeedPriority(str, Enum):
+class NeedPriority(StrEnum):
     """اولویت نیازهای روستا."""
 
     LOW = "low"
@@ -141,7 +141,7 @@ class NeedPriority(str, Enum):
     CRITICAL = "critical"
 
 
-class ConfidenceLevel(str, Enum):
+class ConfidenceLevel(StrEnum):
     """سطح اطمینان داده."""
 
     LOW = "low"
@@ -606,7 +606,7 @@ class VillageOpportunityInterest(Base):
 # ============================================================================
 
 
-class ExperienceType(str, Enum):
+class ExperienceType(StrEnum):
     """انواع تجربه‌های گردشگری."""
 
     ACCOMMODATION = "accommodation"
@@ -770,7 +770,7 @@ class NomadicCommunity(Base):
 # ============================================================================
 
 
-class EngagementRole(str, Enum):
+class EngagementRole(StrEnum):
     """نقش افراد در گره‌گیری ظرفیت با کارآفرین."""
 
     EXECUTOR = "executor"  # من می‌خواهم اجرا کنم
@@ -846,7 +846,7 @@ class VillageDevelopmentGap(Base):
 # ============================================================================
 
 
-class FestivalScope(str, Enum):
+class FestivalScope(StrEnum):
     """مقیاس جشنواره."""
 
     LOCAL = "local"
@@ -854,7 +854,7 @@ class FestivalScope(str, Enum):
     NATIONAL = "national"
 
 
-class FestivalMode(str, Enum):
+class FestivalMode(StrEnum):
     """حالت برگزاری (دیجیتال/فیزیکی/تمرکب)."""
 
     DIGITAL = "digital"
@@ -901,38 +901,38 @@ class VillageFestival(Base):
 
 
 __all__ = [
+    "B2BDemand",
     # Enums
     "CapabilityCategory",
+    "ConfidenceLevel",
+    "EngagementRole",
+    "EntrepreneurProfile",
+    "EventStatus",
+    "ExperienceType",
+    "FestivalMode",
+    "FestivalScope",
+    "InvestmentStatus",
+    "NeedPriority",
+    "NomadicCommunity",
     "OpportunityCategory",
     "OpportunityMaturity",
     "OpportunityStatus",
     "ProjectStatus",
-    "InvestmentStatus",
     "TourismServiceType",
-    "EventStatus",
-    "NeedPriority",
-    "ConfidenceLevel",
-    "ExperienceType",
-    "EngagementRole",
-    "FestivalScope",
-    "FestivalMode",
+    "VillageBrand",
     # Models
     "VillageCapability",
-    "VillageOpportunity",
-    "VillageProject",
-    "EntrepreneurProfile",
-    "VillageInvestment",
-    "VillageTourismService",
+    "VillageDestination",
+    "VillageDevelopmentGap",
+    "VillageEngagement",
     "VillageEvent",
     "VillageEventRegistration",
-    "VillageNeed",
-    "VillageBrand",
-    "VillageOpportunityInterest",
     "VillageExperience",
-    "VillageDestination",
-    "B2BDemand",
-    "NomadicCommunity",
-    "VillageEngagement",
-    "VillageDevelopmentGap",
     "VillageFestival",
+    "VillageInvestment",
+    "VillageNeed",
+    "VillageOpportunity",
+    "VillageOpportunityInterest",
+    "VillageProject",
+    "VillageTourismService",
 ]

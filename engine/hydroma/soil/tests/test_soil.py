@@ -709,7 +709,7 @@ class TestSoilModuleIntegration:
             (50, 30, 20, "clay"),
         ]
 
-        for clay, silt, sand, expected in texture_tests:
+        for clay, silt, sand, _expected in texture_tests:
             result = classify_usda_texture(clay, silt, sand)
             # At minimum, classification should not error
             assert "texture" in result

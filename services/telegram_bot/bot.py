@@ -119,7 +119,7 @@ class HydromaTelegramBot:
         @self.dp.message(Command("crops"))
         async def cmd_crops(message: Message):
             """Handle /crops command."""
-            lang = self.user_languages.get(message.from_user.id, "en")
+            self.user_languages.get(message.from_user.id, "en")
             await message.answer(
                 "🌾 Crop recommendations coming soon!\n\nUse /analyze for full analysis."
             )
@@ -127,7 +127,7 @@ class HydromaTelegramBot:
         @self.dp.message(Command("carbon"))
         async def cmd_carbon(message: Message):
             """Handle /carbon command."""
-            lang = self.user_languages.get(message.from_user.id, "en")
+            self.user_languages.get(message.from_user.id, "en")
             await message.answer(
                 "🌱 Carbon potential analysis coming soon!\n\nUse /analyze for full analysis."
             )

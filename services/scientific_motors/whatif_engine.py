@@ -66,8 +66,8 @@ class WhatIfMotor(AbstractScientificMotor):
 
         try:
             baseline_yield = inputs.get("baseline_yield")
-            baseline_water = inputs.get("baseline_water")
-            baseline_carbon = inputs.get("baseline_carbon")
+            inputs.get("baseline_water")
+            inputs.get("baseline_carbon")
 
             # Define scenarios
             scenarios = self._define_scenarios()

@@ -1,20 +1,18 @@
 """Phase 6 backend tests: versions, translate, RAG sync, public search."""
 
-import asyncio
-
 import pytest
 from fastapi.testclient import TestClient
 
+from database import models  # noqa: F401
 from database.base import Base
 from database.config import engine
-from tests.conftest import TEST_SESSION_FACTORY as SessionLocal
-from database import models  # noqa: F401
 from database.hub import hub as db_models
 from services.api_gateway.auth import hash_password
 from services.api_gateway.main import app
+from tests.conftest import TEST_SESSION_FACTORY as SessionLocal
 
 
-@pytest.fixture()
+@pytest.fixture
 def admin_client(monkeypatch):
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
@@ -37,7 +35,7 @@ def admin_client(monkeypatch):
     )
     assert r.status_code == 200
     client.headers.update({"Authorization": f"Bearer {r.json()['access_token']}"})
-    yield client
+    return client
 
 
 def _make_item(client, title="کشاورزی هوشمند", body="متن درباره آب و خاک", category="agriculture"):
@@ -78,7 +76,7 @@ def test_publish_sets_published_at_and_rag_sync(admin_client):
     assert r.status_code == 200
     assert "RAG" in r.json()["message"]
     items = admin_client.get("/api/v1/admin/content").json()
-    published = [i for i in items if i["id"] == item["id"]][0]
+    published = next(i for i in items if i["id"] == item["id"])
     assert published["status"] == "published"
     assert published["rag_synced"] is True
     assert published["published_at"] is not None

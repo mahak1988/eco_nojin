@@ -86,7 +86,6 @@ class MultiLayerAdapter(BaseSimulator):
 
         # مزایای اکولوژیک
         biodiversity_score = len(layers) * 25
-        water_use_efficiency = 1.3  # ۳۰٪ بهتر از monoculture
         pest_reduction = 40  # کاهش آفت بدون سم
 
         return SimulationResult(

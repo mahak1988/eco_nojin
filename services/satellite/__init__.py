@@ -1,10 +1,10 @@
 """Satellite Integration Package"""
 
-from .service import SatelliteService, SatelliteSource, SatelliteImage, VegetationIndex
+from .service import SatelliteImage, SatelliteService, SatelliteSource, VegetationIndex
 
 __all__ = [
+    "SatelliteImage",
     "SatelliteService",
     "SatelliteSource",
-    "SatelliteImage",
     "VegetationIndex",
 ]

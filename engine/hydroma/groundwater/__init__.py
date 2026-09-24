@@ -3,6 +3,11 @@ Groundwater Module - Phase 3 Water Intelligence
 ================================================
 """
 
+from .models import (
+    GroundwaterBucketInput,
+    GroundwaterBucketOutput,
+    run_groundwater_bucket,
+)
 from .service import (
     AquiferType,
     GroundwaterInput,
@@ -10,19 +15,14 @@ from .service import (
     GroundwaterService,
     WaterQualityClass,
 )
-from .models import (
-    GroundwaterBucketInput,
-    GroundwaterBucketOutput,
-    run_groundwater_bucket,
-)
 
 __all__ = [
     "AquiferType",
+    "GroundwaterBucketInput",
+    "GroundwaterBucketOutput",
     "GroundwaterInput",
     "GroundwaterResult",
     "GroundwaterService",
     "WaterQualityClass",
-    "GroundwaterBucketInput",
-    "GroundwaterBucketOutput",
     "run_groundwater_bucket",
 ]

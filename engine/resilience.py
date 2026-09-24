@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 engine.resilience
 =================
@@ -29,14 +28,14 @@ Author: Eco Nojin Architecture Team
 Version: 2.0.0
 """
 
-import time
+import logging
 import threading
-import asyncio
-from functools import wraps
-from typing import Any, Callable, Optional, TypeVar, Union
+import time
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
 from enum import Enum
-import logging
+from functools import wraps
+from typing import Any, TypeVar
 
 logger = logging.getLogger(__name__)
 
@@ -105,9 +104,7 @@ class CircuitBreaker:
     def allow_request(self) -> bool:
         """Check if request should be allowed."""
         state = self.state
-        if state == CircuitState.CLOSED:
-            return True
-        elif state == CircuitState.HALF_OPEN:
+        if state == CircuitState.CLOSED or state == CircuitState.HALF_OPEN:
             return True
         else:  # OPEN
             return False
@@ -186,11 +183,11 @@ def get_circuit_breaker(
 
 
 def circuit_breaker(
-    name: Optional[str] = None,
+    name: str | None = None,
     failure_threshold: int = 5,
     recovery_timeout: float = 60.0,
     success_threshold: int = 2,
-    fallback: Optional[Callable] = None,
+    fallback: Callable | None = None,
 ):
     """
     Decorator to wrap a function with circuit breaker protection.
@@ -233,7 +230,7 @@ def circuit_breaker(
                 result = func(*args, **kwargs)
                 breaker.record_success()
                 return result
-            except Exception as e:
+            except Exception:
                 breaker.record_failure()
                 raise
 
@@ -337,13 +334,13 @@ def reset_all_breakers():
 
 
 __all__ = [
-    "CircuitState",
-    "CircuitOpenError",
     "CircuitBreaker",
+    "CircuitOpenError",
+    "CircuitState",
     "circuit_breaker",
-    "with_timeout",
-    "with_retry",
-    "get_circuit_breaker",
     "get_all_breakers",
+    "get_circuit_breaker",
     "reset_all_breakers",
+    "with_retry",
+    "with_timeout",
 ]

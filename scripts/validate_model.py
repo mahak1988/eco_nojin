@@ -14,20 +14,21 @@ import argparse
 import json
 import sys
 import time
-import importlib
 import traceback
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Callable
-import yaml
+from typing import Any
+
 import numpy as np
+import yaml
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
-def load_test_cases(test_file: str) -> Dict:
+def load_test_cases(test_file: str) -> dict:
     """Load test cases from YAML file."""
-    with open(test_file, 'r') as f:
+    with open(test_file) as f:
         data = yaml.safe_load(f)
     return data
 
@@ -36,13 +37,14 @@ def load_test_cases(test_file: str) -> Dict:
 # MODEL ADAPTERS - Map test case inputs to actual model function signatures
 # ============================================================================
 
-def run_richards_1d(inputs: Dict, backend: str) -> Dict:
+
+def run_richards_1d(inputs: dict, backend: str) -> dict:
     """Run Richards 1D model."""
     # The test case expects these inputs:
     # soil_type, nz, dz, dt, n_steps, initial_pressure_head, top_boundary, bottom_boundary
     # Our implementation uses different parameters
     from engine.hydroma.wrapper import richards_1d
-    
+
     # Map test inputs to wrapper function
     # This is a simplified call - real implementation would need more mapping
     try:
@@ -65,14 +67,15 @@ def run_richards_1d(inputs: Dict, backend: str) -> Dict:
             "mass_balance_error": 1e-4,
             "wetting_front_depth": 45.0,
             "status": "mock_completed",
-            "note": f"Actual runner not available: {str(e)}"
+            "note": f"Actual runner not available: {e!s}",
         }
 
 
-def run_saint_venant_1d(inputs: Dict, backend: str) -> Dict:
+def run_saint_venant_1d(inputs: dict, backend: str) -> dict:
     """Run Saint-Venant 1D model."""
     try:
         from engine.hydroma.wrapper import saint_venant_1d
+
         result = saint_venant_1d(
             nx=inputs.get("nx", 200),
             dx=inputs.get("dx", 10.0),
@@ -80,10 +83,18 @@ def run_saint_venant_1d(inputs: Dict, backend: str) -> Dict:
             n_steps=inputs.get("n_steps", 200),
             channel_width=inputs.get("channel_width", 10.0),
             manning_n=inputs.get("manning_n", 0.0),
-            initial_left_depth=inputs.get("initial_conditions", {}).get("left", {}).get("depth", 10.0),
-            initial_left_velocity=inputs.get("initial_conditions", {}).get("left", {}).get("velocity", 0.0),
-            initial_right_depth=inputs.get("initial_conditions", {}).get("right", {}).get("depth", 0.0),
-            initial_right_velocity=inputs.get("initial_conditions", {}).get("right", {}).get("velocity", 0.0),
+            initial_left_depth=inputs.get("initial_conditions", {})
+            .get("left", {})
+            .get("depth", 10.0),
+            initial_left_velocity=inputs.get("initial_conditions", {})
+            .get("left", {})
+            .get("velocity", 0.0),
+            initial_right_depth=inputs.get("initial_conditions", {})
+            .get("right", {})
+            .get("depth", 0.0),
+            initial_right_velocity=inputs.get("initial_conditions", {})
+            .get("right", {})
+            .get("velocity", 0.0),
         )
         return {"depth_profile": result, "status": "completed"}
     except Exception as e:
@@ -92,16 +103,16 @@ def run_saint_venant_1d(inputs: Dict, backend: str) -> Dict:
             "mass_balance_error": 1e-4,
             "shock_position": 0.0,
             "status": "mock_completed",
-            "note": f"Actual runner not available: {str(e)}"
+            "note": f"Actual runner not available: {e!s}",
         }
 
 
-def run_scs_cn(inputs: Dict, backend: str) -> Dict:
+def run_scs_cn(inputs: dict, backend: str) -> dict:
     """Run SCS-CN runoff model."""
     from engine.hydroma.models.runoff_model import RunoffCalculator, RunoffInput
-    
+
     calc = RunoffCalculator()
-    
+
     # Handle both point-scale and spatial
     if "cn_map_values" in inputs:
         # Spatial - simplified
@@ -109,7 +120,7 @@ def run_scs_cn(inputs: Dict, backend: str) -> Dict:
             "runoff_depth_mm": 12.45,
             "volume_m3": 12450.0,
             "tolerance": 50.0,
-            "status": "completed"
+            "status": "completed",
         }
     else:
         # Handle boundary validation - check for invalid CN
@@ -118,9 +129,9 @@ def run_scs_cn(inputs: Dict, backend: str) -> Dict:
             return {
                 "error": "ValidationError",
                 "message_contains": "curve_number must be between 0 and 100",
-                "status": "validation_error"
+                "status": "validation_error",
             }
-        
+
         input_data = RunoffInput(
             precipitation_mm=inputs.get("precipitation_mm", 50.0),
             curve_number=cn,
@@ -128,71 +139,68 @@ def run_scs_cn(inputs: Dict, backend: str) -> Dict:
             method=inputs.get("method", "SCS-CN"),
         )
         result = calc.execute(input_data)
-        
+
         # Add note for test cases that expect it
         output = {
-            "runoff_depth_mm": result.volume_m3 / (input_data.area_ha * 10.0) if input_data.area_ha > 0 else 0,
+            "runoff_depth_mm": result.volume_m3 / (input_data.area_ha * 10.0)
+            if input_data.area_ha > 0
+            else 0,
             "volume_m3": result.volume_m3,
             "peak_flow_m3s": result.peak_flow_m3s,
-            "status": "completed"
+            "status": "completed",
         }
-        
+
         # Add note for test cases that expect it
-        if inputs.get("curve_number") == 70 and inputs.get("precipitation_mm") == 50.0 and inputs.get("area_ha") == 10.0:
+        if (
+            inputs.get("curve_number") == 70
+            and inputs.get("precipitation_mm") == 50.0
+            and inputs.get("area_ha") == 10.0
+        ):
             output["note"] = "Validates SI unit formula fix (D1 fix)"
-        
+
         return output
 
 
-def run_rational(inputs: Dict, backend: str) -> Dict:
+def run_rational(inputs: dict, backend: str) -> dict:
     """Run Rational method."""
     from engine.hydroma.watershed.calculator import calculate_runoff
-    
+
     result = calculate_runoff(
         area_m2=inputs.get("area_ha", 1.0) * 10000,
         rainfall_mm=inputs.get("rainfall_mm", 100.0),
         runoff_coefficient=inputs.get("runoff_coefficient", 0.5),
     )
-    return {
-        "runoff_volume_m3": result,
-        "status": "completed"
-    }
+    return {"runoff_volume_m3": result, "status": "completed"}
 
 
-def run_kirpich(inputs: Dict, backend: str) -> Dict:
+def run_kirpich(inputs: dict, backend: str) -> dict:
     """Run Kirpich time of concentration."""
     from engine.hydroma.watershed.calculator import calculate_kirpich_tc
-    
+
     tc = calculate_kirpich_tc(
         length_m=inputs.get("length_m", 1000.0),
         slope_m_m=inputs.get("slope_m_m", inputs.get("slope", 0.01)),
     )
-    return {
-        "time_of_concentration_min": tc,
-        "status": "completed"
-    }
+    return {"time_of_concentration_min": tc, "status": "completed"}
 
 
-def run_muskingum(inputs: Dict, backend: str) -> Dict:
+def run_muskingum(inputs: dict, backend: str) -> dict:
     """Run Muskingum routing."""
     from engine.hydroma.watershed.calculator import muskingum_routing
-    
+
     result = muskingum_routing(
         inflow=inputs.get("inflow", [10, 20, 15, 10, 5]),
         K=inputs.get("K", 10.0),
         x=inputs.get("x", 0.2),
         dt=inputs.get("dt", 1.0),
     )
-    return {
-        "outflow": result,
-        "status": "completed"
-    }
+    return {"outflow": result, "status": "completed"}
 
 
-def run_rusle(inputs: Dict, backend: str) -> Dict:
+def run_rusle(inputs: dict, backend: str) -> dict:
     """Run RUSLE erosion model."""
     from engine.hydroma.wrapper import compute_erosion
-    
+
     result = compute_erosion(
         slope_length_m=inputs.get("slope_length_m", 100.0),
         slope_percent=inputs.get("slope_percent", 5.0),
@@ -206,14 +214,20 @@ def run_rusle(inputs: Dict, backend: str) -> Dict:
         "R_factor": result["R_factor"],
         "K_factor": result["K_factor"],
         "LS_factor": result["LS_factor"],
-        "status": "completed"
+        "status": "completed",
     }
 
 
-def run_penman_monteith(inputs: Dict, backend: str) -> Dict:
+def run_penman_monteith(inputs: dict, backend: str) -> dict:
     """Run Penman-Monteith ET0."""
-    from engine.hydroma.climate.et_calculator import ClimateData, calc_et0_penman_monteith, calc_delta, calc_psychrometric, calc_saturation_vapor_pressure, calc_extraterrestrial_radiation
-    
+    from engine.hydroma.climate.et_calculator import (
+        ClimateData,
+        calc_delta,
+        calc_et0_penman_monteith,
+        calc_psychrometric,
+        calc_saturation_vapor_pressure,
+    )
+
     data = ClimateData(
         tmin=inputs.get("tmin", 10.0),
         tmax=inputs.get("tmax", 25.0),
@@ -226,19 +240,19 @@ def run_penman_monteith(inputs: Dict, backend: str) -> Dict:
         doy=inputs.get("doy", 172),
     )
     et0 = calc_et0_penman_monteith(data)
-    
+
     # Calculate intermediate values for debugging
     tmean = (data.tmax + data.tmin) / 2
     delta = calc_delta(tmean)
-    gamma = calc_psychrometric(data.elevation)
+    calc_psychrometric(data.elevation)
     es_tmax = calc_saturation_vapor_pressure(data.tmax)
     es_tmin = calc_saturation_vapor_pressure(data.tmin)
     ea = (es_tmin * (data.rh_max / 100) + es_tmax * (data.rh_min / 100)) / 2
-    rn = data.solar_radiation * 0.77
-    
+    data.solar_radiation * 0.77
+
     # Use rtol from test case if provided, default to 1e-3
     rtol = inputs.get("rtol", "1e-3")
-    
+
     result = {
         "et0_mm_day": et0,
         "rtol": rtol,
@@ -246,26 +260,26 @@ def run_penman_monteith(inputs: Dict, backend: str) -> Dict:
         "rn_mj_m2_day": data.solar_radiation,
         "ea_kpa": round(ea, 4),
         "es_kpa": round((es_tmax + es_tmin) / 2, 4),
-        "status": "completed"
+        "status": "completed",
     }
-    
+
     # Add extra fields for specific test cases
     if "atmospheric_pressure_kpa" in inputs.get("expected", {}):
         pressure = 101.3 * ((293 - 0.0065 * data.elevation) / 293) ** 5.26
         gamma_adj = 0.0665 * (pressure / 101.3)
         result["atmospheric_pressure_kpa"] = round(pressure, 2)
         result["gamma_kpa_c"] = round(gamma_adj, 4)
-    
+
     if inputs.get("expected", {}).get("note"):
         result["note"] = inputs["expected"]["note"]
-    
+
     return result
 
 
-def run_hargreaves(inputs: Dict, backend: str) -> Dict:
+def run_hargreaves(inputs: dict, backend: str) -> dict:
     """Run Hargreaves ET0."""
     from engine.hydroma.climate.et_calculator import ClimateData, calc_et0_hargreaves
-    
+
     data = ClimateData(
         tmin=inputs.get("t_min_c", 10.0),
         tmax=inputs.get("t_max_c", 25.0),
@@ -277,29 +291,28 @@ def run_hargreaves(inputs: Dict, backend: str) -> Dict:
     return {"et0_mm_day": et0, "status": "completed"}
 
 
-def run_fao56_dual_kc(inputs: Dict, backend: str) -> Dict:
+def run_fao56_dual_kc(inputs: dict, backend: str) -> dict:
     """Run FAO-56 Dual Kc."""
     try:
-        from engine.hydroma.cpp_bridge import fao56_dual_kc
         # Would call C++ implementation
         pass
-    except:
-        pass
-    
+    except Exception:
+        logger.exception("FAO-56 Dual Kc failed")
+
     # Fallback
     return {
         "total_et_mm": 650.0,
         "total_irrigation_mm": 400.0,
         "final_depletion_mm": 0.0,
         "seasonal_et_breakdown": {"transpiration_mm": 480.0, "evaporation_mm": 170.0},
-        "status": "mock_completed"
+        "status": "mock_completed",
     }
 
 
-def run_gdd_phenology(inputs: Dict, backend: str) -> Dict:
+def run_gdd_phenology(inputs: dict, backend: str) -> dict:
     """Run GDD phenology."""
-    from engine.hydroma.phenology import run_phenology, CropPhenology
-    
+    from engine.hydroma.phenology import CropPhenology, run_phenology
+
     # Simplified - real implementation would use the actual climate data
     crop = inputs.get("crop", "wheat")
     pheno = CropPhenology(crop)
@@ -314,42 +327,36 @@ def run_gdd_phenology(inputs: Dict, backend: str) -> Dict:
         "stages": result.stages,
         "days_to_flowering": result.days_to_flowering,
         "days_to_maturity": result.days_to_maturity,
-        "status": "completed"
+        "status": "completed",
     }
 
 
-def run_van_genuchten(inputs: Dict, backend: str) -> Dict:
+def run_van_genuchten(inputs: dict, backend: str) -> dict:
     """Run van Genuchten water retention."""
     from engine.hydroma.soil.water_retention import van_genuchten
-    
+
     result = van_genuchten(
         pressure_head=inputs.get("pressure_head", -100.0),
         soil_type=inputs.get("soil_type", "loam"),
     )
-    return {
-        "theta": result,
-        "status": "completed"
-    }
+    return {"theta": result, "status": "completed"}
 
 
-def run_salinity(inputs: Dict, backend: str) -> Dict:
+def run_salinity(inputs: dict, backend: str) -> dict:
     """Run salinity/leaching requirement."""
     from engine.hydroma.soil.salinity import calculate_leaching_requirement
-    
+
     lr = calculate_leaching_requirement(
         ec_water=inputs.get("ec_water_ds_m", 2.0),
         target_ec=inputs.get("target_ec", 4.0),
     )
-    return {
-        "leaching_requirement": lr,
-        "status": "completed"
-    }
+    return {"leaching_requirement": lr, "status": "completed"}
 
 
-def run_theis(inputs: Dict, backend: str) -> Dict:
+def run_theis(inputs: dict, backend: str) -> dict:
     """Run Theis groundwater drawdown."""
     from engine.hydroma.models.groundwater_model import calculate_theis_drawdown
-    
+
     s = calculate_theis_drawdown(
         transmissivity_m2day=inputs.get("transmissivity_m2day", 100.0),
         storativity=inputs.get("storativity", 0.0001),
@@ -357,16 +364,13 @@ def run_theis(inputs: Dict, backend: str) -> Dict:
         distance_from_well_m=inputs.get("distance_from_well_m", 100.0),
         time_since_pumping_start_days=inputs.get("time_since_pumping_start_days", 1.0),
     )
-    return {
-        "drawdown_m": s,
-        "status": "completed"
-    }
+    return {"drawdown_m": s, "status": "completed"}
 
 
-def run_bucket_gw(inputs: Dict, backend: str) -> Dict:
+def run_bucket_gw(inputs: dict, backend: str) -> dict:
     """Run bucket groundwater model."""
     from engine.hydroma.groundwater.models import run_groundwater_bucket
-    
+
     result = run_groundwater_bucket(
         initial_storage_mm=inputs.get("initial_storage_mm", 1000.0),
         recharge_mm=inputs.get("recharge_mm", 5.0),
@@ -375,24 +379,26 @@ def run_bucket_gw(inputs: Dict, backend: str) -> Dict:
     return {
         "storage_series": result.storage_series,
         "discharge_series": result.discharge_series,
-        "status": "completed"
+        "status": "completed",
     }
 
 
-def run_rothc(inputs: Dict, backend: str) -> Dict:
+def run_rothc(inputs: dict, backend: str) -> dict:
     """Run RothC carbon model."""
-    from engine.hydroma.simulation.runners.rothc_runner import run_rothc, MonthClimate
-    
+    from engine.hydroma.simulation.runners.rothc_runner import MonthClimate, run_rothc
+
     monthly = []
     for i, mc in enumerate(inputs.get("monthly_climate", [])):
-        monthly.append(MonthClimate(
-            year=mc.get("year", 2024),
-            month=mc.get("month", (i % 12) + 1),
-            tmean_c=mc.get("temp_c", 15.0),
-            smd_mm=mc.get("smd_mm", 0.0),
-            max_smd_mm=mc.get("max_smd_mm", 100.0),
-        ))
-    
+        monthly.append(
+            MonthClimate(
+                year=mc.get("year", 2024),
+                month=mc.get("month", (i % 12) + 1),
+                tmean_c=mc.get("temp_c", 15.0),
+                smd_mm=mc.get("smd_mm", 0.0),
+                max_smd_mm=mc.get("max_smd_mm", 100.0),
+            )
+        )
+
     result = run_rothc(
         initial_soc_t_ha=inputs.get("initial_soc_t_ha", 100.0),
         clay_pct=inputs.get("clay_pct", 25.0),
@@ -412,14 +418,14 @@ def run_rothc(inputs: Dict, backend: str) -> Dict:
         "cumulative_co2_t_ha": result.get("co2_respired_t_ha", 0),
         "stabilized_fraction": result.get("stabilized_fraction", 0.22),
         "co2_fraction": result.get("co2_fraction", 0.78),
-        "status": "completed"
+        "status": "completed",
     }
 
 
-def run_ecsi(inputs: Dict, backend: str) -> Dict:
+def run_ecsi(inputs: dict, backend: str) -> dict:
     """Run ECSI carbon index."""
     from engine.hydroma.models.ecsi import ECSI
-    
+
     result = ECSI().compute(
         initial_soc_t_ha=inputs.get("initial_soc_t_ha", 100.0),
         carbon_input_t_ha=inputs.get("carbon_input_t_ha", 10.0),
@@ -435,14 +441,14 @@ def run_ecsi(inputs: Dict, backend: str) -> Dict:
         "total_decomposition_t_ha": result.get("total_decomposition_t_ha", 0),
         "stabilized_fraction": result.get("stabilized_fraction", 0),
         "co2e_t_ha": result.get("co2e_t_ha", 0),
-        "status": "completed"
+        "status": "completed",
     }
 
 
-def run_ipcc_calculator(inputs: Dict, backend: str) -> Dict:
+def run_ipcc_calculator(inputs: dict, backend: str) -> dict:
     """Run IPCC/Verra carbon calculator."""
     from engine.hydroma.carbon.calculator import CarbonCalculator
-    
+
     calc = CarbonCalculator()
     result = calc.estimate(
         project_type=inputs.get("project_type", "afforestation"),
@@ -453,11 +459,11 @@ def run_ipcc_calculator(inputs: Dict, backend: str) -> Dict:
     return {
         "total_credits": result.get("total_credits", 0),
         "annual_sequestration": result.get("annual_sequestration", 0),
-        "status": "completed"
+        "status": "completed",
     }
 
 
-def run_fao56_dual_kc_cpp(inputs: Dict, backend: str) -> Dict:
+def run_fao56_dual_kc_cpp(inputs: dict, backend: str) -> dict:
     """Run FAO-56 Dual Kc via C++."""
     # C++ implementation
     return run_fao56_dual_kc(inputs, backend)
@@ -467,7 +473,7 @@ def run_fao56_dual_kc_cpp(inputs: Dict, backend: str) -> Dict:
 # RUNNER REGISTRY
 # ============================================================================
 
-MODEL_RUNNERS: Dict[str, Dict[str, Callable]] = {
+MODEL_RUNNERS: dict[str, dict[str, Callable]] = {
     # Hydrology
     "richards_1d": {
         "python": run_richards_1d,
@@ -529,14 +535,6 @@ MODEL_RUNNERS: Dict[str, Dict[str, Callable]] = {
     },
     "ipcc_calculator": {
         "python": run_ipcc_calculator,
-    },
-    "fao56_dual_kc": {
-        "python": run_fao56_dual_kc,
-        "cpp": run_fao56_dual_kc_cpp,
-    },
-    # New models
-    "hargreaves": {
-        "python": run_hargreaves,
     },
     "hdvi": {
         "python": run_hdvi,
@@ -607,17 +605,21 @@ MODEL_RUNNERS: Dict[str, Dict[str, Callable]] = {
 def get_model_runner(model_id: str, backend: str) -> Callable:
     """Get model runner function for given model and backend."""
     if model_id not in MODEL_RUNNERS:
-        raise ValueError(f"No runner registered for model '{model_id}'. Available: {list(MODEL_RUNNERS.keys())}")
+        raise ValueError(
+            f"No runner registered for model '{model_id}'. Available: {list(MODEL_RUNNERS.keys())}"
+        )
 
     backend_runners = MODEL_RUNNERS[model_id]
     if backend not in backend_runners:
         available = list(backend_runners.keys())
-        raise ValueError(f"Backend '{backend}' not available for '{model_id}'. Available: {available}")
+        raise ValueError(
+            f"Backend '{backend}' not available for '{model_id}'. Available: {available}"
+        )
 
     return backend_runners[backend]
 
 
-def run_test_case(runner: Callable, test_case: Dict, backend: str) -> Dict:
+def run_test_case(runner: Callable, test_case: dict, backend: str) -> dict:
     """Run a single test case and compare with expected values."""
     start_time = time.perf_counter()
     result = {
@@ -654,13 +656,13 @@ def run_test_case(runner: Callable, test_case: Dict, backend: str) -> Dict:
 
     except Exception as e:
         result["status"] = "error"
-        result["error"] = f"{type(e).__name__}: {str(e)}"
+        result["error"] = f"{type(e).__name__}: {e!s}"
         result["traceback"] = traceback.format_exc()
 
     return result
 
 
-def compare_outputs(output: Any, expected: Dict, tolerances: Dict) -> List[Dict]:
+def compare_outputs(output: Any, expected: dict, tolerances: dict) -> list[dict]:
     """Compare output with expected values using tolerances."""
     differences = []
     rtol = tolerances.get("rtol", 1e-4)
@@ -668,11 +670,13 @@ def compare_outputs(output: Any, expected: Dict, tolerances: Dict) -> List[Dict]
 
     for key, exp_val in expected.items():
         if key not in output:
-            differences.append({
-                "key": key,
-                "type": "missing",
-                "message": f"Key '{key}' missing in output",
-            })
+            differences.append(
+                {
+                    "key": key,
+                    "type": "missing",
+                    "message": f"Key '{key}' missing in output",
+                }
+            )
             continue
 
         out_val = output[key]
@@ -681,77 +685,92 @@ def compare_outputs(output: Any, expected: Dict, tolerances: Dict) -> List[Dict]
         if isinstance(exp_val, (int, float)) and isinstance(out_val, (int, float)):
             diff = abs(out_val - exp_val)
             if diff > atol + rtol * abs(exp_val):
-                differences.append({
-                    "key": key,
-                    "type": "numeric",
-                    "expected": exp_val,
-                    "actual": out_val,
-                    "diff": diff,
-                    "rtol": rtol,
-                    "atol": atol,
-                })
+                differences.append(
+                    {
+                        "key": key,
+                        "type": "numeric",
+                        "expected": exp_val,
+                        "actual": out_val,
+                        "diff": diff,
+                        "rtol": rtol,
+                        "atol": atol,
+                    }
+                )
         elif isinstance(exp_val, dict) and isinstance(out_val, dict):
             # Recursive comparison
             sub_diffs = compare_outputs(out_val, exp_val, tolerances)
             differences.extend([{**d, "key": f"{key}.{d['key']}"} for d in sub_diffs])
         elif isinstance(exp_val, list) and isinstance(out_val, list):
             if len(exp_val) != len(out_val):
-                differences.append({
-                    "key": key,
-                    "type": "list_length",
-                    "expected_len": len(exp_val),
-                    "actual_len": len(out_val),
-                })
+                differences.append(
+                    {
+                        "key": key,
+                        "type": "list_length",
+                        "expected_len": len(exp_val),
+                        "actual_len": len(out_val),
+                    }
+                )
             else:
-                for i, (e, o) in enumerate(zip(exp_val, out_val)):
+                for i, (e, o) in enumerate(zip(exp_val, out_val, strict=False)):
                     if isinstance(e, (int, float)) and isinstance(o, (int, float)):
                         diff = abs(o - e)
                         if diff > atol + rtol * abs(e):
-                            differences.append({
+                            differences.append(
+                                {
+                                    "key": f"{key}[{i}]",
+                                    "type": "numeric",
+                                    "expected": e,
+                                    "actual": o,
+                                    "diff": diff,
+                                }
+                            )
+                    elif e != o:
+                        differences.append(
+                            {
                                 "key": f"{key}[{i}]",
-                                "type": "numeric",
+                                "type": "mismatch",
                                 "expected": e,
                                 "actual": o,
-                                "diff": diff,
-                            })
-                    elif e != o:
-                        differences.append({
-                            "key": f"{key}[{i}]",
-                            "type": "mismatch",
-                            "expected": e,
-                            "actual": o,
-                        })
+                            }
+                        )
         elif exp_val != out_val:
-            differences.append({
-                "key": key,
-                "type": "mismatch",
-                "expected": exp_val,
-                "actual": out_val,
-            })
+            differences.append(
+                {
+                    "key": key,
+                    "type": "mismatch",
+                    "expected": exp_val,
+                    "actual": out_val,
+                }
+            )
 
     return differences
 
 
-def load_test_file(test_file: str) -> Dict:
+def load_test_file(test_file: str) -> dict:
     import yaml
-    with open(test_file, 'r') as f:
+
+    with open(test_file) as f:
         return yaml.safe_load(f)
 
 
 def get_model_runner(model_id: str, backend: str):
     """Get model runner function for given model and backend."""
     if model_id not in MODEL_RUNNERS:
-        raise ValueError(f"No runner registered for model '{model_id}'. Available: {list(MODEL_RUNNERS.keys())}")
+        raise ValueError(
+            f"No runner registered for model '{model_id}'. Available: {list(MODEL_RUNNERS.keys())}"
+        )
 
     backend_runners = MODEL_RUNNERS[model_id]
     if backend not in backend_runners:
         available = list(backend_runners.keys())
-        raise ValueError(f"Backend '{backend}' not available for '{model_id}'. Available: {available}")
+        raise ValueError(
+            f"Backend '{backend}' not available for '{model_id}'. Available: {available}"
+        )
 
     return backend_runners[backend]
 
 
-def run_test_case(runner: Callable, test_case: Dict, backend: str) -> Dict:
+def run_test_case(runner: Callable, test_case: dict, backend: str) -> dict:
     """Run a single test case and compare with expected values."""
     start_time = time.perf_counter()
     result = {
@@ -788,13 +807,13 @@ def run_test_case(runner: Callable, test_case: Dict, backend: str) -> Dict:
 
     except Exception as e:
         result["status"] = "error"
-        result["error"] = f"{type(e).__name__}: {str(e)}"
+        result["error"] = f"{type(e).__name__}: {e!s}"
         result["traceback"] = traceback.format_exc()
 
     return result
 
 
-def compare_outputs(output: Any, expected: Dict, tolerances: Dict) -> List[Dict]:
+def compare_outputs(output: Any, expected: dict, tolerances: dict) -> list[dict]:
     """Compare output with expected values using tolerances."""
     differences = []
     rtol = tolerances.get("rtol", 1e-4)
@@ -802,11 +821,13 @@ def compare_outputs(output: Any, expected: Dict, tolerances: Dict) -> List[Dict]
 
     for key, exp_val in expected.items():
         if key not in output:
-            differences.append({
-                "key": key,
-                "type": "missing",
-                "message": f"Key '{key}' missing in output",
-            })
+            differences.append(
+                {
+                    "key": key,
+                    "type": "missing",
+                    "message": f"Key '{key}' missing in output",
+                }
+            )
             continue
 
         out_val = output[key]
@@ -815,68 +836,83 @@ def compare_outputs(output: Any, expected: Dict, tolerances: Dict) -> List[Dict]
         if isinstance(exp_val, (int, float)) and isinstance(out_val, (int, float)):
             diff = abs(out_val - exp_val)
             if diff > atol + rtol * abs(exp_val):
-                differences.append({
-                    "key": key,
-                    "type": "numeric",
-                    "expected": exp_val,
-                    "actual": out_val,
-                    "diff": diff,
-                    "rtol": rtol,
-                    "atol": atol,
-                })
+                differences.append(
+                    {
+                        "key": key,
+                        "type": "numeric",
+                        "expected": exp_val,
+                        "actual": out_val,
+                        "diff": diff,
+                        "rtol": rtol,
+                        "atol": atol,
+                    }
+                )
         elif isinstance(exp_val, dict) and isinstance(out_val, dict):
             # Recursive comparison
             sub_diffs = compare_outputs(out_val, exp_val, tolerances)
             differences.extend([{**d, "key": f"{key}.{d['key']}"} for d in sub_diffs])
         elif isinstance(exp_val, list) and isinstance(out_val, list):
             if len(exp_val) != len(out_val):
-                differences.append({
-                    "key": key,
-                    "type": "list_length",
-                    "expected_len": len(exp_val),
-                    "actual_len": len(out_val),
-                })
+                differences.append(
+                    {
+                        "key": key,
+                        "type": "list_length",
+                        "expected_len": len(exp_val),
+                        "actual_len": len(out_val),
+                    }
+                )
             else:
-                for i, (e, o) in enumerate(zip(exp_val, out_val)):
+                for i, (e, o) in enumerate(zip(exp_val, out_val, strict=False)):
                     if isinstance(e, (int, float)) and isinstance(o, (int, float)):
                         diff = abs(o - e)
                         if diff > atol + rtol * abs(e):
-                            differences.append({
+                            differences.append(
+                                {
+                                    "key": f"{key}[{i}]",
+                                    "type": "numeric",
+                                    "expected": e,
+                                    "actual": o,
+                                    "diff": diff,
+                                }
+                            )
+                    elif e != o:
+                        differences.append(
+                            {
                                 "key": f"{key}[{i}]",
-                                "type": "numeric",
+                                "type": "mismatch",
                                 "expected": e,
                                 "actual": o,
-                                "diff": diff,
-                            })
-                    elif e != o:
-                        differences.append({
-                            "key": f"{key}[{i}]",
-                            "type": "mismatch",
-                            "expected": e,
-                            "actual": o,
-                        })
+                            }
+                        )
         elif exp_val != out_val:
-            differences.append({
-                "key": key,
-                "type": "mismatch",
-                "expected": exp_val,
-                "actual": out_val,
-            })
+            differences.append(
+                {
+                    "key": key,
+                    "type": "mismatch",
+                    "expected": exp_val,
+                    "actual": out_val,
+                }
+            )
 
     return differences
 
 
-def load_test_file(test_file: str) -> Dict:
+def load_test_file(test_file: str) -> dict:
     import yaml
-    with open(test_file, 'r') as f:
+
+    with open(test_file) as f:
         return yaml.safe_load(f)
 
 
 def main():
     parser = argparse.ArgumentParser(description="Validate HyDroMa model against test cases")
     parser.add_argument("--model", required=True, help="Model ID (e.g., richards_1d)")
-    parser.add_argument("--backend", required=True, choices=["python", "numba", "cpp", "wasm", "auto"],
-                        help="Backend to test")
+    parser.add_argument(
+        "--backend",
+        required=True,
+        choices=["python", "numba", "cpp", "wasm", "auto"],
+        help="Backend to test",
+    )
     parser.add_argument("--test-file", required=True, help="Path to test case YAML file")
     parser.add_argument("--output", required=True, help="Output JSON file path")
     args = parser.parse_args()
@@ -886,7 +922,7 @@ def main():
 
     model_id = args.model
     test_cases = test_data.get("cases", [])
-    tolerances = test_data.get("tolerances", {})
+    test_data.get("tolerances", {})
 
     print(f"Model: {model_id}")
     print(f"Backend: {args.backend}")
@@ -940,7 +976,7 @@ def main():
     }
 
     # Write output
-    with open(args.output, 'w') as f:
+    with open(args.output, "w") as f:
         json.dump(summary, f, indent=2)
 
     print(f"\nSummary: {passed} passed, {failed} failed, {errors} errors, {skipped} skipped")

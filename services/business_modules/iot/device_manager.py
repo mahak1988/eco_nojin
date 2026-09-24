@@ -13,7 +13,7 @@ import logging
 import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from sqlalchemy import select
@@ -23,14 +23,14 @@ from database.hub import hub
 logger = logging.getLogger(__name__)
 
 
-class DeviceStatus(str, Enum):
+class DeviceStatus(StrEnum):
     ACTIVE = "active"
     INACTIVE = "inactive"
     ERROR = "error"
     PROVISIONING = "provisioning"
 
 
-class DeviceType(str, Enum):
+class DeviceType(StrEnum):
     SENSOR = "sensor"
     GATEWAY = "gateway"
     ACTUATOR = "actuator"

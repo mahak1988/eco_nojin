@@ -350,7 +350,7 @@ class LandscapeService:
         governance_result = await self.db.execute(
             select(LandscapeGovernanceMember).where(
                 LandscapeGovernanceMember.village_id == village_id,
-                LandscapeGovernanceMember.is_active == True,
+                LandscapeGovernanceMember.is_active,
             )
         )
         governance_members = governance_result.scalars().all()

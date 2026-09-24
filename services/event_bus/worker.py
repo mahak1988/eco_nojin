@@ -13,7 +13,6 @@ from .consumer import EventConsumer
 from .publisher import EventPublisher
 from .retry import RetryPolicy, retry_or_term
 
-
 logger = logging.getLogger(__name__)
 EventHandler = Callable[..., Awaitable[None] | None]
 
@@ -107,7 +106,7 @@ class EventWorker:
         *,
         handlers: Mapping[str, EventHandler] | None = None,
         **kwargs: Any,
-    ) -> "EventWorker":
+    ) -> EventWorker:
         config = EventBusConfig.from_settings(settings)
         return cls(
             config=config,
@@ -116,7 +115,7 @@ class EventWorker:
             **kwargs,
         )
 
-    def register(self, event_type: str, handler: EventHandler) -> "EventWorker":
+    def register(self, event_type: str, handler: EventHandler) -> EventWorker:
         """Register a handler for an exact event type."""
         self._handlers[event_type] = handler
         return self

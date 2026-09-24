@@ -15,13 +15,13 @@ import pytest
 
 from engine.hydroma.plant_neuro import (
     ElectricalSignalProcessor,
-    SignalFeatures,
-    VOCAnalyzer,
-    PlantNeuroEngine,
     PlantNeuroConfig,
-    VOCProfile,
-    StressLevel,
+    PlantNeuroEngine,
+    SignalFeatures,
     StressAssessment,
+    StressLevel,
+    VOCAnalyzer,
+    VOCProfile,
 )
 
 
@@ -500,7 +500,7 @@ class TestPlantNeuroIntegration:
 
     def test_signal_classification_matches(self):
         """Test that signal classification returns expected stress types."""
-        engine = PlantNeuroEngine()
+        PlantNeuroEngine()
         proc = ElectricalSignalProcessor(sampling_rate_hz=100.0)
 
         # High frequency AP burst (drought-like)
@@ -513,7 +513,7 @@ class TestPlantNeuroIntegration:
 
     def test_voc_classification_matches(self):
         """Test that VOC classification returns expected stress type."""
-        engine = PlantNeuroEngine()
+        PlantNeuroEngine()
         analyzer = VOCAnalyzer()
 
         # Heat stress VOC signature

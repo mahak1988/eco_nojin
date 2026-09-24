@@ -1,7 +1,5 @@
 """ارزیابی قابلیت اراضی."""
 
-from typing import Any
-
 from engine.land.models import CapabilityAssessment, LandCapabilityClass
 
 

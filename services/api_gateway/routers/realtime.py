@@ -1,16 +1,17 @@
 """Real-time events via Server-Sent Events (SSE) for live dashboard updates."""
 
-from fastapi import APIRouter, Depends, Request, HTTPException
-from fastapi.responses import StreamingResponse
-from sqlalchemy import select
-from sqlalchemy.orm import Session
-from typing import AsyncGenerator
 import asyncio
 import json
 import logging
+from collections.abc import AsyncGenerator
+
+from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import StreamingResponse
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from database.hub import hub
-from database.models import ModelRun, IntOutboxEvent
+from database.models import IntOutboxEvent, ModelRun
 from engine.hydroma.config.settings import get_settings
 
 logger = logging.getLogger("econojin.api.realtime")
@@ -111,7 +112,7 @@ async def event_generator(
 @router.get("/stream")
 async def sse_stream(
     request: Request,
-    user_key: str = None,
+    user_key: str | None = None,
     events: str = "model_runs,sync_status",
     interval: float = 2.0,
     db: Session = Depends(get_db),
@@ -132,12 +133,14 @@ async def sse_stream(
     # Generate user_key if not provided (for development)
     if not user_key:
         import uuid
+
         user_key = f"dev-{uuid.uuid4().hex[:16]}"
         logger.info("Auto-generated user_key for development", extra={"user_key": user_key})
 
     # Validate user_key format (skip for auto-generated dev keys)
     if not user_key.startswith("dev-"):
         import re
+
         if not re.match(r"^[A-Za-z0-9_-]{8,64}$", user_key):
             raise HTTPException(status_code=400, detail="Invalid user key format")
 

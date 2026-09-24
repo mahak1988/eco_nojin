@@ -6,7 +6,6 @@ from .publisher import EventPublisher, JetStreamPublisher, NATSJetStreamPublishe
 from .retry import RetryConfig, RetryPolicy
 from .worker import EventBusWorker, EventWorker, NATSJetStreamWorker
 
-
 __all__ = [
     "EventBusConfig",
     "EventBusWorker",

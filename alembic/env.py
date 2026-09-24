@@ -2,13 +2,9 @@
 
 from logging.config import fileConfig
 
-from sqlalchemy import create_engine, pool
-from sqlalchemy.engine import Connection
-
 from alembic import context
-
-from database.models import Base
 from database import models  # noqa: F401  (populates Base.metadata)
+from database.models import Base
 
 config = context.config
 
@@ -20,9 +16,10 @@ target_metadata = Base.metadata
 
 def _resolve_engine():
     """ساخت موتور از تنظیمات config (sqlalchemy.url)"""
+    import os
+
     from sqlalchemy import engine_from_config
     from sqlalchemy.pool import NullPool
-    import os
 
     # دریافت url از config یا متغیر محیطی
     url = config.get_main_option("sqlalchemy.url")

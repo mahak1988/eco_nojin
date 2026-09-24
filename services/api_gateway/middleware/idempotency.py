@@ -8,7 +8,6 @@ import logging
 import re
 import uuid
 from datetime import UTC, datetime, timedelta
-from typing import Any
 
 from fastapi import Request
 from sqlalchemy import select
@@ -46,11 +45,16 @@ IDEMPOTENT_EXACT_ROUTES = {
     "/api/v1/finance/payments/intent",
 }
 
-# Parameterized routes that require idempotency
+# Parameterized routes that require idempotency (6-step purchase flow)
 IDEMPOTENT_PARAM_ROUTES = [
-    "/api/v1/marketplace/orders/{order_id}/confirm",
     "/api/v1/marketplace/orders/{order_id}",
+    "/api/v1/marketplace/orders/{order_id}/confirm",
+    "/api/v1/marketplace/orders/{order_id}/dispute",
+    "/api/v1/marketplace/orders/{order_id}/settle",
+    "/api/v1/marketplace/orders/{order_id}/complete",
     "/api/v1/marketplace/payments/{payment_id}/confirm",
+    "/api/v1/marketplace/payments/{payment_id}/escrow/release",
+    "/api/v1/marketplace/payments/{payment_id}/escrow/refund",
 ]
 
 
@@ -77,8 +81,6 @@ class IdempotencyMiddleware(BaseHTTPMiddleware):
             return True
         # Check parameterized routes
         for route in IDEMPOTENT_PARAM_ROUTES:
-            import re
-
             pattern = route.replace("{", "(?P<").replace("}", ">[^/]+)")
             if re.match(f"^{pattern}$", path):
                 return True
@@ -98,20 +100,41 @@ class IdempotencyMiddleware(BaseHTTPMiddleware):
                 },
             )
 
-        # Validate key format (UUID v4)
-        try:
-            uuid.UUID(idempotency_key)
-        except ValueError:
-            return JSONResponse(
-                status_code=400,
-                content={
-                    "detail": "Invalid Idempotency-Key format. Must be UUID v4.",
-                    "code": "INVALID_IDEMPOTENCY_KEY",
-                },
-            )
+        # Validate key format: accept SHA256 hex (64 chars) or UUID v4
+        is_sha256 = len(idempotency_key) == 64 and all(
+            c in "0123456789abcdefABCDEF" for c in idempotency_key
+        )
+        if not is_sha256:
+            try:
+                uuid.UUID(idempotency_key)
+            except ValueError:
+                return JSONResponse(
+                    status_code=400,
+                    content={
+                        "detail": "Invalid Idempotency-Key format. Must be SHA256 hex or UUID v4.",
+                        "code": "INVALID_IDEMPOTENCY_KEY",
+                    },
+                )
 
         # Read request body for fingerprint
         body = await request.body()
+
+        # If SHA256 key, validate against formula: SHA256(clientSecret + path + body)
+        if is_sha256:
+            client_secret = request.headers.get("X-Client-Secret", "")
+            path = request.url.path
+            computed = hashlib.sha256(
+                (client_secret + path + body.decode("utf-8", errors="replace")).encode()
+            ).hexdigest()
+            if computed != idempotency_key:
+                return JSONResponse(
+                    status_code=400,
+                    content={
+                        "detail": "Idempotency-Key SHA256 mismatch",
+                        "code": "INVALID_IDEMPOTENCY_KEY",
+                    },
+                )
+
         request_hash = hashlib.sha256(body).hexdigest()
 
         # Get user_id from request state (set by auth middleware)
@@ -149,7 +172,7 @@ class IdempotencyMiddleware(BaseHTTPMiddleware):
                         },
                     )
 
-        # Create new idempotency key record
+            # Create new idempotency key record
 
             new_key = FinIdempotencyKey(
                 user_id=getattr(request.state, "user_id", "anonymous"),

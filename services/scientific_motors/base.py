@@ -5,12 +5,12 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
 
-class MotorType(str, Enum):
+class MotorType(StrEnum):
     """Supported scientific motor types."""
 
     SWAT_PLUS = "swat_plus"
@@ -21,7 +21,7 @@ class MotorType(str, Enum):
     BIOFERTILIZER = "biofertilizer"
 
 
-class MotorStatus(str, Enum):
+class MotorStatus(StrEnum):
     """Motor execution status."""
 
     PENDING = "pending"
@@ -129,7 +129,4 @@ class AbstractScientificMotor(ABC):
     def validate_inputs(self, inputs: dict[str, Any]) -> bool:
         """Validate that all required inputs are present."""
         requirements = self.get_input_requirements()
-        for req in requirements:
-            if req.required and req.name not in inputs:
-                return False
-        return True
+        return all(not (req.required and req.name not in inputs) for req in requirements)

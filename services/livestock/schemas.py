@@ -1,13 +1,13 @@
 """Pydantic schemas for Livestock"""
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field
 
 
-class AnimalType(str, Enum):
+class AnimalType(StrEnum):
     CATTLE = "cattle"
     SHEEP = "sheep"
     GOAT = "goat"
@@ -16,7 +16,7 @@ class AnimalType(str, Enum):
     DONKEY = "donkey"
 
 
-class ProductionSystem(str, Enum):
+class ProductionSystem(StrEnum):
     GRAZING = "grazing"
     MIXED = "mixed"
     INTENSIVE = "intensive"

@@ -31,7 +31,7 @@ class ModelVersionManager:
         description: str,
         parameters: dict[str, Any],
         performance_metrics: dict[str, float],
-        calibration_record_id: str = None,
+        calibration_record_id: str | None = None,
         promote_to_current: bool = False,
     ) -> str:
         """
@@ -90,7 +90,7 @@ class ModelVersionManager:
         try:
             current_version = (
                 db.query(ModelVersionDB)
-                .filter(ModelVersionDB.model_name == model_name, ModelVersionDB.is_current == True)
+                .filter(ModelVersionDB.model_name == model_name, ModelVersionDB.is_current)
                 .first()
             )
             return current_version

@@ -10,9 +10,10 @@ Adds missing Phase 3 tables:
 - stream_gauge_data
 """
 
-from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
+
+from alembic import op
 
 # revision identifiers
 revision = "phase3b_water_quality"

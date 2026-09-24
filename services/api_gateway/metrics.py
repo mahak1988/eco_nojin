@@ -5,10 +5,10 @@ Provides custom metrics for alerting: Redis, PostgreSQL, Sync, C++, Business KPI
 """
 
 import time
+from collections.abc import Callable
 from functools import wraps
-from typing import Any, Callable, Optional
 
-from prometheus_client import Counter, Gauge, Histogram, Summary
+from prometheus_client import Counter, Gauge, Histogram
 
 # ============================================================================
 # REDIS METRICS
@@ -258,16 +258,52 @@ http_request_duration_highr_seconds = Histogram(
     "http_request_duration_highr_seconds",
     "Latency with many buckets but no API specific labels. Made for more accurate percentile calculations.",
     buckets=[
-        0.001, 0.0025, 0.005, 0.0075, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035,
-        0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.125, 0.15, 0.175, 0.2,
-        0.25, 0.3, 0.35, 0.4, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0,
-        7.5, 10.0, 20.0, 30.0, 60.0
+        0.001,
+        0.0025,
+        0.005,
+        0.0075,
+        0.01,
+        0.015,
+        0.02,
+        0.025,
+        0.03,
+        0.035,
+        0.04,
+        0.05,
+        0.06,
+        0.07,
+        0.08,
+        0.09,
+        0.1,
+        0.125,
+        0.15,
+        0.175,
+        0.2,
+        0.25,
+        0.3,
+        0.35,
+        0.4,
+        0.5,
+        0.75,
+        1.0,
+        1.5,
+        2.0,
+        2.5,
+        3.0,
+        4.0,
+        5.0,
+        7.5,
+        10.0,
+        20.0,
+        30.0,
+        60.0,
     ],
 )
 
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
+
 
 def record_redis_operation(operation: str, duration: float, success: bool):
     """Record Redis operation metrics."""
@@ -283,7 +319,7 @@ def record_pg_query(query_type: str, duration: float, success: bool):
     pg_query_duration_seconds.labels(query_type=query_type).observe(duration)
 
 
-def record_sync_event(status: str, error_type: str = None):
+def record_sync_event(status: str, error_type: str | None = None):
     """Record sync event metrics."""
     if status == "success":
         sync_events_processed_total.labels(status="success").inc()
@@ -298,14 +334,16 @@ def record_cpp_call(function: str, duration: float, success: bool, fallback: boo
     status = "success" if success else "error"
     cpp_calls_total.labels(function=function, status=status).inc()
     cpp_call_duration_seconds.labels(function=function).observe(duration)
-    
+
     if fallback:
         cpp_fallback_calls_total.labels(function=function).inc()
-    
+
     # Update fallback rate
     try:
-        total = sum(cpp_calls_total.labels(function=function, status=s)._value.get() 
-                    for s in ["success", "error", "fallback"])
+        total = sum(
+            cpp_calls_total.labels(function=function, status=s)._value.get()
+            for s in ["success", "error", "fallback"]
+        )
         fallback_count = cpp_fallback_calls_total.labels(function=function)._value.get()
         if total > 0:
             cpp_fallback_rate.labels(function=function).set(fallback_count / total)
@@ -329,10 +367,10 @@ def record_realtime_message(event_type: str, latency: float):
     realtime_message_latency_seconds.observe(latency)
 
 
-def record_business_kpi(metric: str, value: float = 1, labels: dict = None):
+def record_business_kpi(metric: str, value: float = 1, labels: dict | None = None):
     """Record business KPI metrics."""
     label_dict = labels or {}
-    
+
     if metric == "user_registration":
         user_registrations_total.labels(**label_dict).inc(value)
     elif metric == "farm_creation":
@@ -355,8 +393,10 @@ def record_business_kpi(metric: str, value: float = 1, labels: dict = None):
 # DECORATORS FOR EASY INSTRUMENTATION
 # ============================================================================
 
+
 def instrument_redis(operation: str):
     """Decorator to instrument Redis operations."""
+
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         async def async_wrapper(*args, **kwargs):
@@ -365,9 +405,10 @@ def instrument_redis(operation: str):
                 result = await func(*args, **kwargs)
                 record_redis_operation(operation, time.perf_counter() - start, True)
                 return result
-            except Exception as e:
+            except Exception:
                 record_redis_operation(operation, time.perf_counter() - start, False)
                 raise
+
         @wraps(func)
         def sync_wrapper(*args, **kwargs):
             start = time.perf_counter()
@@ -375,16 +416,20 @@ def instrument_redis(operation: str):
                 result = func(*args, **kwargs)
                 record_redis_operation(operation, time.perf_counter() - start, True)
                 return result
-            except Exception as e:
+            except Exception:
                 record_redis_operation(operation, time.perf_counter() - start, False)
                 raise
+
         import asyncio
+
         return async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper
+
     return decorator
 
 
 def instrument_pg(query_type: str):
     """Decorator to instrument PostgreSQL queries."""
+
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         async def async_wrapper(*args, **kwargs):
@@ -393,9 +438,10 @@ def instrument_pg(query_type: str):
                 result = await func(*args, **kwargs)
                 record_pg_query(query_type, time.perf_counter() - start, True)
                 return result
-            except Exception as e:
+            except Exception:
                 record_pg_query(query_type, time.perf_counter() - start, False)
                 raise
+
         @wraps(func)
         def sync_wrapper(*args, **kwargs):
             start = time.perf_counter()
@@ -403,16 +449,20 @@ def instrument_pg(query_type: str):
                 result = func(*args, **kwargs)
                 record_pg_query(query_type, time.perf_counter() - start, True)
                 return result
-            except Exception as e:
+            except Exception:
                 record_pg_query(query_type, time.perf_counter() - start, False)
                 raise
+
         import asyncio
+
         return async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper
+
     return decorator
 
 
 def instrument_cpp(function: str):
     """Decorator to instrument C++ core calls."""
+
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         async def async_wrapper(*args, **kwargs):
@@ -421,9 +471,10 @@ def instrument_cpp(function: str):
                 result = await func(*args, **kwargs)
                 record_cpp_call(function, time.perf_counter() - start, True)
                 return result
-            except Exception as e:
+            except Exception:
                 record_cpp_call(function, time.perf_counter() - start, False)
                 raise
+
         @wraps(func)
         def sync_wrapper(*args, **kwargs):
             start = time.perf_counter()
@@ -431,16 +482,20 @@ def instrument_cpp(function: str):
                 result = func(*args, **kwargs)
                 record_cpp_call(function, time.perf_counter() - start, True)
                 return result
-            except Exception as e:
+            except Exception:
                 record_cpp_call(function, time.perf_counter() - start, False)
                 raise
+
         import asyncio
+
         return async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper
+
     return decorator
 
 
 def instrument_realtime(event_type: str):
     """Decorator to instrument realtime events."""
+
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         async def async_wrapper(*args, **kwargs):
@@ -452,7 +507,9 @@ def instrument_realtime(event_type: str):
             except Exception as e:
                 realtime_stream_errors_total.labels(error_type=type(e).__name__).inc()
                 raise
+
         return async_wrapper
+
     return decorator
 
 
@@ -460,13 +517,14 @@ def instrument_realtime(event_type: str):
 # CONTEXT MANAGERS
 # ============================================================================
 
+
 class track_realtime_connection:
     """Context manager to track realtime connection lifecycle."""
-    
+
     def __enter__(self):
         record_realtime_connection(True)
         return self
-    
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         record_realtime_connection(False)
         return False
@@ -474,16 +532,16 @@ class track_realtime_connection:
 
 class track_cpp_call:
     """Context manager to track C++ core call."""
-    
+
     def __init__(self, function: str, fallback: bool = False):
         self.function = function
         self.fallback = fallback
         self.start = None
-    
+
     def __enter__(self):
         self.start = time.perf_counter()
         return self
-    
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         duration = time.perf_counter() - self.start
         success = exc_type is None
@@ -496,35 +554,63 @@ class track_cpp_call:
 # ============================================================================
 
 __all__ = [
-    # Redis
-    "redis_operations_total", "redis_operation_duration_seconds",
-    "redis_memory_used_bytes", "redis_connected",
-    "redis_cache_hits_total", "redis_cache_misses_total",
-    "record_redis_operation", "instrument_redis",
-    # PostgreSQL
-    "pg_queries_total", "pg_query_duration_seconds",
-    "pg_connections_active", "pg_connections_idle", "pg_connections_max",
-    "pg_replication_lag_bytes", "record_pg_query", "instrument_pg",
-    # Sync
-    "sync_pending_events", "sync_events_processed_total",
-    "sync_events_failed_total", "sync_duration_seconds",
-    "sync_supabase_connected", "sync_supabase_latency_seconds",
-    "record_sync_event",
+    "active_users_daily",
+    "active_users_monthly",
+    "carbon_credits_issued_total",
+    "carbon_credits_retired_total",
+    "cpp_call_duration_seconds",
+    "cpp_calls_total",
     # C++
-    "cpp_core_available", "cpp_calls_total", "cpp_fallback_calls_total",
-    "cpp_call_duration_seconds", "cpp_fallback_rate",
-    "record_cpp_call", "instrument_cpp", "track_cpp_call",
-    # Realtime
-    "realtime_active_connections", "realtime_connections_total",
-    "realtime_stream_errors_total", "realtime_message_latency_seconds",
-    "realtime_messages_sent_total", "record_realtime_connection",
-    "record_realtime_message", "instrument_realtime", "track_realtime_connection",
-    # Business
-    "user_registrations_total", "active_users_daily", "active_users_monthly",
-    "farm_creations_total", "carbon_credits_issued_total", "carbon_credits_retired_total",
-    "marketplace_orders_total", "marketplace_gmv_total",
-    "simulation_runs_total", "mrv_reports_submitted_total",
-    "record_business_kpi",
+    "cpp_core_available",
+    "cpp_fallback_calls_total",
+    "cpp_fallback_rate",
+    "farm_creations_total",
     # HTTP
     "http_request_duration_highr_seconds",
+    "instrument_cpp",
+    "instrument_pg",
+    "instrument_realtime",
+    "instrument_redis",
+    "marketplace_gmv_total",
+    "marketplace_orders_total",
+    "mrv_reports_submitted_total",
+    "pg_connections_active",
+    "pg_connections_idle",
+    "pg_connections_max",
+    # PostgreSQL
+    "pg_queries_total",
+    "pg_query_duration_seconds",
+    "pg_replication_lag_bytes",
+    # Realtime
+    "realtime_active_connections",
+    "realtime_connections_total",
+    "realtime_message_latency_seconds",
+    "realtime_messages_sent_total",
+    "realtime_stream_errors_total",
+    "record_business_kpi",
+    "record_cpp_call",
+    "record_pg_query",
+    "record_realtime_connection",
+    "record_realtime_message",
+    "record_redis_operation",
+    "record_sync_event",
+    "redis_cache_hits_total",
+    "redis_cache_misses_total",
+    "redis_connected",
+    "redis_memory_used_bytes",
+    "redis_operation_duration_seconds",
+    # Redis
+    "redis_operations_total",
+    "simulation_runs_total",
+    "sync_duration_seconds",
+    "sync_events_failed_total",
+    "sync_events_processed_total",
+    # Sync
+    "sync_pending_events",
+    "sync_supabase_connected",
+    "sync_supabase_latency_seconds",
+    "track_cpp_call",
+    "track_realtime_connection",
+    # Business
+    "user_registrations_total",
 ]

@@ -1,9 +1,6 @@
 """Phase 1 security tests - C1: /auth/seed-demo hard guard."""
 
-import uuid
-
 import pytest
-
 
 DEMO_EMAIL = "farmer@test.com"
 PASSWORD = "SeedGuardPass123"  # nosec (مقدار ساختگی تست)

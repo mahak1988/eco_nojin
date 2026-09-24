@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ============================================================================
 # Hydroma Soil Degradation & Sustainability Model - Phase 3
 # Algorithms: H09 SOC-dynamic AWC | H10 Erosion Root Decay
@@ -6,9 +5,9 @@
 #             H13 Fertility Index | H14 Subsidence Risk
 # References: IPCC AR6 WG2 (2022); FAO GSP (2021); GLASOD (1991)
 # ============================================================================
+import contextlib
 import math
 from dataclasses import dataclass, field
-from typing import Dict, Optional
 
 __version__ = "1.0.0"
 
@@ -26,7 +25,7 @@ class SoilDegradationConfig:
     min_root_depth_cm: float = 10.0
 
     # H11: شوری
-    salinity_thresholds: Dict = field(
+    salinity_thresholds: dict = field(
         default_factory=lambda: {
             "non_saline": 2.0,
             "slightly_saline": 4.0,
@@ -39,7 +38,7 @@ class SoilDegradationConfig:
     max_compaction: float = 0.8
 
     # H13: حاصلخیزی
-    fertility_weights: Dict = field(
+    fertility_weights: dict = field(
         default_factory=lambda: {
             "soc": 0.25,
             "n": 0.15,
@@ -49,12 +48,12 @@ class SoilDegradationConfig:
             "bio": 0.15,
         }
     )
-    fertility_refs: Dict = field(
+    fertility_refs: dict = field(
         default_factory=lambda: {"soc_pct": 3.0, "n_pct": 0.3, "p_ppm": 50.0, "k_ppm": 300.0}
     )
 
     # H14: فرونشست
-    soil_sensitivity: Dict = field(
+    soil_sensitivity: dict = field(
         default_factory=lambda: {"clay": 1.0, "silt": 0.8, "loam": 0.5, "sand": 0.2, "gravel": 0.1}
     )
     subsidence_critical_mm_yr: float = 30.0
@@ -65,7 +64,7 @@ class SoilDegradationConfig:
 # ============================================================================
 class SoilDegradationModel:
     # ------------------------------------------------------------------ init
-    def __init__(self, config: Optional[SoilDegradationConfig] = None):
+    def __init__(self, config: SoilDegradationConfig | None = None):
         self.cfg = config or SoilDegradationConfig()
 
     # ------------------------------------------------------------------- H09
@@ -73,8 +72,8 @@ class SoilDegradationModel:
         self,
         awc_base_mm_m: float,
         soc_current_pct: float,
-        soc_reference_pct: Optional[float] = None,
-    ) -> Dict:
+        soc_reference_pct: float | None = None,
+    ) -> dict:
         """
         ظرفیت نگهداری آب پویا بر اساس کربن آلی خاک
         فرمول: AWC(t) = AWC0 x (1 + 0.5 x dSOC/1%)
@@ -111,7 +110,7 @@ class SoilDegradationModel:
         erosion_rate_t_ha_yr: float,
         years: int,
         soil_bulk_density_t_m3: float = 1.3,
-    ) -> Dict:
+    ) -> dict:
         """
         کاهش عمق مؤثر ریشه بر اثر فرسایش
         فرمول: RD(t) = RD0 x exp(-erosion_depth_rate x t / RD0)
@@ -161,7 +160,7 @@ class SoilDegradationModel:
         trend_rate_ds_m_per_yr: float,
         years: int,
         irrigation_quality_penalty: float = 0.0,
-    ) -> Dict:
+    ) -> dict:
         """
         پیش‌بینی روند شوری ثانویه خاک
         فرمول: EC(t) = EC0 + trend x years + irrigation_penalty
@@ -207,7 +206,7 @@ class SoilDegradationModel:
         return recs.get(classification, "پایش")
 
     # ------------------------------------------------------------------- H12
-    def h12_compaction_adjusted_ksat(self, ksat_mm_h: float, compaction_level: float = 0.0) -> Dict:
+    def h12_compaction_adjusted_ksat(self, ksat_mm_h: float, compaction_level: float = 0.0) -> dict:
         """
         تعدیل هدایت هیدرولیکی اشباع بر اثر تراکم
         فرمول: Ksat_adj = Ksat x (1 - compaction)
@@ -243,7 +242,7 @@ class SoilDegradationModel:
         k_available_ppm: float,
         ph: float,
         biology_index: float = 0.5,
-    ) -> Dict:
+    ) -> dict:
         """
         شاخص جامع حاصلخیزی خاک (0 تا 1)
         فرمول: Fertility = Sum(w_i x score_i)
@@ -256,10 +255,7 @@ class SoilDegradationModel:
         p_score = min(1.0, max(0.0, p_available_ppm / refs["p_ppm"]))
         k_score = min(1.0, max(0.0, k_available_ppm / refs["k_ppm"]))
 
-        if 6.0 <= ph <= 8.0:
-            ph_score = 1.0
-        else:
-            ph_score = max(0.0, 1.0 - abs(ph - 7.0) / 3.0)
+        ph_score = 1.0 if 6.0 <= ph <= 8.0 else max(0.0, 1.0 - abs(ph - 7.0) / 3.0)
 
         bio_score = max(0.0, min(1.0, biology_index))
 
@@ -320,7 +316,7 @@ class SoilDegradationModel:
         groundwater_extraction_mm_yr: float,
         aquifer_thickness_m: float,
         soil_type: str = "clay",
-    ) -> Dict:
+    ) -> dict:
         """
         ارزیابی ریسک فرونشست زمین
         فرمول: Rate = (Extraction/1000) x Soil_Sensitivity x (50/Aquifer_Thickness)
@@ -365,7 +361,7 @@ class SoilDegradationModel:
         irrigation_water_quality: float,
         leaching_fraction: float,
         years: int,
-    ) -> Dict:
+    ) -> dict:
         """
         پیش‌بینی روند شوری-سدیک با در نظر گرفتن کیفیت آب آبیاری
 
@@ -395,10 +391,7 @@ class SoilDegradationModel:
         else:
             ec_class = "شوری بسیار شدید"
 
-        if sar_projected < 13:
-            sar_class = "غیرسدیک"
-        else:
-            sar_class = "سدیک"
+        sar_class = "غیرسدیک" if sar_projected < 13 else "سدیک"
 
         return {
             "ec_initial_ds_m": round(ec_initial, 2),
@@ -435,7 +428,7 @@ class SoilDegradationModel:
         ksat_mm_h: float,
         groundwater_extraction_mm_yr: float,
         soil_type: str = "loam",
-    ) -> Dict:
+    ) -> dict:
         """تولید گزارش جامع تخریب خاک با ترکیب هر شش الگوریتم"""
 
         report = {
@@ -456,7 +449,7 @@ class SoilDegradationModel:
 
         return report
 
-    def _calculate_sustainability_score(self, report: Dict) -> Dict:
+    def _calculate_sustainability_score(self, report: dict) -> dict:
         """محاسبه امتیاز کلی پایداری خاک (0 تا 100)"""
         scores = {}
 
@@ -502,7 +495,7 @@ class SoilDegradationModel:
         }
 
     # ------------------------------------------------- تصحیح خروجی مدل‌ها
-    def apply_soil_corrections(self, result, soil_params: Dict) -> object:
+    def apply_soil_corrections(self, result, soil_params: dict) -> object:
         """
         اعمال تصحیحات خاک به خروجی مدل‌های رشد (مثل AquaCrop)
         """
@@ -530,12 +523,10 @@ class SoilDegradationModel:
         if hasattr(result, "biomass_t_ha"):
             result.biomass_t_ha = round(result.biomass_t_ha * correction_factor, 2)
 
-        try:
-            result.warnings = list(result.warnings) + [
-                "Soil correction x%.2f (EC=%.1f, fertility=%.2f, compaction=%.2f)"
-                % (correction_factor, ec, fertility, compaction)
+        with contextlib.suppress(Exception):
+            result.warnings = [
+                *list(result.warnings),
+                f"Soil correction x{correction_factor:.2f} (EC={ec:.1f}, fertility={fertility:.2f}, compaction={compaction:.2f})",
             ]
-        except Exception:
-            pass
 
         return result

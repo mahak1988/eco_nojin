@@ -3,8 +3,6 @@ Comprehensive Test Suite for Nojin Biofertilizer
 50+ tests covering all system components
 """
 
-import os
-
 import json
 import sys
 from pathlib import Path

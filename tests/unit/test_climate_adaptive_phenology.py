@@ -47,7 +47,9 @@ def main():
         forecast_rain=2.0,
         winter_temps=temps,
     )
-    assert "planting" in adv and "flash_drought" in adv and "chilling" in adv
+    assert "planting" in adv
+    assert "flash_drought" in adv
+    assert "chilling" in adv
 
     logger.info("ALL CAP TESTS PASSED (H05,H06,H07,H24)")
 

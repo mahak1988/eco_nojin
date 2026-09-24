@@ -8,8 +8,9 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from engine.data_connector import connector
 import structlog
+
+from engine.data_connector import connector
 
 logger = structlog.get_logger()
 
@@ -35,7 +36,7 @@ def test_get_climate_data():
     try:
         data = connector.get_climate_data(year=2020)
         assert data is not None
-        logger.info(f"PASS: Climate data retrieved")
+        logger.info("PASS: Climate data retrieved")
     except Exception as e:
         logger.info(f"SKIP: Climate data ({e})")
 

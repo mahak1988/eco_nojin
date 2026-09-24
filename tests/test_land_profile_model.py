@@ -1,12 +1,14 @@
 import os
+
 import structlog
 
 logger = structlog.get_logger()
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database.models import User, LandProfile, Base  # _uuid از اینجا وارد می‌شود
+
 from database.hub import hub
+from database.models import Base, LandProfile, User  # _uuid از اینجا وارد می‌شود
 
 
 # Compatibility: get_db via hub

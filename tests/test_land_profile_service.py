@@ -1,14 +1,15 @@
 import os
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from pydantic import ValidationError
-from database.models import User, LandProfile, Base
+
+from database.models import Base, User
 from services.land_profile_service import LandProfileCreate, create_land_profile
 
 
 # ایجاد یک دیتابیس موقت در حافظه برای تست
-@pytest.fixture(scope="function")
+@pytest.fixture
 def test_db_session():
     engine = create_engine("sqlite:///:memory:")
     Base.metadata.create_all(bind=engine)

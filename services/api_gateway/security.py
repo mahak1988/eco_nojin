@@ -9,9 +9,8 @@ Provides:
 - RequestIDMiddleware: propagate/assign X-Request-ID + correlation context
 """
 
-import hashlib
+import contextlib
 import hmac
-import logging
 import os
 import time
 import uuid
@@ -71,10 +70,8 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             import ipaddress
 
             for proxy in self.trusted_proxies:
-                try:
+                with contextlib.suppress(ValueError):
                     self._trusted_proxy_networks.append(ipaddress.ip_network(proxy, strict=False))
-                except ValueError:
-                    pass
 
     def _client_key(self, request: Request) -> str:
         client_host = request.client.host if request.client else "unknown"
@@ -214,9 +211,9 @@ class APIKeyGuardMiddleware(BaseHTTPMiddleware):
 
 
 __all__ = [
+    "APIKeyGuardMiddleware",
     "HTTPSRedirectMiddleware",
     "RateLimitMiddleware",
     "RequestIDMiddleware",
     "SecurityHeadersMiddleware",
-    "APIKeyGuardMiddleware",
 ]

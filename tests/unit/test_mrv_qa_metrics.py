@@ -42,7 +42,8 @@ class TestQaQcBoundaries:
         assert report.qa_status == "rejected"
         assert "Unknown" in report.message
         assert not is_usable("rejected")
-        assert is_usable("ok") and is_usable("suspect")
+        assert is_usable("ok")
+        assert is_usable("suspect")
 
 
 # ============================================================================

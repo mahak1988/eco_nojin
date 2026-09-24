@@ -1,9 +1,9 @@
 """API endpoints for Blockchain Ledger - EcoCoin Protocol"""
 
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field
 from decimal import Decimal
-from typing import Optional, List
+
+from fastapi import APIRouter
+from pydantic import BaseModel, Field
 
 from database.hub import hub
 
@@ -13,9 +13,6 @@ def get_db():
     with hub.get_session() as session:
         yield session
 
-
-from database.models import User
-from services.api_gateway.auth import require_user
 
 router = APIRouter(prefix="/api/v1/blockchain", tags=["Blockchain Ledger"])
 
@@ -39,7 +36,7 @@ class EcoCoinEarnRequest(BaseModel):
         pattern=r"^(tree_planting|soil_restoration|water_conservation|biodiversity|cleanup|regenerative_farming|carbon_verification|education|community|satellite_verification|mrv_submission)$",
     )
     quantity: Decimal = Field(default=Decimal("1"), gt=0)
-    reference_id: Optional[str] = None
+    reference_id: str | None = None
 
 
 class EcoCoinEarnResponse(BaseModel):
@@ -394,6 +391,5 @@ async def blockchain_info():
             "EcoTreasury": "0x...",
             "EcosystemFund": "0x...",
             "MintController": "0x...",
-            "PhaseGate": "0x...",
         },
     }

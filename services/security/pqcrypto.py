@@ -113,4 +113,4 @@ def _x25519_shared(priv: bytes, pub: bytes) -> bytes:
 
 
 def _xor_bytes(a: bytes, b: bytes) -> bytes:
-    return bytes(x ^ y for x, y in zip(a, b))
+    return bytes(x ^ y for x, y in zip(a, b, strict=False))

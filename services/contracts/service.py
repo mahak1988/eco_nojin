@@ -1,23 +1,14 @@
 """Contract Registry Service - Core business logic for API contract management."""
 
-import uuid
-import json
-from datetime import datetime, UTC
-from typing import Optional, List, Dict, Any, Set
-from difflib import unified_diff
+from datetime import UTC, datetime
+from typing import Any
 
-from sqlalchemy import select, func, and_, or_, desc
+from sqlalchemy import and_, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
-from database.hub import hub
-from services.contracts.models import ContractVersionModel, ContractTestRun
+from services.contracts.models import ContractTestRun, ContractVersionModel
 from services.contracts.schemas import (
-    ContractCreate,
     ContractResponse,
-    ContractDiff,
-    CompatibilityResult,
-    CompatibilityLevel,
 )
 
 
@@ -46,7 +37,6 @@ class ContractRegistry:
             raise ValueError(f"Contract version {data.service_name} v{data.version} already exists")
 
         # If supersedes specified, verify it exists
-        supersedes_id = None
         if data.supersedes:
             result = await self.db.execute(
                 select(ContractVersionModel).where(ContractVersionModel.id == data.supersedes)
@@ -54,7 +44,6 @@ class ContractRegistry:
             superseded = result.scalar_one_or_none()
             if not superseded:
                 raise ValueError(f"Superseded contract {data.supersedes} not found")
-            supersedes_id = data.supersedes
 
         record = ContractVersionModel(
             service_name=data.service_name,
@@ -73,7 +62,7 @@ class ContractRegistry:
 
         return ContractResponse.model_validate(record)
 
-    async def get_contract(self, service_name: str, version: str) -> Optional[Dict[str, Any]]:
+    async def get_contract(self, service_name: str, version: str) -> dict[str, Any] | None:
         """Get a contract version by service and version."""
         result = await self.db.execute(
             select(ContractVersionModel).where(
@@ -101,14 +90,14 @@ class ContractRegistry:
             "supersedes_id": str(record.supersedes_id) if record.supersedes_id else None,
         }
 
-    async def get_active_contract(self, service_name: str) -> Optional[Dict[str, Any]]:
+    async def get_active_contract(self, service_name: str) -> dict[str, Any] | None:
         """Get the active contract version for a service."""
         result = await self.db.execute(
             select(ContractVersionModel)
             .where(
                 and_(
                     ContractVersionModel.service_name == service_name,
-                    ContractVersionModel.is_active == True,
+                    ContractVersionModel.is_active,
                 )
             )
             .order_by(ContractVersionModel.created_at.desc())
@@ -130,11 +119,11 @@ class ContractRegistry:
 
     async def list_contracts(
         self,
-        service_name: Optional[str] = None,
-        is_active: Optional[bool] = None,
+        service_name: str | None = None,
+        is_active: bool | None = None,
         page: int = 1,
         page_size: int = 20,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """List contract versions with filters."""
         query = select(ContractVersionModel)
 
@@ -147,7 +136,7 @@ class ContractRegistry:
         query = query.offset((page - 1) * 20).limit(page_size)
 
         result = await self.db.execute(query)
-        records = result.scalars().all()
+        result.scalars().all()
 
         return [
             {
@@ -191,7 +180,7 @@ class ContractRegistry:
 
     async def check_compatibility(
         self, service_name: str, from_version: str, to_version: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Check compatibility between two contract versions."""
         from_spec = await self.get_contract(service_name, from_version)
         to_spec = await self.get_contract(service_name, to_version)
@@ -201,7 +190,7 @@ class ContractRegistry:
 
         # Compare OpenAPI specs
         diff = self._diff_openapi_specs(from_spec["spec"], to_spec["spec"])
-        compatibility = self._determine_compatibility(diff)
+        self._determine_compatibility(diff)
 
         return {
             "from_version": from_version,
@@ -214,18 +203,18 @@ class ContractRegistry:
         }
 
     def _diff_openapi_specs(
-        self, old_spec: Dict[str, Any], new_spec: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, old_spec: dict[str, Any], new_spec: dict[str, Any]
+    ) -> dict[str, Any]:
         """Compare two OpenAPI specs and identify changes."""
         old_paths = old_spec.get("paths", {})
         new_paths = new_spec.get("paths", {})
 
-        old_endpoints = set(
+        old_endpoints = {
             f"{method.upper()} {path}" for path, methods in old_paths.items() for method in methods
-        )
-        new_endpoints = set(
+        }
+        new_endpoints = {
             f"{method.upper()} {path}" for path, methods in new_paths.items() for method in methods
-        )
+        }
 
         added_endpoints = new_endpoints - old_endpoints
         removed_endpoints = old_endpoints - new_endpoints
@@ -286,10 +275,7 @@ class ContractRegistry:
 
         # Determine overall compatibility
         if not breaking_changes:
-            if added_endpoints or added_schemas:
-                compatibility = "forward"
-            else:
-                compatibility = "full"
+            compatibility = "forward" if added_endpoints or added_schemas else "full"
         elif any(c["type"] == "endpoint_removed" for c in breaking_changes):
             compatibility = "none"
         else:
@@ -307,7 +293,7 @@ class ContractRegistry:
             "compatibility": compatibility,
         }
 
-    def _determine_compatibility(self, diff: Dict[str, Any]) -> str:
+    def _determine_compatibility(self, diff: dict[str, Any]) -> str:
         """Determine overall compatibility level."""
         return diff["compatibility"]
 
@@ -316,10 +302,10 @@ class ContractRegistry:
     # =========================================================================
 
     async def record_test_run(
-        self, contract_version_id: str, test_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, contract_version_id: str, test_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Record a contract test run."""
-        run = ContractTestRun(
+        ContractTestRun(
             contract_version_id=contract_version_id,
             test_type=test_data.get("test_type", "schemathesis"),
             test_tool=test_data.get("test_tool"),
@@ -355,9 +341,8 @@ class ContractRegistry:
 
     async def get_test_history(
         self, contract_version_id: str, page: int = 1, page_size: int = 20
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Get test run history for a contract version."""
-        from sqlalchemy import func
 
         query = (
             select(ContractTestRun)
@@ -368,7 +353,7 @@ class ContractRegistry:
         query = query.offset((page - 1) * 20).limit(page_size)
 
         result = await self.db.execute(query)
-        runs = result.scalars().all()
+        result.scalars().all()
 
         return [
             {

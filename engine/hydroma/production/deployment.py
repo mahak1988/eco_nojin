@@ -18,12 +18,11 @@ Provides:
 from __future__ import annotations
 
 import logging
-import json
-import yaml
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
-from string import Template
+from typing import Any
+
+import yaml
 
 logger = logging.getLogger(__name__)
 
@@ -31,41 +30,48 @@ logger = logging.getLogger(__name__)
 @dataclass
 class DeploymentConfig:
     """Configuration for Kubernetes deployment."""
+
     namespace: str = "eco-nojin"
     replicas: int = 3
     image: str = "ghcr.io/eco-nojin/api-gateway:latest"
     image_pull_policy: str = "Always"
-    resources: Dict[str, str] = field(default_factory=lambda: {
-        "requests": {"cpu": "500m", "memory": "1Gi"},
-        "limits": {"cpu": "2000m", "memory": "4Gi"},
-    })
-    env_vars: Dict[str, str] = field(default_factory=dict)
-    secrets: List[str] = field(default_factory=list)
-    config_maps: List[str] = field(default_factory=list)
-    ports: List[int] = field(default_factory=lambda: [8000])
+    resources: dict[str, str] = field(
+        default_factory=lambda: {
+            "requests": {"cpu": "500m", "memory": "1Gi"},
+            "limits": {"cpu": "2000m", "memory": "4Gi"},
+        }
+    )
+    env_vars: dict[str, str] = field(default_factory=dict)
+    secrets: list[str] = field(default_factory=list)
+    config_maps: list[str] = field(default_factory=list)
+    ports: list[int] = field(default_factory=lambda: [8000])
     health_check_path: str = "/health/live"
     readiness_path: str = "/health/ready"
-    liveness_probe: Dict = field(default_factory=lambda: {
-        "initialDelaySeconds": 30,
-        "periodSeconds": 10,
-        "timeoutSeconds": 5,
-        "failureThreshold": 3,
-    })
-    readiness_probe: Dict = field(default_factory=lambda: {
-        "initialDelaySeconds": 10,
-        "periodSeconds": 5,
-        "timeoutSeconds": 3,
-        "failureThreshold": 3,
-    })
+    liveness_probe: dict = field(
+        default_factory=lambda: {
+            "initialDelaySeconds": 30,
+            "periodSeconds": 10,
+            "timeoutSeconds": 5,
+            "failureThreshold": 3,
+        }
+    )
+    readiness_probe: dict = field(
+        default_factory=lambda: {
+            "initialDelaySeconds": 10,
+            "periodSeconds": 5,
+            "timeoutSeconds": 3,
+            "failureThreshold": 3,
+        }
+    )
 
 
 class KubernetesManifestGenerator:
     """Generate Kubernetes manifests for Eco Nojin services."""
-    
+
     def __init__(self, config: DeploymentConfig):
         self.config = config
-    
-    def generate_deployment(self) -> Dict[str, Any]:
+
+    def generate_deployment(self) -> dict[str, Any]:
         """Generate Deployment manifest."""
         return {
             "apiVersion": "apps/v1",
@@ -99,33 +105,37 @@ class KubernetesManifestGenerator:
                         },
                     },
                     "spec": {
-                        "containers": [{
-                            "name": "api-gateway",
-                            "image": self.config.image,
-                            "imagePullPolicy": self.config.image_pull_policy,
-                            "ports": [{"containerPort": p, "name": f"http-{p}"} for p in self.config.ports],
-                            "resources": self.config.resources,
-                            "env": [{"name": k, "value": v} for k, v in self.config.env_vars.items()],
-                            "envFrom": [
-                                {"secretRef": {"name": s}} for s in self.config.secrets
-                            ] + [
-                                {"configMapRef": {"name": c}} for c in self.config.config_maps
-                            ],
-                            "livenessProbe": {
-                                "httpGet": {
-                                    "path": self.config.health_check_path,
-                                    "port": self.config.ports[0],
+                        "containers": [
+                            {
+                                "name": "api-gateway",
+                                "image": self.config.image,
+                                "imagePullPolicy": self.config.image_pull_policy,
+                                "ports": [
+                                    {"containerPort": p, "name": f"http-{p}"}
+                                    for p in self.config.ports
+                                ],
+                                "resources": self.config.resources,
+                                "env": [
+                                    {"name": k, "value": v} for k, v in self.config.env_vars.items()
+                                ],
+                                "envFrom": [{"secretRef": {"name": s}} for s in self.config.secrets]
+                                + [{"configMapRef": {"name": c}} for c in self.config.config_maps],
+                                "livenessProbe": {
+                                    "httpGet": {
+                                        "path": self.config.health_check_path,
+                                        "port": self.config.ports[0],
+                                    },
+                                    **self.config.liveness_probe,
                                 },
-                                **self.config.liveness_probe,
-                            },
-                            "readinessProbe": {
-                                "httpGet": {
-                                    "path": self.config.readiness_path,
-                                    "port": self.config.ports[0],
+                                "readinessProbe": {
+                                    "httpGet": {
+                                        "path": self.config.readiness_path,
+                                        "port": self.config.ports[0],
+                                    },
+                                    **self.config.readiness_probe,
                                 },
-                                **self.config.readiness_probe,
-                            },
-                        }],
+                            }
+                        ],
                         "serviceAccountName": "api-gateway",
                         "securityContext": {
                             "runAsNonRoot": True,
@@ -136,8 +146,8 @@ class KubernetesManifestGenerator:
                 },
             },
         }
-    
-    def generate_service(self) -> Dict[str, Any]:
+
+    def generate_service(self) -> dict[str, Any]:
         """Generate Service manifest."""
         return {
             "apiVersion": "v1",
@@ -154,19 +164,21 @@ class KubernetesManifestGenerator:
             },
             "spec": {
                 "type": "ClusterIP",
-                "ports": [{
-                    "port": 80,
-                    "targetPort": self.config.ports[0],
-                    "protocol": "TCP",
-                    "name": "http",
-                }],
+                "ports": [
+                    {
+                        "port": 80,
+                        "targetPort": self.config.ports[0],
+                        "protocol": "TCP",
+                        "name": "http",
+                    }
+                ],
                 "selector": {
                     "app": "api-gateway",
                 },
             },
         }
-    
-    def generate_hpa(self) -> Dict[str, Any]:
+
+    def generate_hpa(self) -> dict[str, Any]:
         """Generate HorizontalPodAutoscaler manifest."""
         return {
             "apiVersion": "autoscaling/v2",
@@ -220,30 +232,35 @@ class KubernetesManifestGenerator:
                 "behavior": {
                     "scaleDown": {
                         "stabilizationWindowSeconds": 300,
-                        "policies": [{
-                            "type": "Percent",
-                            "value": 10,
-                            "periodSeconds": 60,
-                        }],
+                        "policies": [
+                            {
+                                "type": "Percent",
+                                "value": 10,
+                                "periodSeconds": 60,
+                            }
+                        ],
                     },
                     "scaleUp": {
                         "stabilizationWindowSeconds": 60,
-                        "policies": [{
-                            "type": "Percent",
-                            "value": 100,
-                            "periodSeconds": 30,
-                        }, {
-                            "type": "Pods",
-                            "value": 4,
-                            "periodSeconds": 30,
-                        }],
+                        "policies": [
+                            {
+                                "type": "Percent",
+                                "value": 100,
+                                "periodSeconds": 30,
+                            },
+                            {
+                                "type": "Pods",
+                                "value": 4,
+                                "periodSeconds": 30,
+                            },
+                        ],
                         "selectPolicy": "Max",
                     },
                 },
             },
         }
-    
-    def generate_pdb(self) -> Dict[str, Any]:
+
+    def generate_pdb(self) -> dict[str, Any]:
         """Generate PodDisruptionBudget manifest."""
         return {
             "apiVersion": "policy/v1",
@@ -261,8 +278,8 @@ class KubernetesManifestGenerator:
                 },
             },
         }
-    
-    def generate_network_policy(self) -> Dict[str, Any]:
+
+    def generate_network_policy(self) -> dict[str, Any]:
         """Generate NetworkPolicy for service mesh."""
         return {
             "apiVersion": "networking.k8s.io/v1",
@@ -288,18 +305,30 @@ class KubernetesManifestGenerator:
                     },
                 ],
                 "egress": [
-                    {"to": [], "ports": [{"protocol": "TCP", "port": 53}, {"protocol": "UDP", "port": 53}]},  # DNS
-                    {"to": [{"namespaceSelector": {"matchLabels": {"name": "monitoring"}}}], "ports": [{"protocol": "TCP", "port": 9090}]},  # Prometheus
-                    {"to": [{"namespaceSelector": {}}], "ports": [{"protocol": "TCP", "port": 5432}]},  # PostgreSQL
-                    {"to": [{"namespaceSelector": {}}], "ports": [{"protocol": "TCP", "port": 6379}]},  # Redis
+                    {
+                        "to": [],
+                        "ports": [{"protocol": "TCP", "port": 53}, {"protocol": "UDP", "port": 53}],
+                    },  # DNS
+                    {
+                        "to": [{"namespaceSelector": {"matchLabels": {"name": "monitoring"}}}],
+                        "ports": [{"protocol": "TCP", "port": 9090}],
+                    },  # Prometheus
+                    {
+                        "to": [{"namespaceSelector": {}}],
+                        "ports": [{"protocol": "TCP", "port": 5432}],
+                    },  # PostgreSQL
+                    {
+                        "to": [{"namespaceSelector": {}}],
+                        "ports": [{"protocol": "TCP", "port": 6379}],
+                    },  # Redis
                 ],
             },
         }
-    
-    def generate_all(self, output_dir: Path) -> List[Path]:
+
+    def generate_all(self, output_dir: Path) -> list[Path]:
         """Generate all manifests to directory."""
         output_dir.mkdir(parents=True, exist_ok=True)
-        
+
         manifests = {
             "deployment.yaml": self.generate_deployment(),
             "service.yaml": self.generate_service(),
@@ -307,26 +336,26 @@ class KubernetesManifestGenerator:
             "pdb.yaml": self.generate_pdb(),
             "network-policy.yaml": self.generate_network_policy(),
         }
-        
+
         paths = []
         for filename, manifest in manifests.items():
             path = output_dir / filename
             path.write_text(yaml.dump(manifest, default_flow_style=False, sort_keys=False))
             paths.append(path)
             logger.info(f"Generated {path}")
-        
+
         return paths
 
 
 class HelmChartGenerator:
     """Generate Helm charts for Eco Nojin."""
-    
+
     def __init__(self, chart_name: str, version: str, app_version: str):
         self.chart_name = chart_name
         self.version = version
         self.app_version = app_version
-    
-    def generate_chart_yaml(self) -> Dict[str, Any]:
+
+    def generate_chart_yaml(self) -> dict[str, Any]:
         return {
             "apiVersion": "v2",
             "name": self.chart_name,
@@ -335,13 +364,15 @@ class HelmChartGenerator:
             "version": self.version,
             "appVersion": self.app_version,
             "keywords": ["eco-nojin", "agriculture", "api", "gateway"],
-            "maintainers": [{
-                "name": "Eco Nojin Team",
-                "email": "team@eco-nojin.org",
-            }],
+            "maintainers": [
+                {
+                    "name": "Eco Nojin Team",
+                    "email": "team@eco-nojin.org",
+                }
+            ],
         }
-    
-    def generate_values_yaml(self) -> Dict[str, Any]:
+
+    def generate_values_yaml(self) -> dict[str, Any]:
         return {
             "global": {
                 "namespace": "eco-nojin",
@@ -377,14 +408,18 @@ class HelmChartGenerator:
                         "cert-manager.io/cluster-issuer": "letsencrypt-prod",
                         "nginx.ingress.kubernetes.io/rate-limit": "100",
                     },
-                    "hosts": [{
-                        "host": "api.eco-nojin.org",
-                        "paths": [{"path": "/", "pathType": "Prefix"}],
-                    }],
-                    "tls": [{
-                        "secretName": "api-gateway-tls",
-                        "hosts": ["api.eco-nojin.org"],
-                    }],
+                    "hosts": [
+                        {
+                            "host": "api.eco-nojin.org",
+                            "paths": [{"path": "/", "pathType": "Prefix"}],
+                        }
+                    ],
+                    "tls": [
+                        {
+                            "secretName": "api-gateway-tls",
+                            "hosts": ["api.eco-nojin.org"],
+                        }
+                    ],
                 },
                 "config": {
                     "environment": "production",
@@ -410,7 +445,9 @@ class HelmChartGenerator:
                 "enabled": True,
                 "prometheus": {
                     "enabled": True,
-                    "serviceMonitors": [{"namespace": "eco-nojin", "selector": {"app": "api-gateway"}}],
+                    "serviceMonitors": [
+                        {"namespace": "eco-nojin", "selector": {"app": "api-gateway"}}
+                    ],
                 },
                 "grafana": {
                     "enabled": True,
@@ -420,7 +457,9 @@ class HelmChartGenerator:
                 },
                 "alertmanager": {
                     "enabled": True,
-                    "config": {"receivers": [{"name": "slack", "slack_configs": [{"channel": "#alerts"}]}]},
+                    "config": {
+                        "receivers": [{"name": "slack", "slack_configs": [{"channel": "#alerts"}]}]
+                    },
                 },
             },
             "logging": {
@@ -433,8 +472,8 @@ class HelmChartGenerator:
                 "tempo": {"enabled": True},
             },
         }
-    
-    def generate_templates(self) -> Dict[str, str]:
+
+    def generate_templates(self) -> dict[str, str]:
         """Generate template files."""
         return {
             "deployment.yaml": """apiVersion: apps/v1
@@ -592,94 +631,100 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 """,
         }
-    
-    def generate_chart(self, output_dir: Path) -> List[Path]:
+
+    def generate_chart(self, output_dir: Path) -> list[Path]:
         """Generate complete Helm chart."""
         chart_dir = output_dir / self.chart_name
         chart_dir.mkdir(parents=True, exist_ok=True)
         templates_dir = chart_dir / "templates"
         templates_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Chart.yaml
-        (chart_dir / "Chart.yaml").write_text(yaml.dump(self.generate_chart_yaml(), default_flow_style=False))
-        
+        (chart_dir / "Chart.yaml").write_text(
+            yaml.dump(self.generate_chart_yaml(), default_flow_style=False)
+        )
+
         # values.yaml
-        (chart_dir / "values.yaml").write_text(yaml.dump(self.generate_values_yaml(), default_flow_style=False))
-        
+        (chart_dir / "values.yaml").write_text(
+            yaml.dump(self.generate_values_yaml(), default_flow_style=False)
+        )
+
         # Templates
         templates = self.generate_templates()
         for filename, content in templates.items():
             (templates_dir / filename).write_text(content)
-        
+
         logger.info(f"Generated Helm chart: {chart_dir}")
         return [chart_dir]
 
 
 class MonitoringStack:
     """Generate monitoring stack configurations."""
-    
+
     @staticmethod
-    def generate_prometheus_rules() -> Dict[str, Any]:
+    def generate_prometheus_rules() -> dict[str, Any]:
         return {
-            "groups": [{
-                "name": "api-gateway-alerts",
-                "rules": [
-                    {
-                        "alert": "HighErrorRate",
-                        "expr": "rate(http_requests_total{status=~\"5..\"}[5m]) > 0.05",
-                        "for": "2m",
-                        "labels": {"severity": "critical"},
-                        "annotations": {
-                            "summary": "High error rate on {{ $labels.instance }}",
-                            "description": "{{ $value }}% of requests are failing",
+            "groups": [
+                {
+                    "name": "api-gateway-alerts",
+                    "rules": [
+                        {
+                            "alert": "HighErrorRate",
+                            "expr": 'rate(http_requests_total{status=~"5.."}[5m]) > 0.05',
+                            "for": "2m",
+                            "labels": {"severity": "critical"},
+                            "annotations": {
+                                "summary": "High error rate on {{ $labels.instance }}",
+                                "description": "{{ $value }}% of requests are failing",
+                            },
                         },
-                    },
-                    {
-                        "alert": "HighLatency",
-                        "expr": "histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m])) > 2",
-                        "for": "5m",
-                        "labels": {"severity": "warning"},
-                        "annotations": {
-                            "summary": "High P99 latency on {{ $labels.instance }}",
-                            "description": "P99 latency is {{ $value }}s",
+                        {
+                            "alert": "HighLatency",
+                            "expr": "histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m])) > 2",
+                            "for": "5m",
+                            "labels": {"severity": "warning"},
+                            "annotations": {
+                                "summary": "High P99 latency on {{ $labels.instance }}",
+                                "description": "P99 latency is {{ $value }}s",
+                            },
                         },
-                    },
-                    {
-                        "alert": "HighMemoryUsage",
-                        "expr": "container_memory_usage_bytes / container_spec_memory_limit_bytes > 0.85",
-                        "for": "10m",
-                        "labels": {"severity": "warning"},
-                        "annotations": {
-                            "summary": "High memory usage on {{ $labels.pod }}",
-                            "description": "Memory usage is {{ $value | humanizePercentage }}",
+                        {
+                            "alert": "HighMemoryUsage",
+                            "expr": "container_memory_usage_bytes / container_spec_memory_limit_bytes > 0.85",
+                            "for": "10m",
+                            "labels": {"severity": "warning"},
+                            "annotations": {
+                                "summary": "High memory usage on {{ $labels.pod }}",
+                                "description": "Memory usage is {{ $value | humanizePercentage }}",
+                            },
                         },
-                    },
-                    {
-                        "alert": "PodNotReady",
-                        "expr": "kube_pod_status_ready{condition=\"true\"} == 0",
-                        "for": "5m",
-                        "labels": {"severity": "critical"},
-                        "annotations": {
-                            "summary": "Pod {{ $labels.pod }} not ready",
-                            "description": "Pod has been not ready for 5 minutes",
+                        {
+                            "alert": "PodNotReady",
+                            "expr": 'kube_pod_status_ready{condition="true"} == 0',
+                            "for": "5m",
+                            "labels": {"severity": "critical"},
+                            "annotations": {
+                                "summary": "Pod {{ $labels.pod }} not ready",
+                                "description": "Pod has been not ready for 5 minutes",
+                            },
                         },
-                    },
-                    {
-                        "alert": "DataFabricationDetected",
-                        "expr": "increase(data_fabrication_total[1h]) > 0",
-                        "for": "0m",
-                        "labels": {"severity": "critical"},
-                        "annotations": {
-                            "summary": "Data fabrication detected!",
-                            "description": "Simulated data presented as real without disclosure",
+                        {
+                            "alert": "DataFabricationDetected",
+                            "expr": "increase(data_fabrication_total[1h]) > 0",
+                            "for": "0m",
+                            "labels": {"severity": "critical"},
+                            "annotations": {
+                                "summary": "Data fabrication detected!",
+                                "description": "Simulated data presented as real without disclosure",
+                            },
                         },
-                    },
-                ],
-            }]
+                    ],
+                }
+            ]
         }
-    
+
     @staticmethod
-    def generate_grafana_dashboard() -> Dict[str, Any]:
+    def generate_grafana_dashboard() -> dict[str, Any]:
         return {
             "dashboard": {
                 "title": "Eco Nojin API Gateway",
@@ -690,55 +735,67 @@ class MonitoringStack:
                     {
                         "title": "Request Rate",
                         "type": "graph",
-                        "targets": [{
-                            "expr": "sum(rate(http_requests_total[5m])) by (method, status)",
-                            "legendFormat": "{{method}} {{status}}",
-                        }],
+                        "targets": [
+                            {
+                                "expr": "sum(rate(http_requests_total[5m])) by (method, status)",
+                                "legendFormat": "{{method}} {{status}}",
+                            }
+                        ],
                     },
                     {
                         "title": "Latency (P50, P95, P99)",
                         "type": "graph",
-                        "targets": [{
-                            "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))",
-                            "legendFormat": "P50",
-                        }, {
-                            "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))",
-                            "legendFormat": "P95",
-                        }, {
-                            "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))",
-                            "legendFormat": "P99",
-                        }],
+                        "targets": [
+                            {
+                                "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))",
+                                "legendFormat": "P50",
+                            },
+                            {
+                                "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))",
+                                "legendFormat": "P95",
+                            },
+                            {
+                                "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))",
+                                "legendFormat": "P99",
+                            },
+                        ],
                     },
                     {
                         "title": "Cache Hit Rate",
                         "type": "graph",
-                        "targets": [{
-                            "expr": "sum(rate(cache_hits_total[5m])) / sum(rate(cache_requests_total[5m]))",
-                            "legendFormat": "Hit Rate",
-                        }],
+                        "targets": [
+                            {
+                                "expr": "sum(rate(cache_hits_total[5m])) / sum(rate(cache_requests_total[5m]))",
+                                "legendFormat": "Hit Rate",
+                            }
+                        ],
                     },
                     {
                         "title": "Data Source Breakdown",
                         "type": "piechart",
-                        "targets": [{
-                            "expr": "sum(increase(data_source_total[1h])) by (source)",
-                            "legendFormat": "{{source}}",
-                        }],
+                        "targets": [
+                            {
+                                "expr": "sum(increase(data_source_total[1h])) by (source)",
+                                "legendFormat": "{{source}}",
+                            }
+                        ],
                     },
                     {
                         "title": "Scientific Model Executions",
                         "type": "graph",
-                        "targets": [{
-                            "expr": "sum(rate(model_executions_total[5m])) by (model, status)",
-                            "legendFormat": "{{model}} {{status}}",
-                        }],
+                        "targets": [
+                            {
+                                "expr": "sum(rate(model_executions_total[5m])) by (model, status)",
+                                "legendFormat": "{{model}} {{status}}",
+                            }
+                        ],
                     },
                 ],
             }
         }
-    
+
     @staticmethod
-    def generate_service_monitor() -> Dict[str, Any]:
+    def generate_service_monitor() -> dict[str, Any]:
         return {
             "apiVersion": "monitoring.coreos.com/v1",
             "kind": "ServiceMonitor",
@@ -751,20 +808,22 @@ class MonitoringStack:
                 "selector": {
                     "matchLabels": {"app": "api-gateway"},
                 },
-                "endpoints": [{
-                    "port": "http",
-                    "path": "/metrics",
-                    "interval": "30s",
-                }],
+                "endpoints": [
+                    {
+                        "port": "http",
+                        "path": "/metrics",
+                        "interval": "30s",
+                    }
+                ],
             },
         }
 
 
 class DisasterRecovery:
     """Disaster recovery and backup configurations."""
-    
+
     @staticmethod
-    def generate_velero_backup() -> Dict[str, Any]:
+    def generate_velero_backup() -> dict[str, Any]:
         return {
             "apiVersion": "velero.io/v1",
             "kind": "Backup",
@@ -782,9 +841,9 @@ class DisasterRecovery:
                 "storageLocation": "default",
             },
         }
-    
+
     @staticmethod
-    def generate_restore_plan() -> Dict[str, Any]:
+    def generate_restore_plan() -> dict[str, Any]:
         return {
             "apiVersion": "velero.io/v1",
             "kind": "Restore",
@@ -802,15 +861,15 @@ class DisasterRecovery:
 
 class MultiRegionDeployment:
     """Multi-region deployment configuration."""
-    
+
     REGIONS = {
         "us-east-1": {"primary": True, "replicas": 5},
         "eu-west-1": {"primary": False, "replicas": 3},
         "ap-southeast-1": {"primary": False, "replicas": 2},
     }
-    
+
     @staticmethod
-    def generate_global_load_balancer() -> Dict[str, Any]:
+    def generate_global_load_balancer() -> dict[str, Any]:
         return {
             "apiVersion": "networking.gke.io/v1",
             "kind": "GlobalLoadBalancer",
@@ -844,9 +903,9 @@ class MultiRegionDeployment:
 # Export main classes
 __all__ = [
     "DeploymentConfig",
-    "KubernetesManifestGenerator",
-    "HelmChartGenerator",
-    "MonitoringStack",
     "DisasterRecovery",
+    "HelmChartGenerator",
+    "KubernetesManifestGenerator",
+    "MonitoringStack",
     "MultiRegionDeployment",
 ]

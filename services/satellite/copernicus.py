@@ -438,7 +438,7 @@ class CopernicusClient:
                     xs, ys = float(xs_arr[0]), float(ys_arr[0])
                     row, col = src_r.index(xs, ys)
                     res = abs(src_r.transform.a) or 10.0
-                    step = max(1, int(round(spacing_m / res)))
+                    step = max(1, round(spacing_m / res))
                     half = (n * step) // 2
                     win = rasterio.windows.Window(col - half, row - half, n * step, n * step)
                     red = src_r.read(1, window=win).astype(np.float64)

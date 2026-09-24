@@ -7,8 +7,9 @@ Create Date: 2026-08-24T13:56:12.322348+00:00
 Note: This migration is stand-alone and does not depend on previous migrations.
 """
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 revision = "20260824_135612_marketplace_tourism_landscape"
 down_revision = None

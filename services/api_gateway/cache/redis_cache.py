@@ -11,15 +11,15 @@ Multi-level caching with:
 """
 
 import asyncio
-import json
+import builtins
 import hashlib
-import time
+import json
 import random
-from typing import Any, Optional, List, Set, Dict, Callable, Awaitable
+import time
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from functools import wraps
-from contextlib import asynccontextmanager
-import logging
+from typing import Any
 
 import redis.asyncio as redis
 from redis.asyncio.connection import ConnectionPool
@@ -53,7 +53,7 @@ class CacheEntry:
     value: Any
     created_at: float
     expires_at: float
-    tags: Set[str] = field(default_factory=set)
+    tags: set[str] = field(default_factory=set)
     hits: int = 0
 
 
@@ -62,10 +62,10 @@ class L1Cache:
 
     def __init__(self, max_size: int = 1000):
         self.max_size = max_size
-        self._cache: Dict[str, CacheEntry] = {}
-        self._access_order: List[str] = []  # LRU tracking
+        self._cache: dict[str, CacheEntry] = {}
+        self._access_order: list[str] = []  # LRU tracking
 
-    def get(self, key: str) -> Optional[CacheEntry]:
+    def get(self, key: str) -> CacheEntry | None:
         entry = self._cache.get(key)
         if entry is None:
             return None
@@ -106,7 +106,7 @@ class L1Cache:
             lru_key = self._access_order.pop(0)
             self._cache.pop(lru_key, None)
 
-    def get_by_tag(self, tag: str) -> List[str]:
+    def get_by_tag(self, tag: str) -> list[str]:
         """Get all keys with a specific tag."""
         return [
             key
@@ -120,11 +120,11 @@ class RedisCache:
 
     def __init__(self, config: CacheConfig):
         self.config = config
-        self._pool: Optional[ConnectionPool] = None
-        self._client: Optional[redis.Redis] = None
-        self._pubsub: Optional[redis.client.PubSub] = None
+        self._pool: ConnectionPool | None = None
+        self._client: redis.Redis | None = None
+        self._pubsub: redis.client.PubSub | None = None
         self._tag_channel = f"{config.key_prefix}tags"
-        self._invalidation_handlers: List[Callable[[str], Awaitable[None]]] = []
+        self._invalidation_handlers: list[Callable[[str], Awaitable[None]]] = []
 
     async def connect(self) -> None:
         """Initialize Redis connection pool and pub/sub."""
@@ -188,7 +188,7 @@ class RedisCache:
         jitter = int(ttl * self.config.ttl_jitter * random.uniform(-1, 1))
         return max(1, ttl + jitter)
 
-    async def get(self, key: str) -> Optional[CacheEntry]:
+    async def get(self, key: str) -> CacheEntry | None:
         """Get value from Redis."""
         redis_key = self._make_key(key)
         data = await self._client.get(redis_key)
@@ -231,8 +231,8 @@ class RedisCache:
         self,
         key: str,
         value: Any,
-        ttl: Optional[int] = None,
-        tags: Optional[Set[str]] = None,
+        ttl: int | None = None,
+        tags: set[str] | None = None,
     ) -> None:
         """Set value in Redis with optional tags."""
         ttl = ttl or self.config.default_ttl
@@ -303,7 +303,7 @@ class RedisCache:
         logger.info("Tag invalidated", tag=tag, count=len(keys))
         return len(keys)
 
-    async def get_keys_by_tag(self, tag: str) -> Set[str]:
+    async def get_keys_by_tag(self, tag: str) -> builtins.set[str]:
         """Get all keys for a tag."""
         tag_key = self._make_tag_key(tag)
         return await self._client.smembers(tag_key)
@@ -330,7 +330,7 @@ class RedisCache:
 class MultiLevelCache:
     """Multi-level cache combining L1 (memory) and L2 (Redis)."""
 
-    def __init__(self, config: Optional[CacheConfig] = None):
+    def __init__(self, config: CacheConfig | None = None):
         self.config = config or CacheConfig()
         self.l1 = L1Cache(self.config.l1_max_size)
         self.l2 = RedisCache(self.config)
@@ -354,7 +354,7 @@ class MultiLevelCache:
             self.l1.delete(key)
         logger.debug("L1 invalidated by tag", tag=tag, count=len(keys))
 
-    def _make_l1_entry(self, value: Any, ttl: int, tags: Set[str]) -> CacheEntry:
+    def _make_l1_entry(self, value: Any, ttl: int, tags: set[str]) -> CacheEntry:
         return CacheEntry(
             value=value,
             created_at=time.time(),
@@ -362,7 +362,7 @@ class MultiLevelCache:
             tags=tags,
         )
 
-    async def get(self, key: str) -> Optional[Any]:
+    async def get(self, key: str) -> Any | None:
         """Get value from cache (L1 -> L2)."""
         start_time = time.time()
 
@@ -403,8 +403,8 @@ class MultiLevelCache:
         self,
         key: str,
         value: Any,
-        ttl: Optional[int] = None,
-        tags: Optional[Set[str]] = None,
+        ttl: int | None = None,
+        tags: set[str] | None = None,
     ) -> None:
         """Set value in both L1 and L2."""
         ttl = ttl or self.config.default_ttl
@@ -456,7 +456,7 @@ class MultiLevelCache:
 
     # Convenience decorators
     def cached(
-        self, ttl: Optional[int] = None, tags: Optional[Set[str]] = None, key_prefix: str = ""
+        self, ttl: int | None = None, tags: builtins.set[str] | None = None, key_prefix: str = ""
     ):
         """Decorator for caching function results."""
 

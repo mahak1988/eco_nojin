@@ -5,13 +5,13 @@ Tests Alembic migrations against SQLite (for local development without Docker).
 """
 
 import os
+
 import pytest
-import pytest_asyncio
+from alembic.config import Config
 from sqlalchemy import text
 
-from database.hub import hub
-from alembic.config import Config
 from alembic import command
+from database.hub import hub
 
 
 @pytest.fixture
@@ -91,9 +91,7 @@ class TestSqliteMigrations:
             ]
 
             for table in tables_to_check:
-                result = await session.execute(
-                    text(f"SELECT 1 FROM {table} LIMIT 1")
-                )
+                await session.execute(text(f"SELECT 1 FROM {table} LIMIT 1"))
                 # Table exists if query doesn't raise exception
 
     @pytest.mark.asyncio
@@ -148,7 +146,7 @@ class TestSqliteMigrations:
                 )
                 session.add(duplicate)
                 await session.commit()
-                assert False, "Should have raised integrity error"
+                raise AssertionError("Should have raised integrity error")
             except Exception:
                 await session.rollback()
 
@@ -168,7 +166,7 @@ class TestDataIntegrity:
         """Test that foreign key constraints are enforced."""
         command.upgrade(alembic_config, "head")
 
-        from database.models import User, Organization, OrganizationMembership
+        from database.models import Organization, OrganizationMembership, User
 
         async with hub_instance.get_async_session() as session:
             # Create organization
@@ -200,7 +198,7 @@ class TestDataIntegrity:
 
             try:
                 await session.commit()
-                assert False, "Should have raised foreign key violation"
+                raise AssertionError("Should have raised foreign key violation")
             except Exception:
                 await session.rollback()
 
@@ -231,7 +229,7 @@ class TestDataIntegrity:
 
             try:
                 await session.commit()
-                assert False, "Should have raised unique constraint violation"
+                raise AssertionError("Should have raised unique constraint violation")
             except Exception:
                 await session.rollback()
 

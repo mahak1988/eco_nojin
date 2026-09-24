@@ -5,29 +5,28 @@ Benchmark tests comparing C++ implementation performance vs Numba/Python.
 Run with: pytest test_benchmarks.py -v --benchmark-only --benchmark-sort=mean
 """
 
-import pytest
 import numpy as np
+import pytest
 
 from engine.hydroma.cpp_bridge import (
-    is_cpp_available,
-    ndvi,
     evi,
-    savi,
-    nbr,
-    ndwi,
-    penman_monteith_et0,
-    muskingum_cunge_route,
-    rusle_annual_soil_loss,
+    get_telemetry,
+    is_cpp_available,
     latin_hypercube,
     monte_carlo_uniform,
-    get_telemetry,
+    muskingum_cunge_route,
+    nbr,
+    ndvi,
+    ndwi,
+    penman_monteith_et0,
     reset_telemetry,
+    rusle_annual_soil_loss,
+    savi,
 )
 
 # Skip all tests if C++ is not available
 pytestmark = pytest.mark.skipif(
-    not is_cpp_available(),
-    reason="C++ hydroma_core not available - skipping benchmarks"
+    not is_cpp_available(), reason="C++ hydroma_core not available - skipping benchmarks"
 )
 
 
@@ -39,14 +38,15 @@ class TestIndicesBenchmarks:
         size = 100_000
         red = np.random.uniform(0, 1, size).astype(np.float64)
         nir = np.random.uniform(0, 1, size).astype(np.float64)
-        
+
         def run():
             return ndvi(red, nir)
-        
+
         result = benchmark(run)
         assert len(result) == size
         # Verify some values are in valid range
-        assert np.all(result >= -1.0) and np.all(result <= 1.0)
+        assert np.all(result >= -1.0)
+        assert np.all(result <= 1.0)
 
     def test_evi_benchmark(self, benchmark):
         """Benchmark EVI computation."""
@@ -54,10 +54,10 @@ class TestIndicesBenchmarks:
         red = np.random.uniform(0, 1, size).astype(np.float64)
         nir = np.random.uniform(0, 1, size).astype(np.float64)
         blue = np.random.uniform(0, 1, size).astype(np.float64)
-        
+
         def run():
             return evi(red, nir, blue)
-        
+
         result = benchmark(run)
         assert len(result) == size
 
@@ -66,10 +66,10 @@ class TestIndicesBenchmarks:
         size = 100_000
         red = np.random.uniform(0, 1, size).astype(np.float64)
         nir = np.random.uniform(0, 1, size).astype(np.float64)
-        
+
         def run():
             return savi(red, nir, 0.5)
-        
+
         result = benchmark(run)
         assert len(result) == size
 
@@ -78,10 +78,10 @@ class TestIndicesBenchmarks:
         size = 100_000
         nir = np.random.uniform(0, 1, size).astype(np.float64)
         swir = np.random.uniform(0, 1, size).astype(np.float64)
-        
+
         def run():
             return nbr(nir, swir)
-        
+
         result = benchmark(run)
         assert len(result) == size
 
@@ -90,10 +90,10 @@ class TestIndicesBenchmarks:
         size = 100_000
         green = np.random.uniform(0, 1, size).astype(np.float64)
         nir = np.random.uniform(0, 1, size).astype(np.float64)
-        
+
         def run():
             return ndwi(green, nir)
-        
+
         result = benchmark(run)
         assert len(result) == size
 
@@ -113,13 +113,12 @@ class TestHydrologyBenchmarks:
         z = np.random.uniform(0, 2000, size).astype(np.float64)
         lat = np.random.uniform(-60, 60, size).astype(np.float64)
         doy = np.random.uniform(1, 365, size).astype(np.int32)
-        
+
         def run():
             return penman_monteith_et0(
-                tmin=tmin, tmax=tmax, rh_mean=rh_mean,
-                rs=rs, u2=u2, z=z, lat=lat, doy=doy
+                tmin=tmin, tmax=tmax, rh_mean=rh_mean, rs=rs, u2=u2, z=z, lat=lat, doy=doy
             )
-        
+
         result = benchmark(run)
         assert len(result) == size
         assert np.all(result >= 0)  # ET0 should be non-negative
@@ -132,7 +131,7 @@ class TestRoutingBenchmarks:
         """Benchmark Muskingum-Cunge routing."""
         size = 1_000
         inflow = np.random.uniform(0, 1000, size).astype(np.float64)
-        
+
         def run():
             return muskingum_cunge_route(
                 inflow=inflow,
@@ -145,7 +144,7 @@ class TestRoutingBenchmarks:
                 bottom_width=20.0,
                 side_slope=2.0,
             )
-        
+
         result = benchmark(run)
         assert len(result) == size
         assert np.all(result >= 0)
@@ -162,10 +161,10 @@ class TestErosionBenchmarks:
         ls = np.random.uniform(0.1, 10, size).astype(np.float64)
         c = np.random.uniform(0.01, 1.0, size).astype(np.float64)
         p = np.random.uniform(0.1, 1.0, size).astype(np.float64)
-        
+
         def run():
             return rusle_annual_soil_loss(r=r, k=k, ls=ls, c=c, p=p)
-        
+
         result = benchmark(run)
         assert len(result) == size
         assert np.all(result >= 0)
@@ -178,26 +177,28 @@ class TestSamplingBenchmarks:
         """Benchmark Latin Hypercube Sampling."""
         n_samples = 1000
         n_dims = 10
-        
+
         def run():
             return latin_hypercube(n_samples=n_samples, n_dimensions=n_dims, seed=42)
-        
+
         result = benchmark(run)
         assert result.shape == (n_samples, n_dims)
-        assert np.all(result >= 0) and np.all(result <= 1)
+        assert np.all(result >= 0)
+        assert np.all(result <= 1)
 
     def test_monte_carlo_benchmark(self, benchmark):
         """Benchmark Monte Carlo uniform sampling."""
         n_samples = 100_000
         n_dims = 5
         bounds = np.array([[0, 1]] * n_dims)
-        
+
         def run():
             return monte_carlo_uniform(n_samples=n_samples, bounds=bounds, seed=42)
-        
+
         result = benchmark(run)
         assert result.shape == (n_samples, n_dims)
-        assert np.all(result >= 0) and np.all(result <= 1)
+        assert np.all(result >= 0)
+        assert np.all(result <= 1)
 
 
 class TestTelemetryBenchmarks:
@@ -208,12 +209,12 @@ class TestTelemetryBenchmarks:
         reset_telemetry()
         red = np.random.uniform(0, 1, 1000).astype(np.float64)
         nir = np.random.uniform(0, 1, 1000).astype(np.float64)
-        
+
         def run():
             reset_telemetry()
             ndvi(red, nir)
             return get_telemetry()
-        
+
         telemetry = benchmark(run)
         assert telemetry["cpp_calls"] == 1
 
@@ -226,12 +227,12 @@ class TestMemoryEfficiency:
         size = 10_000
         red = np.random.uniform(0, 1, size).astype(np.float64)
         nir = np.random.uniform(0, 1, size).astype(np.float64)
-        
+
         def run():
             for _ in range(10):
                 result = ndvi(red, nir)
             return result
-        
+
         result = benchmark(run)
         assert len(result) == size
 
@@ -240,10 +241,10 @@ class TestMemoryEfficiency:
         size = 1_000_000
         red = np.random.uniform(0, 1, size).astype(np.float64)
         nir = np.random.uniform(0, 1, size).astype(np.float64)
-        
+
         def run():
             return ndvi(red, nir)
-        
+
         result = benchmark(run)
         assert len(result) == size
         # Should complete within reasonable time (< 100ms for 1M elements)
@@ -257,6 +258,7 @@ class TestComparisonWithNumba:
         """Check if Numba is available for comparison."""
         try:
             import numba
+
             self.has_numba = True
         except ImportError:
             self.has_numba = False
@@ -266,9 +268,9 @@ class TestComparisonWithNumba:
         """Compare C++ NDVI with Numba implementation."""
         if not self.has_numba:
             pytest.skip("Numba not available")
-        
+
         from numba import jit
-        
+
         @jit(nopython=True, parallel=True)
         def numba_ndvi(red, nir):
             result = np.empty_like(red)
@@ -276,30 +278,30 @@ class TestComparisonWithNumba:
                 denom = nir[i] + red[i]
                 result[i] = (nir[i] - red[i]) / (denom + 1e-10) if denom != 0 else 0.0
             return result
-        
+
         size = 100_000
         red = np.random.uniform(0, 1, size).astype(np.float64)
         nir = np.random.uniform(0, 1, size).astype(np.float64)
-        
+
         # Warm up Numba
         numba_ndvi(red[:100], nir[:100])
-        
+
         def run_cpp():
             return ndvi(red, nir)
-        
+
         def run_numba():
             return numba_ndvi(red, nir)
-        
+
         # Run both and compare
         cpp_result = run_cpp()
         numba_result = run_numba()
-        
+
         # Verify numerical equivalence
         np.testing.assert_allclose(cpp_result, numba_result, rtol=1e-6)
-        
+
         # Benchmark C++
-        cpp_stats = benchmark(run_cpp)
-        
+        benchmark(run_cpp)
+
         # Benchmark Numba (separate benchmark)
         # Note: This would need separate benchmark function
 

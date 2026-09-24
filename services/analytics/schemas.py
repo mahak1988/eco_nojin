@@ -2,13 +2,13 @@
 
 from datetime import datetime
 from decimal import Decimal
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field
 
 
-class PeriodType(str, Enum):
+class PeriodType(StrEnum):
     DAY = "day"
     WEEK = "week"
     MONTH = "month"

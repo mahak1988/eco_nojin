@@ -559,7 +559,7 @@ async def add_to_cart(
     db: Session = Depends(get_db),
 ):
     """Add items to user's cart."""
-    catalog = get_catalog()
+    get_catalog()
     order_manager = get_order_manager()
     try:
         cart = order_manager.add_to_cart(
@@ -961,7 +961,7 @@ async def create_marketplace(
                 "postal_code": payload.postal_code,
                 "location": payload.location,
                 "village_id": payload.village_id,
-                "founder_ids": payload.founder_ids + [user.id],
+                "founder_ids": [*payload.founder_ids, user.id],
                 "e_commerce_rules_accepted": payload.e_commerce_rules_accepted,
                 "buy_sell_rules_accepted": payload.buy_sell_rules_accepted,
                 "rules_document": payload.rules_document,
@@ -1265,3 +1265,111 @@ async def escrow_status(
             }
         except LookupError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+# --- 6-Step Flow: Dispute Window, Settle, Complete ---
+
+
+@router.post("/orders/{order_id}/dispute", status_code=200)
+async def open_dispute(
+    order_id: str,
+    user: User = Depends(require_user),
+    db: Session = Depends(get_db),
+):
+    """Step 5a: Open dispute window for a locked escrow.
+
+    Within the dispute window the buyer can raise a dispute challenge before
+    the seller is released.  Returns the escrow deadline and remaining time.
+    """
+    from services.ledger.service import EscrowService
+
+    try:
+        escrow_svc = EscrowService()
+        record = await escrow_svc.dispute(order_id=order_id)
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    deadline = record.dispute_window_deadline
+    remaining = None
+    if deadline:
+        remaining = (deadline - datetime.now(UTC)).total_seconds()
+
+    return {
+        "order_id": order_id,
+        "escrow_id": record.id,
+        "state": record.state,
+        "dispute_deadline": deadline.isoformat() if deadline else None,
+        "remaining_seconds": remaining,
+        "status": "dispute_window_open",
+    }
+
+
+@router.post("/orders/{order_id}/settle", status_code=200)
+async def settle_order(
+    order_id: str,
+    user: User = Depends(require_user),
+    db: Session = Depends(get_db),
+):
+    """Step 5b: Settle the order — auto-release escrow after dispute window closes.
+
+    Called when the dispute window has closed without a challenge: funds are
+    automatically released to the seller.
+    """
+    from services.ledger.service import EscrowService
+
+    try:
+        escrow_svc = EscrowService()
+        record = await escrow_svc.release(order_id=order_id, actor_id=str(user.id))
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return {
+        "order_id": order_id,
+        "escrow_id": record.id,
+        "state": record.state,
+        "amount": float(record.amount) if record.amount is not None else None,
+        "settled_at": record.completed_at.isoformat() if record.completed_at else None,
+        "status": "settled_released",
+    }
+
+
+@router.post("/orders/{order_id}/complete", status_code=200)
+async def complete_order(
+    order_id: str,
+    user: User = Depends(require_user),
+    db: Session = Depends(get_db),
+):
+    """Step 6: Complete the purchase — final settlement confirmation.
+
+    Marks escrow as fully settled after the dispute window has closed and
+    funds have been released or reversed.
+    """
+    from services.ledger.service import EscrowService
+    from services.provenance.stamp import stamp_value
+
+    try:
+        escrow_svc = EscrowService()
+        record = await escrow_svc.complete(order_id=order_id)
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    amount_stamped = stamp_value(
+        value=record.amount,
+        source="ledger:escrow_release",
+        method="realtime",
+    ).model_dump()
+
+    return {
+        "order_id": order_id,
+        "escrow_id": record.id,
+        "state": record.state,
+        "amount": amount_stamped,
+        "completed_at": record.completed_at.isoformat() if record.completed_at else None,
+        "status": "completed",
+    }

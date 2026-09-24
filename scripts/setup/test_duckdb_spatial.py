@@ -3,8 +3,9 @@
 import structlog
 
 logger = structlog.get_logger()
-import duckdb
 from pathlib import Path
+
+import duckdb
 
 DB_PATH = Path("D:/eco_nojin/data/eco_nojin.duckdb")
 DB_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -21,7 +22,7 @@ def test_spatial():
 
     # Test basic spatial operations
     result = conn.execute("""
-        SELECT 
+        SELECT
             ST_GeomFromText('POINT(51.3890 35.6892)') AS tehran,
             ST_Buffer(ST_GeomFromText('POINT(51.3890 35.6892)'), 0.1) AS buffer,
             ST_Area(ST_Buffer(ST_GeomFromText('POINT(51.3890 35.6892)'), 0.1)) AS area

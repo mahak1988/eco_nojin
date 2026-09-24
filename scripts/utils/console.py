@@ -8,7 +8,6 @@ import structlog
 
 logger = structlog.get_logger()
 import sys
-from typing import Optional
 
 
 class Colors:
@@ -70,7 +69,7 @@ def step(number: int, msg: str) -> None:
     logger.info(f"{Colors.DIM}{'─' * 70}{Colors.RESET}")
 
 
-def question(msg: str, default: Optional[str] = None) -> str:
+def question(msg: str, default: str | None = None) -> str:
     """پرسش از کاربر"""
     suffix = f" [{default}]" if default else ""
     response = input(f"{Colors.CYAN}?{Colors.RESET}  {msg}{suffix}: ").strip()

@@ -672,10 +672,10 @@ class Sentinel2Provider:
         """Generate realistic synthetic bands."""
         shape = (100, 100)
         if bbox:
-            lon_range = bbox[2] - bbox[0]
-            lat_range = bbox[3] - bbox[1]
+            bbox[2] - bbox[0]
+            bbox[3] - bbox[1]
         else:
-            lon_range, lat_range = 0.1, 0.1
+            _lon_range, _lat_range = 0.1, 0.1
             bbox = (51.0, 35.0, 51.1, 35.1)
 
         coords = {
@@ -906,9 +906,8 @@ class Sentinel2Provider:
             nir_narrow = bands["B8A"]
             nir_broad = bands["B08"]
             # Use B8A for vegetation indices (more specific to chlorophyll)
-            nir_veg = nir_narrow
         else:
-            nir_veg = bands["B08"]
+            bands["B08"]
             nir_broad = bands["B08"]
 
         red = bands["B04"]

@@ -13,6 +13,7 @@ Features:
 """
 
 from __future__ import annotations
+
 import structlog
 
 logger = structlog.get_logger()
@@ -60,7 +61,7 @@ class SQLiteCache:
         warnings TEXT,
         UNIQUE(region_name, crop_type, model_version)
     );
-    
+
     CREATE INDEX IF NOT EXISTS idx_region ON analysis_cache(region_name, crop_type);
     CREATE INDEX IF NOT EXISTS idx_expires ON analysis_cache(expires_at);
     """

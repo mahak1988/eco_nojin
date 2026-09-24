@@ -1,4 +1,5 @@
 import logging
+
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -100,9 +101,7 @@ def design_check_dam(
     peak_flow_m3s = 0.6 * intensity_mm_h * area_ha / 360.0
 
     # 2) Annual sediment inflow (volume of deposited sediment)
-    annual_sediment_m3 = (
-        sediment_yield_t_ha_yr * area_ha / sediment_bulk_density_t_m3
-    )
+    annual_sediment_m3 = sediment_yield_t_ha_yr * area_ha / sediment_bulk_density_t_m3
 
     # 3) Required storage via the Brune (1953) trap-efficiency curve,
     #    TE = 1 - 0.05 / sqrt(capacity / annual inflow). Two fixed-point
@@ -112,22 +111,22 @@ def design_check_dam(
         storage_req_m3 = trap_efficiency * annual_sediment_m3 * target_retention_years
         ratio = storage_req_m3 / runoff_m3 if runoff_m3 > 0 else 0.0
         trap_efficiency = max(0.05, min(0.95, 1.0 - 0.05 / math.sqrt(ratio) if ratio > 0 else 0.95))
-    storage_req_m3 = max(
-        trap_efficiency * annual_sediment_m3 * target_retention_years, 1e-6
-    )
+    storage_req_m3 = max(trap_efficiency * annual_sediment_m3 * target_retention_years, 1e-6)
 
     # 4) Trapzoidal storage: V(h) = L * (B*h + z*h^2/2); solve for h.
     dam_length = max(10.0, 2.0 * channel_width_m)
     z = side_slope_hv
-    b_term = 2.0 * storage_req_m3 / (dam_length * z)
-    dam_height = (-channel_width_m + math.sqrt(channel_width_m ** 2 + 2.0 * z * storage_req_m3 / dam_length)) / z
+    2.0 * storage_req_m3 / (dam_length * z)
+    dam_height = (
+        -channel_width_m + math.sqrt(channel_width_m**2 + 2.0 * z * storage_req_m3 / dam_length)
+    ) / z
     dam_height = max(0.5, min(6.0, dam_height))
     top_width = channel_width_m + 2.0 * z * dam_height
     dam_volume = (channel_width_m + top_width) / 2.0 * dam_height * dam_length
 
     # 5) Spillway (broad-crested weir) + freeboard
     design_head = max(0.2, min(0.5, 0.4 * dam_height))
-    spillway_width = peak_flow_m3s / (1.7 * design_head ** 1.5) if peak_flow_m3s > 0 else 0.0
+    spillway_width = peak_flow_m3s / (1.7 * design_head**1.5) if peak_flow_m3s > 0 else 0.0
     freeboard = 0.3 if dam_height < 3.0 else 0.5
 
     spacing = min(5.0 * dam_height, 50.0)
@@ -183,14 +182,15 @@ def design_contour_trench(
         raise ValueError("slope_pct must be positive for trench spacing")
 
     depth = depth_m
-    width = bottom_width_m
     spacing = min(30.0, max(5.0, 0.3 * (100.0 / slope_pct)))
 
     n_rows = math.ceil(math.sqrt(area_m2) / spacing)
     row_length = math.sqrt(area_m2)
     total_length = n_rows * row_length
 
-    cross_section_m2 = (bottom_width_m + (bottom_width_m + 2.0 * side_slope_hv * depth)) / 2.0 * depth
+    cross_section_m2 = (
+        (bottom_width_m + (bottom_width_m + 2.0 * side_slope_hv * depth)) / 2.0 * depth
+    )
     total_volume = total_length * cross_section_m2
     infiltration_gain = total_volume * infiltration_efficiency
 
@@ -397,7 +397,7 @@ def calculate_strahler_order(stream_network: dict) -> dict:
             - 'max_order': Maximum order in network
             - 'stream_count': Total number of streams
     """
-    nodes = stream_network.get("nodes", [])
+    stream_network.get("nodes", [])
     edges = stream_network.get("edges", [])
 
     # Handle empty network
@@ -416,7 +416,7 @@ def calculate_strahler_order(stream_network: dict) -> dict:
         incoming_to_node[to_node].append(edge["id"])
 
     # Iterate to convergence
-    for iteration in range(10):
+    for _iteration in range(10):
         changed = False
 
         for node, incoming_edges in incoming_to_node.items():
@@ -435,10 +435,7 @@ def calculate_strahler_order(stream_network: dict) -> dict:
                         old_order = orders.get(edge["id"], 0)
 
                         # Strahler rule
-                        if count_max >= 2:
-                            new_order = max_order + 1
-                        else:
-                            new_order = max_order
+                        new_order = max_order + 1 if count_max >= 2 else max_order
 
                         if new_order != old_order:
                             orders[edge["id"]] = new_order
@@ -499,15 +496,13 @@ def calculate_horton_ratios(strahler_result: dict, stream_lengths: dict) -> dict
     Rl_values = []
 
     for w in range(1, max_order):
-        if w in order_counts and (w + 1) in order_counts:
-            if order_counts[w + 1] > 0:
-                Rb = order_counts[w] / order_counts[w + 1]
-                Rb_values.append(Rb)
+        if w in order_counts and (w + 1) in order_counts and order_counts[w + 1] > 0:
+            Rb = order_counts[w] / order_counts[w + 1]
+            Rb_values.append(Rb)
 
-        if w in order_lengths and (w + 1) in order_lengths:
-            if order_lengths[w] > 0:
-                Rl = order_lengths[w + 1] / order_lengths[w]
-                Rl_values.append(Rl)
+        if w in order_lengths and (w + 1) in order_lengths and order_lengths[w] > 0:
+            Rl = order_lengths[w + 1] / order_lengths[w]
+            Rl_values.append(Rl)
 
     return {
         "Rb": np.mean(Rb_values) if Rb_values else 0,

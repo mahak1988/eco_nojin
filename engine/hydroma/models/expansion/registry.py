@@ -12,25 +12,23 @@ from __future__ import annotations
 
 import json
 import logging
-from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Type, TypeVar, Generic
+from typing import Any, TypeVar
 from uuid import uuid4
-
-from pydantic import BaseModel, Field
 
 from engine.hydroma.models.base import ScientificModel
 
 logger = logging.getLogger(__name__)
 
-T = TypeVar('T', bound=ScientificModel)
+T = TypeVar("T", bound=ScientificModel)
 
 
-class ModelDomain(str, Enum):
+class ModelDomain(StrEnum):
     """Scientific domain of the model."""
+
     HYDROLOGY = "hydrology"
     AGRONOMY = "agronomy"
     SOIL = "soil"
@@ -42,16 +40,18 @@ class ModelDomain(str, Enum):
     SOCIOECONOMIC = "socioeconomic"
 
 
-class ModelFidelity(str, Enum):
+class ModelFidelity(StrEnum):
     """Model fidelity level."""
-    EMPIRICAL = "empirical"           # Statistical/empirical relationships
-    PROCESS_BASED = "process_based"   # Physics-based process models
-    HYBRID = "hybrid"                 # Physics + ML hybrid
-    DATA_DRIVEN = "data_driven"       # Pure ML/data-driven
+
+    EMPIRICAL = "empirical"  # Statistical/empirical relationships
+    PROCESS_BASED = "process_based"  # Physics-based process models
+    HYBRID = "hybrid"  # Physics + ML hybrid
+    DATA_DRIVEN = "data_driven"  # Pure ML/data-driven
 
 
-class ModelStatus(str, Enum):
+class ModelStatus(StrEnum):
     """Model lifecycle status."""
+
     EXPERIMENTAL = "experimental"
     VALIDATED = "validated"
     PRODUCTION = "production"
@@ -61,6 +61,7 @@ class ModelStatus(str, Enum):
 @dataclass
 class ModelMetadata:
     """Metadata for a registered model."""
+
     model_id: str
     name: str
     version: str
@@ -68,26 +69,26 @@ class ModelMetadata:
     fidelity: ModelFidelity
     status: ModelStatus
     description: str
-    references: List[str] = field(default_factory=list)
-    doi: Optional[str] = None
-    authors: List[str] = field(default_factory=list)
+    references: list[str] = field(default_factory=list)
+    doi: str | None = None
+    authors: list[str] = field(default_factory=list)
     created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
     updated_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
-    input_schema: Dict[str, Any] = field(default_factory=dict)
-    output_schema: Dict[str, Any] = field(default_factory=dict)
-    calibration_sets: List[str] = field(default_factory=list)
-    validation_datasets: List[str] = field(default_factory=list)
-    tags: List[str] = field(default_factory=list)
-    provenance: Dict[str, Any] = field(default_factory=dict)
-    
-    def to_dict(self) -> Dict[str, Any]:
+    input_schema: dict[str, Any] = field(default_factory=dict)
+    output_schema: dict[str, Any] = field(default_factory=dict)
+    calibration_sets: list[str] = field(default_factory=list)
+    validation_datasets: list[str] = field(default_factory=list)
+    tags: list[str] = field(default_factory=list)
+    provenance: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
         return {
             "model_id": self.model_id,
             "name": self.name,
             "version": self.version,
-            "domain": self.domain.value if hasattr(self.domain, 'value') else self.domain,
-            "fidelity": self.fidelity.value if hasattr(self.fidelity, 'value') else self.fidelity,
-            "status": self.status.value if hasattr(self.status, 'value') else self.status,
+            "domain": self.domain.value if hasattr(self.domain, "value") else self.domain,
+            "fidelity": self.fidelity.value if hasattr(self.fidelity, "value") else self.fidelity,
+            "status": self.status.value if hasattr(self.status, "value") else self.status,
             "description": self.description,
             "references": self.references,
             "doi": self.doi,
@@ -106,7 +107,7 @@ class ModelMetadata:
 class ModelRegistry:
     """
     Central registry for all scientific models.
-    
+
     Features:
     - Model registration with metadata
     - Version management
@@ -115,15 +116,15 @@ class ModelRegistry:
     - Validation dataset management
     - Provenance tracking
     """
-    
-    def __init__(self, registry_path: Optional[Path] = None):
+
+    def __init__(self, registry_path: Path | None = None):
         self.registry_path = registry_path or Path("data/model_registry.json")
-        self._models: Dict[str, ModelMetadata] = {}
-        self._model_classes: Dict[str, Type[ScientificModel]] = {}
-        self._calibration_sets: Dict[str, Dict[str, Any]] = {}
-        self._validation_datasets: Dict[str, Dict[str, Any]] = {}
+        self._models: dict[str, ModelMetadata] = {}
+        self._model_classes: dict[str, type[ScientificModel]] = {}
+        self._calibration_sets: dict[str, dict[str, Any]] = {}
+        self._validation_datasets: dict[str, dict[str, Any]] = {}
         self._load_registry()
-    
+
     def _load_registry(self) -> None:
         """Load registry from disk."""
         if self.registry_path.exists():
@@ -143,7 +144,7 @@ class ModelRegistry:
                 logger.info(f"Loaded {len(self._models)} models from registry")
             except Exception as e:
                 logger.warning(f"Failed to load registry: {e}")
-    
+
     def _save_registry(self) -> None:
         """Save registry to disk."""
         self.registry_path.parent.mkdir(parents=True, exist_ok=True)
@@ -151,35 +152,35 @@ class ModelRegistry:
             "models": [m.to_dict() for m in self._models.values()],
             "updated_at": datetime.utcnow().isoformat(),
         }
-        with open(self.registry_path, 'w') as f:
+        with open(self.registry_path, "w") as f:
             json.dump(data, f, indent=2)
-    
+
     def register(
         self,
-        model_class: Type[ScientificModel],
+        model_class: type[ScientificModel],
         metadata: ModelMetadata,
-        calibration_set: Optional[Dict[str, Any]] = None,
-        validation_dataset: Optional[Dict[str, Any]] = None,
+        calibration_set: dict[str, Any] | None = None,
+        validation_dataset: dict[str, Any] | None = None,
     ) -> str:
         """
         Register a model with metadata.
-        
+
         Args:
             model_class: The model class (must inherit from ScientificModel)
             metadata: Model metadata
             calibration_set: Optional calibration parameters
             validation_dataset: Optional validation dataset reference
-            
+
         Returns:
             Model ID
         """
         model_id = metadata.model_id or str(uuid4())
         metadata.model_id = model_id
         metadata.updated_at = datetime.utcnow().isoformat()
-        
+
         self._models[model_id] = metadata
         self._model_classes[model_id] = model_class
-        
+
         if calibration_set:
             cal_id = calibration_set.get("id", f"cal_{model_id}_{len(self._calibration_sets)}")
             self._calibration_sets[cal_id] = {
@@ -188,20 +189,22 @@ class ModelRegistry:
                 "registered_at": datetime.utcnow().isoformat(),
             }
             metadata.calibration_sets.append(cal_id)
-        
+
         if validation_dataset:
-            val_id = validation_dataset.get("id", f"val_{model_id}_{len(self._validation_datasets)}")
+            val_id = validation_dataset.get(
+                "id", f"val_{model_id}_{len(self._validation_datasets)}"
+            )
             self._validation_datasets[val_id] = {
                 **validation_dataset,
                 "model_id": model_id,
                 "registered_at": datetime.utcnow().isoformat(),
             }
             metadata.validation_datasets.append(val_id)
-        
+
         self._save_registry()
         logger.info(f"Registered model: {metadata.name} v{metadata.version} ({model_id})")
         return model_id
-    
+
     def unregister(self, model_id: str) -> bool:
         """Unregister a model."""
         if model_id in self._models:
@@ -211,28 +214,28 @@ class ModelRegistry:
             logger.info(f"Unregistered model: {model_id}")
             return True
         return False
-    
-    def get(self, model_id: str) -> Optional[ModelMetadata]:
+
+    def get(self, model_id: str) -> ModelMetadata | None:
         """Get model metadata by ID."""
         return self._models.get(model_id)
-    
-    def get_class(self, model_id: str) -> Optional[Type[ScientificModel]]:
+
+    def get_class(self, model_id: str) -> type[ScientificModel] | None:
         """Get model class by ID."""
         return self._model_classes.get(model_id)
-    
-    def instantiate(self, model_id: str, **kwargs) -> Optional[ScientificModel]:
+
+    def instantiate(self, model_id: str, **kwargs) -> ScientificModel | None:
         """Instantiate a model by ID."""
         model_class = self._model_classes.get(model_id)
         if model_class:
             return model_class(**kwargs)
         return None
-    
+
     def list_models(
         self,
-        domain: Optional[ModelDomain] = None,
-        fidelity: Optional[ModelFidelity] = None,
-        status: Optional[ModelStatus] = None,
-    ) -> List[ModelMetadata]:
+        domain: ModelDomain | None = None,
+        fidelity: ModelFidelity | None = None,
+        status: ModelStatus | None = None,
+    ) -> list[ModelMetadata]:
         """List models with optional filters."""
         models = list(self._models.values())
         if domain:
@@ -242,16 +245,16 @@ class ModelRegistry:
         if status:
             models = [m for m in models if m.status == status]
         return models
-    
+
     def get_best_model(
         self,
         task: str,
         domain: ModelDomain,
-        criteria: Optional[Dict[str, float]] = None,
-    ) -> Optional[ModelMetadata]:
+        criteria: dict[str, float] | None = None,
+    ) -> ModelMetadata | None:
         """
         Get the best model for a task based on criteria.
-        
+
         Args:
             task: Task description (e.g., "runoff_prediction", "yield_estimation")
             domain: Required domain
@@ -260,10 +263,10 @@ class ModelRegistry:
         candidates = self.list_models(domain=domain, status=ModelStatus.PRODUCTION)
         if not candidates:
             candidates = self.list_models(domain=domain, status=ModelStatus.VALIDATED)
-        
+
         if not candidates:
             return None
-        
+
         # Default criteria weights
         default_criteria = {
             "accuracy": 0.4,
@@ -274,7 +277,7 @@ class ModelRegistry:
         }
         if criteria:
             default_criteria.update(criteria)
-        
+
         # Score candidates (simplified scoring)
         scored = []
         for model in candidates:
@@ -285,19 +288,19 @@ class ModelRegistry:
                 score += default_criteria.get("accuracy", 0) * 0.9
             elif model.fidelity == ModelFidelity.DATA_DRIVEN:
                 score += default_criteria.get("accuracy", 0) * 0.7
-            
+
             if model.validation_datasets:
                 score += default_criteria.get("uncertainty_quantification", 0)
-            
+
             if model.status == ModelStatus.PRODUCTION:
                 score += default_criteria.get("maturity", 0)
-            
+
             scored.append((score, model))
-        
+
         scored.sort(key=lambda x: x[0], reverse=True)
         return scored[0][1] if scored else None
-    
-    def register_calibration_set(self, model_id: str, calibration_set: Dict[str, Any]) -> str:
+
+    def register_calibration_set(self, model_id: str, calibration_set: dict[str, Any]) -> str:
         """Register a calibration set for a model."""
         cal_id = calibration_set.get("id", f"cal_{model_id}_{len(self._calibration_sets)}")
         self._calibration_sets[cal_id] = {
@@ -309,12 +312,12 @@ class ModelRegistry:
             self._models[model_id].calibration_sets.append(cal_id)
             self._save_registry()
         return cal_id
-    
-    def get_calibration_set(self, cal_id: str) -> Optional[Dict[str, Any]]:
+
+    def get_calibration_set(self, cal_id: str) -> dict[str, Any] | None:
         """Get calibration set by ID."""
         return self._calibration_sets.get(cal_id)
-    
-    def register_validation_dataset(self, model_id: str, dataset: Dict[str, Any]) -> str:
+
+    def register_validation_dataset(self, model_id: str, dataset: dict[str, Any]) -> str:
         """Register a validation dataset for a model."""
         val_id = dataset.get("id", f"val_{model_id}_{len(self._validation_datasets)}")
         self._validation_datasets[val_id] = {
@@ -326,12 +329,12 @@ class ModelRegistry:
             self._models[model_id].validation_datasets.append(val_id)
             self._save_registry()
         return val_id
-    
-    def get_validation_dataset(self, val_id: str) -> Optional[Dict[str, Any]]:
+
+    def get_validation_dataset(self, val_id: str) -> dict[str, Any] | None:
         """Get validation dataset by ID."""
         return self._validation_datasets.get(val_id)
-    
-    def export_catalog(self) -> Dict[str, Any]:
+
+    def export_catalog(self) -> dict[str, Any]:
         """Export full model catalog."""
         return {
             "models": [m.to_dict() for m in self._models.values()],
@@ -342,7 +345,7 @@ class ModelRegistry:
 
 
 # Global registry instance
-_registry: Optional[ModelRegistry] = None
+_registry: ModelRegistry | None = None
 
 
 def get_registry() -> ModelRegistry:
@@ -354,19 +357,19 @@ def get_registry() -> ModelRegistry:
 
 
 def register_model(
-    model_class: Type[ScientificModel],
+    model_class: type[ScientificModel],
     name: str,
     version: str,
     domain: ModelDomain,
     fidelity: ModelFidelity,
     status: ModelStatus,
     description: str,
-    references: List[str],
-    doi: Optional[str] = None,
-    authors: Optional[List[str]] = None,
-    input_schema: Optional[Dict] = None,
-    output_schema: Optional[Dict] = None,
-    tags: Optional[List[str]] = None,
+    references: list[str],
+    doi: str | None = None,
+    authors: list[str] | None = None,
+    input_schema: dict | None = None,
+    output_schema: dict | None = None,
+    tags: list[str] | None = None,
 ) -> str:
     """Convenience function to register a model."""
     metadata = ModelMetadata(

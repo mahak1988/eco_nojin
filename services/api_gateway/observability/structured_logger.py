@@ -7,13 +7,12 @@ context enrichment, and multiple output formats.
 """
 
 import contextvars
-import json
 import logging
 import sys
 from contextlib import contextmanager
 from datetime import UTC, datetime
 from functools import wraps
-from typing import Any, Dict, Optional
+from typing import Any
 
 import structlog
 from structlog.stdlib import ProcessorFormatter
@@ -24,7 +23,7 @@ correlation_id_var: contextvars.ContextVar[str] = contextvars.ContextVar(
 )
 
 # Context variable for extra context
-extra_context_var: contextvars.ContextVar[Dict[str, Any]] = contextvars.ContextVar(
+extra_context_var: contextvars.ContextVar[dict[str, Any]] = contextvars.ContextVar(
     "extra_context", default={}
 )
 
@@ -51,12 +50,12 @@ def clear_correlation_id() -> None:
     correlation_id_var.set("")
 
 
-def get_extra_context() -> Dict[str, Any]:
+def get_extra_context() -> dict[str, Any]:
     """Get extra context from context variable."""
     return extra_context_var.get().copy()
 
 
-def set_extra_context(context: Dict[str, Any]) -> None:
+def set_extra_context(context: dict[str, Any]) -> None:
     """Set extra context in context variable."""
     extra_context_var.set(context)
 
@@ -74,7 +73,7 @@ def clear_extra_context() -> None:
 
 
 @contextmanager
-def correlation_context(correlation_id: Optional[str] = None, **extra_context):
+def correlation_context(correlation_id: str | None = None, **extra_context):
     """Context manager for correlation ID and extra context."""
     cid_token = correlation_id_var.set(correlation_id) if correlation_id is not None else None
     context_token = extra_context_var.set(extra_context) if extra_context else None
@@ -180,10 +179,7 @@ def setup_structured_logging(
 
     # Configure structlog
     structlog.configure(
-        processors=shared_processors
-        + [
-            structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
-        ],
+        processors=[*shared_processors, structlog.stdlib.ProcessorFormatter.wrap_for_formatter],
         wrapper_class=structlog.stdlib.BoundLogger,
         logger_factory=structlog.stdlib.LoggerFactory(),
         cache_logger_on_first_use=True,
@@ -245,8 +241,8 @@ def log_external_call(
     service: str,
     endpoint: str,
     method: str = "GET",
-    status_code: Optional[int] = None,
-    duration_ms: Optional[float] = None,
+    status_code: int | None = None,
+    duration_ms: float | None = None,
     **extra,
 ):
     """Log an external API call."""
@@ -265,7 +261,7 @@ def log_db_query(
     logger: structlog.BoundLogger,
     query: str,
     duration_ms: float,
-    rows_affected: Optional[int] = None,
+    rows_affected: int | None = None,
     **extra,
 ):
     """Log a database query."""
@@ -282,8 +278,8 @@ def log_cache_operation(
     logger: structlog.BoundLogger,
     operation: str,
     key: str,
-    hit: Optional[bool] = None,
-    duration_ms: Optional[float] = None,
+    hit: bool | None = None,
+    duration_ms: float | None = None,
     **extra,
 ):
     """Log a cache operation."""
@@ -301,7 +297,7 @@ def log_background_task(
     logger: structlog.BoundLogger,
     task_name: str,
     status: str,  # started, completed, failed
-    duration_ms: Optional[float] = None,
+    duration_ms: float | None = None,
     **extra,
 ):
     """Log a background task."""

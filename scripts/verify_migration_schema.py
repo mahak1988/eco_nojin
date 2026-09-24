@@ -3,9 +3,11 @@
 
 import os
 import sys
+
 from sqlalchemy import create_engine, inspect, text
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///test_migration.db")
+
 
 def verify_schema():
     engine = create_engine(DATABASE_URL)

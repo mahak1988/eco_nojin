@@ -134,14 +134,14 @@ class OutboxWorker:
 
         # Mark as Supabase synced (for compatibility with existing sync flow)
         await self.db.execute(
-            update(IntOutboxEvent)
-            .where(IntOutboxEvent.id == event.id)
-            .values(supabase_synced=True)
+            update(IntOutboxEvent).where(IntOutboxEvent.id == event.id).values(supabase_synced=True)
         )
 
         logger.info(
             "Outbox: event %d (%s) published to NATS subject %s",
-            event.id, event_type, subject,
+            event.id,
+            event_type,
+            subject,
         )
 
     def _get_subject(self, event_type: str, aggregate_type: str) -> str:
@@ -191,7 +191,9 @@ class OutboxWorker:
 
     async def run_forever(self, poll_interval: float = POLL_INTERVAL_SECONDS) -> None:
         """Run the outbox worker continuously."""
-        logger.info("Outbox worker started (poll interval=%.1fs, NATS bridge enabled)", poll_interval)
+        logger.info(
+            "Outbox worker started (poll interval=%.1fs, NATS bridge enabled)", poll_interval
+        )
         while True:
             try:
                 async with hub.get_async_session() as db:

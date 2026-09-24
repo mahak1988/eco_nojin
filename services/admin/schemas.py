@@ -1,13 +1,13 @@
 """Pydantic schemas for Admin"""
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel
 
 
-class ServiceStatus(str, Enum):
+class ServiceStatus(StrEnum):
     HEALTHY = "healthy"
     DEGRADED = "degraded"
     DOWN = "down"

@@ -8,7 +8,6 @@ Provides endpoints for:
 
 from __future__ import annotations
 
-import json
 import logging
 from pathlib import Path
 from typing import Any
@@ -28,6 +27,7 @@ VALIDATION_DIR = MODELS_DIR / "validation" / "test_cases"
 # ============================================================================
 # Pydantic Models
 # ============================================================================
+
 
 class ModelInput(BaseModel):
     name: str
@@ -81,6 +81,7 @@ class ModelMeta(BaseModel):
 
 class ModelDetail(ModelMeta):
     """Extended model detail with test cases and validation history."""
+
     test_cases: list[dict[str, Any]] = Field(default_factory=list)
     validation_history: list[dict[str, Any]] = Field(default_factory=list)
 
@@ -129,9 +130,9 @@ class SlaughterhouseStatus(BaseModel):
 # Helper Functions
 # ============================================================================
 
+
 def _discover_models() -> list[dict[str, Any]]:
     """Discover all models in the engine/hydroma/models directory."""
-    models = []
 
     # Core model files in engine/hydroma/models/
     model_files = {
@@ -673,7 +674,7 @@ def _load_test_cases(model_id: str) -> list[dict[str, Any]]:
         return []
 
     try:
-        with open(test_file, "r") as f:
+        with open(test_file) as f:
             data = yaml.safe_load(f)
         return data.get("cases", [])
     except Exception as e:
@@ -708,6 +709,7 @@ def _determine_validation_status(model_id: str) -> ValidationStatus:
 # ============================================================================
 # API Endpoints
 # ============================================================================
+
 
 @router.get("/models", response_model=list[ModelMeta])
 async def list_models(
@@ -750,7 +752,7 @@ async def get_model(model_id: str) -> ModelDetail:
 @router.get("/models/{model_id}/validation", response_model=ValidationReport)
 async def get_validation_report(model_id: str) -> ValidationReport:
     """Get validation report for a model (runs test cases)."""
-    from datetime import datetime, UTC
+    from datetime import UTC, datetime
 
     models = {m["id"]: m for m in _discover_models()}
     if model_id not in models:
@@ -768,18 +770,22 @@ async def get_validation_report(model_id: str) -> ValidationReport:
     for tc in test_cases:
         # Check if test case has expected values defined
         if "expected" in tc:
-            details.append({
-                "test_case": tc["name"],
-                "status": "passed",  # Would be determined by actual run
-                "message": "Test case defined with expected values",
-            })
+            details.append(
+                {
+                    "test_case": tc["name"],
+                    "status": "passed",  # Would be determined by actual run
+                    "message": "Test case defined with expected values",
+                }
+            )
             passed += 1
         else:
-            details.append({
-                "test_case": tc["name"],
-                "status": "skipped",
-                "message": "No expected values defined",
-            })
+            details.append(
+                {
+                    "test_case": tc["name"],
+                    "status": "skipped",
+                    "message": "No expected values defined",
+                }
+            )
             skipped += 1
 
     return ValidationReport(
@@ -797,8 +803,8 @@ async def get_validation_report(model_id: str) -> ValidationReport:
 @router.post("/models/{model_id}/run", response_model=RunResult)
 async def run_model(model_id: str, request: RunRequest) -> RunResult:
     """Execute a model with given inputs."""
-    import uuid
     import time
+    import uuid
 
     models = {m["id"]: m for m in _discover_models()}
     if model_id not in models:
@@ -826,7 +832,7 @@ async def run_model(model_id: str, request: RunRequest) -> RunResult:
 @router.get("/slaughterhouse/status", response_model=SlaughterhouseStatus)
 async def slaughterhouse_status() -> SlaughterhouseStatus:
     """Get overall slaughterhouse validation status."""
-    from datetime import datetime, UTC
+    from datetime import UTC, datetime
 
     models = _discover_models()
 

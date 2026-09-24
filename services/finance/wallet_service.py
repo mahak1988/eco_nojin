@@ -1,17 +1,17 @@
 """EcoCoin Wallet Service - Manages user wallets, balances, and transactions"""
 
 from __future__ import annotations
+
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Optional
 from enum import Enum
-from uuid import uuid4
-from sqlalchemy import select, func
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import IntegrityError
 
-from database.models import EcoWallet, DailyEarnings, FinJournalBatch, FinJournalEntry, FinAccount
+from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from database.models import DailyEarnings, EcoWallet, FinAccount, FinJournalBatch, FinJournalEntry
 from services.api_gateway.exceptions import EcoNojinException
 
 
@@ -35,7 +35,7 @@ class WalletTransaction:
     description: str
     category: str
     balance_after: Decimal
-    reference_id: Optional[str] = None
+    reference_id: str | None = None
     timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
@@ -102,7 +102,7 @@ class WalletService:
         user_id: str,
         category: str,
         quantity: Decimal = Decimal("1"),
-        reference_id: str = None,
+        reference_id: str | None = None,
     ) -> tuple[Decimal, Decimal]:
         """Credit ECO tokens to user wallet for ecosystem activities"""
         if category not in self.EARNING_RATES:
@@ -139,7 +139,7 @@ class WalletService:
         wallet = await self._get_or_create_wallet(user_id)
 
         # Create journal batch
-        batch = await self._create_earning_batch(user_id, amount, category)
+        await self._create_earning_batch(user_id, amount, category)
 
         # Update wallet balance
         for attempt in range(3):
@@ -183,7 +183,7 @@ class WalletService:
         self,
         user_id: str,
         category: str,
-        reference_id: str = None,
+        reference_id: str | None = None,
     ) -> tuple[Decimal, Decimal]:
         """Redeem ECO tokens for platform services"""
         if category not in self.REDEMPTION_RATES:
@@ -203,7 +203,7 @@ class WalletService:
                 code="INSUFFICIENT_BALANCE",
             )
 
-        batch = await self._create_redemption_batch(user_id, amount, category)
+        await self._create_redemption_batch(user_id, amount, category)
 
         for attempt in range(3):
             try:
@@ -214,10 +214,10 @@ class WalletService:
 
                 if wallet.balance < amount:
                     raise EcoNojinException(
-                f"Insufficient balance ({wallet.balance:.2f} < {amount:.2f})",
-                status_code=400,
-                code="INSUFFICIENT_BALANCE",
-            )
+                        f"Insufficient balance ({wallet.balance:.2f} < {amount:.2f})",
+                        status_code=400,
+                        code="INSUFFICIENT_BALANCE",
+                    )
 
                 wallet.balance -= amount
                 wallet.total_redeemed += amount
@@ -273,7 +273,7 @@ class WalletService:
         to_wallet = await self._get_or_create_wallet(to_user)
 
         # Atomic transfer with journal
-        batch = await self._create_transfer_batch(from_user, to_user, amount, "transfer")
+        await self._create_transfer_batch(from_user, to_user, amount, "transfer")
 
         for attempt in range(3):
             try:
@@ -288,7 +288,9 @@ class WalletService:
                 to_wallet = to_result.scalar_one()
 
                 if from_wallet.balance < amount:
-                    raise EcoNojinException("Insufficient balance", status_code=400, code="INSUFFICIENT_BALANCE")
+                    raise EcoNojinException(
+                        "Insufficient balance", status_code=400, code="INSUFFICIENT_BALANCE"
+                    )
 
                 from_wallet.balance -= amount
                 to_wallet.balance += amount
@@ -339,7 +341,7 @@ class WalletService:
         ]
 
     async def _create_earning_batch(
-        self, user_id: str, amount: Decimal, category: str, reference_id: str = None
+        self, user_id: str, amount: Decimal, category: str, reference_id: str | None = None
     ):
         eco_asset = await self._get_or_create_account("ECO_ASSET", "ECO", "asset")
         reward_liability = await self._get_or_create_account("REWARD_LIABILITY", "ECO", "liability")
@@ -369,7 +371,7 @@ class WalletService:
         )
 
     async def _create_redemption_batch(
-        self, user_id: str, amount: Decimal, category: str, reference_id: str = None
+        self, user_id: str, amount: Decimal, category: str, reference_id: str | None = None
     ):
         eco_asset = await self._get_or_create_account("ECO_ASSET", "ECO", "asset")
         reward_liability = await self._get_or_create_account("REWARD_LIABILITY", "ECO", "liability")
@@ -401,7 +403,7 @@ class WalletService:
     async def _create_transfer_batch(
         self, from_user: str, to_user: str, amount: Decimal, description: str
     ):
-        eco_asset = await self._get_or_create_account("ECO_ASSET", "ECO", "asset")
+        await self._get_or_create_account("ECO_ASSET", "ECO", "asset")
 
         entries = [
             {
@@ -427,7 +429,7 @@ class WalletService:
             reference_type="eco_transfer",
             reference_id=f"xfer-{__import__('uuid').uuid4().hex[:8]}",
             entries=entries,
-            description=f"ECO transfer",
+            description="ECO transfer",
             created_by="system",
         )
 

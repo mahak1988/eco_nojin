@@ -184,7 +184,7 @@ def calculate_leaching_requirement(
         return {
             "leaching_required": True,
             "reason": "Irrigation water EC is too high relative to the target "
-                      "soil EC - this water is not suitable without blending",
+            "soil EC - this water is not suitable without blending",
             "current_ec": ec_soil,
             "target_ec": target_ec,
             "water_ec": ec_water,

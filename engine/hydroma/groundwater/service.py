@@ -17,12 +17,12 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 logger = logging.getLogger(__name__)
 
 
-class AquiferType(str, Enum):
+class AquiferType(StrEnum):
     """Classification of aquifer types."""
 
     UNCONFINED = "unconfined"
@@ -31,7 +31,7 @@ class AquiferType(str, Enum):
     FRACTURED = "fractured"
 
 
-class WaterQualityClass(str, Enum):
+class WaterQualityClass(StrEnum):
     """Water quality classification based on TDS."""
 
     EXCELLENT = "excellent"  # < 300 mg/L

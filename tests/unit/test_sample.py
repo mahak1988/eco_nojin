@@ -1,7 +1,8 @@
 """Sample unit tests."""
 
-import pytest
 import os
+
+import pytest
 
 
 class TestEnvironment:

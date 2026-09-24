@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 tests/test_phase4_hell_hardening.py
 ====================================
@@ -8,8 +7,9 @@ Tests for Phase 4 Hell hardening fixes.
 """
 
 import sys
-import pytest
 from pathlib import Path
+
+import pytest
 
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -85,9 +85,11 @@ class TestThreadPoolImprovements:
 
     def test_concurrent_sessions(self):
         """Concurrent sessions should work without exhaustion."""
-        from database.hub import hub
-        from sqlalchemy import text
         import threading
+
+        from sqlalchemy import text
+
+        from database.hub import hub
 
         results = []
         errors = []

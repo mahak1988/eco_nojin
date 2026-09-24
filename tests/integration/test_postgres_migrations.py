@@ -5,14 +5,14 @@ Tests Alembic migrations against real PostgreSQL using testcontainers.
 """
 
 import os
+
 import pytest
-import pytest_asyncio
+from alembic.config import Config
 from sqlalchemy import text
 from testcontainers.postgres import PostgresContainer
 
-from database.hub import hub
-from alembic.config import Config
 from alembic import command
+from database.hub import hub
 
 
 @pytest.fixture(scope="session")
@@ -93,6 +93,7 @@ class TestPostgresMigrations:
 
         # Get current revision
         from alembic.script import ScriptDirectory
+
         script = ScriptDirectory.from_config(alembic_config)
         head_revision = script.get_current_head()
 
@@ -135,9 +136,7 @@ class TestPostgresMigrations:
             ]
 
             for table in tables_to_check:
-                result = await session.execute(
-                    text(f"SELECT 1 FROM {table} LIMIT 1")
-                )
+                await session.execute(text(f"SELECT 1 FROM {table} LIMIT 1"))
                 # Table exists if query doesn't raise exception
                 # We just verify it doesn't raise
 
@@ -193,7 +192,7 @@ class TestPostgresMigrations:
                 )
                 session.add(duplicate)
                 await session.commit()
-                assert False, "Should have raised integrity error"
+                raise AssertionError("Should have raised integrity error")
             except Exception:
                 await session.rollback()
 
@@ -213,7 +212,7 @@ class TestDataIntegrity:
         """Test that foreign key constraints are enforced."""
         command.upgrade(alembic_config, "head")
 
-        from database.models import User, Organization, OrganizationMembership
+        from database.models import Organization, OrganizationMembership, User
 
         async with hub_instance.get_async_session() as session:
             # Create organization
@@ -245,7 +244,7 @@ class TestDataIntegrity:
 
             try:
                 await session.commit()
-                assert False, "Should have raised foreign key violation"
+                raise AssertionError("Should have raised foreign key violation")
             except Exception:
                 await session.rollback()
 
@@ -276,7 +275,7 @@ class TestDataIntegrity:
 
             try:
                 await session.commit()
-                assert False, "Should have raised unique constraint violation"
+                raise AssertionError("Should have raised unique constraint violation")
             except Exception:
                 await session.rollback()
 

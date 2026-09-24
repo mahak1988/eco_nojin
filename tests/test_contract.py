@@ -15,8 +15,9 @@ schema = schemathesis.openapi.from_path("D:/eco_nojin/openapi_schema.json")
 # Test specific endpoints with direct calls (more reliable than schemathesis parametrize)
 def test_sync_status_endpoint():
     """Test /api/v1/sync/status endpoint specifically."""
-    from fastapi.testclient import TestClient
     import sys
+
+    from fastapi.testclient import TestClient
 
     sys.path.insert(0, "D:/eco_nojin")
     from services.api_gateway.main import app
@@ -48,8 +49,9 @@ def test_sync_status_endpoint():
 
 def test_sync_trigger_endpoint():
     """Test /api/v1/sync/trigger endpoint specifically."""
-    from fastapi.testclient import TestClient
     import sys
+
+    from fastapi.testclient import TestClient
 
     sys.path.insert(0, "D:/eco_nojin")
     from services.api_gateway.main import app
@@ -74,8 +76,9 @@ def test_sync_trigger_endpoint():
 
 def test_sync_pending_endpoint():
     """Test /api/v1/sync/pending endpoint specifically."""
-    from fastapi.testclient import TestClient
     import sys
+
+    from fastapi.testclient import TestClient
 
     sys.path.insert(0, "D:/eco_nojin")
     from services.api_gateway.main import app
@@ -96,8 +99,9 @@ def test_sync_pending_endpoint():
 
 def test_realtime_health_endpoint():
     """Test /api/v1/realtime/health endpoint specifically."""
-    from fastapi.testclient import TestClient
     import sys
+
+    from fastapi.testclient import TestClient
 
     sys.path.insert(0, "D:/eco_nojin")
     from services.api_gateway.main import app
@@ -116,8 +120,9 @@ def test_realtime_health_endpoint():
 
 def test_realtime_stream_validation():
     """Test /api/v1/realtime/stream validates user_key format."""
-    from fastapi.testclient import TestClient
     import sys
+
+    from fastapi.testclient import TestClient
 
     sys.path.insert(0, "D:/eco_nojin")
     from services.api_gateway.main import app
@@ -166,7 +171,7 @@ def test_openapi_schema_validity():
         "/api/v1/realtime/stream",
     ]:
         path_obj = schema["paths"][path]
-        for method, method_obj in path_obj.items():
+        for _method, method_obj in path_obj.items():
             assert "responses" in method_obj
             assert "200" in method_obj["responses"] or "400" in method_obj["responses"]
 

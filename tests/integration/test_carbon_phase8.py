@@ -1,6 +1,5 @@
 """Phase 8 integration tests: register -> verify (honest) -> issue -> wallet."""
 
-import pytest
 from fastapi.testclient import TestClient
 
 from database.base import Base

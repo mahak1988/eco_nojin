@@ -445,8 +445,8 @@ class CropDatabaseService:
             try:
                 df = self._repo._conn.execute(
                     """
-                    SELECT id, name_fa, scientific_name, category 
-                    FROM ref_species 
+                    SELECT id, name_fa, scientific_name, category
+                    FROM ref_species
                     WHERE name_fa ILIKE ? OR scientific_name ILIKE ? OR id = ?
                     LIMIT 50
                 """,
@@ -665,8 +665,8 @@ class CropDatabaseService:
             try:
                 df = self._repo._conn.execute(
                     """
-                    SELECT id, name_fa, scientific_name, category 
-                    FROM ref_species 
+                    SELECT id, name_fa, scientific_name, category
+                    FROM ref_species
                     WHERE name_fa ILIKE ? OR scientific_name ILIKE ? OR id = ?
                     LIMIT 50
                 """,

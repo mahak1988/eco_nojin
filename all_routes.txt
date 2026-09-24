@@ -1,0 +1,11 @@
+/
+/api/v1/health
+/docs
+/docs/oauth2-redirect
+/health
+/health/live
+/health/ready
+/metrics
+/openapi.json
+/ready
+/redoc

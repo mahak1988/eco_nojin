@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Literal
 
@@ -16,13 +16,13 @@ logger = logging.getLogger(__name__)
 MethodType = Literal["SCS-CN", "Rational"]
 
 
-class CurveNumberType(str, Enum):
+class CurveNumberType(StrEnum):
     """Common Curve Number values based on land use and hydrologic soil group."""
 
-    PASTURE_GOOD_CONDITION = 60
-    FOREST_MIXED = 65
-    CULTIVATED_IRRIGATED = 85
-    URBAN_RESIDENTIAL = 85
+    PASTURE_GOOD_CONDITION = "60"
+    FOREST_MIXED = "65"
+    CULTIVATED_IRRIGATED = "85"
+    URBAN_RESIDENTIAL = "85"
     # Add more as needed
 
 
@@ -101,7 +101,13 @@ class RunoffCalculator:
 
     def _scs_cn_method(self, input_data: RunoffInput) -> RunoffOutput:
         """Calculate runoff using SCS-CN method."""
-        cn = input_data.curve_number if isinstance(input_data.curve_number, (int, float)) else 70
+        cn_val = input_data.curve_number
+        if isinstance(cn_val, CurveNumberType):
+            cn = int(cn_val.value)
+        elif isinstance(cn_val, (int, float)):
+            cn = cn_val
+        else:
+            cn = 70
         area_ha = input_data.area_ha
 
         # SCS-CN potential maximum retention in MILLIMETRES.
@@ -117,7 +123,9 @@ class RunoffCalculator:
         if precipitation_mm <= initial_abstraction:
             volume_m3 = 0.0
         else:
-            runoff_depth_mm = (precipitation_mm - initial_abstraction) ** 2 / (precipitation_mm + 0.8 * s)
+            runoff_depth_mm = (precipitation_mm - initial_abstraction) ** 2 / (
+                precipitation_mm + 0.8 * s
+            )
             volume_m3 = max(0.0, runoff_depth_mm * area_ha * 10.0)
 
         peak_flow_m3s = volume_m3 / (10 * 3600) if volume_m3 > 0 else 0.0
@@ -237,6 +245,3 @@ class SpatialRunoffCalculator:
             raise ValueError(
                 f"Spatial calculation for method '{input_data.method}' is not yet implemented."
             )
-
-
-

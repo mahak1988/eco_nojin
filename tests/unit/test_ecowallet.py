@@ -38,9 +38,7 @@ def _register_or_login(client, email: str, password: str = "TestPass123") -> dic
         },
     )
     if response.status_code != 200:
-        response = client.post(
-            "/api/v1/auth/login", json={"email": email, "password": password}
-        )
+        response = client.post("/api/v1/auth/login", json={"email": email, "password": password})
     assert response.status_code == 200, response.text
     token = response.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}

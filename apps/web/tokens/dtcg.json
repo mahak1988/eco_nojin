@@ -1,0 +1,148 @@
+{
+  "$schema": "https://design-tokens.github.io/format/transforms/1.0.0/schema.json",
+  "version": "1.0.0",
+  "color": {
+    "water": {
+      "$value": "oklch(0.62 0.11 235)",
+      "$type": "color",
+      "$description": "Primary water/blue color"
+    },
+    "forest": {
+      "$value": "oklch(0.55 0.12 150)",
+      "$type": "color",
+      "$description": "Primary forest/green color"
+    },
+    "soil": {
+      "$value": "oklch(0.45 0.06 70)",
+      "$type": "color",
+      "$description": "Primary soil/brown color"
+    },
+    "paper": {
+      "$value": "oklch(0.97 0.005 90)",
+      "$type": "color",
+      "$description": "Paper/background color"
+    },
+    "ink": {
+      "$value": "oklch(0.24 0.01 250)",
+      "$type": "color",
+      "$description": "Primary ink/text color"
+    },
+    "copper": {
+      "$value": "oklch(0.60 0.14 45)",
+      "$type": "color",
+      "$description": "Warning/money copper color"
+    },
+    "chart": {
+      "1": {
+        "$value": "oklch(0.62 0.11 235)",
+        "$type": "color",
+        "$description": "Chart color 1 - water blue"
+      },
+      "2": {
+        "$value": "oklch(0.55 0.12 150)",
+        "$type": "color",
+        "$description": "Chart color 2 - forest green"
+      },
+      "3": {
+        "$value": "oklch(0.60 0.14 45)",
+        "$type": "color",
+        "$description": "Chart color 3 - copper orange"
+      },
+      "4": {
+        "$value": "oklch(0.58 0.12 25)",
+        "$type": "color",
+        "$description": "Chart color 4 - clay red"
+      },
+      "5": {
+        "$value": "oklch(0.52 0.13 300)",
+        "$type": "color",
+        "$description": "Chart color 5 - violet"
+      },
+      "6": {
+        "$value": "oklch(0.65 0.15 30)",
+        "$type": "color",
+        "$description": "Chart color 6 - amber"
+      },
+      "7": {
+        "$value": "oklch(0.55 0.10 190)",
+        "$type": "color",
+        "$description": "Chart color 7 - teal"
+      },
+      "8": {
+        "$value": "oklch(0.45 0.06 70)",
+        "$type": "color",
+        "$description": "Chart color 8 - soil brown"
+      }
+    }
+  },
+  "fontFamily": {
+    "sans": {
+      "$value": ["Vazirmatn", "ui-sans-serif", "system-ui", "sans-serif"],
+      "$type": "fontFamily",
+      "$description": "Primary sans-serif font (variable)"
+    },
+    "display": {
+      "$value": ["Markazi Text", "Vazirmatn", "ui-serif", "serif"],
+      "$type": "fontFamily",
+      "$description": "Display/heading font"
+    },
+    "mono": {
+      "$value": ["JetBrains Mono", "ui-monospace", "monospace"],
+      "$type": "fontFamily",
+      "$description": "Monospace font for code/numbers"
+    }
+  },
+  "spacing": {
+    "0": { "$value": "0px", "$type": "dimension" },
+    "1": { "$value": "4px", "$type": "dimension" },
+    "2": { "$value": "8px", "$type": "dimension" },
+    "3": { "$value": "12px", "$type": "dimension" },
+    "4": { "$value": "16px", "$type": "dimension" },
+    "5": { "$value": "20px", "$type": "dimension" },
+    "6": { "$value": "24px", "$type": "dimension" },
+    "7": { "$value": "28px", "$type": "dimension" },
+    "8": { "$value": "32px", "$type": "dimension" },
+    "9": { "$value": "36px", "$type": "dimension" },
+    "10": { "$value": "40px", "$type": "dimension" },
+    "11": { "$value": "44px", "$type": "dimension" },
+    "12": { "$value": "48px", "$type": "dimension" },
+    "13": { "$value": "52px", "$type": "dimension" },
+    "14": { "$value": "56px", "$type": "dimension" },
+    "15": { "$value": "60px", "$type": "dimension" },
+    "16": { "$value": "64px", "$type": "dimension" },
+    "17": { "$value": "68px", "$type": "dimension" },
+    "18": { "$value": "72px", "$type": "dimension" },
+    "19": { "$value": "76px", "$type": "dimension" },
+    "20": { "$value": "80px", "$type": "dimension" },
+    "24": { "$value": "96px", "$type": "dimension" },
+    "28": { "$value": "112px", "$type": "dimension" },
+    "32": { "$value": "128px", "$type": "dimension" },
+    "36": { "$value": "144px", "$type": "dimension" },
+    "40": { "$value": "160px", "$type": "dimension" },
+    "44": { "$value": "176px", "$type": "dimension" },
+    "48": { "$value": "192px", "$type": "dimension" },
+    "52": { "$value": "208px", "$type": "dimension" },
+    "56": { "$value": "224px", "$type": "dimension" },
+    "60": { "$value": "240px", "$type": "dimension" },
+    "64": { "$value": "256px", "$type": "dimension" },
+    "72": { "$value": "288px", "$type": "dimension" },
+    "80": { "$value": "320px", "$type": "dimension" },
+    "96": { "$value": "384px", "$type": "dimension" }
+  },
+  "borderRadius": {
+    "2": { "$value": "2px", "$type": "dimension" },
+    "8": { "$value": "8px", "$type": "dimension" },
+    "16": { "$value": "16px", "$type": "dimension" }
+  },
+  "transitionDuration": {
+    "120": { "$value": "120ms", "$type": "duration" },
+    "240": { "$value": "240ms", "$type": "duration" },
+    "480": { "$value": "480ms", "$type": "duration" }
+  },
+  "transitionTimingFunction": {
+    "easeOutQuart": {
+      "$value": "cubic-bezier(0.25, 1, 0.5, 1)",
+      "$type": "transitionTimingFunction"
+    }
+  }
+}

@@ -1,12 +1,11 @@
 """EcoCoin Ecosystem API Routes - FastAPI endpoints for ecosystem activities"""
 
 from __future__ import annotations
-from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, Form
-from pydantic import BaseModel, Field
-from typing import Optional, List
-from decimal import Decimal
+
 from datetime import datetime
-from datetime import UTC, datetime, timedelta
+
+from fastapi import APIRouter, File, Form, Query, UploadFile
+from pydantic import BaseModel
 
 router = APIRouter(prefix="/api/v1/ecosystem", tags=["ecosystem"])
 
@@ -39,7 +38,7 @@ class ActivityCreate(BaseModel):
     location_hash: str
     region: str
     estimated_impact: dict
-    evidence: List[dict] = []
+    evidence: list[dict] = []
 
 
 class EvidenceCreate(BaseModel):
@@ -56,14 +55,14 @@ class ActivityResponse(BaseModel):
     location_hash: str
     region: str
     estimated_impact: dict
-    evidence_ids: List[str]
+    evidence_ids: list[str]
     status: str
     confidence: int
     trust_score: float
     impact_score: float
     created_at: datetime
     updated_at: datetime
-    verified_at: Optional[datetime] = None
+    verified_at: datetime | None = None
 
 
 class EvidenceResponse(BaseModel):
@@ -81,8 +80,8 @@ class VerificationResponse(BaseModel):
     confidence: int
     impact_score: float
     trust_multiplier: int
-    challenge_deadline: Optional[datetime]
-    eco_coin_minted: Optional[int] = None
+    challenge_deadline: datetime | None
+    eco_coin_minted: int | None = None
 
 
 class TrustScoreResponse(BaseModel):
@@ -90,7 +89,7 @@ class TrustScoreResponse(BaseModel):
     score: float
     level: str
     multiplier_bps: int
-    next_level: Optional[str]
+    next_level: str | None
 
 
 class ChallengeRequest(BaseModel):
@@ -142,10 +141,10 @@ async def get_activity(activity_id: str):
     }
 
 
-@router.get("/activities", response_model=List[dict])
+@router.get("/activities", response_model=list[dict])
 async def list_activities(
     user_id: str = "user_123",
-    status: Optional[str] = None,
+    status: str | None = None,
 ):
     """List user activities"""
     return []

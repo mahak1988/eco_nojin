@@ -7,7 +7,7 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timezone
 from decimal import Decimal
-from enum import Enum
+from enum import Enum, StrEnum
 
 from sqlalchemy import (
     JSON,
@@ -28,7 +28,7 @@ from sqlalchemy.orm import relationship
 from database.base import Base
 
 
-class MarketplaceProductStatus(str, Enum):
+class MarketplaceProductStatus(StrEnum):
     DRAFT = "draft"
     PENDING_APPROVAL = "pending_approval"
     APPROVED = "approved"
@@ -38,7 +38,7 @@ class MarketplaceProductStatus(str, Enum):
     ARCHIVED = "archived"
 
 
-class MarketplaceOrderStatus(str, Enum):
+class MarketplaceOrderStatus(StrEnum):
     PENDING = "pending"
     PAID = "paid"
     PROCESSING = "processing"
@@ -124,12 +124,12 @@ class MarketplaceProduct(Base):
     seller = relationship("MarketplaceSeller", back_populates="products")
 
 
-class MarketplaceType(str, Enum):
+class MarketplaceType(StrEnum):
     RURAL = "rural"
     TRIBAL = "tribal"
 
 
-class MarketplaceStatus(str, Enum):
+class MarketplaceStatus(StrEnum):
     PENDING = "pending"
     APPROVED = "approved"
     REJECTED = "rejected"

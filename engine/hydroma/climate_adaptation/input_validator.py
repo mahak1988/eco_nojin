@@ -4,7 +4,7 @@
 """
 
 import math
-from typing import Any, Optional
+from typing import Any
 
 # محدوده‌های فیزیکی معتبر
 PHYSICAL_BOUNDS = {
@@ -20,7 +20,7 @@ PHYSICAL_BOUNDS = {
 }
 
 
-def sanitize(value: Any, key: str = None, default: float = 0.0) -> float:
+def sanitize(value: Any, key: str | None = None, default: float = 0.0) -> float:
     """
     پاک‌سازی یک مقدار ورودی:
     - None -> default
@@ -54,7 +54,7 @@ def sanitize(value: Any, key: str = None, default: float = 0.0) -> float:
     return value
 
 
-def sanitize_dict(data: dict, defaults: dict = None) -> dict:
+def sanitize_dict(data: dict, defaults: dict | None = None) -> dict:
     """پاک‌سازی یک دیکشنری از مقادیر"""
     defaults = defaults or {}
     result = {}

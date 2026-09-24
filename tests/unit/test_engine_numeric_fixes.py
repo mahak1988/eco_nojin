@@ -6,15 +6,13 @@ cannot silently return.
 
 from __future__ import annotations
 
-import math
-
 import pytest
 
-from engine.hydroma.models.runoff_model import RunoffCalculator, RunoffInput
-from engine.hydroma.soil.salinity import calculate_leaching_requirement
 from engine.hydroma.groundwater.models import GroundwaterBucketInput, run_groundwater_bucket
+from engine.hydroma.models.runoff_model import RunoffCalculator, RunoffInput
 from engine.hydroma.phenology import CROP_PHENOLOGY, _stage_from_gdd
 from engine.hydroma.simulation.runners.rothc_runner import stabilization_split
+from engine.hydroma.soil.salinity import calculate_leaching_requirement
 
 
 class TestScsCnUnits:

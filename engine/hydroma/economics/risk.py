@@ -128,8 +128,8 @@ def assess_combined_project_risk(
         "number_of_revenue_risks_assessed": len(revenue_streams_with_risks),
         "number_of_cost_risks_assessed": len(cost_streams_with_risks),
         "individual_risk_summaries": {
-            "revenue_risks": [r for r in revenue_streams_with_risks],
-            "cost_risks": [c for c in cost_streams_with_risks],
+            "revenue_risks": list(revenue_streams_with_risks),
+            "cost_risks": list(cost_streams_with_risks),
         },
         "notes": "This is a basic aggregation. A Monte Carlo simulation considering correlations would provide a more accurate combined risk assessment.",
     }

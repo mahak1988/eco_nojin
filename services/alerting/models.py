@@ -1,36 +1,35 @@
 """Database models for Alerting Service."""
 
+import enum
 import uuid
-from datetime import datetime, UTC
-from typing import Optional
+from datetime import UTC, datetime
 
 from sqlalchemy import (
-    Column,
-    String,
-    Text,
-    DateTime,
-    ForeignKey,
-    Index,
-    Enum as SQLEnum,
     JSON,
     Boolean,
-    Integer,
+    Column,
+    DateTime,
+    Enum as SQLEnum,
     Float,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Text,
 )
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import relationship
 
 from database.base import Base
-import enum
 
 
-class AlertSeverity(str, enum.Enum):
+class AlertSeverity(enum.StrEnum):
     INFO = "info"
     WARNING = "warning"
     CRITICAL = "critical"
 
 
-class AlertStatus(str, enum.Enum):
+class AlertStatus(enum.StrEnum):
     FIRING = "firing"
     RESOLVED = "resolved"
     ACKNOWLEDGED = "acknowledged"

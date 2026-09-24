@@ -44,7 +44,8 @@ def test_founder_create_and_dict(db_session):
     db_session.add(f)
     db_session.commit()
     d = f.to_dict()
-    assert d["role"] == "founder" and d["equity_share"] == 60.0
+    assert d["role"] == "founder"
+    assert d["equity_share"] == 60.0
 
 
 def test_founder_equity_bounds(db_session):
@@ -78,7 +79,8 @@ def test_dispute_lifecycle(db_session):
     d2 = svc.get(d.id)
     assert d2.status == "under_review"
     resolved = svc.resolve(d.id, "mediator-1", "Partial refund issued to buyer.")
-    assert resolved.status == "resolved" and resolved.resolution
+    assert resolved.status == "resolved"
+    assert resolved.resolution
     assert len(svc.events(d.id)) >= 3
 
 

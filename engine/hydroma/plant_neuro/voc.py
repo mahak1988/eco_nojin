@@ -13,13 +13,12 @@ Reference:
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Optional
+from dataclasses import dataclass
 
 import numpy as np
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
 from sklearn.cluster import DBSCAN
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 
 
 @dataclass
@@ -27,10 +26,10 @@ class VOCProfile:
     """A normalized VOC profile from a single sample."""
 
     compounds: dict[str, float]  # compound_name -> concentration (ppb)
-    timestamp: Optional[str] = None
-    plant_id: Optional[str] = None
+    timestamp: str | None = None
+    plant_id: str | None = None
     stress_level: float = 0.0  # 0-1 normalized stress index
-    profile_hash: Optional[str] = None
+    profile_hash: str | None = None
 
 
 @dataclass
@@ -41,7 +40,7 @@ class StressSignature:
     confidence: float  # 0-1
     key_compounds: list[str]  # diagnostic VOCs
     severity_score: float  # 0-1
-    pca_components: Optional[np.ndarray] = None
+    pca_components: np.ndarray | None = None
 
 
 class VOCAnalyzer:

@@ -1,7 +1,5 @@
 """Phase 0 tests: pydantic-settings configuration."""
 
-import os
-
 import pytest
 from pydantic import ValidationError
 

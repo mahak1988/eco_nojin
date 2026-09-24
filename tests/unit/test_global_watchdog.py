@@ -10,14 +10,14 @@ References:
 - WRI Aqueduct 4.0 — Water stress levels
 """
 
-import pytest
 import numpy as np
+import pytest
 
 from engine.hydroma.models.global_watchdog import (
-    KGCv5,
-    WBIv3,
-    WBIInputs,
     GlobalWatchdog,
+    KGCv5,
+    WBIInputs,
+    WBIv3,
     reference_data,
 )
 
@@ -255,7 +255,7 @@ class TestGlobalWatchdog:
         watchdog = GlobalWatchdog()
         regions = {}
         for name in ["Brazil_Amazon", "Yemen_Sanaa", "France_Paris"]:
-            lat, lon = reference_data.GEO_COORDS[name]
+            _lat, _lon = reference_data.GEO_COORDS[name]
             t_min = np.zeros(12)
             t_max = np.full(12, 20.0)
             p = np.full(12, 50.0)

@@ -14,7 +14,7 @@ from services.api_gateway.routers import hydroma_hub
 USER = "test-client-1234"
 
 
-@pytest.fixture()
+@pytest.fixture
 def client():
     engine = create_engine(
         "sqlite://",
@@ -54,7 +54,7 @@ def _create(test_client, model_id="horton-infiltration", outputs=None):
 
 class TestHubRuns:
     def test_create_and_list(self, client):
-        test_client, session_factory = client
+        test_client, _session_factory = client
         response = _create(test_client)
         assert response.status_code == 200
         assert response.json()["ok"] is True
@@ -65,7 +65,7 @@ class TestHubRuns:
         assert listing.json()["runs"][0]["model_id"] == "horton-infiltration"
 
     def test_share_toggle_and_shared_feed(self, client):
-        test_client, session_factory = client
+        test_client, _session_factory = client
         run_id = _create(test_client).json()["id"]
 
         shared_on = test_client.post(
@@ -89,14 +89,14 @@ class TestHubRuns:
         assert feed_after.json()["count"] == 0
 
     def test_user_isolation(self, client):
-        test_client, session_factory = client
+        test_client, _session_factory = client
         _create(test_client)
         other = test_client.get("/api/v1/hub/runs", params={"user_key": "other-client-99"})
         assert other.json()["count"] == 0
 
     def test_invalid_user_key_rejected(self, client):
         test_client, _ = client
-        response = _create(test_client)
+        _create(test_client)
         bad = test_client.post(
             "/api/v1/hub/runs",
             json={"user_key": "short", "model_id": "m", "inputs": {}, "outputs": {}},

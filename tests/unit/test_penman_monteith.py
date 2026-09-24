@@ -1,7 +1,5 @@
 """Tests for FAO-56 Penman-Monteith and Hargreaves ET0 calculations."""
 
-import math
-
 import pytest
 
 from engine.hydroma.climate.et_calculator import (

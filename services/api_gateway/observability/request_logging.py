@@ -21,9 +21,11 @@ class StructuredLoggingMiddleware(BaseHTTPMiddleware):
         self.logger = logger or get_logger("econojin.http")
 
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint):
-        request_id = getattr(request.state, "request_id", None) or request.headers.get(
-            "X-Request-ID"
-        ) or str(uuid.uuid4())
+        request_id = (
+            getattr(request.state, "request_id", None)
+            or request.headers.get("X-Request-ID")
+            or str(uuid.uuid4())
+        )
         request.state.request_id = request_id
         correlation_token = set_correlation_id(request_id)
         started = time.perf_counter()

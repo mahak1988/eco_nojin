@@ -86,7 +86,7 @@ class VillageDevelopmentHubService:
             select(LandscapeGovernanceMember).where(
                 LandscapeGovernanceMember.village_id == village_id,
                 LandscapeGovernanceMember.user_id == str(user.id),
-                LandscapeGovernanceMember.is_active == True,
+                LandscapeGovernanceMember.is_active,
             )
         )
         member = result.scalar_one_or_none()
@@ -94,10 +94,7 @@ class VillageDevelopmentHubService:
         if member is None:
             return False
 
-        if write_access and member.role not in _GOVERNANCE_WRITE_ROLES:
-            return False
-
-        return True
+        return not (write_access and member.role not in _GOVERNANCE_WRITE_ROLES)
 
     async def _verify_village_exists(self, village_id: str) -> LandscapeVillage:
         result = await self.db.execute(
@@ -174,7 +171,7 @@ class VillageDevelopmentHubService:
         total_caps = await self.db.scalar(
             select(func.count(VillageCapability.id)).where(
                 VillageCapability.village_id == village_id,
-                VillageCapability.is_active == True,
+                VillageCapability.is_active,
             )
         )
         total_opps = await self.db.scalar(
@@ -215,13 +212,13 @@ class VillageDevelopmentHubService:
         tourism_services = await self.db.scalar(
             select(func.count(VillageTourismService.id)).where(
                 VillageTourismService.village_id == village_id,
-                VillageTourismService.is_verified == True,
+                VillageTourismService.is_verified,
             )
         )
         needs_count = await self.db.scalar(
             select(func.count(VillageNeed.id)).where(
                 VillageNeed.village_id == village_id,
-                VillageNeed.is_resolved == False,
+                not VillageNeed.is_resolved,
             )
         )
 
@@ -472,7 +469,7 @@ class VillageDevelopmentHubService:
         village_id: str | None = None,
     ) -> list[EntrepreneurProfile]:
         """جستجوی کارآفرینان بر اساس مهارت یا روستا."""
-        query = select(EntrepreneurProfile).where(EntrepreneurProfile.is_available == True)
+        query = select(EntrepreneurProfile).where(EntrepreneurProfile.is_available)
         if village_id:
             query = query.where(EntrepreneurProfile.village_id == village_id)
         if skills:
@@ -882,7 +879,7 @@ class VillageDevelopmentHubService:
         await self._verify_village_exists(village_id)
 
         capabilities = await self.get_village_capabilities(village_id)
-        opportunities = await self.get_village_opportunities(village_id)
+        await self.get_village_opportunities(village_id)
         projects = await self.db.execute(
             select(VillageProject).where(VillageProject.village_id == village_id)
         )
@@ -900,7 +897,7 @@ class VillageDevelopmentHubService:
         needs_result = await self.db.execute(
             select(VillageNeed).where(
                 VillageNeed.village_id == village_id,
-                VillageNeed.is_resolved == False,
+                not VillageNeed.is_resolved,
             )
         )
         unresolved_needs = needs_result.scalars().all()
@@ -1176,9 +1173,9 @@ class VillageDevelopmentHubService:
 
     async def get_nomadic_communities(self, approved_only: bool = True) -> list[NomadicCommunity]:
         """دریافت لیست جوامع عشایری."""
-        query = select(NomadicCommunity).where(NomadicCommunity.is_active == True)
+        query = select(NomadicCommunity).where(NomadicCommunity.is_active)
         if approved_only:
-            query = query.where(NomadicCommunity.is_approved == True)
+            query = query.where(NomadicCommunity.is_approved)
         result = await self.db.execute(query)
         return result.scalars().all()
 

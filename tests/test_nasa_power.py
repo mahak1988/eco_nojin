@@ -2,7 +2,6 @@
 
 import asyncio
 import datetime
-from typing import Optional
 
 import httpx
 

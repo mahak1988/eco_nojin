@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 موتور محاسبه هیدروما
 """
@@ -11,7 +10,7 @@ from pathlib import Path
 class CalculationEngine:
     """موتور محاسبه با محاسبه فرمول‌ها"""
 
-    def __init__(self, kb_path: str = None):
+    def __init__(self, kb_path: str | None = None):
         if kb_path is None:
             kb_path = (
                 Path(__file__).parent.parent.parent.parent

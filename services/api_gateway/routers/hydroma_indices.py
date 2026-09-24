@@ -480,7 +480,7 @@ _HLHS_CLEAN = [
     "connectivity",
 ]
 _HLHS_ACTUAL = [f.name for f in _fields(LandscapeMetrics)]
-_HLHS_MAP = dict(zip(_HLHS_CLEAN, _HLHS_ACTUAL))
+_HLHS_MAP = dict(zip(_HLHS_CLEAN, _HLHS_ACTUAL, strict=False))
 
 # HYRUE.compute accepts the water-stress array under a dotless-i name.
 _HYRUE_EWSI_KEY = "ews\u0131"

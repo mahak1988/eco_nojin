@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 tests/test_phase3_memory_fixes.py
 ==================================
@@ -7,10 +6,11 @@ tests/test_phase3_memory_fixes.py
 Tests for Phase 3 memory leak fixes.
 """
 
-import sys
 import gc
-import pytest
+import sys
 from pathlib import Path
+
+import pytest
 
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -32,7 +32,7 @@ class TestMemoryMonitor:
         from engine.memory_monitor import track_memory
 
         with track_memory("test_op") as tracker:
-            data = [i for i in range(1000)]
+            list(range(1000))
         assert tracker.delta_mb >= 0  # Memory increased or stable
 
     def test_memory_manager(self):
@@ -90,7 +90,7 @@ class TestResourceManager:
         from engine.resource_manager import cleanup_resources
 
         # Create some garbage
-        garbage = [[i for i in range(1000)] for _ in range(100)]
+        garbage = [list(range(1000)) for _ in range(100)]
         del garbage
 
         stats = cleanup_resources()

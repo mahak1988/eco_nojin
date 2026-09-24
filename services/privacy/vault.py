@@ -1,18 +1,22 @@
 """Privacy Vault - Encrypted off-chain storage for sensitive activity evidence"""
 
 from __future__ import annotations
+
+import base64
 import hashlib
 import json
-import os
+import logging
 import secrets
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
+
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-import base64
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -36,7 +40,7 @@ class PrivacyVault:
     - Selective disclosure via ZK proofs or signed access grants
     """
 
-    def __init__(self, storage_path: str = "./privacy_vault", master_key: bytes = None):
+    def __init__(self, storage_path: str = "./privacy_vault", master_key: bytes | None = None):
         self.storage_path = Path(storage_path)
         self.storage_path.mkdir(parents=True, exist_ok=True)
         self._master_key = master_key or self._generate_master_key()
@@ -54,7 +58,7 @@ class PrivacyVault:
         key_file.chmod(0o600)
         return key
 
-    def _derive_user_key(self, user_id: str, salt: bytes = None) -> bytes:
+    def _derive_user_key(self, user_id: str, salt: bytes | None = None) -> bytes:
         """Derive user-specific encryption key from master"""
         if salt is None:
             salt = hashlib.sha256(user_id.encode()).digest()[:16]
@@ -71,7 +75,7 @@ class PrivacyVault:
         key = self._derive_user_key(user_id)
         return Fernet(base64.urlsafe_b64encode(base64.urlsafe_b64encode(key)))
 
-    def store(self, user_id: str, data: dict, metadata: dict = None) -> str:
+    def store(self, user_id: str, data: dict, metadata: dict | None = None) -> str:
         """Store encrypted data, return entry ID"""
         entry_id = f"VAULT-{secrets.token_hex(8)}"
 
@@ -81,7 +85,7 @@ class PrivacyVault:
         ciphertext = cipher.encrypt(plaintext)
 
         # Compute commitment hash
-        commitment = hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
+        hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
 
         entry = {
             "entry_id": f"VAULT-{secrets.token_hex(8)}",
@@ -127,7 +131,7 @@ class PrivacyVault:
         )
 
         # Decrypt
-        cipher = self._get_user_cipher(entry["owner_id"])
+        self._get_user_cipher(entry["owner_id"])
         plaintext = Fernet(base64.urlsafe_b64decode(entry["ciphertext"])).decrypt(
             base64.urlsafe_b64decode(entry["ciphertext"])
         )
@@ -141,10 +145,12 @@ class PrivacyVault:
             return False
 
         entry = json.loads(entry_file.read_text())
-        computed = hashlib.sha256(json.dumps(entry["data"], sort_keys=True).encode()).hexdigest()
+        hashlib.sha256(json.dumps(entry["data"], sort_keys=True).encode()).hexdigest()
         return entry["commitment_hash"] == commitment
 
-    def log_access(self, entry_id: str, requester_id: str, action: str, granted_by: str = None):
+    def log_access(
+        self, entry_id: str, requester_id: str, action: str, granted_by: str | None = None
+    ):
         """Log access to entry"""
         entry_file = self.storage_path / f"{entry_id}.json"
         if not entry_file.exists():
@@ -162,7 +168,7 @@ class PrivacyVault:
         entry_file.write_text(json.dumps(entry, indent=2))
 
     def grant_access(
-        self, entry_id: str, requester_id: str, granted_by: str, expiry: int = None
+        self, entry_id: str, requester_id: str, granted_by: str, expiry: int | None = None
     ) -> bool:
         """Grant selective access to a third party (e.g., VVB, auditor)"""
         # In production: create signed access grant, store in vault
@@ -198,6 +204,6 @@ class PrivacyVault:
                             "metadata": entry.get("metadata", {}),
                         }
                     )
-            except:
-                pass
+            except Exception:
+                logger.exception("Failed to process vault entry")
         return entries

@@ -5,7 +5,6 @@ Generates SVG badges for each model and pushes them to the badges/ directory.
 """
 
 import json
-import os
 import sys
 from pathlib import Path
 
@@ -56,7 +55,11 @@ def determine_status(result: dict) -> str:
         return "error"
     if result.get("failed", 0) > 0:
         return "failed"
-    if result.get("passed", 0) > 0 and result.get("failed", 0) == 0 and result.get("errors", 0) == 0:
+    if (
+        result.get("passed", 0) > 0
+        and result.get("failed", 0) == 0
+        and result.get("errors", 0) == 0
+    ):
         return "passed"
     if result.get("skipped", 0) > 0:
         return "skipped"
@@ -102,7 +105,7 @@ def main():
         print(f"Generated badge: {badge_path} -> {message}")
 
     # Generate overall badge
-    total_models = len(set(r["model"] for r in results.values()))
+    total_models = len({r["model"] for r in results.values()})
     passed_models = sum(1 for r in results.values() if determine_status(r) == "passed")
     failed_models = sum(1 for r in results.values() if determine_status(r) in ["failed", "error"])
 

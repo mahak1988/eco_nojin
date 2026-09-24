@@ -237,15 +237,12 @@ def richards_buildup(
     )
 
     # Hydraulic conductivity from Schaap & van Genuchten
-    K_se = (dtheta_dh**2) / (Ks * (theta_s - theta_r) / alpha**2)
+    (dtheta_dh**2) / (Ks * (theta_s - theta_r) / alpha**2)
     K = Ks * se**0.5 * ((1.0 - (1.0 - se ** (1.0 / m)) ** m) ** 2)
 
     # Simple time stepping: dh/dt = -K / (dtheta/dh)
     # dh = -K / (dtheta_dh) * dt
-    if abs(dtheta_dh) > 1e-12:
-        dh = -K / dtheta_dh * dt
-    else:
-        dh = 0.0
+    dh = -K / dtheta_dh * dt if abs(dtheta_dh) > 1e-12 else 0.0
 
     h_new = h + dh
     # Ensure we don't jump past the air-entry value unrealistically

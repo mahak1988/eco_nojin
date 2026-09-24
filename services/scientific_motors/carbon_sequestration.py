@@ -344,7 +344,8 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
                         "baseline_soc": [round(s, 3) for s in baseline_soc],
                         "sequestration_soc": [round(s, 3) for s in sequestration_soc],
                         "difference": [
-                            round(s - b, 3) for s, b in zip(sequestration_soc, baseline_soc)
+                            round(s - b, 3)
+                            for s, b in zip(sequestration_soc, baseline_soc, strict=False)
                         ],
                     },
                     "core_integration": {

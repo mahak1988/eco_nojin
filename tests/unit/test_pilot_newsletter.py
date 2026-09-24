@@ -8,14 +8,14 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from database.base import Base
-from database.models import (  # noqa: F401 — registers the models
+from database.models import (
     NewsletterSubscriber,
     PilotApplication,
 )
 from services.api_gateway.routers import newsletter, pilot
 
 
-@pytest.fixture()
+@pytest.fixture
 def client():
     engine = create_engine(
         "sqlite://",

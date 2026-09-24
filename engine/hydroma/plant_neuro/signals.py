@@ -11,9 +11,7 @@ electrical signalling of plants." Plant, Cell & Environment.
 
 from __future__ import annotations
 
-import math
-from dataclasses import dataclass, field
-from typing import Optional
+from dataclasses import dataclass
 
 import numpy as np
 from scipy import signal as scipy_signal
@@ -35,8 +33,8 @@ class SignalFeatures:
     variance_mv: float = 0.0
     skewness: float = 0.0
     kurtosis: float = 0.0
-    dominant_frequency_hz: Optional[float] = None
-    raw_signal: Optional[np.ndarray] = None
+    dominant_frequency_hz: float | None = None
+    raw_signal: np.ndarray | None = None
 
 
 class ElectricalSignalProcessor:
@@ -142,7 +140,7 @@ class ElectricalSignalProcessor:
             durations.append(duration_s * 1000)
         return durations
 
-    def _dominant_frequency(self, signal: np.ndarray) -> Optional[float]:
+    def _dominant_frequency(self, signal: np.ndarray) -> float | None:
         """Compute dominant frequency via FFT."""
         if len(signal) < 4:
             return None

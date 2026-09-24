@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 
 def calculate_ndvi(red: float, nir: float) -> float:
     """Calculate NDVI from red and NIR bands.

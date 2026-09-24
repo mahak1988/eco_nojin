@@ -46,7 +46,6 @@ from engine.hydroma.simulation_env.weather import (
 )
 from engine.hydroma.soil.physics import available_water_capacity
 
-
 _BASE_SM = 0.5  # initial soil-moisture fraction of TAW
 
 

@@ -1,5 +1,7 @@
 """Order management with dependency injection support."""
 
+import contextlib
+
 from .models import Order, OrderStatus
 from .product_catalog import ProductCatalog, get_catalog
 
@@ -228,7 +230,7 @@ class OrderManager:
         self._orders[order.id] = order
 
         if self._order_repo is not None:
-            try:
+            with contextlib.suppress(Exception):
                 self._order_repo.create_order(
                     order_number=f"ORD-{order.id[:8].upper()}",
                     buyer_id=buyer_name,
@@ -238,8 +240,6 @@ class OrderManager:
                     product_id=product_id,
                     status=order.status.value,
                 )
-            except Exception:
-                pass
 
         # Reserve quantity
         self._catalog.update_quantity(product_id, -quantity_kg)

@@ -5,20 +5,20 @@ import structlog
 logger = structlog.get_logger()
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class BotPlatform(str, Enum):
+class BotPlatform(StrEnum):
     BALE = "bale"
     RUBIKA = "rubika"
     WHATSAPP = "whatsapp"
     TELEGRAM = "telegram"
 
 
-class MessageType(str, Enum):
+class MessageType(StrEnum):
     TEXT = "text"
     IMAGE = "image"
     VOICE = "voice"

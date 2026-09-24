@@ -156,5 +156,6 @@ def test_stac_search_sends_auth_and_datetime_window(monkeypatch):
     assert captured["headers"]["Authorization"] == "Bearer tok123"
     body = captured["json"]
     assert body["collections"] == ["sentinel-2-l2a"]
-    assert "2026-07-01" in body["datetime"] and "2026-07-10" in body["datetime"]
+    assert "2026-07-01" in body["datetime"]
+    assert "2026-07-10" in body["datetime"]
     assert body["bbox"] == [51.0, 35.0, 51.0, 35.0]

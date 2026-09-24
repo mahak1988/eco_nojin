@@ -1,14 +1,13 @@
 """Pydantic schemas for Compute Jobs API."""
 
-import uuid
 from datetime import datetime
-from typing import Optional, List, Dict, Any, Literal
-from enum import Enum
+from enum import StrEnum
+from typing import Any, Literal
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
-class JobStatus(str, Enum):
+class JobStatus(StrEnum):
     PENDING = "pending"
     QUEUED = "queued"
     RUNNING = "running"
@@ -18,7 +17,7 @@ class JobStatus(str, Enum):
     TIMEOUT = "timeout"
 
 
-class JobPriority(str, Enum):
+class JobPriority(StrEnum):
     LOW = "low"
     NORMAL = "normal"
     HIGH = "high"
@@ -27,49 +26,50 @@ class JobPriority(str, Enum):
 
 class JobCreate(BaseModel):
     """Request to create a compute job."""
+
     model_config = ConfigDict(extra="forbid")
-    
+
     name: str = Field(..., min_length=1, max_length=200)
     job_type: str = Field(..., min_length=1, max_length=100)
-    input_data: Dict[str, Any] = Field(default_factory=dict)
+    input_data: dict[str, Any] = Field(default_factory=dict)
     priority: Literal["low", "normal", "high", "critical"] = "normal"
     max_runtime_seconds: int = Field(3600, ge=60, le=86400)
     max_memory_mb: int = Field(1024, ge=64, le=16384)
     max_cpu_cores: int = Field(1, ge=1, le=16)
     max_retries: int = Field(0, ge=0, le=10)
-    docker_image: Optional[str] = Field(None, max_length=255)
-    command: Optional[str] = Field(None, max_length=500)
-    environment_variables: Dict[str, str] = Field(default_factory=dict)
-    working_directory: Optional[str] = Field(None, max_length=500)
-    callback_url: Optional[str] = Field(None, max_length=500)
-    callback_secret: Optional[str] = Field(None, max_length=255)
-    created_by: Optional[str] = Field(None, max_length=255)
+    docker_image: str | None = Field(None, max_length=255)
+    command: str | None = Field(None, max_length=500)
+    environment_variables: dict[str, str] = Field(default_factory=dict)
+    working_directory: str | None = Field(None, max_length=500)
+    callback_url: str | None = Field(None, max_length=500)
+    callback_secret: str | None = Field(None, max_length=255)
+    created_by: str | None = Field(None, max_length=255)
 
 
 class JobResponse(JobCreate):
     model_config = ConfigDict(from_attributes=True)
-    
+
     id: str
     status: str
     priority_score: int
-    queue_position: Optional[int]
-    worker_id: Optional[str]
-    started_at: Optional[datetime]
-    completed_at: Optional[datetime]
-    runtime_seconds: Optional[int]
+    queue_position: int | None
+    worker_id: str | None
+    started_at: datetime | None
+    completed_at: datetime | None
+    runtime_seconds: int | None
     retry_count: int
     progress_percent: int
-    progress_message: Optional[str]
-    output_data: Dict[str, Any]
-    error_message: Optional[str]
-    output_artifact_urls: List[str]
-    log_url: Optional[str]
+    progress_message: str | None
+    output_data: dict[str, Any]
+    error_message: str | None
+    output_artifact_urls: list[str]
+    log_url: str | None
     created_at: datetime
     updated_at: datetime
 
 
 class JobListResponse(BaseModel):
-    items: List[JobResponse]
+    items: list[JobResponse]
     total: int
     page: int
     page_size: int
@@ -78,29 +78,30 @@ class JobListResponse(BaseModel):
 
 class JobStatusUpdate(BaseModel):
     """Update job status (worker → API)."""
+
     model_config = ConfigDict(extra="forbid")
-    
+
     status: Literal["running", "completed", "failed", "cancelled", "timeout"]
-    progress_percent: Optional[int] = Field(None, ge=0, le=100)
-    progress_message: Optional[str] = Field(None, max_length=500)
-    output_data: Optional[Dict[str, Any]] = None
-    error_message: Optional[str] = None
-    output_artifact_urls: Optional[List[str]] = None
-    log_url: Optional[str] = None
-    runtime_seconds: Optional[int] = None
+    progress_percent: int | None = Field(None, ge=0, le=100)
+    progress_message: str | None = Field(None, max_length=500)
+    output_data: dict[str, Any] | None = None
+    error_message: str | None = None
+    output_artifact_urls: list[str] | None = None
+    log_url: str | None = None
+    runtime_seconds: int | None = None
 
 
 class JobEventResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    
+
     id: str
     job_id: str
     event_type: str
-    message: Optional[str]
-    progress_percent: Optional[int]
+    message: str | None
+    progress_percent: int | None
     # API contract keeps the public key name `metadata`; the ORM attribute is
     # `event_metadata` (SQLAlchemy reserves the name `metadata`).
-    event_metadata: Dict[str, Any] = Field(
+    event_metadata: dict[str, Any] = Field(
         default_factory=dict,
         validation_alias="event_metadata",
         serialization_alias="metadata",
@@ -110,6 +111,7 @@ class JobEventResponse(BaseModel):
 
 class JobStatsResponse(BaseModel):
     """Job statistics summary."""
+
     total: int
     pending: int
     queued: int
@@ -118,5 +120,5 @@ class JobStatsResponse(BaseModel):
     failed: int
     cancelled: int
     timeout: int
-    avg_runtime_seconds: Optional[float]
-    success_rate: Optional[float]
+    avg_runtime_seconds: float | None
+    success_rate: float | None

@@ -1,19 +1,14 @@
 """API Contract Registry Router."""
 
-from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.hub import hub
-from services.contracts.service import ContractRegistry
 from services.contracts.schemas import (
     ContractCreate,
     ContractResponse,
-    ContractDiff,
-    CompatibilityResult,
-    ContractDiff as ContractDiffSchema,
-    CompatibilityResult as CompatibilityResultSchema,
 )
+from services.contracts.service import ContractRegistry
 
 router = APIRouter(prefix="/api/v1/contracts", tags=["contracts"])
 
@@ -69,10 +64,10 @@ async def get_active_contract(
     return contract
 
 
-@router.get("", response_model=List[ContractResponse])
+@router.get("", response_model=list[ContractResponse])
 async def list_contracts(
-    service_name: Optional[str] = Query(None, description="Filter by service name"),
-    is_active: Optional[bool] = Query(None, description="Filter by active status"),
+    service_name: str | None = Query(None, description="Filter by service name"),
+    is_active: bool | None = Query(None, description="Filter by active status"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Page size"),
     registry: ContractRegistry = Depends(get_contract_registry),
