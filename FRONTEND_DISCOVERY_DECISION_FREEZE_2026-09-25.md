@@ -294,18 +294,20 @@ Performance gates:
 
 | اعتبارسنجی | نتیجه |
 |---|---|
-| `pnpm -C apps/web quality` | موفق؛ ۳۳۰ فایل، ۲۳ فایل تست و ۱۱۳ تست |
+| `pnpm -C apps/web quality` | موفق؛ ۴۰۲ فایل، ۳۱ فایل تست و ۲۲۰ تست |
 | TypeScript app و `packages/ui` | موفق |
 | Vitest | موفق |
 | i18n parity | هر ۱۴ locale موفق |
-| Next production build | موفق؛ ۲۰۱ route و service worker تولید شدند |
+| Next production build | موفق؛ بیش از ۲۰۰ route و service worker |
 | Playwright i18n | ۱۹ تست موفق |
-| Playwright WCAG 2.2 AA | ۱۱ تست موفق |
+| Playwright WCAG 2.2 AA | ۱۶ تست موفق |
 | Playwright PWA offline | ۱ تست موفق |
 | Playwright Auth UI | ۱ تست موفق |
 | Playwright security | ۲ تست موفق |
 | Playwright page honesty | ۸ تست موفق |
 | Playwright marketplace states | ۲ تست موفق |
+| Playwright Tier 0 | ۱۰ تست موفق |
+| Playwright responsive 320px | ۸ تست موفق |
 | provenance guard | صفر ادعای verified نادرست |
 | Ruff auth files | موفق |
 | auth unit tests | ۷ تست موفق |
@@ -317,7 +319,9 @@ Performance gates:
 ### ۷.۳ محدودیت‌ها و کارهای باقی‌مانده
 
 - `clean: true` در Orval هنوز فعال نیست؛ خروجی و فایل‌های دستی در یک پوشه قرار دارند و باید به پوشه generated مستقل منتقل شوند.
-- login/signup/session، Marketplace، ۶۲ صفحه public و developer/trust/AI تکمیل و به قراردادهای ثبت‌شده متصل شدند.
+- login/signup/session، Marketplace، ۶۲ صفحه public، developer/trust/AI، Admin، Research، System، Help و Workspace حرفه‌ای تکمیل و به قراردادهای ثبت‌شده متصل شدند.
+- نقش‌های حرفه‌ای `advisor`، `operator`، `support`، `analyst`، `content_editor`، `auditor` و `manager` هنوز توسط gateway صادر نمی‌شوند؛ registry آن‌ها را صریحاً `issuedByGateway: false` نگه می‌دارد.
+- admin users/content به اصلاح response model وابسته است.
 - production باید `REDIS_URL` واقعی را در Secret ارائه کند.
 - remote فقط GitHub است؛ GitLab یا remote دوم وجود ندارد.
 - branch واقعی remote فقط `main` و `security` است؛ branch `develop` مستندشده وجود ندارد.

@@ -1738,13 +1738,15 @@ PWA اکنون یک پوستهٔ آفلاین و draft/outbox عمومی است�
 
 | بررسی | نتیجه |
 |---|---|
-| frontend quality gate | موفق؛ ۳۳۰ فایل |
+| frontend quality gate | موفق؛ ۴۰۲ فایل |
 | TypeScript app و `packages/ui` | موفق |
-| Vitest | ۲۳ فایل و ۱۱۳ تست موفق |
+| Vitest | ۳۱ فایل و ۲۲۰ تست موفق |
 | i18n parity | هر ۱۴ locale موفق |
-| Next production build | موفق؛ ۲۰۱ route شامل BFF، health/ready، Auth و System |
+| Next production build | موفق؛ بیش از ۲۰۰ route شامل BFF، Admin، Research، System، Workspace و Help |
 | Playwright i18n | ۱۹ تست موفق |
-| Playwright WCAG 2.2 AA | ۱۱ تست موفق |
+| Playwright WCAG 2.2 AA | ۱۶ تست موفق |
+| Playwright Tier 0 route smoke | ۱۰ تست موفق |
+| Playwright responsive 320px | ۸ تست موفق |
 | Playwright PWA offline | ۱ تست موفق |
 | Playwright Auth UI | ۱ تست موفق |
 | Playwright security headers/CSRF | ۲ تست موفق |
@@ -1769,6 +1771,16 @@ PWA اکنون یک پوستهٔ آفلاین و draft/outbox عمومی است�
 - فهرست و جزئیات بازارچه زنده و فرم احراز هویت‌شدهٔ ایجاد بازارچه به endpoint واقعی متصل شد.
 - `scripts/check-verified-claims.mjs` به‌عنوان CI gate فعال شد.
 
+## World-class Tier 0
+
+- Admin shell و ۹ صفحه تخصصی با DataGrid، breadcrumb، navigation و capability registry ساخته شدند.
+- Research index و workspace دوپنلی با dataset، citation، Zenodo status، validation و provenance ساخته شدند.
+- System overview، PWA update lifecycle، locale fallback، WebGPU fallback و Help ساخته شدند.
+- پنل حرفه‌ای `/workspace` با ۱۶ مسیر، server-side deny-by-default و role allowlist ساخته شد.
+- ۳۲۰ پیکسل reflow، keyboard navigation، Help path و focus regression پوشش داده شدند.
+- fallbackهای placeholder سایت در build به `app.eco-nojin.org` تثبیت شدند.
+- پس از این Wave، پیشرفت نسبت به پذیرش نهایی سند از حدود ۶۰–۶۵٪ به حدود **۶۵–۷۰٪** رسیده است؛ عمدتاً به دلیل تکمیل مسیرهای حیاتی و رفع شکاف‌های معماری، نه افزایش صرفاً تعدادی صفحات.
+
 ## اعتبارسنجی و commitهای نهایی
 
 | Commit | دامنه |
@@ -1780,6 +1792,7 @@ PWA اکنون یک پوستهٔ آفلاین و draft/outbox عمومی است�
 | `5088ef5` | branch/release policy، version source و quality gates |
 | `cbd7bd8` | جایگزینی legacy docs با مستندات canonical |
 | `21673b7` | Marketplace، ۶۲ صفحه public، developer/trust/AI و اسناد Page Gates |
+| `3c1d641` | Admin، Research، System/Help و پنل حرفه‌ای Workspace |
 
 ## موارد باقی‌مانده پیش از تکمیل نهایی
 
