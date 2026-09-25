@@ -2694,8 +2694,25 @@
           "auth"
         ],
         "summary": "Logout",
-        "description": "Logout - clears httpOnly auth cookies.",
+        "description": "Logout - revokes the active refresh token and clears auth cookies.",
         "operationId": "logout_api_v1_auth_logout_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/LogoutRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Req"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -2703,6 +2720,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -16270,6 +16297,65 @@
         }
       }
     },
+    "/api/v1/content/search": {
+      "get": {
+        "tags": [
+          "content"
+        ],
+        "summary": "Search Content",
+        "description": "Keyword search over published content (honest RAG surface).",
+        "operationId": "search_content_api_v1_content_search_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "title": "Q"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "default": 10,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Search Content Api V1 Content Search Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/models": {
       "get": {
         "tags": [
@@ -29789,6 +29875,23 @@
         ],
         "title": "LoginHistoryResponse"
       },
+      "LogoutRequest": {
+        "properties": {
+          "refresh_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refresh Token"
+          }
+        },
+        "type": "object",
+        "title": "LogoutRequest"
+      },
       "MarketplaceCreate": {
         "properties": {
           "name": {
@@ -32536,7 +32639,7 @@
           },
           "role": {
             "type": "string",
-            "pattern": "^(farmer|researcher|organization|tourist|regular|admin|security_admin|content_admin|user_admin)$",
+            "pattern": "^(farmer|advisor|researcher|organization|tourist|regular)$",
             "title": "Role",
             "default": "regular"
           },

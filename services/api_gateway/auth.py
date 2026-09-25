@@ -35,6 +35,20 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=F
 ACCESS_TOKEN_COOKIE = "econojin_access_token"
 REFRESH_TOKEN_COOKIE = "econojin_refresh_token"
 
+#: Values that must never be used to sign a JWT. These are public literals that
+#: appear in the source, so a token signed with any of them is forgeable.
+_WEAK_SIGNING_KEYS = frozenset(
+    {
+        "dev-secret-key",
+        "dev-jwt-secret",
+        "change-me-in-production",
+        "changeme",
+        "secret",
+        "dev",
+        "demo123",
+    }
+)
+
 
 async def _get_async_db():
     """Dependency wrapper for async database session."""
@@ -72,6 +86,25 @@ def verify_password(plain: str, hashed: str) -> bool:
         return False
 
 
+def _signing_key() -> str:
+    """Resolve the JWT signing key, failing fast rather than signing with a weak key.
+
+    ``Settings.jwt_signing_key`` prefers ``JWT_SECRET`` over ``SECRET_KEY``. In
+    production ``validate_production_settings`` has already rejected a short or
+    default value, so reaching the guard here means the process was started
+    without running the validator; refusing to mint a token is the safe answer
+    because a token signed with a public literal is forgeable by anyone who has
+    read the source.
+    """
+    key = _settings.jwt_signing_key
+    if not key or len(key) < 32 or key in _WEAK_SIGNING_KEYS:
+        raise RuntimeError(
+            "JWT signing key is missing, too short, or a known development default. "
+            "Set JWT_SECRET (64+ chars) to a random value before issuing tokens."
+        )
+    return key
+
+
 def create_access_token(
     data: dict,
     expires_delta: timedelta | None = None,
@@ -91,13 +124,13 @@ def create_access_token(
         expires_delta or timedelta(minutes=_settings.access_token_expire_minutes)
     )
     to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, _settings.secret_key, algorithm=_settings.jwt_algorithm)
+    return jwt.encode(to_encode, _signing_key(), algorithm=_settings.jwt_algorithm)
 
 
 def decode_token(token: str) -> dict | None:
     """Decode + validate signature/expiry. Returns payload or None."""
     try:
-        return jwt.decode(token, _settings.secret_key, algorithms=[_settings.jwt_algorithm])
+        return jwt.decode(token, _signing_key(), algorithms=[_settings.jwt_algorithm])
     except JWTError:
         return None
 
@@ -122,14 +155,14 @@ def create_refresh_token(
         to_encode["sub"] = str(subject)
     to_encode["role"] = role
     to_encode["type"] = "refresh"
-    # H12 FIX: Add JTI for refresh token tracking and rotation
-    to_encode["jti"] = secrets.token_urlsafe(16)
+    jti = to_encode.get("jti") or secrets.token_urlsafe(16)
+    to_encode["jti"] = jti
     if tenant_id is not None:
         to_encode["platform_id"] = tenant_id
         to_encode["tenant_id"] = tenant_id
     expire = datetime.now(UTC) + timedelta(minutes=_settings.refresh_token_expire_minutes)
     to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, _settings.secret_key, algorithm=_settings.jwt_algorithm)
+    return jwt.encode(to_encode, _signing_key(), algorithm=_settings.jwt_algorithm)
 
 
 async def store_refresh_token(
@@ -138,19 +171,12 @@ async def store_refresh_token(
     """Store a refresh token JTI in the database for revocation tracking."""
     from database.models import RefreshToken
 
-    RefreshToken(
-        jti=jti,
-        user_id=user_id,
-        revoked=False,
-        expires_at=datetime.now(UTC) + timedelta(minutes=_settings.refresh_token_expire_minutes),
-    )
     db.add(
         RefreshToken(
             jti=jti,
             user_id=user_id,
             revoked=False,
-            expires_at=datetime.now(UTC)
-            + timedelta(minutes=_settings.refresh_token_expire_minutes),
+            expires_at=expires_at,
         )
     )
     # Note: caller must commit the session
@@ -202,7 +228,8 @@ async def get_current_user_optional(
     payload = decode_token(token)
     if payload is None:
         return None
-    return await _user_from_payload(payload, db)
+    user = await _user_from_payload(payload, db)
+    return user if user is not None and user.is_active else None
 
 
 async def get_current_user(

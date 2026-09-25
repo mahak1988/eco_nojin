@@ -4,6 +4,7 @@ Week 2 fix: converted all endpoints to async to fix SQLite thread-safety
 issues when used with async FastAPI test clients and production deployments.
 """
 
+import contextlib
 import hashlib
 import json
 import logging
@@ -34,25 +35,22 @@ from database.models import (
     User,
 )
 from engine.hydroma.config.settings import get_settings
-
-# Module-level settings handle used by the refresh-token expiry logic.
-_settings = get_settings()
-import contextlib
-
 from services.api_gateway.auth import (
+    ADMIN_ROLES,
     clear_auth_cookies,
     create_access_token,
     create_refresh_token,
     decode_refresh_token,
     get_current_user,
     hash_password,
-    is_refresh_token_revoked,
     role_of,
     set_auth_cookies,
     verify_password,
 )
 from services.api_gateway.eventbus import publish_user_event
+from services.api_gateway.security import RateLimitMiddleware
 
+_settings = get_settings()
 logger = structlog.get_logger()
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
@@ -109,7 +107,7 @@ class RegisterRequest(BaseModel):
     password: str = Field(min_length=8, max_length=100)
     role: str = Field(
         default="regular",
-        pattern="^(farmer|researcher|organization|tourist|regular|admin|security_admin|content_admin|user_admin)$",
+        pattern="^(farmer|advisor|researcher|organization|tourist|regular)$",
     )
     phone: str | None = None
     date_of_birth: str | None = None  # YYYY-MM-DD
@@ -180,6 +178,10 @@ class RefreshRequest(BaseModel):
     refresh_token: str
 
 
+class LogoutRequest(BaseModel):
+    refresh_token: str | None = None
+
+
 class MessageResponse(BaseModel):
     message: str
     success: bool = True
@@ -206,39 +208,36 @@ def user_to_response(u: User) -> UserResponse:
 # ============================================================================
 # REGISTER
 # ============================================================================
-from services.api_gateway.security import RateLimitMiddleware
-
 # H11 FIX: Add specific rate limiting for sensitive auth endpoints
-_register_limiter = RateLimitMiddleware(None, redis_client=None)
-_register_limiter.DEFAULT_LIMIT = 5  # 5 requests per minute
-_register_limiter.WINDOW_SECONDS = 60
-
-_forgot_limiter = RateLimitMiddleware(None, redis_client=None)
-_forgot_limiter.DEFAULT_LIMIT = 3  # 3 requests per minute
-_forgot_limiter.WINDOW_SECONDS = 60
+# Both bugs here were independent and both disabled the limit entirely:
+#   1. Reassigning ``.DEFAULT_LIMIT``/``.WINDOW_SECONDS`` after construction only
+#      created shadowing instance attributes; the constructor had already copied
+#      the class values into ``self.limit``/``self.window_seconds``.
+#   2. ``_check_memory`` returns a 3-tuple, so ``if not allowed`` was never true.
+# The constructor now takes limit=/window=, and ``is_allowed`` returns the tuple.
+_register_limiter = RateLimitMiddleware(None, redis_client=None, limit=5, window=60)
+_forgot_limiter = RateLimitMiddleware(None, redis_client=None, limit=3, window=60)
 
 
 async def _check_register_rate_limit(request: Request) -> None:
     """H11 FIX: Rate limit register endpoint to 5/min."""
-    key = _register_limiter._client_key(request)
-    allowed = _register_limiter._check_memory(key)
+    allowed, _remaining, _reset = _register_limiter.is_allowed(request)
     if not allowed:
         raise HTTPException(
             status_code=429,
             detail="Too many registration attempts. Try again later.",
-            headers={"Retry-After": str(_register_limiter.WINDOW_SECONDS)},
+            headers={"Retry-After": str(_register_limiter.window_seconds)},
         )
 
 
 async def _check_forgot_rate_limit(request: Request) -> None:
     """H11 FIX: Rate limit forgot-password endpoint to 3/min."""
-    key = _forgot_limiter._client_key(request)
-    allowed = _forgot_limiter._check_memory(key)
+    allowed, _remaining, _reset = _forgot_limiter.is_allowed(request)
     if not allowed:
         raise HTTPException(
             status_code=429,
             detail="Too many password reset attempts. Try again later.",
-            headers={"Retry-After": str(_forgot_limiter.WINDOW_SECONDS)},
+            headers={"Retry-After": str(_forgot_limiter.window_seconds)},
         )
 
 
@@ -246,6 +245,7 @@ async def _check_forgot_rate_limit(request: Request) -> None:
 # ============================================================================
 @router.post("/register", response_model=TokenResponse)
 async def register(
+    request: Request,
     req: RegisterRequest,
     response: Response,
     db: AsyncSession = Depends(get_async_db),
@@ -255,6 +255,8 @@ async def register(
     # Legal compliance
     if not req.accept_tos or not req.accept_privacy:
         raise HTTPException(status_code=400, detail="accept_tos and accept_privacy must be true")
+    if req.role in ADMIN_ROLES:
+        raise HTTPException(status_code=403, detail="Role cannot be self-assigned")
 
     # Email uniqueness
     result = await db.execute(select(User).where(User.email == req.email))
@@ -289,7 +291,7 @@ async def register(
 
     # Publish user_registered event to NATS
     try:
-        request_id = request.headers.get("X-Request-ID") if "request" in locals() else None
+        request_id = request.headers.get("X-Request-ID")
         await publish_user_event(
             "registered",
             str(user.id),
@@ -318,6 +320,7 @@ async def register(
         expires_at=expires_at,
     )
     db.add(refresh_record)
+    await db.commit()
 
     # C5 FIX: Set httpOnly cookies
     set_auth_cookies(response, token, refresh_token)
@@ -536,8 +539,8 @@ async def update_profile(
                 if req.date_of_birth
                 else None
             )
-        except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid date_of_birth format")
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail="Invalid date_of_birth format") from e
     if req.country is not None:
         current_user.country = req.country
     if req.city is not None:
@@ -584,29 +587,25 @@ async def refresh_token_endpoint(
         user_id = payload["sub"]
         # Get the token ID for revocation tracking
         token_jti = payload.get("jti")
-    except (KeyError, TypeError):
-        raise HTTPException(status_code=401, detail="Invalid refresh token")
+    except (KeyError, TypeError) as e:
+        raise HTTPException(status_code=401, detail="Invalid refresh token") from e
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if user is None or not user.is_active:
         raise HTTPException(status_code=401, detail="User not found or inactive")
 
-    # Check if the refresh token is revoked in the database
-    if token_jti:
-        revoked = await is_refresh_token_revoked(token_jti, db)
-        if revoked:
-            raise HTTPException(status_code=401, detail="Refresh token has been revoked")
-
-    # H12 FIX: Revoke the old refresh token if we have a JTI
     if token_jti:
         from database.models import RefreshToken
 
-        revoke_result = await db.execute(select(RefreshToken).where(RefreshToken.jti == token_jti))
+        revoke_result = await db.execute(
+            select(RefreshToken).where(RefreshToken.jti == token_jti).with_for_update()
+        )
         old_token = revoke_result.scalar_one_or_none()
-        if old_token:
-            old_token.revoked = True
-            old_token.revoked_at = datetime.now(UTC)
-            await db.flush()
+        if old_token is None or old_token.revoked:
+            raise HTTPException(status_code=401, detail="Refresh token has been revoked")
+        old_token.revoked = True
+        old_token.revoked_at = datetime.now(UTC)
+        await db.flush()
 
     # Create new access token and refresh token (with new JTI)
     new_jti = secrets.token_urlsafe(16)
@@ -643,8 +642,25 @@ async def refresh_token_endpoint(
 # LOGOUT
 # ============================================================================
 @router.post("/logout", response_model=MessageResponse)
-async def logout(response: Response, current_user: User = Depends(get_current_user)):
-    """Logout - clears httpOnly auth cookies."""
+async def logout(
+    request: Request,
+    response: Response,
+    req: LogoutRequest | None = None,
+    db: AsyncSession = Depends(get_async_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Logout - revokes the active refresh token and clears auth cookies."""
+    refresh_token = req.refresh_token if req else request.cookies.get("econojin_refresh_token")
+    if refresh_token:
+        payload = decode_refresh_token(refresh_token)
+        token_jti = payload.get("jti") if payload else None
+        if token_jti:
+            await db.execute(
+                update(RefreshToken)
+                .where(RefreshToken.jti == token_jti, RefreshToken.revoked.is_(False))
+                .values(revoked=True, revoked_at=datetime.now(UTC))
+            )
+            await db.commit()
     clear_auth_cookies(response)
     logger.info(f"Logout: {current_user.email}")
     return MessageResponse(message="Logged out successfully")
@@ -920,7 +936,6 @@ async def create_api_key(
 ):
     """Create a new API key for the current user."""
     raw_key = secrets.token_urlsafe(32)
-    import hashlib
 
     key_hash = hashlib.sha256(raw_key.encode()).hexdigest()
     key = ApiKey(
@@ -1020,7 +1035,7 @@ async def toggle_2fa(
         }
     except Exception as e:
         logger.warning(f"2FA toggle failed: {e}")
-        raise HTTPException(status_code=500, detail="Failed to toggle 2FA")
+        raise HTTPException(status_code=500, detail="Failed to toggle 2FA") from e
 
 
 # ============================================================================
@@ -1382,11 +1397,11 @@ async def get_assets(
                 "count": len(lands),
                 "items": [
                     {
-                        "name": l.name,
-                        "detail": f"{l.area_ha or 0} ha",
-                        "location": f"{l.location_lat or 0}, {l.location_lon or 0}",
+                        "name": land.name,
+                        "detail": f"{land.area_ha or 0} ha",
+                        "location": f"{land.location_lat or 0}, {land.location_lon or 0}",
                     }
-                    for l in lands
+                    for land in lands
                 ],
             },
             "sensors": {

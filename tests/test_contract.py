@@ -9,7 +9,7 @@ import pytest
 import schemathesis
 
 # Load the OpenAPI schema
-schema = schemathesis.openapi.from_path("D:/eco_nojin/openapi_schema.json")
+schema = schemathesis.openapi.from_path("D:/eco_nojin/openapi.json")
 
 
 # Test specific endpoints with direct calls (more reliable than schemathesis parametrize)
@@ -146,7 +146,7 @@ def test_openapi_schema_validity():
     """Test that the OpenAPI schema itself is valid."""
     import json
 
-    with open("D:/eco_nojin/openapi_schema.json") as f:
+    with open("D:/eco_nojin/openapi.json") as f:
         schema = json.load(f)
 
     # Basic structure validation

@@ -25,6 +25,7 @@ load_dotenv()
 import logging
 import time
 import traceback
+import uuid
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
@@ -80,6 +81,7 @@ from .routers import (  # Import the new router
     blockchain,
     carbon,
     contact,
+    content_public,
     dashboard,
     disputes,
     ecowallet,
@@ -381,15 +383,32 @@ async def global_exception_handler(request: Request, exc: Exception):
         )
     logger.error(f"Unhandled error on {request.method} {request.url.path}: {exc}")
     logger.error(traceback.format_exc())
-    error_detail = str(exc) if _settings.app_env == "development" else "Internal server error"
-    return JSONResponse(
+
+    # Gate the diagnostic detail on the explicit debug flag, not on an environment
+    # string. The previous gate keyed off ``app_env == "development"``, which a
+    # misconfigured ENVIRONMENT silently satisfied, so every unhandled 500 in
+    # production returned the raw exception text, the exception class name and the
+    # request path. A stable error id is returned instead so support can correlate
+    # the client-side report with the server-side traceback via the request id.
+    request_id = getattr(request.state, "request_id", None)
+    error_id = request_id or uuid.uuid4().hex
+
+    content = {
+        "detail": "Internal server error",
+        "error_id": error_id,
+        "path": str(request.url.path),
+    }
+    if _settings.debug:
+        content["detail"] = str(exc)
+        content["error_type"] = type(exc).__name__
+
+    response = JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={
-            "detail": error_detail,
-            "error_type": type(exc).__name__,
-            "path": str(request.url.path),
-        },
+        content=content,
     )
+    if request_id:
+        response.headers["X-Request-ID"] = str(request_id)
+    return response
 
 
 @app.exception_handler(404)
@@ -449,6 +468,7 @@ app.include_router(nojin.router)
 app.include_router(simulation.router, tags=["simulation"])
 app.include_router(mrv.router, prefix="/api/v1", tags=["mrv"])
 app.include_router(science.router, tags=["science"])
+app.include_router(content_public.router)
 app.include_router(models_router.router, tags=["models"])
 app.include_router(elevation.router, tags=["elevation"])
 app.include_router(support.router, tags=["support"])

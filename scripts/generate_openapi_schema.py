@@ -3,6 +3,7 @@
 
 import json
 import sys
+from pathlib import Path
 
 sys.path.insert(0, ".")
 
@@ -11,7 +12,7 @@ from fastapi.openapi.utils import get_openapi
 from services.api_gateway.main import app
 
 schema = get_openapi(title=app.title, version="0.1.0", routes=app.routes)
-with open("openapi_schema.json", "w") as f:
+with Path("openapi.json").open("w", encoding="utf-8") as f:
     json.dump(schema, f, indent=2)
 
 print("Full OpenAPI schema generated")
