@@ -4,9 +4,8 @@ import { FivePart } from '@/components/FivePart';
 import { ListBlock } from '@/components/ListBlock';
 import { SiteNav } from '@/components/SiteNav';
 import { type DotState, StatusDot } from '@/components/StatusDot';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
 const CITATIONS_PATH = '/api/v1/science/citations/index';
 const DATASETS_PATH = '/api/v1/science/datasets';

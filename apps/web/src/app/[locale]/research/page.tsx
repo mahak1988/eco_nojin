@@ -17,6 +17,7 @@ import {
   researchCapability,
   resolveSourceState,
 } from '@/components/research/registry';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import {
   CONTRACT_DETAIL_LABEL_KEY,
@@ -33,8 +34,6 @@ import {
   UNAVAILABLE_LABEL_KEY,
   UNAVAILABLE_TITLE_KEY,
 } from '@/lib/domains/registry';
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://app.eco-nojin.org';
 
 // Datasets, citations and the workspace contract are re-resolved per request.
 export const dynamic = 'force-dynamic';

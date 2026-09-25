@@ -5,10 +5,10 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import { Link } from '@/i18n/navigation';
 import { apiGet } from '@/lib/api/client';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 const ROUTE = 'developers/changelog';
 
 export const dynamic = 'force-dynamic';

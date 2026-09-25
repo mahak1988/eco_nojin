@@ -9,8 +9,7 @@ import { OfflineBanner } from '@/components/ui/OfflineBanner';
 import { WebVitals } from '@/components/WebVitals';
 import { isRtl, routing } from '@/i18n/routing';
 import '../globals.css';
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://app.eco-nojin.org';
+import { SITE_URL as BASE_URL } from '@/config/site';
 
 export const viewport: Viewport = {
   width: 'device-width',

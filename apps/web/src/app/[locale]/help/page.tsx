@@ -5,6 +5,7 @@ import { type RecoveryLinkItem, RecoveryLinks } from '@/components/system/Recove
 import { RefreshStateButton } from '@/components/system/RefreshStateButton';
 import { SupportDirectory, type SupportPersona } from '@/components/system/SupportDirectory';
 import { type HealthRow, SystemHealthMatrix } from '@/components/system/SystemHealthMatrix';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import {
   ENDPOINT_LABEL_KEY,
@@ -15,7 +16,6 @@ import {
   UNAVAILABLE_LABEL_KEY,
 } from '@/lib/domains/registry';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://app.eco-nojin.org';
 const PERSONAS_PATH = '/api/v1/support/personas';
 
 const INTAKE_ENDPOINTS = [

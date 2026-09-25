@@ -3,9 +3,8 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ListBlock } from '@/components/ListBlock';
 import { SiteNav } from '@/components/SiteNav';
 import { type DotState, StatusDot } from '@/components/StatusDot';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet, type CppStatus } from '@/lib/api/client';
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
 const MODELS_PATH = '/api/v1/models';
 const CARDS_PATH = '/api/v1/science/model-cards';

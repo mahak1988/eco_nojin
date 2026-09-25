@@ -1,7 +1,6 @@
 import type { MetadataRoute } from 'next';
+import { SITE_URL as BASE } from '@/config/site';
 import { locales } from '@/i18n/routing';
-
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://app.eco-nojin.org';
 
 export const dynamic = 'force-static';
 

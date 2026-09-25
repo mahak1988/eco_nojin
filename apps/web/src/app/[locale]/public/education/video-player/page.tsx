@@ -4,9 +4,8 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import { UnavailableCapability } from '../../data-states';
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
 // The LMS video routes are not registered on the gateway, so no asset is served.
 const MISSING_PATH = '/api/v1/public/education/video';

@@ -4,10 +4,9 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
 const MODELS_PATH = '/api/v1/models';
 

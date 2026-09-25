@@ -4,6 +4,7 @@ import { type DotState, StatusDot } from '@/components/StatusDot';
 import { type RecoveryLinkItem, RecoveryLinks } from '@/components/system/RecoveryLinks';
 import { RefreshStateButton } from '@/components/system/RefreshStateButton';
 import { type HealthRow, SystemHealthMatrix } from '@/components/system/SystemHealthMatrix';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet, type CppStatus, type PlatformHealth, type PlatformStats } from '@/lib/api/client';
 import { getServiceOverview } from '@/lib/api/health';
 import {
@@ -15,8 +16,6 @@ import {
   STATE_LABEL_KEY,
   UNAVAILABLE_LABEL_KEY,
 } from '@/lib/domains/registry';
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
 export const dynamic = 'force-dynamic';
 

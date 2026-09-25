@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ScientificToolLayout } from '@/components/layout/ScientificToolLayout';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import {
   BACK_LABEL_KEY,
@@ -27,8 +28,6 @@ import {
   UNAVAILABLE_LABEL_KEY,
   UNAVAILABLE_TITLE_KEY,
 } from '@/lib/domains/registry';
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
 type ToolRegistryRecord = {
   tool_id: string;

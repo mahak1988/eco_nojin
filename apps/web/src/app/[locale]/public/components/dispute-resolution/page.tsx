@@ -2,9 +2,8 @@ import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import { UnavailableCapability } from '../../data-states';
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
 // Only a per-case lookup is registered, and it needs a dispute id a visitor does
 // not have; the listing itself is authenticated, so no case is rendered here.

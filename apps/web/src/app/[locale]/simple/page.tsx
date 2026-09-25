@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { StatusDot } from '@/components/StatusDot';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import {
   isUssdMenuLanguage,
@@ -9,8 +10,6 @@ import {
   SIMPLE_ACCESS_ROUTE,
   UNAVAILABLE_LABEL_KEY,
 } from '@/lib/domains/registry';
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
 type MenuPreview = { language: string; menu_text: string };
 type GatewayStatus = { status: string };

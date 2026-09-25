@@ -5,6 +5,7 @@ import { LocaleFallbackChain } from '@/components/system/LocaleFallbackChain';
 import { LocaleSelector } from '@/components/system/LocaleSelector';
 import { type RecoveryLinkItem, RecoveryLinks } from '@/components/system/RecoveryLinks';
 import { RefreshStateButton } from '@/components/system/RefreshStateButton';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import {
   LIVE_LABEL_KEY,
   METRIC_LABEL_KEY,
@@ -13,8 +14,6 @@ import {
   UNAVAILABLE_LABEL_KEY,
 } from '@/lib/domains/registry';
 import { getLocaleFallbackReport } from './catalogue';
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
 export const dynamic = 'force-dynamic';
 

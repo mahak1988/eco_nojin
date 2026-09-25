@@ -5,9 +5,9 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { type DotState, StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://app.eco-nojin.org';
 const HEALTH_PATH = '/api/v1/health';
 
 type GatewayHealth = {

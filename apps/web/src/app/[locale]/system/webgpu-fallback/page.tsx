@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { StatusDot } from '@/components/StatusDot';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import {
   LIVE_LABEL_KEY,
@@ -13,8 +14,6 @@ import {
   UNAVAILABLE_LABEL_KEY,
   UNAVAILABLE_TITLE_KEY,
 } from '@/lib/domains/registry';
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
 // GPU capability is a client probe; the kernel state is read live per request.
 export const dynamic = 'force-dynamic';

@@ -136,7 +136,7 @@ Consolidated from both companion documents. None of these is resolved by a chang
 | B6 | `services/api_gateway/routers/lms.py` is neither imported nor included in `main.py`, so `/api/v1/lms/courses` does not exist | `platform-web`, `content-web` | PUB-G4 |
 | B7 | `/api/v1/legal-texts` returns only registered slugs, so governance, accessibility, and licensing text must be published before those pages can bind | `content-web` | PUB-G4 |
 | B8 | No benchmark result store is published | `science-web` | PUB-G2 |
-| B9 | `NEXT_PUBLIC_SITE_URL` has no committed value, so canonical and Open Graph URLs fall back to a placeholder | `platform-operations` | PUB-G6 |
+| B9 | Resolved: all page/metadata code reads the shared `apps/web/src/config/site.ts`; `scripts/check-site-url.mjs` fails on placeholder origins or inline environment reads | `platform-web` | PUB-G6 |
 | B10 | Public server-side `GET` requests now use a 60-second revalidation window; browser requests and mutations remain `no-store`. A per-route ISR decision is still required for any page that must be statically generated | `platform-web` | PUB-G5, GATE-G1 |
 
 ## Definition of Done

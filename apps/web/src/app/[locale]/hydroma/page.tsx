@@ -1,10 +1,9 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { SiteNav } from '@/components/SiteNav';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import { routing } from '@/i18n/routing';
 import { apiGet, type CppStatus, type HydromaModel } from '@/lib/api/client';
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
 export const dynamic = 'force-dynamic';
 

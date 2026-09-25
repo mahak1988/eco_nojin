@@ -3,11 +3,11 @@ import Link from 'next/link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import { routing } from '@/i18n/routing';
 import { apiGet, type MarketProducts, type MarketStats } from '@/lib/api/client';
 import { loadMessages } from '@/lib/i18n/messages';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 const PRODUCTS_SOURCE = '/api/v1/marketplace/products';
 const STATS_SOURCE = '/api/v1/marketplace/stats';
 

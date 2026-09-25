@@ -2,10 +2,9 @@ import { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
 const TOOL_REGISTRY_PATH = '/api/v1/tool-registry';
 

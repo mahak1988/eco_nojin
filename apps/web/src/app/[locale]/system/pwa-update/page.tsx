@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { PwaUpdatePanel } from '@/components/system/PwaUpdatePanel';
 import { type RecoveryLinkItem, RecoveryLinks } from '@/components/system/RecoveryLinks';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import {
   LIVE_LABEL_KEY,
   METRIC_LABEL_KEY,
@@ -10,8 +11,6 @@ import {
   SYSTEM_PWA_UPDATE_ROUTE,
   UNAVAILABLE_LABEL_KEY,
 } from '@/lib/domains/registry';
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
 export const dynamic = 'force-dynamic';
 

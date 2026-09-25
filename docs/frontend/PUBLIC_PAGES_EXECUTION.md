@@ -133,7 +133,7 @@ These 28 pages make no request. Each renders the `unavailable` contract block an
 | B6 | `services/api_gateway/routers/lms.py` is not mounted, so the LMS endpoints do not exist and `public/education/courses` cannot bind | `platform-web`, `content-web` |
 | B7 | `/api/v1/legal-texts` returns only registered slugs. Legal copy for governance, accessibility, and licensing must be published before those pages can bind | `content-web` |
 | B8 | No benchmark result store is published, so `public/science/benchmarks` cannot show benchmark outcomes | `science-web` |
-| B9 | `NEXT_PUBLIC_SITE_URL` has no committed value; pages fall back to `https://econojin.example.org`, so canonical and Open Graph URLs are placeholders until the site URL is supplied by the environment | `platform-operations` |
+| B9 | Resolved: `apps/web/src/config/site.ts` is the only environment reader, with `scripts/check-site-url.mjs` enforcing the invariant in quality/CI | `platform-web` |
 | B10 | Public server-side `GET` requests use a 60-second revalidation window; browser requests and mutations remain `no-store`. Per-route ISR/static decisions are still required where full static generation is mandatory | `platform-web` |
 
 ## Execution result — 2026-09-25
@@ -142,4 +142,4 @@ These 28 pages make no request. Each renders the `unavailable` contract block an
 - public science, education, component, service, policy, audience, goal, channel, and model-count surfaces no longer use local static numbers as live data.
 - CTA and visit forms post to the registered newsletter and contact endpoints and expose non-2xx failures.
 - `scripts/check-verified-claims.mjs` reports zero unsupported verified claims.
-- B6–B10 remain external or require per-route static-generation decisions.
+- B6–B8 and B10 remain external or require per-route static-generation decisions; B9 is resolved by the shared site-URL module and guard.

@@ -28,6 +28,7 @@ jobs:
       - run: pnpm -C apps/web generate:api
       - run: git diff --exit-code -- packages/api-client/src/generated.ts
       - run: node scripts/check-verified-claims.mjs
+      - run: pnpm check:site-url
 
   lint:
     name: Lint & Format
@@ -45,6 +46,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm format:check
+      - run: pnpm check:site-url
 
   type-check:
     name: Type Check

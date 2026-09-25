@@ -2,9 +2,8 @@ import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
+import { SITE_URL as BASE_URL } from '@/config/site';
 import { UnavailableCapability } from '../../data-states';
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
 const SLUGS_PATH = '/api/v1/legal-texts/slugs';
 const TEXT_PATH = '/api/v1/legal-texts/{locale}/accessibility';
