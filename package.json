@@ -9,10 +9,12 @@
     "start": "pnpm -C apps/web start",
     "lint": "pnpm -C apps/web lint",
     "format": "pnpm -C apps/web format",
+    "format:check": "pnpm -C apps/web format:check",
     "test": "pnpm -C apps/web test",
     "test:e2e": "pnpm -C apps/web test:e2e",
     "type-check": "pnpm -C apps/web type-check",
     "generate:api": "pnpm -C apps/web generate:api",
+    "quality": "pnpm -C apps/web quality",
     "backend:test": "python -m pytest -q",
     "test:all": "pnpm test && pnpm backend:test"
   },

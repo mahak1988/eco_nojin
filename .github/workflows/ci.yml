@@ -25,9 +25,10 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm -C apps/web generate:api
+      - run: git diff --exit-code -- packages/api-client/src/generated.ts
 
   lint:
-    name: Lint
+    name: Lint & Format
     runs-on: ubuntu-latest
     needs: generate-api
     steps:
@@ -41,6 +42,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
+      - run: pnpm format:check
 
   type-check:
     name: Type Check
@@ -112,7 +114,6 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm -C apps/web build
       - uses: actions/download-artifact@v4
         with:
           name: dist

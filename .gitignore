@@ -74,6 +74,7 @@ playwright-report/
 blob-report/
 playwright/.cache/
 .playwright-artifacts/
+.lighthouseci/
 frontend/test-results/
 frontend/playwright-report/
 
@@ -81,6 +82,7 @@ frontend/playwright-report/
 node_modules/
 **/node_modules/
 **/.next/
+**/.next-*/
 .next/
 **/.turbo/
 .turbo/

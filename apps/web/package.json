@@ -11,10 +11,12 @@
     "generate:api": "orval --config ../../orval.config.ts",
     "lint": "biome check src/",
     "format": "biome format --write src/",
+    "format:check": "biome format src/",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "i18n:compile": "node scripts/i18n-check.mjs"
+    "i18n:compile": "node scripts/i18n-check.mjs",
+    "quality": "pnpm lint && pnpm format:check && pnpm type-check && pnpm test && pnpm i18n:compile"
   },
   "dependencies": {
     "@eco/api-client": "workspace:*",

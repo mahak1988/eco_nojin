@@ -3,8 +3,8 @@
 export default defineConfig({
   ecoNojin: {
     input: {
-      target: './openapi_schema.json',
-      validate: false,
+      target: './openapi.json',
+      validate: true,
     },
     output: {
       target: './packages/api-client/src/generated.ts',

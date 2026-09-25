@@ -3,69 +3,89 @@ name: i18n Layout Verification
 on:
   push:
     paths:
-      - 'src/paraglide/**'
-      - 'src/test/e2e/**'
-      - '.github/workflows/i18n-ci.yml'
+      - 'apps/web/messages/**'
+      - 'apps/web/scripts/i18n-check.mjs'
+      - 'apps/web/tests/i18n.spec.ts'
+      - 'apps/web/playwright.config.ts'
+      - 'apps/web/src/i18n/**'
+      - 'apps/web/src/lib/i18n/**'
+      - 'apps/web/package.json'
       - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/i18n-ci.yml'
   pull_request:
     paths:
-      - 'src/paraglide/**'
-      - 'src/test/e2e/**'
-      - '.github/workflows/i18n-ci.yml'
+      - 'apps/web/messages/**'
+      - 'apps/web/scripts/i18n-check.mjs'
+      - 'apps/web/tests/i18n.spec.ts'
+      - 'apps/web/playwright.config.ts'
+      - 'apps/web/src/i18n/**'
+      - 'apps/web/src/lib/i18n/**'
+      - 'apps/web/package.json'
       - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/i18n-ci.yml'
+  workflow_dispatch:
 
 jobs:
   validate-locales:
+    name: Validate Locale Catalogues
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: '20'
-      - run: coreutils
+          version: 11.4.0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Validate i18n translations
-        run: pnpm i18n:validate
-      - name: Check RTL direction mapping
-        run: node scripts/check-rtl-mapping.js
+        run: pnpm -C apps/web i18n:compile
 
-  playwright-tests:
+  playwright-locales:
+    name: Playwright (${{ matrix.locale }})
     needs: validate-locales
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        locale: [fa, en, ar, ur, de, es, fr, hi, it, ms, pt, ru, zh, bn]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: '20'
+          version: 11.4.0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Build application
-        run: pnpm build
-      - name: Run RTL/LTR layout tests
-        run: pnpm test:e2e --project=RTL\ Chromium
+        run: pnpm -C apps/web build
+      - name: Install Playwright Chromium
+        uses: playwright/action@v1
+        with:
+          browser: chromium
+      - name: Test locale ${{ matrix.locale }}
+        run: pnpm -C apps/web test:e2e tests/i18n.spec.ts --project=chromium --grep "(${matrix.locale})"
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-report
-          path: playwright-report/
+          name: playwright-report-${{ matrix.locale }}
+          path: apps/web/playwright-report/
           retention-days: 30
-
-  multi-language-tests:
-    needs: validate-locales
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        locale: [fa, ar, es, fr, hi, pt, en, zh]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      - name: Build application
-        run: pnpm build
-      - name: Test locale ${{ matrix.locale }}
-        run: pnpm test:e2e --grep="${matrix.locale}"

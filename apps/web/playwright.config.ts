@@ -1,6 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3001';
+const CHANNEL = process.env.PLAYWRIGHT_CHANNEL === 'msedge' ? 'msedge' : undefined;
+const WEB_SERVER_COMMAND = process.env.CI
+  ? 'pnpm exec next start -p 3001'
+  : 'pnpm exec next dev -p 3001';
 
 export default defineConfig({
   testDir: './tests',
@@ -18,7 +22,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], channel: CHANNEL },
     },
     {
       name: 'firefox',
@@ -38,7 +42,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm dev',
+    command: WEB_SERVER_COMMAND,
     url: BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 120000,

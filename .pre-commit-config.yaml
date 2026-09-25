@@ -75,12 +75,12 @@ repos:
 
   # Frontend - Biome (replaces ESLint/Prettier)
   - repo: https://github.com/biomejs/biome
-    rev: v1.9.4
+    rev: v2.5.14
     hooks:
       - id: biome-check
         name: biome lint and format
         files: ^apps/web/
-        args: [--write, --files-ignore-unknown=true]
+        args: [--files-ignore-unknown=true]
         stages: [commit]
 
   # Frontend - TypeScript type check

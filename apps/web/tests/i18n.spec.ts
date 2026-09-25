@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 const LOCALES = [
   { code: 'fa', dir: 'rtl', name: 'Persian' },
@@ -8,7 +8,13 @@ const LOCALES = [
   { code: 'de', dir: 'ltr', name: 'German' },
   { code: 'es', dir: 'ltr', name: 'Spanish' },
   { code: 'fr', dir: 'ltr', name: 'French' },
+  { code: 'hi', dir: 'ltr', name: 'Hindi' },
+  { code: 'it', dir: 'ltr', name: 'Italian' },
+  { code: 'ms', dir: 'ltr', name: 'Malay' },
+  { code: 'pt', dir: 'ltr', name: 'Portuguese' },
+  { code: 'ru', dir: 'ltr', name: 'Russian' },
   { code: 'zh', dir: 'ltr', name: 'Chinese' },
+  { code: 'bn', dir: 'ltr', name: 'Bengali' },
 ];
 
 test.describe('i18n - All 14 locales', () => {
@@ -22,18 +28,21 @@ test.describe('i18n - All 14 locales', () => {
 
   test('Locale switcher shows all 14 locales', async ({ page }) => {
     await page.goto('/fa/home');
-    const switcher = page.locator('nav[aria-label="زبان"]');
+    const switcher = page.getByRole('button', { name: 'زبان' });
     await expect(switcher).toBeVisible();
-    
-    // Check all 14 locale links exist
+    await switcher.click();
+    const options = page.locator('[role="option"]');
+    await expect(options).toHaveCount(14);
+
     for (const locale of LOCALES) {
-      await expect(page.locator(`a[hrefLang="${locale.code}"]`)).toBeVisible();
+      await expect(page.locator(`[role="option"][lang="${locale.code}"]`)).toBeVisible();
     }
   });
 
   test('Locale change persists via URL', async ({ page }) => {
     await page.goto('/fa/home');
-    await page.click('a[hrefLang="en"]');
+    await page.getByRole('button', { name: 'زبان' }).click();
+    await page.locator('[role="option"][lang="en"]').click();
     await expect(page).toHaveURL(/\/en\/home/);
     await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
   });
@@ -42,7 +51,7 @@ test.describe('i18n - All 14 locales', () => {
     await page.goto('/fa/home');
     const body = page.locator('body');
     await expect(body).toHaveCSS('direction', 'rtl');
-    
+
     await page.goto('/ar/home');
     await expect(body).toHaveCSS('direction', 'rtl');
   });

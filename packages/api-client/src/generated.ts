@@ -34,14 +34,6 @@ export interface AccountResponse {
   is_active: boolean;
 }
 
-/**
- * Generic action response.
- */
-export interface ActionResponse {
-  success: boolean;
-  message: string;
-}
-
 export interface CartItem {
   /** @minLength 1 */
   product_id: string;
@@ -69,23 +61,15 @@ export interface AdjustRequest {
   reason?: string | null;
 }
 
-export interface AdminAIChatRequest {
+export interface AdvisoryRequest {
+  /**
+     * @minLength 3
+     * @maxLength 2000
+     */
   question: string;
-  page?: string | null;
-}
-
-/**
- * Public user representation for admin panel.
- */
-export interface AdminUserOut {
-  id: string;
-  email: string;
-  full_name?: string | null;
-  role?: string | null;
-  is_active?: boolean;
-  is_email_verified?: boolean;
+  lat?: number | null;
+  lon?: number | null;
   language?: string | null;
-  created_at?: string | null;
 }
 
 /**
@@ -237,18 +221,6 @@ export interface AssessCapabilityRequest {
   soil_texture?: string;
 }
 
-/**
- * Audit log entry for public consumption.
- */
-export interface AuditOut {
-  id: string;
-  actor_email?: string | null;
-  action: string;
-  target?: string | null;
-  detail?: string | null;
-  created_at?: string | null;
-}
-
 export type B2BDemandCreatePriceRange = { [key: string]: unknown }[] | null;
 
 export interface B2BDemandCreate {
@@ -290,15 +262,17 @@ export interface BodyUploadProductImagesApiV1MarketplaceProductsProductIdImagesP
   files: Blob[];
 }
 
-/**
- * Bot platform status.
- */
-export interface BotOut {
+export interface BotStatusResponse {
   key: string;
-  label: string;
-  kind: string;
-  verified: boolean;
-  configured: boolean;
+  name: string;
+  enabled: boolean;
+  platform: string;
+  status: string;
+  last_activity?: string | null;
+  message_count?: number;
+}
+
+export interface BotToggleRequest {
   enabled: boolean;
 }
 
@@ -534,13 +508,11 @@ export interface ChangePasswordRequest {
   new_password: string;
 }
 
-/**
- * Health status of a single platform channel.
- */
-export interface ChannelStatus {
-  channel: string;
+export interface ChannelHealth {
+  name: string;
   status: string;
-  detail: string;
+  latency_ms?: number | null;
+  last_check: string;
 }
 
 export interface ChatRequest {
@@ -738,46 +710,50 @@ export interface ContactCreate {
   website?: string | null;
 }
 
-/**
- * Content creation payload.
- */
 export interface ContentCreate {
   title: string;
   body: string;
   category?: string;
+  status?: string;
   language?: string;
-  source?: string | null;
-  generated_by_ai?: boolean;
 }
 
-/**
- * Content item representation.
- */
-export interface ContentOut {
+export interface ContentResponse {
   id: number;
   title: string;
   body: string;
   category: string;
-  language: string;
   status: string;
-  source?: string | null;
-  updated_at?: string | null;
-  generated_by_ai?: boolean;
-  rag_synced?: boolean;
+  language: string;
+  created_at: string;
+  updated_at: string;
   published_at?: string | null;
-  scheduled_at?: string | null;
 }
 
-/**
- * Content update payload (partial).
- */
+export interface ContentTranslationResponse {
+  id: number;
+  content_id: number;
+  locale: string;
+  title: string;
+  body: string;
+  source: string;
+  is_published: boolean;
+}
+
 export interface ContentUpdate {
   title?: string | null;
   body?: string | null;
   category?: string | null;
-  language?: string | null;
-  source?: string | null;
-  generated_by_ai?: boolean | null;
+  status?: string | null;
+}
+
+export interface ContentVersionResponse {
+  id: number;
+  content_id: number;
+  version: number;
+  title: string;
+  body: string;
+  created_at: string;
 }
 
 /**
@@ -1023,6 +999,49 @@ export interface DrainageAnalysis {
   analyzed_at?: string;
 }
 
+export interface DroughtReportRequest {
+  /**
+     * @minimum -90
+     * @maximum 90
+     */
+  lat: number;
+  /**
+     * @minimum -180
+     * @maximum 180
+     */
+  lon: number;
+  /**
+     * @minimum 1
+     * @maximum 24
+     */
+  months?: number;
+  /** @pattern ^(fa|en|ar|tr|ur|ps|de|es|fr|hi|pt|zh|ms|it|bn)$ */
+  language?: string;
+}
+
+export interface DroughtRequest {
+  /**
+     * Latitude
+     * @minimum -90
+     * @maximum 90
+     */
+  lat: number;
+  /**
+     * Longitude
+     * @minimum -180
+     * @maximum 180
+     */
+  lon: number;
+  /**
+     * Analysis period in months
+     * @minimum 1
+     * @maximum 24
+     */
+  months?: number;
+  /** SPI/SPEI time scales */
+  scales?: number[];
+}
+
 export interface EarnResponse {
   /** @pattern ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$ */
   amount_earned: string;
@@ -1070,17 +1089,22 @@ export interface EntrepreneurProfileUpdate {
   is_available?: boolean | null;
 }
 
-/**
- * API error log entry.
- */
-export interface ErrorOut {
-  id: number;
+export interface ErrorAckRequest {
+  acknowledged_by: string;
+}
+
+export interface ErrorResponse {
+  id: string;
   path: string;
   method: string;
-  status: number;
-  message?: string | null;
-  acked: boolean;
-  created_at?: string | null;
+  status_code: number;
+  error_type: string;
+  message: string;
+  user_id?: string | null;
+  created_at: string;
+  acknowledged?: boolean;
+  acknowledged_at?: string | null;
+  acknowledged_by?: string | null;
 }
 
 export type EventCreateCoordinates = { [key: string]: unknown } | null;
@@ -1722,14 +1746,6 @@ export interface LandscapeCreate {
      * @maxLength 100
      */
   name: string;
-  /** @pattern ^[a-z0-9-]+$ */
-  slug: string;
-  /**
-     * @minLength 2
-     * @maxLength 2
-     */
-  country: string;
-  province?: string | null;
   /**
      * @minimum -90
      * @maximum 90
@@ -1745,18 +1761,19 @@ export interface LandscapeCreate {
      * @exclusiveMinimum 0
      */
   area_ha: number;
+  description?: string | null;
 }
 
 /**
- * Response model for landscape.
+ * Response model for a land profile (real fields only).
  */
 export interface LandscapeOut {
   id: string;
   name: string;
-  slug: string;
-  country: string;
-  province: string | null;
-  created_at: string;
+  location_lat?: number | null;
+  location_lon?: number | null;
+  area_ha?: number | null;
+  created_at?: string | null;
 }
 
 export interface LegacyResponse {
@@ -1770,6 +1787,39 @@ export interface LegacyResponse {
   updated?: string | null;
 }
 
+export interface LegalTextCreate {
+  /**
+     * Locale code (e.g., fa, en, ar)
+     * @minLength 2
+     * @maxLength 8
+     */
+  locale: string;
+  /**
+     * Document identifier
+     * @minLength 1
+     * @maxLength 64
+     */
+  slug: string;
+  /**
+     * @minLength 1
+     * @maxLength 200
+     */
+  title: string;
+  /** @minLength 1 */
+  body: string;
+  version?: number | null;
+  /** @pattern ^(draft|published|archived)$ */
+  status?: string;
+  effective_at?: string | null;
+}
+
+export interface LegalTextUpdate {
+  title?: string | null;
+  body?: string | null;
+  status?: string | null;
+  effective_at?: string | null;
+}
+
 export interface LocationCreate {
   warehouse_id: number;
   /**
@@ -1778,6 +1828,18 @@ export interface LocationCreate {
      */
   code: string;
   location_type?: string;
+}
+
+export interface LoginHistoryResponse {
+  id: string;
+  user_id: string;
+  email: string;
+  ip_address: string;
+  user_agent?: string | null;
+  success: boolean;
+  failure_reason?: string | null;
+  location?: string | null;
+  created_at: string;
 }
 
 export interface MarketplaceCreate {
@@ -1910,6 +1972,64 @@ export interface ModelMeta {
   status: string;
   repo_path: string;
   test_file?: string | null;
+}
+
+export interface ModelResponse {
+  name: string;
+  size: string;
+  modified_at: string;
+  digest: string;
+  family?: string | null;
+  parameter_size?: string | null;
+  quantization_level?: string | null;
+  running?: boolean;
+}
+
+export interface ServicesApiGatewayRoutersAiAnalysisScenarioRequest {
+  /**
+     * @minimum -90
+     * @maximum 90
+     */
+  lat: number;
+  /**
+     * @minimum -180
+     * @maximum 180
+     */
+  lon: number;
+  /**
+     * @minimum -100
+     * @maximum 100
+     */
+  precip_change_pct?: number;
+  /**
+     * @minimum -20
+     * @maximum 20
+     */
+  temp_change_c?: number;
+  /**
+     * @minimum 1
+     * @maximum 24
+     */
+  months?: number;
+}
+
+export interface MultiScenarioRequest {
+  /**
+     * @minimum -90
+     * @maximum 90
+     */
+  lat: number;
+  /**
+     * @minimum -180
+     * @maximum 180
+     */
+  lon: number;
+  scenarios: ServicesApiGatewayRoutersAiAnalysisScenarioRequest[];
+  /**
+     * @minimum 1
+     * @maximum 24
+     */
+  months?: number;
 }
 
 export interface NeedCreate {
@@ -2120,6 +2240,21 @@ export interface PilotApply {
   locale?: string | null;
 }
 
+export interface PlatformStats {
+  total_users: number;
+  active_users_24h: number;
+  total_farms: number;
+  total_land_profiles: number;
+  total_content: number;
+  published_content: number;
+  total_marketplace_products: number;
+  total_orders: number;
+  revenue_24h: number;
+  api_requests_24h: number;
+  error_rate_24h: number;
+  avg_response_time_ms: number;
+}
+
 export interface ProductCreateRequest {
   /**
      * @minLength 2
@@ -2229,6 +2364,7 @@ export interface QueryRequest {
      * @maxLength 1000
      */
   question: string;
+  language?: string | null;
 }
 
 export type QueryResponseCitationsItem = { [key: string]: unknown };
@@ -2253,6 +2389,7 @@ export interface QueryResponse {
   sources: SourceResponse[];
   confidence: number;
   citations?: QueryResponseCitationsItem[];
+  language: string;
 }
 
 export type RealLandResponseSatellite = { [key: string]: unknown };
@@ -2648,20 +2785,8 @@ export interface ScaleRequest {
   area_ha: number;
 }
 
-export interface ScenarioRequest {
-  /** Baseline annual mean temp (C) */
-  baseline_temp?: number;
-  /** Baseline annual precipitation (mm) */
-  baseline_precip?: number;
-  /** ssp126/ssp245/ssp370/ssp585 */
-  scenario?: string;
-  /**
-     * @minimum 2025
-     * @maximum 2100
-     */
-  year?: number;
-  farm_id?: number | null;
-  user_id?: number | null;
+export interface ScheduleRequest {
+  publish_at: string;
 }
 
 export interface ScrapRequest {
@@ -2671,21 +2796,32 @@ export interface ScrapRequest {
   reason?: string | null;
 }
 
-/**
- * Platform setting.
- */
-export interface SettingOut {
+export type SecurityAuditResponseTopCountriesItem = { [key: string]: unknown };
+
+export type SecurityAuditResponseSuspiciousActivitiesItem = { [key: string]: unknown };
+
+export interface SecurityAuditResponse {
+  total_logins_24h: number;
+  successful_logins: number;
+  failed_logins: number;
+  unique_users: number;
+  unique_ips: number;
+  top_countries: SecurityAuditResponseTopCountriesItem[];
+  suspicious_activities: SecurityAuditResponseSuspiciousActivitiesItem[];
+}
+
+export interface SettingResponse {
   key: string;
   value: string;
   description?: string | null;
+  is_secret?: boolean;
   updated_at?: string | null;
+  updated_by?: string | null;
 }
 
-/**
- * Setting update payload.
- */
 export interface SettingUpdate {
-  value: string;
+  value: unknown;
+  description?: string | null;
 }
 
 export interface ShareUpdate {
@@ -3035,7 +3171,7 @@ export interface TTSOut {
   duration_seconds: number;
 }
 
-export interface UserResponse {
+export interface ServicesApiGatewayRoutersAuthUserResponse {
   id: string;
   email: string;
   full_name?: string | null;
@@ -3054,7 +3190,7 @@ export interface TokenResponse {
   access_token: string;
   refresh_token: string;
   token_type?: string;
-  user: UserResponse;
+  user: ServicesApiGatewayRoutersAuthUserResponse;
 }
 
 export interface TokenizeRequest {
@@ -3064,6 +3200,58 @@ export interface TokenizeRequest {
   amount_tonnes: number;
   credit_type?: string;
   recipient_address?: string | null;
+}
+
+export interface ToolRegistryCreate {
+  /**
+     * @minLength 1
+     * @maxLength 32
+     * @pattern ^[A-Z0-9_-]+$
+     */
+  tool_id: string;
+  /**
+     * @minLength 1
+     * @maxLength 200
+     */
+  name_fa: string;
+  /**
+     * @minLength 1
+     * @maxLength 200
+     */
+  name_en: string;
+  /**
+     * @minLength 1
+     * @maxLength 50
+     */
+  domain: string;
+  /**
+     * @minLength 1
+     * @maxLength 50
+     */
+  category: string;
+  fidelity?: string | null;
+  reference?: string | null;
+  description?: string | null;
+  formula?: string | null;
+  service_slug?: string | null;
+  endpoint_path?: string | null;
+  phase?: number | null;
+  is_active?: boolean;
+}
+
+export interface ToolRegistryUpdate {
+  name_fa?: string | null;
+  name_en?: string | null;
+  domain?: string | null;
+  category?: string | null;
+  fidelity?: string | null;
+  reference?: string | null;
+  description?: string | null;
+  formula?: string | null;
+  service_slug?: string | null;
+  endpoint_path?: string | null;
+  phase?: number | null;
+  is_active?: boolean | null;
 }
 
 export type TopographyInputAnalysisTypesItem = typeof TopographyInputAnalysisTypesItem[keyof typeof TopographyInputAnalysisTypesItem];
@@ -3126,6 +3314,11 @@ export interface TransferResponse {
   timestamp: string;
 }
 
+export interface TranslateRequest {
+  target_locale: string;
+  source_locale?: string;
+}
+
 export interface TrialBalanceRow {
   account_id: string;
   asset: string;
@@ -3154,6 +3347,11 @@ export interface UpdateCartItemRequest {
      * @exclusiveMinimum 0
      */
   quantity: number;
+}
+
+export interface UserBulkAction {
+  user_ids: string[];
+  action: string;
 }
 
 export type UssdInLanguage = typeof UssdInLanguage[keyof typeof UssdInLanguage];
@@ -3344,13 +3542,19 @@ export interface WeatherResponse {
   nasa_power?: WeatherResponseNasaPower;
 }
 
-/**
- * Aggregate health response.
- */
-export interface ServicesApiGatewayRoutersAdminHealthResponse {
-  status: string;
-  channels: ChannelStatus[];
-  checked_at: string;
+export interface ServicesApiGatewayRoutersAdminUsersUserResponse {
+  id: string;
+  email: string;
+  full_name?: string | null;
+  phone?: string | null;
+  country?: string | null;
+  city?: string | null;
+  language?: string | null;
+  role?: string | null;
+  is_email_verified: boolean;
+  is_active: boolean;
+  two_factor_enabled: boolean;
+  created_at: string;
 }
 
 export interface ServicesApiGatewayRoutersAuthLoginRequest {
@@ -3415,6 +3619,22 @@ export interface ServicesApiGatewayRoutersSatelliteHealthResponse {
   data_source: string;
 }
 
+export interface ServicesApiGatewayRoutersScenariosScenarioRequest {
+  /** Baseline annual mean temp (C) */
+  baseline_temp?: number;
+  /** Baseline annual precipitation (mm) */
+  baseline_precip?: number;
+  /** ssp126/ssp245/ssp370/ssp585 */
+  scenario?: string;
+  /**
+     * @minimum 2025
+     * @maximum 2100
+     */
+  year?: number;
+  farm_id?: number | null;
+  user_id?: number | null;
+}
+
 export interface ServicesFinanceRoutersFinanceEarnRequest {
   /** @pattern ^(tree_planting|soil_health|water_saving|carbon_credit|education|community)$ */
   category: string;
@@ -3440,195 +3660,108 @@ export interface ServicesInventoryRoutersInventoryTransferRequest {
 }
 
 export type ListUsersApiV1AdminUsersGetParams = {
+/**
+ * @minimum 1
+ * @maximum 200
+ */
 limit?: number;
 /**
- * Search by email, name, or ID
- */
-search?: string | null;
-/**
- * Filter by role
- */
-role?: string | null;
-/**
- * Filter by active status
- */
-is_active?: boolean | null;
-/**
- * Pagination offset
  * @minimum 0
  */
 offset?: number;
+timeout?: number;
 };
 
-export type BulkUserActionApiV1AdminUsersBulkActionPostParams = {
-/**
- * List of user IDs
- */
-user_ids: string[];
-/**
- * Action to perform
- * @pattern ^(block|unblock|delete)$
- */
-action: string;
+export type BulkActionUsersApiV1AdminUsersBulkActionPostParams = {
+timeout?: number;
 };
 
-export type ListAuditApiV1AdminAuditGetParams = {
-limit?: number;
-/**
- * Pagination offset
- * @minimum 0
- */
-offset?: number;
-/**
- * Search by actor email, action, or target
- */
-search?: string | null;
-/**
- * Filter by action type
- */
-action?: string | null;
-/**
- * Filter by date from (ISO format)
- */
-date_from?: string | null;
-/**
- * Filter by date to (ISO format)
- */
-date_to?: string | null;
+export type BlockUserApiV1AdminUsersUserIdBlockPostParams = {
+timeout?: number;
+};
+
+export type UnblockUserApiV1AdminUsersUserIdUnblockPostParams = {
+timeout?: number;
 };
 
 export type ListContentApiV1AdminContentGetParams = {
+status?: string | null;
+language?: string | null;
+category?: string | null;
+/**
+ * @minimum 1
+ * @maximum 200
+ */
 limit?: number;
 /**
- * Pagination offset
  * @minimum 0
  */
 offset?: number;
-/**
- * Search by title or body
- */
-search?: string | null;
-/**
- * Filter by category
- */
-category?: string | null;
-/**
- * Filter by status (draft/published/archived)
- */
-status?: string | null;
-/**
- * Filter by language
- */
-language?: string | null;
-/**
- * Filter by AI-generated
- */
-generated_by_ai?: boolean | null;
-/**
- * Filter by date from (ISO format)
- */
-date_from?: string | null;
-/**
- * Filter by date to (ISO format)
- */
-date_to?: string | null;
 };
 
-export type BulkContentActionApiV1AdminContentBulkActionPostParams = {
-/**
- * List of content item IDs
- */
-item_ids: number[];
-/**
- * Action to perform
- * @pattern ^(publish|archive|delete)$
- */
-action: string;
-};
-
-export type ContentVersionsApiV1AdminContentItemIdVersionsGet200Item = { [key: string]: unknown };
-
-export type ContentTranslationsListApiV1AdminContentItemIdTranslationsGet200Item = { [key: string]: unknown };
-
-export type TranslateContentApiV1AdminContentItemIdTranslatePostParams = {
-/**
- * Target language code
- */
-language: string;
-};
-
-export type GenerateAiDraftApiV1AdminContentGenerateDraftPostParams = {
-/**
- * @minLength 3
- * @maxLength 200
- */
-topic: string;
+export type GenerateDraftApiV1AdminContentGenerateDraftPostParams = {
+prompt: string;
+language?: string;
 category?: string;
 };
 
-export type ScheduleContentApiV1AdminContentItemIdSchedulePostParams = {
-/**
- * ISO-8601 datetime (UTC)
- */
-at: string;
-};
-
 export type ListErrorsApiV1AdminErrorsGetParams = {
+status_code?: number | null;
+error_type?: string | null;
+acknowledged?: boolean | null;
+/**
+ * @minimum 1
+ * @maximum 200
+ */
 limit?: number;
 /**
- * Pagination offset
  * @minimum 0
  */
 offset?: number;
-/**
- * Search by path or message
- */
-search?: string | null;
-/**
- * Filter by HTTP method
- */
-method?: string | null;
-/**
- * Filter by status code
- */
-status_code?: number | null;
-/**
- * Filter by acknowledged status
- */
-acked?: boolean | null;
-/**
- * Filter by date from (ISO format)
- */
-date_from?: string | null;
-/**
- * Filter by date to (ISO format)
- */
-date_to?: string | null;
 };
 
-export type BulkErrorActionApiV1AdminErrorsBulkActionPostParams = {
-/**
- * List of error IDs
- */
-error_ids: number[];
-/**
- * Action to perform
- * @pattern ^(ack|unack|delete)$
- */
-action: string;
+export type ListSettingsApiV1AdminSettingsGetParams = {
+prefix?: string | null;
 };
 
-export type ListModelsApiV1AdminModelsGet200 = { [key: string]: unknown };
+export type BulkUpdateSettingsApiV1AdminSettingsBulkPostBody = { [key: string]: unknown };
 
-export type StopModelApiV1AdminModelsModelNameStopPost200 = { [key: string]: unknown };
+export type GetDetailedMetricsApiV1AdminOverviewMetricsGetParams = {
+/**
+ * @minimum 1
+ * @maximum 168
+ */
+hours?: number;
+};
 
-export type AdminOverviewApiV1AdminOverviewGet200 = { [key: string]: unknown };
+export type GetLoginHistoryApiV1AdminSecurityLoginsGetParams = {
+user_id?: string | null;
+success?: boolean | null;
+/**
+ * @minimum 1
+ * @maximum 720
+ */
+hours?: number;
+/**
+ * @minimum 1
+ * @maximum 500
+ */
+limit?: number;
+/**
+ * @minimum 0
+ */
+offset?: number;
+timeout?: number;
+};
 
-export type AdminSecurityApiV1AdminSecurityGet200 = { [key: string]: unknown };
-
-export type AdminAiStatusEndpointApiV1AdminAiStatusGet200 = { [key: string]: unknown };
-
-export type AdminAiChatApiV1AdminAiChatPost200 = { [key: string]: unknown };
+export type GetSecurityAuditApiV1AdminSecurityAuditGetParams = {
+/**
+ * @minimum 1
+ * @maximum 720
+ */
+hours?: number;
+timeout?: number;
+};
 
 export type GetActivityHistoryApiV1AuthActivityHistoryGetParams = {
 /**
@@ -4087,7 +4220,7 @@ export type TwilioDtmfWebhookApiV1VoiceIvrTwilioDtmfPostBody = { [key: string]: 
 export type TwilioDtmfWebhookApiV1VoiceIvrTwilioDtmfPost200 = { [key: string]: unknown };
 
 export type SseStreamApiV1RealtimeStreamGetParams = {
-user_key?: string;
+user_key?: string | null;
 events?: string;
 interval?: number;
 };
@@ -4336,6 +4469,66 @@ export type ApplyPilotApiV1PilotApplyPost200 = { [key: string]: unknown };
 export type PilotStatsApiV1PilotStatsGet200 = { [key: string]: unknown };
 
 export type SubscribeApiV1NewsletterSubscribePost200 = { [key: string]: unknown };
+
+export type ListLegalTextsApiV1LegalTextsGetParams = {
+locale?: string | null;
+slug?: string | null;
+status?: string | null;
+/**
+ * @minimum 1
+ * @maximum 200
+ */
+limit?: number;
+/**
+ * @minimum 0
+ */
+offset?: number;
+};
+
+export type ListLegalTextsApiV1LegalTextsGet200 = { [key: string]: unknown };
+
+export type CreateLegalTextApiV1LegalTextsPost201 = { [key: string]: unknown };
+
+export type GetLegalTextApiV1LegalTextsLocaleSlugGetParams = {
+version?: number | null;
+};
+
+export type GetLegalTextApiV1LegalTextsLocaleSlugGet200 = { [key: string]: unknown };
+
+export type GetLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGet200Item = { [key: string]: unknown };
+
+export type UpdateLegalTextApiV1LegalTextsLocaleSlugVersionPatch200 = { [key: string]: unknown };
+
+export type DeleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete200 = { [key: string]: unknown };
+
+export type ListToolsApiV1ToolRegistryGetParams = {
+domain?: string | null;
+category?: string | null;
+fidelity?: string | null;
+phase?: number | null;
+is_active?: boolean | null;
+/**
+ * @minimum 1
+ * @maximum 500
+ */
+limit?: number;
+/**
+ * @minimum 0
+ */
+offset?: number;
+};
+
+export type ListToolsApiV1ToolRegistryGet200 = { [key: string]: unknown };
+
+export type CreateToolApiV1ToolRegistryPost201 = { [key: string]: unknown };
+
+export type GetToolApiV1ToolRegistryToolIdGet200 = { [key: string]: unknown };
+
+export type UpdateToolApiV1ToolRegistryToolIdPatch200 = { [key: string]: unknown };
+
+export type DeleteToolApiV1ToolRegistryToolIdDelete200 = { [key: string]: unknown };
+
+export type GetToolByServiceApiV1ToolRegistryByServiceServiceSlugGet200 = { [key: string]: unknown };
 
 export type CreateRunApiV1HubRunsPost200 = { [key: string]: unknown };
 
@@ -4713,7 +4906,7 @@ export const getPlatformHealthApiV1PlatformHealthGetUrl = () => {
 }
 
 /**
- * Health check for platform router.
+ * Health check for platform router — reports the REAL database reachability.
  * @summary Platform Health
  */
 export const platformHealthApiV1PlatformHealthGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<platformHealthApiV1PlatformHealthGetResponse> => {
@@ -4800,7 +4993,7 @@ export const getListLandscapesApiV1PlatformLandscapesGetUrl = () => {
 }
 
 /**
- * List all landscapes from Supabase.
+ * List land profiles from the real database (SQLite via the SQLAlchemy hub).
  * @summary List Landscapes
  */
 export const listLandscapesApiV1PlatformLandscapesGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<listLandscapesApiV1PlatformLandscapesGetResponse> => {
@@ -4894,7 +5087,7 @@ export const getCreateLandscapeApiV1PlatformLandscapesPostUrl = () => {
 }
 
 /**
- * Create a new landscape in Supabase.
+ * Create a new land profile in the real database.
  * @summary Create Landscape
  */
 export const createLandscapeApiV1PlatformLandscapesPost = async (landscapeCreate: LandscapeCreate, options?: Parameters<typeof apiRequest>[1]): Promise<createLandscapeApiV1PlatformLandscapesPostResponse> => {
@@ -5029,14 +5222,6 @@ export const getAnalyzeLandApiV1PlatformAnalyzePostUrl = () => {
 }
 
 /**
- * Full land analysis - the MAIN endpoint of the platform.
- *
- * Flow:
- * 1. Create/retrieve landscape in Supabase
- * 2. Fetch climate data from Open-Meteo
- * 3. Run C++ accelerated computations
- * 4. Apply Python decision layer
- * 5. Save and return results
  * @summary Analyze Land
  */
 export const analyzeLandApiV1PlatformAnalyzePost = async (analyzeRequest: AnalyzeRequest, options?: Parameters<typeof apiRequest>[1]): Promise<analyzeLandApiV1PlatformAnalyzePostResponse> => {
@@ -5164,7 +5349,8 @@ export const getPlatformStatsApiV1PlatformStatsGetUrl = () => {
 }
 
 /**
- * Platform statistics.
+ * Platform statistics from the REAL database. No fabricated fallbacks:
+ * on failure the counters are null and db_reachable is False.
  * @summary Platform Stats
  */
 export const platformStatsApiV1PlatformStatsGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<platformStatsApiV1PlatformStatsGetResponse> => {
@@ -5230,95 +5416,8 @@ export const usePlatformStatsApiV1PlatformStatsGet = <TError = unknown,
       return useMutation(getPlatformStatsApiV1PlatformStatsGetMutationOptions(options), queryClient);
     }
 
-export type adminHealthApiV1AdminHealthGetResponse200 = {
-  data: ServicesApiGatewayRoutersAdminHealthResponse
-  status: 200
-}
-
-export type adminHealthApiV1AdminHealthGetResponseSuccess = (adminHealthApiV1AdminHealthGetResponse200) & {
-  headers: Headers;
-};
-;
-
-export type adminHealthApiV1AdminHealthGetResponse = (adminHealthApiV1AdminHealthGetResponseSuccess)
-
-export const getAdminHealthApiV1AdminHealthGetUrl = () => {
-
-
-
-
-  return `/api/v1/admin/health`
-}
-
-/**
- * Live health of all platform channels (real checks, honest results).
- * @summary Admin Health
- */
-export const adminHealthApiV1AdminHealthGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<adminHealthApiV1AdminHealthGetResponse> => {
-
-  return apiRequest<adminHealthApiV1AdminHealthGetResponse>(getAdminHealthApiV1AdminHealthGetUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getAdminHealthApiV1AdminHealthGetMutationKey = () => ['adminHealthApiV1AdminHealthGet'] as const;
-
-export const getAdminHealthApiV1AdminHealthGetMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminHealthApiV1AdminHealthGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof adminHealthApiV1AdminHealthGet>>, TError,void, TContext> => {
-
-const mutationKey = getAdminHealthApiV1AdminHealthGetMutationKey();
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminHealthApiV1AdminHealthGet>>, void> = () => {
-
-
-          return  adminHealthApiV1AdminHealthGet(requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type AdminHealthApiV1AdminHealthGetMutationResult = NonNullable<Awaited<ReturnType<typeof adminHealthApiV1AdminHealthGet>>>
-
-    export type AdminHealthApiV1AdminHealthGetMutationError = unknown
-
-
-    /**
- * @summary Admin Health
- */
-export const useAdminHealthApiV1AdminHealthGet = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminHealthApiV1AdminHealthGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof adminHealthApiV1AdminHealthGet>>,
-        TError,
-        void,
-        TContext
-      > => {
-      return useMutation(getAdminHealthApiV1AdminHealthGetMutationOptions(options), queryClient);
-    }
-
 export type listUsersApiV1AdminUsersGetResponse200 = {
-  data: AdminUserOut[]
+  data: ServicesApiGatewayRoutersAdminUsersUserResponse[]
   status: 200
 }
 
@@ -5352,7 +5451,7 @@ export const getListUsersApiV1AdminUsersGetUrl = (params?: ListUsersApiV1AdminUs
 }
 
 /**
- * List users with search and filter capabilities.
+ * List users with pagination (admin only).
  * @summary List Users
  */
 export const listUsersApiV1AdminUsersGet = async (params?: ListUsersApiV1AdminUsersGetParams, options?: Parameters<typeof apiRequest>[1]): Promise<listUsersApiV1AdminUsersGetResponse> => {
@@ -5418,37 +5517,29 @@ export const useListUsersApiV1AdminUsersGet = <TError = HTTPValidationError,
       return useMutation(getListUsersApiV1AdminUsersGetMutationOptions(options), queryClient);
     }
 
-export type bulkUserActionApiV1AdminUsersBulkActionPostResponse200 = {
-  data: ActionResponse
+export type bulkActionUsersApiV1AdminUsersBulkActionPostResponse200 = {
+  data: unknown
   status: 200
 }
 
-export type bulkUserActionApiV1AdminUsersBulkActionPostResponse422 = {
+export type bulkActionUsersApiV1AdminUsersBulkActionPostResponse422 = {
   data: HTTPValidationError
   status: 422
 }
 
-export type bulkUserActionApiV1AdminUsersBulkActionPostResponseSuccess = (bulkUserActionApiV1AdminUsersBulkActionPostResponse200) & {
+export type bulkActionUsersApiV1AdminUsersBulkActionPostResponseSuccess = (bulkActionUsersApiV1AdminUsersBulkActionPostResponse200) & {
   headers: Headers;
 };
-export type bulkUserActionApiV1AdminUsersBulkActionPostResponseError = (bulkUserActionApiV1AdminUsersBulkActionPostResponse422) & {
+export type bulkActionUsersApiV1AdminUsersBulkActionPostResponseError = (bulkActionUsersApiV1AdminUsersBulkActionPostResponse422) & {
   headers: Headers;
 };
 
-export type bulkUserActionApiV1AdminUsersBulkActionPostResponse = (bulkUserActionApiV1AdminUsersBulkActionPostResponseSuccess | bulkUserActionApiV1AdminUsersBulkActionPostResponseError)
+export type bulkActionUsersApiV1AdminUsersBulkActionPostResponse = (bulkActionUsersApiV1AdminUsersBulkActionPostResponseSuccess | bulkActionUsersApiV1AdminUsersBulkActionPostResponseError)
 
-export const getBulkUserActionApiV1AdminUsersBulkActionPostUrl = (params: BulkUserActionApiV1AdminUsersBulkActionPostParams,) => {
+export const getBulkActionUsersApiV1AdminUsersBulkActionPostUrl = (params?: BulkActionUsersApiV1AdminUsersBulkActionPostParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    const explodeParameters = ["user_ids"];
-
-    if (Array.isArray(value) && explodeParameters.includes(key)) {
-      value.forEach((v) => {
-        normalizedParams.append(key, v === null ? 'null' : String(v));
-      });
-      return;
-    }
 
     if (value !== undefined) {
       normalizedParams.append(key, value === null ? 'null' : String(value))
@@ -5461,17 +5552,32 @@ export const getBulkUserActionApiV1AdminUsersBulkActionPostUrl = (params: BulkUs
 }
 
 /**
- * Perform bulk action on multiple users (requires MFA).
- * @summary Bulk User Action
+ * Bulk block/unblock users.
+ * @summary Bulk Action Users
  */
-export const bulkUserActionApiV1AdminUsersBulkActionPost = async (params: BulkUserActionApiV1AdminUsersBulkActionPostParams, options?: Parameters<typeof apiRequest>[1]): Promise<bulkUserActionApiV1AdminUsersBulkActionPostResponse> => {
+export const bulkActionUsersApiV1AdminUsersBulkActionPost = async (userBulkAction: UserBulkAction,
+    params?: BulkActionUsersApiV1AdminUsersBulkActionPostParams, options?: Parameters<typeof apiRequest>[1]): Promise<bulkActionUsersApiV1AdminUsersBulkActionPostResponse> => {
 
-  return apiRequest<bulkUserActionApiV1AdminUsersBulkActionPostResponse>(getBulkUserActionApiV1AdminUsersBulkActionPostUrl(params),
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiRequest<bulkActionUsersApiV1AdminUsersBulkActionPostResponse>(getBulkActionUsersApiV1AdminUsersBulkActionPostUrl(params),
   {
     ...options,
-    method: 'POST'
-
-
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(userBulkAction)
   }
 );}
 
@@ -5479,69 +5585,75 @@ export const bulkUserActionApiV1AdminUsersBulkActionPost = async (params: BulkUs
 
 
 
-export const getBulkUserActionApiV1AdminUsersBulkActionPostQueryKey = (params?: BulkUserActionApiV1AdminUsersBulkActionPostParams,) => {
+export const getBulkActionUsersApiV1AdminUsersBulkActionPostQueryKey = (userBulkAction?: UserBulkAction,
+    params?: BulkActionUsersApiV1AdminUsersBulkActionPostParams,) => {
     return [
-    'POST', `/api/v1/admin/users/bulk-action`, ...(params ? [params] : [])
+    'POST', `/api/v1/admin/users/bulk-action`, ...(params ? [params] : []), userBulkAction
     ] as const;
     }
 
 
-export const getBulkUserActionApiV1AdminUsersBulkActionPostQueryOptions = <TData = Awaited<ReturnType<typeof bulkUserActionApiV1AdminUsersBulkActionPost>>, TError = HTTPValidationError>(params: BulkUserActionApiV1AdminUsersBulkActionPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkUserActionApiV1AdminUsersBulkActionPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getBulkActionUsersApiV1AdminUsersBulkActionPostQueryOptions = <TData = Awaited<ReturnType<typeof bulkActionUsersApiV1AdminUsersBulkActionPost>>, TError = HTTPValidationError>(userBulkAction: UserBulkAction,
+    params?: BulkActionUsersApiV1AdminUsersBulkActionPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkActionUsersApiV1AdminUsersBulkActionPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getBulkUserActionApiV1AdminUsersBulkActionPostQueryKey(params);
+  const queryKey =  queryOptions?.queryKey ?? getBulkActionUsersApiV1AdminUsersBulkActionPostQueryKey(userBulkAction,params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof bulkUserActionApiV1AdminUsersBulkActionPost>>> = ({ signal }) => bulkUserActionApiV1AdminUsersBulkActionPost(params, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof bulkActionUsersApiV1AdminUsersBulkActionPost>>> = ({ signal }) => bulkActionUsersApiV1AdminUsersBulkActionPost(userBulkAction,params, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof bulkUserActionApiV1AdminUsersBulkActionPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof bulkActionUsersApiV1AdminUsersBulkActionPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type BulkUserActionApiV1AdminUsersBulkActionPostQueryResult = NonNullable<Awaited<ReturnType<typeof bulkUserActionApiV1AdminUsersBulkActionPost>>>
-export type BulkUserActionApiV1AdminUsersBulkActionPostQueryError = HTTPValidationError
+export type BulkActionUsersApiV1AdminUsersBulkActionPostQueryResult = NonNullable<Awaited<ReturnType<typeof bulkActionUsersApiV1AdminUsersBulkActionPost>>>
+export type BulkActionUsersApiV1AdminUsersBulkActionPostQueryError = HTTPValidationError
 
 
-export function useBulkUserActionApiV1AdminUsersBulkActionPost<TData = Awaited<ReturnType<typeof bulkUserActionApiV1AdminUsersBulkActionPost>>, TError = HTTPValidationError>(
- params: BulkUserActionApiV1AdminUsersBulkActionPostParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkUserActionApiV1AdminUsersBulkActionPost>>, TError, TData>> & Pick<
+export function useBulkActionUsersApiV1AdminUsersBulkActionPost<TData = Awaited<ReturnType<typeof bulkActionUsersApiV1AdminUsersBulkActionPost>>, TError = HTTPValidationError>(
+ userBulkAction: UserBulkAction,
+    params: undefined |  BulkActionUsersApiV1AdminUsersBulkActionPostParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkActionUsersApiV1AdminUsersBulkActionPost>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof bulkUserActionApiV1AdminUsersBulkActionPost>>,
+          Awaited<ReturnType<typeof bulkActionUsersApiV1AdminUsersBulkActionPost>>,
           TError,
-          Awaited<ReturnType<typeof bulkUserActionApiV1AdminUsersBulkActionPost>>
+          Awaited<ReturnType<typeof bulkActionUsersApiV1AdminUsersBulkActionPost>>
         > , 'initialData'
       >, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useBulkUserActionApiV1AdminUsersBulkActionPost<TData = Awaited<ReturnType<typeof bulkUserActionApiV1AdminUsersBulkActionPost>>, TError = HTTPValidationError>(
- params: BulkUserActionApiV1AdminUsersBulkActionPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkUserActionApiV1AdminUsersBulkActionPost>>, TError, TData>> & Pick<
+export function useBulkActionUsersApiV1AdminUsersBulkActionPost<TData = Awaited<ReturnType<typeof bulkActionUsersApiV1AdminUsersBulkActionPost>>, TError = HTTPValidationError>(
+ userBulkAction: UserBulkAction,
+    params?: BulkActionUsersApiV1AdminUsersBulkActionPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkActionUsersApiV1AdminUsersBulkActionPost>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof bulkUserActionApiV1AdminUsersBulkActionPost>>,
+          Awaited<ReturnType<typeof bulkActionUsersApiV1AdminUsersBulkActionPost>>,
           TError,
-          Awaited<ReturnType<typeof bulkUserActionApiV1AdminUsersBulkActionPost>>
+          Awaited<ReturnType<typeof bulkActionUsersApiV1AdminUsersBulkActionPost>>
         > , 'initialData'
       >, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useBulkUserActionApiV1AdminUsersBulkActionPost<TData = Awaited<ReturnType<typeof bulkUserActionApiV1AdminUsersBulkActionPost>>, TError = HTTPValidationError>(
- params: BulkUserActionApiV1AdminUsersBulkActionPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkUserActionApiV1AdminUsersBulkActionPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function useBulkActionUsersApiV1AdminUsersBulkActionPost<TData = Awaited<ReturnType<typeof bulkActionUsersApiV1AdminUsersBulkActionPost>>, TError = HTTPValidationError>(
+ userBulkAction: UserBulkAction,
+    params?: BulkActionUsersApiV1AdminUsersBulkActionPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkActionUsersApiV1AdminUsersBulkActionPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Bulk User Action
+ * @summary Bulk Action Users
  */
 
-export function useBulkUserActionApiV1AdminUsersBulkActionPost<TData = Awaited<ReturnType<typeof bulkUserActionApiV1AdminUsersBulkActionPost>>, TError = HTTPValidationError>(
- params: BulkUserActionApiV1AdminUsersBulkActionPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkUserActionApiV1AdminUsersBulkActionPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function useBulkActionUsersApiV1AdminUsersBulkActionPost<TData = Awaited<ReturnType<typeof bulkActionUsersApiV1AdminUsersBulkActionPost>>, TError = HTTPValidationError>(
+ userBulkAction: UserBulkAction,
+    params?: BulkActionUsersApiV1AdminUsersBulkActionPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkActionUsersApiV1AdminUsersBulkActionPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getBulkUserActionApiV1AdminUsersBulkActionPostQueryOptions(params,options)
+  const queryOptions = getBulkActionUsersApiV1AdminUsersBulkActionPostQueryOptions(userBulkAction,params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -5555,7 +5667,7 @@ export function useBulkUserActionApiV1AdminUsersBulkActionPost<TData = Awaited<R
 
 
 export type blockUserApiV1AdminUsersUserIdBlockPostResponse200 = {
-  data: ActionResponse
+  data: unknown
   status: 200
 }
 
@@ -5573,21 +5685,30 @@ export type blockUserApiV1AdminUsersUserIdBlockPostResponseError = (blockUserApi
 
 export type blockUserApiV1AdminUsersUserIdBlockPostResponse = (blockUserApiV1AdminUsersUserIdBlockPostResponseSuccess | blockUserApiV1AdminUsersUserIdBlockPostResponseError)
 
-export const getBlockUserApiV1AdminUsersUserIdBlockPostUrl = (userId: string,) => {
+export const getBlockUserApiV1AdminUsersUserIdBlockPostUrl = (userId: string,
+    params?: BlockUserApiV1AdminUsersUserIdBlockPostParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/v1/admin/users/${userId}/block`
+  return stringifiedParams.length > 0 ? `/api/v1/admin/users/${userId}/block?${stringifiedParams}` : `/api/v1/admin/users/${userId}/block`
 }
 
 /**
- * Deactivate a user account (audited, requires MFA).
+ * Deactivate a user (audited).
  * @summary Block User
  */
-export const blockUserApiV1AdminUsersUserIdBlockPost = async (userId: string, options?: Parameters<typeof apiRequest>[1]): Promise<blockUserApiV1AdminUsersUserIdBlockPostResponse> => {
+export const blockUserApiV1AdminUsersUserIdBlockPost = async (userId: string,
+    params?: BlockUserApiV1AdminUsersUserIdBlockPostParams, options?: Parameters<typeof apiRequest>[1]): Promise<blockUserApiV1AdminUsersUserIdBlockPostResponse> => {
 
-  return apiRequest<blockUserApiV1AdminUsersUserIdBlockPostResponse>(getBlockUserApiV1AdminUsersUserIdBlockPostUrl(userId),
+  return apiRequest<blockUserApiV1AdminUsersUserIdBlockPostResponse>(getBlockUserApiV1AdminUsersUserIdBlockPostUrl(userId,params),
   {
     ...options,
     method: 'POST'
@@ -5600,23 +5721,25 @@ export const blockUserApiV1AdminUsersUserIdBlockPost = async (userId: string, op
 
 
 
-export const getBlockUserApiV1AdminUsersUserIdBlockPostQueryKey = (userId: string,) => {
+export const getBlockUserApiV1AdminUsersUserIdBlockPostQueryKey = (userId: string,
+    params?: BlockUserApiV1AdminUsersUserIdBlockPostParams,) => {
     return [
-    'POST', `/api/v1/admin/users/${userId}/block`
+    'POST', `/api/v1/admin/users/${userId}/block`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getBlockUserApiV1AdminUsersUserIdBlockPostQueryOptions = <TData = Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>, TError = HTTPValidationError>(userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getBlockUserApiV1AdminUsersUserIdBlockPostQueryOptions = <TData = Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>, TError = HTTPValidationError>(userId: string,
+    params?: BlockUserApiV1AdminUsersUserIdBlockPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getBlockUserApiV1AdminUsersUserIdBlockPostQueryKey(userId);
+  const queryKey =  queryOptions?.queryKey ?? getBlockUserApiV1AdminUsersUserIdBlockPostQueryKey(userId,params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>> = ({ signal }) => blockUserApiV1AdminUsersUserIdBlockPost(userId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>> = ({ signal }) => blockUserApiV1AdminUsersUserIdBlockPost(userId,params, { signal, ...requestOptions });
 
 
 
@@ -5630,7 +5753,8 @@ export type BlockUserApiV1AdminUsersUserIdBlockPostQueryError = HTTPValidationEr
 
 
 export function useBlockUserApiV1AdminUsersUserIdBlockPost<TData = Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>, TError = HTTPValidationError>(
- userId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>, TError, TData>> & Pick<
+ userId: string,
+    params: undefined |  BlockUserApiV1AdminUsersUserIdBlockPostParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>,
           TError,
@@ -5640,7 +5764,8 @@ export function useBlockUserApiV1AdminUsersUserIdBlockPost<TData = Awaited<Retur
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useBlockUserApiV1AdminUsersUserIdBlockPost<TData = Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>, TError = HTTPValidationError>(
- userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>, TError, TData>> & Pick<
+ userId: string,
+    params?: BlockUserApiV1AdminUsersUserIdBlockPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>,
           TError,
@@ -5650,7 +5775,8 @@ export function useBlockUserApiV1AdminUsersUserIdBlockPost<TData = Awaited<Retur
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useBlockUserApiV1AdminUsersUserIdBlockPost<TData = Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>, TError = HTTPValidationError>(
- userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ userId: string,
+    params?: BlockUserApiV1AdminUsersUserIdBlockPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -5658,11 +5784,12 @@ export function useBlockUserApiV1AdminUsersUserIdBlockPost<TData = Awaited<Retur
  */
 
 export function useBlockUserApiV1AdminUsersUserIdBlockPost<TData = Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>, TError = HTTPValidationError>(
- userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ userId: string,
+    params?: BlockUserApiV1AdminUsersUserIdBlockPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof blockUserApiV1AdminUsersUserIdBlockPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getBlockUserApiV1AdminUsersUserIdBlockPostQueryOptions(userId,options)
+  const queryOptions = getBlockUserApiV1AdminUsersUserIdBlockPostQueryOptions(userId,params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -5676,7 +5803,7 @@ export function useBlockUserApiV1AdminUsersUserIdBlockPost<TData = Awaited<Retur
 
 
 export type unblockUserApiV1AdminUsersUserIdUnblockPostResponse200 = {
-  data: ActionResponse
+  data: unknown
   status: 200
 }
 
@@ -5694,21 +5821,30 @@ export type unblockUserApiV1AdminUsersUserIdUnblockPostResponseError = (unblockU
 
 export type unblockUserApiV1AdminUsersUserIdUnblockPostResponse = (unblockUserApiV1AdminUsersUserIdUnblockPostResponseSuccess | unblockUserApiV1AdminUsersUserIdUnblockPostResponseError)
 
-export const getUnblockUserApiV1AdminUsersUserIdUnblockPostUrl = (userId: string,) => {
+export const getUnblockUserApiV1AdminUsersUserIdUnblockPostUrl = (userId: string,
+    params?: UnblockUserApiV1AdminUsersUserIdUnblockPostParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/v1/admin/users/${userId}/unblock`
+  return stringifiedParams.length > 0 ? `/api/v1/admin/users/${userId}/unblock?${stringifiedParams}` : `/api/v1/admin/users/${userId}/unblock`
 }
 
 /**
- * Reactivate a user account (audited, requires MFA).
+ * Reactivate a user (audited).
  * @summary Unblock User
  */
-export const unblockUserApiV1AdminUsersUserIdUnblockPost = async (userId: string, options?: Parameters<typeof apiRequest>[1]): Promise<unblockUserApiV1AdminUsersUserIdUnblockPostResponse> => {
+export const unblockUserApiV1AdminUsersUserIdUnblockPost = async (userId: string,
+    params?: UnblockUserApiV1AdminUsersUserIdUnblockPostParams, options?: Parameters<typeof apiRequest>[1]): Promise<unblockUserApiV1AdminUsersUserIdUnblockPostResponse> => {
 
-  return apiRequest<unblockUserApiV1AdminUsersUserIdUnblockPostResponse>(getUnblockUserApiV1AdminUsersUserIdUnblockPostUrl(userId),
+  return apiRequest<unblockUserApiV1AdminUsersUserIdUnblockPostResponse>(getUnblockUserApiV1AdminUsersUserIdUnblockPostUrl(userId,params),
   {
     ...options,
     method: 'POST'
@@ -5721,23 +5857,25 @@ export const unblockUserApiV1AdminUsersUserIdUnblockPost = async (userId: string
 
 
 
-export const getUnblockUserApiV1AdminUsersUserIdUnblockPostQueryKey = (userId: string,) => {
+export const getUnblockUserApiV1AdminUsersUserIdUnblockPostQueryKey = (userId: string,
+    params?: UnblockUserApiV1AdminUsersUserIdUnblockPostParams,) => {
     return [
-    'POST', `/api/v1/admin/users/${userId}/unblock`
+    'POST', `/api/v1/admin/users/${userId}/unblock`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getUnblockUserApiV1AdminUsersUserIdUnblockPostQueryOptions = <TData = Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>, TError = HTTPValidationError>(userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getUnblockUserApiV1AdminUsersUserIdUnblockPostQueryOptions = <TData = Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>, TError = HTTPValidationError>(userId: string,
+    params?: UnblockUserApiV1AdminUsersUserIdUnblockPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getUnblockUserApiV1AdminUsersUserIdUnblockPostQueryKey(userId);
+  const queryKey =  queryOptions?.queryKey ?? getUnblockUserApiV1AdminUsersUserIdUnblockPostQueryKey(userId,params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>> = ({ signal }) => unblockUserApiV1AdminUsersUserIdUnblockPost(userId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>> = ({ signal }) => unblockUserApiV1AdminUsersUserIdUnblockPost(userId,params, { signal, ...requestOptions });
 
 
 
@@ -5751,7 +5889,8 @@ export type UnblockUserApiV1AdminUsersUserIdUnblockPostQueryError = HTTPValidati
 
 
 export function useUnblockUserApiV1AdminUsersUserIdUnblockPost<TData = Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>, TError = HTTPValidationError>(
- userId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>, TError, TData>> & Pick<
+ userId: string,
+    params: undefined |  UnblockUserApiV1AdminUsersUserIdUnblockPostParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>,
           TError,
@@ -5761,7 +5900,8 @@ export function useUnblockUserApiV1AdminUsersUserIdUnblockPost<TData = Awaited<R
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useUnblockUserApiV1AdminUsersUserIdUnblockPost<TData = Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>, TError = HTTPValidationError>(
- userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>, TError, TData>> & Pick<
+ userId: string,
+    params?: UnblockUserApiV1AdminUsersUserIdUnblockPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>,
           TError,
@@ -5771,7 +5911,8 @@ export function useUnblockUserApiV1AdminUsersUserIdUnblockPost<TData = Awaited<R
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useUnblockUserApiV1AdminUsersUserIdUnblockPost<TData = Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>, TError = HTTPValidationError>(
- userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ userId: string,
+    params?: UnblockUserApiV1AdminUsersUserIdUnblockPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -5779,11 +5920,12 @@ export function useUnblockUserApiV1AdminUsersUserIdUnblockPost<TData = Awaited<R
  */
 
 export function useUnblockUserApiV1AdminUsersUserIdUnblockPost<TData = Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>, TError = HTTPValidationError>(
- userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ userId: string,
+    params?: UnblockUserApiV1AdminUsersUserIdUnblockPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof unblockUserApiV1AdminUsersUserIdUnblockPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getUnblockUserApiV1AdminUsersUserIdUnblockPostQueryOptions(userId,options)
+  const queryOptions = getUnblockUserApiV1AdminUsersUserIdUnblockPostQueryOptions(userId,params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -5796,109 +5938,8 @@ export function useUnblockUserApiV1AdminUsersUserIdUnblockPost<TData = Awaited<R
 
 
 
-export type listAuditApiV1AdminAuditGetResponse200 = {
-  data: AuditOut[]
-  status: 200
-}
-
-export type listAuditApiV1AdminAuditGetResponse422 = {
-  data: HTTPValidationError
-  status: 422
-}
-
-export type listAuditApiV1AdminAuditGetResponseSuccess = (listAuditApiV1AdminAuditGetResponse200) & {
-  headers: Headers;
-};
-export type listAuditApiV1AdminAuditGetResponseError = (listAuditApiV1AdminAuditGetResponse422) & {
-  headers: Headers;
-};
-
-export type listAuditApiV1AdminAuditGetResponse = (listAuditApiV1AdminAuditGetResponseSuccess | listAuditApiV1AdminAuditGetResponseError)
-
-export const getListAuditApiV1AdminAuditGetUrl = (params?: ListAuditApiV1AdminAuditGetParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/api/v1/admin/audit?${stringifiedParams}` : `/api/v1/admin/audit`
-}
-
-/**
- * Recent audit-log entries with search and filter capabilities.
- * @summary List Audit
- */
-export const listAuditApiV1AdminAuditGet = async (params?: ListAuditApiV1AdminAuditGetParams, options?: Parameters<typeof apiRequest>[1]): Promise<listAuditApiV1AdminAuditGetResponse> => {
-
-  return apiRequest<listAuditApiV1AdminAuditGetResponse>(getListAuditApiV1AdminAuditGetUrl(params),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getListAuditApiV1AdminAuditGetMutationKey = () => ['listAuditApiV1AdminAuditGet'] as const;
-
-export const getListAuditApiV1AdminAuditGetMutationOptions = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listAuditApiV1AdminAuditGet>>, TError,ListAuditApiV1AdminAuditGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof listAuditApiV1AdminAuditGet>>, TError,ListAuditApiV1AdminAuditGetMutationVariables, TContext> => {
-
-const mutationKey = getListAuditApiV1AdminAuditGetMutationKey();
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listAuditApiV1AdminAuditGet>>, ListAuditApiV1AdminAuditGetMutationVariables> = (props) => {
-          const {params} = props ?? {};
-
-          return  listAuditApiV1AdminAuditGet(params,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type ListAuditApiV1AdminAuditGetMutationResult = NonNullable<Awaited<ReturnType<typeof listAuditApiV1AdminAuditGet>>>
-
-    export type ListAuditApiV1AdminAuditGetMutationError = HTTPValidationError
-    export type ListAuditApiV1AdminAuditGetMutationVariables = {params?: ListAuditApiV1AdminAuditGetParams}
-
-    /**
- * @summary List Audit
- */
-export const useListAuditApiV1AdminAuditGet = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listAuditApiV1AdminAuditGet>>, TError,ListAuditApiV1AdminAuditGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof listAuditApiV1AdminAuditGet>>,
-        TError,
-        ListAuditApiV1AdminAuditGetMutationVariables,
-        TContext
-      > => {
-      return useMutation(getListAuditApiV1AdminAuditGetMutationOptions(options), queryClient);
-    }
-
 export type listContentApiV1AdminContentGetResponse200 = {
-  data: ContentOut[]
+  data: ContentResponse[]
   status: 200
 }
 
@@ -5932,7 +5973,7 @@ export const getListContentApiV1AdminContentGetUrl = (params?: ListContentApiV1A
 }
 
 /**
- * List content items with search and filter capabilities.
+ * List content items with filters.
  * @summary List Content
  */
 export const listContentApiV1AdminContentGet = async (params?: ListContentApiV1AdminContentGetParams, options?: Parameters<typeof apiRequest>[1]): Promise<listContentApiV1AdminContentGetResponse> => {
@@ -5998,9 +6039,9 @@ export const useListContentApiV1AdminContentGet = <TError = HTTPValidationError,
       return useMutation(getListContentApiV1AdminContentGetMutationOptions(options), queryClient);
     }
 
-export type createContentApiV1AdminContentPostResponse200 = {
-  data: ContentOut
-  status: 200
+export type createContentApiV1AdminContentPostResponse201 = {
+  data: ContentResponse
+  status: 201
 }
 
 export type createContentApiV1AdminContentPostResponse422 = {
@@ -6008,7 +6049,7 @@ export type createContentApiV1AdminContentPostResponse422 = {
   status: 422
 }
 
-export type createContentApiV1AdminContentPostResponseSuccess = (createContentApiV1AdminContentPostResponse200) & {
+export type createContentApiV1AdminContentPostResponseSuccess = (createContentApiV1AdminContentPostResponse201) & {
   headers: Headers;
 };
 export type createContentApiV1AdminContentPostResponseError = (createContentApiV1AdminContentPostResponse422) & {
@@ -6026,7 +6067,7 @@ export const getCreateContentApiV1AdminContentPostUrl = () => {
 }
 
 /**
- * Create a content item (draft).
+ * Create new content (draft).
  * @summary Create Content
  */
 export const createContentApiV1AdminContentPost = async (contentCreate: ContentCreate, options?: Parameters<typeof apiRequest>[1]): Promise<createContentApiV1AdminContentPostResponse> => {
@@ -6133,144 +6174,8 @@ export function useCreateContentApiV1AdminContentPost<TData = Awaited<ReturnType
 
 
 
-export type bulkContentActionApiV1AdminContentBulkActionPostResponse200 = {
-  data: ActionResponse
-  status: 200
-}
-
-export type bulkContentActionApiV1AdminContentBulkActionPostResponse422 = {
-  data: HTTPValidationError
-  status: 422
-}
-
-export type bulkContentActionApiV1AdminContentBulkActionPostResponseSuccess = (bulkContentActionApiV1AdminContentBulkActionPostResponse200) & {
-  headers: Headers;
-};
-export type bulkContentActionApiV1AdminContentBulkActionPostResponseError = (bulkContentActionApiV1AdminContentBulkActionPostResponse422) & {
-  headers: Headers;
-};
-
-export type bulkContentActionApiV1AdminContentBulkActionPostResponse = (bulkContentActionApiV1AdminContentBulkActionPostResponseSuccess | bulkContentActionApiV1AdminContentBulkActionPostResponseError)
-
-export const getBulkContentActionApiV1AdminContentBulkActionPostUrl = (params: BulkContentActionApiV1AdminContentBulkActionPostParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    const explodeParameters = ["item_ids"];
-
-    if (Array.isArray(value) && explodeParameters.includes(key)) {
-      value.forEach((v) => {
-        normalizedParams.append(key, v === null ? 'null' : String(v));
-      });
-      return;
-    }
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/api/v1/admin/content/bulk-action?${stringifiedParams}` : `/api/v1/admin/content/bulk-action`
-}
-
-/**
- * Perform bulk action on multiple content items (requires MFA).
- * @summary Bulk Content Action
- */
-export const bulkContentActionApiV1AdminContentBulkActionPost = async (params: BulkContentActionApiV1AdminContentBulkActionPostParams, options?: Parameters<typeof apiRequest>[1]): Promise<bulkContentActionApiV1AdminContentBulkActionPostResponse> => {
-
-  return apiRequest<bulkContentActionApiV1AdminContentBulkActionPostResponse>(getBulkContentActionApiV1AdminContentBulkActionPostUrl(params),
-  {
-    ...options,
-    method: 'POST'
-
-
-  }
-);}
-
-
-
-
-
-export const getBulkContentActionApiV1AdminContentBulkActionPostQueryKey = (params?: BulkContentActionApiV1AdminContentBulkActionPostParams,) => {
-    return [
-    'POST', `/api/v1/admin/content/bulk-action`, ...(params ? [params] : [])
-    ] as const;
-    }
-
-
-export const getBulkContentActionApiV1AdminContentBulkActionPostQueryOptions = <TData = Awaited<ReturnType<typeof bulkContentActionApiV1AdminContentBulkActionPost>>, TError = HTTPValidationError>(params: BulkContentActionApiV1AdminContentBulkActionPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkContentActionApiV1AdminContentBulkActionPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getBulkContentActionApiV1AdminContentBulkActionPostQueryKey(params);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof bulkContentActionApiV1AdminContentBulkActionPost>>> = ({ signal }) => bulkContentActionApiV1AdminContentBulkActionPost(params, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof bulkContentActionApiV1AdminContentBulkActionPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type BulkContentActionApiV1AdminContentBulkActionPostQueryResult = NonNullable<Awaited<ReturnType<typeof bulkContentActionApiV1AdminContentBulkActionPost>>>
-export type BulkContentActionApiV1AdminContentBulkActionPostQueryError = HTTPValidationError
-
-
-export function useBulkContentActionApiV1AdminContentBulkActionPost<TData = Awaited<ReturnType<typeof bulkContentActionApiV1AdminContentBulkActionPost>>, TError = HTTPValidationError>(
- params: BulkContentActionApiV1AdminContentBulkActionPostParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkContentActionApiV1AdminContentBulkActionPost>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof bulkContentActionApiV1AdminContentBulkActionPost>>,
-          TError,
-          Awaited<ReturnType<typeof bulkContentActionApiV1AdminContentBulkActionPost>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useBulkContentActionApiV1AdminContentBulkActionPost<TData = Awaited<ReturnType<typeof bulkContentActionApiV1AdminContentBulkActionPost>>, TError = HTTPValidationError>(
- params: BulkContentActionApiV1AdminContentBulkActionPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkContentActionApiV1AdminContentBulkActionPost>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof bulkContentActionApiV1AdminContentBulkActionPost>>,
-          TError,
-          Awaited<ReturnType<typeof bulkContentActionApiV1AdminContentBulkActionPost>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useBulkContentActionApiV1AdminContentBulkActionPost<TData = Awaited<ReturnType<typeof bulkContentActionApiV1AdminContentBulkActionPost>>, TError = HTTPValidationError>(
- params: BulkContentActionApiV1AdminContentBulkActionPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkContentActionApiV1AdminContentBulkActionPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Bulk Content Action
- */
-
-export function useBulkContentActionApiV1AdminContentBulkActionPost<TData = Awaited<ReturnType<typeof bulkContentActionApiV1AdminContentBulkActionPost>>, TError = HTTPValidationError>(
- params: BulkContentActionApiV1AdminContentBulkActionPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkContentActionApiV1AdminContentBulkActionPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getBulkContentActionApiV1AdminContentBulkActionPostQueryOptions(params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
 export type updateContentApiV1AdminContentItemIdPutResponse200 = {
-  data: ContentOut
+  data: ContentResponse
   status: 200
 }
 
@@ -6297,7 +6202,7 @@ export const getUpdateContentApiV1AdminContentItemIdPutUrl = (itemId: number,) =
 }
 
 /**
- * Update a content item (previous state snapshotted as a version).
+ * Update content item.
  * @summary Update Content
  */
 export const updateContentApiV1AdminContentItemIdPut = async (itemId: number,
@@ -6412,7 +6317,7 @@ export function useUpdateContentApiV1AdminContentItemIdPut<TData = Awaited<Retur
 
 
 export type deleteContentApiV1AdminContentItemIdDeleteResponse200 = {
-  data: ActionResponse
+  data: unknown
   status: 200
 }
 
@@ -6439,7 +6344,7 @@ export const getDeleteContentApiV1AdminContentItemIdDeleteUrl = (itemId: number,
 }
 
 /**
- * Archive (soft delete) a content item.
+ * Archive content (soft delete).
  * @summary Delete Content
  */
 export const deleteContentApiV1AdminContentItemIdDelete = async (itemId: number, options?: Parameters<typeof apiRequest>[1]): Promise<deleteContentApiV1AdminContentItemIdDeleteResponse> => {
@@ -6533,7 +6438,7 @@ export function useDeleteContentApiV1AdminContentItemIdDelete<TData = Awaited<Re
 
 
 export type publishContentApiV1AdminContentItemIdPublishPostResponse200 = {
-  data: ActionResponse
+  data: ContentResponse
   status: 200
 }
 
@@ -6560,7 +6465,7 @@ export const getPublishContentApiV1AdminContentItemIdPublishPostUrl = (itemId: n
 }
 
 /**
- * Publish a content item (visible flag + RAG sync).
+ * Publish content.
  * @summary Publish Content
  */
 export const publishContentApiV1AdminContentItemIdPublishPost = async (itemId: number, options?: Parameters<typeof apiRequest>[1]): Promise<publishContentApiV1AdminContentItemIdPublishPostResponse> => {
@@ -6653,26 +6558,26 @@ export function usePublishContentApiV1AdminContentItemIdPublishPost<TData = Awai
 
 
 
-export type contentVersionsApiV1AdminContentItemIdVersionsGetResponse200 = {
-  data: ContentVersionsApiV1AdminContentItemIdVersionsGet200Item[]
+export type getContentVersionsApiV1AdminContentItemIdVersionsGetResponse200 = {
+  data: ContentVersionResponse[]
   status: 200
 }
 
-export type contentVersionsApiV1AdminContentItemIdVersionsGetResponse422 = {
+export type getContentVersionsApiV1AdminContentItemIdVersionsGetResponse422 = {
   data: HTTPValidationError
   status: 422
 }
 
-export type contentVersionsApiV1AdminContentItemIdVersionsGetResponseSuccess = (contentVersionsApiV1AdminContentItemIdVersionsGetResponse200) & {
+export type getContentVersionsApiV1AdminContentItemIdVersionsGetResponseSuccess = (getContentVersionsApiV1AdminContentItemIdVersionsGetResponse200) & {
   headers: Headers;
 };
-export type contentVersionsApiV1AdminContentItemIdVersionsGetResponseError = (contentVersionsApiV1AdminContentItemIdVersionsGetResponse422) & {
+export type getContentVersionsApiV1AdminContentItemIdVersionsGetResponseError = (getContentVersionsApiV1AdminContentItemIdVersionsGetResponse422) & {
   headers: Headers;
 };
 
-export type contentVersionsApiV1AdminContentItemIdVersionsGetResponse = (contentVersionsApiV1AdminContentItemIdVersionsGetResponseSuccess | contentVersionsApiV1AdminContentItemIdVersionsGetResponseError)
+export type getContentVersionsApiV1AdminContentItemIdVersionsGetResponse = (getContentVersionsApiV1AdminContentItemIdVersionsGetResponseSuccess | getContentVersionsApiV1AdminContentItemIdVersionsGetResponseError)
 
-export const getContentVersionsApiV1AdminContentItemIdVersionsGetUrl = (itemId: number,) => {
+export const getGetContentVersionsApiV1AdminContentItemIdVersionsGetUrl = (itemId: number,) => {
 
 
 
@@ -6681,12 +6586,12 @@ export const getContentVersionsApiV1AdminContentItemIdVersionsGetUrl = (itemId: 
 }
 
 /**
- * Version history of a content item (newest first).
- * @summary Content Versions
+ * Get version history for content.
+ * @summary Get Content Versions
  */
-export const contentVersionsApiV1AdminContentItemIdVersionsGet = async (itemId: number, options?: Parameters<typeof apiRequest>[1]): Promise<contentVersionsApiV1AdminContentItemIdVersionsGetResponse> => {
+export const getContentVersionsApiV1AdminContentItemIdVersionsGet = async (itemId: number, options?: Parameters<typeof apiRequest>[1]): Promise<getContentVersionsApiV1AdminContentItemIdVersionsGetResponse> => {
 
-  return apiRequest<contentVersionsApiV1AdminContentItemIdVersionsGetResponse>(getContentVersionsApiV1AdminContentItemIdVersionsGetUrl(itemId),
+  return apiRequest<getContentVersionsApiV1AdminContentItemIdVersionsGetResponse>(getGetContentVersionsApiV1AdminContentItemIdVersionsGetUrl(itemId),
   {
     ...options,
     method: 'GET'
@@ -6699,13 +6604,13 @@ export const contentVersionsApiV1AdminContentItemIdVersionsGet = async (itemId: 
 
 
 
-export const getContentVersionsApiV1AdminContentItemIdVersionsGetMutationKey = () => ['contentVersionsApiV1AdminContentItemIdVersionsGet'] as const;
+export const getGetContentVersionsApiV1AdminContentItemIdVersionsGetMutationKey = () => ['getContentVersionsApiV1AdminContentItemIdVersionsGet'] as const;
 
-export const getContentVersionsApiV1AdminContentItemIdVersionsGetMutationOptions = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof contentVersionsApiV1AdminContentItemIdVersionsGet>>, TError,ContentVersionsApiV1AdminContentItemIdVersionsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof contentVersionsApiV1AdminContentItemIdVersionsGet>>, TError,ContentVersionsApiV1AdminContentItemIdVersionsGetMutationVariables, TContext> => {
+export const getGetContentVersionsApiV1AdminContentItemIdVersionsGetMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getContentVersionsApiV1AdminContentItemIdVersionsGet>>, TError,GetContentVersionsApiV1AdminContentItemIdVersionsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof getContentVersionsApiV1AdminContentItemIdVersionsGet>>, TError,GetContentVersionsApiV1AdminContentItemIdVersionsGetMutationVariables, TContext> => {
 
-const mutationKey = getContentVersionsApiV1AdminContentItemIdVersionsGetMutationKey();
+const mutationKey = getGetContentVersionsApiV1AdminContentItemIdVersionsGetMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -6715,10 +6620,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof contentVersionsApiV1AdminContentItemIdVersionsGet>>, ContentVersionsApiV1AdminContentItemIdVersionsGetMutationVariables> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getContentVersionsApiV1AdminContentItemIdVersionsGet>>, GetContentVersionsApiV1AdminContentItemIdVersionsGetMutationVariables> = (props) => {
           const {itemId} = props ?? {};
 
-          return  contentVersionsApiV1AdminContentItemIdVersionsGet(itemId,requestOptions)
+          return  getContentVersionsApiV1AdminContentItemIdVersionsGet(itemId,requestOptions)
         }
 
 
@@ -6728,45 +6633,45 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type ContentVersionsApiV1AdminContentItemIdVersionsGetMutationResult = NonNullable<Awaited<ReturnType<typeof contentVersionsApiV1AdminContentItemIdVersionsGet>>>
+    export type GetContentVersionsApiV1AdminContentItemIdVersionsGetMutationResult = NonNullable<Awaited<ReturnType<typeof getContentVersionsApiV1AdminContentItemIdVersionsGet>>>
 
-    export type ContentVersionsApiV1AdminContentItemIdVersionsGetMutationError = HTTPValidationError
-    export type ContentVersionsApiV1AdminContentItemIdVersionsGetMutationVariables = {itemId: number}
+    export type GetContentVersionsApiV1AdminContentItemIdVersionsGetMutationError = HTTPValidationError
+    export type GetContentVersionsApiV1AdminContentItemIdVersionsGetMutationVariables = {itemId: number}
 
     /**
- * @summary Content Versions
+ * @summary Get Content Versions
  */
-export const useContentVersionsApiV1AdminContentItemIdVersionsGet = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof contentVersionsApiV1AdminContentItemIdVersionsGet>>, TError,ContentVersionsApiV1AdminContentItemIdVersionsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const useGetContentVersionsApiV1AdminContentItemIdVersionsGet = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getContentVersionsApiV1AdminContentItemIdVersionsGet>>, TError,GetContentVersionsApiV1AdminContentItemIdVersionsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof contentVersionsApiV1AdminContentItemIdVersionsGet>>,
+        Awaited<ReturnType<typeof getContentVersionsApiV1AdminContentItemIdVersionsGet>>,
         TError,
-        ContentVersionsApiV1AdminContentItemIdVersionsGetMutationVariables,
+        GetContentVersionsApiV1AdminContentItemIdVersionsGetMutationVariables,
         TContext
       > => {
-      return useMutation(getContentVersionsApiV1AdminContentItemIdVersionsGetMutationOptions(options), queryClient);
+      return useMutation(getGetContentVersionsApiV1AdminContentItemIdVersionsGetMutationOptions(options), queryClient);
     }
 
-export type contentTranslationsListApiV1AdminContentItemIdTranslationsGetResponse200 = {
-  data: ContentTranslationsListApiV1AdminContentItemIdTranslationsGet200Item[]
+export type getContentTranslationsApiV1AdminContentItemIdTranslationsGetResponse200 = {
+  data: ContentTranslationResponse[]
   status: 200
 }
 
-export type contentTranslationsListApiV1AdminContentItemIdTranslationsGetResponse422 = {
+export type getContentTranslationsApiV1AdminContentItemIdTranslationsGetResponse422 = {
   data: HTTPValidationError
   status: 422
 }
 
-export type contentTranslationsListApiV1AdminContentItemIdTranslationsGetResponseSuccess = (contentTranslationsListApiV1AdminContentItemIdTranslationsGetResponse200) & {
+export type getContentTranslationsApiV1AdminContentItemIdTranslationsGetResponseSuccess = (getContentTranslationsApiV1AdminContentItemIdTranslationsGetResponse200) & {
   headers: Headers;
 };
-export type contentTranslationsListApiV1AdminContentItemIdTranslationsGetResponseError = (contentTranslationsListApiV1AdminContentItemIdTranslationsGetResponse422) & {
+export type getContentTranslationsApiV1AdminContentItemIdTranslationsGetResponseError = (getContentTranslationsApiV1AdminContentItemIdTranslationsGetResponse422) & {
   headers: Headers;
 };
 
-export type contentTranslationsListApiV1AdminContentItemIdTranslationsGetResponse = (contentTranslationsListApiV1AdminContentItemIdTranslationsGetResponseSuccess | contentTranslationsListApiV1AdminContentItemIdTranslationsGetResponseError)
+export type getContentTranslationsApiV1AdminContentItemIdTranslationsGetResponse = (getContentTranslationsApiV1AdminContentItemIdTranslationsGetResponseSuccess | getContentTranslationsApiV1AdminContentItemIdTranslationsGetResponseError)
 
-export const getContentTranslationsListApiV1AdminContentItemIdTranslationsGetUrl = (itemId: number,) => {
+export const getGetContentTranslationsApiV1AdminContentItemIdTranslationsGetUrl = (itemId: number,) => {
 
 
 
@@ -6775,12 +6680,12 @@ export const getContentTranslationsListApiV1AdminContentItemIdTranslationsGetUrl
 }
 
 /**
- * Existing translations of a content item.
- * @summary Content Translations List
+ * Get translations for content.
+ * @summary Get Content Translations
  */
-export const contentTranslationsListApiV1AdminContentItemIdTranslationsGet = async (itemId: number, options?: Parameters<typeof apiRequest>[1]): Promise<contentTranslationsListApiV1AdminContentItemIdTranslationsGetResponse> => {
+export const getContentTranslationsApiV1AdminContentItemIdTranslationsGet = async (itemId: number, options?: Parameters<typeof apiRequest>[1]): Promise<getContentTranslationsApiV1AdminContentItemIdTranslationsGetResponse> => {
 
-  return apiRequest<contentTranslationsListApiV1AdminContentItemIdTranslationsGetResponse>(getContentTranslationsListApiV1AdminContentItemIdTranslationsGetUrl(itemId),
+  return apiRequest<getContentTranslationsApiV1AdminContentItemIdTranslationsGetResponse>(getGetContentTranslationsApiV1AdminContentItemIdTranslationsGetUrl(itemId),
   {
     ...options,
     method: 'GET'
@@ -6793,13 +6698,13 @@ export const contentTranslationsListApiV1AdminContentItemIdTranslationsGet = asy
 
 
 
-export const getContentTranslationsListApiV1AdminContentItemIdTranslationsGetMutationKey = () => ['contentTranslationsListApiV1AdminContentItemIdTranslationsGet'] as const;
+export const getGetContentTranslationsApiV1AdminContentItemIdTranslationsGetMutationKey = () => ['getContentTranslationsApiV1AdminContentItemIdTranslationsGet'] as const;
 
-export const getContentTranslationsListApiV1AdminContentItemIdTranslationsGetMutationOptions = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof contentTranslationsListApiV1AdminContentItemIdTranslationsGet>>, TError,ContentTranslationsListApiV1AdminContentItemIdTranslationsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof contentTranslationsListApiV1AdminContentItemIdTranslationsGet>>, TError,ContentTranslationsListApiV1AdminContentItemIdTranslationsGetMutationVariables, TContext> => {
+export const getGetContentTranslationsApiV1AdminContentItemIdTranslationsGetMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getContentTranslationsApiV1AdminContentItemIdTranslationsGet>>, TError,GetContentTranslationsApiV1AdminContentItemIdTranslationsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof getContentTranslationsApiV1AdminContentItemIdTranslationsGet>>, TError,GetContentTranslationsApiV1AdminContentItemIdTranslationsGetMutationVariables, TContext> => {
 
-const mutationKey = getContentTranslationsListApiV1AdminContentItemIdTranslationsGetMutationKey();
+const mutationKey = getGetContentTranslationsApiV1AdminContentItemIdTranslationsGetMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -6809,10 +6714,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof contentTranslationsListApiV1AdminContentItemIdTranslationsGet>>, ContentTranslationsListApiV1AdminContentItemIdTranslationsGetMutationVariables> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getContentTranslationsApiV1AdminContentItemIdTranslationsGet>>, GetContentTranslationsApiV1AdminContentItemIdTranslationsGetMutationVariables> = (props) => {
           const {itemId} = props ?? {};
 
-          return  contentTranslationsListApiV1AdminContentItemIdTranslationsGet(itemId,requestOptions)
+          return  getContentTranslationsApiV1AdminContentItemIdTranslationsGet(itemId,requestOptions)
         }
 
 
@@ -6822,27 +6727,27 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type ContentTranslationsListApiV1AdminContentItemIdTranslationsGetMutationResult = NonNullable<Awaited<ReturnType<typeof contentTranslationsListApiV1AdminContentItemIdTranslationsGet>>>
+    export type GetContentTranslationsApiV1AdminContentItemIdTranslationsGetMutationResult = NonNullable<Awaited<ReturnType<typeof getContentTranslationsApiV1AdminContentItemIdTranslationsGet>>>
 
-    export type ContentTranslationsListApiV1AdminContentItemIdTranslationsGetMutationError = HTTPValidationError
-    export type ContentTranslationsListApiV1AdminContentItemIdTranslationsGetMutationVariables = {itemId: number}
+    export type GetContentTranslationsApiV1AdminContentItemIdTranslationsGetMutationError = HTTPValidationError
+    export type GetContentTranslationsApiV1AdminContentItemIdTranslationsGetMutationVariables = {itemId: number}
 
     /**
- * @summary Content Translations List
+ * @summary Get Content Translations
  */
-export const useContentTranslationsListApiV1AdminContentItemIdTranslationsGet = <TError = HTTPValidationError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof contentTranslationsListApiV1AdminContentItemIdTranslationsGet>>, TError,ContentTranslationsListApiV1AdminContentItemIdTranslationsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const useGetContentTranslationsApiV1AdminContentItemIdTranslationsGet = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getContentTranslationsApiV1AdminContentItemIdTranslationsGet>>, TError,GetContentTranslationsApiV1AdminContentItemIdTranslationsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof contentTranslationsListApiV1AdminContentItemIdTranslationsGet>>,
+        Awaited<ReturnType<typeof getContentTranslationsApiV1AdminContentItemIdTranslationsGet>>,
         TError,
-        ContentTranslationsListApiV1AdminContentItemIdTranslationsGetMutationVariables,
+        GetContentTranslationsApiV1AdminContentItemIdTranslationsGetMutationVariables,
         TContext
       > => {
-      return useMutation(getContentTranslationsListApiV1AdminContentItemIdTranslationsGetMutationOptions(options), queryClient);
+      return useMutation(getGetContentTranslationsApiV1AdminContentItemIdTranslationsGetMutationOptions(options), queryClient);
     }
 
 export type translateContentApiV1AdminContentItemIdTranslatePostResponse200 = {
-  data: ActionResponse
+  data: ContentTranslationResponse
   status: 200
 }
 
@@ -6860,35 +6765,41 @@ export type translateContentApiV1AdminContentItemIdTranslatePostResponseError = 
 
 export type translateContentApiV1AdminContentItemIdTranslatePostResponse = (translateContentApiV1AdminContentItemIdTranslatePostResponseSuccess | translateContentApiV1AdminContentItemIdTranslatePostResponseError)
 
-export const getTranslateContentApiV1AdminContentItemIdTranslatePostUrl = (itemId: number,
-    params: TranslateContentApiV1AdminContentItemIdTranslatePostParams,) => {
-  const normalizedParams = new URLSearchParams();
+export const getTranslateContentApiV1AdminContentItemIdTranslatePostUrl = (itemId: number,) => {
 
-  Object.entries(params || {}).forEach(([key, value]) => {
 
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
 
-  const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/v1/admin/content/${itemId}/translate?${stringifiedParams}` : `/api/v1/admin/content/${itemId}/translate`
+  return `/api/v1/admin/content/${itemId}/translate`
 }
 
 /**
- * AI-translate a content item via local Ollama (honest: 503 when offline).
+ * AI translate content to target locale.
  * @summary Translate Content
  */
 export const translateContentApiV1AdminContentItemIdTranslatePost = async (itemId: number,
-    params: TranslateContentApiV1AdminContentItemIdTranslatePostParams, options?: Parameters<typeof apiRequest>[1]): Promise<translateContentApiV1AdminContentItemIdTranslatePostResponse> => {
+    translateRequest: TranslateRequest, options?: Parameters<typeof apiRequest>[1]): Promise<translateContentApiV1AdminContentItemIdTranslatePostResponse> => {
 
-  return apiRequest<translateContentApiV1AdminContentItemIdTranslatePostResponse>(getTranslateContentApiV1AdminContentItemIdTranslatePostUrl(itemId,params),
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiRequest<translateContentApiV1AdminContentItemIdTranslatePostResponse>(getTranslateContentApiV1AdminContentItemIdTranslatePostUrl(itemId),
   {
     ...options,
-    method: 'POST'
-
-
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(translateRequest)
   }
 );}
 
@@ -6897,24 +6808,24 @@ export const translateContentApiV1AdminContentItemIdTranslatePost = async (itemI
 
 
 export const getTranslateContentApiV1AdminContentItemIdTranslatePostQueryKey = (itemId: number,
-    params?: TranslateContentApiV1AdminContentItemIdTranslatePostParams,) => {
+    translateRequest?: TranslateRequest,) => {
     return [
-    'POST', `/api/v1/admin/content/${itemId}/translate`, ...(params ? [params] : [])
+    'POST', `/api/v1/admin/content/${itemId}/translate`, translateRequest
     ] as const;
     }
 
 
 export const getTranslateContentApiV1AdminContentItemIdTranslatePostQueryOptions = <TData = Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>, TError = HTTPValidationError>(itemId: number,
-    params: TranslateContentApiV1AdminContentItemIdTranslatePostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+    translateRequest: TranslateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getTranslateContentApiV1AdminContentItemIdTranslatePostQueryKey(itemId,params);
+  const queryKey =  queryOptions?.queryKey ?? getTranslateContentApiV1AdminContentItemIdTranslatePostQueryKey(itemId,translateRequest);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>> = ({ signal }) => translateContentApiV1AdminContentItemIdTranslatePost(itemId,params, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>> = ({ signal }) => translateContentApiV1AdminContentItemIdTranslatePost(itemId,translateRequest, { signal, ...requestOptions });
 
 
 
@@ -6929,7 +6840,7 @@ export type TranslateContentApiV1AdminContentItemIdTranslatePostQueryError = HTT
 
 export function useTranslateContentApiV1AdminContentItemIdTranslatePost<TData = Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>, TError = HTTPValidationError>(
  itemId: number,
-    params: TranslateContentApiV1AdminContentItemIdTranslatePostParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>, TError, TData>> & Pick<
+    translateRequest: TranslateRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>,
           TError,
@@ -6940,7 +6851,7 @@ export function useTranslateContentApiV1AdminContentItemIdTranslatePost<TData = 
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useTranslateContentApiV1AdminContentItemIdTranslatePost<TData = Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>, TError = HTTPValidationError>(
  itemId: number,
-    params: TranslateContentApiV1AdminContentItemIdTranslatePostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>, TError, TData>> & Pick<
+    translateRequest: TranslateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>,
           TError,
@@ -6951,7 +6862,7 @@ export function useTranslateContentApiV1AdminContentItemIdTranslatePost<TData = 
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useTranslateContentApiV1AdminContentItemIdTranslatePost<TData = Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>, TError = HTTPValidationError>(
  itemId: number,
-    params: TranslateContentApiV1AdminContentItemIdTranslatePostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+    translateRequest: TranslateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -6960,11 +6871,11 @@ export function useTranslateContentApiV1AdminContentItemIdTranslatePost<TData = 
 
 export function useTranslateContentApiV1AdminContentItemIdTranslatePost<TData = Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>, TError = HTTPValidationError>(
  itemId: number,
-    params: TranslateContentApiV1AdminContentItemIdTranslatePostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+    translateRequest: TranslateRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof translateContentApiV1AdminContentItemIdTranslatePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getTranslateContentApiV1AdminContentItemIdTranslatePostQueryOptions(itemId,params,options)
+  const queryOptions = getTranslateContentApiV1AdminContentItemIdTranslatePostQueryOptions(itemId,translateRequest,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -6977,26 +6888,289 @@ export function useTranslateContentApiV1AdminContentItemIdTranslatePost<TData = 
 
 
 
-export type generateAiDraftApiV1AdminContentGenerateDraftPostResponse200 = {
-  data: ContentOut
+export type schedulePublishApiV1AdminContentItemIdSchedulePostResponse200 = {
+  data: unknown
   status: 200
 }
 
-export type generateAiDraftApiV1AdminContentGenerateDraftPostResponse422 = {
+export type schedulePublishApiV1AdminContentItemIdSchedulePostResponse422 = {
   data: HTTPValidationError
   status: 422
 }
 
-export type generateAiDraftApiV1AdminContentGenerateDraftPostResponseSuccess = (generateAiDraftApiV1AdminContentGenerateDraftPostResponse200) & {
+export type schedulePublishApiV1AdminContentItemIdSchedulePostResponseSuccess = (schedulePublishApiV1AdminContentItemIdSchedulePostResponse200) & {
   headers: Headers;
 };
-export type generateAiDraftApiV1AdminContentGenerateDraftPostResponseError = (generateAiDraftApiV1AdminContentGenerateDraftPostResponse422) & {
+export type schedulePublishApiV1AdminContentItemIdSchedulePostResponseError = (schedulePublishApiV1AdminContentItemIdSchedulePostResponse422) & {
   headers: Headers;
 };
 
-export type generateAiDraftApiV1AdminContentGenerateDraftPostResponse = (generateAiDraftApiV1AdminContentGenerateDraftPostResponseSuccess | generateAiDraftApiV1AdminContentGenerateDraftPostResponseError)
+export type schedulePublishApiV1AdminContentItemIdSchedulePostResponse = (schedulePublishApiV1AdminContentItemIdSchedulePostResponseSuccess | schedulePublishApiV1AdminContentItemIdSchedulePostResponseError)
 
-export const getGenerateAiDraftApiV1AdminContentGenerateDraftPostUrl = (params: GenerateAiDraftApiV1AdminContentGenerateDraftPostParams,) => {
+export const getSchedulePublishApiV1AdminContentItemIdSchedulePostUrl = (itemId: number,) => {
+
+
+
+
+  return `/api/v1/admin/content/${itemId}/schedule`
+}
+
+/**
+ * Schedule content publishing.
+ * @summary Schedule Publish
+ */
+export const schedulePublishApiV1AdminContentItemIdSchedulePost = async (itemId: number,
+    scheduleRequest: ScheduleRequest, options?: Parameters<typeof apiRequest>[1]): Promise<schedulePublishApiV1AdminContentItemIdSchedulePostResponse> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiRequest<schedulePublishApiV1AdminContentItemIdSchedulePostResponse>(getSchedulePublishApiV1AdminContentItemIdSchedulePostUrl(itemId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(scheduleRequest)
+  }
+);}
+
+
+
+
+
+export const getSchedulePublishApiV1AdminContentItemIdSchedulePostQueryKey = (itemId: number,
+    scheduleRequest?: ScheduleRequest,) => {
+    return [
+    'POST', `/api/v1/admin/content/${itemId}/schedule`, scheduleRequest
+    ] as const;
+    }
+
+
+export const getSchedulePublishApiV1AdminContentItemIdSchedulePostQueryOptions = <TData = Awaited<ReturnType<typeof schedulePublishApiV1AdminContentItemIdSchedulePost>>, TError = HTTPValidationError>(itemId: number,
+    scheduleRequest: ScheduleRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof schedulePublishApiV1AdminContentItemIdSchedulePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getSchedulePublishApiV1AdminContentItemIdSchedulePostQueryKey(itemId,scheduleRequest);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof schedulePublishApiV1AdminContentItemIdSchedulePost>>> = ({ signal }) => schedulePublishApiV1AdminContentItemIdSchedulePost(itemId,scheduleRequest, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: itemId !== null && itemId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof schedulePublishApiV1AdminContentItemIdSchedulePost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type SchedulePublishApiV1AdminContentItemIdSchedulePostQueryResult = NonNullable<Awaited<ReturnType<typeof schedulePublishApiV1AdminContentItemIdSchedulePost>>>
+export type SchedulePublishApiV1AdminContentItemIdSchedulePostQueryError = HTTPValidationError
+
+
+export function useSchedulePublishApiV1AdminContentItemIdSchedulePost<TData = Awaited<ReturnType<typeof schedulePublishApiV1AdminContentItemIdSchedulePost>>, TError = HTTPValidationError>(
+ itemId: number,
+    scheduleRequest: ScheduleRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof schedulePublishApiV1AdminContentItemIdSchedulePost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof schedulePublishApiV1AdminContentItemIdSchedulePost>>,
+          TError,
+          Awaited<ReturnType<typeof schedulePublishApiV1AdminContentItemIdSchedulePost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useSchedulePublishApiV1AdminContentItemIdSchedulePost<TData = Awaited<ReturnType<typeof schedulePublishApiV1AdminContentItemIdSchedulePost>>, TError = HTTPValidationError>(
+ itemId: number,
+    scheduleRequest: ScheduleRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof schedulePublishApiV1AdminContentItemIdSchedulePost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof schedulePublishApiV1AdminContentItemIdSchedulePost>>,
+          TError,
+          Awaited<ReturnType<typeof schedulePublishApiV1AdminContentItemIdSchedulePost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useSchedulePublishApiV1AdminContentItemIdSchedulePost<TData = Awaited<ReturnType<typeof schedulePublishApiV1AdminContentItemIdSchedulePost>>, TError = HTTPValidationError>(
+ itemId: number,
+    scheduleRequest: ScheduleRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof schedulePublishApiV1AdminContentItemIdSchedulePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Schedule Publish
+ */
+
+export function useSchedulePublishApiV1AdminContentItemIdSchedulePost<TData = Awaited<ReturnType<typeof schedulePublishApiV1AdminContentItemIdSchedulePost>>, TError = HTTPValidationError>(
+ itemId: number,
+    scheduleRequest: ScheduleRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof schedulePublishApiV1AdminContentItemIdSchedulePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getSchedulePublishApiV1AdminContentItemIdSchedulePostQueryOptions(itemId,scheduleRequest,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type cancelScheduleApiV1AdminContentItemIdCancelSchedulePostResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type cancelScheduleApiV1AdminContentItemIdCancelSchedulePostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type cancelScheduleApiV1AdminContentItemIdCancelSchedulePostResponseSuccess = (cancelScheduleApiV1AdminContentItemIdCancelSchedulePostResponse200) & {
+  headers: Headers;
+};
+export type cancelScheduleApiV1AdminContentItemIdCancelSchedulePostResponseError = (cancelScheduleApiV1AdminContentItemIdCancelSchedulePostResponse422) & {
+  headers: Headers;
+};
+
+export type cancelScheduleApiV1AdminContentItemIdCancelSchedulePostResponse = (cancelScheduleApiV1AdminContentItemIdCancelSchedulePostResponseSuccess | cancelScheduleApiV1AdminContentItemIdCancelSchedulePostResponseError)
+
+export const getCancelScheduleApiV1AdminContentItemIdCancelSchedulePostUrl = (itemId: number,) => {
+
+
+
+
+  return `/api/v1/admin/content/${itemId}/cancel-schedule`
+}
+
+/**
+ * Cancel scheduled publishing.
+ * @summary Cancel Schedule
+ */
+export const cancelScheduleApiV1AdminContentItemIdCancelSchedulePost = async (itemId: number, options?: Parameters<typeof apiRequest>[1]): Promise<cancelScheduleApiV1AdminContentItemIdCancelSchedulePostResponse> => {
+
+  return apiRequest<cancelScheduleApiV1AdminContentItemIdCancelSchedulePostResponse>(getCancelScheduleApiV1AdminContentItemIdCancelSchedulePostUrl(itemId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getCancelScheduleApiV1AdminContentItemIdCancelSchedulePostQueryKey = (itemId: number,) => {
+    return [
+    'POST', `/api/v1/admin/content/${itemId}/cancel-schedule`
+    ] as const;
+    }
+
+
+export const getCancelScheduleApiV1AdminContentItemIdCancelSchedulePostQueryOptions = <TData = Awaited<ReturnType<typeof cancelScheduleApiV1AdminContentItemIdCancelSchedulePost>>, TError = HTTPValidationError>(itemId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cancelScheduleApiV1AdminContentItemIdCancelSchedulePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getCancelScheduleApiV1AdminContentItemIdCancelSchedulePostQueryKey(itemId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof cancelScheduleApiV1AdminContentItemIdCancelSchedulePost>>> = ({ signal }) => cancelScheduleApiV1AdminContentItemIdCancelSchedulePost(itemId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: itemId !== null && itemId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof cancelScheduleApiV1AdminContentItemIdCancelSchedulePost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CancelScheduleApiV1AdminContentItemIdCancelSchedulePostQueryResult = NonNullable<Awaited<ReturnType<typeof cancelScheduleApiV1AdminContentItemIdCancelSchedulePost>>>
+export type CancelScheduleApiV1AdminContentItemIdCancelSchedulePostQueryError = HTTPValidationError
+
+
+export function useCancelScheduleApiV1AdminContentItemIdCancelSchedulePost<TData = Awaited<ReturnType<typeof cancelScheduleApiV1AdminContentItemIdCancelSchedulePost>>, TError = HTTPValidationError>(
+ itemId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof cancelScheduleApiV1AdminContentItemIdCancelSchedulePost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof cancelScheduleApiV1AdminContentItemIdCancelSchedulePost>>,
+          TError,
+          Awaited<ReturnType<typeof cancelScheduleApiV1AdminContentItemIdCancelSchedulePost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCancelScheduleApiV1AdminContentItemIdCancelSchedulePost<TData = Awaited<ReturnType<typeof cancelScheduleApiV1AdminContentItemIdCancelSchedulePost>>, TError = HTTPValidationError>(
+ itemId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cancelScheduleApiV1AdminContentItemIdCancelSchedulePost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof cancelScheduleApiV1AdminContentItemIdCancelSchedulePost>>,
+          TError,
+          Awaited<ReturnType<typeof cancelScheduleApiV1AdminContentItemIdCancelSchedulePost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCancelScheduleApiV1AdminContentItemIdCancelSchedulePost<TData = Awaited<ReturnType<typeof cancelScheduleApiV1AdminContentItemIdCancelSchedulePost>>, TError = HTTPValidationError>(
+ itemId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cancelScheduleApiV1AdminContentItemIdCancelSchedulePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Cancel Schedule
+ */
+
+export function useCancelScheduleApiV1AdminContentItemIdCancelSchedulePost<TData = Awaited<ReturnType<typeof cancelScheduleApiV1AdminContentItemIdCancelSchedulePost>>, TError = HTTPValidationError>(
+ itemId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cancelScheduleApiV1AdminContentItemIdCancelSchedulePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getCancelScheduleApiV1AdminContentItemIdCancelSchedulePostQueryOptions(itemId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type generateDraftApiV1AdminContentGenerateDraftPostResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type generateDraftApiV1AdminContentGenerateDraftPostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type generateDraftApiV1AdminContentGenerateDraftPostResponseSuccess = (generateDraftApiV1AdminContentGenerateDraftPostResponse200) & {
+  headers: Headers;
+};
+export type generateDraftApiV1AdminContentGenerateDraftPostResponseError = (generateDraftApiV1AdminContentGenerateDraftPostResponse422) & {
+  headers: Headers;
+};
+
+export type generateDraftApiV1AdminContentGenerateDraftPostResponse = (generateDraftApiV1AdminContentGenerateDraftPostResponseSuccess | generateDraftApiV1AdminContentGenerateDraftPostResponseError)
+
+export const getGenerateDraftApiV1AdminContentGenerateDraftPostUrl = (params: GenerateDraftApiV1AdminContentGenerateDraftPostParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -7012,12 +7186,12 @@ export const getGenerateAiDraftApiV1AdminContentGenerateDraftPostUrl = (params: 
 }
 
 /**
- * Generate an article draft with local Ollama (labelled AI, honest 503).
- * @summary Generate Ai Draft
+ * Generate content draft using AI.
+ * @summary Generate Draft
  */
-export const generateAiDraftApiV1AdminContentGenerateDraftPost = async (params: GenerateAiDraftApiV1AdminContentGenerateDraftPostParams, options?: Parameters<typeof apiRequest>[1]): Promise<generateAiDraftApiV1AdminContentGenerateDraftPostResponse> => {
+export const generateDraftApiV1AdminContentGenerateDraftPost = async (params: GenerateDraftApiV1AdminContentGenerateDraftPostParams, options?: Parameters<typeof apiRequest>[1]): Promise<generateDraftApiV1AdminContentGenerateDraftPostResponse> => {
 
-  return apiRequest<generateAiDraftApiV1AdminContentGenerateDraftPostResponse>(getGenerateAiDraftApiV1AdminContentGenerateDraftPostUrl(params),
+  return apiRequest<generateDraftApiV1AdminContentGenerateDraftPostResponse>(getGenerateDraftApiV1AdminContentGenerateDraftPostUrl(params),
   {
     ...options,
     method: 'POST'
@@ -7030,326 +7204,69 @@ export const generateAiDraftApiV1AdminContentGenerateDraftPost = async (params: 
 
 
 
-export const getGenerateAiDraftApiV1AdminContentGenerateDraftPostQueryKey = (params?: GenerateAiDraftApiV1AdminContentGenerateDraftPostParams,) => {
+export const getGenerateDraftApiV1AdminContentGenerateDraftPostQueryKey = (params?: GenerateDraftApiV1AdminContentGenerateDraftPostParams,) => {
     return [
     'POST', `/api/v1/admin/content/generate-draft`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGenerateAiDraftApiV1AdminContentGenerateDraftPostQueryOptions = <TData = Awaited<ReturnType<typeof generateAiDraftApiV1AdminContentGenerateDraftPost>>, TError = HTTPValidationError>(params: GenerateAiDraftApiV1AdminContentGenerateDraftPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof generateAiDraftApiV1AdminContentGenerateDraftPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGenerateDraftApiV1AdminContentGenerateDraftPostQueryOptions = <TData = Awaited<ReturnType<typeof generateDraftApiV1AdminContentGenerateDraftPost>>, TError = HTTPValidationError>(params: GenerateDraftApiV1AdminContentGenerateDraftPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof generateDraftApiV1AdminContentGenerateDraftPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGenerateAiDraftApiV1AdminContentGenerateDraftPostQueryKey(params);
+  const queryKey =  queryOptions?.queryKey ?? getGenerateDraftApiV1AdminContentGenerateDraftPostQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof generateAiDraftApiV1AdminContentGenerateDraftPost>>> = ({ signal }) => generateAiDraftApiV1AdminContentGenerateDraftPost(params, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof generateDraftApiV1AdminContentGenerateDraftPost>>> = ({ signal }) => generateDraftApiV1AdminContentGenerateDraftPost(params, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof generateAiDraftApiV1AdminContentGenerateDraftPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof generateDraftApiV1AdminContentGenerateDraftPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GenerateAiDraftApiV1AdminContentGenerateDraftPostQueryResult = NonNullable<Awaited<ReturnType<typeof generateAiDraftApiV1AdminContentGenerateDraftPost>>>
-export type GenerateAiDraftApiV1AdminContentGenerateDraftPostQueryError = HTTPValidationError
+export type GenerateDraftApiV1AdminContentGenerateDraftPostQueryResult = NonNullable<Awaited<ReturnType<typeof generateDraftApiV1AdminContentGenerateDraftPost>>>
+export type GenerateDraftApiV1AdminContentGenerateDraftPostQueryError = HTTPValidationError
 
 
-export function useGenerateAiDraftApiV1AdminContentGenerateDraftPost<TData = Awaited<ReturnType<typeof generateAiDraftApiV1AdminContentGenerateDraftPost>>, TError = HTTPValidationError>(
- params: GenerateAiDraftApiV1AdminContentGenerateDraftPostParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof generateAiDraftApiV1AdminContentGenerateDraftPost>>, TError, TData>> & Pick<
+export function useGenerateDraftApiV1AdminContentGenerateDraftPost<TData = Awaited<ReturnType<typeof generateDraftApiV1AdminContentGenerateDraftPost>>, TError = HTTPValidationError>(
+ params: GenerateDraftApiV1AdminContentGenerateDraftPostParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof generateDraftApiV1AdminContentGenerateDraftPost>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof generateAiDraftApiV1AdminContentGenerateDraftPost>>,
+          Awaited<ReturnType<typeof generateDraftApiV1AdminContentGenerateDraftPost>>,
           TError,
-          Awaited<ReturnType<typeof generateAiDraftApiV1AdminContentGenerateDraftPost>>
+          Awaited<ReturnType<typeof generateDraftApiV1AdminContentGenerateDraftPost>>
         > , 'initialData'
       >, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGenerateAiDraftApiV1AdminContentGenerateDraftPost<TData = Awaited<ReturnType<typeof generateAiDraftApiV1AdminContentGenerateDraftPost>>, TError = HTTPValidationError>(
- params: GenerateAiDraftApiV1AdminContentGenerateDraftPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof generateAiDraftApiV1AdminContentGenerateDraftPost>>, TError, TData>> & Pick<
+export function useGenerateDraftApiV1AdminContentGenerateDraftPost<TData = Awaited<ReturnType<typeof generateDraftApiV1AdminContentGenerateDraftPost>>, TError = HTTPValidationError>(
+ params: GenerateDraftApiV1AdminContentGenerateDraftPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof generateDraftApiV1AdminContentGenerateDraftPost>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof generateAiDraftApiV1AdminContentGenerateDraftPost>>,
+          Awaited<ReturnType<typeof generateDraftApiV1AdminContentGenerateDraftPost>>,
           TError,
-          Awaited<ReturnType<typeof generateAiDraftApiV1AdminContentGenerateDraftPost>>
+          Awaited<ReturnType<typeof generateDraftApiV1AdminContentGenerateDraftPost>>
         > , 'initialData'
       >, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGenerateAiDraftApiV1AdminContentGenerateDraftPost<TData = Awaited<ReturnType<typeof generateAiDraftApiV1AdminContentGenerateDraftPost>>, TError = HTTPValidationError>(
- params: GenerateAiDraftApiV1AdminContentGenerateDraftPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof generateAiDraftApiV1AdminContentGenerateDraftPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function useGenerateDraftApiV1AdminContentGenerateDraftPost<TData = Awaited<ReturnType<typeof generateDraftApiV1AdminContentGenerateDraftPost>>, TError = HTTPValidationError>(
+ params: GenerateDraftApiV1AdminContentGenerateDraftPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof generateDraftApiV1AdminContentGenerateDraftPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Generate Ai Draft
+ * @summary Generate Draft
  */
 
-export function useGenerateAiDraftApiV1AdminContentGenerateDraftPost<TData = Awaited<ReturnType<typeof generateAiDraftApiV1AdminContentGenerateDraftPost>>, TError = HTTPValidationError>(
- params: GenerateAiDraftApiV1AdminContentGenerateDraftPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof generateAiDraftApiV1AdminContentGenerateDraftPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function useGenerateDraftApiV1AdminContentGenerateDraftPost<TData = Awaited<ReturnType<typeof generateDraftApiV1AdminContentGenerateDraftPost>>, TError = HTTPValidationError>(
+ params: GenerateDraftApiV1AdminContentGenerateDraftPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof generateDraftApiV1AdminContentGenerateDraftPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGenerateAiDraftApiV1AdminContentGenerateDraftPostQueryOptions(params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
-export type scheduleContentApiV1AdminContentItemIdSchedulePostResponse200 = {
-  data: ActionResponse
-  status: 200
-}
-
-export type scheduleContentApiV1AdminContentItemIdSchedulePostResponse422 = {
-  data: HTTPValidationError
-  status: 422
-}
-
-export type scheduleContentApiV1AdminContentItemIdSchedulePostResponseSuccess = (scheduleContentApiV1AdminContentItemIdSchedulePostResponse200) & {
-  headers: Headers;
-};
-export type scheduleContentApiV1AdminContentItemIdSchedulePostResponseError = (scheduleContentApiV1AdminContentItemIdSchedulePostResponse422) & {
-  headers: Headers;
-};
-
-export type scheduleContentApiV1AdminContentItemIdSchedulePostResponse = (scheduleContentApiV1AdminContentItemIdSchedulePostResponseSuccess | scheduleContentApiV1AdminContentItemIdSchedulePostResponseError)
-
-export const getScheduleContentApiV1AdminContentItemIdSchedulePostUrl = (itemId: number,
-    params: ScheduleContentApiV1AdminContentItemIdSchedulePostParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/api/v1/admin/content/${itemId}/schedule?${stringifiedParams}` : `/api/v1/admin/content/${itemId}/schedule`
-}
-
-/**
- * Schedule a draft for automatic publishing (UTC ISO-8601).
- * @summary Schedule Content
- */
-export const scheduleContentApiV1AdminContentItemIdSchedulePost = async (itemId: number,
-    params: ScheduleContentApiV1AdminContentItemIdSchedulePostParams, options?: Parameters<typeof apiRequest>[1]): Promise<scheduleContentApiV1AdminContentItemIdSchedulePostResponse> => {
-
-  return apiRequest<scheduleContentApiV1AdminContentItemIdSchedulePostResponse>(getScheduleContentApiV1AdminContentItemIdSchedulePostUrl(itemId,params),
-  {
-    ...options,
-    method: 'POST'
-
-
-  }
-);}
-
-
-
-
-
-export const getScheduleContentApiV1AdminContentItemIdSchedulePostQueryKey = (itemId: number,
-    params?: ScheduleContentApiV1AdminContentItemIdSchedulePostParams,) => {
-    return [
-    'POST', `/api/v1/admin/content/${itemId}/schedule`, ...(params ? [params] : [])
-    ] as const;
-    }
-
-
-export const getScheduleContentApiV1AdminContentItemIdSchedulePostQueryOptions = <TData = Awaited<ReturnType<typeof scheduleContentApiV1AdminContentItemIdSchedulePost>>, TError = HTTPValidationError>(itemId: number,
-    params: ScheduleContentApiV1AdminContentItemIdSchedulePostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof scheduleContentApiV1AdminContentItemIdSchedulePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getScheduleContentApiV1AdminContentItemIdSchedulePostQueryKey(itemId,params);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof scheduleContentApiV1AdminContentItemIdSchedulePost>>> = ({ signal }) => scheduleContentApiV1AdminContentItemIdSchedulePost(itemId,params, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: itemId !== null && itemId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof scheduleContentApiV1AdminContentItemIdSchedulePost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type ScheduleContentApiV1AdminContentItemIdSchedulePostQueryResult = NonNullable<Awaited<ReturnType<typeof scheduleContentApiV1AdminContentItemIdSchedulePost>>>
-export type ScheduleContentApiV1AdminContentItemIdSchedulePostQueryError = HTTPValidationError
-
-
-export function useScheduleContentApiV1AdminContentItemIdSchedulePost<TData = Awaited<ReturnType<typeof scheduleContentApiV1AdminContentItemIdSchedulePost>>, TError = HTTPValidationError>(
- itemId: number,
-    params: ScheduleContentApiV1AdminContentItemIdSchedulePostParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof scheduleContentApiV1AdminContentItemIdSchedulePost>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof scheduleContentApiV1AdminContentItemIdSchedulePost>>,
-          TError,
-          Awaited<ReturnType<typeof scheduleContentApiV1AdminContentItemIdSchedulePost>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useScheduleContentApiV1AdminContentItemIdSchedulePost<TData = Awaited<ReturnType<typeof scheduleContentApiV1AdminContentItemIdSchedulePost>>, TError = HTTPValidationError>(
- itemId: number,
-    params: ScheduleContentApiV1AdminContentItemIdSchedulePostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof scheduleContentApiV1AdminContentItemIdSchedulePost>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof scheduleContentApiV1AdminContentItemIdSchedulePost>>,
-          TError,
-          Awaited<ReturnType<typeof scheduleContentApiV1AdminContentItemIdSchedulePost>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useScheduleContentApiV1AdminContentItemIdSchedulePost<TData = Awaited<ReturnType<typeof scheduleContentApiV1AdminContentItemIdSchedulePost>>, TError = HTTPValidationError>(
- itemId: number,
-    params: ScheduleContentApiV1AdminContentItemIdSchedulePostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof scheduleContentApiV1AdminContentItemIdSchedulePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Schedule Content
- */
-
-export function useScheduleContentApiV1AdminContentItemIdSchedulePost<TData = Awaited<ReturnType<typeof scheduleContentApiV1AdminContentItemIdSchedulePost>>, TError = HTTPValidationError>(
- itemId: number,
-    params: ScheduleContentApiV1AdminContentItemIdSchedulePostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof scheduleContentApiV1AdminContentItemIdSchedulePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getScheduleContentApiV1AdminContentItemIdSchedulePostQueryOptions(itemId,params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
-export type cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostResponse200 = {
-  data: ActionResponse
-  status: 200
-}
-
-export type cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostResponse422 = {
-  data: HTTPValidationError
-  status: 422
-}
-
-export type cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostResponseSuccess = (cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostResponse200) & {
-  headers: Headers;
-};
-export type cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostResponseError = (cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostResponse422) & {
-  headers: Headers;
-};
-
-export type cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostResponse = (cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostResponseSuccess | cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostResponseError)
-
-export const getCancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostUrl = (itemId: number,) => {
-
-
-
-
-  return `/api/v1/admin/content/${itemId}/cancel-schedule`
-}
-
-/**
- * Cancel a pending scheduled publish.
- * @summary Cancel Schedule Content
- */
-export const cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost = async (itemId: number, options?: Parameters<typeof apiRequest>[1]): Promise<cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostResponse> => {
-
-  return apiRequest<cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostResponse>(getCancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostUrl(itemId),
-  {
-    ...options,
-    method: 'POST'
-
-
-  }
-);}
-
-
-
-
-
-export const getCancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostQueryKey = (itemId: number,) => {
-    return [
-    'POST', `/api/v1/admin/content/${itemId}/cancel-schedule`
-    ] as const;
-    }
-
-
-export const getCancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostQueryOptions = <TData = Awaited<ReturnType<typeof cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost>>, TError = HTTPValidationError>(itemId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getCancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostQueryKey(itemId);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost>>> = ({ signal }) => cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost(itemId, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: itemId !== null && itemId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type CancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostQueryResult = NonNullable<Awaited<ReturnType<typeof cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost>>>
-export type CancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostQueryError = HTTPValidationError
-
-
-export function useCancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost<TData = Awaited<ReturnType<typeof cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost>>, TError = HTTPValidationError>(
- itemId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost>>,
-          TError,
-          Awaited<ReturnType<typeof cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost<TData = Awaited<ReturnType<typeof cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost>>, TError = HTTPValidationError>(
- itemId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost>>,
-          TError,
-          Awaited<ReturnType<typeof cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost<TData = Awaited<ReturnType<typeof cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost>>, TError = HTTPValidationError>(
- itemId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Cancel Schedule Content
- */
-
-export function useCancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost<TData = Awaited<ReturnType<typeof cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost>>, TError = HTTPValidationError>(
- itemId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cancelScheduleContentApiV1AdminContentItemIdCancelSchedulePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getCancelScheduleContentApiV1AdminContentItemIdCancelSchedulePostQueryOptions(itemId,options)
+  const queryOptions = getGenerateDraftApiV1AdminContentGenerateDraftPostQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -7363,7 +7280,7 @@ export function useCancelScheduleContentApiV1AdminContentItemIdCancelSchedulePos
 
 
 export type listBotsApiV1AdminBotsGetResponse200 = {
-  data: BotOut[]
+  data: BotStatusResponse[]
   status: 200
 }
 
@@ -7383,7 +7300,7 @@ export const getListBotsApiV1AdminBotsGetUrl = () => {
 }
 
 /**
- * Platform registry status: configured (env) + enabled (settings).
+ * List all bot statuses.
  * @summary List Bots
  */
 export const listBotsApiV1AdminBotsGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<listBotsApiV1AdminBotsGetResponse> => {
@@ -7450,7 +7367,7 @@ export const useListBotsApiV1AdminBotsGet = <TError = unknown,
     }
 
 export type toggleBotApiV1AdminBotsKeyTogglePostResponse200 = {
-  data: ActionResponse
+  data: BotStatusResponse
   status: 200
 }
 
@@ -7477,17 +7394,32 @@ export const getToggleBotApiV1AdminBotsKeyTogglePostUrl = (key: string,) => {
 }
 
 /**
- * Flip the persisted enabled flag for a bot platform (audited).
+ * Toggle bot enabled state.
  * @summary Toggle Bot
  */
-export const toggleBotApiV1AdminBotsKeyTogglePost = async (key: string, options?: Parameters<typeof apiRequest>[1]): Promise<toggleBotApiV1AdminBotsKeyTogglePostResponse> => {
+export const toggleBotApiV1AdminBotsKeyTogglePost = async (key: string,
+    botToggleRequest: BotToggleRequest, options?: Parameters<typeof apiRequest>[1]): Promise<toggleBotApiV1AdminBotsKeyTogglePostResponse> => {
 
-  return apiRequest<toggleBotApiV1AdminBotsKeyTogglePostResponse>(getToggleBotApiV1AdminBotsKeyTogglePostUrl(key),
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiRequest<toggleBotApiV1AdminBotsKeyTogglePostResponse>(getToggleBotApiV1AdminBotsKeyTogglePostUrl(key),
   {
     ...options,
-    method: 'POST'
-
-
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(botToggleRequest)
   }
 );}
 
@@ -7495,23 +7427,25 @@ export const toggleBotApiV1AdminBotsKeyTogglePost = async (key: string, options?
 
 
 
-export const getToggleBotApiV1AdminBotsKeyTogglePostQueryKey = (key: string,) => {
+export const getToggleBotApiV1AdminBotsKeyTogglePostQueryKey = (key: string,
+    botToggleRequest?: BotToggleRequest,) => {
     return [
-    'POST', `/api/v1/admin/bots/${key}/toggle`
+    'POST', `/api/v1/admin/bots/${key}/toggle`, botToggleRequest
     ] as const;
     }
 
 
-export const getToggleBotApiV1AdminBotsKeyTogglePostQueryOptions = <TData = Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>, TError = HTTPValidationError>(key: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getToggleBotApiV1AdminBotsKeyTogglePostQueryOptions = <TData = Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>, TError = HTTPValidationError>(key: string,
+    botToggleRequest: BotToggleRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getToggleBotApiV1AdminBotsKeyTogglePostQueryKey(key);
+  const queryKey =  queryOptions?.queryKey ?? getToggleBotApiV1AdminBotsKeyTogglePostQueryKey(key,botToggleRequest);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>> = ({ signal }) => toggleBotApiV1AdminBotsKeyTogglePost(key, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>> = ({ signal }) => toggleBotApiV1AdminBotsKeyTogglePost(key,botToggleRequest, { signal, ...requestOptions });
 
 
 
@@ -7525,7 +7459,8 @@ export type ToggleBotApiV1AdminBotsKeyTogglePostQueryError = HTTPValidationError
 
 
 export function useToggleBotApiV1AdminBotsKeyTogglePost<TData = Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>, TError = HTTPValidationError>(
- key: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>, TError, TData>> & Pick<
+ key: string,
+    botToggleRequest: BotToggleRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>,
           TError,
@@ -7535,7 +7470,8 @@ export function useToggleBotApiV1AdminBotsKeyTogglePost<TData = Awaited<ReturnTy
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useToggleBotApiV1AdminBotsKeyTogglePost<TData = Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>, TError = HTTPValidationError>(
- key: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>, TError, TData>> & Pick<
+ key: string,
+    botToggleRequest: BotToggleRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>,
           TError,
@@ -7545,7 +7481,8 @@ export function useToggleBotApiV1AdminBotsKeyTogglePost<TData = Awaited<ReturnTy
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useToggleBotApiV1AdminBotsKeyTogglePost<TData = Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>, TError = HTTPValidationError>(
- key: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ key: string,
+    botToggleRequest: BotToggleRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -7553,11 +7490,133 @@ export function useToggleBotApiV1AdminBotsKeyTogglePost<TData = Awaited<ReturnTy
  */
 
 export function useToggleBotApiV1AdminBotsKeyTogglePost<TData = Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>, TError = HTTPValidationError>(
- key: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ key: string,
+    botToggleRequest: BotToggleRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof toggleBotApiV1AdminBotsKeyTogglePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getToggleBotApiV1AdminBotsKeyTogglePostQueryOptions(key,options)
+  const queryOptions = getToggleBotApiV1AdminBotsKeyTogglePostQueryOptions(key,botToggleRequest,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type restartBotApiV1AdminBotsKeyRestartPostResponse200 = {
+  data: BotStatusResponse
+  status: 200
+}
+
+export type restartBotApiV1AdminBotsKeyRestartPostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type restartBotApiV1AdminBotsKeyRestartPostResponseSuccess = (restartBotApiV1AdminBotsKeyRestartPostResponse200) & {
+  headers: Headers;
+};
+export type restartBotApiV1AdminBotsKeyRestartPostResponseError = (restartBotApiV1AdminBotsKeyRestartPostResponse422) & {
+  headers: Headers;
+};
+
+export type restartBotApiV1AdminBotsKeyRestartPostResponse = (restartBotApiV1AdminBotsKeyRestartPostResponseSuccess | restartBotApiV1AdminBotsKeyRestartPostResponseError)
+
+export const getRestartBotApiV1AdminBotsKeyRestartPostUrl = (key: string,) => {
+
+
+
+
+  return `/api/v1/admin/bots/${key}/restart`
+}
+
+/**
+ * Restart a bot.
+ * @summary Restart Bot
+ */
+export const restartBotApiV1AdminBotsKeyRestartPost = async (key: string, options?: Parameters<typeof apiRequest>[1]): Promise<restartBotApiV1AdminBotsKeyRestartPostResponse> => {
+
+  return apiRequest<restartBotApiV1AdminBotsKeyRestartPostResponse>(getRestartBotApiV1AdminBotsKeyRestartPostUrl(key),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getRestartBotApiV1AdminBotsKeyRestartPostQueryKey = (key: string,) => {
+    return [
+    'POST', `/api/v1/admin/bots/${key}/restart`
+    ] as const;
+    }
+
+
+export const getRestartBotApiV1AdminBotsKeyRestartPostQueryOptions = <TData = Awaited<ReturnType<typeof restartBotApiV1AdminBotsKeyRestartPost>>, TError = HTTPValidationError>(key: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof restartBotApiV1AdminBotsKeyRestartPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getRestartBotApiV1AdminBotsKeyRestartPostQueryKey(key);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof restartBotApiV1AdminBotsKeyRestartPost>>> = ({ signal }) => restartBotApiV1AdminBotsKeyRestartPost(key, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: key !== null && key !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof restartBotApiV1AdminBotsKeyRestartPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type RestartBotApiV1AdminBotsKeyRestartPostQueryResult = NonNullable<Awaited<ReturnType<typeof restartBotApiV1AdminBotsKeyRestartPost>>>
+export type RestartBotApiV1AdminBotsKeyRestartPostQueryError = HTTPValidationError
+
+
+export function useRestartBotApiV1AdminBotsKeyRestartPost<TData = Awaited<ReturnType<typeof restartBotApiV1AdminBotsKeyRestartPost>>, TError = HTTPValidationError>(
+ key: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof restartBotApiV1AdminBotsKeyRestartPost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof restartBotApiV1AdminBotsKeyRestartPost>>,
+          TError,
+          Awaited<ReturnType<typeof restartBotApiV1AdminBotsKeyRestartPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRestartBotApiV1AdminBotsKeyRestartPost<TData = Awaited<ReturnType<typeof restartBotApiV1AdminBotsKeyRestartPost>>, TError = HTTPValidationError>(
+ key: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof restartBotApiV1AdminBotsKeyRestartPost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof restartBotApiV1AdminBotsKeyRestartPost>>,
+          TError,
+          Awaited<ReturnType<typeof restartBotApiV1AdminBotsKeyRestartPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRestartBotApiV1AdminBotsKeyRestartPost<TData = Awaited<ReturnType<typeof restartBotApiV1AdminBotsKeyRestartPost>>, TError = HTTPValidationError>(
+ key: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof restartBotApiV1AdminBotsKeyRestartPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Restart Bot
+ */
+
+export function useRestartBotApiV1AdminBotsKeyRestartPost<TData = Awaited<ReturnType<typeof restartBotApiV1AdminBotsKeyRestartPost>>, TError = HTTPValidationError>(
+ key: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof restartBotApiV1AdminBotsKeyRestartPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getRestartBotApiV1AdminBotsKeyRestartPostQueryOptions(key,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -7571,7 +7630,7 @@ export function useToggleBotApiV1AdminBotsKeyTogglePost<TData = Awaited<ReturnTy
 
 
 export type listErrorsApiV1AdminErrorsGetResponse200 = {
-  data: ErrorOut[]
+  data: ErrorResponse[]
   status: 200
 }
 
@@ -7605,7 +7664,7 @@ export const getListErrorsApiV1AdminErrorsGetUrl = (params?: ListErrorsApiV1Admi
 }
 
 /**
- * Recent captured API errors with search and filter capabilities.
+ * List recent API errors with filters.
  * @summary List Errors
  */
 export const listErrorsApiV1AdminErrorsGet = async (params?: ListErrorsApiV1AdminErrorsGetParams, options?: Parameters<typeof apiRequest>[1]): Promise<listErrorsApiV1AdminErrorsGetResponse> => {
@@ -7671,58 +7730,43 @@ export const useListErrorsApiV1AdminErrorsGet = <TError = HTTPValidationError,
       return useMutation(getListErrorsApiV1AdminErrorsGetMutationOptions(options), queryClient);
     }
 
-export type bulkErrorActionApiV1AdminErrorsBulkActionPostResponse200 = {
-  data: ActionResponse
+export type getErrorApiV1AdminErrorsErrorIdGetResponse200 = {
+  data: ErrorResponse
   status: 200
 }
 
-export type bulkErrorActionApiV1AdminErrorsBulkActionPostResponse422 = {
+export type getErrorApiV1AdminErrorsErrorIdGetResponse422 = {
   data: HTTPValidationError
   status: 422
 }
 
-export type bulkErrorActionApiV1AdminErrorsBulkActionPostResponseSuccess = (bulkErrorActionApiV1AdminErrorsBulkActionPostResponse200) & {
+export type getErrorApiV1AdminErrorsErrorIdGetResponseSuccess = (getErrorApiV1AdminErrorsErrorIdGetResponse200) & {
   headers: Headers;
 };
-export type bulkErrorActionApiV1AdminErrorsBulkActionPostResponseError = (bulkErrorActionApiV1AdminErrorsBulkActionPostResponse422) & {
+export type getErrorApiV1AdminErrorsErrorIdGetResponseError = (getErrorApiV1AdminErrorsErrorIdGetResponse422) & {
   headers: Headers;
 };
 
-export type bulkErrorActionApiV1AdminErrorsBulkActionPostResponse = (bulkErrorActionApiV1AdminErrorsBulkActionPostResponseSuccess | bulkErrorActionApiV1AdminErrorsBulkActionPostResponseError)
+export type getErrorApiV1AdminErrorsErrorIdGetResponse = (getErrorApiV1AdminErrorsErrorIdGetResponseSuccess | getErrorApiV1AdminErrorsErrorIdGetResponseError)
 
-export const getBulkErrorActionApiV1AdminErrorsBulkActionPostUrl = (params: BulkErrorActionApiV1AdminErrorsBulkActionPostParams,) => {
-  const normalizedParams = new URLSearchParams();
+export const getGetErrorApiV1AdminErrorsErrorIdGetUrl = (errorId: string,) => {
 
-  Object.entries(params || {}).forEach(([key, value]) => {
-    const explodeParameters = ["error_ids"];
 
-    if (Array.isArray(value) && explodeParameters.includes(key)) {
-      value.forEach((v) => {
-        normalizedParams.append(key, v === null ? 'null' : String(v));
-      });
-      return;
-    }
 
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
 
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/api/v1/admin/errors/bulk-action?${stringifiedParams}` : `/api/v1/admin/errors/bulk-action`
+  return `/api/v1/admin/errors/${errorId}`
 }
 
 /**
- * Perform bulk action on multiple errors (requires MFA).
- * @summary Bulk Error Action
+ * Get error details.
+ * @summary Get Error
  */
-export const bulkErrorActionApiV1AdminErrorsBulkActionPost = async (params: BulkErrorActionApiV1AdminErrorsBulkActionPostParams, options?: Parameters<typeof apiRequest>[1]): Promise<bulkErrorActionApiV1AdminErrorsBulkActionPostResponse> => {
+export const getErrorApiV1AdminErrorsErrorIdGet = async (errorId: string, options?: Parameters<typeof apiRequest>[1]): Promise<getErrorApiV1AdminErrorsErrorIdGetResponse> => {
 
-  return apiRequest<bulkErrorActionApiV1AdminErrorsBulkActionPostResponse>(getBulkErrorActionApiV1AdminErrorsBulkActionPostUrl(params),
+  return apiRequest<getErrorApiV1AdminErrorsErrorIdGetResponse>(getGetErrorApiV1AdminErrorsErrorIdGetUrl(errorId),
   {
     ...options,
-    method: 'POST'
+    method: 'GET'
 
 
   }
@@ -7732,101 +7776,74 @@ export const bulkErrorActionApiV1AdminErrorsBulkActionPost = async (params: Bulk
 
 
 
-export const getBulkErrorActionApiV1AdminErrorsBulkActionPostQueryKey = (params?: BulkErrorActionApiV1AdminErrorsBulkActionPostParams,) => {
-    return [
-    'POST', `/api/v1/admin/errors/bulk-action`, ...(params ? [params] : [])
-    ] as const;
+export const getGetErrorApiV1AdminErrorsErrorIdGetMutationKey = () => ['getErrorApiV1AdminErrorsErrorIdGet'] as const;
+
+export const getGetErrorApiV1AdminErrorsErrorIdGetMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getErrorApiV1AdminErrorsErrorIdGet>>, TError,GetErrorApiV1AdminErrorsErrorIdGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof getErrorApiV1AdminErrorsErrorIdGet>>, TError,GetErrorApiV1AdminErrorsErrorIdGetMutationVariables, TContext> => {
+
+const mutationKey = getGetErrorApiV1AdminErrorsErrorIdGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getErrorApiV1AdminErrorsErrorIdGet>>, GetErrorApiV1AdminErrorsErrorIdGetMutationVariables> = (props) => {
+          const {errorId} = props ?? {};
+
+          return  getErrorApiV1AdminErrorsErrorIdGet(errorId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetErrorApiV1AdminErrorsErrorIdGetMutationResult = NonNullable<Awaited<ReturnType<typeof getErrorApiV1AdminErrorsErrorIdGet>>>
+
+    export type GetErrorApiV1AdminErrorsErrorIdGetMutationError = HTTPValidationError
+    export type GetErrorApiV1AdminErrorsErrorIdGetMutationVariables = {errorId: string}
+
+    /**
+ * @summary Get Error
+ */
+export const useGetErrorApiV1AdminErrorsErrorIdGet = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getErrorApiV1AdminErrorsErrorIdGet>>, TError,GetErrorApiV1AdminErrorsErrorIdGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getErrorApiV1AdminErrorsErrorIdGet>>,
+        TError,
+        GetErrorApiV1AdminErrorsErrorIdGetMutationVariables,
+        TContext
+      > => {
+      return useMutation(getGetErrorApiV1AdminErrorsErrorIdGetMutationOptions(options), queryClient);
     }
 
-
-export const getBulkErrorActionApiV1AdminErrorsBulkActionPostQueryOptions = <TData = Awaited<ReturnType<typeof bulkErrorActionApiV1AdminErrorsBulkActionPost>>, TError = HTTPValidationError>(params: BulkErrorActionApiV1AdminErrorsBulkActionPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkErrorActionApiV1AdminErrorsBulkActionPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getBulkErrorActionApiV1AdminErrorsBulkActionPostQueryKey(params);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof bulkErrorActionApiV1AdminErrorsBulkActionPost>>> = ({ signal }) => bulkErrorActionApiV1AdminErrorsBulkActionPost(params, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof bulkErrorActionApiV1AdminErrorsBulkActionPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type BulkErrorActionApiV1AdminErrorsBulkActionPostQueryResult = NonNullable<Awaited<ReturnType<typeof bulkErrorActionApiV1AdminErrorsBulkActionPost>>>
-export type BulkErrorActionApiV1AdminErrorsBulkActionPostQueryError = HTTPValidationError
-
-
-export function useBulkErrorActionApiV1AdminErrorsBulkActionPost<TData = Awaited<ReturnType<typeof bulkErrorActionApiV1AdminErrorsBulkActionPost>>, TError = HTTPValidationError>(
- params: BulkErrorActionApiV1AdminErrorsBulkActionPostParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkErrorActionApiV1AdminErrorsBulkActionPost>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof bulkErrorActionApiV1AdminErrorsBulkActionPost>>,
-          TError,
-          Awaited<ReturnType<typeof bulkErrorActionApiV1AdminErrorsBulkActionPost>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useBulkErrorActionApiV1AdminErrorsBulkActionPost<TData = Awaited<ReturnType<typeof bulkErrorActionApiV1AdminErrorsBulkActionPost>>, TError = HTTPValidationError>(
- params: BulkErrorActionApiV1AdminErrorsBulkActionPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkErrorActionApiV1AdminErrorsBulkActionPost>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof bulkErrorActionApiV1AdminErrorsBulkActionPost>>,
-          TError,
-          Awaited<ReturnType<typeof bulkErrorActionApiV1AdminErrorsBulkActionPost>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useBulkErrorActionApiV1AdminErrorsBulkActionPost<TData = Awaited<ReturnType<typeof bulkErrorActionApiV1AdminErrorsBulkActionPost>>, TError = HTTPValidationError>(
- params: BulkErrorActionApiV1AdminErrorsBulkActionPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkErrorActionApiV1AdminErrorsBulkActionPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Bulk Error Action
- */
-
-export function useBulkErrorActionApiV1AdminErrorsBulkActionPost<TData = Awaited<ReturnType<typeof bulkErrorActionApiV1AdminErrorsBulkActionPost>>, TError = HTTPValidationError>(
- params: BulkErrorActionApiV1AdminErrorsBulkActionPostParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkErrorActionApiV1AdminErrorsBulkActionPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getBulkErrorActionApiV1AdminErrorsBulkActionPostQueryOptions(params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
-export type ackErrorApiV1AdminErrorsErrorIdAckPostResponse200 = {
-  data: ActionResponse
+export type acknowledgeErrorApiV1AdminErrorsErrorIdAckPostResponse200 = {
+  data: ErrorResponse
   status: 200
 }
 
-export type ackErrorApiV1AdminErrorsErrorIdAckPostResponse422 = {
+export type acknowledgeErrorApiV1AdminErrorsErrorIdAckPostResponse422 = {
   data: HTTPValidationError
   status: 422
 }
 
-export type ackErrorApiV1AdminErrorsErrorIdAckPostResponseSuccess = (ackErrorApiV1AdminErrorsErrorIdAckPostResponse200) & {
+export type acknowledgeErrorApiV1AdminErrorsErrorIdAckPostResponseSuccess = (acknowledgeErrorApiV1AdminErrorsErrorIdAckPostResponse200) & {
   headers: Headers;
 };
-export type ackErrorApiV1AdminErrorsErrorIdAckPostResponseError = (ackErrorApiV1AdminErrorsErrorIdAckPostResponse422) & {
+export type acknowledgeErrorApiV1AdminErrorsErrorIdAckPostResponseError = (acknowledgeErrorApiV1AdminErrorsErrorIdAckPostResponse422) & {
   headers: Headers;
 };
 
-export type ackErrorApiV1AdminErrorsErrorIdAckPostResponse = (ackErrorApiV1AdminErrorsErrorIdAckPostResponseSuccess | ackErrorApiV1AdminErrorsErrorIdAckPostResponseError)
+export type acknowledgeErrorApiV1AdminErrorsErrorIdAckPostResponse = (acknowledgeErrorApiV1AdminErrorsErrorIdAckPostResponseSuccess | acknowledgeErrorApiV1AdminErrorsErrorIdAckPostResponseError)
 
-export const getAckErrorApiV1AdminErrorsErrorIdAckPostUrl = (errorId: number,) => {
+export const getAcknowledgeErrorApiV1AdminErrorsErrorIdAckPostUrl = (errorId: string,) => {
 
 
 
@@ -7835,17 +7852,32 @@ export const getAckErrorApiV1AdminErrorsErrorIdAckPostUrl = (errorId: number,) =
 }
 
 /**
- * Mark an error as acknowledged (seen/handled).
- * @summary Ack Error
+ * Acknowledge an error.
+ * @summary Acknowledge Error
  */
-export const ackErrorApiV1AdminErrorsErrorIdAckPost = async (errorId: number, options?: Parameters<typeof apiRequest>[1]): Promise<ackErrorApiV1AdminErrorsErrorIdAckPostResponse> => {
+export const acknowledgeErrorApiV1AdminErrorsErrorIdAckPost = async (errorId: string,
+    errorAckRequest: ErrorAckRequest, options?: Parameters<typeof apiRequest>[1]): Promise<acknowledgeErrorApiV1AdminErrorsErrorIdAckPostResponse> => {
 
-  return apiRequest<ackErrorApiV1AdminErrorsErrorIdAckPostResponse>(getAckErrorApiV1AdminErrorsErrorIdAckPostUrl(errorId),
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiRequest<acknowledgeErrorApiV1AdminErrorsErrorIdAckPostResponse>(getAcknowledgeErrorApiV1AdminErrorsErrorIdAckPostUrl(errorId),
   {
     ...options,
-    method: 'POST'
-
-
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(errorAckRequest)
   }
 );}
 
@@ -7853,69 +7885,75 @@ export const ackErrorApiV1AdminErrorsErrorIdAckPost = async (errorId: number, op
 
 
 
-export const getAckErrorApiV1AdminErrorsErrorIdAckPostQueryKey = (errorId: number,) => {
+export const getAcknowledgeErrorApiV1AdminErrorsErrorIdAckPostQueryKey = (errorId: string,
+    errorAckRequest?: ErrorAckRequest,) => {
     return [
-    'POST', `/api/v1/admin/errors/${errorId}/ack`
+    'POST', `/api/v1/admin/errors/${errorId}/ack`, errorAckRequest
     ] as const;
     }
 
 
-export const getAckErrorApiV1AdminErrorsErrorIdAckPostQueryOptions = <TData = Awaited<ReturnType<typeof ackErrorApiV1AdminErrorsErrorIdAckPost>>, TError = HTTPValidationError>(errorId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ackErrorApiV1AdminErrorsErrorIdAckPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getAcknowledgeErrorApiV1AdminErrorsErrorIdAckPostQueryOptions = <TData = Awaited<ReturnType<typeof acknowledgeErrorApiV1AdminErrorsErrorIdAckPost>>, TError = HTTPValidationError>(errorId: string,
+    errorAckRequest: ErrorAckRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof acknowledgeErrorApiV1AdminErrorsErrorIdAckPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getAckErrorApiV1AdminErrorsErrorIdAckPostQueryKey(errorId);
+  const queryKey =  queryOptions?.queryKey ?? getAcknowledgeErrorApiV1AdminErrorsErrorIdAckPostQueryKey(errorId,errorAckRequest);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof ackErrorApiV1AdminErrorsErrorIdAckPost>>> = ({ signal }) => ackErrorApiV1AdminErrorsErrorIdAckPost(errorId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof acknowledgeErrorApiV1AdminErrorsErrorIdAckPost>>> = ({ signal }) => acknowledgeErrorApiV1AdminErrorsErrorIdAckPost(errorId,errorAckRequest, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, enabled: errorId !== null && errorId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof ackErrorApiV1AdminErrorsErrorIdAckPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: errorId !== null && errorId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof acknowledgeErrorApiV1AdminErrorsErrorIdAckPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type AckErrorApiV1AdminErrorsErrorIdAckPostQueryResult = NonNullable<Awaited<ReturnType<typeof ackErrorApiV1AdminErrorsErrorIdAckPost>>>
-export type AckErrorApiV1AdminErrorsErrorIdAckPostQueryError = HTTPValidationError
+export type AcknowledgeErrorApiV1AdminErrorsErrorIdAckPostQueryResult = NonNullable<Awaited<ReturnType<typeof acknowledgeErrorApiV1AdminErrorsErrorIdAckPost>>>
+export type AcknowledgeErrorApiV1AdminErrorsErrorIdAckPostQueryError = HTTPValidationError
 
 
-export function useAckErrorApiV1AdminErrorsErrorIdAckPost<TData = Awaited<ReturnType<typeof ackErrorApiV1AdminErrorsErrorIdAckPost>>, TError = HTTPValidationError>(
- errorId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof ackErrorApiV1AdminErrorsErrorIdAckPost>>, TError, TData>> & Pick<
+export function useAcknowledgeErrorApiV1AdminErrorsErrorIdAckPost<TData = Awaited<ReturnType<typeof acknowledgeErrorApiV1AdminErrorsErrorIdAckPost>>, TError = HTTPValidationError>(
+ errorId: string,
+    errorAckRequest: ErrorAckRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof acknowledgeErrorApiV1AdminErrorsErrorIdAckPost>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof ackErrorApiV1AdminErrorsErrorIdAckPost>>,
+          Awaited<ReturnType<typeof acknowledgeErrorApiV1AdminErrorsErrorIdAckPost>>,
           TError,
-          Awaited<ReturnType<typeof ackErrorApiV1AdminErrorsErrorIdAckPost>>
+          Awaited<ReturnType<typeof acknowledgeErrorApiV1AdminErrorsErrorIdAckPost>>
         > , 'initialData'
       >, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useAckErrorApiV1AdminErrorsErrorIdAckPost<TData = Awaited<ReturnType<typeof ackErrorApiV1AdminErrorsErrorIdAckPost>>, TError = HTTPValidationError>(
- errorId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ackErrorApiV1AdminErrorsErrorIdAckPost>>, TError, TData>> & Pick<
+export function useAcknowledgeErrorApiV1AdminErrorsErrorIdAckPost<TData = Awaited<ReturnType<typeof acknowledgeErrorApiV1AdminErrorsErrorIdAckPost>>, TError = HTTPValidationError>(
+ errorId: string,
+    errorAckRequest: ErrorAckRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof acknowledgeErrorApiV1AdminErrorsErrorIdAckPost>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof ackErrorApiV1AdminErrorsErrorIdAckPost>>,
+          Awaited<ReturnType<typeof acknowledgeErrorApiV1AdminErrorsErrorIdAckPost>>,
           TError,
-          Awaited<ReturnType<typeof ackErrorApiV1AdminErrorsErrorIdAckPost>>
+          Awaited<ReturnType<typeof acknowledgeErrorApiV1AdminErrorsErrorIdAckPost>>
         > , 'initialData'
       >, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useAckErrorApiV1AdminErrorsErrorIdAckPost<TData = Awaited<ReturnType<typeof ackErrorApiV1AdminErrorsErrorIdAckPost>>, TError = HTTPValidationError>(
- errorId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ackErrorApiV1AdminErrorsErrorIdAckPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function useAcknowledgeErrorApiV1AdminErrorsErrorIdAckPost<TData = Awaited<ReturnType<typeof acknowledgeErrorApiV1AdminErrorsErrorIdAckPost>>, TError = HTTPValidationError>(
+ errorId: string,
+    errorAckRequest: ErrorAckRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof acknowledgeErrorApiV1AdminErrorsErrorIdAckPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Ack Error
+ * @summary Acknowledge Error
  */
 
-export function useAckErrorApiV1AdminErrorsErrorIdAckPost<TData = Awaited<ReturnType<typeof ackErrorApiV1AdminErrorsErrorIdAckPost>>, TError = HTTPValidationError>(
- errorId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof ackErrorApiV1AdminErrorsErrorIdAckPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function useAcknowledgeErrorApiV1AdminErrorsErrorIdAckPost<TData = Awaited<ReturnType<typeof acknowledgeErrorApiV1AdminErrorsErrorIdAckPost>>, TError = HTTPValidationError>(
+ errorId: string,
+    errorAckRequest: ErrorAckRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof acknowledgeErrorApiV1AdminErrorsErrorIdAckPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getAckErrorApiV1AdminErrorsErrorIdAckPostQueryOptions(errorId,options)
+  const queryOptions = getAcknowledgeErrorApiV1AdminErrorsErrorIdAckPostQueryOptions(errorId,errorAckRequest,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -7928,33 +7966,376 @@ export function useAckErrorApiV1AdminErrorsErrorIdAckPost<TData = Awaited<Return
 
 
 
-export type listSettingsApiV1AdminSettingsGetResponse200 = {
-  data: SettingOut[]
+export type resolveErrorApiV1AdminErrorsErrorIdResolvePostResponse200 = {
+  data: ErrorResponse
   status: 200
+}
+
+export type resolveErrorApiV1AdminErrorsErrorIdResolvePostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type resolveErrorApiV1AdminErrorsErrorIdResolvePostResponseSuccess = (resolveErrorApiV1AdminErrorsErrorIdResolvePostResponse200) & {
+  headers: Headers;
+};
+export type resolveErrorApiV1AdminErrorsErrorIdResolvePostResponseError = (resolveErrorApiV1AdminErrorsErrorIdResolvePostResponse422) & {
+  headers: Headers;
+};
+
+export type resolveErrorApiV1AdminErrorsErrorIdResolvePostResponse = (resolveErrorApiV1AdminErrorsErrorIdResolvePostResponseSuccess | resolveErrorApiV1AdminErrorsErrorIdResolvePostResponseError)
+
+export const getResolveErrorApiV1AdminErrorsErrorIdResolvePostUrl = (errorId: string,) => {
+
+
+
+
+  return `/api/v1/admin/errors/${errorId}/resolve`
+}
+
+/**
+ * Mark error as resolved (acknowledged + removed from active).
+ * @summary Resolve Error
+ */
+export const resolveErrorApiV1AdminErrorsErrorIdResolvePost = async (errorId: string, options?: Parameters<typeof apiRequest>[1]): Promise<resolveErrorApiV1AdminErrorsErrorIdResolvePostResponse> => {
+
+  return apiRequest<resolveErrorApiV1AdminErrorsErrorIdResolvePostResponse>(getResolveErrorApiV1AdminErrorsErrorIdResolvePostUrl(errorId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getResolveErrorApiV1AdminErrorsErrorIdResolvePostQueryKey = (errorId: string,) => {
+    return [
+    'POST', `/api/v1/admin/errors/${errorId}/resolve`
+    ] as const;
+    }
+
+
+export const getResolveErrorApiV1AdminErrorsErrorIdResolvePostQueryOptions = <TData = Awaited<ReturnType<typeof resolveErrorApiV1AdminErrorsErrorIdResolvePost>>, TError = HTTPValidationError>(errorId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resolveErrorApiV1AdminErrorsErrorIdResolvePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getResolveErrorApiV1AdminErrorsErrorIdResolvePostQueryKey(errorId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof resolveErrorApiV1AdminErrorsErrorIdResolvePost>>> = ({ signal }) => resolveErrorApiV1AdminErrorsErrorIdResolvePost(errorId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: errorId !== null && errorId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof resolveErrorApiV1AdminErrorsErrorIdResolvePost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ResolveErrorApiV1AdminErrorsErrorIdResolvePostQueryResult = NonNullable<Awaited<ReturnType<typeof resolveErrorApiV1AdminErrorsErrorIdResolvePost>>>
+export type ResolveErrorApiV1AdminErrorsErrorIdResolvePostQueryError = HTTPValidationError
+
+
+export function useResolveErrorApiV1AdminErrorsErrorIdResolvePost<TData = Awaited<ReturnType<typeof resolveErrorApiV1AdminErrorsErrorIdResolvePost>>, TError = HTTPValidationError>(
+ errorId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof resolveErrorApiV1AdminErrorsErrorIdResolvePost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof resolveErrorApiV1AdminErrorsErrorIdResolvePost>>,
+          TError,
+          Awaited<ReturnType<typeof resolveErrorApiV1AdminErrorsErrorIdResolvePost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useResolveErrorApiV1AdminErrorsErrorIdResolvePost<TData = Awaited<ReturnType<typeof resolveErrorApiV1AdminErrorsErrorIdResolvePost>>, TError = HTTPValidationError>(
+ errorId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resolveErrorApiV1AdminErrorsErrorIdResolvePost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof resolveErrorApiV1AdminErrorsErrorIdResolvePost>>,
+          TError,
+          Awaited<ReturnType<typeof resolveErrorApiV1AdminErrorsErrorIdResolvePost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useResolveErrorApiV1AdminErrorsErrorIdResolvePost<TData = Awaited<ReturnType<typeof resolveErrorApiV1AdminErrorsErrorIdResolvePost>>, TError = HTTPValidationError>(
+ errorId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resolveErrorApiV1AdminErrorsErrorIdResolvePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Resolve Error
+ */
+
+export function useResolveErrorApiV1AdminErrorsErrorIdResolvePost<TData = Awaited<ReturnType<typeof resolveErrorApiV1AdminErrorsErrorIdResolvePost>>, TError = HTTPValidationError>(
+ errorId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resolveErrorApiV1AdminErrorsErrorIdResolvePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getResolveErrorApiV1AdminErrorsErrorIdResolvePostQueryOptions(errorId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type suppressErrorApiV1AdminErrorsErrorIdSuppressPostResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type suppressErrorApiV1AdminErrorsErrorIdSuppressPostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type suppressErrorApiV1AdminErrorsErrorIdSuppressPostResponseSuccess = (suppressErrorApiV1AdminErrorsErrorIdSuppressPostResponse200) & {
+  headers: Headers;
+};
+export type suppressErrorApiV1AdminErrorsErrorIdSuppressPostResponseError = (suppressErrorApiV1AdminErrorsErrorIdSuppressPostResponse422) & {
+  headers: Headers;
+};
+
+export type suppressErrorApiV1AdminErrorsErrorIdSuppressPostResponse = (suppressErrorApiV1AdminErrorsErrorIdSuppressPostResponseSuccess | suppressErrorApiV1AdminErrorsErrorIdSuppressPostResponseError)
+
+export const getSuppressErrorApiV1AdminErrorsErrorIdSuppressPostUrl = (errorId: string,) => {
+
+
+
+
+  return `/api/v1/admin/errors/${errorId}/suppress`
+}
+
+/**
+ * Suppress future occurrences of this error.
+ * @summary Suppress Error
+ */
+export const suppressErrorApiV1AdminErrorsErrorIdSuppressPost = async (errorId: string, options?: Parameters<typeof apiRequest>[1]): Promise<suppressErrorApiV1AdminErrorsErrorIdSuppressPostResponse> => {
+
+  return apiRequest<suppressErrorApiV1AdminErrorsErrorIdSuppressPostResponse>(getSuppressErrorApiV1AdminErrorsErrorIdSuppressPostUrl(errorId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getSuppressErrorApiV1AdminErrorsErrorIdSuppressPostQueryKey = (errorId: string,) => {
+    return [
+    'POST', `/api/v1/admin/errors/${errorId}/suppress`
+    ] as const;
+    }
+
+
+export const getSuppressErrorApiV1AdminErrorsErrorIdSuppressPostQueryOptions = <TData = Awaited<ReturnType<typeof suppressErrorApiV1AdminErrorsErrorIdSuppressPost>>, TError = HTTPValidationError>(errorId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof suppressErrorApiV1AdminErrorsErrorIdSuppressPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getSuppressErrorApiV1AdminErrorsErrorIdSuppressPostQueryKey(errorId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof suppressErrorApiV1AdminErrorsErrorIdSuppressPost>>> = ({ signal }) => suppressErrorApiV1AdminErrorsErrorIdSuppressPost(errorId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: errorId !== null && errorId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof suppressErrorApiV1AdminErrorsErrorIdSuppressPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type SuppressErrorApiV1AdminErrorsErrorIdSuppressPostQueryResult = NonNullable<Awaited<ReturnType<typeof suppressErrorApiV1AdminErrorsErrorIdSuppressPost>>>
+export type SuppressErrorApiV1AdminErrorsErrorIdSuppressPostQueryError = HTTPValidationError
+
+
+export function useSuppressErrorApiV1AdminErrorsErrorIdSuppressPost<TData = Awaited<ReturnType<typeof suppressErrorApiV1AdminErrorsErrorIdSuppressPost>>, TError = HTTPValidationError>(
+ errorId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof suppressErrorApiV1AdminErrorsErrorIdSuppressPost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof suppressErrorApiV1AdminErrorsErrorIdSuppressPost>>,
+          TError,
+          Awaited<ReturnType<typeof suppressErrorApiV1AdminErrorsErrorIdSuppressPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useSuppressErrorApiV1AdminErrorsErrorIdSuppressPost<TData = Awaited<ReturnType<typeof suppressErrorApiV1AdminErrorsErrorIdSuppressPost>>, TError = HTTPValidationError>(
+ errorId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof suppressErrorApiV1AdminErrorsErrorIdSuppressPost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof suppressErrorApiV1AdminErrorsErrorIdSuppressPost>>,
+          TError,
+          Awaited<ReturnType<typeof suppressErrorApiV1AdminErrorsErrorIdSuppressPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useSuppressErrorApiV1AdminErrorsErrorIdSuppressPost<TData = Awaited<ReturnType<typeof suppressErrorApiV1AdminErrorsErrorIdSuppressPost>>, TError = HTTPValidationError>(
+ errorId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof suppressErrorApiV1AdminErrorsErrorIdSuppressPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Suppress Error
+ */
+
+export function useSuppressErrorApiV1AdminErrorsErrorIdSuppressPost<TData = Awaited<ReturnType<typeof suppressErrorApiV1AdminErrorsErrorIdSuppressPost>>, TError = HTTPValidationError>(
+ errorId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof suppressErrorApiV1AdminErrorsErrorIdSuppressPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getSuppressErrorApiV1AdminErrorsErrorIdSuppressPostQueryOptions(errorId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type errorSummaryApiV1AdminErrorsSummaryGetResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type errorSummaryApiV1AdminErrorsSummaryGetResponseSuccess = (errorSummaryApiV1AdminErrorsSummaryGetResponse200) & {
+  headers: Headers;
+};
+;
+
+export type errorSummaryApiV1AdminErrorsSummaryGetResponse = (errorSummaryApiV1AdminErrorsSummaryGetResponseSuccess)
+
+export const getErrorSummaryApiV1AdminErrorsSummaryGetUrl = () => {
+
+
+
+
+  return `/api/v1/admin/errors/summary`
+}
+
+/**
+ * Get error summary statistics.
+ * @summary Error Summary
+ */
+export const errorSummaryApiV1AdminErrorsSummaryGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<errorSummaryApiV1AdminErrorsSummaryGetResponse> => {
+
+  return apiRequest<errorSummaryApiV1AdminErrorsSummaryGetResponse>(getErrorSummaryApiV1AdminErrorsSummaryGetUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getErrorSummaryApiV1AdminErrorsSummaryGetMutationKey = () => ['errorSummaryApiV1AdminErrorsSummaryGet'] as const;
+
+export const getErrorSummaryApiV1AdminErrorsSummaryGetMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof errorSummaryApiV1AdminErrorsSummaryGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof errorSummaryApiV1AdminErrorsSummaryGet>>, TError,void, TContext> => {
+
+const mutationKey = getErrorSummaryApiV1AdminErrorsSummaryGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof errorSummaryApiV1AdminErrorsSummaryGet>>, void> = () => {
+
+
+          return  errorSummaryApiV1AdminErrorsSummaryGet(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ErrorSummaryApiV1AdminErrorsSummaryGetMutationResult = NonNullable<Awaited<ReturnType<typeof errorSummaryApiV1AdminErrorsSummaryGet>>>
+
+    export type ErrorSummaryApiV1AdminErrorsSummaryGetMutationError = unknown
+
+
+    /**
+ * @summary Error Summary
+ */
+export const useErrorSummaryApiV1AdminErrorsSummaryGet = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof errorSummaryApiV1AdminErrorsSummaryGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof errorSummaryApiV1AdminErrorsSummaryGet>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getErrorSummaryApiV1AdminErrorsSummaryGetMutationOptions(options), queryClient);
+    }
+
+export type listSettingsApiV1AdminSettingsGetResponse200 = {
+  data: SettingResponse[]
+  status: 200
+}
+
+export type listSettingsApiV1AdminSettingsGetResponse422 = {
+  data: HTTPValidationError
+  status: 422
 }
 
 export type listSettingsApiV1AdminSettingsGetResponseSuccess = (listSettingsApiV1AdminSettingsGetResponse200) & {
   headers: Headers;
 };
-;
+export type listSettingsApiV1AdminSettingsGetResponseError = (listSettingsApiV1AdminSettingsGetResponse422) & {
+  headers: Headers;
+};
 
-export type listSettingsApiV1AdminSettingsGetResponse = (listSettingsApiV1AdminSettingsGetResponseSuccess)
+export type listSettingsApiV1AdminSettingsGetResponse = (listSettingsApiV1AdminSettingsGetResponseSuccess | listSettingsApiV1AdminSettingsGetResponseError)
 
-export const getListSettingsApiV1AdminSettingsGetUrl = () => {
+export const getListSettingsApiV1AdminSettingsGetUrl = (params?: ListSettingsApiV1AdminSettingsGetParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/v1/admin/settings`
+  return stringifiedParams.length > 0 ? `/api/v1/admin/settings?${stringifiedParams}` : `/api/v1/admin/settings`
 }
 
 /**
- * All persisted settings.
+ * List all settings.
  * @summary List Settings
  */
-export const listSettingsApiV1AdminSettingsGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<listSettingsApiV1AdminSettingsGetResponse> => {
+export const listSettingsApiV1AdminSettingsGet = async (params?: ListSettingsApiV1AdminSettingsGetParams, options?: Parameters<typeof apiRequest>[1]): Promise<listSettingsApiV1AdminSettingsGetResponse> => {
 
-  return apiRequest<listSettingsApiV1AdminSettingsGetResponse>(getListSettingsApiV1AdminSettingsGetUrl(),
+  return apiRequest<listSettingsApiV1AdminSettingsGetResponse>(getListSettingsApiV1AdminSettingsGetUrl(params),
   {
     ...options,
     method: 'GET'
@@ -7969,9 +8350,9 @@ export const listSettingsApiV1AdminSettingsGet = async ( options?: Parameters<ty
 
 export const getListSettingsApiV1AdminSettingsGetMutationKey = () => ['listSettingsApiV1AdminSettingsGet'] as const;
 
-export const getListSettingsApiV1AdminSettingsGetMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listSettingsApiV1AdminSettingsGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof listSettingsApiV1AdminSettingsGet>>, TError,void, TContext> => {
+export const getListSettingsApiV1AdminSettingsGetMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listSettingsApiV1AdminSettingsGet>>, TError,ListSettingsApiV1AdminSettingsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof listSettingsApiV1AdminSettingsGet>>, TError,ListSettingsApiV1AdminSettingsGetMutationVariables, TContext> => {
 
 const mutationKey = getListSettingsApiV1AdminSettingsGetMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -7983,10 +8364,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listSettingsApiV1AdminSettingsGet>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listSettingsApiV1AdminSettingsGet>>, ListSettingsApiV1AdminSettingsGetMutationVariables> = (props) => {
+          const {params} = props ?? {};
 
-
-          return  listSettingsApiV1AdminSettingsGet(requestOptions)
+          return  listSettingsApiV1AdminSettingsGet(params,requestOptions)
         }
 
 
@@ -7998,25 +8379,119 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ListSettingsApiV1AdminSettingsGetMutationResult = NonNullable<Awaited<ReturnType<typeof listSettingsApiV1AdminSettingsGet>>>
 
-    export type ListSettingsApiV1AdminSettingsGetMutationError = unknown
-
+    export type ListSettingsApiV1AdminSettingsGetMutationError = HTTPValidationError
+    export type ListSettingsApiV1AdminSettingsGetMutationVariables = {params?: ListSettingsApiV1AdminSettingsGetParams}
 
     /**
  * @summary List Settings
  */
-export const useListSettingsApiV1AdminSettingsGet = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listSettingsApiV1AdminSettingsGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const useListSettingsApiV1AdminSettingsGet = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listSettingsApiV1AdminSettingsGet>>, TError,ListSettingsApiV1AdminSettingsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof listSettingsApiV1AdminSettingsGet>>,
         TError,
-        void,
+        ListSettingsApiV1AdminSettingsGetMutationVariables,
         TContext
       > => {
       return useMutation(getListSettingsApiV1AdminSettingsGetMutationOptions(options), queryClient);
     }
 
+export type getSettingApiV1AdminSettingsKeyGetResponse200 = {
+  data: SettingResponse
+  status: 200
+}
+
+export type getSettingApiV1AdminSettingsKeyGetResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type getSettingApiV1AdminSettingsKeyGetResponseSuccess = (getSettingApiV1AdminSettingsKeyGetResponse200) & {
+  headers: Headers;
+};
+export type getSettingApiV1AdminSettingsKeyGetResponseError = (getSettingApiV1AdminSettingsKeyGetResponse422) & {
+  headers: Headers;
+};
+
+export type getSettingApiV1AdminSettingsKeyGetResponse = (getSettingApiV1AdminSettingsKeyGetResponseSuccess | getSettingApiV1AdminSettingsKeyGetResponseError)
+
+export const getGetSettingApiV1AdminSettingsKeyGetUrl = (key: string,) => {
+
+
+
+
+  return `/api/v1/admin/settings/${key}`
+}
+
+/**
+ * Get a specific setting.
+ * @summary Get Setting
+ */
+export const getSettingApiV1AdminSettingsKeyGet = async (key: string, options?: Parameters<typeof apiRequest>[1]): Promise<getSettingApiV1AdminSettingsKeyGetResponse> => {
+
+  return apiRequest<getSettingApiV1AdminSettingsKeyGetResponse>(getGetSettingApiV1AdminSettingsKeyGetUrl(key),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetSettingApiV1AdminSettingsKeyGetMutationKey = () => ['getSettingApiV1AdminSettingsKeyGet'] as const;
+
+export const getGetSettingApiV1AdminSettingsKeyGetMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getSettingApiV1AdminSettingsKeyGet>>, TError,GetSettingApiV1AdminSettingsKeyGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof getSettingApiV1AdminSettingsKeyGet>>, TError,GetSettingApiV1AdminSettingsKeyGetMutationVariables, TContext> => {
+
+const mutationKey = getGetSettingApiV1AdminSettingsKeyGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getSettingApiV1AdminSettingsKeyGet>>, GetSettingApiV1AdminSettingsKeyGetMutationVariables> = (props) => {
+          const {key} = props ?? {};
+
+          return  getSettingApiV1AdminSettingsKeyGet(key,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetSettingApiV1AdminSettingsKeyGetMutationResult = NonNullable<Awaited<ReturnType<typeof getSettingApiV1AdminSettingsKeyGet>>>
+
+    export type GetSettingApiV1AdminSettingsKeyGetMutationError = HTTPValidationError
+    export type GetSettingApiV1AdminSettingsKeyGetMutationVariables = {key: string}
+
+    /**
+ * @summary Get Setting
+ */
+export const useGetSettingApiV1AdminSettingsKeyGet = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getSettingApiV1AdminSettingsKeyGet>>, TError,GetSettingApiV1AdminSettingsKeyGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getSettingApiV1AdminSettingsKeyGet>>,
+        TError,
+        GetSettingApiV1AdminSettingsKeyGetMutationVariables,
+        TContext
+      > => {
+      return useMutation(getGetSettingApiV1AdminSettingsKeyGetMutationOptions(options), queryClient);
+    }
+
 export type updateSettingApiV1AdminSettingsKeyPutResponse200 = {
-  data: SettingOut
+  data: SettingResponse
   status: 200
 }
 
@@ -8043,7 +8518,7 @@ export const getUpdateSettingApiV1AdminSettingsKeyPutUrl = (key: string,) => {
 }
 
 /**
- * Create or update a global setting (audited).
+ * Update a setting.
  * @summary Update Setting
  */
 export const updateSettingApiV1AdminSettingsKeyPut = async (key: string,
@@ -8157,8 +8632,264 @@ export function useUpdateSettingApiV1AdminSettingsKeyPut<TData = Awaited<ReturnT
 
 
 
+export type deleteSettingApiV1AdminSettingsKeyDeleteResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type deleteSettingApiV1AdminSettingsKeyDeleteResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type deleteSettingApiV1AdminSettingsKeyDeleteResponseSuccess = (deleteSettingApiV1AdminSettingsKeyDeleteResponse200) & {
+  headers: Headers;
+};
+export type deleteSettingApiV1AdminSettingsKeyDeleteResponseError = (deleteSettingApiV1AdminSettingsKeyDeleteResponse422) & {
+  headers: Headers;
+};
+
+export type deleteSettingApiV1AdminSettingsKeyDeleteResponse = (deleteSettingApiV1AdminSettingsKeyDeleteResponseSuccess | deleteSettingApiV1AdminSettingsKeyDeleteResponseError)
+
+export const getDeleteSettingApiV1AdminSettingsKeyDeleteUrl = (key: string,) => {
+
+
+
+
+  return `/api/v1/admin/settings/${key}`
+}
+
+/**
+ * Delete a setting.
+ * @summary Delete Setting
+ */
+export const deleteSettingApiV1AdminSettingsKeyDelete = async (key: string, options?: Parameters<typeof apiRequest>[1]): Promise<deleteSettingApiV1AdminSettingsKeyDeleteResponse> => {
+
+  return apiRequest<deleteSettingApiV1AdminSettingsKeyDeleteResponse>(getDeleteSettingApiV1AdminSettingsKeyDeleteUrl(key),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getDeleteSettingApiV1AdminSettingsKeyDeleteQueryKey = (key: string,) => {
+    return [
+    'DELETE', `/api/v1/admin/settings/${key}`
+    ] as const;
+    }
+
+
+export const getDeleteSettingApiV1AdminSettingsKeyDeleteQueryOptions = <TData = Awaited<ReturnType<typeof deleteSettingApiV1AdminSettingsKeyDelete>>, TError = HTTPValidationError>(key: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteSettingApiV1AdminSettingsKeyDelete>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getDeleteSettingApiV1AdminSettingsKeyDeleteQueryKey(key);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof deleteSettingApiV1AdminSettingsKeyDelete>>> = ({ signal }) => deleteSettingApiV1AdminSettingsKeyDelete(key, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: key !== null && key !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof deleteSettingApiV1AdminSettingsKeyDelete>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type DeleteSettingApiV1AdminSettingsKeyDeleteQueryResult = NonNullable<Awaited<ReturnType<typeof deleteSettingApiV1AdminSettingsKeyDelete>>>
+export type DeleteSettingApiV1AdminSettingsKeyDeleteQueryError = HTTPValidationError
+
+
+export function useDeleteSettingApiV1AdminSettingsKeyDelete<TData = Awaited<ReturnType<typeof deleteSettingApiV1AdminSettingsKeyDelete>>, TError = HTTPValidationError>(
+ key: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteSettingApiV1AdminSettingsKeyDelete>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof deleteSettingApiV1AdminSettingsKeyDelete>>,
+          TError,
+          Awaited<ReturnType<typeof deleteSettingApiV1AdminSettingsKeyDelete>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useDeleteSettingApiV1AdminSettingsKeyDelete<TData = Awaited<ReturnType<typeof deleteSettingApiV1AdminSettingsKeyDelete>>, TError = HTTPValidationError>(
+ key: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteSettingApiV1AdminSettingsKeyDelete>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof deleteSettingApiV1AdminSettingsKeyDelete>>,
+          TError,
+          Awaited<ReturnType<typeof deleteSettingApiV1AdminSettingsKeyDelete>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useDeleteSettingApiV1AdminSettingsKeyDelete<TData = Awaited<ReturnType<typeof deleteSettingApiV1AdminSettingsKeyDelete>>, TError = HTTPValidationError>(
+ key: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteSettingApiV1AdminSettingsKeyDelete>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Delete Setting
+ */
+
+export function useDeleteSettingApiV1AdminSettingsKeyDelete<TData = Awaited<ReturnType<typeof deleteSettingApiV1AdminSettingsKeyDelete>>, TError = HTTPValidationError>(
+ key: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteSettingApiV1AdminSettingsKeyDelete>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getDeleteSettingApiV1AdminSettingsKeyDeleteQueryOptions(key,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type bulkUpdateSettingsApiV1AdminSettingsBulkPostResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type bulkUpdateSettingsApiV1AdminSettingsBulkPostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type bulkUpdateSettingsApiV1AdminSettingsBulkPostResponseSuccess = (bulkUpdateSettingsApiV1AdminSettingsBulkPostResponse200) & {
+  headers: Headers;
+};
+export type bulkUpdateSettingsApiV1AdminSettingsBulkPostResponseError = (bulkUpdateSettingsApiV1AdminSettingsBulkPostResponse422) & {
+  headers: Headers;
+};
+
+export type bulkUpdateSettingsApiV1AdminSettingsBulkPostResponse = (bulkUpdateSettingsApiV1AdminSettingsBulkPostResponseSuccess | bulkUpdateSettingsApiV1AdminSettingsBulkPostResponseError)
+
+export const getBulkUpdateSettingsApiV1AdminSettingsBulkPostUrl = () => {
+
+
+
+
+  return `/api/v1/admin/settings/bulk`
+}
+
+/**
+ * Bulk update settings.
+ * @summary Bulk Update Settings
+ */
+export const bulkUpdateSettingsApiV1AdminSettingsBulkPost = async (bulkUpdateSettingsApiV1AdminSettingsBulkPostBody: BulkUpdateSettingsApiV1AdminSettingsBulkPostBody, options?: Parameters<typeof apiRequest>[1]): Promise<bulkUpdateSettingsApiV1AdminSettingsBulkPostResponse> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiRequest<bulkUpdateSettingsApiV1AdminSettingsBulkPostResponse>(getBulkUpdateSettingsApiV1AdminSettingsBulkPostUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(bulkUpdateSettingsApiV1AdminSettingsBulkPostBody)
+  }
+);}
+
+
+
+
+
+export const getBulkUpdateSettingsApiV1AdminSettingsBulkPostQueryKey = (bulkUpdateSettingsApiV1AdminSettingsBulkPostBody?: BulkUpdateSettingsApiV1AdminSettingsBulkPostBody,) => {
+    return [
+    'POST', `/api/v1/admin/settings/bulk`, bulkUpdateSettingsApiV1AdminSettingsBulkPostBody
+    ] as const;
+    }
+
+
+export const getBulkUpdateSettingsApiV1AdminSettingsBulkPostQueryOptions = <TData = Awaited<ReturnType<typeof bulkUpdateSettingsApiV1AdminSettingsBulkPost>>, TError = HTTPValidationError>(bulkUpdateSettingsApiV1AdminSettingsBulkPostBody: BulkUpdateSettingsApiV1AdminSettingsBulkPostBody, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkUpdateSettingsApiV1AdminSettingsBulkPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getBulkUpdateSettingsApiV1AdminSettingsBulkPostQueryKey(bulkUpdateSettingsApiV1AdminSettingsBulkPostBody);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof bulkUpdateSettingsApiV1AdminSettingsBulkPost>>> = ({ signal }) => bulkUpdateSettingsApiV1AdminSettingsBulkPost(bulkUpdateSettingsApiV1AdminSettingsBulkPostBody, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof bulkUpdateSettingsApiV1AdminSettingsBulkPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type BulkUpdateSettingsApiV1AdminSettingsBulkPostQueryResult = NonNullable<Awaited<ReturnType<typeof bulkUpdateSettingsApiV1AdminSettingsBulkPost>>>
+export type BulkUpdateSettingsApiV1AdminSettingsBulkPostQueryError = HTTPValidationError
+
+
+export function useBulkUpdateSettingsApiV1AdminSettingsBulkPost<TData = Awaited<ReturnType<typeof bulkUpdateSettingsApiV1AdminSettingsBulkPost>>, TError = HTTPValidationError>(
+ bulkUpdateSettingsApiV1AdminSettingsBulkPostBody: BulkUpdateSettingsApiV1AdminSettingsBulkPostBody, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkUpdateSettingsApiV1AdminSettingsBulkPost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof bulkUpdateSettingsApiV1AdminSettingsBulkPost>>,
+          TError,
+          Awaited<ReturnType<typeof bulkUpdateSettingsApiV1AdminSettingsBulkPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useBulkUpdateSettingsApiV1AdminSettingsBulkPost<TData = Awaited<ReturnType<typeof bulkUpdateSettingsApiV1AdminSettingsBulkPost>>, TError = HTTPValidationError>(
+ bulkUpdateSettingsApiV1AdminSettingsBulkPostBody: BulkUpdateSettingsApiV1AdminSettingsBulkPostBody, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkUpdateSettingsApiV1AdminSettingsBulkPost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof bulkUpdateSettingsApiV1AdminSettingsBulkPost>>,
+          TError,
+          Awaited<ReturnType<typeof bulkUpdateSettingsApiV1AdminSettingsBulkPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useBulkUpdateSettingsApiV1AdminSettingsBulkPost<TData = Awaited<ReturnType<typeof bulkUpdateSettingsApiV1AdminSettingsBulkPost>>, TError = HTTPValidationError>(
+ bulkUpdateSettingsApiV1AdminSettingsBulkPostBody: BulkUpdateSettingsApiV1AdminSettingsBulkPostBody, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkUpdateSettingsApiV1AdminSettingsBulkPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Bulk Update Settings
+ */
+
+export function useBulkUpdateSettingsApiV1AdminSettingsBulkPost<TData = Awaited<ReturnType<typeof bulkUpdateSettingsApiV1AdminSettingsBulkPost>>, TError = HTTPValidationError>(
+ bulkUpdateSettingsApiV1AdminSettingsBulkPostBody: BulkUpdateSettingsApiV1AdminSettingsBulkPostBody, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof bulkUpdateSettingsApiV1AdminSettingsBulkPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getBulkUpdateSettingsApiV1AdminSettingsBulkPostQueryOptions(bulkUpdateSettingsApiV1AdminSettingsBulkPostBody,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
 export type listModelsApiV1AdminModelsGetResponse200 = {
-  data: ListModelsApiV1AdminModelsGet200
+  data: ModelResponse[]
   status: 200
 }
 
@@ -8178,7 +8909,7 @@ export const getListModelsApiV1AdminModelsGetUrl = () => {
 }
 
 /**
- * List Ollama models + loaded state. Never fabricates: unreachable -> honest flags.
+ * List all available Ollama models.
  * @summary List Models
  */
 export const listModelsApiV1AdminModelsGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<listModelsApiV1AdminModelsGetResponse> => {
@@ -8244,40 +8975,255 @@ export const useListModelsApiV1AdminModelsGet = <TError = unknown,
       return useMutation(getListModelsApiV1AdminModelsGetMutationOptions(options), queryClient);
     }
 
-export type stopModelApiV1AdminModelsModelNameStopPostResponse200 = {
-  data: StopModelApiV1AdminModelsModelNameStopPost200
+export type getModelApiV1AdminModelsNameGetResponse200 = {
+  data: ModelResponse
   status: 200
 }
 
-export type stopModelApiV1AdminModelsModelNameStopPostResponse422 = {
+export type getModelApiV1AdminModelsNameGetResponse422 = {
   data: HTTPValidationError
   status: 422
 }
 
-export type stopModelApiV1AdminModelsModelNameStopPostResponseSuccess = (stopModelApiV1AdminModelsModelNameStopPostResponse200) & {
+export type getModelApiV1AdminModelsNameGetResponseSuccess = (getModelApiV1AdminModelsNameGetResponse200) & {
   headers: Headers;
 };
-export type stopModelApiV1AdminModelsModelNameStopPostResponseError = (stopModelApiV1AdminModelsModelNameStopPostResponse422) & {
+export type getModelApiV1AdminModelsNameGetResponseError = (getModelApiV1AdminModelsNameGetResponse422) & {
   headers: Headers;
 };
 
-export type stopModelApiV1AdminModelsModelNameStopPostResponse = (stopModelApiV1AdminModelsModelNameStopPostResponseSuccess | stopModelApiV1AdminModelsModelNameStopPostResponseError)
+export type getModelApiV1AdminModelsNameGetResponse = (getModelApiV1AdminModelsNameGetResponseSuccess | getModelApiV1AdminModelsNameGetResponseError)
 
-export const getStopModelApiV1AdminModelsModelNameStopPostUrl = (modelName: string,) => {
-
-
+export const getGetModelApiV1AdminModelsNameGetUrl = (name: string,) => {
 
 
-  return `/api/v1/admin/models/${modelName}/stop`
+
+
+  return `/api/v1/admin/models/${name}`
 }
 
 /**
- * Unload a loaded model from memory (keep_alive=0). Audited.
- * @summary Stop Model
+ * Get model details.
+ * @summary Get Model
  */
-export const stopModelApiV1AdminModelsModelNameStopPost = async (modelName: string, options?: Parameters<typeof apiRequest>[1]): Promise<stopModelApiV1AdminModelsModelNameStopPostResponse> => {
+export const getModelApiV1AdminModelsNameGet = async (name: string, options?: Parameters<typeof apiRequest>[1]): Promise<getModelApiV1AdminModelsNameGetResponse> => {
 
-  return apiRequest<stopModelApiV1AdminModelsModelNameStopPostResponse>(getStopModelApiV1AdminModelsModelNameStopPostUrl(modelName),
+  return apiRequest<getModelApiV1AdminModelsNameGetResponse>(getGetModelApiV1AdminModelsNameGetUrl(name),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetModelApiV1AdminModelsNameGetMutationKey = () => ['getModelApiV1AdminModelsNameGet'] as const;
+
+export const getGetModelApiV1AdminModelsNameGetMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getModelApiV1AdminModelsNameGet>>, TError,GetModelApiV1AdminModelsNameGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof getModelApiV1AdminModelsNameGet>>, TError,GetModelApiV1AdminModelsNameGetMutationVariables, TContext> => {
+
+const mutationKey = getGetModelApiV1AdminModelsNameGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getModelApiV1AdminModelsNameGet>>, GetModelApiV1AdminModelsNameGetMutationVariables> = (props) => {
+          const {name} = props ?? {};
+
+          return  getModelApiV1AdminModelsNameGet(name,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetModelApiV1AdminModelsNameGetMutationResult = NonNullable<Awaited<ReturnType<typeof getModelApiV1AdminModelsNameGet>>>
+
+    export type GetModelApiV1AdminModelsNameGetMutationError = HTTPValidationError
+    export type GetModelApiV1AdminModelsNameGetMutationVariables = {name: string}
+
+    /**
+ * @summary Get Model
+ */
+export const useGetModelApiV1AdminModelsNameGet = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getModelApiV1AdminModelsNameGet>>, TError,GetModelApiV1AdminModelsNameGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getModelApiV1AdminModelsNameGet>>,
+        TError,
+        GetModelApiV1AdminModelsNameGetMutationVariables,
+        TContext
+      > => {
+      return useMutation(getGetModelApiV1AdminModelsNameGetMutationOptions(options), queryClient);
+    }
+
+export type deleteModelApiV1AdminModelsNameDeleteResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type deleteModelApiV1AdminModelsNameDeleteResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type deleteModelApiV1AdminModelsNameDeleteResponseSuccess = (deleteModelApiV1AdminModelsNameDeleteResponse200) & {
+  headers: Headers;
+};
+export type deleteModelApiV1AdminModelsNameDeleteResponseError = (deleteModelApiV1AdminModelsNameDeleteResponse422) & {
+  headers: Headers;
+};
+
+export type deleteModelApiV1AdminModelsNameDeleteResponse = (deleteModelApiV1AdminModelsNameDeleteResponseSuccess | deleteModelApiV1AdminModelsNameDeleteResponseError)
+
+export const getDeleteModelApiV1AdminModelsNameDeleteUrl = (name: string,) => {
+
+
+
+
+  return `/api/v1/admin/models/${name}`
+}
+
+/**
+ * Delete a model from local storage.
+ * @summary Delete Model
+ */
+export const deleteModelApiV1AdminModelsNameDelete = async (name: string, options?: Parameters<typeof apiRequest>[1]): Promise<deleteModelApiV1AdminModelsNameDeleteResponse> => {
+
+  return apiRequest<deleteModelApiV1AdminModelsNameDeleteResponse>(getDeleteModelApiV1AdminModelsNameDeleteUrl(name),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getDeleteModelApiV1AdminModelsNameDeleteQueryKey = (name: string,) => {
+    return [
+    'DELETE', `/api/v1/admin/models/${name}`
+    ] as const;
+    }
+
+
+export const getDeleteModelApiV1AdminModelsNameDeleteQueryOptions = <TData = Awaited<ReturnType<typeof deleteModelApiV1AdminModelsNameDelete>>, TError = HTTPValidationError>(name: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteModelApiV1AdminModelsNameDelete>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getDeleteModelApiV1AdminModelsNameDeleteQueryKey(name);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof deleteModelApiV1AdminModelsNameDelete>>> = ({ signal }) => deleteModelApiV1AdminModelsNameDelete(name, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: name !== null && name !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof deleteModelApiV1AdminModelsNameDelete>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type DeleteModelApiV1AdminModelsNameDeleteQueryResult = NonNullable<Awaited<ReturnType<typeof deleteModelApiV1AdminModelsNameDelete>>>
+export type DeleteModelApiV1AdminModelsNameDeleteQueryError = HTTPValidationError
+
+
+export function useDeleteModelApiV1AdminModelsNameDelete<TData = Awaited<ReturnType<typeof deleteModelApiV1AdminModelsNameDelete>>, TError = HTTPValidationError>(
+ name: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteModelApiV1AdminModelsNameDelete>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof deleteModelApiV1AdminModelsNameDelete>>,
+          TError,
+          Awaited<ReturnType<typeof deleteModelApiV1AdminModelsNameDelete>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useDeleteModelApiV1AdminModelsNameDelete<TData = Awaited<ReturnType<typeof deleteModelApiV1AdminModelsNameDelete>>, TError = HTTPValidationError>(
+ name: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteModelApiV1AdminModelsNameDelete>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof deleteModelApiV1AdminModelsNameDelete>>,
+          TError,
+          Awaited<ReturnType<typeof deleteModelApiV1AdminModelsNameDelete>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useDeleteModelApiV1AdminModelsNameDelete<TData = Awaited<ReturnType<typeof deleteModelApiV1AdminModelsNameDelete>>, TError = HTTPValidationError>(
+ name: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteModelApiV1AdminModelsNameDelete>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Delete Model
+ */
+
+export function useDeleteModelApiV1AdminModelsNameDelete<TData = Awaited<ReturnType<typeof deleteModelApiV1AdminModelsNameDelete>>, TError = HTTPValidationError>(
+ name: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteModelApiV1AdminModelsNameDelete>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getDeleteModelApiV1AdminModelsNameDeleteQueryOptions(name,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type pullModelApiV1AdminModelsNamePullPostResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type pullModelApiV1AdminModelsNamePullPostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type pullModelApiV1AdminModelsNamePullPostResponseSuccess = (pullModelApiV1AdminModelsNamePullPostResponse200) & {
+  headers: Headers;
+};
+export type pullModelApiV1AdminModelsNamePullPostResponseError = (pullModelApiV1AdminModelsNamePullPostResponse422) & {
+  headers: Headers;
+};
+
+export type pullModelApiV1AdminModelsNamePullPostResponse = (pullModelApiV1AdminModelsNamePullPostResponseSuccess | pullModelApiV1AdminModelsNamePullPostResponseError)
+
+export const getPullModelApiV1AdminModelsNamePullPostUrl = (name: string,) => {
+
+
+
+
+  return `/api/v1/admin/models/${name}/pull`
+}
+
+/**
+ * Pull/download a model from Ollama registry.
+ * @summary Pull Model
+ */
+export const pullModelApiV1AdminModelsNamePullPost = async (name: string, options?: Parameters<typeof apiRequest>[1]): Promise<pullModelApiV1AdminModelsNamePullPostResponse> => {
+
+  return apiRequest<pullModelApiV1AdminModelsNamePullPostResponse>(getPullModelApiV1AdminModelsNamePullPostUrl(name),
   {
     ...options,
     method: 'POST'
@@ -8290,69 +9236,69 @@ export const stopModelApiV1AdminModelsModelNameStopPost = async (modelName: stri
 
 
 
-export const getStopModelApiV1AdminModelsModelNameStopPostQueryKey = (modelName: string,) => {
+export const getPullModelApiV1AdminModelsNamePullPostQueryKey = (name: string,) => {
     return [
-    'POST', `/api/v1/admin/models/${modelName}/stop`
+    'POST', `/api/v1/admin/models/${name}/pull`
     ] as const;
     }
 
 
-export const getStopModelApiV1AdminModelsModelNameStopPostQueryOptions = <TData = Awaited<ReturnType<typeof stopModelApiV1AdminModelsModelNameStopPost>>, TError = HTTPValidationError>(modelName: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof stopModelApiV1AdminModelsModelNameStopPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getPullModelApiV1AdminModelsNamePullPostQueryOptions = <TData = Awaited<ReturnType<typeof pullModelApiV1AdminModelsNamePullPost>>, TError = HTTPValidationError>(name: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pullModelApiV1AdminModelsNamePullPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getStopModelApiV1AdminModelsModelNameStopPostQueryKey(modelName);
+  const queryKey =  queryOptions?.queryKey ?? getPullModelApiV1AdminModelsNamePullPostQueryKey(name);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof stopModelApiV1AdminModelsModelNameStopPost>>> = ({ signal }) => stopModelApiV1AdminModelsModelNameStopPost(modelName, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof pullModelApiV1AdminModelsNamePullPost>>> = ({ signal }) => pullModelApiV1AdminModelsNamePullPost(name, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, enabled: modelName !== null && modelName !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof stopModelApiV1AdminModelsModelNameStopPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: name !== null && name !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof pullModelApiV1AdminModelsNamePullPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type StopModelApiV1AdminModelsModelNameStopPostQueryResult = NonNullable<Awaited<ReturnType<typeof stopModelApiV1AdminModelsModelNameStopPost>>>
-export type StopModelApiV1AdminModelsModelNameStopPostQueryError = HTTPValidationError
+export type PullModelApiV1AdminModelsNamePullPostQueryResult = NonNullable<Awaited<ReturnType<typeof pullModelApiV1AdminModelsNamePullPost>>>
+export type PullModelApiV1AdminModelsNamePullPostQueryError = HTTPValidationError
 
 
-export function useStopModelApiV1AdminModelsModelNameStopPost<TData = Awaited<ReturnType<typeof stopModelApiV1AdminModelsModelNameStopPost>>, TError = HTTPValidationError>(
- modelName: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof stopModelApiV1AdminModelsModelNameStopPost>>, TError, TData>> & Pick<
+export function usePullModelApiV1AdminModelsNamePullPost<TData = Awaited<ReturnType<typeof pullModelApiV1AdminModelsNamePullPost>>, TError = HTTPValidationError>(
+ name: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof pullModelApiV1AdminModelsNamePullPost>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof stopModelApiV1AdminModelsModelNameStopPost>>,
+          Awaited<ReturnType<typeof pullModelApiV1AdminModelsNamePullPost>>,
           TError,
-          Awaited<ReturnType<typeof stopModelApiV1AdminModelsModelNameStopPost>>
+          Awaited<ReturnType<typeof pullModelApiV1AdminModelsNamePullPost>>
         > , 'initialData'
       >, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useStopModelApiV1AdminModelsModelNameStopPost<TData = Awaited<ReturnType<typeof stopModelApiV1AdminModelsModelNameStopPost>>, TError = HTTPValidationError>(
- modelName: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof stopModelApiV1AdminModelsModelNameStopPost>>, TError, TData>> & Pick<
+export function usePullModelApiV1AdminModelsNamePullPost<TData = Awaited<ReturnType<typeof pullModelApiV1AdminModelsNamePullPost>>, TError = HTTPValidationError>(
+ name: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pullModelApiV1AdminModelsNamePullPost>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof stopModelApiV1AdminModelsModelNameStopPost>>,
+          Awaited<ReturnType<typeof pullModelApiV1AdminModelsNamePullPost>>,
           TError,
-          Awaited<ReturnType<typeof stopModelApiV1AdminModelsModelNameStopPost>>
+          Awaited<ReturnType<typeof pullModelApiV1AdminModelsNamePullPost>>
         > , 'initialData'
       >, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useStopModelApiV1AdminModelsModelNameStopPost<TData = Awaited<ReturnType<typeof stopModelApiV1AdminModelsModelNameStopPost>>, TError = HTTPValidationError>(
- modelName: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof stopModelApiV1AdminModelsModelNameStopPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function usePullModelApiV1AdminModelsNamePullPost<TData = Awaited<ReturnType<typeof pullModelApiV1AdminModelsNamePullPost>>, TError = HTTPValidationError>(
+ name: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pullModelApiV1AdminModelsNamePullPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Stop Model
+ * @summary Pull Model
  */
 
-export function useStopModelApiV1AdminModelsModelNameStopPost<TData = Awaited<ReturnType<typeof stopModelApiV1AdminModelsModelNameStopPost>>, TError = HTTPValidationError>(
- modelName: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof stopModelApiV1AdminModelsModelNameStopPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function usePullModelApiV1AdminModelsNamePullPost<TData = Awaited<ReturnType<typeof pullModelApiV1AdminModelsNamePullPost>>, TError = HTTPValidationError>(
+ name: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pullModelApiV1AdminModelsNamePullPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getStopModelApiV1AdminModelsModelNameStopPostQueryOptions(modelName,options)
+  const queryOptions = getPullModelApiV1AdminModelsNamePullPostQueryOptions(name,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -8365,19 +9311,261 @@ export function useStopModelApiV1AdminModelsModelNameStopPost<TData = Awaited<Re
 
 
 
-export type adminOverviewApiV1AdminOverviewGetResponse200 = {
-  data: AdminOverviewApiV1AdminOverviewGet200
+export type stopModelApiV1AdminModelsNameStopPostResponse200 = {
+  data: unknown
   status: 200
 }
 
-export type adminOverviewApiV1AdminOverviewGetResponseSuccess = (adminOverviewApiV1AdminOverviewGetResponse200) & {
+export type stopModelApiV1AdminModelsNameStopPostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type stopModelApiV1AdminModelsNameStopPostResponseSuccess = (stopModelApiV1AdminModelsNameStopPostResponse200) & {
+  headers: Headers;
+};
+export type stopModelApiV1AdminModelsNameStopPostResponseError = (stopModelApiV1AdminModelsNameStopPostResponse422) & {
+  headers: Headers;
+};
+
+export type stopModelApiV1AdminModelsNameStopPostResponse = (stopModelApiV1AdminModelsNameStopPostResponseSuccess | stopModelApiV1AdminModelsNameStopPostResponseError)
+
+export const getStopModelApiV1AdminModelsNameStopPostUrl = (name: string,) => {
+
+
+
+
+  return `/api/v1/admin/models/${name}/stop`
+}
+
+/**
+ * Unload a model from memory.
+ * @summary Stop Model
+ */
+export const stopModelApiV1AdminModelsNameStopPost = async (name: string, options?: Parameters<typeof apiRequest>[1]): Promise<stopModelApiV1AdminModelsNameStopPostResponse> => {
+
+  return apiRequest<stopModelApiV1AdminModelsNameStopPostResponse>(getStopModelApiV1AdminModelsNameStopPostUrl(name),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getStopModelApiV1AdminModelsNameStopPostQueryKey = (name: string,) => {
+    return [
+    'POST', `/api/v1/admin/models/${name}/stop`
+    ] as const;
+    }
+
+
+export const getStopModelApiV1AdminModelsNameStopPostQueryOptions = <TData = Awaited<ReturnType<typeof stopModelApiV1AdminModelsNameStopPost>>, TError = HTTPValidationError>(name: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof stopModelApiV1AdminModelsNameStopPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getStopModelApiV1AdminModelsNameStopPostQueryKey(name);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof stopModelApiV1AdminModelsNameStopPost>>> = ({ signal }) => stopModelApiV1AdminModelsNameStopPost(name, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: name !== null && name !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof stopModelApiV1AdminModelsNameStopPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type StopModelApiV1AdminModelsNameStopPostQueryResult = NonNullable<Awaited<ReturnType<typeof stopModelApiV1AdminModelsNameStopPost>>>
+export type StopModelApiV1AdminModelsNameStopPostQueryError = HTTPValidationError
+
+
+export function useStopModelApiV1AdminModelsNameStopPost<TData = Awaited<ReturnType<typeof stopModelApiV1AdminModelsNameStopPost>>, TError = HTTPValidationError>(
+ name: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof stopModelApiV1AdminModelsNameStopPost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof stopModelApiV1AdminModelsNameStopPost>>,
+          TError,
+          Awaited<ReturnType<typeof stopModelApiV1AdminModelsNameStopPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useStopModelApiV1AdminModelsNameStopPost<TData = Awaited<ReturnType<typeof stopModelApiV1AdminModelsNameStopPost>>, TError = HTTPValidationError>(
+ name: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof stopModelApiV1AdminModelsNameStopPost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof stopModelApiV1AdminModelsNameStopPost>>,
+          TError,
+          Awaited<ReturnType<typeof stopModelApiV1AdminModelsNameStopPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useStopModelApiV1AdminModelsNameStopPost<TData = Awaited<ReturnType<typeof stopModelApiV1AdminModelsNameStopPost>>, TError = HTTPValidationError>(
+ name: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof stopModelApiV1AdminModelsNameStopPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Stop Model
+ */
+
+export function useStopModelApiV1AdminModelsNameStopPost<TData = Awaited<ReturnType<typeof stopModelApiV1AdminModelsNameStopPost>>, TError = HTTPValidationError>(
+ name: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof stopModelApiV1AdminModelsNameStopPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getStopModelApiV1AdminModelsNameStopPostQueryOptions(name,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type loadModelApiV1AdminModelsNameLoadPostResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type loadModelApiV1AdminModelsNameLoadPostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type loadModelApiV1AdminModelsNameLoadPostResponseSuccess = (loadModelApiV1AdminModelsNameLoadPostResponse200) & {
+  headers: Headers;
+};
+export type loadModelApiV1AdminModelsNameLoadPostResponseError = (loadModelApiV1AdminModelsNameLoadPostResponse422) & {
+  headers: Headers;
+};
+
+export type loadModelApiV1AdminModelsNameLoadPostResponse = (loadModelApiV1AdminModelsNameLoadPostResponseSuccess | loadModelApiV1AdminModelsNameLoadPostResponseError)
+
+export const getLoadModelApiV1AdminModelsNameLoadPostUrl = (name: string,) => {
+
+
+
+
+  return `/api/v1/admin/models/${name}/load`
+}
+
+/**
+ * Load a model into memory.
+ * @summary Load Model
+ */
+export const loadModelApiV1AdminModelsNameLoadPost = async (name: string, options?: Parameters<typeof apiRequest>[1]): Promise<loadModelApiV1AdminModelsNameLoadPostResponse> => {
+
+  return apiRequest<loadModelApiV1AdminModelsNameLoadPostResponse>(getLoadModelApiV1AdminModelsNameLoadPostUrl(name),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getLoadModelApiV1AdminModelsNameLoadPostQueryKey = (name: string,) => {
+    return [
+    'POST', `/api/v1/admin/models/${name}/load`
+    ] as const;
+    }
+
+
+export const getLoadModelApiV1AdminModelsNameLoadPostQueryOptions = <TData = Awaited<ReturnType<typeof loadModelApiV1AdminModelsNameLoadPost>>, TError = HTTPValidationError>(name: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof loadModelApiV1AdminModelsNameLoadPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getLoadModelApiV1AdminModelsNameLoadPostQueryKey(name);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof loadModelApiV1AdminModelsNameLoadPost>>> = ({ signal }) => loadModelApiV1AdminModelsNameLoadPost(name, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: name !== null && name !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof loadModelApiV1AdminModelsNameLoadPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type LoadModelApiV1AdminModelsNameLoadPostQueryResult = NonNullable<Awaited<ReturnType<typeof loadModelApiV1AdminModelsNameLoadPost>>>
+export type LoadModelApiV1AdminModelsNameLoadPostQueryError = HTTPValidationError
+
+
+export function useLoadModelApiV1AdminModelsNameLoadPost<TData = Awaited<ReturnType<typeof loadModelApiV1AdminModelsNameLoadPost>>, TError = HTTPValidationError>(
+ name: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof loadModelApiV1AdminModelsNameLoadPost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof loadModelApiV1AdminModelsNameLoadPost>>,
+          TError,
+          Awaited<ReturnType<typeof loadModelApiV1AdminModelsNameLoadPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useLoadModelApiV1AdminModelsNameLoadPost<TData = Awaited<ReturnType<typeof loadModelApiV1AdminModelsNameLoadPost>>, TError = HTTPValidationError>(
+ name: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof loadModelApiV1AdminModelsNameLoadPost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof loadModelApiV1AdminModelsNameLoadPost>>,
+          TError,
+          Awaited<ReturnType<typeof loadModelApiV1AdminModelsNameLoadPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useLoadModelApiV1AdminModelsNameLoadPost<TData = Awaited<ReturnType<typeof loadModelApiV1AdminModelsNameLoadPost>>, TError = HTTPValidationError>(
+ name: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof loadModelApiV1AdminModelsNameLoadPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Load Model
+ */
+
+export function useLoadModelApiV1AdminModelsNameLoadPost<TData = Awaited<ReturnType<typeof loadModelApiV1AdminModelsNameLoadPost>>, TError = HTTPValidationError>(
+ name: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof loadModelApiV1AdminModelsNameLoadPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getLoadModelApiV1AdminModelsNameLoadPostQueryOptions(name,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type getPlatformOverviewApiV1AdminOverviewGetResponse200 = {
+  data: PlatformStats
+  status: 200
+}
+
+export type getPlatformOverviewApiV1AdminOverviewGetResponseSuccess = (getPlatformOverviewApiV1AdminOverviewGetResponse200) & {
   headers: Headers;
 };
 ;
 
-export type adminOverviewApiV1AdminOverviewGetResponse = (adminOverviewApiV1AdminOverviewGetResponseSuccess)
+export type getPlatformOverviewApiV1AdminOverviewGetResponse = (getPlatformOverviewApiV1AdminOverviewGetResponseSuccess)
 
-export const getAdminOverviewApiV1AdminOverviewGetUrl = () => {
+export const getGetPlatformOverviewApiV1AdminOverviewGetUrl = () => {
 
 
 
@@ -8386,12 +9574,12 @@ export const getAdminOverviewApiV1AdminOverviewGetUrl = () => {
 }
 
 /**
- * Honest platform metrics: counts, uptime, recent activity, open errors.
- * @summary Admin Overview
+ * Get platform overview statistics.
+ * @summary Get Platform Overview
  */
-export const adminOverviewApiV1AdminOverviewGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<adminOverviewApiV1AdminOverviewGetResponse> => {
+export const getPlatformOverviewApiV1AdminOverviewGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<getPlatformOverviewApiV1AdminOverviewGetResponse> => {
 
-  return apiRequest<adminOverviewApiV1AdminOverviewGetResponse>(getAdminOverviewApiV1AdminOverviewGetUrl(),
+  return apiRequest<getPlatformOverviewApiV1AdminOverviewGetResponse>(getGetPlatformOverviewApiV1AdminOverviewGetUrl(),
   {
     ...options,
     method: 'GET'
@@ -8404,13 +9592,13 @@ export const adminOverviewApiV1AdminOverviewGet = async ( options?: Parameters<t
 
 
 
-export const getAdminOverviewApiV1AdminOverviewGetMutationKey = () => ['adminOverviewApiV1AdminOverviewGet'] as const;
+export const getGetPlatformOverviewApiV1AdminOverviewGetMutationKey = () => ['getPlatformOverviewApiV1AdminOverviewGet'] as const;
 
-export const getAdminOverviewApiV1AdminOverviewGetMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminOverviewApiV1AdminOverviewGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof adminOverviewApiV1AdminOverviewGet>>, TError,void, TContext> => {
+export const getGetPlatformOverviewApiV1AdminOverviewGetMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getPlatformOverviewApiV1AdminOverviewGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof getPlatformOverviewApiV1AdminOverviewGet>>, TError,void, TContext> => {
 
-const mutationKey = getAdminOverviewApiV1AdminOverviewGetMutationKey();
+const mutationKey = getGetPlatformOverviewApiV1AdminOverviewGetMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -8420,10 +9608,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminOverviewApiV1AdminOverviewGet>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getPlatformOverviewApiV1AdminOverviewGet>>, void> = () => {
 
 
-          return  adminOverviewApiV1AdminOverviewGet(requestOptions)
+          return  getPlatformOverviewApiV1AdminOverviewGet(requestOptions)
         }
 
 
@@ -8433,52 +9621,52 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type AdminOverviewApiV1AdminOverviewGetMutationResult = NonNullable<Awaited<ReturnType<typeof adminOverviewApiV1AdminOverviewGet>>>
+    export type GetPlatformOverviewApiV1AdminOverviewGetMutationResult = NonNullable<Awaited<ReturnType<typeof getPlatformOverviewApiV1AdminOverviewGet>>>
 
-    export type AdminOverviewApiV1AdminOverviewGetMutationError = unknown
+    export type GetPlatformOverviewApiV1AdminOverviewGetMutationError = unknown
 
 
     /**
- * @summary Admin Overview
+ * @summary Get Platform Overview
  */
-export const useAdminOverviewApiV1AdminOverviewGet = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminOverviewApiV1AdminOverviewGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const useGetPlatformOverviewApiV1AdminOverviewGet = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getPlatformOverviewApiV1AdminOverviewGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof adminOverviewApiV1AdminOverviewGet>>,
+        Awaited<ReturnType<typeof getPlatformOverviewApiV1AdminOverviewGet>>,
         TError,
         void,
         TContext
       > => {
-      return useMutation(getAdminOverviewApiV1AdminOverviewGetMutationOptions(options), queryClient);
+      return useMutation(getGetPlatformOverviewApiV1AdminOverviewGetMutationOptions(options), queryClient);
     }
 
-export type adminSecurityApiV1AdminSecurityGetResponse200 = {
-  data: AdminSecurityApiV1AdminSecurityGet200
+export type getChannelsHealthApiV1AdminOverviewHealthGetResponse200 = {
+  data: ChannelHealth[]
   status: 200
 }
 
-export type adminSecurityApiV1AdminSecurityGetResponseSuccess = (adminSecurityApiV1AdminSecurityGetResponse200) & {
+export type getChannelsHealthApiV1AdminOverviewHealthGetResponseSuccess = (getChannelsHealthApiV1AdminOverviewHealthGetResponse200) & {
   headers: Headers;
 };
 ;
 
-export type adminSecurityApiV1AdminSecurityGetResponse = (adminSecurityApiV1AdminSecurityGetResponseSuccess)
+export type getChannelsHealthApiV1AdminOverviewHealthGetResponse = (getChannelsHealthApiV1AdminOverviewHealthGetResponseSuccess)
 
-export const getAdminSecurityApiV1AdminSecurityGetUrl = () => {
-
-
+export const getGetChannelsHealthApiV1AdminOverviewHealthGetUrl = () => {
 
 
-  return `/api/v1/admin/security`
+
+
+  return `/api/v1/admin/overview/health`
 }
 
 /**
- * Recent authentication events (login attempts, success/failure).
- * @summary Admin Security
+ * Get health status of all platform channels.
+ * @summary Get Channels Health
  */
-export const adminSecurityApiV1AdminSecurityGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<adminSecurityApiV1AdminSecurityGetResponse> => {
+export const getChannelsHealthApiV1AdminOverviewHealthGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<getChannelsHealthApiV1AdminOverviewHealthGetResponse> => {
 
-  return apiRequest<adminSecurityApiV1AdminSecurityGetResponse>(getAdminSecurityApiV1AdminSecurityGetUrl(),
+  return apiRequest<getChannelsHealthApiV1AdminOverviewHealthGetResponse>(getGetChannelsHealthApiV1AdminOverviewHealthGetUrl(),
   {
     ...options,
     method: 'GET'
@@ -8491,13 +9679,13 @@ export const adminSecurityApiV1AdminSecurityGet = async ( options?: Parameters<t
 
 
 
-export const getAdminSecurityApiV1AdminSecurityGetMutationKey = () => ['adminSecurityApiV1AdminSecurityGet'] as const;
+export const getGetChannelsHealthApiV1AdminOverviewHealthGetMutationKey = () => ['getChannelsHealthApiV1AdminOverviewHealthGet'] as const;
 
-export const getAdminSecurityApiV1AdminSecurityGetMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminSecurityApiV1AdminSecurityGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof adminSecurityApiV1AdminSecurityGet>>, TError,void, TContext> => {
+export const getGetChannelsHealthApiV1AdminOverviewHealthGetMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getChannelsHealthApiV1AdminOverviewHealthGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof getChannelsHealthApiV1AdminOverviewHealthGet>>, TError,void, TContext> => {
 
-const mutationKey = getAdminSecurityApiV1AdminSecurityGetMutationKey();
+const mutationKey = getGetChannelsHealthApiV1AdminOverviewHealthGetMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -8507,10 +9695,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminSecurityApiV1AdminSecurityGet>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getChannelsHealthApiV1AdminOverviewHealthGet>>, void> = () => {
 
 
-          return  adminSecurityApiV1AdminSecurityGet(requestOptions)
+          return  getChannelsHealthApiV1AdminOverviewHealthGet(requestOptions)
         }
 
 
@@ -8520,167 +9708,71 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type AdminSecurityApiV1AdminSecurityGetMutationResult = NonNullable<Awaited<ReturnType<typeof adminSecurityApiV1AdminSecurityGet>>>
+    export type GetChannelsHealthApiV1AdminOverviewHealthGetMutationResult = NonNullable<Awaited<ReturnType<typeof getChannelsHealthApiV1AdminOverviewHealthGet>>>
 
-    export type AdminSecurityApiV1AdminSecurityGetMutationError = unknown
+    export type GetChannelsHealthApiV1AdminOverviewHealthGetMutationError = unknown
 
 
     /**
- * @summary Admin Security
+ * @summary Get Channels Health
  */
-export const useAdminSecurityApiV1AdminSecurityGet = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminSecurityApiV1AdminSecurityGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const useGetChannelsHealthApiV1AdminOverviewHealthGet = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getChannelsHealthApiV1AdminOverviewHealthGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof adminSecurityApiV1AdminSecurityGet>>,
+        Awaited<ReturnType<typeof getChannelsHealthApiV1AdminOverviewHealthGet>>,
         TError,
         void,
         TContext
       > => {
-      return useMutation(getAdminSecurityApiV1AdminSecurityGetMutationOptions(options), queryClient);
+      return useMutation(getGetChannelsHealthApiV1AdminOverviewHealthGetMutationOptions(options), queryClient);
     }
 
-export type adminAiStatusEndpointApiV1AdminAiStatusGetResponse200 = {
-  data: AdminAiStatusEndpointApiV1AdminAiStatusGet200
+export type getDetailedMetricsApiV1AdminOverviewMetricsGetResponse200 = {
+  data: unknown
   status: 200
 }
 
-export type adminAiStatusEndpointApiV1AdminAiStatusGetResponseSuccess = (adminAiStatusEndpointApiV1AdminAiStatusGetResponse200) & {
-  headers: Headers;
-};
-;
-
-export type adminAiStatusEndpointApiV1AdminAiStatusGetResponse = (adminAiStatusEndpointApiV1AdminAiStatusGetResponseSuccess)
-
-export const getAdminAiStatusEndpointApiV1AdminAiStatusGetUrl = () => {
-
-
-
-
-  return `/api/v1/admin/ai/status`
-}
-
-/**
- * Ollama reachability + configured model availability (panel banner).
- * @summary Admin Ai Status Endpoint
- */
-export const adminAiStatusEndpointApiV1AdminAiStatusGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<adminAiStatusEndpointApiV1AdminAiStatusGetResponse> => {
-
-  return apiRequest<adminAiStatusEndpointApiV1AdminAiStatusGetResponse>(getAdminAiStatusEndpointApiV1AdminAiStatusGetUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getAdminAiStatusEndpointApiV1AdminAiStatusGetMutationKey = () => ['adminAiStatusEndpointApiV1AdminAiStatusGet'] as const;
-
-export const getAdminAiStatusEndpointApiV1AdminAiStatusGetMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminAiStatusEndpointApiV1AdminAiStatusGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof adminAiStatusEndpointApiV1AdminAiStatusGet>>, TError,void, TContext> => {
-
-const mutationKey = getAdminAiStatusEndpointApiV1AdminAiStatusGetMutationKey();
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminAiStatusEndpointApiV1AdminAiStatusGet>>, void> = () => {
-
-
-          return  adminAiStatusEndpointApiV1AdminAiStatusGet(requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type AdminAiStatusEndpointApiV1AdminAiStatusGetMutationResult = NonNullable<Awaited<ReturnType<typeof adminAiStatusEndpointApiV1AdminAiStatusGet>>>
-
-    export type AdminAiStatusEndpointApiV1AdminAiStatusGetMutationError = unknown
-
-
-    /**
- * @summary Admin Ai Status Endpoint
- */
-export const useAdminAiStatusEndpointApiV1AdminAiStatusGet = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminAiStatusEndpointApiV1AdminAiStatusGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof adminAiStatusEndpointApiV1AdminAiStatusGet>>,
-        TError,
-        void,
-        TContext
-      > => {
-      return useMutation(getAdminAiStatusEndpointApiV1AdminAiStatusGetMutationOptions(options), queryClient);
-    }
-
-export type adminAiChatApiV1AdminAiChatPostResponse200 = {
-  data: AdminAiChatApiV1AdminAiChatPost200
-  status: 200
-}
-
-export type adminAiChatApiV1AdminAiChatPostResponse422 = {
+export type getDetailedMetricsApiV1AdminOverviewMetricsGetResponse422 = {
   data: HTTPValidationError
   status: 422
 }
 
-export type adminAiChatApiV1AdminAiChatPostResponseSuccess = (adminAiChatApiV1AdminAiChatPostResponse200) & {
+export type getDetailedMetricsApiV1AdminOverviewMetricsGetResponseSuccess = (getDetailedMetricsApiV1AdminOverviewMetricsGetResponse200) & {
   headers: Headers;
 };
-export type adminAiChatApiV1AdminAiChatPostResponseError = (adminAiChatApiV1AdminAiChatPostResponse422) & {
+export type getDetailedMetricsApiV1AdminOverviewMetricsGetResponseError = (getDetailedMetricsApiV1AdminOverviewMetricsGetResponse422) & {
   headers: Headers;
 };
 
-export type adminAiChatApiV1AdminAiChatPostResponse = (adminAiChatApiV1AdminAiChatPostResponseSuccess | adminAiChatApiV1AdminAiChatPostResponseError)
+export type getDetailedMetricsApiV1AdminOverviewMetricsGetResponse = (getDetailedMetricsApiV1AdminOverviewMetricsGetResponseSuccess | getDetailedMetricsApiV1AdminOverviewMetricsGetResponseError)
 
-export const getAdminAiChatApiV1AdminAiChatPostUrl = () => {
+export const getGetDetailedMetricsApiV1AdminOverviewMetricsGetUrl = (params?: GetDetailedMetricsApiV1AdminOverviewMetricsGetParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/v1/admin/ai/chat`
+  return stringifiedParams.length > 0 ? `/api/v1/admin/overview/metrics?${stringifiedParams}` : `/api/v1/admin/overview/metrics`
 }
 
 /**
- * Context-aware Persian admin assistant backed by the local Ollama model.
- *
- * Read-only DB context; the answer is advisory only. Every call is audited.
- * @summary Admin Ai Chat
+ * Get detailed metrics for the last N hours.
+ * @summary Get Detailed Metrics
  */
-export const adminAiChatApiV1AdminAiChatPost = async (adminAIChatRequest: AdminAIChatRequest, options?: Parameters<typeof apiRequest>[1]): Promise<adminAiChatApiV1AdminAiChatPostResponse> => {
+export const getDetailedMetricsApiV1AdminOverviewMetricsGet = async (params?: GetDetailedMetricsApiV1AdminOverviewMetricsGetParams, options?: Parameters<typeof apiRequest>[1]): Promise<getDetailedMetricsApiV1AdminOverviewMetricsGetResponse> => {
 
-    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
-    if (!h) return {};
-    if (h instanceof Headers) return Object.fromEntries(h.entries());
-    if (Symbol.iterator in h) {
-      return Object.fromEntries(
-        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
-      );
-    }
-    const headers: Record<string, string | readonly string[]> = {};
-    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
-      if (value !== undefined) headers[name] = value;
-    }
-    return headers;
-  };
-return apiRequest<adminAiChatApiV1AdminAiChatPostResponse>(getAdminAiChatApiV1AdminAiChatPostUrl(),
+  return apiRequest<getDetailedMetricsApiV1AdminOverviewMetricsGetResponse>(getGetDetailedMetricsApiV1AdminOverviewMetricsGetUrl(params),
   {
     ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
-    body: JSON.stringify(adminAIChatRequest)
+    method: 'GET'
+
+
   }
 );}
 
@@ -8688,80 +9780,255 @@ return apiRequest<adminAiChatApiV1AdminAiChatPostResponse>(getAdminAiChatApiV1Ad
 
 
 
-export const getAdminAiChatApiV1AdminAiChatPostQueryKey = (adminAIChatRequest?: AdminAIChatRequest,) => {
-    return [
-    'POST', `/api/v1/admin/ai/chat`, adminAIChatRequest
-    ] as const;
+export const getGetDetailedMetricsApiV1AdminOverviewMetricsGetMutationKey = () => ['getDetailedMetricsApiV1AdminOverviewMetricsGet'] as const;
+
+export const getGetDetailedMetricsApiV1AdminOverviewMetricsGetMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getDetailedMetricsApiV1AdminOverviewMetricsGet>>, TError,GetDetailedMetricsApiV1AdminOverviewMetricsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof getDetailedMetricsApiV1AdminOverviewMetricsGet>>, TError,GetDetailedMetricsApiV1AdminOverviewMetricsGetMutationVariables, TContext> => {
+
+const mutationKey = getGetDetailedMetricsApiV1AdminOverviewMetricsGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getDetailedMetricsApiV1AdminOverviewMetricsGet>>, GetDetailedMetricsApiV1AdminOverviewMetricsGetMutationVariables> = (props) => {
+          const {params} = props ?? {};
+
+          return  getDetailedMetricsApiV1AdminOverviewMetricsGet(params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetDetailedMetricsApiV1AdminOverviewMetricsGetMutationResult = NonNullable<Awaited<ReturnType<typeof getDetailedMetricsApiV1AdminOverviewMetricsGet>>>
+
+    export type GetDetailedMetricsApiV1AdminOverviewMetricsGetMutationError = HTTPValidationError
+    export type GetDetailedMetricsApiV1AdminOverviewMetricsGetMutationVariables = {params?: GetDetailedMetricsApiV1AdminOverviewMetricsGetParams}
+
+    /**
+ * @summary Get Detailed Metrics
+ */
+export const useGetDetailedMetricsApiV1AdminOverviewMetricsGet = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getDetailedMetricsApiV1AdminOverviewMetricsGet>>, TError,GetDetailedMetricsApiV1AdminOverviewMetricsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getDetailedMetricsApiV1AdminOverviewMetricsGet>>,
+        TError,
+        GetDetailedMetricsApiV1AdminOverviewMetricsGetMutationVariables,
+        TContext
+      > => {
+      return useMutation(getGetDetailedMetricsApiV1AdminOverviewMetricsGetMutationOptions(options), queryClient);
     }
 
-
-export const getAdminAiChatApiV1AdminAiChatPostQueryOptions = <TData = Awaited<ReturnType<typeof adminAiChatApiV1AdminAiChatPost>>, TError = HTTPValidationError>(adminAIChatRequest: AdminAIChatRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminAiChatApiV1AdminAiChatPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getAdminAiChatApiV1AdminAiChatPostQueryKey(adminAIChatRequest);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminAiChatApiV1AdminAiChatPost>>> = ({ signal }) => adminAiChatApiV1AdminAiChatPost(adminAIChatRequest, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof adminAiChatApiV1AdminAiChatPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+export type getLoginHistoryApiV1AdminSecurityLoginsGetResponse200 = {
+  data: LoginHistoryResponse[]
+  status: 200
 }
 
-export type AdminAiChatApiV1AdminAiChatPostQueryResult = NonNullable<Awaited<ReturnType<typeof adminAiChatApiV1AdminAiChatPost>>>
-export type AdminAiChatApiV1AdminAiChatPostQueryError = HTTPValidationError
+export type getLoginHistoryApiV1AdminSecurityLoginsGetResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
 
+export type getLoginHistoryApiV1AdminSecurityLoginsGetResponseSuccess = (getLoginHistoryApiV1AdminSecurityLoginsGetResponse200) & {
+  headers: Headers;
+};
+export type getLoginHistoryApiV1AdminSecurityLoginsGetResponseError = (getLoginHistoryApiV1AdminSecurityLoginsGetResponse422) & {
+  headers: Headers;
+};
 
-export function useAdminAiChatApiV1AdminAiChatPost<TData = Awaited<ReturnType<typeof adminAiChatApiV1AdminAiChatPost>>, TError = HTTPValidationError>(
- adminAIChatRequest: AdminAIChatRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminAiChatApiV1AdminAiChatPost>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof adminAiChatApiV1AdminAiChatPost>>,
-          TError,
-          Awaited<ReturnType<typeof adminAiChatApiV1AdminAiChatPost>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useAdminAiChatApiV1AdminAiChatPost<TData = Awaited<ReturnType<typeof adminAiChatApiV1AdminAiChatPost>>, TError = HTTPValidationError>(
- adminAIChatRequest: AdminAIChatRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminAiChatApiV1AdminAiChatPost>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof adminAiChatApiV1AdminAiChatPost>>,
-          TError,
-          Awaited<ReturnType<typeof adminAiChatApiV1AdminAiChatPost>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useAdminAiChatApiV1AdminAiChatPost<TData = Awaited<ReturnType<typeof adminAiChatApiV1AdminAiChatPost>>, TError = HTTPValidationError>(
- adminAIChatRequest: AdminAIChatRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminAiChatApiV1AdminAiChatPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export type getLoginHistoryApiV1AdminSecurityLoginsGetResponse = (getLoginHistoryApiV1AdminSecurityLoginsGetResponseSuccess | getLoginHistoryApiV1AdminSecurityLoginsGetResponseError)
+
+export const getGetLoginHistoryApiV1AdminSecurityLoginsGetUrl = (params?: GetLoginHistoryApiV1AdminSecurityLoginsGetParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/admin/security/logins?${stringifiedParams}` : `/api/v1/admin/security/logins`
+}
+
 /**
- * @summary Admin Ai Chat
+ * Get login history with filters.
+ * @summary Get Login History
  */
+export const getLoginHistoryApiV1AdminSecurityLoginsGet = async (params?: GetLoginHistoryApiV1AdminSecurityLoginsGetParams, options?: Parameters<typeof apiRequest>[1]): Promise<getLoginHistoryApiV1AdminSecurityLoginsGetResponse> => {
 
-export function useAdminAiChatApiV1AdminAiChatPost<TData = Awaited<ReturnType<typeof adminAiChatApiV1AdminAiChatPost>>, TError = HTTPValidationError>(
- adminAIChatRequest: AdminAIChatRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminAiChatApiV1AdminAiChatPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  return apiRequest<getLoginHistoryApiV1AdminSecurityLoginsGetResponse>(getGetLoginHistoryApiV1AdminSecurityLoginsGetUrl(params),
+  {
+    ...options,
+    method: 'GET'
 
-  const queryOptions = getAdminAiChatApiV1AdminAiChatPostQueryOptions(adminAIChatRequest,options)
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  }
+);}
 
-  return withQueryKey(query, queryOptions.queryKey);
+
+
+
+
+export const getGetLoginHistoryApiV1AdminSecurityLoginsGetMutationKey = () => ['getLoginHistoryApiV1AdminSecurityLoginsGet'] as const;
+
+export const getGetLoginHistoryApiV1AdminSecurityLoginsGetMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getLoginHistoryApiV1AdminSecurityLoginsGet>>, TError,GetLoginHistoryApiV1AdminSecurityLoginsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof getLoginHistoryApiV1AdminSecurityLoginsGet>>, TError,GetLoginHistoryApiV1AdminSecurityLoginsGetMutationVariables, TContext> => {
+
+const mutationKey = getGetLoginHistoryApiV1AdminSecurityLoginsGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getLoginHistoryApiV1AdminSecurityLoginsGet>>, GetLoginHistoryApiV1AdminSecurityLoginsGetMutationVariables> = (props) => {
+          const {params} = props ?? {};
+
+          return  getLoginHistoryApiV1AdminSecurityLoginsGet(params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetLoginHistoryApiV1AdminSecurityLoginsGetMutationResult = NonNullable<Awaited<ReturnType<typeof getLoginHistoryApiV1AdminSecurityLoginsGet>>>
+
+    export type GetLoginHistoryApiV1AdminSecurityLoginsGetMutationError = HTTPValidationError
+    export type GetLoginHistoryApiV1AdminSecurityLoginsGetMutationVariables = {params?: GetLoginHistoryApiV1AdminSecurityLoginsGetParams}
+
+    /**
+ * @summary Get Login History
+ */
+export const useGetLoginHistoryApiV1AdminSecurityLoginsGet = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getLoginHistoryApiV1AdminSecurityLoginsGet>>, TError,GetLoginHistoryApiV1AdminSecurityLoginsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getLoginHistoryApiV1AdminSecurityLoginsGet>>,
+        TError,
+        GetLoginHistoryApiV1AdminSecurityLoginsGetMutationVariables,
+        TContext
+      > => {
+      return useMutation(getGetLoginHistoryApiV1AdminSecurityLoginsGetMutationOptions(options), queryClient);
+    }
+
+export type getSecurityAuditApiV1AdminSecurityAuditGetResponse200 = {
+  data: SecurityAuditResponse
+  status: 200
 }
 
+export type getSecurityAuditApiV1AdminSecurityAuditGetResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type getSecurityAuditApiV1AdminSecurityAuditGetResponseSuccess = (getSecurityAuditApiV1AdminSecurityAuditGetResponse200) & {
+  headers: Headers;
+};
+export type getSecurityAuditApiV1AdminSecurityAuditGetResponseError = (getSecurityAuditApiV1AdminSecurityAuditGetResponse422) & {
+  headers: Headers;
+};
+
+export type getSecurityAuditApiV1AdminSecurityAuditGetResponse = (getSecurityAuditApiV1AdminSecurityAuditGetResponseSuccess | getSecurityAuditApiV1AdminSecurityAuditGetResponseError)
+
+export const getGetSecurityAuditApiV1AdminSecurityAuditGetUrl = (params?: GetSecurityAuditApiV1AdminSecurityAuditGetParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/admin/security/audit?${stringifiedParams}` : `/api/v1/admin/security/audit`
+}
+
+/**
+ * Get security audit summary.
+ * @summary Get Security Audit
+ */
+export const getSecurityAuditApiV1AdminSecurityAuditGet = async (params?: GetSecurityAuditApiV1AdminSecurityAuditGetParams, options?: Parameters<typeof apiRequest>[1]): Promise<getSecurityAuditApiV1AdminSecurityAuditGetResponse> => {
+
+  return apiRequest<getSecurityAuditApiV1AdminSecurityAuditGetResponse>(getGetSecurityAuditApiV1AdminSecurityAuditGetUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
 
 
 
 
 
+export const getGetSecurityAuditApiV1AdminSecurityAuditGetMutationKey = () => ['getSecurityAuditApiV1AdminSecurityAuditGet'] as const;
+
+export const getGetSecurityAuditApiV1AdminSecurityAuditGetMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getSecurityAuditApiV1AdminSecurityAuditGet>>, TError,GetSecurityAuditApiV1AdminSecurityAuditGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof getSecurityAuditApiV1AdminSecurityAuditGet>>, TError,GetSecurityAuditApiV1AdminSecurityAuditGetMutationVariables, TContext> => {
+
+const mutationKey = getGetSecurityAuditApiV1AdminSecurityAuditGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getSecurityAuditApiV1AdminSecurityAuditGet>>, GetSecurityAuditApiV1AdminSecurityAuditGetMutationVariables> = (props) => {
+          const {params} = props ?? {};
+
+          return  getSecurityAuditApiV1AdminSecurityAuditGet(params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetSecurityAuditApiV1AdminSecurityAuditGetMutationResult = NonNullable<Awaited<ReturnType<typeof getSecurityAuditApiV1AdminSecurityAuditGet>>>
+
+    export type GetSecurityAuditApiV1AdminSecurityAuditGetMutationError = HTTPValidationError
+    export type GetSecurityAuditApiV1AdminSecurityAuditGetMutationVariables = {params?: GetSecurityAuditApiV1AdminSecurityAuditGetParams}
+
+    /**
+ * @summary Get Security Audit
+ */
+export const useGetSecurityAuditApiV1AdminSecurityAuditGet = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getSecurityAuditApiV1AdminSecurityAuditGet>>, TError,GetSecurityAuditApiV1AdminSecurityAuditGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getSecurityAuditApiV1AdminSecurityAuditGet>>,
+        TError,
+        GetSecurityAuditApiV1AdminSecurityAuditGetMutationVariables,
+        TContext
+      > => {
+      return useMutation(getGetSecurityAuditApiV1AdminSecurityAuditGetMutationOptions(options), queryClient);
+    }
 
 export type registerApiV1AuthRegisterPostResponse200 = {
   data: TokenResponse
@@ -9034,7 +10301,7 @@ export function useLoginApiV1AuthLoginPost<TData = Awaited<ReturnType<typeof log
 
 
 export type meApiV1AuthMeGetResponse200 = {
-  data: UserResponse
+  data: ServicesApiGatewayRoutersAuthUserResponse
   status: 200
 }
 
@@ -9523,7 +10790,7 @@ export function useChangePasswordApiV1AuthChangePasswordPost<TData = Awaited<Ret
 
 
 export type updateProfileApiV1AuthProfilePutResponse200 = {
-  data: UserResponse
+  data: ServicesApiGatewayRoutersAuthUserResponse
   status: 200
 }
 
@@ -20003,7 +21270,7 @@ export const getApplyScenarioApiV1ScenariosApplyPostUrl = () => {
  * Apply IPCC SSP climate scenario.
  * @summary Apply Scenario
  */
-export const applyScenarioApiV1ScenariosApplyPost = async (scenarioRequest: ScenarioRequest, options?: Parameters<typeof apiRequest>[1]): Promise<applyScenarioApiV1ScenariosApplyPostResponse> => {
+export const applyScenarioApiV1ScenariosApplyPost = async (servicesApiGatewayRoutersScenariosScenarioRequest: ServicesApiGatewayRoutersScenariosScenarioRequest, options?: Parameters<typeof apiRequest>[1]): Promise<applyScenarioApiV1ScenariosApplyPostResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -20024,7 +21291,7 @@ return apiRequest<applyScenarioApiV1ScenariosApplyPostResponse>(getApplyScenario
     ...options,
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
-    body: JSON.stringify(scenarioRequest)
+    body: JSON.stringify(servicesApiGatewayRoutersScenariosScenarioRequest)
   }
 );}
 
@@ -20032,23 +21299,23 @@ return apiRequest<applyScenarioApiV1ScenariosApplyPostResponse>(getApplyScenario
 
 
 
-export const getApplyScenarioApiV1ScenariosApplyPostQueryKey = (scenarioRequest?: ScenarioRequest,) => {
+export const getApplyScenarioApiV1ScenariosApplyPostQueryKey = (servicesApiGatewayRoutersScenariosScenarioRequest?: ServicesApiGatewayRoutersScenariosScenarioRequest,) => {
     return [
-    'POST', `/api/v1/scenarios/apply`, scenarioRequest
+    'POST', `/api/v1/scenarios/apply`, servicesApiGatewayRoutersScenariosScenarioRequest
     ] as const;
     }
 
 
-export const getApplyScenarioApiV1ScenariosApplyPostQueryOptions = <TData = Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>, TError = HTTPValidationError>(scenarioRequest: ScenarioRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getApplyScenarioApiV1ScenariosApplyPostQueryOptions = <TData = Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>, TError = HTTPValidationError>(servicesApiGatewayRoutersScenariosScenarioRequest: ServicesApiGatewayRoutersScenariosScenarioRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getApplyScenarioApiV1ScenariosApplyPostQueryKey(scenarioRequest);
+  const queryKey =  queryOptions?.queryKey ?? getApplyScenarioApiV1ScenariosApplyPostQueryKey(servicesApiGatewayRoutersScenariosScenarioRequest);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>> = ({ signal }) => applyScenarioApiV1ScenariosApplyPost(scenarioRequest, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>> = ({ signal }) => applyScenarioApiV1ScenariosApplyPost(servicesApiGatewayRoutersScenariosScenarioRequest, { signal, ...requestOptions });
 
 
 
@@ -20062,7 +21329,7 @@ export type ApplyScenarioApiV1ScenariosApplyPostQueryError = HTTPValidationError
 
 
 export function useApplyScenarioApiV1ScenariosApplyPost<TData = Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>, TError = HTTPValidationError>(
- scenarioRequest: ScenarioRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>, TError, TData>> & Pick<
+ servicesApiGatewayRoutersScenariosScenarioRequest: ServicesApiGatewayRoutersScenariosScenarioRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>,
           TError,
@@ -20072,7 +21339,7 @@ export function useApplyScenarioApiV1ScenariosApplyPost<TData = Awaited<ReturnTy
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useApplyScenarioApiV1ScenariosApplyPost<TData = Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>, TError = HTTPValidationError>(
- scenarioRequest: ScenarioRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>, TError, TData>> & Pick<
+ servicesApiGatewayRoutersScenariosScenarioRequest: ServicesApiGatewayRoutersScenariosScenarioRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>,
           TError,
@@ -20082,7 +21349,7 @@ export function useApplyScenarioApiV1ScenariosApplyPost<TData = Awaited<ReturnTy
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useApplyScenarioApiV1ScenariosApplyPost<TData = Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>, TError = HTTPValidationError>(
- scenarioRequest: ScenarioRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ servicesApiGatewayRoutersScenariosScenarioRequest: ServicesApiGatewayRoutersScenariosScenarioRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -20090,11 +21357,11 @@ export function useApplyScenarioApiV1ScenariosApplyPost<TData = Awaited<ReturnTy
  */
 
 export function useApplyScenarioApiV1ScenariosApplyPost<TData = Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>, TError = HTTPValidationError>(
- scenarioRequest: ScenarioRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ servicesApiGatewayRoutersScenariosScenarioRequest: ServicesApiGatewayRoutersScenariosScenarioRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof applyScenarioApiV1ScenariosApplyPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getApplyScenarioApiV1ScenariosApplyPostQueryOptions(scenarioRequest,options)
+  const queryOptions = getApplyScenarioApiV1ScenariosApplyPostQueryOptions(servicesApiGatewayRoutersScenariosScenarioRequest,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -20793,6 +22060,768 @@ export function useTextToSpeechApiV1AiVoiceTtsPost<TData = Awaited<ReturnType<ty
 
 
 
+
+export type analyzeDroughtApiV1AiAnalysisDroughtPostResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type analyzeDroughtApiV1AiAnalysisDroughtPostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type analyzeDroughtApiV1AiAnalysisDroughtPostResponseSuccess = (analyzeDroughtApiV1AiAnalysisDroughtPostResponse200) & {
+  headers: Headers;
+};
+export type analyzeDroughtApiV1AiAnalysisDroughtPostResponseError = (analyzeDroughtApiV1AiAnalysisDroughtPostResponse422) & {
+  headers: Headers;
+};
+
+export type analyzeDroughtApiV1AiAnalysisDroughtPostResponse = (analyzeDroughtApiV1AiAnalysisDroughtPostResponseSuccess | analyzeDroughtApiV1AiAnalysisDroughtPostResponseError)
+
+export const getAnalyzeDroughtApiV1AiAnalysisDroughtPostUrl = () => {
+
+
+
+
+  return `/api/v1/ai/analysis/drought`
+}
+
+/**
+ * Analyze drought conditions using SPI/SPEI indices.
+ * @summary Analyze Drought
+ */
+export const analyzeDroughtApiV1AiAnalysisDroughtPost = async (droughtRequest: DroughtRequest, options?: Parameters<typeof apiRequest>[1]): Promise<analyzeDroughtApiV1AiAnalysisDroughtPostResponse> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiRequest<analyzeDroughtApiV1AiAnalysisDroughtPostResponse>(getAnalyzeDroughtApiV1AiAnalysisDroughtPostUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(droughtRequest)
+  }
+);}
+
+
+
+
+
+export const getAnalyzeDroughtApiV1AiAnalysisDroughtPostQueryKey = (droughtRequest?: DroughtRequest,) => {
+    return [
+    'POST', `/api/v1/ai/analysis/drought`, droughtRequest
+    ] as const;
+    }
+
+
+export const getAnalyzeDroughtApiV1AiAnalysisDroughtPostQueryOptions = <TData = Awaited<ReturnType<typeof analyzeDroughtApiV1AiAnalysisDroughtPost>>, TError = HTTPValidationError>(droughtRequest: DroughtRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof analyzeDroughtApiV1AiAnalysisDroughtPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAnalyzeDroughtApiV1AiAnalysisDroughtPostQueryKey(droughtRequest);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof analyzeDroughtApiV1AiAnalysisDroughtPost>>> = ({ signal }) => analyzeDroughtApiV1AiAnalysisDroughtPost(droughtRequest, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof analyzeDroughtApiV1AiAnalysisDroughtPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type AnalyzeDroughtApiV1AiAnalysisDroughtPostQueryResult = NonNullable<Awaited<ReturnType<typeof analyzeDroughtApiV1AiAnalysisDroughtPost>>>
+export type AnalyzeDroughtApiV1AiAnalysisDroughtPostQueryError = HTTPValidationError
+
+
+export function useAnalyzeDroughtApiV1AiAnalysisDroughtPost<TData = Awaited<ReturnType<typeof analyzeDroughtApiV1AiAnalysisDroughtPost>>, TError = HTTPValidationError>(
+ droughtRequest: DroughtRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof analyzeDroughtApiV1AiAnalysisDroughtPost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof analyzeDroughtApiV1AiAnalysisDroughtPost>>,
+          TError,
+          Awaited<ReturnType<typeof analyzeDroughtApiV1AiAnalysisDroughtPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAnalyzeDroughtApiV1AiAnalysisDroughtPost<TData = Awaited<ReturnType<typeof analyzeDroughtApiV1AiAnalysisDroughtPost>>, TError = HTTPValidationError>(
+ droughtRequest: DroughtRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof analyzeDroughtApiV1AiAnalysisDroughtPost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof analyzeDroughtApiV1AiAnalysisDroughtPost>>,
+          TError,
+          Awaited<ReturnType<typeof analyzeDroughtApiV1AiAnalysisDroughtPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAnalyzeDroughtApiV1AiAnalysisDroughtPost<TData = Awaited<ReturnType<typeof analyzeDroughtApiV1AiAnalysisDroughtPost>>, TError = HTTPValidationError>(
+ droughtRequest: DroughtRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof analyzeDroughtApiV1AiAnalysisDroughtPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Analyze Drought
+ */
+
+export function useAnalyzeDroughtApiV1AiAnalysisDroughtPost<TData = Awaited<ReturnType<typeof analyzeDroughtApiV1AiAnalysisDroughtPost>>, TError = HTTPValidationError>(
+ droughtRequest: DroughtRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof analyzeDroughtApiV1AiAnalysisDroughtPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getAnalyzeDroughtApiV1AiAnalysisDroughtPostQueryOptions(droughtRequest,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type runScenarioApiV1AiAnalysisScenarioPostResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type runScenarioApiV1AiAnalysisScenarioPostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type runScenarioApiV1AiAnalysisScenarioPostResponseSuccess = (runScenarioApiV1AiAnalysisScenarioPostResponse200) & {
+  headers: Headers;
+};
+export type runScenarioApiV1AiAnalysisScenarioPostResponseError = (runScenarioApiV1AiAnalysisScenarioPostResponse422) & {
+  headers: Headers;
+};
+
+export type runScenarioApiV1AiAnalysisScenarioPostResponse = (runScenarioApiV1AiAnalysisScenarioPostResponseSuccess | runScenarioApiV1AiAnalysisScenarioPostResponseError)
+
+export const getRunScenarioApiV1AiAnalysisScenarioPostUrl = () => {
+
+
+
+
+  return `/api/v1/ai/analysis/scenario`
+}
+
+/**
+ * Run a single what-if scenario.
+ * @summary Run Scenario
+ */
+export const runScenarioApiV1AiAnalysisScenarioPost = async (servicesApiGatewayRoutersAiAnalysisScenarioRequest: ServicesApiGatewayRoutersAiAnalysisScenarioRequest, options?: Parameters<typeof apiRequest>[1]): Promise<runScenarioApiV1AiAnalysisScenarioPostResponse> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiRequest<runScenarioApiV1AiAnalysisScenarioPostResponse>(getRunScenarioApiV1AiAnalysisScenarioPostUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(servicesApiGatewayRoutersAiAnalysisScenarioRequest)
+  }
+);}
+
+
+
+
+
+export const getRunScenarioApiV1AiAnalysisScenarioPostQueryKey = (servicesApiGatewayRoutersAiAnalysisScenarioRequest?: ServicesApiGatewayRoutersAiAnalysisScenarioRequest,) => {
+    return [
+    'POST', `/api/v1/ai/analysis/scenario`, servicesApiGatewayRoutersAiAnalysisScenarioRequest
+    ] as const;
+    }
+
+
+export const getRunScenarioApiV1AiAnalysisScenarioPostQueryOptions = <TData = Awaited<ReturnType<typeof runScenarioApiV1AiAnalysisScenarioPost>>, TError = HTTPValidationError>(servicesApiGatewayRoutersAiAnalysisScenarioRequest: ServicesApiGatewayRoutersAiAnalysisScenarioRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof runScenarioApiV1AiAnalysisScenarioPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getRunScenarioApiV1AiAnalysisScenarioPostQueryKey(servicesApiGatewayRoutersAiAnalysisScenarioRequest);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof runScenarioApiV1AiAnalysisScenarioPost>>> = ({ signal }) => runScenarioApiV1AiAnalysisScenarioPost(servicesApiGatewayRoutersAiAnalysisScenarioRequest, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof runScenarioApiV1AiAnalysisScenarioPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type RunScenarioApiV1AiAnalysisScenarioPostQueryResult = NonNullable<Awaited<ReturnType<typeof runScenarioApiV1AiAnalysisScenarioPost>>>
+export type RunScenarioApiV1AiAnalysisScenarioPostQueryError = HTTPValidationError
+
+
+export function useRunScenarioApiV1AiAnalysisScenarioPost<TData = Awaited<ReturnType<typeof runScenarioApiV1AiAnalysisScenarioPost>>, TError = HTTPValidationError>(
+ servicesApiGatewayRoutersAiAnalysisScenarioRequest: ServicesApiGatewayRoutersAiAnalysisScenarioRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof runScenarioApiV1AiAnalysisScenarioPost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof runScenarioApiV1AiAnalysisScenarioPost>>,
+          TError,
+          Awaited<ReturnType<typeof runScenarioApiV1AiAnalysisScenarioPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRunScenarioApiV1AiAnalysisScenarioPost<TData = Awaited<ReturnType<typeof runScenarioApiV1AiAnalysisScenarioPost>>, TError = HTTPValidationError>(
+ servicesApiGatewayRoutersAiAnalysisScenarioRequest: ServicesApiGatewayRoutersAiAnalysisScenarioRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof runScenarioApiV1AiAnalysisScenarioPost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof runScenarioApiV1AiAnalysisScenarioPost>>,
+          TError,
+          Awaited<ReturnType<typeof runScenarioApiV1AiAnalysisScenarioPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRunScenarioApiV1AiAnalysisScenarioPost<TData = Awaited<ReturnType<typeof runScenarioApiV1AiAnalysisScenarioPost>>, TError = HTTPValidationError>(
+ servicesApiGatewayRoutersAiAnalysisScenarioRequest: ServicesApiGatewayRoutersAiAnalysisScenarioRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof runScenarioApiV1AiAnalysisScenarioPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Run Scenario
+ */
+
+export function useRunScenarioApiV1AiAnalysisScenarioPost<TData = Awaited<ReturnType<typeof runScenarioApiV1AiAnalysisScenarioPost>>, TError = HTTPValidationError>(
+ servicesApiGatewayRoutersAiAnalysisScenarioRequest: ServicesApiGatewayRoutersAiAnalysisScenarioRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof runScenarioApiV1AiAnalysisScenarioPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getRunScenarioApiV1AiAnalysisScenarioPostQueryOptions(servicesApiGatewayRoutersAiAnalysisScenarioRequest,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type runMultipleScenariosApiV1AiAnalysisScenariosPostResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type runMultipleScenariosApiV1AiAnalysisScenariosPostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type runMultipleScenariosApiV1AiAnalysisScenariosPostResponseSuccess = (runMultipleScenariosApiV1AiAnalysisScenariosPostResponse200) & {
+  headers: Headers;
+};
+export type runMultipleScenariosApiV1AiAnalysisScenariosPostResponseError = (runMultipleScenariosApiV1AiAnalysisScenariosPostResponse422) & {
+  headers: Headers;
+};
+
+export type runMultipleScenariosApiV1AiAnalysisScenariosPostResponse = (runMultipleScenariosApiV1AiAnalysisScenariosPostResponseSuccess | runMultipleScenariosApiV1AiAnalysisScenariosPostResponseError)
+
+export const getRunMultipleScenariosApiV1AiAnalysisScenariosPostUrl = () => {
+
+
+
+
+  return `/api/v1/ai/analysis/scenarios`
+}
+
+/**
+ * Run multiple scenarios and rank by severity.
+ * @summary Run Multiple Scenarios
+ */
+export const runMultipleScenariosApiV1AiAnalysisScenariosPost = async (multiScenarioRequest: MultiScenarioRequest, options?: Parameters<typeof apiRequest>[1]): Promise<runMultipleScenariosApiV1AiAnalysisScenariosPostResponse> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiRequest<runMultipleScenariosApiV1AiAnalysisScenariosPostResponse>(getRunMultipleScenariosApiV1AiAnalysisScenariosPostUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(multiScenarioRequest)
+  }
+);}
+
+
+
+
+
+export const getRunMultipleScenariosApiV1AiAnalysisScenariosPostQueryKey = (multiScenarioRequest?: MultiScenarioRequest,) => {
+    return [
+    'POST', `/api/v1/ai/analysis/scenarios`, multiScenarioRequest
+    ] as const;
+    }
+
+
+export const getRunMultipleScenariosApiV1AiAnalysisScenariosPostQueryOptions = <TData = Awaited<ReturnType<typeof runMultipleScenariosApiV1AiAnalysisScenariosPost>>, TError = HTTPValidationError>(multiScenarioRequest: MultiScenarioRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof runMultipleScenariosApiV1AiAnalysisScenariosPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getRunMultipleScenariosApiV1AiAnalysisScenariosPostQueryKey(multiScenarioRequest);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof runMultipleScenariosApiV1AiAnalysisScenariosPost>>> = ({ signal }) => runMultipleScenariosApiV1AiAnalysisScenariosPost(multiScenarioRequest, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof runMultipleScenariosApiV1AiAnalysisScenariosPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type RunMultipleScenariosApiV1AiAnalysisScenariosPostQueryResult = NonNullable<Awaited<ReturnType<typeof runMultipleScenariosApiV1AiAnalysisScenariosPost>>>
+export type RunMultipleScenariosApiV1AiAnalysisScenariosPostQueryError = HTTPValidationError
+
+
+export function useRunMultipleScenariosApiV1AiAnalysisScenariosPost<TData = Awaited<ReturnType<typeof runMultipleScenariosApiV1AiAnalysisScenariosPost>>, TError = HTTPValidationError>(
+ multiScenarioRequest: MultiScenarioRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof runMultipleScenariosApiV1AiAnalysisScenariosPost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof runMultipleScenariosApiV1AiAnalysisScenariosPost>>,
+          TError,
+          Awaited<ReturnType<typeof runMultipleScenariosApiV1AiAnalysisScenariosPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRunMultipleScenariosApiV1AiAnalysisScenariosPost<TData = Awaited<ReturnType<typeof runMultipleScenariosApiV1AiAnalysisScenariosPost>>, TError = HTTPValidationError>(
+ multiScenarioRequest: MultiScenarioRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof runMultipleScenariosApiV1AiAnalysisScenariosPost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof runMultipleScenariosApiV1AiAnalysisScenariosPost>>,
+          TError,
+          Awaited<ReturnType<typeof runMultipleScenariosApiV1AiAnalysisScenariosPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRunMultipleScenariosApiV1AiAnalysisScenariosPost<TData = Awaited<ReturnType<typeof runMultipleScenariosApiV1AiAnalysisScenariosPost>>, TError = HTTPValidationError>(
+ multiScenarioRequest: MultiScenarioRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof runMultipleScenariosApiV1AiAnalysisScenariosPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Run Multiple Scenarios
+ */
+
+export function useRunMultipleScenariosApiV1AiAnalysisScenariosPost<TData = Awaited<ReturnType<typeof runMultipleScenariosApiV1AiAnalysisScenariosPost>>, TError = HTTPValidationError>(
+ multiScenarioRequest: MultiScenarioRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof runMultipleScenariosApiV1AiAnalysisScenariosPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getRunMultipleScenariosApiV1AiAnalysisScenariosPostQueryOptions(multiScenarioRequest,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type getAdviceApiV1AiAnalysisAdvisePostResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type getAdviceApiV1AiAnalysisAdvisePostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type getAdviceApiV1AiAnalysisAdvisePostResponseSuccess = (getAdviceApiV1AiAnalysisAdvisePostResponse200) & {
+  headers: Headers;
+};
+export type getAdviceApiV1AiAnalysisAdvisePostResponseError = (getAdviceApiV1AiAnalysisAdvisePostResponse422) & {
+  headers: Headers;
+};
+
+export type getAdviceApiV1AiAnalysisAdvisePostResponse = (getAdviceApiV1AiAnalysisAdvisePostResponseSuccess | getAdviceApiV1AiAnalysisAdvisePostResponseError)
+
+export const getGetAdviceApiV1AiAnalysisAdvisePostUrl = () => {
+
+
+
+
+  return `/api/v1/ai/analysis/advise`
+}
+
+/**
+ * Get advisory answer for a farmer question.
+ * @summary Get Advice
+ */
+export const getAdviceApiV1AiAnalysisAdvisePost = async (advisoryRequest: AdvisoryRequest, options?: Parameters<typeof apiRequest>[1]): Promise<getAdviceApiV1AiAnalysisAdvisePostResponse> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiRequest<getAdviceApiV1AiAnalysisAdvisePostResponse>(getGetAdviceApiV1AiAnalysisAdvisePostUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(advisoryRequest)
+  }
+);}
+
+
+
+
+
+export const getGetAdviceApiV1AiAnalysisAdvisePostQueryKey = (advisoryRequest?: AdvisoryRequest,) => {
+    return [
+    'POST', `/api/v1/ai/analysis/advise`, advisoryRequest
+    ] as const;
+    }
+
+
+export const getGetAdviceApiV1AiAnalysisAdvisePostQueryOptions = <TData = Awaited<ReturnType<typeof getAdviceApiV1AiAnalysisAdvisePost>>, TError = HTTPValidationError>(advisoryRequest: AdvisoryRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdviceApiV1AiAnalysisAdvisePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAdviceApiV1AiAnalysisAdvisePostQueryKey(advisoryRequest);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdviceApiV1AiAnalysisAdvisePost>>> = ({ signal }) => getAdviceApiV1AiAnalysisAdvisePost(advisoryRequest, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAdviceApiV1AiAnalysisAdvisePost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetAdviceApiV1AiAnalysisAdvisePostQueryResult = NonNullable<Awaited<ReturnType<typeof getAdviceApiV1AiAnalysisAdvisePost>>>
+export type GetAdviceApiV1AiAnalysisAdvisePostQueryError = HTTPValidationError
+
+
+export function useGetAdviceApiV1AiAnalysisAdvisePost<TData = Awaited<ReturnType<typeof getAdviceApiV1AiAnalysisAdvisePost>>, TError = HTTPValidationError>(
+ advisoryRequest: AdvisoryRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdviceApiV1AiAnalysisAdvisePost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdviceApiV1AiAnalysisAdvisePost>>,
+          TError,
+          Awaited<ReturnType<typeof getAdviceApiV1AiAnalysisAdvisePost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAdviceApiV1AiAnalysisAdvisePost<TData = Awaited<ReturnType<typeof getAdviceApiV1AiAnalysisAdvisePost>>, TError = HTTPValidationError>(
+ advisoryRequest: AdvisoryRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdviceApiV1AiAnalysisAdvisePost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdviceApiV1AiAnalysisAdvisePost>>,
+          TError,
+          Awaited<ReturnType<typeof getAdviceApiV1AiAnalysisAdvisePost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAdviceApiV1AiAnalysisAdvisePost<TData = Awaited<ReturnType<typeof getAdviceApiV1AiAnalysisAdvisePost>>, TError = HTTPValidationError>(
+ advisoryRequest: AdvisoryRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdviceApiV1AiAnalysisAdvisePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get Advice
+ */
+
+export function useGetAdviceApiV1AiAnalysisAdvisePost<TData = Awaited<ReturnType<typeof getAdviceApiV1AiAnalysisAdvisePost>>, TError = HTTPValidationError>(
+ advisoryRequest: AdvisoryRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdviceApiV1AiAnalysisAdvisePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetAdviceApiV1AiAnalysisAdvisePostQueryOptions(advisoryRequest,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type getDroughtReportApiV1AiAnalysisDroughtReportPostResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type getDroughtReportApiV1AiAnalysisDroughtReportPostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type getDroughtReportApiV1AiAnalysisDroughtReportPostResponseSuccess = (getDroughtReportApiV1AiAnalysisDroughtReportPostResponse200) & {
+  headers: Headers;
+};
+export type getDroughtReportApiV1AiAnalysisDroughtReportPostResponseError = (getDroughtReportApiV1AiAnalysisDroughtReportPostResponse422) & {
+  headers: Headers;
+};
+
+export type getDroughtReportApiV1AiAnalysisDroughtReportPostResponse = (getDroughtReportApiV1AiAnalysisDroughtReportPostResponseSuccess | getDroughtReportApiV1AiAnalysisDroughtReportPostResponseError)
+
+export const getGetDroughtReportApiV1AiAnalysisDroughtReportPostUrl = () => {
+
+
+
+
+  return `/api/v1/ai/analysis/drought-report`
+}
+
+/**
+ * Get comprehensive drought report with recommendations.
+ * @summary Get Drought Report
+ */
+export const getDroughtReportApiV1AiAnalysisDroughtReportPost = async (droughtReportRequest: DroughtReportRequest, options?: Parameters<typeof apiRequest>[1]): Promise<getDroughtReportApiV1AiAnalysisDroughtReportPostResponse> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiRequest<getDroughtReportApiV1AiAnalysisDroughtReportPostResponse>(getGetDroughtReportApiV1AiAnalysisDroughtReportPostUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(droughtReportRequest)
+  }
+);}
+
+
+
+
+
+export const getGetDroughtReportApiV1AiAnalysisDroughtReportPostQueryKey = (droughtReportRequest?: DroughtReportRequest,) => {
+    return [
+    'POST', `/api/v1/ai/analysis/drought-report`, droughtReportRequest
+    ] as const;
+    }
+
+
+export const getGetDroughtReportApiV1AiAnalysisDroughtReportPostQueryOptions = <TData = Awaited<ReturnType<typeof getDroughtReportApiV1AiAnalysisDroughtReportPost>>, TError = HTTPValidationError>(droughtReportRequest: DroughtReportRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDroughtReportApiV1AiAnalysisDroughtReportPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetDroughtReportApiV1AiAnalysisDroughtReportPostQueryKey(droughtReportRequest);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDroughtReportApiV1AiAnalysisDroughtReportPost>>> = ({ signal }) => getDroughtReportApiV1AiAnalysisDroughtReportPost(droughtReportRequest, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getDroughtReportApiV1AiAnalysisDroughtReportPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetDroughtReportApiV1AiAnalysisDroughtReportPostQueryResult = NonNullable<Awaited<ReturnType<typeof getDroughtReportApiV1AiAnalysisDroughtReportPost>>>
+export type GetDroughtReportApiV1AiAnalysisDroughtReportPostQueryError = HTTPValidationError
+
+
+export function useGetDroughtReportApiV1AiAnalysisDroughtReportPost<TData = Awaited<ReturnType<typeof getDroughtReportApiV1AiAnalysisDroughtReportPost>>, TError = HTTPValidationError>(
+ droughtReportRequest: DroughtReportRequest, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDroughtReportApiV1AiAnalysisDroughtReportPost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDroughtReportApiV1AiAnalysisDroughtReportPost>>,
+          TError,
+          Awaited<ReturnType<typeof getDroughtReportApiV1AiAnalysisDroughtReportPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetDroughtReportApiV1AiAnalysisDroughtReportPost<TData = Awaited<ReturnType<typeof getDroughtReportApiV1AiAnalysisDroughtReportPost>>, TError = HTTPValidationError>(
+ droughtReportRequest: DroughtReportRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDroughtReportApiV1AiAnalysisDroughtReportPost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDroughtReportApiV1AiAnalysisDroughtReportPost>>,
+          TError,
+          Awaited<ReturnType<typeof getDroughtReportApiV1AiAnalysisDroughtReportPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetDroughtReportApiV1AiAnalysisDroughtReportPost<TData = Awaited<ReturnType<typeof getDroughtReportApiV1AiAnalysisDroughtReportPost>>, TError = HTTPValidationError>(
+ droughtReportRequest: DroughtReportRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDroughtReportApiV1AiAnalysisDroughtReportPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get Drought Report
+ */
+
+export function useGetDroughtReportApiV1AiAnalysisDroughtReportPost<TData = Awaited<ReturnType<typeof getDroughtReportApiV1AiAnalysisDroughtReportPost>>, TError = HTTPValidationError>(
+ droughtReportRequest: DroughtReportRequest, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDroughtReportApiV1AiAnalysisDroughtReportPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetDroughtReportApiV1AiAnalysisDroughtReportPostQueryOptions(droughtReportRequest,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type listProvidersApiV1AiAnalysisProvidersGetResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type listProvidersApiV1AiAnalysisProvidersGetResponseSuccess = (listProvidersApiV1AiAnalysisProvidersGetResponse200) & {
+  headers: Headers;
+};
+;
+
+export type listProvidersApiV1AiAnalysisProvidersGetResponse = (listProvidersApiV1AiAnalysisProvidersGetResponseSuccess)
+
+export const getListProvidersApiV1AiAnalysisProvidersGetUrl = () => {
+
+
+
+
+  return `/api/v1/ai/analysis/providers`
+}
+
+/**
+ * List available LLM and embedding providers with quota status.
+ * @summary List Providers
+ */
+export const listProvidersApiV1AiAnalysisProvidersGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<listProvidersApiV1AiAnalysisProvidersGetResponse> => {
+
+  return apiRequest<listProvidersApiV1AiAnalysisProvidersGetResponse>(getListProvidersApiV1AiAnalysisProvidersGetUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListProvidersApiV1AiAnalysisProvidersGetMutationKey = () => ['listProvidersApiV1AiAnalysisProvidersGet'] as const;
+
+export const getListProvidersApiV1AiAnalysisProvidersGetMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listProvidersApiV1AiAnalysisProvidersGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof listProvidersApiV1AiAnalysisProvidersGet>>, TError,void, TContext> => {
+
+const mutationKey = getListProvidersApiV1AiAnalysisProvidersGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listProvidersApiV1AiAnalysisProvidersGet>>, void> = () => {
+
+
+          return  listProvidersApiV1AiAnalysisProvidersGet(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ListProvidersApiV1AiAnalysisProvidersGetMutationResult = NonNullable<Awaited<ReturnType<typeof listProvidersApiV1AiAnalysisProvidersGet>>>
+
+    export type ListProvidersApiV1AiAnalysisProvidersGetMutationError = unknown
+
+
+    /**
+ * @summary List Providers
+ */
+export const useListProvidersApiV1AiAnalysisProvidersGet = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listProvidersApiV1AiAnalysisProvidersGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof listProvidersApiV1AiAnalysisProvidersGet>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getListProvidersApiV1AiAnalysisProvidersGetMutationOptions(options), queryClient);
+    }
 
 export type createWalletApiV1EcowalletWalletsPostResponse201 = {
   data: WalletState
@@ -26897,6 +28926,378 @@ export const useEscrowStatusApiV1MarketplacePaymentsPaymentIdEscrowGet = <TError
       > => {
       return useMutation(getEscrowStatusApiV1MarketplacePaymentsPaymentIdEscrowGetMutationOptions(options), queryClient);
     }
+
+export type openDisputeApiV1MarketplaceOrdersOrderIdDisputePostResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type openDisputeApiV1MarketplaceOrdersOrderIdDisputePostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type openDisputeApiV1MarketplaceOrdersOrderIdDisputePostResponseSuccess = (openDisputeApiV1MarketplaceOrdersOrderIdDisputePostResponse200) & {
+  headers: Headers;
+};
+export type openDisputeApiV1MarketplaceOrdersOrderIdDisputePostResponseError = (openDisputeApiV1MarketplaceOrdersOrderIdDisputePostResponse422) & {
+  headers: Headers;
+};
+
+export type openDisputeApiV1MarketplaceOrdersOrderIdDisputePostResponse = (openDisputeApiV1MarketplaceOrdersOrderIdDisputePostResponseSuccess | openDisputeApiV1MarketplaceOrdersOrderIdDisputePostResponseError)
+
+export const getOpenDisputeApiV1MarketplaceOrdersOrderIdDisputePostUrl = (orderId: string,) => {
+
+
+
+
+  return `/api/v1/marketplace/orders/${orderId}/dispute`
+}
+
+/**
+ * Step 5a: Open dispute window for a locked escrow.
+ *
+ * Within the dispute window the buyer can raise a dispute challenge before
+ * the seller is released.  Returns the escrow deadline and remaining time.
+ * @summary Open Dispute
+ */
+export const openDisputeApiV1MarketplaceOrdersOrderIdDisputePost = async (orderId: string, options?: Parameters<typeof apiRequest>[1]): Promise<openDisputeApiV1MarketplaceOrdersOrderIdDisputePostResponse> => {
+
+  return apiRequest<openDisputeApiV1MarketplaceOrdersOrderIdDisputePostResponse>(getOpenDisputeApiV1MarketplaceOrdersOrderIdDisputePostUrl(orderId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getOpenDisputeApiV1MarketplaceOrdersOrderIdDisputePostQueryKey = (orderId: string,) => {
+    return [
+    'POST', `/api/v1/marketplace/orders/${orderId}/dispute`
+    ] as const;
+    }
+
+
+export const getOpenDisputeApiV1MarketplaceOrdersOrderIdDisputePostQueryOptions = <TData = Awaited<ReturnType<typeof openDisputeApiV1MarketplaceOrdersOrderIdDisputePost>>, TError = HTTPValidationError>(orderId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof openDisputeApiV1MarketplaceOrdersOrderIdDisputePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getOpenDisputeApiV1MarketplaceOrdersOrderIdDisputePostQueryKey(orderId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof openDisputeApiV1MarketplaceOrdersOrderIdDisputePost>>> = ({ signal }) => openDisputeApiV1MarketplaceOrdersOrderIdDisputePost(orderId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: orderId !== null && orderId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof openDisputeApiV1MarketplaceOrdersOrderIdDisputePost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type OpenDisputeApiV1MarketplaceOrdersOrderIdDisputePostQueryResult = NonNullable<Awaited<ReturnType<typeof openDisputeApiV1MarketplaceOrdersOrderIdDisputePost>>>
+export type OpenDisputeApiV1MarketplaceOrdersOrderIdDisputePostQueryError = HTTPValidationError
+
+
+export function useOpenDisputeApiV1MarketplaceOrdersOrderIdDisputePost<TData = Awaited<ReturnType<typeof openDisputeApiV1MarketplaceOrdersOrderIdDisputePost>>, TError = HTTPValidationError>(
+ orderId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof openDisputeApiV1MarketplaceOrdersOrderIdDisputePost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof openDisputeApiV1MarketplaceOrdersOrderIdDisputePost>>,
+          TError,
+          Awaited<ReturnType<typeof openDisputeApiV1MarketplaceOrdersOrderIdDisputePost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useOpenDisputeApiV1MarketplaceOrdersOrderIdDisputePost<TData = Awaited<ReturnType<typeof openDisputeApiV1MarketplaceOrdersOrderIdDisputePost>>, TError = HTTPValidationError>(
+ orderId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof openDisputeApiV1MarketplaceOrdersOrderIdDisputePost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof openDisputeApiV1MarketplaceOrdersOrderIdDisputePost>>,
+          TError,
+          Awaited<ReturnType<typeof openDisputeApiV1MarketplaceOrdersOrderIdDisputePost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useOpenDisputeApiV1MarketplaceOrdersOrderIdDisputePost<TData = Awaited<ReturnType<typeof openDisputeApiV1MarketplaceOrdersOrderIdDisputePost>>, TError = HTTPValidationError>(
+ orderId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof openDisputeApiV1MarketplaceOrdersOrderIdDisputePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Open Dispute
+ */
+
+export function useOpenDisputeApiV1MarketplaceOrdersOrderIdDisputePost<TData = Awaited<ReturnType<typeof openDisputeApiV1MarketplaceOrdersOrderIdDisputePost>>, TError = HTTPValidationError>(
+ orderId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof openDisputeApiV1MarketplaceOrdersOrderIdDisputePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getOpenDisputeApiV1MarketplaceOrdersOrderIdDisputePostQueryOptions(orderId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type settleOrderApiV1MarketplaceOrdersOrderIdSettlePostResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type settleOrderApiV1MarketplaceOrdersOrderIdSettlePostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type settleOrderApiV1MarketplaceOrdersOrderIdSettlePostResponseSuccess = (settleOrderApiV1MarketplaceOrdersOrderIdSettlePostResponse200) & {
+  headers: Headers;
+};
+export type settleOrderApiV1MarketplaceOrdersOrderIdSettlePostResponseError = (settleOrderApiV1MarketplaceOrdersOrderIdSettlePostResponse422) & {
+  headers: Headers;
+};
+
+export type settleOrderApiV1MarketplaceOrdersOrderIdSettlePostResponse = (settleOrderApiV1MarketplaceOrdersOrderIdSettlePostResponseSuccess | settleOrderApiV1MarketplaceOrdersOrderIdSettlePostResponseError)
+
+export const getSettleOrderApiV1MarketplaceOrdersOrderIdSettlePostUrl = (orderId: string,) => {
+
+
+
+
+  return `/api/v1/marketplace/orders/${orderId}/settle`
+}
+
+/**
+ * Step 5b: Settle the order — auto-release escrow after dispute window closes.
+ *
+ * Called when the dispute window has closed without a challenge: funds are
+ * automatically released to the seller.
+ * @summary Settle Order
+ */
+export const settleOrderApiV1MarketplaceOrdersOrderIdSettlePost = async (orderId: string, options?: Parameters<typeof apiRequest>[1]): Promise<settleOrderApiV1MarketplaceOrdersOrderIdSettlePostResponse> => {
+
+  return apiRequest<settleOrderApiV1MarketplaceOrdersOrderIdSettlePostResponse>(getSettleOrderApiV1MarketplaceOrdersOrderIdSettlePostUrl(orderId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getSettleOrderApiV1MarketplaceOrdersOrderIdSettlePostQueryKey = (orderId: string,) => {
+    return [
+    'POST', `/api/v1/marketplace/orders/${orderId}/settle`
+    ] as const;
+    }
+
+
+export const getSettleOrderApiV1MarketplaceOrdersOrderIdSettlePostQueryOptions = <TData = Awaited<ReturnType<typeof settleOrderApiV1MarketplaceOrdersOrderIdSettlePost>>, TError = HTTPValidationError>(orderId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof settleOrderApiV1MarketplaceOrdersOrderIdSettlePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getSettleOrderApiV1MarketplaceOrdersOrderIdSettlePostQueryKey(orderId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof settleOrderApiV1MarketplaceOrdersOrderIdSettlePost>>> = ({ signal }) => settleOrderApiV1MarketplaceOrdersOrderIdSettlePost(orderId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: orderId !== null && orderId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof settleOrderApiV1MarketplaceOrdersOrderIdSettlePost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type SettleOrderApiV1MarketplaceOrdersOrderIdSettlePostQueryResult = NonNullable<Awaited<ReturnType<typeof settleOrderApiV1MarketplaceOrdersOrderIdSettlePost>>>
+export type SettleOrderApiV1MarketplaceOrdersOrderIdSettlePostQueryError = HTTPValidationError
+
+
+export function useSettleOrderApiV1MarketplaceOrdersOrderIdSettlePost<TData = Awaited<ReturnType<typeof settleOrderApiV1MarketplaceOrdersOrderIdSettlePost>>, TError = HTTPValidationError>(
+ orderId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof settleOrderApiV1MarketplaceOrdersOrderIdSettlePost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof settleOrderApiV1MarketplaceOrdersOrderIdSettlePost>>,
+          TError,
+          Awaited<ReturnType<typeof settleOrderApiV1MarketplaceOrdersOrderIdSettlePost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useSettleOrderApiV1MarketplaceOrdersOrderIdSettlePost<TData = Awaited<ReturnType<typeof settleOrderApiV1MarketplaceOrdersOrderIdSettlePost>>, TError = HTTPValidationError>(
+ orderId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof settleOrderApiV1MarketplaceOrdersOrderIdSettlePost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof settleOrderApiV1MarketplaceOrdersOrderIdSettlePost>>,
+          TError,
+          Awaited<ReturnType<typeof settleOrderApiV1MarketplaceOrdersOrderIdSettlePost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useSettleOrderApiV1MarketplaceOrdersOrderIdSettlePost<TData = Awaited<ReturnType<typeof settleOrderApiV1MarketplaceOrdersOrderIdSettlePost>>, TError = HTTPValidationError>(
+ orderId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof settleOrderApiV1MarketplaceOrdersOrderIdSettlePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Settle Order
+ */
+
+export function useSettleOrderApiV1MarketplaceOrdersOrderIdSettlePost<TData = Awaited<ReturnType<typeof settleOrderApiV1MarketplaceOrdersOrderIdSettlePost>>, TError = HTTPValidationError>(
+ orderId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof settleOrderApiV1MarketplaceOrdersOrderIdSettlePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getSettleOrderApiV1MarketplaceOrdersOrderIdSettlePostQueryOptions(orderId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type completeOrderApiV1MarketplaceOrdersOrderIdCompletePostResponse200 = {
+  data: unknown
+  status: 200
+}
+
+export type completeOrderApiV1MarketplaceOrdersOrderIdCompletePostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type completeOrderApiV1MarketplaceOrdersOrderIdCompletePostResponseSuccess = (completeOrderApiV1MarketplaceOrdersOrderIdCompletePostResponse200) & {
+  headers: Headers;
+};
+export type completeOrderApiV1MarketplaceOrdersOrderIdCompletePostResponseError = (completeOrderApiV1MarketplaceOrdersOrderIdCompletePostResponse422) & {
+  headers: Headers;
+};
+
+export type completeOrderApiV1MarketplaceOrdersOrderIdCompletePostResponse = (completeOrderApiV1MarketplaceOrdersOrderIdCompletePostResponseSuccess | completeOrderApiV1MarketplaceOrdersOrderIdCompletePostResponseError)
+
+export const getCompleteOrderApiV1MarketplaceOrdersOrderIdCompletePostUrl = (orderId: string,) => {
+
+
+
+
+  return `/api/v1/marketplace/orders/${orderId}/complete`
+}
+
+/**
+ * Step 6: Complete the purchase — final settlement confirmation.
+ *
+ * Marks escrow as fully settled after the dispute window has closed and
+ * funds have been released or reversed.
+ * @summary Complete Order
+ */
+export const completeOrderApiV1MarketplaceOrdersOrderIdCompletePost = async (orderId: string, options?: Parameters<typeof apiRequest>[1]): Promise<completeOrderApiV1MarketplaceOrdersOrderIdCompletePostResponse> => {
+
+  return apiRequest<completeOrderApiV1MarketplaceOrdersOrderIdCompletePostResponse>(getCompleteOrderApiV1MarketplaceOrdersOrderIdCompletePostUrl(orderId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getCompleteOrderApiV1MarketplaceOrdersOrderIdCompletePostQueryKey = (orderId: string,) => {
+    return [
+    'POST', `/api/v1/marketplace/orders/${orderId}/complete`
+    ] as const;
+    }
+
+
+export const getCompleteOrderApiV1MarketplaceOrdersOrderIdCompletePostQueryOptions = <TData = Awaited<ReturnType<typeof completeOrderApiV1MarketplaceOrdersOrderIdCompletePost>>, TError = HTTPValidationError>(orderId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof completeOrderApiV1MarketplaceOrdersOrderIdCompletePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getCompleteOrderApiV1MarketplaceOrdersOrderIdCompletePostQueryKey(orderId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof completeOrderApiV1MarketplaceOrdersOrderIdCompletePost>>> = ({ signal }) => completeOrderApiV1MarketplaceOrdersOrderIdCompletePost(orderId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: orderId !== null && orderId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof completeOrderApiV1MarketplaceOrdersOrderIdCompletePost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CompleteOrderApiV1MarketplaceOrdersOrderIdCompletePostQueryResult = NonNullable<Awaited<ReturnType<typeof completeOrderApiV1MarketplaceOrdersOrderIdCompletePost>>>
+export type CompleteOrderApiV1MarketplaceOrdersOrderIdCompletePostQueryError = HTTPValidationError
+
+
+export function useCompleteOrderApiV1MarketplaceOrdersOrderIdCompletePost<TData = Awaited<ReturnType<typeof completeOrderApiV1MarketplaceOrdersOrderIdCompletePost>>, TError = HTTPValidationError>(
+ orderId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof completeOrderApiV1MarketplaceOrdersOrderIdCompletePost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof completeOrderApiV1MarketplaceOrdersOrderIdCompletePost>>,
+          TError,
+          Awaited<ReturnType<typeof completeOrderApiV1MarketplaceOrdersOrderIdCompletePost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCompleteOrderApiV1MarketplaceOrdersOrderIdCompletePost<TData = Awaited<ReturnType<typeof completeOrderApiV1MarketplaceOrdersOrderIdCompletePost>>, TError = HTTPValidationError>(
+ orderId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof completeOrderApiV1MarketplaceOrdersOrderIdCompletePost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof completeOrderApiV1MarketplaceOrdersOrderIdCompletePost>>,
+          TError,
+          Awaited<ReturnType<typeof completeOrderApiV1MarketplaceOrdersOrderIdCompletePost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCompleteOrderApiV1MarketplaceOrdersOrderIdCompletePost<TData = Awaited<ReturnType<typeof completeOrderApiV1MarketplaceOrdersOrderIdCompletePost>>, TError = HTTPValidationError>(
+ orderId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof completeOrderApiV1MarketplaceOrdersOrderIdCompletePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Complete Order
+ */
+
+export function useCompleteOrderApiV1MarketplaceOrdersOrderIdCompletePost<TData = Awaited<ReturnType<typeof completeOrderApiV1MarketplaceOrdersOrderIdCompletePost>>, TError = HTTPValidationError>(
+ orderId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof completeOrderApiV1MarketplaceOrdersOrderIdCompletePost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getCompleteOrderApiV1MarketplaceOrdersOrderIdCompletePostQueryOptions(orderId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export type getVillageProfileApiV1MarketplaceVillagesVillageIdGetResponse200 = {
   data: GetVillageProfileApiV1MarketplaceVillagesVillageIdGet200
@@ -47450,6 +49851,1860 @@ export function useSubscribeApiV1NewsletterSubscribePost<TData = Awaited<ReturnT
 
 
 
+
+export type listLegalTextsApiV1LegalTextsGetResponse200 = {
+  data: ListLegalTextsApiV1LegalTextsGet200
+  status: 200
+}
+
+export type listLegalTextsApiV1LegalTextsGetResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type listLegalTextsApiV1LegalTextsGetResponseSuccess = (listLegalTextsApiV1LegalTextsGetResponse200) & {
+  headers: Headers;
+};
+export type listLegalTextsApiV1LegalTextsGetResponseError = (listLegalTextsApiV1LegalTextsGetResponse422) & {
+  headers: Headers;
+};
+
+export type listLegalTextsApiV1LegalTextsGetResponse = (listLegalTextsApiV1LegalTextsGetResponseSuccess | listLegalTextsApiV1LegalTextsGetResponseError)
+
+export const getListLegalTextsApiV1LegalTextsGetUrl = (params?: ListLegalTextsApiV1LegalTextsGetParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/legal-texts?${stringifiedParams}` : `/api/v1/legal-texts`
+}
+
+/**
+ * List legal texts with optional filters.
+ * @summary List Legal Texts
+ */
+export const listLegalTextsApiV1LegalTextsGet = async (params?: ListLegalTextsApiV1LegalTextsGetParams, options?: Parameters<typeof apiRequest>[1]): Promise<listLegalTextsApiV1LegalTextsGetResponse> => {
+
+  return apiRequest<listLegalTextsApiV1LegalTextsGetResponse>(getListLegalTextsApiV1LegalTextsGetUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListLegalTextsApiV1LegalTextsGetMutationKey = () => ['listLegalTextsApiV1LegalTextsGet'] as const;
+
+export const getListLegalTextsApiV1LegalTextsGetMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listLegalTextsApiV1LegalTextsGet>>, TError,ListLegalTextsApiV1LegalTextsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof listLegalTextsApiV1LegalTextsGet>>, TError,ListLegalTextsApiV1LegalTextsGetMutationVariables, TContext> => {
+
+const mutationKey = getListLegalTextsApiV1LegalTextsGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listLegalTextsApiV1LegalTextsGet>>, ListLegalTextsApiV1LegalTextsGetMutationVariables> = (props) => {
+          const {params} = props ?? {};
+
+          return  listLegalTextsApiV1LegalTextsGet(params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ListLegalTextsApiV1LegalTextsGetMutationResult = NonNullable<Awaited<ReturnType<typeof listLegalTextsApiV1LegalTextsGet>>>
+
+    export type ListLegalTextsApiV1LegalTextsGetMutationError = HTTPValidationError
+    export type ListLegalTextsApiV1LegalTextsGetMutationVariables = {params?: ListLegalTextsApiV1LegalTextsGetParams}
+
+    /**
+ * @summary List Legal Texts
+ */
+export const useListLegalTextsApiV1LegalTextsGet = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listLegalTextsApiV1LegalTextsGet>>, TError,ListLegalTextsApiV1LegalTextsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof listLegalTextsApiV1LegalTextsGet>>,
+        TError,
+        ListLegalTextsApiV1LegalTextsGetMutationVariables,
+        TContext
+      > => {
+      return useMutation(getListLegalTextsApiV1LegalTextsGetMutationOptions(options), queryClient);
+    }
+
+export type createLegalTextApiV1LegalTextsPostResponse201 = {
+  data: CreateLegalTextApiV1LegalTextsPost201
+  status: 201
+}
+
+export type createLegalTextApiV1LegalTextsPostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type createLegalTextApiV1LegalTextsPostResponseSuccess = (createLegalTextApiV1LegalTextsPostResponse201) & {
+  headers: Headers;
+};
+export type createLegalTextApiV1LegalTextsPostResponseError = (createLegalTextApiV1LegalTextsPostResponse422) & {
+  headers: Headers;
+};
+
+export type createLegalTextApiV1LegalTextsPostResponse = (createLegalTextApiV1LegalTextsPostResponseSuccess | createLegalTextApiV1LegalTextsPostResponseError)
+
+export const getCreateLegalTextApiV1LegalTextsPostUrl = () => {
+
+
+
+
+  return `/api/v1/legal-texts`
+}
+
+/**
+ * Create a new legal text (auto-increments version if not specified).
+ * @summary Create Legal Text
+ */
+export const createLegalTextApiV1LegalTextsPost = async (legalTextCreate: LegalTextCreate, options?: Parameters<typeof apiRequest>[1]): Promise<createLegalTextApiV1LegalTextsPostResponse> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiRequest<createLegalTextApiV1LegalTextsPostResponse>(getCreateLegalTextApiV1LegalTextsPostUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(legalTextCreate)
+  }
+);}
+
+
+
+
+
+export const getCreateLegalTextApiV1LegalTextsPostQueryKey = (legalTextCreate?: LegalTextCreate,) => {
+    return [
+    'POST', `/api/v1/legal-texts`, legalTextCreate
+    ] as const;
+    }
+
+
+export const getCreateLegalTextApiV1LegalTextsPostQueryOptions = <TData = Awaited<ReturnType<typeof createLegalTextApiV1LegalTextsPost>>, TError = HTTPValidationError>(legalTextCreate: LegalTextCreate, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createLegalTextApiV1LegalTextsPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getCreateLegalTextApiV1LegalTextsPostQueryKey(legalTextCreate);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof createLegalTextApiV1LegalTextsPost>>> = ({ signal }) => createLegalTextApiV1LegalTextsPost(legalTextCreate, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof createLegalTextApiV1LegalTextsPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CreateLegalTextApiV1LegalTextsPostQueryResult = NonNullable<Awaited<ReturnType<typeof createLegalTextApiV1LegalTextsPost>>>
+export type CreateLegalTextApiV1LegalTextsPostQueryError = HTTPValidationError
+
+
+export function useCreateLegalTextApiV1LegalTextsPost<TData = Awaited<ReturnType<typeof createLegalTextApiV1LegalTextsPost>>, TError = HTTPValidationError>(
+ legalTextCreate: LegalTextCreate, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof createLegalTextApiV1LegalTextsPost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof createLegalTextApiV1LegalTextsPost>>,
+          TError,
+          Awaited<ReturnType<typeof createLegalTextApiV1LegalTextsPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCreateLegalTextApiV1LegalTextsPost<TData = Awaited<ReturnType<typeof createLegalTextApiV1LegalTextsPost>>, TError = HTTPValidationError>(
+ legalTextCreate: LegalTextCreate, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createLegalTextApiV1LegalTextsPost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof createLegalTextApiV1LegalTextsPost>>,
+          TError,
+          Awaited<ReturnType<typeof createLegalTextApiV1LegalTextsPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCreateLegalTextApiV1LegalTextsPost<TData = Awaited<ReturnType<typeof createLegalTextApiV1LegalTextsPost>>, TError = HTTPValidationError>(
+ legalTextCreate: LegalTextCreate, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createLegalTextApiV1LegalTextsPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Create Legal Text
+ */
+
+export function useCreateLegalTextApiV1LegalTextsPost<TData = Awaited<ReturnType<typeof createLegalTextApiV1LegalTextsPost>>, TError = HTTPValidationError>(
+ legalTextCreate: LegalTextCreate, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createLegalTextApiV1LegalTextsPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getCreateLegalTextApiV1LegalTextsPostQueryOptions(legalTextCreate,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type listLegalLocalesApiV1LegalTextsLocalesGetResponse200 = {
+  data: string[]
+  status: 200
+}
+
+export type listLegalLocalesApiV1LegalTextsLocalesGetResponseSuccess = (listLegalLocalesApiV1LegalTextsLocalesGetResponse200) & {
+  headers: Headers;
+};
+;
+
+export type listLegalLocalesApiV1LegalTextsLocalesGetResponse = (listLegalLocalesApiV1LegalTextsLocalesGetResponseSuccess)
+
+export const getListLegalLocalesApiV1LegalTextsLocalesGetUrl = () => {
+
+
+
+
+  return `/api/v1/legal-texts/locales`
+}
+
+/**
+ * Get all locales that have legal texts.
+ * @summary List Legal Locales
+ */
+export const listLegalLocalesApiV1LegalTextsLocalesGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<listLegalLocalesApiV1LegalTextsLocalesGetResponse> => {
+
+  return apiRequest<listLegalLocalesApiV1LegalTextsLocalesGetResponse>(getListLegalLocalesApiV1LegalTextsLocalesGetUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListLegalLocalesApiV1LegalTextsLocalesGetMutationKey = () => ['listLegalLocalesApiV1LegalTextsLocalesGet'] as const;
+
+export const getListLegalLocalesApiV1LegalTextsLocalesGetMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listLegalLocalesApiV1LegalTextsLocalesGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof listLegalLocalesApiV1LegalTextsLocalesGet>>, TError,void, TContext> => {
+
+const mutationKey = getListLegalLocalesApiV1LegalTextsLocalesGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listLegalLocalesApiV1LegalTextsLocalesGet>>, void> = () => {
+
+
+          return  listLegalLocalesApiV1LegalTextsLocalesGet(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ListLegalLocalesApiV1LegalTextsLocalesGetMutationResult = NonNullable<Awaited<ReturnType<typeof listLegalLocalesApiV1LegalTextsLocalesGet>>>
+
+    export type ListLegalLocalesApiV1LegalTextsLocalesGetMutationError = unknown
+
+
+    /**
+ * @summary List Legal Locales
+ */
+export const useListLegalLocalesApiV1LegalTextsLocalesGet = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listLegalLocalesApiV1LegalTextsLocalesGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof listLegalLocalesApiV1LegalTextsLocalesGet>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getListLegalLocalesApiV1LegalTextsLocalesGetMutationOptions(options), queryClient);
+    }
+
+export type listLegalSlugsApiV1LegalTextsSlugsGetResponse200 = {
+  data: string[]
+  status: 200
+}
+
+export type listLegalSlugsApiV1LegalTextsSlugsGetResponseSuccess = (listLegalSlugsApiV1LegalTextsSlugsGetResponse200) & {
+  headers: Headers;
+};
+;
+
+export type listLegalSlugsApiV1LegalTextsSlugsGetResponse = (listLegalSlugsApiV1LegalTextsSlugsGetResponseSuccess)
+
+export const getListLegalSlugsApiV1LegalTextsSlugsGetUrl = () => {
+
+
+
+
+  return `/api/v1/legal-texts/slugs`
+}
+
+/**
+ * Get all available legal text slugs.
+ * @summary List Legal Slugs
+ */
+export const listLegalSlugsApiV1LegalTextsSlugsGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<listLegalSlugsApiV1LegalTextsSlugsGetResponse> => {
+
+  return apiRequest<listLegalSlugsApiV1LegalTextsSlugsGetResponse>(getListLegalSlugsApiV1LegalTextsSlugsGetUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListLegalSlugsApiV1LegalTextsSlugsGetMutationKey = () => ['listLegalSlugsApiV1LegalTextsSlugsGet'] as const;
+
+export const getListLegalSlugsApiV1LegalTextsSlugsGetMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listLegalSlugsApiV1LegalTextsSlugsGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof listLegalSlugsApiV1LegalTextsSlugsGet>>, TError,void, TContext> => {
+
+const mutationKey = getListLegalSlugsApiV1LegalTextsSlugsGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listLegalSlugsApiV1LegalTextsSlugsGet>>, void> = () => {
+
+
+          return  listLegalSlugsApiV1LegalTextsSlugsGet(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ListLegalSlugsApiV1LegalTextsSlugsGetMutationResult = NonNullable<Awaited<ReturnType<typeof listLegalSlugsApiV1LegalTextsSlugsGet>>>
+
+    export type ListLegalSlugsApiV1LegalTextsSlugsGetMutationError = unknown
+
+
+    /**
+ * @summary List Legal Slugs
+ */
+export const useListLegalSlugsApiV1LegalTextsSlugsGet = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listLegalSlugsApiV1LegalTextsSlugsGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof listLegalSlugsApiV1LegalTextsSlugsGet>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getListLegalSlugsApiV1LegalTextsSlugsGetMutationOptions(options), queryClient);
+    }
+
+export type getLegalTextApiV1LegalTextsLocaleSlugGetResponse200 = {
+  data: GetLegalTextApiV1LegalTextsLocaleSlugGet200
+  status: 200
+}
+
+export type getLegalTextApiV1LegalTextsLocaleSlugGetResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type getLegalTextApiV1LegalTextsLocaleSlugGetResponseSuccess = (getLegalTextApiV1LegalTextsLocaleSlugGetResponse200) & {
+  headers: Headers;
+};
+export type getLegalTextApiV1LegalTextsLocaleSlugGetResponseError = (getLegalTextApiV1LegalTextsLocaleSlugGetResponse422) & {
+  headers: Headers;
+};
+
+export type getLegalTextApiV1LegalTextsLocaleSlugGetResponse = (getLegalTextApiV1LegalTextsLocaleSlugGetResponseSuccess | getLegalTextApiV1LegalTextsLocaleSlugGetResponseError)
+
+export const getGetLegalTextApiV1LegalTextsLocaleSlugGetUrl = (locale: string,
+    slug: string,
+    params?: GetLegalTextApiV1LegalTextsLocaleSlugGetParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/legal-texts/${locale}/${slug}?${stringifiedParams}` : `/api/v1/legal-texts/${locale}/${slug}`
+}
+
+/**
+ * Get a specific legal text by locale and slug (latest version by default).
+ * @summary Get Legal Text
+ */
+export const getLegalTextApiV1LegalTextsLocaleSlugGet = async (locale: string,
+    slug: string,
+    params?: GetLegalTextApiV1LegalTextsLocaleSlugGetParams, options?: Parameters<typeof apiRequest>[1]): Promise<getLegalTextApiV1LegalTextsLocaleSlugGetResponse> => {
+
+  return apiRequest<getLegalTextApiV1LegalTextsLocaleSlugGetResponse>(getGetLegalTextApiV1LegalTextsLocaleSlugGetUrl(locale,slug,params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetLegalTextApiV1LegalTextsLocaleSlugGetMutationKey = () => ['getLegalTextApiV1LegalTextsLocaleSlugGet'] as const;
+
+export const getGetLegalTextApiV1LegalTextsLocaleSlugGetMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getLegalTextApiV1LegalTextsLocaleSlugGet>>, TError,GetLegalTextApiV1LegalTextsLocaleSlugGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof getLegalTextApiV1LegalTextsLocaleSlugGet>>, TError,GetLegalTextApiV1LegalTextsLocaleSlugGetMutationVariables, TContext> => {
+
+const mutationKey = getGetLegalTextApiV1LegalTextsLocaleSlugGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getLegalTextApiV1LegalTextsLocaleSlugGet>>, GetLegalTextApiV1LegalTextsLocaleSlugGetMutationVariables> = (props) => {
+          const {locale,slug,params} = props ?? {};
+
+          return  getLegalTextApiV1LegalTextsLocaleSlugGet(locale,slug,params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetLegalTextApiV1LegalTextsLocaleSlugGetMutationResult = NonNullable<Awaited<ReturnType<typeof getLegalTextApiV1LegalTextsLocaleSlugGet>>>
+
+    export type GetLegalTextApiV1LegalTextsLocaleSlugGetMutationError = HTTPValidationError
+    export type GetLegalTextApiV1LegalTextsLocaleSlugGetMutationVariables = {locale: string;slug: string;params?: GetLegalTextApiV1LegalTextsLocaleSlugGetParams}
+
+    /**
+ * @summary Get Legal Text
+ */
+export const useGetLegalTextApiV1LegalTextsLocaleSlugGet = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getLegalTextApiV1LegalTextsLocaleSlugGet>>, TError,GetLegalTextApiV1LegalTextsLocaleSlugGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getLegalTextApiV1LegalTextsLocaleSlugGet>>,
+        TError,
+        GetLegalTextApiV1LegalTextsLocaleSlugGetMutationVariables,
+        TContext
+      > => {
+      return useMutation(getGetLegalTextApiV1LegalTextsLocaleSlugGetMutationOptions(options), queryClient);
+    }
+
+export type getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetResponse200 = {
+  data: GetLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGet200Item[]
+  status: 200
+}
+
+export type getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetResponseSuccess = (getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetResponse200) & {
+  headers: Headers;
+};
+export type getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetResponseError = (getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetResponse422) & {
+  headers: Headers;
+};
+
+export type getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetResponse = (getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetResponseSuccess | getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetResponseError)
+
+export const getGetLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetUrl = (locale: string,
+    slug: string,) => {
+
+
+
+
+  return `/api/v1/legal-texts/${locale}/${slug}/versions`
+}
+
+/**
+ * Get all versions of a legal text.
+ * @summary Get Legal Text Versions
+ */
+export const getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGet = async (locale: string,
+    slug: string, options?: Parameters<typeof apiRequest>[1]): Promise<getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetResponse> => {
+
+  return apiRequest<getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetResponse>(getGetLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetUrl(locale,slug),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetMutationKey = () => ['getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGet'] as const;
+
+export const getGetLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGet>>, TError,GetLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGet>>, TError,GetLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetMutationVariables, TContext> => {
+
+const mutationKey = getGetLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGet>>, GetLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetMutationVariables> = (props) => {
+          const {locale,slug} = props ?? {};
+
+          return  getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGet(locale,slug,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetMutationResult = NonNullable<Awaited<ReturnType<typeof getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGet>>>
+
+    export type GetLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetMutationError = HTTPValidationError
+    export type GetLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetMutationVariables = {locale: string;slug: string}
+
+    /**
+ * @summary Get Legal Text Versions
+ */
+export const useGetLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGet = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGet>>, TError,GetLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGet>>,
+        TError,
+        GetLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetMutationVariables,
+        TContext
+      > => {
+      return useMutation(getGetLegalTextVersionsApiV1LegalTextsLocaleSlugVersionsGetMutationOptions(options), queryClient);
+    }
+
+export type updateLegalTextApiV1LegalTextsLocaleSlugVersionPatchResponse200 = {
+  data: UpdateLegalTextApiV1LegalTextsLocaleSlugVersionPatch200
+  status: 200
+}
+
+export type updateLegalTextApiV1LegalTextsLocaleSlugVersionPatchResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type updateLegalTextApiV1LegalTextsLocaleSlugVersionPatchResponseSuccess = (updateLegalTextApiV1LegalTextsLocaleSlugVersionPatchResponse200) & {
+  headers: Headers;
+};
+export type updateLegalTextApiV1LegalTextsLocaleSlugVersionPatchResponseError = (updateLegalTextApiV1LegalTextsLocaleSlugVersionPatchResponse422) & {
+  headers: Headers;
+};
+
+export type updateLegalTextApiV1LegalTextsLocaleSlugVersionPatchResponse = (updateLegalTextApiV1LegalTextsLocaleSlugVersionPatchResponseSuccess | updateLegalTextApiV1LegalTextsLocaleSlugVersionPatchResponseError)
+
+export const getUpdateLegalTextApiV1LegalTextsLocaleSlugVersionPatchUrl = (locale: string,
+    slug: string,
+    version: number,) => {
+
+
+
+
+  return `/api/v1/legal-texts/${locale}/${slug}/${version}`
+}
+
+/**
+ * Update a legal text (only title, body, status, effective_at).
+ * @summary Update Legal Text
+ */
+export const updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch = async (locale: string,
+    slug: string,
+    version: number,
+    legalTextUpdate: LegalTextUpdate, options?: Parameters<typeof apiRequest>[1]): Promise<updateLegalTextApiV1LegalTextsLocaleSlugVersionPatchResponse> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiRequest<updateLegalTextApiV1LegalTextsLocaleSlugVersionPatchResponse>(getUpdateLegalTextApiV1LegalTextsLocaleSlugVersionPatchUrl(locale,slug,version),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(legalTextUpdate)
+  }
+);}
+
+
+
+
+
+export const getUpdateLegalTextApiV1LegalTextsLocaleSlugVersionPatchQueryKey = (locale: string,
+    slug: string,
+    version: number,
+    legalTextUpdate?: LegalTextUpdate,) => {
+    return [
+    'PATCH', `/api/v1/legal-texts/${locale}/${slug}/${version}`, legalTextUpdate
+    ] as const;
+    }
+
+
+export const getUpdateLegalTextApiV1LegalTextsLocaleSlugVersionPatchQueryOptions = <TData = Awaited<ReturnType<typeof updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch>>, TError = HTTPValidationError>(locale: string,
+    slug: string,
+    version: number,
+    legalTextUpdate: LegalTextUpdate, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getUpdateLegalTextApiV1LegalTextsLocaleSlugVersionPatchQueryKey(locale,slug,version,legalTextUpdate);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch>>> = ({ signal }) => updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch(locale,slug,version,legalTextUpdate, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: locale !== null && locale !== undefined && slug !== null && slug !== undefined && version !== null && version !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type UpdateLegalTextApiV1LegalTextsLocaleSlugVersionPatchQueryResult = NonNullable<Awaited<ReturnType<typeof updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch>>>
+export type UpdateLegalTextApiV1LegalTextsLocaleSlugVersionPatchQueryError = HTTPValidationError
+
+
+export function useUpdateLegalTextApiV1LegalTextsLocaleSlugVersionPatch<TData = Awaited<ReturnType<typeof updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch>>, TError = HTTPValidationError>(
+ locale: string,
+    slug: string,
+    version: number,
+    legalTextUpdate: LegalTextUpdate, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch>>,
+          TError,
+          Awaited<ReturnType<typeof updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useUpdateLegalTextApiV1LegalTextsLocaleSlugVersionPatch<TData = Awaited<ReturnType<typeof updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch>>, TError = HTTPValidationError>(
+ locale: string,
+    slug: string,
+    version: number,
+    legalTextUpdate: LegalTextUpdate, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch>>,
+          TError,
+          Awaited<ReturnType<typeof updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useUpdateLegalTextApiV1LegalTextsLocaleSlugVersionPatch<TData = Awaited<ReturnType<typeof updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch>>, TError = HTTPValidationError>(
+ locale: string,
+    slug: string,
+    version: number,
+    legalTextUpdate: LegalTextUpdate, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Update Legal Text
+ */
+
+export function useUpdateLegalTextApiV1LegalTextsLocaleSlugVersionPatch<TData = Awaited<ReturnType<typeof updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch>>, TError = HTTPValidationError>(
+ locale: string,
+    slug: string,
+    version: number,
+    legalTextUpdate: LegalTextUpdate, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateLegalTextApiV1LegalTextsLocaleSlugVersionPatch>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getUpdateLegalTextApiV1LegalTextsLocaleSlugVersionPatchQueryOptions(locale,slug,version,legalTextUpdate,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type deleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteResponse200 = {
+  data: DeleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete200
+  status: 200
+}
+
+export type deleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type deleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteResponseSuccess = (deleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteResponse200) & {
+  headers: Headers;
+};
+export type deleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteResponseError = (deleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteResponse422) & {
+  headers: Headers;
+};
+
+export type deleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteResponse = (deleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteResponseSuccess | deleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteResponseError)
+
+export const getDeleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteUrl = (locale: string,
+    slug: string,
+    version: number,) => {
+
+
+
+
+  return `/api/v1/legal-texts/${locale}/${slug}/${version}`
+}
+
+/**
+ * Delete a specific legal text version.
+ * @summary Delete Legal Text
+ */
+export const deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete = async (locale: string,
+    slug: string,
+    version: number, options?: Parameters<typeof apiRequest>[1]): Promise<deleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteResponse> => {
+
+  return apiRequest<deleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteResponse>(getDeleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteUrl(locale,slug,version),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getDeleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteQueryKey = (locale: string,
+    slug: string,
+    version: number,) => {
+    return [
+    'DELETE', `/api/v1/legal-texts/${locale}/${slug}/${version}`
+    ] as const;
+    }
+
+
+export const getDeleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteQueryOptions = <TData = Awaited<ReturnType<typeof deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete>>, TError = HTTPValidationError>(locale: string,
+    slug: string,
+    version: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getDeleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteQueryKey(locale,slug,version);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete>>> = ({ signal }) => deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete(locale,slug,version, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: locale !== null && locale !== undefined && slug !== null && slug !== undefined && version !== null && version !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type DeleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteQueryResult = NonNullable<Awaited<ReturnType<typeof deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete>>>
+export type DeleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteQueryError = HTTPValidationError
+
+
+export function useDeleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete<TData = Awaited<ReturnType<typeof deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete>>, TError = HTTPValidationError>(
+ locale: string,
+    slug: string,
+    version: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete>>,
+          TError,
+          Awaited<ReturnType<typeof deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useDeleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete<TData = Awaited<ReturnType<typeof deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete>>, TError = HTTPValidationError>(
+ locale: string,
+    slug: string,
+    version: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete>>,
+          TError,
+          Awaited<ReturnType<typeof deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useDeleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete<TData = Awaited<ReturnType<typeof deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete>>, TError = HTTPValidationError>(
+ locale: string,
+    slug: string,
+    version: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Delete Legal Text
+ */
+
+export function useDeleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete<TData = Awaited<ReturnType<typeof deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete>>, TError = HTTPValidationError>(
+ locale: string,
+    slug: string,
+    version: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteLegalTextApiV1LegalTextsLocaleSlugVersionDelete>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getDeleteLegalTextApiV1LegalTextsLocaleSlugVersionDeleteQueryOptions(locale,slug,version,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type listToolsApiV1ToolRegistryGetResponse200 = {
+  data: ListToolsApiV1ToolRegistryGet200
+  status: 200
+}
+
+export type listToolsApiV1ToolRegistryGetResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type listToolsApiV1ToolRegistryGetResponseSuccess = (listToolsApiV1ToolRegistryGetResponse200) & {
+  headers: Headers;
+};
+export type listToolsApiV1ToolRegistryGetResponseError = (listToolsApiV1ToolRegistryGetResponse422) & {
+  headers: Headers;
+};
+
+export type listToolsApiV1ToolRegistryGetResponse = (listToolsApiV1ToolRegistryGetResponseSuccess | listToolsApiV1ToolRegistryGetResponseError)
+
+export const getListToolsApiV1ToolRegistryGetUrl = (params?: ListToolsApiV1ToolRegistryGetParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/tool-registry?${stringifiedParams}` : `/api/v1/tool-registry`
+}
+
+/**
+ * List tools with optional filters.
+ * @summary List Tools
+ */
+export const listToolsApiV1ToolRegistryGet = async (params?: ListToolsApiV1ToolRegistryGetParams, options?: Parameters<typeof apiRequest>[1]): Promise<listToolsApiV1ToolRegistryGetResponse> => {
+
+  return apiRequest<listToolsApiV1ToolRegistryGetResponse>(getListToolsApiV1ToolRegistryGetUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListToolsApiV1ToolRegistryGetMutationKey = () => ['listToolsApiV1ToolRegistryGet'] as const;
+
+export const getListToolsApiV1ToolRegistryGetMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listToolsApiV1ToolRegistryGet>>, TError,ListToolsApiV1ToolRegistryGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof listToolsApiV1ToolRegistryGet>>, TError,ListToolsApiV1ToolRegistryGetMutationVariables, TContext> => {
+
+const mutationKey = getListToolsApiV1ToolRegistryGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listToolsApiV1ToolRegistryGet>>, ListToolsApiV1ToolRegistryGetMutationVariables> = (props) => {
+          const {params} = props ?? {};
+
+          return  listToolsApiV1ToolRegistryGet(params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ListToolsApiV1ToolRegistryGetMutationResult = NonNullable<Awaited<ReturnType<typeof listToolsApiV1ToolRegistryGet>>>
+
+    export type ListToolsApiV1ToolRegistryGetMutationError = HTTPValidationError
+    export type ListToolsApiV1ToolRegistryGetMutationVariables = {params?: ListToolsApiV1ToolRegistryGetParams}
+
+    /**
+ * @summary List Tools
+ */
+export const useListToolsApiV1ToolRegistryGet = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listToolsApiV1ToolRegistryGet>>, TError,ListToolsApiV1ToolRegistryGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof listToolsApiV1ToolRegistryGet>>,
+        TError,
+        ListToolsApiV1ToolRegistryGetMutationVariables,
+        TContext
+      > => {
+      return useMutation(getListToolsApiV1ToolRegistryGetMutationOptions(options), queryClient);
+    }
+
+export type createToolApiV1ToolRegistryPostResponse201 = {
+  data: CreateToolApiV1ToolRegistryPost201
+  status: 201
+}
+
+export type createToolApiV1ToolRegistryPostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type createToolApiV1ToolRegistryPostResponseSuccess = (createToolApiV1ToolRegistryPostResponse201) & {
+  headers: Headers;
+};
+export type createToolApiV1ToolRegistryPostResponseError = (createToolApiV1ToolRegistryPostResponse422) & {
+  headers: Headers;
+};
+
+export type createToolApiV1ToolRegistryPostResponse = (createToolApiV1ToolRegistryPostResponseSuccess | createToolApiV1ToolRegistryPostResponseError)
+
+export const getCreateToolApiV1ToolRegistryPostUrl = () => {
+
+
+
+
+  return `/api/v1/tool-registry`
+}
+
+/**
+ * Create a new tool registry entry.
+ * @summary Create Tool
+ */
+export const createToolApiV1ToolRegistryPost = async (toolRegistryCreate: ToolRegistryCreate, options?: Parameters<typeof apiRequest>[1]): Promise<createToolApiV1ToolRegistryPostResponse> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiRequest<createToolApiV1ToolRegistryPostResponse>(getCreateToolApiV1ToolRegistryPostUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(toolRegistryCreate)
+  }
+);}
+
+
+
+
+
+export const getCreateToolApiV1ToolRegistryPostQueryKey = (toolRegistryCreate?: ToolRegistryCreate,) => {
+    return [
+    'POST', `/api/v1/tool-registry`, toolRegistryCreate
+    ] as const;
+    }
+
+
+export const getCreateToolApiV1ToolRegistryPostQueryOptions = <TData = Awaited<ReturnType<typeof createToolApiV1ToolRegistryPost>>, TError = HTTPValidationError>(toolRegistryCreate: ToolRegistryCreate, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createToolApiV1ToolRegistryPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getCreateToolApiV1ToolRegistryPostQueryKey(toolRegistryCreate);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof createToolApiV1ToolRegistryPost>>> = ({ signal }) => createToolApiV1ToolRegistryPost(toolRegistryCreate, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof createToolApiV1ToolRegistryPost>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CreateToolApiV1ToolRegistryPostQueryResult = NonNullable<Awaited<ReturnType<typeof createToolApiV1ToolRegistryPost>>>
+export type CreateToolApiV1ToolRegistryPostQueryError = HTTPValidationError
+
+
+export function useCreateToolApiV1ToolRegistryPost<TData = Awaited<ReturnType<typeof createToolApiV1ToolRegistryPost>>, TError = HTTPValidationError>(
+ toolRegistryCreate: ToolRegistryCreate, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof createToolApiV1ToolRegistryPost>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof createToolApiV1ToolRegistryPost>>,
+          TError,
+          Awaited<ReturnType<typeof createToolApiV1ToolRegistryPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCreateToolApiV1ToolRegistryPost<TData = Awaited<ReturnType<typeof createToolApiV1ToolRegistryPost>>, TError = HTTPValidationError>(
+ toolRegistryCreate: ToolRegistryCreate, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createToolApiV1ToolRegistryPost>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof createToolApiV1ToolRegistryPost>>,
+          TError,
+          Awaited<ReturnType<typeof createToolApiV1ToolRegistryPost>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCreateToolApiV1ToolRegistryPost<TData = Awaited<ReturnType<typeof createToolApiV1ToolRegistryPost>>, TError = HTTPValidationError>(
+ toolRegistryCreate: ToolRegistryCreate, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createToolApiV1ToolRegistryPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Create Tool
+ */
+
+export function useCreateToolApiV1ToolRegistryPost<TData = Awaited<ReturnType<typeof createToolApiV1ToolRegistryPost>>, TError = HTTPValidationError>(
+ toolRegistryCreate: ToolRegistryCreate, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createToolApiV1ToolRegistryPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getCreateToolApiV1ToolRegistryPostQueryOptions(toolRegistryCreate,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type listDomainsApiV1ToolRegistryDomainsGetResponse200 = {
+  data: string[]
+  status: 200
+}
+
+export type listDomainsApiV1ToolRegistryDomainsGetResponseSuccess = (listDomainsApiV1ToolRegistryDomainsGetResponse200) & {
+  headers: Headers;
+};
+;
+
+export type listDomainsApiV1ToolRegistryDomainsGetResponse = (listDomainsApiV1ToolRegistryDomainsGetResponseSuccess)
+
+export const getListDomainsApiV1ToolRegistryDomainsGetUrl = () => {
+
+
+
+
+  return `/api/v1/tool-registry/domains`
+}
+
+/**
+ * Get all unique domains.
+ * @summary List Domains
+ */
+export const listDomainsApiV1ToolRegistryDomainsGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<listDomainsApiV1ToolRegistryDomainsGetResponse> => {
+
+  return apiRequest<listDomainsApiV1ToolRegistryDomainsGetResponse>(getListDomainsApiV1ToolRegistryDomainsGetUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListDomainsApiV1ToolRegistryDomainsGetMutationKey = () => ['listDomainsApiV1ToolRegistryDomainsGet'] as const;
+
+export const getListDomainsApiV1ToolRegistryDomainsGetMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listDomainsApiV1ToolRegistryDomainsGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof listDomainsApiV1ToolRegistryDomainsGet>>, TError,void, TContext> => {
+
+const mutationKey = getListDomainsApiV1ToolRegistryDomainsGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listDomainsApiV1ToolRegistryDomainsGet>>, void> = () => {
+
+
+          return  listDomainsApiV1ToolRegistryDomainsGet(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ListDomainsApiV1ToolRegistryDomainsGetMutationResult = NonNullable<Awaited<ReturnType<typeof listDomainsApiV1ToolRegistryDomainsGet>>>
+
+    export type ListDomainsApiV1ToolRegistryDomainsGetMutationError = unknown
+
+
+    /**
+ * @summary List Domains
+ */
+export const useListDomainsApiV1ToolRegistryDomainsGet = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listDomainsApiV1ToolRegistryDomainsGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof listDomainsApiV1ToolRegistryDomainsGet>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getListDomainsApiV1ToolRegistryDomainsGetMutationOptions(options), queryClient);
+    }
+
+export type listCategoriesApiV1ToolRegistryCategoriesGetResponse200 = {
+  data: string[]
+  status: 200
+}
+
+export type listCategoriesApiV1ToolRegistryCategoriesGetResponseSuccess = (listCategoriesApiV1ToolRegistryCategoriesGetResponse200) & {
+  headers: Headers;
+};
+;
+
+export type listCategoriesApiV1ToolRegistryCategoriesGetResponse = (listCategoriesApiV1ToolRegistryCategoriesGetResponseSuccess)
+
+export const getListCategoriesApiV1ToolRegistryCategoriesGetUrl = () => {
+
+
+
+
+  return `/api/v1/tool-registry/categories`
+}
+
+/**
+ * Get all unique categories.
+ * @summary List Categories
+ */
+export const listCategoriesApiV1ToolRegistryCategoriesGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<listCategoriesApiV1ToolRegistryCategoriesGetResponse> => {
+
+  return apiRequest<listCategoriesApiV1ToolRegistryCategoriesGetResponse>(getListCategoriesApiV1ToolRegistryCategoriesGetUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListCategoriesApiV1ToolRegistryCategoriesGetMutationKey = () => ['listCategoriesApiV1ToolRegistryCategoriesGet'] as const;
+
+export const getListCategoriesApiV1ToolRegistryCategoriesGetMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listCategoriesApiV1ToolRegistryCategoriesGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof listCategoriesApiV1ToolRegistryCategoriesGet>>, TError,void, TContext> => {
+
+const mutationKey = getListCategoriesApiV1ToolRegistryCategoriesGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listCategoriesApiV1ToolRegistryCategoriesGet>>, void> = () => {
+
+
+          return  listCategoriesApiV1ToolRegistryCategoriesGet(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ListCategoriesApiV1ToolRegistryCategoriesGetMutationResult = NonNullable<Awaited<ReturnType<typeof listCategoriesApiV1ToolRegistryCategoriesGet>>>
+
+    export type ListCategoriesApiV1ToolRegistryCategoriesGetMutationError = unknown
+
+
+    /**
+ * @summary List Categories
+ */
+export const useListCategoriesApiV1ToolRegistryCategoriesGet = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listCategoriesApiV1ToolRegistryCategoriesGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof listCategoriesApiV1ToolRegistryCategoriesGet>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getListCategoriesApiV1ToolRegistryCategoriesGetMutationOptions(options), queryClient);
+    }
+
+export type listPhasesApiV1ToolRegistryPhasesGetResponse200 = {
+  data: number[]
+  status: 200
+}
+
+export type listPhasesApiV1ToolRegistryPhasesGetResponseSuccess = (listPhasesApiV1ToolRegistryPhasesGetResponse200) & {
+  headers: Headers;
+};
+;
+
+export type listPhasesApiV1ToolRegistryPhasesGetResponse = (listPhasesApiV1ToolRegistryPhasesGetResponseSuccess)
+
+export const getListPhasesApiV1ToolRegistryPhasesGetUrl = () => {
+
+
+
+
+  return `/api/v1/tool-registry/phases`
+}
+
+/**
+ * Get all unique phases.
+ * @summary List Phases
+ */
+export const listPhasesApiV1ToolRegistryPhasesGet = async ( options?: Parameters<typeof apiRequest>[1]): Promise<listPhasesApiV1ToolRegistryPhasesGetResponse> => {
+
+  return apiRequest<listPhasesApiV1ToolRegistryPhasesGetResponse>(getListPhasesApiV1ToolRegistryPhasesGetUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListPhasesApiV1ToolRegistryPhasesGetMutationKey = () => ['listPhasesApiV1ToolRegistryPhasesGet'] as const;
+
+export const getListPhasesApiV1ToolRegistryPhasesGetMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listPhasesApiV1ToolRegistryPhasesGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof listPhasesApiV1ToolRegistryPhasesGet>>, TError,void, TContext> => {
+
+const mutationKey = getListPhasesApiV1ToolRegistryPhasesGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof listPhasesApiV1ToolRegistryPhasesGet>>, void> = () => {
+
+
+          return  listPhasesApiV1ToolRegistryPhasesGet(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ListPhasesApiV1ToolRegistryPhasesGetMutationResult = NonNullable<Awaited<ReturnType<typeof listPhasesApiV1ToolRegistryPhasesGet>>>
+
+    export type ListPhasesApiV1ToolRegistryPhasesGetMutationError = unknown
+
+
+    /**
+ * @summary List Phases
+ */
+export const useListPhasesApiV1ToolRegistryPhasesGet = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof listPhasesApiV1ToolRegistryPhasesGet>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof listPhasesApiV1ToolRegistryPhasesGet>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getListPhasesApiV1ToolRegistryPhasesGetMutationOptions(options), queryClient);
+    }
+
+export type getToolApiV1ToolRegistryToolIdGetResponse200 = {
+  data: GetToolApiV1ToolRegistryToolIdGet200
+  status: 200
+}
+
+export type getToolApiV1ToolRegistryToolIdGetResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type getToolApiV1ToolRegistryToolIdGetResponseSuccess = (getToolApiV1ToolRegistryToolIdGetResponse200) & {
+  headers: Headers;
+};
+export type getToolApiV1ToolRegistryToolIdGetResponseError = (getToolApiV1ToolRegistryToolIdGetResponse422) & {
+  headers: Headers;
+};
+
+export type getToolApiV1ToolRegistryToolIdGetResponse = (getToolApiV1ToolRegistryToolIdGetResponseSuccess | getToolApiV1ToolRegistryToolIdGetResponseError)
+
+export const getGetToolApiV1ToolRegistryToolIdGetUrl = (toolId: string,) => {
+
+
+
+
+  return `/api/v1/tool-registry/${toolId}`
+}
+
+/**
+ * Get a specific tool by tool_id.
+ * @summary Get Tool
+ */
+export const getToolApiV1ToolRegistryToolIdGet = async (toolId: string, options?: Parameters<typeof apiRequest>[1]): Promise<getToolApiV1ToolRegistryToolIdGetResponse> => {
+
+  return apiRequest<getToolApiV1ToolRegistryToolIdGetResponse>(getGetToolApiV1ToolRegistryToolIdGetUrl(toolId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetToolApiV1ToolRegistryToolIdGetMutationKey = () => ['getToolApiV1ToolRegistryToolIdGet'] as const;
+
+export const getGetToolApiV1ToolRegistryToolIdGetMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getToolApiV1ToolRegistryToolIdGet>>, TError,GetToolApiV1ToolRegistryToolIdGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof getToolApiV1ToolRegistryToolIdGet>>, TError,GetToolApiV1ToolRegistryToolIdGetMutationVariables, TContext> => {
+
+const mutationKey = getGetToolApiV1ToolRegistryToolIdGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getToolApiV1ToolRegistryToolIdGet>>, GetToolApiV1ToolRegistryToolIdGetMutationVariables> = (props) => {
+          const {toolId} = props ?? {};
+
+          return  getToolApiV1ToolRegistryToolIdGet(toolId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetToolApiV1ToolRegistryToolIdGetMutationResult = NonNullable<Awaited<ReturnType<typeof getToolApiV1ToolRegistryToolIdGet>>>
+
+    export type GetToolApiV1ToolRegistryToolIdGetMutationError = HTTPValidationError
+    export type GetToolApiV1ToolRegistryToolIdGetMutationVariables = {toolId: string}
+
+    /**
+ * @summary Get Tool
+ */
+export const useGetToolApiV1ToolRegistryToolIdGet = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getToolApiV1ToolRegistryToolIdGet>>, TError,GetToolApiV1ToolRegistryToolIdGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getToolApiV1ToolRegistryToolIdGet>>,
+        TError,
+        GetToolApiV1ToolRegistryToolIdGetMutationVariables,
+        TContext
+      > => {
+      return useMutation(getGetToolApiV1ToolRegistryToolIdGetMutationOptions(options), queryClient);
+    }
+
+export type updateToolApiV1ToolRegistryToolIdPatchResponse200 = {
+  data: UpdateToolApiV1ToolRegistryToolIdPatch200
+  status: 200
+}
+
+export type updateToolApiV1ToolRegistryToolIdPatchResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type updateToolApiV1ToolRegistryToolIdPatchResponseSuccess = (updateToolApiV1ToolRegistryToolIdPatchResponse200) & {
+  headers: Headers;
+};
+export type updateToolApiV1ToolRegistryToolIdPatchResponseError = (updateToolApiV1ToolRegistryToolIdPatchResponse422) & {
+  headers: Headers;
+};
+
+export type updateToolApiV1ToolRegistryToolIdPatchResponse = (updateToolApiV1ToolRegistryToolIdPatchResponseSuccess | updateToolApiV1ToolRegistryToolIdPatchResponseError)
+
+export const getUpdateToolApiV1ToolRegistryToolIdPatchUrl = (toolId: string,) => {
+
+
+
+
+  return `/api/v1/tool-registry/${toolId}`
+}
+
+/**
+ * Update a tool registry entry.
+ * @summary Update Tool
+ */
+export const updateToolApiV1ToolRegistryToolIdPatch = async (toolId: string,
+    toolRegistryUpdate: ToolRegistryUpdate, options?: Parameters<typeof apiRequest>[1]): Promise<updateToolApiV1ToolRegistryToolIdPatchResponse> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiRequest<updateToolApiV1ToolRegistryToolIdPatchResponse>(getUpdateToolApiV1ToolRegistryToolIdPatchUrl(toolId),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(toolRegistryUpdate)
+  }
+);}
+
+
+
+
+
+export const getUpdateToolApiV1ToolRegistryToolIdPatchQueryKey = (toolId: string,
+    toolRegistryUpdate?: ToolRegistryUpdate,) => {
+    return [
+    'PATCH', `/api/v1/tool-registry/${toolId}`, toolRegistryUpdate
+    ] as const;
+    }
+
+
+export const getUpdateToolApiV1ToolRegistryToolIdPatchQueryOptions = <TData = Awaited<ReturnType<typeof updateToolApiV1ToolRegistryToolIdPatch>>, TError = HTTPValidationError>(toolId: string,
+    toolRegistryUpdate: ToolRegistryUpdate, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateToolApiV1ToolRegistryToolIdPatch>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getUpdateToolApiV1ToolRegistryToolIdPatchQueryKey(toolId,toolRegistryUpdate);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof updateToolApiV1ToolRegistryToolIdPatch>>> = ({ signal }) => updateToolApiV1ToolRegistryToolIdPatch(toolId,toolRegistryUpdate, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: toolId !== null && toolId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof updateToolApiV1ToolRegistryToolIdPatch>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type UpdateToolApiV1ToolRegistryToolIdPatchQueryResult = NonNullable<Awaited<ReturnType<typeof updateToolApiV1ToolRegistryToolIdPatch>>>
+export type UpdateToolApiV1ToolRegistryToolIdPatchQueryError = HTTPValidationError
+
+
+export function useUpdateToolApiV1ToolRegistryToolIdPatch<TData = Awaited<ReturnType<typeof updateToolApiV1ToolRegistryToolIdPatch>>, TError = HTTPValidationError>(
+ toolId: string,
+    toolRegistryUpdate: ToolRegistryUpdate, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateToolApiV1ToolRegistryToolIdPatch>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof updateToolApiV1ToolRegistryToolIdPatch>>,
+          TError,
+          Awaited<ReturnType<typeof updateToolApiV1ToolRegistryToolIdPatch>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useUpdateToolApiV1ToolRegistryToolIdPatch<TData = Awaited<ReturnType<typeof updateToolApiV1ToolRegistryToolIdPatch>>, TError = HTTPValidationError>(
+ toolId: string,
+    toolRegistryUpdate: ToolRegistryUpdate, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateToolApiV1ToolRegistryToolIdPatch>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof updateToolApiV1ToolRegistryToolIdPatch>>,
+          TError,
+          Awaited<ReturnType<typeof updateToolApiV1ToolRegistryToolIdPatch>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useUpdateToolApiV1ToolRegistryToolIdPatch<TData = Awaited<ReturnType<typeof updateToolApiV1ToolRegistryToolIdPatch>>, TError = HTTPValidationError>(
+ toolId: string,
+    toolRegistryUpdate: ToolRegistryUpdate, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateToolApiV1ToolRegistryToolIdPatch>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Update Tool
+ */
+
+export function useUpdateToolApiV1ToolRegistryToolIdPatch<TData = Awaited<ReturnType<typeof updateToolApiV1ToolRegistryToolIdPatch>>, TError = HTTPValidationError>(
+ toolId: string,
+    toolRegistryUpdate: ToolRegistryUpdate, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateToolApiV1ToolRegistryToolIdPatch>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getUpdateToolApiV1ToolRegistryToolIdPatchQueryOptions(toolId,toolRegistryUpdate,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type deleteToolApiV1ToolRegistryToolIdDeleteResponse200 = {
+  data: DeleteToolApiV1ToolRegistryToolIdDelete200
+  status: 200
+}
+
+export type deleteToolApiV1ToolRegistryToolIdDeleteResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type deleteToolApiV1ToolRegistryToolIdDeleteResponseSuccess = (deleteToolApiV1ToolRegistryToolIdDeleteResponse200) & {
+  headers: Headers;
+};
+export type deleteToolApiV1ToolRegistryToolIdDeleteResponseError = (deleteToolApiV1ToolRegistryToolIdDeleteResponse422) & {
+  headers: Headers;
+};
+
+export type deleteToolApiV1ToolRegistryToolIdDeleteResponse = (deleteToolApiV1ToolRegistryToolIdDeleteResponseSuccess | deleteToolApiV1ToolRegistryToolIdDeleteResponseError)
+
+export const getDeleteToolApiV1ToolRegistryToolIdDeleteUrl = (toolId: string,) => {
+
+
+
+
+  return `/api/v1/tool-registry/${toolId}`
+}
+
+/**
+ * Delete a tool registry entry.
+ * @summary Delete Tool
+ */
+export const deleteToolApiV1ToolRegistryToolIdDelete = async (toolId: string, options?: Parameters<typeof apiRequest>[1]): Promise<deleteToolApiV1ToolRegistryToolIdDeleteResponse> => {
+
+  return apiRequest<deleteToolApiV1ToolRegistryToolIdDeleteResponse>(getDeleteToolApiV1ToolRegistryToolIdDeleteUrl(toolId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getDeleteToolApiV1ToolRegistryToolIdDeleteQueryKey = (toolId: string,) => {
+    return [
+    'DELETE', `/api/v1/tool-registry/${toolId}`
+    ] as const;
+    }
+
+
+export const getDeleteToolApiV1ToolRegistryToolIdDeleteQueryOptions = <TData = Awaited<ReturnType<typeof deleteToolApiV1ToolRegistryToolIdDelete>>, TError = HTTPValidationError>(toolId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteToolApiV1ToolRegistryToolIdDelete>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getDeleteToolApiV1ToolRegistryToolIdDeleteQueryKey(toolId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof deleteToolApiV1ToolRegistryToolIdDelete>>> = ({ signal }) => deleteToolApiV1ToolRegistryToolIdDelete(toolId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: toolId !== null && toolId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof deleteToolApiV1ToolRegistryToolIdDelete>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type DeleteToolApiV1ToolRegistryToolIdDeleteQueryResult = NonNullable<Awaited<ReturnType<typeof deleteToolApiV1ToolRegistryToolIdDelete>>>
+export type DeleteToolApiV1ToolRegistryToolIdDeleteQueryError = HTTPValidationError
+
+
+export function useDeleteToolApiV1ToolRegistryToolIdDelete<TData = Awaited<ReturnType<typeof deleteToolApiV1ToolRegistryToolIdDelete>>, TError = HTTPValidationError>(
+ toolId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteToolApiV1ToolRegistryToolIdDelete>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof deleteToolApiV1ToolRegistryToolIdDelete>>,
+          TError,
+          Awaited<ReturnType<typeof deleteToolApiV1ToolRegistryToolIdDelete>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useDeleteToolApiV1ToolRegistryToolIdDelete<TData = Awaited<ReturnType<typeof deleteToolApiV1ToolRegistryToolIdDelete>>, TError = HTTPValidationError>(
+ toolId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteToolApiV1ToolRegistryToolIdDelete>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof deleteToolApiV1ToolRegistryToolIdDelete>>,
+          TError,
+          Awaited<ReturnType<typeof deleteToolApiV1ToolRegistryToolIdDelete>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useDeleteToolApiV1ToolRegistryToolIdDelete<TData = Awaited<ReturnType<typeof deleteToolApiV1ToolRegistryToolIdDelete>>, TError = HTTPValidationError>(
+ toolId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteToolApiV1ToolRegistryToolIdDelete>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Delete Tool
+ */
+
+export function useDeleteToolApiV1ToolRegistryToolIdDelete<TData = Awaited<ReturnType<typeof deleteToolApiV1ToolRegistryToolIdDelete>>, TError = HTTPValidationError>(
+ toolId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteToolApiV1ToolRegistryToolIdDelete>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getDeleteToolApiV1ToolRegistryToolIdDeleteQueryOptions(toolId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type getToolByServiceApiV1ToolRegistryByServiceServiceSlugGetResponse200 = {
+  data: GetToolByServiceApiV1ToolRegistryByServiceServiceSlugGet200
+  status: 200
+}
+
+export type getToolByServiceApiV1ToolRegistryByServiceServiceSlugGetResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type getToolByServiceApiV1ToolRegistryByServiceServiceSlugGetResponseSuccess = (getToolByServiceApiV1ToolRegistryByServiceServiceSlugGetResponse200) & {
+  headers: Headers;
+};
+export type getToolByServiceApiV1ToolRegistryByServiceServiceSlugGetResponseError = (getToolByServiceApiV1ToolRegistryByServiceServiceSlugGetResponse422) & {
+  headers: Headers;
+};
+
+export type getToolByServiceApiV1ToolRegistryByServiceServiceSlugGetResponse = (getToolByServiceApiV1ToolRegistryByServiceServiceSlugGetResponseSuccess | getToolByServiceApiV1ToolRegistryByServiceServiceSlugGetResponseError)
+
+export const getGetToolByServiceApiV1ToolRegistryByServiceServiceSlugGetUrl = (serviceSlug: string,) => {
+
+
+
+
+  return `/api/v1/tool-registry/by-service/${serviceSlug}`
+}
+
+/**
+ * Get tool by service slug (e.g., models/et0_hargreaves).
+ * @summary Get Tool By Service
+ */
+export const getToolByServiceApiV1ToolRegistryByServiceServiceSlugGet = async (serviceSlug: string, options?: Parameters<typeof apiRequest>[1]): Promise<getToolByServiceApiV1ToolRegistryByServiceServiceSlugGetResponse> => {
+
+  return apiRequest<getToolByServiceApiV1ToolRegistryByServiceServiceSlugGetResponse>(getGetToolByServiceApiV1ToolRegistryByServiceServiceSlugGetUrl(serviceSlug),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetToolByServiceApiV1ToolRegistryByServiceServiceSlugGetMutationKey = () => ['getToolByServiceApiV1ToolRegistryByServiceServiceSlugGet'] as const;
+
+export const getGetToolByServiceApiV1ToolRegistryByServiceServiceSlugGetMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getToolByServiceApiV1ToolRegistryByServiceServiceSlugGet>>, TError,GetToolByServiceApiV1ToolRegistryByServiceServiceSlugGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof getToolByServiceApiV1ToolRegistryByServiceServiceSlugGet>>, TError,GetToolByServiceApiV1ToolRegistryByServiceServiceSlugGetMutationVariables, TContext> => {
+
+const mutationKey = getGetToolByServiceApiV1ToolRegistryByServiceServiceSlugGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getToolByServiceApiV1ToolRegistryByServiceServiceSlugGet>>, GetToolByServiceApiV1ToolRegistryByServiceServiceSlugGetMutationVariables> = (props) => {
+          const {serviceSlug} = props ?? {};
+
+          return  getToolByServiceApiV1ToolRegistryByServiceServiceSlugGet(serviceSlug,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetToolByServiceApiV1ToolRegistryByServiceServiceSlugGetMutationResult = NonNullable<Awaited<ReturnType<typeof getToolByServiceApiV1ToolRegistryByServiceServiceSlugGet>>>
+
+    export type GetToolByServiceApiV1ToolRegistryByServiceServiceSlugGetMutationError = HTTPValidationError
+    export type GetToolByServiceApiV1ToolRegistryByServiceServiceSlugGetMutationVariables = {serviceSlug: string}
+
+    /**
+ * @summary Get Tool By Service
+ */
+export const useGetToolByServiceApiV1ToolRegistryByServiceServiceSlugGet = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getToolByServiceApiV1ToolRegistryByServiceServiceSlugGet>>, TError,GetToolByServiceApiV1ToolRegistryByServiceServiceSlugGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getToolByServiceApiV1ToolRegistryByServiceServiceSlugGet>>,
+        TError,
+        GetToolByServiceApiV1ToolRegistryByServiceServiceSlugGetMutationVariables,
+        TContext
+      > => {
+      return useMutation(getGetToolByServiceApiV1ToolRegistryByServiceServiceSlugGetMutationOptions(options), queryClient);
+    }
 
 export type createRunApiV1HubRunsPostResponse200 = {
   data: CreateRunApiV1HubRunsPost200
