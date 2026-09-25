@@ -1672,3 +1672,92 @@ docs/adr/0005-api-contract.md
 8. stabilization کیفیت، امنیت، observability و performance
 9. تکمیل deployment و production gates
 10. بستن gaps مستندسازی و رسیدن به Definition of Done
+
+---
+
+# ۱۰. گزارش اجرای Wave 1 و Wave 2
+
+## Wave 1 — قرارداد، Auth و Release
+
+انجام‌شده:
+
+- BFF same-origin با routeهای زیر ایجاد شد:
+  - `apps/web/src/app/api/auth/login/route.ts`
+  - `apps/web/src/app/api/auth/signup/route.ts`
+  - `apps/web/src/app/api/auth/refresh/route.ts`
+  - `apps/web/src/app/api/auth/logout/route.ts`
+  - `apps/web/src/app/api/auth/session/route.ts`
+  - `apps/web/src/app/api/[...path]/route.ts`
+- session به یک شناسهٔ opaque در Redis تبدیل شد؛ access/refresh token در cookie مرورگر نیست.
+- Redis session store، TTL، rotation، logout و fallback حافظه‌ای توسعه اضافه شد.
+- Origin، `X-CSRF-Intent` و `Sec-Fetch-Site` برای mutationهای BFF اعمال شد.
+- RBAC به roleهای واقعی backend محدود شد؛ permission اختراعی منتشر نشد.
+- اصلاح JTI refresh token، commit رکورد register، revoke در logout و محدودیت self-assign شدن role مدیریتی در backend انجام شد.
+- checkout، cart، wallet، escrow و search از داده mock به API واقعی یا وضعیت unavailable منتقل شدند.
+- endpointهای AI به قرارداد `/api/v1/ai/chat` و voice به `answer`/`text` منتقل شدند.
+- `openapi.json` منبع canonical شد، `openapi_schema.json` حذف و Orval client بازتولید شد.
+- `API_PROXY_TARGET`، `REDIS_URL`، `SESSION_SECRET` و `NEXT_PUBLIC_APP_URL` در Helm/env نمونه هم‌تراز شدند.
+- workflowهای CI، release و branch model روی `main` و semver tag محدود شدند.
+- deploy placeholder staging/production خاموش نگه داشته شد.
+
+## Wave 2 — Design System، i18n، Accessibility و PWA
+
+انجام‌شده:
+
+- `tokens/variables.css` به runtime متصل و مقادیر Tailwind به semantic tokenها متحد شدند.
+- tokenهای action/ink/contrast اصلاح شدند و WCAG 2.2 AA تست جدی روی ۱۱ مسیر عبور کرد.
+- مؤلفه‌های مشترک جدید به `packages/ui` اضافه و export شدند:
+  - `IconButton`
+  - `Progress`
+  - `Spinner`
+  - `ErrorState`
+  - `Tag`
+  - `CurrencyUnitToggle`
+  - `DataGrid`
+  - `ChartFrame`
+  - `Stepper`
+- `OfflineBanner`، `ErrorBoundary` و `OfflineProvider` در layout mount شدند.
+- canonical i18n به en تغییر کرد، fallback چندلایه حذف و localeهای ۱۴گانه parity شدند.
+- Serwist 9.5.12 و Dexie اضافه شدند.
+- `sw.ts` فقط app-shell و asset عمومی را cache می‌کند و `/api/*` را Network-only نگه می‌دارد.
+- `tests/offline.spec.ts` اضافه و عبور آفلاین بعد از اولین بازدید آنلاین اثبات شد.
+
+## Wave 4 — PWA Baseline
+
+انجام‌شده:
+
+- Serwist 9.5.12 و Dexie به workspace اضافه شدند.
+- `apps/web/src/app/sw.ts` فقط app-shell و assetهای عمومی را cache می‌کند.
+- `/api/*`، session، داده خصوصی و عملیات مالی در cache policy مسدود هستند.
+- `OfflineBanner`، `ErrorBoundary` و `OfflineProvider` در layout mount شدند.
+- تست E2E آفلاین پس از اولین بازدید آنلاین موفق است.
+
+PWA اکنون یک پوستهٔ آفلاین و draft/outbox عمومی است؛ ledger مالی، پرداخت، escrow و order همچنان online-only باقی می‌مانند.
+
+## اعتبارسنجی نهایی این مرحله
+
+| بررسی | نتیجه |
+|---|---|
+| frontend quality gate | موفق؛ ۲۹۸ فایل، ۶۷ تست |
+| TypeScript app | موفق |
+| Vitest | ۱۸ فایل و ۶۷ تست موفق |
+| i18n parity | هر ۱۴ locale موفق |
+| Next production build | موفق؛ خروجی routeها و service worker تولید شد |
+| Playwright i18n | ۱۹ تست موفق |
+| Playwright WCAG 2.2 AA | ۱۱ تست موفق |
+| Playwright PWA offline | ۱ تست موفق |
+| packages/ui TypeScript | موفق |
+| Ruff auth files | موفق |
+| auth unit tests | ۷ تست موفق |
+| auth refresh integration | ۴ تست موفق در SQLite ایزوله |
+| OpenAPI contract test | ۱ تست موفق |
+| version check | `0.2.0` برای VERSION/package/pyproject |
+
+## موارد باقی‌مانده پیش از تکمیل نهایی
+
+- UI صفحه‌های login/signup و کنترل‌های session در UI هنوز به Wave 2 تکمیلی نیاز دارند؛ API و provider آماده‌اند.
+- production باید `REDIS_URL` و `SESSION_SECRET` واقعی را در Secret ارائه کند.
+- cache/query persistence سراسری و outbox برای فرم عمومی باید به فرم واقعی متصل شود.
+- بسیاری از صفحات عمومی قدیمی هنوز محتوای scaffold/demo دارند و باید به محتوای canonical و ProvenanceStamp منتقل شوند.
+- image/Docker/deploy واقعی frontend و GitHub environments/rulesets هنوز نیازمند دسترسی مدیر و قرارداد نهایی هستند.
+- تغییرات Wave 1 و Wave 2 فعلاً uncommitted هستند و باید پیش از merge بازبینی و commit شوند.

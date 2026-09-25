@@ -11,14 +11,19 @@
 
 ## Commands
 ```bash
-# Dev
-docker-compose up -d
-uvicorn services.api_gateway.main:app --reload --port 8000
-cd frontend && pnpm dev
+# Dev (no container runtime required)
+python -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-local-api.txt
+.venv\Scripts\python.exe -m uvicorn services.api_gateway.main:app --reload --port 8000
+pnpm -C apps/web dev
 
-# Test
-pytest tests/ -v --tb=short
-pytest tests/test_contract.py -v
+# Optional full local dependency stack (Podman)
+podman compose -f deploy/docker-compose.yml up -d
+
+# Test (no-container lane)
+pytest tests/unit -q
+pytest tests/integration/test_sqlite_migrations.py -q
+pytest tests/contract -q
 locust -f tests/load/locustfile.py --headless -u 50 -t 60s
 
 # Lint
@@ -26,8 +31,8 @@ ruff check . && ruff format --check .
 mypy --strict engine/hydroma/config/settings.py services/api_gateway/
 
 # DB
-alembic upgrade heads
-alembic revision --autogenerate -m "description"
+python -m alembic upgrade heads
+python -m alembic revision --autogenerate -m "description"
 
 # Pre-commit
 pre-commit run --all-files
@@ -71,8 +76,8 @@ pre-commit run --all-files
 | `services/api_gateway/routers/` | API endpoints |
 | `database/models.py` | SQLAlchemy models |
 | `database/hub.py` | Database access layer |
-| `frontend/lib/api/apiClient.ts` | Frontend API client |
-| `frontend/lib/cache/` | Offline cache logic |
+| `apps/web/src/lib/api/client.ts` | Frontend API client |
+| `apps/web/src/lib/offline/` | Offline cache logic |
 
 ## Don't Do
 - ❌ Commit `.env` or secrets

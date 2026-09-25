@@ -294,30 +294,30 @@ Performance gates:
 
 | اعتبارسنجی | نتیجه |
 |---|---|
-| `pnpm -C apps/web quality` | موفق |
-| Biome check برای فایل‌های تغییریافته | موفق |
-| TypeScript type-check | موفق |
-| Vitest | ۱۳ فایل و ۵۳ تست موفق |
+| `pnpm -C apps/web quality` | موفق؛ ۲۹۸ فایل، ۱۸ فایل تست و ۶۷ تست |
+| TypeScript app و `packages/ui` | موفق |
+| Vitest | موفق |
 | i18n parity | هر ۱۴ locale موفق |
-| Next production build | موفق؛ ۱۷۷ مسیر page و shared JS حدود ۱۰۳KB |
-| Playwright i18n روی production build | ۱۹ تست موفق |
-| Playwright a11y فعلی | ۱۱ تست موفق؛ فعلاً critical-only |
-| YAML syntax | ۵ workflow/config موفق |
-| JSON syntax | package و LHCI موفق |
-| Orval determinism | hash قبل و بعد generation یکسان |
-| scoped `git diff --check` | موفق؛ فقط هشدار line ending |
-| build کامل E2E | build قبلی Chromium نصب نبود؛ تست با Edge و production build موفق شد |
+| Next production build | موفق؛ BFF، health/ready و service worker تولید شدند |
+| Playwright i18n | ۱۹ تست موفق |
+| Playwright WCAG 2.2 AA | ۱۱ تست موفق |
+| Playwright PWA offline | ۱ تست موفق |
+| Ruff auth files | موفق |
+| auth unit tests | ۷ تست موفق |
+| auth refresh integration | ۴ تست موفق در SQLite ایزوله |
+| OpenAPI contract test | ۱ تست موفق |
+| YAML/JSON validation | ۸ YAML و ۴ JSON فایل موفق |
+| version check | `0.2.0` برای VERSION/package/pyproject |
 
 ### ۷.۳ محدودیت‌ها و کارهای باقی‌مانده
 
-- `clean: true` در Orval هنوز فعال نیست؛ خروجی و فایل‌های دستی در یک پوشه قرار دارند و فعال‌کردن آن manual sourceها را حذف کرد. ابتدا باید generated output به پوشه مستقل منتقل شود.
+- `clean: true` در Orval هنوز فعال نیست؛ خروجی و فایل‌های دستی در یک پوشه قرار دارند و باید به پوشه generated مستقل منتقل شوند.
 - build یک warning مربوط به `metadataBase` برای static social image دارد.
-- `docs/` همچنان deleted است و باید تعیین تکلیف شود.
+- UIهای login/signup و session control هنوز به Wave 2 تکمیلی نیاز دارند؛ BFF API و provider آماده‌اند.
+- production باید `REDIS_URL` و `SESSION_SECRET` واقعی را در Secret ارائه کند.
 - remote فقط GitHub است؛ GitLab یا remote دوم وجود ندارد.
 - branch واقعی remote فقط `main` و `security` است؛ branch `develop` مستندشده وجود ندارد.
 - GitHub Releases، Environments و Rulesets عمومی خالی هستند.
 - آخرین runهای frontend، C++ و security روی HEAD شکست خورده‌اند.
-- workflow `cpp-build.yml` هنوز publish به PyPI را از push روی `main` آغاز می‌کند و باید به semver tag محدود شود.
-- image namespace میان `ghcr.io/mahak1988/eco_nojin` و Helm فعلی ناسازگار است.
 - release به tag immutable، digest promotion، attestation و reviewer انسانی هنوز پیاده‌سازی نشده است.
-- Wave 1 باید پیش از PWA یا بازسازی بزرگ، env/BFF/session و قراردادهای مالی را اصلاح کند.
+- image/Docker/deploy واقعی frontend و قرارداد نهایی platform نیازمند دسترسی مدیر هستند.

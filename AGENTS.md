@@ -71,11 +71,11 @@ services/api_gateway/
 - **Chaos**: Chaos Mesh (latency, error, partition injection)
 
 ## Development Workflow
-1. **Branch**: `feature/{ticket-id}-{short-desc}` from `develop`
+1. **Branch**: `feature/{ticket-id}-{short-desc}` from `main`
 2. **Commit**: Conventional Commits (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`)
-3. **PR**: Target `develop`, require CI green + 1 review
+3. **PR**: Target `main`, require CI green + 1 review
 4. **Merge**: Squash merge, delete branch
-5. **Release**: `main` → `release/vX.Y.Z` tag → GitHub Release
+5. **Release**: Immutable `vX.Y.Z` tag → GitHub Release; no branch publish
 
 ## Code Quality Gates
 - **Lint**: Ruff (replaces flake8, isort, black) — `ruff check . && ruff format --check .`
@@ -91,23 +91,27 @@ All secrets in `.env` (never committed):
 - **External**: `SUPABASE_*`, `TELEGRAM_BOT_TOKEN`, `CDSE_*`, `CDS_*`, `ALCHEMY_API_KEY`, etc.
 
 ## Deployment
-- **Staging**: Auto-deploy on push to `develop`
-- **Production**: Manual approval on push to `main`
+- **Staging**: Disabled until required checks and deployment contract are green
+- **Production**: Disabled until immutable artifact promotion and reviewer gates are configured
 - **Containers**: Multi-stage Dockerfile, GHCR registry
 - **Orchestration**: Kubernetes (staging/prod namespaces)
 - **Secrets**: External Secrets Operator → AWS Secrets Manager / Vault
 
 ## Key Commands
 ```bash
-# Local development
-docker-compose up -d          # Redis, PostgreSQL
-uvicorn services.api_gateway.main:app --reload --port 8000
+# Local development (no container runtime required)
+python -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-local-api.txt
+.venv\Scripts\python.exe -m uvicorn services.api_gateway.main:app --reload --port 8000
 pnpm -C apps/web dev
 
-# Testing
-.venv\Scripts\python.exe -m pytest -q
-.venv\Scripts\python.exe -m pytest tests/ -v --tb=short
-pytest tests/test_contract.py -v
+# Optional full local dependency stack (Podman; not required for SQLite-only dev)
+podman compose -f deploy/docker-compose.yml up -d
+
+# Testing (no-container lane)
+.venv\Scripts\python.exe -m pytest tests/unit -q
+.venv\Scripts\python.exe -m pytest tests/integration/test_sqlite_migrations.py -q
+.venv\Scripts\python.exe -m pytest tests/contract -q
 pnpm -C apps/web test
 pnpm -C apps/web type-check
 locust -f tests/load/locustfile.py --headless -u 50 -t 60s
@@ -117,8 +121,8 @@ ruff check . && ruff format --check .
 mypy --strict engine/hydroma/config/settings.py services/api_gateway/
 
 # Database
-alembic upgrade heads
-alembic revision --autogenerate -m "description"
+.venv\Scripts\python.exe -m alembic upgrade heads
+.venv\Scripts\python.exe -m alembic revision --autogenerate -m "description"
 
 # Pre-commit
 pre-commit run --all-files
@@ -130,7 +134,7 @@ pre-commit run --all-files
 - **Use feature flags** for new functionality — `settings.enable_xxx`
 - **Add correlation IDs** to logs — `request.headers.get("X-Request-ID")`
 - **Write contract tests** for new endpoints — `tests/test_contract.py`
-- **Update OpenAPI schema** after API changes — `python regen_schema.py`
+- **Update OpenAPI schema** after API changes — `.venv\Scripts\python.exe scripts/generate_openapi_schema.py`
 - **Write ADRs** for architectural decisions — `docs/adr/NNNN-title.md`
 - **Prefer composition over inheritance** — dependency injection via FastAPI `Depends`
 - **Use structured logging** — `logger.info("event", extra={"key": value})`

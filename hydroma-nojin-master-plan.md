@@ -81,11 +81,11 @@
 | `engine/hydroma/` | موتور علمی پایتونی — ۴۰+ زیرماژول (خاک، اقلیم، هیدرولوژی، فرسایش، کربن، MRV، ماهواره، سناریو، اقتصاد، آبیاری، تصمیم‌یار، بهینه‌سازی، AI کمکی، مولد، جذر پایتون-C++) | فعال |
 | `engine/cpp_core/` | هستهٔ عددی C++20 (Richards، Saint-Venant، FAO-56، RUSLE، نمونه‌برداری MC/LHS) با pybind11 | پایدار؛ ۷۰/۷۰ تست سبز |
 | `services/` | ۵۷ سرویس میکروسرویسی (auth، ledger، marketplace، mrv، satellite، map_engine، dispute_resolution، provenance، ecowallet، event_bus، jobs، observability و…) | فعال؛ ۱۲۸/۱۲۸ تست |
-| `frontend/` | وبسایت/اپ عمومی — **در شاخهٔ main حذف شده** و نسخهٔ کامل آن در worktreeهای `.kilo/worktrees/*` نگهداری میشود | نیازمند تصمیم بازیابی |
+| `apps/web/` | وبسایت/اپ عمومی Next.js 15 در شاخهٔ `main` | فعال؛ مرجع frontend |
 | `mobile/` | اپ موبایل React Native/Expo با معماری آفلاین‌اول | پایه |
 | `packages/` | `api-client`، `config`، `types`، `ui` | پایه |
 | `blockchain/`، `contracts/`، `foundry/` | رجیستری کربن و زنجیرهٔ تأمین روی بلاکچین | پایه |
-| `docs/` | ADRها، معماری (شامل `local_first` و پروتکل sync)، مستندات دوزبانهٔ en/fa | غنی |
+| `docs/` | معماری canonical، راهنمای frontend و ADRها | فعال |
 | `supabase/`، `alembic/`، `database/` | Postgres+RLS، مهاجرتها | فعال |
 | `deploy/`، `helm/`، `k8s/`، `render.yaml`، `railway.toml` | استقرار چندسکویی | فعال |
 

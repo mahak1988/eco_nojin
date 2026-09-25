@@ -5,7 +5,7 @@
 [![React 19](https://img.shields.io/badge/React-19-61DAFB.svg)](https://react.dev/)
 [![C++20](https://img.shields.io/badge/C++-20-00599C.svg)](https://isocpp.org/)
 [![Services: 38](https://img.shields.io/badge/microservices-38-blueviolet.svg)](services/)
-[![i18n: en, fa](https://img.shields.io/badge/i18n-en%20%C2%B7%20fa-green.svg)](frontend/src/i18n/locales/)
+[![i18n: 14 locales](https://img.shields.io/badge/i18n-14%20locales-green.svg)](apps/web/messages/)
 
 ## English
 
@@ -22,7 +22,7 @@ simulations for land, water, and carbon.
 
 ```
 ┌──────────────────────────┐    ┌──────────────────────────┐
-│  Frontend (Vite/React 19)│◄──►│  API Gateway (FastAPI)   │
+│  Frontend (Next.js/React 19)│◄──►│  API Gateway (FastAPI)   │
 │  deck.gl · MapLibre · 3D │    │  Auth · Rate · Routing   │
 └──────────────────────────┘    └────────────┬─────────────┘
                                               │
@@ -45,7 +45,8 @@ simulations for land, water, and carbon.
 - Python 3.12+
 - Node.js 20+ and pnpm 9+
 - A C++20 compiler (MSVC 2022 / GCC 12+ / Clang 15+) — only required to rebuild `cpp_core`
-- PostgreSQL 15+ (or Supabase project) for persistence
+- SQLite for local development (default), or PostgreSQL 15+ / Supabase for integrations and production
+- Optional: Podman Desktop for a local PostgreSQL/Redis/n8n stack
 - (Optional) Copernicus CDSE credentials for real Sentinel-2/1 tiles
 
 ### Environment variables
@@ -54,7 +55,10 @@ Copy `.env.example` to `.env` and fill in:
 
 | Variable | Purpose | Required |
 |---|---|---|
-| `SUPABASE_URL` / `SUPABASE_KEY` | Database + auth | Yes (prod) |
+| `DATABASE_URL` | Local SQLite or production PostgreSQL connection | Yes |
+| `SUPABASE_URL` / `SUPABASE_KEY` | Managed database + auth | Production integrations |
+| `REDIS_URL` | Optional managed Redis for rate limiting/cache | Production |
+| `NATS_URL` | Optional managed NATS when the event bus is enabled | Event-bus mode |
 | `CDSE_CLIENT_ID` / `CDSE_CLIENT_SECRET` | Real Sentinel access | For Phase 1 |
 | `OPEN_METEO_URL` | ERA5 climate (free, no key) | Recommended |
 | `JWT_SECRET` | Auth token signing | Yes (prod) |
@@ -62,7 +66,10 @@ Copy `.env.example` to `.env` and fill in:
 
 ### Deployment tooling
 
-- `Dockerfile` — container image for the API gateway + engine.
+- Local development uses a native Python environment and SQLite; Docker is not required.
+- Optional local infrastructure: Podman Desktop with `podman compose -f deploy/docker-compose.yml up -d`.
+- `requirements-local-api.txt` — scientific packages imported by the API routers.
+- `Dockerfile` — optional container image for the API gateway + engine in staging/production.
 - `render.yaml` — Render.com service manifests.
 - `railway.toml` — Railway.app deployment config.
 - `alembic.ini` + `alembic/`, `migrations/` — schema migration runner.
@@ -73,23 +80,36 @@ Copy `.env.example` to `.env` and fill in:
 
 ### Quick start
 
+Docker is not required for the default local profile. SQLite, an in-process/optional
+service fallback, and native Python are enough for development.
+
 ```bash
-# Python 3.12+ virtual environment
+# Python 3.12+ virtual environment (uv is optional)
 python -m venv .venv
-.venv\Scripts\activate          # Windows
-pip install -r requirements.txt
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Linux/macOS: source .venv/bin/activate
+python -m pip install -r requirements.txt -r requirements-local-api.txt
+# Optional integrations: python -m pip install -r requirements-optional.txt
 
-# API gateway
-uvicorn services.api_gateway.main:app --reload --port 8000
+# Windows PowerShell: Copy-Item .env.example .env
+# Linux/macOS: cp .env.example .env
 
-# Frontend (Vite + React 19 + TypeScript)
-cd frontend
-pnpm install
-pnpm run dev
+# API gateway (SQLite is configured in .env.example)
+python -m uvicorn services.api_gateway.main:app --reload --port 8000
+
+# Frontend
+pnpm -C apps/web install
+pnpm -C apps/web dev
 
 # Tests
-pytest
+python -m pytest -q
 ```
+
+For integration testing, set `DATABASE_URL`, `REDIS_URL`, and (when needed) `NATS_URL`
+to managed services. `requirements-local-api.txt` supplies the scientific packages
+imported by the API routers; `requirements-optional.txt` is only for additional
+integrations. If all dependencies must run locally, install Podman Desktop and
+run `podman compose -f deploy/docker-compose.yml up -d`; this is an optional path.
 
 ### Layout
 
@@ -99,7 +119,8 @@ pytest
 | `engine/cpp_core/` | C++20 numerical core (Richards, Saint-Venant, FAO-56, RUSLE, sampling) with pybind11 bindings |
 | `engine/data/`, `engine/land/` | Auxiliary engine data + land-profile utilities |
 | `services/` | 38 microservices: admin, ai, analytics, api_gateway, audit, auth, bots, business_modules, carbon, content, data, data_manual, data_sources, design_engine, ecowallet, field_monitoring, land, landscape, ledger, livestock, map_engine, marketplace, mobile_monitoring, models, mrv, notification, ogc, quality, reporting, satellite, science, scientific_motors, security, simulation, supabase, telegram_bot, tourism, workflow |
-| `frontend/` | Vite 8 + React 19 + TypeScript SPA. UI kit: antd 6 + tailwind-merge. Visualization: deck.gl 9, MapLibre GL, Three.js + drei + postprocessing, echarts, recharts. State: zustand, TanStack Query. Forms: react-hook-form + zod. Animation: framer-motion. i18n: react-i18next 17 (locales: `en`, `fa`). Testing: vitest 4 + Testing Library + Playwright + MSW. |
+| `apps/web/` | Next.js 15 + React 19 + TypeScript App Router. UI: Tailwind 4 + `@eco/ui`; data: TanStack Query; i18n: next-intl with 14 locales; PWA target: Serwist + IndexedDB. |
+
 | `adapters/` | External-system adapters (third-party API integrations) |
 | `ml/` | Machine-learning models and training pipelines |
 | `blockchain/`, `contracts/` | On-chain components and smart-contract sources |
@@ -110,9 +131,9 @@ pytest
 | `deploy/`, `demo/` | Deployment manifests and demo artifacts |
 | `testing_lab/`, `benchmarks/`, `data/` | Experimental harnesses, perf benchmarks, raw data |
 | `backups/` | Backup snapshots (kept under gitignore or quarantine) |
-| `docs/en`, `docs/fa` | Bilingual documentation (00–12) |
+| `docs/` | Canonical project and frontend architecture documentation; legacy documentation is not the source of truth |
 | `tests/` | Test suites — subfolders: `unit/`, `integration/`, `e2e/`, `fixtures/`, `benchmarks/`; plus top-level `test_*.py` and `challenge_*.py` scripts (e.g. `challenge_25_scientists.py`, `strict_challenge_v2.py`) |
-| `frontend/src/` | SPA source — `App.tsx` router, `features/`, `components/`, `lib/`, `i18n/`, `app/` |
+| `apps/web/src/` | Next App Router source — `app/`, `components/`, `lib/`, `i18n/`, `messages/` |
 
 ### Honesty note on satellite data
 
@@ -169,10 +190,7 @@ All pages are reachable from the router (no orphan pages):
    `pnpm test:e2e` for Playwright, `pnpm quality` for type-check + lint + format).
 3. New scientific code must include: unit tests, a calibration reference,
    and a `provenance.json` for the dataset(s) used.
-4. Translations: edit `frontend/src/i18n/locales/<lang>.json` — currently
-   `en` and `fa` are shipped. Additional locales (ar, ur, etc.) are tracked
-   in `docs/`; new translations must include RTL metadata in the
-   corresponding LanguageContext entry.
+4. Translations: edit `apps/web/messages/<locale>.json`; all 14 official locales use the same key contract and explicit RTL metadata in `apps/web/src/i18n/routing.ts`.
 5. Read `docs/11_weaknesses_and_fixes.md` to avoid repeating known issues.
 
 ### Project status
@@ -201,7 +219,7 @@ See `docs/12_30_year_strategy.md` for the long-horizon roadmap (2025 → 2055).
 
 ```
 ┌──────────────────────────┐    ┌──────────────────────────┐
-│  فرانت‌اند (Vite/React19)│◄──►│  دروازه API (FastAPI)    │
+│  فرانت‌اند (Next.js/React19)│◄──►│  دروازه API (FastAPI)    │
 │  deck.gl · MapLibre · 3D │    │  احراز هویت · نرخ · مسیریابی│
 └──────────────────────────┘    └────────────┬─────────────┘
                                               │
@@ -224,16 +242,20 @@ See `docs/12_30_year_strategy.md` for the long-horizon roadmap (2025 → 2055).
 - پایتون ۳.۱۲ به بالا
 - Node.js ۲۰ به بالا و pnpm ۹ به بالا
 - کامپایلر C++20 (MSVC 2022 / GCC 12+ / Clang 15+) — فقط برای بازسازی `cpp_core`
-- PostgreSQL ۱۵ به بالا (یا پروژه Supabase) برای ذخیره‌سازی
+- SQLite برای توسعه محلی (پیش‌فرض)، یا PostgreSQL 15+ / Supabase برای یکپارچگی و تولید
+- اختیاری: Podman Desktop برای اجرای محلی PostgreSQL/Redis/n8n
 - (اختیاری) اعتبارنامه‌های Copernicus CDSE برای تایل‌های واقعی Sentinel-2/1
 
 ### متغیرهای محیطی
 
-فایل `.env.example` را به `.env` کپی کنید و مقداردهی نمایید:
+فایل `.env.example` را به `.env` کپی کنید و فقط سرویس‌های موردنیاز را مقداردهی کنید:
 
 | متغیر | کاربرد | الزامی |
 |---|---|---|
-| `SUPABASE_URL` / `SUPABASE_KEY` | پایگاه‌داده + احراز هویت | بله (تولید) |
+| `DATABASE_URL` | اتصال SQLite محلی یا PostgreSQL تولید | بله |
+| `SUPABASE_URL` / `SUPABASE_KEY` | پایگاه‌داده و احراز هویت مدیریت‌شده | یکپارچگی تولید |
+| `REDIS_URL` | Redis مدیریت‌شده برای rate limiting/cache | تولید |
+| `NATS_URL` | NATS مدیریت‌شده در صورت فعال‌بودن event bus | حالت event bus |
 | `CDSE_CLIENT_ID` / `CDSE_CLIENT_SECRET` | دسترسی واقعی Sentinel | فاز ۱ |
 | `OPEN_METEO_URL` | اقلیم ERA5 (رایگان، بدون کلید) | توصیه‌شده |
 | `JWT_SECRET` | امضای توکن احراز هویت | بله (تولید) |
@@ -241,7 +263,10 @@ See `docs/12_30_year_strategy.md` for the long-horizon roadmap (2025 → 2055).
 
 ### ابزارهای استقرار
 
-- `Dockerfile` — ایمیج کانتینر برای دروازه API + موتور.
+- توسعه محلی با محیط پایتون-native و SQLite انجام می‌شود؛ Docker لازم نیست.
+- زیرساخت محلی اختیاری: Podman Desktop با `podman compose -f deploy/docker-compose.yml up -d`.
+- `requirements-local-api.txt` — بسته‌های علمی موردنیاز routerهای API.
+- `Dockerfile` — ایمیج کانتینر اختیاری برای دروازه API + موتور در staging/production.
 - `render.yaml` — مانیفست‌های سرویس Render.com.
 - `railway.toml` — پیکربندی استقرار Railway.app.
 - `alembic.ini` + `alembic/`، `migrations/` — اجراکننده مهاجرت طرحواره.
@@ -252,23 +277,37 @@ See `docs/12_30_year_strategy.md` for the long-horizon roadmap (2025 → 2055).
 
 ### شروع سریع
 
+برای پروفایل محلی پیش‌فرض، Docker لازم نیست. SQLite و محیط پایتون-native
+برای توسعه کافی است.
+
 ```bash
-# محیط مجازی پایتون 3.11+
+# محیط مجازی پایتون 3.12+ (uv اختیاری است)
 python -m venv .venv
-.venv\Scripts\activate          # ویندوز
-pip install -r requirements.txt
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# Linux/macOS: source .venv/bin/activate
+python -m pip install -r requirements.txt -r requirements-local-api.txt
+# یکپارچگی اختیاری: python -m pip install -r requirements-optional.txt
 
-# دروازه API
-uvicorn services.api_gateway.main:app --reload --port 8000
+# Windows PowerShell: Copy-Item .env.example .env
+# Linux/macOS: cp .env.example .env
 
-# فرانت‌اند (Vite + React 19 + TypeScript)
-cd frontend
-pnpm install
-pnpm run dev
+# دروازه API (SQLite در .env.example تنظیم شده است)
+python -m uvicorn services.api_gateway.main:app --reload --port 8000
+
+# فرانت‌اند
+pnpm -C apps/web install
+pnpm -C apps/web dev
 
 # تست‌ها
-pytest
+python -m pytest -q
 ```
+
+برای تست یکپارچگی، `DATABASE_URL`، `REDIS_URL` و در صورت نیاز `NATS_URL` را
+به سرویس‌های مدیریت‌شده متصل کنید. `requirements-local-api.txt` بسته‌های علمی
+موردنیاز routerهای API را نصب می‌کند؛ `requirements-optional.txt` فقط برای
+یکپارچگی‌های اضافی است. اگر همه وابستگی‌ها باید محلی اجرا شوند،
+Podman Desktop را نصب کنید و دستور اختیاری
+`podman compose -f deploy/docker-compose.yml up -d` را اجرا کنید.
 
 ### ساختار
 
@@ -333,12 +372,8 @@ pytest
    format دارد).
 3. کد علمی جدید باید شامل: تست واحد، مرجع کالیبراسیون، و `provenance.json`
    برای داده‌های مصرفی باشد.
-4. ترجمه‌ها: `frontend/src/i18n/locales/<lang>.json` را ویرایش کنید — در
-   حال حاضر `en` و `fa` ارائه شده‌اند. زبان‌های بیشتر (ar، ur و غیره) در
-   `docs/` ردگیری می‌شوند؛ ترجمه‌های جدید باید فراداده RTL را در ورودی
-   متناظر LanguageContext داشته باشند.
-5. برای جلوگیری از تکرار نقاط ضعف شناخته‌شده، `docs/11_weaknesses_and_fixes.md`
-   را مطالعه کنید.
+4. ترجمه‌ها: `apps/web/messages/<locale>.json` را ویرایش کنید؛ هر ۱۴ locale رسمی از قرارداد کلید مشترک و فرادادهٔ RTL صریح در `apps/web/src/i18n/routing.ts` استفاده می‌کنند.
+5. برای جلوگیری از تکرار نقاط ضعف شناخته‌شده، `docs/` و Decision Freeze را مطالعه کنید.
 
 ### وضعیت پروژه
 
@@ -356,7 +391,7 @@ git clone https://github.com/mahak1988/eco_nojin.git
 cd eco_nojin
 python -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements.txt -r requirements-local-api.txt
 cp .env.example .env
 uvicorn services.api_gateway.main:app --reload
 ```
@@ -383,7 +418,7 @@ native Windows Service using **NSSM** (Non-Sucking Service Manager).
 
 - Python 3.12+ installed
 - Project venv activated: `.\.venv\Scripts\Activate.ps1`
-- Dependencies installed: `pip install -r requirements.txt`
+- Dependencies installed: `pip install -r requirements.txt -r requirements-local-api.txt`
 
 ### Quick Setup
 

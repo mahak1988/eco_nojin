@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "econojin"
-version = "0.1.0"
+version = "0.2.0"
 description = "Integrated Sustainable Agriculture Platform - Global Digital Twin"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -22,7 +22,8 @@ dependencies = [
     "python-multipart>=0.0.32,<1.0",
     "python-jose[cryptography]>=3.3,<4.0",
     "passlib[bcrypt]>=1.7,<2.0",
-    "sqlalchemy>=2.0,<3.0",
+    "sqlalchemy[asyncio]>=2.0,<3.0",
+    "aiosqlite>=0.20,<1.0",
     "alembic>=1.13,<2.0",
     "psycopg[binary]>=3.3,<4.0",
     "numpy>=2.3,<2.4",
