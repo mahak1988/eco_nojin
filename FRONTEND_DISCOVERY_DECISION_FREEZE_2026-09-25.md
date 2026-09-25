@@ -294,14 +294,19 @@ Performance gates:
 
 | اعتبارسنجی | نتیجه |
 |---|---|
-| `pnpm -C apps/web quality` | موفق؛ ۲۹۸ فایل، ۱۸ فایل تست و ۶۷ تست |
+| `pnpm -C apps/web quality` | موفق؛ ۳۳۰ فایل، ۲۳ فایل تست و ۱۱۳ تست |
 | TypeScript app و `packages/ui` | موفق |
 | Vitest | موفق |
 | i18n parity | هر ۱۴ locale موفق |
-| Next production build | موفق؛ BFF، health/ready و service worker تولید شدند |
+| Next production build | موفق؛ ۲۰۱ route و service worker تولید شدند |
 | Playwright i18n | ۱۹ تست موفق |
 | Playwright WCAG 2.2 AA | ۱۱ تست موفق |
 | Playwright PWA offline | ۱ تست موفق |
+| Playwright Auth UI | ۱ تست موفق |
+| Playwright security | ۲ تست موفق |
+| Playwright page honesty | ۸ تست موفق |
+| Playwright marketplace states | ۲ تست موفق |
+| provenance guard | صفر ادعای verified نادرست |
 | Ruff auth files | موفق |
 | auth unit tests | ۷ تست موفق |
 | auth refresh integration | ۴ تست موفق در SQLite ایزوله |
@@ -312,12 +317,11 @@ Performance gates:
 ### ۷.۳ محدودیت‌ها و کارهای باقی‌مانده
 
 - `clean: true` در Orval هنوز فعال نیست؛ خروجی و فایل‌های دستی در یک پوشه قرار دارند و باید به پوشه generated مستقل منتقل شوند.
-- build یک warning مربوط به `metadataBase` برای static social image دارد.
-- UIهای login/signup و session control هنوز به Wave 2 تکمیلی نیاز دارند؛ BFF API و provider آماده‌اند.
-- production باید `REDIS_URL` و `SESSION_SECRET` واقعی را در Secret ارائه کند.
+- login/signup/session، Marketplace، ۶۲ صفحه public و developer/trust/AI تکمیل و به قراردادهای ثبت‌شده متصل شدند.
+- production باید `REDIS_URL` واقعی را در Secret ارائه کند.
 - remote فقط GitHub است؛ GitLab یا remote دوم وجود ندارد.
 - branch واقعی remote فقط `main` و `security` است؛ branch `develop` مستندشده وجود ندارد.
 - GitHub Releases، Environments و Rulesets عمومی خالی هستند.
 - آخرین runهای frontend، C++ و security روی HEAD شکست خورده‌اند.
 - release به tag immutable، digest promotion، attestation و reviewer انسانی هنوز پیاده‌سازی نشده است.
-- image/Docker/deploy واقعی frontend و قرارداد نهایی platform نیازمند دسترسی مدیر هستند.
+- Dockerfile و Kubernetes base فرانت ساخته شده‌اند؛ registry canonical، promotion و دسترسی admin هنوز باقی است.

@@ -1696,7 +1696,7 @@ docs/adr/0005-api-contract.md
 - checkout، cart، wallet، escrow و search از داده mock به API واقعی یا وضعیت unavailable منتقل شدند.
 - endpointهای AI به قرارداد `/api/v1/ai/chat` و voice به `answer`/`text` منتقل شدند.
 - `openapi.json` منبع canonical شد، `openapi_schema.json` حذف و Orval client بازتولید شد.
-- `API_PROXY_TARGET`، `REDIS_URL`، `SESSION_SECRET` و `NEXT_PUBLIC_APP_URL` در Helm/env نمونه هم‌تراز شدند.
+- `API_PROXY_TARGET`، `REDIS_URL` و `NEXT_PUBLIC_APP_URL` در Helm/env نمونه هم‌تراز شدند.
 - workflowهای CI، release و branch model روی `main` و semver tag محدود شدند.
 - deploy placeholder staging/production خاموش نگه داشته شد.
 
@@ -1738,9 +1738,9 @@ PWA اکنون یک پوستهٔ آفلاین و draft/outbox عمومی است�
 
 | بررسی | نتیجه |
 |---|---|
-| frontend quality gate | موفق؛ ۳۳۵ فایل |
+| frontend quality gate | موفق؛ ۳۳۰ فایل |
 | TypeScript app و `packages/ui` | موفق |
-| Vitest | ۲۲ فایل و ۱۰۱ تست موفق |
+| Vitest | ۲۳ فایل و ۱۱۳ تست موفق |
 | i18n parity | هر ۱۴ locale موفق |
 | Next production build | موفق؛ ۲۰۱ route شامل BFF، health/ready، Auth و System |
 | Playwright i18n | ۱۹ تست موفق |
@@ -1748,6 +1748,8 @@ PWA اکنون یک پوستهٔ آفلاین و draft/outbox عمومی است�
 | Playwright PWA offline | ۱ تست موفق |
 | Playwright Auth UI | ۱ تست موفق |
 | Playwright security headers/CSRF | ۲ تست موفق |
+| Playwright page honesty | ۸ تست موفق |
+| Playwright marketplace states | ۲ تست موفق |
 | provenance guard | صفر `verified={true}` نادرست در `app/**/page.tsx` |
 | packages/ui TypeScript | موفق |
 | Ruff auth files | موفق |
@@ -1764,6 +1766,7 @@ PWA اکنون یک پوستهٔ آفلاین و draft/outbox عمومی است�
 - login/signup/session UI در هر ۱۴ locale تکمیل و تست شد.
 - تمام صفحات دارای ادعای verified ساختگی پاک‌سازی شدند.
 - صفحات public/market به endpointهای واقعی متصل یا به unavailable صریح تبدیل شدند.
+- فهرست و جزئیات بازارچه زنده و فرم احراز هویت‌شدهٔ ایجاد بازارچه به endpoint واقعی متصل شد.
 - `scripts/check-verified-claims.mjs` به‌عنوان CI gate فعال شد.
 
 ## اعتبارسنجی و commitهای نهایی
@@ -1776,10 +1779,11 @@ PWA اکنون یک پوستهٔ آفلاین و draft/outbox عمومی است�
 | `16b32ab` | Dockerfile و Kubernetes/Helm frontend base |
 | `5088ef5` | branch/release policy، version source و quality gates |
 | `cbd7bd8` | جایگزینی legacy docs با مستندات canonical |
+| `21673b7` | Marketplace، ۶۲ صفحه public، developer/trust/AI و اسناد Page Gates |
 
 ## موارد باقی‌مانده پیش از تکمیل نهایی
 
-- production باید `REDIS_URL` و `SESSION_SECRET` واقعی را در Secret ارائه کند.
+- production باید `REDIS_URL` واقعی را در Secret ارائه کند.
 - frontend image باید در registry canonical ساخته و promote شود؛ namespace مخزن هنوز نیازمند تصمیم مدیریتی است.
 - GitHub environments، required reviewers، rulesets و tag protection نیازمند دسترسی admin هستند.
 - cache/query persistence سراسری و outbox باید به فرم عمومی واقعی متصل شود.
