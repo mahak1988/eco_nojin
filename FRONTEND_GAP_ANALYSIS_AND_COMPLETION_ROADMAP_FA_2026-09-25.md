@@ -1738,14 +1738,17 @@ PWA اکنون یک پوستهٔ آفلاین و draft/outbox عمومی است�
 
 | بررسی | نتیجه |
 |---|---|
-| frontend quality gate | موفق؛ ۲۹۸ فایل، ۶۷ تست |
-| TypeScript app | موفق |
-| Vitest | ۱۸ فایل و ۶۷ تست موفق |
+| frontend quality gate | موفق؛ ۳۳۵ فایل |
+| TypeScript app و `packages/ui` | موفق |
+| Vitest | ۲۲ فایل و ۱۰۱ تست موفق |
 | i18n parity | هر ۱۴ locale موفق |
-| Next production build | موفق؛ خروجی routeها و service worker تولید شد |
+| Next production build | موفق؛ ۲۰۱ route شامل BFF، health/ready، Auth و System |
 | Playwright i18n | ۱۹ تست موفق |
 | Playwright WCAG 2.2 AA | ۱۱ تست موفق |
 | Playwright PWA offline | ۱ تست موفق |
+| Playwright Auth UI | ۱ تست موفق |
+| Playwright security headers/CSRF | ۲ تست موفق |
+| provenance guard | صفر `verified={true}` نادرست در `app/**/page.tsx` |
 | packages/ui TypeScript | موفق |
 | Ruff auth files | موفق |
 | auth unit tests | ۷ تست موفق |
@@ -1753,11 +1756,33 @@ PWA اکنون یک پوستهٔ آفلاین و draft/outbox عمومی است�
 | OpenAPI contract test | ۱ تست موفق |
 | version check | `0.2.0` برای VERSION/package/pyproject |
 
+## Wave 3 — Domain Routes and Content Integrity
+
+- registry مشترک ۵۲ ابزار Hydroma و قالب `ScientificToolLayout` ایجاد شد.
+- Admin با کنترل server-side و deny-by-default ایجاد شد.
+- Research، System، Simple و Telecom به‌صورت capability-aware و بدون endpoint جعلی ایجاد شدند.
+- login/signup/session UI در هر ۱۴ locale تکمیل و تست شد.
+- تمام صفحات دارای ادعای verified ساختگی پاک‌سازی شدند.
+- صفحات public/market به endpointهای واقعی متصل یا به unavailable صریح تبدیل شدند.
+- `scripts/check-verified-claims.mjs` به‌عنوان CI gate فعال شد.
+
+## اعتبارسنجی و commitهای نهایی
+
+| Commit | دامنه |
+|---|---|
+| `2b497b0` | Wave 0: build hygiene، CI، OpenAPI و typed client |
+| `758b45e` | Auth/BFF، domain routes، PWA، Design System و content truthfulness |
+| `e98d706` | refresh rotation، revoke و canonical OpenAPI |
+| `16b32ab` | Dockerfile و Kubernetes/Helm frontend base |
+| `5088ef5` | branch/release policy، version source و quality gates |
+| `cbd7bd8` | جایگزینی legacy docs با مستندات canonical |
+
 ## موارد باقی‌مانده پیش از تکمیل نهایی
 
-- UI صفحه‌های login/signup و کنترل‌های session در UI هنوز به Wave 2 تکمیلی نیاز دارند؛ API و provider آماده‌اند.
 - production باید `REDIS_URL` و `SESSION_SECRET` واقعی را در Secret ارائه کند.
-- cache/query persistence سراسری و outbox برای فرم عمومی باید به فرم واقعی متصل شود.
-- بسیاری از صفحات عمومی قدیمی هنوز محتوای scaffold/demo دارند و باید به محتوای canonical و ProvenanceStamp منتقل شوند.
-- image/Docker/deploy واقعی frontend و GitHub environments/rulesets هنوز نیازمند دسترسی مدیر و قرارداد نهایی هستند.
-- تغییرات Wave 1 و Wave 2 فعلاً uncommitted هستند و باید پیش از merge بازبینی و commit شوند.
+- frontend image باید در registry canonical ساخته و promote شود؛ namespace مخزن هنوز نیازمند تصمیم مدیریتی است.
+- GitHub environments، required reviewers، rulesets و tag protection نیازمند دسترسی admin هستند.
+- cache/query persistence سراسری و outbox باید به فرم عمومی واقعی متصل شود.
+- sync پیشرفته و conflict resolution برای داده‌های غیرمالی می‌تواند پس از production Redis توسعه یابد.
+- payment، escrow و order همچنان online-only و بدون offline write هستند.
+- صفحاتی که backend ندارند عمداً `unavailable` هستند و برای فعال‌سازی به API/store جدید نیاز دارند.
