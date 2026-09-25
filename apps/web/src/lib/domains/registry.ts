@@ -329,12 +329,132 @@ export const TELECOM_ROUTE = {
   ],
 } satisfies DomainRoute;
 
+export const SYSTEM_STATUS_ROUTE = {
+  id: 'system-status',
+  domain: 'system',
+  pattern: '/:locale/system',
+  kind: 'system-state',
+  access: 'public',
+  allowedRoles: [],
+  owner: 'platform-operations',
+  sourceOfTruth: 'services/api_gateway/routers/platform.py',
+  headingKey: 'statusPage.title',
+  capabilities: [
+    {
+      id: 'platform-health',
+      labelKey: SERVICE_LABEL_KEY,
+      method: 'GET',
+      endpoint: '/api/v1/platform/health',
+    },
+    {
+      id: 'platform-stats',
+      labelKey: METRIC_LABEL_KEY,
+      method: 'GET',
+      endpoint: '/api/v1/platform/stats',
+    },
+    {
+      id: 'service-health',
+      labelKey: 'statusPage.service',
+      method: 'GET',
+      endpoint: '/api/v1/satellite/health',
+    },
+  ],
+} satisfies DomainRoute;
+
+export const SYSTEM_LOCALE_FALLBACK_ROUTE = {
+  id: 'system-locale-fallback',
+  domain: 'system',
+  pattern: '/:locale/system/locale-fallback',
+  kind: 'system-state',
+  access: 'public',
+  allowedRoles: [],
+  owner: 'platform-operations',
+  sourceOfTruth: 'apps/web/src/lib/i18n/messages.ts',
+  headingKey: 'auth.session.language',
+  capabilities: [
+    {
+      id: 'locale-fallback-chain',
+      labelKey: 'auth.session.language',
+      method: 'GET',
+      endpoint: null,
+    },
+  ],
+} satisfies DomainRoute;
+
+export const HELP_ROUTE = {
+  id: 'help',
+  domain: 'system',
+  pattern: '/:locale/help',
+  kind: 'channel',
+  access: 'public',
+  allowedRoles: [],
+  owner: 'platform-operations',
+  sourceOfTruth: 'services/api_gateway/routers/support.py',
+  headingKey: 'help.title',
+  capabilities: [
+    {
+      id: 'support-directory',
+      labelKey: 'help.title',
+      method: 'GET',
+      endpoint: '/api/v1/support/personas',
+    },
+    {
+      id: 'support-chat',
+      labelKey: 'help.formTitle',
+      method: 'POST',
+      endpoint: '/api/v1/support/chat',
+    },
+  ],
+} satisfies DomainRoute;
+
+export const WORKSPACE_ROUTE = {
+  id: 'professional-workspace',
+  domain: 'admin',
+  pattern: '/:locale/workspace',
+  kind: 'workspace',
+  access: 'role-gated',
+  allowedRoles: ['admin', 'security_admin', 'content_admin', 'user_admin', 'advisor'],
+  owner: 'platform-operations',
+  sourceOfTruth: 'apps/web/src/lib/workspaces/registry.ts',
+  headingKey: 'statusPage.title',
+  capabilities: [
+    {
+      id: 'workspace-organizations',
+      labelKey: 'public.audiences.organizations',
+      method: 'GET',
+      endpoint: '/api/v1/organizations',
+    },
+    {
+      id: 'workspace-content-search',
+      labelKey: 'developers.api',
+      method: 'GET',
+      endpoint: '/api/v1/content/search',
+    },
+    {
+      id: 'workspace-sync-status',
+      labelKey: 'offline.title',
+      method: 'GET',
+      endpoint: '/api/v1/sync/status',
+    },
+    {
+      id: 'workspace-service-health',
+      labelKey: SERVICE_LABEL_KEY,
+      method: 'GET',
+      endpoint: '/api/v1/platform/health',
+    },
+  ],
+} satisfies DomainRoute;
+
 export const DOMAIN_ROUTES = [
   HYDROMA_TOOLS_ROUTE,
   ADMIN_CONSOLE_ROUTE,
   RESEARCH_WORKSPACE_ROUTE,
+  WORKSPACE_ROUTE,
+  SYSTEM_STATUS_ROUTE,
   SYSTEM_PWA_UPDATE_ROUTE,
+  SYSTEM_LOCALE_FALLBACK_ROUTE,
   SYSTEM_WEBGPU_FALLBACK_ROUTE,
+  HELP_ROUTE,
   SIMPLE_ACCESS_ROUTE,
   TELECOM_ROUTE,
 ] as const satisfies readonly DomainRoute[];

@@ -1,5 +1,122 @@
 {
   "meta": { "machineTranslated": false, "fallbackLocale": null },
+  "admin": {
+    "title": "مدیریت پلتفرم",
+    "sections": {
+      "overview": "نمای کلی",
+      "systemHealth": "سلامت سامانه",
+      "jobs": "کارها و صف‌ها",
+      "localization": "بومی‌سازی",
+      "featureFlags": "قابلیت‌ها و پرچم‌ها",
+      "security": "امنیت",
+      "content": "محتوا",
+      "users": "کاربران",
+      "designTokens": "توکن‌های طراحی"
+    },
+    "leads": {
+      "overview": "وضعیت زنده سلامت و قابلیت‌های پلتفرم.",
+      "systemHealth": "سلامت هر سرویس، وابستگی‌ها و آخرین بررسی.",
+      "jobs": "قابلیت‌های ثبت‌شده صف، worker و job.",
+      "localization": "پوشش زبان‌ها، ترجمه ماشینی و زبان‌های حقوقی منتشرشده.",
+      "featureFlags": "رجیستری قابلیت‌ها و قراردادهای تنظیمات.",
+      "security": "قابلیت‌های امنیتی و حسابرسی با کنترل نقش.",
+      "content": "محتوای منتشرشده و قراردادهای ثبت‌شده محتوا.",
+      "users": "مدیریت کاربر و bulk action با کنترل نقش.",
+      "designTokens": "منابع واقعی DTCG، CSS و runtime توکن‌های مخزن."
+    },
+    "grid": {
+      "search": "جست‌وجو",
+      "submit": "جست‌وجو",
+      "clear": "پاک‌کردن فیلترها",
+      "results": "{filtered} از {total} ردیف"
+    },
+    "capabilities": {
+      "serviceMatrix": "ماتریس سلامت سرویس‌ها",
+      "adminOverview": "نمای کلی مدیریتی",
+      "channelHealth": "سلامت کانال‌ها",
+      "jobIndex": "فهرست job",
+      "automationRuns": "اجراهای automation",
+      "messageCatalogues": "کاتالوگ پیام‌ها",
+      "legalLocales": "زبان‌های حقوقی",
+      "contentTranslations": "ترجمه محتوا",
+      "capabilityMatrix": "ماتریس قابلیت‌ها",
+      "settingsIndex": "فهرست تنظیمات",
+      "loginHistory": "تاریخچه ورود",
+      "securityAudit": "حسابرسی امنیت",
+      "contentIndex": "فهرست محتوا",
+      "contentWrites": "قرارداد نوشتن محتوا",
+      "usersIndex": "فهرست کاربران",
+      "userBulkActions": "قرارداد bulk کاربران",
+      "dtcgTokens": "منبع توکن DTCG",
+      "cssVariables": "منبع متغیرهای CSS",
+      "runtimeTokens": "منبع توکن runtime"
+    }
+  },
+  "workspace": {
+    "title": "فضای کاری حرفه‌ای",
+    "lead": "کار، شواهد و عملیات محدود به نقش، جدا از بازارگاه مصرف‌کننده.",
+    "groups": {
+      "work": "کار",
+      "governance": "حاکمیت",
+      "operations": "عملیات",
+      "settings": "تنظیمات"
+    },
+    "pages": {
+      "overview": "نمای کلی",
+      "assignments": "موارد تخصیص‌یافته",
+      "cases": "پرونده‌ها",
+      "knowledge": "دانش",
+      "reports": "گزارش‌ها",
+      "team": "تیم",
+      "approvals": "تأییدها",
+      "targets": "اهداف",
+      "audit": "حسابرسی",
+      "operations": "عملیات",
+      "operationsJobs": "کارها و صف‌ها",
+      "operationsEvents": "رویدادها",
+      "operationsHealth": "سلامت سامانه",
+      "settings": "تنظیمات",
+      "settingsNotifications": "اعلان‌ها",
+      "settingsAccess": "دسترسی‌ها"
+    },
+    "leads": {
+      "overview": "زمینه کاری و خلاصه قابلیت‌های زنده برای نقش شما.",
+      "assignments": "کارهای تخصیص‌یافته و قابلیت‌های ثبت‌شده تخصیص.",
+      "cases": "پرونده‌ها، شواهد و قراردادهای چرخه حیات در محدوده دسترسی.",
+      "knowledge": "اسناد منتشرشده، استنادها و جست‌وجوی محتوا.",
+      "reports": "قابلیت‌های ثبت‌شده گزارش، زمان‌بندی و export.",
+      "team": "سازمان و اعضای قابل مشاهده برای این نقش.",
+      "approvals": "صف تأیید و قراردادهای اقدام ثبت‌شده.",
+      "targets": "قابلیت‌های هدف، اندازه‌گیری و پیشرفت.",
+      "audit": "رویدادهای امنیتی غیرشخصی و شواهد دسترسی.",
+      "operations": "قابلیت‌های sync، صف، رویداد و سلامت سرویس.",
+      "operationsJobs": "قابلیت‌های صف، worker و job.",
+      "operationsEvents": "جریان رویدادهای امنیتی و یکپارچه‌سازی.",
+      "operationsHealth": "وابستگی‌ها و سلامت سرویس برای ابزارهای حرفه‌ای.",
+      "settings": "تنظیمات و قابلیت‌های ترجیحات فضای کاری.",
+      "settingsNotifications": "قابلیت‌های ترجیح و ارسال اعلان.",
+      "settingsAccess": "نقش‌های صادرشده، مجاز و توصیفی."
+    },
+    "roles": {
+      "operator": "اپراتور",
+      "support": "پشتیبانی",
+      "analyst": "تحلیلگر",
+      "content_editor": "ویرایشگر محتوا",
+      "auditor": "حسابرس",
+      "manager": "مدیر"
+    }
+  },
+  "help": {
+    "title": "راهنما و پشتیبانی",
+    "lead": "راهنمای پلتفرم، وضعیت سرویس، دسترسی‌پذیری، اسناد حقوقی و کانال‌های پشتیبانی را پیدا کنید.",
+    "supportDirectoryTitle": "فهرست پشتیبانی",
+    "supportDirectoryLead": "نقش‌های پشتیبانی که گیت‌وی به‌صورت زنده برمی‌گرداند.",
+    "supportUnavailable": "فهرست پشتیبانی در دسترس نیست.",
+    "intakeTitle": "ثبت درخواست پشتیبانی",
+    "intakeLead": "مسیرهای ثبت‌شده پشتیبانی؛ جریان ارسال تا فعال‌شدن قرارداد آن برای این کلاینت unavailable می‌ماند.",
+    "topicsTitle": "موضوعات راهنما",
+    "lastObserved": "آخرین مشاهده"
+  },
   "brand": {
     "name": "هیدروما نوژین",
     "logoAlt": "لوگوی پلتفرم هیدروما نوژین (اکو نوژین)",

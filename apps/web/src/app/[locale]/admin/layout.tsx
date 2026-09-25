@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { AdminShell } from '@/components/admin/AdminShell';
 import { hasRole } from '@/lib/auth/roles';
 import {
   ADMIN_CONSOLE_ROLES,
@@ -72,5 +73,9 @@ export default async function AdminLayout({
     );
   }
 
-  return <main id="main">{children}</main>;
+  return (
+    <main id="main" className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <AdminShell>{children}</AdminShell>
+    </main>
+  );
 }

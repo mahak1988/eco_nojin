@@ -93,10 +93,11 @@ export function SessionMenu() {
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex max-w-[12rem] items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-3 py-1.5 text-sm text-[var(--ink)] transition-colors hover:border-[var(--forest)] hover:bg-[var(--surface-2)]"
+        aria-label={`${t('auth.common.signedInAs')}: ${displayName}`}
+        className="inline-flex min-h-11 min-w-11 items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-3 py-1.5 text-sm text-[var(--ink)] transition-colors hover:border-[var(--forest)] hover:bg-[var(--surface-2)]"
       >
         <span className="sr-only">{t('auth.common.signedInAs')}: </span>
-        <span className="max-w-[9rem] truncate">{displayName}</span>
+        <span className="sr-only sm:not-sr-only sm:max-w-[9rem] sm:truncate">{displayName}</span>
       </button>
 
       <section

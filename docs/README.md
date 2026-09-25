@@ -18,6 +18,8 @@ This directory is the new canonical documentation set. The deleted legacy docume
 | Area | Document |
 |---|---|
 | Frontend boundaries and layers | [`frontend/ARCHITECTURE.md`](frontend/ARCHITECTURE.md) |
+| World-class page benchmark and priority | [`frontend/WORLD_CLASS_BENCHMARK_2026-09-25.md`](frontend/WORLD_CLASS_BENCHMARK_2026-09-25.md) |
+| Professional workspace security and routes | [`frontend/WORKSPACE_SECURITY_DESIGN.md`](frontend/WORKSPACE_SECURITY_DESIGN.md) |
 | Authentication and authorization | [`frontend/AUTH_AND_RBAC.md`](frontend/AUTH_AND_RBAC.md) |
 | Internationalization and RTL | [`frontend/I18N_AND_RTL.md`](frontend/I18N_AND_RTL.md) |
 | PWA and offline boundaries | [`frontend/PWA_AND_OFFLINE.md`](frontend/PWA_AND_OFFLINE.md) |
@@ -33,6 +35,7 @@ This directory is the new canonical documentation set. The deleted legacy docume
 
 1. Read the Decision Freeze referenced by the ADR set before changing a boundary.
 2. Read the relevant frontend guide and its ADR.
-3. For a page change, read the route matrix in [`frontend/MARKETPLACE_IMPLEMENTATION.md`](frontend/MARKETPLACE_IMPLEMENTATION.md) or [`frontend/PUBLIC_PAGES_EXECUTION.md`](frontend/PUBLIC_PAGES_EXECUTION.md), then the gate in [`frontend/PAGE_GATES.md`](frontend/PAGE_GATES.md). Do not connect a page to an endpoint that is absent from `openapi.json`.
-4. Run the smallest relevant test, then the full quality gate in [`frontend/TESTING.md`](frontend/TESTING.md).
-5. Do not enable deployment or publishing until the release gates in [`frontend/DEPLOYMENT.md`](frontend/DEPLOYMENT.md) are satisfied.
+3. For a new or Tier 0 page, read the comparison and rationale in [`frontend/WORLD_CLASS_BENCHMARK_2026-09-25.md`](frontend/WORLD_CLASS_BENCHMARK_2026-09-25.md).
+4. For a page change, read the route matrix in [`frontend/MARKETPLACE_IMPLEMENTATION.md`](frontend/MARKETPLACE_IMPLEMENTATION.md) or [`frontend/PUBLIC_PAGES_EXECUTION.md`](frontend/PUBLIC_PAGES_EXECUTION.md), then the gate in [`frontend/PAGE_GATES.md`](frontend/PAGE_GATES.md). Do not connect a page to an endpoint that is absent from `openapi.json`.
+5. Run the smallest relevant test, then the full quality gate in [`frontend/TESTING.md`](frontend/TESTING.md).
+6. Do not enable deployment or publishing until the release gates in [`frontend/DEPLOYMENT.md`](frontend/DEPLOYMENT.md) are satisfied.

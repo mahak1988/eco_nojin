@@ -11,7 +11,16 @@ test.describe('Accessibility (WCAG 2.2 AA)', () => {
     { path: '/en/hydroma', name: 'Hydroma (en)' },
     { path: '/fa', name: 'Cover (fa)' },
     { path: '/en', name: 'Cover (en)' },
+    { path: '/fa/research', name: 'Research (fa)' },
+    { path: '/fa/system', name: 'System (fa)' },
+    { path: '/fa/help', name: 'Help (fa)' },
+    { path: '/fa/admin', name: 'Admin denied state (fa)' },
+    { path: '/fa/workspace', name: 'Workspace denied state (fa)' },
   ];
+
+  test.beforeEach(async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+  });
 
   for (const pageInfo of pages) {
     test(`${pageInfo.name} has no serious a11y violations`, async ({ page }) => {
@@ -46,7 +55,7 @@ test.describe('Accessibility (WCAG 2.2 AA)', () => {
 
   test('All interactive elements have focus styles', async ({ page }) => {
     await page.goto('/fa/home');
-    const links = page.locator('a[href]');
+    const links = page.locator('a[href]:visible');
     const count = await links.count();
     for (let i = 0; i < Math.min(count, 10); i++) {
       const link = links.nth(i);

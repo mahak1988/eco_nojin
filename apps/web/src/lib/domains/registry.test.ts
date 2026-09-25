@@ -22,6 +22,7 @@ import {
   scientificToolParams,
   TELECOM_ROUTE,
   UNAVAILABLE_LABEL_KEY,
+  WORKSPACE_ROUTE,
 } from './registry';
 
 describe('wave 3 domain registry', () => {
@@ -31,8 +32,12 @@ describe('wave 3 domain registry', () => {
       'hydroma-tools',
       'admin-console',
       'research-workspace',
+      'professional-workspace',
+      'system-status',
       'system-pwa-update',
+      'system-locale-fallback',
       'system-webgpu-fallback',
+      'help',
       'inclusive-simple',
       'inclusive-telecom',
     ]);
@@ -70,6 +75,7 @@ describe('wave 3 domain registry', () => {
     expect(unwired).toContain('hydroma-tools:tool-execution');
     expect(unwired).toContain('research-workspace:research-datasets');
     expect(unwired).toContain('system-pwa-update:pwa-update-state');
+    expect(unwired).toContain('system-locale-fallback:locale-fallback-chain');
     expect(unwired).toContain('system-webgpu-fallback:compute-capability');
     expect(unwired).toContain('inclusive-simple:simple-sms');
     expect(unwired).toContain('inclusive-simple:simple-voice');
@@ -106,6 +112,14 @@ describe('wave 3 domain registry', () => {
     expect(ADMIN_CONSOLE_ROLES.every((role) => hasRole(role, ADMIN_CONSOLE_ROLES))).toBe(true);
     expect(hasRole('farmer', ADMIN_CONSOLE_ROLES)).toBe(false);
     expect(hasRole('admin', ADMIN_CONSOLE_ROLES)).toBe(true);
+  });
+
+  it('keeps the professional workspace role-gated and outside the public surface', () => {
+    expect(WORKSPACE_ROUTE.access).toBe('role-gated');
+    expect(WORKSPACE_ROUTE.kind).toBe('workspace');
+    expect(WORKSPACE_ROUTE.allowedRoles).toContain('advisor');
+    expect(WORKSPACE_ROUTE.allowedRoles).not.toContain('regular');
+    expect(WORKSPACE_ROUTE.allowedRoles).not.toContain('farmer');
   });
 
   it('keeps inclusive channels bound to real gateway endpoints only', () => {

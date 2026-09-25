@@ -3,6 +3,123 @@
     "machineTranslated": false,
     "fallbackLocale": null
   },
+  "admin": {
+    "title": "Platform administration",
+    "sections": {
+      "overview": "Overview",
+      "systemHealth": "System health",
+      "jobs": "Jobs and queues",
+      "localization": "Localization",
+      "featureFlags": "Feature flags and capabilities",
+      "security": "Security",
+      "content": "Content",
+      "users": "Users",
+      "designTokens": "Design tokens"
+    },
+    "leads": {
+      "overview": "Live platform health and capability overview.",
+      "systemHealth": "Service-by-service health, dependencies and last checks.",
+      "jobs": "Registered queue, worker and job capabilities.",
+      "localization": "Locale coverage, machine translation and published legal locales.",
+      "featureFlags": "Capability registry and settings contracts.",
+      "security": "Role-gated security and audit capabilities.",
+      "content": "Published content and registered content contracts.",
+      "users": "Role-gated user management and bulk-action contracts.",
+      "designTokens": "The DTCG, CSS and runtime token sources shipped in the repository."
+    },
+    "grid": {
+      "search": "Search",
+      "submit": "Search",
+      "clear": "Clear filters",
+      "results": "{filtered} of {total} rows"
+    },
+    "capabilities": {
+      "serviceMatrix": "Service health matrix",
+      "adminOverview": "Administrative overview",
+      "channelHealth": "Channel health",
+      "jobIndex": "Job index",
+      "automationRuns": "Automation runs",
+      "messageCatalogues": "Message catalogues",
+      "legalLocales": "Legal locales",
+      "contentTranslations": "Content translations",
+      "capabilityMatrix": "Capability matrix",
+      "settingsIndex": "Settings index",
+      "loginHistory": "Login history",
+      "securityAudit": "Security audit",
+      "contentIndex": "Content index",
+      "contentWrites": "Content write contract",
+      "usersIndex": "User index",
+      "userBulkActions": "User bulk-action contract",
+      "dtcgTokens": "DTCG token source",
+      "cssVariables": "CSS variable source",
+      "runtimeTokens": "Runtime token source"
+    }
+  },
+  "workspace": {
+    "title": "Professional workspace",
+    "lead": "Role-scoped work, evidence and operations separate from the consumer marketplace.",
+    "groups": {
+      "work": "Work",
+      "governance": "Governance",
+      "operations": "Operations",
+      "settings": "Settings"
+    },
+    "pages": {
+      "overview": "Overview",
+      "assignments": "Assignments",
+      "cases": "Cases",
+      "knowledge": "Knowledge",
+      "reports": "Reports",
+      "team": "Team",
+      "approvals": "Approvals",
+      "targets": "Targets",
+      "audit": "Audit",
+      "operations": "Operations",
+      "operationsJobs": "Jobs and queues",
+      "operationsEvents": "Events",
+      "operationsHealth": "Health",
+      "settings": "Settings",
+      "settingsNotifications": "Notifications",
+      "settingsAccess": "Access"
+    },
+    "leads": {
+      "overview": "Your role-scoped work context and live capability summary.",
+      "assignments": "Assigned work and registered assignment capabilities.",
+      "cases": "Scoped cases, evidence and lifecycle contracts.",
+      "knowledge": "Published documents, citations and content search.",
+      "reports": "Registered report, schedule and export capabilities.",
+      "team": "Organization and member scope available to this role.",
+      "approvals": "Approval queues and registered action contracts.",
+      "targets": "Target, measurement and progress capabilities.",
+      "audit": "Non-personal security events and access evidence.",
+      "operations": "Sync, queue, event and service-health capabilities.",
+      "operationsJobs": "Queue, worker and job capabilities.",
+      "operationsEvents": "Security and integration event streams.",
+      "operationsHealth": "Dependency and service health for professional tools.",
+      "settings": "Workspace settings and preference capabilities.",
+      "settingsNotifications": "Notification preference and delivery capabilities.",
+      "settingsAccess": "Issued, allowed and descriptive role scopes."
+    },
+    "roles": {
+      "operator": "Operator",
+      "support": "Support",
+      "analyst": "Analyst",
+      "content_editor": "Content editor",
+      "auditor": "Auditor",
+      "manager": "Manager"
+    }
+  },
+  "help": {
+    "title": "Help and support",
+    "lead": "Find platform guidance, service status, accessibility, legal and support channels.",
+    "supportDirectoryTitle": "Support directory",
+    "supportDirectoryLead": "Live support personas returned by the gateway.",
+    "supportUnavailable": "The support directory is unavailable.",
+    "intakeTitle": "Support intake",
+    "intakeLead": "Registered intake endpoints. Submit flows remain unavailable until their contracts are enabled for this client.",
+    "topicsTitle": "Help topics",
+    "lastObserved": "Last observed"
+  },
   "brand": {
     "name": "HyDroMa Nojin",
     "logoAlt": "HyDroMa Nojin (Eco Nojin) platform logo",

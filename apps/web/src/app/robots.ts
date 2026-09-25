@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://app.eco-nojin.org';
 
 export const dynamic = 'force-static';
 

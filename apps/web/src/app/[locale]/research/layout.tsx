@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { SiteNav } from '@/components/SiteNav';
 import { RESEARCH_WORKSPACE_ROUTE } from '@/lib/domains/registry';
 
 // The workspace is session-bound and reads live records per request.
@@ -22,10 +23,22 @@ export async function generateMetadata({
   };
 }
 
-export default async function ResearchLayout({ children }: { children: React.ReactNode }) {
+export default async function ResearchLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   return (
-    <main id="main" className="mx-auto w-full max-w-6xl px-6 py-10">
-      {children}
-    </main>
+    <>
+      <SiteNav locale={locale} />
+      <main id="main" className="mx-auto w-full max-w-6xl px-6 py-10">
+        {children}
+      </main>
+    </>
   );
 }

@@ -1,27 +1,64 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { StatusDot } from '@/components/StatusDot';
-import { apiGet, type PlatformHealth, type PlatformStats } from '@/lib/api/client';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import {
-  ADMIN_CONSOLE_ROUTE,
-  CONTRACT_LABEL_KEY,
-  findCapability,
-  LIVE_LABEL_KEY,
-  METRIC_LABEL_KEY,
-  REAL_DATA_LABEL_KEY,
-  resolveCapabilityState,
-  STATE_LABEL_KEY,
-  UNAVAILABLE_LABEL_KEY,
-} from '@/lib/domains/registry';
+  AdminCapabilityTable,
+  AdminSourceNote,
+  AdminUnavailable,
+  roleLabel,
+} from '@/components/admin/AdminStates';
+import {
+  type AdminSectionId,
+  adminSectionHref,
+  findAdminSection,
+  getAdminSection,
+} from '@/components/admin/admin-sections';
+import { adminGet, adminToken, readAdminSession } from '@/components/admin/admin-server';
+import { StatusDot } from '@/components/StatusDot';
+import type { PlatformHealth, PlatformStats } from '@/lib/api/client';
+import { getServiceOverview } from '@/lib/api/health';
 
 // Every row is read from the live gateway at request time.
 export const dynamic = 'force-dynamic';
 
-type Row = { key: string; label: string; value: string | null; ok: boolean };
+const section = getAdminSection('overview');
+const healthCapability = section.capabilities.find((item) => item.id === 'platform-health');
+const statsCapability = section.capabilities.find((item) => item.id === 'platform-stats');
+const NEXT_SECTIONS: readonly AdminSectionId[] = [
+  'system-health',
+  'jobs',
+  'users',
+  'content',
+  'feature-flags',
+  'security',
+];
 
-const healthCapability = findCapability(ADMIN_CONSOLE_ROUTE, 'platform-health');
-const statsCapability = findCapability(ADMIN_CONSOLE_ROUTE, 'platform-stats');
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations();
 
-export default async function AdminConsolePage({
+  return {
+    title: t('statusPage.title'),
+    description: t('statusPage.subtitle'),
+    robots: { index: false, follow: false },
+  };
+}
+
+type MetricRow = {
+  key: string;
+  labelKey: string;
+  value: string | null;
+  numeric: boolean;
+  source: string;
+};
+
+export default async function AdminOverviewPage({
   params,
 }: {
   params: Promise<{ locale: string }>;
@@ -30,124 +67,228 @@ export default async function AdminConsolePage({
   setRequestLocale(locale);
   const t = await getTranslations();
 
-  const [health, stats] = await Promise.all([
-    apiGet<PlatformHealth>('/api/v1/platform/health'),
-    apiGet<PlatformStats>('/api/v1/platform/stats'),
+  const session = await readAdminSession();
+  const sessionRole = session?.user.role ?? 'regular';
+  const token = adminToken(session);
+  const [health, stats, services] = await Promise.all([
+    adminGet<PlatformHealth>(token, '/api/v1/platform/health'),
+    adminGet<PlatformStats>(token, '/api/v1/platform/stats'),
+    getServiceOverview(),
   ]);
 
-  const healthState = resolveCapabilityState(healthCapability, health.ok);
-  const statsState = resolveCapabilityState(statsCapability, stats.ok);
+  const numberFormat = new Intl.NumberFormat(locale);
+  const formatCount = (value: number | null | undefined) =>
+    typeof value === 'number' ? numberFormat.format(value) : null;
+
   const healthData = health.ok ? health.data : null;
   const statsData = stats.ok ? stats.data : null;
-  const count = (value: number | null | undefined) =>
-    value === null || value === undefined ? null : new Intl.NumberFormat(locale).format(value);
+  const serviceRows = services.ok ? services.data.services : [];
+  const summary = services.ok ? services.data.summary : null;
+  const lastChecked = serviceRows[0]?.lastCheck;
 
-  const rows: Row[] = [
+  const metrics: MetricRow[] = [
     {
       key: 'service',
-      label: t('statusPage.service'),
-      value:
-        healthState === 'available' && healthData?.status === 'operational'
-          ? t(LIVE_LABEL_KEY)
-          : t(UNAVAILABLE_LABEL_KEY),
-      ok: healthState === 'available' && healthData?.status === 'operational',
+      labelKey: 'statusPage.service',
+      value: healthData?.status === 'operational' ? t('common.live') : null,
+      numeric: false,
+      source: '/api/v1/platform/health',
     },
     {
       key: 'cpp',
-      label: t('statusPage.cpp'),
-      value: healthState === 'available' && healthData?.cpp_available ? t(LIVE_LABEL_KEY) : null,
-      ok: healthState === 'available' && healthData?.cpp_available === true,
+      labelKey: 'statusPage.cpp',
+      value: healthData?.cpp_available === true ? t('common.live') : null,
+      numeric: false,
+      source: '/api/v1/platform/health',
     },
     {
       key: 'database',
-      label: t('statusPage.dbReachable'),
-      value: healthState === 'available' && healthData?.db_reachable ? t(LIVE_LABEL_KEY) : null,
-      ok: healthState === 'available' && healthData?.db_reachable === true,
+      labelKey: 'statusPage.dbReachable',
+      value: healthData?.db_reachable === true ? t('common.live') : null,
+      numeric: false,
+      source: '/api/v1/platform/health',
     },
     {
       key: 'landscapes',
-      label: t('statusPage.landscapes'),
-      value: statsState === 'available' ? count(statsData?.total_landscapes) : null,
-      ok: statsState === 'available' && statsData?.total_landscapes != null,
+      labelKey: 'statusPage.landscapes',
+      value: formatCount(statsData?.total_landscapes),
+      numeric: true,
+      source: '/api/v1/platform/stats',
     },
     {
       key: 'projects',
-      label: t('statusPage.projects'),
-      value: statsState === 'available' ? count(statsData?.total_projects) : null,
-      ok: statsState === 'available' && statsData?.total_projects != null,
+      labelKey: 'statusPage.projects',
+      value: formatCount(statsData?.total_projects),
+      numeric: true,
+      source: '/api/v1/platform/stats',
     },
     {
       key: 'active',
-      label: t('statusPage.activeProjects'),
-      value: statsState === 'available' ? count(statsData?.active_projects) : null,
-      ok: statsState === 'available' && statsData?.active_projects != null,
+      labelKey: 'statusPage.activeProjects',
+      value: formatCount(statsData?.active_projects),
+      numeric: true,
+      source: '/api/v1/platform/stats',
     },
   ];
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-10">
-      <header>
-        <h1 className="display text-3xl font-bold text-ink sm:text-4xl">
-          {t(ADMIN_CONSOLE_ROUTE.headingKey)}
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm text-ink-soft">{t('statusPage.subtitle')}</p>
-      </header>
+    <div>
+      <AdminPageHeader locale={locale} section={section} />
 
-      <section className="card mt-6 p-5">
-        <h2 className="field-label">{t(METRIC_LABEL_KEY)}</h2>
-        <table className="mt-3 w-full border-collapse text-sm">
-          <thead>
-            <tr className="border-b border-line text-ink-soft">
-              <th scope="col" className="py-2 text-start font-medium">
-                {t(METRIC_LABEL_KEY)}
-              </th>
-              <th scope="col" className="py-2 text-start font-medium">
-                {t(STATE_LABEL_KEY)}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.key} className="border-b border-line">
-                <td className="py-2 pe-4 text-ink">{row.label}</td>
-                <td className={`num py-2 ${row.ok ? 'text-forest' : 'text-copper'}`}>
-                  {row.value ?? t(UNAVAILABLE_LABEL_KEY)}
-                </td>
+      <div className="card mt-6 p-4">
+        <dl className="grid gap-3 sm:grid-cols-3">
+          <div>
+            <dt className="field-label">{t('platformOverview.itemStatus')}</dt>
+            <dd className="mt-1 flex flex-wrap items-center gap-2 text-sm text-ink">
+              {summary ? (
+                <StatusDot
+                  state={summary.operational === summary.total ? 'ok' : 'warn'}
+                  label={`${summary.operational} / ${summary.total} ${t('common.live')}`}
+                />
+              ) : (
+                <StatusDot state="down" label={t('statusLine.unavailable')} />
+              )}
+            </dd>
+          </div>
+          <div>
+            <dt className="field-label">{t('market.template.source')}</dt>
+            <dd className="num mt-1 text-sm text-ink">
+              {lastChecked ?? t('statusLine.unavailable')}
+            </dd>
+          </div>
+          <div>
+            <dt className="field-label">{t('auth.session.role')}</dt>
+            <dd className="num mt-1 text-sm text-ink">{roleLabel(t, sessionRole)}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <section className="mt-6" aria-labelledby="admin-overview-metrics">
+        <h2 id="admin-overview-metrics" className="field-label">
+          {t('statusPage.label')}
+        </h2>
+
+        <div className="card mt-3 overflow-x-auto">
+          <table className="w-full min-w-[30rem] border-collapse text-sm">
+            <caption className="px-4 py-3 text-start text-xs text-ink-soft">
+              {t('statusPage.subtitle')}
+            </caption>
+            <thead>
+              <tr className="border-y border-line text-ink-soft">
+                <th scope="col" className="px-4 py-2 text-start font-medium">
+                  {t('statusPage.label')}
+                </th>
+                <th scope="col" className="px-4 py-2 text-start font-medium">
+                  {t('statusPage.result')}
+                </th>
+                <th scope="col" className="px-4 py-2 text-start font-medium">
+                  {t('statusPage.endpoint')}
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {metrics.map((metric) => (
+                <tr key={metric.key} className="border-b border-line last:border-0">
+                  <th scope="row" className="px-4 py-2 text-start font-normal text-ink">
+                    {t(metric.labelKey)}
+                  </th>
+                  <td className={`px-4 py-2 ${metric.numeric ? 'num text-end' : ''}`}>
+                    {metric.value === null ? (
+                      <StatusDot state="down" label={t('statusLine.unavailable')} />
+                    ) : (
+                      <StatusDot state="ok" label={metric.value} />
+                    )}
+                  </td>
+                  <td className="num px-4 py-2 break-words text-xs text-ink-faint">
+                    {metric.source}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
 
-      <section className="mt-4" aria-labelledby="admin-capabilities">
-        <h2 id="admin-capabilities" className="field-label">
-          {t(CONTRACT_LABEL_KEY)}
+      <section className="mt-6" aria-labelledby="admin-overview-services">
+        <h2 id="admin-overview-services" className="field-label">
+          {t('platformOverview.itemStatus')}
         </h2>
-        <ul className="mt-3 space-y-2">
-          {ADMIN_CONSOLE_ROUTE.capabilities.map((capability) => {
-            const wired = capability.endpoint !== null;
-            return (
-              <li
-                key={capability.id}
-                className="card flex flex-wrap items-center justify-between gap-3 p-4"
-              >
-                <span className="text-sm text-ink">{t(capability.labelKey)}</span>
-                <span className="flex flex-wrap items-center gap-3">
-                  <span className="num text-xs text-ink-faint">
-                    {capability.endpoint ?? t(UNAVAILABLE_LABEL_KEY)}
+        {serviceRows.length > 0 ? (
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+            {serviceRows.map((service) => (
+              <li key={service.id} className="card flex items-center justify-between gap-3 p-3">
+                <span className="min-w-0">
+                  <span className="block truncate text-sm text-ink">{service.name}</span>
+                  <span className="num block truncate text-[0.65rem] text-ink-faint">
+                    {service.provenance.source}
                   </span>
+                </span>
+                <span className="flex shrink-0 flex-col items-end gap-1">
                   <StatusDot
-                    state={wired ? 'ok' : 'down'}
-                    label={wired ? t(LIVE_LABEL_KEY) : t(UNAVAILABLE_LABEL_KEY)}
+                    state={service.status === 'operational' ? 'ok' : 'warn'}
+                    label={
+                      service.status === 'operational'
+                        ? t('common.live')
+                        : t('statusLine.unavailable')
+                    }
                   />
+                  <span className="num text-[0.6rem] text-ink-faint">{service.lastCheck}</span>
                 </span>
               </li>
-            );
-          })}
-        </ul>
+            ))}
+          </ul>
+        ) : (
+          <div className="mt-3">
+            <AdminUnavailable
+              source="API Gateway health endpoints"
+              status={services.ok ? 200 : services.status}
+              detail={services.ok ? undefined : services.error}
+            />
+          </div>
+        )}
       </section>
 
-      <p className="mt-6 text-xs text-ink-soft">{t(REAL_DATA_LABEL_KEY)}</p>
+      <AdminCapabilityTable id="admin-overview-contract" capabilities={section.capabilities} />
+
+      <section
+        className="mt-6 grid gap-4 sm:grid-cols-2"
+        aria-label={t('market.template.nextTitle')}
+      >
+        <div className="card p-5">
+          <h2 className="field-label">{t('market.template.contractTitle')}</h2>
+          <p className="mt-2 text-sm text-ink-soft">{t('market.template.contractDescription')}</p>
+          <p className="num mt-3 break-words text-xs text-ink-faint">
+            {healthCapability?.endpoint ?? t('statusLine.unavailable')} ·{' '}
+            {statsCapability?.endpoint ?? t('statusLine.unavailable')}
+          </p>
+        </div>
+        <div className="card p-5">
+          <h2 className="field-label">{t('market.template.nextTitle')}</h2>
+          <p className="mt-2 text-sm text-ink-soft">{t('market.template.nextDescription')}</p>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {NEXT_SECTIONS.map((id) => {
+              const target = findAdminSection(id);
+              if (!target) return null;
+              return (
+                <li key={id}>
+                  <Link
+                    href={adminSectionHref(locale, target.path)}
+                    className="chip hover:bg-[var(--surface-2)]"
+                  >
+                    {t(target.labelKey)}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
+
+      <AdminSourceNote
+        source="/api/v1/platform/health · /api/v1/platform/stats"
+        ok={health.ok && stats.ok && services.ok}
+        observedAt={lastChecked}
+      />
     </div>
   );
 }

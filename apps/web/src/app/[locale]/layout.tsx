@@ -10,7 +10,7 @@ import { WebVitals } from '@/components/WebVitals';
 import { isRtl, routing } from '@/i18n/routing';
 import '../globals.css';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://app.eco-nojin.org';
 
 export const viewport: Viewport = {
   width: 'device-width',

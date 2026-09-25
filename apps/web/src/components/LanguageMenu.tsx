@@ -77,7 +77,7 @@ export function LanguageMenu({
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-3 py-1.5 text-sm text-[var(--ink)] transition-colors hover:border-[var(--forest)] hover:bg-[var(--surface-2)]"
+        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-3 py-1.5 text-sm text-[var(--ink)] transition-colors hover:border-[var(--forest)] hover:bg-[var(--surface-2)]"
       >
         <svg
           aria-hidden="true"
@@ -91,7 +91,7 @@ export function LanguageMenu({
           <path d="M3 12h18M12 3c2.7 3 2.7 15 0 18M12 3c-2.7 3-2.7 15 0 18" />
         </svg>
         <span
-          className="max-w-[8rem] truncate"
+          className="sr-only sm:not-sr-only sm:max-w-[8rem] sm:truncate"
           dir={active === 'fa' || active === 'ar' || active === 'ur' ? 'rtl' : 'ltr'}
         >
           {NATIVE[active] ?? current}
