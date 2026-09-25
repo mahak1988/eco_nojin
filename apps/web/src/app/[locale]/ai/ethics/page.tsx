@@ -1,24 +1,26 @@
-'use client';
-
-import { useTranslations } from 'next-intl';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { FivePart } from '@/components/FivePart';
+import { SiteNav } from '@/components/SiteNav';
 
-export default function EthicsPage() {
-  const t = useTranslations('ai.ethics');
+export const dynamic = 'force-dynamic';
+
+export default async function EthicsPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations('ai');
 
   return (
     <main id="main">
+      <SiteNav locale={locale} />
       <div className="mx-auto max-w-4xl px-6 py-10">
         <FivePart
           title={t('title')}
           lead={t('lead')}
           what={t('what')}
           audience={t('audience')}
-          evidence={[t('evidence1'), t('evidence2'), t('evidence3'), t('evidence4')]}
-          limits={[t('limit1'), t('limit2'), t('limit3')]}
-          next={[t('next1'), t('next2')]}
-          limitsLabel={t('limitsTitle')}
-          nextLabel={t('nextTitle')}
+          evidence={t.raw('evidence') as string[]}
+          limits={t.raw('limits') as string[]}
+          next={t.raw('next') as string[]}
         />
       </div>
     </main>

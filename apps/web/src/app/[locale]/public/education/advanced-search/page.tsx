@@ -5,6 +5,7 @@ import { SiteNav } from '@/components/SiteNav';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
@@ -68,8 +69,6 @@ export default async function AdvancedSearchPage({
   const { locale } = await params;
   const query = await searchParams;
   setRequestLocale(locale);
-  const t = await getTranslations('statusLine');
-  const template = await getTranslations('market.template');
   const learn = await getTranslations('learn');
   const title = TITLES[locale] ?? TITLES.en;
   const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
@@ -81,6 +80,7 @@ export default async function AdvancedSearchPage({
     ? await apiGet<ContentSearch>(`${CONTENT_SEARCH_PATH}?q=${encodeURIComponent(term)}&limit=20`)
     : null;
   const results = search?.ok ? search.data.results : [];
+  const state = search ? toDataState(CONTENT_SEARCH_PATH, search, results.length) : null;
 
   return (
     <main id="main" className="min-h-dvh">
@@ -126,47 +126,38 @@ export default async function AdvancedSearchPage({
             <h3 className="text-sm font-medium text-ink">{learn('emptyTitle')}</h3>
             <p className="mt-1 text-sm text-ink-soft">{learn('emptyDesc')}</p>
           </Card>
-        ) : search && !search.ok ? (
-          <Card density="compact">
-            <h3 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h3>
-            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
-            <p className="mt-3 text-xs text-ink-soft">
-              {t('unavailable')} · {search.error}
-            </p>
-          </Card>
-        ) : results.length === 0 ? (
-          <Card density="compact">
-            <h3 className="text-sm font-medium text-ink">{learn('emptyTitle')}</h3>
-            <p className="mt-1 text-sm text-ink-soft">{learn('emptyDesc')}</p>
-          </Card>
-        ) : (
-          <>
-            <div className="grid gap-4">
-              {results.map((hit) => (
-                <Card key={hit.id} density="compact">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <h3 className="font-medium text-ink">{hit.title}</h3>
-                      <p className="mt-1 text-sm text-ink-soft">{hit.snippet}</p>
-                      <p className="mt-1 text-xs text-ink-soft">
-                        {hit.category} · {hit.language}
-                      </p>
-                    </div>
-                    <ProvenanceStamp
-                      source={CONTENT_SEARCH_PATH}
-                      verified={Boolean(hit.published_at)}
-                      timestamp={hit.published_at ?? undefined}
-                      method={hit.category}
-                    />
+        ) : null}
+        {state ? (
+          <DataStateCard
+            state={state}
+            emptyTitle={learn('emptyTitle')}
+            emptyDescription={learn('emptyDesc')}
+          />
+        ) : null}
+        {state?.kind === 'ready' ? (
+          <div className="grid gap-4">
+            {results.map((hit) => (
+              <Card key={hit.id} density="compact">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="font-medium text-ink">{hit.title}</h3>
+                    <p className="mt-1 text-sm text-ink-soft">{hit.snippet}</p>
+                    <p className="mt-1 text-xs text-ink-soft">
+                      {hit.category} · {hit.language}
+                    </p>
                   </div>
-                </Card>
-              ))}
-            </div>
-            <p className="mt-6 text-xs text-ink-soft">
-              {CONTENT_SEARCH_PATH} · {t('realData')}
-            </p>
-          </>
-        )}
+                  <ProvenanceStamp
+                    source={CONTENT_SEARCH_PATH}
+                    verified={Boolean(hit.published_at)}
+                    timestamp={hit.published_at ?? undefined}
+                    method={hit.category}
+                  />
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : null}
+        {state ? <SourceFooter state={state} /> : null}
       </section>
     </main>
   );

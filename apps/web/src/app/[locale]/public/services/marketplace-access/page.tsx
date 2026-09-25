@@ -4,6 +4,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const STATS_PATH = '/api/v1/marketplace/stats';
 const MARKETPLACES_PATH = '/api/v1/marketplace/marketplaces';
@@ -45,6 +46,7 @@ export default async function MarketplaceAccessPage({
     apiGet<Marketplaces>(MARKETPLACES_PATH),
   ]);
   const rows = marketplaces.ok ? marketplaces.data.marketplaces : [];
+  const state = toDataState(MARKETPLACES_PATH, marketplaces, rows.length);
 
   return (
     <main className="min-h-dvh">
@@ -100,44 +102,28 @@ export default async function MarketplaceAccessPage({
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
         <h2 className="text-xl font-semibold text-ink mb-4">{MARKETPLACES_PATH}</h2>
-        {rows.length === 0 ? (
-          <Card density="compact">
-            <h3 className="text-sm font-medium text-ink">
-              {marketplaces.ok ? market('empty') : template('unavailableTitle')}
-            </h3>
-            <p className="mt-1 text-sm text-ink-soft">
-              {marketplaces.ok ? market('empty') : template('unavailableDescription')}
-            </p>
-            <p className="mt-3 text-xs text-ink-soft">
-              {t('unavailable')}
-              {marketplaces.ok ? '' : ` · ${marketplaces.error}`}
-            </p>
-          </Card>
-        ) : (
-          <>
-            <div className="grid gap-4">
-              {rows.map((marketplace) => (
-                <Card key={marketplace.id} density="compact">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <h3 className="font-medium text-ink">{marketplace.name}</h3>
-                      <p className="mt-1 text-sm text-ink-soft">{marketplace.description}</p>
-                      <p className="mt-1 text-xs text-ink-soft">{marketplace.marketplace_type}</p>
-                    </div>
-                    <ProvenanceStamp
-                      source={MARKETPLACES_PATH}
-                      verified={marketplaces.ok}
-                      method={marketplace.slug}
-                    />
+        <DataStateCard state={state} />
+        {state.kind === 'ready' ? (
+          <div className="grid gap-4">
+            {rows.map((marketplace) => (
+              <Card key={marketplace.id} density="compact">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="font-medium text-ink">{marketplace.name}</h3>
+                    <p className="mt-1 text-sm text-ink-soft">{marketplace.description}</p>
+                    <p className="mt-1 text-xs text-ink-soft">{marketplace.marketplace_type}</p>
                   </div>
-                </Card>
-              ))}
-            </div>
-            <p className="mt-6 text-xs text-ink-soft">
-              {MARKETPLACES_PATH} · {t('realData')}
-            </p>
-          </>
-        )}
+                  <ProvenanceStamp
+                    source={MARKETPLACES_PATH}
+                    verified={marketplaces.ok}
+                    method={marketplace.slug}
+                  />
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : null}
+        <SourceFooter state={state} />
       </section>
 
       <OwnerFooter />

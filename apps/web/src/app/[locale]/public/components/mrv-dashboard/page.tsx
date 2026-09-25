@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
@@ -63,14 +64,13 @@ export default async function MRVDashboardPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('statusLine');
-  const template = await getTranslations('market.template');
   const title = TITLES[locale] ?? TITLES.en;
   const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
 
   const summary = await apiGet<MrvSummary>(SUMMARY_PATH);
   const data = summary.ok ? summary.data : null;
-  const error = summary.ok ? '' : summary.error;
+  const sites = data ? data.latest_satellite_per_site : [];
+  const state = toDataState(SUMMARY_PATH, summary, data ? data.total_observations : 0);
 
   return (
     <main id="main" className="min-h-dvh">
@@ -89,15 +89,8 @@ export default async function MRVDashboardPage({
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
         <h2 className="text-xl font-semibold text-ink mb-4">{SUMMARY_PATH}</h2>
-        {!data ? (
-          <Card density="compact">
-            <h3 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h3>
-            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
-            <p className="mt-3 text-xs text-ink-soft">
-              {t('unavailable')} · {error}
-            </p>
-          </Card>
-        ) : (
+        <DataStateCard state={state} />
+        {state.kind === 'ready' && data ? (
           <>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <Card density="compact">
@@ -117,9 +110,9 @@ export default async function MRVDashboardPage({
               ))}
             </div>
 
-            {data.latest_satellite_per_site.length > 0 ? (
+            {sites.length > 0 ? (
               <div className="mt-8 grid gap-4">
-                {data.latest_satellite_per_site.map((row) => (
+                {sites.map((row) => (
                   <Card key={`${row.site_id}-${row.index}`} density="compact">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                       <div>
@@ -137,16 +130,10 @@ export default async function MRVDashboardPage({
                   </Card>
                 ))}
               </div>
-            ) : (
-              <Card density="compact">
-                <p className="text-sm text-ink-soft">{t('unavailable')}</p>
-              </Card>
-            )}
-            <p className="mt-6 text-xs text-ink-soft">
-              {SUMMARY_PATH} · {t('realData')}
-            </p>
+            ) : null}
           </>
-        )}
+        ) : null}
+        <SourceFooter state={state} />
       </section>
     </main>
   );

@@ -4,6 +4,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const SUMMARY_PATH = '/api/v1/mrv/public/dashboard-summary';
 
@@ -23,12 +24,10 @@ export default async function MRVVerificationPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const services = await getTranslations('services');
-  const t = await getTranslations('statusLine');
-  const template = await getTranslations('market.template');
 
   const summary = await apiGet<MrvSummary>(SUMMARY_PATH);
   const data = summary.ok ? summary.data : null;
-  const error = summary.ok ? '' : summary.error;
+  const state = toDataState(SUMMARY_PATH, summary, data ? data.total_observations : 0);
 
   return (
     <main className="min-h-dvh">
@@ -50,15 +49,8 @@ export default async function MRVVerificationPage({
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
         <h2 className="text-xl font-semibold text-ink mb-4">{SUMMARY_PATH}</h2>
-        {!data ? (
-          <Card density="compact">
-            <h3 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h3>
-            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
-            <p className="mt-3 text-xs text-ink-soft">
-              {t('unavailable')} · {error}
-            </p>
-          </Card>
-        ) : (
+        <DataStateCard state={state} />
+        {state.kind === 'ready' && data ? (
           <>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <Card density="compact">
@@ -85,11 +77,9 @@ export default async function MRVVerificationPage({
                 </Card>
               ))}
             </div>
-            <p className="mt-6 text-xs text-ink-soft">
-              {SUMMARY_PATH} · {t('realData')}
-            </p>
           </>
-        )}
+        ) : null}
+        <SourceFooter state={state} />
       </section>
 
       <OwnerFooter />

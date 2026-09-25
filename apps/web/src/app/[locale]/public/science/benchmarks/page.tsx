@@ -2,22 +2,40 @@ import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
+import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
-const DATASETS_PATH = '/api/v1/science/datasets';
+const VALIDATION_PATH = '/api/v1/hydroma/validation';
 
-type DatasetCatalog = {
-  count: number;
-  live: number;
+type ValidationCheck = {
+  id: string;
+  label: string;
+  kind: string;
+  source: string;
+  expected: number | string;
+  actual: number | string;
+  tolerance: number;
+  unit: string;
+  passed: boolean;
+  note: string;
+};
+
+type ValidationReport = {
+  total: number;
+  passed: number;
+  failed: number;
+  pass_rate: number;
+  checks: ValidationCheck[];
 };
 
 const TITLES: Record<string, string> = { fa: 'معیارهای مقایسه', en: 'Benchmarks' };
 const DESCRIPTIONS: Record<string, string> = {
-  fa: 'بندمارک‌های استاندارد برای ارزیابی مدل‌ها',
-  en: 'Standard benchmarks for model evaluation',
+  fa: 'نتیجهٔ واقعی بررسی فرمول‌ها در برابر مرجع علمی',
+  en: 'Real formula-verification results against published references',
 };
 
 export const dynamic = 'force-dynamic';
@@ -50,40 +68,85 @@ export async function generateMetadata({
 export default async function BenchmarksPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('statusLine');
+  const status = await getTranslations('statusLine');
   const template = await getTranslations('market.template');
   const title = TITLES[locale] ?? TITLES.en;
   const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
 
-  // No benchmark results are published by the API gateway; only the honest
-  // dataset availability report exists, so the results table stays empty.
-  const datasets = await apiGet<DatasetCatalog>(DATASETS_PATH);
+  // The independent formula-verification suite is the only measured comparison the
+  // gateway publishes: every row is an executed check against a cited reference.
+  const report = await apiGet<ValidationReport>(VALIDATION_PATH);
+  const checks = report.ok ? report.data.checks : [];
+  const state = toDataState(VALIDATION_PATH, report, checks.length);
 
   return (
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
         <ProvenanceStamp
-          source={DATASETS_PATH}
+          source={VALIDATION_PATH}
           label={title}
-          verified={datasets.ok}
-          method={template('method')}
+          verified={report.ok}
+          method={VALIDATION_PATH}
         >
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
         </ProvenanceStamp>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 
+      {state.kind === 'ready' && report.ok ? (
+        <section className="mx-auto max-w-5xl px-6 pb-6">
+          <div className="grid gap-4 sm:grid-cols-4">
+            <Card density="compact">
+              <div className="num text-3xl font-semibold text-ink">{report.data.total}</div>
+              <p className="mt-1 text-sm text-ink-soft">{template('source')}</p>
+            </Card>
+            <Card density="compact">
+              <div className="num text-3xl font-semibold text-forest">{report.data.passed}</div>
+              <p className="mt-1 text-sm text-ink-soft">{status('realData')}</p>
+            </Card>
+            <Card density="compact">
+              <div className="num text-3xl font-semibold text-copper">{report.data.failed}</div>
+              <p className="mt-1 text-sm text-ink-soft">{status('unavailable')}</p>
+            </Card>
+            <Card density="compact">
+              <div className="num text-3xl font-semibold text-ink">{report.data.pass_rate}</div>
+              <p className="mt-1 text-sm text-ink-soft">{template('status')}</p>
+            </Card>
+          </div>
+        </section>
+      ) : null}
+
       <section className="mx-auto max-w-5xl px-6 pb-12">
-        <h2 className="text-xl font-semibold text-ink mb-4">{template('source')}</h2>
-        <Card density="compact">
-          <h3 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h3>
-          <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
-          <p className="mt-3 text-xs text-ink-soft">
-            {template('method')} · {t('unavailable')}
-          </p>
-        </Card>
-        <p className="mt-6 text-xs text-ink-soft">{t('realData')}</p>
+        <h2 className="text-xl font-semibold text-ink mb-4">{VALIDATION_PATH}</h2>
+        <DataStateCard state={state} />
+        {state.kind === 'ready' && report.ok ? (
+          <div className="grid gap-4">
+            {checks.map((check) => (
+              <Card key={check.id} density="compact">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="font-medium text-ink">{check.label}</h3>
+                    <p className="mt-1 text-sm text-ink-soft">{check.source}</p>
+                    <p className="num mt-1 text-xs text-ink-soft">
+                      {check.expected} / {check.actual} · {check.tolerance} {check.unit}
+                    </p>
+                    {check.note ? <p className="mt-1 text-xs text-ink-soft">{check.note}</p> : null}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <StatusDot state={check.passed ? 'ok' : 'down'} label={check.kind} />
+                    <ProvenanceStamp
+                      source={check.source}
+                      verified={check.passed}
+                      method={check.id}
+                    />
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : null}
+        <SourceFooter state={state} />
       </section>
     </main>
   );

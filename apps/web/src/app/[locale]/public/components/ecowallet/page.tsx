@@ -5,6 +5,7 @@ import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
@@ -63,7 +64,6 @@ export async function generateMetadata({
 export default async function EcoWalletPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('statusLine');
   const template = await getTranslations('market.template');
   const title = TITLES[locale] ?? TITLES.en;
   const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
@@ -74,10 +74,26 @@ export default async function EcoWalletPage({ params }: { params: Promise<{ loca
     apiGet<OptionsPayload>(REDEMPTION_PATH),
   ]);
 
+  const healthState = toDataState(HEALTH_PATH, health, health.ok ? 1 : 0);
   const optionGroups = [
     { path: EARNING_PATH, result: earning },
     { path: REDEMPTION_PATH, result: redemption },
-  ];
+  ].map((group) => ({
+    ...group,
+    state: toDataState(
+      group.path,
+      group.result,
+      group.result.ok ? group.result.data.options.length : 0,
+    ),
+  }));
+  const readyGroups = optionGroups.filter((group) => group.state.kind === 'ready');
+  const readyState = toDataState(
+    EARNING_PATH,
+    readyGroups.length > 0
+      ? { ok: true, data: null, status: 200 }
+      : { ok: false, error: '', status: 503 },
+    readyGroups.length,
+  );
 
   return (
     <main id="main" className="min-h-dvh">
@@ -95,7 +111,7 @@ export default async function EcoWalletPage({ params }: { params: Promise<{ loca
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-6">
-        {health.ok ? (
+        {healthState.kind === 'ready' && health.ok ? (
           <Card density="compact">
             <div className="flex items-center justify-between gap-3">
               <p className="text-sm text-ink">
@@ -111,52 +127,21 @@ export default async function EcoWalletPage({ params }: { params: Promise<{ loca
             </div>
           </Card>
         ) : (
-          <Card density="compact">
-            <h2 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h2>
-            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
-            <p className="mt-3 text-xs text-ink-soft">
-              {t('unavailable')} · {health.error}
-            </p>
-          </Card>
+          <DataStateCard state={healthState} />
         )}
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
         <h2 className="text-xl font-semibold text-ink mb-4">{template('source')}</h2>
         <div className="grid gap-4">
-          {optionGroups.map(({ path, result }) => (
-            <Card key={path} density="compact">
+          {optionGroups.map(({ path, state }) => (
+            <div key={path}>
               <h3 className="font-mono text-sm font-medium text-ink">{path}</h3>
-              {result.ok ? (
-                result.data.options.length > 0 ? (
-                  <div className="mt-3 grid gap-2">
-                    {result.data.options.map((option) => (
-                      <div
-                        key={option.category}
-                        className="flex items-center justify-between gap-3 text-sm"
-                      >
-                        <span className="text-ink">{option.category}</span>
-                        <span className="num font-mono text-ink-soft">
-                          {option.eco_per_unit ?? option.eco_cost ?? t('unavailable')}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="mt-1 text-sm text-ink-soft">{t('unavailable')}</p>
-                )
-              ) : (
-                <p className="mt-1 text-sm text-ink-soft">
-                  {t('unavailable')} · {result.error}
-                </p>
-              )}
-              <div className="mt-3">
-                <ProvenanceStamp source={path} verified={result.ok} method={path} />
-              </div>
-            </Card>
+              <DataStateCard state={state} />
+            </div>
           ))}
         </div>
-        <p className="mt-6 text-xs text-ink-soft">{t('realData')}</p>
+        <SourceFooter state={readyState} />
       </section>
     </main>
   );

@@ -1,196 +1,167 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { FormEvent, useState } from 'react';
+import { type FormEvent, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Toast } from '@/components/ui/Toast';
+
+/**
+ * Registered session-free read endpoints from the gateway contract. The
+ * playground only offers methods the browser can actually complete: the gateway
+ * CSRF middleware rejects cookie-less writes, so a POST/PATCH control here
+ * would always fail and is not offered.
+ */
+const READ_ENDPOINTS = [
+  '/api/v1/platform/health',
+  '/api/v1/platform/stats',
+  '/api/v1/platform/landscapes',
+  '/api/v1/health',
+  '/api/v1/models',
+  '/api/v1/models/cpp-status',
+  '/api/v1/hydroma/models',
+  '/api/v1/hydroma/validation',
+  '/api/v1/tool-registry',
+  '/api/v1/science/citations/index',
+  '/api/v1/science/datasets',
+  '/api/v1/science/model-cards',
+  '/api/v1/science/zenodo/status',
+  '/api/v1/legal-texts',
+  '/api/v1/marketplace/products',
+  '/api/v1/marketplace/stats',
+  '/api/v1/ai/health',
+  '/api/v1/voice/health',
+  '/api/v1/voice/status',
+  '/api/v1/voice/languages',
+  '/api/v1/support/personas',
+  '/api/v1/content/search?q=soil',
+  '/api/v1/mrv/public/dashboard-summary',
+  '/api/v1/pilot/stats',
+  '/api/v1/manual/status',
+];
+
+type Outcome = { status: number; body: string } | null;
 
 export default function PlaygroundPage() {
-  const t = useTranslations('developers.playground');
+  const t = useTranslations('developers');
+  const common = useTranslations('common');
+  const statusPage = useTranslations('statusPage');
+  const statusLine = useTranslations('statusLine');
+  const template = useTranslations('market.template');
 
-  const [method, setMethod] = useState('GET');
-  const [endpoint, setEndpoint] = useState('/api/v1/platform/stats');
-  const [headers, setHeaders] = useState('Content-Type: application/json');
-  const [body, setBody] = useState('');
-  const [response, setResponse] = useState<{ status: number; data: unknown } | null>(null);
+  const [endpoint, setEndpoint] = useState(READ_ENDPOINTS[0]);
   const [isLoading, setIsLoading] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [outcome, setOutcome] = useState<Outcome>(null);
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
     setIsLoading(true);
-    setSubmitStatus('idle');
-    setResponse(null);
-
+    setOutcome(null);
     try {
-      const headerObj: Record<string, string> = {};
-      const allowedHeaders = new Set(['content-type', 'x-request-id', 'idempotency-key', 'accept']);
-      headers.split('\n').forEach((line) => {
-        const [key, ...valueParts] = line.split(':');
-        if (key && valueParts.length && allowedHeaders.has(key.trim().toLowerCase())) {
-          headerObj[key.trim()] = valueParts.join(':').trim();
-        }
-      });
-      if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) headerObj['X-CSRF-Intent'] = '1';
-
-      const target = endpoint.startsWith('/api/') ? endpoint : `/api/${endpoint}`;
-      const res = await fetch(target, {
-        method,
-        headers: headerObj,
+      const res = await fetch(endpoint, {
+        method: 'GET',
         credentials: 'same-origin',
-        body: method !== 'GET' && method !== 'HEAD' ? body : undefined,
+        headers: { Accept: 'application/json' },
+        cache: 'no-store',
       });
-
-      const data = await res.json().catch(() => ({ error: 'Invalid JSON response' }));
-      setResponse({ status: res.status, data });
-      setSubmitStatus(res.ok ? 'success' : 'error');
-    } catch {
-      setSubmitStatus('error');
+      const body = await res.text();
+      setOutcome({ status: res.status, body });
+    } catch (err) {
+      setOutcome({ status: 0, body: err instanceof Error ? err.message : String(err) });
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <main id="main" className="min-h-screen">
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <header className="mb-10">
-          <h1 className="display text-3xl font-bold text-ink sm:text-4xl">{t('title')}</h1>
-          <p className="mt-3 text-ink-soft">{t('lead')}</p>
-        </header>
+    <main id="main" className="min-h-dvh">
+      <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
+        <h1 className="display text-balance text-4xl font-bold text-ink">{t('title')}</h1>
+        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
 
-        {submitStatus === 'success' && (
-          <Toast
-            variant="success"
-            title={t('successTitle')}
-            className="mb-6"
-            onClose={() => setSubmitStatus('idle')}
-          >
-            {t('successMessage')}
-          </Toast>
-        )}
-
-        {submitStatus === 'error' && (
-          <Toast
-            variant="error"
-            title={t('errorTitle')}
-            className="mb-6"
-            onClose={() => setSubmitStatus('idle')}
-          >
-            {t('errorMessage')}
-          </Toast>
-        )}
-
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="mt-6 grid gap-6 lg:grid-cols-2">
           <Card density="cozy">
-            <h2 className="font-medium text-ink mb-4">{t('request')}</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="flex gap-3">
+            <h2 className="field-label">{statusPage('endpoint')}</h2>
+            <form onSubmit={handleSubmit} className="mt-3 space-y-4">
+              <div>
+                <label htmlFor="playground-endpoint" className="sr-only">
+                  {statusPage('endpoint')}
+                </label>
                 <select
-                  value={method}
-                  onChange={(e) => setMethod(e.target.value)}
-                  className="px-3 py-2 rounded-md border border-line bg-background text-ink focus:outline-none focus:ring-2 focus:ring-forest"
+                  id="playground-endpoint"
+                  value={endpoint}
+                  onChange={(event) => setEndpoint(event.target.value)}
+                  className="w-full rounded-md border border-line bg-background px-3 py-2 font-mono text-sm text-ink focus:outline-none focus:ring-2 focus:ring-forest"
                 >
-                  {['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].map((m) => (
-                    <option key={m} value={m}>
-                      {m}
+                  {READ_ENDPOINTS.map((path) => (
+                    <option key={path} value={path}>
+                      {path}
                     </option>
                   ))}
                 </select>
-                <input
-                  type="text"
-                  value={endpoint}
-                  onChange={(e) => setEndpoint(e.target.value)}
-                  placeholder="/api/v1/..."
-                  className="flex-1 px-4 py-2 rounded-md border border-line bg-background text-ink focus:outline-none focus:ring-2 focus:ring-forest font-mono text-sm"
-                  required
-                />
               </div>
-
-              <div>
-                <label
-                  htmlFor="api-playground-headers"
-                  className="block text-sm font-medium text-ink mb-1"
-                >
-                  {t('headers')}
-                </label>
-                <textarea
-                  id="api-playground-headers"
-                  value={headers}
-                  onChange={(e) => setHeaders(e.target.value)}
-                  rows={4}
-                  className="w-full px-4 py-2 rounded-md border border-line bg-background text-ink focus:outline-none focus:ring-2 focus:ring-forest font-mono text-sm resize-y"
-                  placeholder="Content-Type: application/json&#10;X-Request-ID: optional"
-                />
-              </div>
-
-              {method !== 'GET' && method !== 'HEAD' && (
-                <div>
-                  <label
-                    htmlFor="api-playground-body"
-                    className="block text-sm font-medium text-ink mb-1"
-                  >
-                    {t('body')}
-                  </label>
-                  <textarea
-                    id="api-playground-body"
-                    value={body}
-                    onChange={(e) => setBody(e.target.value)}
-                    rows={6}
-                    className="w-full px-4 py-2 rounded-md border border-line bg-background text-ink focus:outline-none focus:ring-2 focus:ring-forest font-mono text-sm resize-y"
-                    placeholder='{ "key": "value" }'
-                  />
-                </div>
-              )}
-
-              <Button type="submit" size="lg" disabled={isLoading} className="w-full">
-                {isLoading ? t('sending') : t('sendRequest')}
+              <Button type="submit" size="lg" loading={isLoading} className="w-full">
+                {common('view')}
               </Button>
             </form>
           </Card>
 
           <Card density="cozy">
-            <h2 className="font-medium text-ink mb-4">{t('response')}</h2>
-            {response ? (
-              <div className="space-y-3">
+            <h2 className="field-label">{statusPage('result')}</h2>
+            {outcome ? (
+              <div className="mt-3 space-y-3">
                 <div
-                  className={`px-3 py-2 rounded-md font-mono text-sm ${
-                    response.status >= 200 && response.status < 300
+                  className={`rounded-md px-3 py-2 font-mono text-sm ${
+                    outcome.status >= 200 && outcome.status < 300
                       ? 'bg-forest/10 text-forest'
                       : 'bg-copper/10 text-copper'
                   }`}
                 >
-                  Status: {response.status}
+                  {statusPage('result')}:{' '}
+                  {outcome.status === 0 ? statusLine('unavailable') : outcome.status}
                 </div>
-                <pre className="bg-surface-2 border border-line rounded-md p-4 text-xs font-mono overflow-auto max-h-96 text-ink">
-                  {JSON.stringify(response.data, null, 2)}
+                <pre className="max-h-96 overflow-auto rounded-md border border-line bg-surface-2 p-4 font-mono text-xs text-ink">
+                  {outcome.body.slice(0, 4000)}
                 </pre>
               </div>
             ) : (
-              <p className="text-center text-ink-soft py-8">{t('noResponse')}</p>
+              <p className="py-8 text-center text-ink-soft">{statusLine('noData')}</p>
             )}
           </Card>
         </div>
 
+        <Card density="cozy" className="mt-6">
+          <h2 className="field-label">{template('contractTitle')}</h2>
+          <p className="mt-2 text-sm text-ink-soft">{template('contractDescription')}</p>
+        </Card>
+
+        <div className="mt-6 grid gap-3 md:grid-cols-2">
+          <div className="rounded-md border border-line p-4">
+            <h3 className="font-medium text-ink">{template('unavailableTitle')}</h3>
+            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
+          </div>
+          <div className="rounded-md border border-line p-4">
+            <h3 className="font-medium text-ink">{template('nextTitle')}</h3>
+            <p className="mt-1 text-sm text-ink-soft">{template('nextDescription')}</p>
+          </div>
+        </div>
+
         <div className="mt-6 grid gap-4">
-          <Card density="cozy" className="border-clay/40 bg-clay/5">
-            <h3 className="font-medium text-ink mb-2">{t('limitsTitle')}</h3>
-            <ul className="space-y-1 text-sm text-ink-soft">
-              {t.raw('limits')?.map((item: string) => (
-                <li key={item} className="flex gap-2">
-                  <span className="text-copper">•</span>
-                  <span>{item}</span>
-                </li>
+          <Card density="cozy">
+            <h3 className="field-label text-clay">{common('limitsLabel')}</h3>
+            <ul className="mt-3 list-inside list-disc space-y-2 text-sm text-ink">
+              {(t.raw('limits') as string[]).map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
           </Card>
-          <Card density="cozy" className="border-forest/40 bg-forest/5">
-            <h3 className="font-medium text-ink mb-2">{t('nextTitle')}</h3>
-            <ul className="space-y-1 text-sm text-ink-soft">
-              {t.raw('next')?.map((item: string) => (
-                <li key={item} className="flex gap-2">
-                  <span className="text-forest">•</span>
+          <Card density="cozy">
+            <h3 className="field-label text-moss">{common('nextLabel')}</h3>
+            <ul className="mt-3 space-y-2 text-sm text-ink">
+              {(t.raw('next') as string[]).map((item) => (
+                <li key={item} className="flex items-baseline gap-2">
+                  <span aria-hidden="true" className="text-moss">
+                    ↳
+                  </span>
                   <span>{item}</span>
                 </li>
               ))}

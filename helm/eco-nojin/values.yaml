@@ -143,7 +143,6 @@ frontend:
           - eco-nojin.org
   sessionSecret:
     existingSecret: frontend-secrets
-    existingSecretKey: SESSION_SECRET
     existingSecretRedisUrlKey: REDIS_URL
   config:
     API_PROXY_TARGET: ""

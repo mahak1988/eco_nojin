@@ -15,14 +15,6 @@ export function getPublicAppUrl(): URL {
   return new URL(url);
 }
 
-export function getSessionSecret(): string {
-  const secret = process.env.SESSION_SECRET;
-  if (process.env.NODE_ENV === 'production' && (!secret || secret.length < 32)) {
-    throw new Error('SESSION_SECRET must contain at least 32 characters in production');
-  }
-  return secret ?? 'development-session-secret-change-before-production';
-}
-
 export function getRedisUrl(): string | null {
   const value = process.env.REDIS_URL?.trim();
   if (!value) {

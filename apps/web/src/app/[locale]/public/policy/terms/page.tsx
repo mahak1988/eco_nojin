@@ -5,9 +5,12 @@ import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
+const SLUGS_PATH = '/api/v1/legal-texts/slugs';
+const LOCALES_PATH = '/api/v1/legal-texts/locales';
 const SLUG = 'terms';
 
 const TITLES: Record<string, string> = { fa: 'شرایط استفاده', en: 'Terms of Service' };
@@ -68,17 +71,24 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
   const { locale } = await params;
   setRequestLocale(locale);
   const status = await getTranslations('statusLine');
+  const common = await getTranslations('common');
   const template = await getTranslations('market.template');
 
   const path = `/api/v1/legal-texts/${locale}/${SLUG}`;
-  const [record, history] = await Promise.all([
+  const [record, history, slugs, locales] = await Promise.all([
     apiGet<LegalText>(path),
     apiGet<LegalTextVersion[]>(`${path}/versions`),
+    apiGet<string[]>(SLUGS_PATH),
+    apiGet<string[]>(LOCALES_PATH),
   ]);
   const legalText = record.ok ? record.data : null;
   const versions = history.ok ? history.data : [];
   const published = legalText?.status === 'published';
   const heading = legalText?.title ?? TITLES[locale] ?? TITLES.en;
+  const slugRows = slugs.ok ? slugs.data : [];
+  const localeRows = locales.ok ? locales.data : [];
+  const slugsState = toDataState(SLUGS_PATH, slugs, slugRows.length);
+  const localesState = toDataState(LOCALES_PATH, locales, localeRows.length);
 
   return (
     <main id="main" className="min-h-dvh">
@@ -155,6 +165,33 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
           </div>
         )}
       </div>
+
+      <section className="mx-auto max-w-4xl px-6 pb-12">
+        <h2 className="text-xl font-semibold text-ink mb-4">{common('view')}</h2>
+        <DataStateCard state={slugsState} />
+        {slugsState.kind === 'ready' && slugs.ok ? (
+          <div className="flex flex-wrap gap-2">
+            {slugRows.map((slug) => (
+              <span key={slug} className="rounded bg-forest/10 px-2 py-1 text-xs text-forest">
+                {slug}
+              </span>
+            ))}
+          </div>
+        ) : null}
+        <SourceFooter state={slugsState} />
+        <h2 className="mt-8 text-xl font-semibold text-ink mb-4">{LOCALES_PATH}</h2>
+        <DataStateCard state={localesState} />
+        {localesState.kind === 'ready' && locales.ok ? (
+          <div className="flex flex-wrap gap-2">
+            {localeRows.map((entry) => (
+              <span key={entry} className="rounded bg-forest/10 px-2 py-1 text-xs text-forest">
+                {entry}
+              </span>
+            ))}
+          </div>
+        ) : null}
+        <SourceFooter state={localesState} />
+      </section>
     </main>
   );
 }

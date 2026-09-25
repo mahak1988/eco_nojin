@@ -46,4 +46,4 @@ The session cookie is named `__Host-eco_session` and has `HttpOnly`, `Secure`, `
 
 The UI forms use message keys from all 14 catalogues, localized validation, labelled consent controls, accessible password toggles, and an Escape/focus-safe session menu.
 
-`REDIS_URL` is required in production and `SESSION_SECRET` must contain at least 32 characters. In development, tests may use the in-memory session fallback.
+`REDIS_URL` is required in production. In development, tests may use the in-memory session fallback. Session identifiers are opaque random values; no signing secret is required by the current design.

@@ -4,6 +4,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
@@ -59,9 +60,8 @@ export async function generateMetadata({
 export default async function GlossaryPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('statusLine');
-  const template = await getTranslations('market.template');
   const learn = await getTranslations('learn');
+  const template = await getTranslations('market.template');
   const title = TITLES[locale] ?? TITLES.en;
   const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
 
@@ -70,6 +70,9 @@ export default async function GlossaryPage({ params }: { params: Promise<{ local
   const glossary = await apiGet<AgrovocResult>(AGROVOC_PATH);
   const terms = glossary.ok ? glossary.data.results : [];
   const stats = glossary.ok ? glossary.data.stats : {};
+  const groups = Object.entries(stats);
+  const state = toDataState(AGROVOC_PATH, glossary, terms.length);
+  const groupsState = toDataState(AGROVOC_PATH, glossary, groups.length);
 
   return (
     <main id="main" className="min-h-dvh">
@@ -88,59 +91,53 @@ export default async function GlossaryPage({ params }: { params: Promise<{ local
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
         <h2 className="text-xl font-semibold text-ink mb-4">{AGROVOC_PATH}</h2>
-        {!glossary.ok ? (
-          <Card density="compact">
-            <h3 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h3>
-            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
-            <p className="mt-3 text-xs text-ink-soft">
-              {t('unavailable')} · {glossary.error}
-            </p>
-          </Card>
-        ) : terms.length === 0 ? (
-          <>
-            <Card density="compact">
-              <h3 className="text-sm font-medium text-ink">{learn('emptyTitle')}</h3>
-              <p className="mt-1 text-sm text-ink-soft">{learn('emptyDesc')}</p>
-            </Card>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {Object.entries(stats).map(([group, count]) => (
-                <Card key={group} density="compact">
-                  <div className="num text-2xl font-semibold text-ink">{count}</div>
-                  <p className="mt-1 text-sm text-ink-soft">{group}</p>
-                </Card>
-              ))}
-            </div>
-            <p className="mt-6 text-xs text-ink-soft">
-              {AGROVOC_PATH} · {t('realData')}
-            </p>
-          </>
-        ) : (
-          <>
-            <div className="grid gap-4">
-              {terms.map((entry) => (
-                <Card key={entry.uri} density="compact">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <h3 className="font-medium text-ink">
-                        {locale === 'fa' ? entry.term : entry.term_en}
-                      </h3>
-                      <p className="mt-1 text-sm text-ink-soft">{entry.aliases.join(' · ')}</p>
-                    </div>
-                    <ProvenanceStamp
-                      source={entry.uri}
-                      verified={false}
-                      method={entry.group}
-                      label={entry.group}
-                    />
+        <DataStateCard
+          state={state}
+          emptyTitle={learn('emptyTitle')}
+          emptyDescription={learn('emptyDesc')}
+        />
+        {state.kind === 'ready' ? (
+          <div className="grid gap-4">
+            {terms.map((entry) => (
+              <Card key={entry.uri} density="compact">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="font-medium text-ink">
+                      {locale === 'fa' ? entry.term : entry.term_en}
+                    </h3>
+                    <p className="mt-1 text-sm text-ink-soft">{entry.aliases.join(' · ')}</p>
                   </div>
-                </Card>
-              ))}
-            </div>
-            <p className="mt-6 text-xs text-ink-soft">
-              {AGROVOC_PATH} · {t('realData')}
-            </p>
-          </>
-        )}
+                  <ProvenanceStamp
+                    source={entry.uri}
+                    verified={false}
+                    method={entry.group}
+                    label={entry.group}
+                  />
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : null}
+        <SourceFooter state={state} />
+      </section>
+
+      <section className="mx-auto max-w-5xl px-6 pb-12">
+        <h2 className="text-xl font-semibold text-ink mb-4">{template('status')}</h2>
+        <DataStateCard state={groupsState} />
+        {groupsState.kind === 'ready' && glossary.ok ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {groups.map(([group, count]) => (
+              <Card key={group} density="compact">
+                <div className="num text-2xl font-semibold text-ink">{count}</div>
+                <p className="mt-1 text-sm text-ink-soft">{group}</p>
+                <div className="mt-2">
+                  <ProvenanceStamp source={AGROVOC_PATH} verified method={group} />
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : null}
+        <SourceFooter state={groupsState} />
       </section>
     </main>
   );

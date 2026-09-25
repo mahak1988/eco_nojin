@@ -2,17 +2,21 @@ import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
-import { Card } from '@/components/ui/Card';
+import { UnavailableCapability } from '../../data-states';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
+
+// Only a per-case lookup is registered, and it needs a dispute id a visitor does
+// not have; the listing itself is authenticated, so no case is rendered here.
+const CASE_PATH = '/api/v1/disputes/{dispute_id}';
 
 const TITLES: Record<string, string> = {
   fa: 'نمایشگاه حل اختلاف',
   en: 'Dispute Resolution Demo',
 };
 const DESCRIPTIONS: Record<string, string> = {
-  fa: 'فرآیند داوری و حل منازعات',
-  en: 'Arbitration and dispute resolution workflow',
+  fa: 'فهرست پرونده‌های اختلاف در گیتوی ثبت نشده است؛ هیچ پرونده یا رأیی نمایش داده نمی‌شود',
+  en: 'No dispute listing is registered on the gateway; no case or verdict is shown',
 };
 
 export const dynamic = 'force-dynamic';
@@ -49,38 +53,23 @@ export default async function DisputeResolutionPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('statusLine');
-  const template = await getTranslations('market.template');
+  const common = await getTranslations('common');
   const title = TITLES[locale] ?? TITLES.en;
   const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
 
-  // The dispute listing endpoint requires an authenticated user, so no case,
-  // evidence, verdict or enforcement record is rendered on this public page.
   return (
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={template('source')}
-          label={title}
-          verified={false}
-          method={template('method')}
-        >
+        <ProvenanceStamp source={CASE_PATH} label={title} verified={false} method={CASE_PATH}>
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
         </ProvenanceStamp>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
-        <h2 className="text-xl font-semibold text-ink mb-4">{template('contractTitle')}</h2>
-        <Card density="compact">
-          <h3 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h3>
-          <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
-          <p className="mt-3 text-xs text-ink-soft">
-            {template('method')} · {t('unavailable')}
-          </p>
-        </Card>
-        <p className="mt-6 text-xs text-ink-soft">{t('realData')}</p>
+        <UnavailableCapability path={CASE_PATH} />
+        <p className="mt-6 text-xs text-ink-soft">{common('limits')}</p>
       </section>
     </main>
   );

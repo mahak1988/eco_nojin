@@ -1,21 +1,24 @@
 import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { ListBlock } from '@/components/ListBlock';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
-import { StatusDot } from '@/components/StatusDot';
-import { Card } from '@/components/ui/Card';
+import { UnavailableCapability } from '../../data-states';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
+
+const SLUGS_PATH = '/api/v1/legal-texts/slugs';
+const TEXT_PATH = '/api/v1/legal-texts/{locale}/accessibility';
 
 const TITLES: Record<string, string> = {
   fa: 'بیانیه دسترس‌پذیری',
   en: 'Accessibility Statement',
 };
 const DESCRIPTIONS: Record<string, string> = {
-  fa: 'تعهد به WCAG 2.2 AA و وضعیت انطباق',
-  en: 'Commitment to WCAG 2.2 AA and conformance status',
+  fa: 'سگیرکد دسترس‌پذیری در سرویس متن‌های حقوقی ثبت نشده است؛ هیچ وضعیت انطباقی نمایش داده نمی‌شود',
+  en: 'No accessibility slug is registered in legal-texts, so no conformance status is shown',
 };
+
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,
@@ -49,45 +52,25 @@ export default async function AccessibilityPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('accessibility');
-  const template = await getTranslations('market.template');
   const common = await getTranslations('common');
-  const status = await getTranslations('statusLine');
+  const title = TITLES[locale] ?? TITLES.en;
+  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+  const missing = TEXT_PATH.replace('{locale}', locale).replace('{slug}', 'accessibility');
 
   return (
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
-        <h1 className="display text-4xl font-bold text-ink">{t('title')}</h1>
-        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
-        <div className="mt-3 max-w-2xl text-sm text-ink-soft">{t('what')}</div>
-        <div className="mt-3 max-w-2xl text-sm text-ink-soft">{t('audience')}</div>
-
-        <div className="mt-6 grid gap-4">
-          <ListBlock
-            title={common('evidence')}
-            items={t.raw('evidence') as string[]}
-            tone="neutral"
-          />
-          <ListBlock title={common('limits')} items={t.raw('limits') as string[]} tone="clay" />
-          <ListBlock title={common('next')} items={t.raw('next') as string[]} tone="moss" />
+        <ProvenanceStamp source={missing} label={title} verified={false} method={missing}>
+          <h1 className="display text-4xl font-bold text-ink">{title}</h1>
+        </ProvenanceStamp>
+        <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
+        <div className="mt-6">
+          <UnavailableCapability path={missing} />
         </div>
-
-        <section className="mt-8">
-          <div className="flex flex-wrap items-center gap-4">
-            <StatusDot state="down" label={status('unavailable')} />
-            <ProvenanceStamp
-              source={template('source')}
-              label={template('source')}
-              verified={false}
-              method={template('method')}
-            />
-          </div>
-          <Card density="cozy" className="mt-4">
-            <h2 className="font-semibold text-ink">{template('unavailableTitle')}</h2>
-            <p className="mt-2 text-sm text-ink-soft">{template('unavailableDescription')}</p>
-          </Card>
-        </section>
+        <p className="mt-6 text-xs text-ink-soft">
+          {common('limits')} · {SLUGS_PATH}
+        </p>
       </div>
     </main>
   );

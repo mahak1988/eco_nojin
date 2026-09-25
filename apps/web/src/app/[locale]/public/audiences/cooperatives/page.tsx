@@ -2,16 +2,30 @@ import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
-import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
+type MarketStats = { total_products: number; total_producers: number; organic_products: number };
+
+type PilotStats = {
+  applications: number;
+  provinces: number;
+  total_hectares: number;
+  status: string;
+  outcomes_status: string;
+  generated_at: string;
+};
+
 const TITLES: Record<string, string> = { fa: 'تعاونی‌ها', en: 'Cooperatives' };
 const DESCRIPTIONS: Record<string, string> = {
-  fa: 'ابزارها برای تعاونی‌های کشاورزی',
-  en: 'Tools for agricultural cooperatives',
+  fa: 'تقاضای ثبت‌شده و آمار واقعی بازارگاه',
+  en: 'Registered applications and the real marketplace counters',
 };
+
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,
@@ -45,38 +59,85 @@ export default async function CooperativesPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('market.template');
   const status = await getTranslations('statusLine');
+  const marketText = await getTranslations('market');
+
+  const title = TITLES[locale] ?? TITLES.en;
+  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+
+  const market = await apiGet<MarketStats>('/api/v1/marketplace/stats');
+  const marketState = toDataState('/api/v1/marketplace/stats', market, market.ok ? 1 : 0);
+  const pilot = await apiGet<PilotStats>('/api/v1/pilot/stats');
+  const pilotState = toDataState('/api/v1/pilot/stats', pilot, pilot.ok ? 1 : 0);
 
   return (
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
-      <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
-        <h1 className="display text-4xl font-bold text-ink">{TITLES[locale] ?? TITLES.en}</h1>
-        <div className="mt-6 flex flex-wrap items-center gap-4">
-          <StatusDot state="down" label={status('unavailable')} />
-          <ProvenanceStamp
-            source={t('source')}
-            label={t('source')}
-            verified={false}
-            method={t('method')}
-          />
-        </div>
-        <Card density="cozy" className="mt-6">
-          <h2 className="font-semibold text-ink">{t('unavailableTitle')}</h2>
-          <p className="mt-2 text-sm text-ink-soft">{t('unavailableDescription')}</p>
-        </Card>
-        <div className="mt-6 grid gap-3 md:grid-cols-2">
-          <div className="rounded-md border border-line p-4">
-            <h3 className="font-medium text-ink">{t('contractTitle')}</h3>
-            <p className="mt-1 text-sm text-ink-soft">{t('contractDescription')}</p>
+      <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
+        <ProvenanceStamp
+          source={'/api/v1/pilot/stats'}
+          label={title}
+          verified={pilot.ok}
+          method={'/api/v1/pilot/stats'}
+        >
+          <h1 className="display text-4xl font-bold text-ink">{title}</h1>
+        </ProvenanceStamp>
+        <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
+      </section>
+
+      <section className="mx-auto max-w-5xl px-6 pb-6">
+        <h2 className="text-xl font-semibold text-ink mb-4">{'/api/v1/marketplace/stats'}</h2>
+        <DataStateCard state={marketState} />
+        {marketState.kind === 'ready' && market.ok ? (
+          <div className="grid gap-4 sm:grid-cols-3">
+            <Card density="compact">
+              <div className="num text-3xl font-semibold text-ink">
+                {market.data.total_products}
+              </div>
+              <p className="mt-1 text-sm text-ink-soft">{marketText('products')}</p>
+            </Card>
+            <Card density="compact">
+              <div className="num text-3xl font-semibold text-ink">
+                {market.data.total_producers}
+              </div>
+              <p className="mt-1 text-sm text-ink-soft">{marketText('producers')}</p>
+            </Card>
+            <Card density="compact">
+              <div className="num text-3xl font-semibold text-ink">
+                {market.data.organic_products}
+              </div>
+              <p className="mt-1 text-sm text-ink-soft">{marketText('organic')}</p>
+            </Card>
           </div>
-          <div className="rounded-md border border-line p-4">
-            <h3 className="font-medium text-ink">{t('nextTitle')}</h3>
-            <p className="mt-1 text-sm text-ink-soft">{t('nextDescription')}</p>
+        ) : null}
+        <SourceFooter state={marketState} />
+      </section>
+
+      <section className="mx-auto max-w-5xl px-6 pb-6">
+        <h2 className="text-xl font-semibold text-ink mb-4">{'/api/v1/pilot/stats'}</h2>
+        <DataStateCard state={pilotState} />
+        {pilotState.kind === 'ready' && pilot.ok ? (
+          <div className="grid gap-4 sm:grid-cols-4">
+            <Card density="compact">
+              <div className="num text-3xl font-semibold text-ink">{pilot.data.applications}</div>
+              <p className="mt-1 text-sm text-ink-soft">{status('noData')}</p>
+            </Card>
+            <Card density="compact">
+              <div className="num text-3xl font-semibold text-ink">{pilot.data.provinces}</div>
+              <p className="mt-1 text-sm text-ink-soft">{status('pilotProvince')}</p>
+            </Card>
+            <Card density="compact">
+              <div className="num text-3xl font-semibold text-ink">{pilot.data.total_hectares}</div>
+              <p className="mt-1 text-sm text-ink-soft">{pilot.data.status}</p>
+            </Card>
+            <Card density="compact">
+              <p className="text-sm text-ink">{pilot.data.outcomes_status}</p>
+              <p className="num mt-1 text-xs text-ink-soft">{pilot.data.generated_at}</p>
+            </Card>
           </div>
-        </div>
-      </div>
+        ) : null}
+        <SourceFooter state={pilotState} />
+      </section>
     </main>
   );
 }

@@ -47,7 +47,15 @@ function withRequestHeaders(init: RequestInit = {}): RequestInit {
   if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
     headers.set('X-CSRF-Intent', '1');
   }
-  return { ...init, headers, credentials: 'same-origin' };
+  const base = { ...init, headers, credentials: 'same-origin' as const };
+  if (
+    typeof window === 'undefined' &&
+    (method === 'GET' || method === 'HEAD') &&
+    init.cache === undefined
+  ) {
+    return { ...base, next: { revalidate: 60 } };
+  }
+  return { ...base, cache: init.cache ?? 'no-store' };
 }
 
 export type ApiOk<T> = { ok: true; data: T; status: number };
@@ -60,7 +68,6 @@ export async function apiGet<T>(path: string, init?: RequestInit): Promise<ApiRe
     const res = await fetch(
       url,
       withRequestHeaders({
-        cache: 'no-store',
         headers: { Accept: 'application/json' },
         ...init,
       }),

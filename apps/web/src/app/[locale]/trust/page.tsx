@@ -7,6 +7,15 @@ import { Link } from '@/i18n/navigation';
 
 export const dynamic = 'force-dynamic';
 
+const SUB_ROUTES = [
+  '/trust/audits',
+  '/trust/carbon-registry',
+  '/trust/provenance',
+  '/trust/disclosure',
+  '/trust/report',
+  '/trust/sanctions',
+] as const;
+
 export default async function TrustPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -24,9 +33,11 @@ export default async function TrustPage({ params }: { params: Promise<{ locale: 
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           <section className="card p-5">
+            <h2 className="field-label">{common('whatLabel')}</h2>
             <p className="mt-2 text-sm text-ink">{t('trust.what')}</p>
           </section>
           <section className="card p-5">
+            <h2 className="field-label">{common('audienceLabel')}</h2>
             <p className="mt-2 text-sm text-ink">{t('trust.audience')}</p>
           </section>
         </div>
@@ -37,12 +48,27 @@ export default async function TrustPage({ params }: { params: Promise<{ locale: 
           </Link>
           <StatusDot state="down" label={t('statusLine.unavailable')} />
           <ProvenanceStamp
-            source={t('market.template.source')}
-            label={t('market.template.source')}
-            verified={false}
-            method={t('market.template.method')}
+            source={t('statusPage.endpoint')}
+            label={t('statusPage.endpoint')}
+            method={t('statusPage.state')}
           />
         </div>
+
+        <section className="mt-10" aria-labelledby="trust-routes">
+          <h2 id="trust-routes" className="field-label">
+            {t('statusPage.service')}
+          </h2>
+          <ul className="mt-3 grid gap-3 sm:grid-cols-2">
+            {SUB_ROUTES.map((route) => (
+              <li key={route} className="card flex items-center justify-between gap-3 p-4">
+                <span className="font-mono text-xs text-ink">{route}</span>
+                <Link href={route} className="text-sm text-water hover:underline">
+                  {common('view')}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
 
         <div className="mt-6 grid gap-4">
           <ListBlock

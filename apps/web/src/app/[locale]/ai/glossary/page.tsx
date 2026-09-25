@@ -1,245 +1,159 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useMemo, useState } from 'react';
+import { type FormEvent, useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 
-interface GlossaryTerm {
-  term: string;
-  definition: string;
-  category: string;
-  related?: string[];
-}
+const AGROVOC_PATH = '/api/v1/science/agrovoc';
 
-const GLOSSARY_DATA: GlossaryTerm[] = [
-  {
-    term: 'RAG',
-    definition:
-      'Retrieval-Augmented Generation: A technique that combines information retrieval with text generation to provide grounded, source-cited answers.',
-    category: 'Core',
-  },
-  {
-    term: 'Embeddings',
-    definition:
-      'Vector representations of text that capture semantic meaning, enabling similarity search and clustering.',
-    category: 'Core',
-  },
-  {
-    term: 'Provenance Stamp',
-    definition:
-      'A visual indicator linking each AI response to its source documents, ensuring traceability and accountability.',
-    category: 'Core',
-  },
-  {
-    term: 'Hallucination',
-    definition:
-      'When a language model generates plausible-sounding but factually incorrect or unsupported information.',
-    category: 'Risks',
-  },
-  {
-    term: 'Grounding',
-    definition:
-      'The process of constraining model outputs to verified sources, reducing hallucination risk.',
-    category: 'Core',
-  },
-  {
-    term: 'Context Window',
-    definition:
-      'The maximum amount of text (tokens) a model can process at once, limiting how much information can be referenced.',
-    category: 'Technical',
-  },
-  {
-    term: 'Token',
-    definition:
-      'A unit of text (word, subword, or character) used by language models for processing; roughly 0.75 words per token in English.',
-    category: 'Technical',
-  },
-  {
-    term: 'Fine-tuning',
-    definition:
-      'Adapting a pre-trained model on domain-specific data to improve performance on specialized tasks.',
-    category: 'Technical',
-  },
-  {
-    term: 'Prompt Engineering',
-    definition:
-      'Designing input prompts to elicit desired behaviors and outputs from language models.',
-    category: 'Technical',
-  },
-  {
-    term: 'Agent',
-    definition:
-      'An autonomous system that uses language models to plan, reason, and execute actions toward a goal.',
-    category: 'Core',
-  },
-  {
-    term: 'Multi-agent Orchestration',
-    definition:
-      'Coordinating multiple specialized agents to solve complex tasks through collaboration.',
-    category: 'Core',
-  },
-  {
-    term: 'Tool Use',
-    definition:
-      'The ability of a language model to invoke external functions (APIs, calculators, search) during reasoning.',
-    category: 'Core',
-  },
-  {
-    term: 'Temperature',
-    definition:
-      'A sampling parameter controlling output randomness; lower values produce more deterministic responses.',
-    category: 'Technical',
-  },
-  {
-    term: 'Top-p Sampling',
-    definition:
-      'Nucleus sampling that considers only the most probable tokens whose cumulative probability exceeds threshold p.',
-    category: 'Technical',
-  },
-  {
-    term: 'System Prompt',
-    definition:
-      "A fixed instruction set that defines the model's role, behavior, and constraints for all interactions.",
-    category: 'Technical',
-  },
-  {
-    term: 'Guardrails',
-    definition:
-      'Safety mechanisms that filter, validate, or constrain model outputs to prevent harmful or inaccurate responses.',
-    category: 'Risks',
-  },
-  {
-    term: 'Human-in-the-loop',
-    definition:
-      'A design pattern where human review or approval is required for critical decisions or outputs.',
-    category: 'Risks',
-  },
-  {
-    term: 'Explainability',
-    definition:
-      "The degree to which an AI system's decision-making process can be understood by humans.",
-    category: 'Risks',
-  },
-  {
-    term: 'Bias',
-    definition:
-      'Systematic errors in model outputs that reflect societal biases present in training data.',
-    category: 'Risks',
-  },
-  {
-    term: 'Alignment',
-    definition:
-      'The process of ensuring model behavior matches human values, intentions, and safety requirements.',
-    category: 'Risks',
-  },
-];
-
-const CATEGORIES = ['All', 'Core', 'Technical', 'Risks'];
+type AgrovocTerm = { term: string; term_en: string; uri: string; group: string; aliases: string[] };
+type AgrovocResponse = {
+  count: number | null;
+  results: AgrovocTerm[];
+  stats?: Record<string, number>;
+};
 
 export default function GlossaryPage() {
-  const t = useTranslations('ai.glossary');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const t = useTranslations('ai');
+  const common = useTranslations('common');
+  const statusPage = useTranslations('statusPage');
+  const statusLine = useTranslations('statusLine');
 
-  const filteredTerms = useMemo(() => {
-    return GLOSSARY_DATA.filter((term) => {
-      const matchesSearch =
-        term.term.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        term.definition.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = selectedCategory === 'All' || term.category === selectedCategory;
-      return matchesSearch && matchesCategory;
-    });
-  }, [searchQuery, selectedCategory]);
+  const [query, setQuery] = useState('');
+  const [data, setData] = useState<AgrovocResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(
+    async (term: string) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const search = new URLSearchParams();
+        if (term) search.set('q', term);
+        search.set('limit', '20');
+        const res = await fetch(`${AGROVOC_PATH}?${search.toString()}`, {
+          credentials: 'same-origin',
+          cache: 'no-store',
+        });
+        const payload: unknown = await res.json().catch(() => null);
+        if (!res.ok) throw new Error(common('error'));
+        setData(payload as AgrovocResponse);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : common('error'));
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [common],
+  );
+
+  useEffect(() => {
+    void load('');
+  }, [load]);
+
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    void load(query.trim());
+  };
+
+  const results = data?.results ?? [];
 
   return (
-    <main id="main" className="min-h-screen">
-      <div className="mx-auto max-w-4xl px-4 py-10">
-        <header className="mb-10">
-          <h1 className="display text-3xl font-bold text-ink sm:text-4xl">{t('title')}</h1>
-          <p className="mt-3 text-ink-soft">{t('lead')}</p>
-        </header>
+    <main id="main" className="min-h-dvh">
+      <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
+        <h1 className="display text-balance text-4xl font-bold text-ink">{t('title')}</h1>
+        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
 
-        <Card density="compact" className="mb-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 relative">
-              <svg
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                aria-hidden="true"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-              <input
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={t('searchPlaceholder')}
-                className="w-full pl-10 pr-4 py-2 rounded-md border border-line bg-background text-ink focus:outline-none focus:ring-2 focus:ring-forest"
-                aria-label={t('searchLabel')}
-              />
-            </div>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-2 rounded-md border border-line bg-background text-ink focus:outline-none focus:ring-2 focus:ring-forest"
-              aria-label={t('categoryLabel')}
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <span className="chip num font-mono">{AGROVOC_PATH}</span>
+        </div>
+
+        {error && (
+          <div className="mt-6 card border-clay/40 p-4 text-sm" role="alert">
+            <p className="font-medium text-clay">{common('error')}</p>
+            <p className="mt-1 text-ink-soft">{error}</p>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="mt-2"
+              onClick={() => void load(query.trim())}
             >
-              {CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>
-                  {t(`category.${cat.toLowerCase()}`)}
-                </option>
-              ))}
-            </select>
+              {common('retry')}
+            </Button>
           </div>
-          <p className="mt-2 text-sm text-ink-soft">
-            {t('resultsCount', { count: filteredTerms.length })}
-          </p>
+        )}
+
+        <Card density="compact" className="mt-6">
+          <form onSubmit={handleSubmit} className="flex flex-wrap gap-3">
+            <label htmlFor="glossary-query" className="sr-only">
+              {statusPage('label')}
+            </label>
+            <input
+              id="glossary-query"
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              className="min-w-[240px] flex-1 rounded-md border border-line bg-background px-4 py-2 text-ink focus:outline-none focus:ring-2 focus:ring-forest"
+            />
+            <Button type="submit" loading={isLoading}>
+              {common('view')}
+            </Button>
+          </form>
+          {data?.stats && (
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {Object.entries(data.stats).map(([group, value]) => (
+                <li key={group} className="chip num font-mono text-[11px]">
+                  {group}: {value}
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
 
-        <ul className="space-y-3" aria-label={t('termsListLabel')}>
-          {filteredTerms.length === 0 ? (
+        <p className="mt-4 text-sm text-ink-soft">
+          {statusPage('result')}: {results.length}
+        </p>
+
+        <ul className="mt-3 space-y-3">
+          {results.length === 0 ? (
             <li>
-              <Card density="cozy" className="text-center py-8">
-                <p className="text-ink-soft">{t('noResults')}</p>
+              <Card density="cozy" className="py-8 text-center">
+                <p className="text-ink-soft">
+                  {error ? statusLine('unavailable') : statusLine('noData')}
+                </p>
               </Card>
             </li>
           ) : (
-            filteredTerms.map((term) => (
-              <li key={term.term}>
-                <Card density="compact" className="group">
-                  <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-4">
-                        <h3 className="font-medium text-ink text-lg">{term.term}</h3>
-                        <span className="px-2 py-0.5 text-xs rounded-full bg-forest/10 text-forest font-medium whitespace-nowrap shrink-0">
-                          {t(`category.${term.category.toLowerCase()}`)}
-                        </span>
-                      </div>
-                      <p className="mt-2 text-ink-soft">{term.definition}</p>
-                      {term.related && term.related.length > 0 && (
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {term.related.map((rel) => (
-                            <Button
-                              key={rel}
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              className="text-xs"
-                            >
-                              {rel}
-                            </Button>
+            results.map((term) => (
+              <li key={term.uri}>
+                <Card density="compact">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h2 className="text-base font-medium text-ink">{term.term}</h2>
+                      <p className="text-sm text-ink-soft">{term.term_en}</p>
+                      {term.aliases.length > 0 && (
+                        <ul className="mt-2 flex flex-wrap gap-2">
+                          {term.aliases.map((alias) => (
+                            <li key={alias} className="chip text-[11px]">
+                              {alias}
+                            </li>
                           ))}
-                        </div>
+                        </ul>
                       )}
                     </div>
+                    <span className="chip shrink-0 text-[11px]">{term.group}</span>
                   </div>
+                  <a
+                    href={term.uri}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-block font-mono text-xs text-water hover:underline"
+                  >
+                    {term.uri}
+                  </a>
                 </Card>
               </li>
             ))

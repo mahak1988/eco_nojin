@@ -4,6 +4,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
@@ -77,6 +78,7 @@ export default async function MarketplacePage({ params }: { params: Promise<{ lo
     apiGet<Producers>(PRODUCERS_PATH),
   ]);
   const rows = producers.ok ? producers.data.producers : [];
+  const state = toDataState(PRODUCERS_PATH, producers, rows.length);
 
   return (
     <main id="main" className="min-h-dvh">
@@ -124,53 +126,45 @@ export default async function MarketplacePage({ params }: { params: Promise<{ lo
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
         <h2 className="text-xl font-semibold text-ink mb-4">{PRODUCERS_PATH}</h2>
-        {rows.length === 0 ? (
-          <Card density="compact">
-            <h3 className="text-sm font-medium text-ink">
-              {producers.ok ? market('empty') : template('unavailableTitle')}
-            </h3>
-            <p className="mt-1 text-sm text-ink-soft">
-              {producers.ok ? market('empty') : template('unavailableDescription')}
-            </p>
-          </Card>
-        ) : (
-          <>
-            <div className="grid gap-4">
-              {rows.map((producer) => (
-                <Card key={producer.id} density="compact">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <h3 className="font-medium text-ink">{producer.name}</h3>
-                      <p className="mt-1 text-sm text-ink-soft">
-                        {producer.location} · {producer.producer_type}
-                      </p>
-                      {producer.certifications.length > 0 ? (
-                        <div className="mt-2 flex flex-wrap gap-1 text-xs">
-                          {producer.certifications.map((certification) => (
-                            <span
-                              key={certification}
-                              className="px-1.5 py-0.5 rounded bg-forest/10 text-forest"
-                            >
-                              {certification}
-                            </span>
-                          ))}
-                        </div>
-                      ) : null}
-                    </div>
-                    <ProvenanceStamp
-                      source={PRODUCERS_PATH}
-                      verified={producers.ok}
-                      method={producer.producer_type}
-                    />
+        <DataStateCard
+          state={state}
+          emptyTitle={market('empty')}
+          emptyDescription={market('empty')}
+        />
+        {state.kind === 'ready' ? (
+          <div className="grid gap-4">
+            {rows.map((producer) => (
+              <Card key={producer.id} density="compact">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="font-medium text-ink">{producer.name}</h3>
+                    <p className="mt-1 text-sm text-ink-soft">
+                      {producer.location} · {producer.producer_type}
+                    </p>
+                    {producer.certifications.length > 0 ? (
+                      <div className="mt-2 flex flex-wrap gap-1 text-xs">
+                        {producer.certifications.map((certification) => (
+                          <span
+                            key={certification}
+                            className="px-1.5 py-0.5 rounded bg-forest/10 text-forest"
+                          >
+                            {certification}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
                   </div>
-                </Card>
-              ))}
-            </div>
-            <p className="mt-6 text-xs text-ink-soft">
-              {PRODUCERS_PATH} · {t('realData')}
-            </p>
-          </>
-        )}
+                  <ProvenanceStamp
+                    source={PRODUCERS_PATH}
+                    verified={producers.ok}
+                    method={producer.producer_type}
+                  />
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : null}
+        <SourceFooter state={state} />
       </section>
     </main>
   );

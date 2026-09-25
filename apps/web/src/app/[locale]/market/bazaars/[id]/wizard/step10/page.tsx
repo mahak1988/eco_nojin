@@ -1,20 +1,30 @@
-'use client';
+import type { Metadata } from 'next';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { MarketplaceTemplatePage } from '@/components/market/MarketplaceTemplatePage';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useParams } from 'next/navigation';
-import { FormProvider, useForm } from 'react-hook-form';
-import { Step10Form } from '@/components/market/bazaar-wizard/Step10Form';
-import { type Step10Input, step10Schema } from '@/lib/validation/bazaar-establishment';
+export const dynamic = 'force-dynamic';
 
-export default function Step10Page() {
-  const params = useParams();
-  const locale = (params.locale as string) ?? 'fa';
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations('market.template');
 
-  return (
-    <FormProvider
-      {...useForm<Step10Input>({ resolver: zodResolver(step10Schema), mode: 'onChange' })}
-    >
-      <Step10Form locale={locale} />
-    </FormProvider>
-  );
+  return {
+    title: t('title'),
+    description: t('description'),
+    robots: { index: false, follow: true },
+  };
+}
+
+export default async function BazaarWizardStep10Page({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}) {
+  const { locale, id } = await params;
+  return <MarketplaceTemplatePage locale={locale} group="bazaars" slug={`${id}/wizard/step10`} />;
 }

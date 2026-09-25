@@ -2,21 +2,57 @@
 
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import { type FormEvent, useEffect, useRef, useState } from 'react';
+import { ListBlock } from '@/components/ListBlock';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 
-interface Message {
+const CHAT_PATH = '/api/v1/ai/chat';
+
+/** Language codes accepted by the gateway QueryRequest contract. */
+const SUPPORTED_LANGUAGES = new Set([
+  'fa',
+  'en',
+  'ar',
+  'ur',
+  'de',
+  'es',
+  'fr',
+  'hi',
+  'it',
+  'ms',
+  'pt',
+  'zh',
+  'bn',
+]);
+
+type Source = { id: string; title: string; source: string; category: string; relevance: number };
+type Citation = { slug?: string; reference?: string; doi?: string | null };
+type Message = {
   id: string;
   role: 'user' | 'assistant';
   content: string;
-  sources?: string[];
-  timestamp: Date;
+  confidence: number | null;
+  sources: Source[];
+  citations: Citation[];
+};
+
+function readDetail(data: unknown, fallback: string): string {
+  if (data && typeof data === 'object') {
+    const record = data as Record<string, unknown>;
+    if (typeof record.detail === 'string') return record.detail;
+    if (record.detail !== undefined) return fallback;
+    if (typeof record.error === 'string') return record.error;
+  }
+  if (typeof data === 'string' && data.trim()) return data;
+  return fallback;
 }
 
 export default function AssistantPage() {
-  const t = useTranslations('ai.assistant');
+  const t = useTranslations('ai');
+  const common = useTranslations('common');
+  const statusPage = useTranslations('statusPage');
   const pathname = usePathname();
   const locale = pathname.split('/')[1];
 
@@ -33,138 +69,173 @@ export default function AssistantPage() {
     }
   }, [messages]);
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    const question = input.trim();
+    if (!question || isLoading) return;
 
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: `u-${Date.now()}`,
       role: 'user',
-      content: input,
-      timestamp: new Date(),
+      content: question,
+      confidence: null,
+      sources: [],
+      citations: [],
     };
-
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages((previous) => [...previous, userMessage]);
     setInput('');
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch('/api/v1/ai/chat', {
+      const res = await fetch(CHAT_PATH, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Intent': '1' },
         credentials: 'same-origin',
-        body: JSON.stringify({ question: userMessage.content, language: locale }),
+        body: JSON.stringify(
+          SUPPORTED_LANGUAGES.has(locale) ? { question, language: locale } : { question },
+        ),
       });
+      const data: unknown = await res.json().catch(() => null);
 
-      const data = await response.json();
+      if (!res.ok) throw new Error(readDetail(data, common('error')));
 
-      if (!response.ok) {
-        throw new Error(data.error ?? t('error'));
-      }
+      const payload = (data ?? {}) as Record<string, unknown>;
+      const answer = typeof payload.answer === 'string' ? payload.answer : '';
+      if (!answer) throw new Error(common('error'));
 
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: data.answer,
-        sources: data.sources,
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
+      setMessages((previous) => [
+        ...previous,
+        {
+          id: `a-${Date.now()}`,
+          role: 'assistant',
+          content: answer,
+          confidence: typeof payload.confidence === 'number' ? payload.confidence : null,
+          sources: Array.isArray(payload.sources) ? (payload.sources as Source[]) : [],
+          citations: Array.isArray(payload.citations) ? (payload.citations as Citation[]) : [],
+        },
+      ]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('error'));
+      setError(err instanceof Error ? err.message : common('error'));
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <main id="main" className="min-h-screen">
-      <div className="mx-auto max-w-3xl px-4 py-8">
-        <header className="mb-8">
-          <h1 className="display text-3xl font-bold text-ink sm:text-4xl">{t('title')}</h1>
-          <p className="mt-2 text-ink-soft">{t('lead')}</p>
-        </header>
+    <main id="main" className="min-h-dvh">
+      <div className="mx-auto max-w-3xl px-6 pb-12 pt-8">
+        <h1 className="display text-balance text-4xl font-bold text-ink">{t('title')}</h1>
+        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
+
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <span className="chip num font-mono">{CHAT_PATH}</span>
+          <ProvenanceStamp source={CHAT_PATH} label={CHAT_PATH} method={statusPage('state')} />
+        </div>
 
         {error && (
-          <div
-            className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700"
-            role="alert"
-          >
-            {error}
+          <div className="mt-6 card border-clay/40 p-4 text-sm" role="alert">
+            <p className="font-medium text-clay">{common('error')}</p>
+            <p className="mt-1 text-ink-soft">{error}</p>
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              className="ml-2"
+              className="mt-2"
               onClick={() => setError(null)}
             >
-              Try again
+              {common('retry')}
             </Button>
           </div>
         )}
 
-        <Card density="cozy" className="flex flex-col h-[calc(100vh-20rem)] min-h-[400px]">
-          <div className="flex-1 overflow-y-auto p-4 space-y-4" aria-live="polite">
+        <Card density="cozy" className="mt-6 flex min-h-[400px] flex-col">
+          <div className="flex-1 space-y-4" aria-live="polite">
             {messages.length === 0 && (
-              <div className="text-center text-ink-soft py-8">
-                <p>{t('welcome')}</p>
-                <p className="mt-2 text-sm">{t('welcomeHint')}</p>
+              <div className="py-8 text-center text-ink-soft">
+                <p>{t('what')}</p>
               </div>
             )}
-            {messages.map((msg) => (
+            {messages.map((message) => (
               <div
-                key={msg.id}
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                key={message.id}
+                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[80%] ${msg.role === 'user' ? 'bg-forest text-paper' : 'bg-surface border border-line'}`}
+                  className={`max-w-[85%] rounded-2xl p-4 text-sm ${
+                    message.role === 'user'
+                      ? 'rounded-br-md bg-forest text-paper'
+                      : 'rounded-bl-md border border-line bg-surface text-ink'
+                  }`}
                 >
-                  <div className="p-4">
-                    <p className="whitespace-pre-wrap">{msg.content}</p>
-                    {msg.sources && msg.sources.length > 0 && (
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {msg.sources.map((source, idx) => (
+                  <p className="whitespace-pre-wrap">{message.content}</p>
+                  {message.role === 'assistant' &&
+                    (message.confidence !== null ||
+                      message.sources.length > 0 ||
+                      message.citations.length > 0) && (
+                      <div className="mt-3 flex flex-wrap items-center gap-2">
+                        {message.confidence !== null && (
+                          <span className="num chip font-mono text-[10px]">
+                            {statusPage('result')}:{' '}
+                            {new Intl.NumberFormat(locale === 'fa' ? 'fa-IR' : 'en', {
+                              style: 'percent',
+                              maximumFractionDigits: 0,
+                            }).format(message.confidence)}
+                          </span>
+                        )}
+                        {message.sources.map((source) => (
                           <ProvenanceStamp
-                            key={`${msg.id}:${source}`}
-                            source={source}
-                            label={`[${idx + 1}]`}
+                            key={`${message.id}-${source.id}`}
+                            source={source.source || source.title || source.id}
+                            label={source.title || source.id}
+                          />
+                        ))}
+                        {message.citations.map((citation) => (
+                          <ProvenanceStamp
+                            key={`${message.id}-c-${citation.slug ?? citation.doi ?? citation.reference ?? ''}`}
+                            source={citation.reference ?? citation.slug ?? ''}
+                            label={citation.slug ?? citation.reference ?? ''}
                           />
                         ))}
                       </div>
                     )}
-                  </div>
                 </div>
               </div>
             ))}
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="border-t border-line p-4">
+          <div className="mt-4 border-t border-line pt-4">
             <form onSubmit={handleSubmit} className="flex gap-2">
               <textarea
                 ref={textareaRef}
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder={t('placeholder')}
-                className="flex-1 min-h-[60px] max-h-[200px] px-4 py-2 rounded-md border border-line bg-background text-ink resize-none focus:outline-none focus:ring-2 focus:ring-forest"
+                onChange={(event) => setInput(event.target.value)}
+                className="min-h-[60px] max-h-[200px] flex-1 resize-none rounded-md border border-line bg-background px-4 py-2 text-ink focus:outline-none focus:ring-2 focus:ring-forest"
                 rows={1}
                 disabled={isLoading}
-                aria-label={t('placeholder')}
+                aria-label={t('audience')}
               />
               <Button
                 type="submit"
                 disabled={isLoading || !input.trim()}
                 size="lg"
-                aria-label={t('sendLabel')}
+                loading={isLoading}
               >
-                {isLoading ? t('sending') : t('send')}
+                {common('view')}
               </Button>
             </form>
-            <p className="mt-2 text-xs text-ink-soft text-center">{t('disclaimer')}</p>
           </div>
         </Card>
+
+        <div className="mt-6 grid gap-4">
+          <ListBlock
+            title={common('evidence')}
+            items={t.raw('evidence') as string[]}
+            tone="neutral"
+          />
+          <ListBlock title={common('limits')} items={t.raw('limits') as string[]} tone="clay" />
+        </div>
       </div>
     </main>
   );

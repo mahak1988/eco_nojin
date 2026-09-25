@@ -1,10 +1,11 @@
 import { Metadata } from 'next';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
@@ -61,8 +62,6 @@ export default async function SatelliteViewPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('statusLine');
-  const template = await getTranslations('market.template');
   const title = TITLES[locale] ?? TITLES.en;
   const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
 
@@ -71,6 +70,8 @@ export default async function SatelliteViewPage({
     apiGet<Providers>(PROVIDERS_PATH),
   ]);
   const rows = providers.ok ? providers.data.providers : [];
+  const healthState = toDataState(HEALTH_PATH, health, health.ok ? 1 : 0);
+  const providersState = toDataState(PROVIDERS_PATH, providers, rows.length);
 
   return (
     <main id="main" className="min-h-dvh">
@@ -88,7 +89,7 @@ export default async function SatelliteViewPage({
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-6">
-        {health.ok ? (
+        {healthState.kind === 'ready' && health.ok ? (
           <Card density="compact">
             <div className="flex items-center justify-between gap-3">
               <p className="text-sm text-ink">
@@ -105,48 +106,30 @@ export default async function SatelliteViewPage({
             </div>
           </Card>
         ) : (
-          <Card density="compact">
-            <h2 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h2>
-            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
-            <p className="mt-3 text-xs text-ink-soft">
-              {t('unavailable')} · {health.error}
-            </p>
-          </Card>
+          <DataStateCard state={healthState} />
         )}
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
         <h2 className="text-xl font-semibold text-ink mb-4">{PROVIDERS_PATH}</h2>
-        {rows.length === 0 ? (
-          <Card density="compact">
-            <h3 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h3>
-            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
-            <p className="mt-3 text-xs text-ink-soft">
-              {t('unavailable')}
-              {providers.ok ? '' : ` · ${providers.error}`}
-            </p>
-          </Card>
-        ) : (
-          <>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {rows.map((provider) => (
-                <Card key={provider} density="compact">
-                  <h3 className="font-medium text-ink">{provider}</h3>
-                  <div className="mt-2">
-                    <ProvenanceStamp
-                      source={PROVIDERS_PATH}
-                      verified={providers.ok}
-                      method={PROVIDERS_PATH}
-                    />
-                  </div>
-                </Card>
-              ))}
-            </div>
-            <p className="mt-6 text-xs text-ink-soft">
-              {PROVIDERS_PATH} · {t('realData')}
-            </p>
-          </>
-        )}
+        <DataStateCard state={providersState} />
+        {providersState.kind === 'ready' && providers.ok ? (
+          <div className="grid gap-4 sm:grid-cols-2">
+            {rows.map((provider) => (
+              <Card key={provider} density="compact">
+                <h3 className="font-medium text-ink">{provider}</h3>
+                <div className="mt-2">
+                  <ProvenanceStamp
+                    source={PROVIDERS_PATH}
+                    verified={providers.ok}
+                    method={PROVIDERS_PATH}
+                  />
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : null}
+        <SourceFooter state={providersState} />
       </section>
     </main>
   );

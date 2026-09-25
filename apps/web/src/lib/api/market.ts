@@ -9,10 +9,74 @@ import {
   type SearchSuggestionsResponse,
   type VisualSearchResponse,
 } from '@/types/market';
-import { apiGet } from './client';
+import { type ApiFailureKind, classifyApiFailure } from './cart';
+import { apiGet, apiPost, createIdempotencyKey } from './client';
 
 const PRODUCTS_BASE = '/api/v1/marketplace/products';
-const SEARCH_BASE = '/api/v1/marketplace/products/search';
+const SEARCH_BASE = `${PRODUCTS_BASE}/search`;
+
+export const PRODUCTS_SOURCE = PRODUCTS_BASE;
+
+export type MarketResult<T> =
+  | { ok: true; data: T; status: number }
+  | { ok: false; error: string; status: number; kind: ApiFailureKind };
+
+/**
+ * Fields the gateway actually returns for a product. Everything the detail
+ * endpoint does not send stays `undefined` so callers can render an unavailable
+ * state instead of a fabricated value.
+ */
+export interface MarketProductDetail {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  pricePerKg: number;
+  quantityAvailableKg: number;
+  minimumOrderKg: number | null;
+  organicCertified: boolean;
+  carbonFootprintKgCo2: number | null;
+  waterFootprintLiters: number | null;
+  producerName: string;
+  originLocation: string;
+  harvestDate: string | null;
+  batchNumber: string | null;
+  traceabilityCode: string | null;
+  images: string[];
+}
+
+export interface ProductSearchHit {
+  id: string;
+  name: string;
+  pricePerKg: number;
+}
+
+export interface ProductTrace {
+  product_id: string;
+  traceability_code: string;
+  events: Array<{
+    timestamp: string;
+    event: string;
+    location: string;
+    actor?: string;
+    document_hash?: string;
+  }>;
+}
+
+function failure<T>(error: string, status: number): MarketResult<T> {
+  return { ok: false, error, status, kind: classifyApiFailure(status) };
+}
+
+function unavailable<T>(error: string): Promise<MarketResult<T>> {
+  return Promise.resolve(failure<T>(error, 501));
+}
+
+function fromApi<T>(
+  result: { ok: true; data: T; status: number } | { ok: false; error: string; status: number },
+): MarketResult<T> {
+  if (result.ok) return result;
+  return failure<T>(result.error, result.status);
+}
 
 type BackendProduct = {
   id: string;
@@ -25,59 +89,61 @@ type BackendProduct = {
   organic_certified: boolean;
   producer_name?: string;
   origin_location?: string;
-  traceability_code?: string;
+  traceability_code?: string | null;
   images?: string[];
-  carbon_footprint_kg_co2?: number;
-  water_footprint_liters?: number;
+  minimum_order_kg?: number | null;
+  carbon_footprint_kg_co2?: number | null;
+  water_footprint_liters?: number | null;
+  harvest_date?: string | null;
+  batch_number?: string | null;
 };
 
 type BackendProductsResponse = { products: BackendProduct[]; count?: number };
 type BackendSearchResponse = {
   query: string;
-  results: Array<Pick<BackendProduct, 'id' | 'name' | 'price_per_kg'>>;
+  results: Array<{ id: string; name: string; price_per_kg: number }>;
   count: number;
 };
-
-type Result<T> = { ok: true; data: T } | { ok: false; error: string };
-
-function unavailable<T>(): Promise<Result<T>> {
-  return Promise.resolve({ ok: false, error: 'This marketplace capability is unavailable' });
-}
 
 function mapProduct(product: BackendProduct): ProductListing {
   return {
     id: product.id,
-    slug: product.slug ?? product.id,
+    slug: product.slug || product.id,
     name: { en: product.name },
     description: product.description ? { en: product.description } : undefined,
     images: product.images ?? [],
     price: product.price_per_kg,
     unit: 'kg',
     organic: product.organic_certified,
-    producer: {
-      name: product.producer_name ?? '',
-    },
-    category: {
-      id: product.category,
-      slug: product.category,
-      name: { en: product.category },
-    },
+    producer: { name: product.producer_name ?? '' },
+    category: { id: product.category, slug: product.category, name: { en: product.category } },
     origin: product.origin_location,
-    carbonFootprint: product.carbon_footprint_kg_co2,
-    waterFootprint: product.water_footprint_liters,
+    carbonFootprint: product.carbon_footprint_kg_co2 ?? undefined,
+    waterFootprint: product.water_footprint_liters ?? undefined,
     inStock: product.quantity_available_kg > 0,
     stockQuantity: product.quantity_available_kg,
-    traceabilityCode: product.traceability_code,
+    traceabilityCode: product.traceability_code ?? undefined,
   };
 }
 
-function mapProducts(products: BackendProduct[]): ProductListResponse {
+function mapDetail(product: BackendProduct): MarketProductDetail {
   return {
-    products: products.map(mapProduct),
-    total: products.length,
-    page: 1,
-    pageSize: products.length,
-    totalPages: 1,
+    id: product.id,
+    name: product.name,
+    category: product.category,
+    description: product.description ?? '',
+    pricePerKg: product.price_per_kg,
+    quantityAvailableKg: product.quantity_available_kg,
+    minimumOrderKg: product.minimum_order_kg ?? null,
+    organicCertified: product.organic_certified,
+    carbonFootprintKgCo2: product.carbon_footprint_kg_co2 ?? null,
+    waterFootprintLiters: product.water_footprint_liters ?? null,
+    producerName: product.producer_name ?? '',
+    originLocation: product.origin_location ?? '',
+    harvestDate: product.harvest_date ?? null,
+    batchNumber: product.batch_number ?? null,
+    traceabilityCode: product.traceability_code ?? null,
+    images: product.images ?? [],
   };
 }
 
@@ -91,111 +157,201 @@ function productQuery(filters?: SearchFilters): string {
   return params.toString();
 }
 
-export function getCategoryTree(): Promise<Result<CategoryTree>> {
-  return unavailable();
-}
-
-export function getCategoryBySlug(_slug: string): Promise<Result<Category>> {
-  return unavailable();
-}
-
-export function getCategoryChildren(_parentSlug: string): Promise<Result<Category[]>> {
-  return unavailable();
-}
-
-export async function getProductsByCategory(
-  categorySlug: string,
+export async function listProducts(
   filters?: SearchFilters,
-): Promise<Result<ProductListResponse>> {
-  const result = await apiGet<BackendProductsResponse>(
-    `${PRODUCTS_BASE}?${productQuery({ ...filters, category: categorySlug })}`,
-  );
-  if (!result.ok) return result;
-  return { ok: true, data: mapProducts(result.data.products) };
+): Promise<MarketResult<ProductListResponse>> {
+  const result = await apiGet<BackendProductsResponse>(`${PRODUCTS_BASE}?${productQuery(filters)}`);
+  if (!result.ok) return fromApi<ProductListResponse>(result);
+  const products = result.data.products.map(mapProduct);
+  return {
+    ok: true,
+    status: result.status,
+    data: {
+      products,
+      total: result.data.count ?? products.length,
+      page: 1,
+      pageSize: products.length,
+      totalPages: 1,
+    },
+  };
 }
 
-export async function searchProducts(filters: SearchFilters): Promise<Result<ProductListResponse>> {
-  if (filters.query) {
-    const params = new URLSearchParams({ q: filters.query });
-    const result = await apiGet<BackendSearchResponse>(`${SEARCH_BASE}?${params.toString()}`);
-    if (!result.ok) return result;
-    return {
-      ok: true,
-      data: mapProducts(
-        result.data.results.map((item) => ({
-          ...item,
-          category: '',
-          quantity_available_kg: 0,
-          organic_certified: false,
-        })),
-      ),
-    };
-  }
-  const result = await apiGet<BackendProductsResponse>(`${PRODUCTS_BASE}?${productQuery(filters)}`);
-  if (!result.ok) return result;
-  return { ok: true, data: mapProducts(result.data.products) };
+/**
+ * `/products/search` only returns id, name and unit price. The remaining
+ * attributes are left out of the hit instead of being filled with placeholders.
+ */
+export async function searchProducts(query: string): Promise<MarketResult<ProductSearchHit[]>> {
+  const params = new URLSearchParams({ q: query });
+  const result = await apiGet<BackendSearchResponse>(`${SEARCH_BASE}?${params.toString()}`);
+  if (!result.ok) return fromApi<ProductSearchHit[]>(result);
+  return {
+    ok: true,
+    status: result.status,
+    data: result.data.results.map((hit) => ({
+      id: hit.id,
+      name: hit.name,
+      pricePerKg: hit.price_per_kg,
+    })),
+  };
+}
+
+export async function getProduct(productId: string): Promise<MarketResult<MarketProductDetail>> {
+  const result = await apiGet<BackendProduct>(`${PRODUCTS_BASE}/${encodeURIComponent(productId)}`);
+  if (!result.ok) return fromApi<MarketProductDetail>(result);
+  return { ok: true, data: mapDetail(result.data), status: result.status };
+}
+
+export interface Bazaar {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  marketplace_type: 'cooperative' | 'individual' | 'farmers_market' | 'mixed' | 'other';
+  address: string;
+  location: string;
+  village_id: string;
+  founder_ids: string[];
+  status: string;
+  admin_approved: boolean;
+  marketing_enabled: boolean;
+  branding_enabled: boolean;
+  created_at: string;
+}
+
+export interface BazaarListResponse {
+  marketplaces: Bazaar[];
+}
+
+export interface CreateBazaarInput {
+  name: string;
+  marketplaceType: Bazaar['marketplace_type'];
+  description: string;
+  address: string;
+  location: string;
+  villageId: string;
+  acceptEcommerce: boolean;
+  acceptTrading: boolean;
+  rulesDocument: string;
+  contactEmail: string;
+  contactPhone: string;
+}
+
+export interface CreateBazaarResponse {
+  marketplace_id: string;
+  status: string;
+}
+
+export const BAZAARS_SOURCE = '/api/v1/marketplace/marketplaces';
+
+export async function listBazaars(): Promise<MarketResult<Bazaar[]>> {
+  const result = await apiGet<BazaarListResponse>(`${BAZAARS_SOURCE}?limit=100`);
+  return fromApi<Bazaar[]>(
+    result.ok ? { ok: true, data: result.data.marketplaces, status: result.status } : result,
+  );
+}
+
+export async function getBazaar(id: string): Promise<MarketResult<Bazaar>> {
+  const result = await apiGet<Bazaar>(`${BAZAARS_SOURCE}/${encodeURIComponent(id)}`);
+  return fromApi<Bazaar>(result);
+}
+
+export async function createBazaar(
+  input: CreateBazaarInput,
+): Promise<MarketResult<CreateBazaarResponse>> {
+  const result = await apiPost<CreateBazaarResponse>(
+    BAZAARS_SOURCE,
+    {
+      name: input.name,
+      marketplace_type: input.marketplaceType,
+      description: input.description,
+      address: input.address,
+      location: input.location,
+      village_id: input.villageId,
+      founder_ids: [],
+      e_commerce_rules_accepted: input.acceptEcommerce,
+      buy_sell_rules_accepted: input.acceptTrading,
+      rules_document: input.rulesDocument,
+      contact_email: input.contactEmail,
+      contact_phone: input.contactPhone,
+    },
+    { headers: { 'Idempotency-Key': createIdempotencyKey() } },
+  );
+  return fromApi(result);
+}
+
+export async function getProductTrace(productId: string): Promise<MarketResult<ProductTrace>> {
+  const result = await apiGet<ProductTrace>(
+    `${PRODUCTS_BASE}/${encodeURIComponent(productId)}/trace`,
+  );
+  return fromApi<ProductTrace>(result);
+}
+
+/* Capabilities with no connected endpoint stay explicitly unavailable. */
+
+const UNSEARCHABLE = 'Unconnected marketplace search capability';
+
+export function getCategoryTree(): Promise<MarketResult<CategoryTree>> {
+  return unavailable(UNSEARCHABLE);
+}
+
+export function getCategoryBySlug(_slug: string): Promise<MarketResult<Category>> {
+  return unavailable(UNSEARCHABLE);
+}
+
+export function getCategoryChildren(_parentSlug: string): Promise<MarketResult<Category[]>> {
+  return unavailable(UNSEARCHABLE);
 }
 
 export function getSearchSuggestions(
   _query: string,
   _limit?: number,
-): Promise<Result<SearchSuggestionsResponse>> {
-  return unavailable();
+): Promise<MarketResult<SearchSuggestionsResponse>> {
+  return unavailable(UNSEARCHABLE);
 }
 
-export function getSearchAutocomplete(_query: string, _limit?: number): Promise<Result<string[]>> {
-  return unavailable();
+export function getSearchAutocomplete(
+  _query: string,
+  _limit?: number,
+): Promise<MarketResult<string[]>> {
+  return unavailable(UNSEARCHABLE);
 }
 
-export function getSearchHistory(): Promise<Result<SearchHistoryResponse>> {
-  return unavailable();
+export function getSearchHistory(): Promise<MarketResult<SearchHistoryResponse>> {
+  return unavailable(UNSEARCHABLE);
 }
 
 export function visualSearch(_request: {
   image: string;
   filters?: SearchFilters;
-}): Promise<Result<VisualSearchResponse>> {
-  return unavailable();
+}): Promise<MarketResult<VisualSearchResponse>> {
+  return unavailable(UNSEARCHABLE);
 }
 
 export function semanticSearch(_request: {
   query: string;
   filters?: SearchFilters;
   useEmbeddings?: boolean;
-}): Promise<Result<ProductListResponse>> {
-  return unavailable();
+}): Promise<MarketResult<ProductListResponse>> {
+  return unavailable(UNSEARCHABLE);
 }
 
 export function advancedSearch(
   _request: AdvancedSearchRequest,
-): Promise<Result<ProductListResponse>> {
-  return unavailable();
+): Promise<MarketResult<ProductListResponse>> {
+  return unavailable(UNSEARCHABLE);
 }
 
-export function searchByBarcode(_barcode: string): Promise<Result<ProductListing | null>> {
-  return unavailable();
+export function searchByBarcode(_barcode: string): Promise<MarketResult<ProductListing | null>> {
+  return unavailable(UNSEARCHABLE);
 }
 
-export async function getProduct(productId: string): Promise<Result<ProductListing | null>> {
-  const result = await apiGet<BackendProduct>(`${PRODUCTS_BASE}/${encodeURIComponent(productId)}`);
-  if (!result.ok) return result;
-  return { ok: true, data: mapProduct(result.data) };
-}
-
-export async function getProductTrace(productId: string): Promise<Result<unknown>> {
-  return apiGet<unknown>(`${PRODUCTS_BASE}/${encodeURIComponent(productId)}/trace`);
-}
-
-export function searchByNfc(_nfcTag: string): Promise<Result<ProductListing | null>> {
-  return unavailable();
+export function searchByNfc(_nfcTag: string): Promise<MarketResult<ProductListing | null>> {
+  return unavailable(UNSEARCHABLE);
 }
 
 export function voiceSearch(
   _audioBlob: Blob,
   _filters?: SearchFilters,
-): Promise<
-  | { ok: true; data: ProductListResponse; status: number }
-  | { ok: false; error: string; status: number }
-> {
-  return Promise.resolve({ ok: false, error: 'Voice search is unavailable', status: 501 });
+): Promise<MarketResult<ProductListResponse>> {
+  return unavailable(UNSEARCHABLE);
 }

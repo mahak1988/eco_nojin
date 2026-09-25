@@ -98,12 +98,6 @@ spec:
               value: "0.0.0.0"
             - name: API_PROXY_TARGET
               value: "http://api-gateway.eco-nojin.svc.cluster.local"
-            - name: SESSION_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: frontend-secrets
-                  key: SESSION_SECRET
-                  optional: false
             - name: REDIS_URL
               valueFrom:
                 secretKeyRef:

@@ -1,157 +1,103 @@
-'use client';
-
-import { usePathname, useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { ListBlock } from '@/components/ListBlock';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
-import { Button } from '@/components/ui/Button';
+import { SiteNav } from '@/components/SiteNav';
+import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { apiGet } from '@/lib/api/client';
 
-interface Audit {
-  id: string;
-  title: string;
-  type: 'certification' | 'audit' | 'compliance';
-  status: 'valid' | 'expired' | 'pending';
-  issuer: string;
-  issuedAt: string;
-  expiresAt?: string;
-  documentUrl?: string;
-}
+export const dynamic = 'force-dynamic';
 
-export default function AuditsPage() {
-  const t = useTranslations('trust.audits');
-  const pathname = usePathname();
-  const router = useRouter();
-  const locale = pathname.split('/')[1];
+/**
+ * The only audit surface in the gateway contract is role-gated, and the public
+ * audit router is not registered at all. Both are probed so the page reports
+ * the observed status instead of an assurance it cannot back.
+ */
+const AUDIT_SURFACES = ['/api/v1/admin/security/audit', '/api/v1/admin/overview/health'];
 
-  const [audits, setAudits] = useState<Audit[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'valid' | 'expired' | 'pending'>('all');
-  const [error, setError] = useState<string | null>(null);
+export default async function AuditsPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations('trust');
+  const common = await getTranslations('common');
+  const status = await getTranslations('statusLine');
+  const statusPage = await getTranslations('statusPage');
+  const template = await getTranslations('market.template');
 
-  useEffect(() => {
-    async function fetchAudits() {
-      try {
-        const res = await fetch(`/api/trust/audits?locale=${locale}`);
-        if (!res.ok) throw new Error('Failed to fetch');
-        const data = await res.json();
-        setAudits(data.audits || []);
-      } catch {
-        setError(t('fetchError'));
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchAudits();
-  }, [locale, t]);
-
-  const filteredAudits = filter === 'all' ? audits : audits.filter((a) => a.status === filter);
-
-  const statusStyles = {
-    valid: 'text-forest bg-forest/10',
-    expired: 'text-copper bg-copper/10',
-    pending: 'text-water bg-water/10',
-  };
-
-  if (isLoading) {
-    return (
-      <main id="main" className="min-h-screen">
-        <div className="mx-auto max-w-4xl px-4 py-10">
-          <div className="text-center py-20">
-            <p className="text-ink-soft">{t('loading')}</p>
-          </div>
-        </div>
-      </main>
-    );
-  }
+  const probes = await Promise.all(
+    AUDIT_SURFACES.map(async (path) => {
+      const result = await apiGet<unknown>(path);
+      return { path, status: result.status, reachable: result.ok };
+    }),
+  );
 
   return (
-    <main id="main" className="min-h-screen">
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <header className="mb-10">
-          <h1 className="display text-3xl font-bold text-ink sm:text-4xl">{t('title')}</h1>
-          <p className="mt-3 text-ink-soft">{t('lead')}</p>
-        </header>
+    <main id="main" className="min-h-dvh">
+      <SiteNav locale={locale} />
+      <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
+        <span className="chip num font-mono">trust/audits</span>
+        <h1 className="display mt-3 text-4xl font-bold text-ink">{t('title')}</h1>
+        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
 
-        {error && (
-          <div
-            className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700"
-            role="alert"
-          >
-            {error}
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="ml-2"
-              onClick={() => router.refresh()}
-            >
-              Try again
-            </Button>
-          </div>
-        )}
-
-        <div className="mb-6 flex flex-wrap gap-2">
-          {(['all', 'valid', 'expired', 'pending'] as const).map((f) => (
-            <Button
-              key={f}
-              type="button"
-              variant={filter === f ? 'primary' : 'ghost'}
-              size="sm"
-              onClick={() => setFilter(f)}
-            >
-              {t(`filter.${f}`)}
-            </Button>
-          ))}
+        <div className="mt-6 flex flex-wrap items-center gap-4">
+          <StatusDot state="down" label={status('unavailable')} />
+          <ProvenanceStamp
+            source={statusPage('endpoint')}
+            label={statusPage('endpoint')}
+            method={statusPage('state')}
+          />
         </div>
 
-        <div className="grid gap-4">
-          {filteredAudits.length > 0 ? (
-            filteredAudits.map((audit) => (
-              <Card key={audit.id} density="compact">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="flex-1">
-                    <h3 className="font-medium text-ink">{audit.title}</h3>
-                    <p className="text-sm text-ink-soft">{audit.issuer}</p>
-                    <p className="text-xs text-ink-soft">
-                      Issued:{' '}
-                      {new Date(audit.issuedAt).toLocaleDateString(
-                        locale === 'fa' ? 'fa-IR' : 'en-US',
-                      )}
-                      {audit.expiresAt &&
-                        ` · Expires: ${new Date(audit.expiresAt).toLocaleDateString(locale === 'fa' ? 'fa-IR' : 'en-US')}`}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${statusStyles[audit.status]}`}
+        <Card density="cozy" className="mt-6">
+          <h2 className="font-semibold text-ink">{template('unavailableTitle')}</h2>
+          <p className="mt-2 text-sm text-ink-soft">{template('unavailableDescription')}</p>
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-line text-ink-soft">
+                  <th className="py-2 pe-4 text-start font-medium">{statusPage('endpoint')}</th>
+                  <th className="py-2 text-start font-medium">{statusPage('result')}</th>
+                  <th className="py-2 ps-4 text-start font-medium">{statusPage('state')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {probes.map((probe) => (
+                  <tr key={probe.path} className="border-b border-line/50">
+                    <td className="py-2 pe-4 font-mono text-xs text-ink">{probe.path}</td>
+                    <td className="num py-2 text-ink-soft">
+                      {probe.status === 0 ? '—' : probe.status}
+                    </td>
+                    <td
+                      className={`py-2 ps-4 text-xs ${probe.reachable ? 'text-forest' : 'text-copper'}`}
                     >
-                      {t(`status.${audit.status}`)}
-                    </span>
-                    {audit.documentUrl && (
-                      <a
-                        href={audit.documentUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-water hover:underline"
-                      >
-                        {t('viewDocument')}
-                      </a>
-                    )}
-                    <ProvenanceStamp
-                      source={audit.issuer}
-                      verified={audit.status === 'valid'}
-                      timestamp={audit.issuedAt}
-                    />
-                  </div>
-                </div>
-              </Card>
-            ))
-          ) : (
-            <Card density="cozy" className="text-center py-8">
-              <p className="text-ink-soft">{t('noAudits')}</p>
-            </Card>
-          )}
+                      {probe.reachable ? common('live') : status('unavailable')}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+
+        <div className="mt-6 grid gap-3 md:grid-cols-2">
+          <div className="rounded-md border border-line p-4">
+            <h3 className="font-medium text-ink">{template('contractTitle')}</h3>
+            <p className="mt-1 text-sm text-ink-soft">{template('contractDescription')}</p>
+          </div>
+          <div className="rounded-md border border-line p-4">
+            <h3 className="font-medium text-ink">{template('nextTitle')}</h3>
+            <p className="mt-1 text-sm text-ink-soft">{template('nextDescription')}</p>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4">
+          <ListBlock
+            title={common('evidence')}
+            items={t.raw('evidence') as string[]}
+            tone="neutral"
+          />
+          <ListBlock title={common('limits')} items={t.raw('limits') as string[]} tone="clay" />
+          <ListBlock title={common('next')} items={t.raw('next') as string[]} tone="moss" />
         </div>
       </div>
     </main>

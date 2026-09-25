@@ -1,11 +1,15 @@
 import { Metadata } from 'next';
+import Link from 'next/link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { routing } from '@/i18n/routing';
 import { apiGet, type MarketProducts, type MarketStats } from '@/lib/api/client';
 import { loadMessages } from '@/lib/i18n/messages';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
+const PRODUCTS_SOURCE = '/api/v1/marketplace/products';
+const STATS_SOURCE = '/api/v1/marketplace/stats';
 
 type NestedMessages = {
   brand?: { name?: string };
@@ -18,19 +22,20 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  setRequestLocale(locale);
   const messages = (await loadMessages(locale)) as NestedMessages;
-  const brandName = messages.brand?.name ?? 'هیدروما نوژین';
-  const marketLead =
-    messages.market?.lead ?? 'بازارگاه محصولات تولیدکنندگان با قیمت و موجودی واقعی';
+  const brandName = messages.brand?.name ?? '';
+  const marketLead = messages.market?.lead ?? '';
+  const title = marketLead ? `${brandName} · ${marketLead}` : brandName;
 
   return {
-    title: `بازارگاه · ${brandName}`,
+    title,
     description: marketLead,
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/market`,
-      title: `بازارگاه · ${brandName}`,
+      title,
       description: marketLead,
       images: [
         {
@@ -59,8 +64,8 @@ export default async function MarketPage({ params }: { params: Promise<{ locale:
   const n = new Intl.NumberFormat(locale === 'fa' ? 'fa-IR' : 'en');
 
   const [products, stats] = await Promise.all([
-    apiGet<MarketProducts>('/api/v1/marketplace/products'),
-    apiGet<MarketStats>('/api/v1/marketplace/stats'),
+    apiGet<MarketProducts>(PRODUCTS_SOURCE),
+    apiGet<MarketStats>(STATS_SOURCE),
   ]);
 
   const items = products.ok ? products.data.products : [];
@@ -69,7 +74,14 @@ export default async function MarketPage({ params }: { params: Promise<{ locale:
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <h1 className="display text-4xl font-bold text-ink">{t('market.title')}</h1>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="display flex-1 text-4xl font-bold text-ink">{t('market.title')}</h1>
+          <ProvenanceStamp
+            source={PRODUCTS_SOURCE}
+            label={t('market.lead')}
+            method={products.ok ? t('statusLine.realData') : undefined}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{t('market.lead')}</p>
       </section>
 
@@ -124,6 +136,12 @@ export default async function MarketPage({ params }: { params: Promise<{ locale:
                     {n.format(p.quantity_available_kg)} kg
                   </span>
                 </div>
+                <Link
+                  href={`/${locale}/market/product/${p.id}`}
+                  className="mt-3 inline-block text-xs text-forest underline"
+                >
+                  {t('common.view')}
+                </Link>
               </article>
             ))}
           </div>

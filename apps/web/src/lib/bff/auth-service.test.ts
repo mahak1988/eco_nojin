@@ -33,7 +33,6 @@ describe('BFF auth service', () => {
 
   it('stores backend login tokens in a server session record', async () => {
     vi.stubEnv('API_PROXY_TARGET', 'http://backend.test');
-    vi.stubEnv('SESSION_SECRET', 'test-session-secret-with-at-least-32-characters');
     const fetchMock = vi.fn(async () => tokenResponse());
     vi.stubGlobal('fetch', fetchMock);
 
@@ -49,7 +48,6 @@ describe('BFF auth service', () => {
 
   it('rotates the stored refresh token', async () => {
     vi.stubEnv('API_PROXY_TARGET', 'http://backend.test');
-    vi.stubEnv('SESSION_SECRET', 'test-session-secret-with-at-least-32-characters');
     const current = createSessionRecord({
       accessToken: 'old-access',
       refreshToken: 'old-refresh',

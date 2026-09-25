@@ -2,42 +2,46 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { type MarketDataState, MarketDataStateNotice } from '@/components/market/MarketDataState';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { StatusDot } from '@/components/StatusDot';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { type CartLine, getCart, removeFromCart, updateCartItem } from '@/lib/api/cart';
+import {
+  type ApiResult,
+  CART_SOURCE,
+  type CartLine,
+  classifyApiFailure,
+  getCart,
+  removeFromCart,
+  updateCartItem,
+} from '@/lib/api/cart';
+import { isOnline, registerConnectivityListeners } from '@/lib/offline/connectivity';
 
 interface CartItem {
   id: string;
   product: string;
-  producer: string;
-  variant: string;
-  price: number;
   quantity: number;
-  inStock: boolean;
+  unitPrice: number;
 }
 
-function mapCartLine(line: CartLine): CartItem {
+function toCartItem(line: CartLine): CartItem {
   return {
     id: line.product_id,
     product: line.product_name ?? line.product_id,
-    producer: line.producer_name ?? '',
-    variant: line.unit ?? '',
-    price: line.price ?? 0,
     quantity: line.quantity,
-    inStock: line.in_stock ?? true,
+    unitPrice: line.price ?? 0,
   };
 }
 
-const platformFeeRate = 0.05;
-const escrowFeeRate = 0.02;
-
 export default function CartPage() {
   const t = useTranslations('market.cart');
+  const checkout = useTranslations('market.checkout');
+  const stock = useTranslations('market.product');
   const common = useTranslations('common');
+  const nav = useTranslations('nav');
   const statusLine = useTranslations('statusLine');
   const pathname = usePathname();
   const router = useRouter();
@@ -45,202 +49,208 @@ export default function CartPage() {
 
   const { user, loading: authLoading } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
-  const [dataState, setDataState] = useState<
-    'loading' | 'live' | 'unauthenticated' | 'unavailable'
-  >('loading');
-  const [error, setError] = useState('');
+  const [subtotal, setSubtotal] = useState(0);
+  const [dataState, setDataState] = useState<MarketDataState>('loading');
+  const [failureKind, setFailureKind] = useState<'auth' | 'offline' | 'server' | 'not-found'>(
+    'server',
+  );
+  const [detail, setDetail] = useState('');
+  const [pendingId, setPendingId] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    if (!isOnline()) {
+      setDataState('offline');
+      return;
+    }
+    setDetail('');
+    const result = await getCart();
+    if (!result.ok) {
+      const kind = classifyApiFailure(result.status);
+      setFailureKind(kind);
+      setDetail(result.error);
+      setDataState(kind === 'offline' ? 'offline' : kind === 'auth' ? 'unauthenticated' : 'error');
+      return;
+    }
+    const next = result.data.items.map(toCartItem);
+    setItems(next);
+    // The payable amount is the server subtotal; no client-side fee is invented.
+    setSubtotal(result.data.subtotal);
+    setDataState(next.length > 0 ? 'live' : 'empty');
+  }, []);
 
   useEffect(() => {
     if (authLoading) return;
     if (!user) {
       setDataState('unauthenticated');
+      setItems([]);
       return;
     }
-    let active = true;
-    void getCart().then((result) => {
-      if (!active) return;
-      if (result.ok && result.data.items.length > 0) {
-        setItems(result.data.items.map(mapCartLine));
-        setDataState('live');
-      } else {
-        setDataState('unavailable');
-        if (!result.ok) setError(result.error);
-      }
+    setDataState('loading');
+    void load();
+  }, [authLoading, user, load]);
+
+  useEffect(() => {
+    if (dataState !== 'offline') return;
+    return registerConnectivityListeners((online) => {
+      if (online) void load();
     });
-    return () => {
-      active = false;
-    };
-  }, [authLoading, user]);
+  }, [dataState, load]);
 
-  const updateQuantity = async (id: string, qty: number) => {
-    const quantity = Math.max(1, qty);
-    setItems(items.map((item) => (item.id === id ? { ...item, quantity } : item)));
-    if (dataState === 'live') {
-      const result = await updateCartItem(id, quantity);
-      if (!result.ok) setError(result.error);
+  const mutate = async (id: string, action: () => Promise<ApiResult<unknown>>) => {
+    setPendingId(id);
+    setDetail('');
+    const result = await action();
+    setPendingId(null);
+    if (!result.ok) {
+      setDetail(result.error);
+      setFailureKind(classifyApiFailure(result.status));
+      await load();
+      return;
     }
+    await load();
   };
 
-  const removeItem = async (id: string) => {
-    setItems(items.filter((item) => item.id !== id));
-    if (dataState === 'live') {
-      const result = await removeFromCart(id);
-      if (!result.ok) setError(result.error);
-    }
+  const changeQuantity = (item: CartItem, nextQuantity: number) => {
+    const quantity = Math.max(1, nextQuantity);
+    if (quantity === item.quantity) return;
+    void mutate(item.id, () => updateCartItem(item.id, quantity));
   };
 
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const platformFee = Math.round(subtotal * platformFeeRate);
-  const escrowFee = Math.round(subtotal * escrowFeeRate);
-  const total = subtotal + platformFee + escrowFee;
-
-  const handleCheckout = () => {
-    router.push(`/${locale}/market/checkout`);
+  const removeItem = (item: CartItem) => {
+    void mutate(item.id, () => removeFromCart(item.id));
   };
 
-  const handleContinueShopping = () => {
-    router.push(`/${locale}/market`);
-  };
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat(locale === 'fa' ? 'fa-IR' : 'en-US').format(price);
-  };
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat(locale === 'fa' ? 'fa-IR' : 'en-US').format(price);
 
   return (
     <main id="main" className="min-h-dvh">
       <div className="mx-auto max-w-4xl px-6 pb-12 pt-6">
-        <header className="mb-8">
-          <h1 className="display text-3xl font-bold text-ink sm:text-4xl">{t('title')}</h1>
-          <p className="mt-2 text-ink-soft">
-            {items.length} {items.length === 1 ? common('item') : common('items')}
-          </p>
+        <header className="mb-8 flex flex-wrap items-center gap-3">
+          <div className="flex-1">
+            <h1 className="display text-3xl font-bold text-ink sm:text-4xl">{t('title')}</h1>
+            {dataState === 'live' ? (
+              <p className="mt-2 text-ink-soft">{statusLine('realData')}</p>
+            ) : null}
+          </div>
+          <ProvenanceStamp
+            source={CART_SOURCE}
+            label={t('cartProvenance')}
+            method={dataState === 'live' ? statusLine('realData') : undefined}
+          />
         </header>
 
-        {dataState === 'unavailable' && (
-          <p
-            role="status"
-            className="mb-6 rounded-md border border-line bg-surface-alt p-3 text-sm text-ink-soft"
-          >
-            {statusLine('unavailable')}
-          </p>
+        {dataState !== 'live' && dataState !== 'loading' && (
+          <MarketDataStateNotice
+            state={dataState}
+            locale={locale}
+            detail={dataState === 'error' || dataState === 'unavailable' ? detail : undefined}
+            failureKind={failureKind}
+            onRetry={() => void load()}
+            emptyMessage={t('empty')}
+            emptyAction={
+              <Button variant="primary" onClick={() => router.push(`/${locale}/market`)}>
+                {nav('market')}
+              </Button>
+            }
+          />
         )}
-        {error && (
-          <p role="alert" className="mb-6 rounded-md bg-red-50 p-3 text-sm text-red-800">
-            {error}
+
+        {dataState === 'loading' && <MarketDataStateNotice state="loading" locale={locale} />}
+
+        {detail && dataState === 'live' && (
+          <p role="alert" className="mb-6 rounded-md bg-clay/10 p-3 text-sm text-clay">
+            {detail}
           </p>
         )}
 
-        {items.length === 0 ? (
-          <Card density="cozy" className="text-center py-12">
-            <p className="text-ink-soft mb-4">{t('empty')}</p>
-            <Button variant="primary" onClick={handleContinueShopping}>
-              {common('continueShopping')}
-            </Button>
-          </Card>
-        ) : (
+        {dataState === 'live' && (
           <div className="space-y-6">
             {items.map((item) => (
               <Card key={item.id} density="compact">
-                <div className="flex gap-4">
-                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded border border-line bg-surface">
-                    📷
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between">
-                      <h3 className="font-medium text-ink">{item.product}</h3>
-                      <button
-                        type="button"
-                        onClick={() => removeItem(item.id)}
-                        className="text-sm text-copper hover:text-copper/80"
-                      >
-                        {common('remove')}
-                      </button>
-                    </div>
-                    <p className="text-sm text-ink-soft">{item.producer}</p>
-                    <div className="mt-2 flex items-center gap-4">
-                      <StatusDot
-                        state={item.inStock ? 'ok' : 'down'}
-                        label={item.inStock ? common('inStock') : common('outOfStock')}
-                      />
+                <div className="flex flex-wrap gap-4">
+                  <div className="min-w-0 flex-1">
+                    <h2 className="font-medium text-ink">{item.product}</h2>
+                    <div className="mt-2">
+                      <StatusDot state="ok" label={stock('inStock')} />
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-3">
-                    <span className="font-medium text-ink">{formatPrice(item.price)} ریال</span>
+                    <span className="font-medium text-ink">{formatPrice(item.unitPrice)}</span>
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
                         aria-label={`${t('decrease')}: ${item.product}`}
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="flex h-11 w-11 items-center justify-center rounded border border-line text-sm"
+                        disabled={pendingId === item.id}
+                        onClick={() => changeQuantity(item, item.quantity - 1)}
+                        className="flex h-11 w-11 items-center justify-center rounded border border-line text-sm disabled:opacity-40"
                       >
                         −
                       </button>
-                      <span className="text-sm font-medium text-ink w-6 text-center">
+                      <span className="num w-8 text-center text-sm font-medium text-ink">
                         {item.quantity}
                       </span>
                       <button
                         type="button"
                         aria-label={`${t('increase')}: ${item.product}`}
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="flex h-11 w-11 items-center justify-center rounded border border-line text-sm"
+                        disabled={pendingId === item.id}
+                        onClick={() => changeQuantity(item, item.quantity + 1)}
+                        className="flex h-11 w-11 items-center justify-center rounded border border-line text-sm disabled:opacity-40"
                       >
                         +
                       </button>
                     </div>
-                    <span className="text-sm text-ink-soft">{item.variant}</span>
+                    <button
+                      type="button"
+                      aria-label={item.product}
+                      title={item.product}
+                      disabled={pendingId === item.id}
+                      onClick={() => removeItem(item)}
+                      className="text-sm text-copper disabled:opacity-40"
+                    >
+                      ✕
+                    </button>
                   </div>
                 </div>
               </Card>
             ))}
 
             <Card density="compact">
-              <h2 className="font-medium text-ink mb-4">{t('summary')}</h2>
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="font-medium text-ink">{t('summary')}</h2>
+                <span className="num text-sm text-ink-soft">{items.length}</span>
+              </div>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-ink-soft">{t('subtotal')}</span>
-                  <span className="text-ink">{formatPrice(subtotal)} ریال</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-ink-soft">{t('platformFee')}</span>
-                  <span className="text-ink">{formatPrice(platformFee)} ریال</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-ink-soft">{t('escrowFee')}</span>
-                  <span className="text-ink">{formatPrice(escrowFee)} ریال</span>
+                  <span className="text-ink-soft">{checkout('subtotal')}</span>
+                  <span className="text-ink">{formatPrice(subtotal)}</span>
                 </div>
                 <div className="border-t border-line pt-3">
                   <div className="flex justify-between">
                     <span className="font-medium text-ink">{common('total')}</span>
-                    <span className="font-bold text-forest text-xl">{formatPrice(total)} ریال</span>
+                    <span className="num text-xl font-bold text-forest">
+                      {formatPrice(subtotal)}
+                    </span>
                   </div>
                 </div>
               </div>
             </Card>
 
-            <div className="flex gap-4">
-              <Button variant="ghost" size="lg" onClick={handleContinueShopping}>
-                {common('continueShopping')}
+            <div className="flex flex-wrap gap-4">
+              <Button variant="ghost" size="lg" onClick={() => router.push(`/${locale}/market`)}>
+                {nav('market')}
               </Button>
               <Button
                 variant="primary"
                 size="lg"
                 className="flex-1"
-                disabled={dataState !== 'live'}
-                onClick={handleCheckout}
+                onClick={() => router.push(`/${locale}/market/checkout`)}
               >
                 {common('proceedToCheckout')}
               </Button>
             </div>
           </div>
         )}
-
-        <Card density="compact" className="mt-8">
-          <ProvenanceStamp
-            source="/api/v1/marketplace/cart"
-            verified={false}
-            label={t('cartProvenance')}
-          />
-        </Card>
       </div>
     </main>
   );

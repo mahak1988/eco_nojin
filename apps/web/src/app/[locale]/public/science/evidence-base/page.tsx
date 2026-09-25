@@ -6,6 +6,7 @@ import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
@@ -71,6 +72,7 @@ export default async function EvidenceBasePage({
 
   const citations = await apiGet<CitationIndex>(CITATIONS_PATH);
   const items = citations.ok ? citations.data.items : [];
+  const state = toDataState(CITATIONS_PATH, citations, items.length);
 
   return (
     <main id="main" className="min-h-dvh">
@@ -104,15 +106,12 @@ export default async function EvidenceBasePage({
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
         <h2 className="text-xl font-semibold text-ink mb-4">{t('evidenceCatalog')}</h2>
-        {items.length === 0 ? (
-          <Card density="compact">
-            <h3 className="text-sm font-medium text-ink">{t('emptyTitle')}</h3>
-            <p className="mt-1 text-sm text-ink-soft">{t('emptyDesc')}</p>
-            <div className="mt-3">
-              <StatusDot state="down" label={citations.ok ? '—' : citations.error} />
-            </div>
-          </Card>
-        ) : (
+        <DataStateCard
+          state={state}
+          emptyTitle={t('emptyTitle')}
+          emptyDescription={t('emptyDesc')}
+        />
+        {state.kind === 'ready' ? (
           <div className="grid gap-4">
             {items.map((item) => (
               <Card key={item.slug} density="compact">
@@ -123,19 +122,19 @@ export default async function EvidenceBasePage({
                     </h3>
                     <p className="mt-1 text-sm text-ink-soft">{item.reference}</p>
                     <p className="mt-1 text-xs text-ink-soft">{item.citation}</p>
-                    <p className="mt-1 text-xs text-ink-soft">
-                      DOI:{' '}
+                    <p className="mt-1 flex items-center gap-2 text-xs text-ink-soft">
+                      <span>DOI</span>
                       {item.doi ? (
                         <code className="font-mono">{item.doi}</code>
                       ) : (
-                        <span>{status('unavailable')}</span>
+                        <StatusDot state="warn" label={status('unavailable')} />
                       )}
                     </p>
                     {item.note ? <p className="mt-1 text-xs text-ink-soft">{item.note}</p> : null}
                   </div>
                   <ProvenanceStamp
                     source={item.reference}
-                    verified={false}
+                    verified={Boolean(item.doi)}
                     method={item.slug}
                     label={item.doi ? item.doi : undefined}
                   />
@@ -143,10 +142,8 @@ export default async function EvidenceBasePage({
               </Card>
             ))}
           </div>
-        )}
-        <p className="mt-6 text-xs text-ink-soft">
-          {CITATIONS_PATH} · {status('realData')}
-        </p>
+        ) : null}
+        <SourceFooter state={state} />
       </section>
     </main>
   );

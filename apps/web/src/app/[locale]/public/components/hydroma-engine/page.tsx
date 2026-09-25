@@ -5,6 +5,7 @@ import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
@@ -79,8 +80,8 @@ export default async function HydromaEnginePage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('statusLine');
-  const template = await getTranslations('market.template');
+  const status = await getTranslations('statusLine');
+  const common = await getTranslations('common');
   const science = await getTranslations('science');
   const title = TITLES[locale] ?? TITLES.en;
   const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
@@ -91,6 +92,7 @@ export default async function HydromaEnginePage({
     apiGet<PinnStatus>(PINN_PATH),
   ]);
   const models = registry.ok ? registry.data.models : [];
+  const state = toDataState(MODELS_PATH, registry, models.length);
 
   return (
     <main id="main" className="min-h-dvh">
@@ -111,16 +113,18 @@ export default async function HydromaEnginePage({
         <div className="grid gap-4 sm:grid-cols-2">
           <Card density="compact">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-sm text-ink">{science('cppOk')}</p>
+              <p className="text-sm text-ink">
+                {cpp.ok && cpp.data.available ? science('cppOk') : science('cppMissing')}
+              </p>
               <StatusDot
                 state={cpp.ok && cpp.data.available ? 'ok' : 'warn'}
-                label={cpp.ok && cpp.data.available ? 'live' : 'unavailable'}
+                label={cpp.ok && cpp.data.available ? common('live') : status('unavailable')}
               />
             </div>
             <p className="mt-1 text-xs text-ink-soft">
               {cpp.ok
                 ? (cpp.data.note ?? `${science('kernels')}: ${cpp.data.kernels.join(', ')}`)
-                : cpp.error}
+                : `${CPP_PATH} · ${cpp.error}`}
             </p>
             <ProvenanceStamp source={CPP_PATH} verified={cpp.ok} method={CPP_PATH} />
           </Card>
@@ -129,10 +133,12 @@ export default async function HydromaEnginePage({
               <p className="text-sm text-ink">{PINN_PATH}</p>
               <StatusDot
                 state={pinn.ok && pinn.data.available ? 'ok' : 'warn'}
-                label={pinn.ok && pinn.data.available ? 'live' : 'unavailable'}
+                label={pinn.ok && pinn.data.available ? common('live') : status('unavailable')}
               />
             </div>
-            <p className="mt-1 text-xs text-ink-soft">{pinn.ok ? pinn.data.note : pinn.error}</p>
+            <p className="mt-1 text-xs text-ink-soft">
+              {pinn.ok ? pinn.data.note : `${PINN_PATH} · ${pinn.error}`}
+            </p>
             <ProvenanceStamp source={PINN_PATH} verified={pinn.ok} method={PINN_PATH} />
           </Card>
         </div>
@@ -140,52 +146,40 @@ export default async function HydromaEnginePage({
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
         <h2 className="text-xl font-semibold text-ink mb-4">{science('modelsTitle')}</h2>
-        {models.length === 0 ? (
-          <Card density="compact">
-            <h3 className="text-sm font-medium text-ink">
-              {registry.ok ? science('modelsEmpty') : template('unavailableTitle')}
-            </h3>
-            <p className="mt-1 text-sm text-ink-soft">
-              {registry.ok ? science('modelsPublicNote') : template('unavailableDescription')}
-            </p>
-            <p className="mt-3 text-xs text-ink-soft">
-              {t('unavailable')}
-              {registry.ok ? '' : ` · ${registry.error}`}
-            </p>
-          </Card>
-        ) : (
-          <>
-            <div className="grid gap-4">
-              {models.map((model) => (
-                <Card key={model.slug} density="compact">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <h3 className="font-medium text-ink">
-                        {locale === 'fa' ? model.name_fa : model.name_en}
-                      </h3>
-                      <p className="mt-1 text-sm text-ink-soft">{model.reference}</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <StatusDot
-                        state={model.fidelity === 'official' ? 'ok' : 'warn'}
-                        label={model.fidelity}
-                      />
-                      <ProvenanceStamp
-                        source={MODELS_PATH}
-                        verified={false}
-                        method={model.domain}
-                        label={model.slug}
-                      />
-                    </div>
+        <DataStateCard
+          state={state}
+          emptyTitle={science('modelsEmpty')}
+          emptyDescription={science('modelsPublicNote')}
+        />
+        {state.kind === 'ready' ? (
+          <div className="grid gap-4">
+            {models.map((model) => (
+              <Card key={model.slug} density="compact">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="font-medium text-ink">
+                      {locale === 'fa' ? model.name_fa : model.name_en}
+                    </h3>
+                    <p className="mt-1 text-sm text-ink-soft">{model.reference}</p>
                   </div>
-                </Card>
-              ))}
-            </div>
-            <p className="mt-6 text-xs text-ink-soft">
-              {MODELS_PATH} · {t('realData')}
-            </p>
-          </>
-        )}
+                  <div className="flex items-center gap-3">
+                    <StatusDot
+                      state={model.fidelity === 'official' ? 'ok' : 'warn'}
+                      label={model.fidelity}
+                    />
+                    <ProvenanceStamp
+                      source={MODELS_PATH}
+                      verified={false}
+                      method={model.domain}
+                      label={model.slug}
+                    />
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : null}
+        <SourceFooter state={state} />
       </section>
     </main>
   );

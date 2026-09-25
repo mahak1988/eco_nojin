@@ -6,6 +6,7 @@ import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
@@ -74,6 +75,7 @@ export default async function SatelliteIntelligencePage({
     apiGet<Providers>(PROVIDERS_PATH),
   ]);
   const rows = providers.ok ? providers.data.providers : [];
+  const state = toDataState(PROVIDERS_PATH, providers, rows.length);
 
   return (
     <main className="min-h-dvh">
@@ -127,36 +129,24 @@ export default async function SatelliteIntelligencePage({
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
         <h2 className="text-xl font-semibold text-ink mb-4">{PROVIDERS_PATH}</h2>
-        {rows.length === 0 ? (
-          <Card density="compact">
-            <h3 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h3>
-            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
-            <p className="mt-3 text-xs text-ink-soft">
-              {t('unavailable')}
-              {providers.ok ? '' : ` · ${providers.error}`}
-            </p>
-          </Card>
-        ) : (
-          <>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {rows.map((provider) => (
-                <Card key={provider} density="compact">
-                  <h3 className="font-medium text-ink">{provider}</h3>
-                  <div className="mt-2">
-                    <ProvenanceStamp
-                      source={PROVIDERS_PATH}
-                      verified={providers.ok}
-                      method={PROVIDERS_PATH}
-                    />
-                  </div>
-                </Card>
-              ))}
-            </div>
-            <p className="mt-6 text-xs text-ink-soft">
-              {PROVIDERS_PATH} · {t('realData')}
-            </p>
-          </>
-        )}
+        <DataStateCard state={state} />
+        {state.kind === 'ready' ? (
+          <div className="grid gap-4 sm:grid-cols-2">
+            {rows.map((provider) => (
+              <Card key={provider} density="compact">
+                <h3 className="font-medium text-ink">{provider}</h3>
+                <div className="mt-2">
+                  <ProvenanceStamp
+                    source={PROVIDERS_PATH}
+                    verified={providers.ok}
+                    method={PROVIDERS_PATH}
+                  />
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : null}
+        <SourceFooter state={state} />
       </section>
 
       <OwnerFooter />

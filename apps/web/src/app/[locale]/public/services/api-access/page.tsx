@@ -4,6 +4,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const TOOL_REGISTRY_PATH = '/api/v1/tool-registry';
 const PLATFORM_HEALTH_PATH = '/api/v1/platform/health';
@@ -43,7 +44,7 @@ export default async function APIAccessPage({ params }: { params: Promise<{ loca
     apiGet<ToolRegistry>(TOOL_REGISTRY_PATH),
   ]);
   const tools = registry.ok ? registry.data.tools : [];
-  const count = registry.ok ? registry.data.count : 0;
+  const state = toDataState(TOOL_REGISTRY_PATH, registry, tools.length);
 
   return (
     <main className="min-h-dvh">
@@ -96,46 +97,34 @@ export default async function APIAccessPage({ params }: { params: Promise<{ loca
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
         <h2 className="text-xl font-semibold text-ink mb-4">{TOOL_REGISTRY_PATH}</h2>
-        {tools.length === 0 ? (
-          <Card density="compact">
-            <h3 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h3>
-            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
-            <p className="mt-3 text-xs text-ink-soft">
-              {t('unavailable')}
-              {registry.ok ? '' : ` · ${registry.error}`}
-            </p>
-          </Card>
-        ) : (
-          <>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-line">
-                    <th className="px-3 py-2 text-start font-medium text-ink-soft">tool_id</th>
-                    <th className="px-3 py-2 text-start font-medium text-ink-soft">endpoint</th>
-                    <th className="px-3 py-2 text-start font-medium text-ink-soft">domain</th>
-                    <th className="px-3 py-2 text-start font-medium text-ink-soft">category</th>
+        <DataStateCard state={state} />
+        {state.kind === 'ready' ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-line">
+                  <th className="px-3 py-2 text-start font-medium text-ink-soft">tool_id</th>
+                  <th className="px-3 py-2 text-start font-medium text-ink-soft">endpoint</th>
+                  <th className="px-3 py-2 text-start font-medium text-ink-soft">domain</th>
+                  <th className="px-3 py-2 text-start font-medium text-ink-soft">category</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tools.map((tool) => (
+                  <tr key={tool.tool_id} className="border-b border-line/50">
+                    <td className="px-3 py-2 font-mono text-ink">{tool.tool_id}</td>
+                    <td className="px-3 py-2 font-mono text-ink-soft">
+                      {tool.endpoint_path ?? t('unavailable')}
+                    </td>
+                    <td className="px-3 py-2 text-ink-soft">{tool.domain}</td>
+                    <td className="px-3 py-2 text-ink-soft">{tool.category}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {tools.map((tool) => (
-                    <tr key={tool.tool_id} className="border-b border-line/50">
-                      <td className="px-3 py-2 font-mono text-ink">{tool.tool_id}</td>
-                      <td className="px-3 py-2 font-mono text-ink-soft">
-                        {tool.endpoint_path ?? t('unavailable')}
-                      </td>
-                      <td className="px-3 py-2 text-ink-soft">{tool.domain}</td>
-                      <td className="px-3 py-2 text-ink-soft">{tool.category}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="mt-6 text-xs text-ink-soft">
-              {TOOL_REGISTRY_PATH} · {t('realData')} · {count}
-            </p>
-          </>
-        )}
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
+        <SourceFooter state={state} />
       </section>
 
       <OwnerFooter />

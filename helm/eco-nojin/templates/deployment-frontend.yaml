@@ -78,12 +78,6 @@ spec:
             - configMapRef:
                 name: {{ include "eco-nojin.fullname" . }}-frontend-config
           env:
-            - name: SESSION_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: {{ required "frontend.sessionSecret.existingSecret is required" .Values.frontend.sessionSecret.existingSecret | quote }}
-                  key: {{ required "frontend.sessionSecret.existingSecretKey is required" .Values.frontend.sessionSecret.existingSecretKey | quote }}
-                  optional: false
             - name: REDIS_URL
               valueFrom:
                 secretKeyRef:

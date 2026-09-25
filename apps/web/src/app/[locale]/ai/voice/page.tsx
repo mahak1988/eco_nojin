@@ -1,192 +1,106 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 
-interface VoiceMessage {
-  id: string;
-  type: 'user' | 'assistant' | 'system';
-  text: string;
-  timestamp: Date;
-}
+const CHAT_PATH = '/api/v1/ai/chat';
+const LANGUAGES_PATH = '/api/v1/voice/languages';
 
-interface SpeechRecognitionEvent extends Event {
-  resultIndex: number;
-  results: SpeechRecognitionResultList;
-}
+const SUPPORTED_LANGUAGES = new Set([
+  'fa',
+  'en',
+  'ar',
+  'ur',
+  'de',
+  'es',
+  'fr',
+  'hi',
+  'it',
+  'ms',
+  'pt',
+  'zh',
+  'bn',
+]);
 
-interface SpeechRecognitionResultList {
-  length: number;
-  item(index: number): SpeechRecognitionResult;
-  [index: number]: SpeechRecognitionResult;
-}
+type Voice = { code: string; name: string; voices: string[] };
+type Message = { id: string; role: 'user' | 'assistant'; content: string };
 
-interface SpeechRecognitionResult {
-  isFinal: boolean;
-  length: number;
-  item(index: number): SpeechRecognitionAlternative;
-  [index: number]: SpeechRecognitionAlternative;
-}
-
-interface SpeechRecognitionAlternative {
+interface SpeechRecognitionAlternativeLike {
   transcript: string;
-  confidence: number;
 }
-
-interface SpeechRecognitionErrorEvent extends Event {
+interface SpeechRecognitionResultLike {
+  isFinal: boolean;
+  0: SpeechRecognitionAlternativeLike;
+}
+interface SpeechRecognitionEventLike extends Event {
+  resultIndex: number;
+  results: { length: number; [index: number]: SpeechRecognitionResultLike };
+}
+interface SpeechRecognitionErrorEventLike extends Event {
   error: string;
-  message: string;
 }
-
-interface SpeechRecognition extends EventTarget {
+interface SpeechRecognitionLike extends EventTarget {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
   start(): void;
   stop(): void;
-  onstart: ((this: SpeechRecognition, ev: Event) => void) | null;
-  onend: ((this: SpeechRecognition, ev: Event) => void) | null;
-  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => void) | null;
-  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
+  onend: (() => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEventLike) => void) | null;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
 }
 
-const SUPPORTED_LANGUAGES = [
-  { code: 'fa', name: 'فارسی', nativeName: 'فارسی' },
-  { code: 'en', name: 'English', nativeName: 'English' },
-  { code: 'ar', name: 'العربية', nativeName: 'العربية' },
-  { code: 'ur', name: 'اردو', nativeName: 'اردو' },
-];
+function readDetail(data: unknown, fallback: string): string {
+  if (data && typeof data === 'object') {
+    const record = data as Record<string, unknown>;
+    if (typeof record.detail === 'string') return record.detail;
+    if (record.detail !== undefined) return fallback;
+  }
+  if (typeof data === 'string' && data.trim()) return data;
+  return fallback;
+}
 
 export default function VoicePage() {
-  const t = useTranslations('ai.voice');
+  const t = useTranslations('ai');
+  const common = useTranslations('common');
+  const statusPage = useTranslations('statusPage');
+  const statusLine = useTranslations('statusLine');
+  const template = useTranslations('market.template');
+  const pathname = usePathname();
+  const locale = pathname.split('/')[1];
 
+  const [languages, setLanguages] = useState<Voice[]>([]);
+  const [languagesReachable, setLanguagesReachable] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState(locale);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [messages, setMessages] = useState<VoiceMessage[]>([]);
-  const [selectedLanguage, setSelectedLanguage] = useState('fa');
+  const [speechSupported, setSpeechSupported] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [, setTranscript] = useState('');
 
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const synthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const speakResponse = useCallback(
-    (text: string) => {
-      if (!('speechSynthesis' in window)) return;
-
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = selectedLanguage;
-      utterance.rate = 1;
-      utterance.pitch = 1;
-      utterance.volume = 1;
-
-      synthesisRef.current = utterance;
-      window.speechSynthesis.speak(utterance);
-    },
-    [selectedLanguage],
-  );
-
-  const handleUserSpeech = useCallback(
-    async (text: string) => {
-      const userMessage: VoiceMessage = {
-        id: Date.now().toString(),
-        type: 'user',
-        text,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, userMessage]);
-      setIsProcessing(true);
-
-      try {
-        const response = await fetch('/api/v1/ai/voice', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-CSRF-Intent': '1' },
-          credentials: 'same-origin',
-          body: JSON.stringify({ text, language: selectedLanguage }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error ?? t('error'));
-        }
-
-        const assistantMessage: VoiceMessage = {
-          id: (Date.now() + 1).toString(),
-          type: 'assistant',
-          text: data.text,
-          timestamp: new Date(),
-        };
-        setMessages((prev) => [...prev, assistantMessage]);
-
-        speakResponse(data.text);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : t('error'));
-      } finally {
-        setIsProcessing(false);
-      }
-    },
-    [selectedLanguage, speakResponse, t],
-  );
-
   useEffect(() => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      setError(t('unsupported'));
-      return;
-    }
-
-    const SpeechRecognitionConstructor =
-      (
-        window as unknown as {
-          SpeechRecognition: new () => SpeechRecognition;
-          webkitSpeechRecognition: new () => SpeechRecognition;
+    let active = true;
+    fetch(LANGUAGES_PATH, { credentials: 'same-origin', cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: unknown) => {
+        if (!active || !data || typeof data !== 'object') return;
+        const list = (data as { languages?: unknown }).languages;
+        if (Array.isArray(list)) {
+          setLanguages(list as Voice[]);
+          setLanguagesReachable(true);
         }
-      ).SpeechRecognition ??
-      (window as unknown as { webkitSpeechRecognition: new () => SpeechRecognition })
-        .webkitSpeechRecognition;
-    const recognition = new SpeechRecognitionConstructor();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = selectedLanguage;
-
-    recognition.onstart = () => {
-      setIsListening(true);
-      setError(null);
-    };
-
-    recognition.onend = () => {
-      setIsListening(false);
-    };
-
-    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-      if (event.error !== 'no-speech') {
-        setError(t('recognitionError', { error: event.error }));
-      }
-      setIsListening(false);
-    };
-
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      let finalTranscript = '';
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript;
-        }
-      }
-      if (finalTranscript) {
-        setTranscript(finalTranscript);
-        handleUserSpeech(finalTranscript);
-      }
-    };
-
-    recognitionRef.current = recognition;
-
+      })
+      .catch(() => undefined);
     return () => {
-      recognition.stop();
+      active = false;
     };
-  }, [handleUserSpeech, selectedLanguage, t]);
+  }, []);
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -194,85 +108,184 @@ export default function VoicePage() {
     }
   }, [messages]);
 
-  const toggleListening = () => {
-    if (!recognitionRef.current) return;
+  const speak = useCallback(
+    (text: string) => {
+      if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = selectedLanguage;
+      window.speechSynthesis.speak(utterance);
+    },
+    [selectedLanguage],
+  );
 
+  const ask = useCallback(
+    async (text: string) => {
+      const question = text.trim();
+      if (!question) return;
+      setMessages((previous) => [
+        ...previous,
+        { id: `u-${Date.now()}`, role: 'user', content: question },
+      ]);
+      setIsProcessing(true);
+      setError(null);
+      try {
+        const res = await fetch(CHAT_PATH, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Intent': '1' },
+          credentials: 'same-origin',
+          body: JSON.stringify(
+            SUPPORTED_LANGUAGES.has(selectedLanguage)
+              ? { question, language: selectedLanguage }
+              : { question },
+          ),
+        });
+        const data: unknown = await res.json().catch(() => null);
+        if (!res.ok) throw new Error(readDetail(data, common('error')));
+        const payload = (data ?? {}) as Record<string, unknown>;
+        const answer = typeof payload.answer === 'string' ? payload.answer : '';
+        if (!answer) throw new Error(common('error'));
+        setMessages((previous) => [
+          ...previous,
+          { id: `a-${Date.now()}`, role: 'assistant', content: answer },
+        ]);
+        speak(answer);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : common('error'));
+      } finally {
+        setIsProcessing(false);
+      }
+    },
+    [common, selectedLanguage, speak],
+  );
+
+  useEffect(() => {
+    const scope = window as unknown as {
+      SpeechRecognition?: new () => SpeechRecognitionLike;
+      webkitSpeechRecognition?: new () => SpeechRecognitionLike;
+    };
+    const Recognition = scope.SpeechRecognition ?? scope.webkitSpeechRecognition;
+    if (!Recognition) {
+      setSpeechSupported(false);
+      return;
+    }
+
+    const recognition = new Recognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = selectedLanguage;
+
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = (event) => {
+      if (event.error !== 'no-speech') setError(`${statusPage('state')}: ${event.error}`);
+      setIsListening(false);
+    };
+    recognition.onresult = (event) => {
+      let transcript = '';
+      for (let i = event.resultIndex; i < event.results.length; i += 1) {
+        if (event.results[i].isFinal) transcript += event.results[i][0].transcript;
+      }
+      if (transcript) void ask(transcript);
+    };
+
+    recognitionRef.current = recognition;
+    return () => {
+      recognition.onend = null;
+      recognition.onerror = null;
+      recognition.onresult = null;
+      recognition.stop();
+    };
+  }, [ask, selectedLanguage, statusPage]);
+
+  const toggleListening = () => {
+    const recognition = recognitionRef.current;
+    if (!recognition) return;
     if (isListening) {
-      recognitionRef.current.stop();
+      recognition.stop();
     } else {
-      setTranscript('');
-      recognitionRef.current.lang = selectedLanguage;
-      recognitionRef.current.start();
+      setError(null);
+      recognition.lang = selectedLanguage;
+      recognition.start();
+      setIsListening(true);
     }
   };
 
   return (
-    <main id="main" className="min-h-screen">
-      <div className="mx-auto max-w-2xl px-4 py-8">
-        <header className="mb-8">
-          <h1 className="display text-3xl font-bold text-ink sm:text-4xl">{t('title')}</h1>
-          <p className="mt-2 text-ink-soft">{t('lead')}</p>
-        </header>
+    <main id="main" className="min-h-dvh">
+      <div className="mx-auto max-w-3xl px-6 pb-12 pt-8">
+        <h1 className="display text-balance text-4xl font-bold text-ink">{t('title')}</h1>
+        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
+
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <span className="chip num font-mono">{CHAT_PATH}</span>
+          <span className="chip num font-mono">{LANGUAGES_PATH}</span>
+        </div>
 
         {error && (
-          <div
-            className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700"
-            role="alert"
-          >
-            {error}
+          <div className="mt-6 card border-clay/40 p-4 text-sm" role="alert">
+            <p className="font-medium text-clay">{common('error')}</p>
+            <p className="mt-1 text-ink-soft">{error}</p>
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              className="ml-2"
+              className="mt-2"
               onClick={() => setError(null)}
             >
-              Try again
+              {common('retry')}
             </Button>
           </div>
         )}
 
-        <Card density="cozy" className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium text-ink">{t('languageLabel')}</h2>
+        <Card density="cozy" className="mt-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <h2 className="field-label">{statusPage('label')}</h2>
+            <label htmlFor="voice-language" className="sr-only">
+              {statusPage('label')}
+            </label>
             <select
+              id="voice-language"
               value={selectedLanguage}
-              onChange={(e) => setSelectedLanguage(e.target.value)}
-              className="px-3 py-2 rounded-md border border-line bg-background text-ink focus:outline-none focus:ring-2 focus:ring-forest"
-              aria-label={t('languageLabel')}
+              onChange={(event) => setSelectedLanguage(event.target.value)}
+              className="rounded-md border border-line bg-background px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-forest"
+              disabled={!languagesReachable}
             >
-              {SUPPORTED_LANGUAGES.map((lang) => (
-                <option key={lang.code} value={lang.code}>
-                  {lang.nativeName} ({lang.name})
-                </option>
-              ))}
+              {languagesReachable ? (
+                languages.map((voice) => (
+                  <option key={voice.code} value={voice.code}>
+                    {voice.name} ({voice.voices.length})
+                  </option>
+                ))
+              ) : (
+                <option value={selectedLanguage}>{selectedLanguage}</option>
+              )}
             </select>
           </div>
-          <p className="text-sm text-ink-soft">{t('languageHint')}</p>
+          <p className="mt-2 text-xs text-ink-soft">
+            {languagesReachable ? statusLine('realData') : statusLine('unavailable')}
+          </p>
         </Card>
 
-        <Card density="cozy" className="flex flex-col h-[calc(100vh-30rem)] min-h-[300px] mb-6">
-          <div className="flex-1 overflow-y-auto p-4 space-y-3" aria-live="polite">
+        <Card density="cozy" className="mt-6 flex min-h-[320px] flex-col">
+          <div className="flex-1 space-y-3" aria-live="polite">
             {messages.length === 0 && (
-              <div className="text-center text-ink-soft py-8">
-                <p>{t('welcome')}</p>
+              <div className="py-8 text-center text-ink-soft">
+                <p>{t('what')}</p>
               </div>
             )}
-            {messages.map((msg) => (
+            {messages.map((message) => (
               <div
-                key={msg.id}
-                className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                key={message.id}
+                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm ${
-                    msg.type === 'user'
-                      ? 'bg-forest text-paper rounded-br-md'
-                      : msg.type === 'assistant'
-                        ? 'bg-surface border border-line rounded-bl-md'
-                        : 'bg-muted text-ink-soft rounded-md italic'
+                  className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${
+                    message.role === 'user'
+                      ? 'rounded-br-md bg-forest text-paper'
+                      : 'rounded-bl-md border border-line bg-surface text-ink'
                   }`}
                 >
-                  {msg.text}
+                  {message.content}
                 </div>
               </div>
             ))}
@@ -280,85 +293,42 @@ export default function VoicePage() {
           </div>
         </Card>
 
-        <div className="flex items-center justify-center gap-4">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
           <Button
             type="button"
             variant={isListening ? 'danger' : 'primary'}
             size="lg"
             onClick={toggleListening}
-            disabled={isProcessing}
-            aria-label={isListening ? t('stopListening') : t('startListening')}
-            className="min-w-[160px]"
+            disabled={!speechSupported || isProcessing}
+            className="min-w-[180px]"
           >
-            {isListening ? (
-              <>
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeDasharray="30 100"
-                  />
-                </svg>
-                {t('listening')}
-              </>
-            ) : (
-              <>
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  aria-hidden="true"
-                >
-                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                  <line x1="12" y1="19" x2="12" y2="22" />
-                  <line x1="8" y1="22" x2="16" y2="22" />
-                </svg>
-                {t('startListening')}
-              </>
-            )}
+            {isListening ? statusPage('state') : common('view')}
           </Button>
-
-          {isProcessing && (
-            <Button type="button" variant="secondary" size="lg" disabled className="min-w-[160px]">
-              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeDasharray="30 100"
-                />
-              </svg>
-              {t('processing')}
-            </Button>
-          )}
+          <Button
+            type="button"
+            variant="secondary"
+            size="lg"
+            onClick={() => {
+              const last = [...messages].reverse().find((message) => message.role === 'assistant');
+              if (last) speak(last.content);
+            }}
+            disabled={messages.length === 0}
+            className="min-w-[180px]"
+          >
+            {statusPage('result')}
+          </Button>
         </div>
 
-        <p className="mt-4 text-center text-xs text-ink-soft">{t('disclaimer')}</p>
-
-        <Card density="compact" className="mt-6">
-          <h3 className="font-medium text-ink mb-2">{t('commands')}</h3>
-          <ul className="space-y-1 text-sm text-ink-soft">
-            {t.raw('commandList')?.map((cmd: string) => (
-              <li key={cmd} className="flex gap-2">
-                <span className="text-forest">•</span>
-                <span>{cmd}</span>
-              </li>
-            ))}
-          </ul>
-        </Card>
+        <div className="mt-6 grid gap-3 md:grid-cols-2">
+          <div className="rounded-md border border-line p-4">
+            <h3 className="font-medium text-ink">{template('contractTitle')}</h3>
+            <p className="mt-1 text-sm text-ink-soft">{template('contractDescription')}</p>
+          </div>
+          <div className="rounded-md border border-line p-4">
+            <h3 className="font-medium text-ink">{template('nextTitle')}</h3>
+            <p className="mt-1 text-sm text-ink-soft">{template('nextDescription')}</p>
+          </div>
+        </div>
       </div>
     </main>
   );

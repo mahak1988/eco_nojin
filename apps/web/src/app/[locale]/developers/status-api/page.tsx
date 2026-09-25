@@ -7,21 +7,15 @@ import { type DotState, StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
-
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://app.eco-nojin.org';
 const HEALTH_PATH = '/api/v1/health';
-
-const TITLES: Record<string, string> = { fa: 'وضعیت API', en: 'API Status' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'وضعیت زنده گیت‌وی از مسیر واقعی /api/v1/health؛ داده سهمیه و تأخیر هر سرویس منتشر نشده است.',
-  en: 'Live gateway state from the real /api/v1/health path; per-service quota and latency are not published.',
-};
 
 type GatewayHealth = {
   status: string;
   service: string;
   version: string;
   environment: string;
+  modules: Record<string, string>;
   checks: Record<string, string>;
   degraded_reasons: string[];
 };
@@ -34,14 +28,16 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations('developers');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: t('title'),
+    description: t('lead'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/developers/status-api`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: t('title'),
     },
     alternates: {
       canonical: `${BASE_URL}/${locale}/developers/status-api`,
@@ -61,7 +57,6 @@ export default async function StatusApiPage({ params }: { params: Promise<{ loca
   const status = await getTranslations('statusLine');
   const statusPage = await getTranslations('statusPage');
   const template = await getTranslations('market.template');
-  const title = TITLES[locale] ?? TITLES.en;
 
   const health = await apiGet<GatewayHealth>(HEALTH_PATH);
   const gatewayState: DotState = !health.ok
@@ -69,39 +64,43 @@ export default async function StatusApiPage({ params }: { params: Promise<{ loca
     : health.data.status === 'healthy'
       ? 'ok'
       : 'warn';
-  const checks = health.ok ? Object.entries(health.data.checks) : [];
-  const degraded = health.ok ? health.data.degraded_reasons : [];
+  const checks = health.ok && health.data.checks ? Object.entries(health.data.checks) : [];
+  const modules = health.ok && health.data.modules ? Object.entries(health.data.modules) : [];
+  const degraded =
+    health.ok && Array.isArray(health.data.degraded_reasons) ? health.data.degraded_reasons : [];
 
   return (
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
-        <div className="flex flex-wrap items-center gap-4">
-          <ProvenanceStamp
-            source={HEALTH_PATH}
-            label={title}
-            verified={health.ok}
-            method={HEALTH_PATH}
-          >
-            <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-          </ProvenanceStamp>
+        <span className="chip num font-mono">developers/status-api</span>
+        <h1 className="display mt-3 text-4xl font-bold text-ink">{t('title')}</h1>
+        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
+
+        <div className="mt-6 flex flex-wrap items-center gap-4">
           <StatusDot
             state={gatewayState}
             label={health.ok ? health.data.status : status('unavailable')}
           />
+          <ProvenanceStamp source={HEALTH_PATH} label={HEALTH_PATH} method={statusPage('state')} />
         </div>
-        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
 
         {health.ok ? (
           <>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <div className="mt-6 grid gap-4 sm:grid-cols-3">
               <Card density="compact">
-                <p className="text-sm text-ink-soft">version</p>
-                <p className="num mt-1 font-mono text-ink">{health.data.version}</p>
+                <p className="text-sm text-ink-soft">{statusPage('service')}</p>
+                <p className="num mt-1 font-mono text-ink">{health.data.service}</p>
               </Card>
               <Card density="compact">
-                <p className="text-sm text-ink-soft">environment</p>
-                <p className="mt-1 font-mono text-ink">{health.data.environment}</p>
+                <p className="text-sm text-ink-soft">{statusPage('state')}</p>
+                <p className="num mt-1 font-mono text-ink">{health.data.status}</p>
+              </Card>
+              <Card density="compact">
+                <p className="text-sm text-ink-soft">{statusPage('result')}</p>
+                <p className="num mt-1 font-mono text-ink">
+                  {health.data.environment} · {health.data.version}
+                </p>
               </Card>
             </div>
 
@@ -110,7 +109,7 @@ export default async function StatusApiPage({ params }: { params: Promise<{ loca
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-line text-ink-soft">
-                      <th className="py-2 pe-4 text-start font-medium">{statusPage('service')}</th>
+                      <th className="py-2 pe-4 text-start font-medium">{statusPage('label')}</th>
                       <th className="py-2 text-start font-medium">{statusPage('state')}</th>
                     </tr>
                   </thead>
@@ -119,6 +118,27 @@ export default async function StatusApiPage({ params }: { params: Promise<{ loca
                       <tr key={name} className="border-b border-line/50">
                         <td className="py-2 pe-4 font-mono text-ink">{name}</td>
                         <td className="py-2 font-mono text-ink-soft">{value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {modules.length > 0 && (
+              <div className="mt-6 overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-line text-ink-soft">
+                      <th className="py-2 pe-4 text-start font-medium">{statusPage('service')}</th>
+                      <th className="py-2 text-start font-medium">{statusPage('endpoint')}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {modules.map(([name, path]) => (
+                      <tr key={name} className="border-b border-line/50">
+                        <td className="py-2 pe-4 font-mono text-ink">{name}</td>
+                        <td className="py-2 font-mono text-xs text-ink-soft">{path}</td>
                       </tr>
                     ))}
                   </tbody>

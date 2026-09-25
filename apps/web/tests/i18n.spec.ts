@@ -62,9 +62,8 @@ test.describe('i18n - All 14 locales', () => {
     await expect(body).toHaveCSS('direction', 'ltr');
   });
 
-  test('Fallback chain: de falls back to en then fa', async ({ page }) => {
+  test('Fallback: a partial locale renders with English content', async ({ page }) => {
     await page.goto('/de/home');
-    // Should have some translated content and some fallback content
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('h1').first()).toBeVisible();
   });
 });

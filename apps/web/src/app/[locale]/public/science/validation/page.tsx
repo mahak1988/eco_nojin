@@ -5,6 +5,7 @@ import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
@@ -68,12 +69,12 @@ export default async function ValidationPage({ params }: { params: Promise<{ loc
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations('statusLine');
-  const template = await getTranslations('market.template');
   const title = TITLES[locale] ?? TITLES.en;
   const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
 
   const report = await apiGet<ValidationReport>(VALIDATION_PATH);
   const checks = report.ok ? report.data.checks : [];
+  const state = toDataState(VALIDATION_PATH, report, checks.length);
 
   return (
     <main id="main" className="min-h-dvh">
@@ -91,54 +92,39 @@ export default async function ValidationPage({ params }: { params: Promise<{ loc
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
-        <h2 className="text-xl font-semibold text-ink mb-4">{template('source')}</h2>
-        {checks.length === 0 ? (
-          <Card density="compact">
-            <h3 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h3>
-            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
-            <p className="mt-3 text-xs text-ink-soft">
-              {t('unavailable')}
-              {report.ok ? '' : ` · ${report.error}`}
-            </p>
-          </Card>
-        ) : (
-          <>
-            <div className="grid gap-4">
-              {checks.map((check) => (
-                <Card key={check.id} density="compact">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <h3 className="font-medium text-ink">{check.label}</h3>
-                      <p className="mt-1 text-sm text-ink-soft">{check.source}</p>
-                      <p className="mt-1 font-mono text-xs text-ink-soft">
-                        expected: {String(check.expected)} · actual: {String(check.actual)} ·{' '}
-                        {check.unit} · tolerance: {check.tolerance}
-                      </p>
-                      {check.note ? (
-                        <p className="mt-1 text-xs text-ink-soft">{check.note}</p>
-                      ) : null}
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <StatusDot
-                        state={check.passed ? 'ok' : 'down'}
-                        label={check.passed ? 'pass' : 'fail'}
-                      />
-                      <ProvenanceStamp
-                        source={check.source}
-                        verified={check.passed}
-                        method={check.kind}
-                      />
-                    </div>
+        <h2 className="text-xl font-semibold text-ink mb-4">{VALIDATION_PATH}</h2>
+        <DataStateCard state={state} />
+        {state.kind === 'ready' ? (
+          <div className="grid gap-4">
+            {checks.map((check) => (
+              <Card key={check.id} density="compact">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="font-medium text-ink">{check.label}</h3>
+                    <p className="mt-1 text-sm text-ink-soft">{check.source}</p>
+                    <p className="num mt-1 font-mono text-xs text-ink-soft">
+                      {String(check.expected)} / {String(check.actual)} · {check.tolerance} ·{' '}
+                      {check.unit}
+                    </p>
+                    {check.note ? <p className="mt-1 text-xs text-ink-soft">{check.note}</p> : null}
                   </div>
-                </Card>
-              ))}
-            </div>
-            <p className="mt-6 text-xs text-ink-soft">
-              {VALIDATION_PATH} · {t('realData')} · {report.ok ? report.data.total : 0} ·{' '}
-              {report.ok ? report.data.passed : 0} · {report.ok ? report.data.failed : 0}
-            </p>
-          </>
-        )}
+                  <div className="flex items-center gap-3">
+                    <StatusDot
+                      state={check.passed ? 'ok' : 'down'}
+                      label={check.passed ? t('realData') : t('unavailable')}
+                    />
+                    <ProvenanceStamp
+                      source={check.source}
+                      verified={check.passed}
+                      method={check.kind}
+                    />
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : null}
+        <SourceFooter state={state} />
       </section>
     </main>
   );

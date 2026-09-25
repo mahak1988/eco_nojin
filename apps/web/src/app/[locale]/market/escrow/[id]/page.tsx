@@ -1,142 +1,129 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { use, useEffect, useState } from 'react';
+import { use, useCallback, useEffect, useState } from 'react';
+import { type MarketDataState, MarketDataStateNotice } from '@/components/market/MarketDataState';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { StatusDot } from '@/components/StatusDot';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { getEscrowStatus, openDispute, settleOrder } from '@/lib/api/escrow';
+import { type ApiFailureKind, type ApiResult, classifyApiFailure } from '@/lib/api/cart';
+import {
+  ESCROW_SOURCE,
+  type EscrowEntry,
+  type EscrowStatusResponse,
+  getEscrowStatus,
+  heldAmount,
+  openDispute,
+  settleOrder,
+} from '@/lib/api/escrow';
+import { isOnline, registerConnectivityListeners } from '@/lib/offline/connectivity';
 
-interface EscrowParty {
-  role: 'buyer' | 'seller' | 'arbitrator' | 'platform';
-  name: string;
-  address: string;
-  signed: boolean;
-  timestamp?: string;
+const HOLD_STATES = new Set(['held', 'released', 'refunded']);
+const CLOSED_STATES = new Set(['released', 'refunded', 'reversed', 'completed']);
+
+function dotState(escrowStatus: string): 'ok' | 'warn' | 'down' {
+  if (CLOSED_STATES.has(escrowStatus)) return escrowStatus === 'refunded' ? 'down' : 'ok';
+  if (HOLD_STATES.has(escrowStatus)) return 'ok';
+  return 'warn';
 }
-
-interface EscrowEvent {
-  id: string;
-  timestamp: string;
-  action: string;
-  description: string;
-  party: string;
-  signature?: string;
-}
-
-interface EscrowData {
-  id: string;
-  product: string;
-  amount: number;
-  currency: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-  parties: EscrowParty[];
-  events: EscrowEvent[];
-  contractHash: string;
-  orderId: string;
-}
-
-const EMPTY_ESCROW: EscrowData = {
-  id: '',
-  product: '',
-  amount: 0,
-  currency: '',
-  status: 'unavailable',
-  createdAt: '',
-  updatedAt: '',
-  orderId: '',
-  contractHash: '',
-  parties: [],
-  events: [],
-};
-
-const statusStateMap: Record<string, 'ok' | 'warn' | 'down'> = {
-  created: 'ok',
-  locked: 'ok',
-  shipped: 'ok',
-  confirmed: 'ok',
-  released: 'ok',
-  disputed: 'down',
-  cancelled: 'down',
-  pending: 'warn',
-  unavailable: 'warn',
-};
 
 export default function EscrowPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get('order') ?? '';
+
   const t = useTranslations('market.escrow');
   const common = useTranslations('common');
+  const statusLine = useTranslations('statusLine');
   const pathname = usePathname();
   const router = useRouter();
   const locale = pathname.split('/')[1] || 'fa';
+  const { user, loading: authLoading } = useAuth();
 
-  const [escrow, setEscrow] = useState<EscrowData>(EMPTY_ESCROW);
+  const [escrow, setEscrow] = useState<EscrowStatusResponse | null>(null);
+  const [dataState, setDataState] = useState<MarketDataState>('loading');
+  const [failureKind, setFailureKind] = useState<ApiFailureKind>('server');
+  const [detail, setDetail] = useState('');
+  const [actionError, setActionError] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
-  const [dataState, setDataState] = useState<'loading' | 'live' | 'unavailable'>('loading');
-  const [error, setError] = useState('');
+  const [acting, setActing] = useState(false);
 
-  useEffect(() => {
-    let active = true;
-    void getEscrowStatus(id).then((result) => {
-      if (!active) return;
-      if (result.ok) {
-        setEscrow((current) => ({ ...current, id, status: result.data.escrow_status }));
-        setDataState('live');
-      } else {
-        setDataState('unavailable');
-        setError(result.error);
-      }
-    });
-    return () => {
-      active = false;
-    };
+  const source = `${ESCROW_SOURCE}/${encodeURIComponent(id)}/escrow`;
+
+  const load = useCallback(async () => {
+    if (!isOnline()) {
+      setDataState('offline');
+      return;
+    }
+    setDetail('');
+    const result = await getEscrowStatus(id);
+    if (!result.ok) {
+      const kind = classifyApiFailure(result.status);
+      setFailureKind(kind);
+      setDetail(result.error);
+      setEscrow(null);
+      setDataState(kind === 'offline' ? 'offline' : kind === 'auth' ? 'unauthenticated' : 'error');
+      return;
+    }
+    setEscrow(result.data);
+    setDataState('live');
   }, [id]);
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat(locale === 'fa' ? 'fa-IR' : 'en-US').format(price);
-  };
-
-  const handleRelease = async () => {
-    if (!escrow.orderId) {
-      setError(t('dataUnavailable'));
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) {
+      setDataState('unauthenticated');
       return;
     }
-    setShowConfirm(false);
-    const result = await settleOrder(escrow.orderId);
-    if (result.ok) {
-      setEscrow((current) => ({ ...current, status: 'released' }));
-    } else {
-      setError(result.error);
+    setDataState('loading');
+    void load();
+  }, [authLoading, user, load]);
+
+  useEffect(() => {
+    if (dataState !== 'offline') return;
+    return registerConnectivityListeners((online) => {
+      if (online) void load();
+    });
+  }, [dataState, load]);
+
+  const amount = escrow ? heldAmount(escrow.entries) : null;
+  const closed = escrow ? CLOSED_STATES.has(escrow.escrow_status) : false;
+
+  const runTransition = async (action: () => Promise<ApiResult<unknown>>) => {
+    setActing(true);
+    setActionError('');
+    try {
+      const result = await action();
+      if (!result.ok) {
+        setFailureKind(classifyApiFailure(result.status));
+        setActionError(result.error);
+        return;
+      }
+      await load();
+    } finally {
+      setActing(false);
+      setShowConfirm(false);
     }
   };
 
-  const handleDispute = async () => {
-    if (!escrow.orderId) {
-      setError(t('dataUnavailable'));
-      return;
-    }
-    const result = await openDispute(escrow.orderId);
-    if (result.ok) {
-      setEscrow((current) => ({ ...current, status: 'disputed' }));
-    } else {
-      setError(result.error);
-    }
-  };
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat(locale === 'fa' ? 'fa-IR' : 'en-US').format(price);
 
-  const roleLabels: Record<string, string> = {
-    buyer: t('buyer'),
-    seller: t('seller'),
-    arbitrator: t('arbitrator'),
-    platform: t('platform'),
-  };
-
-  const handleBack = () => {
-    router.push(`/${locale}/market/orders`);
-  };
+  const renderEntry = (entry: EscrowEntry) => (
+    <li key={entry.id} className="relative border-s-2 border-forest pb-2 ps-4">
+      <span
+        aria-hidden="true"
+        className="absolute start-[-5px] top-1 h-3 w-3 rounded-full bg-forest"
+      />
+      <p className="num font-mono text-xs text-ink-soft">{entry.entry_type}</p>
+      {entry.amount !== null ? (
+        <p className="num text-sm text-ink">{formatPrice(entry.amount)}</p>
+      ) : null}
+    </li>
+  );
 
   return (
     <main id="main" className="min-h-dvh">
@@ -145,137 +132,134 @@ export default function EscrowPage({ params }: { params: Promise<{ id: string }>
           <nav className="mb-4">
             <button
               type="button"
-              onClick={handleBack}
-              className="text-sm text-ink-soft hover:text-ink underline"
+              onClick={() => router.push(`/${locale}/market/cart`)}
+              className="text-sm text-ink-soft underline hover:text-ink"
             >
               {common('back')}
             </button>
           </nav>
-          <h1 className="display text-3xl font-bold text-ink sm:text-4xl">
-            {t('title')}: {escrow.id}
-          </h1>
-          <p className="mt-2 text-ink-soft">{escrow.product}</p>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h1 className="display text-3xl font-bold text-ink sm:text-4xl">
+              {t('title')}: <span className="num font-mono">{escrow?.payment_id ?? id}</span>
+            </h1>
+            <ProvenanceStamp
+              source={source}
+              label={t('escrowProvenance')}
+              method={dataState === 'live' ? statusLine('realData') : undefined}
+            />
+          </div>
         </header>
 
-        {dataState === 'unavailable' && (
-          <p
-            role="status"
-            className="mb-6 rounded-md border border-line bg-surface-alt p-3 text-sm text-ink-soft"
-          >
-            {t('dataUnavailable')}
-          </p>
-        )}
-        {error && (
-          <p role="alert" className="mb-6 rounded-md bg-red-50 p-3 text-sm text-red-800">
-            {error}
-          </p>
+        {dataState !== 'live' && (
+          <MarketDataStateNotice
+            state={dataState}
+            locale={locale}
+            detail={dataState === 'error' ? detail : undefined}
+            failureKind={failureKind}
+            onRetry={() => void load()}
+            emptyMessage={t('dataUnavailable')}
+          />
         )}
 
-        <Card density="compact" className="mb-6">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-sm text-ink-soft">{t('amount')}</p>
-              <p className="text-2xl font-bold text-forest">{formatPrice(escrow.amount)} ریال</p>
-            </div>
-            <StatusDot state={statusStateMap[escrow.status] || 'ok'} label={escrow.status} />
-          </div>
-          <div className="mt-4">
-            <p className="text-xs text-ink-soft">
-              {t('contractHash')}: <code className="text-ink">{escrow.contractHash}</code>
-            </p>
-            <p className="text-xs text-ink-soft mt-1">
-              {t('orderId')}: {escrow.orderId}
-            </p>
-          </div>
-        </Card>
+        {dataState === 'live' && escrow && (
+          <div className="space-y-6">
+            {actionError ? (
+              <p role="alert" className="rounded-md bg-clay/10 p-3 text-sm text-clay">
+                {actionError}
+              </p>
+            ) : null}
 
-        <Card density="compact" className="mb-6">
-          <h2 className="font-medium text-ink mb-3">{t('parties')}</h2>
-          <div className="space-y-3">
-            {escrow.parties.map((party) => (
-              <div key={party.role} className="flex items-center justify-between">
+            <Card density="compact">
+              <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="font-medium text-ink">{roleLabels[party.role]}</p>
-                  <p className="text-sm text-ink-soft">{party.name}</p>
-                  <p className="text-xs text-ink-soft font-mono">{party.address}</p>
+                  <p className="text-sm text-ink-soft">{t('amount')}</p>
+                  <p className="num text-2xl font-bold text-forest">
+                    {amount === null ? statusLine('unavailable') : formatPrice(amount)}
+                  </p>
                 </div>
                 <StatusDot
-                  state={party.signed ? 'ok' : 'warn'}
-                  label={party.signed ? t('signed') : t('notSigned')}
+                  state={dotState(escrow.escrow_status)}
+                  label={`${escrow.payment_status} · ${escrow.escrow_status}`}
                 />
               </div>
-            ))}
-          </div>
-        </Card>
-
-        <Card density="compact" className="mb-6">
-          <h2 className="font-medium text-ink mb-4">{t('eventTimeline')}</h2>
-          <div className="space-y-4">
-            {escrow.events.map((event) => (
-              <div key={event.id} className="border-l-2 border-forest pl-4 pb-2 relative">
-                <div className="absolute -left-[5px] top-0 h-3 w-3 rounded-full bg-forest" />
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="font-medium text-ink">{event.action}</p>
-                    <p className="text-sm text-ink-soft">{event.description}</p>
-                    <p className="text-xs text-ink-soft mt-1">
-                      {new Date(event.timestamp).toLocaleString()} • {event.party}
-                    </p>
-                  </div>
-                  {event.signature && (
-                    <span className="text-xs text-forest">{event.signature}</span>
-                  )}
-                </div>
+              <div className="mt-4 space-y-1">
+                <p className="text-xs text-ink-soft">
+                  {t('orderId')}:{' '}
+                  <span className="num font-mono">{orderId || statusLine('unavailable')}</span>
+                </p>
+                <p className="text-xs text-ink-soft">
+                  {t('contractHash')}:{' '}
+                  <span className="num font-mono">
+                    {escrow.entries[0]?.id ?? statusLine('unavailable')}
+                  </span>
+                </p>
               </div>
-            ))}
+            </Card>
+
+            <Card density="compact">
+              <h2 className="mb-3 font-medium text-ink">{t('eventTimeline')}</h2>
+              {escrow.entries.length === 0 ? (
+                <p role="status" className="text-sm text-ink-soft">
+                  {statusLine('unavailable')}
+                </p>
+              ) : (
+                <ul className="space-y-4">{escrow.entries.map(renderEntry)}</ul>
+              )}
+            </Card>
+
+            <Card density="compact">
+              <h2 className="mb-3 font-medium text-ink">{t('parties')}</h2>
+              <p role="status" className="text-sm text-ink-soft">
+                {statusLine('unavailable')}
+              </p>
+            </Card>
+
+            {closed ? (
+              <Card density="compact">
+                <p className="text-sm text-ink-soft">{t('escrowComplete')}</p>
+              </Card>
+            ) : orderId ? (
+              <div className="flex flex-wrap gap-3">
+                <Button variant="primary" loading={acting} onClick={() => setShowConfirm(true)}>
+                  {t('releaseFunds')}
+                </Button>
+                <Button
+                  variant="danger"
+                  loading={acting}
+                  onClick={() => void runTransition(() => openDispute(orderId))}
+                >
+                  {t('openDispute')}
+                </Button>
+              </div>
+            ) : (
+              <Card density="compact">
+                <p role="status" className="text-sm text-ink-soft">
+                  {statusLine('unavailable')}
+                </p>
+              </Card>
+            )}
+
+            {showConfirm && (
+              <Card density="cozy">
+                <h3 className="mb-2 font-medium text-ink">{t('confirmRelease')}</h3>
+                <p className="mb-4 text-sm text-ink-soft">{t('confirmReleaseDesc')}</p>
+                <div className="flex gap-3">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    loading={acting}
+                    onClick={() => void runTransition(() => settleOrder(orderId))}
+                  >
+                    {t('confirmReleaseButton')}
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => setShowConfirm(false)}>
+                    {common('cancel')}
+                  </Button>
+                </div>
+              </Card>
+            )}
           </div>
-        </Card>
-
-        {escrow.status === 'released' && (
-          <Card density="compact" className="mb-6">
-            <p className="text-ink-soft text-sm">{t('escrowComplete')}</p>
-          </Card>
         )}
-
-        {escrow.status !== 'released' &&
-          escrow.status !== 'cancelled' &&
-          escrow.status !== 'disputed' && (
-            <div className="mt-6 flex gap-3">
-              <Button
-                variant="primary"
-                disabled={!escrow.orderId}
-                onClick={() => setShowConfirm(true)}
-              >
-                {t('releaseFunds')}
-              </Button>
-              <Button variant="danger" disabled={!escrow.orderId} onClick={handleDispute}>
-                {t('openDispute')}
-              </Button>
-            </div>
-          )}
-
-        {showConfirm && (
-          <Card density="cozy" className="mt-4">
-            <h3 className="font-medium text-ink mb-2">{t('confirmRelease')}</h3>
-            <p className="text-sm text-ink-soft mb-4">{t('confirmReleaseDesc')}</p>
-            <div className="flex gap-3">
-              <Button variant="primary" size="sm" onClick={handleRelease}>
-                {t('confirmReleaseButton')}
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => setShowConfirm(false)}>
-                {common('cancel')}
-              </Button>
-            </div>
-          </Card>
-        )}
-
-        <Card density="compact" className="mt-8">
-          <ProvenanceStamp
-            source={`/api/v1/marketplace/payments/${encodeURIComponent(id)}/escrow`}
-            verified={false}
-            label={t('escrowProvenance')}
-          />
-        </Card>
       </div>
     </main>
   );

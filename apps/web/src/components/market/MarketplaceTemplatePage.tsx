@@ -9,6 +9,8 @@ interface MarketplaceTemplatePageProps {
   locale: string;
   group: string;
   slug: string;
+  /** Real gateway path this route would read, when one already exists. */
+  source?: string;
 }
 
 export async function generateMarketplaceMetadata({
@@ -27,13 +29,21 @@ export async function generateMarketplaceMetadata({
   };
 }
 
+/**
+ * Shared state for marketplace routes whose data source is not connected yet.
+ * It reports the route, never a stand-in payload, so an unavailable capability
+ * can never be mistaken for live data.
+ */
 export async function MarketplaceTemplatePage({
   locale,
   group,
   slug,
+  source,
 }: MarketplaceTemplatePageProps) {
   setRequestLocale(locale);
   const t = await getTranslations('market.template');
+  const statusLine = await getTranslations('statusLine');
+  const route = `${group}/${slug}`;
 
   return (
     <main id="main-content" className="min-h-dvh">
@@ -43,22 +53,18 @@ export async function MarketplaceTemplatePage({
         </Link>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <StatusDot state="warn" label={t('status')} />
-          <span className="font-mono text-xs text-ink-soft">
-            {group}/{slug}
-          </span>
+          <span className="font-mono text-xs text-ink-soft">{route}</span>
+          <ProvenanceStamp source={source ?? route} label={t('source')} />
         </div>
-        <ProvenanceStamp
-          source={t('source')}
-          label={t('source')}
-          verified={false}
-          method={t('method')}
-        />
         <Card density="cozy" className="mt-6">
           <h1 className="display text-3xl font-bold text-ink">{t('title')}</h1>
           <p className="mt-3 text-ink-soft">{t('description')}</p>
-          <div className="mt-6 rounded-md border border-line bg-surface-alt p-4">
+          <div className="mt-6 rounded-md border border-line p-4">
             <h2 className="font-semibold text-ink">{t('unavailableTitle')}</h2>
             <p className="mt-2 text-sm text-ink-soft">{t('unavailableDescription')}</p>
+            <p role="status" className="mt-2 text-sm text-ink-soft">
+              {statusLine('unavailable')}
+            </p>
           </div>
           <div className="mt-6 grid gap-3 md:grid-cols-2">
             <div className="rounded-md border border-line p-4">

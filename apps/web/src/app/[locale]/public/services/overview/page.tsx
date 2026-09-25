@@ -4,16 +4,33 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
-import { publicApi } from '@/lib/api/public';
+import { apiGet } from '@/lib/api/client';
+import { toDataState } from '../../data-states';
 
 export const dynamic = 'force-dynamic';
 
-type ServiceStatus = {
-  id: string;
-  name: string;
-  status: 'operational' | 'degraded' | 'maintenance' | 'offline';
-  lastCheck: string;
-  provenance: { source: string; verified?: boolean; timestamp?: string; method?: string };
+// Each health route is read directly so the page reports the gateway's own
+// status value, never a locally derived "operational" guess.
+const HEALTH_ENDPOINTS = [
+  { path: '/api/v1/platform/health' },
+  { path: '/api/v1/satellite/health' },
+  { path: '/api/v1/voice/health' },
+  { path: '/api/v1/ai/health' },
+  { path: '/api/v1/land/health' },
+  { path: '/api/v1/blockchain/health' },
+  { path: '/api/v1/automation/health' },
+  { path: '/api/v1/ecowallet/health' },
+] as const;
+
+type HealthPayload = {
+  status?: string;
+  service?: string;
+  module?: string;
+  cpp_available?: boolean;
+  db_backend?: string;
+  db_reachable?: boolean;
+  profiles_count?: number;
+  error?: string;
 };
 
 export default async function ServicesOverviewPage({
@@ -24,18 +41,28 @@ export default async function ServicesOverviewPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const servicesText = await getTranslations('services');
-  const t = await getTranslations('statusLine');
-  const template = await getTranslations('market.template');
+  const common = await getTranslations('common');
+  const status = await getTranslations('statusLine');
 
-  const overviewResult = await publicApi.services.overview();
-
-  const services: ServiceStatus[] = overviewResult.ok ? overviewResult.data.services : [];
-  const summary = overviewResult.ok
-    ? overviewResult.data.summary
-    : { total: 0, operational: 0, degraded: 0, offline: 0 };
-  const provenance = overviewResult.ok
-    ? overviewResult.data.provenance
-    : { source: 'unknown', verified: false };
+  const results = await Promise.all(
+    HEALTH_ENDPOINTS.map((endpoint) => apiGet<HealthPayload>(endpoint.path)),
+  );
+  const rows = HEALTH_ENDPOINTS.map((endpoint, index) => ({
+    path: endpoint.path,
+    result: results[index],
+  }));
+  const reachable = rows.filter((row) => row.result.ok);
+  const operational = reachable.filter(
+    (row) => row.result.ok && row.result.data.status === 'operational',
+  );
+  const degraded = reachable.length - operational.length;
+  const overviewState = toDataState(
+    HEALTH_ENDPOINTS.map((endpoint) => endpoint.path).join(' '),
+    reachable.length > 0
+      ? { ok: true, data: null, status: 200 }
+      : { ok: false, error: rows[0]?.result.ok === false ? rows[0].result.error : '', status: 503 },
+    reachable.length,
+  );
 
   return (
     <main className="min-h-dvh">
@@ -43,11 +70,10 @@ export default async function ServicesOverviewPage({
 
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
         <ProvenanceStamp
-          source={provenance.source}
+          source={HEALTH_ENDPOINTS[0].path}
           label={servicesText('title')}
-          verified={provenance.verified}
-          timestamp={provenance.timestamp}
-          method={provenance.method}
+          verified={reachable.length > 0}
+          method={HEALTH_ENDPOINTS[0].path}
         >
           <h1 className="display text-4xl font-bold text-ink">{servicesText('title')}</h1>
         </ProvenanceStamp>
@@ -73,77 +99,63 @@ export default async function ServicesOverviewPage({
 
       <section className="mx-auto max-w-5xl px-6 pb-6">
         <h2 className="text-sm font-semibold text-ink-soft">{servicesText('title')}</h2>
-        {services.length === 0 ? (
+        <div className="mt-4 grid gap-4 sm:grid-cols-3">
           <Card density="compact">
-            <h3 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h3>
-            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
-            <p className="mt-3 text-xs text-ink-soft">
-              {t('unavailable')}
-              {overviewResult.ok ? '' : ` · ${overviewResult.error}`}
-            </p>
+            <div className="text-sm text-ink-soft">{status('realData')}</div>
+            <div className="num mt-1 text-3xl font-semibold text-ink">{reachable.length}</div>
           </Card>
-        ) : (
-          <div className="mt-4 grid gap-4 sm:grid-cols-4">
-            <Card density="compact">
-              <div className="text-sm text-ink-soft">health</div>
-              <div className="num mt-1 text-3xl font-semibold text-ink">{summary.total}</div>
-            </Card>
-            <Card density="compact">
-              <div className="text-sm text-ink-soft">operational</div>
-              <div className="num mt-1 text-3xl font-semibold text-forest">
-                {summary.operational}
-              </div>
-            </Card>
-            <Card density="compact">
-              <div className="text-sm text-ink-soft">degraded</div>
-              <div className="num mt-1 text-3xl font-semibold text-amber">{summary.degraded}</div>
-            </Card>
-            <Card density="compact">
-              <div className="text-sm text-ink-soft">offline</div>
-              <div className="num mt-1 text-3xl font-semibold text-copper">{summary.offline}</div>
-            </Card>
-          </div>
-        )}
+          <Card density="compact">
+            <div className="text-sm text-ink-soft">{common('live')}</div>
+            <div className="num mt-1 text-3xl font-semibold text-forest">{operational.length}</div>
+          </Card>
+          <Card density="compact">
+            <div className="text-sm text-ink-soft">{status('unavailable')}</div>
+            <div className="num mt-1 text-3xl font-semibold text-copper">{degraded}</div>
+          </Card>
+        </div>
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-10">
-        <h2 className="text-sm font-semibold text-ink-soft">{template('source')}</h2>
+        <h2 className="text-sm font-semibold text-ink-soft">{common('view')}</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((service) => (
-            <div key={service.id} className="card p-4">
+          {rows.map((row) => (
+            <div key={row.path} className="card p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h3 className="font-semibold text-ink">{service.name}</h3>
-                  <p className="mt-1 font-mono text-xs text-ink-soft">
-                    {service.provenance.method ?? service.provenance.source}
-                  </p>
+                  <h3 className="font-semibold text-ink">
+                    {row.result.ok ? row.path : status('unavailable')}
+                  </h3>
+                  <p className="mt-1 font-mono text-xs text-ink-soft">{row.path}</p>
                 </div>
-                <ProvenanceStamp
-                  source={service.provenance.source}
-                  verified={service.provenance.verified}
-                  timestamp={service.provenance.timestamp}
-                  method={service.provenance.method}
-                />
+                <ProvenanceStamp source={row.path} verified={row.result.ok} method={row.path} />
               </div>
               <div className="mt-3">
                 <StatusDot
-                  state={
-                    service.status === 'operational'
-                      ? 'ok'
-                      : service.status === 'degraded'
-                        ? 'warn'
-                        : 'down'
+                  state={row.result.ok && row.result.data.status === 'operational' ? 'ok' : 'down'}
+                  label={
+                    row.result.ok && row.result.data.status
+                      ? row.result.data.status
+                      : row.result.ok
+                        ? status('unavailable')
+                        : status('unavailable')
                   }
-                  label={service.status}
                 />
               </div>
-              <p className="num mt-3 font-mono text-xs text-ink-soft">
-                {new Date(service.lastCheck).toLocaleString(locale)}
-              </p>
+              {row.result.ok && row.result.data.error ? (
+                <p className="num mt-3 font-mono text-xs text-ink-soft">{row.result.data.error}</p>
+              ) : null}
             </div>
           ))}
         </div>
-        <p className="mt-6 text-xs text-ink-soft">{t('realData')}</p>
+        <p className="mt-6 flex flex-wrap items-center gap-2 text-xs text-ink-soft">
+          <ProvenanceStamp
+            source={HEALTH_ENDPOINTS[0].path}
+            verified={overviewState.kind === 'ready'}
+            method={HEALTH_ENDPOINTS[0].path}
+          />
+          <span>{status('realData')}</span>
+          <span className="num">{reachable.length}</span>
+        </p>
       </section>
 
       <OwnerFooter />

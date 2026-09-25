@@ -99,7 +99,7 @@ export const HYDROMA_TOOLS_ROUTE = {
       id: 'tool-metadata',
       labelKey: 'science.modelsTitle',
       method: 'GET',
-      endpoint: '/api/v1/tool-registry/{toolId}',
+      endpoint: '/api/v1/tool-registry/{tool_id}',
     },
     {
       id: 'tool-execution',

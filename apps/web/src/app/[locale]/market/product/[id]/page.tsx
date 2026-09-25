@@ -1,77 +1,21 @@
 'use client';
 
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { use, useCallback, useEffect, useState } from 'react';
+import { type MarketDataState, MarketDataStateNotice } from '@/components/market/MarketDataState';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { StatusDot } from '@/components/StatusDot';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { getProduct } from '@/lib/api/market';
-import type { ProductListing } from '@/types/market';
-
-interface ProductSpec {
-  label: string;
-  value: string;
-}
-
-interface ProductVariant {
-  unit: string;
-  price: number;
-  stock: number;
-}
-
-interface ProductData {
-  id: string;
-  name: string;
-  producer: string;
-  description: string;
-  category: string;
-  origin: string;
-  impact: { carbon: number; water: number; soil: number };
-  variants: ProductVariant[];
-  specs: ProductSpec[];
-  images: string[];
-  inStock: boolean;
-  rating: number;
-}
-
-const EMPTY_PRODUCT: ProductData = {
-  id: '',
-  name: '',
-  producer: '',
-  description: '',
-  category: '',
-  origin: '',
-  impact: { carbon: 0, water: 0, soil: 0 },
-  variants: [],
-  specs: [],
-  images: [],
-  inStock: false,
-  rating: 0,
-};
-
-const EMPTY_VARIANT: ProductVariant = { unit: '', price: 0, stock: 0 };
+import { type ApiFailureKind, addToCart, classifyApiFailure } from '@/lib/api/cart';
+import { getProduct, type MarketProductDetail, PRODUCTS_SOURCE } from '@/lib/api/market';
+import { isOnline, registerConnectivityListeners } from '@/lib/offline/connectivity';
 
 function productSource(id: string): string {
-  return `/api/v1/marketplace/products/${encodeURIComponent(id)}`;
-}
-
-function mapProduct(item: ProductListing, locale: string): ProductData {
-  return {
-    id: item.id,
-    name: item.name[locale] ?? item.name.en ?? item.id,
-    producer: item.producer.name,
-    description: item.description?.[locale] ?? item.description?.en ?? '',
-    category: item.category.name[locale] ?? item.category.name.en ?? item.category.slug,
-    origin: item.origin ?? item.location?.address ?? '',
-    impact: { carbon: item.carbonFootprint ?? 0, water: item.waterFootprint ?? 0, soil: 0 },
-    variants: [{ unit: item.unit, price: item.price, stock: item.stockQuantity ?? 0 }],
-    specs: [],
-    images: item.images,
-    inStock: item.inStock,
-    rating: item.producer.rating ?? 0,
-  };
+  return `${PRODUCTS_SOURCE}/${encodeURIComponent(id)}`;
 }
 
 export default function ProductPage({
@@ -79,286 +23,348 @@ export default function ProductPage({
 }: {
   params: Promise<{ locale: string; id: string }>;
 }) {
+  const { locale: routeLocale, id } = use(params);
+  const locale = routeLocale || 'fa';
   const t = useTranslations('market.product');
+  const market = useTranslations('market');
   const common = useTranslations('common');
-  const { locale, id } = useParamsSafe(params);
+  const statusLine = useTranslations('statusLine');
+  const authCommon = useTranslations('auth.common');
+  const authSession = useTranslations('auth.session');
   const router = useRouter();
-  const [selectedVariant, setSelectedVariant] = useState(0);
+  const { user, loading: authLoading } = useAuth();
+
+  const [product, setProduct] = useState<MarketProductDetail | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [product, setProduct] = useState<ProductData>(EMPTY_PRODUCT);
-  const [dataState, setDataState] = useState<'loading' | 'live' | 'unavailable'>('loading');
-  const [error, setError] = useState('');
+  const [dataState, setDataState] = useState<MarketDataState>('loading');
+  const [failureKind, setFailureKind] = useState<ApiFailureKind>('server');
+  const [detail, setDetail] = useState('');
+  const [addState, setAddState] = useState<'idle' | 'adding' | 'failed'>('idle');
+
   const source = productSource(id);
 
+  const load = useCallback(async () => {
+    if (!isOnline()) {
+      setDataState('offline');
+      return;
+    }
+    setDetail('');
+    const result = await getProduct(id);
+    if (!result.ok) {
+      const kind = classifyApiFailure(result.status);
+      setFailureKind(kind);
+      setDetail(result.error);
+      setDataState(kind === 'offline' ? 'offline' : 'error');
+      return;
+    }
+    setProduct(result.data);
+    setQuantity(
+      result.data.minimumOrderKg && result.data.minimumOrderKg > 0 ? result.data.minimumOrderKg : 1,
+    );
+    setDataState('live');
+  }, [id]);
+
   useEffect(() => {
-    let active = true;
-    if (!id)
-      return () => {
-        active = false;
-      };
-    void getProduct(id).then((result) => {
-      if (!active) return;
-      if (!result.ok) {
-        setDataState('unavailable');
-        setError(result.error);
-        return;
-      }
-      if (result.data) {
-        setProduct(mapProduct(result.data, locale || 'en'));
-        setDataState('live');
-      } else {
-        setDataState('unavailable');
-        setError(t('dataUnavailable'));
-      }
+    if (!id) return;
+    setDataState('loading');
+    void load();
+  }, [id, load]);
+
+  useEffect(() => {
+    if (dataState !== 'offline') return;
+    return registerConnectivityListeners((online) => {
+      if (online) void load();
     });
-    return () => {
-      active = false;
-    };
-  }, [id, locale, t]);
+  }, [dataState, load]);
 
-  const currentVariant = product.variants[selectedVariant] ?? EMPTY_VARIANT;
+  const available = product ? product.quantityAvailableKg : 0;
+  const minimum =
+    product?.minimumOrderKg && product.minimumOrderKg > 0 ? product.minimumOrderKg : 1;
 
-  const handleAddToCart = () => {
-    const params = new URLSearchParams();
-    params.set('product', product.id);
-    params.set('variant', selectedVariant.toString());
-    params.set('qty', quantity.toString());
-    router.push(`/${locale}/market/cart?${params.toString()}`);
+  const handleAddToCart = async () => {
+    if (!user || !product) {
+      setAddState('failed');
+      setDetail(authSession('signedOut'));
+      return;
+    }
+    setAddState('adding');
+    setDetail('');
+    const result = await addToCart([{ productId: product.id, quantity }]);
+    if (!result.ok) {
+      setAddState('failed');
+      setFailureKind(classifyApiFailure(result.status));
+      setDetail(result.error);
+      return;
+    }
+    setAddState('idle');
+    router.push(`/${locale}/market/cart`);
   };
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat(locale === 'fa' ? 'fa-IR' : 'en-US').format(price);
-  };
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat(locale === 'fa' ? 'fa-IR' : 'en-US').format(price);
+
+  const hasEcoImpact =
+    product?.carbonFootprintKgCo2 != null ||
+    product?.waterFootprintLiters != null ||
+    product?.batchNumber != null;
 
   return (
     <main id="main" className="min-h-dvh">
       <div className="mx-auto max-w-6xl px-6 pb-12 pt-6">
         <header className="mb-8">
-          <nav className="mb-4 text-sm text-ink-soft">
+          <nav className="mb-4 flex flex-wrap items-center gap-2 text-sm text-ink-soft">
             <button
               type="button"
               onClick={() => router.push(`/${locale}/market`)}
-              className="text-ink-soft hover:text-ink underline"
+              className="text-ink-soft underline hover:text-ink"
             >
               {t('backToMarket')}
             </button>
-            {' / '}
-            <span className="text-ink">{product.name}</span>
+            {product ? (
+              <>
+                <span aria-hidden="true">/</span>
+                <span className="text-ink">{product.name}</span>
+              </>
+            ) : null}
           </nav>
-          <div className="flex items-center justify-between">
-            <h1 className="display text-3xl font-bold text-ink sm:text-4xl">{product.name}</h1>
-            <ProvenanceStamp source={source} verified={false} label={t('verifiedProduct')} />
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h1 className="display text-3xl font-bold text-ink sm:text-4xl">
+              {product?.name ?? ''}
+            </h1>
+            <ProvenanceStamp
+              source={source}
+              label={t('productProvenance')}
+              method={dataState === 'live' ? statusLine('realData') : undefined}
+            />
           </div>
-          <p className="mt-3 text-ink-soft">{product.description}</p>
+          {product?.description ? (
+            <p className="mt-3 text-ink-soft">{product.description}</p>
+          ) : null}
         </header>
 
-        {dataState === 'unavailable' && (
-          <p
-            role="status"
-            className="mb-6 rounded-md border border-line bg-surface-alt p-3 text-sm text-ink-soft"
-          >
-            {t('dataUnavailable')}
-          </p>
-        )}
-        {error && (
-          <p role="alert" className="mb-6 rounded-md bg-red-50 p-3 text-sm text-red-800">
-            {error}
-          </p>
+        {dataState !== 'live' && (
+          <MarketDataStateNotice
+            state={dataState}
+            locale={locale}
+            detail={dataState === 'error' ? detail : undefined}
+            failureKind={failureKind}
+            onRetry={() => void load()}
+            emptyMessage={t('dataUnavailable')}
+          />
         )}
 
-        <div className="grid gap-8 lg:grid-cols-2">
-          <div className="space-y-4">
-            <div className="aspect-square w-full overflow-hidden rounded-lg border border-line bg-surface">
-              <div className="flex h-full items-center justify-center text-4xl text-ink-soft">
-                📷
-              </div>
-            </div>
-            <div className="flex gap-2">
-              {product.images.map((src, idx) => (
-                <button
-                  type="button"
-                  key={src}
-                  onClick={() => setSelectedVariant(idx)}
-                  className="h-16 w-16 rounded border border-line bg-surface"
-                >
-                  <span className="text-2xl text-ink-soft">📷</span>
-                </button>
-              ))}
-            </div>
-          </div>
+        {product && dataState === 'live' && (
+          <>
+            {detail ? (
+              <p role="alert" className="mb-6 rounded-md bg-clay/10 p-3 text-sm text-clay">
+                {detail}
+              </p>
+            ) : null}
 
-          <div className="space-y-6">
-            <Card density="compact">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-ink-soft">{common('status')}</p>
-                  <StatusDot
-                    state={product.inStock ? 'ok' : 'down'}
-                    label={product.inStock ? common('inStock') : common('outOfStock')}
-                  />
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-ink-soft">{common('rating')}</p>
-                  <p className="font-medium text-ink">⭐ {product.rating}</p>
-                </div>
-              </div>
-            </Card>
-
-            <Card density="compact">
-              <h2 className="font-medium text-ink mb-3">{t('pricing')}</h2>
-              <div className="space-y-3">
-                {product.variants.map((variant, idx) => (
-                  <label
-                    key={variant.unit}
-                    className="flex items-center justify-between cursor-pointer"
-                  >
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="radio"
-                        name="variant"
-                        checked={selectedVariant === idx}
-                        onChange={() => setSelectedVariant(idx)}
-                        className="h-4 w-4 text-forest focus:ring-forest"
+            <div className="grid gap-8 lg:grid-cols-2">
+              <div className="space-y-4">
+                {product.images.length > 0 ? (
+                  <>
+                    <div className="aspect-square w-full overflow-hidden rounded-lg border border-line bg-surface">
+                      <Image
+                        src={product.images[0]}
+                        alt={product.name}
+                        width={800}
+                        height={800}
+                        unoptimized
+                        className="h-full w-full object-contain"
                       />
-                      <span className="text-ink">{variant.unit}</span>
                     </div>
-                    <div className="text-right">
-                      <span className="font-medium text-ink">
-                        {formatPrice(variant.price)} ریال
+                    {product.images.length > 1 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {product.images.slice(1).map((src) => (
+                          <Image
+                            key={src}
+                            src={src}
+                            alt={product.name}
+                            width={128}
+                            height={128}
+                            unoptimized
+                            className="h-16 w-16 rounded border border-line bg-surface object-cover"
+                          />
+                        ))}
+                      </div>
+                    ) : null}
+                  </>
+                ) : (
+                  <div
+                    role="status"
+                    className="aspect-square w-full rounded-lg border border-line bg-surface p-6 text-sm text-ink-soft"
+                  >
+                    {statusLine('unavailable')}
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-6">
+                <Card density="compact">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <StatusDot
+                      state={available > 0 ? 'ok' : 'down'}
+                      label={available > 0 ? t('inStock') : t('outOfStock')}
+                    />
+                    {product.organicCertified ? (
+                      <span className="rounded-full border border-line px-2 py-0.5 text-[10px] text-forest">
+                        {market('organicBadge')}
                       </span>
-                      <span className="text-xs text-ink-soft">
-                        {' '}
-                        ({variant.stock} {common('available')})
-                      </span>
+                    ) : null}
+                  </div>
+                  <dl className="mt-4 space-y-2">
+                    <div className="flex justify-between">
+                      <dt className="text-sm text-ink-soft">{t('unitPrice')}</dt>
+                      <dd className="num font-medium text-ink">
+                        {formatPrice(product.pricePerKg)}
+                      </dd>
                     </div>
-                  </label>
-                ))}
-              </div>
-            </Card>
+                    <div className="flex justify-between">
+                      <dt className="text-sm text-ink-soft">{t('available')}</dt>
+                      <dd className="num text-ink">{available}</dd>
+                    </div>
+                    {product.minimumOrderKg ? (
+                      <div className="flex justify-between">
+                        <dt className="text-sm text-ink-soft">{t('qty')}</dt>
+                        <dd className="num text-ink">{product.minimumOrderKg}</dd>
+                      </div>
+                    ) : null}
+                    {product.producerName || product.originLocation ? (
+                      <div className="flex justify-between">
+                        <dt className="text-sm text-ink-soft">{market('producers')}</dt>
+                        <dd className="text-right text-ink">
+                          {product.producerName}
+                          {product.originLocation ? (
+                            <span className="block text-xs text-ink-soft">
+                              {product.originLocation}
+                            </span>
+                          ) : null}
+                        </dd>
+                      </div>
+                    ) : null}
+                    {product.harvestDate ? (
+                      <div className="flex justify-between">
+                        <dt className="text-sm text-ink-soft">{t('pricingHistory')}</dt>
+                        <dd className="num text-ink">{product.harvestDate}</dd>
+                      </div>
+                    ) : null}
+                    {product.traceabilityCode ? (
+                      <div className="flex justify-between">
+                        <dt className="text-sm text-ink-soft">{t('traceability')}</dt>
+                        <dd className="num font-mono text-xs text-forest">
+                          {product.traceabilityCode}
+                        </dd>
+                      </div>
+                    ) : null}
+                  </dl>
+                </Card>
 
-            <Card density="compact">
-              <h2 className="font-medium text-ink mb-3">{t('quantity')}</h2>
-              <div className="flex items-center gap-4">
-                <button
-                  type="button"
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="flex h-8 w-8 items-center justify-center rounded border border-line bg-surface"
-                >
-                  −
-                </button>
-                <span className="font-medium text-ink w-8 text-center">{quantity}</span>
-                <button
-                  type="button"
-                  onClick={() => setQuantity(Math.min(currentVariant.stock, quantity + 1))}
-                  className="flex h-8 w-8 items-center justify-center rounded border border-line bg-surface"
-                >
-                  +
-                </button>
-              </div>
-            </Card>
+                <Card density="compact">
+                  <h2 className="mb-3 font-medium text-ink">{t('quantity')}</h2>
+                  <div className="flex items-center gap-4">
+                    <button
+                      type="button"
+                      aria-label={t('qty')}
+                      onClick={() => setQuantity((value) => Math.max(minimum, value - 1))}
+                      disabled={quantity <= minimum || available === 0}
+                      className="flex h-11 w-11 items-center justify-center rounded border border-line disabled:opacity-40"
+                    >
+                      −
+                    </button>
+                    <span className="num w-10 text-center font-medium text-ink">{quantity}</span>
+                    <button
+                      type="button"
+                      aria-label={t('qty')}
+                      onClick={() =>
+                        setQuantity((value) => Math.min(Math.max(available, minimum), value + 1))
+                      }
+                      disabled={available === 0 || quantity >= Math.max(available, minimum)}
+                      className="flex h-11 w-11 items-center justify-center rounded border border-line disabled:opacity-40"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div className="mt-4 flex items-center justify-between border-t border-line pt-3">
+                    <span className="font-medium text-ink">{common('total')}</span>
+                    <span className="num text-xl font-bold text-forest">
+                      {formatPrice(product.pricePerKg * quantity)}
+                    </span>
+                  </div>
+                </Card>
 
-            <Card density="compact">
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-ink-soft">{t('unitPrice')}</span>
-                  <span className="font-medium text-ink">
-                    {formatPrice(currentVariant.price)} ریال
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-ink-soft">{t('qty')}</span>
-                  <span className="font-medium text-ink">{quantity}</span>
-                </div>
-                <div className="flex justify-between border-t border-line pt-3">
-                  <span className="font-medium text-ink">{common('total')}</span>
-                  <span className="font-bold text-forest">
-                    {formatPrice(currentVariant.price * quantity)} ریال
-                  </span>
-                </div>
-              </div>
-            </Card>
-
-            <Button variant="primary" size="lg" className="w-full" onClick={handleAddToCart}>
-              {common('addToCart')}
-            </Button>
-
-            <Button variant="secondary" size="lg" className="w-full">
-              {t('escrowOption')}
-            </Button>
-          </div>
-        </div>
-
-        <div className="mt-8 grid gap-8 lg:grid-cols-2">
-          <Card density="compact">
-            <h2 className="font-medium text-ink mb-3">{t('productSpecs')}</h2>
-            <div className="space-y-2">
-              {product.specs.map((spec) => (
-                <div key={spec.label} className="flex justify-between">
-                  <span className="text-ink-soft">{spec.label}</span>
-                  <span className="text-ink">{spec.value}</span>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          <Card density="compact">
-            <h2 className="font-medium text-ink mb-3">{t('ecoImpact')}</h2>
-            <div className="space-y-3">
-              <div>
-                <div className="flex justify-between">
-                  <span className="text-ink-soft">{t('carbonSequestration')}</span>
-                  <span className="font-medium text-ink">{product.impact.carbon} kg CO₂</span>
-                </div>
-                <div className="h-2 rounded-full bg-surface-alt mt-1">
+                {authLoading ? null : user ? (
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    className="w-full"
+                    loading={addState === 'adding'}
+                    disabled={available === 0}
+                    onClick={() => void handleAddToCart()}
+                  >
+                    {t('addToCart')}
+                  </Button>
+                ) : (
                   <div
-                    className="h-2 rounded-full bg-forest"
-                    style={{ width: `${Math.min(product.impact.carbon * 5, 100)}%` }}
-                  />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between">
-                  <span className="text-ink-soft">{t('waterSavings')}</span>
-                  <span className="font-medium text-ink">{product.impact.water} L</span>
-                </div>
-                <div className="h-2 rounded-full bg-surface-alt mt-1">
-                  <div
-                    className="h-2 rounded-full bg-forest"
-                    style={{ width: `${Math.min(product.impact.water / 100, 100)}%` }}
-                  />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between">
-                  <span className="text-ink-soft">{t('soilRestoration')}</span>
-                  <span className="font-medium text-ink">{product.impact.soil} t/ha</span>
-                </div>
-                <div className="h-2 rounded-full bg-surface-alt mt-1">
-                  <div
-                    className="h-2 rounded-full bg-forest"
-                    style={{ width: `${Math.min(product.impact.soil * 20, 100)}%` }}
-                  />
-                </div>
+                    role="status"
+                    className="rounded-[var(--radius-l)] border border-[var(--color-line)] bg-[var(--color-surface-2)] p-4"
+                  >
+                    <p className="text-sm text-[var(--color-ink-soft)]">
+                      {authSession('signedOut')}
+                    </p>
+                    <a
+                      href={`/${locale}/auth/login`}
+                      className="mt-3 inline-flex rounded-[var(--radius-m)] border border-[var(--color-line)] px-3 py-2 text-sm font-semibold text-[var(--color-ink)]"
+                    >
+                      {authCommon('signIn')}
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
-          </Card>
-        </div>
 
-        <Card density="compact" className="mt-8">
-          <ProvenanceStamp source={source} verified={false} label={t('productProvenance')} />
-        </Card>
+            <div className="mt-8 grid gap-8 lg:grid-cols-2">
+              <Card density="compact">
+                <h2 className="mb-3 font-medium text-ink">{t('productSpecs')}</h2>
+                <p role="status" className="text-sm text-ink-soft">
+                  {statusLine('unavailable')}
+                </p>
+              </Card>
+
+              <Card density="compact">
+                <h2 className="mb-3 font-medium text-ink">{t('ecoImpact')}</h2>
+                {!hasEcoImpact ? (
+                  <p role="status" className="text-sm text-ink-soft">
+                    {statusLine('unavailable')}
+                  </p>
+                ) : (
+                  <dl className="space-y-3">
+                    {product.carbonFootprintKgCo2 != null ? (
+                      <div className="flex justify-between">
+                        <dt className="text-sm text-ink-soft">{t('carbonSequestration')}</dt>
+                        <dd className="num font-medium text-ink">{product.carbonFootprintKgCo2}</dd>
+                      </div>
+                    ) : null}
+                    {product.waterFootprintLiters != null ? (
+                      <div className="flex justify-between">
+                        <dt className="text-sm text-ink-soft">{t('waterSavings')}</dt>
+                        <dd className="num font-medium text-ink">{product.waterFootprintLiters}</dd>
+                      </div>
+                    ) : null}
+                    {product.batchNumber ? (
+                      <div className="flex justify-between">
+                        <dt className="text-sm text-ink-soft">{t('certifications')}</dt>
+                        <dd className="num font-mono text-xs text-ink">{product.batchNumber}</dd>
+                      </div>
+                    ) : null}
+                  </dl>
+                )}
+              </Card>
+            </div>
+          </>
+        )}
       </div>
     </main>
   );
-}
-
-function useParamsSafe(params: Promise<{ locale: string; id: string }>) {
-  const [resolved, setResolved] = useState<{ locale: string; id: string } | null>(null);
-  if (typeof window === 'undefined') {
-    if (!resolved) {
-      params.then(setResolved);
-    }
-    return { locale: '', id: '' };
-  }
-  return resolved || { locale: '', id: '' };
 }

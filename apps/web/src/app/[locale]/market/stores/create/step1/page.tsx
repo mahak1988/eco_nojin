@@ -1,32 +1,30 @@
-'use client';
+import type { Metadata } from 'next';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { MarketplaceTemplatePage } from '@/components/market/MarketplaceTemplatePage';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useParams } from 'next/navigation';
-import { FormProvider, useForm } from 'react-hook-form';
-import { z } from 'zod';
-import StoreStep1Form from '@/components/market/store-wizard/StoreStep1Form';
+export const dynamic = 'force-dynamic';
 
-const step1Schema = z.object({
-  bazaarId: z.string().optional(),
-  storeName: z.string().min(2),
-  storeCode: z.string().min(3),
-  storeType: z.enum(['producer', 'reseller', 'cooperative', 'artisan']),
-  ownerName: z.string().optional(),
-  contactPhone: z.string().optional(),
-  contactEmail: z.string().email().optional(),
-});
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations('market.template');
 
-type Step1Input = z.infer<typeof step1Schema>;
+  return {
+    title: t('title'),
+    description: t('description'),
+    robots: { index: false, follow: true },
+  };
+}
 
-export default function StoreStep1Page() {
-  const params = useParams();
-  const locale = params.locale as string;
-
-  return (
-    <FormProvider
-      {...useForm<Step1Input>({ resolver: zodResolver(step1Schema), mode: 'onChange' })}
-    >
-      <StoreStep1Form locale={locale} />
-    </FormProvider>
-  );
+export default async function StoreCreateStep1Page({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return <MarketplaceTemplatePage locale={locale} group="stores" slug="create/step1" />;
 }

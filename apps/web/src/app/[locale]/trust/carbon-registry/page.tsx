@@ -1,141 +1,115 @@
-'use client';
-
-import { usePathname, useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { ListBlock } from '@/components/ListBlock';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
-import { Button } from '@/components/ui/Button';
+import { SiteNav } from '@/components/SiteNav';
+import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { apiGet } from '@/lib/api/client';
 
-interface CarbonTransaction {
-  id: string;
-  txHash: string;
-  blockNumber: number;
-  amount: number;
-  token: string;
-  timestamp: string;
-  verified: boolean;
-}
+export const dynamic = 'force-dynamic';
 
-export default function CarbonRegistryPage() {
-  const t = useTranslations('trust.carbonRegistry');
-  const pathname = usePathname();
-  const router = useRouter();
-  const locale = pathname.split('/')[1];
+/**
+ * Carbon registry reads exist in the contract but every one of them is
+ * authenticated, so the public page has nothing it may show. Each candidate is
+ * probed and the real status is rendered.
+ */
+const CARBON_SURFACES = [
+  '/api/v1/carbon/verra/standards',
+  '/api/v1/carbon/credits/balance',
+  '/api/v1/carbon/credits/{token_id}/verify',
+];
 
-  const [transactions, setTransactions] = useState<CarbonTransaction[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default async function CarbonRegistryPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations('trust');
+  const common = await getTranslations('common');
+  const status = await getTranslations('statusLine');
+  const statusPage = await getTranslations('statusPage');
+  const template = await getTranslations('market.template');
 
-  useEffect(() => {
-    async function fetchRegistry() {
-      try {
-        const res = await fetch(`/api/trust/carbon-registry?locale=${locale}`);
-        if (!res.ok) throw new Error('Failed to fetch');
-        const data = await res.json();
-        setTransactions(data.transactions || []);
-      } catch {
-        setError(t('fetchError'));
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchRegistry();
-  }, [locale, t]);
-
-  const formatTxHash = (hash: string) => `${hash.slice(0, 10)}...${hash.slice(-8)}`;
-
-  if (isLoading) {
-    return (
-      <main id="main" className="min-h-screen">
-        <div className="mx-auto max-w-4xl px-4 py-10">
-          <div className="text-center py-20">
-            <p className="text-ink-soft">{t('loading')}</p>
-          </div>
-        </div>
-      </main>
-    );
-  }
+  const probes = await Promise.all(
+    CARBON_SURFACES.map(async (path) => {
+      // Path templates are not callable; the concrete sibling is probed instead
+      // and the registered path is what the table reports.
+      const probePath = path.includes('{') ? path.replace('{token_id}', 'probe') : path;
+      const result = await apiGet<unknown>(probePath);
+      return { path, status: result.status, reachable: result.ok };
+    }),
+  );
 
   return (
-    <main id="main" className="min-h-screen">
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <header className="mb-10">
-          <h1 className="display text-3xl font-bold text-ink sm:text-4xl">{t('title')}</h1>
-          <p className="mt-3 text-ink-soft">{t('lead')}</p>
-        </header>
+    <main id="main" className="min-h-dvh">
+      <SiteNav locale={locale} />
+      <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
+        <span className="chip num font-mono">trust/carbon-registry</span>
+        <h1 className="display mt-3 text-4xl font-bold text-ink">{t('title')}</h1>
+        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
 
-        {error && (
-          <div
-            className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700"
-            role="alert"
-          >
-            {error}
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="ml-2"
-              onClick={() => router.refresh()}
-            >
-              Try again
-            </Button>
-          </div>
-        )}
-
-        <div className="grid gap-4">
-          {transactions.length > 0 ? (
-            transactions.map((tx) => (
-              <Card key={tx.id} density="compact">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div>
-                      <p className="font-mono text-sm text-ink">{formatTxHash(tx.txHash)}</p>
-                      <p className="text-xs text-ink-soft">
-                        Block #{tx.blockNumber.toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="ml-4 border-l border-line pl-4">
-                      <p className="font-mono text-lg font-semibold text-forest">
-                        {tx.amount.toLocaleString()} {tx.token}
-                      </p>
-                      <p className="text-xs text-ink-soft">
-                        {new Date(tx.timestamp).toLocaleDateString(
-                          locale === 'fa' ? 'fa-IR' : 'en-US',
-                        )}
-                      </p>
-                    </div>
-                  </div>
-                  <ProvenanceStamp
-                    source="Blockchain"
-                    verified={tx.verified}
-                    timestamp={tx.timestamp}
-                    method="Smart Contract"
-                  />
-                </div>
-              </Card>
-            ))
-          ) : (
-            <Card density="cozy" className="text-center py-8">
-              <p className="text-ink-soft">{t('noTransactions')}</p>
-            </Card>
-          )}
+        <div className="mt-6 flex flex-wrap items-center gap-4">
+          <StatusDot state="down" label={status('unavailable')} />
+          <ProvenanceStamp
+            source={statusPage('endpoint')}
+            label={statusPage('endpoint')}
+            method={statusPage('state')}
+          />
         </div>
 
         <Card density="cozy" className="mt-6">
-          <h2 className="font-medium text-ink mb-3">{t('verificationNote')}</h2>
-          <p className="text-sm text-ink-soft">{t('verificationNoteDesc')}</p>
-          <div className="mt-4 flex gap-2">
-            <a
-              href="https://explorer.example.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-water hover:underline"
-            >
-              {t('viewOnExplorer')}
-            </a>
+          <h2 className="font-semibold text-ink">{template('unavailableTitle')}</h2>
+          <p className="mt-2 text-sm text-ink-soft">{template('unavailableDescription')}</p>
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-line text-ink-soft">
+                  <th className="py-2 pe-4 text-start font-medium">{statusPage('endpoint')}</th>
+                  <th className="py-2 text-start font-medium">{statusPage('result')}</th>
+                  <th className="py-2 ps-4 text-start font-medium">{statusPage('state')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {probes.map((probe) => (
+                  <tr key={probe.path} className="border-b border-line/50">
+                    <td className="py-2 pe-4 font-mono text-xs text-ink">{probe.path}</td>
+                    <td className="num py-2 text-ink-soft">
+                      {probe.status === 0 ? '—' : probe.status}
+                    </td>
+                    <td
+                      className={`py-2 ps-4 text-xs ${probe.reachable ? 'text-forest' : 'text-copper'}`}
+                    >
+                      {probe.reachable ? common('live') : status('unavailable')}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </Card>
+
+        <div className="mt-6 grid gap-3 md:grid-cols-2">
+          <div className="rounded-md border border-line p-4">
+            <h3 className="font-medium text-ink">{template('contractTitle')}</h3>
+            <p className="mt-1 text-sm text-ink-soft">{template('contractDescription')}</p>
+          </div>
+          <div className="rounded-md border border-line p-4">
+            <h3 className="font-medium text-ink">{template('nextTitle')}</h3>
+            <p className="mt-1 text-sm text-ink-soft">{template('nextDescription')}</p>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4">
+          <ListBlock
+            title={common('evidence')}
+            items={t.raw('evidence') as string[]}
+            tone="neutral"
+          />
+          <ListBlock title={common('limits')} items={t.raw('limits') as string[]} tone="clay" />
+          <ListBlock title={common('next')} items={t.raw('next') as string[]} tone="moss" />
+        </div>
       </div>
     </main>
   );

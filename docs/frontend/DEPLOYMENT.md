@@ -37,12 +37,11 @@ Deployment configuration may be prepared locally, but preparation is not activat
 
 The Kubernetes frontend Deployment references a non-committed `frontend-secrets` Secret:
 
-- `SESSION_SECRET`: random value of at least 32 characters
 - `REDIS_URL`: Redis connection URL for the shared session store
 
 These keys must be supplied by External Secrets Operator, a sealed secret, or an equivalent cluster secret mechanism. A missing key intentionally keeps the pod in `CreateContainerConfigError` rather than starting without sessions or caching.
 
-The Helm values `frontend.sessionSecret.existingSecret` and `existingSecretKey`/`existingSecretRedisUrlKey` allow the Secret name and key names to be overridden without putting values in Git.
+The Helm values `frontend.sessionSecret.existingSecret` and `existingSecretRedisUrlKey` allow the Redis Secret name and key to be overridden without putting values in Git.
 
 ## Ownership boundary
 

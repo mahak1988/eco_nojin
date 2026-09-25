@@ -18,11 +18,9 @@ export default async function AiPage({ params }: { params: Promise<{ locale: str
           lead={t('ai.lead')}
           what={t('ai.what')}
           audience={t('ai.audience')}
-          evidence={[t('ai.sourceRule')]}
+          evidence={t.raw('ai.evidence') as string[]}
           limits={t.raw('ai.limits') as string[]}
           next={t.raw('ai.next') as string[]}
-          limitsLabel={t('ai.limitsTitle')}
-          nextLabel={t('ai.nextTitle')}
         />
       </div>
     </main>

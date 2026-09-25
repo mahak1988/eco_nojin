@@ -5,6 +5,7 @@ import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
@@ -72,13 +73,13 @@ export default async function ValidationMethodsPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations('statusLine');
-  const template = await getTranslations('market.template');
   const title = TITLES[locale] ?? TITLES.en;
   const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
 
   const report = await apiGet<ValidationReport>(VALIDATION_PATH);
   const checks = report.ok ? report.data.checks : [];
   const kinds = Array.from(new Set(checks.map((check) => check.kind)));
+  const state = toDataState(VALIDATION_PATH, report, checks.length);
 
   return (
     <main id="main" className="min-h-dvh">
@@ -96,17 +97,9 @@ export default async function ValidationMethodsPage({
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
-        <h2 className="text-xl font-semibold text-ink mb-4">{template('source')}</h2>
-        {checks.length === 0 ? (
-          <Card density="compact">
-            <h3 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h3>
-            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
-            <p className="mt-3 text-xs text-ink-soft">
-              {t('unavailable')}
-              {report.ok ? '' : ` · ${report.error}`}
-            </p>
-          </Card>
-        ) : (
+        <h2 className="text-xl font-semibold text-ink mb-4">{VALIDATION_PATH}</h2>
+        <DataStateCard state={state} />
+        {state.kind === 'ready' ? (
           <>
             <div className="mb-4 flex flex-wrap gap-2">
               {kinds.map((kind) => (
@@ -129,7 +122,7 @@ export default async function ValidationMethodsPage({
                     <div className="flex items-center gap-3">
                       <StatusDot
                         state={check.passed ? 'ok' : 'down'}
-                        label={check.passed ? 'pass' : 'fail'}
+                        label={check.passed ? t('realData') : t('unavailable')}
                       />
                       <ProvenanceStamp
                         source={check.source}
@@ -141,11 +134,9 @@ export default async function ValidationMethodsPage({
                 </Card>
               ))}
             </div>
-            <p className="mt-6 text-xs text-ink-soft">
-              {VALIDATION_PATH} · {t('realData')}
-            </p>
           </>
-        )}
+        ) : null}
+        <SourceFooter state={state} />
       </section>
     </main>
   );

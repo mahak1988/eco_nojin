@@ -1,10 +1,11 @@
 import { Metadata } from 'next';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
+import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
@@ -63,14 +64,13 @@ export async function generateMetadata({
 export default async function DataSourcesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('statusLine');
-  const template = await getTranslations('market.template');
   const title = TITLES[locale] ?? TITLES.en;
   const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
 
   const catalog = await apiGet<DatasetCatalog>(DATASETS_PATH);
   const data = catalog.ok ? catalog.data : null;
   const datasets = data ? data.datasets : [];
+  const state = toDataState(DATASETS_PATH, catalog, datasets.length);
 
   return (
     <main id="main" className="min-h-dvh">
@@ -89,16 +89,8 @@ export default async function DataSourcesPage({ params }: { params: Promise<{ lo
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
         <h2 className="text-xl font-semibold text-ink mb-4">{DATASETS_PATH}</h2>
-        {datasets.length === 0 ? (
-          <Card density="compact">
-            <h3 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h3>
-            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
-            <p className="mt-3 text-xs text-ink-soft">
-              {t('unavailable')}
-              {catalog.ok ? '' : ` · ${catalog.error}`}
-            </p>
-          </Card>
-        ) : (
+        <DataStateCard state={state} />
+        {state.kind === 'ready' ? (
           <>
             <div className="grid gap-4">
               {datasets.map((dataset) => (
@@ -131,15 +123,15 @@ export default async function DataSourcesPage({ params }: { params: Promise<{ lo
                 </Card>
               ))}
             </div>
-            <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-ink-soft">
-              <span>{t('realData')}</span>
-              <span>
-                {DATASETS_PATH} · {data?.count ?? 0} · {data?.live ?? 0}
-              </span>
-            </div>
+            <p className="mt-6 flex flex-wrap items-center gap-2 text-xs text-ink-soft">
+              <span>{DATASETS_PATH}</span>
+              <span className="num">{data?.count ?? 0}</span>
+              <span className="num">{data?.live ?? 0}</span>
+            </p>
             {data?.note ? <p className="mt-2 text-xs text-ink-soft">{data.note}</p> : null}
           </>
-        )}
+        ) : null}
+        <SourceFooter state={state} />
       </section>
     </main>
   );
