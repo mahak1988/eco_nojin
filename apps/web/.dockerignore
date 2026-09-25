@@ -1,0 +1,46 @@
+# Context-relative ignore set for apps/web (used when the build context is apps/web).
+# The production build runs with the monorepo root as context, where the root
+# .dockerignore applies; keep both lists in sync with this file.
+
+# Dependencies and build output must never leak into an image layer
+node_modules/
+.next/
+.next-*/
+out/
+dist/
+build/
+*.tsbuildinfo
+
+# Test and QA artifacts
+coverage/
+test-results/
+playwright-report/
+blob-report/
+.playwright-artifacts/
+.lighthouseci/
+.playwright/
+
+# Local configuration and secrets (never ship these)
+.env
+.env.local
+.env.*.local
+
+# Tooling caches and logs
+.turbo/
+.cache/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+
+# Keep: src/, public/, messages/, tokens/, next.config.ts, tsconfig.json,
+# next-env.d.ts, postcss.config.mjs, tailwind.config.ts, package.json

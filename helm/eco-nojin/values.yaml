@@ -141,8 +141,12 @@ frontend:
         hosts:
           - app.eco-nojin.org
           - eco-nojin.org
+  sessionSecret:
+    existingSecret: frontend-secrets
+    existingSecretKey: SESSION_SECRET
+    existingSecretRedisUrlKey: REDIS_URL
   config:
-    NEXT_PUBLIC_API_URL: https://api.eco-nojin.org
+    API_PROXY_TARGET: ""
     NEXT_PUBLIC_APP_URL: https://app.eco-nojin.org
     NEXT_PUBLIC_WS_URL: wss://api.eco-nojin.org
     NODE_ENV: production

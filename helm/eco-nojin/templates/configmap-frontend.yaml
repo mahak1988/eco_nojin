@@ -7,6 +7,9 @@ metadata:
     {{- include "eco-nojin.labels" . | nindent 4 }}
     app: frontend
 data:
+  API_PROXY_TARGET: {{ default (printf "http://%s-api-gateway" (include "eco-nojin.fullname" .)) .Values.frontend.config.API_PROXY_TARGET | quote }}
   {{- range $key, $value := .Values.frontend.config }}
+  {{- if ne $key "API_PROXY_TARGET" }}
   {{ $key }}: {{ $value | quote }}
+  {{- end }}
   {{- end }}

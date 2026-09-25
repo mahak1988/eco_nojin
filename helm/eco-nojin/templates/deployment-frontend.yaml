@@ -30,7 +30,7 @@ spec:
         version: {{ .Chart.AppVersion }}
       annotations:
         prometheus.io/scrape: "true"
-        prometheus.io/port: "3000"
+        prometheus.io/port: {{ .Values.frontend.service.port | quote }}
         prometheus.io/path: "/metrics"
         checksum/config: {{ include (print $.Template.BasePath "/configmap-frontend.yaml") . | sha256sum }}
     spec:
@@ -70,15 +70,26 @@ spec:
           imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 3000
+              containerPort: {{ .Values.frontend.service.port }}
               protocol: TCP
           resources:
             {{- toYaml .Values.frontend.resources | nindent 12 }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "eco-nojin.fullname" . }}-frontend-config
           env:
-            {{- range $key, $value := .Values.frontend.config }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
+            - name: SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "frontend.sessionSecret.existingSecret is required" .Values.frontend.sessionSecret.existingSecret | quote }}
+                  key: {{ required "frontend.sessionSecret.existingSecretKey is required" .Values.frontend.sessionSecret.existingSecretKey | quote }}
+                  optional: false
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "frontend.sessionSecret.existingSecret is required" .Values.frontend.sessionSecret.existingSecret | quote }}
+                  key: {{ required "frontend.sessionSecret.existingSecretRedisUrlKey is required" .Values.frontend.sessionSecret.existingSecretRedisUrlKey | quote }}
+                  optional: false
           livenessProbe:
             httpGet:
               path: /health

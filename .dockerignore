@@ -30,6 +30,13 @@ venv/
 .satellite_cache/
 .cache/
 .pytest_cache/
+**/node_modules/
+**/.next/
+**/.next-*/
+**/coverage/
+**/test-results/
+**/playwright-report/
+**/*.tsbuildinfo
 
 # Logs
 *.log

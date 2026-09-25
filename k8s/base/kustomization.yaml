@@ -10,6 +10,9 @@ resources:
   - secrets.yaml
   - api-gateway-deployment.yaml
   - api-gateway-service-hpa.yaml
+  - frontend-deployment.yaml
+  - frontend-service.yaml
+  - frontend-hpa.yaml
   - pdb.yaml
   - network-policies.yaml
   - ingress.yaml
@@ -36,6 +39,8 @@ secretGenerator:
 
 images:
   - name: ghcr.io/eco-nojin/api-gateway
+    newTag: latest
+  - name: ghcr.io/eco-nojin/frontend
     newTag: latest
 
 patchesStrategicMerge: []
