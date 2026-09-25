@@ -52,4 +52,18 @@ describe('Phase 1 public pages — T02 five-part content contract', () => {
     expect(fa.learn.emptyTitle).toBeTruthy();
     expect(en.learn.emptyDesc).toBeTruthy();
   });
+
+  it('public vertical namespaces and channel states are available', () => {
+    for (const catalogue of [fa, en]) {
+      const publicNamespace = catalogue.public as Record<string, Record<string, unknown>>;
+      const scienceNamespace = publicNamespace.science as Record<string, unknown>;
+      expect(publicNamespace.why.title).toBeTruthy();
+      expect(publicNamespace.cta.cta1_action).toBeTruthy();
+      expect(scienceNamespace.evidenceBase).toBeTruthy();
+      expect(publicNamespace.channels.channels).toBeTruthy();
+      expect(publicNamespace.visit.visitSteps).toBeTruthy();
+      expect(catalogue.common.live).toBeTruthy();
+      expect(catalogue.common.planned).toBeTruthy();
+    }
+  });
 });

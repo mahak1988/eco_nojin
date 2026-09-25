@@ -1,9 +1,9 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
-import { Card } from '@/components/ui/Card';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 
 const AGENTS = [
   {
@@ -31,7 +31,6 @@ const AGENTS = [
 
 export default function AgentsPage() {
   const t = useTranslations('ai.agents');
-  const common = useTranslations('common');
   const pathname = usePathname();
   const router = useRouter();
   const locale = pathname.split('/')[1];
@@ -50,19 +49,26 @@ export default function AgentsPage() {
           {AGENTS.map((agent) => (
             <Card key={agent.id} density="cozy" className="flex flex-col h-full">
               <div className="flex items-center gap-3 mb-4">
-                <span className="text-3xl" aria-hidden="true">{agent.icon}</span>
+                <span className="text-3xl" aria-hidden="true">
+                  {agent.icon}
+                </span>
                 <h2 className="text-xl font-semibold text-ink">{t(agent.titleKey)}</h2>
               </div>
               <p className="text-ink-soft mb-4">{t(agent.descriptionKey)}</p>
               <ul className="mb-6 flex-1 space-y-2 text-sm text-ink">
-                {t.raw(agent.capabilitiesKey)?.map((cap: string, idx: number) => (
-                  <li key={idx} className="flex gap-2">
+                {t.raw(agent.capabilitiesKey)?.map((cap: string) => (
+                  <li key={cap} className="flex gap-2">
                     <span className="text-forest">✓</span>
                     <span>{cap}</span>
                   </li>
                 ))}
               </ul>
-              <Button variant="primary" className="w-full" onClick={() => navigate(`/${locale}/ai/assistant`)}>
+              <Button
+                type="button"
+                variant="primary"
+                className="w-full"
+                onClick={() => navigate(`/${locale}/ai/assistant`)}
+              >
                 {t('tryAgent', { agent: t(agent.titleKey) })}
               </Button>
             </Card>
@@ -70,11 +76,18 @@ export default function AgentsPage() {
         </div>
 
         <section className="mt-12" aria-labelledby="cta-heading">
-          <h2 id="cta-heading" className="sr-only">{t('ctaTitle')}</h2>
+          <h2 id="cta-heading" className="sr-only">
+            {t('ctaTitle')}
+          </h2>
           <Card density="cozy" className="text-center">
             <h3 className="text-lg font-medium text-ink mb-2">{t('ctaTitle')}</h3>
             <p className="text-ink-soft mb-4">{t('ctaDescription')}</p>
-            <Button variant="primary" size="lg" onClick={() => navigate(`/${locale}/ai/assistant`)}>
+            <Button
+              type="button"
+              variant="primary"
+              size="lg"
+              onClick={() => navigate(`/${locale}/ai/assistant`)}
+            >
               {t('ctaButton')}
             </Button>
           </Card>

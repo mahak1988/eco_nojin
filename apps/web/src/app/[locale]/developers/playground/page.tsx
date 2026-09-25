@@ -1,21 +1,17 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
 import { useTranslations } from 'next-intl';
-import { usePathname } from 'next/navigation';
-import { Card } from '@/components/ui/Card';
+import { FormEvent, useState } from 'react';
 import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 import { Toast } from '@/components/ui/Toast';
 
 export default function PlaygroundPage() {
   const t = useTranslations('developers.playground');
-  const common = useTranslations('common');
-  const pathname = usePathname();
-  const locale = pathname.split('/')[1];
 
   const [method, setMethod] = useState('GET');
   const [endpoint, setEndpoint] = useState('/api/v1/platform/stats');
-  const [headers, setHeaders] = useState('Content-Type: application/json\nAuthorization: Bearer YOUR_TOKEN');
+  const [headers, setHeaders] = useState('Content-Type: application/json');
   const [body, setBody] = useState('');
   const [response, setResponse] = useState<{ status: number; data: unknown } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,16 +25,20 @@ export default function PlaygroundPage() {
 
     try {
       const headerObj: Record<string, string> = {};
-      headers.split('\n').forEach(line => {
+      const allowedHeaders = new Set(['content-type', 'x-request-id', 'idempotency-key', 'accept']);
+      headers.split('\n').forEach((line) => {
         const [key, ...valueParts] = line.split(':');
-        if (key && valueParts.length) {
+        if (key && valueParts.length && allowedHeaders.has(key.trim().toLowerCase())) {
           headerObj[key.trim()] = valueParts.join(':').trim();
         }
       });
+      if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) headerObj['X-CSRF-Intent'] = '1';
 
-      const res = await fetch(`https://api.econojin.example.org${endpoint}`, {
+      const target = endpoint.startsWith('/api/') ? endpoint : `/api/${endpoint}`;
+      const res = await fetch(target, {
         method,
         headers: headerObj,
+        credentials: 'same-origin',
         body: method !== 'GET' && method !== 'HEAD' ? body : undefined,
       });
 
@@ -61,13 +61,23 @@ export default function PlaygroundPage() {
         </header>
 
         {submitStatus === 'success' && (
-          <Toast variant="success" title={t('successTitle')} className="mb-6" onClose={() => setSubmitStatus('idle')}>
+          <Toast
+            variant="success"
+            title={t('successTitle')}
+            className="mb-6"
+            onClose={() => setSubmitStatus('idle')}
+          >
             {t('successMessage')}
           </Toast>
         )}
 
         {submitStatus === 'error' && (
-          <Toast variant="error" title={t('errorTitle')} className="mb-6" onClose={() => setSubmitStatus('idle')}>
+          <Toast
+            variant="error"
+            title={t('errorTitle')}
+            className="mb-6"
+            onClose={() => setSubmitStatus('idle')}
+          >
             {t('errorMessage')}
           </Toast>
         )}
@@ -79,17 +89,19 @@ export default function PlaygroundPage() {
               <div className="flex gap-3">
                 <select
                   value={method}
-                  onChange={e => setMethod(e.target.value)}
+                  onChange={(e) => setMethod(e.target.value)}
                   className="px-3 py-2 rounded-md border border-line bg-background text-ink focus:outline-none focus:ring-2 focus:ring-forest"
                 >
-                  {['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].map(m => (
-                    <option key={m} value={m}>{m}</option>
+                  {['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
                   ))}
                 </select>
                 <input
                   type="text"
                   value={endpoint}
-                  onChange={e => setEndpoint(e.target.value)}
+                  onChange={(e) => setEndpoint(e.target.value)}
                   placeholder="/api/v1/..."
                   className="flex-1 px-4 py-2 rounded-md border border-line bg-background text-ink focus:outline-none focus:ring-2 focus:ring-forest font-mono text-sm"
                   required
@@ -97,22 +109,34 @@ export default function PlaygroundPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ink mb-1">{t('headers')}</label>
+                <label
+                  htmlFor="api-playground-headers"
+                  className="block text-sm font-medium text-ink mb-1"
+                >
+                  {t('headers')}
+                </label>
                 <textarea
+                  id="api-playground-headers"
                   value={headers}
-                  onChange={e => setHeaders(e.target.value)}
+                  onChange={(e) => setHeaders(e.target.value)}
                   rows={4}
                   className="w-full px-4 py-2 rounded-md border border-line bg-background text-ink focus:outline-none focus:ring-2 focus:ring-forest font-mono text-sm resize-y"
-                  placeholder="Content-Type: application/json&#10;Authorization: Bearer YOUR_TOKEN"
+                  placeholder="Content-Type: application/json&#10;X-Request-ID: optional"
                 />
               </div>
 
               {method !== 'GET' && method !== 'HEAD' && (
                 <div>
-                  <label className="block text-sm font-medium text-ink mb-1">{t('body')}</label>
+                  <label
+                    htmlFor="api-playground-body"
+                    className="block text-sm font-medium text-ink mb-1"
+                  >
+                    {t('body')}
+                  </label>
                   <textarea
+                    id="api-playground-body"
                     value={body}
-                    onChange={e => setBody(e.target.value)}
+                    onChange={(e) => setBody(e.target.value)}
                     rows={6}
                     className="w-full px-4 py-2 rounded-md border border-line bg-background text-ink focus:outline-none focus:ring-2 focus:ring-forest font-mono text-sm resize-y"
                     placeholder='{ "key": "value" }'
@@ -130,11 +154,13 @@ export default function PlaygroundPage() {
             <h2 className="font-medium text-ink mb-4">{t('response')}</h2>
             {response ? (
               <div className="space-y-3">
-                <div className={`px-3 py-2 rounded-md font-mono text-sm ${
-                  response.status >= 200 && response.status < 300
-                    ? 'bg-forest/10 text-forest'
-                    : 'bg-copper/10 text-copper'
-                }`}>
+                <div
+                  className={`px-3 py-2 rounded-md font-mono text-sm ${
+                    response.status >= 200 && response.status < 300
+                      ? 'bg-forest/10 text-forest'
+                      : 'bg-copper/10 text-copper'
+                  }`}
+                >
                   Status: {response.status}
                 </div>
                 <pre className="bg-surface-2 border border-line rounded-md p-4 text-xs font-mono overflow-auto max-h-96 text-ink">
@@ -151,8 +177,8 @@ export default function PlaygroundPage() {
           <Card density="cozy" className="border-clay/40 bg-clay/5">
             <h3 className="font-medium text-ink mb-2">{t('limitsTitle')}</h3>
             <ul className="space-y-1 text-sm text-ink-soft">
-              {t.raw('limits')?.map((item: string, idx: number) => (
-                <li key={idx} className="flex gap-2">
+              {t.raw('limits')?.map((item: string) => (
+                <li key={item} className="flex gap-2">
                   <span className="text-copper">•</span>
                   <span>{item}</span>
                 </li>
@@ -162,8 +188,8 @@ export default function PlaygroundPage() {
           <Card density="cozy" className="border-forest/40 bg-forest/5">
             <h3 className="font-medium text-ink mb-2">{t('nextTitle')}</h3>
             <ul className="space-y-1 text-sm text-ink-soft">
-              {t.raw('next')?.map((item: string, idx: number) => (
-                <li key={idx} className="flex gap-2">
+              {t.raw('next')?.map((item: string) => (
+                <li key={item} className="flex gap-2">
                   <span className="text-forest">•</span>
                   <span>{item}</span>
                 </li>

@@ -1,12 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { StatusDot } from '@/components/StatusDot';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { createOrder, getCart } from '@/lib/api/cart';
+import { createPayment } from '@/lib/api/escrow';
 
 type CheckoutStep = 'cart' | 'escrow' | 'confirmation';
 
@@ -20,33 +23,6 @@ interface CartItem {
   inStock: boolean;
 }
 
-interface EscrowSignature {
-  party: string;
-  signed: boolean;
-  timestamp?: string;
-}
-
-const MOCK_CART: CartItem[] = [
-  {
-    id: 'cart-1',
-    product: 'Organic Pistachio Kernels',
-    producer: 'Kerman Cooperative',
-    variant: '1 kg',
-    price: 245000,
-    quantity: 2,
-    inStock: true,
-  },
-  {
-    id: 'cart-2',
-    product: 'Saffron Threads',
-    producer: 'Khorasan Organic Farm',
-    variant: '5 g',
-    price: 8900000,
-    quantity: 1,
-    inStock: true,
-  },
-];
-
 const platformFeeRate = 0.05;
 const escrowFeeRate = 0.02;
 
@@ -56,13 +32,49 @@ export default function CheckoutPage() {
   const pathname = usePathname();
   const router = useRouter();
   const locale = pathname.split('/')[1] || 'fa';
+  const { user, loading: authLoading } = useAuth();
 
   const [step, setStep] = useState<CheckoutStep>('cart');
   const [contractAccepted, setContractAccepted] = useState(false);
   const [walletSelected, setWalletSelected] = useState<'ecowallet' | 'card'>('ecowallet');
   const [transactionKey, setTransactionKey] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [dataState, setDataState] = useState<
+    'loading' | 'ready' | 'empty' | 'unauthenticated' | 'error'
+  >('loading');
 
-  const items = MOCK_CART;
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) {
+      setDataState('unauthenticated');
+      return;
+    }
+    void getCart()
+      .then((result) => {
+        if (!result.ok) {
+          setDataState('error');
+          setError(result.error);
+          return;
+        }
+        const nextItems = result.data.items.map((item) => ({
+          id: item.product_id,
+          product: item.product_name ?? item.product_id,
+          producer: item.producer_name ?? '',
+          variant: item.unit ?? 'kg',
+          price: item.price ?? 0,
+          quantity: item.quantity,
+          inStock: item.in_stock ?? true,
+        }));
+        setItems(nextItems);
+        setDataState(nextItems.length > 0 ? 'ready' : 'empty');
+      })
+      .catch((caught) => {
+        setDataState('error');
+        setError(caught instanceof Error ? caught.message : t('apiUnavailable'));
+      });
+  }, [authLoading, user, t]);
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const platformFee = Math.round(subtotal * platformFeeRate);
   const escrowFee = Math.round(subtotal * escrowFeeRate);
@@ -72,23 +84,65 @@ export default function CheckoutPage() {
     return new Intl.NumberFormat(locale === 'fa' ? 'fa-IR' : 'en-US').format(price);
   };
 
-  const generateTransactionKey = () => {
-    return 'TXN-' + Math.random().toString(36).substring(2, 10).toUpperCase() + '-' + Date.now().toString(36);
-  };
-
   const handleEscrowStep = () => {
-    setTransactionKey(generateTransactionKey());
+    if (!user || items.length === 0) {
+      setError(t('apiUnavailable'));
+      return;
+    }
+    setError('');
     setStep('escrow');
   };
 
-  const handleConfirm = () => {
-    const signatures: EscrowSignature[] = [
-      { party: 'Buyer', signed: true, timestamp: new Date().toISOString() },
-      { party: 'Seller', signed: true, timestamp: new Date().toISOString() },
-      { party: 'Arbitrator', signed: false },
-      { party: 'Platform', signed: false },
-    ];
-    setStep('confirmation');
+  const handleConfirm = async () => {
+    if (!user || items.length === 0) {
+      setError(t('apiUnavailable'));
+      return;
+    }
+    setIsSubmitting(true);
+    setError('');
+    try {
+      const orders = await Promise.all(
+        items.map((item) =>
+          createOrder({
+            productId: item.id,
+            buyerName: user.full_name ?? user.email,
+            quantityKg: item.quantity,
+          }),
+        ),
+      );
+      const failedOrder = orders.find((result) => !result.ok);
+      if (failedOrder && !failedOrder.ok) {
+        setError(failedOrder.error);
+        return;
+      }
+
+      const payments = await Promise.all(
+        orders.map((result, index) => {
+          if (!result.ok) return Promise.resolve(result);
+          return createPayment({
+            orderId: result.data.order_id,
+            amount: items[index].price * items[index].quantity,
+            paymentMethod: walletSelected,
+            description: 'Marketplace checkout',
+          });
+        }),
+      );
+      const failedPayment = payments.find((result) => !result.ok);
+      if (failedPayment && !failedPayment.ok) {
+        setError(failedPayment.error);
+        return;
+      }
+
+      const firstPayment = payments.find((result) => result.ok);
+      if (!firstPayment?.ok) {
+        setError(t('apiUnavailable'));
+        return;
+      }
+      setTransactionKey(firstPayment.data.id ?? firstPayment.data.payment_id ?? '');
+      setStep('confirmation');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleBack = () => {
@@ -110,7 +164,7 @@ export default function CheckoutPage() {
       <div className="flex justify-between mb-8">
         {steps.map((s, idx) => {
           const isActive = step === s.key;
-          const isComplete = steps.findIndex(st => st.key === step) > idx;
+          const isComplete = steps.findIndex((st) => st.key === step) > idx;
           return (
             <div key={s.key} className="flex items-center">
               <div
@@ -129,9 +183,7 @@ export default function CheckoutPage() {
               >
                 {s.label}
               </span>
-              {idx < steps.length - 1 && (
-                <div className="mx-2 h-px w-8 bg-line" />
-              )}
+              {idx < steps.length - 1 && <div className="mx-2 h-px w-8 bg-line" />}
             </div>
           );
         })}
@@ -143,12 +195,20 @@ export default function CheckoutPage() {
     <main id="main" className="min-h-dvh">
       <div className="mx-auto max-w-3xl px-6 pb-12 pt-6">
         <StepIndicator />
+        {step !== 'cart' && (
+          <Button variant="ghost" size="sm" className="mb-6" onClick={handleBack}>
+            {common('back')}
+          </Button>
+        )}
 
         {step === 'cart' && (
           <Card density="compact">
             <h2 className="font-medium text-ink mb-4">{t('cartReview')}</h2>
+            <p className="mb-4 text-sm text-ink-soft">
+              {dataState === 'ready' ? t('cartReview') : t('apiUnavailable')}
+            </p>
             <div className="space-y-3 mb-6">
-              {items.map(item => (
+              {items.map((item) => (
                 <div key={item.id} className="flex justify-between">
                   <span className="text-ink-soft">
                     {item.product} × {item.quantity} ({item.variant})
@@ -172,12 +232,15 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between pt-2 border-t border-line">
                 <span className="font-bold text-ink">{common('total')}</span>
-                <span className="font-bold text-forest text-xl">
-                  {formatPrice(total)} ریال
-                </span>
+                <span className="font-bold text-forest text-xl">{formatPrice(total)} ریال</span>
               </div>
             </div>
-            <Button variant="primary" className="w-full mt-6" onClick={handleEscrowStep}>
+            <Button
+              variant="primary"
+              className="w-full mt-6"
+              disabled={dataState !== 'ready'}
+              onClick={handleEscrowStep}
+            >
               {common('proceedToCheckout')}
             </Button>
           </Card>
@@ -186,6 +249,11 @@ export default function CheckoutPage() {
         {step === 'escrow' && (
           <Card density="compact">
             <h2 className="font-medium text-ink mb-4">{t('escrowSetup')}</h2>
+            {error && (
+              <p role="alert" className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-800">
+                {error}
+              </p>
+            )}
 
             <div className="mb-6">
               <label className="flex items-center gap-3 cursor-pointer">
@@ -219,9 +287,7 @@ export default function CheckoutPage() {
                   className="mt-1 h-4 w-4 text-forest"
                   required
                 />
-                <span className="text-sm text-ink-soft">
-                  {t('contractAcceptance')}
-                </span>
+                <span className="text-sm text-ink-soft">{t('contractAcceptance')}</span>
               </label>
             </div>
 
@@ -236,12 +302,14 @@ export default function CheckoutPage() {
               <Button
                 variant="primary"
                 className="w-full"
-                disabled={!contractAccepted || walletSelected !== 'ecowallet'}
+                disabled={isSubmitting || !contractAccepted || walletSelected !== 'ecowallet'}
                 onClick={handleConfirm}
               >
-                {contractAccepted && walletSelected === 'ecowallet'
-                  ? t('confirmAndLock')
-                  : t('acceptContractFirst')}
+                {isSubmitting
+                  ? t('processing')
+                  : contractAccepted && walletSelected === 'ecowallet'
+                    ? t('confirmAndLock')
+                    : t('acceptContractFirst')}
               </Button>
             </div>
           </Card>
@@ -268,7 +336,13 @@ export default function CheckoutPage() {
                     <span className="text-ink">{party}</span>
                     <StatusDot
                       state={idx < 2 ? 'ok' : idx === 2 ? 'warn' : 'down'}
-                      label={idx < 2 ? common('signed') : idx === 2 ? common('pending') : common('pending')}
+                      label={
+                        idx < 2
+                          ? common('signed')
+                          : idx === 2
+                            ? common('pending')
+                            : common('pending')
+                      }
                     />
                   </div>
                 ))}
@@ -287,9 +361,8 @@ export default function CheckoutPage() {
 
         <div className="mt-8">
           <ProvenanceStamp
-            source="Checkout Flow"
-            verified={true}
-            method="PQ signed"
+            source="/api/v1/marketplace/orders"
+            verified={false}
             label={t('checkoutProvenance')}
           />
         </div>

@@ -1,148 +1,201 @@
 import {
+  type AdvancedSearchRequest,
   type Category,
   type CategoryTree,
   type ProductListing,
   type ProductListResponse,
   type SearchFilters,
-  type SearchSuggestionsResponse,
   type SearchHistoryResponse,
+  type SearchSuggestionsResponse,
   type VisualSearchResponse,
-  type AdvancedSearchRequest,
 } from '@/types/market';
-import { apiGet, apiPost } from './client';
+import { apiGet } from './client';
 
-const CATEGORIES_BASE = '/api/v1/market/categories';
-const SEARCH_BASE = '/api/v1/market/search';
+const PRODUCTS_BASE = '/api/v1/marketplace/products';
+const SEARCH_BASE = '/api/v1/marketplace/products/search';
 
-export async function getCategoryTree(): Promise<{ ok: true; data: CategoryTree } | { ok: false; error: string }> {
-  return apiGet<CategoryTree>(`${CATEGORIES_BASE}/tree`);
+type BackendProduct = {
+  id: string;
+  name: string;
+  slug?: string;
+  category: string;
+  description?: string;
+  price_per_kg: number;
+  quantity_available_kg: number;
+  organic_certified: boolean;
+  producer_name?: string;
+  origin_location?: string;
+  traceability_code?: string;
+  images?: string[];
+  carbon_footprint_kg_co2?: number;
+  water_footprint_liters?: number;
+};
+
+type BackendProductsResponse = { products: BackendProduct[]; count?: number };
+type BackendSearchResponse = {
+  query: string;
+  results: Array<Pick<BackendProduct, 'id' | 'name' | 'price_per_kg'>>;
+  count: number;
+};
+
+type Result<T> = { ok: true; data: T } | { ok: false; error: string };
+
+function unavailable<T>(): Promise<Result<T>> {
+  return Promise.resolve({ ok: false, error: 'This marketplace capability is unavailable' });
 }
 
-export async function getCategoryBySlug(slug: string): Promise<{ ok: true; data: Category } | { ok: false; error: string }> {
-  return apiGet<Category>(`${CATEGORIES_BASE}/${slug}`);
+function mapProduct(product: BackendProduct): ProductListing {
+  return {
+    id: product.id,
+    slug: product.slug ?? product.id,
+    name: { en: product.name },
+    description: product.description ? { en: product.description } : undefined,
+    images: product.images ?? [],
+    price: product.price_per_kg,
+    unit: 'kg',
+    organic: product.organic_certified,
+    producer: {
+      name: product.producer_name ?? '',
+    },
+    category: {
+      id: product.category,
+      slug: product.category,
+      name: { en: product.category },
+    },
+    origin: product.origin_location,
+    carbonFootprint: product.carbon_footprint_kg_co2,
+    waterFootprint: product.water_footprint_liters,
+    inStock: product.quantity_available_kg > 0,
+    stockQuantity: product.quantity_available_kg,
+    traceabilityCode: product.traceability_code,
+  };
 }
 
-export async function getCategoryChildren(parentSlug: string): Promise<{ ok: true; data: Category[] } | { ok: false; error: string }> {
-  return apiGet<Category[]>(`${CATEGORIES_BASE}/${parentSlug}/children`);
+function mapProducts(products: BackendProduct[]): ProductListResponse {
+  return {
+    products: products.map(mapProduct),
+    total: products.length,
+    page: 1,
+    pageSize: products.length,
+    totalPages: 1,
+  };
+}
+
+function productQuery(filters?: SearchFilters): string {
+  const params = new URLSearchParams();
+  if (filters?.category) params.set('category', filters.category);
+  if (filters?.organic !== undefined) params.set('organic_only', String(filters.organic));
+  if (filters?.priceMin !== undefined) params.set('min_price', String(filters.priceMin));
+  if (filters?.priceMax !== undefined) params.set('max_price', String(filters.priceMax));
+  params.set('limit', String(filters?.pageSize ?? 50));
+  return params.toString();
+}
+
+export function getCategoryTree(): Promise<Result<CategoryTree>> {
+  return unavailable();
+}
+
+export function getCategoryBySlug(_slug: string): Promise<Result<Category>> {
+  return unavailable();
+}
+
+export function getCategoryChildren(_parentSlug: string): Promise<Result<Category[]>> {
+  return unavailable();
 }
 
 export async function getProductsByCategory(
   categorySlug: string,
-  filters?: SearchFilters
-): Promise<{ ok: true; data: ProductListResponse } | { ok: false; error: string }> {
-  const params = new URLSearchParams();
-  if (filters) {
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '') {
-        if (Array.isArray(value)) {
-          value.forEach(v => params.append(key, String(v)));
-        } else {
-          params.set(key, String(value));
-        }
-      }
-    });
+  filters?: SearchFilters,
+): Promise<Result<ProductListResponse>> {
+  const result = await apiGet<BackendProductsResponse>(
+    `${PRODUCTS_BASE}?${productQuery({ ...filters, category: categorySlug })}`,
+  );
+  if (!result.ok) return result;
+  return { ok: true, data: mapProducts(result.data.products) };
+}
+
+export async function searchProducts(filters: SearchFilters): Promise<Result<ProductListResponse>> {
+  if (filters.query) {
+    const params = new URLSearchParams({ q: filters.query });
+    const result = await apiGet<BackendSearchResponse>(`${SEARCH_BASE}?${params.toString()}`);
+    if (!result.ok) return result;
+    return {
+      ok: true,
+      data: mapProducts(
+        result.data.results.map((item) => ({
+          ...item,
+          category: '',
+          quantity_available_kg: 0,
+          organic_certified: false,
+        })),
+      ),
+    };
   }
-  const queryString = params.toString();
-  return apiGet<ProductListResponse>(`${CATEGORIES_BASE}/${categorySlug}/products${queryString ? `?${queryString}` : ''}`);
+  const result = await apiGet<BackendProductsResponse>(`${PRODUCTS_BASE}?${productQuery(filters)}`);
+  if (!result.ok) return result;
+  return { ok: true, data: mapProducts(result.data.products) };
 }
 
-export async function searchProducts(
-  filters: SearchFilters
-): Promise<{ ok: true; data: ProductListResponse } | { ok: false; error: string }> {
-  const params = new URLSearchParams();
-  Object.entries(filters).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== '') {
-      if (Array.isArray(value)) {
-        value.forEach(v => params.append(key, String(v)));
-      } else {
-        params.set(key, String(value));
-      }
-    }
-  });
-  return apiGet<ProductListResponse>(`${SEARCH_BASE}?${params.toString()}`);
+export function getSearchSuggestions(
+  _query: string,
+  _limit?: number,
+): Promise<Result<SearchSuggestionsResponse>> {
+  return unavailable();
 }
 
-export async function getSearchSuggestions(
-  query: string,
-  limit?: number
-): Promise<{ ok: true; data: SearchSuggestionsResponse } | { ok: false; error: string }> {
-  const params = new URLSearchParams({ q: query });
-  if (limit) params.set('limit', String(limit));
-  return apiGet<SearchSuggestionsResponse>(`${SEARCH_BASE}/suggestions?${params.toString()}`);
+export function getSearchAutocomplete(_query: string, _limit?: number): Promise<Result<string[]>> {
+  return unavailable();
 }
 
-export async function getSearchAutocomplete(
-  query: string,
-  limit?: number
-): Promise<{ ok: true; data: string[] } | { ok: false; error: string }> {
-  const params = new URLSearchParams({ q: query });
-  if (limit) params.set('limit', String(limit));
-  return apiGet<string[]>(`${SEARCH_BASE}/autocomplete?${params.toString()}`);
+export function getSearchHistory(): Promise<Result<SearchHistoryResponse>> {
+  return unavailable();
 }
 
-export async function getSearchHistory(): Promise<{ ok: true; data: SearchHistoryResponse } | { ok: false; error: string }> {
-  return apiGet<SearchHistoryResponse>(`${SEARCH_BASE}/history`);
+export function visualSearch(_request: {
+  image: string;
+  filters?: SearchFilters;
+}): Promise<Result<VisualSearchResponse>> {
+  return unavailable();
 }
 
-export async function visualSearch(
-  request: { image: string; filters?: SearchFilters }
-): Promise<{ ok: true; data: VisualSearchResponse } | { ok: false; error: string }> {
-  return apiPost<VisualSearchResponse>(`${SEARCH_BASE}/visual`, request);
+export function semanticSearch(_request: {
+  query: string;
+  filters?: SearchFilters;
+  useEmbeddings?: boolean;
+}): Promise<Result<ProductListResponse>> {
+  return unavailable();
 }
 
-export async function semanticSearch(
-  request: { query: string; filters?: SearchFilters; useEmbeddings?: boolean }
-): Promise<{ ok: true; data: ProductListResponse } | { ok: false; error: string }> {
-  return apiPost<ProductListResponse>(`${SEARCH_BASE}/semantic`, request);
+export function advancedSearch(
+  _request: AdvancedSearchRequest,
+): Promise<Result<ProductListResponse>> {
+  return unavailable();
 }
 
-export async function advancedSearch(
-  request: AdvancedSearchRequest
-): Promise<{ ok: true; data: ProductListResponse } | { ok: false; error: string }> {
-  return apiPost<ProductListResponse>(`${SEARCH_BASE}/advanced`, request);
+export function searchByBarcode(_barcode: string): Promise<Result<ProductListing | null>> {
+  return unavailable();
 }
 
-export async function searchByBarcode(
-  barcode: string
-): Promise<{ ok: true; data: ProductListing | null } | { ok: false; error: string }> {
-  return apiGet<ProductListing | null>(`${SEARCH_BASE}/barcode/${encodeURIComponent(barcode)}`);
+export async function getProduct(productId: string): Promise<Result<ProductListing | null>> {
+  const result = await apiGet<BackendProduct>(`${PRODUCTS_BASE}/${encodeURIComponent(productId)}`);
+  if (!result.ok) return result;
+  return { ok: true, data: mapProduct(result.data) };
 }
 
-export async function searchByNfc(
-  nfcTag: string
-): Promise<{ ok: true; data: ProductListing | null } | { ok: false; error: string }> {
-  return apiGet<ProductListing | null>(`${SEARCH_BASE}/nfc/${encodeURIComponent(nfcTag)}`);
+export async function getProductTrace(productId: string): Promise<Result<unknown>> {
+  return apiGet<unknown>(`${PRODUCTS_BASE}/${encodeURIComponent(productId)}/trace`);
 }
 
-export async function voiceSearch(
-  audioBlob: Blob,
-  filters?: SearchFilters
-): Promise<{ ok: true; data: ProductListResponse; status: number } | { ok: false; error: string; status: number }> {
-  const formData = new FormData();
-  formData.append('audio', audioBlob);
-  if (filters) {
-    formData.append('filters', JSON.stringify(filters));
-  }
-  const API_BASE = process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:8000';
-  try {
-    const res = await fetch(`${API_BASE}${SEARCH_BASE}/voice`, {
-      method: 'POST',
-      cache: 'no-store',
-      body: formData,
-    });
-    const text = await res.text();
-    let parsed: unknown;
-    try {
-      parsed = text ? JSON.parse(text) : undefined;
-    } catch {
-      parsed = text;
-    }
-    if (!res.ok) {
-      const detail = typeof parsed === 'string' ? parsed.slice(0, 300) : ((parsed as Record<string, unknown> | undefined)?.detail as string) ?? res.statusText;
-      return { ok: false, error: String(detail ?? 'request failed'), status: res.status };
-    }
-    return { ok: true, data: parsed as ProductListResponse, status: res.status };
-  } catch (err) {
-    return { ok: false, error: err instanceof Error ? err.message : String(err), status: 0 };
-  }
+export function searchByNfc(_nfcTag: string): Promise<Result<ProductListing | null>> {
+  return unavailable();
+}
+
+export function voiceSearch(
+  _audioBlob: Blob,
+  _filters?: SearchFilters,
+): Promise<
+  | { ok: true; data: ProductListResponse; status: number }
+  | { ok: false; error: string; status: number }
+> {
+  return Promise.resolve({ ok: false, error: 'Voice search is unavailable', status: 501 });
 }

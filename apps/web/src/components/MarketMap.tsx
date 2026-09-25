@@ -33,45 +33,64 @@ export function MarketMap({
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [mapReady, setMapReady] = useState(false);
   const [selectedBazaar, setSelectedBazaar] = useState<BazaarType | null>(null);
+  const centerLat = center?.lat;
+  const centerLon = center?.lon;
 
   useEffect(() => {
-    // Scaffold: dynamic import of maplibre-g will be wired in Phase 3
-    // Dynamic import avoids SSR issues
+    const container = mapContainerRef.current;
+    if (!container) return;
+
+    let cancelled = false;
+    let map: { remove: () => void } | null = null;
+    setMapReady(false);
+
     const loadMap = async () => {
       try {
         const maplibre = await import('maplibre-gl');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const map = new maplibre.Map({
-          container: mapContainerRef.current!,
-          style: 'https://demotiles.maplibre.org/style.json', // scaffold — real style in Phase 3
-          center: center ? [center.lon, center.lat] : [52.0, 35.0],
+        if (cancelled) return;
+
+        const instance = new maplibre.Map({
+          container,
+          style: 'https://demotiles.maplibre.org/style.json',
+          center:
+            centerLat !== undefined && centerLon !== undefined
+              ? [centerLon, centerLat]
+              : [52.0, 35.0],
           zoom,
         });
+        map = instance;
 
-        map.on('load', () => {
-          // Scaffold: polygons will be added via GeoJSON source in Phase 3
-          setMapReady(true);
+        instance.on('load', () => {
+          if (!cancelled) setMapReady(true);
         });
 
-        // Click handler for bazaar popups (scaffold)
-        map.on('click', (e: { point: { x: number; y: number } }) => {
-          const features = map.queryRenderedFeatures([e.point.x, e.point.y], { layers: ['bazaars'] });
-          if (features.length > 0) {
-            const bazaarId = features[0].properties?.id;
-            const bazaar = bazaars.find((b) => b.id === bazaarId);
-            if (bazaar) {
-              setSelectedBazaar(bazaar);
-              onBazaarClick?.(bazaar);
-            }
+        instance.on('click', (event) => {
+          const features = instance.queryRenderedFeatures([event.point.x, event.point.y], {
+            layers: ['bazaars'],
+          });
+          const rawBazaarId = features[0]?.properties?.id;
+          const bazaarId =
+            typeof rawBazaarId === 'string' || typeof rawBazaarId === 'number'
+              ? String(rawBazaarId)
+              : undefined;
+          const bazaar = bazaarId ? bazaars.find((item) => item.id === bazaarId) : undefined;
+          if (bazaar) {
+            setSelectedBazaar(bazaar);
+            onBazaarClick?.(bazaar);
           }
         });
       } catch {
-        // maplibre not installed — scaffold shows fallback
-        setMapReady(false);
+        if (!cancelled) setMapReady(false);
       }
     };
-    loadMap();
-  }, [center?.lat, center?.lon, zoom]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    void loadMap();
+
+    return () => {
+      cancelled = true;
+      map?.remove();
+    };
+  }, [bazaars, centerLat, centerLon, onBazaarClick, zoom]);
 
   const rtl = locale === 'fa' || locale === 'ar';
 

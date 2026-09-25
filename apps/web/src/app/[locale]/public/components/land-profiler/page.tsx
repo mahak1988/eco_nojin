@@ -1,99 +1,132 @@
 import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { FivePart } from '@/components/FivePart';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { StatusDot } from '@/components/StatusDot';
+import { apiGet } from '@/lib/api/client';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
-interface ProfilerFeature {
+const PROFILES_PATH = '/api/v1/land/profiles';
+
+type LandProfile = {
   id: string;
   name: string;
-  description: string;
-  status: 'live' | 'beta' | 'planned';
-  apiEndpoint: string;
-  source: string;
-}
+  location_lat: number | null;
+  location_lon: number | null;
+  area_ha: number | null;
+  created_at: string | null;
+};
 
-const MOCK_FEATURES: ProfilerFeature[] = [
-  { id: 'pf1', name: 'Polygon Editor', description: 'Draw/edit land boundaries on map', status: 'live', apiEndpoint: 'POST /api/land/polygons', source: 'land service' },
-  { id: 'pf2', name: 'Soil Profile', description: 'Depth-based soil properties from SoilGrids', status: 'live', apiEndpoint: 'GET /api/land/soil-profile', source: 'satellite service' },
-  { id: 'pf3', name: 'Climate Normals', description: '30-year climate averages (ERA5)', status: 'live', apiEndpoint: 'GET /api/land/climate', source: 'climate service' },
-  { id: 'pf4', name: 'Hydrology Indices', description: 'FAO-56 ET, runoff, infiltration', status: 'beta', apiEndpoint: 'POST /api/land/hydrology', source: 'hydrology service' },
-  { id: 'pf5', name: 'Carbon Potential', description: 'Sequestration scenarios (RothC)', status: 'planned', apiEndpoint: 'POST /api/land/carbon', source: 'carbon service' },
-];
+const TITLES: Record<string, string> = { fa: 'نمایشگاه پروفایلر زمین', en: 'Land Profiler Demo' };
+const DESCRIPTIONS: Record<string, string> = {
+  fa: 'تحلیل زمین و سناریوهای مدیریتی',
+  en: 'Land analysis and management scenarios',
+};
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
-  const titles: Record<string, string> = { fa: 'نمایشگاه پروفایلر زمین', en: 'Land Profiler Demo' };
-  const descriptions: Record<string, string> = { fa: 'تحلیل زمین و سناریوهای مدیریتی', en: 'Land analysis and management scenarios' };
   return {
-    title: titles[locale] ?? titles.en,
-    description: descriptions[locale] ?? descriptions.en,
-    openGraph: { type: 'website', locale, url: `${BASE_URL}/${locale}/public/components/land-profiler`, title: titles[locale] ?? titles.en },
-    alternates: { canonical: `${BASE_URL}/${locale}/public/components/land-profiler`, languages: { fa: `${BASE_URL}/fa/public/components/land-profiler`, en: `${BASE_URL}/en/public/components/land-profiler` } },
+    title: TITLES[locale] ?? TITLES.en,
+    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    openGraph: {
+      type: 'website',
+      locale,
+      url: `${BASE_URL}/${locale}/public/components/land-profiler`,
+      title: TITLES[locale] ?? TITLES.en,
+    },
+    alternates: {
+      canonical: `${BASE_URL}/${locale}/public/components/land-profiler`,
+      languages: {
+        fa: `${BASE_URL}/fa/public/components/land-profiler`,
+        en: `${BASE_URL}/en/public/components/land-profiler`,
+      },
+    },
   };
 }
 
-export default async function LandProfilerPage({ params }: { params: Promise<{ locale: string }> }) {
+const coordinate = (value: number | null) => (value === null ? '—' : String(value));
+
+export default async function LandProfilerPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('public.components.landProfiler');
-  const common = await getTranslations('common');
+  const t = await getTranslations('statusLine');
+  const template = await getTranslations('market.template');
+  const statusPage = await getTranslations('statusPage');
+  const title = TITLES[locale] ?? TITLES.en;
+  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+
+  const profiles = await apiGet<LandProfile[]>(PROFILES_PATH);
+  const rows = profiles.ok ? profiles.data : [];
 
   return (
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp source="Land Registry" label={t('provenanceLabel')} verified={true} method="Multi-source" timestamp="2024-12-10">
-          <h1 className="display text-4xl font-bold text-ink">{t('title')}</h1>
+        <ProvenanceStamp
+          source={PROFILES_PATH}
+          label={title}
+          verified={profiles.ok}
+          method={PROFILES_PATH}
+        >
+          <h1 className="display text-4xl font-bold text-ink">{title}</h1>
         </ProvenanceStamp>
-        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
-      </section>
-
-      <section className="mx-auto max-w-5xl px-6 pb-6">
-        <FivePart
-          title={t('whatTitle')}
-          lead={t('whatLead')}
-          what={t('whatDesc')}
-          audience={t('audience')}
-          evidence={['Polygon-based analysis', 'Multi-layer data fusion', 'Scenario comparison']}
-          limits={['Carbon scenarios WIP', 'Economic valuation missing', 'Offline mode limited']}
-          next={['Add economic module', 'Enable PDF reports', 'Offline WASM bundle']}
-          evidenceLabel={common('evidence')} limitsLabel={common('limits')} nextLabel={common('next')}
-        />
+        <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
-        <h2 className="text-xl font-semibold text-ink mb-4">{t('features')}</h2>
-        <div className="grid gap-4">
-          {MOCK_FEATURES.map(f => (
-            <Card key={f.id} density="compact">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-ink">{f.name}</h3>
-                    <span className="px-2 py-1 rounded text-xs font-medium
-                      {f.status === 'live' ? 'bg-forest/10 text-forest' :
-                       f.status === 'beta' ? 'bg-amber/10 text-amber' :
-                       'bg-slate/10 text-slate'}">
-                      {f.status}
-                    </span>
+        <h2 className="text-xl font-semibold text-ink mb-4">{statusPage('landProfileList')}</h2>
+        {rows.length === 0 ? (
+          <Card density="compact">
+            <h3 className="text-sm font-medium text-ink">
+              {profiles.ok ? statusPage('noLandProfiles') : template('unavailableTitle')}
+            </h3>
+            <p className="mt-1 text-sm text-ink-soft">
+              {profiles.ok ? statusPage('emptyDbNote') : template('unavailableDescription')}
+            </p>
+            <p className="mt-3 text-xs text-ink-soft">
+              {t('unavailable')}
+              {profiles.ok ? '' : ` · ${profiles.error}`}
+            </p>
+          </Card>
+        ) : (
+          <>
+            <div className="grid gap-4">
+              {rows.map((profile) => (
+                <Card key={profile.id} density="compact">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <h3 className="font-medium text-ink">{profile.name}</h3>
+                      <p className="mt-1 font-mono text-sm text-ink-soft">
+                        {coordinate(profile.location_lat)} / {coordinate(profile.location_lon)} ·{' '}
+                        {coordinate(profile.area_ha)} ha
+                      </p>
+                    </div>
+                    <ProvenanceStamp
+                      source={PROFILES_PATH}
+                      verified={profiles.ok}
+                      timestamp={profile.created_at ?? undefined}
+                      method={profile.id}
+                    />
                   </div>
-                  <p className="text-sm text-ink-soft mt-1">{f.description}</p>
-                  <p className="text-xs text-ink-soft font-mono">{f.apiEndpoint}</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <StatusDot state={f.status === 'live' ? 'ok' : f.status === 'beta' ? 'warn' : 'down'} label={common(f.status)} />
-                  <ProvenanceStamp source={f.source} verified={true} method="OpenAPI" label={f.status} />
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+                </Card>
+              ))}
+            </div>
+            <p className="mt-6 text-xs text-ink-soft">
+              {PROFILES_PATH} · {t('realData')}
+            </p>
+          </>
+        )}
       </section>
     </main>
   );

@@ -1,99 +1,152 @@
 import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { FivePart } from '@/components/FivePart';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { StatusDot } from '@/components/StatusDot';
+import { apiGet } from '@/lib/api/client';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
-interface MRVFeature {
-  id: string;
-  name: string;
-  description: string;
-  status: 'live' | 'beta' | 'planned';
-  apiEndpoint: string;
-  source: string;
-}
+const SUMMARY_PATH = '/api/v1/mrv/public/dashboard-summary';
 
-const MOCK_FEATURES: MRVFeature[] = [
-  { id: 'mrv1', name: 'Satellite MRV', description: 'Sentinel-2 NDVI + ERA5 validation', status: 'live', apiEndpoint: 'GET /api/mrv/satellite', source: 'satellite service' },
-  { id: 'mrv2', name: 'Ground Truth', description: 'IoT sensor network integration', status: 'beta', apiEndpoint: 'GET /api/mrv/ground', source: 'field_monitoring service' },
-  { id: 'mrv3', name: 'Carbon Accounting', description: 'IPCC Tier 2/3 with uncertainty', status: 'live', apiEndpoint: 'POST /api/mrv/carbon', source: 'carbon service' },
-  { id: 'mrv4', name: 'Verification Pipeline', description: 'VVB workflow with evidence', status: 'live', apiEndpoint: 'GET /api/mrv/verification', source: 'mrv service' },
-  { id: 'mrv5', name: 'Blockchain Registry', description: 'Immutable credit issuance', status: 'planned', apiEndpoint: 'POST /api/registry/issue', source: 'blockchain/contracts' },
-];
+type LatestSatellite = {
+  site_id: string;
+  index: string;
+  value: number;
+  data_source: string;
+};
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+type MrvSummary = {
+  total_observations: number;
+  by_level: Record<string, number>;
+  by_source: Record<string, number>;
+  latest_satellite_per_site: LatestSatellite[];
+};
+
+const TITLES: Record<string, string> = { fa: 'نمایشگاه MRV', en: 'MRV Dashboard Demo' };
+const DESCRIPTIONS: Record<string, string> = {
+  fa: 'نظارت، گزارش‌گیری و تأیید اکولوژیک',
+  en: 'Monitoring, Reporting, Verification showcase',
+};
+
+export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
-  const titles: Record<string, string> = { fa: 'نمایشگاه MRV', en: 'MRV Dashboard Demo' };
-  const descriptions: Record<string, string> = { fa: 'نظارت، گزارش‌گیری و تأیید اکولوژیک', en: 'Monitoring, Reporting, Verification showcase' };
   return {
-    title: titles[locale] ?? titles.en,
-    description: descriptions[locale] ?? descriptions.en,
-    openGraph: { type: 'website', locale, url: `${BASE_URL}/${locale}/public/components/mrv-dashboard`, title: titles[locale] ?? titles.en },
-    alternates: { canonical: `${BASE_URL}/${locale}/public/components/mrv-dashboard`, languages: { fa: `${BASE_URL}/fa/public/components/mrv-dashboard`, en: `${BASE_URL}/en/public/components/mrv-dashboard` } },
+    title: TITLES[locale] ?? TITLES.en,
+    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    openGraph: {
+      type: 'website',
+      locale,
+      url: `${BASE_URL}/${locale}/public/components/mrv-dashboard`,
+      title: TITLES[locale] ?? TITLES.en,
+    },
+    alternates: {
+      canonical: `${BASE_URL}/${locale}/public/components/mrv-dashboard`,
+      languages: {
+        fa: `${BASE_URL}/fa/public/components/mrv-dashboard`,
+        en: `${BASE_URL}/en/public/components/mrv-dashboard`,
+      },
+    },
   };
 }
 
-export default async function MRVDashboardPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function MRVDashboardPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('public.components.mrvDashboard');
-  const common = await getTranslations('common');
+  const t = await getTranslations('statusLine');
+  const template = await getTranslations('market.template');
+  const title = TITLES[locale] ?? TITLES.en;
+  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+
+  const summary = await apiGet<MrvSummary>(SUMMARY_PATH);
+  const data = summary.ok ? summary.data : null;
+  const error = summary.ok ? '' : summary.error;
 
   return (
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp source="MRV Registry" label={t('provenanceLabel')} verified={true} method="Multi-source" timestamp="2024-12-10">
-          <h1 className="display text-4xl font-bold text-ink">{t('title')}</h1>
+        <ProvenanceStamp
+          source={SUMMARY_PATH}
+          label={title}
+          verified={summary.ok}
+          method={SUMMARY_PATH}
+        >
+          <h1 className="display text-4xl font-bold text-ink">{title}</h1>
         </ProvenanceStamp>
-        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
-      </section>
-
-      <section className="mx-auto max-w-5xl px-6 pb-6">
-        <FivePart
-          title={t('whatTitle')}
-          lead={t('whatLead')}
-          what={t('whatDesc')}
-          audience={t('audience')}
-          evidence={['Satellite + ground fusion', 'IPCC-compliant accounting', 'VVB-ready evidence packages']}
-          limits={['Ground sensors limited', 'Cloud cover gaps', 'VVB onboarding manual']}
-          next={['Add drone imagery', 'Automate VVB matching', 'Real-time alerting']}
-          evidenceLabel={common('evidence')} limitsLabel={common('limits')} nextLabel={common('next')}
-        />
+        <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
-        <h2 className="text-xl font-semibold text-ink mb-4">{t('features')}</h2>
-        <div className="grid gap-4">
-          {MOCK_FEATURES.map(f => (
-            <Card key={f.id} density="compact">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-ink">{f.name}</h3>
-                    <span className="px-2 py-1 rounded text-xs font-medium
-                      {f.status === 'live' ? 'bg-forest/10 text-forest' :
-                       f.status === 'beta' ? 'bg-amber/10 text-amber' :
-                       'bg-slate/10 text-slate'}">
-                      {f.status}
-                    </span>
-                  </div>
-                  <p className="text-sm text-ink-soft mt-1">{f.description}</p>
-                  <p className="text-xs text-ink-soft font-mono">{f.apiEndpoint}</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <StatusDot state={f.status === 'live' ? 'ok' : f.status === 'beta' ? 'warn' : 'down'} label={common(f.status)} />
-                  <ProvenanceStamp source={f.source} verified={true} method="OpenAPI" label={f.status} />
-                </div>
+        <h2 className="text-xl font-semibold text-ink mb-4">{SUMMARY_PATH}</h2>
+        {!data ? (
+          <Card density="compact">
+            <h3 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h3>
+            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
+            <p className="mt-3 text-xs text-ink-soft">
+              {t('unavailable')} · {error}
+            </p>
+          </Card>
+        ) : (
+          <>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <Card density="compact">
+                <div className="num text-3xl font-semibold text-ink">{data.total_observations}</div>
+                <p className="mt-1 text-sm text-ink-soft">{SUMMARY_PATH}</p>
+                <ProvenanceStamp
+                  source={SUMMARY_PATH}
+                  verified={summary.ok}
+                  method={SUMMARY_PATH}
+                />
+              </Card>
+              {Object.entries(data.by_source).map(([source, count]) => (
+                <Card key={source} density="compact">
+                  <div className="num text-3xl font-semibold text-ink">{count}</div>
+                  <p className="mt-1 text-sm text-ink-soft">{source}</p>
+                </Card>
+              ))}
+            </div>
+
+            {data.latest_satellite_per_site.length > 0 ? (
+              <div className="mt-8 grid gap-4">
+                {data.latest_satellite_per_site.map((row) => (
+                  <Card key={`${row.site_id}-${row.index}`} density="compact">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                      <div>
+                        <h3 className="font-mono text-sm font-medium text-ink">{row.site_id}</h3>
+                        <p className="mt-1 text-sm text-ink-soft">
+                          {row.index} · {row.value} · {row.data_source}
+                        </p>
+                      </div>
+                      <ProvenanceStamp
+                        source={SUMMARY_PATH}
+                        verified={row.data_source !== 'simulated'}
+                        method={row.data_source}
+                      />
+                    </div>
+                  </Card>
+                ))}
               </div>
-            </Card>
-          ))}
-        </div>
+            ) : (
+              <Card density="compact">
+                <p className="text-sm text-ink-soft">{t('unavailable')}</p>
+              </Card>
+            )}
+            <p className="mt-6 text-xs text-ink-soft">
+              {SUMMARY_PATH} · {t('realData')}
+            </p>
+          </>
+        )}
       </section>
     </main>
   );

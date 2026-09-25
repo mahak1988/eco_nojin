@@ -1,6 +1,6 @@
 // Type stub for maplibre-gl-js (scaffold — install with `pnpm add -D maplibre-gl-js` in Phase 3)
 declare module 'maplibre-gl-js' {
-  class Map {
+  class MapInstance {
     constructor(options: {
       container: HTMLElement | string;
       style?: string | object;
@@ -17,8 +17,8 @@ declare module 'maplibre-gl-js' {
     remove(): void;
   }
 
-  export { Map };
-  export function createMap(options: Record<string, unknown>): Map;
+  export { MapInstance as Map };
+  export function createMap(options: Record<string, unknown>): MapInstance;
 }
 
 declare module 'maplibre-gl-js/css/maplibre-gl.css' {

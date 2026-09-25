@@ -1,100 +1,162 @@
 import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { FivePart } from '@/components/FivePart';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
 import { StatusDot } from '@/components/StatusDot';
+import { Card } from '@/components/ui/Card';
+import { apiGet } from '@/lib/api/client';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
-interface WalletFeature {
-  id: string;
-  name: string;
+const HEALTH_PATH = '/api/v1/ecowallet/health';
+const EARNING_PATH = '/api/v1/ecowallet/earning-options';
+const REDEMPTION_PATH = '/api/v1/ecowallet/redemption-options';
+
+type WalletHealth = {
+  status: string;
+  module: string;
+  version: string;
+};
+
+type WalletOption = {
+  category: string;
+  eco_per_unit?: string;
+  eco_cost?: string;
   description: string;
-  status: 'live' | 'beta' | 'planned';
-  apiEndpoint: string;
-  source: string;
-}
+};
 
-const MOCK_FEATURES: WalletFeature[] = [
-  { id: 'wf1', name: 'Balance & Reserved', description: 'Real-time balance with escrow holds', status: 'live', apiEndpoint: 'GET /api/wallet/balance', source: 'ecowallet service' },
-  { id: 'wf2', name: 'Transaction History', description: 'Filtered, paginated, exportable', status: 'live', apiEndpoint: 'GET /api/wallet/transactions', source: 'ecowallet service' },
-  { id: 'wf3', name: 'Withdrawal Request', description: 'KYC-gated withdrawal to bank/mobile', status: 'live', apiEndpoint: 'POST /api/wallet/withdraw', source: 'ecowallet service' },
-  { id: 'wf4', name: 'Escrow Center', description: 'View and manage active escrows', status: 'live', apiEndpoint: 'GET /api/wallet/escrows', source: 'escrow service' },
-  { id: 'wf5', name: 'Microcredit Scoring', description: 'Farmer credit score for microloans', status: 'beta', apiEndpoint: 'GET /api/wallet/credit-score', source: 'finance service' },
-  { id: 'wf6', name: 'Climate Insurance', description: 'Index-based payout triggers', status: 'planned', apiEndpoint: 'POST /api/wallet/insurance/claim', source: 'insurance service' },
-];
+type OptionsPayload = { options: WalletOption[] };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+const TITLES: Record<string, string> = { fa: 'نمایشگاه اکومین', en: 'EcoWallet Demo' };
+const DESCRIPTIONS: Record<string, string> = {
+  fa: 'قابلیت‌های کیف پول دیجیتال',
+  en: 'Digital wallet features showcase',
+};
+
+export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
-  const titles: Record<string, string> = { fa: 'نمایشگاه اکومین', en: 'EcoWallet Demo' };
-  const descriptions: Record<string, string> = { fa: 'قابلیت‌های کیف پول دیجیتال', en: 'Digital wallet features showcase' };
   return {
-    title: titles[locale] ?? titles.en,
-    description: descriptions[locale] ?? descriptions.en,
-    openGraph: { type: 'website', locale, url: `${BASE_URL}/${locale}/public/components/ecowallet`, title: titles[locale] ?? titles.en },
-    alternates: { canonical: `${BASE_URL}/${locale}/public/components/ecowallet`, languages: { fa: `${BASE_URL}/fa/public/components/ecowallet`, en: `${BASE_URL}/en/public/components/ecowallet` } },
+    title: TITLES[locale] ?? TITLES.en,
+    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    openGraph: {
+      type: 'website',
+      locale,
+      url: `${BASE_URL}/${locale}/public/components/ecowallet`,
+      title: TITLES[locale] ?? TITLES.en,
+    },
+    alternates: {
+      canonical: `${BASE_URL}/${locale}/public/components/ecowallet`,
+      languages: {
+        fa: `${BASE_URL}/fa/public/components/ecowallet`,
+        en: `${BASE_URL}/en/public/components/ecowallet`,
+      },
+    },
   };
 }
 
 export default async function EcoWalletPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('public.components.ecowallet');
-  const common = await getTranslations('common');
+  const t = await getTranslations('statusLine');
+  const template = await getTranslations('market.template');
+  const title = TITLES[locale] ?? TITLES.en;
+  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+
+  const [health, earning, redemption] = await Promise.all([
+    apiGet<WalletHealth>(HEALTH_PATH),
+    apiGet<OptionsPayload>(EARNING_PATH),
+    apiGet<OptionsPayload>(REDEMPTION_PATH),
+  ]);
+
+  const optionGroups = [
+    { path: EARNING_PATH, result: earning },
+    { path: REDEMPTION_PATH, result: redemption },
+  ];
 
   return (
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp source="Wallet Registry" label={t('provenanceLabel')} verified={true} method="Ledger-audited" timestamp="2024-12-10">
-          <h1 className="display text-4xl font-bold text-ink">{t('title')}</h1>
+        <ProvenanceStamp
+          source={HEALTH_PATH}
+          label={title}
+          verified={health.ok}
+          method={HEALTH_PATH}
+        >
+          <h1 className="display text-4xl font-bold text-ink">{title}</h1>
         </ProvenanceStamp>
-        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
+        <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-6">
-        <FivePart
-          title={t('whatTitle')}
-          lead={t('whatLead')}
-          what={t('whatDesc')}
-          audience={t('audience')}
-          evidence={['Real ledger integration', 'Escrow-linked balances', 'Audit trail per transaction']}
-          limits={['Sandbox balances only', 'KYC simulated', 'Bank integration mocked']}
-          next={['Connect testnet ledger', 'Enable mobile money', 'Add DeFi bridge demo']}
-          evidenceLabel={common('evidence')} limitsLabel={common('limits')} nextLabel={common('next')}
-        />
+        {health.ok ? (
+          <Card density="compact">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm text-ink">
+                {health.data.module} · {health.data.version}
+              </p>
+              <StatusDot
+                state={health.data.status === 'operational' ? 'ok' : 'warn'}
+                label={health.data.status}
+              />
+            </div>
+            <div className="mt-2">
+              <ProvenanceStamp source={HEALTH_PATH} verified={health.ok} method={HEALTH_PATH} />
+            </div>
+          </Card>
+        ) : (
+          <Card density="compact">
+            <h2 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h2>
+            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
+            <p className="mt-3 text-xs text-ink-soft">
+              {t('unavailable')} · {health.error}
+            </p>
+          </Card>
+        )}
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
-        <h2 className="text-xl font-semibold text-ink mb-4">{t('features')}</h2>
+        <h2 className="text-xl font-semibold text-ink mb-4">{template('source')}</h2>
         <div className="grid gap-4">
-          {MOCK_FEATURES.map(f => (
-            <Card key={f.id} density="compact">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-ink">{f.name}</h3>
-                    <span className="px-2 py-1 rounded text-xs font-medium
-                      {f.status === 'live' ? 'bg-forest/10 text-forest' :
-                       f.status === 'beta' ? 'bg-amber/10 text-amber' :
-                       'bg-slate/10 text-slate'}">
-                      {f.status}
-                    </span>
+          {optionGroups.map(({ path, result }) => (
+            <Card key={path} density="compact">
+              <h3 className="font-mono text-sm font-medium text-ink">{path}</h3>
+              {result.ok ? (
+                result.data.options.length > 0 ? (
+                  <div className="mt-3 grid gap-2">
+                    {result.data.options.map((option) => (
+                      <div
+                        key={option.category}
+                        className="flex items-center justify-between gap-3 text-sm"
+                      >
+                        <span className="text-ink">{option.category}</span>
+                        <span className="num font-mono text-ink-soft">
+                          {option.eco_per_unit ?? option.eco_cost ?? t('unavailable')}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                  <p className="text-sm text-ink-soft mt-1">{f.description}</p>
-                  <p className="text-xs text-ink-soft font-mono">{f.apiEndpoint}</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <StatusDot state={f.status === 'live' ? 'ok' : f.status === 'beta' ? 'warn' : 'down'} label={common(f.status)} />
-                  <ProvenanceStamp source={f.source} verified={true} method="OpenAPI" label={f.status} />
-                </div>
+                ) : (
+                  <p className="mt-1 text-sm text-ink-soft">{t('unavailable')}</p>
+                )
+              ) : (
+                <p className="mt-1 text-sm text-ink-soft">
+                  {t('unavailable')} · {result.error}
+                </p>
+              )}
+              <div className="mt-3">
+                <ProvenanceStamp source={path} verified={result.ok} method={path} />
               </div>
             </Card>
           ))}
         </div>
+        <p className="mt-6 text-xs text-ink-soft">{t('realData')}</p>
       </section>
     </main>
   );

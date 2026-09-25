@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { type ReactNode, type HTMLAttributes, forwardRef, type CSSProperties } from "react";
+import { type CSSProperties, forwardRef, type HTMLAttributes, type ReactNode } from 'react';
 
-export type CardDensity = "cozy" | "compact" | "dense";
+export type CardDensity = 'cozy' | 'compact' | 'dense';
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   density?: CardDensity;
@@ -11,30 +11,30 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
 
 const densityStyles: Record<CardDensity, CSSProperties> = {
   cozy: {
-    padding: "var(--space-6)",
-    gap: "var(--space-4)",
+    padding: 'var(--space-6)',
+    gap: 'var(--space-4)',
   },
   compact: {
-    padding: "var(--space-4)",
-    gap: "var(--space-3)",
+    padding: 'var(--space-4)',
+    gap: 'var(--space-3)',
   },
   dense: {
-    padding: "var(--space-3)",
-    gap: "var(--space-2)",
+    padding: 'var(--space-3)',
+    gap: 'var(--space-2)',
   },
 };
 
 const baseStyles: CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  backgroundColor: "var(--color-surface)",
-  border: "1px solid var(--color-line)",
-  borderRadius: "var(--radius-16)",
-  boxShadow: "var(--shadow-card)",
+  display: 'flex',
+  flexDirection: 'column',
+  backgroundColor: 'var(--color-surface)',
+  border: '1px solid var(--color-line)',
+  borderRadius: 'var(--radius-16)',
+  boxShadow: 'var(--shadow-card)',
 };
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ density = "cozy", children, className = "", style, ...props }, ref) => {
+  ({ density = 'cozy', children, className = '', style, ...props }, ref) => {
     const combinedStyle: CSSProperties = {
       ...baseStyles,
       ...densityStyles[density],
@@ -42,18 +42,13 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     };
 
     return (
-      <div
-        ref={ref}
-        className={className}
-        style={combinedStyle}
-        {...props}
-      >
+      <div ref={ref} className={className} style={combinedStyle} {...props}>
         {children}
       </div>
     );
-  }
+  },
 );
 
-Card.displayName = "Card";
+Card.displayName = 'Card';
 
 export default Card;

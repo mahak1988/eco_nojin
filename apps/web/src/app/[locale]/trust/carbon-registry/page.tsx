@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 
 interface CarbonTransaction {
   id: string;
@@ -19,7 +19,6 @@ interface CarbonTransaction {
 
 export default function CarbonRegistryPage() {
   const t = useTranslations('trust.carbonRegistry');
-  const common = useTranslations('common');
   const pathname = usePathname();
   const router = useRouter();
   const locale = pathname.split('/')[1];
@@ -35,7 +34,7 @@ export default function CarbonRegistryPage() {
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
         setTransactions(data.transactions || []);
-      } catch (err) {
+      } catch {
         setError(t('fetchError'));
       } finally {
         setIsLoading(false);
@@ -67,9 +66,18 @@ export default function CarbonRegistryPage() {
         </header>
 
         {error && (
-          <div className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700" role="alert">
+          <div
+            className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700"
+            role="alert"
+          >
             {error}
-            <Button variant="ghost" size="sm" className="ml-2" onClick={() => router.refresh()}>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="ml-2"
+              onClick={() => router.refresh()}
+            >
               Try again
             </Button>
           </div>
@@ -83,13 +91,19 @@ export default function CarbonRegistryPage() {
                   <div className="flex items-center gap-4">
                     <div>
                       <p className="font-mono text-sm text-ink">{formatTxHash(tx.txHash)}</p>
-                      <p className="text-xs text-ink-soft">Block #{tx.blockNumber.toLocaleString()}</p>
+                      <p className="text-xs text-ink-soft">
+                        Block #{tx.blockNumber.toLocaleString()}
+                      </p>
                     </div>
                     <div className="ml-4 border-l border-line pl-4">
                       <p className="font-mono text-lg font-semibold text-forest">
                         {tx.amount.toLocaleString()} {tx.token}
                       </p>
-                      <p className="text-xs text-ink-soft">{new Date(tx.timestamp).toLocaleDateString(locale === 'fa' ? 'fa-IR' : 'en-US')}</p>
+                      <p className="text-xs text-ink-soft">
+                        {new Date(tx.timestamp).toLocaleDateString(
+                          locale === 'fa' ? 'fa-IR' : 'en-US',
+                        )}
+                      </p>
                     </div>
                   </div>
                   <ProvenanceStamp

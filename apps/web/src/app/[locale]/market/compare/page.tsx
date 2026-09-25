@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
-import { StatusDot } from '@/components/StatusDot';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { searchProducts } from '@/lib/api/market';
+import type { ProductListing } from '@/types/market';
 
 interface Product {
   id: string;
@@ -20,67 +21,25 @@ interface Product {
   rating: number;
   impact: { carbon: number; water: number; soil: number };
   organic: boolean;
-  verified: boolean;
 }
 
-const MOCK_PRODUCTS: Product[] = [
-  {
-    id: 'p001',
-    name: 'Organic Pistachio Kernels',
-    producer: 'Kerman Cooperative',
-    price: 245000,
-    unit: '1 kg',
-    category: 'Nuts & Seeds',
-    origin: 'Kerman Province',
-    stock: 42,
-    rating: 4.8,
-    impact: { carbon: 12.4, water: 850, soil: 3.2 },
-    organic: true,
-    verified: true,
-  },
-  {
-    id: 'p002',
-    name: 'Saffron Threads',
-    producer: 'Khorasan Organic Farm',
-    price: 8900000,
-    unit: '5 g',
-    category: 'Spices',
-    origin: 'Khorasan Province',
-    stock: 8,
-    rating: 4.9,
-    impact: { carbon: 2.1, water: 1200, soil: 4.5 },
-    organic: true,
-    verified: true,
-  },
-  {
-    id: 'p003',
-    name: 'Organic Walnuts',
-    producer: 'Gilan Mountain Co-op',
-    price: 1850000,
-    unit: '500 g',
-    category: 'Nuts & Seeds',
-    origin: 'Gilan Province',
-    stock: 15,
-    rating: 4.6,
-    impact: { carbon: 8.7, water: 650, soil: 5.1 },
-    organic: true,
-    verified: false,
-  },
-  {
-    id: 'p004',
-    name: 'Dried Apricots',
-    producer: 'Kerman Fruit Co.',
-    price: 980000,
-    unit: '1 kg',
-    category: 'Dried Fruit',
-    origin: 'Kerman Province',
-    stock: 0,
-    rating: 4.3,
-    impact: { carbon: 5.2, water: 750, soil: 2.8 },
-    organic: false,
-    verified: false,
-  },
-];
+const PRODUCTS_SOURCE = '/api/v1/marketplace/products';
+
+function mapProduct(item: ProductListing, locale: string): Product {
+  return {
+    id: item.id,
+    name: item.name[locale] ?? item.name.en ?? item.id,
+    producer: item.producer.name,
+    price: item.price,
+    unit: item.unit,
+    category: item.category.name[locale] ?? item.category.name.en ?? item.category.slug,
+    origin: item.origin ?? item.location?.address ?? '',
+    stock: item.stockQuantity ?? 0,
+    rating: item.producer.rating ?? 0,
+    impact: { carbon: item.carbonFootprint ?? 0, water: item.waterFootprint ?? 0, soil: 0 },
+    organic: item.organic,
+  };
+}
 
 export default function ComparePage() {
   const t = useTranslations('market.compare');
@@ -89,13 +48,31 @@ export default function ComparePage() {
   const router = useRouter();
   const locale = pathname.split('/')[1] || 'fa';
 
-  const [selected, setSelected] = useState<string[]>(['p001', 'p002']);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [dataState, setDataState] = useState<'loading' | 'live' | 'unavailable'>('loading');
+  const [selected, setSelected] = useState<string[]>([]);
 
-  const selectedProducts = MOCK_PRODUCTS.filter(p => selected.includes(p.id)).slice(0, 4);
+  useEffect(() => {
+    let active = true;
+    void searchProducts({}).then((result) => {
+      if (!active) return;
+      if (result.ok && result.data.products.length > 0) {
+        setProducts(result.data.products.map((item) => mapProduct(item, locale)));
+        setDataState('live');
+      } else {
+        setDataState('unavailable');
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [locale]);
+
+  const selectedProducts = products.filter((p) => selected.includes(p.id)).slice(0, 4);
 
   const toggleProduct = (id: string) => {
     if (selected.includes(id)) {
-      setSelected(selected.filter(s => s !== id));
+      setSelected(selected.filter((s) => s !== id));
     } else if (selected.length < 4) {
       setSelected([...selected, id]);
     }
@@ -106,15 +83,30 @@ export default function ComparePage() {
   };
 
   const fields = [
-    { key: 'price', label: t('price'), render: (p: Product) => `${formatPrice(p.price)} ریال / ${p.unit}` },
+    {
+      key: 'price',
+      label: t('price'),
+      render: (p: Product) => `${formatPrice(p.price)} ریال / ${p.unit}`,
+    },
     { key: 'category', label: t('category'), render: (p: Product) => p.category },
     { key: 'origin', label: t('origin'), render: (p: Product) => p.origin },
     { key: 'producer', label: t('producer'), render: (p: Product) => p.producer },
     { key: 'rating', label: t('rating'), render: (p: Product) => `⭐ ${p.rating}` },
-    { key: 'stock', label: t('availability'), render: (p: Product) => p.stock > 0 ? t('inStock') : t('outOfStock') },
-    { key: 'organic', label: t('organic'), render: (p: Product) => (p.organic ? t('yes') : t('no')) },
-    { key: 'verified', label: t('verified'), render: (p: Product) => (p.verified ? t('yes') : t('no')) },
-    { key: 'carbon', label: t('carbonImpact'), render: (p: Product) => `${p.impact.carbon} kg CO₂` },
+    {
+      key: 'stock',
+      label: t('availability'),
+      render: (p: Product) => (p.stock > 0 ? t('inStock') : t('outOfStock')),
+    },
+    {
+      key: 'organic',
+      label: t('organic'),
+      render: (p: Product) => (p.organic ? t('yes') : t('no')),
+    },
+    {
+      key: 'carbon',
+      label: t('carbonImpact'),
+      render: (p: Product) => `${p.impact.carbon} kg CO₂`,
+    },
     { key: 'water', label: t('waterImpact'), render: (p: Product) => `${p.impact.water} L` },
     { key: 'soil', label: t('soilImpact'), render: (p: Product) => `${p.impact.soil} t/ha` },
   ];
@@ -127,14 +119,24 @@ export default function ComparePage() {
           <p className="mt-2 text-ink-soft">{t('lead')}</p>
         </header>
 
+        {dataState === 'unavailable' && (
+          <p
+            role="status"
+            className="mb-6 rounded-md border border-line bg-surface-alt p-3 text-sm text-ink-soft"
+          >
+            {t('dataUnavailable')}
+          </p>
+        )}
+
         <Card density="compact" className="mb-8">
           <h2 className="font-medium text-ink mb-4">{t('selectProducts')}</h2>
           <p className="text-sm text-ink-soft mb-3">
             {t('maxFour')}: {selected.length}/4
           </p>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {MOCK_PRODUCTS.map(product => (
+            {products.map((product) => (
               <button
+                type="button"
                 key={product.id}
                 onClick={() => toggleProduct(product.id)}
                 disabled={!selected.includes(product.id) && selected.length >= 4}
@@ -157,8 +159,10 @@ export default function ComparePage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-line">
-                    <th className="text-left py-3 px-3 font-medium text-ink-soft">{t('feature')}</th>
-                    {selectedProducts.map(p => (
+                    <th className="text-left py-3 px-3 font-medium text-ink-soft">
+                      {t('feature')}
+                    </th>
+                    {selectedProducts.map((p) => (
                       <th key={p.id} className="text-center py-3 px-3">
                         <p className="font-medium text-ink">{p.name}</p>
                         <p className="text-xs text-ink-soft">{p.producer}</p>
@@ -167,10 +171,10 @@ export default function ComparePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {fields.map(field => (
+                  {fields.map((field) => (
                     <tr key={field.key} className="border-b border-line/50">
                       <td className="py-3 px-3 font-medium text-ink">{field.label}</td>
-                      {selectedProducts.map(p => (
+                      {selectedProducts.map((p) => (
                         <td key={p.id} className="py-3 px-3 text-center">
                           {field.render(p)}
                         </td>
@@ -179,7 +183,7 @@ export default function ComparePage() {
                   ))}
                   <tr className="border-b border-line/50">
                     <td className="py-3 px-3 font-medium text-ink">{t('actions')}</td>
-                    {selectedProducts.map(p => (
+                    {selectedProducts.map((p) => (
                       <td key={p.id} className="py-3 px-3 text-center">
                         <Button
                           variant="ghost"
@@ -196,9 +200,7 @@ export default function ComparePage() {
             </div>
 
             <div className="mt-4 text-center">
-              <p className="text-xs text-ink-soft">
-                {t('antiFraudWarning')}
-              </p>
+              <p className="text-xs text-ink-soft">{t('antiFraudWarning')}</p>
             </div>
           </Card>
         )}
@@ -211,9 +213,8 @@ export default function ComparePage() {
 
         <Card density="compact" className="mt-8">
           <ProvenanceStamp
-            source="Compare Service"
-            verified={true}
-            method="Price API"
+            source={PRODUCTS_SOURCE}
+            verified={false}
             label={t('compareProvenance')}
           />
         </Card>

@@ -1,7 +1,8 @@
+import Image from 'next/image';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { FivePart } from '@/components/FivePart';
-import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
+import { SiteNav } from '@/components/SiteNav';
 import { Link } from '@/i18n/navigation';
 
 export const dynamic = 'force-dynamic';
@@ -30,9 +31,11 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             {t('owner.sectionTitle')}
           </h2>
           <div className="mt-4 flex flex-wrap items-center gap-6">
-            <img
+            <Image
               src="/brand/owner-narvan-logo-transparent.png"
               alt={t('owner.logoAlt')}
+              width={848}
+              height={1020}
               className="h-20 w-auto"
             />
             <div className="max-w-md">

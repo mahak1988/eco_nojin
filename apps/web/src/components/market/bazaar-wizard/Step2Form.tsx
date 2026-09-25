@@ -1,7 +1,7 @@
 'use client';
 
-import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
+import { useFormContext } from 'react-hook-form';
 import { Input } from '@/components/ui/Input';
 import { type Step2Input } from '@/lib/validation/bazaar-establishment';
 

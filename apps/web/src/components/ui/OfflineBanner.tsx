@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState, type HTMLAttributes, forwardRef, type CSSProperties } from "react";
+import { type CSSProperties, forwardRef, type HTMLAttributes, useEffect, useState } from 'react';
 
 export interface OfflineBannerProps extends HTMLAttributes<HTMLDivElement> {
   message?: string;
@@ -8,32 +8,41 @@ export interface OfflineBannerProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const baseStyles: CSSProperties = {
-  position: "fixed",
+  position: 'fixed',
   top: 0,
   left: 0,
   right: 0,
   zIndex: 1000,
-  padding: "var(--space-2) var(--space-4)",
-  fontFamily: "var(--font-sans)",
-  fontSize: "0.8125rem",
+  padding: 'var(--space-2) var(--space-4)',
+  fontFamily: 'var(--font-sans)',
+  fontSize: '0.8125rem',
   fontWeight: 500,
-  textAlign: "center",
-  transform: "translateY(-100%)",
-  transition: "transform var(--duration-240) var(--easing-ease-out-quart)",
+  textAlign: 'center',
+  transform: 'translateY(-100%)',
+  transition: 'transform var(--duration-240) var(--easing-ease-out-quart)',
 };
 
 const offlineStyles: CSSProperties = {
-  background: "var(--color-copper)",
-  color: "var(--color-paper)",
+  background: 'var(--color-copper)',
+  color: 'var(--color-paper)',
 };
 
 const reconnectingStyles: CSSProperties = {
-  background: "var(--color-water)",
-  color: "var(--color-paper)",
+  background: 'var(--color-water)',
+  color: 'var(--color-paper)',
 };
 
 export const OfflineBanner = forwardRef<HTMLDivElement, OfflineBannerProps>(
-  ({ message = "You are offline", reconnectingMessage = "Reconnecting...", className = "", style, ...props }, ref) => {
+  (
+    {
+      message = 'You are offline',
+      reconnectingMessage = 'Reconnecting...',
+      className = '',
+      style,
+      ...props
+    },
+    ref,
+  ) => {
     const [isOnline, setIsOnline] = useState(true);
     const [wasOffline, setWasOffline] = useState(false);
 
@@ -54,12 +63,12 @@ export const OfflineBanner = forwardRef<HTMLDivElement, OfflineBannerProps>(
       setIsOnline(navigator.onLine);
       if (!navigator.onLine) setWasOffline(true);
 
-      window.addEventListener("online", handleOnline);
-      window.addEventListener("offline", handleOffline);
+      window.addEventListener('online', handleOnline);
+      window.addEventListener('offline', handleOffline);
 
       return () => {
-        window.removeEventListener("online", handleOnline);
-        window.removeEventListener("offline", handleOffline);
+        window.removeEventListener('online', handleOnline);
+        window.removeEventListener('offline', handleOffline);
       };
     }, [wasOffline]);
 
@@ -71,7 +80,7 @@ export const OfflineBanner = forwardRef<HTMLDivElement, OfflineBannerProps>(
     const combinedStyle: CSSProperties = {
       ...baseStyles,
       ...(isReconnecting ? reconnectingStyles : offlineStyles),
-      transform: "translateY(0)",
+      transform: 'translateY(0)',
       ...style,
     };
 
@@ -85,13 +94,13 @@ export const OfflineBanner = forwardRef<HTMLDivElement, OfflineBannerProps>(
         style={combinedStyle}
         {...props}
       >
-        <span aria-hidden="true">{isReconnecting ? "🔄" : "📡"}</span>
+        <span aria-hidden="true">{isReconnecting ? '🔄' : '📡'}</span>
         <span>{bannerMessage}</span>
       </div>
     );
-  }
+  },
 );
 
-OfflineBanner.displayName = "OfflineBanner";
+OfflineBanner.displayName = 'OfflineBanner';
 
 export default OfflineBanner;

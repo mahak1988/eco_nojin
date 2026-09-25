@@ -1,6 +1,8 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { SiteNav } from '@/components/SiteNav';
+import { SustainabilityPreview } from '@/components/SustainabilityPreview';
 import { Link } from '@/i18n/navigation';
+import { apiGet, type PlatformStats } from '@/lib/api/client';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,6 +11,14 @@ export default async function PlatformPage({ params }: { params: Promise<{ local
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations();
+  const stats = await apiGet<PlatformStats>('/api/v1/platform/stats');
+  const previewData = stats.ok
+    ? {
+        source: 'live' as const,
+        landscapes: stats.data.total_landscapes,
+        projects: stats.data.total_projects,
+      }
+    : { source: 'fallback' as const, landscapes: null, projects: null };
 
   const items = [
     {
@@ -41,6 +51,10 @@ export default async function PlatformPage({ params }: { params: Promise<{ local
           {t('platformOverview.title')}
         </h1>
         <p className="mt-3 max-w-2xl text-ink-soft">{t('platformOverview.lead')}</p>
+
+        <section className="mt-8">
+          <SustainabilityPreview locale={locale} compact data={previewData} />
+        </section>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           {items.map((item, index) => (

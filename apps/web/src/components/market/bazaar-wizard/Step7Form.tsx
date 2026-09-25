@@ -1,7 +1,7 @@
 'use client';
 
-import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
+import { useFormContext } from 'react-hook-form';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { type Step7Input } from '@/lib/validation/bazaar-establishment';
@@ -24,11 +24,7 @@ export function Step7Form({ locale }: { locale: string }) {
           />
         </div>
         <div>
-          <Input
-            label={t('verificationDate')}
-            type="date"
-            {...register('verificationDate')}
-          />
+          <Input label={t('verificationDate')} type="date" {...register('verificationDate')} />
         </div>
         <div className="sm:col-span-2">
           <Textarea
@@ -40,7 +36,7 @@ export function Step7Form({ locale }: { locale: string }) {
         </div>
       </div>
 
-{(verifiedBy || verificationDate) && (
+      {(verifiedBy || verificationDate) && (
         <div className="mt-4 p-3 bg-primary/5 border border-primary/20 rounded text-sm text-primary">
           <strong>{t('preview')}: </strong>
           {t('verificationPreview', { by: verifiedBy ?? '', date: verificationDate ?? '' })}

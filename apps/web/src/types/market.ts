@@ -37,33 +37,35 @@ export interface ProductListing {
   images: string[];
   thumbnail?: string;
   price: number;
-  currency: string;
+  currency?: string;
   unit: string;
   organic: boolean;
-  certifications: string[];
+  certifications?: string[];
   producer: {
-    id: string;
+    id?: string;
     name: string;
-    slug: string;
-    rating: number;
+    slug?: string;
+    rating?: number;
   };
   category: {
     id: string;
     slug: string;
     name: Record<string, string>;
   };
-  location: {
+  location?: {
     latitude: number;
     longitude: number;
     address?: string;
   };
+  origin?: string;
   carbonFootprint?: number;
   waterFootprint?: number;
   inStock: boolean;
   stockQuantity?: number;
-  tags: string[];
-  createdAt: string;
-  updatedAt: string;
+  tags?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+  traceabilityCode?: string;
 }
 
 export interface ProductListResponse {

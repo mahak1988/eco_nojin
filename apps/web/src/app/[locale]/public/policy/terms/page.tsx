@@ -1,99 +1,160 @@
 import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { FivePart } from '@/components/FivePart';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
+import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { apiGet } from '@/lib/api/client';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
-interface Version {
-  version: string;
-  date: string;
-  changes: string[];
-  hash: string;
-}
+const SLUG = 'terms';
 
-const MOCK_VERSIONS: Version[] = [
-  { version: '2.1.0', date: '2024-12-01', changes: ['Added AI usage terms', 'Updated data residency clauses', 'Clarified liability limits'], hash: 'sha256:a1b2...' },
-  { version: '2.0.0', date: '2024-06-15', changes: ['Major restructuring', 'Added 14-language support', 'Escrow terms integrated'], hash: 'sha256:c3d4...' },
-  { version: '1.5.0', date: '2023-12-01', changes: ['Carbon credit terms', 'Dispute resolution updates'], hash: 'sha256:e5f6...' },
-];
+const TITLES: Record<string, string> = { fa: 'شرایط استفاده', en: 'Terms of Service' };
+const DESCRIPTIONS: Record<string, string> = {
+  fa: 'متن شرایط استفاده و تاریخچه نسخه‌ها از سرویس متن‌های حقوقی خوانده می‌شود.',
+  en: 'The terms text and its version history are read from the legal-texts service.',
+};
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+type LegalText = {
+  id: string;
+  locale: string;
+  slug: string;
+  title: string;
+  body: string;
+  version: number;
+  status: string;
+  effective_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+};
+
+type LegalTextVersion = {
+  version: number;
+  status: string;
+  effective_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+};
+
+export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
-  const titles: Record<string, string> = { fa: 'شرایط استفاده', en: 'Terms of Service' };
-  const descriptions: Record<string, string> = { fa: 'شرایط و قوانین استفاده از پلتفرم', en: 'Platform terms and conditions of use' };
   return {
-    title: titles[locale] ?? titles.en,
-    description: descriptions[locale] ?? descriptions.en,
-    openGraph: { type: 'website', locale, url: `${BASE_URL}/${locale}/public/policy/terms`, title: titles[locale] ?? titles.en },
-    alternates: { canonical: `${BASE_URL}/${locale}/public/policy/terms`, languages: { fa: `${BASE_URL}/fa/public/policy/terms`, en: `${BASE_URL}/en/public/policy/terms` } },
+    title: TITLES[locale] ?? TITLES.en,
+    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    openGraph: {
+      type: 'website',
+      locale,
+      url: `${BASE_URL}/${locale}/public/policy/terms`,
+      title: TITLES[locale] ?? TITLES.en,
+    },
+    alternates: {
+      canonical: `${BASE_URL}/${locale}/public/policy/terms`,
+      languages: {
+        fa: `${BASE_URL}/fa/public/policy/terms`,
+        en: `${BASE_URL}/en/public/policy/terms`,
+      },
+    },
   };
 }
 
 export default async function TermsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('public.policy.terms');
-  const common = await getTranslations('common');
+  const status = await getTranslations('statusLine');
+  const template = await getTranslations('market.template');
+
+  const path = `/api/v1/legal-texts/${locale}/${SLUG}`;
+  const [record, history] = await Promise.all([
+    apiGet<LegalText>(path),
+    apiGet<LegalTextVersion[]>(`${path}/versions`),
+  ]);
+  const legalText = record.ok ? record.data : null;
+  const versions = history.ok ? history.data : [];
+  const published = legalText?.status === 'published';
+  const heading = legalText?.title ?? TITLES[locale] ?? TITLES.en;
 
   return (
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
-      <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp source="Legal Registry" label={t('provenanceLabel')} verified={true} method="Version-controlled" timestamp="2024-12-01">
-          <h1 className="display text-4xl font-bold text-ink">{t('title')}</h1>
+      <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
+        <ProvenanceStamp
+          source={path}
+          label={heading}
+          verified={published}
+          method={path}
+          timestamp={legalText?.updated_at ?? undefined}
+        >
+          <h1 className="display text-4xl font-bold text-ink">{heading}</h1>
         </ProvenanceStamp>
-        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
-      </section>
+        <p className="mt-3 max-w-2xl text-ink-soft">{DESCRIPTIONS[locale] ?? DESCRIPTIONS.en}</p>
 
-      <section className="mx-auto max-w-5xl px-6 pb-6">
-        <FivePart
-          title={t('whatTitle')}
-          lead={t('whatLead')}
-          what={t('whatDesc')}
-          audience={t('audience')}
-          evidence={['Version-controlled (Git)', '14-language synchronized', 'Legal review per release']}
-          limits={['Not legal advice', 'Jurisdiction-specific gaps', 'Enforceability varies by region']}
-          next={['Add automated compliance checks', 'Enable diff viewer', 'Integrate with e-signature']}
-          evidenceLabel={common('evidence')} limitsLabel={common('limits')} nextLabel={common('next')}
-        />
-      </section>
-
-      <section className="mx-auto max-w-5xl px-6 pb-6">
-        <h2 className="text-xl font-semibold text-ink mb-4">{t('currentVersion')}</h2>
-        <Card density="compact">
-          <div className="prose max-w-none text-ink">
-            <h3 className="font-semibold mb-2">v2.1.0 — {t('effectiveDate')} 2024-12-01</h3>
-            <ul className="list-disc list-inside space-y-1">
-              <li>{t('term1')}</li>
-              <li>{t('term2')}</li>
-              <li>{t('term3')}</li>
-              <li>{t('term4')}</li>
-              <li>{t('term5')}</li>
-            </ul>
-          </div>
-          <ProvenanceStamp source="Legal Registry" verified={true} method="Git-signed" timestamp="2024-12-01" label="v2.1.0" />
-        </Card>
-      </section>
-
-      <section className="mx-auto max-w-5xl px-6 pb-12">
-        <h2 className="text-xl font-semibold text-ink mb-4">{t('versionHistory')}</h2>
-        <div className="space-y-3">
-          {MOCK_VERSIONS.map(v => (
-            <Card key={v.version} density="compact">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        {legalText ? (
+          <>
+            <div className="mt-6">
+              <StatusDot state={published ? 'ok' : 'warn'} label={legalText.status} />
+            </div>
+            <Card density="cozy" className="mt-6">
+              <dl className="grid gap-4 text-sm sm:grid-cols-3">
                 <div>
-                  <h3 className="font-medium text-ink">Version {v.version}</h3>
-                  <p className="text-sm text-ink-soft">{v.date} · {v.changes.length} {common('changes')}</p>
+                  <dt className="field-label">version</dt>
+                  <dd className="num mt-1 font-mono text-ink">{legalText.version}</dd>
                 </div>
-                <ProvenanceStamp source="Legal Registry" verified={true} method="Git-signed" timestamp={v.date} label={v.hash} />
+                <div>
+                  <dt className="field-label">status</dt>
+                  <dd className="mt-1 font-mono text-ink">{legalText.status}</dd>
+                </div>
+                <div>
+                  <dt className="field-label">effective_at</dt>
+                  <dd className="num mt-1 font-mono text-ink">{legalText.effective_at ?? '—'}</dd>
+                </div>
+              </dl>
+              <div className="prose mt-6 max-w-none whitespace-pre-wrap text-ink-soft">
+                {legalText.body}
               </div>
             </Card>
-          ))}
-        </div>
-      </section>
+          </>
+        ) : (
+          <Card density="cozy" className="mt-6">
+            <StatusDot state="down" label={status('unavailable')} />
+            <h2 className="mt-4 font-semibold text-ink">{template('unavailableTitle')}</h2>
+            <p className="mt-2 text-sm text-ink-soft">{template('unavailableDescription')}</p>
+            <p className="mt-3 text-xs text-ink-soft">
+              {path} · {record.ok ? '' : record.error}
+            </p>
+          </Card>
+        )}
+
+        {versions.length > 0 && (
+          <div className="mt-8 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-line text-ink-soft">
+                  <th className="py-2 pe-4 text-start font-medium">version</th>
+                  <th className="py-2 pe-4 text-start font-medium">status</th>
+                  <th className="py-2 text-start font-medium">effective_at</th>
+                </tr>
+              </thead>
+              <tbody>
+                {versions.map((item) => (
+                  <tr key={item.version} className="border-b border-line/50">
+                    <td className="num py-2 pe-4 font-mono text-ink">{item.version}</td>
+                    <td className="py-2 pe-4 font-mono text-ink-soft">{item.status}</td>
+                    <td className="num py-2 font-mono text-ink-soft">{item.effective_at ?? '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="mt-2 text-xs text-ink-soft">{`${path}/versions`}</p>
+          </div>
+        )}
+      </div>
     </main>
   );
 }

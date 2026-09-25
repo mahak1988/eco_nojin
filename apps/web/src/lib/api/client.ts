@@ -1,20 +1,70 @@
 // Real backend client. Pages bind to the live API gateway; no mock data layer exists.
 
-const API_BASE =
-  process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:8000';
+import { publicEnv, resolveApiUrl } from '@/lib/config/public-env';
+
+let apiBase = publicEnv.apiBaseUrl;
+
+export function setApiBaseUrl(baseUrl: string): void {
+  const normalized = baseUrl.replace(/\/+$/, '');
+  if (process.env.NODE_ENV === 'production' && !normalized.startsWith('/')) {
+    throw new Error('Production API base URL must be same-origin');
+  }
+  apiBase = normalized;
+}
+
+function requestUrl(path: string): string {
+  if (typeof window === 'undefined' && apiBase === publicEnv.apiBaseUrl) {
+    return resolveApiUrl(path);
+  }
+  return `${apiBase}${path}`;
+}
+
+function createRequestId(): string {
+  if (typeof globalThis.crypto?.randomUUID === 'function') {
+    return globalThis.crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+export function createIdempotencyKey(): string {
+  if (typeof globalThis.crypto?.randomUUID === 'function') {
+    return globalThis.crypto.randomUUID();
+  }
+  if (typeof globalThis.crypto?.getRandomValues === 'function') {
+    const bytes = new Uint8Array(32);
+    globalThis.crypto.getRandomValues(bytes);
+    return Array.from(bytes, (value) => value.toString(16).padStart(2, '0')).join('');
+  }
+  throw new Error('A secure random source is required for idempotency keys');
+}
+
+function withRequestHeaders(init: RequestInit = {}): RequestInit {
+  const headers = new Headers(init.headers);
+  const method = (init.method ?? 'GET').toUpperCase();
+  if (!headers.has('X-Request-ID')) {
+    headers.set('X-Request-ID', createRequestId());
+  }
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+    headers.set('X-CSRF-Intent', '1');
+  }
+  return { ...init, headers, credentials: 'same-origin' };
+}
 
 export type ApiOk<T> = { ok: true; data: T; status: number };
 export type ApiErr = { ok: false; error: string; status: number };
 export type ApiResult<T> = ApiOk<T> | ApiErr;
 
 export async function apiGet<T>(path: string, init?: RequestInit): Promise<ApiResult<T>> {
-  const url = `${API_BASE}${path}`;
+  const url = requestUrl(path);
   try {
-    const res = await fetch(url, {
-      cache: 'no-store',
-      headers: { Accept: 'application/json' },
-      ...init,
-    });
+    const res = await fetch(
+      url,
+      withRequestHeaders({
+        cache: 'no-store',
+        headers: { Accept: 'application/json' },
+        ...init,
+      }),
+    );
     const text = await res.text();
     let parsed: unknown;
     try {
@@ -33,6 +83,52 @@ export async function apiGet<T>(path: string, init?: RequestInit): Promise<ApiRe
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : String(err), status: 0 };
   }
+}
+
+export async function apiRequest<T>(path: string, init: RequestInit = {}): Promise<ApiResult<T>> {
+  const url = requestUrl(path);
+  try {
+    const headers = new Headers(init.headers);
+    headers.set('Accept', 'application/json');
+    const res = await fetch(url, withRequestHeaders({ cache: 'no-store', ...init, headers }));
+    const text = await res.text();
+    let parsed: unknown;
+    try {
+      parsed = text ? JSON.parse(text) : undefined;
+    } catch {
+      parsed = text;
+    }
+    if (!res.ok) {
+      const detail =
+        typeof parsed === 'string'
+          ? parsed.slice(0, 300)
+          : (((parsed as Record<string, unknown> | undefined)?.detail as string) ?? res.statusText);
+      return { ok: false, error: String(detail ?? 'request failed'), status: res.status };
+    }
+    return { ok: true, data: parsed as T, status: res.status };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err), status: 0 };
+  }
+}
+
+export async function apiPatch<T>(
+  path: string,
+  body?: unknown,
+  init: RequestInit = {},
+): Promise<ApiResult<T>> {
+  return apiRequest<T>(path, {
+    ...init,
+    method: 'PATCH',
+    body: body === undefined ? undefined : JSON.stringify(body),
+    headers: {
+      ...Object.fromEntries(new Headers(init.headers)),
+      'Content-Type': 'application/json',
+    },
+  });
+}
+
+export async function apiDelete<T>(path: string, init: RequestInit = {}): Promise<ApiResult<T>> {
+  return apiRequest<T>(path, { ...init, method: 'DELETE' });
 }
 
 export type PlatformStats = {
@@ -83,15 +179,26 @@ export type MarketStats = {
   organic_products: number;
 };
 
-export async function apiPost<T>(path: string, body?: unknown): Promise<ApiResult<T>> {
-  const url = `${API_BASE}${path}`;
+export async function apiPost<T>(
+  path: string,
+  body?: unknown,
+  init: RequestInit = {},
+): Promise<ApiResult<T>> {
+  const url = requestUrl(path);
   try {
-    const res = await fetch(url, {
-      method: 'POST',
-      cache: 'no-store',
-      headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-      body: body !== undefined ? JSON.stringify(body) : undefined,
-    });
+    const headers = new Headers(init.headers);
+    headers.set('Accept', 'application/json');
+    if (body !== undefined) headers.set('Content-Type', 'application/json');
+    const res = await fetch(
+      url,
+      withRequestHeaders({
+        method: 'POST',
+        cache: 'no-store',
+        ...init,
+        headers,
+        body: body !== undefined ? JSON.stringify(body) : init.body,
+      }),
+    );
     const text = await res.text();
     let parsed: unknown;
     try {

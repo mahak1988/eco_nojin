@@ -76,16 +76,15 @@ export function BazaarEstablishmentWizard({
   const {
     watch,
     trigger,
-    setValue,
     getValues,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = methods;
 
   const [currentStep, setCurrentStep] = useState(1);
   const [stepStatuses, setStepStatuses] = useState<Record<number, WizardStepStatus>>(() =>
-    Array.from({ length: TOTAL_STEPS }, (_, i) => ({
-      [i + 1]: 'pending' as WizardStepStatus,
-    })).reduce((a, b) => ({ ...a, ...b }), {}),
+    Object.fromEntries(
+      Array.from({ length: TOTAL_STEPS }, (_, i) => [i + 1, 'pending' as WizardStepStatus]),
+    ),
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitResult, setSubmitResult] = useState<ApiResult<unknown> | null>(null);
@@ -144,7 +143,24 @@ export function BazaarEstablishmentWizard({
     setIsSubmitting(true);
     try {
       const data = getValues();
-      const result = await apiPost('/api/v1/bazaars/establish', { ...data, tenant_id: tenantId });
+      const location =
+        data.step1.latitude !== null && data.step1.longitude !== null
+          ? `${data.step1.latitude},${data.step1.longitude}`
+          : '';
+      const result = await apiPost('/api/v1/marketplace/marketplaces', {
+        name: data.step1.name,
+        marketplace_type: data.step1.bazaarType,
+        description: data.step1.description ?? '',
+        address: data.step1.address ?? '',
+        location,
+        village_id: tenantId,
+        founder_ids: [],
+        e_commerce_rules_accepted: Boolean(data.step4.rulesDocument),
+        buy_sell_rules_accepted: Boolean(data.step4.rulesDocument),
+        rules_document: data.step4.rulesDocument ?? '',
+        contact_email: '',
+        contact_phone: '',
+      });
       setSubmitResult(result);
       if (result.ok && onComplete) {
         onComplete(data);
@@ -273,7 +289,7 @@ export function BazaarEstablishmentWizard({
           {submitResult.error}
         </div>
       )}
-      {submitResult && submitResult.ok && (
+      {submitResult?.ok && (
         <div
           className="m-4 p-3 border border-success/30 bg-success/5 text-success text-sm rounded"
           role="status"

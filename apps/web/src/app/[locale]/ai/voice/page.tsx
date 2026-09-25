@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 
@@ -61,18 +61,76 @@ const SUPPORTED_LANGUAGES = [
 
 export default function VoicePage() {
   const t = useTranslations('ai.voice');
-  const common = useTranslations('common');
 
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [messages, setMessages] = useState<VoiceMessage[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState('fa');
   const [error, setError] = useState<string | null>(null);
-  const [transcript, setTranscript] = useState('');
+  const [, setTranscript] = useState('');
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const synthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const speakResponse = useCallback(
+    (text: string) => {
+      if (!('speechSynthesis' in window)) return;
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = selectedLanguage;
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+
+      synthesisRef.current = utterance;
+      window.speechSynthesis.speak(utterance);
+    },
+    [selectedLanguage],
+  );
+
+  const handleUserSpeech = useCallback(
+    async (text: string) => {
+      const userMessage: VoiceMessage = {
+        id: Date.now().toString(),
+        type: 'user',
+        text,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, userMessage]);
+      setIsProcessing(true);
+
+      try {
+        const response = await fetch('/api/v1/ai/voice', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Intent': '1' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ text, language: selectedLanguage }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error ?? t('error'));
+        }
+
+        const assistantMessage: VoiceMessage = {
+          id: (Date.now() + 1).toString(),
+          type: 'assistant',
+          text: data.text,
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, assistantMessage]);
+
+        speakResponse(data.text);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : t('error'));
+      } finally {
+        setIsProcessing(false);
+      }
+    },
+    [selectedLanguage, speakResponse, t],
+  );
 
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -80,7 +138,15 @@ export default function VoicePage() {
       return;
     }
 
-    const SpeechRecognitionConstructor = (window as unknown as { SpeechRecognition: new () => SpeechRecognition; webkitSpeechRecognition: new () => SpeechRecognition }).SpeechRecognition ?? (window as unknown as { webkitSpeechRecognition: new () => SpeechRecognition }).webkitSpeechRecognition;
+    const SpeechRecognitionConstructor =
+      (
+        window as unknown as {
+          SpeechRecognition: new () => SpeechRecognition;
+          webkitSpeechRecognition: new () => SpeechRecognition;
+        }
+      ).SpeechRecognition ??
+      (window as unknown as { webkitSpeechRecognition: new () => SpeechRecognition })
+        .webkitSpeechRecognition;
     const recognition = new SpeechRecognitionConstructor();
     recognition.continuous = true;
     recognition.interimResults = true;
@@ -120,63 +186,13 @@ export default function VoicePage() {
     return () => {
       recognition.stop();
     };
-  }, [selectedLanguage, t]);
+  }, [handleUserSpeech, selectedLanguage, t]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  const handleUserSpeech = useCallback(async (text: string) => {
-    const userMessage: VoiceMessage = {
-      id: Date.now().toString(),
-      type: 'user',
-      text,
-      timestamp: new Date(),
-    };
-    setMessages((prev) => [...prev, userMessage]);
-    setIsProcessing(true);
-
-    try {
-      const response = await fetch('/api/ai/voice', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, language: selectedLanguage }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error ?? t('error'));
-      }
-
-      const assistantMessage: VoiceMessage = {
-        id: (Date.now() + 1).toString(),
-        type: 'assistant',
-        text: data.response,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
-
-      speakResponse(data.response);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('error'));
-    } finally {
-      setIsProcessing(false);
+    if (messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [selectedLanguage, t]);
-
-  const speakResponse = (text: string) => {
-    if (!('speechSynthesis' in window)) return;
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = selectedLanguage;
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    utterance.volume = 1;
-
-    synthesisRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
-  };
+  }, [messages]);
 
   const toggleListening = () => {
     if (!recognitionRef.current) return;
@@ -190,16 +206,6 @@ export default function VoicePage() {
     }
   };
 
-  const addSystemMessage = (text: string) => {
-    const msg: VoiceMessage = {
-      id: Date.now().toString(),
-      type: 'system',
-      text,
-      timestamp: new Date(),
-    };
-    setMessages((prev) => [...prev, msg]);
-  };
-
   return (
     <main id="main" className="min-h-screen">
       <div className="mx-auto max-w-2xl px-4 py-8">
@@ -209,9 +215,18 @@ export default function VoicePage() {
         </header>
 
         {error && (
-          <div className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700" role="alert">
+          <div
+            className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700"
+            role="alert"
+          >
             {error}
-            <Button variant="ghost" size="sm" className="ml-2" onClick={() => setError(null)}>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="ml-2"
+              onClick={() => setError(null)}
+            >
               Try again
             </Button>
           </div>
@@ -244,14 +259,17 @@ export default function VoicePage() {
               </div>
             )}
             {messages.map((msg) => (
-              <div key={msg.id} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div
+                key={msg.id}
+                className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
                 <div
                   className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm ${
                     msg.type === 'user'
                       ? 'bg-forest text-paper rounded-br-md'
                       : msg.type === 'assistant'
-                      ? 'bg-surface border border-line rounded-bl-md'
-                      : 'bg-muted text-ink-soft rounded-md italic'
+                        ? 'bg-surface border border-line rounded-bl-md'
+                        : 'bg-muted text-ink-soft rounded-md italic'
                   }`}
                 >
                   {msg.text}
@@ -264,6 +282,7 @@ export default function VoicePage() {
 
         <div className="flex items-center justify-center gap-4">
           <Button
+            type="button"
             variant={isListening ? 'danger' : 'primary'}
             size="lg"
             onClick={toggleListening}
@@ -274,13 +293,30 @@ export default function VoicePage() {
             {isListening ? (
               <>
                 <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" strokeDasharray="30 100" />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeDasharray="30 100"
+                  />
                 </svg>
                 {t('listening')}
               </>
             ) : (
               <>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  aria-hidden="true"
+                >
                   <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
                   <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
                   <line x1="12" y1="19" x2="12" y2="22" />
@@ -292,9 +328,18 @@ export default function VoicePage() {
           </Button>
 
           {isProcessing && (
-            <Button variant="secondary" size="lg" disabled className="min-w-[160px]">
+            <Button type="button" variant="secondary" size="lg" disabled className="min-w-[160px]">
               <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" strokeDasharray="30 100" />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeDasharray="30 100"
+                />
               </svg>
               {t('processing')}
             </Button>
@@ -306,8 +351,8 @@ export default function VoicePage() {
         <Card density="compact" className="mt-6">
           <h3 className="font-medium text-ink mb-2">{t('commands')}</h3>
           <ul className="space-y-1 text-sm text-ink-soft">
-            {t.raw('commandList')?.map((cmd: string, idx: number) => (
-              <li key={idx} className="flex gap-2">
+            {t.raw('commandList')?.map((cmd: string) => (
+              <li key={cmd} className="flex gap-2">
                 <span className="text-forest">•</span>
                 <span>{cmd}</span>
               </li>

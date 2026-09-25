@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 
 interface Audit {
   id: string;
@@ -20,7 +20,6 @@ interface Audit {
 
 export default function AuditsPage() {
   const t = useTranslations('trust.audits');
-  const common = useTranslations('common');
   const pathname = usePathname();
   const router = useRouter();
   const locale = pathname.split('/')[1];
@@ -37,7 +36,7 @@ export default function AuditsPage() {
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
         setAudits(data.audits || []);
-      } catch (err) {
+      } catch {
         setError(t('fetchError'));
       } finally {
         setIsLoading(false);
@@ -46,9 +45,7 @@ export default function AuditsPage() {
     fetchAudits();
   }, [locale, t]);
 
-  const filteredAudits = filter === 'all'
-    ? audits
-    : audits.filter(a => a.status === filter);
+  const filteredAudits = filter === 'all' ? audits : audits.filter((a) => a.status === filter);
 
   const statusStyles = {
     valid: 'text-forest bg-forest/10',
@@ -77,9 +74,18 @@ export default function AuditsPage() {
         </header>
 
         {error && (
-          <div className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700" role="alert">
+          <div
+            className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700"
+            role="alert"
+          >
             {error}
-            <Button variant="ghost" size="sm" className="ml-2" onClick={() => router.refresh()}>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="ml-2"
+              onClick={() => router.refresh()}
+            >
               Try again
             </Button>
           </div>
@@ -89,6 +95,7 @@ export default function AuditsPage() {
           {(['all', 'valid', 'expired', 'pending'] as const).map((f) => (
             <Button
               key={f}
+              type="button"
               variant={filter === f ? 'primary' : 'ghost'}
               size="sm"
               onClick={() => setFilter(f)}
@@ -107,12 +114,18 @@ export default function AuditsPage() {
                     <h3 className="font-medium text-ink">{audit.title}</h3>
                     <p className="text-sm text-ink-soft">{audit.issuer}</p>
                     <p className="text-xs text-ink-soft">
-                      Issued: {new Date(audit.issuedAt).toLocaleDateString(locale === 'fa' ? 'fa-IR' : 'en-US')}
-                      {audit.expiresAt && ` · Expires: ${new Date(audit.expiresAt).toLocaleDateString(locale === 'fa' ? 'fa-IR' : 'en-US')}`}
+                      Issued:{' '}
+                      {new Date(audit.issuedAt).toLocaleDateString(
+                        locale === 'fa' ? 'fa-IR' : 'en-US',
+                      )}
+                      {audit.expiresAt &&
+                        ` · Expires: ${new Date(audit.expiresAt).toLocaleDateString(locale === 'fa' ? 'fa-IR' : 'en-US')}`}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusStyles[audit.status]}`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${statusStyles[audit.status]}`}
+                    >
                       {t(`status.${audit.status}`)}
                     </span>
                     {audit.documentUrl && (

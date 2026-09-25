@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useRef, useEffect, FormEvent } from 'react';
+import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { usePathname, useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/Button';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
+import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 
 interface Message {
@@ -17,7 +17,6 @@ interface Message {
 
 export default function AssistantPage() {
   const t = useTranslations('ai.assistant');
-  const common = useTranslations('common');
   const pathname = usePathname();
   const locale = pathname.split('/')[1];
 
@@ -29,7 +28,9 @@ export default function AssistantPage() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages]);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -49,10 +50,11 @@ export default function AssistantPage() {
     setError(null);
 
     try {
-      const response = await fetch(`/api/ai/assistant`, {
+      const response = await fetch('/api/v1/ai/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMessage.content, locale }),
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Intent': '1' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ question: userMessage.content, language: locale }),
       });
 
       const data = await response.json();
@@ -64,7 +66,7 @@ export default function AssistantPage() {
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.response,
+        content: data.answer,
         sources: data.sources,
         timestamp: new Date(),
       };
@@ -86,9 +88,18 @@ export default function AssistantPage() {
         </header>
 
         {error && (
-          <div className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700" role="alert">
+          <div
+            className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700"
+            role="alert"
+          >
             {error}
-            <Button variant="ghost" size="sm" className="ml-2" onClick={() => setError(null)}>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="ml-2"
+              onClick={() => setError(null)}
+            >
               Try again
             </Button>
           </div>
@@ -103,14 +114,23 @@ export default function AssistantPage() {
               </div>
             )}
             {messages.map((msg) => (
-              <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] ${msg.role === 'user' ? 'bg-forest text-paper' : 'bg-surface border border-line'}`}>
+              <div
+                key={msg.id}
+                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-[80%] ${msg.role === 'user' ? 'bg-forest text-paper' : 'bg-surface border border-line'}`}
+                >
                   <div className="p-4">
                     <p className="whitespace-pre-wrap">{msg.content}</p>
                     {msg.sources && msg.sources.length > 0 && (
                       <div className="mt-3 flex flex-wrap gap-2">
                         {msg.sources.map((source, idx) => (
-                          <ProvenanceStamp key={idx} source={source} label={`[${idx + 1}]`} />
+                          <ProvenanceStamp
+                            key={`${msg.id}:${source}`}
+                            source={source}
+                            label={`[${idx + 1}]`}
+                          />
                         ))}
                       </div>
                     )}
@@ -133,7 +153,12 @@ export default function AssistantPage() {
                 disabled={isLoading}
                 aria-label={t('placeholder')}
               />
-              <Button type="submit" disabled={isLoading || !input.trim()} size="lg" aria-label={t('sendLabel')}>
+              <Button
+                type="submit"
+                disabled={isLoading || !input.trim()}
+                size="lg"
+                aria-label={t('sendLabel')}
+              >
                 {isLoading ? t('sending') : t('send')}
               </Button>
             </form>

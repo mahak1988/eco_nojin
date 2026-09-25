@@ -3,8 +3,6 @@
 import { Button } from '@eco/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@eco/ui/card';
 import {
-  AlertCircle,
-  AlertTriangle,
   ArrowRight,
   BarChart3,
   CheckCircle,
@@ -186,8 +184,8 @@ export default function ValidationPage() {
               {t('typesTitle')}
             </h2>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {validationTypes.map((type, index) => (
-                <Card key={index} className="h-full hover:border-primary/50 transition-colors">
+              {validationTypes.map((type) => (
+                <Card key={type.title} className="h-full hover:border-primary/50 transition-colors">
                   <CardHeader>
                     <div
                       className={`flex h-14 w-14 items-center justify-center rounded-xl ${type.color}`}
@@ -206,7 +204,7 @@ export default function ValidationPage() {
                       <span className="font-medium">{t('standard')}: </span>
                       {type.standard}
                     </div>
-                    <Button variant="ghost" size="sm" asChild className="w-full">
+                    <Button type="button" variant="ghost" size="sm" asChild className="w-full">
                       <a href={`/fa/validation/${type.title.toLowerCase().replace(/\s+/g, '-')}`}>
                         {t('viewDetails')}
                         <ChevronRight className="size-4 ml-1" aria-hidden="true" />
@@ -222,7 +220,7 @@ export default function ValidationPage() {
           <section className="mb-16">
             <div className="mb-8 flex items-center justify-between">
               <h2 className="text-3xl font-bold tracking-tight">{t('resultsTitle')}</h2>
-              <Button variant="outline" size="sm" asChild>
+              <Button type="button" variant="outline" size="sm" asChild>
                 <a href="/fa/validation/results">
                   {t('viewAll')}
                   <ExternalLink className="size-4 ml-1" aria-hidden="true" />
@@ -238,9 +236,9 @@ export default function ValidationPage() {
                 <div>{t('resCol5')}</div>
                 <div>{t('resCol6')}</div>
               </div>
-              {validationResults.map((result, index) => (
+              {validationResults.map((result) => (
                 <div
-                  key={index}
+                  key={result.model}
                   className="grid grid-cols-7 border-b border-border px-6 py-4 last:border-0 items-center hover:bg-muted/50 transition-colors"
                 >
                   <div className="col-span-2 font-medium">{result.model}</div>
@@ -275,8 +273,11 @@ export default function ValidationPage() {
               {t('methodsTitle')}
             </h2>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {validationMethods.map((method, index) => (
-                <Card key={index} className="h-full hover:border-primary/50 transition-colors">
+              {validationMethods.map((method) => (
+                <Card
+                  key={method.title}
+                  className="h-full hover:border-primary/50 transition-colors"
+                >
                   <CardHeader>
                     <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                       <method.icon className="size-6" aria-hidden="true" />
@@ -301,8 +302,8 @@ export default function ValidationPage() {
               {t('ongoingTitle')}
             </h2>
             <div className="grid gap-6 md:grid-cols-3">
-              {ongoingValidation.map((ongoing, index) => (
-                <Card key={index} className="h-full">
+              {ongoingValidation.map((ongoing) => (
+                <Card key={ongoing.title} className="h-full">
                   <CardHeader>
                     <CardTitle>{t(ongoing.title)}</CardTitle>
                     <CardDescription>{ongoing.model}</CardDescription>
@@ -335,7 +336,7 @@ export default function ValidationPage() {
             <h2 className="mb-4 text-2xl font-bold tracking-tight">{t('ctaTitle')}</h2>
             <p className="mb-8 text-muted-foreground max-w-2xl mx-auto">{t('ctaDesc')}</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="w-full sm:w-auto gap-2" asChild>
+              <Button type="button" size="lg" className="w-full sm:w-auto gap-2" asChild>
                 <a href="/fa/validation/reports">
                   <span className="inline-flex items-center gap-2">
                     <span>{t('ctaReports')}</span>
@@ -343,7 +344,13 @@ export default function ValidationPage() {
                   </span>
                 </a>
               </Button>
-              <Button variant="outline" size="lg" className="w-full sm:w-auto" asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                className="w-full sm:w-auto"
+                asChild
+              >
                 <a href="/fa/contact?topic=validation">{t('ctaContact')}</a>
               </Button>
             </div>

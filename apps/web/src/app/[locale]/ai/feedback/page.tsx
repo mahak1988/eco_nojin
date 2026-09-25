@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
 import { useTranslations } from 'next-intl';
-import { usePathname } from 'next/navigation';
+import { FormEvent, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Toast } from '@/components/ui/Toast';
@@ -24,9 +23,6 @@ const CATEGORIES = [
 
 export default function FeedbackPage() {
   const t = useTranslations('ai.feedback');
-  const common = useTranslations('common');
-  const pathname = usePathname();
-  const locale = pathname.split('/')[1];
 
   const [form, setForm] = useState<FeedbackForm>({
     rating: 0,
@@ -38,7 +34,7 @@ export default function FeedbackPage() {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (form.rating === 0 || !form.category || !form.comment.trim()) {
       setError(t('validationError'));
@@ -49,25 +45,9 @@ export default function FeedbackPage() {
     setError(null);
     setSubmitStatus('idle');
 
-    try {
-      const response = await fetch('/api/ai/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, locale }),
-      });
-
-      if (!response.ok) {
-        throw new Error(t('submitError'));
-      }
-
-      setSubmitStatus('success');
-      setForm({ rating: 0, category: '', comment: '', email: '' });
-    } catch {
-      setSubmitStatus('error');
-      setError(t('submitError'));
-    } finally {
-      setIsSubmitting(false);
-    }
+    setSubmitStatus('error');
+    setError(t('submitError'));
+    setIsSubmitting(false);
   };
 
   return (
@@ -79,21 +59,40 @@ export default function FeedbackPage() {
         </header>
 
         {submitStatus === 'success' && (
-          <Toast variant="success" title={t('successTitle')} className="mb-6" onClose={() => setSubmitStatus('idle')}>
+          <Toast
+            variant="success"
+            title={t('successTitle')}
+            className="mb-6"
+            onClose={() => setSubmitStatus('idle')}
+          >
             {t('successMessage')}
           </Toast>
         )}
 
         {submitStatus === 'error' && (
-          <Toast variant="error" title={t('errorTitle')} className="mb-6" onClose={() => setSubmitStatus('idle')}>
+          <Toast
+            variant="error"
+            title={t('errorTitle')}
+            className="mb-6"
+            onClose={() => setSubmitStatus('idle')}
+          >
             {t('errorMessage')}
           </Toast>
         )}
 
         {error && (
-          <div className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700" role="alert">
+          <div
+            className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700"
+            role="alert"
+          >
             {error}
-            <Button variant="ghost" size="sm" className="ml-2" onClick={() => setError(null)}>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="ml-2"
+              onClick={() => setError(null)}
+            >
               Try again
             </Button>
           </div>
@@ -103,20 +102,32 @@ export default function FeedbackPage() {
           <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             <fieldset>
               <legend className="font-medium text-ink mb-3">{t('ratingLabel')}</legend>
-              <div className="flex items-center gap-2" role="radiogroup" aria-label={t('ratingLabel')}>
+              <div
+                className="flex items-center gap-2"
+                role="radiogroup"
+                aria-label={t('ratingLabel')}
+              >
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    role="radio"
-                    aria-checked={form.rating === star}
-                    aria-label={`${star} ${t('starLabel')}`}
-                    onClick={() => setForm((prev) => ({ ...prev, rating: star }))}
-                    className="text-4xl transition-colors"
-                    style={{ color: form.rating >= star ? 'var(--color-amber)' : 'var(--color-line)' }}
-                  >
-                    ★
-                  </button>
+                  <label key={star} className="cursor-pointer text-4xl transition-colors">
+                    <input
+                      type="radio"
+                      name="rating"
+                      value={star}
+                      checked={form.rating === star}
+                      onChange={() => setForm((prev) => ({ ...prev, rating: star }))}
+                      className="peer sr-only"
+                      aria-label={`${star} ${t('starLabel')}`}
+                    />
+                    <span
+                      aria-hidden="true"
+                      className="block peer-focus-visible:ring-2 peer-focus-visible:ring-forest"
+                      style={{
+                        color: form.rating >= star ? 'var(--color-amber)' : 'var(--color-line)',
+                      }}
+                    >
+                      ★
+                    </span>
+                  </label>
                 ))}
               </div>
               <p className="mt-2 text-sm text-ink-soft" aria-live="polite">
@@ -126,7 +137,11 @@ export default function FeedbackPage() {
 
             <fieldset>
               <legend className="font-medium text-ink mb-3">{t('categoryLabel')}</legend>
-              <div className="grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label={t('categoryLabel')}>
+              <div
+                className="grid gap-2 sm:grid-cols-2"
+                role="radiogroup"
+                aria-label={t('categoryLabel')}
+              >
                 {CATEGORIES.map((cat) => (
                   <label
                     key={cat.value}
@@ -163,7 +178,9 @@ export default function FeedbackPage() {
                 className="w-full px-4 py-3 rounded-md border border-line bg-background text-ink focus:outline-none focus:ring-2 focus:ring-forest resize-y min-h-[120px]"
                 aria-describedby="comment-hint"
               />
-              <p id="comment-hint" className="mt-1 text-sm text-ink-soft">{t('commentHint')}</p>
+              <p id="comment-hint" className="mt-1 text-sm text-ink-soft">
+                {t('commentHint')}
+              </p>
             </div>
 
             <div>
@@ -179,14 +196,21 @@ export default function FeedbackPage() {
                 className="w-full px-4 py-3 rounded-md border border-line bg-background text-ink focus:outline-none focus:ring-2 focus:ring-forest"
                 aria-describedby="email-hint"
               />
-              <p id="email-hint" className="mt-1 text-sm text-ink-soft">{t('emailHint')}</p>
+              <p id="email-hint" className="mt-1 text-sm text-ink-soft">
+                {t('emailHint')}
+              </p>
             </div>
 
             <div className="flex gap-3 pt-4">
               <Button type="submit" size="lg" disabled={isSubmitting} className="flex-1">
                 {isSubmitting ? t('submitting') : t('submit')}
               </Button>
-              <Button type="button" variant="secondary" size="lg" onClick={() => setForm({ rating: 0, category: '', comment: '', email: '' })}>
+              <Button
+                type="button"
+                variant="secondary"
+                size="lg"
+                onClick={() => setForm({ rating: 0, category: '', comment: '', email: '' })}
+              >
                 Reset
               </Button>
             </div>

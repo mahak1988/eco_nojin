@@ -1,12 +1,12 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { unstable_noStore as noStore } from 'next/cache';
 
 type Json = Record<string, unknown>;
 
 async function readJson(file: string): Promise<Json> {
   try {
-    return JSON.parse(await readFile(file, 'utf8')) as Json;
+    const content = await readFile(file, 'utf8');
+    return JSON.parse(content.replace(/^\uFEFF/, '')) as Json;
   } catch {
     return {};
   }
@@ -18,9 +18,8 @@ function getMeta(obj: Json): Json {
 }
 
 /**
- * Deep-merges catalogue layers so a skeleton locale's partial namespace
- * (e.g. its own `common` object) never shadows keys that only exist in the
- * fa/en reference layers.
+ * Deep-merges catalogue layers so a requested locale can override the
+ * canonical English catalogue without hiding its own namespaces.
  */
 function deepMerge(...layers: Json[]): Json {
   const out: Json = {};
@@ -44,30 +43,21 @@ function deepMerge(...layers: Json[]): Json {
 }
 
 /**
- * Loads messages for a locale. Fallback chain: locale -> en -> fa.
+ * Loads messages for a locale with English as the canonical fallback.
  * When a catalogue is still machine-translated, the `meta.machineTranslated` flag
  * is preserved so the UI can label it honestly.
  */
 export async function loadMessages(locale: string): Promise<Json> {
-  noStore(); // Prevent build-time caching of locale data
   const dir = path.join(process.cwd(), 'messages');
-  const fa = await readJson(path.join(dir, 'fa.json'));
-  if (locale === 'fa') {
-    const result = { ...fa };
-    result.meta = { machineTranslated: false, fallbackLocale: null };
-    return result;
-  }
-
   const en = await readJson(path.join(dir, 'en.json'));
   if (locale === 'en') {
-    const merged = deepMerge(fa, en);
-    merged.meta = { machineTranslated: false, fallbackLocale: null };
-    return merged;
+    return { ...en, meta: { machineTranslated: false, fallbackLocale: null } };
   }
 
-  const over = await readJson(path.join(dir, `${locale}.json`));
-  const merged = deepMerge(fa, en, over);
-  merged.meta = getMeta(over);
+  const requested = await readJson(path.join(dir, `${locale}.json`));
+  const merged = deepMerge(en, requested);
+  merged.meta =
+    locale === 'fa' ? { machineTranslated: false, fallbackLocale: null } : getMeta(requested);
   return merged;
 }
 

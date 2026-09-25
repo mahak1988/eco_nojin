@@ -1,8 +1,6 @@
 // Post-scaffold step content components (Phase 3 delivery stubs)
 // Each file represents one step of the T05 wizard that will be filled in Phase 3.
 
-import { z } from 'zod';
-
 // Re-export schemas for convenience
 export * from '@/lib/validation/bazaar-establishment';
 

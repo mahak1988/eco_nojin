@@ -1,8 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import { Card } from '@/components/ui/Card';
-import { WIZARD_TOTAL_STEPS, stepLabels } from '@/components/BazaarEstablishmentWizard';
+import { stepLabels } from '@/components/BazaarEstablishmentWizard';
 
 interface BazaarStepRendererProps {
   step: number;
@@ -12,7 +10,6 @@ interface BazaarStepRendererProps {
 
 export function BazaarStepRenderer({ step, locale, watchedStep1 }: BazaarStepRendererProps) {
   const stepTitle = stepLabels[step - 1];
-  const t = useTranslations('market.bazaarWizard');
 
   return (
     <fieldset className="space-y-4" aria-labelledby={`step-${step}-legend`}>

@@ -1,12 +1,12 @@
 'use client';
 
-import { useFormContext, useFieldArray } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { type Step6Input, type SignatureInput } from '@/lib/validation/bazaar-establishment';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { type Step6Input } from '@/lib/validation/bazaar-establishment';
 
 const PQ_ALGORITHMS = [
   { value: 'DILITHIUM2+ED25519', label: 'DILITHIUM2 + ED25519 (Sign)' },
@@ -35,8 +35,11 @@ export function Step6Form({ locale }: { locale: string }) {
         <p className="text-sm text-ink-soft mb-4">{t('description')}</p>
 
         <div className="grid gap-3 sm:grid-cols-2 mb-4">
-          {PQ_ALGORITHMS.map(algo => (
-            <label key={algo.value} className="inline-flex items-center gap-2 px-3 py-2 rounded border cursor-pointer hover:bg-surface-alt">
+          {PQ_ALGORITHMS.map((algo) => (
+            <label
+              key={algo.value}
+              className="inline-flex items-center gap-2 px-3 py-2 rounded border cursor-pointer hover:bg-surface-alt"
+            >
               <input type="radio" name="defaultAlgorithm" value={algo.value} />
               <span className="font-mono text-sm">{algo.label}</span>
             </label>
@@ -47,9 +50,7 @@ export function Step6Form({ locale }: { locale: string }) {
           {fields.map((field, index) => (
             <Card key={field.id} className="p-4">
               <div className="flex items-start justify-between gap-4 mb-3">
-                <h4 className="font-medium text-ink">
-                  {t('signature', { number: index + 1 })}
-                </h4>
+                <h4 className="font-medium text-ink">{t('signature', { number: index + 1 })}</h4>
                 {fields.length > 1 && (
                   <Button variant="ghost" size="sm" onClick={() => remove(index)}>
                     {t('remove')}
@@ -95,17 +96,11 @@ export function Step6Form({ locale }: { locale: string }) {
                   className="font-mono text-sm"
                   {...register(`signatures.${index}.sharedSecretHex`)}
                 />
-                <Select
-                  label={t('algorithm')}
-                  {...register(`signatures.${index}.algorithm`)}
-                >
+                <Select label={t('algorithm')} {...register(`signatures.${index}.algorithm`)}>
                   <option value="DILITHIUM2+ED25519">DILITHIUM2 + ED25519</option>
                   <option value="KYBER512+X25519">KYBER512 + X25519</option>
                 </Select>
-                <Select
-                  label={t('kemAlgorithm')}
-                  {...register(`signatures.${index}.kemAlgorithm`)}
-                >
+                <Select label={t('kemAlgorithm')} {...register(`signatures.${index}.kemAlgorithm`)}>
                   <option value="KYBER512">KYBER512</option>
                   <option value="X25519">X25519</option>
                 </Select>
@@ -115,14 +110,19 @@ export function Step6Form({ locale }: { locale: string }) {
         </div>
 
         {fields.length < trusteeCount && (
-          <Button variant="ghost" onClick={() => append({
-            trusteeId: '',
-            stepNumber: 6,
-            signatureHex: '',
-            pqPublicKeyHex: '',
-            algorithm: 'DILITHIUM2+ED25519',
-            kemAlgorithm: 'KYBER512',
-          })}>
+          <Button
+            variant="ghost"
+            onClick={() =>
+              append({
+                trusteeId: '',
+                stepNumber: 6,
+                signatureHex: '',
+                pqPublicKeyHex: '',
+                algorithm: 'DILITHIUM2+ED25519',
+                kemAlgorithm: 'KYBER512',
+              })
+            }
+          >
             + {t('addSignature')}
           </Button>
         )}

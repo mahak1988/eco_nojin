@@ -5,12 +5,12 @@
 
 :root {
   /* ===== Colors ===== */
-  --color-water: oklch(0.62 0.11 235);
-  --color-forest: oklch(0.55 0.12 150);
-  --color-soil: oklch(0.45 0.06 70);
-  --color-paper: oklch(0.97 0.005 90);
-  --color-ink: oklch(0.24 0.01 250);
-  --color-copper: oklch(0.60 0.14 45);
+  --color-water: var(--water);
+  --color-forest: var(--forest);
+  --color-soil: var(--soil);
+  --color-paper: var(--surface);
+  --color-ink: var(--ink);
+  --color-copper: var(--copper);
 
   /* Chart palette (8-color colorblind-safe) */
   --color-chart-1: oklch(0.62 0.11 235);

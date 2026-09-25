@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { usePathname, useRouter } from 'next/navigation';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { useEffect, useState } from 'react';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { StatusDot } from '@/components/StatusDot';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { getProduct } from '@/lib/api/market';
+import type { ProductListing } from '@/types/market';
 
 interface ProductSpec {
   label: string;
@@ -30,50 +32,91 @@ interface ProductData {
   variants: ProductVariant[];
   specs: ProductSpec[];
   images: string[];
-  provenance: string;
-  verified: boolean;
   inStock: boolean;
   rating: number;
 }
 
-const MOCK_PRODUCT: ProductData = {
-  id: 'p001',
-  name: 'Organic Pistachio Kernels',
-  producer: 'Kerman Cooperative',
-  description:
-    'Hand-harvested organic pistachios from Kerman province. Certified organic and carbon-negative production.',
-  category: 'Nuts & Seeds',
-  origin: 'Kerman Province, Iran',
-  impact: { carbon: 12.4, water: 850, soil: 3.2 },
-  variants: [
-    { unit: '1 kg', price: 245000, stock: 42 },
-    { unit: '5 kg', price: 1180000, stock: 12 },
-    { unit: '25 kg', price: 5750000, stock: 5 },
-  ],
-  specs: [
-    { label: 'Harvest', value: '2025/09' },
-    { label: 'Processing', value: 'Cold-pressed' },
-    { label: 'Moisture', value: '6%' },
-    { label: 'Protein', value: '21g / 100g' },
-  ],
-  images: ['/og-pistachio.png', '/og-pistachio-2.png'],
-  provenance: 'Kerman Agroecology Cooperative',
-  verified: true,
-  inStock: true,
-  rating: 4.8,
+const EMPTY_PRODUCT: ProductData = {
+  id: '',
+  name: '',
+  producer: '',
+  description: '',
+  category: '',
+  origin: '',
+  impact: { carbon: 0, water: 0, soil: 0 },
+  variants: [],
+  specs: [],
+  images: [],
+  inStock: false,
+  rating: 0,
 };
 
-export default function ProductPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
+const EMPTY_VARIANT: ProductVariant = { unit: '', price: 0, stock: 0 };
+
+function productSource(id: string): string {
+  return `/api/v1/marketplace/products/${encodeURIComponent(id)}`;
+}
+
+function mapProduct(item: ProductListing, locale: string): ProductData {
+  return {
+    id: item.id,
+    name: item.name[locale] ?? item.name.en ?? item.id,
+    producer: item.producer.name,
+    description: item.description?.[locale] ?? item.description?.en ?? '',
+    category: item.category.name[locale] ?? item.category.name.en ?? item.category.slug,
+    origin: item.origin ?? item.location?.address ?? '',
+    impact: { carbon: item.carbonFootprint ?? 0, water: item.waterFootprint ?? 0, soil: 0 },
+    variants: [{ unit: item.unit, price: item.price, stock: item.stockQuantity ?? 0 }],
+    specs: [],
+    images: item.images,
+    inStock: item.inStock,
+    rating: item.producer.rating ?? 0,
+  };
+}
+
+export default function ProductPage({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}) {
   const t = useTranslations('market.product');
   const common = useTranslations('common');
-  const { locale } = useParamsSafe(params);
-  const pathname = usePathname();
+  const { locale, id } = useParamsSafe(params);
   const router = useRouter();
   const [selectedVariant, setSelectedVariant] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [product, setProduct] = useState<ProductData>(EMPTY_PRODUCT);
+  const [dataState, setDataState] = useState<'loading' | 'live' | 'unavailable'>('loading');
+  const [error, setError] = useState('');
+  const source = productSource(id);
 
-  const product = MOCK_PRODUCT;
-  const currentVariant = product.variants[selectedVariant];
+  useEffect(() => {
+    let active = true;
+    if (!id)
+      return () => {
+        active = false;
+      };
+    void getProduct(id).then((result) => {
+      if (!active) return;
+      if (!result.ok) {
+        setDataState('unavailable');
+        setError(result.error);
+        return;
+      }
+      if (result.data) {
+        setProduct(mapProduct(result.data, locale || 'en'));
+        setDataState('live');
+      } else {
+        setDataState('unavailable');
+        setError(t('dataUnavailable'));
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [id, locale, t]);
+
+  const currentVariant = product.variants[selectedVariant] ?? EMPTY_VARIANT;
 
   const handleAddToCart = () => {
     const params = new URLSearchParams();
@@ -93,6 +136,7 @@ export default function ProductPage({ params }: { params: Promise<{ locale: stri
         <header className="mb-8">
           <nav className="mb-4 text-sm text-ink-soft">
             <button
+              type="button"
               onClick={() => router.push(`/${locale}/market`)}
               className="text-ink-soft hover:text-ink underline"
             >
@@ -103,15 +147,24 @@ export default function ProductPage({ params }: { params: Promise<{ locale: stri
           </nav>
           <div className="flex items-center justify-between">
             <h1 className="display text-3xl font-bold text-ink sm:text-4xl">{product.name}</h1>
-            <ProvenanceStamp
-              source={product.provenance}
-              verified={product.verified}
-              method="On-chain certification"
-              label={t('verifiedProduct')}
-            />
+            <ProvenanceStamp source={source} verified={false} label={t('verifiedProduct')} />
           </div>
           <p className="mt-3 text-ink-soft">{product.description}</p>
         </header>
+
+        {dataState === 'unavailable' && (
+          <p
+            role="status"
+            className="mb-6 rounded-md border border-line bg-surface-alt p-3 text-sm text-ink-soft"
+          >
+            {t('dataUnavailable')}
+          </p>
+        )}
+        {error && (
+          <p role="alert" className="mb-6 rounded-md bg-red-50 p-3 text-sm text-red-800">
+            {error}
+          </p>
+        )}
 
         <div className="grid gap-8 lg:grid-cols-2">
           <div className="space-y-4">
@@ -123,7 +176,8 @@ export default function ProductPage({ params }: { params: Promise<{ locale: stri
             <div className="flex gap-2">
               {product.images.map((src, idx) => (
                 <button
-                  key={idx}
+                  type="button"
+                  key={src}
                   onClick={() => setSelectedVariant(idx)}
                   className="h-16 w-16 rounded border border-line bg-surface"
                 >
@@ -154,7 +208,10 @@ export default function ProductPage({ params }: { params: Promise<{ locale: stri
               <h2 className="font-medium text-ink mb-3">{t('pricing')}</h2>
               <div className="space-y-3">
                 {product.variants.map((variant, idx) => (
-                  <label key={idx} className="flex items-center justify-between cursor-pointer">
+                  <label
+                    key={variant.unit}
+                    className="flex items-center justify-between cursor-pointer"
+                  >
                     <div className="flex items-center gap-3">
                       <input
                         type="radio"
@@ -166,8 +223,13 @@ export default function ProductPage({ params }: { params: Promise<{ locale: stri
                       <span className="text-ink">{variant.unit}</span>
                     </div>
                     <div className="text-right">
-                      <span className="font-medium text-ink">{formatPrice(variant.price)} ریال</span>
-                      <span className="text-xs text-ink-soft"> ({variant.stock} {common('available')})</span>
+                      <span className="font-medium text-ink">
+                        {formatPrice(variant.price)} ریال
+                      </span>
+                      <span className="text-xs text-ink-soft">
+                        {' '}
+                        ({variant.stock} {common('available')})
+                      </span>
                     </div>
                   </label>
                 ))}
@@ -178,6 +240,7 @@ export default function ProductPage({ params }: { params: Promise<{ locale: stri
               <h2 className="font-medium text-ink mb-3">{t('quantity')}</h2>
               <div className="flex items-center gap-4">
                 <button
+                  type="button"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="flex h-8 w-8 items-center justify-center rounded border border-line bg-surface"
                 >
@@ -185,6 +248,7 @@ export default function ProductPage({ params }: { params: Promise<{ locale: stri
                 </button>
                 <span className="font-medium text-ink w-8 text-center">{quantity}</span>
                 <button
+                  type="button"
                   onClick={() => setQuantity(Math.min(currentVariant.stock, quantity + 1))}
                   className="flex h-8 w-8 items-center justify-center rounded border border-line bg-surface"
                 >
@@ -197,7 +261,9 @@ export default function ProductPage({ params }: { params: Promise<{ locale: stri
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-ink-soft">{t('unitPrice')}</span>
-                  <span className="font-medium text-ink">{formatPrice(currentVariant.price)} ریال</span>
+                  <span className="font-medium text-ink">
+                    {formatPrice(currentVariant.price)} ریال
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-ink-soft">{t('qty')}</span>
@@ -226,8 +292,8 @@ export default function ProductPage({ params }: { params: Promise<{ locale: stri
           <Card density="compact">
             <h2 className="font-medium text-ink mb-3">{t('productSpecs')}</h2>
             <div className="space-y-2">
-              {product.specs.map((spec, idx) => (
-                <div key={idx} className="flex justify-between">
+              {product.specs.map((spec) => (
+                <div key={spec.label} className="flex justify-between">
                   <span className="text-ink-soft">{spec.label}</span>
                   <span className="text-ink">{spec.value}</span>
                 </div>
@@ -279,13 +345,7 @@ export default function ProductPage({ params }: { params: Promise<{ locale: stri
         </div>
 
         <Card density="compact" className="mt-8">
-          <ProvenanceStamp
-            source={product.provenance}
-            verified={product.verified}
-            timestamp="2025-07-15T10:30:00Z"
-            method="5-party PQ signature"
-            label={t('productProvenance')}
-          />
+          <ProvenanceStamp source={source} verified={false} label={t('productProvenance')} />
         </Card>
       </div>
     </main>

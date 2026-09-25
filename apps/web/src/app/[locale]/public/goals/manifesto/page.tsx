@@ -1,70 +1,78 @@
 import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { FivePart } from '@/components/FivePart';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
+import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+const TITLES: Record<string, string> = { fa: 'مانیفست', en: 'Manifesto' };
+const DESCRIPTIONS: Record<string, string> = {
+  fa: 'مانیفست کامل پلتفرم',
+  en: 'Full platform manifesto',
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
-  const titles: Record<string, string> = { fa: 'مانیفست', en: 'Manifesto' };
-  const descriptions: Record<string, string> = { fa: 'مانیفست کامل پلتفرم', en: 'Full platform manifesto' };
   return {
-    title: titles[locale] ?? titles.en,
-    description: descriptions[locale] ?? descriptions.en,
-    openGraph: { type: 'website', locale, url: `${BASE_URL}/${locale}/public/goals/manifesto`, title: titles[locale] ?? titles.en },
-    alternates: { canonical: `${BASE_URL}/${locale}/public/goals/manifesto`, languages: { fa: `${BASE_URL}/fa/public/goals/manifesto`, en: `${BASE_URL}/en/public/goals/manifesto` } },
+    title: TITLES[locale] ?? TITLES.en,
+    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    openGraph: {
+      type: 'website',
+      locale,
+      url: `${BASE_URL}/${locale}/public/goals/manifesto`,
+      title: TITLES[locale] ?? TITLES.en,
+    },
+    alternates: {
+      canonical: `${BASE_URL}/${locale}/public/goals/manifesto`,
+      languages: {
+        fa: `${BASE_URL}/fa/public/goals/manifesto`,
+        en: `${BASE_URL}/en/public/goals/manifesto`,
+      },
+    },
   };
 }
 
 export default async function ManifestoPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('public.goals.manifesto');
-  const common = await getTranslations('common');
+  const t = await getTranslations('market.template');
+  const status = await getTranslations('statusLine');
 
   return (
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
-      <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp source="Manifesto Document" label={t('provenanceLabel')} verified={true} method="Community-signed" timestamp="2024-12-01">
-          <h1 className="display text-4xl font-bold text-ink">{t('title')}</h1>
-        </ProvenanceStamp>
-        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
-      </section>
-
-      <section className="mx-auto max-w-5xl px-6 pb-6">
-        <FivePart
-          title={t('whatTitle')}
-          lead={t('whatLead')}
-          what={t('whatDesc')}
-          audience={t('audience')}
-          evidence={['Participatory drafting', 'Multi-language consensus', 'Digital signatures']}
-          limits={['Living document', 'Translation sync challenges', 'Version control essential']}
-          next={['Add annotation layer', 'Enable community proposals', 'Annual manifesto summit']}
-          evidenceLabel={common('evidence')} limitsLabel={common('limits')} nextLabel={common('next')}
-        />
-      </section>
-
-      <section className="mx-auto max-w-5xl px-6 pb-12">
-        <h2 className="text-xl font-semibold text-ink mb-4">{t('manifestoText')}</h2>
-        <Card density="cozy">
-          <div className="prose max-w-none text-ink">
-            <div className="space-y-4">
-              <p>{t('para1')}</p>
-              <p>{t('para2')}</p>
-              <p>{t('para3')}</p>
-              <p>{t('para4')}</p>
-              <p>{t('para5')}</p>
-            </div>
-          </div>
-          <div className="mt-4">
-            <ProvenanceStamp source="Manifesto Document" verified={true} method="Community-signed" timestamp="2024-12-01" label={t('provenanceLabel')} />
-          </div>
+      <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
+        <h1 className="display text-4xl font-bold text-ink">{TITLES[locale] ?? TITLES.en}</h1>
+        <div className="mt-6 flex flex-wrap items-center gap-4">
+          <StatusDot state="down" label={status('unavailable')} />
+          <ProvenanceStamp
+            source={t('source')}
+            label={t('source')}
+            verified={false}
+            method={t('method')}
+          />
+        </div>
+        <Card density="cozy" className="mt-6">
+          <h2 className="font-semibold text-ink">{t('unavailableTitle')}</h2>
+          <p className="mt-2 text-sm text-ink-soft">{t('unavailableDescription')}</p>
         </Card>
-      </section>
+        <div className="mt-6 grid gap-3 md:grid-cols-2">
+          <div className="rounded-md border border-line p-4">
+            <h3 className="font-medium text-ink">{t('contractTitle')}</h3>
+            <p className="mt-1 text-sm text-ink-soft">{t('contractDescription')}</p>
+          </div>
+          <div className="rounded-md border border-line p-4">
+            <h3 className="font-medium text-ink">{t('nextTitle')}</h3>
+            <p className="mt-1 text-sm text-ink-soft">{t('nextDescription')}</p>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }

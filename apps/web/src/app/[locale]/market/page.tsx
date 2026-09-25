@@ -20,7 +20,8 @@ export async function generateMetadata({
   const { locale } = await params;
   const messages = (await loadMessages(locale)) as NestedMessages;
   const brandName = messages.brand?.name ?? 'هیدروما نوژین';
-  const marketLead = messages.market?.lead ?? 'بازارگاه محصولات تولیدکنندگان با قیمت و موجودی واقعی';
+  const marketLead =
+    messages.market?.lead ?? 'بازارگاه محصولات تولیدکنندگان با قیمت و موجودی واقعی';
 
   return {
     title: `بازارگاه · ${brandName}`,

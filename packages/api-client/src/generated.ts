@@ -1842,6 +1842,10 @@ export interface LoginHistoryResponse {
   created_at: string;
 }
 
+export interface LogoutRequest {
+  refresh_token?: string | null;
+}
+
 export interface MarketplaceCreate {
   /**
      * @minLength 2
@@ -2493,7 +2497,7 @@ export interface RegisterRequest {
      * @maxLength 100
      */
   password: string;
-  /** @pattern ^(farmer|researcher|organization|tourist|regular|admin|security_admin|content_admin|user_admin)$ */
+  /** @pattern ^(farmer|advisor|researcher|organization|tourist|regular)$ */
   role?: string;
   phone?: string | null;
   date_of_birth?: string | null;
@@ -4320,6 +4324,21 @@ export type AgrovocSearchEndpointApiV1ScienceAgrovocGetParams = {
 q?: string;
 limit?: number;
 };
+
+export type SearchContentApiV1ContentSearchGetParams = {
+/**
+ * @minLength 1
+ * @maxLength 200
+ */
+q: string;
+/**
+ * @minimum 1
+ * @maximum 50
+ */
+limit?: number;
+};
+
+export type SearchContentApiV1ContentSearchGet200 = { [key: string]: unknown };
 
 export type ModelsIndexApiV1ModelsGet200 = { [key: string]: unknown };
 
@@ -11067,12 +11086,19 @@ export type logoutApiV1AuthLogoutPostResponse200 = {
   status: 200
 }
 
+export type logoutApiV1AuthLogoutPostResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
 export type logoutApiV1AuthLogoutPostResponseSuccess = (logoutApiV1AuthLogoutPostResponse200) & {
   headers: Headers;
 };
-;
+export type logoutApiV1AuthLogoutPostResponseError = (logoutApiV1AuthLogoutPostResponse422) & {
+  headers: Headers;
+};
 
-export type logoutApiV1AuthLogoutPostResponse = (logoutApiV1AuthLogoutPostResponseSuccess)
+export type logoutApiV1AuthLogoutPostResponse = (logoutApiV1AuthLogoutPostResponseSuccess | logoutApiV1AuthLogoutPostResponseError)
 
 export const getLogoutApiV1AuthLogoutPostUrl = () => {
 
@@ -11083,17 +11109,31 @@ export const getLogoutApiV1AuthLogoutPostUrl = () => {
 }
 
 /**
- * Logout - clears httpOnly auth cookies.
+ * Logout - revokes the active refresh token and clears auth cookies.
  * @summary Logout
  */
-export const logoutApiV1AuthLogoutPost = async ( options?: Parameters<typeof apiRequest>[1]): Promise<logoutApiV1AuthLogoutPostResponse> => {
+export const logoutApiV1AuthLogoutPost = async (logoutRequestNull?: LogoutRequest | null, options?: Parameters<typeof apiRequest>[1]): Promise<logoutApiV1AuthLogoutPostResponse> => {
 
-  return apiRequest<logoutApiV1AuthLogoutPostResponse>(getLogoutApiV1AuthLogoutPostUrl(),
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiRequest<logoutApiV1AuthLogoutPostResponse>(getLogoutApiV1AuthLogoutPostUrl(),
   {
     ...options,
-    method: 'POST'
-
-
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(logoutRequestNull)
   }
 );}
 
@@ -11101,23 +11141,23 @@ export const logoutApiV1AuthLogoutPost = async ( options?: Parameters<typeof api
 
 
 
-export const getLogoutApiV1AuthLogoutPostQueryKey = () => {
+export const getLogoutApiV1AuthLogoutPostQueryKey = (logoutRequestNull?: LogoutRequest | null,) => {
     return [
-    'POST', `/api/v1/auth/logout`
+    'POST', `/api/v1/auth/logout`, logoutRequestNull
     ] as const;
     }
 
 
-export const getLogoutApiV1AuthLogoutPostQueryOptions = <TData = Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getLogoutApiV1AuthLogoutPostQueryOptions = <TData = Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError = HTTPValidationError>(logoutRequestNull?: LogoutRequest | null, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getLogoutApiV1AuthLogoutPostQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getLogoutApiV1AuthLogoutPostQueryKey(logoutRequestNull);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>> = ({ signal }) => logoutApiV1AuthLogoutPost({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>> = ({ signal }) => logoutApiV1AuthLogoutPost(logoutRequestNull, { signal, ...requestOptions });
 
 
 
@@ -11127,11 +11167,11 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type LogoutApiV1AuthLogoutPostQueryResult = NonNullable<Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>>
-export type LogoutApiV1AuthLogoutPostQueryError = unknown
+export type LogoutApiV1AuthLogoutPostQueryError = HTTPValidationError
 
 
-export function useLogoutApiV1AuthLogoutPost<TData = Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError, TData>> & Pick<
+export function useLogoutApiV1AuthLogoutPost<TData = Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError = HTTPValidationError>(
+ logoutRequestNull: undefined |  LogoutRequest | null, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>,
           TError,
@@ -11140,8 +11180,8 @@ export function useLogoutApiV1AuthLogoutPost<TData = Awaited<ReturnType<typeof l
       >, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useLogoutApiV1AuthLogoutPost<TData = Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError, TData>> & Pick<
+export function useLogoutApiV1AuthLogoutPost<TData = Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError = HTTPValidationError>(
+ logoutRequestNull?: LogoutRequest | null, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>,
           TError,
@@ -11150,20 +11190,20 @@ export function useLogoutApiV1AuthLogoutPost<TData = Awaited<ReturnType<typeof l
       >, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useLogoutApiV1AuthLogoutPost<TData = Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function useLogoutApiV1AuthLogoutPost<TData = Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError = HTTPValidationError>(
+ logoutRequestNull?: LogoutRequest | null, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Logout
  */
 
-export function useLogoutApiV1AuthLogoutPost<TData = Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function useLogoutApiV1AuthLogoutPost<TData = Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError = HTTPValidationError>(
+ logoutRequestNull?: LogoutRequest | null, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof logoutApiV1AuthLogoutPost>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getLogoutApiV1AuthLogoutPostQueryOptions(options)
+  const queryOptions = getLogoutApiV1AuthLogoutPostQueryOptions(logoutRequestNull,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -46173,6 +46213,107 @@ export function useRequestDatasetDoiApiV1ScienceDatasetsSlugDoiPost<TData = Awai
 
 
 
+
+export type searchContentApiV1ContentSearchGetResponse200 = {
+  data: SearchContentApiV1ContentSearchGet200
+  status: 200
+}
+
+export type searchContentApiV1ContentSearchGetResponse422 = {
+  data: HTTPValidationError
+  status: 422
+}
+
+export type searchContentApiV1ContentSearchGetResponseSuccess = (searchContentApiV1ContentSearchGetResponse200) & {
+  headers: Headers;
+};
+export type searchContentApiV1ContentSearchGetResponseError = (searchContentApiV1ContentSearchGetResponse422) & {
+  headers: Headers;
+};
+
+export type searchContentApiV1ContentSearchGetResponse = (searchContentApiV1ContentSearchGetResponseSuccess | searchContentApiV1ContentSearchGetResponseError)
+
+export const getSearchContentApiV1ContentSearchGetUrl = (params: SearchContentApiV1ContentSearchGetParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/content/search?${stringifiedParams}` : `/api/v1/content/search`
+}
+
+/**
+ * Keyword search over published content (honest RAG surface).
+ * @summary Search Content
+ */
+export const searchContentApiV1ContentSearchGet = async (params: SearchContentApiV1ContentSearchGetParams, options?: Parameters<typeof apiRequest>[1]): Promise<searchContentApiV1ContentSearchGetResponse> => {
+
+  return apiRequest<searchContentApiV1ContentSearchGetResponse>(getSearchContentApiV1ContentSearchGetUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getSearchContentApiV1ContentSearchGetMutationKey = () => ['searchContentApiV1ContentSearchGet'] as const;
+
+export const getSearchContentApiV1ContentSearchGetMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof searchContentApiV1ContentSearchGet>>, TError,SearchContentApiV1ContentSearchGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof searchContentApiV1ContentSearchGet>>, TError,SearchContentApiV1ContentSearchGetMutationVariables, TContext> => {
+
+const mutationKey = getSearchContentApiV1ContentSearchGetMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof searchContentApiV1ContentSearchGet>>, SearchContentApiV1ContentSearchGetMutationVariables> = (props) => {
+          const {params} = props ?? {};
+
+          return  searchContentApiV1ContentSearchGet(params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SearchContentApiV1ContentSearchGetMutationResult = NonNullable<Awaited<ReturnType<typeof searchContentApiV1ContentSearchGet>>>
+
+    export type SearchContentApiV1ContentSearchGetMutationError = HTTPValidationError
+    export type SearchContentApiV1ContentSearchGetMutationVariables = {params: SearchContentApiV1ContentSearchGetParams}
+
+    /**
+ * @summary Search Content
+ */
+export const useSearchContentApiV1ContentSearchGet = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof searchContentApiV1ContentSearchGet>>, TError,SearchContentApiV1ContentSearchGetMutationVariables, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof searchContentApiV1ContentSearchGet>>,
+        TError,
+        SearchContentApiV1ContentSearchGetMutationVariables,
+        TContext
+      > => {
+      return useMutation(getSearchContentApiV1ContentSearchGetMutationOptions(options), queryClient);
+    }
 
 export type modelsIndexApiV1ModelsGetResponse200 = {
   data: ModelsIndexApiV1ModelsGet200

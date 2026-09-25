@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { useFormContext, useFieldArray } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
-import { Input } from '@/components/ui/Input';
+import { useState } from 'react';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { type Step3Input, type TrusteeInput } from '@/lib/validation/bazaar-establishment';
+import { Input } from '@/components/ui/Input';
+import { type Step3Input } from '@/lib/validation/bazaar-establishment';
 
 const REQUIRED_TRUSTEES = 5;
 
@@ -18,18 +18,19 @@ export function Step3Form({ locale }: { locale: string }) {
 
   const [showAdd, setShowAdd] = useState(false);
 
-  const isComplete = trustees.length === REQUIRED_TRUSTEES &&
-    trustees.every(t => t.fullName && t.role && t.position);
+  const isComplete =
+    trustees.length === REQUIRED_TRUSTEES &&
+    trustees.every((t) => t.fullName && t.role && t.position);
 
   return (
     <div className="space-y-4" dir={locale === 'fa' || locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="flex items-center justify-between">
         <h3 className="font-medium text-ink">{t('foundingBoard')}</h3>
-{fields.length < REQUIRED_TRUSTEES && (
-            <Button variant="ghost" size="sm" onClick={() => setShowAdd(true)}>
-              + {t('addTrustee')}
-            </Button>
-          )}
+        {fields.length < REQUIRED_TRUSTEES && (
+          <Button variant="ghost" size="sm" onClick={() => setShowAdd(true)}>
+            + {t('addTrustee')}
+          </Button>
+        )}
       </div>
 
       <div className="grid gap-4">
@@ -38,7 +39,9 @@ export function Step3Form({ locale }: { locale: string }) {
             <div className="flex items-start justify-between gap-4 mb-3">
               <h4 className="font-medium text-ink">
                 {t('trustee', { number: index + 1 })}
-                <span className="text-sm text-ink-soft ml-2">({t('position')} {field.position})</span>
+                <span className="text-sm text-ink-soft ml-2">
+                  ({t('position')} {field.position})
+                </span>
               </h4>
               {fields.length > 1 && (
                 <Button variant="ghost" size="sm" onClick={() => remove(index)}>
@@ -129,7 +132,12 @@ export function Step3Form({ locale }: { locale: string }) {
             />
           </div>
           <div className="flex gap-2 mt-4">
-            <Button onClick={() => { append({ fullName: '', role: '', position: fields.length + 1 }); setShowAdd(false); }}>
+            <Button
+              onClick={() => {
+                append({ fullName: '', role: '', position: fields.length + 1 });
+                setShowAdd(false);
+              }}
+            >
               {t('saveTrustee')}
             </Button>
             <Button variant="ghost" onClick={() => setShowAdd(false)}>

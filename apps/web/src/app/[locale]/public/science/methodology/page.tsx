@@ -1,85 +1,134 @@
 import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { FivePart } from '@/components/FivePart';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
+import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { apiGet } from '@/lib/api/client';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
-interface MethodItem {
-  id: string;
-  name: string;
-  standard: string;
+const MODELS_PATH = '/api/v1/models';
+
+type RegistryModel = {
+  slug: string;
+  name_fa: string;
+  name_en: string;
   domain: string;
-  verified: boolean;
-  version: string;
-}
+  fidelity: string;
+  reference: string;
+  description: string;
+};
 
-const MOCK_METHODS: MethodItem[] = [
-  { id: 'm1', name: 'FAO-56 Evapotranspiration', standard: 'FAO Irrigation and Drainage Paper 56', domain: 'Hydrology', verified: true, version: '1.0' },
-  { id: 'm2', name: 'RUSLE2 Erosion', standard: 'USDA Agriculture Handbook 703', domain: 'Soil Conservation', verified: true, version: '2.0' },
-  { id: 'm3', name: 'IPCC 2006 Guidelines', standard: 'IPCC Guidelines for National GHG Inventories', domain: 'Carbon Accounting', verified: true, version: '2006' },
-  { id: 'm4', name: 'AquaCrop-OSPy', standard: 'FAO AquaCrop Model', domain: 'Crop Water Productivity', verified: false, version: '1.0' },
-];
+type ModelsIndex = {
+  count: number;
+  fidelity_counts: Record<string, number>;
+  models: RegistryModel[];
+};
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+const TITLES: Record<string, string> = { fa: 'روش‌شناسی', en: 'Methodology' };
+const DESCRIPTIONS: Record<string, string> = {
+  fa: 'استانداردها و روش‌های محاسبه علمی',
+  en: 'Standards and scientific computation methods',
+};
+
+export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
-  const titles: Record<string, string> = { fa: 'روش‌شناسی', en: 'Methodology' };
-  const descriptions: Record<string, string> = { fa: 'استانداردها و روش‌های محاسبه علمی', en: 'Standards and scientific computation methods' };
   return {
-    title: titles[locale] ?? titles.en,
-    description: descriptions[locale] ?? descriptions.en,
-    openGraph: { type: 'website', locale, url: `${BASE_URL}/${locale}/public/science/methodology`, title: titles[locale] ?? titles.en },
-    alternates: { canonical: `${BASE_URL}/${locale}/public/science/methodology`, languages: { fa: `${BASE_URL}/fa/public/science/methodology`, en: `${BASE_URL}/en/public/science/methodology` } },
+    title: TITLES[locale] ?? TITLES.en,
+    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    openGraph: {
+      type: 'website',
+      locale,
+      url: `${BASE_URL}/${locale}/public/science/methodology`,
+      title: TITLES[locale] ?? TITLES.en,
+    },
+    alternates: {
+      canonical: `${BASE_URL}/${locale}/public/science/methodology`,
+      languages: {
+        fa: `${BASE_URL}/fa/public/science/methodology`,
+        en: `${BASE_URL}/en/public/science/methodology`,
+      },
+    },
   };
 }
 
 export default async function MethodologyPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('public.science.methodology');
-  const common = await getTranslations('common');
+  const t = await getTranslations('statusLine');
+  const template = await getTranslations('market.template');
+  const title = TITLES[locale] ?? TITLES.en;
+  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+
+  const registry = await apiGet<ModelsIndex>(MODELS_PATH);
+  const models = registry.ok ? registry.data.models : [];
 
   return (
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp source="Methodology Registry" label={t('provenanceLabel')} verified={true} method="Standard-indexed" timestamp="2024-12-01">
-          <h1 className="display text-4xl font-bold text-ink">{t('title')}</h1>
+        <ProvenanceStamp
+          source={MODELS_PATH}
+          label={title}
+          verified={registry.ok}
+          method={MODELS_PATH}
+        >
+          <h1 className="display text-4xl font-bold text-ink">{title}</h1>
         </ProvenanceStamp>
-        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
-      </section>
-
-      <section className="mx-auto max-w-5xl px-6 pb-6">
-        <FivePart
-          title={t('whatTitle')}
-          lead={t('whatLead')}
-          what={t('whatDesc')}
-          audience={t('audience')}
-          evidence={['FAO standards', 'IPCC guidelines', 'OGC specifications']}
-          limits={['Some methods uncalibrated for region', 'Version drift possible', 'Translation coverage varies']}
-          next={['Add calibration dashboards', 'Link to model versions', 'Automate compliance checks']}
-          evidenceLabel={common('evidence')} limitsLabel={common('limits')} nextLabel={common('next')}
-        />
+        <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
-        <h2 className="text-xl font-semibold text-ink mb-4">{t('methodsCatalog')}</h2>
-        <div className="grid gap-4">
-          {MOCK_METHODS.map(item => (
-            <Card key={item.id} density="compact">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                  <h3 className="font-medium text-ink">{item.name}</h3>
-                  <p className="text-sm text-ink-soft">{item.standard}</p>
-                  <p className="text-xs text-ink-soft">Domain: {item.domain} · v{item.version}</p>
-                </div>
-                <ProvenanceStamp source={item.standard} verified={item.verified} label={item.domain} />
-              </div>
-            </Card>
-          ))}
-        </div>
+        <h2 className="text-xl font-semibold text-ink mb-4">{template('source')}</h2>
+        {models.length === 0 ? (
+          <Card density="compact">
+            <h3 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h3>
+            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
+            <p className="mt-3 text-xs text-ink-soft">
+              {t('unavailable')}
+              {registry.ok ? '' : ` · ${registry.error}`}
+            </p>
+          </Card>
+        ) : (
+          <>
+            <div className="grid gap-4">
+              {models.map((model) => (
+                <Card key={model.slug} density="compact">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <h3 className="font-medium text-ink">
+                        {locale === 'fa' ? model.name_fa : model.name_en}
+                      </h3>
+                      <p className="text-sm text-ink-soft mt-1">{model.reference}</p>
+                      <p className="text-xs text-ink-soft mt-1">{model.description}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <StatusDot
+                        state={model.fidelity === 'official' ? 'ok' : 'warn'}
+                        label={model.fidelity}
+                      />
+                      <ProvenanceStamp
+                        source={model.reference}
+                        method={model.domain}
+                        label={model.slug}
+                      />
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+            <p className="mt-6 text-xs text-ink-soft">
+              {MODELS_PATH} · {t('realData')}
+            </p>
+          </>
+        )}
       </section>
     </main>
   );

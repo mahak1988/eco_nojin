@@ -1,103 +1,191 @@
 import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { FivePart } from '@/components/FivePart';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
 import { StatusDot } from '@/components/StatusDot';
+import { Card } from '@/components/ui/Card';
+import { apiGet } from '@/lib/api/client';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
-interface EngineModule {
-  id: string;
-  name: string;
-  version: string;
-  language: string;
-  status: 'stable' | 'beta' | 'experimental';
-  tests: string;
-  coverage: string;
-  source: string;
-}
+const MODELS_PATH = '/api/v1/models';
+const CPP_PATH = '/api/v1/models/cpp-status';
+const PINN_PATH = '/api/v1/models/pinn-status';
 
-const MOCK_MODULES: EngineModule[] = [
-  { id: 'm1', name: 'Soil Water Balance (FAO-56)', version: '2.1.0', language: 'Python/C++', status: 'stable', tests: '70/70', coverage: '94%', source: 'engine/hydroma/soil' },
-  { id: 'm2', name: 'Surface Hydrology (Saint-Venant)', version: '1.3.0', language: 'C++20', status: 'stable', tests: '45/45', coverage: '89%', source: 'engine/cpp_core/hydro' },
-  { id: 'm3', name: 'Erosion (RUSLE2)', version: '2.0.0', language: 'Python', status: 'stable', tests: '38/38', coverage: '91%', source: 'engine/hydroma/erosion' },
-  { id: 'm4', name: 'Carbon Cycle (RothC)', version: '1.0.0', language: 'Python', status: 'beta', tests: '22/25', coverage: '78%', source: 'engine/hydroma/carbon' },
-  { id: 'm5', name: 'Climate Downscaling', version: '0.9.0', language: 'Python', status: 'experimental', tests: '15/20', coverage: '65%', source: 'engine/hydroma/climate' },
-];
+type RegistryModel = {
+  slug: string;
+  name_fa: string;
+  name_en: string;
+  domain: string;
+  fidelity: string;
+  reference: string;
+};
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+type ModelsIndex = {
+  count: number;
+  fidelity_counts: Record<string, number>;
+  models: RegistryModel[];
+};
+
+type CppStatus = {
+  available: boolean;
+  dll: string | null;
+  kernels: string[];
+  note?: string;
+};
+
+type PinnStatus = {
+  available: boolean;
+  note?: string;
+};
+
+const TITLES: Record<string, string> = { fa: 'موتور هیدروما', en: 'HydroMa Engine' };
+const DESCRIPTIONS: Record<string, string> = {
+  fa: 'نمایشگر ماژول‌های موتور علمی',
+  en: 'Scientific engine module showcase',
+};
+
+export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
-  const titles: Record<string, string> = { fa: 'موتور هیدروما', en: 'HydroMa Engine' };
-  const descriptions: Record<string, string> = { fa: 'نمایشگر ماژول‌های موتور علمی', en: 'Scientific engine module showcase' };
   return {
-    title: titles[locale] ?? titles.en,
-    description: descriptions[locale] ?? descriptions.en,
-    openGraph: { type: 'website', locale, url: `${BASE_URL}/${locale}/public/components/hydroma-engine`, title: titles[locale] ?? titles.en },
-    alternates: { canonical: `${BASE_URL}/${locale}/public/components/hydroma-engine`, languages: { fa: `${BASE_URL}/fa/public/components/hydroma-engine`, en: `${BASE_URL}/en/public/components/hydroma-engine` } },
+    title: TITLES[locale] ?? TITLES.en,
+    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    openGraph: {
+      type: 'website',
+      locale,
+      url: `${BASE_URL}/${locale}/public/components/hydroma-engine`,
+      title: TITLES[locale] ?? TITLES.en,
+    },
+    alternates: {
+      canonical: `${BASE_URL}/${locale}/public/components/hydroma-engine`,
+      languages: {
+        fa: `${BASE_URL}/fa/public/components/hydroma-engine`,
+        en: `${BASE_URL}/en/public/components/hydroma-engine`,
+      },
+    },
   };
 }
 
-export default async function HydromaEnginePage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function HydromaEnginePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('public.components.hydromaEngine');
-  const common = await getTranslations('common');
+  const t = await getTranslations('statusLine');
+  const template = await getTranslations('market.template');
+  const science = await getTranslations('science');
+  const title = TITLES[locale] ?? TITLES.en;
+  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
 
-  const runDemo = (id: string) => alert(`${t('runningDemo')} ${id}`);
+  const [registry, cpp, pinn] = await Promise.all([
+    apiGet<ModelsIndex>(MODELS_PATH),
+    apiGet<CppStatus>(CPP_PATH),
+    apiGet<PinnStatus>(PINN_PATH),
+  ]);
+  const models = registry.ok ? registry.data.models : [];
 
   return (
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp source="Engine Registry" label={t('provenanceLabel')} verified={true} method="CI-validated" timestamp="2024-12-10">
-          <h1 className="display text-4xl font-bold text-ink">{t('title')}</h1>
+        <ProvenanceStamp
+          source={MODELS_PATH}
+          label={title}
+          verified={registry.ok}
+          method={MODELS_PATH}
+        >
+          <h1 className="display text-4xl font-bold text-ink">{title}</h1>
         </ProvenanceStamp>
-        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
+        <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-6">
-        <FivePart
-          title={t('whatTitle')}
-          lead={t('whatLead')}
-          what={t('whatDesc')}
-          audience={t('audience')}
-          evidence={['FAO/IPCC/OGC compliance', 'C++20 + Python bindings', '70+ unit tests passing']}
-          limits={['Experimental modules unstable', 'WASM port partial', 'Regional calibration needed']}
-          next={['Complete RothC integration', 'WASM for all modules', 'Add uncertainty quantification']}
-          evidenceLabel={common('evidence')} limitsLabel={common('limits')} nextLabel={common('next')}
-        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Card density="compact">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm text-ink">{science('cppOk')}</p>
+              <StatusDot
+                state={cpp.ok && cpp.data.available ? 'ok' : 'warn'}
+                label={cpp.ok && cpp.data.available ? 'live' : 'unavailable'}
+              />
+            </div>
+            <p className="mt-1 text-xs text-ink-soft">
+              {cpp.ok
+                ? (cpp.data.note ?? `${science('kernels')}: ${cpp.data.kernels.join(', ')}`)
+                : cpp.error}
+            </p>
+            <ProvenanceStamp source={CPP_PATH} verified={cpp.ok} method={CPP_PATH} />
+          </Card>
+          <Card density="compact">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm text-ink">{PINN_PATH}</p>
+              <StatusDot
+                state={pinn.ok && pinn.data.available ? 'ok' : 'warn'}
+                label={pinn.ok && pinn.data.available ? 'live' : 'unavailable'}
+              />
+            </div>
+            <p className="mt-1 text-xs text-ink-soft">{pinn.ok ? pinn.data.note : pinn.error}</p>
+            <ProvenanceStamp source={PINN_PATH} verified={pinn.ok} method={PINN_PATH} />
+          </Card>
+        </div>
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-12">
-        <h2 className="text-xl font-semibold text-ink mb-4">{t('modules')}</h2>
-        <div className="grid gap-4">
-          {MOCK_MODULES.map(mod => (
-            <Card key={mod.id} density="compact">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-ink">{mod.name}</h3>
-                    <span className="px-2 py-1 rounded text-xs font-medium
-                      {mod.status === 'stable' ? 'bg-forest/10 text-forest' :
-                       mod.status === 'beta' ? 'bg-amber/10 text-amber' :
-                       'bg-purple/10 text-purple'}">
-                      {mod.status}
-                    </span>
+        <h2 className="text-xl font-semibold text-ink mb-4">{science('modelsTitle')}</h2>
+        {models.length === 0 ? (
+          <Card density="compact">
+            <h3 className="text-sm font-medium text-ink">
+              {registry.ok ? science('modelsEmpty') : template('unavailableTitle')}
+            </h3>
+            <p className="mt-1 text-sm text-ink-soft">
+              {registry.ok ? science('modelsPublicNote') : template('unavailableDescription')}
+            </p>
+            <p className="mt-3 text-xs text-ink-soft">
+              {t('unavailable')}
+              {registry.ok ? '' : ` · ${registry.error}`}
+            </p>
+          </Card>
+        ) : (
+          <>
+            <div className="grid gap-4">
+              {models.map((model) => (
+                <Card key={model.slug} density="compact">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <h3 className="font-medium text-ink">
+                        {locale === 'fa' ? model.name_fa : model.name_en}
+                      </h3>
+                      <p className="mt-1 text-sm text-ink-soft">{model.reference}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <StatusDot
+                        state={model.fidelity === 'official' ? 'ok' : 'warn'}
+                        label={model.fidelity}
+                      />
+                      <ProvenanceStamp
+                        source={MODELS_PATH}
+                        verified={false}
+                        method={model.domain}
+                        label={model.slug}
+                      />
+                    </div>
                   </div>
-                  <p className="text-sm text-ink-soft mt-1">v{mod.version} · {mod.language} · Tests: {mod.tests} · Coverage: {mod.coverage}</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <StatusDot state={mod.status === 'stable' ? 'ok' : mod.status === 'beta' ? 'warn' : 'down'} label={common(mod.status)} />
-                  <Button variant="ghost" size="sm" onClick={() => runDemo(mod.id)}>{t('runDemo')}</Button>
-                  <ProvenanceStamp source={mod.source} verified={true} method="CI" timestamp="2024-12-10" label={mod.version} />
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+                </Card>
+              ))}
+            </div>
+            <p className="mt-6 text-xs text-ink-soft">
+              {MODELS_PATH} · {t('realData')}
+            </p>
+          </>
+        )}
       </section>
     </main>
   );

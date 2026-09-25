@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { useParams, useRouter, usePathname } from 'next/navigation';
-import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useParams, useRouter } from 'next/navigation';
+import { useCallback, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { stepLabels, WIZARD_TOTAL_STEPS } from '@/components/BazaarEstablishmentWizard';
+import { BazaarStepRenderer } from '@/components/market/BazaarStepRenderer';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -22,8 +24,6 @@ import {
   step9Schema,
   step10Schema,
 } from '@/lib/validation/bazaar-establishment';
-import { WIZARD_TOTAL_STEPS, stepLabels } from '@/components/BazaarEstablishmentWizard';
-import { BazaarStepRenderer } from '@/components/market/BazaarStepRenderer';
 
 const TOTAL_STEPS = WIZARD_TOTAL_STEPS;
 
@@ -34,7 +34,6 @@ export default function BazaarWizardPage() {
   const locale = params.locale as string;
   const id = params.id as string;
   const router = useRouter();
-  const pathname = usePathname();
 
   const methods = useForm<BazaarFormInput>({
     resolver: zodResolver(bazaarEstablishmentSchema),
@@ -64,16 +63,16 @@ export default function BazaarWizardPage() {
   const {
     watch,
     trigger,
-    setValue,
     getValues,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = methods;
 
   const [currentStep, setCurrentStep] = useState(1);
-  const [stepStatuses, setStepStatuses] = useState<Record<number, WizardStepStatus>>(() =>
-    Array.from({ length: TOTAL_STEPS }, (_, i) => ({
-      [i + 1]: 'pending' as WizardStepStatus,
-    })).reduce((a, b) => ({ ...a, ...b }), {}),
+  const [stepStatuses, setStepStatuses] = useState<Record<number, WizardStepStatus>>(
+    () =>
+      Object.fromEntries(
+        Array.from({ length: TOTAL_STEPS }, (_, index) => [index + 1, 'pending']),
+      ) as Record<number, WizardStepStatus>,
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitResult, setSubmitResult] = useState<ApiResult<unknown> | null>(null);
@@ -112,11 +111,14 @@ export default function BazaarWizardPage() {
     }
   }, [currentStep, trigger, markStep, getValues]);
 
-  const goToStep = useCallback((step: number) => {
-    if (step < 1 || step > TOTAL_STEPS) return;
-    if (step > currentStep && stepStatuses[step - 1] !== 'completed') return;
-    setCurrentStep(step);
-  }, [currentStep, stepStatuses]);
+  const goToStep = useCallback(
+    (step: number) => {
+      if (step < 1 || step > TOTAL_STEPS) return;
+      if (step > currentStep && stepStatuses[step - 1] !== 'completed') return;
+      setCurrentStep(step);
+    },
+    [currentStep, stepStatuses],
+  );
 
   const nextStep = useCallback(async () => {
     const ok = await validateCurrentStep();
@@ -133,7 +135,24 @@ export default function BazaarWizardPage() {
     setIsSubmitting(true);
     try {
       const data = getValues();
-      const result = await apiPost('/api/v1/bazaars/establish', { ...data, tenant_id: id });
+      const location =
+        data.step1.latitude !== null && data.step1.longitude !== null
+          ? `${data.step1.latitude},${data.step1.longitude}`
+          : '';
+      const result = await apiPost('/api/v1/marketplace/marketplaces', {
+        name: data.step1.name,
+        marketplace_type: data.step1.bazaarType,
+        description: data.step1.description ?? '',
+        address: data.step1.address ?? '',
+        location,
+        village_id: id,
+        founder_ids: [],
+        e_commerce_rules_accepted: Boolean(data.step4.rulesDocument),
+        buy_sell_rules_accepted: Boolean(data.step4.rulesDocument),
+        rules_document: data.step4.rulesDocument ?? '',
+        contact_email: '',
+        contact_phone: '',
+      });
       setSubmitResult(result);
       if (result.ok) {
         router.push(`/${locale}/market/bazaars/${id}`);
@@ -147,10 +166,14 @@ export default function BazaarWizardPage() {
 
   const getStepStatusIcon = (status: WizardStepStatus) => {
     switch (status) {
-      case 'completed': return '✓';
-      case 'error': return '✗';
-      case 'active': return '●';
-      default: return '○';
+      case 'completed':
+        return '✓';
+      case 'error':
+        return '✗';
+      case 'active':
+        return '●';
+      default:
+        return '○';
     }
   };
 
@@ -161,14 +184,15 @@ export default function BazaarWizardPage() {
       <div className="mx-auto max-w-5xl px-6 pb-12 pt-6">
         <header className="mb-8">
           <nav className="mb-4">
-            <a
-              href={backUrl}
-              className="text-sm text-ink-soft hover:text-ink underline"
-            >
+            <a href={backUrl} className="text-sm text-ink-soft hover:text-ink underline">
               ← {locale === 'fa' ? 'بازگشت به بازارچه' : 'Back to Bazaar'}
             </a>
           </nav>
-          <ProvenanceStamp source="bazaar-establishment-wizard" label="تأسیس بازارچه — 10 گام">
+          <ProvenanceStamp
+            source="/api/v1/marketplace/marketplaces"
+            verified={false}
+            label="تأسیس بازارچه — 10 گام"
+          >
             <h1 className="display text-3xl font-bold text-ink sm:text-4xl">
               {locale === 'fa' ? 'معاونت تأسیس بازارچه' : 'Bazaar Establishment Wizard'}
             </h1>
@@ -178,8 +202,8 @@ export default function BazaarWizardPage() {
         <Card className="mb-6">
           <p className="text-ink-soft">
             {locale === 'fa'
-              ? 'این جادوگر ۱۰-مرحله‌ای شما را در فرآیند تأسیس بازارچه نهادی راهنمایی می‌کند. هر گام به‌صورت خودکار ذخیره می‌شود.'
-              : 'This 10-step wizard guides you through institutional bazaar establishment. Each step auto-saves.'}
+              ? 'این جادوگر ۱۰-مرحله‌ای شما را در فرآیند تأسیس بازارچه نهادی راهنمایی می‌کند. داده‌ها فقط با ارسال نهایی ثبت می‌شوند.'
+              : 'This 10-step wizard guides you through institutional bazaar establishment. Data is persisted only on final submit.'}
           </p>
         </Card>
 
@@ -210,7 +234,9 @@ export default function BazaarWizardPage() {
                   >
                     <span aria-hidden="true">{getStepStatusIcon(status)}</span>
                     <span className="num">{step}</span>
-                    <span className="hidden sm:inline">{locale === 'fa' ? stepLabels[i].fa : stepLabels[i].en}</span>
+                    <span className="hidden sm:inline">
+                      {locale === 'fa' ? stepLabels[i].fa : stepLabels[i].en}
+                    </span>
                   </button>
                 </li>
               );
@@ -227,12 +253,7 @@ export default function BazaarWizardPage() {
 
         {/* Navigation */}
         <div className="flex items-center justify-between p-4 border-t border-line">
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={prevStep}
-            disabled={currentStep === 1}
-          >
+          <Button type="button" variant="ghost" onClick={prevStep} disabled={currentStep === 1}>
             {locale === 'fa' ? '↩ گام قبلی' : '← Previous'}
           </Button>
 
@@ -247,11 +268,7 @@ export default function BazaarWizardPage() {
               {locale === 'fa' ? 'گام بعدی →' : 'Next →'}
             </Button>
           ) : (
-            <Button
-              type="button"
-              onClick={handleSubmit}
-              disabled={isSubmitting || !isValid}
-            >
+            <Button type="button" onClick={handleSubmit} disabled={isSubmitting || !isValid}>
               {isSubmitting
                 ? locale === 'fa'
                   ? 'در حال ثبت...'
@@ -271,7 +288,7 @@ export default function BazaarWizardPage() {
             {submitResult.error}
           </div>
         )}
-        {submitResult && submitResult.ok && (
+        {submitResult?.ok && (
           <div
             className="m-4 p-3 border border-success/30 bg-success/5 text-success text-sm rounded"
             role="status"

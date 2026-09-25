@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 
 interface ProvenanceEntry {
   id: string;
@@ -18,7 +18,6 @@ interface ProvenanceEntry {
 
 export default function ProvenancePage() {
   const t = useTranslations('trust.provenance');
-  const common = useTranslations('common');
   const pathname = usePathname();
   const router = useRouter();
   const locale = pathname.split('/')[1];
@@ -35,7 +34,7 @@ export default function ProvenancePage() {
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
         setEntries(data.entries || []);
-      } catch (err) {
+      } catch {
         setError(t('fetchError'));
       } finally {
         setIsLoading(false);
@@ -44,9 +43,10 @@ export default function ProvenancePage() {
     fetchProvenance();
   }, [locale, t]);
 
-  const filteredEntries = entries.filter(e =>
-    e.source.toLowerCase().includes(search.toLowerCase()) ||
-    e.service.toLowerCase().includes(search.toLowerCase())
+  const filteredEntries = entries.filter(
+    (e) =>
+      e.source.toLowerCase().includes(search.toLowerCase()) ||
+      e.service.toLowerCase().includes(search.toLowerCase()),
   );
 
   if (isLoading) {
@@ -70,9 +70,18 @@ export default function ProvenancePage() {
         </header>
 
         {error && (
-          <div className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700" role="alert">
+          <div
+            className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700"
+            role="alert"
+          >
             {error}
-            <Button variant="ghost" size="sm" className="ml-2" onClick={() => router.refresh()}>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="ml-2"
+              onClick={() => router.refresh()}
+            >
               Try again
             </Button>
           </div>
@@ -83,7 +92,7 @@ export default function ProvenancePage() {
             <input
               type="search"
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder={t('searchPlaceholder')}
               className="flex-1 px-4 py-2 rounded-md border border-line bg-background text-ink focus:outline-none focus:ring-2 focus:ring-forest"
               aria-label={t('searchPlaceholder')}

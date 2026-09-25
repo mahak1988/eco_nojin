@@ -1,10 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { usePathname } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 
 interface WebhookEvent {
   name: string;
@@ -16,7 +13,8 @@ const EVENTS: WebhookEvent[] = [
   {
     name: 'order.created',
     description: 'Fired when a new order is placed',
-    payload: '{ "orderId": "string", "buyerId": "string", "totalAmount": "number", "currency": "string" }',
+    payload:
+      '{ "orderId": "string", "buyerId": "string", "totalAmount": "number", "currency": "string" }',
   },
   {
     name: 'order.updated',
@@ -47,9 +45,6 @@ const EVENTS: WebhookEvent[] = [
 
 export default function WebhooksPage() {
   const t = useTranslations('developers.webhooks');
-  const common = useTranslations('common');
-  const pathname = usePathname();
-  const locale = pathname.split('/')[1];
 
   return (
     <main id="main" className="min-h-screen">
@@ -81,14 +76,18 @@ export default function WebhooksPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-line">
-                  <th className="text-left py-2 px-3 font-medium text-ink-soft">{t('eventName')}</th>
-                  <th className="text-left py-2 px-3 font-medium text-ink-soft">{t('description')}</th>
+                  <th className="text-left py-2 px-3 font-medium text-ink-soft">
+                    {t('eventName')}
+                  </th>
+                  <th className="text-left py-2 px-3 font-medium text-ink-soft">
+                    {t('description')}
+                  </th>
                   <th className="text-left py-2 px-3 font-medium text-ink-soft">{t('payload')}</th>
                 </tr>
               </thead>
               <tbody>
-                {EVENTS.map((evt, idx) => (
-                  <tr key={idx} className="border-b border-line/50">
+                {EVENTS.map((evt) => (
+                  <tr key={evt.name} className="border-b border-line/50">
                     <td className="py-2 px-3 font-mono text-ink">{evt.name}</td>
                     <td className="py-2 px-3 text-ink-soft">{evt.description}</td>
                     <td className="py-2 px-3">
@@ -106,8 +105,8 @@ export default function WebhooksPage() {
         <Card density="cozy" className="mt-6">
           <h2 className="font-medium text-ink mb-3">{t('retryPolicy')}</h2>
           <ul className="space-y-2 text-sm text-ink-soft">
-            {t.raw('retryPolicy')?.map((item: string, idx: number) => (
-              <li key={idx} className="flex gap-2">
+            {t.raw('retryPolicy')?.map((item: string) => (
+              <li key={item} className="flex gap-2">
                 <span className="text-forest">•</span>
                 <span>{item}</span>
               </li>
@@ -119,8 +118,8 @@ export default function WebhooksPage() {
           <Card density="cozy" className="border-clay/40 bg-clay/5">
             <h3 className="font-medium text-ink mb-2">{t('limitsTitle')}</h3>
             <ul className="space-y-1 text-sm text-ink-soft">
-              {t.raw('limits')?.map((item: string, idx: number) => (
-                <li key={idx} className="flex gap-2">
+              {t.raw('limits')?.map((item: string) => (
+                <li key={item} className="flex gap-2">
                   <span className="text-copper">•</span>
                   <span>{item}</span>
                 </li>
@@ -130,8 +129,8 @@ export default function WebhooksPage() {
           <Card density="cozy" className="border-forest/40 bg-forest/5">
             <h3 className="font-medium text-ink mb-2">{t('nextTitle')}</h3>
             <ul className="space-y-1 text-sm text-ink-soft">
-              {t.raw('next')?.map((item: string, idx: number) => (
-                <li key={idx} className="flex gap-2">
+              {t.raw('next')?.map((item: string) => (
+                <li key={item} className="flex gap-2">
                   <span className="text-forest">•</span>
                   <span>{item}</span>
                 </li>

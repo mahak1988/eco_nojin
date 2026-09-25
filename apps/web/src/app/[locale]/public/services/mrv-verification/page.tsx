@@ -1,122 +1,97 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { publicApi } from '@/lib/api/public';
-import { Link } from '@/i18n/navigation';
-import { FivePart } from '@/components/FivePart';
-import { ProvenanceStamp } from '@/components/ProvenanceStamp';
-import { Card } from '@/components/ui/Card';
-import { SiteNav } from '@/components/SiteNav';
 import { OwnerFooter } from '@/components/OwnerFooter';
+import { ProvenanceStamp } from '@/components/ProvenanceStamp';
+import { SiteNav } from '@/components/SiteNav';
+import { Card } from '@/components/ui/Card';
+import { apiGet } from '@/lib/api/client';
 
-interface ServiceDetail {
-  id: string;
-  name: string;
-  description?: string;
-  status: 'operational' | 'degraded' | 'maintenance' | 'offline';
-  latencyMs?: number;
-  lastCheck: string;
-  capabilities?: string[];
-  endpoints?: string[];
-  provenance: {
-    source: string;
-    verified?: boolean;
-    timestamp?: string;
-    method?: string;
-  };
-}
+const SUMMARY_PATH = '/api/v1/mrv/public/dashboard-summary';
+
+type MrvSummary = {
+  total_observations: number;
+  by_level: Record<string, number>;
+  by_source: Record<string, number>;
+};
 
 export const dynamic = 'force-dynamic';
 
-export default async function MRVVerificationPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function MRVVerificationPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('public.services.mrvVerification');
+  const services = await getTranslations('services');
+  const t = await getTranslations('statusLine');
+  const template = await getTranslations('market.template');
 
-  const statusResult = await publicApi.services.status('mrv-verification');
-
-  const service: ServiceDetail | null = statusResult.ok ? statusResult.data : null;
-  const provenance = service?.provenance ?? { source: 'unknown', verified: false };
+  const summary = await apiGet<MrvSummary>(SUMMARY_PATH);
+  const data = summary.ok ? summary.data : null;
+  const error = summary.ok ? '' : summary.error;
 
   return (
     <main className="min-h-dvh">
       <SiteNav locale={locale} />
 
-      <FivePart
-        title={t('title')}
-        lead={t('lead')}
-        what={t('what')}
-        audience={t('audience')}
-        evidence={t.raw('evidence') as string[]}
-        limits={t.raw('limits') as string[]}
-        next={t.raw('next') as string[]}
-      />
-
-      {service && (
-        <section className="mx-auto max-w-5xl px-6 py-6">
-          <h2 className="text-sm font-semibold text-ink-soft">{t('status.title')}</h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-4">
-            <Card density="compact">
-              <div className="text-sm text-ink-soft">{t('status.label')}</div>
-              <div className="num mt-1 text-3xl font-semibold text-ink">
-                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-                  service.status === 'operational' ? 'bg-forest/10 text-forest' :
-                  service.status === 'degraded' ? 'bg-amber/10 text-amber' :
-                  service.status === 'maintenance' ? 'bg-blue/10 text-blue' : 'bg-copper/10 text-copper'
-                }`}>
-                  {t(`status.${service.status}`)}
-                </span>
-              </div>
-              <ProvenanceStamp source={provenance.source} verified={provenance.verified} timestamp={provenance.timestamp} method={provenance.method} />
-            </Card>
-            <Card density="compact">
-              <div className="text-sm text-ink-soft">{t('status.latency')}</div>
-              <div className="num mt-1 text-3xl font-semibold text-ink">
-                {service.latencyMs !== undefined ? `${service.latencyMs} ms` : t('status.na')}
-              </div>
-              <ProvenanceStamp source={provenance.source} verified={provenance.verified} timestamp={provenance.timestamp} method={provenance.method} />
-            </Card>
-            <Card density="compact">
-              <div className="text-sm text-ink-soft">{t('status.lastCheck')}</div>
-              <div className="num mt-1 text-3xl font-semibold text-ink">
-                {new Date(service.lastCheck).toLocaleString(locale)}
-              </div>
-              <ProvenanceStamp source={provenance.source} verified={provenance.verified} timestamp={provenance.timestamp} method={provenance.method} />
-            </Card>
-            <Card density="compact">
-              <div className="text-sm text-ink-soft">{t('status.source')}</div>
-              <div className="num mt-1 text-3xl font-semibold text-ink">{provenance.source}</div>
-              <ProvenanceStamp source={provenance.source} verified={provenance.verified} timestamp={provenance.timestamp} method={provenance.method} />
-            </Card>
-          </div>
-        </section>
-      )}
-
-      <section className="mx-auto max-w-5xl px-6 py-6">
-        <h2 className="text-sm font-semibold text-ink-soft">{t('capabilities.title')}</h2>
-        <p className="mt-2 text-sm text-ink-soft">{t('capabilities.description')}</p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {service?.capabilities?.map((cap, idx) => (
-            <Card key={idx} className="p-4 hover:border-water transition-colors">
-              <ProvenanceStamp source={provenance.source} verified={provenance.verified} timestamp={provenance.timestamp} method={provenance.method} />
-              <p className="mt-2 text-sm text-ink">{cap}</p>
-            </Card>
-          ))}
-        </div>
+      <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
+        <ProvenanceStamp
+          source={SUMMARY_PATH}
+          label={services('title')}
+          verified={summary.ok}
+          method={SUMMARY_PATH}
+        >
+          <h1 className="display text-4xl font-bold text-ink">{services('title')}</h1>
+        </ProvenanceStamp>
+        <p className="mt-3 max-w-2xl text-ink-soft">{services('lead')}</p>
+        <p className="mt-3 max-w-2xl text-sm text-ink-soft">{services('what')}</p>
+        <p className="mt-3 max-w-2xl text-sm text-ink-soft">{services('audience')}</p>
       </section>
 
-      <section className="mx-auto max-w-5xl px-6 py-6">
-        <h2 className="text-sm font-semibold text-ink-soft">{t('endpoints.title')}</h2>
-        <p className="mt-2 text-sm text-ink-soft">{t('endpoints.description')}</p>
-        <div className="mt-4 space-y-2">
-          {service?.endpoints?.map((ep, idx) => (
-            <Link key={idx} href={`/developers/api?endpoint=${encodeURIComponent(ep)}`} className="card p-3 hover:border-water transition-colors flex items-center justify-between">
-              <code className="text-sm font-mono text-ink">{ep}</code>
-              <ProvenanceStamp source={provenance.source} verified={provenance.verified} timestamp={provenance.timestamp} method={provenance.method} />
-            </Link>
-          ))}
-        </div>
+      <section className="mx-auto max-w-5xl px-6 pb-12">
+        <h2 className="text-xl font-semibold text-ink mb-4">{SUMMARY_PATH}</h2>
+        {!data ? (
+          <Card density="compact">
+            <h3 className="text-sm font-medium text-ink">{template('unavailableTitle')}</h3>
+            <p className="mt-1 text-sm text-ink-soft">{template('unavailableDescription')}</p>
+            <p className="mt-3 text-xs text-ink-soft">
+              {t('unavailable')} · {error}
+            </p>
+          </Card>
+        ) : (
+          <>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <Card density="compact">
+                <div className="num text-3xl font-semibold text-ink">{data.total_observations}</div>
+                <p className="mt-1 text-sm text-ink-soft">{SUMMARY_PATH}</p>
+                <ProvenanceStamp
+                  source={SUMMARY_PATH}
+                  verified={summary.ok}
+                  method={SUMMARY_PATH}
+                />
+              </Card>
+              {Object.entries(data.by_source).map(([source, count]) => (
+                <Card key={source} density="compact">
+                  <div className="num text-3xl font-semibold text-ink">{count}</div>
+                  <p className="mt-1 text-sm text-ink-soft">{source}</p>
+                </Card>
+              ))}
+            </div>
+            <div className="mt-4 grid gap-4 sm:grid-cols-3">
+              {Object.entries(data.by_level).map(([level, count]) => (
+                <Card key={level} density="compact">
+                  <div className="num text-2xl font-semibold text-ink">{count}</div>
+                  <p className="mt-1 text-sm text-ink-soft">level {level}</p>
+                </Card>
+              ))}
+            </div>
+            <p className="mt-6 text-xs text-ink-soft">
+              {SUMMARY_PATH} · {t('realData')}
+            </p>
+          </>
+        )}
       </section>
 
-      <p className="mx-auto max-w-5xl px-6 mt-10 text-xs text-ink-soft">{t('provenance.note')}</p>
       <OwnerFooter />
     </main>
   );

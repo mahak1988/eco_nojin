@@ -1,7 +1,7 @@
-import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { expect, test } from '@playwright/test';
 
-test.describe('Accessibility (WCAG 2.1 AA)', () => {
+test.describe('Accessibility (WCAG 2.2 AA)', () => {
   const pages = [
     { path: '/fa/home', name: 'Home (fa)' },
     { path: '/en/home', name: 'Home (en)' },
@@ -14,13 +14,18 @@ test.describe('Accessibility (WCAG 2.1 AA)', () => {
   ];
 
   for (const pageInfo of pages) {
-    test(`${pageInfo.name} has no critical a11y violations`, async ({ page }) => {
+    test(`${pageInfo.name} has no serious a11y violations`, async ({ page }) => {
       await page.goto(pageInfo.path);
-      const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
-      const criticalViolations = accessibilityScanResults.violations.filter(
-        (v) => v.impact === 'critical'
+      const accessibilityScanResults = await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+        .analyze();
+      const seriousViolations = accessibilityScanResults.violations.filter(
+        (violation) => violation.impact === 'critical' || violation.impact === 'serious',
       );
-      expect(criticalViolations, `Critical a11y violations on ${pageInfo.path}: ${JSON.stringify(criticalViolations, null, 2)}`).toHaveLength(0);
+      expect(
+        seriousViolations,
+        `Serious a11y violations on ${pageInfo.path}: ${JSON.stringify(seriousViolations, null, 2)}`,
+      ).toHaveLength(0);
     });
   }
 
@@ -36,7 +41,7 @@ test.describe('Accessibility (WCAG 2.1 AA)', () => {
     const skipLink = page.locator('a.skip-link');
     await expect(skipLink).toBeFocused();
     await page.keyboard.press('Enter');
-    await expect(page.locator('#main')).toBeFocused();
+    await expect(page.locator('#main-content')).toBeFocused();
   });
 
   test('All interactive elements have focus styles', async ({ page }) => {

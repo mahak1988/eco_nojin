@@ -75,6 +75,7 @@ blob-report/
 playwright/.cache/
 .playwright-artifacts/
 .lighthouseci/
+**/public/sw.js
 frontend/test-results/
 frontend/playwright-report/
 

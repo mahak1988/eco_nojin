@@ -2,6 +2,11 @@ import type { Metadata, Viewport } from 'next';
 import { notFound } from 'next/navigation';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
+import { Providers } from '@/components/Providers';
+import { OfflineProvider } from '@/components/providers/OfflineProvider';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { OfflineBanner } from '@/components/ui/OfflineBanner';
+import { WebVitals } from '@/components/WebVitals';
 import { isRtl, routing } from '@/i18n/routing';
 import '../globals.css';
 
@@ -19,21 +24,12 @@ export const viewport: Viewport = {
 // Every page is bound to live backend data, so nothing is prerendered at build time.
 export const dynamic = 'force-dynamic';
 
-export default async function LocaleLayout({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  if (!hasLocale(routing.locales, locale)) notFound();
-  setRequestLocale(locale);
+async function getLocaleMetadata(locale: string): Promise<Metadata> {
   const messages = await getMessages();
-
   const localeUrl = `${BASE_URL}/${locale}`;
 
-  const metadata: Metadata = {
+  return {
+    metadataBase: new URL(BASE_URL),
     title: {
       default: messages.brand?.name ?? 'HyDroMa / هیدروما نوژین',
       template: '%s · هیدروما نوژین',
@@ -72,6 +68,35 @@ export default async function LocaleLayout({
       follow: true,
     },
   };
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) return {};
+  setRequestLocale(locale);
+  return getLocaleMetadata(locale);
+}
+
+export default async function LocaleLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
+  setRequestLocale(locale);
+  const messages = await getMessages();
+
+  const skipLabel =
+    typeof messages.a11y?.skipToContent === 'string'
+      ? messages.a11y.skipToContent
+      : 'Skip to main content';
 
   return (
     <html lang={locale} dir={isRtl(locale) ? 'rtl' : 'ltr'}>
@@ -82,7 +107,20 @@ export default async function LocaleLayout({
         ))}
       </head>
       <body className="flex min-h-dvh flex-col">
-        <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+        <a href="#main-content" className="skip-link">
+          {skipLabel}
+        </a>
+        <div id="main-content" tabIndex={-1}>
+          <OfflineBanner />
+          <OfflineProvider>
+            <WebVitals />
+            <ErrorBoundary>
+              <Providers>
+                <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+              </Providers>
+            </ErrorBoundary>
+          </OfflineProvider>
+        </div>
       </body>
     </html>
   );

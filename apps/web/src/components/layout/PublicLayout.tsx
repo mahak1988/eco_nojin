@@ -1,13 +1,13 @@
 'use client';
 
-import { ReactNode } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { ReactNode } from 'react';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
-import { SiteNav } from '@/components/SiteNav';
 import { SiteFooter } from '@/components/SiteFooter';
-import { ProvenanceStamp } from '@/components/ProvenanceStamp';
+import { SiteNav } from '@/components/SiteNav';
 
 interface PublicLayoutProps {
   children: ReactNode;
@@ -15,11 +15,7 @@ interface PublicLayoutProps {
 
 export function PublicLayout({ children }: PublicLayoutProps) {
   const pathname = usePathname();
-  const router = useRouter();
   const t = useTranslations('layout');
-  const common = useTranslations('common');
-
-  const isRtl = document.dir === 'rtl';
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -30,17 +26,21 @@ export function PublicLayout({ children }: PublicLayoutProps) {
               href={`/${pathname.split('/')[1]}`}
               className="flex items-center gap-2 text-xl font-bold text-foreground"
             >
-              <img src="/brand/platform-logo-transparent.png" alt="هیدروما نوژین" className="h-9 w-auto" />
+              <Image
+                src="/brand/platform-logo-transparent.png"
+                alt="هیدروما نوژین"
+                width={144}
+                height={36}
+                className="h-9 w-auto"
+                priority
+              />
             </Link>
             <nav className="hidden md:flex items-center gap-6" aria-label={t('mainNav')}>
               <SiteNav locale={pathname.split('/')[1]} />
             </nav>
           </div>
           <div className="flex items-center gap-4">
-            <LocaleSwitcher
-              current={pathname.split('/')[1]}
-              label="Language"
-            />
+            <LocaleSwitcher current={pathname.split('/')[1]} label="Language" />
             <Link
               href={`/${pathname.split('/')[1]}/market`}
               className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
@@ -57,4 +57,3 @@ export function PublicLayout({ children }: PublicLayoutProps) {
     </div>
   );
 }
-

@@ -1,4 +1,5 @@
 import { apiGet } from '@/lib/api/client';
+import { getServiceOverview, getServiceStatus } from '@/lib/api/health';
 
 interface ProvenanceStamp {
   source: string;
@@ -7,7 +8,7 @@ interface ProvenanceStamp {
   method?: string;
 }
 
-interface ServiceStatus {
+export interface ServiceStatus {
   id: string;
   name: string;
   status: 'operational' | 'degraded' | 'maintenance' | 'offline';
@@ -16,7 +17,7 @@ interface ServiceStatus {
   provenance: ProvenanceStamp;
 }
 
-interface ServiceOverview {
+export interface ServiceOverview {
   services: ServiceStatus[];
   summary: {
     total: number;
@@ -187,7 +188,15 @@ interface ComponentDemo {
   id: string;
   name: string;
   description: string;
-  type: 'hydroma-engine' | 'marketplace' | 'ecowallet' | 'mrv-dashboard' | 'satellite-view' | 'dispute-resolution' | 'land-profiler' | 'api-playground';
+  type:
+    | 'hydroma-engine'
+    | 'marketplace'
+    | 'ecowallet'
+    | 'mrv-dashboard'
+    | 'satellite-view'
+    | 'dispute-resolution'
+    | 'land-profiler'
+    | 'api-playground';
   status: 'live' | 'demo' | 'development';
   embedUrl?: string;
   documentationUrl?: string;
@@ -220,58 +229,119 @@ interface ApiResponse {
   schema?: Record<string, unknown>;
 }
 
-const API_BASE =
-  process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:8000';
-
 export const publicApi = {
   services: {
-    overview: (): Promise<{ ok: boolean; data: ServiceOverview; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<ServiceOverview>('/api/v1/public/services/overview'),
-    status: (serviceId: string): Promise<{ ok: boolean; data: ServiceOverview['services'][0]; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<ServiceOverview['services'][0]>(`/api/v1/public/services/${serviceId}/status`),
-    list: (): Promise<{ ok: boolean; data: ServiceOverview['services']; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<ServiceOverview['services']>('/api/v1/public/services'),
+    overview: getServiceOverview,
+    status: getServiceStatus,
+    list: async () => {
+      const overview = await getServiceOverview();
+      return overview.ok
+        ? { ok: true as const, data: overview.data.services, status: 200 }
+        : overview;
+    },
   },
 
   science: {
-    evidenceBase: (): Promise<{ ok: boolean; data: ScienceEvidence[]; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<ScienceEvidence[]>('/api/v1/public/science/evidence-base'),
-    methodology: (): Promise<{ ok: boolean; data: Methodology[]; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<Methodology[]>('/api/v1/public/science/methodology'),
-    validation: (modelId?: string): Promise<{ ok: boolean; data: ValidationResult[]; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<ValidationResult[]>(modelId ? `/api/v1/public/science/validation?model_id=${modelId}` : '/api/v1/public/science/validation'),
-    uncertainty: (): Promise<{ ok: boolean; data: UncertaintyQuantification[]; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<UncertaintyQuantification[]>('/api/v1/public/science/uncertainty'),
-    reproducibility: (): Promise<{ ok: boolean; data: ReproducibilityRecord[]; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<ReproducibilityRecord[]>('/api/v1/public/science/reproducibility'),
-    dataSources: (): Promise<{ ok: boolean; data: DataSource[]; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<DataSource[]>('/api/v1/public/science/data-sources'),
+    evidenceBase: (): Promise<
+      | { ok: boolean; data: ScienceEvidence[]; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<ScienceEvidence[]>('/api/v1/public/science/evidence-base'),
+    methodology: (): Promise<
+      | { ok: boolean; data: Methodology[]; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<Methodology[]>('/api/v1/public/science/methodology'),
+    validation: (
+      modelId?: string,
+    ): Promise<
+      | { ok: boolean; data: ValidationResult[]; status: number }
+      | { ok: false; error: string; status: number }
+    > =>
+      apiGet<ValidationResult[]>(
+        modelId
+          ? `/api/v1/public/science/validation?model_id=${modelId}`
+          : '/api/v1/public/science/validation',
+      ),
+    uncertainty: (): Promise<
+      | { ok: boolean; data: UncertaintyQuantification[]; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<UncertaintyQuantification[]>('/api/v1/public/science/uncertainty'),
+    reproducibility: (): Promise<
+      | { ok: boolean; data: ReproducibilityRecord[]; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<ReproducibilityRecord[]>('/api/v1/public/science/reproducibility'),
+    dataSources: (): Promise<
+      | { ok: boolean; data: DataSource[]; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<DataSource[]>('/api/v1/public/science/data-sources'),
   },
 
   education: {
-    library: (params?: { language?: string; level?: string; type?: string }): Promise<{ ok: boolean; data: EducationResource[]; status: number } | { ok: false; error: string; status: number }> => {
+    library: (params?: {
+      language?: string;
+      level?: string;
+      type?: string;
+    }): Promise<
+      | { ok: boolean; data: EducationResource[]; status: number }
+      | { ok: false; error: string; status: number }
+    > => {
       const search = new URLSearchParams();
       if (params?.language) search.set('language', params.language);
       if (params?.level) search.set('level', params.level);
       if (params?.type) search.set('type', params.type);
       return apiGet<EducationResource[]>(`/api/v1/public/education/library?${search.toString()}`);
     },
-    courses: (language?: string): Promise<{ ok: boolean; data: Course[]; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<Course[]>(language ? `/api/v1/public/education/courses?language=${language}` : '/api/v1/public/education/courses'),
-    video: (id: string): Promise<{ ok: boolean; data: VideoContent; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<VideoContent>(`/api/v1/public/education/video/${id}`),
-    videos: (language?: string): Promise<{ ok: boolean; data: VideoContent[]; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<VideoContent[]>(language ? `/api/v1/public/education/videos?language=${language}` : '/api/v1/public/education/videos'),
-    glossary: (params?: { language?: string; category?: string; search?: string }): Promise<{ ok: boolean; data: GlossaryTerm[]; status: number } | { ok: false; error: string; status: number }> => {
+    courses: (
+      language?: string,
+    ): Promise<
+      { ok: boolean; data: Course[]; status: number } | { ok: false; error: string; status: number }
+    > =>
+      apiGet<Course[]>(
+        language
+          ? `/api/v1/public/education/courses?language=${language}`
+          : '/api/v1/public/education/courses',
+      ),
+    video: (
+      id: string,
+    ): Promise<
+      | { ok: boolean; data: VideoContent; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<VideoContent>(`/api/v1/public/education/video/${id}`),
+    videos: (
+      language?: string,
+    ): Promise<
+      | { ok: boolean; data: VideoContent[]; status: number }
+      | { ok: false; error: string; status: number }
+    > =>
+      apiGet<VideoContent[]>(
+        language
+          ? `/api/v1/public/education/videos?language=${language}`
+          : '/api/v1/public/education/videos',
+      ),
+    glossary: (params?: {
+      language?: string;
+      category?: string;
+      search?: string;
+    }): Promise<
+      | { ok: boolean; data: GlossaryTerm[]; status: number }
+      | { ok: false; error: string; status: number }
+    > => {
       const search = new URLSearchParams();
       if (params?.language) search.set('language', params.language);
       if (params?.category) search.set('category', params.category);
       if (params?.search) search.set('search', params.search);
       return apiGet<GlossaryTerm[]>(`/api/v1/public/education/glossary?${search.toString()}`);
     },
-    certifications: (): Promise<{ ok: boolean; data: Certification[]; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<Certification[]>('/api/v1/public/education/certifications'),
-    workshops: (params?: { upcoming?: boolean; language?: string }): Promise<{ ok: boolean; data: Workshop[]; status: number } | { ok: false; error: string; status: number }> => {
+    certifications: (): Promise<
+      | { ok: boolean; data: Certification[]; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<Certification[]>('/api/v1/public/education/certifications'),
+    workshops: (params?: {
+      upcoming?: boolean;
+      language?: string;
+    }): Promise<
+      | { ok: boolean; data: Workshop[]; status: number }
+      | { ok: false; error: string; status: number }
+    > => {
       const search = new URLSearchParams();
       if (params?.upcoming) search.set('upcoming', 'true');
       if (params?.language) search.set('language', params.language);
@@ -280,66 +350,108 @@ export const publicApi = {
   },
 
   policy: {
-    terms: (version?: string): Promise<{ ok: boolean; data: PolicyDocument; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<PolicyDocument>(version ? `/api/v1/public/policy/terms?version=${version}` : '/api/v1/public/policy/terms'),
-    privacy: (): Promise<{ ok: boolean; data: PolicyDocument; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<PolicyDocument>('/api/v1/public/policy/privacy'),
-    cookies: (): Promise<{ ok: boolean; data: PolicyDocument; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<PolicyDocument>('/api/v1/public/policy/cookies'),
-    accessibility: (): Promise<{ ok: boolean; data: PolicyDocument; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<PolicyDocument>('/api/v1/public/policy/accessibility'),
-    licensing: (): Promise<{ ok: boolean; data: PolicyDocument; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<PolicyDocument>('/api/v1/public/policy/licensing'),
-    governance: (): Promise<{ ok: boolean; data: PolicyDocument; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<PolicyDocument>('/api/v1/public/policy/governance'),
-    versions: (documentId: string): Promise<{ ok: boolean; data: PolicyDocument[]; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<PolicyDocument[]>(`/api/v1/public/policy/${documentId}/versions`),
+    terms: (
+      version?: string,
+    ): Promise<
+      | { ok: boolean; data: PolicyDocument; status: number }
+      | { ok: false; error: string; status: number }
+    > =>
+      apiGet<PolicyDocument>(
+        version ? `/api/v1/public/policy/terms?version=${version}` : '/api/v1/public/policy/terms',
+      ),
+    privacy: (): Promise<
+      | { ok: boolean; data: PolicyDocument; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<PolicyDocument>('/api/v1/public/policy/privacy'),
+    cookies: (): Promise<
+      | { ok: boolean; data: PolicyDocument; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<PolicyDocument>('/api/v1/public/policy/cookies'),
+    accessibility: (): Promise<
+      | { ok: boolean; data: PolicyDocument; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<PolicyDocument>('/api/v1/public/policy/accessibility'),
+    licensing: (): Promise<
+      | { ok: boolean; data: PolicyDocument; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<PolicyDocument>('/api/v1/public/policy/licensing'),
+    governance: (): Promise<
+      | { ok: boolean; data: PolicyDocument; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<PolicyDocument>('/api/v1/public/policy/governance'),
+    versions: (
+      documentId: string,
+    ): Promise<
+      | { ok: boolean; data: PolicyDocument[]; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<PolicyDocument[]>(`/api/v1/public/policy/${documentId}/versions`),
   },
 
   components: {
-    hydromaEngine: (): Promise<{ ok: boolean; data: ComponentDemo; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<ComponentDemo>('/api/v1/public/components/hydroma-engine'),
-    marketplace: (): Promise<{ ok: boolean; data: ComponentDemo; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<ComponentDemo>('/api/v1/public/components/marketplace'),
-    ecowallet: (): Promise<{ ok: boolean; data: ComponentDemo; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<ComponentDemo>('/api/v1/public/components/ecowallet'),
-    mrvDashboard: (): Promise<{ ok: boolean; data: ComponentDemo; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<ComponentDemo>('/api/v1/public/components/mrv-dashboard'),
-    satelliteView: (): Promise<{ ok: boolean; data: ComponentDemo; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<ComponentDemo>('/api/v1/public/components/satellite-view'),
-    disputeResolution: (): Promise<{ ok: boolean; data: ComponentDemo; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<ComponentDemo>('/api/v1/public/components/dispute-resolution'),
-    landProfiler: (): Promise<{ ok: boolean; data: ComponentDemo; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<ComponentDemo>('/api/v1/public/components/land-profiler'),
-    apiPlayground: (): Promise<{ ok: boolean; data: ComponentDemo; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<ComponentDemo>('/api/v1/public/components/api-playground'),
-    list: (): Promise<{ ok: boolean; data: ComponentDemo[]; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<ComponentDemo[]>('/api/v1/public/components'),
+    hydromaEngine: (): Promise<
+      | { ok: boolean; data: ComponentDemo; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<ComponentDemo>('/api/v1/public/components/hydroma-engine'),
+    marketplace: (): Promise<
+      | { ok: boolean; data: ComponentDemo; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<ComponentDemo>('/api/v1/public/components/marketplace'),
+    ecowallet: (): Promise<
+      | { ok: boolean; data: ComponentDemo; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<ComponentDemo>('/api/v1/public/components/ecowallet'),
+    mrvDashboard: (): Promise<
+      | { ok: boolean; data: ComponentDemo; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<ComponentDemo>('/api/v1/public/components/mrv-dashboard'),
+    satelliteView: (): Promise<
+      | { ok: boolean; data: ComponentDemo; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<ComponentDemo>('/api/v1/public/components/satellite-view'),
+    disputeResolution: (): Promise<
+      | { ok: boolean; data: ComponentDemo; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<ComponentDemo>('/api/v1/public/components/dispute-resolution'),
+    landProfiler: (): Promise<
+      | { ok: boolean; data: ComponentDemo; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<ComponentDemo>('/api/v1/public/components/land-profiler'),
+    apiPlayground: (): Promise<
+      | { ok: boolean; data: ComponentDemo; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<ComponentDemo>('/api/v1/public/components/api-playground'),
+    list: (): Promise<
+      | { ok: boolean; data: ComponentDemo[]; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<ComponentDemo[]>('/api/v1/public/components'),
   },
 
   api: {
-    endpoints: (): Promise<{ ok: boolean; data: ApiEndpoint[]; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<ApiEndpoint[]>('/api/v1/public/api/endpoints'),
-    schema: (): Promise<{ ok: boolean; data: Record<string, unknown>; status: number } | { ok: false; error: string; status: number }> =>
-      apiGet<Record<string, unknown>>('/api/v1/public/api/schema'),
+    endpoints: (): Promise<
+      | { ok: boolean; data: ApiEndpoint[]; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<ApiEndpoint[]>('/api/v1/public/api/endpoints'),
+    schema: (): Promise<
+      | { ok: boolean; data: Record<string, unknown>; status: number }
+      | { ok: false; error: string; status: number }
+    > => apiGet<Record<string, unknown>>('/api/v1/public/api/schema'),
   },
 };
 
 export type {
-  ServiceOverview,
-  ScienceEvidence,
-  Methodology,
-  ValidationResult,
-  UncertaintyQuantification,
-  ReproducibilityRecord,
+  ApiEndpoint,
+  Certification,
+  ComponentDemo,
+  Course,
   DataSource,
   EducationResource,
-  Course,
-  VideoContent,
   GlossaryTerm,
-  Certification,
-  Workshop,
+  Methodology,
   PolicyDocument,
-  ComponentDemo,
-  ApiEndpoint,
+  ReproducibilityRecord,
+  ScienceEvidence,
+  UncertaintyQuantification,
+  ValidationResult,
+  VideoContent,
+  Workshop,
 };

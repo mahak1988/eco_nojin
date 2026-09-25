@@ -1,4 +1,5 @@
-﻿{  "meta": { "machineTranslated": true, "fallbackLocale": "fa" } },
+{
+  "meta": { "machineTranslated": true, "fallbackLocale": "fa" },
   "brand": {
     "name": "ظ‡غŒط¯ط±ظˆظ…ط§ ظ†ظˆعکغŒظ†",
     "description": "ط¨ط®ط´ ط¹ظ„ظ…غŒ ط§ع©ظˆ ظ†ظˆعکغŒظ†ط› ظ‡ظ…ط±ط§ظ‡غŒ ط¨ط±ط§غŒ ظپظ‡ظ… ط¨ظ‡طھط± ط¢ط¨طŒ ط®ط§ع©طŒ ظ¾ظˆط´ط´ ع¯غŒط§ظ‡غŒ ظˆ ط§ظ‚ظ„غŒظ…."
@@ -276,6 +277,130 @@
       "ط¨ط§ط²ط¨غŒظ†غŒ ع©ظ†طھط±ط§ط³طھ ط¯ط± ط­ط§ظ„طھ طھط§ط±غŒع© ظˆ ع†ط§ظ¾",
       "ط³ظ†ط¬ط´ طھط¬ط±ط¨ظ‡ظ” ط´ط¨ع©ظ‡ظ” ط¶ط¹غŒظپ ظˆ ط§ط¨ط²ط§ط±ظ‡ط§غŒ ظ…ط®طھظ„ظپ"
     ]
+  },
+  "auth": {
+    "meta": {
+      "title": "Account access",
+      "description": "Sign in or create an account for the HyDroMa Nojin platform; the session is kept in a same-origin HttpOnly cookie."
+    },
+    "common": {
+      "signIn": "Sign in",
+      "signInLabel": "Sign in to your account",
+      "signOut": "Sign out",
+      "signingOut": "Signing out…",
+      "checkingSession": "Checking your session…",
+      "alreadySignedIn": "You are already signed in.",
+      "accountMenu": "Account menu",
+      "sessionDetails": "Session details",
+      "backToHome": "Back to home",
+      "email": "Email address",
+      "password": "Password",
+      "showPassword": "Show",
+      "hidePassword": "Hide",
+      "showPasswordFor": "Show password ({field})",
+      "hidePasswordFor": "Hide password ({field})",
+      "termsOfService": "Terms of service",
+      "privacyPolicy": "Privacy policy",
+      "errorHeading": "The request could not be completed",
+      "errorDetails": "Server detail",
+      "validationHeading": "Review the highlighted fields",
+      "provenance": {
+        "heading": "Session provenance",
+        "source": "Source",
+        "method": "Method",
+        "verified": "Verified",
+        "unverified": "Not verified"
+      }
+    },
+    "roles": {
+      "regular": "Individual",
+      "tourist": "Visitor",
+      "farmer": "Farmer or producer",
+      "advisor": "Advisor",
+      "researcher": "Researcher",
+      "organization": "Organization",
+      "admin": "Administrator",
+      "security_admin": "Security administrator",
+      "content_admin": "Content administrator",
+      "user_admin": "User administrator"
+    },
+    "languages": {
+      "fa": "Persian",
+      "en": "English",
+      "ar": "Arabic"
+    },
+    "errors": {
+      "forbidden": "The request was rejected by the session boundary. Reload the page and try again.",
+      "invalidPayload": "The submitted data was not accepted. Check the fields and try again.",
+      "unavailable": "The authentication service is unavailable. Try again shortly.",
+      "timeout": "The authentication service took too long to answer. Try again.",
+      "rejected": "The email address or password was not accepted, or this account already exists.",
+      "signOutFailed": "Sign-out did not complete. The local session was cleared anyway.",
+      "unknown": "An unexpected error occurred. Try again."
+    },
+    "validation": {
+      "invalid": "Review this field.",
+      "emailInvalid": "Enter a valid email address.",
+      "passwordRequired": "Enter your password.",
+      "passwordMin": "Use at least 8 characters.",
+      "passwordMax": "Use at most 128 characters.",
+      "passwordMismatch": "The two passwords do not match.",
+      "fullNameRequired": "Enter your full name (2 to 100 characters).",
+      "roleRequired": "Choose an account type.",
+      "languageRequired": "Choose an interface language.",
+      "termsRequired": "Accept the terms of service to continue.",
+      "privacyRequired": "Accept the privacy policy to continue."
+    },
+    "login": {
+      "title": "Sign in",
+      "lead": "Sign in to reach your land profiles, marketplace, evidence and carbon records.",
+      "submit": "Sign in",
+      "pending": "Signing in…",
+      "noAccount": "No account yet?",
+      "createAccount": "Create an account",
+      "transport": "Credentials reach the same-origin BFF; the session stays in an HttpOnly cookie.",
+      "source": "bff:/api/auth/login",
+      "method": "same-origin POST"
+    },
+    "signup": {
+      "title": "Create an account",
+      "lead": "Create an account to save land profiles, track carbon and use the marketplace.",
+      "submit": "Create account",
+      "pending": "Creating your account…",
+      "hasAccount": "Already have an account?",
+      "signInInstead": "Sign in instead",
+      "fullName": "Full name",
+      "passwordConfirm": "Confirm password",
+      "accountType": "Account type",
+      "interfaceLanguage": "Interface language",
+      "consent": "Consent",
+      "acceptTerms": "I accept the terms of service",
+      "acceptPrivacy": "I accept the privacy policy",
+      "source": "bff:/api/auth/signup",
+      "method": "same-origin POST"
+    },
+    "session": {
+      "title": "Session",
+      "lead": "The active session is resolved by the same-origin BFF from the HttpOnly session cookie.",
+      "loading": "Checking your session…",
+      "signedOut": "You are not signed in.",
+      "signedOutLead": "Sign in to see the account attached to this session.",
+      "signedIn": "Signed in",
+      "email": "Email",
+      "fullName": "Name",
+      "role": "Role",
+      "language": "Interface language",
+      "country": "Country",
+      "city": "City",
+      "phone": "Phone",
+      "emailVerified": "Email verified",
+      "emailNotVerified": "Email not verified",
+      "accountActive": "Account active",
+      "accountInactive": "Account inactive",
+      "memberSince": "Member since",
+      "unknown": "Not provided",
+      "source": "bff:/api/auth/session",
+      "method": "HttpOnly session cookie"
+    }
   }
 }
-

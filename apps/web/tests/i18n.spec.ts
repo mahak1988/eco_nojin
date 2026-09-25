@@ -22,7 +22,7 @@ test.describe('i18n - All 14 locales', () => {
     test(`${locale.name} (${locale.code}) loads with correct dir`, async ({ page }) => {
       await page.goto(`/${locale.code}/home`);
       await expect(page.locator('html')).toHaveAttribute('dir', locale.dir);
-      await expect(page.locator('h1')).toBeVisible();
+      await expect(page.locator('h1').first()).toBeVisible();
     });
   }
 

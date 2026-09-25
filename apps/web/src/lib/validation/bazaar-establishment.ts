@@ -15,10 +15,12 @@ export const step1Schema = z.object({
 export const step2Schema = z.object({
   boundingBox: z.record(z.string(), z.unknown()).optional(),
   areaHa: z.number().positive().optional(),
-  polygonGeojson: z.object({
-    type: z.enum(['Polygon', 'MultiPolygon']),
-    coordinates: z.array(z.array(z.array(z.number()))),
-  }).optional(),
+  polygonGeojson: z
+    .object({
+      type: z.enum(['Polygon', 'MultiPolygon']),
+      coordinates: z.array(z.array(z.array(z.number()))),
+    })
+    .optional(),
 });
 
 // Step 3: هیئت مؤسس ۵ نفره (Founding Board)
@@ -68,7 +70,7 @@ export const step6Schema = z.object({
       }),
     )
     .min(1),
-  });
+});
 
 // Step 7: اعتبارسنجی (Verification)
 export const step7Schema = z.object({

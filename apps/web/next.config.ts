@@ -1,17 +1,18 @@
+import withSerwistInit from '@serwist/next';
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
-
-// Real backend only. No mock server, no fixtures.
-const apiTarget = process.env.API_PROXY_TARGET ?? 'http://127.0.0.1:8000';
+const withSerwist = withSerwistInit({
+  swSrc: 'src/app/sw.ts',
+  swDest: 'public/sw.js',
+  disable: process.env.NODE_ENV !== 'production',
+  register: true,
+  reloadOnOnline: true,
+});
 
 const nextConfig: NextConfig = {
-  // Allow validation builds without disturbing a running `next dev` cache.
   distDir: process.env.NEXT_DIST_DIR ?? '.next',
-  async rewrites() {
-    return [{ source: '/api/:path*', destination: `${apiTarget}/api/:path*` }];
-  },
   async headers() {
     return [
       {
@@ -25,10 +26,16 @@ const nextConfig: NextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'X-DNS-Prefetch-Control', value: 'on' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(self)' },
+          { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+          { key: 'Cross-Origin-Resource-Policy', value: 'same-site' },
+          { key: 'Content-Security-Policy-Report-Only', value: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https: wss:; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests; report-uri /api/csp-report" },
+          ...(process.env.NODE_ENV === 'production'
+            ? [{ key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' }]
+            : []),
         ],
       },
     ];
   },
 };
 
-export default withNextIntl(nextConfig);
+export default withNextIntl(withSerwist(nextConfig));

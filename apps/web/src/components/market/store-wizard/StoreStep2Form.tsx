@@ -1,10 +1,10 @@
 'use client';
 
-import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
+import { useFormContext } from 'react-hook-form';
+import { z } from 'zod';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
-import { z } from 'zod';
 
 const step2Schema = z.object({
   description: z.string().optional(),

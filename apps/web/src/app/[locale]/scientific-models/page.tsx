@@ -4,7 +4,6 @@ import { Button } from '@eco/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@eco/ui/card';
 import {
   ArrowRight,
-  Award,
   BookOpen,
   ChevronRight,
   Cpu,
@@ -13,7 +12,6 @@ import {
   FlaskConical,
   Globe,
   Layers,
-  Shield,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { PublicLayout } from '@/components/layout';
@@ -192,8 +190,8 @@ export default function ScientificModelsPage() {
               {t('categoriesTitle')}
             </h2>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {modelCategories.map((cat, index) => (
-                <Card key={index} className="h-full hover:border-primary/50 transition-colors">
+              {modelCategories.map((cat) => (
+                <Card key={cat.title} className="h-full hover:border-primary/50 transition-colors">
                   <CardHeader>
                     <div
                       className={`flex h-14 w-14 items-center justify-center rounded-xl ${cat.color}`}
@@ -212,7 +210,7 @@ export default function ScientificModelsPage() {
                       <span className="font-medium">{t('standards')}: </span>
                       {t(cat.ref)}
                     </div>
-                    <Button variant="ghost" size="sm" asChild className="w-full">
+                    <Button type="button" variant="ghost" size="sm" asChild className="w-full">
                       <a
                         href={`/fa/scientific-models/${cat.title.toLowerCase().replace(/\s+/g, '-')}`}
                       >
@@ -230,7 +228,7 @@ export default function ScientificModelsPage() {
           <section className="mb-16">
             <div className="mb-8 flex items-center justify-between">
               <h2 className="text-3xl font-bold tracking-tight">{t('featuredTitle')}</h2>
-              <Button variant="outline" size="sm" asChild>
+              <Button type="button" variant="outline" size="sm" asChild>
                 <a href="/fa/scientific-models/catalog">
                   {t('viewAll')}
                   <ExternalLink className="size-4 ml-1" aria-hidden="true" />
@@ -238,8 +236,8 @@ export default function ScientificModelsPage() {
               </Button>
             </div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {featuredModels.map((model, index) => (
-                <Card key={index} className="h-full hover:border-primary/50 transition-colors">
+              {featuredModels.map((model) => (
+                <Card key={model.name} className="h-full hover:border-primary/50 transition-colors">
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div>
@@ -273,7 +271,7 @@ export default function ScientificModelsPage() {
                       <span className="font-medium">{t('reference')}: </span>
                       {model.ref}
                     </p>
-                    <Button variant="ghost" size="sm" asChild className="w-full">
+                    <Button type="button" variant="ghost" size="sm" asChild className="w-full">
                       <a
                         href={`/fa/scientific-models/${model.name.toLowerCase().replace(/\s+/g, '-')}`}
                       >
@@ -300,9 +298,9 @@ export default function ScientificModelsPage() {
                 <div>{t('stdCol4')}</div>
                 <div>{t('stdCol5')}</div>
               </div>
-              {standardsTable.map((std, index) => (
+              {standardsTable.map((std) => (
                 <div
-                  key={index}
+                  key={std.standard}
                   className="grid grid-cols-5 border-b border-border px-6 py-4 last:border-0 items-center hover:bg-muted/50 transition-colors"
                 >
                   <div className="col-span-2 font-medium">{t(std.domain)}</div>
@@ -334,7 +332,7 @@ export default function ScientificModelsPage() {
             <h2 className="mb-4 text-2xl font-bold tracking-tight">{t('ctaTitle')}</h2>
             <p className="mb-8 text-muted-foreground max-w-2xl mx-auto">{t('ctaDesc')}</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="w-full sm:w-auto gap-2" asChild>
+              <Button type="button" size="lg" className="w-full sm:w-auto gap-2" asChild>
                 <a href="/fa/dashboard">
                   <span className="inline-flex items-center gap-2">
                     <span>{t('ctaDashboard')}</span>
@@ -342,7 +340,13 @@ export default function ScientificModelsPage() {
                   </span>
                 </a>
               </Button>
-              <Button variant="outline" size="lg" className="w-full sm:w-auto" asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                className="w-full sm:w-auto"
+                asChild
+              >
                 <a href="/fa/docs/api">{t('ctaApiDocs')}</a>
               </Button>
             </div>

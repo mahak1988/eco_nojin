@@ -1,30 +1,37 @@
 // Custom Orval mutator: a single fetch-based request function used by the
 // generated API client. There is no mock layer — every call hits the real gateway.
 
-let baseUrl = '';
+let configuredBaseUrl: string | null = null;
 
 export function setApiBaseUrl(url: string): void {
-  baseUrl = url.replace(/\/$/, '');
+  configuredBaseUrl = url.replace(/\/$/, '');
 }
 
 export function getApiBaseUrl(): string {
-  return baseUrl;
+  if (configuredBaseUrl) return configuredBaseUrl;
+  if (typeof window === 'undefined') return process.env.API_PROXY_TARGET ?? 'http://127.0.0.1:8000';
+  return process.env.NEXT_PUBLIC_API_BASE_URL ?? '/api';
 }
 
 export const apiRequest = async <T>(
   url: string,
   options?: RequestInit,
 ): Promise<T> => {
-  const fullUrl = `${baseUrl}${url}`;
+  const fullUrl = `${getApiBaseUrl()}${url}`;
+  const method = (options?.method ?? 'GET').toUpperCase();
+  const headers = new Headers(options?.headers);
+  if (!headers.has('Accept')) headers.set('Accept', 'application/json');
+  if (options?.body !== undefined && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+    headers.set('X-CSRF-Intent', '1');
+  }
 
   const response = await fetch(fullUrl, {
     ...options,
-    headers: {
-      Accept: 'application/json',
-      ...(options?.body !== undefined ? { 'Content-Type': 'application/json' } : {}),
-      ...options?.headers,
-    },
-    credentials: 'include',
+    headers,
+    credentials: 'same-origin',
   });
 
   const text = await response.text();

@@ -1,135 +1,80 @@
-'use client';
-
-import { useTranslations } from 'next-intl';
-import { usePathname } from 'next/navigation';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import type { Metadata } from 'next';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { ListBlock } from '@/components/ListBlock';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
+import { SiteNav } from '@/components/SiteNav';
+import { StatusDot } from '@/components/StatusDot';
+import { Card } from '@/components/ui/Card';
 
-interface SdkInfo {
-  name: string;
-  language: string;
-  version: string;
-  description: string;
-  npmUrl: string;
-  githubUrl: string;
-  installCmd: string;
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
+
+const TITLES: Record<string, string> = { fa: 'کتابخانه‌های توسعه', en: 'SDKs' };
+const DESCRIPTIONS: Record<string, string> = {
+  fa: 'رجیستری SDK منتشرشده‌ای متصل نیست؛ بنابراین نام بسته، نسخه یا دستور نصبی نمایش داده نمی‌شود.',
+  en: 'No published SDK registry is connected, so no package name, version or install command is shown.',
+};
+
+export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    title: TITLES[locale] ?? TITLES.en,
+    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    openGraph: {
+      type: 'website',
+      locale,
+      url: `${BASE_URL}/${locale}/developers/sdks`,
+      title: TITLES[locale] ?? TITLES.en,
+    },
+    alternates: {
+      canonical: `${BASE_URL}/${locale}/developers/sdks`,
+      languages: {
+        fa: `${BASE_URL}/fa/developers/sdks`,
+        en: `${BASE_URL}/en/developers/sdks`,
+      },
+    },
+  };
 }
 
-const SDKS: SdkInfo[] = [
-  {
-    name: '@eco/sdk-typescript',
-    language: 'TypeScript',
-    version: '1.2.0',
-    description: 'Full-featured TypeScript SDK with React hooks',
-    npmUrl: 'https://npmjs.com/package/@eco/sdk-typescript',
-    githubUrl: 'https://github.com/eco-nojin/sdk-typescript',
-    installCmd: 'npm install @eco/sdk-typescript',
-  },
-  {
-    name: 'eco-sdk-python',
-    language: 'Python',
-    version: '1.1.0',
-    description: 'Python SDK for backend integrations and data science',
-    npmUrl: 'https://pypi.org/project/eco-sdk-python/',
-    githubUrl: 'https://github.com/eco-nojin/sdk-python',
-    installCmd: 'pip install eco-sdk-python',
-  },
-  {
-    name: '@eco/sdk-go',
-    language: 'Go',
-    version: '1.0.0',
-    description: 'Go SDK for high-performance services',
-    npmUrl: 'https://pkg.go.dev/github.com/eco-nojin/sdk-go',
-    githubUrl: 'https://github.com/eco-nojin/sdk-go',
-    installCmd: 'go get github.com/eco-nojin/sdk-go',
-  },
-];
-
-export default function SdksPage() {
-  const t = useTranslations('developers.sdks');
-  const common = useTranslations('common');
-  const pathname = usePathname();
-  const locale = pathname.split('/')[1];
+export default async function SdksPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations('developers');
+  const common = await getTranslations('common');
+  const status = await getTranslations('statusLine');
+  const template = await getTranslations('market.template');
+  const title = TITLES[locale] ?? TITLES.en;
 
   return (
-    <main id="main" className="min-h-screen">
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <header className="mb-10">
-          <h1 className="display text-3xl font-bold text-ink sm:text-4xl">{t('title')}</h1>
-          <p className="mt-3 text-ink-soft">{t('lead')}</p>
-        </header>
+    <main id="main" className="min-h-dvh">
+      <SiteNav locale={locale} />
+      <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
+        <h1 className="display text-4xl font-bold text-ink">{title}</h1>
+        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
 
-        <div className="grid gap-6">
-          {SDKS.map((sdk) => (
-            <Card key={sdk.name} density="cozy">
-              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-xl font-semibold text-ink">{sdk.name}</h3>
-                    <span className="px-2 py-0.5 rounded text-xs bg-water/10 text-water font-mono">
-                      {sdk.language}
-                    </span>
-                    <span className="px-2 py-0.5 rounded text-xs bg-forest/10 text-forest font-mono">
-                      v{sdk.version}
-                    </span>
-                  </div>
-                  <p className="text-ink-soft mb-4">{sdk.description}</p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    <a href={sdk.npmUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-water hover:underline">
-                      {t('npmRegistry')}
-                    </a>
-                    <span className="text-ink-soft">·</span>
-                    <a href={sdk.githubUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-water hover:underline">
-                      {t('githubRepo')}
-                    </a>
-                  </div>
-                  <pre className="bg-surface-2 border border-line rounded-md p-3 text-xs font-mono overflow-x-auto text-ink">
-                    {sdk.installCmd}
-                  </pre>
-                </div>
-                <div className="flex flex-col gap-2 sm:flex-row">
-                  <Button variant="secondary" size="sm" onClick={() => navigator.clipboard.writeText(sdk.installCmd)}>
-                    {t('copyInstallCmd')}
-                  </Button>
-                </div>
-              </div>
-              <ProvenanceStamp source="SDK Registry" verified={true} method="Automated publish" />
-            </Card>
-          ))}
+        <div className="mt-6 flex flex-wrap items-center gap-4">
+          <StatusDot state="down" label={status('unavailable')} />
+          <ProvenanceStamp
+            source={template('source')}
+            label={template('source')}
+            verified={false}
+            method={template('method')}
+          />
         </div>
 
         <Card density="cozy" className="mt-6">
-          <h2 className="font-medium text-ink mb-3">{t('quickStart')}</h2>
-          <p className="text-sm text-ink-soft mb-4">{t('quickStartDesc')}</p>
-          <pre className="bg-surface-2 border border-line rounded-md p-4 text-xs font-mono overflow-x-auto text-ink">
-            {t('quickStartExample')}
-          </pre>
+          <h2 className="font-semibold text-ink">{template('unavailableTitle')}</h2>
+          <p className="mt-2 text-sm text-ink-soft">{template('unavailableDescription')}</p>
         </Card>
 
         <div className="mt-6 grid gap-4">
-          <Card density="cozy" className="border-clay/40 bg-clay/5">
-            <h3 className="font-medium text-ink mb-2">{t('limitsTitle')}</h3>
-            <ul className="space-y-1 text-sm text-ink-soft">
-              {t.raw('limits')?.map((item: string, idx: number) => (
-                <li key={idx} className="flex gap-2">
-                  <span className="text-copper">•</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
-          <Card density="cozy" className="border-forest/40 bg-forest/5">
-            <h3 className="font-medium text-ink mb-2">{t('nextTitle')}</h3>
-            <ul className="space-y-1 text-sm text-ink-soft">
-              {t.raw('next')?.map((item: string, idx: number) => (
-                <li key={idx} className="flex gap-2">
-                  <span className="text-forest">•</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
+          <ListBlock title={common('limits')} items={t.raw('limits') as string[]} tone="clay" />
+          <ListBlock title={common('next')} items={t.raw('next') as string[]} tone="moss" />
         </div>
       </div>
     </main>

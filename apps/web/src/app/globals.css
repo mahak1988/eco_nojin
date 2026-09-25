@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../../tokens/variables.css";
 
 /* ============================================================
    Eco Nojin — Design System «زمینِ زنده» (Living Terrain) 2026
@@ -123,24 +124,41 @@
 
   /* Ink (text) */
   --ink: light-dark(oklch(0.26 0.015 210), oklch(0.93 0.012 120));
-  --ink-soft: light-dark(oklch(0.47 0.02 210), oklch(0.72 0.02 180));
-  --ink-faint: light-dark(oklch(0.6 0.02 210), oklch(0.56 0.02 180));
+  --ink-soft: light-dark(oklch(0.36 0.02 210), oklch(0.78 0.02 180));
+  --ink-faint: light-dark(oklch(0.4 0.02 210), oklch(0.72 0.02 180));
 
   /* Lines */
   --line: light-dark(oklch(0.9 0.01 210), oklch(0.32 0.02 200));
   --line-strong: light-dark(oklch(0.8 0.015 210), oklch(0.42 0.025 190));
 
   /* Contextual — water / life / earth */
-  --water: light-dark(oklch(0.55 0.11 235), oklch(0.72 0.12 220));
-  --forest: light-dark(oklch(0.52 0.12 152), oklch(0.7 0.15 155));
-  --moss: light-dark(oklch(0.5 0.09 130), oklch(0.62 0.1 130));
-  --soil: light-dark(oklch(0.45 0.06 70), oklch(0.66 0.09 75));
-  --copper: light-dark(oklch(0.58 0.13 45), oklch(0.72 0.14 55));
+  --water: light-dark(oklch(0.4 0.12 235), oklch(0.72 0.12 220));
+  --forest: light-dark(oklch(0.36 0.11 152), oklch(0.7 0.15 155));
+  --moss: light-dark(oklch(0.4 0.09 130), oklch(0.62 0.1 130));
+  --soil: light-dark(oklch(0.38 0.06 70), oklch(0.66 0.09 75));
+  --copper: light-dark(oklch(0.42 0.13 45), oklch(0.72 0.14 55));
   --clay: light-dark(oklch(0.55 0.12 35), oklch(0.68 0.13 35));
   --sky: light-dark(oklch(0.6 0.09 235), oklch(0.78 0.09 235));
   --canopy: light-dark(oklch(0.28 0.05 160), oklch(0.26 0.04 160));
   --focus: light-dark(oklch(0.55 0.14 90), oklch(0.82 0.14 90));
+  --action: oklch(0.25 0.05 160);
   --on-action: oklch(0.99 0.005 120);
+
+  /* Chart palette — colorblind-safe 8-color (Design System §2.3) */
+  --chart-1: oklch(0.62 0.11 235);
+  --chart-2: oklch(0.55 0.12 150);
+  --chart-3: oklch(0.6 0.14 45);
+  --chart-4: oklch(0.58 0.12 25);
+  --chart-5: oklch(0.52 0.13 300);
+  --chart-6: oklch(0.65 0.15 30);
+  --chart-7: oklch(0.55 0.1 190);
+  --chart-8: oklch(0.45 0.06 70);
+
+  /* Motion tokens — micro 120ms / structural 240ms / scene 480ms (Design System §6.1) */
+  --duration-120: 120ms;
+  --duration-240: 240ms;
+  --duration-480: 480ms;
+  --easing-ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
 
   /* Elevation */
   --shadow-card: light-dark(
@@ -275,6 +293,10 @@ body {
   text-wrap: balance;
 }
 
+.text-pretty {
+  text-wrap: pretty;
+}
+
 /* ---------- Signature visual: living contour ---------- */
 
 .contour {
@@ -386,13 +408,13 @@ body {
   filter: brightness(0.97);
 }
 
-.btn-primary {
-  background: var(--forest);
+.btn.btn-primary {
+  background: var(--action);
   color: var(--on-action);
   box-shadow: var(--shadow-card);
 }
 
-.btn-ghost {
+.btn.btn-ghost {
   border: 1px solid var(--line-strong);
   background: var(--surface);
   color: var(--ink);
@@ -443,4 +465,52 @@ body {
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--ink-soft);
+}
+
+/* ---------- Motion utilities (Design System §6.1) ---------- */
+
+.transition-micro {
+  transition: all var(--duration-120) var(--easing-ease-out-quart);
+}
+
+.transition-structural {
+  transition: all var(--duration-240) var(--easing-ease-out-quart);
+}
+
+.transition-scene {
+  transition: all var(--duration-480) var(--easing-ease-out-quart);
+}
+
+/* ---------- Native popover baseline (Design System §3.2) ---------- */
+
+[popover] {
+  border-radius: var(--radius-m);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-pop);
+  padding: 0.75rem 1rem;
+  font-size: 0.8125rem;
+}
+
+[popover]::backdrop {
+  background: color-mix(in oklch, var(--canopy) 30%, transparent);
+  backdrop-filter: blur(2px);
+}
+
+/* ---------- Scroll-driven progress indicator (Design System §6.2) ---------- */
+
+@keyframes scroll-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.scroll-timeline-indicator {
+  transform-origin: 0% 50%;
+  animation: scroll-progress linear;
+  animation-timeline: scroll(root block);
 }

@@ -1,78 +1,124 @@
 import { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { FivePart } from '@/components/FivePart';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
+import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { apiGet } from '@/lib/api/client';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
 
-interface PrivacySection {
+const SLUG = 'privacy';
+
+const TITLES: Record<string, string> = { fa: 'حریم خصوصی', en: 'Privacy Policy' };
+const DESCRIPTIONS: Record<string, string> = {
+  fa: 'متن سیاست حریم خصوصی از سند منتشرشده در سرویس متن‌های حقوقی خوانده می‌شود.',
+  en: 'The privacy policy text is read from the published legal-texts record.',
+};
+
+type LegalText = {
   id: string;
+  locale: string;
+  slug: string;
   title: string;
-  content: string;
-  lastUpdated: string;
-  source: string;
-}
+  body: string;
+  version: number;
+  status: string;
+  effective_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+};
 
-const MOCK_SECTIONS: PrivacySection[] = [
-  { id: 'p1', title: 'Data Controller', content: 'Eco Nojin Foundation is the data controller for personal data processed through this platform.', lastUpdated: '2024-12-01', source: 'Legal Registry' },
-  { id: 'p2', title: 'Categories of Personal Data', content: 'We process: account data, land profile data, transaction data, usage analytics, and communication preferences.', lastUpdated: '2024-12-01', source: 'Legal Registry' },
-  { id: 'p3', title: 'Legal Basis', content: 'Processing is based on: contract performance, legitimate interest, consent, and legal obligations.', lastUpdated: '2024-12-01', source: 'Legal Registry' },
-  { id: 'p4', title: 'Data Retention', content: 'Account data: 7 years post-closure. Transaction data: 10 years (financial regulation). Analytics: 2 years anonymized.', lastUpdated: '2024-12-01', source: 'Legal Registry' },
-  { id: 'p5', title: 'Your Rights', content: 'Access, rectification, erasure, restriction, portability, objection, and complaint to supervisory authority.', lastUpdated: '2024-12-01', source: 'Legal Registry' },
-];
+export const dynamic = 'force-dynamic';
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
-  const titles: Record<string, string> = { fa: 'حریم خصوصی', en: 'Privacy Policy' };
-  const descriptions: Record<string, string> = { fa: 'سیاست حفاظت از داده‌های شخصی', en: 'Personal data protection policy' };
   return {
-    title: titles[locale] ?? titles.en,
-    description: descriptions[locale] ?? descriptions.en,
-    openGraph: { type: 'website', locale, url: `${BASE_URL}/${locale}/public/policy/privacy`, title: titles[locale] ?? titles.en },
-    alternates: { canonical: `${BASE_URL}/${locale}/public/policy/privacy`, languages: { fa: `${BASE_URL}/fa/public/policy/privacy`, en: `${BASE_URL}/en/public/policy/privacy` } },
+    title: TITLES[locale] ?? TITLES.en,
+    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    openGraph: {
+      type: 'website',
+      locale,
+      url: `${BASE_URL}/${locale}/public/policy/privacy`,
+      title: TITLES[locale] ?? TITLES.en,
+    },
+    alternates: {
+      canonical: `${BASE_URL}/${locale}/public/policy/privacy`,
+      languages: {
+        fa: `${BASE_URL}/fa/public/policy/privacy`,
+        en: `${BASE_URL}/en/public/policy/privacy`,
+      },
+    },
   };
 }
 
 export default async function PrivacyPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('public.policy.privacy');
-  const common = await getTranslations('common');
+  const status = await getTranslations('statusLine');
+  const template = await getTranslations('market.template');
+
+  const path = `/api/v1/legal-texts/${locale}/${SLUG}`;
+  const record = await apiGet<LegalText>(path);
+  const legalText = record.ok ? record.data : null;
+  const published = legalText?.status === 'published';
+  const heading = legalText?.title ?? TITLES[locale] ?? TITLES.en;
 
   return (
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
-      <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp source="Legal Registry" label={t('provenanceLabel')} verified={true} method="Version-controlled" timestamp="2024-12-01">
-          <h1 className="display text-4xl font-bold text-ink">{t('title')}</h1>
+      <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
+        <ProvenanceStamp
+          source={path}
+          label={heading}
+          verified={published}
+          method={path}
+          timestamp={legalText?.updated_at ?? undefined}
+        >
+          <h1 className="display text-4xl font-bold text-ink">{heading}</h1>
         </ProvenanceStamp>
-        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
-      </section>
+        <p className="mt-3 max-w-2xl text-ink-soft">{DESCRIPTIONS[locale] ?? DESCRIPTIONS.en}</p>
 
-      <section className="mx-auto max-w-5xl px-6 pb-6">
-        <FivePart
-          title={t('whatTitle')}
-          lead={t('whatLead')}
-          what={t('whatDesc')}
-          audience={t('audience')}
-          evidence={['GDPR/CCPA aligned', 'Data minimization by design', 'Annual DPIA reviews']}
-          limits={['Regional law variations', 'Cross-border transfer complexity', 'AI processing not fully covered']}
-          next={['Add automated DSAR handling', 'Enable data portability API', 'Regional compliance dashboards']}
-          evidenceLabel={common('evidence')} limitsLabel={common('limits')} nextLabel={common('next')}
-        />
-      </section>
-
-      <section className="mx-auto max-w-5xl px-6 pb-12">
-        {MOCK_SECTIONS.map(section => (
-          <Card key={section.id} density="compact" className="mb-4">
-            <h3 className="font-semibold text-ink mb-2">{section.title}</h3>
-            <div className="prose max-w-none text-ink-soft">{section.content}</div>
-            <ProvenanceStamp source={section.source} verified={true} method="Legal review" timestamp={section.lastUpdated} />
+        {legalText ? (
+          <>
+            <div className="mt-6">
+              <StatusDot state={published ? 'ok' : 'warn'} label={legalText.status} />
+            </div>
+            <Card density="cozy" className="mt-6">
+              <dl className="grid gap-4 text-sm sm:grid-cols-3">
+                <div>
+                  <dt className="field-label">version</dt>
+                  <dd className="num mt-1 font-mono text-ink">{legalText.version}</dd>
+                </div>
+                <div>
+                  <dt className="field-label">status</dt>
+                  <dd className="mt-1 font-mono text-ink">{legalText.status}</dd>
+                </div>
+                <div>
+                  <dt className="field-label">effective_at</dt>
+                  <dd className="num mt-1 font-mono text-ink">{legalText.effective_at ?? '—'}</dd>
+                </div>
+              </dl>
+              <div className="prose mt-6 max-w-none whitespace-pre-wrap text-ink-soft">
+                {legalText.body}
+              </div>
+            </Card>
+          </>
+        ) : (
+          <Card density="cozy" className="mt-6">
+            <StatusDot state="down" label={status('unavailable')} />
+            <h2 className="mt-4 font-semibold text-ink">{template('unavailableTitle')}</h2>
+            <p className="mt-2 text-sm text-ink-soft">{template('unavailableDescription')}</p>
+            <p className="mt-3 text-xs text-ink-soft">
+              {path} · {record.ok ? '' : record.error}
+            </p>
           </Card>
-        ))}
-      </section>
+        )}
+      </div>
     </main>
   );
 }

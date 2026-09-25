@@ -1,7 +1,8 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { Link } from '@/i18n/navigation';
-import { SiteNav } from '@/components/SiteNav';
 import { OwnerFooter } from '@/components/OwnerFooter';
+import { SiteNav } from '@/components/SiteNav';
+import { SustainabilityPreview } from '@/components/SustainabilityPreview';
+import { Link } from '@/i18n/navigation';
 import {
   apiGet,
   type LandProfile,
@@ -24,7 +25,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     apiGet<MarketProducts>('/api/v1/marketplace/products'),
   ]);
 
-  const count = (v: number | null | undefined) => (v === null || v === undefined ? '—' : n.format(v));
+  const count = (v: number | null | undefined) =>
+    v === null || v === undefined ? '—' : n.format(v);
+  const previewData = stats.ok
+    ? {
+        source: 'live' as const,
+        landscapes: stats.data.total_landscapes,
+        projects: stats.data.total_projects,
+      }
+    : { source: 'fallback' as const, landscapes: null, projects: null };
 
   return (
     <main className="min-h-dvh">
@@ -59,6 +68,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </section>
 
       <section className="mx-auto max-w-5xl px-6 py-6">
+        <SustainabilityPreview locale={locale} data={previewData} />
+      </section>
+
+      <section className="mx-auto max-w-5xl px-6 py-6">
         <h2 className="text-sm font-semibold text-ink-soft">{t('home.landsTitle')}</h2>
         {lands.ok && lands.data.length > 0 ? (
           <ul className="mt-3 divide-y divide-line rounded-[var(--radius-card)] border border-line bg-surface">
@@ -84,7 +97,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         {products.ok && products.data.products.length > 0 ? (
           <div className="mt-3 grid gap-4 sm:grid-cols-3">
             {products.data.products.slice(0, 3).map((p) => (
-              <article key={p.id} className="rounded-[var(--radius-card)] border border-line bg-surface p-4">
+              <article
+                key={p.id}
+                className="rounded-[var(--radius-card)] border border-line bg-surface p-4"
+              >
                 <div className="text-sm font-semibold text-ink">{p.name}</div>
                 <div className="mt-1 text-xs text-ink-soft">{p.producer_name}</div>
                 <div className="num mt-3 text-lg text-ink">

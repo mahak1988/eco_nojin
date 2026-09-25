@@ -1,6 +1,8 @@
+import Image from 'next/image';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { Link } from '@/i18n/navigation';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
+import { SustainabilityPreview } from '@/components/SustainabilityPreview';
+import { Link } from '@/i18n/navigation';
 import { apiGet, type PlatformStats } from '@/lib/api/client';
 import { getLocaleMeta } from '@/lib/i18n/messages';
 
@@ -17,14 +19,23 @@ export default async function CoverPage({ params }: { params: Promise<{ locale: 
   const nf = new Intl.NumberFormat(locale === 'fa' ? 'fa-IR' : 'en');
   const num = (value: number | null | undefined) =>
     value === null || value === undefined ? '—' : nf.format(value);
+  const previewData = stats.ok
+    ? {
+        source: 'live' as const,
+        landscapes: stats.data.total_landscapes,
+        projects: stats.data.total_projects,
+      }
+    : { source: 'fallback' as const, landscapes: null, projects: null };
 
   return (
     <main className="min-h-dvh">
       <header className="site-header">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-5 py-3">
-          <img
+          <Image
             src="/brand/platform-logo-transparent.png"
             alt={t('brand.logoAlt')}
+            width={1664}
+            height={928}
             className="h-9 w-auto"
           />
           <LocaleSwitcher current={locale} label={t('cover.languageLabel')} />
@@ -111,6 +122,9 @@ export default async function CoverPage({ params }: { params: Promise<{ locale: 
             </div>
           </aside>
         </div>
+      </section>
+      <section className="mx-auto max-w-6xl px-5 pb-16">
+        <SustainabilityPreview locale={locale} compact data={previewData} />
       </section>
     </main>
   );

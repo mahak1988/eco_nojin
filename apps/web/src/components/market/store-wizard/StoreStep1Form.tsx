@@ -3,9 +3,9 @@
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
+import { z } from 'zod';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
-import { z } from 'zod';
 
 const step1Schema = z.object({
   bazaarId: z.string().optional(),
@@ -22,7 +22,7 @@ type Step1Input = z.infer<typeof step1Schema>;
 export default function StoreStep1Form({ locale }: { locale: string }) {
   const t = useTranslations('market.storeWizard.step1');
   const searchParams = useSearchParams();
-  const { register, setValue, watch } = useFormContext<Step1Input>();
+  const { register } = useFormContext<Step1Input>();
 
   const bazaarId = searchParams.get('bazaar') || '';
 
@@ -53,10 +53,7 @@ export default function StoreStep1Form({ locale }: { locale: string }) {
           />
         </div>
         <div>
-          <Select
-            label={t('storeType')}
-            {...register('storeType')}
-          >
+          <Select label={t('storeType')} {...register('storeType')}>
             <option value="producer">{t('storeType.producer')}</option>
             <option value="reseller">{t('storeType.reseller')}</option>
             <option value="cooperative">{t('storeType.cooperative')}</option>

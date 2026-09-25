@@ -1,7 +1,7 @@
 'use client';
 
-import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
+import { useFormContext } from 'react-hook-form';
 import { Input } from '@/components/ui/Input';
 import { type Step8Input } from '@/lib/validation/bazaar-establishment';
 
@@ -23,11 +23,7 @@ export function Step8Form({ locale }: { locale: string }) {
           />
         </div>
         <div>
-          <Input
-            label={t('registrationDate')}
-            type="date"
-            {...register('registrationDate')}
-          />
+          <Input label={t('registrationDate')} type="date" {...register('registrationDate')} />
         </div>
         <div>
           <Input
@@ -48,7 +44,10 @@ export function Step8Form({ locale }: { locale: string }) {
       {(registrationNumber || registrationDate) && (
         <div className="mt-4 p-3 bg-primary/5 border border-primary/20 rounded text-sm text-primary">
           <strong>{t('preview')}: </strong>
-          {t('registrationPreview', { number: String(registrationNumber ?? ''), date: String(registrationDate ?? '') })}
+          {t('registrationPreview', {
+            number: String(registrationNumber ?? ''),
+            date: String(registrationDate ?? ''),
+          })}
         </div>
       )}
     </div>

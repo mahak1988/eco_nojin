@@ -1,22 +1,31 @@
 'use client';
 
-import { useFormContext, useFieldArray } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
+import { Input } from '@/components/ui/Input';
 
 const VENDOR_CATEGORIES = [
-  'agriculture', 'handicrafts', 'food_processing', 'textiles',
-  'dairy', 'meat', 'bakery', 'spices', 'herbal', 'other'
+  'agriculture',
+  'handicrafts',
+  'food_processing',
+  'textiles',
+  'dairy',
+  'meat',
+  'bakery',
+  'spices',
+  'herbal',
+  'other',
 ];
 
 export function Step5Form({ locale }: { locale: string }) {
   const t = useTranslations('market.bazaarWizard.step5');
   const { register, control, watch } = useFormContext();
   const { fields, append, remove } = useFieldArray({ control, name: 'vendorIds' });
-  const { fields: catFields, append: appendCat, remove: removeCat } = useFieldArray({ control, name: 'vendorCategories' });
+  const { append: appendCat, remove: removeCat } = useFieldArray({
+    control,
+    name: 'vendorCategories',
+  });
   const vendorIds = watch('vendorIds') ?? [];
   const expectedStoreCount = watch('expectedStoreCount') ?? 0;
   const vendorCategories = watch('vendorCategories') ?? [];
@@ -61,12 +70,15 @@ export function Step5Form({ locale }: { locale: string }) {
       <div className="mt-6">
         <h4 className="font-medium text-ink mb-3">{t('vendorCategories')}</h4>
         <div className="flex flex-wrap gap-2">
-          {VENDOR_CATEGORIES.map(cat => (
-            <label key={cat} className="inline-flex items-center gap-2 px-3 py-1.5 rounded border text-sm cursor-pointer hover:bg-surface-alt">
+          {VENDOR_CATEGORIES.map((cat) => (
+            <label
+              key={cat}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded border text-sm cursor-pointer hover:bg-surface-alt"
+            >
               <input
                 type="checkbox"
                 checked={vendorCategories.includes(cat)}
-                onChange={e => {
+                onChange={(e) => {
                   if (e.target.checked) {
                     appendCat(cat);
                   } else {
@@ -84,7 +96,8 @@ export function Step5Form({ locale }: { locale: string }) {
       {(vendorIds.length > 0 || expectedStoreCount) && (
         <div className="mt-4 p-3 bg-primary/5 border border-primary/20 rounded text-sm text-primary">
           <strong>{t('preview')}: </strong>
-          {vendorIds.length} {t('vendorIds')}, {expectedStoreCount || 0} {t('expectedStores')}, {vendorCategories.length} {t('categories')}
+          {vendorIds.length} {t('vendorIds')}, {expectedStoreCount || 0} {t('expectedStores')},{' '}
+          {vendorCategories.length} {t('categories')}
         </div>
       )}
     </div>

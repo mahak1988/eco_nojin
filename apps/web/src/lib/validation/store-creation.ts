@@ -38,7 +38,9 @@ export const step5Schema = z.object({
 });
 
 export const step6Schema = z.object({
-  paymentMethods: z.array(z.enum(['wallet', 'card', 'bank_transfer', 'cash', 'installment'])).optional(),
+  paymentMethods: z
+    .array(z.enum(['wallet', 'card', 'bank_transfer', 'cash', 'installment']))
+    .optional(),
   escrowRequired: z.boolean().optional(),
   installmentMonths: z.number().min(1).max(24).optional(),
 });

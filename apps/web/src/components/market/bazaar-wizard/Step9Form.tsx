@@ -1,7 +1,7 @@
 'use client';
 
-import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
+import { useFormContext } from 'react-hook-form';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { type Step9Input } from '@/lib/validation/bazaar-establishment';
@@ -17,11 +17,7 @@ export default function Step9Form({ locale }: { locale: string }) {
     <div className="space-y-4" dir={locale === 'fa' || locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <Input
-            label={t('launchDate')}
-            type="date"
-            {...register('launchDate')}
-          />
+          <Input label={t('launchDate')} type="date" {...register('launchDate')} />
         </div>
         <div>
           <Input

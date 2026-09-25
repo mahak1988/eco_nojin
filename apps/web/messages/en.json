@@ -1,5 +1,8 @@
 {
-  "meta": { "machineTranslated": false, "fallbackLocale": null },
+  "meta": {
+    "machineTranslated": false,
+    "fallbackLocale": null
+  },
   "brand": {
     "name": "HyDroMa Nojin",
     "logoAlt": "HyDroMa Nojin (Eco Nojin) platform logo",
@@ -32,7 +35,309 @@
       "Start the field pilot"
     ]
   },
-  "nav": { "home": "Home", "science": "Science", "market": "Marketplace", "status": "Status" },
+  "services": {
+    "title": "Services and solutions",
+    "lead": "Practical starting points for pilots, field learning and data-informed decisions.",
+    "what": "Each solution begins with a real problem, names the data and model it needs, and returns a result with explicit limits and provenance.",
+    "audience": "Farmers, cooperatives, water and soil managers, researchers and delivery teams.",
+    "evidence": [
+      "A pre-deployment evaluation method",
+      "A recorded model version and analysis date"
+    ],
+    "limits": [
+      "Every solution needs validated data and local calibration",
+      "A pilot result is not final without field review"
+    ],
+    "next": ["Choose a small pilot", "Capture user feedback and revise the model"]
+  },
+  "evidence": {
+    "title": "Science and evidence",
+    "lead": "Every scientific claim is shown with its source, validation method and limitations.",
+    "what": "The evidence library links standard FAO and IPCC methods and scientific tool outputs to traceable decisions.",
+    "audience": "Researchers, advisers and users who need an explanation and a reference.",
+    "evidence": ["DOI references for selected studies", "Model version and uncertainty range"],
+    "limits": [
+      "Not every model is valid in every climate",
+      "Field data quality remains the primary limitation"
+    ],
+    "next": ["Select an appropriate reference", "Review evidence periodically"]
+  },
+  "ai": {
+    "title": "AI assistant",
+    "lead": "Traceable answers for water, soil and livelihood questions.",
+    "what": "The assistant can prepare a calculation, but its final answer always needs a source and human confirmation.",
+    "audience": "Advisers, farmers and support teams.",
+    "evidence": ["A source is shown for every answer", "Draft label for answers without a source"],
+    "limits": [
+      "A language model does not replace local judgement",
+      "Sensitive data must not be sent without permission"
+    ],
+    "next": ["Connect source search", "Require human review before publication"]
+  },
+  "trust": {
+    "title": "Trust and provenance",
+    "lead": "Every datum can be traced to its service, retrieval time and validation method.",
+    "what": "The provenance explorer shows the data chain and distinguishes live data, demos and unavailable services.",
+    "audience": "Organisational users, auditors and scientific teams.",
+    "evidence": ["Source identifier and retrieval time", "Data version and change history"],
+    "limits": [
+      "Not all services have the same timestamp contract yet",
+      "Deleted data cannot be recovered"
+    ],
+    "next": ["Complete the provenance chain", "Add data-change reports"]
+  },
+  "developers": {
+    "title": "Developers",
+    "lead": "APIs, data contracts and integration tools for dependable services.",
+    "what": "OpenAPI documentation and a generated client provide a clear path to connect platform services.",
+    "audience": "Software teams, researchers and technology partners.",
+    "evidence": ["A versioned API contract", "Request and response examples"],
+    "limits": [
+      "Rate limits and authentication must be respected",
+      "Development and production environments differ"
+    ],
+    "next": ["Complete public route documentation", "Add webhooks and versioned contracts"]
+  },
+  "accessibility": {
+    "title": "Accessibility",
+    "lead": "An experience usable with keyboards, screen readers, right-to-left and left-to-right languages.",
+    "what": "Semantic controls, Tab navigation, sufficient contrast and translatable messages are part of the base design.",
+    "audience": "Everyone, especially people with diverse access needs.",
+    "evidence": ["Automated axe checks", "Direction and language checks in browsers"],
+    "limits": ["Some specialist content still needs human review"],
+    "next": ["Complete route coverage", "Review with real users"]
+  },
+  "statements": {
+    "title": "Statements and documents",
+    "lead": "Public documents carry a version and date so decisions can be referenced.",
+    "versionLabel": "Version 1.0 — 2026-09-24",
+    "missionTitle": "Mission",
+    "missionBody": "Restore landscapes through data, science and community participation.",
+    "quoteLabel": "Mission statement",
+    "transparencyTitle": "Transparency",
+    "transparencyBody": "Data, model and limitations must be disclosed with every result."
+  },
+  "legal": {
+    "title": "Legal documents",
+    "version": "Version 1.0 — 2026-09-24",
+    "lead": "Review the terms of use and privacy notice before any commercial activity."
+  },
+  "learn": {
+    "emptyTitle": "The learning library is not published yet",
+    "emptyDesc": "Reviewed learning content will be published soon. Until then, use the getting-started guide and field learning materials."
+  },
+  "platformOverview": {
+    "title": "Platform components",
+    "lead": "Four public entry points; each area shows its status and limits clearly.",
+    "itemHome": "Public home",
+    "itemHomeDesc": "Review registered lands, projects, and products without invented numbers.",
+    "itemScience": "Science tools",
+    "itemScienceDesc": "Understand water, soil, vegetation, and climate with clear boundaries.",
+    "itemMarket": "Market",
+    "itemMarketDesc": "Browse producer products with registered prices and availability.",
+    "itemStatus": "System status",
+    "itemStatusDesc": "See public service status and registered information with clear timestamps.",
+    "cta": "View"
+  },
+  "public": {
+    "home": {
+      "title": "HyDroMa Nojin — Landscape restoration platform",
+      "lead": "Data, scientific models and practical paths for restoring water, soil and rural livelihoods.",
+      "provenanceLabel": "Status source",
+      "liveWhenAvailable": "Shown when live data is available",
+      "whatTitle": "One window for better decisions",
+      "whatLead": "From a land profile to markets and carbon, every area states its status and limitations.",
+      "whatDesc": "Recorded data is shown with source and date, and experimental results are never presented as verified data.",
+      "keyMetrics": "Status overview",
+      "beneficiaries": "Beneficiaries",
+      "activeMarkets": "Active markets",
+      "landProfiles": "Land profiles",
+      "carbonProjects": "Carbon projects",
+      "quickActions": "Next steps",
+      "enterMarket": "Open the marketplace",
+      "exploreScience": "Explore the science engine",
+      "learnMore": "Open the learning guide",
+      "statusSource": "Platform service status",
+      "afterPilot": "After the pilot",
+      "evidenceItems": [
+        "FAO/IPCC standards",
+        "Traceable scientific references",
+        "Reproducible protocols"
+      ],
+      "limitsItems": [
+        "Experimental results remain provisional until human review",
+        "Field data coverage is limited",
+        "Machine translations require review"
+      ],
+      "nextItems": [
+        "Choose a small pilot",
+        "Complete live data connection",
+        "Publish an impact report"
+      ]
+    },
+    "why": {
+      "title": "Why Eco Nojin?",
+      "lead": "Complex water, soil and livelihood problems need traceable decisions.",
+      "provenanceLabel": "Strategy source",
+      "whatTitle": "From problem to response",
+      "whatLead": "Every capability starts with a real problem.",
+      "whatDesc": "Each response shows its data, model, limitations and next step together.",
+      "audience": "Farmers, managers, researchers and delivery partners",
+      "problemSolutionTable": "Problem and response",
+      "problem": "Problem",
+      "solution": "Response",
+      "p1_problem": "Scattered data without sources",
+      "p1_solution": "A shared data profile and provenance chain",
+      "p2_problem": "No repeatable analysis method",
+      "p2_solution": "Versioned models and run manifests",
+      "p3_problem": "Decisions made without visible limitations",
+      "p3_solution": "Evidence, uncertainty and data status",
+      "p4_problem": "Unequal access to tools",
+      "p4_solution": "PWA, multiple languages and inclusive channels",
+      "evidenceItems": ["Stakeholder workshops", "Field research", "Recorded pilots"],
+      "limitsItems": [
+        "Regional generalisation is limited",
+        "Long-term impact is still being measured",
+        "Cost and economic impact vary by context"
+      ],
+      "nextItems": [
+        "Publish an impact report",
+        "Add economic valuation",
+        "Expand a controlled pilot"
+      ]
+    },
+    "cta": {
+      "title": "Call to action",
+      "lead": "Choose a clear entry point to the marketplace, science engine and learning content.",
+      "provenanceLabel": "Product strategy source",
+      "whatTitle": "Choose the next step",
+      "whatLead": "Each path has an explicit starting point.",
+      "whatDesc": "Check data status and limitations before taking action.",
+      "audience": "Visitors, users and potential partners",
+      "primaryCTAs": "Primary access paths",
+      "cta1_title": "Open the marketplace",
+      "cta1_desc": "Explore discovery, orders and escrow",
+      "cta1_action": "Open marketplace",
+      "cta2_title": "Explore science",
+      "cta2_desc": "Understand the engine, models and provenance",
+      "cta2_action": "Open the engine",
+      "cta3_title": "Start learning",
+      "cta3_desc": "Read reviewed guides and learning content",
+      "cta3_action": "Open learning",
+      "cta4_title": "Terms of use",
+      "cta4_desc": "Review legal documents before commercial activity",
+      "cta4_action": "Read terms",
+      "evidenceItems": ["User journey maps", "Accessibility tests", "CTA content review"],
+      "limitsItems": ["CTA variants vary by region", "Offline forms are still being completed"],
+      "nextItems": ["Add role-aware CTAs", "Record conversion events", "Connect onboarding"]
+    },
+    "science": {
+      "evidenceBase": {
+        "title": "Scientific evidence base",
+        "lead": "Scientific references with source status and limitations.",
+        "provenanceLabel": "Evidence library source",
+        "whatTitle": "Traceable evidence",
+        "whatLead": "Every record states its verification status.",
+        "whatDesc": "The list below is a demo of reference standards and does not replace source review.",
+        "audience": "Researchers, advisers and users who need a reference",
+        "evidenceCatalog": "Reference catalogue",
+        "evidenceItems": [
+          "FAO/IPCC/OGC standards",
+          "Traceable scientific references",
+          "Reproducible pipelines"
+        ],
+        "limitsItems": [
+          "Modelled estimates are explicitly labelled",
+          "Regional calibration gaps remain",
+          "Human source review is required"
+        ],
+        "nextItems": [
+          "Add living systematic reviews",
+          "Link to the model registry",
+          "Enable evidence gap maps"
+        ],
+        "demoLabel": "Demo",
+        "emptyTitle": "No scientific source loaded",
+        "emptyDesc": "Until the scientific registry is connected, this page shows the source structure only."
+      }
+    },
+    "channels": {
+      "title": "Access channels",
+      "lead": "An experience for web, mobile and low-connectivity users.",
+      "provenanceLabel": "Channel registry source",
+      "whatTitle": "One platform, multiple access paths",
+      "whatLead": "Each channel has its own contract and status.",
+      "whatDesc": "USSD, SMS and Voice are shown as independent adapters, not fake Next.js routes.",
+      "audience": "Web, mobile and feature-phone users",
+      "channels": "Available channels",
+      "webPwa": "Web/PWA",
+      "mobileApp": "Mobile app",
+      "ussd": "USSD",
+      "sms": "SMS",
+      "voice": "Voice",
+      "telegram": "Telegram",
+      "evidenceItems": ["Inclusive design", "PWA and offline mode", "14 languages"],
+      "limitsItems": [
+        "USSD/SMS/Voice do not have production contracts yet",
+        "The mobile app is in beta",
+        "USSD character limits"
+      ],
+      "nextItems": [
+        "Define an independent USSD adapter",
+        "Complete the Voice contract",
+        "Add WhatsApp"
+      ]
+    },
+    "visit": {
+      "title": "Field visit",
+      "lead": "A guide to observing pilot sites and recording observations.",
+      "provenanceLabel": "Field protocol source",
+      "whatTitle": "A repeatable visit protocol",
+      "whatLead": "Each visit records its context, method and limitations.",
+      "whatDesc": "The visit form covers soil, water, vegetation and community feedback.",
+      "audience": "Pilot teams, local partners and researchers",
+      "visitSteps": "Visit steps",
+      "s1_title": "Record context",
+      "s1_desc": "Record location, season, rainfall and access conditions.",
+      "s2_title": "Observe the land",
+      "s2_desc": "Review soil, water, vegetation and erosion evidence.",
+      "s3_title": "Listen locally",
+      "s3_desc": "Review needs and delivery gaps with participants.",
+      "s4_title": "Record the result",
+      "s4_desc": "Record findings, limitations and next steps in the run manifest.",
+      "scheduleVisit": "Request a visit",
+      "evidenceItems": [
+        "Soil/water/carbon protocol",
+        "Community consent form",
+        "Visit context record"
+      ],
+      "limitsItems": [
+        "Seasonal access limits",
+        "Translated forms need review",
+        "Field data depends on local consent"
+      ],
+      "nextItems": [
+        "Publish visit reports",
+        "Record the next step in the run manifest",
+        "Review seasonally"
+      ]
+    }
+  },
+  "offline": {
+    "code": "Connection unavailable",
+    "title": "Offline mode",
+    "description": "Cached data is available; retry when you want to refresh.",
+    "retry": "Try again"
+  },
+  "layout": {
+    "mainNav": "Main navigation"
+  },
+  "nav": {
+    "home": "Home",
+    "science": "Science",
+    "market": "Marketplace",
+    "status": "Status"
+  },
   "home": {
     "title": "HyDroMa Nojin — Landscape restoration platform",
     "lead": "An integrated platform for smart management of water, soil, carbon and markets to restore landscapes and rural livelihoods. Every number on this page is read from the real backend.",
@@ -48,18 +353,10 @@
     "lead": "The platform's numerical models and scientific indices, together with the real state of the compute core.",
     "modelsTitle": "Registered models",
     "modelsEmpty": "No model has been registered.",
+    "modelsPublicNote": "The public tool list will be published after documentation is complete.",
     "cppOk": "The C++ numerical core is active.",
     "cppMissing": "The C++ numerical core is not available.",
     "kernels": "Kernels"
-  },
-  "market": {
-    "title": "Marketplace",
-    "lead": "Producer products with real prices and stock from the backend.",
-    "products": "Products",
-    "producers": "Producers",
-    "organic": "Organic",
-    "organicBadge": "Organic",
-    "empty": "There is no product to display."
   },
   "cover": {
     "subtitle": "Smart landscape management for restoring water, soil and livelihoods",
@@ -100,6 +397,13 @@
     "emptyDbNote": "The database is connected but has no real records yet, so every counter is zero — no placeholder value is substituted."
   },
   "market": {
+    "title": "Marketplace",
+    "lead": "Producer products with real prices and stock from the backend.",
+    "products": "Products",
+    "producers": "Producers",
+    "organic": "Organic",
+    "organicBadge": "Organic",
+    "empty": "There is no product to display.",
     "product": {
       "backToMarket": "Back to Marketplace",
       "verifiedProduct": "Verified Product",
@@ -113,6 +417,7 @@
       "waterSavings": "Water Savings",
       "soilRestoration": "Soil Restoration",
       "productProvenance": "Product Provenance",
+      "dataUnavailable": "Live product data is unavailable; this detail is from the demo catalogue.",
       "addToCart": "Add to Cart",
       "escrowOption": "Escrow Option",
       "inStock": "In Stock",
@@ -134,7 +439,6 @@
       "warrantyTitle": "Warranty Information",
       "compareTitle": "Quick Compare",
       "specs": "Specifications",
-      "ecoImpact": "Eco Impact",
       "reviews": "Reviews",
       "qa": "Q&A",
       "traceability": "Traceability",
@@ -167,6 +471,7 @@
       "view": "View",
       "noProductsSelected": "No products selected for comparison",
       "antiFraudWarning": "⚠ Anti-fraud analysis available on detailed comparison pages",
+      "dataUnavailable": "Live comparison data is unavailable; this table shows demo data.",
       "compareProvenance": "Comparison Data Provenance",
       "productsTitle": "Product Comparison",
       "pricesTitle": "Price History Comparison",
@@ -181,11 +486,233 @@
       "saveTitle": "Saved Comparisons",
       "shareTitle": "Share Comparison",
       "alertsTitle": "Price Drop Alerts"
+    },
+    "template": {
+      "title": "Marketplace capability",
+      "description": "This route is registered in the marketplace framework and shows an unavailable state until its data source is connected.",
+      "status": "Data unavailable",
+      "source": "Route source",
+      "method": "Route template",
+      "unavailableTitle": "This capability is not connected yet",
+      "unavailableDescription": "No unverified data is shown. After the API connection, source and observation date will be added.",
+      "contractTitle": "Data contract",
+      "contractDescription": "Input, output, access level and owner must be registered in the manifest.",
+      "nextTitle": "Next step",
+      "nextDescription": "API integration, i18n and accessibility tests are required before beta.",
+      "back": "Back to marketplace"
+    },
+    "cart": {
+      "title": "Cart",
+      "empty": "Your cart is empty.",
+      "summary": "Order summary",
+      "cartProvenance": "Cart source",
+      "decrease": "Decrease quantity",
+      "increase": "Increase quantity",
+      "demoNotice": "This is a demo cart; a signed-in API cart is required for real use."
+    },
+    "checkout": {
+      "step1Cart": "Cart",
+      "step2Escrow": "Escrow",
+      "step3Confirm": "Confirm",
+      "cartReview": "Cart review",
+      "subtotal": "Subtotal",
+      "platformFee": "Platform fee",
+      "escrowFee": "Escrow fee",
+      "escrowSetup": "Escrow setup",
+      "ecowallet": "EcoWallet",
+      "card": "Card",
+      "contractAcceptance": "I have read and accept the escrow contract and terms.",
+      "transactionKey": "Transaction key",
+      "confirmAndLock": "Confirm and lock escrow",
+      "acceptContractFirst": "Accept the contract first",
+      "confirmation": "Transaction confirmation",
+      "orderPlaced": "Order submitted",
+      "escrowStatus": "Escrow status",
+      "viewOrders": "View orders",
+      "checkoutProvenance": "Checkout flow source",
+      "processing": "Submitting…",
+      "apiUnavailable": "The escrow service is unavailable; the order was not confirmed.",
+      "demoCart": "This cart is demo data and must be loaded from the API before real submission."
+    },
+    "escrow": {
+      "title": "Escrow",
+      "amount": "Amount",
+      "contractHash": "Contract hash",
+      "orderId": "Order ID",
+      "parties": "Parties",
+      "buyer": "Buyer",
+      "seller": "Seller",
+      "arbitrator": "Arbitrator",
+      "platform": "Platform",
+      "eventTimeline": "Event timeline",
+      "signed": "Signed",
+      "notSigned": "Not signed",
+      "escrowComplete": "Escrow is complete.",
+      "releaseFunds": "Release funds",
+      "cancelEscrow": "Cancel escrow",
+      "openDispute": "Open dispute",
+      "dataUnavailable": "Live escrow data is unavailable; this record is shown as demo data.",
+      "confirmRelease": "Release funds?",
+      "confirmReleaseDesc": "This action is allowed only after authorization and a contract review.",
+      "confirmReleaseButton": "Confirm release",
+      "escrowProvenance": "Escrow source",
+      "released": "Funds released",
+      "cancelled": "Escrow cancelled"
     }
   },
   "common": {
     "error": "Error",
     "retry": "Retry",
-    "machineTranslatedNotice": "This language is currently shown via machine translation."
+    "machineTranslatedNotice": "This language is currently shown via machine translation.",
+    "whatLabel": "What it is",
+    "audienceLabel": "Who it is for",
+    "evidenceLabel": "Evidence",
+    "limitsLabel": "Limitations",
+    "nextLabel": "Next step",
+    "evidence": "Evidence",
+    "limits": "Limitations",
+    "next": "Next step",
+    "live": "Live",
+    "beta": "Beta",
+    "planned": "Planned",
+    "open": "Open",
+    "demo": "Demo",
+    "view": "View",
+    "back": "Back",
+    "card": "Card",
+    "total": "Total",
+    "proceedToCheckout": "Continue to checkout",
+    "signed": "Signed",
+    "pending": "Pending",
+    "cancel": "Cancel",
+    "released": "Released"
+  },
+  "a11y": {
+    "skipToContent": "Skip to main content"
+  },
+  "auth": {
+    "meta": {
+      "title": "Account access",
+      "description": "Sign in or create an account for the HyDroMa Nojin platform; the session is kept in a same-origin HttpOnly cookie."
+    },
+    "common": {
+      "signIn": "Sign in",
+      "signInLabel": "Sign in to your account",
+      "signOut": "Sign out",
+      "signingOut": "Signing out…",
+      "checkingSession": "Checking your session…",
+      "alreadySignedIn": "You are already signed in.",
+      "accountMenu": "Account menu",
+      "sessionDetails": "Session details",
+      "backToHome": "Back to home",
+      "email": "Email address",
+      "password": "Password",
+      "showPassword": "Show",
+      "hidePassword": "Hide",
+      "showPasswordFor": "Show password ({field})",
+      "hidePasswordFor": "Hide password ({field})",
+      "termsOfService": "Terms of service",
+      "privacyPolicy": "Privacy policy",
+      "errorHeading": "The request could not be completed",
+      "errorDetails": "Server detail",
+      "validationHeading": "Review the highlighted fields",
+      "provenance": {
+        "heading": "Session provenance",
+        "source": "Source",
+        "method": "Method",
+        "verified": "Verified",
+        "unverified": "Not verified"
+      }
+    },
+    "roles": {
+      "regular": "Individual",
+      "tourist": "Visitor",
+      "farmer": "Farmer or producer",
+      "advisor": "Advisor",
+      "researcher": "Researcher",
+      "organization": "Organization",
+      "admin": "Administrator",
+      "security_admin": "Security administrator",
+      "content_admin": "Content administrator",
+      "user_admin": "User administrator"
+    },
+    "languages": {
+      "fa": "Persian",
+      "en": "English",
+      "ar": "Arabic"
+    },
+    "errors": {
+      "forbidden": "The request was rejected by the session boundary. Reload the page and try again.",
+      "invalidPayload": "The submitted data was not accepted. Check the fields and try again.",
+      "unavailable": "The authentication service is unavailable. Try again shortly.",
+      "timeout": "The authentication service took too long to answer. Try again.",
+      "rejected": "The email address or password was not accepted, or this account already exists.",
+      "signOutFailed": "Sign-out did not complete. The local session was cleared anyway.",
+      "unknown": "An unexpected error occurred. Try again."
+    },
+    "validation": {
+      "invalid": "Review this field.",
+      "emailInvalid": "Enter a valid email address.",
+      "passwordRequired": "Enter your password.",
+      "passwordMin": "Use at least 8 characters.",
+      "passwordMax": "Use at most 128 characters.",
+      "passwordMismatch": "The two passwords do not match.",
+      "fullNameRequired": "Enter your full name (2 to 100 characters).",
+      "roleRequired": "Choose an account type.",
+      "languageRequired": "Choose an interface language.",
+      "termsRequired": "Accept the terms of service to continue.",
+      "privacyRequired": "Accept the privacy policy to continue."
+    },
+    "login": {
+      "title": "Sign in",
+      "lead": "Sign in to reach your land profiles, marketplace, evidence and carbon records.",
+      "submit": "Sign in",
+      "pending": "Signing in…",
+      "noAccount": "No account yet?",
+      "createAccount": "Create an account",
+      "transport": "Credentials reach the same-origin BFF; the session stays in an HttpOnly cookie.",
+      "source": "bff:/api/auth/login",
+      "method": "same-origin POST"
+    },
+    "signup": {
+      "title": "Create an account",
+      "lead": "Create an account to save land profiles, track carbon and use the marketplace.",
+      "submit": "Create account",
+      "pending": "Creating your account…",
+      "hasAccount": "Already have an account?",
+      "signInInstead": "Sign in instead",
+      "fullName": "Full name",
+      "passwordConfirm": "Confirm password",
+      "accountType": "Account type",
+      "interfaceLanguage": "Interface language",
+      "consent": "Consent",
+      "acceptTerms": "I accept the terms of service",
+      "acceptPrivacy": "I accept the privacy policy",
+      "source": "bff:/api/auth/signup",
+      "method": "same-origin POST"
+    },
+    "session": {
+      "title": "Session",
+      "lead": "The active session is resolved by the same-origin BFF from the HttpOnly session cookie.",
+      "loading": "Checking your session…",
+      "signedOut": "You are not signed in.",
+      "signedOutLead": "Sign in to see the account attached to this session.",
+      "signedIn": "Signed in",
+      "email": "Email",
+      "fullName": "Name",
+      "role": "Role",
+      "language": "Interface language",
+      "country": "Country",
+      "city": "City",
+      "phone": "Phone",
+      "emailVerified": "Email verified",
+      "emailNotVerified": "Email not verified",
+      "accountActive": "Account active",
+      "accountInactive": "Account inactive",
+      "memberSince": "Member since",
+      "unknown": "Not provided",
+      "source": "bff:/api/auth/session",
+      "method": "HttpOnly session cookie"
+    }
   }
 }

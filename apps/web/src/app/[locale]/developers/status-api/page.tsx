@@ -1,187 +1,153 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
-import { usePathname } from 'next/navigation';
-import { Card } from '@/components/ui/Card';
+import type { Metadata } from 'next';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { ListBlock } from '@/components/ListBlock';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
-import { StatusDot } from '@/components/StatusDot';
+import { SiteNav } from '@/components/SiteNav';
+import { type DotState, StatusDot } from '@/components/StatusDot';
+import { Card } from '@/components/ui/Card';
+import { apiGet } from '@/lib/api/client';
 
-interface HealthCheck {
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://econojin.example.org';
+
+const HEALTH_PATH = '/api/v1/health';
+
+const TITLES: Record<string, string> = { fa: 'وضعیت API', en: 'API Status' };
+const DESCRIPTIONS: Record<string, string> = {
+  fa: 'وضعیت زنده گیت‌وی از مسیر واقعی /api/v1/health؛ داده سهمیه و تأخیر هر سرویس منتشر نشده است.',
+  en: 'Live gateway state from the real /api/v1/health path; per-service quota and latency are not published.',
+};
+
+type GatewayHealth = {
+  status: string;
   service: string;
-  status: 'healthy' | 'degraded' | 'down';
-  latency: number;
-  lastCheck: string;
+  version: string;
+  environment: string;
+  checks: Record<string, string>;
+  degraded_reasons: string[];
+};
+
+export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    title: TITLES[locale] ?? TITLES.en,
+    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    openGraph: {
+      type: 'website',
+      locale,
+      url: `${BASE_URL}/${locale}/developers/status-api`,
+      title: TITLES[locale] ?? TITLES.en,
+    },
+    alternates: {
+      canonical: `${BASE_URL}/${locale}/developers/status-api`,
+      languages: {
+        fa: `${BASE_URL}/fa/developers/status-api`,
+        en: `${BASE_URL}/en/developers/status-api`,
+      },
+    },
+  };
 }
 
-interface QuotaInfo {
-  used: number;
-  limit: number;
-  resetAt: string;
-}
+export default async function StatusApiPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations('developers');
+  const common = await getTranslations('common');
+  const status = await getTranslations('statusLine');
+  const statusPage = await getTranslations('statusPage');
+  const template = await getTranslations('market.template');
+  const title = TITLES[locale] ?? TITLES.en;
 
-export default function StatusApiPage() {
-  const t = useTranslations('developers.statusApi');
-  const common = useTranslations('common');
-  const pathname = usePathname();
-  const locale = pathname.split('/')[1];
-
-  const [health, setHealth] = useState<HealthCheck[]>([]);
-  const [quota, setQuota] = useState<QuotaInfo | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchStatus() {
-      try {
-        const [healthRes, quotaRes] = await Promise.all([
-          fetch(`/api/developers/health?locale=${locale}`),
-          fetch(`/api/developers/quota?locale=${locale}`),
-        ]);
-        if (!healthRes.ok || !quotaRes.ok) throw new Error('Failed to fetch');
-        const healthData = await healthRes.json();
-        const quotaData = await quotaRes.json();
-        setHealth(healthData.services || []);
-        setQuota(quotaData);
-      } catch (err) {
-        setError(t('fetchError'));
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 30000);
-    return () => clearInterval(interval);
-  }, [locale, t]);
-
-  if (isLoading) {
-    return (
-      <main id="main" className="min-h-screen">
-        <div className="mx-auto max-w-4xl px-4 py-10">
-          <div className="text-center py-20">
-            <p className="text-ink-soft">{t('loading')}</p>
-          </div>
-        </div>
-      </main>
-    );
-  }
+  const health = await apiGet<GatewayHealth>(HEALTH_PATH);
+  const gatewayState: DotState = !health.ok
+    ? 'down'
+    : health.data.status === 'healthy'
+      ? 'ok'
+      : 'warn';
+  const checks = health.ok ? Object.entries(health.data.checks) : [];
+  const degraded = health.ok ? health.data.degraded_reasons : [];
 
   return (
-    <main id="main" className="min-h-screen">
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <header className="mb-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="display text-3xl font-bold text-ink sm:text-4xl">{t('title')}</h1>
-            <p className="mt-3 text-ink-soft">{t('lead')}</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <StatusDot state="ok" label={t('status.healthy')} />
-            <span className="text-sm text-ink-soft">{t('lastUpdated', { time: new Date().toLocaleTimeString() })}</span>
-          </div>
-        </header>
+    <main id="main" className="min-h-dvh">
+      <SiteNav locale={locale} />
+      <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
+        <div className="flex flex-wrap items-center gap-4">
+          <ProvenanceStamp
+            source={HEALTH_PATH}
+            label={title}
+            verified={health.ok}
+            method={HEALTH_PATH}
+          >
+            <h1 className="display text-4xl font-bold text-ink">{title}</h1>
+          </ProvenanceStamp>
+          <StatusDot
+            state={gatewayState}
+            label={health.ok ? health.data.status : status('unavailable')}
+          />
+        </div>
+        <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
 
-        {error && (
-          <div className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700" role="alert">
-            {error}
-          </div>
-        )}
+        {health.ok ? (
+          <>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              <Card density="compact">
+                <p className="text-sm text-ink-soft">version</p>
+                <p className="num mt-1 font-mono text-ink">{health.data.version}</p>
+              </Card>
+              <Card density="compact">
+                <p className="text-sm text-ink-soft">environment</p>
+                <p className="mt-1 font-mono text-ink">{health.data.environment}</p>
+              </Card>
+            </div>
 
-        {quota && (
-          <Card density="cozy" className="mb-6">
-            <h2 className="font-medium text-ink mb-4">{t('quota')}</h2>
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div className="card p-4">
-                <p className="text-sm text-ink-soft">{t('quota.used')}</p>
-                <p className="num mt-1 text-3xl font-semibold text-ink">{quota.used.toLocaleString()}</p>
+            {checks.length > 0 && (
+              <div className="mt-6 overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-line text-ink-soft">
+                      <th className="py-2 pe-4 text-start font-medium">{statusPage('service')}</th>
+                      <th className="py-2 text-start font-medium">{statusPage('state')}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {checks.map(([name, value]) => (
+                      <tr key={name} className="border-b border-line/50">
+                        <td className="py-2 pe-4 font-mono text-ink">{name}</td>
+                        <td className="py-2 font-mono text-ink-soft">{value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <div className="card p-4">
-                <p className="text-sm text-ink-soft">{t('quota.limit')}</p>
-                <p className="num mt-1 text-3xl font-semibold text-ink">{quota.limit.toLocaleString()}</p>
-              </div>
-              <div className="card p-4">
-                <p className="text-sm text-ink-soft">{t('quota.remaining')}</p>
-                <p className="num mt-1 text-3xl font-semibold text-ink">
-                  {(quota.limit - quota.used).toLocaleString()}
-                </p>
-              </div>
-            </div>
-            <div className="mt-4">
-              <div className="h-2 bg-line rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-forest rounded-full transition-all duration-300"
-                  style={{ width: `${(quota.used / quota.limit) * 100}%` }}
-                />
-              </div>
-              <p className="mt-1 text-sm text-ink-soft">
-                {t('quota.resetsAt', { time: new Date(quota.resetAt).toLocaleString(locale === 'fa' ? 'fa-IR' : 'en-US') })}
-              </p>
-            </div>
+            )}
+
+            {degraded.length > 0 && (
+              <ListBlock title={common('limits')} items={degraded} tone="clay" />
+            )}
+          </>
+        ) : (
+          <Card density="cozy" className="mt-6">
+            <h2 className="font-semibold text-ink">{template('unavailableTitle')}</h2>
+            <p className="mt-2 text-sm text-ink-soft">{template('unavailableDescription')}</p>
+            <p className="mt-3 text-xs text-ink-soft">
+              {HEALTH_PATH} · {status('unavailable')} · {health.error}
+            </p>
           </Card>
         )}
-
-<Card density="compact">
-          <h2 className="font-medium text-ink mb-3">{t('services')}</h2>
-          <div className="space-y-3">
-            {health.map((svc) => {
-              const stateMap: Record<string, 'ok' | 'warn' | 'down'> = {
-                healthy: 'ok',
-                degraded: 'warn',
-                down: 'down',
-              };
-              return (
-                <div key={svc.service} className="flex items-center justify-between p-3 card">
-                  <div className="flex items-center gap-3">
-                    <StatusDot state={stateMap[svc.status] || 'down'} label={t(`status.${svc.status}`)} />
-                    <div>
-                      <p className="font-medium text-ink">{svc.service}</p>
-                      <p className="text-xs text-ink-soft">
-                        {t('lastCheck', { time: new Date(svc.lastCheck).toLocaleTimeString() })}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4 text-sm">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      svc.status === 'healthy' ? 'bg-forest/10 text-forest' :
-                      svc.status === 'degraded' ? 'bg-copper/10 text-copper' :
-                      'bg-red/10 text-red'
-                    }`}>
-                      {t(`status.${svc.status}`)}
-                    </span>
-                    <span className="text-ink-soft font-mono">
-                      {svc.latency}ms
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <ProvenanceStamp source="Health Check" verified={true} method="Automated" />
-        </Card>
 
         <div className="mt-6 grid gap-4">
-          <Card density="cozy" className="border-clay/40 bg-clay/5">
-            <h3 className="font-medium text-ink mb-2">{t('limitsTitle')}</h3>
-            <ul className="space-y-1 text-sm text-ink-soft">
-              {t.raw('limits')?.map((item: string, idx: number) => (
-                <li key={idx} className="flex gap-2">
-                  <span className="text-copper">•</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
-          <Card density="cozy" className="border-forest/40 bg-forest/5">
-            <h3 className="font-medium text-ink mb-2">{t('nextTitle')}</h3>
-            <ul className="space-y-1 text-sm text-ink-soft">
-              {t.raw('next')?.map((item: string, idx: number) => (
-                <li key={idx} className="flex gap-2">
-                  <span className="text-forest">•</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
+          <ListBlock title={common('limits')} items={t.raw('limits') as string[]} tone="clay" />
+          <ListBlock title={common('next')} items={t.raw('next') as string[]} tone="moss" />
         </div>
+
+        <p className="mt-6 text-xs text-ink-soft">
+          {HEALTH_PATH} · {status('realData')}
+        </p>
       </div>
     </main>
   );

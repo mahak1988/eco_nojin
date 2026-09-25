@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { type HTMLAttributes, forwardRef, type CSSProperties } from "react";
+import { type CSSProperties, forwardRef, type HTMLAttributes } from 'react';
 
-export type SkeletonVariant = "text" | "card" | "stat" | "table-row" | "circular" | "rectangular";
+export type SkeletonVariant = 'text' | 'card' | 'stat' | 'table-row' | 'circular' | 'rectangular';
 
 export interface SkeletonProps extends HTMLAttributes<HTMLDivElement> {
   variant?: SkeletonVariant;
@@ -13,40 +13,41 @@ export interface SkeletonProps extends HTMLAttributes<HTMLDivElement> {
 
 const variantStyles: Record<SkeletonVariant, CSSProperties> = {
   text: {
-    height: "1rem",
-    borderRadius: "var(--radius-2)",
+    height: '1rem',
+    borderRadius: 'var(--radius-2)',
   },
   card: {
-    borderRadius: "var(--radius-16)",
-    background: "var(--color-surface)",
-    border: "1px solid var(--color-line)",
-    padding: "var(--space-6)",
+    borderRadius: 'var(--radius-16)',
+    background: 'var(--color-surface)',
+    border: '1px solid var(--color-line)',
+    padding: 'var(--space-6)',
   },
   stat: {
-    borderRadius: "var(--radius-12)",
-    background: "var(--color-surface)",
-    border: "1px solid var(--color-line)",
-    padding: "var(--space-4)",
-    minWidth: "160px",
+    borderRadius: 'var(--radius-12)',
+    background: 'var(--color-surface)',
+    border: '1px solid var(--color-line)',
+    padding: 'var(--space-4)',
+    minWidth: '160px',
   },
-  "table-row": {
-    display: "grid",
-    gap: "var(--space-4)",
-    padding: "var(--space-3) var(--space-4)",
-    borderBottom: "1px solid var(--color-line)",
+  'table-row': {
+    display: 'grid',
+    gap: 'var(--space-4)',
+    padding: 'var(--space-3) var(--space-4)',
+    borderBottom: '1px solid var(--color-line)',
   },
   circular: {
-    borderRadius: "50%",
+    borderRadius: '50%',
   },
   rectangular: {
-    borderRadius: "var(--radius-8)",
+    borderRadius: 'var(--radius-8)',
   },
 };
 
 const baseStyles: CSSProperties = {
-  background: "linear-gradient(90deg, var(--color-surface-2) 25%, var(--color-line) 50%, var(--color-surface-2) 75%)",
-  backgroundSize: "200% 100%",
-  animation: "shimmer 1.5s ease-in-out infinite",
+  background:
+    'linear-gradient(90deg, var(--color-surface-2) 25%, var(--color-line) 50%, var(--color-surface-2) 75%)',
+  backgroundSize: '200% 100%',
+  animation: 'shimmer 1.5s ease-in-out infinite',
 };
 
 const keyframes = `
@@ -57,37 +58,37 @@ const keyframes = `
 `;
 
 const lineStyles = (lineIndex: number, totalLines: number): CSSProperties => ({
-  width: lineIndex === totalLines - 1 ? "70%" : "100%",
-  marginBottom: lineIndex === totalLines - 1 ? "0" : "var(--space-2)",
+  width: lineIndex === totalLines - 1 ? '70%' : '100%',
+  marginBottom: lineIndex === totalLines - 1 ? '0' : 'var(--space-2)',
 });
 
 export const Skeleton = forwardRef<HTMLDivElement, SkeletonProps>(
-  ({ variant = "text", width, height, lines = 1, className = "", style, ...props }, ref) => {
+  ({ variant = 'text', width, height, lines = 1, className = '', style, ...props }, ref) => {
     const combinedStyle: CSSProperties = {
       ...baseStyles,
       ...variantStyles[variant],
-      ...(width ? { width: typeof width === "number" ? `${width}px` : width } : {}),
-      ...(height ? { height: typeof height === "number" ? `${height}px` : height } : {}),
+      ...(width ? { width: typeof width === 'number' ? `${width}px` : width } : {}),
+      ...(height ? { height: typeof height === 'number' ? `${height}px` : height } : {}),
       ...style,
     };
 
-    if (variant === "text" && lines > 1) {
+    if (variant === 'text' && lines > 1) {
       return (
         <div
           ref={ref}
           className={className}
           style={{
             ...style,
-            display: "flex",
-            flexDirection: "column",
-            gap: "var(--space-2)",
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--space-2)',
           }}
           {...props}
         >
-          <style dangerouslySetInnerHTML={{ __html: keyframes }} />
-          {Array.from({ length: lines }).map((_, i) => (
+          <style>{keyframes}</style>
+          {Array.from({ length: lines }, (_, i) => `skeleton-line-${i}`).map((lineKey, i) => (
             <div
-              key={i}
+              key={lineKey}
               style={{
                 ...baseStyles,
                 ...variantStyles.text,
@@ -100,18 +101,13 @@ export const Skeleton = forwardRef<HTMLDivElement, SkeletonProps>(
     }
 
     return (
-      <div
-        ref={ref}
-        className={className}
-        style={combinedStyle}
-        {...props}
-      >
-        <style dangerouslySetInnerHTML={{ __html: keyframes }} />
+      <div ref={ref} className={className} style={combinedStyle} {...props}>
+        <style>{keyframes}</style>
       </div>
     );
-  }
+  },
 );
 
-Skeleton.displayName = "Skeleton";
+Skeleton.displayName = 'Skeleton';
 
 export default Skeleton;

@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { useTranslations } from 'next-intl';
+import { use, useEffect, useState } from 'react';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { StatusDot } from '@/components/StatusDot';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { getEscrowStatus, openDispute, settleOrder } from '@/lib/api/escrow';
 
 interface EscrowParty {
   role: 'buyer' | 'seller' | 'arbitrator' | 'platform';
@@ -39,64 +40,18 @@ interface EscrowData {
   orderId: string;
 }
 
-const MOCK_ESCROW: EscrowData = {
-  id: 'ESC-001',
-  product: 'Organic Pistachio Kernels',
-  amount: 514500,
-  currency: 'IRT',
-  status: 'released',
-  createdAt: '2025-09-15T10:35:00Z',
-  updatedAt: '2025-09-18T10:00:00Z',
-  orderId: 'ORD-001',
-  contractHash: '0x8a4f...c2d3',
-  parties: [
-    { role: 'buyer', name: 'Eco Buyer', address: '0x1a4f...', signed: true, timestamp: '2025-09-15T10:35:00Z' },
-    { role: 'seller', name: 'Kerman Cooperative', address: '0x2b8c...', signed: true, timestamp: '2025-09-15T10:36:00Z' },
-    { role: 'arbitrator', name: 'Platform Arbitration', address: '0x3d2e...', signed: false },
-    { role: 'platform', name: 'Eco Nojin', address: '0x4f1a...', signed: true, timestamp: '2025-09-15T10:35:00Z' },
-  ],
-  events: [
-    {
-      id: 'ev1',
-      timestamp: '2025-09-15T10:35:00Z',
-      action: 'created',
-      description: 'Escrow contract deployed',
-      party: 'Platform',
-      signature: 'PQ-DILITHIUM2',
-    },
-    {
-      id: 'ev2',
-      timestamp: '2025-09-15T10:35:30Z',
-      action: 'locked',
-      description: 'Funds locked by 4-of-5 parties',
-      party: 'Buyer',
-      signature: 'ED25519',
-    },
-    {
-      id: 'ev3',
-      timestamp: '2025-09-16T14:00:00Z',
-      action: 'shipped',
-      description: 'Shipment confirmed by seller',
-      party: 'Seller',
-      signature: 'ED25519',
-    },
-    {
-      id: 'ev4',
-      timestamp: '2025-09-18T09:20:00Z',
-      action: 'confirmed',
-      description: 'Delivery confirmed by buyer',
-      party: 'Buyer',
-      signature: 'ED25519',
-    },
-    {
-      id: 'ev5',
-      timestamp: '2025-09-18T10:00:00Z',
-      action: 'released',
-      description: 'Funds released to seller',
-      party: 'Platform',
-      signature: 'PQ-KYBER512',
-    },
-  ],
+const EMPTY_ESCROW: EscrowData = {
+  id: '',
+  product: '',
+  amount: 0,
+  currency: '',
+  status: 'unavailable',
+  createdAt: '',
+  updatedAt: '',
+  orderId: '',
+  contractHash: '',
+  parties: [],
+  events: [],
 };
 
 const statusStateMap: Record<string, 'ok' | 'warn' | 'down'> = {
@@ -108,30 +63,68 @@ const statusStateMap: Record<string, 'ok' | 'warn' | 'down'> = {
   disputed: 'down',
   cancelled: 'down',
   pending: 'warn',
+  unavailable: 'warn',
 };
 
 export default function EscrowPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const t = useTranslations('market.escrow');
   const common = useTranslations('common');
   const pathname = usePathname();
   const router = useRouter();
   const locale = pathname.split('/')[1] || 'fa';
 
-  const [escrow, setEscrow] = useState<EscrowData>(MOCK_ESCROW);
+  const [escrow, setEscrow] = useState<EscrowData>(EMPTY_ESCROW);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [dataState, setDataState] = useState<'loading' | 'live' | 'unavailable'>('loading');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    void getEscrowStatus(id).then((result) => {
+      if (!active) return;
+      if (result.ok) {
+        setEscrow((current) => ({ ...current, id, status: result.data.escrow_status }));
+        setDataState('live');
+      } else {
+        setDataState('unavailable');
+        setError(result.error);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [id]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat(locale === 'fa' ? 'fa-IR' : 'en-US').format(price);
   };
 
-  const handleRelease = () => {
+  const handleRelease = async () => {
+    if (!escrow.orderId) {
+      setError(t('dataUnavailable'));
+      return;
+    }
     setShowConfirm(false);
-    alert(t('released'));
+    const result = await settleOrder(escrow.orderId);
+    if (result.ok) {
+      setEscrow((current) => ({ ...current, status: 'released' }));
+    } else {
+      setError(result.error);
+    }
   };
 
-  const handleCancel = () => {
-    setShowConfirm(false);
-    alert(t('cancelled'));
+  const handleDispute = async () => {
+    if (!escrow.orderId) {
+      setError(t('dataUnavailable'));
+      return;
+    }
+    const result = await openDispute(escrow.orderId);
+    if (result.ok) {
+      setEscrow((current) => ({ ...current, status: 'disputed' }));
+    } else {
+      setError(result.error);
+    }
   };
 
   const roleLabels: Record<string, string> = {
@@ -151,6 +144,7 @@ export default function EscrowPage({ params }: { params: Promise<{ id: string }>
         <header className="mb-8">
           <nav className="mb-4">
             <button
+              type="button"
               onClick={handleBack}
               className="text-sm text-ink-soft hover:text-ink underline"
             >
@@ -163,16 +157,27 @@ export default function EscrowPage({ params }: { params: Promise<{ id: string }>
           <p className="mt-2 text-ink-soft">{escrow.product}</p>
         </header>
 
+        {dataState === 'unavailable' && (
+          <p
+            role="status"
+            className="mb-6 rounded-md border border-line bg-surface-alt p-3 text-sm text-ink-soft"
+          >
+            {t('dataUnavailable')}
+          </p>
+        )}
+        {error && (
+          <p role="alert" className="mb-6 rounded-md bg-red-50 p-3 text-sm text-red-800">
+            {error}
+          </p>
+        )}
+
         <Card density="compact" className="mb-6">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-ink-soft">{t('amount')}</p>
               <p className="text-2xl font-bold text-forest">{formatPrice(escrow.amount)} ریال</p>
             </div>
-            <StatusDot
-              state={statusStateMap[escrow.status] || 'ok'}
-              label={escrow.status}
-            />
+            <StatusDot state={statusStateMap[escrow.status] || 'ok'} label={escrow.status} />
           </div>
           <div className="mt-4">
             <p className="text-xs text-ink-soft">
@@ -187,7 +192,7 @@ export default function EscrowPage({ params }: { params: Promise<{ id: string }>
         <Card density="compact" className="mb-6">
           <h2 className="font-medium text-ink mb-3">{t('parties')}</h2>
           <div className="space-y-3">
-            {escrow.parties.map(party => (
+            {escrow.parties.map((party) => (
               <div key={party.role} className="flex items-center justify-between">
                 <div>
                   <p className="font-medium text-ink">{roleLabels[party.role]}</p>
@@ -206,7 +211,7 @@ export default function EscrowPage({ params }: { params: Promise<{ id: string }>
         <Card density="compact" className="mb-6">
           <h2 className="font-medium text-ink mb-4">{t('eventTimeline')}</h2>
           <div className="space-y-4">
-            {escrow.events.map(event => (
+            {escrow.events.map((event) => (
               <div key={event.id} className="border-l-2 border-forest pl-4 pb-2 relative">
                 <div className="absolute -left-[5px] top-0 h-3 w-3 rounded-full bg-forest" />
                 <div className="flex justify-between items-start">
@@ -218,9 +223,7 @@ export default function EscrowPage({ params }: { params: Promise<{ id: string }>
                     </p>
                   </div>
                   {event.signature && (
-                    <span className="text-xs text-forest">
-                      {event.signature}
-                    </span>
+                    <span className="text-xs text-forest">{event.signature}</span>
                   )}
                 </div>
               </div>
@@ -234,16 +237,22 @@ export default function EscrowPage({ params }: { params: Promise<{ id: string }>
           </Card>
         )}
 
-        {escrow.status !== 'released' && escrow.status !== 'cancelled' && escrow.status !== 'disputed' && (
-          <div className="mt-6 flex gap-3">
-            <Button variant="primary" onClick={() => setShowConfirm(true)}>
-              {t('releaseFunds')}
-            </Button>
-            <Button variant="danger" onClick={handleCancel}>
-              {t('cancelEscrow')}
-            </Button>
-          </div>
-        )}
+        {escrow.status !== 'released' &&
+          escrow.status !== 'cancelled' &&
+          escrow.status !== 'disputed' && (
+            <div className="mt-6 flex gap-3">
+              <Button
+                variant="primary"
+                disabled={!escrow.orderId}
+                onClick={() => setShowConfirm(true)}
+              >
+                {t('releaseFunds')}
+              </Button>
+              <Button variant="danger" disabled={!escrow.orderId} onClick={handleDispute}>
+                {t('openDispute')}
+              </Button>
+            </div>
+          )}
 
         {showConfirm && (
           <Card density="cozy" className="mt-4">
@@ -262,9 +271,8 @@ export default function EscrowPage({ params }: { params: Promise<{ id: string }>
 
         <Card density="compact" className="mt-8">
           <ProvenanceStamp
-            source="Escrow Service"
-            verified={true}
-            method="5-party PQ signature"
+            source={`/api/v1/marketplace/payments/${encodeURIComponent(id)}/escrow`}
+            verified={false}
             label={t('escrowProvenance')}
           />
         </Card>

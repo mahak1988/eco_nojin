@@ -1,7 +1,7 @@
 'use client';
 
-import { useFormContext } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
+import { useFormContext } from 'react-hook-form';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { type Step10Input } from '@/lib/validation/bazaar-establishment';
@@ -42,10 +42,13 @@ export function Step10Form({ locale }: { locale: string }) {
         </div>
       </div>
 
-{(oversightSchedule || reviewCycleMonths) && (
+      {(oversightSchedule || reviewCycleMonths) && (
         <div className="mt-4 p-3 bg-primary/5 border border-primary/20 rounded text-sm text-primary">
           <strong>{t('preview')}: </strong>
-          {t('oversightPreview', { schedule: oversightSchedule ?? '', cycle: reviewCycleMonths ?? 0 })}
+          {t('oversightPreview', {
+            schedule: oversightSchedule ?? '',
+            cycle: reviewCycleMonths ?? 0,
+          })}
         </div>
       )}
     </div>
