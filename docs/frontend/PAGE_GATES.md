@@ -10,6 +10,8 @@
 | Public | `apps/web/src/app/[locale]/public/**` | 62 page files |
 | Total | | 579 page files plus 444 generated routes |
 
+These are **physical routes** and **declared fallback routes**, not logical page paths. A catch-all template route is one physical file serving 444 declared logical paths; it is never counted as 444 implemented pages. The four-way distinction between physical route, logical path, catalog fallback, and data-bearing page, and the measurable checklist built on it, are defined in [`PAGE_CHECKLIST_600.md`](PAGE_CHECKLIST_600.md). A gate in this document is never satisfied by counting logical paths.
+
 ## Gate index
 
 | Gate | Subject | Owner |
@@ -33,6 +35,18 @@
 | GATE-G2 | No page hard-codes a number that an endpoint owns | all page owners |
 | GATE-G3 | Contract drift is zero | `platform-web` |
 | GATE-G4 | Security findings on the commerce surface are closed or accepted | security owner |
+| C600-G1 | Every declared logical path appears exactly once and declares its physical or fallback resolution | `platform-web` |
+| C600-G2 | The inventory buckets partition with no gap and no overlap and sum to the measured route count | `platform-web` |
+| C600-G3 | A recorded page state matches what the code renders | all page owners |
+| C600-G4 | Every recorded endpoint exists in `openapi.json`; every `none` names a source of truth | all page owners |
+| C600-G5 | Every authenticated or role-gated row names its server-side enforcement point | `bff`, `platform-operations` |
+| C600-G6 | Every group has a named owner with a real scope in this repository | all page owners |
+| C600-G7 | No verification stamp is marked verified without a backing response | all page owners |
+| C600-G8 | Every group is accessibility-covered with a named spec and route, or is reported `not-covered` | `platform-web` |
+| C600-G9 | Every group resolves in all 14 catalogs, or names the missing locales | `i18n` |
+| C600-G10 | Every group names a command and a commit for its acceptance evidence | `platform-web` |
+
+The `C600-G*` family governs the page inventory itself rather than a page surface. It is defined in full, with the per-group rows it applies to, in [`PAGE_CHECKLIST_600.md`](PAGE_CHECKLIST_600.md). It does not replace, relax, or satisfy any `MKT-G*`, `PUB-G*`, or `GATE-G*` gate.
 
 ## Acceptance criteria by group
 
@@ -138,6 +152,7 @@ Consolidated from both companion documents. None of these is resolved by a chang
 | B8 | No benchmark result store is published | `science-web` | PUB-G2 |
 | B9 | Resolved: all page/metadata code reads the shared `apps/web/src/config/site.ts`; `scripts/check-site-url.mjs` fails on placeholder origins or inline environment reads | `platform-web` | PUB-G6 |
 | B10 | Public server-side `GET` requests now use a 60-second revalidation window; browser requests and mutations remain `no-store`. A per-route ISR decision is still required for any page that must be statically generated | `platform-web` | PUB-G5, GATE-G1 |
+| B11 | The declared 600 logical page paths are not reconciled against the physical route set. 218 physical routes and 444 declared fallback routes do not compose to 600, and 82 physical routes outside the marketplace and public surfaces have no declared catalog position. This is a documentation gap, not a code defect | `platform-web` | C600-G1, C600-G2, and any 600-derived count |
 
 ## Definition of Done
 
@@ -174,3 +189,41 @@ A failing, skipped, or unavailable required check blocks the gate. It is not a w
 - marketplace, public, developer, trust, AI, and direct informational pages were executed against the registered OpenAPI surface.
 - the provenance guard, Biome, type-check, unit tests, 14-locale parity, production build, and the i18n/a11y/offline/auth/security/page/marketplace E2E suites are green.
 - B1–B10 remain external and are not marked complete by frontend evidence.
+
+## Inventory reconciliation — 2026-09-26
+
+This section does not modify the 2026-09-25 record above. It adds a measured inventory delta and points at the checklist that owns it. No page, code path, backend contract, or message catalog was changed to produce it, and no gate is reported as passed.
+
+### Measured route counts at this date
+
+| Surface | Physical routes at `2177450` | Physical routes at this date | Source |
+|---|---|---|---|
+| Marketplace | 73 | 74 | `apps/web/src/app/[locale]/market/**/page.tsx` |
+| Public | 62 | 62 | `apps/web/src/app/[locale]/public/**/page.tsx` |
+| Workspace | 16 documented | 17 | `apps/web/src/app/[locale]/workspace/**/page.tsx` |
+| All surfaces | not recorded | 218 | `apps/web/src/app/**/page.tsx` (216 routable, 1 root, 1 `_not-found`) |
+| Declared fallback routes | 444 | 444 | `marketplaceRoutePlanTotal` in `apps/web/src/lib/marketplace-routes.ts` |
+
+The marketplace and workspace deltas are the reason the earlier route counts in this document set are no longer exact. They are stated here rather than rewritten in place so the 2026-09-25 record stays intact and the delta stays auditable.
+
+### Declared inventory state
+
+| ID | Figure | Value | Kind |
+|---|---|---|---|
+| S-1 | Declared logical catalog size | 600 | declaration |
+| S-2 | Marketplace baseline | 10 | declaration |
+| S-3 | Implementable orphans | 14 | declaration |
+| S-4 | Requiring mapping | 22 | declaration |
+| S-5 | Without endpoint | 27 | declaration |
+
+Two arithmetic facts follow and both are recorded as open in [`PAGE_CHECKLIST_600.md`](PAGE_CHECKLIST_600.md):
+
+1. `10 + 14 + 22 + 27 = 73`, which matches the marketplace count recorded at `2177450` and is one below the 74 measured today. The four buckets are treated as a partition of the marketplace surface; the 74th file is unassigned and the reconciliation is open.
+2. `218 + 444 = 662`, which is 62 more than the declared 600. The 600 is a separate logical catalog and the difference must be explained by de-duplication or parameter expansion. It is not explained today.
+
+### What this means for a gate
+
+- No `MKT-G*`, `PUB-G*`, `GATE-G*`, or `C600-G*` gate is satisfied by a count of logical paths. A count is inventory evidence, never acceptance evidence.
+- A catalog fallback route is not a page implementation. The 444 generated marketplace paths remain `unavailable` and unindexed, and MKT-G6 continues to govern them.
+- The measured e2e route coverage remains a small representative sample: 13 accessibility routes, 10 Tier 0 smoke routes, 8 reflow routes, and 14 locales on one route template. It is not coverage of the declared 600, and C600-G8 records every other group as `not-covered` until a named spec and route exist.
+- B11 is open. Until it is closed, no document may state a 600-derived count as a page, route, live, or coverage figure.

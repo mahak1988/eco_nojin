@@ -143,3 +143,11 @@ These 28 pages make no request. Each renders the `unavailable` contract block an
 - CTA and visit forms post to the registered newsletter and contact endpoints and expose non-2xx failures.
 - `scripts/check-verified-claims.mjs` reports zero unsupported verified claims.
 - B6–B8 and B10 remain external or require per-route static-generation decisions; B9 is resolved by the shared site-URL module and guard.
+
+## Inventory note — 2026-09-26
+
+- the 62 pages above are **physical routes**. A declared logical page path is a different count, and a catalog fallback path is a third; the four-way definition is in [`PAGE_CHECKLIST_600.md`](PAGE_CHECKLIST_600.md). This document's 34/28 split is a split of physical routes, not of the declared 600 logical paths.
+- the public surface measures 62 `page.tsx` files today, unchanged from `2177450`.
+- 82 physical routes sit outside the marketplace and public surfaces across the workspace, admin, research, system, AI, developers, trust, Hydroma, inclusive, auth, and single-page groups. They have no declared position in the logical catalogue. This is blocker B11 in [`PAGE_GATES.md`](PAGE_GATES.md) and open item R-3 in [`PAGE_CHECKLIST_600.md`](PAGE_CHECKLIST_600.md).
+- this document's `live-partial` status corresponds to `capability` in the checklist vocabulary, and `static` corresponds to `unavailable` or `editorial` provenance. That mapping is asserted here and is not yet stated in the owning documents; it is open as R-4.
+- nothing in this note changes a page status, a gate, or a blocker. The two matrices above remain authoritative for individual public pages.

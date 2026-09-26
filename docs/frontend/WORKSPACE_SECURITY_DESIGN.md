@@ -86,3 +86,10 @@ The frontend registry is descriptive only. It must never be treated as authoriza
 - The workspace reads only registered organizations, content, sync and health capabilities. Unimplemented jobs, cases, assignments, reports, approvals, targets and exports remain unavailable.
 - No role, session, professional record, export, MFA result or audit row is stored in the browser.
 - Tier 0 smoke, WCAG 2.2 AA, 320-pixel reflow, 14-locale parity and the aggregate quality gate pass.
+
+## Inventory note — 2026-09-26
+
+- The surface measures 17 physical `page.tsx` routes today, against the 16 listed in the page map above. The 16 listed paths are the workspace's documented map; the extra physical route is not yet assigned to a listed path, and the difference is stated here rather than resolved by editing the map.
+- These are physical routes. The declared 600 logical page paths are a separate inventory, and no workspace route has a declared position in it. That is blocker B11 in [`PAGE_GATES.md`](PAGE_GATES.md) and open item R-3 in [`PAGE_CHECKLIST_600.md`](PAGE_CHECKLIST_600.md).
+- The checklist records the workspace group as `capability` state, `role` auth, and `response-bound` provenance, with accessibility evidence from the named specs and `not-covered` for every route without one. A role-gated route is never counted as a public route, and the frontend registry is never the authorization authority for this group.
+- Nothing in this note changes an enforcement rule, an acceptance criterion, a role, or a page status. The design above stands as recorded on 2026-09-25.

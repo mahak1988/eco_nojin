@@ -17,6 +17,7 @@ This directory is the new canonical documentation set. The deleted legacy docume
 
 | Area | Document |
 |---|---|
+| Master frontend status dashboard | [`../FRONTEND_MASTER_STATUS_FA_2026-09-26.md`](../FRONTEND_MASTER_STATUS_FA_2026-09-26.md) |
 | Frontend boundaries and layers | [`frontend/ARCHITECTURE.md`](frontend/ARCHITECTURE.md) |
 | World-class page benchmark and priority | [`frontend/WORLD_CLASS_BENCHMARK_2026-09-25.md`](frontend/WORLD_CLASS_BENCHMARK_2026-09-25.md) |
 | Professional workspace security and routes | [`frontend/WORKSPACE_SECURITY_DESIGN.md`](frontend/WORKSPACE_SECURITY_DESIGN.md) |
@@ -27,8 +28,10 @@ This directory is the new canonical documentation set. The deleted legacy docume
 | Marketplace routes, cart-to-escrow flow, and blockers | [`frontend/MARKETPLACE_IMPLEMENTATION.md`](frontend/MARKETPLACE_IMPLEMENTATION.md) |
 | Public page bindings and execution phases | [`frontend/PUBLIC_PAGES_EXECUTION.md`](frontend/PUBLIC_PAGES_EXECUTION.md) |
 | Page acceptance criteria, session/Redis gate, and DoD | [`frontend/PAGE_GATES.md`](frontend/PAGE_GATES.md) |
+| 600-page measurable checklist, page-count definitions, and inventory blockers | [`frontend/PAGE_CHECKLIST_600.md`](frontend/PAGE_CHECKLIST_600.md) |
 | Quality gates and test strategy | [`frontend/TESTING.md`](frontend/TESTING.md) |
 | Deployment and release runbook | [`frontend/DEPLOYMENT.md`](frontend/DEPLOYMENT.md) |
+| GitHub environments, rulesets, and promotion | [`operations/GITHUB_RELEASE_RUNBOOK.md`](operations/GITHUB_RELEASE_RUNBOOK.md) |
 | Architecture decisions | [`adr/0001-language-strategy.md`](adr/0001-language-strategy.md), [`adr/0002-auth-bff.md`](adr/0002-auth-bff.md), [`adr/0003-api-contract.md`](adr/0003-api-contract.md), [`adr/0004-pwa-local-first.md`](adr/0004-pwa-local-first.md), [`adr/0005-release-governance.md`](adr/0005-release-governance.md), [`adr/0006-observability-and-csp.md`](adr/0006-observability-and-csp.md) |
 
 ## Reading order
@@ -37,5 +40,6 @@ This directory is the new canonical documentation set. The deleted legacy docume
 2. Read the relevant frontend guide and its ADR.
 3. For a new or Tier 0 page, read the comparison and rationale in [`frontend/WORLD_CLASS_BENCHMARK_2026-09-25.md`](frontend/WORLD_CLASS_BENCHMARK_2026-09-25.md).
 4. For a page change, read the route matrix in [`frontend/MARKETPLACE_IMPLEMENTATION.md`](frontend/MARKETPLACE_IMPLEMENTATION.md) or [`frontend/PUBLIC_PAGES_EXECUTION.md`](frontend/PUBLIC_PAGES_EXECUTION.md), then the gate in [`frontend/PAGE_GATES.md`](frontend/PAGE_GATES.md). Do not connect a page to an endpoint that is absent from `openapi.json`.
-5. Run the smallest relevant test, then the full quality gate in [`frontend/TESTING.md`](frontend/TESTING.md).
-6. Do not enable deployment or publishing until the release gates in [`frontend/DEPLOYMENT.md`](frontend/DEPLOYMENT.md) are satisfied.
+5. Before quoting any page count, read [`frontend/PAGE_CHECKLIST_600.md`](frontend/PAGE_CHECKLIST_600.md). A physical route, a logical path, a catalog fallback, and a data-bearing page are four different counts, and the declared 600 logical paths are not a claim that 600 pages exist or are live.
+6. Run the smallest relevant test, then the full quality gate in [`frontend/TESTING.md`](frontend/TESTING.md).
+7. Do not enable deployment or publishing until the release gates in [`frontend/DEPLOYMENT.md`](frontend/DEPLOYMENT.md) are satisfied.

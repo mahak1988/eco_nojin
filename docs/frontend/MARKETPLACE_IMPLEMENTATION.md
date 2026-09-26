@@ -33,6 +33,33 @@ The repository has no owner registry file. The owners below are the module bound
 
 `apps/web/src/app/[locale]/market/**` contains 73 `page.tsx` files. 52 render `MarketplaceTemplatePage`. 21 carry their own implementation. The catch-all `market/[...segments]` adds 444 more template routes declared in `apps/web/src/lib/marketplace-routes.ts`.
 
+### Route counting rule for this surface
+
+The numbers in this section are **physical routes** and **declared fallback routes**. They are not logical page paths and not implemented pages:
+
+- A **physical route** is a `page.tsx` file. The catch-all `market/[...segments]` is one physical route.
+- A **catalog fallback** is a logical path with no dedicated file that the catch-all resolves at request time. The 444 declared template routes are 444 fallback paths, all rendered by the single catch-all file.
+- A **data-bearing page** is a page that issues a request to an endpoint in `openapi.json` and renders the response.
+
+The full four-way definition and the measurable checklist that applies to it are in [`PAGE_CHECKLIST_600.md`](PAGE_CHECKLIST_600.md). The 444 figure must never be reported as 444 implemented or live pages.
+
+### Declared inventory partition — 2026-09-26
+
+The marketplace surface is currently described by a four-bucket partition, recorded as declarations in [`PAGE_CHECKLIST_600.md`](PAGE_CHECKLIST_600.md) section 4:
+
+| Bucket | Count | Meaning |
+|---|---|---|
+| Baseline | 10 | routes with their own implementation, as distinct from the template surface |
+| Implementable orphan | 14 | physical routes with no catalog binding that are implementable without a new backend contract |
+| Requiring mapping | 22 | physical routes whose logical destination is not yet determined |
+| Without endpoint | 27 | logical paths with no endpoint in `openapi.json`; these render `unavailable` by rule |
+| **Sum** | **73** | equals the `page.tsx` count recorded at commit `2177450` |
+
+The partition is treated as gapless and non-overlapping, which is a working assumption rather than a verified fact, and the checklist is the instrument that verifies it. Two open items follow:
+
+- The tree now holds 74 marketplace `page.tsx` files, so the 74th file is unassigned against the partition. Open as `R-2` in [`PAGE_CHECKLIST_600.md`](PAGE_CHECKLIST_600.md).
+- `27` without endpoint is consistent with the `unavailable` rows of the matrices below, but the mapping from bucket to page is not yet written per file. Until it is, the matrices in this document remain authoritative for individual page status, and the buckets remain an inventory statement only.
+
 ### Catalog and discovery
 
 | Page | Path | Endpoint | Status | Owner | Gate |
@@ -232,3 +259,9 @@ These are not frontend work and are not resolved by any change in `apps/web`.
 - the wallet uses the gateway's `balance`, `total_earned`, `total_redeemed`, and `is_active` fields and does not display an available figure the API does not define.
 - placeholder wizard, store-step, and checkout-confirmation routes remain explicitly unavailable.
 - B1–B5 remain external; the frontend no longer hides them behind synthetic success states.
+
+## Inventory note — 2026-09-26
+
+- the marketplace surface measures 74 `page.tsx` files today against the 73 recorded at `2177450`; the delta is stated in [`PAGE_GATES.md`](PAGE_GATES.md) rather than rewritten here, so the 2026-09-25 record stays intact.
+- the four-bucket partition (10 baseline, 14 implementable orphan, 22 requiring mapping, 27 without endpoint) is recorded above. Its sum of 73 is one below the current measured 74, and the 74th file is unassigned.
+- nothing in this note changes a page status, a gate, or a blocker. The route matrices in this document remain authoritative for individual pages; the buckets are inventory only.

@@ -99,3 +99,10 @@ These pages are essential for the platform to feel coherent and trustworthy:
 - The final frontend gate passed 402 source files, 31 unit-test files / 220 tests, 14-locale parity, production build, 16 WCAG 2.2 AA routes, 10 Tier 0 smoke routes and 8 responsive routes.
 
 Residual blockers are external: proposed professional roles are not yet issued by the gateway, admin user/content responses need backend datetime fixes, and deployment environments still require administrator access.
+
+## Inventory note — 2026-09-26
+
+- The 15 Tier 0 pages in section 4 are **physical routes** in `apps/web/src/app/[locale]`, and the `/workspace` surface in [`WORKSPACE_SECURITY_DESIGN.md`](WORKSPACE_SECURITY_DESIGN.md) adds 17 more. They are not a share of the declared 600 logical page paths, and creating them did not change that declared total. A logical path, a physical route, a catalog fallback, and a data-bearing page are four different counts; the definitions are in [`PAGE_CHECKLIST_600.md`](PAGE_CHECKLIST_600.md).
+- The Tier 0 pages resolve their capability state from the shared domain registry, so a capability with `endpoint: null` renders `unavailable` by rule. That is the intended state and is recorded as `unavailable` in the checklist, not as a pass.
+- Blocker B11 in [`PAGE_GATES.md`](PAGE_GATES.md) is open: none of the 82 physical routes outside the marketplace and public surfaces, which includes all 15 Tier 0 pages and the workspace surface, has a declared position in the logical catalogue.
+- Nothing in this note changes a gap analysis, an acceptance gate, or a page status. The sections above stand as recorded on 2026-09-25.
