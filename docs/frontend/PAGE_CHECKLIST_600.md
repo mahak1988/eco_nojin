@@ -352,7 +352,9 @@ Append a new row to the execution log below in the same batch as the code change
 | 2026-09-26 | P-06 Docs | `docs/frontend/**` | ✅ checklist written | `git diff --check` pending final | pending | reconcile R-1..R-4 |
 | 2026-09-26 | P-10 Publish | no push | ⛔ blocked | `git rev-list` shows local ahead of origin | none | do not use `git add .` |
 | 2026-09-26 | P-04 Marketplace A review | `market/**`, `lib/api/{market,cart,escrow}.ts` | ✅ committed | `tsc`, 267 vitest, biome | `3683725` | integrate with P-05 |
-| 2026-09-26 | Agent shutdown and master dashboard | `FRONTEND_MASTER_STATUS_FA_2026-09-26.md`, `docs/README.md` | ✅ consolidated | Agent Manager sessions stopped; file created | pending | owner review before any push |
+| 2026-09-26 | Agent shutdown and master dashboard | `FRONTEND_MASTER_STATUS_FA_2026-09-26.md`, `docs/README.md` | ✅ consolidated | Agent Manager sessions stopped; file created | `42ade22` | owner review before any push |
+| 2026-09-26 | P-05 Catalog 600 | `page-catalog.ts`, catalog catch-all and tests | ✅ 600 unique logical entries, collision/status tests, build green | `b03dec5` | `b03dec5` | reconcile 218/444/600 join rule |
+| 2026-09-26 | P-04 Marketplace A | `market/**`, `lib/api/{market,cart,escrow}.ts` | ✅ committed and reviewed | `3683725` | `3683725` | keep Group-B mapping separate |
 
 Do not overwrite an old row. Append a new row for every change, test, revert, review, or push decision. The checklist is the handoff memory of the workstream.
 
