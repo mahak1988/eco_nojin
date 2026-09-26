@@ -3,8 +3,8 @@
 **Snapshot date:** 2026-09-26
 **Repository:** `mahak1988/eco_nojin`
 **Branch:** `main`
-**Local HEAD:** `3683725`
-**Remote state:** `main` is 13 commits ahead of `origin/main`; no push has been performed.
+**Local HEAD:** this dashboard's commit (`90843e5` and its successors)
+**Remote state:** `main` is ahead of `origin/main`; exact count must be re-read with `git rev-list --left-right --count origin/main...main` before push. No push has been performed.
 **Working tree:** 144 unstaged/untracked changes remain, primarily owned by other workstreams.
 
 This is the single handoff page for the current frontend programme. Detailed gates and page evidence are in [`docs/frontend/PAGE_CHECKLIST_600.md`](docs/frontend/PAGE_CHECKLIST_600.md).
