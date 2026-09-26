@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import {
   type ApiResult,
   apiDelete,
@@ -146,9 +147,76 @@ export function createOrder(request: CreateOrderRequest): Promise<ApiResult<Crea
   );
 }
 
-export function listOrders(status?: string): Promise<ApiResult<OrderListResponse>> {
+/**
+ * Order lifecycle the gateway models (`services/marketplace/models:OrderStatus`).
+ * `GET /orders?status=` swallows an unknown value and returns every order, so
+ * the client sends only these five and reports anything else as a bad request.
+ */
+export const ORDER_STATUSES = [
+  'pending',
+  'confirmed',
+  'shipped',
+  'delivered',
+  'cancelled',
+] as const;
+
+export type OrderStatus = (typeof ORDER_STATUSES)[number];
+
+export function isOrderStatus(value: string): value is OrderStatus {
+  return (ORDER_STATUSES as readonly string[]).includes(value);
+}
+
+export function listOrders(status?: OrderStatus): Promise<ApiResult<OrderListResponse>> {
+  if (status !== undefined && !isOrderStatus(status)) {
+    return Promise.resolve({
+      ok: false,
+      error: `Unknown order status: ${status}`,
+      status: 400,
+    });
+  }
   const query = status ? `?status=${encodeURIComponent(status)}` : '';
   return apiGet<OrderListResponse>(`${ORDERS_SOURCE}${query}`);
+}
+
+/**
+ * `GET /orders` carries no `response_model`, so an order read from it is
+ * validated before its money field is trusted by a payment step
+ * (`marketplace.py::list_orders` is the only order read the gateway exposes).
+ */
+const orderEntrySchema = z.object({
+  id: z.string().min(1),
+  product_name: z.string(),
+  buyer_name: z.string(),
+  seller_id: z.string().default(''),
+  quantity_kg: z.number(),
+  total_price: z.number(),
+  status: z.string().min(1),
+  created_at: z.string().min(1),
+});
+
+/**
+ * Resolves one order through the only endpoint the gateway exposes for it.
+ * A missing order is reported as `404` instead of an empty success, so a
+ * checkout step can never continue with an order that does not exist.
+ */
+export async function getOrder(orderId: string): Promise<ApiResult<OrderListEntry>> {
+  const result = await listOrders();
+  if (!result.ok) return result;
+  const match = result.data.orders.find((entry) => entry.id === orderId);
+  if (!match) {
+    return { ok: false, error: `Order ${orderId} is not in the gateway order list`, status: 404 };
+  }
+  const parsed = orderEntrySchema.safeParse(match);
+  if (!parsed.success) {
+    return {
+      ok: false,
+      error: `Order ${orderId} does not match the gateway order contract: ${parsed.error.issues
+        .map((issue) => `${issue.path.join('.') || 'order'}: ${issue.message}`)
+        .join('; ')}`,
+      status: 502,
+    };
+  }
+  return { ok: true, data: parsed.data, status: result.status };
 }
 
 export function getOrderTimeline(orderId: string): Promise<ApiResult<OrderTimelineResponse>> {

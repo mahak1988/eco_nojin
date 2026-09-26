@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import {
   type AdvancedSearchRequest,
   type Category,
@@ -16,6 +17,23 @@ const PRODUCTS_BASE = '/api/v1/marketplace/products';
 const SEARCH_BASE = `${PRODUCTS_BASE}/search`;
 
 export const PRODUCTS_SOURCE = PRODUCTS_BASE;
+export const SEARCH_SOURCE = SEARCH_BASE;
+
+/**
+ * The complete query contract of `GET /api/v1/marketplace/products`
+ * (`services/api_gateway/routers/marketplace.py::list_products`). Any filter
+ * outside this list has no server-side parameter, so the UI must report it as
+ * unavailable instead of sending an invented key.
+ */
+export const PRODUCT_FILTER_PARAMS = [
+  'category',
+  'organic_only',
+  'min_price',
+  'max_price',
+  'limit',
+] as const;
+
+export type ProductFilterParam = (typeof PRODUCT_FILTER_PARAMS)[number];
 
 export type MarketResult<T> =
   | { ok: true; data: T; status: number }
@@ -51,16 +69,22 @@ export interface ProductSearchHit {
   pricePerKg: number;
 }
 
+/**
+ * Payload of `GET /api/v1/marketplace/products/{id}/trace`
+ * (`marketplace.py::get_product_trace`). The gateway sends `notes` per event and
+ * a `qr_data` string; nothing else is part of the contract.
+ */
 export interface ProductTrace {
   product_id: string;
-  traceability_code: string;
+  traceability_code: string | null;
   events: Array<{
     timestamp: string;
     event: string;
     location: string;
-    actor?: string;
-    document_hash?: string;
+    actor?: string | null;
+    notes?: string | null;
   }>;
+  qr_data?: string | null;
 }
 
 function failure<T>(error: string, status: number): MarketResult<T> {
@@ -176,6 +200,96 @@ export async function listProducts(
   };
 }
 
+const optionalNumberField = z
+  .string()
+  .trim()
+  .max(24)
+  .transform((value) => (value === '' ? undefined : Number(value)))
+  .refine((value) => value === undefined || Number.isFinite(value), {
+    message: 'must be a number',
+  })
+  .refine((value) => value === undefined || (value as number) >= 0, {
+    message: 'must not be negative',
+  });
+
+const optionalLimitField = optionalNumberField.refine(
+  (value) => value === undefined || Number.isInteger(value),
+  { message: 'must be a whole number' },
+);
+
+/**
+ * Raw filter form state of the two connected product-search surfaces. It parses
+ * to the exact `SearchFilters` subset `productQuery` turns into the five
+ * supported query parameters, so no page can smuggle an unsupported filter into
+ * the request.
+ */
+export const productFilterFormSchema = z
+  .object({
+    category: z.string().trim().max(120),
+    organic: z.boolean(),
+    priceMin: optionalNumberField,
+    priceMax: optionalNumberField,
+    limit: optionalLimitField,
+  })
+  .refine(
+    (value) =>
+      value.priceMin === undefined ||
+      value.priceMax === undefined ||
+      value.priceMin <= value.priceMax,
+    { message: 'must not be below the minimum price', path: ['priceMax'] },
+  )
+  .refine((value) => value.limit === undefined || (value.limit as number) >= 1, {
+    message: 'must be at least 1',
+    path: ['limit'],
+  });
+
+export type ProductFilterForm = z.input<typeof productFilterFormSchema>;
+
+export type ProductFilterParse =
+  | { ok: true; filters: SearchFilters; applied: ProductFilterParam[] }
+  | { ok: false; issues: string[] };
+
+/**
+ * Validates a filter form against the connected endpoint contract and reports
+ * which of `PRODUCT_FILTER_PARAMS` will actually reach the gateway.
+ */
+export function parseProductFilterForm(input: ProductFilterForm): ProductFilterParse {
+  const parsed = productFilterFormSchema.safeParse(input);
+  if (!parsed.success) {
+    return {
+      ok: false,
+      issues: parsed.error.issues.map(
+        (issue) => `${issue.path.join('.') || 'filter'}: ${issue.message}`,
+      ),
+    };
+  }
+
+  const { category, organic, priceMin, priceMax, limit } = parsed.data;
+  const filters: SearchFilters = { pageSize: (limit as number | undefined) ?? 50 };
+  if (category) filters.category = category;
+  if (organic) filters.organic = organic;
+  if (priceMin !== undefined) filters.priceMin = priceMin;
+  if (priceMax !== undefined) filters.priceMax = priceMax;
+
+  // Reported in the endpoint's own parameter order so the UI lists exactly the
+  // contract the gateway implements.
+  const sent: Record<ProductFilterParam, boolean> = {
+    category: Boolean(filters.category),
+    organic_only: filters.organic === true,
+    min_price: filters.priceMin !== undefined,
+    max_price: filters.priceMax !== undefined,
+    limit: true,
+  };
+  const applied = PRODUCT_FILTER_PARAMS.filter((param) => sent[param]);
+
+  return { ok: true, filters, applied };
+}
+
+/** Real gateway path behind a product traceability view. */
+export function productTraceSource(productId: string): string {
+  return `${PRODUCTS_BASE}/${encodeURIComponent(productId)}/trace`;
+}
+
 /**
  * `/products/search` only returns id, name and unit price. The remaining
  * attributes are left out of the hit instead of being filled with placeholders.
@@ -280,9 +394,7 @@ export async function createBazaar(
 }
 
 export async function getProductTrace(productId: string): Promise<MarketResult<ProductTrace>> {
-  const result = await apiGet<ProductTrace>(
-    `${PRODUCTS_BASE}/${encodeURIComponent(productId)}/trace`,
-  );
+  const result = await apiGet<ProductTrace>(productTraceSource(productId));
   return fromApi<ProductTrace>(result);
 }
 

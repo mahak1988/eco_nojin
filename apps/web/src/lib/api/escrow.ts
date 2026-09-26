@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { type ApiResult, apiGet, apiPost, createIdempotencyKey } from './client';
 
 const MARKETPLACE_BASE = '/api/v1/marketplace';
@@ -13,6 +14,34 @@ export type PaymentGateway = (typeof PAYMENT_GATEWAYS)[number];
 
 export function isPaymentGateway(value: string): value is PaymentGateway {
   return (PAYMENT_GATEWAYS as readonly string[]).includes(value);
+}
+
+/**
+ * Gateways that answer `POST /payments` with a `redirect_url` the buyer has to
+ * be sent to (`payments_service.py::PaymentGateways.create`). `bank` is absent
+ * on purpose: it returns `redirect_url: null` and waits for a transfer
+ * reference instead.
+ */
+export const REDIRECT_GATEWAYS = ['zarinpal', 'international'] as const;
+export type RedirectGateway = (typeof REDIRECT_GATEWAYS)[number];
+
+export function isRedirectGateway(value: PaymentGateway): value is RedirectGateway {
+  return (REDIRECT_GATEWAYS as readonly string[]).includes(value);
+}
+
+/**
+ * `PaymentConfirmRequest.ref_id` caps the bank tracking code at 120 characters
+ * and a bank payment cannot be verified without one
+ * (`payments_service.py::PaymentGateways.verify`).
+ */
+export const transactionKeySchema = z
+  .string()
+  .trim()
+  .min(1, { message: 'the bank tracking code is required' })
+  .max(120, { message: 'the bank tracking code is limited to 120 characters' });
+
+export function isValidTransactionKey(value: string): boolean {
+  return transactionKeySchema.safeParse(value).success;
 }
 
 export interface CreatePaymentRequest {
