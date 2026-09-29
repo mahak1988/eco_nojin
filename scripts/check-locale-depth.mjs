@@ -58,20 +58,30 @@ const REFERENCE = 'en';
  *
  * When to raise it again. As each locale's own coverage grows this number rises
  * on its own. It should go to 35% once every locale passes 36%.
+ *
+ *   80% — 2026-09-29. All twelve catalogues were machine translated to full
+ *   coverage against the current `en.json` (1496 leaf keys) and now hold every
+ *   one of them, so a floor of 80% is 20 points below the measured value. It is
+ *   set below 100% on purpose: this check measures key coverage, and a key that
+ *   exists but still holds English counts as covered. 80% is a guard against
+ *   whole namespaces disappearing, not a claim that every string is translated.
+ *   `check-locale-encoding.mjs` is the gate that catches a copied reference
+ *   file, and `check-icu-placeholders.mjs` the one that catches a renamed
+ *   placeholder.
  */
 const FLOOR = {
-  ar: 29,
-  bn: 29,
-  de: 29,
-  es: 29,
-  fr: 29,
-  hi: 29,
-  it: 29,
-  ms: 29,
-  pt: 29,
-  ru: 29,
-  ur: 29,
-  zh: 29,
+  ar: 80,
+  bn: 80,
+  de: 80,
+  es: 80,
+  fr: 80,
+  hi: 80,
+  it: 80,
+  ms: 80,
+  pt: 80,
+  ru: 80,
+  ur: 80,
+  zh: 80,
 };
 
 function leafKeys(node, prefix = '') {

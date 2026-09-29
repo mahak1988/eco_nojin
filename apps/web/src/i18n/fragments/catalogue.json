@@ -1,0 +1,1178 @@
+{
+  "ar": {
+    "pageMeta": {
+      "hydroma-hydroma-models": {
+        "title": "سجل النماذج",
+        "description": "كل نموذج يعلنه المحرك، مع إصداره والمنهجية التي يستشهد بها وحالة التحقق التي ينشرها عن نفسه."
+      },
+      "hydroma-hydroma-models-model_id": {
+        "title": "النموذج",
+        "description": "سجل نموذج واحد في السجل: الإصدار، ومرجع المنهجية، وحالة التحقق المعلنة، وحالات الاختبار التي تسنده."
+      },
+      "hydroma-hydroma-models-model_id-validation": {
+        "title": "تقرير التحقق",
+        "description": "تقرير التحقق الذي تبنيه البوابة من حالات الاختبار المعلنة للنموذج."
+      },
+      "hydroma-hydroma-slaughterhouse-status": {
+        "title": "تجميع التحقق",
+        "description": "كم نموذجًا يعلنه السجل وكيف يصف كل نموذج حالة التحقق الخاصة به."
+      },
+      "hydroma-hydroma-validation": {
+        "title": "التحقق من المعادلات",
+        "description": "تُعاد اشتقاق كل معادلة من معادلات المحرك وتُقارن بقيمة منشورة أو بمتطابقة أو بوحدة ثانية؛ وتذكر كل حالة اختبار مصدرها وقيمتها المتوقعة والتحمل الذي يُحكَم به."
+      },
+      "hydroma-hydroma-validation-checks": {
+        "title": "فحوص التحقق",
+        "description": "فهرس فحوص التحقق التي ينفذها المحرك. هذا الإسقاط لا يحمل مصدرًا ولا تحملًا."
+      },
+      "hydroma-hydroma-validation-reference-data": {
+        "title": "بيانات مرجعية",
+        "description": "القيم المنشورة التي يُفترض أن يُحكَم على مجموعة التحقق في ضوئها، كما يحفظها المستودع تمامًا."
+      },
+      "hydroma-hydroma-validation-run": {
+        "title": "تشغيل فحص تحقق",
+        "description": "شغّل فحص تحقق واحدًا واقرأ القيمة التي أنتجها المحرك إلى جانب القيمة التي كان متوقعًا أن ينتجها."
+      },
+      "hydroma-hydroma-indices": {
+        "title": "المؤشرات",
+        "description": "ثمانية مؤشرات للاستشعار عن بعد ومناخ زراعي، من مؤشر الكربون المرتكز إلى RothC إلى مؤشرات الفينولوجيا وميزان المياه."
+      },
+      "hydroma-hydroma-indices-model_id": {
+        "title": "مؤشر واحد",
+        "description": "عقد معاملات المؤشر وسجله المنشور."
+      },
+      "hydroma-hydroma-mrv": {
+        "title": "الرصد والإبلاغ والتحقق",
+        "description": "أداتا MRV: نطاقات ضمان الجودة، ومجموعة المقاييس التي تفصل الملاحظات الحقيقية عن الملاحظات المحاكاة."
+      },
+      "hydroma-hydroma-mrv-model_id": {
+        "title": "أداة MRV",
+        "description": "عقد معاملات أداة MRV وسجلها المنشور."
+      },
+      "hydroma-hydroma-simulation": {
+        "title": "المحاكاة",
+        "description": "أداتا محاكاة: معايرة Sobol بعد Saltelli، ومصفوفات سيناريوهات HyDroMa."
+      },
+      "hydroma-hydroma-simulation-model_id": {
+        "title": "أداة محاكاة",
+        "description": "عقد معاملات أداة المحاكاة وسجلها المنشور."
+      },
+      "hydroma-hydroma-soil": {
+        "title": "نماذج التربة",
+        "description": "تسع أدوات للتربة: مثلث نسيج USDA، وKeys to Soil Taxonomy، ومنحنى احتفاظ van Genuchten، ونقل التربة، والفيزياء، والكيمياء، والملوحة، والصحة، والتوصيات."
+      },
+      "hydroma-hydroma-water": {
+        "title": "نماذج المياه",
+        "description": "أربع أدوات للمياه: جريان SCS-CN وطريقة الرشيد، ونموذج المياه الجوفية، وخدمة المياه الجوفية المحصورة وغير المحصورة."
+      },
+      "hydroma-hydroma-water-model_id": {
+        "title": "أداة مياه",
+        "description": "عقد معاملات نموذج المياه وسجله المنشور."
+      },
+      "marketplace-market-escrow-orders": {
+        "title": "طلبات الضمان",
+        "description": "الطلبات المحفوظة تحت الضمان، كما تبلّغ عنها بوابة التجارة لجلسةك."
+      },
+      "marketplace-market-orders-order": {
+        "title": "الطلب",
+        "description": "طلب تجاري واحد، وعناصره، ونيّات دفعه، والانتقالات التي يسمح بها آلة الحالة حاليًا."
+      },
+      "marketplace-market-orders-order-transitions": {
+        "title": "الانتقالات المسموح بها",
+        "description": "الحالات التالية التي يسمح بها آلة حالة الطلب لهذا الطلب."
+      }
+    }
+  },
+  "bn": {
+    "pageMeta": {
+      "hydroma-hydroma-models": {
+        "title": "মডেল রেজিস্ট্রি",
+        "description": "ইঞ্জিন কর্তৃক ঘোষিত প্রতিটি মডেল, তার সংস্করণ, উদ্ধৃত পদ্ধতি এবং নিজেই প্রকাশ করা যাচাইকরণ অবস্থাসহ।"
+      },
+      "hydroma-hydroma-models-model_id": {
+        "title": "মডেল",
+        "description": "রেজিস্ট্রিতে একটি মডেলের নথি: সংস্করণ, পদ্ধতির রেফারেন্স, ঘোষিত যাচাইকরণ অবস্থা এবং তার পেছনের পরীক্ষার ক্ষেত্রগুলো।"
+      },
+      "hydroma-hydroma-models-model_id-validation": {
+        "title": "যাচাইকরণ প্রতিবেদন",
+        "description": "মডেলের ঘোষিত পরীক্ষার ক্ষেত্র থেকে গেটওয়ে যে যাচাইকরণ প্রতিবেদন গড়ে।"
+      },
+      "hydroma-hydroma-slaughterhouse-status": {
+        "title": "যাচাইকরণ সারসংক্ষেপ",
+        "description": "রেজিস্ট্রি কতগুলো মডেল ঘোষণা করে এবং প্রতিটি মডেল নিজের যাচাইকরণ অবস্থা কীভাবে বর্ণনা করে।"
+      },
+      "hydroma-hydroma-validation": {
+        "title": "সূত্র যাচাইকরণ",
+        "description": "ইঞ্জিনের প্রতিটি সূত্র পুনরায় অনুমিত হয়ে প্রকাশিত মান, কোনো সমতত্ব বা দ্বিতীয় মডিউলের সঙ্গে তুলনা করা হয়; প্রতিটি পরীক্ষা তার উৎস, প্রত্যাশিত মান ও বিচারের সহনশীলতা জানায়।"
+      },
+      "hydroma-hydroma-validation-checks": {
+        "title": "যাচাই পরীক্ষা",
+        "description": "ইঞ্জিন যে যাচাই পরীক্ষাগুলো চালায় তার তালিকা। এই অন্বেষণে না উৎস আছে, না সহনশীলতা।"
+      },
+      "hydroma-hydroma-validation-reference-data": {
+        "title": "রেফারেন্স তথ্য",
+        "description": "যাচাই স্যুটকে যে প্রকাশিত মানের বিচার করা উচিত, ঠিক যেভাবে সংরক্ষাগার তা রাখে।"
+      },
+      "hydroma-hydroma-validation-run": {
+        "title": "একটি যাচাই পরীক্ষা চালান",
+        "description": "একটি যাচাই পরীক্ষা চালিয়ে ইঞ্জিন যে মান তৈরি করেছে তা যে মান তৈরি করার কথা ছিল তার পাশে পড়ুন।"
+      },
+      "hydroma-hydroma-indices": {
+        "title": "সূচক",
+        "description": "আটটি দূরসংবেদন ও কৃষি-জলবায়ু সূচক, RothC-ভিত্তিক কার্বন সূচক থেকে ফিনোলজি ও জল-ভারসাম্য সূচক পর্যন্ত।"
+      },
+      "hydroma-hydroma-indices-model_id": {
+        "title": "একটি সূচক",
+        "description": "একটি সূচকের প্যারামিটার চুক্তি ও প্রকাশিত নথি।"
+      },
+      "hydroma-hydroma-mrv": {
+        "title": "পর্যবেক্ষণ, প্রতিবেদন ও যাচাইকরণ",
+        "description": "দুটি MRV টুল: মান নিশ্চয়তার পট্টি, এবং সেই মাপক-সমচয় যা প্রকৃত পর্যবেক্ষণকে অনুকরিত পর্যবেক্ষণ থেকে আলাদা করে।"
+      },
+      "hydroma-hydroma-mrv-model_id": {
+        "title": "MRV টুল",
+        "description": "একটি MRV টুলের প্যারামিটার চুক্তি ও প্রকাশিত নথি।"
+      },
+      "hydroma-hydroma-simulation": {
+        "title": "সিমুলেশন",
+        "description": "দুটি সিমুলেশন টুল: Saltelli-অনুসারে Sobol ক্যালিব্রেশন, এবং HyDroMa-র দৃশ্য ম্যাট্রিক্স।"
+      },
+      "hydroma-hydroma-simulation-model_id": {
+        "title": "সিমুলেশন টুল",
+        "description": "একটি সিমুলেশন টুলের প্যারামিটার চুক্তি ও প্রকাশিত নথি।"
+      },
+      "hydroma-hydroma-soil": {
+        "title": "মাটির মডেল",
+        "description": "নয়টি মাটির টুল: USDA গঠন ত্রিভুজ, Keys to Soil Taxonomy, van Genuchten ধারণ-রেখা, পেডোট্রান্সফার, পদার্থবিদ্যা, রসায়ন, লবণাক্ততা, স্বাস্থ্য ও পরামর্শ।"
+      },
+      "hydroma-hydroma-water": {
+        "title": "জলের মডেল",
+        "description": "চারটি জলের টুল: SCS-CN ও যুক্তিবাচক পদ্ধতির প্রবাহ, ভূগর্ভস্থ পানির মডেল, এবং বন্ধ ও অবন্ধ ভূগর্ভস্থ পানির সেবা।"
+      },
+      "hydroma-hydroma-water-model_id": {
+        "title": "জলের টুল",
+        "description": "একটি জলের মডেলের প্যারামিটার চুক্তি ও প্রকাশিত নথি।"
+      },
+      "marketplace-market-escrow-orders": {
+        "title": "জমানুত্তের অর্ডার",
+        "description": "জমানুত্তে রাখা অর্ডারগুলি, যেভাবে বাণিজ্য গেটওয়ে আপনার সেশনের জন্য সেগুলি জানায়।"
+      },
+      "marketplace-market-orders-order": {
+        "title": "অর্ডার",
+        "description": "একটি বাণিজ্যিক অর্ডার, তার পণ্য, তার পেমেন্ট উদ্দেশ্য এবং স্টেট মেশিন বর্তমানে যেসব অবস্থান্তরের অনুমতি দেয়।"
+      },
+      "marketplace-market-orders-order-transitions": {
+        "title": "অনুমোদিত অবস্থান্তর",
+        "description": "অর্ডার স্টেট মেশিন এই অর্ডারের জন্য যে পরবর্তী অবস্থাগুলির অনুমতি দেয়।"
+      }
+    }
+  },
+  "de": {
+    "pageMeta": {
+      "hydroma-hydroma-models": {
+        "title": "Modellregister",
+        "description": "Jedes vom Motor deklarierte Modell, mit seiner Version, seiner zitierten Methode und dem Validierungsstatus, den es über sich selbst veröffentlicht."
+      },
+      "hydroma-hydroma-models-model_id": {
+        "title": "Modell",
+        "description": "Der Registereintrag eines Modells: Version, Methodenreferenz, deklarierter Validierungsstatus und die Prüffälle, die ihn stützen."
+      },
+      "hydroma-hydroma-models-model_id-validation": {
+        "title": "Validierungsbericht",
+        "description": "Der Validierungsbericht, den das Gateway aus den deklarierten Prüffällen eines Modells erstellt."
+      },
+      "hydroma-hydroma-slaughterhouse-status": {
+        "title": "Validierungsübersicht",
+        "description": "Wie viele Modelle das Register deklariert und wie jedes seinen eigenen Validierungszustand beschreibt."
+      },
+      "hydroma-hydroma-validation": {
+        "title": "Formelverifikation",
+        "description": "Jede Formel des Motors wird neu hergeleitet und mit einem veröffentlichten Wert, einer Identität oder einem zweiten Modul verglichen. Jede Prüfung nennt ihre Quelle, ihren Erwartungswert und die Toleranz, gegen die sie bewertet wird."
+      },
+      "hydroma-hydroma-validation-checks": {
+        "title": "Verifikationsprüfungen",
+        "description": "Der Katalog der Verifikationsprüfungen, die der Motor ausführt. Diese Projektion trägt weder Quelle noch Toleranz."
+      },
+      "hydroma-hydroma-validation-reference-data": {
+        "title": "Referenzdaten",
+        "description": "Die veröffentlichten Werte, gegen die die Verifikationssuite bewertet werden soll, genau so wie das Repository sie speichert."
+      },
+      "hydroma-hydroma-validation-run": {
+        "title": "Eine Verifikationsprüfung ausführen",
+        "description": "Eine Verifikationsprüfung ausführen und den von der Engine erzeugten Wert neben dem erwarteten Wert lesen."
+      },
+      "hydroma-hydroma-indices": {
+        "title": "Indizes",
+        "description": "Acht Fernerkundungs- und agroklimatische Indizes, vom am RothC verankerten Kohlenstoffindex bis zu den Phänologie- und Wasserbilanzindizes."
+      },
+      "hydroma-hydroma-indices-model_id": {
+        "title": "Index",
+        "description": "Der Parametervertrag und der veröffentlichte Datensatz eines Index."
+      },
+      "hydroma-hydroma-mrv": {
+        "title": "Monitoring, Reporting und Verifikation",
+        "description": "Die beiden MRV-Werkzeuge: die Qualitätssicherungsbänder und der Metriksatz, der reale Beobachtungen von simulierten trennt."
+      },
+      "hydroma-hydroma-mrv-model_id": {
+        "title": "MRV-Werkzeug",
+        "description": "Der Parametervertrag und der veröffentlichte Datensatz eines MRV-Werkzeugs."
+      },
+      "hydroma-hydroma-simulation": {
+        "title": "Simulation",
+        "description": "Zwei Simulationswerkzeuge: die Sobol-Kalibrierung nach Saltelli und die Szenariomatrizen von HyDroMa."
+      },
+      "hydroma-hydroma-simulation-model_id": {
+        "title": "Simulationswerkzeug",
+        "description": "Der Parametervertrag und der veröffentlichte Datensatz eines Simulationswerkzeugs."
+      },
+      "hydroma-hydroma-soil": {
+        "title": "Bodenmodelle",
+        "description": "Neun Bodenwerkzeuge: das USDA-Texturdreieck, Keys to Soil Taxonomy, die van-Genuchten-Haltekurve, Pedotransfer, Physik, Chemie, Salzgehalt, Gesundheit und Empfehlungen."
+      },
+      "hydroma-hydroma-water": {
+        "title": "Wassermodelle",
+        "description": "Vier Wasserwerkzeuge: Abfluss nach SCS-CN und nach der rationalen Methode, das Grundwassermodell sowie der Dienst für gespanntes und ungespanntes Grundwasser."
+      },
+      "hydroma-hydroma-water-model_id": {
+        "title": "Wasserwerkzeug",
+        "description": "Der Parametervertrag und der veröffentlichte Datensatz eines Wassermodells."
+      },
+      "marketplace-market-escrow-orders": {
+        "title": "Treuhandbestellungen",
+        "description": "Bestellungen, die in Treuhand gehalten werden, wie das Commerce-Gateway sie für Ihre Sitzung meldet."
+      },
+      "marketplace-market-orders-order": {
+        "title": "Bestellung",
+        "description": "Eine Commerce-Bestellung, ihre Positionen, ihre Zahlungsabsichten und die Übergaben, die die Zustandsmaschine derzeit zulässt."
+      },
+      "marketplace-market-orders-order-transitions": {
+        "title": "Zulässige Übergaben",
+        "description": "Die nächsten Zustände, die die Bestellungs-Zustandsmaschine für diese Bestellung zulässt."
+      }
+    }
+  },
+  "en": {
+    "pageMeta": {
+      "hydroma-hydroma-models": {
+        "title": "Model registry",
+        "description": "Every model the engine declares, with its version, its cited method and the validation status it publishes about itself."
+      },
+      "hydroma-hydroma-models-model_id": {
+        "title": "Model",
+        "description": "One model's registry record: version, method reference, declared validation status and the fixtures that back it."
+      },
+      "hydroma-hydroma-models-model_id-validation": {
+        "title": "Validation report",
+        "description": "The validation report the gateway builds from a model's declared test cases."
+      },
+      "hydroma-hydroma-slaughterhouse-status": {
+        "title": "Validation roll-up",
+        "description": "How many models the registry declares, and how each one describes its own validation state."
+      },
+      "hydroma-hydroma-validation": {
+        "title": "Formula verification",
+        "description": "Every engine formula re-derived and compared with a published value, an identity or a second module. Each check states its source, its expected value and the tolerance it is judged against."
+      },
+      "hydroma-hydroma-validation-checks": {
+        "title": "Verification checks",
+        "description": "The catalogue of verification checks the engine runs. This projection carries no source and no tolerance."
+      },
+      "hydroma-hydroma-validation-reference-data": {
+        "title": "Reference data",
+        "description": "The published values the verification suite is meant to be judged against, exactly as the repository stores them."
+      },
+      "hydroma-hydroma-validation-run": {
+        "title": "Run a verification check",
+        "description": "Run one verification check and read the value the engine produced beside the value it was expected to produce."
+      },
+      "hydroma-hydroma-indices": {
+        "title": "Indices",
+        "description": "Eight remote-sensing and agroclimatic indices, from the RothC-anchored carbon index to the phenology and water-balance indices."
+      },
+      "hydroma-hydroma-indices-model_id": {
+        "title": "Index",
+        "description": "The parameter contract and published record of one index."
+      },
+      "hydroma-hydroma-mrv": {
+        "title": "Monitoring, reporting and verification",
+        "description": "The two MRV tools: the quality-assurance bands, and the metric set that separates real observations from simulated ones."
+      },
+      "hydroma-hydroma-mrv-model_id": {
+        "title": "MRV tool",
+        "description": "The parameter contract and published record of one MRV tool."
+      },
+      "hydroma-hydroma-simulation": {
+        "title": "Simulation",
+        "description": "Two simulation tools: Sobol calibration after Saltelli, and the HyDroMa scenario matrices."
+      },
+      "hydroma-hydroma-simulation-model_id": {
+        "title": "Simulation tool",
+        "description": "The parameter contract and published record of one simulation tool."
+      },
+      "hydroma-hydroma-soil": {
+        "title": "Soil models",
+        "description": "Nine soil tools: the USDA texture triangle, Keys to Soil Taxonomy, the van Genuchten retention curve, pedotransfer, physics, chemistry, salinity, health and recommendations."
+      },
+      "hydroma-hydroma-water": {
+        "title": "Water models",
+        "description": "Four water tools: SCS-CN and rational-method runoff, the groundwater model, and the confined and unconfined groundwater service."
+      },
+      "hydroma-hydroma-water-model_id": {
+        "title": "Water tool",
+        "description": "The parameter contract and published record of one water model."
+      },
+      "marketplace-market-escrow-orders": {
+        "title": "Escrow orders",
+        "description": "Orders held under escrow, as the commerce gateway reports them for your session."
+      },
+      "marketplace-market-orders-order": {
+        "title": "Order",
+        "description": "One commerce order, its items, its payment intents and the transitions the state machine currently allows."
+      },
+      "marketplace-market-orders-order-transitions": {
+        "title": "Allowed transitions",
+        "description": "The next states the order state machine allows for this order."
+      }
+    }
+  },
+  "es": {
+    "pageMeta": {
+      "hydroma-hydroma-models": {
+        "title": "Registro de modelos",
+        "description": "Cada modelo que declara el motor, con su versión, su método citado y el estado de validación que publica sobre sí mismo."
+      },
+      "hydroma-hydroma-models-model_id": {
+        "title": "Modelo",
+        "description": "La ficha de un modelo en el registro: versión, referencia del método, estado de validación declarado y los casos de prueba que lo respaldan."
+      },
+      "hydroma-hydroma-models-model_id-validation": {
+        "title": "Informe de validación",
+        "description": "El informe de validación que la pasarela construye a partir de los casos de prueba declarados de un modelo."
+      },
+      "hydroma-hydroma-slaughterhouse-status": {
+        "title": "Resumen de validación",
+        "description": "Cuántos modelos declara el registro y cómo cada uno describe su propio estado de validación."
+      },
+      "hydroma-hydroma-validation": {
+        "title": "Verificación de fórmulas",
+        "description": "Cada fórmula del motor vuelve a derivarse y se compara con un valor publicado, una identidad o un segundo módulo. Cada comprobación declara su fuente, su valor esperado y la tolerancia con la que se juzga."
+      },
+      "hydroma-hydroma-validation-checks": {
+        "title": "Comprobaciones de verificación",
+        "description": "El catálogo de comprobaciones de verificación que ejecuta el motor. Esta proyección no lleva fuente ni tolerancia."
+      },
+      "hydroma-hydroma-validation-reference-data": {
+        "title": "Datos de referencia",
+        "description": "Los valores publicados contra los que debe juzgarse la suite de verificación, tal como los guarda el repositorio."
+      },
+      "hydroma-hydroma-validation-run": {
+        "title": "Ejecutar una comprobación",
+        "description": "Ejecute una comprobación de verificación y lea el valor que produjo el motor junto al que se esperaba producir."
+      },
+      "hydroma-hydroma-indices": {
+        "title": "Índices",
+        "description": "Ocho índices de teledetección y agroclimáticos, del índice de carbono anclado en RothC a los índices de fenología y balance hídrico."
+      },
+      "hydroma-hydroma-indices-model_id": {
+        "title": "Índice",
+        "description": "El contrato de parámetros y el registro publicado de un índice."
+      },
+      "hydroma-hydroma-mrv": {
+        "title": "Monitoreo, reporte y verificación",
+        "description": "Las dos herramientas MRV: las bandas de aseguramiento de calidad y el conjunto de métricas que separa las observaciones reales de las simuladas."
+      },
+      "hydroma-hydroma-mrv-model_id": {
+        "title": "Herramienta MRV",
+        "description": "El contrato de parámetros y el registro publicado de una herramienta MRV."
+      },
+      "hydroma-hydroma-simulation": {
+        "title": "Simulación",
+        "description": "Dos herramientas de simulación: la calibración de Sobol según Saltelli y las matrices de escenarios de HyDroMa."
+      },
+      "hydroma-hydroma-simulation-model_id": {
+        "title": "Herramienta de simulación",
+        "description": "El contrato de parámetros y el registro publicado de una herramienta de simulación."
+      },
+      "hydroma-hydroma-soil": {
+        "title": "Modelos de suelo",
+        "description": "Nueve herramientas de suelo: el triángulo de textura del USDA, Keys to Soil Taxonomy, la curva de retención de van Genuchten, la pedotransferencia, la física, la química, la salinidad, la salud y las recomendaciones."
+      },
+      "hydroma-hydroma-water": {
+        "title": "Modelos de agua",
+        "description": "Cuatro herramientas de agua: la escorrentía SCS-CN y del método racional, el modelo de aguas subterráneas y el servicio confinado y no confinado."
+      },
+      "hydroma-hydroma-water-model_id": {
+        "title": "Herramienta de agua",
+        "description": "El contrato de parámetros y el registro publicado de un modelo de agua."
+      },
+      "marketplace-market-escrow-orders": {
+        "title": "Pedidos en depósito",
+        "description": "Pedidos mantenidos en depósito, tal como la pasarela de comercio los informa para tu sesión."
+      },
+      "marketplace-market-orders-order": {
+        "title": "Pedido",
+        "description": "Un pedido comercial, sus líneas, sus intenciones de pago y las transiciones que la máquina de estados permite ahora."
+      },
+      "marketplace-market-orders-order-transitions": {
+        "title": "Transiciones permitidas",
+        "description": "Los estados siguientes que la máquina de estados del pedido permite para este pedido."
+      }
+    }
+  },
+  "fa": {
+    "pageMeta": {
+      "hydroma-hydroma-models": {
+        "title": "رجیستری مدل‌ها",
+        "description": "هر مدلی که موتور اعلام می‌کند، با نسخه، روش ارجاع‌شده و وضعیت اعتبارسنجی‌ای که دربارهٔ خودش منتشر می‌کند."
+      },
+      "hydroma-hydroma-models-model_id": {
+        "title": "مدل",
+        "description": "رکورد یک مدل در رجیستری: نسخه، ارجاع روش، وضعیت اعتبارسنجی اعلام‌شده و حالت‌های آزمونی که پشت آن است."
+      },
+      "hydroma-hydroma-models-model_id-validation": {
+        "title": "گزارش اعتبارسنجی",
+        "description": "گزارش اعتبارسنجی‌ای که درگاه از روی حالت‌های آزمون اعلام‌شدهٔ یک مدل می‌سازد."
+      },
+      "hydroma-hydroma-slaughterhouse-status": {
+        "title": "جمع اعتبارسنجی",
+        "description": "رجیستری چند مدل اعلام می‌کند و هر مدل چگونه وضعیت اعتبارسنجی خودش را توصیف می‌کند."
+      },
+      "hydroma-hydroma-validation": {
+        "title": "راستی‌آزمایی فرمول‌ها",
+        "description": "هر فرمول موتور دوباره مشتق و با یک مقدار منتشرشده، یک هویت ریاضی یا یک ماژول دوم سنجیده می‌شود. هر آزمون منبع، مقدار مورد انتظار و تلورانسی را که با آن داوری می‌شود اعلام می‌کند."
+      },
+      "hydroma-hydroma-validation-checks": {
+        "title": "آزمون‌های راستی‌آزمایی",
+        "description": "فهرست آزمون‌های راستی‌آزمایی که موتور اجرا می‌کند. این تصویر نه منبع دارد و نه تلورانس."
+      },
+      "hydroma-hydroma-validation-reference-data": {
+        "title": "دادهٔ مرجع",
+        "description": "مقادیر منتشرشده‌ای که مجموعهٔ راستی‌آزمایی باید در برابرشان داوری شود، دقیقاً همان‌طور که مخزن نگه می‌دارد."
+      },
+      "hydroma-hydroma-validation-run": {
+        "title": "اجرای یک آزمون راستی‌آزمایی",
+        "description": "یک آزمون راستی‌آزمایی را اجرا کنید و مقداری را که موتور ساخته است کنار مقداری بخوانید که انتظار می‌رفت بسازد."
+      },
+      "hydroma-hydroma-indices": {
+        "title": "شاخص‌ها",
+        "description": "هشت شاخص سنجش از دور و اقلیم‌کشاورزی، از شاخص کربن متصل به RothC تا شاخص‌های فنولوژی و تراز آبی."
+      },
+      "hydroma-hydroma-indices-model_id": {
+        "title": "شاخص",
+        "description": "قرارداد پارامترها و رکورد منتشرشدهٔ یک شاخص."
+      },
+      "hydroma-hydroma-mrv": {
+        "title": "پایش، گزارش‌دهی و راستی‌آزمایی",
+        "description": "دو ابزار MRV: باندهای تضمین کیفیت، و مجموعه معیارهایی که مشاهدهٔ واقعی را از شبیه‌سازی‌شده جدا می‌کند."
+      },
+      "hydroma-hydroma-mrv-model_id": {
+        "title": "ابزار MRV",
+        "description": "قرارداد پارامترها و رکورد منتشرشدهٔ یک ابزار MRV."
+      },
+      "hydroma-hydroma-simulation": {
+        "title": "شبیه‌سازی",
+        "description": "دو ابزار شبیه‌سازی: کالیبراسیون سوbol پس از Saltelli، و ماتریس‌های سناریوی HyDroMa."
+      },
+      "hydroma-hydroma-simulation-model_id": {
+        "title": "ابزار شبیه‌سازی",
+        "description": "قرارداد پارامترها و رکورد منتشرشدهٔ یک مدل شبیه‌سازی."
+      },
+      "hydroma-hydroma-soil": {
+        "title": "مدل‌های خاک",
+        "description": "نُه ابزار خاک: مثلث بافت خاک USDA، طبقه‌بندی Keys to Soil Taxonomy، منحنی نگه‌داشت آب van Genuchten، تابع انتقال پارامتر خاک، فیزیک، شیمی، شوری، سلامت و توصیه‌های مدیریتی."
+      },
+      "hydroma-hydroma-water": {
+        "title": "مدل‌های آب",
+        "description": "چهار ابزار آب: رواناب SCS-CN و روش عقلانی، مدل آب زیرزمینی، و سرویس آب زیرزمینی محصور و غیرمحصور."
+      },
+      "hydroma-hydroma-water-model_id": {
+        "title": "ابزار آب",
+        "description": "قرارداد پارامترها و رکورد منتشرشدهٔ یک مدل آب."
+      },
+      "marketplace-market-escrow-orders": {
+        "title": "سفارش‌های امانی",
+        "description": "سفارش‌هایی که در امانت نگه داشته شده‌اند، آن‌گونه که درگاه تجارت آن‌ها را برای نشست شما گزارش می‌کند."
+      },
+      "marketplace-market-orders-order": {
+        "title": "سفارش",
+        "description": "یک سفارش تجاری، اقلام آن، درخواست‌های پرداخت آن و گذارهایی که ماشین حالت اکنون مجاز می‌داند."
+      },
+      "marketplace-market-orders-order-transitions": {
+        "title": "گذارهای مجاز",
+        "description": "وضعیت‌های بعدی که ماشین حالت سفارش برای این سفارش مجاز می‌داند."
+      }
+    }
+  },
+  "fr": {
+    "pageMeta": {
+      "hydroma-hydroma-models": {
+        "title": "Registre des modèles",
+        "description": "Chaque modèle déclaré par le moteur, avec sa version, sa méthode citée et l’état de validation qu’il publie sur lui-même."
+      },
+      "hydroma-hydroma-models-model_id": {
+        "title": "Modèle",
+        "description": "La fiche d’un modèle au registre : version, référence de la méthode, état de validation déclaré et les cas de test qui l’appuient."
+      },
+      "hydroma-hydroma-models-model_id-validation": {
+        "title": "Rapport de validation",
+        "description": "Le rapport de validation que la passerelle construit à partir des cas de test déclarés d’un modèle."
+      },
+      "hydroma-hydroma-slaughterhouse-status": {
+        "title": "Récapitulatif de validation",
+        "description": "Combien de modèles le registre déclare et comment chacun décrit son propre état de validation."
+      },
+      "hydroma-hydroma-validation": {
+        "title": "Vérification des formules",
+        "description": "Chaque formule du moteur est redérivée puis comparée à une valeur publiée, à une identité ou à un second module. Chaque contrôle indique sa source, sa valeur attendue et la tolérance dont il est jugé."
+      },
+      "hydroma-hydroma-validation-checks": {
+        "title": "Contrôles de vérification",
+        "description": "Le catalogue des contrôles de vérification que le moteur exécute. Cette projection ne porte ni source ni tolérance."
+      },
+      "hydroma-hydroma-validation-reference-data": {
+        "title": "Données de référence",
+        "description": "Les valeurs publiées contre lesquelles la suite de vérification doit être jugée, telles que le dépôt les conserve."
+      },
+      "hydroma-hydroma-validation-run": {
+        "title": "Exécuter un contrôle",
+        "description": "Exécutez un contrôle de vérification et lisez la valeur produite par le moteur à côté de celle qu’il était censé produire."
+      },
+      "hydroma-hydroma-indices": {
+        "title": "Indices",
+        "description": "Huit indices de télédétection et agroclimatiques, de l’indice de carbone ancré sur RothC aux indices de phénologie et de bilan hydrique."
+      },
+      "hydroma-hydroma-indices-model_id": {
+        "title": "Indice",
+        "description": "Le contrat de paramètres et la fiche publiée d’un indice."
+      },
+      "hydroma-hydroma-mrv": {
+        "title": "Suivi, reportage et vérification",
+        "description": "Les deux outils MRV : les bandes d’assurance qualité et l’ensemble de métriques qui sépare les observations réelles des observations simulées."
+      },
+      "hydroma-hydroma-mrv-model_id": {
+        "title": "Outil MRV",
+        "description": "Le contrat de paramètres et la fiche publiée d’un outil MRV."
+      },
+      "hydroma-hydroma-simulation": {
+        "title": "Simulation",
+        "description": "Deux outils de simulation : le calibrage de Sobol selon Saltelli et les matrices de scénarios d’HyDroMa."
+      },
+      "hydroma-hydroma-simulation-model_id": {
+        "title": "Outil de simulation",
+        "description": "Le contrat de paramètres et la fiche publiée d’un outil de simulation."
+      },
+      "hydroma-hydroma-soil": {
+        "title": "Modèles de sol",
+        "description": "Neuf outils de sol : le triangle textural de l’USDA, Keys to Soil Taxonomy, la courbe de rétention de van Genuchten, le pédotransfert, la physique, la chimie, la salinité, la santé et les recommandations."
+      },
+      "hydroma-hydroma-water": {
+        "title": "Modèles d’eau",
+        "description": "Quatre outils d’eau : le ruissellement SCS-CN et par méthode rationnelle, le modèle d’eau souterraine et le service confiné et non confiné."
+      },
+      "hydroma-hydroma-water-model_id": {
+        "title": "Outil d’eau",
+        "description": "Le contrat de paramètres et la fiche publiée d’un modèle d’eau."
+      },
+      "marketplace-market-escrow-orders": {
+        "title": "Commandes sous séquestre",
+        "description": "Commandes détenues sous séquestre, telles que la passerelle commerce les rapporte pour votre session."
+      },
+      "marketplace-market-orders-order": {
+        "title": "Commande",
+        "description": "Une commande commerce, ses lignes, ses intentions de paiement et les transitions que la machine à états autorise actuellement."
+      },
+      "marketplace-market-orders-order-transitions": {
+        "title": "Transitions autorisées",
+        "description": "Les états suivants que la machine à états de commande autorise pour cette commande."
+      }
+    }
+  },
+  "hi": {
+    "pageMeta": {
+      "hydroma-hydroma-models": {
+        "title": "मॉडल रजिस्ट्री",
+        "description": "इंजन द्वारा घोषित प्रत्येक मॉडल, उसके संस्करण, संदर्भित विधि और उसके बारे में प्रकाशित सत्यापन स्थिति के साथ।"
+      },
+      "hydroma-hydroma-models-model_id": {
+        "title": "मॉडल",
+        "description": "रजिस्ट्री में एक मॉडल का अभिलेख: संस्करण, विधि संदर्भ, घोषित सत्यापन स्थिति और उसके पीछे के परीक्षण मामले।"
+      },
+      "hydroma-hydroma-models-model_id-validation": {
+        "title": "सत्यापन रिपोर्ट",
+        "description": "वह रिपोर्ट जो गेटवे मॉडल के घोषित परीक्षण मामलों से बनाता है।"
+      },
+      "hydroma-hydroma-slaughterhouse-status": {
+        "title": "सत्यापन सारांश",
+        "description": "रजिस्ट्री कितने मॉडल घोषित करता है और हर मॉडल अपनी सत्यापन स्थिति का वर्णन कैसे करता है।"
+      },
+      "hydroma-hydroma-validation": {
+        "title": "सूत्र सत्यापन",
+        "description": "इंजन का हर सूत्र पुनः व्युत्पन्न होकर प्रकाशित मान, किसी सर्वसमिका या दूसरे मॉडल से तुलना किया जाता है; हर जाँच अपना स्रोत, अपेक्षित मान और निर्णय की सहनशीलता बताती है।"
+      },
+      "hydroma-hydroma-validation-checks": {
+        "title": "सत्यापन जाँचें",
+        "description": "इंजन द्वारा चलाई जाने वाली सत्यापन जाँचों की सूची। यह प्रक्षेपण न स्रोत रखता है, न सहनशीलता।"
+      },
+      "hydroma-hydroma-validation-reference-data": {
+        "title": "संदर्भ आँकड़े",
+        "description": "वे प्रकाशित मान जिनके सापक्ष सत्यापन सूट का फ़ैसला होना चाहिए, ठीक वैसे ही जैसे भंडार उन्हें रखता है।"
+      },
+      "hydroma-hydroma-validation-run": {
+        "title": "एक सत्यापन जाँच चलाएँ",
+        "description": "एक सत्यापन जाँच चलाएँ और इंजन द्वारा बनाया गया मान उस मान के साथ पढ़ें जिसकी अपेक्षा की गई थी।"
+      },
+      "hydroma-hydroma-indices": {
+        "title": "सूचकांक",
+        "description": "आठ दूरसंवेदी और कृषि-जलवायु सूचकांक, RothC से आधारित कार्बन सूचकांक से लेकर फीनोलॉजी और जल-संतुलन सूचकांक तक।"
+      },
+      "hydroma-hydroma-indices-model_id": {
+        "title": "एक सूचकांक",
+        "description": "एक सूचकांक का पैरामीटर संविदा और प्रकाशित अभिलेख।"
+      },
+      "hydroma-hydroma-mrv": {
+        "title": "निगरानी, प्रतिवेदन और सत्यापन",
+        "description": "दो MRV उपकरण: गुणवत्ता-आश्वासन पट्टियाँ, और वह मापक-समुच्चय जो वास्तविक पर्यवेक्षणों को अनुमानित पर्यवेक्षणों से अलग करता है।"
+      },
+      "hydroma-hydroma-mrv-model_id": {
+        "title": "MRV उपकरण",
+        "description": "एक MRV उपकरण का पैरामीटर संविदा और प्रकाशित अभिलेख।"
+      },
+      "hydroma-hydroma-simulation": {
+        "title": "सिमुलेशन",
+        "description": "दो सिमुलेशन उपकरण: Saltelli के अनुसार Sobol अंशांकन, और HyDroMa के परिदृश्य मैट्रिक्स।"
+      },
+      "hydroma-hydroma-simulation-model_id": {
+        "title": "सिमुलेशन उपकरण",
+        "description": "एक सिमुलेशन उपकरण का पैरामीटर संविदा और प्रकाशित अभिलेख।"
+      },
+      "hydroma-hydroma-soil": {
+        "title": "मृदा मॉडल",
+        "description": "नौ मृदा उपकरण: USDA बनावट त्रिभुज, Keys to Soil Taxonomy, van Genuchten धारण वक्र, मृदा-अंतरण, भौतिकी, रसायन, लवणता, स्वास्थ्य और अनुशंसाएँ।"
+      },
+      "hydroma-hydroma-water": {
+        "title": "जल मॉडल",
+        "description": "चार जल उपकरण: SCS-CN और युक्तिमत विधि से अपवाह, भूजल मॉडल, तथा दबावयुक्त और अदबावयुक्त भूजल सेवा।"
+      },
+      "hydroma-hydroma-water-model_id": {
+        "title": "जल उपकरण",
+        "description": "एक जल मॉडल का पैरामीटर संविदा और प्रकाशित अभिलेख।"
+      },
+      "marketplace-market-escrow-orders": {
+        "title": "एस्क्रो ऑर्डर",
+        "description": "एस्क्रो में रखे गए ऑर्डर, जैसे वाणिज्य गेटवे उन्हें आपके सत्र के लिए बताता है।"
+      },
+      "marketplace-market-orders-order": {
+        "title": "ऑर्डर",
+        "description": "एक वाणिज्य ऑर्डर, उसकी पंक्तियाँ, उसके भुगतान इरादे और वे परिवर्तन जो स्थिति मशीन अभी अनुमति देती है।"
+      },
+      "marketplace-market-orders-order-transitions": {
+        "title": "अनुमत परिवर्तन",
+        "description": "वे अगली अवस्थाएँ जो ऑर्डर स्थिति मशीन इस ऑर्डर के लिए अनुमति देती है।"
+      }
+    }
+  },
+  "it": {
+    "pageMeta": {
+      "hydroma-hydroma-models": {
+        "title": "Registro dei modelli",
+        "description": "Ogni modello dichiarato dal motore, con la sua versione, il metodo citato e lo stato di validazione che pubblica su sé stesso."
+      },
+      "hydroma-hydroma-models-model_id": {
+        "title": "Modello",
+        "description": "La scheda di un modello nel registro: versione, riferimento del metodo, stato di validazione dichiarato e i casi di test che lo sostengono."
+      },
+      "hydroma-hydroma-models-model_id-validation": {
+        "title": "Rapporto di validazione",
+        "description": "Il rapporto di validazione che il gateway costruisce dai casi di test dichiarati di un modello."
+      },
+      "hydroma-hydroma-slaughterhouse-status": {
+        "title": "Riepilogo di validazione",
+        "description": "Quanti modelli dichiara il registro e come ciascuno descrive il proprio stato di validazione."
+      },
+      "hydroma-hydroma-validation": {
+        "title": "Verifica delle formule",
+        "description": "Ogni formula del motore viene ridesunta e confrontata con un valore pubblicato, un’identità o un secondo modulo. Ogni controllo dichiara la propria fonte, il valore atteso e la tolleranza rispetto a cui è giudicato."
+      },
+      "hydroma-hydroma-validation-checks": {
+        "title": "Controlli di verifica",
+        "description": "Il catalogo dei controlli di verifica che il motore esegue. Questa proiezione non porta né fonte né tolleranza."
+      },
+      "hydroma-hydroma-validation-reference-data": {
+        "title": "Dati di riferimento",
+        "description": "I valori pubblicati rispetto a cui la suite di verifica deve essere giudicata, esattamente come il repository li conserva."
+      },
+      "hydroma-hydroma-validation-run": {
+        "title": "Esegui un controllo",
+        "description": "Esegui un controllo di verifica e leggi il valore prodotto dal motore accanto a quello che era previsto produrre."
+      },
+      "hydroma-hydroma-indices": {
+        "title": "Indici",
+        "description": "Otto indici da telerilevamento e agroclimatici, dall’indice di carbonio ancorato a RothC agli indici di fenologia e bilancio idrico."
+      },
+      "hydroma-hydroma-indices-model_id": {
+        "title": "Indice",
+        "description": "Il contratto dei parametri e la scheda pubblicata di un indice."
+      },
+      "hydroma-hydroma-mrv": {
+        "title": "Monitoraggio, reporting e verifica",
+        "description": "I due strumenti MRV: le fasce di assicurazione qualità e l’insieme di metriche che separa le osservazioni reali da quelle simulate."
+      },
+      "hydroma-hydroma-mrv-model_id": {
+        "title": "Strumento MRV",
+        "description": "Il contratto dei parametri e la scheda pubblicata di uno strumento MRV."
+      },
+      "hydroma-hydroma-simulation": {
+        "title": "Simulazione",
+        "description": "Due strumenti di simulazione: la calibrazione di Sobol secondo Saltelli e le matrici di scenari di HyDroMa."
+      },
+      "hydroma-hydroma-simulation-model_id": {
+        "title": "Strumento di simulazione",
+        "description": "Il contratto dei parametri e la scheda pubblicata di uno strumento di simulazione."
+      },
+      "hydroma-hydroma-soil": {
+        "title": "Modelli del suolo",
+        "description": "Nove strumenti del suolo: il triangolo tessiturale USDA, Keys to Soil Taxonomy, la curva di ritenzione di van Genuchten, il pedotrasferimento, la fisica, la chimica, la salinità, la salute e le raccomandazioni."
+      },
+      "hydroma-hydroma-water": {
+        "title": "Modelli idrici",
+        "description": "Quattro strumenti idrici: il deflusso SCS-CN e a metodo razionale, il modello di falda e il servizio confinato e non confinato."
+      },
+      "hydroma-hydroma-water-model_id": {
+        "title": "Strumento idrico",
+        "description": "Il contratto dei parametri e la scheda pubblicata di un modello idrico."
+      },
+      "marketplace-market-escrow-orders": {
+        "title": "Ordini in garanzia",
+        "description": "Ordini custoditi in garanzia, come il gateway di commercio li riporta per la tua sessione."
+      },
+      "marketplace-market-orders-order": {
+        "title": "Ordine",
+        "description": "Un ordine commerciale, le sue righe, le sue intenzioni di pagamento e le transizioni che la macchina a stati consente ora."
+      },
+      "marketplace-market-orders-order-transitions": {
+        "title": "Transizioni consentite",
+        "description": "Gli stati successivi che la macchina a stati dell'ordine consente per questo ordine."
+      }
+    }
+  },
+  "ms": {
+    "pageMeta": {
+      "hydroma-hydroma-models": {
+        "title": "Pendaftaran model",
+        "description": "Setiap model yang diisytiharkan oleh enjin, bersama versinya, kaedah yang dirujuk dan status pengesahan yang diterbitkannya tentang dirinya sendiri."
+      },
+      "hydroma-hydroma-models-model_id": {
+        "title": "Model",
+        "description": "Rekod satu model dalam pendaftaran: versi, rujukan kaedah, status pengesahan yang diisytiharkan dan kes ujian yang menyokongnya."
+      },
+      "hydroma-hydroma-models-model_id-validation": {
+        "title": "Laporan pengesahan",
+        "description": "Laporan pengesahan yang dibina oleh get laluan daripada kes ujian yang diisytiharkan bagi satu model."
+      },
+      "hydroma-hydroma-slaughterhouse-status": {
+        "title": "Ringkasan pengesahan",
+        "description": "Berapa banyak model yang diisytiharkan oleh pendaftaran dan bagaimana setiap satu menggambarkan status pengesahannya sendiri."
+      },
+      "hydroma-hydroma-validation": {
+        "title": "Pengesahan formula",
+        "description": "Setiap formula enjin diterakkan semula dan dibandingkan dengan nilai yang diterbitkan, identiti atau modul kedua. Setiap ujian menyatakan sumbernya, nilai yang dijangka dan toleransi yang menghakiminya."
+      },
+      "hydroma-hydroma-validation-checks": {
+        "title": "Ujian pengesahan",
+        "description": "Senarai ujian pengesahan yang dijalankan oleh enjin. Unjuran ini tidak membawa sumber atau toleransi."
+      },
+      "hydroma-hydroma-validation-reference-data": {
+        "title": "Data rujukan",
+        "description": "Nilai yang diterbitkan yang bagi mana-mana set pengesahan itu dinilai, tepat seperti repositori menyimpannya."
+      },
+      "hydroma-hydroma-validation-run": {
+        "title": "Jalankan satu ujian",
+        "description": "Jalankan satu ujian pengesahan dan baca nilai yang dihasilkan oleh enjin berserta nilai yang sepatutnya dihasilkan."
+      },
+      "hydroma-hydroma-indices": {
+        "title": "Indeks",
+        "description": "Lapan indeks remote sensing dan agroiklimatik, daripada indeks karbon berpaut pada RothC hingga indeks fenologi dan imbangan air."
+      },
+      "hydroma-hydroma-indices-model_id": {
+        "title": "Indeks",
+        "description": "Kontrak parameter dan rekod yang diterbitkan bagi satu indeks."
+      },
+      "hydroma-hydroma-mrv": {
+        "title": "Pemantauan, pelaporan dan pengesahan",
+        "description": "Dua alat MRV: jalur jaminan kualiti, dan set metrik yang memisahkan pemerhatikan sebenar daripada pemerhatian bersimulasi."
+      },
+      "hydroma-hydroma-mrv-model_id": {
+        "title": "Alat MRV",
+        "description": "Kontrak parameter dan rekod yang diterbitkan bagi satu alat MRV."
+      },
+      "hydroma-hydroma-simulation": {
+        "title": "Simulasi",
+        "description": "Dua alat simulasi: pengkalibrasi Sobol mengikut Saltelli, dan matriks senario HyDroMa."
+      },
+      "hydroma-hydroma-simulation-model_id": {
+        "title": "Alat simulasi",
+        "description": "Kontrak parameter dan rekod yang diterbitkan bagi satu alat simulasi."
+      },
+      "hydroma-hydroma-soil": {
+        "title": "Model tanah",
+        "description": "Sembilan alat tanah: segi tiga tekstur USDA, Keys to Soil Taxonomy, lengkung retensi van Genuchten, pedotransfer, fizik, kimia, kesalan, kesihatan dan cadangan."
+      },
+      "hydroma-hydroma-water": {
+        "title": "Model air",
+        "description": "Empat alat air: limpahan SCS-CN dan kaedah rasional, model air bawah tanah, serta perkhidmatan air bawah tanah terkurung dan tidak terkurung."
+      },
+      "hydroma-hydroma-water-model_id": {
+        "title": "Alat air",
+        "description": "Kontrak parameter dan rekod yang diterbitkan bagi satu model air."
+      },
+      "marketplace-market-escrow-orders": {
+        "title": "Pesanan dalam escrow",
+        "description": "Pesanan yang disimpan dalam escrow, sebagaimana gateway perdagangan melaporkannya untuk sesi anda."
+      },
+      "marketplace-market-orders-order": {
+        "title": "Pesanan",
+        "description": "Satu pesanan perdagangan, barisannya, niat pembayarannya dan peralihan yang dibenarkan oleh mesin keadaan buat masa ini."
+      },
+      "marketplace-market-orders-order-transitions": {
+        "title": "Peralihan yang dibenarkan",
+        "description": "Keadaan seterusnya yang dibenarkan oleh mesin keadaan pesanan untuk pesanan ini."
+      }
+    }
+  },
+  "pt": {
+    "pageMeta": {
+      "hydroma-hydroma-models": {
+        "title": "Registo de modelos",
+        "description": "Cada modelo declarado pelo motor, com a sua versão, o seu método citado e o estado de validação que publica sobre si próprio."
+      },
+      "hydroma-hydroma-models-model_id": {
+        "title": "Modelo",
+        "description": "A ficha de um modelo no registo: versão, referência do método, estado de validação declarado e os casos de teste que o sustentam."
+      },
+      "hydroma-hydroma-models-model_id-validation": {
+        "title": "Relatório de validação",
+        "description": "O relatório de validação que o gateway constrói a partir dos casos de teste declarados de um modelo."
+      },
+      "hydroma-hydroma-slaughterhouse-status": {
+        "title": "Resumo de validação",
+        "description": "Quantos modelos o registo declara e como cada um descreve o seu próprio estado de validação."
+      },
+      "hydroma-hydroma-validation": {
+        "title": "Verificação de fórmulas",
+        "description": "Cada fórmula do motor é deduzida de novo e comparada com um valor publicado, uma identidade ou um segundo módulo. Cada verificação declara a sua fonte, o valor esperado e a tolerância que a julga."
+      },
+      "hydroma-hydroma-validation-checks": {
+        "title": "Testes de verificação",
+        "description": "O catálogo dos testes de verificação que o motor executa. Esta projeção não traz fonte nem tolerância."
+      },
+      "hydroma-hydroma-validation-reference-data": {
+        "title": "Dados de referência",
+        "description": "Os valores publicados contra os quais a suíte de verificação deve ser julgada, exatamente como o repositório os guarda."
+      },
+      "hydroma-hydroma-validation-run": {
+        "title": "Executar um teste",
+        "description": "Execute um teste de verificação e leia o valor que o motor produziu ao lado do valor que deveria produzir."
+      },
+      "hydroma-hydroma-indices": {
+        "title": "Índices",
+        "description": "Oito índices de sensoriamento remoto e agroclimáticos, do índice de carbono ancorado no RothC aos índices de fenologia e balanço hídrico."
+      },
+      "hydroma-hydroma-indices-model_id": {
+        "title": "Índice",
+        "description": "O contrato de parâmetros e a ficha publicada de um índice."
+      },
+      "hydroma-hydroma-mrv": {
+        "title": "Monitorização, reporte e verificação",
+        "description": "As duas ferramentas MRV: as bandas de garantia de qualidade e o conjunto de métricas que separa observações reais de simuladas."
+      },
+      "hydroma-hydroma-mrv-model_id": {
+        "title": "Ferramenta MRV",
+        "description": "O contrato de parâmetros e a ficha publicada de uma ferramenta MRV."
+      },
+      "hydroma-hydroma-simulation": {
+        "title": "Simulação",
+        "description": "Duas ferramentas de simulação: a calibração de Sobol segundo Saltelli e as matrizes de cenários do HyDroMa."
+      },
+      "hydroma-hydroma-simulation-model_id": {
+        "title": "Ferramenta de simulação",
+        "description": "O contrato de parâmetros e a ficha publicada de uma ferramenta de simulação."
+      },
+      "hydroma-hydroma-soil": {
+        "title": "Modelos de solo",
+        "description": "Nove ferramentas de solo: o triângulo textural do USDA, Keys to Soil Taxonomy, a curva de retenção de van Genuchten, a pedotransferência, a física, a química, a salinidade, a saúde e as recomendações."
+      },
+      "hydroma-hydroma-water": {
+        "title": "Modelos de água",
+        "description": "Quatro ferramentas de água: o escoamento SCS-CN e pelo método racional, o modelo de águas subterrâneas e o serviço confinado e não confinado."
+      },
+      "hydroma-hydroma-water-model_id": {
+        "title": "Ferramenta de água",
+        "description": "O contrato de parâmetros e a ficha publicada de um modelo de água."
+      },
+      "marketplace-market-escrow-orders": {
+        "title": "Encomendas em custódia",
+        "description": "Encomendas mantidas em custódia, tal como o gateway de comércio as relata para a sua sessão."
+      },
+      "marketplace-market-orders-order": {
+        "title": "Encomenda",
+        "description": "Uma encomenda comercial, as suas linhas, as suas intenções de pagamento e as transições que a máquina de estados permite agora."
+      },
+      "marketplace-market-orders-order-transitions": {
+        "title": "Transições permitidas",
+        "description": "Os estados seguintes que a máquina de estados da encomenda permite para esta encomenda."
+      }
+    }
+  },
+  "ru": {
+    "pageMeta": {
+      "hydroma-hydroma-models": {
+        "title": "Реестр моделей",
+        "description": "Каждая модель, объявленная движком, с её версией, указанным методом и статусом валидации, который она публикует о себе."
+      },
+      "hydroma-hydroma-models-model_id": {
+        "title": "Модель",
+        "description": "Запись одной модели в реестре: версия, ссылка на метод, объявленный статус валидации и тестовые случаи, которые её подтверждают."
+      },
+      "hydroma-hydroma-models-model_id-validation": {
+        "title": "Отчёт о валидации",
+        "description": "Отчёт о валидации, который шлюз строит по объявленным тестовым случаям модели."
+      },
+      "hydroma-hydroma-slaughterhouse-status": {
+        "title": "Сводка валидации",
+        "description": "Сколько моделей объявляет реестр и как каждая описывает своё собственное состояние валидации."
+      },
+      "hydroma-hydroma-validation": {
+        "title": "Проверка формул",
+        "description": "Каждая формула движка выводится заново и сверяется с опубликованным значением, тождеством или вторым модулем. Каждая проверка называет свой источник, ожидаемое значение и допуск, по которому оценивается."
+      },
+      "hydroma-hydroma-validation-checks": {
+        "title": "Проверки верификации",
+        "description": "Каталог проверок верификации, которые выполняет движок. Эта проекция не несёт ни источника, ни допуска."
+      },
+      "hydroma-hydroma-validation-reference-data": {
+        "title": "Эталонные данные",
+        "description": "Опубликованные значения, по которым должен оцениваться набор верификации, в точности так, как их хранит репозиторий."
+      },
+      "hydroma-hydroma-validation-run": {
+        "title": "Запустить проверку",
+        "description": "Запустите одну проверку верификации и прочитайте значение, полученное движком, рядом с тем, которое он должен был получить."
+      },
+      "hydroma-hydroma-indices": {
+        "title": "Индексы",
+        "description": "Восемь индексов дистанционного зондирования и агроклиматических индексов — от углеродного индекса на базе RothC до индексов фенологии и водного баланса."
+      },
+      "hydroma-hydroma-indices-model_id": {
+        "title": "Индекс",
+        "description": "Контракт параметров и опубликованная запись одного индекса."
+      },
+      "hydroma-hydroma-mrv": {
+        "title": "Мониторинг, отчётность и верификация",
+        "description": "Два инструмента MRV: полосы гарантии качества и набор метрик, который отделяет реальные наблюдения от смоделированных."
+      },
+      "hydroma-hydroma-mrv-model_id": {
+        "title": "Инструмент MRV",
+        "description": "Контракт параметров и опубликованная запись одного инструмента MRV."
+      },
+      "hydroma-hydroma-simulation": {
+        "title": "Моделирование",
+        "description": "Два инструмента моделирования: калибровка Соболя по Сальтелли и матрицы сценариев HyDroMa."
+      },
+      "hydroma-hydroma-simulation-model_id": {
+        "title": "Инструмент моделирования",
+        "description": "Контракт параметров и опубликованная запись одного инструмента моделирования."
+      },
+      "hydroma-hydroma-soil": {
+        "title": "Почвенные модели",
+        "description": "Девять почвенных инструментов: треугольник текстуры USDA, Keys to Soil Taxonomy, кривая удержания ван Генхюхтена, педотрансфер, физика, химия, засоление, здоровье и рекомендации."
+      },
+      "hydroma-hydroma-water": {
+        "title": "Водные модели",
+        "description": "Четыре водных инструмента: сток по SCS-CN и рациональному методу, модель грунтовых вод и служба напорных и безнапорных вод."
+      },
+      "hydroma-hydroma-water-model_id": {
+        "title": "Водный инструмент",
+        "description": "Контракт параметров и опубликованная запись одной водной модели."
+      },
+      "marketplace-market-escrow-orders": {
+        "title": "Заказы в эскроу",
+        "description": "Заказы, хранящиеся в эскроу, в том виде, в каком коммерческий шлюз отчитывается о них для вашей сессии."
+      },
+      "marketplace-market-orders-order": {
+        "title": "Заказ",
+        "description": "Один коммерческий заказ, его позиции, его платёжные намерения и переходы, которые машина состояний разрешает сейчас."
+      },
+      "marketplace-market-orders-order-transitions": {
+        "title": "Разрешённые переходы",
+        "description": "Следующие состояния, которые машина состояний заказа разрешает для этого заказа."
+      }
+    }
+  },
+  "ur": {
+    "pageMeta": {
+      "hydroma-hydroma-models": {
+        "title": "ماڈل رجسٹری",
+        "description": "انجن کے اعلام کردہ ہر ماڈل، اس کے ورژن، حوالہ شدہ طریقے اور اپنے بارے میں شائع کردہ توثیقی حالت کے ساتھ۔"
+      },
+      "hydroma-hydroma-models-model_id": {
+        "title": "ماڈل",
+        "description": "رجسٹری میں ایک ماڈل کا ریکارڈ: ورژن، طریقے کا حوالہ، اعلام شدہ توثیقی حالت اور اس کے پیچھے کے ٹیسٹ کیس۔"
+      },
+      "hydroma-hydroma-models-model_id-validation": {
+        "title": "توثیقی رپورٹ",
+        "description": "وہ توثیقی رپورٹ جو گیٹ وے ماڈل کے اعلام شدہ ٹیسٹ کیسز سے بناتی ہے۔"
+      },
+      "hydroma-hydroma-slaughterhouse-status": {
+        "title": "توثیقی خلاصہ",
+        "description": "رجسٹری کتنے ماڈلز اعلام کرتا ہے اور ہر ماڈل اپنی توثیقی حالت کو کیسے بیان کرتا ہے۔"
+      },
+      "hydroma-hydroma-validation": {
+        "title": "فارمولا کی تصدیق",
+        "description": "انجن کا ہر فارمولا دوبارہ اخذ کر کے شائع شدہ قدر، کسی یکسانیت یا دوسرے ماڈول سے موازنہ کیا جاتا ہے؛ ہر چیک اپنا ماخذ، متوقع قدر اور فیصلے کی برداشت بتاتا ہے۔"
+      },
+      "hydroma-hydroma-validation-checks": {
+        "title": "تصدیقی چیکس",
+        "description": "انجن کی انجام دینے والی توثیقی چیکس کی فہرست۔ یہ نقشہ نہ ماخذ رکھتا ہے نہ برداشت۔"
+      },
+      "hydroma-hydroma-validation-reference-data": {
+        "title": "حوالہ جی ڈیٹا",
+        "description": "وہ شائع شدہ قدریں جن کے مقابلے توثیقی سیٹ کا فیصلہ ہونا چاہیے، بعینہٖ وہی جیسے ذخیرہ انہیں رکھتا ہے۔"
+      },
+      "hydroma-hydroma-validation-run": {
+        "title": "تصدیقی چیک چلائیں",
+        "description": "ایک توثیقی چیک چلا کر انجن کی بنائی ہوئی قدر کو اس قدر کے ساتھ پڑھیں جو پیدا کی جانا تھی۔"
+      },
+      "hydroma-hydroma-indices": {
+        "title": "اشاریے",
+        "description": "آٹھ ریموٹ سینسنگ اور زرعی آب وہوا کے اشارے، RothC پر مبنی کربن اشارے سے لے کر فینالوجی اور پانی کے توازن تک۔"
+      },
+      "hydroma-hydroma-indices-model_id": {
+        "title": "ایک اشارہ",
+        "description": "ایک اشارے کا پیمانہ معاہدہ اور اس کا شائع شدہ ریکارڈ۔"
+      },
+      "hydroma-hydroma-mrv": {
+        "title": "نگرانی، رپورٹنگ اور تصدیق",
+        "description": "دو MRV ٹولز: معیاری ضمانت کی پٹیاں، اور وہ پیمائش کا مجموعہ جو حقیقی مشاہدات کو سمولیٹ شدہ مشاہدات سے ممیز کرتا ہے۔"
+      },
+      "hydroma-hydroma-mrv-model_id": {
+        "title": "MRV ٹول",
+        "description": "ایک MRV ٹول کا پیمانہ معاہدہ اور اس کا شائع شدہ ریکارڈ۔"
+      },
+      "hydroma-hydroma-simulation": {
+        "title": "سمولیشن",
+        "description": "دو سمولیشن ٹولز: Saltelli کے بعد Sobol کیلیبریشن، اور HyDroMa کے منظر نامے کے میٹرکس۔"
+      },
+      "hydroma-hydroma-simulation-model_id": {
+        "title": "سمولیشن ٹول",
+        "description": "ایک سمولیشن ٹول کا پیمانہ معاہدہ اور اس کا شائع شدہ ریکارڈ۔"
+      },
+      "hydroma-hydroma-soil": {
+        "title": "خاک کے ماڈل",
+        "description": "نو خاکی ٹولز: USDA کے بافت کا مثلث، Keys to Soil Taxonomy، van Genuchten کی روکھ کی منحنی، مٹی کا منتقلی، طبیعیات، کیمیا، شور، صحت اور سفارشات۔"
+      },
+      "hydroma-hydroma-water": {
+        "title": "پانی کے ماڈل",
+        "description": "چار پانی کے ٹولز: SCS-CN اور عقلانی طریقے سے رواںی، زیر زمین پانی کا ماڈل، اور محصور و غیر محصور زیر زمین پانی کی سروس۔"
+      },
+      "hydroma-hydroma-water-model_id": {
+        "title": "پانی کا ٹول",
+        "description": "ایک پانی کے ماڈل کا پیمانہ معاہدہ اور اس کا شائع شدہ ریکارڈ۔"
+      },
+      "marketplace-market-escrow-orders": {
+        "title": "امانتی آرڈرز",
+        "description": "وہ آرڈرز جو امانت میں محفوظ ہیں، جیسا کہ تجارتی گیٹ وے آپ کے سیشن کے لیے انہیں رپورٹ کرتا ہے۔"
+      },
+      "marketplace-market-orders-order": {
+        "title": "آرڈر",
+        "description": "ایک تجارتی آرڈر، اس کی اقلام، اس کے ادائیگی کے ارادات، اور وہ تبدیلیاں جو اس وقت اسٹیٹ مشین اجازت دیتی ہے۔"
+      },
+      "marketplace-market-orders-order-transitions": {
+        "title": "اجازت شدہ تبدیلیاں",
+        "description": "وہ اگلی حالتیں جو آرڈر اسٹیٹ مشین اس آرڈر کے لیے اجازت دیتی ہے۔"
+      }
+    }
+  },
+  "zh": {
+    "pageMeta": {
+      "hydroma-hydroma-models": {
+        "title": "模型注册表",
+        "description": "引擎声明的每一个模型，附其版本、所引方法以及它为自己发布的验证状态。"
+      },
+      "hydroma-hydroma-models-model_id": {
+        "title": "模型",
+        "description": "一个模型在注册表中的记录：版本、方法引用、声明的验证状态，以及支撑它的测试用例。"
+      },
+      "hydroma-hydroma-models-model_id-validation": {
+        "title": "验证报告",
+        "description": "网关依据模型声明的测试用例生成的验证报告。"
+      },
+      "hydroma-hydroma-slaughterhouse-status": {
+        "title": "验证汇总",
+        "description": "注册表声明了多少个模型，以及每个模型如何描述自己的验证状态。"
+      },
+      "hydroma-hydroma-validation": {
+        "title": "公式校验",
+        "description": "每一个引擎公式都被重新推导，并与已发布的数值、一个恒等式或第二个模块比对。每项校验都声明其来源、期望值和判定容差。"
+      },
+      "hydroma-hydroma-validation-checks": {
+        "title": "校验项",
+        "description": "引擎运行的校验项目录。该投影不携带来源与容差。"
+      },
+      "hydroma-hydroma-validation-reference-data": {
+        "title": "参考数据",
+        "description": "校验套件据以判定的已发布数值，与仓库中保存的完全一致。"
+      },
+      "hydroma-hydroma-validation-run": {
+        "title": "运行一项校验",
+        "description": "运行一项校验，并并排读取引擎产生的数值与它本应产生的数值。"
+      },
+      "hydroma-hydroma-indices": {
+        "title": "指数",
+        "description": "八个遥感与农候指数，从以 RothC 为基础的碳指数到物候与水分平衡指数。"
+      },
+      "hydroma-hydroma-indices-model_id": {
+        "title": "单个指数",
+        "description": "一个指数的参数契约与已发布记录。"
+      },
+      "hydroma-hydroma-mrv": {
+        "title": "监测、报告与核查",
+        "description": "两项 MRV 工具：质量保证区间，以及把实测观测与模拟观测区分开的指标集。"
+      },
+      "hydroma-hydroma-mrv-model_id": {
+        "title": "MRV 工具",
+        "description": "一项 MRV 工具的参数契约与已发布记录。"
+      },
+      "hydroma-hydroma-simulation": {
+        "title": "模拟",
+        "description": "两项模拟工具：依据 Saltelli 的 Sobol 校准，以及 HyDroMa 的情景矩阵。"
+      },
+      "hydroma-hydroma-simulation-model_id": {
+        "title": "模拟工具",
+        "description": "一项模拟工具的参数契约与已发布记录。"
+      },
+      "hydroma-hydroma-soil": {
+        "title": "土壤模型",
+        "description": "九项土壤工具：USDA 质地三角、Keys to Soil Taxonomy、van Genuchten 持水曲线、土壤传递函数、物理、化学、盐分、健康与推荐。"
+      },
+      "hydroma-hydroma-water": {
+        "title": "水模型",
+        "description": "四项水工具：SCS-CN 与理性方法的径流、地下水模型，以及承压与非承压地下水服务。"
+      },
+      "hydroma-hydroma-water-model_id": {
+        "title": "水工具",
+        "description": "一个水模型的参数契约与已发布记录。"
+      },
+      "marketplace-market-escrow-orders": {
+        "title": "托管订单",
+        "description": "以商业网关为您的会话所报告的托管订单。"
+      },
+      "marketplace-market-orders-order": {
+        "title": "订单",
+        "description": "一笔商业订单，其明细、其支付意图，以及状态机当前允许的转换。"
+      },
+      "marketplace-market-orders-order-transitions": {
+        "title": "允许的转换",
+        "description": "订单状态机为该订单允许的下一批状态。"
+      }
+    }
+  }
+}

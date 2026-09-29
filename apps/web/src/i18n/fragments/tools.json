@@ -1,0 +1,194 @@
+{
+  "fa": {
+    "tools": {
+      "meta": {
+        "title": "ابزار علمی",
+        "description": "اجرای یک مدل علمی با قرارداد پارامتری ثبت‌شدهٔ خودش؛ نسخهٔ مدل، کالیبراسیون و فاصلهٔ اطمینان روی صفحه نمایش داده می‌شود."
+      },
+      "provenance": "منبع این اجرا",
+      "live": "در دسترس",
+      "unavailable": "در دسترس نیست",
+      "footer": "هر عدد روی این صفحه یا از قرارداد سنجش آمده، یا صریحاً «هنوز موجود نیست» برچسب خورده است.",
+      "states": {
+        "loading": "در حال خواندن قرارداد ابزار…",
+        "empty": "هنوز اجرایی انجام نشده است.",
+        "error": "اجرا ناتمام ماند یا قرارداد ورودی را نپذیرفت.",
+        "partial": "پاسخ ناقص است؛ آنچه کامل برگشته و آنچه نبرگشته در ادامه آمده است.",
+        "offline": "دروازهٔ علمی در دسترس نیست؛ هیچ عددی از این اجرا وجود ندارد.",
+        "retry": "تلاش دوباره"
+      },
+      "regions": {
+        "filters": "قرارداد ورودی ثبت‌شده",
+        "data": "نتیجهٔ اجرا",
+        "state": "وضعیت داده",
+        "summary": "نسخه، کالیبراسیون و عدمقطعیت",
+        "detail": "این محاسبه چگونه کار می‌کند",
+        "notes": "یادداشت صداقت داده",
+        "actions": "اجرای دوباره",
+        "provenance": "منبع",
+        "footer": "پانوشت"
+      },
+      "input": {
+        "run": "اجرای مدل با این ورودی‌ها",
+        "fixErrors": "ابتدا فیلدهای مشخص‌شده را اصلاح کنید",
+        "required": "الزامی",
+        "optional": "اختیاری",
+        "pickOne": "یک گزینه برگزینید",
+        "noParameters": "این ابزار پارامتری برای ورودی ثبت نکرده است.",
+        "contractUnavailable": "قرارداد ورودی ثبت‌شدهٔ این ابزار از دروازه دریافت نشد.",
+        "noContract": "برای این ابزار هیچ قرارداد اجرایی منتشر نشده است.",
+        "noContractDeclared": "این ابزار در فهرست اعلام‌شده هست اما هیچ مسیر اجرایی ندارد؛ بنابراین هیچ نتیجه‌ای نمایش داده نمی‌شود.",
+        "noContractUnknown": "این شناسه در فهرست اعلام‌شده نیست و قرارداد اجرایی ندارد.",
+        "invalid": {
+          "required": "این فیلد الزامی است و مقدار پیش‌فرض ندارد.",
+          "not-a-number": "مقدار باید عدد باشد.",
+          "not-an-integer": "مقدار باید عدد صحیح باشد.",
+          "option": "مقدار باید یکی از گزینه‌های قرارداد باشد."
+        }
+      },
+      "output": {
+        "field": "کلید",
+        "value": "مقدار",
+        "empty": "پاسخ بدون هیچ مقدار خوانایی برگشت.",
+        "none": "هنوز اجرایی انجام نشده است؛ با دکمهٔ اجرا، همین قرارداد فراخوانی می‌شود.",
+        "blocked": "{count, plural, one {یک فیلد ورودی نامعتبر است و اجرا آغاز نشد.} other {# فیلد ورودی نامعتبر است و اجرا آغاز نشد.}}",
+        "truncated": "این پاسخ بیش از {count} سطر دارد؛ تنها {count} سطر نخست نمایش داده شده است و بقیهٔ آن پنهان است."
+      },
+      "field": {
+        "modelVersion": "نسخهٔ مدل",
+        "calibration": "کالیبراسیون",
+        "confidenceInterval": "فاصلهٔ اطمینان",
+        "runId": "شناسهٔ اجرا",
+        "notAvailable": "هنوز موجود نیست",
+        "fidelity": "وفاداری روش",
+        "reference": "مرجع علمی",
+        "engine": "پیاده‌سازی موتور",
+        "execution": "قرارداد اجرا"
+      },
+      "bar": {
+        "missing": "{count, plural, one {این قرارداد یکی از چهار خانهٔ نوار را برنمی‌گرداند؛ مقداری برای آن حدس زده نشده است.} other {این قرارداد # خانه از چهار خانهٔ نوار را برنمی‌گرداند؛ برای آن‌ها مقداری حدس زده نشده است.}}"
+      },
+      "detail": {
+        "noReference": "این ابزار مرجع علمی اعلام نکرده است.",
+        "validity": "دامنهٔ اعتبار",
+        "limitations": "محدودیت‌های شناخته‌شده",
+        "inputData": "دادهٔ ورودی مورد نیاز",
+        "noContract": "چون مسیر اجرایی منتشر نشده، هیچ عددی از این ابزار قابل تولید نیست."
+      },
+      "notes": {
+        "integrity": "هر مقدار باید منشأ خود را اعلام کند: «واقعی»، «شبیه‌سازی‌شده» یا «بدون داده».",
+        "noBadge": "این پاسخ هیچ برچسب منشأ ندارد؛ نبودِ برچسب دلیل اندازه‌گیری‌شدن عدد نیست.",
+        "source": {
+          "real": "واقعی",
+          "simulated": "شبیه‌سازی‌شده",
+          "no_data": "بدون داده"
+        }
+      },
+      "actions": {
+        "rerun": "اجرای دوباره با همین ورودی‌ها",
+        "back": "بازگشت به HyDroMa"
+      },
+      "notFound": {
+        "title": "چنین ابزاری ثبت نشده است",
+        "description": "این شناسه نه در فهرست اعلام‌شدهٔ ابزارها هست و نه قرارداد اجرایی دارد؛ بنابراین صفحه‌ای برای آن ساخته نشد.",
+        "detail": "اگر نام را اشتباه وارد کرده‌اید، شناسه را بررسی کنید؛ اگر ابزار واقعی است، مسیر اجرایی آن در دروازه منتشر نشده است."
+      }
+    }
+  },
+  "en": {
+    "tools": {
+      "meta": {
+        "title": "Scientific instrument",
+        "description": "Run a scientific model through its own registered parameter contract; model version, calibration and confidence interval are stated on the page."
+      },
+      "provenance": "Source of this run",
+      "live": "Live",
+      "unavailable": "Unavailable",
+      "footer": "Every number on this page either came from a measured contract or is explicitly labelled as not yet available.",
+      "states": {
+        "loading": "Reading the tool contract…",
+        "empty": "No run has been made yet.",
+        "error": "The run did not complete, or the input contract was rejected.",
+        "partial": "The answer is partial; what returned in full and what did not is stated below.",
+        "offline": "The science gateway is unreachable; this run has produced no number.",
+        "retry": "Try again"
+      },
+      "regions": {
+        "filters": "Registered input contract",
+        "data": "Run result",
+        "state": "Data state",
+        "summary": "Version, calibration and uncertainty",
+        "detail": "How this calculation works",
+        "notes": "Data integrity note",
+        "actions": "Run again",
+        "provenance": "Source",
+        "footer": "Footnote"
+      },
+      "input": {
+        "run": "Run the model with these inputs",
+        "fixErrors": "Fix the marked fields first",
+        "required": "Required",
+        "optional": "Optional",
+        "pickOne": "Choose one",
+        "noParameters": "This tool registers no input parameters.",
+        "contractUnavailable": "The registered input contract for this tool did not come back from the gateway.",
+        "noContract": "No execution contract is published for this tool.",
+        "noContractDeclared": "The tool is declared, but no route executes it, so no result is shown.",
+        "noContractUnknown": "This identifier is not in the declared catalogue and has no execution contract.",
+        "invalid": {
+          "required": "This field is required and has no default.",
+          "not-a-number": "The value must be a number.",
+          "not-an-integer": "The value must be a whole number.",
+          "option": "The value must be one of the contract's own options."
+        }
+      },
+      "output": {
+        "field": "Key",
+        "value": "Value",
+        "empty": "The response carried no readable value.",
+        "none": "No run has been made yet; the run button calls this same contract.",
+        "blocked": "{count, plural, one {One input field is not valid, so the run did not start.} other {# input fields are not valid, so the run did not start.}}",
+        "truncated": "This response holds more than {count} rows. The first {count} are shown; the rest are not displayed."
+      },
+      "field": {
+        "modelVersion": "Model version",
+        "calibration": "Calibration",
+        "confidenceInterval": "Confidence interval",
+        "runId": "Run identifier",
+        "notAvailable": "Not yet available",
+        "fidelity": "Method fidelity",
+        "reference": "Scientific reference",
+        "engine": "Engine implementation",
+        "execution": "Execution contract"
+      },
+      "bar": {
+        "missing": "{count, plural, one {The contract returns one of the four cells in this bar; no value has been guessed for it.} other {The contract returns # of the four cells in this bar; no value has been guessed for the rest.}}"
+      },
+      "detail": {
+        "noReference": "This tool declares no scientific reference.",
+        "validity": "Domain of validity",
+        "limitations": "Known limitations",
+        "inputData": "Input data required",
+        "noContract": "Because no execution route is published, this tool cannot produce a number here."
+      },
+      "notes": {
+        "integrity": "Every value must declare where it came from: real, simulated, or no data.",
+        "noBadge": "This response carries no provenance badge; the absence of a badge is not evidence that a value was measured.",
+        "source": {
+          "real": "Real",
+          "simulated": "Simulated",
+          "no_data": "No data"
+        }
+      },
+      "actions": {
+        "rerun": "Run again with these inputs",
+        "back": "Back to HyDroMa"
+      },
+      "notFound": {
+        "title": "No such tool is registered",
+        "description": "This identifier is neither in the declared tool catalogue nor resolvable to an execution contract, so no page was built for it.",
+        "detail": "If the name is a typo, check the identifier. If the tool is real, its execution route has not been published in the gateway, and that is the gap to close."
+      }
+    }
+  }
+}

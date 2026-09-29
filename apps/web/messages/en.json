@@ -53,6 +53,65 @@
       "dtcgTokens": "DTCG token source",
       "cssVariables": "CSS variable source",
       "runtimeTokens": "Runtime token source"
+    },
+    "ledger": {
+      "live": "Live",
+      "unavailable": "Unavailable",
+      "provenance": "Source",
+      "notMeasured": "not measured",
+      "showing": "{shown} of {total} rows shown",
+      "placeholderHeading": "This contract does not measure what its schema implies",
+      "placeholderBody": "The gateway answers with constants rather than readings. Every such field is labelled below instead of being shown as a measurement, so no number on this page is a reading of the running platform.",
+      "upstreamGate": "The gateway requires only an authenticated session for this contract; it applies no role gate of its own. Read every row as tenant data, not as data scoped to you.",
+      "processMemory": "This registry lives in the gateway’s process memory and is lost when the gateway restarts.",
+      "seededRegistry": "This registry is seeded in the gateway and never probed. A row changes only when an action is issued against the same process.",
+      "notAnIdentifier": "This path segment is not an identifier the contract accepts, so no request was made.",
+      "states": {
+        "loading": "Resolving this surface.",
+        "empty": "The gateway returned no rows for this contract.",
+        "error": "The gateway answered with an error. The contract and its status are named above.",
+        "offline": "The gateway could not be reached. This reader is offline or the service is degraded, and nothing on this page can be trusted as current.",
+        "partial": "Only part of the result could be resolved.",
+        "retry": "Retry"
+      },
+      "regions": {
+        "title": "Surface",
+        "status": "Contract state",
+        "provenance": "Provenance",
+        "filters": "Input contract",
+        "state": "Result state",
+        "data": "Published values",
+        "actions": "Actions this contract exposes",
+        "summary": "Headline figures",
+        "detail": "Contract detail",
+        "notes": "Method note",
+        "print": "Printable statement",
+        "footer": "Catalogue entry"
+      },
+      "columns": {
+        "name": "Name",
+        "status": "Status",
+        "updated": "Last updated",
+        "created": "Created",
+        "value": "Value",
+        "type": "Type",
+        "key": "Key",
+        "source": "Source",
+        "identifier": "Identifier",
+        "count": "Count",
+        "total": "Total",
+        "amount": "Amount",
+        "detail": "Detail",
+        "locale": "Language",
+        "version": "Version",
+        "group": "Group",
+        "member": "Member",
+        "action": "Action",
+        "message": "Message",
+        "code": "Code",
+        "currency": "Currency"
+      },
+      "footer": "Console ledger surface"
     }
   },
   "workspace": {
@@ -107,6 +166,64 @@
       "content_editor": "Content editor",
       "auditor": "Auditor",
       "manager": "Manager"
+    },
+    "ledger": {
+      "live": "Live",
+      "unavailable": "Unavailable",
+      "provenance": "Source",
+      "notMeasured": "not measured",
+      "showing": "{shown} of {total} rows shown",
+      "placeholderHeading": "This contract does not measure what its schema implies",
+      "placeholderBody": "The gateway answers with constants rather than readings. Every such field is labelled below instead of being shown as a measurement, so no number on this page is a reading of the running platform.",
+      "upstreamGate": "The gateway requires only an authenticated session for this contract; it applies no role gate of its own. Read every row as tenant data, not as data scoped to you.",
+      "processMemory": "This registry lives in the gateway’s process memory and is lost when the gateway restarts.",
+      "seededRegistry": "This registry is seeded in the gateway and never probed. A row changes only when an action is issued against the same process.",
+      "notAnIdentifier": "This path segment is not an identifier the contract accepts, so no request was made.",
+      "states": {
+        "loading": "Resolving this surface.",
+        "empty": "The gateway returned no rows for this contract.",
+        "error": "The gateway answered with an error. The contract and its status are named above.",
+        "offline": "The gateway could not be reached. This reader is offline or the service is degraded, and nothing on this page can be trusted as current.",
+        "partial": "Only part of the result could be resolved.",
+        "retry": "Retry"
+      },
+      "regions": {
+        "title": "Surface",
+        "status": "Contract state",
+        "provenance": "Provenance",
+        "filters": "Input contract",
+        "state": "Result state",
+        "data": "Published values",
+        "actions": "Actions this contract exposes",
+        "summary": "Headline figures",
+        "detail": "Contract detail",
+        "notes": "Method note",
+        "print": "Printable statement",
+        "footer": "Catalogue entry"
+      },
+      "columns": {
+        "name": "Name",
+        "status": "Status",
+        "updated": "Last updated",
+        "created": "Created",
+        "value": "Value",
+        "type": "Type",
+        "key": "Key",
+        "source": "Source",
+        "identifier": "Identifier",
+        "count": "Count",
+        "total": "Total",
+        "amount": "Amount",
+        "detail": "Detail",
+        "locale": "Language",
+        "version": "Version",
+        "group": "Group",
+        "member": "Member",
+        "action": "Action",
+        "message": "Message",
+        "code": "Code"
+      },
+      "footer": "Workspace ledger surface"
     }
   },
   "help": {
@@ -520,6 +637,118 @@
       "scheduleVisit": "Request a visit",
       "body": "The visit request is posted to the gateway.",
       "visitNote": "No date is promised until the request has been answered."
+    },
+    "a11y": {
+      "metaTitle": "Accessibility statement",
+      "metaDescription": "What this build measures about contrast and typefaces, what it does not claim, and how to report a barrier.",
+      "measuredTitle": "What this statement rests on",
+      "contrastTitle": "Colour contrast",
+      "contrastBody": "One gate measures every foreground and background token pair the stylesheet declares, in both the light and the dark scheme, against the WCAG floor for that pair.",
+      "contrastPairs": "token pairs measured",
+      "contrastFloor": "floor for each pair",
+      "contrastPass": "every measured pair meets its own floor",
+      "fontsTitle": "Typefaces",
+      "fontsBody": "The stylesheet declares three font families and eight font files. Every script the platform serves is listed below with what actually reaches the screen.",
+      "fontsBundled": "Shipped from this origin",
+      "fontsFallback": "Not shipped here; the reader's own installed font is used",
+      "fontsGap": "A script in this column is drawn with a font already installed on the reader’s device, so its appearance is not controlled by this build. An empty list means no locale is in that state.",
+      "assistiveTitle": "Keyboard and focus",
+      "assistiveBody": "Every interactive control is reachable and operable by keyboard, and the focus ring is never removed. A skip link is the first focusable element on every page.",
+      "inclusiveTitle": "Channels beyond the browser",
+      "inclusiveBody": "The same content is reachable over USSD, SMS and voice, so a reader does not need a smartphone, a data plan or a modern browser.",
+      "notClaimedTitle": "What this statement does not claim",
+      "notClaimedItems": [
+        "No external accessibility audit has been carried out, so no conformance level is declared.",
+        "The two measurements below are a point-in-time record. A later build can differ, and the stamp says when the record was taken.",
+        "Screen-reader behaviour is not checked automatically by this build’s gate.",
+        "No usability study with assistive-technology users has been run.",
+        "WCAG conformance is a property of a release, not of this page."
+      ],
+      "feedbackTitle": "Reporting a barrier",
+      "feedbackBody": "If any part of this site blocks you, say so and name the page. A barrier that is never reported cannot be prioritised.",
+      "measuredBy": "Measured by",
+      "measuredAt": "measured on",
+      "fontsFamilies": "font families declared",
+      "fontsFiles": "font files on disk",
+      "fontsLocales": "locales served by a bundled family"
+    },
+    "telecom": {
+      "metaTitle": "USSD, SMS and voice access",
+      "metaDescription": "USSD and SMS copy, with the hard character limits shown, beside the live status of the voice gateway.",
+      "editorTitle": "Message editor",
+      "editorLead": "USSD and SMS have hard limits. Text past the limit is either split or not sent at all, so both limits are shown here at all times.",
+      "editorUssd": "USSD text",
+      "editorSms": "SMS text",
+      "editorLimitUssd": "USSD limit",
+      "editorLimitSms": "SMS limit",
+      "editorRule": "GSM 07.05 splits a message into 160-character segments and the handset shows no more than 20 of them.",
+      "editorOver": "More than one segment; the text is split across both.",
+      "editorWithin": "Fits in a single segment.",
+      "editorSegments": "segments",
+      "editorUssdNote": "A service code works on any basic phone with * and #, and the network will not carry more than 182 characters.",
+      "menuTitle": "The service menu as the gateway builds it",
+      "menuBody": "This text is produced by the gateway's own engine, not written by hand, and comes back in the language that was asked for.",
+      "menuUnavailable": "The gateway does not build a menu for this language.",
+      "languagesTitle": "Languages the voice gateway reports",
+      "languagesBody": "This is the gateway's live list, not an aspiration.",
+      "smsDeliveryTitle": "SMS delivery",
+      "smsDeliveryBody": "No contract exists for SMS delivery, so no delivery status is shown here."
+    },
+    "simple": {
+      "metaTitle": "Low-bandwidth version",
+      "metaDescription": "The same content with fewer images, fewer scripts and fourteen languages, for a weak network.",
+      "guaranteeTitle": "What makes this version lighter",
+      "guaranteeNoImages": "No image is loaded.",
+      "guaranteeNoScripts": "No script runs on this page.",
+      "guaranteeSmall": "The HTML document is small and carries no render overhead.",
+      "guaranteeLanguages": "All fourteen languages are served from one route.",
+      "guaranteeOffline": "When a request fails the page shows its own state rather than inventing a number.",
+      "languagesTitle": "The gateway menu for your language",
+      "languagesBody": "The gateway builds a menu in three languages. For the other eleven, the page says plainly that there is none."
+    },
+    "integrity": {
+      "metaTitle": "Evidence and references",
+      "metaDescription": "What these pages can show from a real contract, and what is labelled as an aspiration instead.",
+      "claimTitle": "The rule these pages follow",
+      "claimBody": "Every number you see here came back from a live call. When the call does not answer, the page says it is unavailable and shows no number at all.",
+      "traceabilityTitle": "Traceability",
+      "traceabilityBody": "Every row names the contract path and the method used to read it, so you can ask for it again yourself.",
+      "aspirationTitle": "Aspiration, not report",
+      "aspirationLead": "The master plan's standing rule is \"no external validation claim\": nothing here claims that an institution outside this repository has approved anything. Anything beyond that is labelled an aspiration.",
+      "aspirationItems": [
+        "External validation of the models has not been carried out.",
+        "Publication in an external repository has not been carried out.",
+        "Peer review by an outside researcher has not been carried out."
+      ],
+      "noExternalTitle": "On external validation",
+      "noExternalBody": "This page shows no external certificate, because none is registered in this repository. When one is, it appears here with its name and its date.",
+      "modelCardsTitle": "Model cards",
+      "modelCardsBody": "Each model's validity domain and limitations, read from the platform's own model registry.",
+      "agrovocTitle": "AGROVOC vocabulary",
+      "agrovocBody": "Offline search over the agronomy knowledge graph, with no external service in the path.",
+      "contractTitle": "The contract that would fix this",
+      "contractBody": "One reviewed read that returns the number. Until then this page invents nothing."
+    },
+    "legalTexts": {
+      "metaTitle": "Legal texts",
+      "metaDescription": "Published legal texts with their language and version number, exactly as the gateway holds them.",
+      "localesTitle": "Locales that hold a legal text",
+      "slugsTitle": "Published slugs",
+      "versionsTitle": "Version history",
+      "versionLabel": "version",
+      "statusLabel": "status",
+      "effectiveLabel": "effective at",
+      "publishedOnly": "No published text exists in this language yet; the raw gateway listing is below."
+    },
+    "statement": {
+      "metaTitle": "Statements",
+      "metaDescription": "Mission, transparency, and what is deliberately not claimed yet.",
+      "aspirationTitle": "What is not claimed yet",
+      "aspirationBody": "Every number this platform has produced so far is a return from data it produced itself. Until something is verified from outside this repository, no figure for impact, beneficiaries or scale is written here."
+    },
+    "about": {
+      "metaTitle": "About the platform",
+      "metaDescription": "What this platform is, who it is for, and what it does not claim yet."
     }
   },
   "offline": {
@@ -840,6 +1069,63 @@
       "escrowProvenance": "Source of the escrow",
       "released": "The funds were released",
       "cancelled": "The escrow was cancelled"
+    },
+    "surface": {
+      "back": "Back to marketplace",
+      "actionTitle": "Action endpoint",
+      "actionLead": "This marketplace path is a command the gateway executes, not a document it publishes.",
+      "actionStatus": "Action endpoint",
+      "actionSource": "Declared source",
+      "actionCommandTitle": "The command",
+      "actionCommandDescription": "The gateway mounts this path as a write. It has no page of its own because a write is not something a reader reads.",
+      "actionReadTitle": "The read side",
+      "actionReadDescription": "This is the endpoint that publishes the same subject for reading.",
+      "actionReadLink": "Open the read page",
+      "actionNoRead": "The gateway publishes no read endpoint for this command, so there is nothing to link to. Adding one belongs to the owner of this surface.",
+      "actionFormTitle": "No form here",
+      "actionFormDescription": "This page deliberately offers no submit control. A form would assert a request body and a caller role the contract does not describe, and a command that moves money is barred until a versioned contract step comes before it.",
+      "actionDeclaredBy": "Declared by"
+    },
+    "escrowOrders": {
+      "title": "Escrow orders",
+      "lead": "Orders held under escrow, as the commerce gateway reports them for your session.",
+      "authHint": "This list is scoped to your signed-in session. A signed-out request is refused by the gateway, not shown as empty.",
+      "escrowByDefault": "Funds are held in escrow by default and are released only on an allowed order transition."
+    },
+    "orderRecord": {
+      "title": "Order",
+      "lead": "One commerce order, its items, its payment intents and the transitions the state machine currently allows.",
+      "authHint": "This order is read for your signed-in session only.",
+      "transitions": "Allowed transitions",
+      "track": "Tracking timeline",
+      "evidence": "Evidence"
+    },
+    "orderTransitions": {
+      "title": "Allowed transitions",
+      "lead": "The next states the order state machine allows for this order.",
+      "transition": "Transition",
+      "note": "A transition the gateway does not allow returns an error, so this page offers no command."
+    },
+    "form": {
+      "loadingSession": "Loading your session",
+      "authRequired": "A signed-in session is required to submit this form.",
+      "signIn": "Sign in",
+      "invalidField": "Check the highlighted field and submit again.",
+      "requiredHint": "The fields the gateway marks as required must be filled in. The gateway checks every value again."
+    },
+    "demand": {
+      "title": "Post a B2B demand",
+      "lead": "Register a purchase demand that villages and sellers can be matched against. Your identity comes from your session and is not asked for here.",
+      "provenance": "Demand command",
+      "listProvenance": "Your demands",
+      "commodity": "Commodity",
+      "quantity": "Quantity required",
+      "unit": "Unit",
+      "frequency": "Frequency",
+      "submit": "Submit demand",
+      "yourDemands": "Your demands",
+      "createdTitle": "Demand submitted",
+      "createdDescription": "The gateway registered the demand. It is listed under your demands, with no name attached to it."
     }
   },
   "common": {
@@ -2157,6 +2443,90 @@
     "learning-learn-legal-locale-slug-versions": {
       "title": "Version history",
       "description": "Every version of a legal text, with the change recorded for each."
+    },
+    "hydroma-hydroma-carbon-model_id": {
+      "title": "Carbon model",
+      "description": "Metadata for one HyDroMa carbon tool: its parameters, domain and fidelity, exactly as the engine registry declares them."
+    },
+    "hydroma-hydroma-models": {
+      "title": "Model registry",
+      "description": "Every model the engine declares, with its version, its cited method and the validation status it publishes about itself."
+    },
+    "hydroma-hydroma-models-model_id": {
+      "title": "Model",
+      "description": "One model's registry record: version, method reference, declared validation status and the fixtures that back it."
+    },
+    "hydroma-hydroma-models-model_id-validation": {
+      "title": "Validation report",
+      "description": "The validation report the gateway builds from a model's declared test cases."
+    },
+    "hydroma-hydroma-slaughterhouse-status": {
+      "title": "Validation roll-up",
+      "description": "How many models the registry declares, and how each one describes its own validation state."
+    },
+    "hydroma-hydroma-validation": {
+      "title": "Formula verification",
+      "description": "Every engine formula re-derived and compared with a published value, an identity or a second module. Each check states its source, its expected value and the tolerance it is judged against."
+    },
+    "hydroma-hydroma-validation-checks": {
+      "title": "Verification checks",
+      "description": "The catalogue of verification checks the engine runs. This projection carries no source and no tolerance."
+    },
+    "hydroma-hydroma-validation-reference-data": {
+      "title": "Reference data",
+      "description": "The published values the verification suite is meant to be judged against, exactly as the repository stores them."
+    },
+    "hydroma-hydroma-validation-run": {
+      "title": "Run a verification check",
+      "description": "Run one verification check and read the value the engine produced beside the value it was expected to produce."
+    },
+    "hydroma-hydroma-indices": {
+      "title": "Indices",
+      "description": "Eight remote-sensing and agroclimatic indices, from the RothC-anchored carbon index to the phenology and water-balance indices."
+    },
+    "hydroma-hydroma-indices-model_id": {
+      "title": "Index",
+      "description": "The parameter contract and published record of one index."
+    },
+    "hydroma-hydroma-mrv": {
+      "title": "Monitoring, reporting and verification",
+      "description": "The two MRV tools: the quality-assurance bands, and the metric set that separates real observations from simulated ones."
+    },
+    "hydroma-hydroma-mrv-model_id": {
+      "title": "MRV tool",
+      "description": "The parameter contract and published record of one MRV tool."
+    },
+    "hydroma-hydroma-simulation": {
+      "title": "Simulation",
+      "description": "Two simulation tools: Sobol calibration after Saltelli, and the HyDroMa scenario matrices."
+    },
+    "hydroma-hydroma-simulation-model_id": {
+      "title": "Simulation tool",
+      "description": "The parameter contract and published record of one simulation tool."
+    },
+    "hydroma-hydroma-soil": {
+      "title": "Soil models",
+      "description": "Nine soil tools: the USDA texture triangle, Keys to Soil Taxonomy, the van Genuchten retention curve, pedotransfer, physics, chemistry, salinity, health and recommendations."
+    },
+    "hydroma-hydroma-water": {
+      "title": "Water models",
+      "description": "Four water tools: SCS-CN and rational-method runoff, the groundwater model, and the confined and unconfined groundwater service."
+    },
+    "hydroma-hydroma-water-model_id": {
+      "title": "Water tool",
+      "description": "The parameter contract and published record of one water model."
+    },
+    "marketplace-market-escrow-orders": {
+      "title": "Escrow orders",
+      "description": "Orders held under escrow, as the commerce gateway reports them for your session."
+    },
+    "marketplace-market-orders-order": {
+      "title": "Order",
+      "description": "One commerce order, its items, its payment intents and the transitions the state machine currently allows."
+    },
+    "marketplace-market-orders-order-transitions": {
+      "title": "Allowed transitions",
+      "description": "The next states the order state machine allows for this order."
     }
   },
   "pages": {
@@ -2398,5 +2768,264 @@
     "current_sponsors": "Current sponsors",
     "become": "How sponsorship works",
     "none": "No sponsor is listed at present."
+  },
+  "hydroma": {
+    "chrome": {
+      "provenance": "Source",
+      "live": "Live",
+      "unavailable": "Unavailable",
+      "footer": "HyDroMa scientific engine",
+      "regions": {
+        "filters": "Input contract",
+        "state": "Contract state",
+        "data": "Output",
+        "summary": "Model provenance",
+        "detail": "Contract detail",
+        "notes": "Method note",
+        "provenance": "Provenance"
+      }
+    },
+    "provenance": {
+      "heading": "Scientific transparency",
+      "version": "Model version",
+      "calibration": "Calibration",
+      "confidence": "Confidence interval",
+      "run": "Run identifier",
+      "notPublished": "Not published by this contract"
+    },
+    "instrument": {
+      "filter": "Filter",
+      "shown": "{count} of the published tools",
+      "kind": "kind",
+      "unit": "unit",
+      "default": "default",
+      "options": "options:",
+      "required": "required",
+      "optional": "optional",
+      "noParams": "This tool declares no parameters.",
+      "runIsPost": "Execution is POST {path}, which is a mutation and therefore has no page.",
+      "familyNote": "{count} tools are declared by the engine registry. The response publishes a name, a description, a cited method reference and a parameter contract — and nothing else.",
+      "specNote": "{count} parameters are declared. The run endpoint is POST {path}; a mutation never gets a page."
+    },
+    "table": {
+      "name": "Name",
+      "description": "Description",
+      "reference": "Method reference",
+      "params": "Parameters",
+      "truncated": "{count} rows; the first 50 are shown.",
+      "category": "Category",
+      "version": "Version",
+      "language": "Language",
+      "status": "Status",
+      "testCases": "test_cases",
+      "source": "Source",
+      "expected": "Expected",
+      "actual": "Actual",
+      "tolerance": "Tolerance",
+      "unit": "Unit"
+    },
+    "chart": {
+      "caption": "Error relative to the declared tolerance",
+      "exact": "exact",
+      "ratio": "×{value}",
+      "legend": "The scale runs to 100× the tolerance, so a bar past the fifth column has failed its check.",
+      "toleranceRange": "Tolerance {min} – {max}",
+      "suiteNote": "A tolerance is the bound the engine has to land inside for a check to pass. It is not a confidence interval over a prediction, and this contract does not publish one."
+    },
+    "registry": {
+      "all": "All",
+      "category": "Category",
+      "status": "Status",
+      "language": "Language",
+      "apply": "Apply",
+      "noFilter": "No filter applied; the contract is called without query parameters.",
+      "filtered": "Filtered by",
+      "note": "{count} models are declared. Version, language and method reference come from the registry. The validation status is the model's own declared field, not the result of a test run.",
+      "noInputs": "The registry declares no inputs for this model.",
+      "inputCount": "{count} inputs are declared.",
+      "runIsPost": "Execution is POST {path}, which is a mutation and therefore has no page.",
+      "declaredNotExecuted": "The validation status is the model's own declared field. This read does not execute a test suite.",
+      "declaredBadge": "Declared, not executed",
+      "mockNote": "The gateway builds this report from the test-case definitions: a case with a declared expected value is counted as passed without anything running, so the failed count is always zero.",
+      "declaredInput": "{count} declared test cases feed this report.",
+      "slaughterhouseNote": "The buckets tally the registry's own declared status field. They count declarations, not executed validations."
+    },
+    "suite": {
+      "panelNote": "The suite is pure computation. It re-derives each engine output and compares it with a published value or with a mathematical identity.",
+      "count": "{count} checks ran",
+      "run": "Run",
+      "runNote": "Leaving the field empty returns the whole suite, which is the subject of the verification report page.",
+      "referenceNote": "The contract reads one JSON file from the repository and returns it verbatim.",
+      "referenceFile": "docs/hydroma/scientific_reference_data.json",
+      "slaughterhousePanel": "The endpoint takes no parameters. It counts the declared status of every model in the registry."
+    },
+    "families": {
+      "soil": {
+        "title": "Soil models",
+        "description": "Nine soil tools: the USDA texture triangle, Keys to Soil Taxonomy, the van Genuchten retention curve, pedotransfer, physics, chemistry, salinity, health and recommendations.",
+        "method": "Methods: USDA NRCS, Keys to Soil Taxonomy 13th ed., van Genuchten 1980 with Mualem 1976, Saxton & Rawls 2006, Brooks-Corey 1964, Campbell 1974, Brady & Weil 2017, USDA Handbook 60 and FAO-29.",
+        "toolTitle": "Soil tool",
+        "toolDescription": "The parameter contract and published record of one soil model."
+      },
+      "water": {
+        "title": "Water models",
+        "description": "Four water tools: SCS-CN and rational-method runoff, the groundwater model, and the confined and unconfined groundwater service.",
+        "method": "Methods: SCS National Engineering Handbook and the rational method of Chow 1959, and Todd & Mays 2005 for the groundwater pair.",
+        "toolTitle": "Water tool",
+        "toolDescription": "The parameter contract and published record of one water model."
+      },
+      "indices": {
+        "title": "Indices",
+        "description": "Eight remote-sensing and agroclimatic indices, from the RothC-anchored carbon index to the phenology and water-balance indices.",
+        "method": "Methods: Coleman & Jenkinson 1996, FAO-56 and FAO-29, Richards 1954, Gao 1996, McKee 1993, Shannon 1948, Zhang 2003 and Steduto 2009. The ECSI reference states its own limit: moisture is a rainfall/evaporation proxy, and the RothC runner should be used when soil moisture deficit is available.",
+        "toolTitle": "Index",
+        "toolDescription": "The parameter contract and published record of one index."
+      },
+      "mrv": {
+        "title": "Monitoring, reporting and verification",
+        "description": "The two MRV tools: the quality-assurance bands, and the metric set that separates real observations from simulated ones.",
+        "method": "Method: EM-01. Its §3 is where the real / simulated / no_data distinction is written down, and a simulated input taints any aggregate it enters.",
+        "toolTitle": "MRV tool",
+        "toolDescription": "The parameter contract and published record of one MRV tool."
+      },
+      "simulation": {
+        "title": "Simulation",
+        "description": "Two simulation tools: Sobol calibration after Saltelli, and the HyDroMa scenario matrices.",
+        "method": "Methods: Saltelli 2010 for the Sobol calibration, and the HyDroMa scenario matrices of document 28. The scenario tool declares no parameters, which the panel states rather than hiding.",
+        "toolTitle": "Simulation tool",
+        "toolDescription": "The parameter contract and published record of one simulation tool."
+      }
+    },
+    "pages": {
+      "models": {
+        "title": "Model registry",
+        "description": "Every model the engine declares, with its version, its cited method and the validation status it publishes about itself."
+      },
+      "model": {
+        "title": "Model",
+        "description": "One model's registry record: version, method reference, declared validation status and the fixtures that back it."
+      },
+      "modelValidation": {
+        "title": "Validation report",
+        "description": "The validation report the gateway builds from a model's declared test cases."
+      },
+      "slaughterhouse": {
+        "title": "Validation roll-up",
+        "description": "How many models the registry declares, and how each one describes its own validation state."
+      },
+      "suite": {
+        "title": "Formula verification",
+        "description": "Every engine formula re-derived and compared with a published value, an identity or a second module. Each check states its source, its expected value and the tolerance it is judged against."
+      },
+      "suiteChecks": {
+        "title": "Verification checks",
+        "description": "The catalogue of verification checks the engine runs. This projection carries no source and no tolerance.",
+        "note": "The contract projects each check down to its id, label, kind and unit, so the source and the tolerance are not on this page. The verification report carries them."
+      },
+      "suiteReference": {
+        "title": "Reference data",
+        "description": "The published values the verification suite is meant to be judged against, exactly as the repository stores them.",
+        "note": "The contract returns this file verbatim. It is not in the repository today, so the response is the contract's own error — and the verification suite's expected values are inlined in the checks rather than loaded from it."
+      },
+      "suiteRun": {
+        "title": "Run a verification check",
+        "description": "Run one verification check and read the value the engine produced beside the value it was expected to produce.",
+        "note": "An unknown check id is answered with HTTP 200 and an error in the body. The page reports that as a failure rather than as a clean run."
+      }
+    }
+  },
+  "tools": {
+    "meta": {
+      "title": "Scientific instrument",
+      "description": "Run a scientific model through its own registered parameter contract; model version, calibration and confidence interval are stated on the page."
+    },
+    "provenance": "Source of this run",
+    "live": "Live",
+    "unavailable": "Unavailable",
+    "footer": "Every number on this page either came from a measured contract or is explicitly labelled as not yet available.",
+    "states": {
+      "loading": "Reading the tool contract…",
+      "empty": "No run has been made yet.",
+      "error": "The run did not complete, or the input contract was rejected.",
+      "partial": "The answer is partial; what returned in full and what did not is stated below.",
+      "offline": "The science gateway is unreachable; this run has produced no number.",
+      "retry": "Try again"
+    },
+    "regions": {
+      "filters": "Registered input contract",
+      "data": "Run result",
+      "state": "Data state",
+      "summary": "Version, calibration and uncertainty",
+      "detail": "How this calculation works",
+      "notes": "Data integrity note",
+      "actions": "Run again",
+      "provenance": "Source",
+      "footer": "Footnote"
+    },
+    "input": {
+      "run": "Run the model with these inputs",
+      "fixErrors": "Fix the marked fields first",
+      "required": "Required",
+      "optional": "Optional",
+      "pickOne": "Choose one",
+      "noParameters": "This tool registers no input parameters.",
+      "contractUnavailable": "The registered input contract for this tool did not come back from the gateway.",
+      "noContract": "No execution contract is published for this tool.",
+      "noContractDeclared": "The tool is declared, but no route executes it, so no result is shown.",
+      "noContractUnknown": "This identifier is not in the declared catalogue and has no execution contract.",
+      "invalid": {
+        "required": "This field is required and has no default.",
+        "not-a-number": "The value must be a number.",
+        "not-an-integer": "The value must be a whole number.",
+        "option": "The value must be one of the contract's own options."
+      }
+    },
+    "output": {
+      "field": "Key",
+      "value": "Value",
+      "empty": "The response carried no readable value.",
+      "none": "No run has been made yet; the run button calls this same contract.",
+      "blocked": "{count, plural, one {One input field is not valid, so the run did not start.} other {# input fields are not valid, so the run did not start.}}",
+      "truncated": "This response holds more than {count} rows. The first {count} are shown; the rest are not displayed."
+    },
+    "field": {
+      "modelVersion": "Model version",
+      "calibration": "Calibration",
+      "confidenceInterval": "Confidence interval",
+      "runId": "Run identifier",
+      "notAvailable": "Not yet available",
+      "fidelity": "Method fidelity",
+      "reference": "Scientific reference",
+      "engine": "Engine implementation",
+      "execution": "Execution contract"
+    },
+    "bar": {
+      "missing": "{count, plural, one {The contract returns one of the four cells in this bar; no value has been guessed for it.} other {The contract returns # of the four cells in this bar; no value has been guessed for the rest.}}"
+    },
+    "detail": {
+      "noReference": "This tool declares no scientific reference.",
+      "validity": "Domain of validity",
+      "limitations": "Known limitations",
+      "inputData": "Input data required",
+      "noContract": "Because no execution route is published, this tool cannot produce a number here."
+    },
+    "notes": {
+      "integrity": "Every value must declare where it came from: real, simulated, or no data.",
+      "noBadge": "This response carries no provenance badge; the absence of a badge is not evidence that a value was measured.",
+      "source": {
+        "real": "Real",
+        "simulated": "Simulated",
+        "no_data": "No data"
+      }
+    },
+    "actions": {
+      "rerun": "Run again with these inputs",
+      "back": "Back to HyDroMa"
+    },
+    "notFound": {
+      "title": "No such tool is registered",
+      "description": "This identifier is neither in the declared tool catalogue nor resolvable to an execution contract, so no page was built for it.",
+      "detail": "If the name is a typo, check the identifier. If the tool is real, its execution route has not been published in the gateway, and that is the gap to close."
+    }
   }
 }

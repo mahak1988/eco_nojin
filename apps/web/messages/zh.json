@@ -1,18 +1,775 @@
 {
   "meta": {
     "machineTranslated": true,
-    "fallbackLocale": "en"
+    "fallbackLocale": "fa"
+  },
+  "admin": {
+    "title": "平台管理",
+    "sections": {
+      "overview": "概览",
+      "systemHealth": "系统健康",
+      "jobs": "任务与队列",
+      "localization": "本地化",
+      "featureFlags": "功能开关与能力",
+      "security": "安全",
+      "content": "内容",
+      "users": "用户",
+      "designTokens": "设计令牌"
+    },
+    "leads": {
+      "overview": "平台实时状态与能力总览。",
+      "systemHealth": "各服务的状态、依赖关系与最近检查。",
+      "jobs": "已登记的队列、工作进程与任务能力。",
+      "localization": "语言覆盖范围、机器翻译与已发布的法律语言。",
+      "featureFlags": "能力登记表与设置契约。",
+      "security": "按角色划定的安全与审计能力。",
+      "content": "已发布内容与已登记的内容契约。",
+      "users": "按角色划分的用户管理与批量操作契约。",
+      "designTokens": "仓库随附的 DTCG、CSS 与运行时令牌来源。"
+    },
+    "grid": {
+      "search": "搜索",
+      "submit": "搜索",
+      "clear": "清除筛选",
+      "results": "共 {total} 行中的 {filtered} 行"
+    },
+    "capabilities": {
+      "serviceMatrix": "服务状态矩阵",
+      "adminOverview": "管理概览",
+      "channelHealth": "渠道状态",
+      "jobIndex": "任务索引",
+      "automationRuns": "自动化运行",
+      "messageCatalogues": "消息目录",
+      "legalLocales": "法律语言",
+      "contentTranslations": "内容翻译",
+      "capabilityMatrix": "能力矩阵",
+      "settingsIndex": "设置索引",
+      "loginHistory": "登录历史",
+      "securityAudit": "安全审计",
+      "contentIndex": "内容索引",
+      "contentWrites": "内容写入契约",
+      "usersIndex": "用户索引",
+      "userBulkActions": "用户批量操作契约",
+      "dtcgTokens": "DTCG 令牌来源",
+      "cssVariables": "CSS 变量来源",
+      "runtimeTokens": "运行时令牌来源"
+    },
+    "ledger": {
+      "live": "实时",
+      "unavailable": "不可用",
+      "provenance": "来源",
+      "notMeasured": "未测量",
+      "showing": "显示 {shown} 条，共 {total} 条",
+      "placeholderHeading": "该契约并未测量其结构所暗示的内容",
+      "placeholderBody": "网关返回的是常量而非读数。此类字段一律在下方标注，而不是作为测量值显示，因此本页上的任何数字都不是对运行中平台的读数。",
+      "upstreamGate": "网关对该契约只要求一个已认证的会话，它本身不施加任何角色校验。请把每一行读作租户数据，而不是属于你个人的数据。",
+      "processMemory": "该注册表保存在网关的进程内存中，网关重启后会丢失。",
+      "seededRegistry": "该注册表在网关中预置，从不主动探测。只有在同一进程上执行某项操作时，某一行的状态才会改变。",
+      "notAnIdentifier": "该路径片段不是契约接受的标识符，因此没有发出任何请求。",
+      "states": {
+        "loading": "正在解析此界面。",
+        "empty": "网关未为该契约返回任何行。",
+        "error": "网关返回了错误。契约及其状态见上方。",
+        "offline": "无法连接网关。当前读者处于离线状态，或服务已降级，本页内容均不可视为最新。",
+        "partial": "只能解析出部分结果。",
+        "retry": "重试"
+      },
+      "regions": {
+        "title": "界面",
+        "status": "契约状态",
+        "provenance": "出处",
+        "filters": "输入契约",
+        "state": "结果状态",
+        "data": "已发布数值",
+        "actions": "该契约提供的操作",
+        "summary": "主要数字",
+        "detail": "契约详情",
+        "notes": "方法说明",
+        "print": "可打印报表",
+        "footer": "目录条目"
+      },
+      "columns": {
+        "name": "名称",
+        "status": "状态",
+        "updated": "最后更新",
+        "created": "创建时间",
+        "value": "数值",
+        "type": "类型",
+        "key": "键",
+        "source": "来源",
+        "identifier": "标识符",
+        "count": "数量",
+        "total": "合计",
+        "amount": "金额",
+        "detail": "详情",
+        "locale": "语言",
+        "version": "版本",
+        "group": "分组",
+        "member": "成员",
+        "action": "操作",
+        "message": "消息",
+        "code": "代码",
+        "currency": "货币"
+      },
+      "footer": "控制台账簿界面"
+    }
+  },
+  "workspace": {
+    "title": "专业工作区",
+    "lead": "按角色划分的工作、证据与运营，与面向消费者的市场相分离。",
+    "groups": {
+      "work": "工作",
+      "governance": "治理",
+      "operations": "运营",
+      "settings": "设置"
+    },
+    "pages": {
+      "overview": "概览",
+      "assignments": "任务分配",
+      "cases": "案件",
+      "knowledge": "知识",
+      "reports": "报告",
+      "team": "团队",
+      "approvals": "审批",
+      "targets": "目标",
+      "audit": "审计",
+      "operations": "运营",
+      "operationsJobs": "任务与队列",
+      "operationsEvents": "事件",
+      "operationsHealth": "状态",
+      "settings": "设置",
+      "settingsNotifications": "通知",
+      "settingsAccess": "访问"
+    },
+    "leads": {
+      "overview": "您按角色划分的工作上下文与实时能力总览。",
+      "assignments": "已分配的工作与已登记的任务分配能力。",
+      "cases": "范围内的案件、证据与生命周期契约。",
+      "knowledge": "已发布的文档、引用与内容检索。",
+      "reports": "已登记的报告、排程与导出能力。",
+      "team": "此角色可用的组织与成员范围。",
+      "approvals": "审批队列与已登记的操作契约。",
+      "targets": "目标、度量与进度能力。",
+      "audit": "非个人安全事件与访问证据。",
+      "operations": "同步、队列、事件与服务状态能力。",
+      "operationsJobs": "队列、工作进程与任务能力。",
+      "operationsEvents": "安全与集成事件流。",
+      "operationsHealth": "专业工具的依赖关系与服务状态。",
+      "settings": "工作区设置与偏好设置能力。",
+      "settingsNotifications": "通知偏好与投递能力。",
+      "settingsAccess": "已授予、已允许和用于说明的角色范围。"
+    },
+    "roles": {
+      "operator": "操作员",
+      "support": "支持",
+      "analyst": "分析师",
+      "content_editor": "内容编辑",
+      "auditor": "审计员",
+      "manager": "负责人"
+    },
+    "ledger": {
+      "live": "实时",
+      "unavailable": "不可用",
+      "provenance": "来源",
+      "notMeasured": "未测量",
+      "showing": "显示 {shown} 条，共 {total} 条",
+      "placeholderHeading": "该契约并未测量其结构所暗示的内容",
+      "placeholderBody": "网关返回的是常量而非读数。此类字段一律在下方标注，而不是作为测量值显示，因此本页上的任何数字都不是对运行中平台的读数。",
+      "upstreamGate": "网关对该契约只要求一个已认证的会话，它本身不施加任何角色校验。请把每一行读作租户数据，而不是属于你个人的数据。",
+      "processMemory": "该注册表保存在网关的进程内存中，网关重启后会丢失。",
+      "seededRegistry": "该注册表在网关中预置，从不主动探测。只有在同一进程上执行某项操作时，某一行的状态才会改变。",
+      "notAnIdentifier": "该路径片段不是契约接受的标识符，因此没有发出任何请求。",
+      "states": {
+        "loading": "正在解析此界面。",
+        "empty": "网关未为该契约返回任何行。",
+        "error": "网关返回了错误。契约及其状态见上方。",
+        "offline": "无法连接网关。当前读者处于离线状态，或服务已降级，本页内容均不可视为最新。",
+        "partial": "只能解析出部分结果。",
+        "retry": "重试"
+      },
+      "regions": {
+        "title": "界面",
+        "status": "契约状态",
+        "provenance": "出处",
+        "filters": "输入契约",
+        "state": "结果状态",
+        "data": "已发布数值",
+        "actions": "该契约提供的操作",
+        "summary": "主要数字",
+        "detail": "契约详情",
+        "notes": "方法说明",
+        "print": "可打印报表",
+        "footer": "目录条目"
+      },
+      "columns": {
+        "name": "名称",
+        "status": "状态",
+        "updated": "最后更新",
+        "created": "创建时间",
+        "value": "数值",
+        "type": "类型",
+        "key": "键",
+        "source": "来源",
+        "identifier": "标识符",
+        "count": "数量",
+        "total": "合计",
+        "amount": "金额",
+        "detail": "详情",
+        "locale": "语言",
+        "version": "版本",
+        "group": "分组",
+        "member": "成员",
+        "action": "操作",
+        "message": "消息",
+        "code": "代码"
+      },
+      "footer": "工作区账簿界面"
+    }
+  },
+  "help": {
+    "title": "帮助与支持",
+    "lead": "查找平台指南、服务状态、无障碍、法律事项与支持渠道。",
+    "supportDirectoryTitle": "支持目录",
+    "supportDirectoryLead": "网关实时返回的支持角色。",
+    "supportUnavailable": "支持目录不可用。",
+    "intakeTitle": "支持请求",
+    "intakeLead": "已登记的受理端点。在为此客户端启用其契约之前，提交流程仍不可用。",
+    "topicsTitle": "帮助主题",
+    "lastObserved": "最近观测"
   },
   "brand": {
     "name": "Hydroma Nojin",
+    "logoAlt": "HyDroMa Nojin（Eco Nojin）平台标志",
+    "iconAlt": "HyDroMa Nojin 平台图标",
     "description": "土地智能管理，用于恢复水资源、土壤和生计。"
+  },
+  "owner": {
+    "line": "平台所有者：Dasht Omid Narvan Agro-Industry Co.",
+    "logoAlt": "Dasht Omid Narvan Agro-Industry Co. 标志",
+    "sectionTitle": "平台所有者",
+    "role": "Dasht Omid Narvan Agro-Industry Co.",
+    "statement": "本平台由 Dasht Omid Narvan Agro-Industry Co. 开发并运营。"
+  },
+  "about": {
+    "title": "关于 Hydroma Nojin",
+    "lead": "一套用于保护农村地区水资源、土壤和生计的科学工具。",
+    "what": "Hydroma Nojin 是一套环境监测工具，专为网络不稳定、测量设备昂贵的地区而设计。",
+    "audience": "生产者、合作社、政府机构、高校、研究人员和民间社会组织。",
+    "evidence": [
+      "科学模型基于已发表并经过同行评议的方法",
+      "每个数值都标注其来源和日期",
+      "农艺决策附带推荐理由"
+    ],
+    "limits": [
+      "任何系统都无法取代农户的本地经验",
+      "长期气候预测具有较高的不确定性"
+    ],
+    "next": [
+      "注册后即可查看您的土地概况",
+      "为您的社区申请培训场次"
+    ]
+  },
+  "services": {
+    "title": "服务与解决方案",
+    "lead": "三项独立服务覆盖土地、企业和科学研究。",
+    "what": "每项服务都源自一个真实问题，并向使用方交付可用的结果。",
+    "audience": "生产者、机构、科研团体、高校和个人。",
+    "evidence": [
+      "部署前的评估方法",
+      "已记录的模型版本与分析日期"
+    ],
+    "limits": [
+      "试点地点数量有限，依据数据遴选",
+      "人工智能服务仅限于已声明的农艺领域"
+    ],
+    "next": [
+      "注册后即可从您的土地概况开始",
+      "查看完整的科学模型列表"
+    ],
+    "farmersTitle": "面向农业生产者",
+    "farmersDesc": "作物规划、灌溉、土壤肥力与水资源管理，推荐均有依据。",
+    "institutionsTitle": "面向机构",
+    "institutionsDesc": "风险区域制图、水资源规划和合规报告。",
+    "researchersTitle": "面向研究人员与高校",
+    "researchersDesc": "科学模型、开放数据集、计算环境和可复现的处理流程。",
+    "pilotCta": "申请试点场次",
+    "pilotNote": "试点地点数量有限，依据数据遴选。"
+  },
+  "evidence": {
+    "title": "科学与证据",
+    "lead": "每一项科学主张都关联到来源、日期和验证方法。",
+    "what": "每份科学文档遵循同一逻辑流程：方法、数据、声明的局限、结果。",
+    "audience": "研究人员、评审者、监管机构以及任何评估本项目主张的人。",
+    "evidence": [
+      "所选研究的 DOI 引用",
+      "模型版本与不确定度区间"
+    ],
+    "limits": [
+      "简化的水平衡模型会高估砂质土壤中的含水量",
+      "卫星数据可能被云层遮挡",
+      "季节性预测仍处于较宽的区间内"
+    ],
+    "next": [
+      "阅读完整的方法论与模型假设",
+      "查阅开放数据集与可复现性指南"
+    ],
+    "refsTitle": "方法与参考",
+    "refs": [
+      "土壤建模与水平衡方法",
+      "FAO-56 蒸散量标准",
+      "采样与质量控制规程"
+    ],
+    "limitsTitle": "声明的局限",
+    "nextTitle": "下一步"
+  },
+  "ai": {
+    "title": "负责任的人工智能",
+    "lead": "人工智能是辅助，而非科学方法的替代。它必须声明自身的边界。",
+    "what": "人工智能工具帮助组织问题和检索知识库，但不能替代农艺专家的意见或田间观察。",
+    "audience": "生产者、技术人员、研究人员以及在农业规划中使用自动化工具的所有人。",
+    "evidence": [
+      "每条回答均显示来源",
+      "无来源回答的草稿标记"
+    ],
+    "limits": [
+      "推荐不能替代农艺专家或当地法规",
+      "模型可能推荐不适合特定区域的做法",
+      "仅支持已声明的领域（fa/en/ar/ur）"
+    ],
+    "next": [
+      "报告不正确的回答，以便由人工复核",
+      "查阅系统的完整流程说明"
+    ],
+    "sourceRule": "每个回答都应标注来源，或标记为模型草稿。",
+    "limitsTitle": "声明的局限",
+    "nextTitle": "下一步"
+  },
+  "trust": {
+    "title": "数据溯源与系统可信度",
+    "lead": "溯源意味着追踪每一个数据到其出处，而不仅仅是一个标记。",
+    "what": "每一个展示的数据都带有溯源标记：来源、日期以及生成它的服务。",
+    "audience": "机构合作伙伴、检查人员、研究人员与监管机构。",
+    "evidence": [
+      "来源标识符与获取时间",
+      "数据版本与变更历史"
+    ],
+    "limits": [
+      "碳登记册地址暂不可用",
+      "溯源浏览器对部分数据集暂不可用"
+    ],
+    "next": [
+      "探索系统中每一个数据的来源",
+      "查阅年度透明度报告"
+    ],
+    "provenanceTitle": "溯源浏览器",
+    "provenanceDesc": "将每一个数据追溯到对应服务、数据影像和获取日期。",
+    "registryTitle": "碳登记册",
+    "registryDesc": "项目产生的碳信用可访问、可核验；区块链地址暂不可用。",
+    "disclosureTitle": "负责任的披露",
+    "disclosureDesc": "漏洞披露以保密方式进行，不暴露用户数据。",
+    "statusCta": "查看服务状态"
+  },
+  "developers": {
+    "title": "开发者与 API",
+    "lead": "面向开发者、集成方和技术伙伴：查阅契约、试用接口、参与协作。",
+    "what": "每个接口都有文档，每次 API 变更都被记录，每个请求都携带关联标识。",
+    "audience": "开发者、集成方、高校、研究团队和技术伙伴。",
+    "evidence": [
+      "带版本的 API 契约",
+      "请求与响应示例"
+    ],
+    "limits": [
+      "仅允许在授权环境中写入",
+      "公开接口不允许自动化工具调用"
+    ],
+    "next": [
+      "查阅快速上手指南和集成示例",
+      "申请 API 密钥和测试环境"
+    ],
+    "docsTitle": "API 文档",
+    "docsDesc": "每个接口都配有请求与响应示例、速率限制和错误码说明。",
+    "toolsTitle": "开发工具",
+    "toolsDesc": "工具包含生成的客户端、测试集合和集成示例。",
+    "changesTitle": "变更记录",
+    "changesDesc": "每次 API 变更都关联版本号并发布在变更记录中。",
+    "publicNote": "公开环境为只读。测试与写入受身份验证保护，并限于获准的操作。"
+  },
+  "accessibility": {
+    "title": "无障碍声明",
+    "lead": "无障碍是功能性要求：任何功能都不应只依赖颜色或声音。",
+    "what": "本站支持键盘导航，具备符合要求的对比度、正确的语义结构，并完整支持 RTL/LTR 模式。",
+    "audience": "残障人士、老年人、辅助技术用户，以及使用触摸屏或键盘浏览的所有人。",
+    "evidence": [
+      "自动化 axe 检查",
+      "浏览器中的书写方向与语言检查"
+    ],
+    "limits": [
+      "部分交互地图的文字替代有限",
+      "部分科学文档仅提供文本格式"
+    ],
+    "next": [
+      "连同页面地址反馈无障碍问题",
+      "查阅键盘操作与屏幕阅读器使用指南"
+    ],
+    "standardTitle": "适用标准",
+    "standardDesc": "本站以符合 WCAG 2.2 AA 级为目标。自动检测不能替代与真实用户的人工核验。",
+    "feedbackTitle": "反馈无障碍问题",
+    "feedbackDesc": "如果您遇到障碍，请反馈相关页面地址。我们将在下一个更新周期内解决。"
+  },
+  "statements": {
+    "title": "使命、愿景与宣言",
+    "lead": "项目宣言界定了我们建设什么、谁从中受益，以及技术和经济目的是什么。",
+    "versionLabel": "自由版本",
+    "missionTitle": "我们的使命",
+    "missionBody": "以可验证的科学工具保护水资源、土壤和生计。每项决策都应当可理解、可复现，并对土地生产者真正有用。",
+    "quoteLabel": "声明",
+    "transparencyTitle": "项目透明度",
+    "transparencyBody": "如果某项功能无法使用，我们会如实说明。我们标注为「进行中」，而不是假装已完成。每一项永久性变更都记入项目变更记录。"
+  },
+  "legal": {
+    "title": "条款与条件",
+    "version": "v 自由版 — 草案",
+    "lead": "个人数据为明确目的而收集，仅保留必要时间并受到保护。",
+    "termsTitle": "使用条款",
+    "termsBody": "使用本平台即表示接受本条款。本项目不主张任何未经核实的外部认证。",
+    "privacyTitle": "个人数据",
+    "privacyBody": "我们使用个人数据来提供您所请求的服务。我们不出于商业目的共享身份识别数据。",
+    "cookiesTitle": "Cookie 与语言",
+    "cookiesBody": "我们使用技术性 Cookie 记住您选择的语言，您可以随时在浏览器设置中更改。"
+  },
+  "learn": {
+    "emptyTitle": "该筛选条件下暂无培训内容",
+    "emptyDesc": "培训材料正在审核中。您可以先查看本站的术语表和方法指南。",
+    "title": "内容与培训",
+    "lead": "视频课程、双语术语表和可在实地使用的操作指南。"
+  },
+  "platformOverview": {
+    "title": "平台总览",
+    "lead": "每位用户都能找到自己的路径：从土地到水源，从土壤到数据，不迷失方向。",
+    "itemHome": "首页",
+    "itemHomeDesc": "土地概况、市场商品和项目动态集中呈现于一屏。",
+    "itemScience": "应用科学",
+    "itemScienceDesc": "土壤、水、气候与侵蚀模型，结果可验证。",
+    "itemMarket": "市场",
+    "itemMarketDesc": "来源可追溯的商品与经核实的生产者。",
+    "itemStatus": "系统状态",
+    "itemStatusDesc": "服务与数据库的实时健康状况，清晰透明。",
+    "cta": "了解更多"
+  },
+  "public": {
+    "home": {
+      "title": "生态监测与决策平台",
+      "lead": "以科学为基础的土壤、水、气候与碳监测。",
+      "provenanceLabel": "主张的来源",
+      "liveWhenAvailable": "实时，当网关可访问时",
+      "whatTitle": "这是什么",
+      "whatLead": "一个平台，四个部分，一份契约。",
+      "whatDesc": "一个标明模型版本的科学引擎，一个如实发布其所能提供内容的网关，一个离线优先的客户端，以及一个为实际种植之物付费的市场。",
+      "keyMetrics": "网关报告了什么",
+      "beneficiaries": "已登记的生产者",
+      "activeMarkets": "活跃市场",
+      "landProfiles": "土地档案",
+      "carbonProjects": "碳项目",
+      "quickActions": "接下来去哪里",
+      "enterMarket": "进入市场"
+    },
+    "why": {
+      "title": "为什么选择 Eco Nojin？",
+      "lead": "复杂的水、土壤与生计问题需要可追溯的决策。",
+      "provenanceLabel": "策略来源",
+      "whatTitle": "从问题到应对",
+      "whatLead": "每项能力都始于一个真实的问题。",
+      "whatDesc": "每个应对都同时展示其数据、模型、局限与下一步。",
+      "audience": "农民、管理者、研究者与执行伙伴",
+      "problemSolutionTable": "问题与应对",
+      "problem": "问题",
+      "solution": "应对",
+      "p1_problem": "没有来源的零散数据",
+      "p1_solution": "一份共享的数据档案与来源链",
+      "p2_problem": "没有可重复的分析方法",
+      "p2_solution": "带版本的模型与运行清单",
+      "p3_problem": "在没有可见局限的情况下做出的决策",
+      "p3_solution": "证据、不确定度与数据状态",
+      "p4_problem": "对工具的访问不平等",
+      "p4_solution": "PWA、多种语言与无障碍渠道",
+      "evidenceItems": [
+        "利益相关方工作坊",
+        "实地研究",
+        "有记录的试点"
+      ],
+      "limitsItems": [
+        "区域推广性有限",
+        "长期影响仍在测量中",
+        "成本与经济影响因情境而异"
+      ],
+      "nextItems": [
+        "发布影响报告",
+        "增加经济评估",
+        "扩大受控试点"
+      ]
+    },
+    "cta": {
+      "title": "参与",
+      "lead": "您通往市场、科学引擎与培训的路径从这里开始。",
+      "provenanceLabel": "主张的来源",
+      "whatTitle": "这是什么",
+      "whatLead": "四条路径，每一条都通向真实的端点。",
+      "whatDesc": "请选择与您的工作相符的路径。本页不会向任何不存在的地方发送内容。",
+      "audience": "农民、合作社、研究者、规划者及其资助方",
+      "primaryCTAs": "这些路径",
+      "cta1_title": "进入市场",
+      "cta1_desc": "浏览、发布与结算，每一笔订单都可追溯。",
+      "cta1_action": "查看市场",
+      "cta2_title": "使用科学引擎",
+      "cta2_desc": "运行土壤、水文、气候或碳模型。",
+      "cta2_action": "打开引擎",
+      "cta3_title": "阅读野外手册",
+      "cta3_desc": "面向实际工作的参考表与指南。",
+      "cta3_action": "打开手册",
+      "cta4_title": "检验平台",
+      "cta4_desc": "验证套件发现了什么，包括它的失败之处。",
+      "cta4_action": "查看状态",
+      "evidenceItems": [
+        "每条路径都发往网关发布的端点。 ",
+        " 无法到达的路径会直说，而不是装作可用。"
+      ],
+      "limitsItems": [
+        "一条路径的好坏，不亚于其背后的契约；契约已附链接。 ",
+        " 本页不会承诺任何未经检查证实的成果。"
+      ],
+      "nextItems": [
+        "请选择一条路径，而不是四条全选。 ",
+        " 依赖之前请先阅读契约。"
+      ],
+      "body": "请选择与您的工作相符的路径。每一条都发往真实的端点。",
+      "optionsTitle": "从哪里开始",
+      "farmersLink": "我种植些什么",
+      "governmentLink": "我在公共机构工作",
+      "investorsLink": "我资助这类工作",
+      "ngosLink": "我在非营利组织工作",
+      "newsletterBody": "偶尔记录变化了什么，以及检查发现了什么。",
+      "newsletterConsent": "给我发送简报",
+      "newsletterSubmit": "订阅"
+    },
+    "science": {
+      "evidenceBase": {
+        "title": "科学证据基础",
+        "lead": "科学参考文献，附来源状态与局限。",
+        "provenanceLabel": "证据库来源",
+        "whatTitle": "可追溯的证据",
+        "whatLead": "每条记录都注明其核验状态。",
+        "whatDesc": "下面的列表是参考标准的演示，不能替代来源审查。",
+        "audience": "需要参考文献的研究者、顾问和用户",
+        "evidenceCatalog": "参考目录",
+        "evidenceItems": [
+          "FAO/IPCC/OGC 标准",
+          "可追溯的科学参考文献",
+          "可复现的流程"
+        ],
+        "limitsItems": [
+          "模型估算已明确标注",
+          "区域性校准缺口仍然存在",
+          "需要人工审查来源"
+        ],
+        "nextItems": [
+          "添加最新的系统综述",
+          "链接到模型登记表",
+          "启用证据缺口图"
+        ],
+        "demoLabel": "演示",
+        "emptyTitle": "未加载任何科学来源",
+        "emptyDesc": "在科学登记表接入之前，本页只展示来源结构。"
+      }
+    },
+    "channels": {
+      "title": "访问渠道",
+      "lead": "同一个平台，适配读者真正拥有的设备。",
+      "provenanceLabel": "主张的来源",
+      "whatTitle": "这是什么",
+      "whatLead": "一份契约，四种访问方式。",
+      "whatDesc": "网关决定哪个渠道可以服务哪个界面，客户端则渲染它能渲染的部分。",
+      "audience": "农民、合作社、研究者、规划者及其资助方",
+      "channels": "可用渠道",
+      "webPwa": "网页与可安装应用",
+      "mobileApp": "移动应用",
+      "ussd": "USSD",
+      "sms": "短信",
+      "voice": "语音",
+      "telegram": "Telegram",
+      "evidenceItems": [
+        "所示状态是渠道端点在请求时报告的状态。 ",
+        " 无法到达的渠道会直说，而不是默默回退。"
+      ],
+      "limitsItems": [
+        "比表单更窄的渠道只能承载少量字段。 ",
+        " 已中断的渠道不能被描述为可用。"
+      ],
+      "nextItems": [
+        "请选择您的设备真正支持的渠道。 ",
+        " 依赖之前请先阅读渠道状态。"
+      ],
+      "ussdLabel": "USSD",
+      "ussdBody": "在任何带键盘的手机上都能使用。无需流量套餐。",
+      "smsLabel": "短信",
+      "smsBody": "为农民提供所需的简短文字更新，无需打开任何内容，且仅限于其订阅的事件。",
+      "voiceLabel": "语音",
+      "voiceBody": "为无法使用屏幕的读者提供朗读式指引。",
+      "webLabel": "网页",
+      "webBody": "完整界面，适用于能够显示屏幕的设备。",
+      "whatsappLabel": "WhatsApp",
+      "whatsappBody": "通过许多生产者已在使用的渠道发布市场通知。"
+    },
+    "visit": {
+      "title": "实地走访",
+      "lead": "观察试点地块并记录所见之物的指南。",
+      "provenanceLabel": "主张的来源",
+      "whatTitle": "这是什么",
+      "whatLead": "申请走访，以及之后会发生什么。",
+      "whatDesc": "走访申请会发送到网关。在得到答复之前，不会承诺任何日期。",
+      "audience": "农民、合作社、研究者以及承办走访的团队",
+      "visitSteps": "走访的步骤",
+      "s1_title": "商定目的",
+      "s1_desc": "走访的目的，在有人出发之前商定。",
+      "s2_title": "记录地块",
+      "s2_desc": "位置，附网关所持的坐标。",
+      "s3_title": "观察",
+      "s3_desc": "所见之物当场记录在案，而不是日后再凭记忆回想。",
+      "s4_title": "提交观察",
+      "s4_desc": "观察会发送到网关，由网关按地块保存。",
+      "scheduleVisit": "申请走访",
+      "body": "走访申请会发送到网关。",
+      "visitNote": "在得到答复之前，不会承诺任何日期。"
+    },
+    "a11y": {
+      "metaTitle": "无障碍声明",
+      "metaDescription": "本次构建就对比度与字体实测了什么、未声称什么，以及如何报告障碍。",
+      "measuredTitle": "本声明的依据",
+      "contrastTitle": "颜色对比度",
+      "contrastBody": "一道关卡会在浅色与深色两种方案下，逐一测量样式表声明的每一对前景与背景色标，并与该对色标对应的 WCAG 下限比对。",
+      "contrastPairs": "已测量的色标对数",
+      "contrastFloor": "每一对的下限",
+      "contrastPass": "每一对实测色标都达到各自的下限",
+      "fontsTitle": "字体",
+      "fontsBody": "样式表声明了三个字体族与八个字体文件。平台所提供的每一种文字系统都在下方列出，并注明真正呈现在屏幕上的情形。",
+      "fontsBundled": "由本站点提供",
+      "fontsFallback": "本站点不提供，改用读者系统中已安装的字体",
+      "fontsGap": "此列中的文字系统以读者设备上已安装的字体绘制，因此其呈现不受本次构建控制。该列为空即表示没有任何语言处于此状态。",
+      "assistiveTitle": "键盘与焦点",
+      "assistiveBody": "每一个可交互控件都能用键盘抵达并操作，焦点环从不被移除。每一页的第一个可聚焦元素都是跳转链接。",
+      "inclusiveTitle": "浏览器之外的渠道",
+      "inclusiveBody": "同样的内容也可经由 USSD、短信与语音获取，因此读者不需要智能手机、流量套餐或现代浏览器。",
+      "notClaimedTitle": "本声明并不声称的内容",
+      "notClaimedItems": [
+        "尚未进行任何外部无障碍审计，因此不声明任何符合性等级。",
+        "下面两项实测是某一时点的记录。后续构建可能不同，公章注明了记录时间。",
+        "本次构建的关卡不会自动检查屏幕阅读器的行为。",
+        "尚未与使用辅助技术的用户开展可用性研究。",
+        "WCAG 符合性是某个发布版本的属性，而非本页面的属性。"
+      ],
+      "feedbackTitle": "报告障碍",
+      "feedbackBody": "如果本站有任何部分妨碍到您，请说明并指明页面。未曾被报告的障碍无法排入优先次序。",
+      "measuredBy": "测量来源",
+      "measuredAt": "测量于",
+      "fontsFamilies": "已声明的字体族",
+      "fontsFiles": "磁盘上的字体文件",
+      "fontsLocales": "由随附字体族提供的语言"
+    },
+    "telecom": {
+      "metaTitle": "USSD、短信与语音接入",
+      "metaDescription": "USSD 与短信文案，始终显示硬性字符上限，并附语音网关的实时状态。",
+      "editorTitle": "消息编辑器",
+      "editorLead": "USSD 与短信都有硬性上限。超出上限的文本要么被拆分，要么根本不会发出，因此两个上限在此始终可见。",
+      "editorUssd": "USSD 文本",
+      "editorSms": "短信文本",
+      "editorLimitUssd": "USSD 上限",
+      "editorLimitSms": "短信上限",
+      "editorRule": "GSM 07.05 将消息拆为每段 160 字符，手机最多显示二十段。",
+      "editorOver": "超过一段；文本会在两段之间拆分。",
+      "editorWithin": "可放入单段之内。",
+      "editorSegments": "段",
+      "editorUssdNote": "服务代码在任何基础手机上以 * 与 # 即可使用，而网络不会承载超过 182 个字符。",
+      "menuTitle": "网关所生成的服务菜单",
+      "menuBody": "该文本由网关自身的引擎生成，并非手工撰写，并按所请求的语言返回。",
+      "menuUnavailable": "网关不为该语言生成菜单。",
+      "languagesTitle": "语音网关所报告的语言",
+      "languagesBody": "这是网关的实时清单，而非期望值。",
+      "smsDeliveryTitle": "短信送达",
+      "smsDeliveryBody": "短信送达并不存在对应契约，因此此处不显示任何送达状态。"
+    },
+    "simple": {
+      "metaTitle": "低带宽版本",
+      "metaDescription": "同样的内容，更少的图片、更少的脚本，十四种语言，为弱网而设。",
+      "guaranteeTitle": "这一版本为何更轻",
+      "guaranteeNoImages": "不加载任何图片。",
+      "guaranteeNoScripts": "此页面不运行任何脚本。",
+      "guaranteeSmall": "HTML 文档很小，不带来额外渲染开销。",
+      "guaranteeLanguages": "十四种语言全部由同一条路由提供。",
+      "guaranteeOffline": "请求失败时，页面显示自身状态，而不是编造一个数字。",
+      "languagesTitle": "以您的语言呈现的网关菜单",
+      "languagesBody": "网关只生成三种语言的菜单。其余十一种语言，页面会直说并没有这样的菜单。"
+    },
+    "integrity": {
+      "metaTitle": "证据与参考文献",
+      "metaDescription": "这些页面依据真实契约能够展示什么，以及哪些内容被标注为愿景。",
+      "claimTitle": "这些页面遵守的规则",
+      "claimBody": "您在此看到的每一个数字都来自一次实时调用。调用没有回应时，页面会说明数据不可用，并且不显示任何数字。",
+      "traceabilityTitle": "可追溯性",
+      "traceabilityBody": "每一行都注明契约路径与读取方式，便于您自行再次查询。",
+      "aspirationTitle": "是愿景，不是报告",
+      "aspirationLead": "总计划的既定规则是「不作外部验证主张」：此处没有任何内容声称本仓库之外的机构批准过什么。凡超出此范围的，一律标注为愿景。",
+      "aspirationItems": [
+        "尚未对模型进行外部验证。",
+        "尚未在外部存储库中发布。",
+        "尚未由外部研究者进行同行评审。"
+      ],
+      "noExternalTitle": "关于外部验证",
+      "noExternalBody": "本页面不展示任何外部证书，因为本仓库中并未登记任何一份。一旦登记，将在此连同名称与日期一并显示。",
+      "modelCardsTitle": "模型卡",
+      "modelCardsBody": "每个模型的适用域与限制，取自平台自身的模型登记表。",
+      "agrovocTitle": "AGROVOC 词表",
+      "agrovocBody": "在农学知识图谱上的离线检索，路径中没有任何外部服务。",
+      "contractTitle": "能够修复此事的契约",
+      "contractBody": "一次经过审核、能够返回该数字的读取。在此之前，本页面不编造任何内容。"
+    },
+    "legalTexts": {
+      "metaTitle": "法律文本",
+      "metaDescription": "已发布的法律文本，附其语言与版本号，与网关所保存的完全一致。",
+      "localesTitle": "拥有法律文本的语言",
+      "slugsTitle": "已发布的标识符",
+      "versionsTitle": "版本历史",
+      "versionLabel": "版本",
+      "statusLabel": "状态",
+      "effectiveLabel": "生效于",
+      "publishedOnly": "此语言尚无已发布文本；网关的原始清单见下方。"
+    },
+    "statement": {
+      "metaTitle": "声明",
+      "metaDescription": "使命、透明度，以及刻意尚未主张的内容。",
+      "aspirationTitle": "尚未主张的内容",
+      "aspirationBody": "本平台至今产出的每一个数字，都是它自己产出的数据的一次返回。在来自本仓库之外的东西得到验证之前，此处不写入任何关于成效、受益者或规模的数字。"
+    },
+    "about": {
+      "metaTitle": "关于本平台",
+      "metaDescription": "本平台是什么、为谁而建，以及它尚未主张什么。"
+    }
+  },
+  "offline": {
+    "code": "连接不可用",
+    "title": "离线模式",
+    "description": "缓存数据可用；需要刷新时请重试。",
+    "retry": "重试"
+  },
+  "layout": {
+    "mainNav": "主导航",
+    "language": "语言"
   },
   "nav": {
     "home": "首页",
-    "about": "关于",
     "science": "科学",
     "market": "市场",
-    "status": "状态"
+    "status": "状态",
+    "modelCount": "模型数量",
+    "about": "关于"
   },
   "home": {
     "title": "Hydroma Nojin — 土地智能管理",
@@ -34,15 +791,6 @@
     "cppMissing": "数值内核：未注册任何程序包",
     "kernels": "已实现的内核"
   },
-  "market": {
-    "title": "市场",
-    "lead": "来源可追溯的商品：由谁生产、如何种植、依据哪些经过验证的数据。",
-    "products": "商品",
-    "producers": "生产者",
-    "organic": "有机农业",
-    "organicBadge": "有机",
-    "empty": "没有符合所选筛选条件的商品。"
-  },
   "cover": {
     "subtitle": "水、土壤、生命",
     "slogan": "先有土地，后有收成。先有水，后有庄稼。",
@@ -63,25 +811,324 @@
     "realData": "生态系统真实数据",
     "unavailable": "尚不可用"
   },
+  "search": {
+    "label": "在此目录中搜索",
+    "placeholder": "输入词条",
+    "submit": "搜索",
+    "noResults": "“{term}”没有结果。网关没有匹配到该词条。"
+  },
   "statusPage": {
     "title": "系统状态",
     "subtitle": "支撑公开页面和市场的各项服务的最新健康检查结果。",
     "service": "服务",
     "state": "状态",
-    "science": "科学服务",
-    "storage": "存储",
+    "cpp": "C++ 数值内核",
+    "supabase": "数据库连接（Supabase）",
+    "dbReachable": "数据库连接",
     "landscapes": "土地概况",
     "projects": "项目",
     "activeProjects": "进行中的项目",
+    "endpoint": "端点",
+    "result": "结果",
     "label": "指标",
     "rows": "行",
     "landProfileList": "土地概况列表",
     "noLandProfiles": "暂无土地概况。",
+    "emptyDbNote": "数据库已初始化，但尚未包含来自真实数据库的记录。我们不编造任何数值：空行是明确声明的，不是模拟出来的。",
+    "notFoundTitle": "未找到页面",
+    "notFoundDetail": "您所访问的地址在此语言下不存在。上方的语言切换器会带您回到确实存在的页面。",
+    "notFoundHome": "返回首页",
+    "science": "科学服务",
+    "storage": "存储",
     "operational": "运行中",
     "available": "可用",
-    "requestUnavailable": "当前无法完成请求。",
-    "emptyDbNote": "数据库已初始化，但尚未包含来自真实数据库的记录。我们不编造任何数值：空行是明确声明的，不是模拟出来的。",
-    "notFoundTitle": "未找到页面"
+    "requestUnavailable": "当前无法完成请求。"
+  },
+  "market": {
+    "title": "市场",
+    "lead": "来源可追溯的商品：由谁生产、如何种植、依据哪些经过验证的数据。",
+    "products": "商品",
+    "producers": "生产者",
+    "organic": "有机农业",
+    "organicBadge": "有机",
+    "empty": "没有符合所选筛选条件的商品。",
+    "product": {
+      "backToMarket": "返回市场",
+      "verifiedProduct": "已验证商品",
+      "pricing": "价格",
+      "quantity": "数量",
+      "unitPrice": "单价",
+      "qty": "数量",
+      "productSpecs": "商品规格",
+      "ecoImpact": "生态影响",
+      "carbonSequestration": "碳封存",
+      "waterSavings": "节水",
+      "soilRestoration": "土壤修复",
+      "productProvenance": "商品溯源",
+      "dataUnavailable": "实时商品数据不可用；此详情来自演示目录。",
+      "addToCart": "加入购物车",
+      "escrowOption": "托管选项",
+      "inStock": "有货",
+      "outOfStock": "缺货",
+      "available": "可售",
+      "rating": "评分",
+      "status": "状态",
+      "total": "合计",
+      "specsTitle": "完整规格",
+      "ecoImpactTitle": "详细生态影响",
+      "reviewsTitle": "已验证的买家评价",
+      "qaTitle": "问答",
+      "traceabilityTitle": "供应链可追溯性",
+      "pricingHistoryTitle": "价格历史",
+      "similarTitle": "相似商品",
+      "bulkTitle": "批发价格",
+      "certificationsTitle": "认证与文件",
+      "shippingTitle": "配送选项",
+      "warrantyTitle": "保修信息",
+      "compareTitle": "快速比较",
+      "specs": "规格",
+      "reviews": "评价",
+      "qa": "问答",
+      "traceability": "可追溯性",
+      "pricingHistory": "价格历史",
+      "similar": "相似",
+      "bulk": "批发",
+      "certifications": "认证",
+      "shipping": "配送",
+      "warranty": "保修",
+      "compare": "比较"
+    },
+    "compare": {
+      "title": "商品比较",
+      "lead": "并排比较最多 4 件商品",
+      "selectProducts": "选择要比较的商品",
+      "maxFour": "最多 4 件商品",
+      "feature": "特性",
+      "price": "价格",
+      "category": "类别",
+      "origin": "产地",
+      "producer": "生产者",
+      "rating": "评分",
+      "availability": "供应情况",
+      "organic": "有机",
+      "verified": "已验证",
+      "carbonImpact": "碳影响",
+      "waterImpact": "水影响",
+      "soilImpact": "土壤影响",
+      "actions": "操作",
+      "view": "查看",
+      "noProductsSelected": "未选择要比较的商品",
+      "antiFraudWarning": "⚠ 详细比较页面提供反欺诈分析",
+      "dataUnavailable": "实时比较数据不可用；此表格显示演示数据。",
+      "compareProvenance": "比较数据来源",
+      "productsTitle": "商品比较",
+      "pricesTitle": "价格历史比较",
+      "ecoImpactTitle": "生态影响比较",
+      "certificationsTitle": "认证比较",
+      "sellersTitle": "卖家比较",
+      "shippingTitle": "配送比较",
+      "warrantyTitle": "保修比较",
+      "bulkTitle": "批发价格比较",
+      "fraudCheckTitle": "反欺诈分析",
+      "exportTitle": "导出比较结果",
+      "saveTitle": "已保存的比较",
+      "shareTitle": "分享比较结果",
+      "alertsTitle": "降价提醒"
+    },
+    "template": {
+      "title": "市场能力",
+      "description": "此路由已在市场框架中登记，在其数据源接入之前会显示不可用状态。",
+      "status": "数据不可用",
+      "source": "路由来源",
+      "method": "路由模板",
+      "unavailableTitle": "此能力尚未接入",
+      "unavailableDescription": "不会显示任何未经验证的数据。接入 API 之后会补充来源和观测日期。",
+      "contractTitle": "数据契约",
+      "contractDescription": "输入、输出、访问级别和负责人必须在清单中登记。",
+      "nextTitle": "下一步",
+      "nextDescription": "公测之前需要完成 API 集成、i18n 和无障碍测试。",
+      "back": "返回市场"
+    },
+    "cart": {
+      "title": "购物车",
+      "empty": "您的购物车是空的。",
+      "summary": "订单摘要",
+      "cartProvenance": "购物车来源",
+      "decrease": "减少数量",
+      "increase": "增加数量",
+      "demoNotice": "这是演示购物车；实际使用需要已登录的 API 购物车。"
+    },
+    "bazaar": {
+      "title": "本地市场",
+      "lead": "在网关登记的实时市场。",
+      "detailTitle": "市场详情",
+      "create": "创建市场",
+      "source": "市场登记簿",
+      "empty": "尚未登记任何市场。",
+      "type": "类型",
+      "status": "状态",
+      "address": "地址",
+      "location": "位置",
+      "approval": "审批",
+      "approved": "已批准",
+      "pending": "等待审查",
+      "visibility": "公开可见性",
+      "visible": "可见",
+      "hidden": "隐藏",
+      "browseProducts": "浏览商品",
+      "allBazaars": "全部市场"
+    },
+    "bazaarCreate": {
+      "title": "创建一个市场",
+      "lead": "提交市场登记申请，交由网关审查。",
+      "name": "市场名称",
+      "type": "市场类型",
+      "types": {
+        "cooperative": "合作社",
+        "individual": "个人",
+        "farmersMarket": "农贸市场",
+        "mixed": "混合",
+        "other": "其他"
+      },
+      "description": "描述",
+      "address": "地址",
+      "location": "位置",
+      "villageId": "村庄标识符（UUID）",
+      "rulesDocument": "市场规则",
+      "contactEmail": "联系邮箱",
+      "contactPhone": "联系电话",
+      "acceptEcommerce": "我接受电子商务规则。",
+      "acceptTrading": "我接受买卖规则。",
+      "submit": "提交登记",
+      "signIn": "登录",
+      "loadingSession": "正在加载您的会话",
+      "authRequired": "提交登记需要已登录的会话。",
+      "acceptRequired": "必须同时接受两套规则。",
+      "invalidField": "请为此字段输入有效值。",
+      "successTitle": "登记已提交",
+      "successDescription": "该市场已创建，正在等待审查。",
+      "viewCreated": "查看市场",
+      "back": "返回市场列表"
+    },
+    "wallet": {
+      "title": "EcoWallet",
+      "balance": "余额",
+      "totalEarned": "总收入",
+      "totalRedeemed": "总兑付",
+      "accountStatus": "账户状态",
+      "active": "启用",
+      "inactive": "停用",
+      "earnings": "收入账簿",
+      "noEarnings": "没有可用的收入记录。",
+      "withdrawalUnavailable": "通过当前的网关契约无法提现。"
+    },
+    "checkout": {
+      "step1Cart": "购物车",
+      "step2Escrow": "托管",
+      "step3Confirm": "确认",
+      "cartReview": "购物车审查",
+      "subtotal": "小计",
+      "platformFee": "平台费用",
+      "escrowFee": "托管费用",
+      "escrowSetup": "设置托管",
+      "ecowallet": "EcoWallet",
+      "card": "银行卡",
+      "contractAcceptance": "我已阅读并接受托管契约及其条款。",
+      "transactionKey": "交易密钥",
+      "confirmAndLock": "确认并锁定托管",
+      "acceptContractFirst": "请先接受契约",
+      "confirmation": "交易确认",
+      "orderPlaced": "订单已提交",
+      "escrowStatus": "托管状态",
+      "viewOrders": "查看订单",
+      "checkoutProvenance": "结算流程来源",
+      "processing": "提交中…",
+      "apiUnavailable": "托管服务不可用；订单未获确认。",
+      "demoCart": "此购物车为演示数据，实际提交前必须从 API 加载。"
+    },
+    "escrow": {
+      "title": "托管",
+      "escrowStatus": "网关所报告的托管状态。",
+      "amount": "金额",
+      "contractHash": "契约哈希",
+      "orderId": "订单编号",
+      "parties": "各方",
+      "buyer": "买方",
+      "seller": "卖方",
+      "arbitrator": "仲裁方",
+      "platform": "平台",
+      "eventTimeline": "事件时间线",
+      "signed": "已签署",
+      "notSigned": "未签署",
+      "escrowComplete": "托管已完成。",
+      "releaseFunds": "释放资金",
+      "cancelEscrow": "取消托管",
+      "openDispute": "发起争议",
+      "dataUnavailable": "实时托管数据不可用；当前显示的详情来自演示记录。",
+      "confirmRelease": "要释放资金吗？",
+      "confirmReleaseDesc": "此操作只有在获得授权并审查条件之后才会执行。",
+      "confirmReleaseButton": "确认释放",
+      "escrowProvenance": "托管来源",
+      "released": "资金已释放",
+      "cancelled": "托管已取消"
+    },
+    "surface": {
+      "back": "返回市场",
+      "actionTitle": "操作端点",
+      "actionLead": "这条市场路径是网关执行的命令，不是它发布的文档。",
+      "actionStatus": "操作端点",
+      "actionSource": "声明来源",
+      "actionCommandTitle": "该命令",
+      "actionCommandDescription": "网关将此路径挂载为写入操作。它没有自己的页面，因为写入不是读者要读的东西。",
+      "actionReadTitle": "读取一侧",
+      "actionReadDescription": "这是为读取发布同一对象的端点。",
+      "actionReadLink": "打开读取页面",
+      "actionNoRead": "网关未为该命令发布任何读取端点，因此没有可链接的内容。补充它属于该界面的负责人。",
+      "actionFormTitle": "此处没有表单",
+      "actionFormDescription": "此页面有意不提供任何提交按钮。表单会断言契约并未描述的请求体与调用者角色，而任何转移资金的命令，在其之前没有版本化契约步骤之前都是禁止的。",
+      "actionDeclaredBy": "声明于"
+    },
+    "escrowOrders": {
+      "title": "托管订单",
+      "lead": "以商业网关为您的会话所报告的托管订单。",
+      "authHint": "此列表仅限您已登录的会话。未登录的请求会被网关拒绝，而不是显示为空。",
+      "escrowByDefault": "资金默认处于托管之中，只有在订单状态发生允许的转换时才会释放。"
+    },
+    "orderRecord": {
+      "title": "订单",
+      "lead": "一笔商业订单，其明细、其支付意图，以及状态机当前允许的转换。",
+      "authHint": "此订单仅针对您已登录的会话读取。",
+      "transitions": "允许的转换",
+      "track": "物流时间线",
+      "evidence": "凭证"
+    },
+    "orderTransitions": {
+      "title": "允许的转换",
+      "lead": "订单状态机为该订单允许的下一批状态。",
+      "transition": "转换",
+      "note": "网关不允许的转换会返回错误，因此此页面不提供任何命令。"
+    },
+    "form": {
+      "loadingSession": "正在加载您的会话",
+      "authRequired": "提交此表单需要已登录的会话。",
+      "signIn": "登录",
+      "invalidField": "请检查标记的字段后重新提交。",
+      "requiredHint": "网关标记为必填的字段必须填写。网关会再次校验每一个值。"
+    },
+    "demand": {
+      "title": "发布 B2B 采购需求",
+      "lead": "登记一笔采购需求，以便与村庄和卖家进行匹配。您的身份来自会话，此处不会询问。",
+      "provenance": "需求命令",
+      "listProvenance": "您的需求",
+      "commodity": "商品",
+      "quantity": "所需数量",
+      "unit": "单位",
+      "frequency": "频率",
+      "submit": "提交需求",
+      "yourDemands": "您的需求",
+      "createdTitle": "需求已提交",
+      "createdDescription": "网关已登记该需求。它列在您的需求中，且未附带任何姓名。"
+    }
   },
   "common": {
     "error": "错误",
@@ -91,197 +1138,28 @@
     "audienceLabel": "面向谁",
     "evidenceLabel": "证据",
     "limitsLabel": "局限",
-    "nextLabel": "下一步"
+    "nextLabel": "下一步",
+    "evidence": "证据",
+    "limits": "局限",
+    "next": "下一步",
+    "live": "实时",
+    "beta": "公测",
+    "planned": "已规划",
+    "open": "开放",
+    "demo": "演示",
+    "view": "查看",
+    "back": "返回",
+    "card": "银行卡",
+    "total": "合计",
+    "proceedToCheckout": "继续结算",
+    "signed": "已签署",
+    "pending": "待处理",
+    "cancel": "取消",
+    "released": "已释放",
+    "static": "内容"
   },
   "a11y": {
     "skipToContent": "跳到主要内容"
-  },
-  "footer": {
-    "sitemap": "网站地图",
-    "techStack": "平台技术",
-    "navTitle": "平台"
-  },
-  "about": {
-    "title": "关于 Hydroma Nojin",
-    "lead": "一套用于保护农村地区水资源、土壤和生计的科学工具。",
-    "what": "Hydroma Nojin 是一套环境监测工具，专为网络不稳定、测量设备昂贵的地区而设计。",
-    "audience": "生产者、合作社、政府机构、高校、研究人员和民间社会组织。",
-    "evidence": [
-      "科学模型基于已发表并经过同行评议的方法",
-      "每个数值都标注其来源和日期",
-      "农艺决策附带推荐理由"
-    ],
-    "limits": [
-      "任何系统都无法取代农户的本地经验",
-      "长期气候预测具有较高的不确定性"
-    ],
-    "next": [
-      "注册后即可查看您的土地概况",
-      "为您的社区申请培训场次"
-    ]
-  },
-  "statements": {
-    "title": "使命、愿景与宣言",
-    "lead": "项目宣言界定了我们建设什么、谁从中受益，以及技术和经济目的是什么。",
-    "missionTitle": "我们的使命",
-    "missionBody": "以可验证的科学工具保护水资源、土壤和生计。每项决策都应当可理解、可复现，并对土地生产者真正有用。",
-    "quoteLabel": "声明",
-    "versionLabel": "自由版本",
-    "transparencyTitle": "项目透明度",
-    "transparencyBody": "如果某项功能无法使用，我们会如实说明。我们标注为「进行中」，而不是假装已完成。每一项永久性变更都记入项目变更记录。"
-  },
-  "platformOverview": {
-    "title": "平台总览",
-    "lead": "每位用户都能找到自己的路径：从土地到水源，从土壤到数据，不迷失方向。",
-    "itemHome": "首页",
-    "itemHomeDesc": "土地概况、市场商品和项目动态集中呈现于一屏。",
-    "itemScience": "应用科学",
-    "itemScienceDesc": "土壤、水、气候与侵蚀模型，结果可验证。",
-    "itemMarket": "市场",
-    "itemMarketDesc": "来源可追溯的商品与经核实的生产者。",
-    "itemStatus": "系统状态",
-    "itemStatusDesc": "服务与数据库的实时健康状况，清晰透明。",
-    "cta": "了解更多"
-  },
-  "services": {
-    "title": "服务与解决方案",
-    "lead": "三项独立服务覆盖土地、企业和科学研究。",
-    "what": "每项服务都源自一个真实问题，并向使用方交付可用的结果。",
-    "audience": "生产者、机构、科研团体、高校和个人。",
-    "farmersTitle": "面向农业生产者",
-    "farmersDesc": "作物规划、灌溉、土壤肥力与水资源管理，推荐均有依据。",
-    "institutionsTitle": "面向机构",
-    "institutionsDesc": "风险区域制图、水资源规划和合规报告。",
-    "researchersTitle": "面向研究人员与高校",
-    "researchersDesc": "科学模型、开放数据集、计算环境和可复现的处理流程。",
-    "pilotCta": "申请试点场次",
-    "pilotNote": "试点地点数量有限，依据数据遴选。",
-    "limits": [
-      "试点地点数量有限，依据数据遴选",
-      "人工智能服务仅限于已声明的农艺领域"
-    ],
-    "next": [
-      "注册后即可从您的土地概况开始",
-      "查看完整的科学模型列表"
-    ]
-  },
-  "evidence": {
-    "title": "科学与证据",
-    "lead": "每一项科学主张都关联到来源、日期和验证方法。",
-    "what": "每份科学文档遵循同一逻辑流程：方法、数据、声明的局限、结果。",
-    "audience": "研究人员、评审者、监管机构以及任何评估本项目主张的人。",
-    "refsTitle": "方法与参考",
-    "refs": [
-      "土壤建模与水平衡方法",
-      "FAO-56 蒸散量标准",
-      "采样与质量控制规程"
-    ],
-    "limitsTitle": "声明的局限",
-    "limits": [
-      "简化的水平衡模型会高估砂质土壤中的含水量",
-      "卫星数据可能被云层遮挡",
-      "季节性预测仍处于较宽的区间内"
-    ],
-    "nextTitle": "下一步",
-    "next": [
-      "阅读完整的方法论与模型假设",
-      "查阅开放数据集与可复现性指南"
-    ]
-  },
-  "learn": {
-    "title": "内容与培训",
-    "lead": "视频课程、双语术语表和可在实地使用的操作指南。",
-    "emptyTitle": "该筛选条件下暂无培训内容",
-    "emptyDesc": "培训材料正在审核中。您可以先查看本站的术语表和方法指南。"
-  },
-  "legal": {
-    "title": "条款与条件",
-    "lead": "个人数据为明确目的而收集，仅保留必要时间并受到保护。",
-    "version": "v 自由版 — 草案",
-    "termsTitle": "使用条款",
-    "termsBody": "使用本平台即表示接受本条款。本项目不主张任何未经核实的外部认证。",
-    "privacyTitle": "个人数据",
-    "privacyBody": "我们使用个人数据来提供您所请求的服务。我们不出于商业目的共享身份识别数据。",
-    "cookiesTitle": "Cookie 与语言",
-    "cookiesBody": "我们使用技术性 Cookie 记住您选择的语言，您可以随时在浏览器设置中更改。"
-  },
-  "ai": {
-    "title": "负责任的人工智能",
-    "lead": "人工智能是辅助，而非科学方法的替代。它必须声明自身的边界。",
-    "what": "人工智能工具帮助组织问题和检索知识库，但不能替代农艺专家的意见或田间观察。",
-    "audience": "生产者、技术人员、研究人员以及在农业规划中使用自动化工具的所有人。",
-    "sourceRule": "每个回答都应标注来源，或标记为模型草稿。",
-    "limitsTitle": "声明的局限",
-    "limits": [
-      "推荐不能替代农艺专家或当地法规",
-      "模型可能推荐不适合特定区域的做法",
-      "仅支持已声明的领域（fa/en/ar/ur）"
-    ],
-    "nextTitle": "下一步",
-    "next": [
-      "报告不正确的回答，以便由人工复核",
-      "查阅系统的完整流程说明"
-    ]
-  },
-  "trust": {
-    "title": "数据溯源与系统可信度",
-    "lead": "溯源意味着追踪每一个数据到其出处，而不仅仅是一个标记。",
-    "what": "每一个展示的数据都带有溯源标记：来源、日期以及生成它的服务。",
-    "audience": "机构合作伙伴、检查人员、研究人员与监管机构。",
-    "provenanceTitle": "溯源浏览器",
-    "provenanceDesc": "将每一个数据追溯到对应服务、数据影像和获取日期。",
-    "registryTitle": "碳登记册",
-    "registryDesc": "项目产生的碳信用可访问、可核验；区块链地址暂不可用。",
-    "disclosureTitle": "负责任的披露",
-    "disclosureDesc": "漏洞披露以保密方式进行，不暴露用户数据。",
-    "statusCta": "查看服务状态",
-    "limits": [
-      "碳登记册地址暂不可用",
-      "溯源浏览器对部分数据集暂不可用"
-    ],
-    "next": [
-      "探索系统中每一个数据的来源",
-      "查阅年度透明度报告"
-    ]
-  },
-  "developers": {
-    "title": "开发者与 API",
-    "lead": "面向开发者、集成方和技术伙伴：查阅契约、试用接口、参与协作。",
-    "what": "每个接口都有文档，每次 API 变更都被记录，每个请求都携带关联标识。",
-    "audience": "开发者、集成方、高校、研究团队和技术伙伴。",
-    "docsTitle": "API 文档",
-    "docsDesc": "每个接口都配有请求与响应示例、速率限制和错误码说明。",
-    "toolsTitle": "开发工具",
-    "toolsDesc": "工具包含生成的客户端、测试集合和集成示例。",
-    "changesTitle": "变更记录",
-    "changesDesc": "每次 API 变更都关联版本号并发布在变更记录中。",
-    "publicNote": "公开环境为只读。测试与写入受身份验证保护，并限于获准的操作。",
-    "limits": [
-      "仅允许在授权环境中写入",
-      "公开接口不允许自动化工具调用"
-    ],
-    "next": [
-      "查阅快速上手指南和集成示例",
-      "申请 API 密钥和测试环境"
-    ]
-  },
-  "accessibility": {
-    "title": "无障碍声明",
-    "lead": "无障碍是功能性要求：任何功能都不应只依赖颜色或声音。",
-    "what": "本站支持键盘导航，具备符合要求的对比度、正确的语义结构，并完整支持 RTL/LTR 模式。",
-    "audience": "残障人士、老年人、辅助技术用户，以及使用触摸屏或键盘浏览的所有人。",
-    "standardTitle": "适用标准",
-    "standardDesc": "本站以符合 WCAG 2.2 AA 级为目标。自动检测不能替代与真实用户的人工核验。",
-    "feedbackTitle": "反馈无障碍问题",
-    "feedbackDesc": "如果您遇到障碍，请反馈相关页面地址。我们将在下一个更新周期内解决。",
-    "limits": [
-      "部分交互地图的文字替代有限",
-      "部分科学文档仅提供文本格式"
-    ],
-    "next": [
-      "连同页面地址反馈无障碍问题",
-      "查阅键盘操作与屏幕阅读器使用指南"
-    ]
   },
   "auth": {
     "meta": {
@@ -335,7 +1213,15 @@
       "ar": "阿拉伯语",
       "it": "意大利语",
       "ru": "俄语",
-      "zh": "中文"
+      "ur": "乌尔都语",
+      "de": "德语",
+      "es": "西班牙语",
+      "fr": "法语",
+      "hi": "印地语",
+      "ms": "马来语",
+      "pt": "葡萄牙语",
+      "zh": "中文",
+      "bn": "孟加拉语"
     },
     "errors": {
       "forbidden": "请求被会话边界拒绝。请重新加载页面后重试。",
@@ -624,6 +1510,10 @@
       "title": "为何构建此平台",
       "description": "问题、解决方案与可核查的证据"
     },
+    "marketplace-market-cart-product_id": {
+      "title": "购物车条目",
+      "description": "购物车中的一行，在请求时按其标识符解析。"
+    },
     "marketplace-market-producers": {
       "title": "生产者",
       "description": "市场已登记的生产者，附其记录的核验状态。"
@@ -631,6 +1521,562 @@
     "marketplace-market-stats": {
       "title": "市场统计",
       "description": "从统计端点读取的计数，或声明服务未响应。"
+    },
+    "hydroma-hydroma-carbon-credits-token_id-history": {
+      "title": "信用历史",
+      "description": "一笔碳信用的变动历史，按账本所记录的顺序。"
+    },
+    "hydroma-hydroma-carbon-verra-registry_id": {
+      "title": "登记记录",
+      "description": "按标识查询的一条登记记录，附引擎所报告的状态。"
+    },
+    "hydroma-hydroma-carbon-verra-standards": {
+      "title": "登记标准",
+      "description": "引擎实现的登记标准，附其为每一项所报告的版本。"
+    },
+    "hydroma-hydroma-climate-model_id-run": {
+      "title": "气候计算",
+      "description": "一次气候计算，附引擎为其记录的输入。"
+    },
+    "hydroma-hydroma-climate-scenarios": {
+      "title": "气候情景",
+      "description": "引擎可运行的情景，附每一项所文档化的假设。"
+    },
+    "hydroma-hydroma-economics-model_id-run": {
+      "title": "经济计算",
+      "description": "一项经济结果，附引擎为其记录的假设。"
+    },
+    "hydroma-hydroma-elevation-grid-site_id": {
+      "title": "高程网格",
+      "description": "某地块的高程数据，附引擎所记录的来源与分辨率。"
+    },
+    "hydroma-hydroma-hydrology-model_id-run": {
+      "title": "水文计算",
+      "description": "一项水文结果，附引擎为其记录的输入。"
+    },
+    "hydroma-hydroma-soil-model_id-run": {
+      "title": "土壤计算",
+      "description": "一项土壤结果，附引擎为其记录的输入。"
+    },
+    "admin-admin-content-item_id-translations": {
+      "title": "内容翻译",
+      "description": "某内容条目被翻译成哪些语言，按网关的记录。"
+    },
+    "admin-admin-errors-error_id": {
+      "title": "错误记录",
+      "description": "一条已记录的错误，以及网关为其保留的上下文。"
+    },
+    "admin-admin-errors-summary": {
+      "title": "按严重程度统计的已记录错误数量，由网关实际持有的错误计算得出。",
+      "description": "已登记模型"
+    },
+    "admin-admin-models": {
+      "title": "网关所登记的模型，及其各自发布的版本与文档。",
+      "description": "服务状态"
+    },
+    "admin-admin-overview-health": {
+      "title": "各服务就自身可用性所报告的内容，在请求时读取。",
+      "description": "平台指标"
+    },
+    "admin-admin-overview-metrics": {
+      "title": "网关所报告的具名平台指标，附其单位。",
+      "description": "网关所记录的审计事件，附各自的操作者与操作。"
+    },
+    "admin-admin-security-audit": {
+      "title": "安全审计",
+      "description": "登录记录"
+    },
+    "admin-admin-security-logins": {
+      "title": "网关所记录的登录尝试，及其结果与来源地址。",
+      "description": "争议记录"
+    },
+    "workspace-workspace-disputes-dispute_id": {
+      "title": "按标识符的一项争议，附所附证据与其达到的状态。",
+      "description": "财务账户"
+    },
+    "workspace-workspace-finance-accounts": {
+      "title": "该工作区所持有的财务账户，附网关为各自记录的状态。",
+      "description": "幂等键"
+    },
+    "workspace-workspace-finance-idempotency-keys": {
+      "title": "该工作区所使用过的幂等键，以便重复请求能被识别为同一次。",
+      "description": "账户余额"
+    },
+    "workspace-workspace-finance-ledger-accounts-account_id-balance": {
+      "title": "账本在读取到该笔分录时所记录的账户余额。",
+      "description": "账本分录"
+    },
+    "workspace-workspace-finance-ledger-entries": {
+      "title": "该工作区所持有的全部分录，按顺序列出，附各自的金额与方向。",
+      "description": "损益"
+    },
+    "workspace-workspace-finance-ledger-profit-and-loss": {
+      "title": "由分录本身汇总的收入与支出，涵盖所注明的时段。",
+      "description": "试算平衡"
+    },
+    "workspace-workspace-finance-ledger-trial-balance": {
+      "title": "由分录汇总的借方与贷方，以及双方是否吻合。",
+      "description": "工作区钱包"
+    },
+    "workspace-workspace-finance-wallet": {
+      "title": "账本所记录的工作区钱包，附余额背后的分录。",
+      "description": "账户资产"
+    },
+    "research-research-hub-runs-run_id-share": {
+      "title": "共享运行",
+      "description": "按标识符的一次运行，以及研究中心记录的共享状态。"
+    },
+    "research-research-science-citations": {
+      "title": "引用",
+      "description": "研究中心持有的引用，及其对应的标识符。"
+    },
+    "research-research-science-datasets-slug-doi": {
+      "title": "数据集 DOI",
+      "description": "为某个数据集登记的 DOI，以及是否已分配。"
+    },
+    "research-research-science-model-cards": {
+      "title": "模型卡",
+      "description": "研究中心持有的模型卡，及其所记录的模型。"
+    },
+    "inclusive-auth-2fa-methods": {
+      "title": "双因素方式",
+      "description": "账户服务可用的双因素方式。"
+    },
+    "inclusive-auth-account-bio": {
+      "title": "账户简介",
+      "description": "账户持有人登记的简介，可由其本人编辑。"
+    },
+    "inclusive-auth-assets": {
+      "title": "账户服务所附属于某账户的资产。",
+      "description": "订阅"
+    },
+    "inclusive-auth-billing-subscription": {
+      "title": "计费服务所记录的订阅状态，附其方案与周期。",
+      "description": "法律文本"
+    },
+    "inclusive-auth-billing-usage": {
+      "title": "用量",
+      "description": "已登记额度使用了多少，按计费服务的报告。"
+    },
+    "inclusive-auth-export-data": {
+      "title": "数据导出",
+      "description": "账户服务可以就账户导出什么，以及以何种形式。"
+    },
+    "inclusive-auth-notifications-preferences": {
+      "title": "通知偏好",
+      "description": "账户服务已记录的通知偏好。"
+    },
+    "inclusive-auth-privacy-settings": {
+      "title": "隐私设置",
+      "description": "账户服务为某个账户记录的隐私选择。"
+    },
+    "inclusive-auth-referrals": {
+      "title": "推荐",
+      "description": "与账户关联的推荐记录，及其各自达到的状态。"
+    },
+    "inclusive-auth-rewards": {
+      "title": "奖励",
+      "description": "账户服务已记录的奖励，及其各自的依据。"
+    },
+    "learning-learn-content-search": {
+      "title": "检索学习内容",
+      "description": "检索已发布的学习库。结果即为索引所匹配到的内容，此处不附加任何排序。"
+    },
+    "learning-learn-manual-climate-normals-site_id": {
+      "title": "气候平均值",
+      "description": "某一气象站长期气候平均值，附有所依据的时段与基准。"
+    },
+    "learning-learn-manual-crop-calendar": {
+      "title": "作物日历",
+      "description": "按作物和地区的播种与收获窗口，取自引擎随附的表格。"
+    },
+    "learning-learn-manual-crop-params": {
+      "title": "作物参数",
+      "description": "模型为每种作物所用的参数——系数、生长阶段与胁迫阈值。"
+    },
+    "learning-learn-manual-sites": {
+      "title": "参考站点",
+      "description": "手册所引用的站点，附引擎为各地点记录的坐标。"
+    },
+    "learning-learn-manual-sites-site_id": {
+      "title": "站点",
+      "description": "按标识符的一处参考站点，附引擎为其保留的字段。"
+    },
+    "learning-learn-manual-soil-regions": {
+      "title": "土壤区域",
+      "description": "手册所描述的土壤区域，附各自遵循的分类。"
+    },
+    "learning-learn-manual-status": {
+      "title": "手册状态",
+      "description": "手册服务就其自身内容所报告的内容：哪些已发布，哪些在审查中。"
+    },
+    "learning-learn-manual-weather-daily-site_id": {
+      "title": "每日天气",
+      "description": "某站点的每日天气观测，按服务返回的顺序，附单位。"
+    },
+    "learning-public-education-advanced-search": {
+      "title": "高级检索",
+      "description": "在学习库中进行多条件检索，使用服务实际索引的词组。"
+    },
+    "learning-learn-legal": {
+      "title": "平台所发布的法律文本，附各自的语言与版本。",
+      "description": "法律文本所发布的语言，按记录。"
+    },
+    "learning-learn-legal-locales": {
+      "title": "法律语言",
+      "description": "法律文号"
+    },
+    "learning-learn-legal-slugs": {
+      "title": "平台所持有的法律文件，按文号列出。",
+      "description": "双因素状态"
+    },
+    "inclusive-auth-2fa-status": {
+      "title": "此账户是否启用了双因素身份验证，按账户服务的报告。",
+      "description": "账户服务为此账户所持有的状态，包括其所施加的任何限制。"
+    },
+    "inclusive-auth-account-status": {
+      "title": "账户状态",
+      "description": "旧版账户数据"
+    },
+    "inclusive-auth-legacy": {
+      "title": "从旧账户系统沿用而来的数据，供审阅迁移之用，而非日常使用。",
+      "description": "我的账户"
+    },
+    "inclusive-auth-me": {
+      "title": "服务为此身份所保存的账户记录，完全按其存储的样子。",
+      "description": "发给此账户的通知，按服务所持有的顺序。"
+    },
+    "inclusive-auth-notifications": {
+      "title": "通知",
+      "description": "已连接的服务"
+    },
+    "inclusive-auth-oauth-connections": {
+      "title": "与此账户连接的第三方服务，及其各自获授的权限范围。",
+      "description": "偏好"
+    },
+    "inclusive-auth-preferences": {
+      "title": "账户服务为此账户记录的偏好。",
+      "description": "扩展偏好"
+    },
+    "inclusive-auth-preferences-extended": {
+      "title": "完整的偏好集合，包括服务为将来使用而保留的键。",
+      "description": "公开档案"
+    },
+    "inclusive-auth-profile-public": {
+      "title": "您的档案中他人可见的部分，按服务所发布的样子。",
+      "description": "速率限制"
+    },
+    "inclusive-auth-rate-limit": {
+      "title": "您还可以发送什么，以及您的窗口中还剩多少，按服务的计算。",
+      "description": "阶段闸状态"
+    },
+    "public-ai-analysis-providers": {
+      "title": "分析提供方",
+      "description": "网关登记的分析提供方，及其各自报告的状态。"
+    },
+    "public-ai-health": {
+      "title": "AI 服务状态",
+      "description": "AI 端点就自身可用性所报告的内容，在请求时读取。"
+    },
+    "public-ai-history": {
+      "title": "分析历史",
+      "description": "此前已记录的分析，按网关的保存方式。"
+    },
+    "public-ai-scenarios": {
+      "title": "此前已记录的分析，按网关的保存方式。",
+      "description": "分析场景"
+    },
+    "public-ai-stream": {
+      "title": "网关为分析登记的场景，及其记录状态。",
+      "description": "分析事件流"
+    },
+    "public-ai-tools": {
+      "title": "AI 工具",
+      "description": "AI 界面所提供的工具，取自登记表而非逐条手写。"
+    },
+    "public-ai-tools-tool_id": {
+      "title": "AI 工具",
+      "description": "按标识符的一件工具，附网关为其发布的契约。"
+    },
+    "public-ai-tools-tool_id-schema": {
+      "title": "工具结构",
+      "description": "工具所声明的输入结构，与网关返回的完全一致。"
+    },
+    "public-help-personas": {
+      "title": "读者角色",
+      "description": "该指引所面向的读者角色，按登记记录。"
+    },
+    "public-trust-blockchain-ecocoin-health": {
+      "title": "EcoCoin 链状态",
+      "description": "EcoCoin 端点就自身可用性所报告的内容。"
+    },
+    "public-trust-blockchain-ecocoin-stats": {
+      "title": "EcoCoin 统计",
+      "description": "网关在请求时记录的链上计数。"
+    },
+    "public-trust-blockchain-ecocoin-wallet-user_id": {
+      "title": "EcoCoin 钱包",
+      "description": "按标识符的一个钱包，附链上所报告的余额。"
+    },
+    "public-trust-blockchain-health": {
+      "title": "链状态",
+      "description": "区块链端点的可用性，在请求时读取。"
+    },
+    "public-trust-blockchain-impact-certificate-certificate_id": {
+      "title": "影响证书",
+      "description": "按标识符的一张影响证书，附链上记录的状态。"
+    },
+    "public-trust-blockchain-info": {
+      "title": "链信息",
+      "description": "网关所报告的链参数：网络、契约地址和状态。"
+    },
+    "public-trust-blockchain-oracle-metrics-activity_id": {
+      "title": "预言机指标",
+      "description": "预言机为某项活动记录的价格指标，附其观测时间。"
+    },
+    "public-trust-blockchain-stats": {
+      "title": "链上统计",
+      "description": "所记录的链上计数，附读取时的区块高度。"
+    },
+    "public-trust-blockchain-transactions": {
+      "title": "链上交易",
+      "description": "网关所报告的交易，及其实际返回的字段。"
+    },
+    "public-trust-blockchain-transactions-tx_hash": {
+      "title": "链上交易",
+      "description": "按哈希的一笔交易，附链上记录的状态。"
+    },
+    "public-trust-blockchain-verification": {
+      "title": "链上验证",
+      "description": "网关为某条已记录主张所持有的验证状态。"
+    },
+    "public-trust-cors-proxy-status": {
+      "title": "代理状态",
+      "description": "CORS 代理是否可用，在请求时读取。"
+    },
+    "public-trust-data-availability": {
+      "title": "数据可用性",
+      "description": "网关目前可以提供哪些数据集，以及不能提供哪些。"
+    },
+    "public-trust-data-freshness": {
+      "title": "数据新鲜度",
+      "description": "每个已登记数据集最近一次更新于何时，按网关的报告。"
+    },
+    "public-trust-data-lineage": {
+      "title": "数据血缘",
+      "description": "每个已登记数据集来自何处，按网关的报告。"
+    },
+    "public-trust-data-quality": {
+      "title": "数据质量",
+      "description": "网关计算出的质量信号，而非平台自设的评分。"
+    },
+    "public-trust-mrv-reports": {
+      "title": "MRV 报告",
+      "description": "网关所持有的监测、报告与核查记录。"
+    },
+    "public-trust-report-period-period": {
+      "title": "周期报告",
+      "description": "一个报告周期，以及网关为该周期所持有的记录。"
+    },
+    "public-trust-transparency-log": {
+      "title": "透明度日志",
+      "description": "网关记录的披露与修订历史，按其保存顺序。"
+    },
+    "public-trust-blockchain-phasegate-status": {
+      "title": "阶段闸是否开启，按链上端点在请求时的报告。",
+      "description": "国库余额"
+    },
+    "public-trust-blockchain-treasury-balance": {
+      "title": "链上记录的国库余额，附读取时的区块高度。",
+      "description": "内容版本"
+    },
+    "public-public-pilot-stats": {
+      "title": "试点统计",
+      "description": "试点计划的计数，由其所属服务报告。"
+    },
+    "system-system-dashboard-public-analytics": {
+      "title": "公开分析",
+      "description": "公开仪表板发布的汇总数字，附各自涵盖的窗口。"
+    },
+    "system-system-dashboard-public-carbon": {
+      "title": "公开碳仪表板",
+      "description": "公开仪表板发布的碳数字，附引擎所报告的方法版本。"
+    },
+    "system-system-dashboard-public-full": {
+      "title": "完整公开仪表板",
+      "description": "公开仪表板发布的全部面板，按服务返回的顺序。"
+    },
+    "system-system-dashboard-public-mrv": {
+      "title": "公开 MRV 仪表板",
+      "description": "公开仪表板所开放的监测、报告与核查记录。"
+    },
+    "system-system-dashboard-public-projects": {
+      "title": "公开项目",
+      "description": "公开仪表板列出的项目，及其各自记录的状态。"
+    },
+    "system-system-dashboard-public-satellite": {
+      "title": "公开卫星仪表板",
+      "description": "公开仪表板提供的卫星图层，附各自的获取时间。"
+    },
+    "system-system-dashboard-public-simulations": {
+      "title": "公开模拟",
+      "description": "公开仪表板发布的模拟运行，及其各自所用的参数。"
+    },
+    "system-system-dashboard-public-soil": {
+      "title": "公开土壤仪表板",
+      "description": "公开仪表板发布的土壤测量值，附各自的取样深度与日期。"
+    },
+    "system-system-dashboard-public-test": {
+      "title": "公开仪表板探针",
+      "description": "公开仪表板处理链的自检，予以发布，以便在故障被报告之前就能看见。"
+    },
+    "system-system-dashboard-public-tourism": {
+      "title": "公开旅游仪表板",
+      "description": "公开仪表板发布的旅游数字，附其涵盖的时段。"
+    },
+    "system-system-dashboard-public-weather": {
+      "title": "公开天气仪表板",
+      "description": "公开仪表板发布的天气观测，附各自的站点与时间。"
+    },
+    "admin-admin-bots": {
+      "title": "机器人",
+      "description": "网关登记的机器人，及其各自报告的状态。"
+    },
+    "admin-admin-content": {
+      "title": "内容登记簿",
+      "description": "平台所持有的内容，及其记录在案的发布状态。"
+    },
+    "admin-admin-content-item_id": {
+      "title": "内容条目",
+      "description": "按标识符的一个内容条目，附其记录状态与翻译覆盖率。"
+    },
+    "admin-admin-content-item_id-versions": {
+      "title": "某内容条目的每一个版本，附各自记录的变更。",
+      "description": "我的村庄需求"
+    },
+    "admin-admin-dashboard-overview": {
+      "title": "平台概览",
+      "description": "从网关读取的平台计数，不含服务未曾报告的任何数值。"
+    },
+    "admin-admin-errors": {
+      "title": "错误登记簿",
+      "description": "网关所记录的错误，及其状态与路由。"
+    },
+    "admin-admin-health": {
+      "title": "网关状态",
+      "description": "网关就自身状态所报告的内容，在请求时读取。"
+    },
+    "admin-admin-models-name": {
+      "title": "已登记模型",
+      "description": "按名称的一个已登记模型，附网关为其发布的版本与文档。"
+    },
+    "admin-admin-overview": {
+      "title": "平台概览",
+      "description": "从网关读取的平台计数，不含服务未曾报告的任何数值。"
+    },
+    "admin-admin-settings": {
+      "title": "平台设置",
+      "description": "网关所记录的设置，附每个数值的来源。"
+    },
+    "admin-admin-telemetry": {
+      "title": "遥测",
+      "description": "网关发出的遥测，附其采集所跨的间隔。"
+    },
+    "admin-admin-telemetry-metrics": {
+      "title": "遥测指标",
+      "description": "网关所报告的具名遥测指标，附其单位。"
+    },
+    "admin-admin-telemetry-traces": {
+      "title": "遥测链路追踪",
+      "description": "网关所记录的请求链路追踪，附其状态与耗时。"
+    },
+    "hydroma-hydroma-analyses-crop-water-req": {
+      "title": "作物需水量",
+      "description": "作物需水量估算，附模型所记录的方法与输入。"
+    },
+    "hydroma-hydroma-analyses-groundwater": {
+      "title": "地下水分析",
+      "description": "地下水结果，附引擎所报告的模型版本与不确定性。"
+    },
+    "hydroma-hydroma-analyses-irrigation-design": {
+      "title": "灌溉设计",
+      "description": "灌溉设计结果，附引擎为其记录的假设。"
+    },
+    "hydroma-hydroma-analyses-runoff": {
+      "title": "径流分析",
+      "description": "径流估算，附模型版本与引擎所留的输入。"
+    },
+    "hydroma-hydroma-analyses-structure-design": {
+      "title": "结构设计",
+      "description": "结构设计结果与引擎所采用的安全系数。"
+    },
+    "hydroma-hydroma-analyses-topography": {
+      "title": "地形分析",
+      "description": "引擎计算的地形结果，附所记录的分辨率。"
+    },
+    "hydroma-hydroma-carbon": {
+      "title": "碳核算",
+      "description": "来自引擎的碳估算，显示方法版本与不确定性。"
+    },
+    "hydroma-hydroma-carbon-credits-balance": {
+      "title": "碳信用余额",
+      "description": "引擎所报告的信用余额，及其归属的项目。"
+    },
+    "hydroma-hydroma-carbon-credits-retire": {
+      "title": "信用注销",
+      "description": "引擎所留的注销记录，附每笔的数量。"
+    },
+    "hydroma-hydroma-carbon-credits-token_id-verify": {
+      "title": "信用核验",
+      "description": "引擎为该信用记录的核验状态，附其所用的方法。"
+    },
+    "hydroma-hydroma-carbon-credits-transfer": {
+      "title": "信用转移",
+      "description": "已登记账户之间的转移记录，由引擎所记录。"
+    },
+    "hydroma-hydroma-carbon-methods": {
+      "title": "碳方法",
+      "description": "引擎实现的碳核算方法，附其版本与文档引用。"
+    },
+    "hydroma-hydroma-climate": {
+      "title": "气候模型",
+      "description": "引擎已实现的气候模型，附每一项所文档化的版本与适用范围。"
+    },
+    "hydroma-hydroma-climate-model_id": {
+      "title": "气候模型",
+      "description": "按标识查询的一个气候模型，附其版本与文档化的适用范围。"
+    },
+    "hydroma-hydroma-db-stats": {
+      "title": "引擎数据库",
+      "description": "引擎关于自身存储的报告：后端、可达性与记录数。"
+    },
+    "hydroma-hydroma-economics": {
+      "title": "经济模型",
+      "description": "引擎已实现的经济模型，附每一项所假定的成本基础。"
+    },
+    "hydroma-hydroma-economics-model_id": {
+      "title": "经济模型",
+      "description": "按标识查询的一个经济模型，附其假定的成本基础。"
+    },
+    "hydroma-hydroma-elevation-model_id": {
+      "title": "高程模型",
+      "description": "按标识查询的一个高程模型，附其分辨率与覆盖范围。"
+    },
+    "hydroma-hydroma-farms": {
+      "title": "农场",
+      "description": "引擎已登记的农场，附为每一处所留的面积与位置。"
+    },
+    "hydroma-hydroma-hydrology-model_id": {
+      "title": "水文模型",
+      "description": "按标识查询的一个水文模型，附引擎所报告的版本与率定。"
+    },
+    "hydroma-hydroma-provenance-dataset_id": {
+      "title": "数据集来源",
+      "description": "数据集从何而来、何时获取，以及由哪个服务产生。"
+    },
+    "hydroma-hydroma-soil-model_id": {
+      "title": "土壤模型",
+      "description": "按标识查询的一个土壤模型，附其参数与率定。"
     },
     "marketplace-market-admin-orders": {
       "title": "订单管理",
@@ -647,6 +2093,14 @@
     "marketplace-market-marketplaces-marketplace_id": {
       "title": "市场记录",
       "description": "按标识查询的单个市场：网关为其保存的状态，而非对「它应该是什么样」的描述。"
+    },
+    "marketplace-market-marketplaces-marketplace_id-approve": {
+      "title": "市场审批队列",
+      "description": "等待审批的市场，完全按网关所报告的列出。"
+    },
+    "marketplace-market-marketplaces-marketplace_id-members": {
+      "title": "市场成员",
+      "description": "登记在某市场下的成员，附网关为其保留的角色。"
     },
     "marketplace-market-marketplaces-marketplace_id-shops": {
       "title": "市场店铺",
@@ -780,129 +2234,69 @@
       "title": "核验方式",
       "description": "按标识查询的一种核验方式，及其配置状态。"
     },
-    "hydroma-hydroma-carbon-credits-token_id-history": {
-      "title": "信用历史",
-      "description": "一笔碳信用的变动历史，按账本所记录的顺序。"
+    "marketplace-market-villages-b2b-demands-my": {
+      "title": "为您所属村庄记录的采购需求，按网关的保存方式。",
+      "description": "村庄匹配"
     },
-    "hydroma-hydroma-carbon-verra-registry_id": {
-      "title": "登记记录",
-      "description": "按标识查询的一条登记记录，附引擎所报告的状态。"
+    "marketplace-market-villages-b2b-matches-village_id": {
+      "title": "某采购需求所匹配到的供应商，附网关计算出的评分。",
+      "description": "村庄创业者"
     },
-    "hydroma-hydroma-carbon-verra-standards": {
-      "title": "登记标准",
-      "description": "引擎实现的登记标准，附其为每一项所报告的版本。"
+    "marketplace-market-villages-entrepreneurs": {
+      "title": "网关为某村庄登记的创业者，按记录。",
+      "description": "我的创业者记录"
     },
-    "hydroma-hydroma-climate-model_id-run": {
-      "title": "气候计算",
-      "description": "一次气候计算，附引擎为其记录的输入。"
+    "marketplace-market-villages-entrepreneurs-me": {
+      "title": "为您账户所持有的创业者记录，附网关所存储的字段。",
+      "description": "村庄投资"
     },
-    "hydroma-hydroma-climate-scenarios": {
-      "title": "气候情景",
-      "description": "引擎可运行的情景，附每一项所文档化的假设。"
+    "marketplace-market-villages-investments": {
+      "title": "针对村庄记录的投资，附网关所报告的金额。",
+      "description": "游牧社群"
     },
-    "hydroma-hydroma-economics-model_id-run": {
-      "title": "经济计算",
-      "description": "一项经济结果，附引擎为其记录的假设。"
+    "marketplace-market-villages-nomadic-communities": {
+      "title": "网关所登记的牧民社群，附其为这些社群记录的定居点。",
+      "description": "村庄机会"
     },
-    "hydroma-hydroma-elevation-grid-site_id": {
-      "title": "高程网格",
-      "description": "某地块的高程数据，附引擎所记录的来源与分辨率。"
+    "marketplace-market-villages-opportunities": {
+      "title": "网关为村庄发布的各项机会，及其记录状态。",
+      "description": "机会团队"
     },
-    "hydroma-hydroma-hydrology-model_id-run": {
-      "title": "水文计算",
-      "description": "一项水文结果，附引擎为其记录的输入。"
+    "marketplace-market-villages-opportunities-opportunity_id-team": {
+      "title": "为某项机会记录的团队，附网关为每人保留的角色。",
+      "description": "参与村庄"
     },
-    "hydroma-hydroma-soil-model_id-run": {
-      "title": "土壤计算",
-      "description": "一项土壤结果，附引擎为其记录的输入。"
+    "marketplace-market-villages-projects-project_id-engaged": {
+      "title": "被记录为参与某项目的村庄，及其各自担任的角色。",
+      "description": "村庄记录"
     },
-    "hydroma-hydroma-analyses-crop-water-req": {
-      "title": "作物需水量",
-      "description": "作物需水量估算，附模型所记录的方法与输入。"
+    "marketplace-market-villages-village_id": {
+      "title": "按标识符的一个村庄，附网关为其记录的字段。",
+      "description": "成就"
     },
-    "hydroma-hydroma-analyses-groundwater": {
-      "title": "地下水分析",
-      "description": "地下水结果，附引擎所报告的模型版本与不确定性。"
+    "research-research-hub-runs": {
+      "title": "研究运行",
+      "description": "研究中心所记录的复现运行，及其状态。"
     },
-    "hydroma-hydroma-analyses-irrigation-design": {
-      "title": "灌溉设计",
-      "description": "灌溉设计结果，附引擎为其记录的假设。"
+    "research-research-hub-shared": {
+      "title": "共享运行",
+      "description": "该账户选择共享的运行，按记录。"
     },
-    "hydroma-hydroma-analyses-runoff": {
-      "title": "径流分析",
-      "description": "径流估算，附模型版本与引擎所留的输入。"
+    "research-research-science-agrovoc": {
+      "title": "Agrovoc 术语",
+      "description": "受控词表的术语，按术语服务所返回的。"
     },
-    "hydroma-hydroma-analyses-structure-design": {
-      "title": "结构设计",
-      "description": "结构设计结果与引擎所采用的安全系数。"
+    "research-research-science-citations-index": {
+      "title": "引用索引",
+      "description": "研究中心维护的引用索引，附其声明的覆盖率。"
     },
-    "hydroma-hydroma-analyses-topography": {
-      "title": "地形分析",
-      "description": "引擎计算的地形结果，附所记录的分辨率。"
+    "research-research-science-datasets": {
+      "title": "研究数据集",
+      "description": "研究中心登记的数据集，及其访问状态。"
     },
-    "hydroma-hydroma-carbon": {
-      "title": "碳核算",
-      "description": "来自引擎的碳估算，显示方法版本与不确定性。"
-    },
-    "hydroma-hydroma-carbon-credits-balance": {
-      "title": "碳信用余额",
-      "description": "引擎所报告的信用余额，及其归属的项目。"
-    },
-    "hydroma-hydroma-carbon-credits-retire": {
-      "title": "信用注销",
-      "description": "引擎所留的注销记录，附每笔的数量。"
-    },
-    "hydroma-hydroma-carbon-credits-token_id-verify": {
-      "title": "信用核验",
-      "description": "引擎为该信用记录的核验状态，附其所用的方法。"
-    },
-    "hydroma-hydroma-carbon-credits-transfer": {
-      "title": "信用转移",
-      "description": "已登记账户之间的转移记录，由引擎所记录。"
-    },
-    "hydroma-hydroma-carbon-methods": {
-      "title": "碳方法",
-      "description": "引擎实现的碳核算方法，附其版本与文档引用。"
-    },
-    "hydroma-hydroma-climate": {
-      "title": "气候模型",
-      "description": "引擎已实现的气候模型，附每一项所文档化的版本与适用范围。"
-    },
-    "hydroma-hydroma-climate-model_id": {
-      "title": "气候模型",
-      "description": "按标识查询的一个气候模型，附其版本与文档化的适用范围。"
-    },
-    "hydroma-hydroma-db-stats": {
-      "title": "引擎数据库",
-      "description": "引擎关于自身存储的报告：后端、可达性与记录数。"
-    },
-    "hydroma-hydroma-economics": {
-      "title": "经济模型",
-      "description": "引擎已实现的经济模型，附每一项所假定的成本基础。"
-    },
-    "hydroma-hydroma-economics-model_id": {
-      "title": "经济模型",
-      "description": "按标识查询的一个经济模型，附其假定的成本基础。"
-    },
-    "hydroma-hydroma-elevation-model_id": {
-      "title": "高程模型",
-      "description": "按标识查询的一个高程模型，附其分辨率与覆盖范围。"
-    },
-    "hydroma-hydroma-farms": {
-      "title": "农场",
-      "description": "引擎已登记的农场，附为每一处所留的面积与位置。"
-    },
-    "hydroma-hydroma-hydrology-model_id": {
-      "title": "水文模型",
-      "description": "按标识查询的一个水文模型，附引擎所报告的版本与率定。"
-    },
-    "hydroma-hydroma-provenance-dataset_id": {
-      "title": "数据集来源",
-      "description": "数据集从何而来、何时获取，以及由哪个服务产生。"
-    },
-    "hydroma-hydroma-soil-model_id": {
-      "title": "土壤模型",
-      "description": "按标识查询的一个土壤模型，附其参数与率定。"
+    "research-research-science-zenodo-status": {
+      "title": "Zenodo 状态",
+      "description": "Zenodo 集成的状态，按研究中心的报告。"
     },
     "system-system-analytics-activity-timeline": {
       "title": "活动时间线",
@@ -975,12 +2369,402 @@
     "system-system-logs": {
       "title": "系统日志",
       "description": "网关的日志记录，附每条的严重级别与所属路由。"
+    },
+    "workspace-workspace-analytics": {
+      "title": "工作区分析",
+      "description": "已登录工作区的计数，由其所持有的记录计算得出。"
+    },
+    "workspace-workspace-analytics-usage": {
+      "title": "使用情况分析",
+      "description": "该工作区实际是如何被使用的，按其自身记录所显示的。"
+    },
+    "workspace-workspace-carbon": {
+      "title": "工作区碳排",
+      "description": "该工作区自身已记录活动的碳数字。"
+    },
+    "workspace-workspace-carbon-credits": {
+      "title": "工作区碳信用",
+      "description": "归属于该工作区的信用，及其来源项目。"
+    },
+    "workspace-workspace-commerce-orders": {
+      "title": "贸易订单",
+      "description": "该工作区中的订单，及其各自实际所处的状态。"
+    },
+    "workspace-workspace-commerce-orders-order_id": {
+      "title": "贸易订单",
+      "description": "按标识符的一笔订单，附其记录状态与经历过的状态转换。"
+    },
+    "workspace-workspace-commerce-orders-order_id-transitions": {
+      "title": "订单状态转换",
+      "description": "一笔订单实际经历过的状态转换，按记录顺序。"
+    },
+    "workspace-workspace-dashboard": {
+      "title": "工作区仪表板",
+      "description": "该工作区自身记录的数值，按活动类型分组。"
+    },
+    "workspace-workspace-disputes": {
+      "title": "该工作区中提出的争议，及其各自达到的状态。",
+      "description": "文档"
+    },
+    "workspace-workspace-documents": {
+      "title": "该工作区所持有的文档，及其记录状态。",
+      "description": "发给该工作区的通知，按记录。"
+    },
+    "workspace-workspace-notifications": {
+      "title": "通知",
+      "description": "工作区档案"
+    },
+    "workspace-workspace-profile": {
+      "title": "该工作区为自己登记的档案。",
+      "description": "工作区设置"
+    },
+    "workspace-workspace-settings": {
+      "title": "为该工作区记录的设置，附每个数值的来源。",
+      "description": "API 密钥"
+    },
+    "inclusive-auth-achievements": {
+      "title": "与账户关联的成就记录，及其各自获授所依据的标准。",
+      "description": "活动历史"
+    },
+    "inclusive-auth-activity-history": {
+      "title": "账户服务就某账户所记录的活动。",
+      "description": "API 密钥"
+    },
+    "inclusive-auth-api-keys": {
+      "title": "某账户所持有的 API 密钥，附记录在案的权限范围与创建日期。",
+      "description": "法律文本"
+    },
+    "inclusive-auth-api-keys-key_id": {
+      "title": "按标识符的一把 API 密钥，附其权限范围与最后使用记录。",
+      "description": "此信息流使用匿名客户端密钥加密。该地址中没有 user_key，因此未发送任何请求。"
+    },
+    "learning-learn-legal-locale-slug": {
+      "title": "某一种语言的一份法律文本，附该记录所带的版本。",
+      "description": "版本历史"
+    },
+    "learning-learn-legal-locale-slug-versions": {
+      "title": "某法律文本的每一个版本，附各自记录的变更。",
+      "description": "信用记录"
+    },
+    "hydroma-hydroma-models": {
+      "title": "模型注册表",
+      "description": "引擎声明的每一个模型，附其版本、所引方法以及它为自己发布的验证状态。"
+    },
+    "hydroma-hydroma-models-model_id": {
+      "title": "模型",
+      "description": "一个模型在注册表中的记录：版本、方法引用、声明的验证状态，以及支撑它的测试用例。"
+    },
+    "hydroma-hydroma-models-model_id-validation": {
+      "title": "验证报告",
+      "description": "网关依据模型声明的测试用例生成的验证报告。"
+    },
+    "hydroma-hydroma-slaughterhouse-status": {
+      "title": "验证汇总",
+      "description": "注册表声明了多少个模型，以及每个模型如何描述自己的验证状态。"
+    },
+    "hydroma-hydroma-validation": {
+      "title": "公式校验",
+      "description": "每一个引擎公式都被重新推导，并与已发布的数值、一个恒等式或第二个模块比对。每项校验都声明其来源、期望值和判定容差。"
+    },
+    "hydroma-hydroma-validation-checks": {
+      "title": "校验项",
+      "description": "引擎运行的校验项目录。该投影不携带来源与容差。"
+    },
+    "hydroma-hydroma-validation-reference-data": {
+      "title": "参考数据",
+      "description": "校验套件据以判定的已发布数值，与仓库中保存的完全一致。"
+    },
+    "hydroma-hydroma-validation-run": {
+      "title": "运行一项校验",
+      "description": "运行一项校验，并并排读取引擎产生的数值与它本应产生的数值。"
+    },
+    "hydroma-hydroma-indices": {
+      "title": "指数",
+      "description": "八个遥感与农候指数，从以 RothC 为基础的碳指数到物候与水分平衡指数。"
+    },
+    "hydroma-hydroma-indices-model_id": {
+      "title": "单个指数",
+      "description": "一个指数的参数契约与已发布记录。"
+    },
+    "hydroma-hydroma-mrv": {
+      "title": "监测、报告与核查",
+      "description": "两项 MRV 工具：质量保证区间，以及把实测观测与模拟观测区分开的指标集。"
+    },
+    "hydroma-hydroma-mrv-model_id": {
+      "title": "MRV 工具",
+      "description": "一项 MRV 工具的参数契约与已发布记录。"
+    },
+    "hydroma-hydroma-simulation": {
+      "title": "模拟",
+      "description": "两项模拟工具：依据 Saltelli 的 Sobol 校准，以及 HyDroMa 的情景矩阵。"
+    },
+    "hydroma-hydroma-simulation-model_id": {
+      "title": "模拟工具",
+      "description": "一项模拟工具的参数契约与已发布记录。"
+    },
+    "hydroma-hydroma-soil": {
+      "title": "土壤模型",
+      "description": "九项土壤工具：USDA 质地三角、Keys to Soil Taxonomy、van Genuchten 持水曲线、土壤传递函数、物理、化学、盐分、健康与推荐。"
+    },
+    "hydroma-hydroma-water": {
+      "title": "水模型",
+      "description": "四项水工具：SCS-CN 与理性方法的径流、地下水模型，以及承压与非承压地下水服务。"
+    },
+    "hydroma-hydroma-water-model_id": {
+      "title": "水工具",
+      "description": "一个水模型的参数契约与已发布记录。"
+    },
+    "marketplace-market-escrow-orders": {
+      "title": "托管订单",
+      "description": "以商业网关为您的会话所报告的托管订单。"
+    },
+    "marketplace-market-orders-order": {
+      "title": "订单",
+      "description": "一笔商业订单，其明细、其支付意图，以及状态机当前允许的转换。"
+    },
+    "marketplace-market-orders-order-transitions": {
+      "title": "允许的转换",
+      "description": "订单状态机为该订单允许的下一批状态。"
     }
   },
-  "offline": {
-    "code": "连接不可用",
-    "title": "离线模式",
-    "description": "缓存数据可用；需要刷新时请重试。",
-    "retry": "重试"
+  "pages": {
+    "research": {
+      "hubRuns": {
+        "noKey": "若要读取某把密钥的运行，请把它的 user_key 作为参数加入此地址，例如 ?user_key=…",
+        "keyHint": "网关报告了这些数值，但未将其标记为已验证。所报告的数值并非实测数值：平台只展示网关返回的内容，不作进一步主张。"
+      }
+    }
+  },
+  "footer": {
+    "sitemap": "网站地图",
+    "techStack": "平台技术",
+    "navTitle": "平台"
+  },
+  "surface": {
+    "back": "返回",
+    "unverifiedNote": "网关已将此次运行标记为已验证。",
+    "verifiedNote": "此路由所发布的契约没有声明任何字段，因此下方的数值原样呈现网关所返回的内容，并沿用网关自己的键名。此页面上没有任何内容经过翻译、四舍五入或核验。",
+    "shapeNote": "未返回任何内容",
+    "emptyTitle": "网关作出了回应，但没有任何内容可展示。",
+    "emptyDescription": "网关未返回仪表板数据",
+    "dashboards": {
+      "emptyTitle": "仪表板路由作出了回应，但其中不含任何数据字段。",
+      "emptyDescription": "公开仪表板的完整响应，一次给出。",
+      "full": {
+        "title": "完整公开仪表板",
+        "description": "网关所报告的公开项目列表。"
+      },
+      "projects": {
+        "title": "碳项目",
+        "description": "碳"
+      },
+      "carbon": {
+        "title": "网关所报告的公开碳汇总结。",
+        "description": "平台分析"
+      },
+      "analytics": {
+        "title": "网关所报告的公开分析计数。",
+        "description": "天气"
+      },
+      "weather": {
+        "title": "网关所报告的公开天气总结。",
+        "description": "卫星"
+      },
+      "satellite": {
+        "title": "网关所报告的公开卫星总结。",
+        "description": "土壤"
+      },
+      "soil": {
+        "title": "网关所报告的公开土壤总结。",
+        "description": "测量、报告与核查"
+      },
+      "mrv": {
+        "title": "网关所报告的公开 MRV 总结。",
+        "description": "模拟"
+      },
+      "simulations": {
+        "title": "网关所报告的公开模拟总结。",
+        "description": "旅游"
+      },
+      "tourism": {
+        "title": "网关所报告的公开旅游总结。",
+        "description": "路由器可达性"
+      },
+      "test": {
+        "title": "网关说明此路由器是否在提供服务。这是一项可达性检查，并非对平台的声明。",
+        "description": "网关未返回数据"
+      }
+    },
+    "market": {
+      "emptyTitle": "该路由作出了回应，但没有任何内容可展示。",
+      "emptyDescription": "市场统计",
+      "stats": {
+        "title": "从市场统计端点读取的计数。",
+        "description": "生产者"
+      },
+      "producers": {
+        "title": "市场所登记的生产者。",
+        "description": "内容检索"
+      }
+    },
+    "content": {
+      "title": "检索已发布的学习库。",
+      "description": "检索内容",
+      "searchTitle": "一个词或短语",
+      "searchLabel": "一个词或短语",
+      "searchPlaceholder": "“{search}”的结果",
+      "searchSubmit": "搜索",
+      "resultsFor": "没有内容匹配“{search}”。",
+      "noResults": "没有内容匹配“{search}”。",
+      "emptyDescription": "网关未返回仪表板数据"
+    }
+  },
+  "why": {
+    "title": "为什么选择 Eco Nojin？",
+    "lead": "问题",
+    "problemTitle": "小农户生产了所吃食物的大部分，但他们恰恰是现有数据与建议最少惠及的人群。关于土壤、水与气候的决策都是在不确定中做出的，却没有记录决定了什么、为何这样决定。",
+    "problemBody": "解决方案",
+    "solutionTitle": "一个把科学记录摆在田间旁边的平台：标明版本的模型、每个数值的来源，以及一个为实际种植之物付费的市场。",
+    "solutionBody": "是什么让它可核查",
+    "evidenceTitle": "本平台上的每个数字都带有其来源、方法版本，以及该方法所声明的局限。在数值是报告而非实测之处，本页会如实说明，而不是把两者混为一谈。",
+    "evidenceBody": "它不做什么",
+    "limitsTitle": "它不取代本地知识，也不宣称任何未经它测量的增产。某模型若不适用于您的土壤，就会被显示为不适用于您的土壤。",
+    "limitsBody": "这个平台是什么",
+    "whatTitle": "一个整合的生态智能平台：一个科学引擎、一个 API 网关、一个离线优先的客户端，以及一条事件总线。",
+    "whatLead": "以一份契约承载的土壤、水文、气候、侵蚀与碳建模，配上可离线工作的客户端。",
+    "whatDesc": "这个平台的回答",
+    "audience": "农民、合作社、研究者、规划者及其资助方",
+    "problem": "小农户生产了所吃食物的大部分，但他们恰恰是现有数据与建议最少惠及的人群。关于土壤、水与气候的决策都是在不确定中做出的，却没有记录决定了什么、为何这样决定。",
+    "solution": "问题与回答",
+    "problemSolutionTable": "问题与回答",
+    "provenanceLabel": "主张的来源",
+    "problemRows": [
+      {
+        "problem": "离线的农民无法访问一个假定存在连接的仪表板。",
+        "solution": "客户端持有参考数据集，并声明哪个界面不可用，而不是把过时的数字当作当前数字展示。"
+      },
+      {
+        "problem": "模型结果到来时，无法区分实测与估算。",
+        "solution": "每个界面都带有来源印记，标明来源、方法，以及该数值是否已核实。"
+      },
+      {
+        "problem": "一项主张背后没有任何已执行的检查。",
+        "solution": "平台主张的唯一来源是验证套件，其结果实时从网关读取。"
+      }
+    ],
+    "evidenceItems": [
+      "本页上的每一项主张都在请求时从已执行的验证套件读取，而不是从存储的摘要读取。",
+      "所显示的结果是该次运行的结果，包括失败运行。"
+    ],
+    "limitsItems": [
+      "某模型若不适用于您的土壤，就会被显示为不适用于您的土壤。",
+      "在数值是报告而非实测之处，本页会如实说明，而不是把两者混为一谈。"
+    ],
+    "nextItems": [
+      "阅读方法与每个模型背后的假设。",
+      "检查验证套件，包括它的失败之处。"
+    ]
+  },
+  "manual": {
+    "title": "野外手册",
+    "lead": "面向实际工作的参考表与指南。",
+    "sites": {
+      "title": "登记在参考数据集中的站点，附位置、海拔与气候分类。每一列都是网关返回的一个字段。",
+      "description": "站点数据集为空",
+      "emptyTitle": "网关作出了回应，但未返回任何行。",
+      "emptyDescription": "站点检索",
+      "searchTitle": "检索站点",
+      "searchLabel": "站点编号、国家或省份",
+      "searchPlaceholder": "网关以单一数值检索 site_id、country 和 province 字段。",
+      "searchSubmit": "搜索",
+      "searchHint": "“{search}”的检索结果",
+      "searching": "没有站点匹配“{search}”。",
+      "emptySearch": "没有站点匹配“{search}”。"
+    },
+    "cropCalendar": "作物日历",
+    "cropParams": "作物参数",
+    "climateNormals": "气候平均值",
+    "weatherDaily": "每日天气",
+    "soilRegions": "土壤区域",
+    "status": {
+      "title": "手册状态",
+      "description": "已发布",
+      "back": "返回",
+      "present": "尚未撰写",
+      "missing": "此章节已在目录中声明，但尚无文字。",
+      "missingDescription": "大小",
+      "size": "表格",
+      "tables": "手册所持有的表格",
+      "tableCaption": "表格",
+      "tableName": "行数",
+      "tableRows": "返回站点列表",
+      "emptyDescription": "站点检索"
+    },
+    "search": "搜索",
+    "back": "列名即数据集中的字段名。界面不会添加网关未曾返回的任何单位或标签。",
+    "columnNote": "从参考数据集返回的行",
+    "tableCaption": "正在显示网关所报告的 {total} 行中的 {shown} 行",
+    "truncated": "正在显示网关所报告的 {total} 行中的 {shown} 行",
+    "offline": "站点 {siteId}",
+    "site": {
+      "title": "站点 {siteId}",
+      "description": "设备处于离线。",
+      "back": "列名即数据集中的字段名。界面不会添加网关未曾返回的任何单位或标签。",
+      "offline": "与此站点相关的数据集",
+      "related": "此站点在数据集所述时段上的长期平均值。",
+      "relatedNormals": "气候平均值",
+      "relatedWeather": "每日天气"
+    },
+    "normals": {
+      "title": "气候平均值",
+      "description": "没有气候平均值",
+      "emptyTitle": "网关作出了回应，但未为此站点返回任何行。",
+      "emptyDescription": "返回站点",
+      "backToSite": "此站点的每日观测，附各自的站点与时间。"
+    },
+    "weather": {
+      "title": "每日天气",
+      "description": "没有天气观测",
+      "emptyTitle": "没有作物日历",
+      "emptyDescription": "返回站点",
+      "backToSite": "此站点的每日观测，附各自的站点与时间。"
+    },
+    "crops": {
+      "title": "作物日历",
+      "description": "按作物和地区的播种与收获窗口，取自引擎随附的表格。",
+      "emptyTitle": "没有土壤区域",
+      "emptyDescription": "站点检索"
+    },
+    "soil": {
+      "title": "土壤区域",
+      "description": "手册所描述的土壤区域，附各自遵循的分类。",
+      "emptyTitle": "生长期日历",
+      "emptyDescription": "站点检索"
+    },
+    "calendar": {
+      "title": "按引擎所报告的每种作物的生长期窗口。",
+      "description": "没有生长期日历",
+      "emptyTitle": "合作伙伴",
+      "emptyDescription": "站点检索"
+    }
+  },
+  "sponsors": {
+    "title": "正是这些机构的契约与数据成就了这些数字。",
+    "lead": "尚未列出任何合作伙伴。",
+    "empty": "显示",
+    "show": "资助披露",
+    "region_label": "本章节由 {sponsor} 资助。",
+    "disclosure": "本章节由 {sponsor} 资助。",
+    "policy_title": "赞助是指对为本平台所做工作的具名支持者予以致谢。这不是广告。",
+    "policy_intro": "我们不投放算法广告。本产品中没有广告网络、没有第三方广告 SDK、没有浏览追踪，也没有行为定向。",
+    "no_ads": "赞助回应不携带用户、设备或来源站点数据，因此不存在可定制的广告界面。",
+    "no_targeting": "赞助方的致谢只出现在其资助的服务界面上，绝不会出现在我们给农民的建议旁边。",
+    "contextual": "在农艺、支付、结算或低带宽界面上没有赞助位。",
+    "no_advisory": "所有现有赞助方都列在本页，包括已暂停或已终止的赞助方，并注明原因。",
+    "transparency": "每位赞助方每季度重新确认其自身环境主张仍有据可查。未如此操作的赞助方会被暂停。",
+    "green_claims": "现有赞助方",
+    "current_sponsors": "赞助如何运作",
+    "become": "目前没有列出任何赞助方。",
+    "none": "错误摘要"
   }
 }

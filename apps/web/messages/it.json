@@ -1,18 +1,775 @@
 {
   "meta": {
     "machineTranslated": true,
-    "fallbackLocale": "en"
+    "fallbackLocale": "fa"
+  },
+  "admin": {
+    "title": "Amministrazione della piattaforma",
+    "sections": {
+      "overview": "Panoramica",
+      "systemHealth": "Salute del sistema",
+      "jobs": "Attività e code",
+      "localization": "Localizzazione",
+      "featureFlags": "Flag di funzionalità e capacità",
+      "security": "Sicurezza",
+      "content": "Contenuti",
+      "users": "Utenti",
+      "designTokens": "Token di design"
+    },
+    "leads": {
+      "overview": "Salute della piattaforma in tempo reale e panoramica delle capacità.",
+      "systemHealth": "Salute di ogni servizio, dipendenze e ultimi controlli.",
+      "jobs": "Capacità registrate di coda, worker e attività.",
+      "localization": "Copertura linguistica, traduzione automatica e lingue legali pubblicate.",
+      "featureFlags": "Registro delle capacità e contratti di configurazione.",
+      "security": "Capacità di sicurezza e audit in base al ruolo.",
+      "content": "Contenuti pubblicati e contratti di contenuto registrati.",
+      "users": "Gestione utenti in base al ruolo e contratti per azioni di massa.",
+      "designTokens": "Le sorgenti di token DTCG, CSS e runtime incluse nel repository."
+    },
+    "grid": {
+      "search": "Cerca",
+      "submit": "Cerca",
+      "clear": "Cancella i filtri",
+      "results": "{filtered} di {total} righe"
+    },
+    "capabilities": {
+      "serviceMatrix": "Matrice di salute dei servizi",
+      "adminOverview": "Panoramica amministrativa",
+      "channelHealth": "Salute dei canali",
+      "jobIndex": "Indice delle attività",
+      "automationRuns": "Esecuzioni di automazione",
+      "messageCatalogues": "Cataleghi dei messaggi",
+      "legalLocales": "Lingue legali",
+      "contentTranslations": "Traduzioni dei contenuti",
+      "capabilityMatrix": "Matrice delle capacità",
+      "settingsIndex": "Indice della configurazione",
+      "loginHistory": "Cronologia degli accessi",
+      "securityAudit": "Audit di sicurezza",
+      "contentIndex": "Indice dei contenuti",
+      "contentWrites": "Contratto di scrittura dei contenuti",
+      "usersIndex": "Indice degli utenti",
+      "userBulkActions": "Contratto per azioni di massa sugli utenti",
+      "dtcgTokens": "Sorgente dei token DTCG",
+      "cssVariables": "Sorgente delle variabili CSS",
+      "runtimeTokens": "Sorgente dei token a runtime"
+    },
+    "ledger": {
+      "live": "Attivo",
+      "unavailable": "Non disponibile",
+      "provenance": "Fonte",
+      "notMeasured": "non misurato",
+      "showing": "{shown} righe mostrate su {total}",
+      "placeholderHeading": "Questo contratto non misura ciò che il suo schema lascia intendere",
+      "placeholderBody": "Il gateway risponde con costanti anziché con misurazioni. Ogni campo di questo tipo è etichettato qui sotto invece di essere mostrato come misura, così nessun numero di questa pagina è una lettura della piattaforma in esercizio.",
+      "upstreamGate": "Il gateway richiede per questo contratto soltanto una sessione autenticata e non applica alcun controllo di ruolo proprio. Leggi ogni riga come dato del tenant, non come dato che ti riguarda.",
+      "processMemory": "Questo registro risiede nella memoria del processo del gateway e va perduto al riavvio.",
+      "seededRegistry": "Questo registro è precompilato nel gateway e non viene mai interrogato. Una riga cambia solo quando un'azione viene eseguita sullo stesso processo.",
+      "notAnIdentifier": "Questo segmento di percorso non è un identificatore che il contratto accetta, quindi non è stata inviata alcuna richiesta.",
+      "states": {
+        "loading": "Risoluzione di questa superficie.",
+        "empty": "Il gateway non ha restituito righe per questo contratto.",
+        "error": "Il gateway ha risposto con un errore. Il contratto e il suo stato sono indicati sopra.",
+        "offline": "Il gateway non è raggiungibile. Chi legge è offline o il servizio è degradato, e nulla in questa pagina è da considerare attuale.",
+        "partial": "È stato possibile risolvere solo una parte del risultato.",
+        "retry": "Riprova"
+      },
+      "regions": {
+        "title": "Superficie",
+        "status": "Stato del contratto",
+        "provenance": "Provenienza",
+        "filters": "Contratto di ingresso",
+        "state": "Stato del risultato",
+        "data": "Valori pubblicati",
+        "actions": "Azioni esposte da questo contratto",
+        "summary": "Cifre principali",
+        "detail": "Dettaglio del contratto",
+        "notes": "Nota metodologica",
+        "print": "Prospetto stampabile",
+        "footer": "Voce di catalogo"
+      },
+      "columns": {
+        "name": "Nome",
+        "status": "Stato",
+        "updated": "Ultimo aggiornamento",
+        "created": "Creato",
+        "value": "Valore",
+        "type": "Tipo",
+        "key": "Chiave",
+        "source": "Fonte",
+        "identifier": "Identificatore",
+        "count": "Conteggio",
+        "total": "Totale",
+        "amount": "Importo",
+        "detail": "Dettaglio",
+        "locale": "Lingua",
+        "version": "Versione",
+        "group": "Gruppo",
+        "member": "Membro",
+        "action": "Azione",
+        "message": "Messaggio",
+        "code": "Codice",
+        "currency": "Valuta"
+      },
+      "footer": "Superficie di libro mastro della console"
+    }
+  },
+  "workspace": {
+    "title": "Spazio di lavoro professionale",
+    "lead": "Lavoro, prove e operazioni per ruolo, separati dal mercato rivolto ai consumatori.",
+    "groups": {
+      "work": "Lavoro",
+      "governance": "Governance",
+      "operations": "Operazioni",
+      "settings": "Configurazione"
+    },
+    "pages": {
+      "overview": "Panoramica",
+      "assignments": "Assegnazioni",
+      "cases": "Casi",
+      "knowledge": "Conoscenza",
+      "reports": "Report",
+      "team": "Team",
+      "approvals": "Approvazioni",
+      "targets": "Obiettivi",
+      "audit": "Audit",
+      "operations": "Operazioni",
+      "operationsJobs": "Attività e code",
+      "operationsEvents": "Eventi",
+      "operationsHealth": "Salute",
+      "settings": "Configurazione",
+      "settingsNotifications": "Notifiche",
+      "settingsAccess": "Accesso"
+    },
+    "leads": {
+      "overview": "Il tuo contesto di lavoro per ruolo e la panoramica delle capacità in tempo reale.",
+      "assignments": "Lavoro assegnato e capacità di assegnazione registrate.",
+      "cases": "Casi, prove e contratti di ciclo di vita circoscritti.",
+      "knowledge": "Documenti pubblicati, citazioni e ricerca nei contenuti.",
+      "reports": "Capacità registrate di report, pianificazione ed esportazione.",
+      "team": "Ambito di organizzazione e membri disponibile per questo ruolo.",
+      "approvals": "Code di approvazione e contratti di azione registrati.",
+      "targets": "Capacità di obiettivo, misurazione e avanzamento.",
+      "audit": "Eventi di sicurezza non personali e prove di accesso.",
+      "operations": "Capacità di sincronizzazione, coda, eventi e salute dei servizi.",
+      "operationsJobs": "Capacità di coda, worker e attività.",
+      "operationsEvents": "Flussi di eventi di sicurezza e integrazione.",
+      "operationsHealth": "Dipendenze e salute dei servizi per gli strumenti professionali.",
+      "settings": "Configurazione dello spazio di lavoro e capacità di preferenza.",
+      "settingsNotifications": "Capacità di preferenze di notifica e recapito.",
+      "settingsAccess": "Ambiti di ruolo emessi, consentiti e descrittivi."
+    },
+    "roles": {
+      "operator": "Operatore",
+      "support": "Supporto",
+      "analyst": "Analista",
+      "content_editor": "Redattore",
+      "auditor": "Revisore",
+      "manager": "Responsabile"
+    },
+    "ledger": {
+      "live": "Attivo",
+      "unavailable": "Non disponibile",
+      "provenance": "Fonte",
+      "notMeasured": "non misurato",
+      "showing": "{shown} righe mostrate su {total}",
+      "placeholderHeading": "Questo contratto non misura ciò che il suo schema lascia intendere",
+      "placeholderBody": "Il gateway risponde con costanti anziché con misurazioni. Ogni campo di questo tipo è etichettato qui sotto invece di essere mostrato come misura, così nessun numero di questa pagina è una lettura della piattaforma in esercizio.",
+      "upstreamGate": "Il gateway richiede per questo contratto soltanto una sessione autenticata e non applica alcun controllo di ruolo proprio. Leggi ogni riga come dato del tenant, non come dato che ti riguarda.",
+      "processMemory": "Questo registro risiede nella memoria del processo del gateway e va perduto al riavvio.",
+      "seededRegistry": "Questo registro è precompilato nel gateway e non viene mai interrogato. Una riga cambia solo quando un'azione viene eseguita sullo stesso processo.",
+      "notAnIdentifier": "Questo segmento di percorso non è un identificatore che il contratto accetta, quindi non è stata inviata alcuna richiesta.",
+      "states": {
+        "loading": "Risoluzione di questa superficie.",
+        "empty": "Il gateway non ha restituito righe per questo contratto.",
+        "error": "Il gateway ha risposto con un errore. Il contratto e il suo stato sono indicati sopra.",
+        "offline": "Il gateway non è raggiungibile. Chi legge è offline o il servizio è degradato, e nulla in questa pagina è da considerare attuale.",
+        "partial": "È stato possibile risolvere solo una parte del risultato.",
+        "retry": "Riprova"
+      },
+      "regions": {
+        "title": "Superficie",
+        "status": "Stato del contratto",
+        "provenance": "Provenienza",
+        "filters": "Contratto di ingresso",
+        "state": "Stato del risultato",
+        "data": "Valori pubblicati",
+        "actions": "Azioni esposte da questo contratto",
+        "summary": "Cifre principali",
+        "detail": "Dettaglio del contratto",
+        "notes": "Nota metodologica",
+        "print": "Prospetto stampabile",
+        "footer": "Voce di catalogo"
+      },
+      "columns": {
+        "name": "Nome",
+        "status": "Stato",
+        "updated": "Ultimo aggiornamento",
+        "created": "Creato",
+        "value": "Valore",
+        "type": "Tipo",
+        "key": "Chiave",
+        "source": "Fonte",
+        "identifier": "Identificatore",
+        "count": "Conteggio",
+        "total": "Totale",
+        "amount": "Importo",
+        "detail": "Dettaglio",
+        "locale": "Lingua",
+        "version": "Versione",
+        "group": "Gruppo",
+        "member": "Membro",
+        "action": "Azione",
+        "message": "Messaggio",
+        "code": "Codice"
+      },
+      "footer": "Superficie di libro mastro dell'area di lavoro"
+    }
+  },
+  "help": {
+    "title": "Aiuto e supporto",
+    "lead": "Trova indicazioni sulla piattaforma, stato dei servizi, accessibilità, questioni legali e canali di supporto.",
+    "supportDirectoryTitle": "Elenco del supporto",
+    "supportDirectoryLead": "I profili di supporto restituiti in tempo reale dal gateway.",
+    "supportUnavailable": "L’elenco del supporto non è disponibile.",
+    "intakeTitle": "Richiesta di assistenza",
+    "intakeLead": "Endpoint di presa in carico registrati. I flussi di invio restano non disponibili finché i loro contratti non sono abilitati per questo client.",
+    "topicsTitle": "Argomenti di assistenza",
+    "lastObserved": "Ultima osservazione"
   },
   "brand": {
     "name": "Hydroma Nojin",
+    "logoAlt": "Logo della piattaforma HyDroMa Nojin (Eco Nojin)",
+    "iconAlt": "Icona della piattaforma HyDroMa Nojin",
     "description": "Gestione intelligente del territorio per il recupero di acqua, suolo e mezzi di sussistenza."
+  },
+  "owner": {
+    "line": "Proprietario della piattaforma: Dasht Omid Narvan Agro-Industry Co.",
+    "logoAlt": "Logo di Dasht Omid Narvan Agro-Industry Co.",
+    "sectionTitle": "Proprietario della piattaforma",
+    "role": "Dasht Omid Narvan Agro-Industry Co.",
+    "statement": "Questa piattaforma è sviluppata e gestita da Dasht Omid Narvan Agro-Industry Co."
+  },
+  "about": {
+    "title": "Informazioni su Hydroma Nojin",
+    "lead": "Un insieme di strumenti scientifici per proteggere acqua, suolo e mezzi di sussistenza nelle aree rurali.",
+    "what": "Hydroma Nojin è un insieme di strumenti di monitoraggio ambientale costruiti per operare dove internet è debole e gli strumenti di misura sono costosi.",
+    "audience": "Produttori, cooperative, agenzie governative, università, ricercatori e organizzazioni della società civile.",
+    "evidence": [
+      "I modelli scientifici si basano su metodi pubblicati e revisionati",
+      "Ogni valore numerico mostra la propria fonte e la propria data",
+      "Le decisioni agronomiche includono il motivo delle raccomandazioni"
+    ],
+    "limits": [
+      "Nessun sistema può sostituire la conoscenza locale dell'agricoltore",
+      "Le previsioni climatiche a lungo termine hanno un elevato margine di errore"
+    ],
+    "next": [
+      "Registrati per consultare i tuoi profili territoriali",
+      "Richiedi una sessione di formazione per la tua comunità"
+    ]
+  },
+  "services": {
+    "title": "Servizi e soluzioni",
+    "lead": "Tre servizi distinti coprono terra, impresa e ricerca scientifica.",
+    "what": "Ogni servizio nasce da un problema reale e restituisce un risultato che il destinatario può usare.",
+    "audience": "Produttori, istituzioni, comunità scientifiche, università e privati.",
+    "evidence": [
+      "Un metodo di valutazione prima della messa in esercizio",
+      "Una versione di modello registrata e la data dell’analisi"
+    ],
+    "limits": [
+      "I siti pilota sono limitati e selezionati sulla base dei dati",
+      "Servizi di intelligenza artificiale limitati a domini agronomici dichiarati"
+    ],
+    "next": [
+      "Registrati per iniziare dal tuo profilo territoriale",
+      "Consulta l'elenco completo dei modelli scientifici"
+    ],
+    "farmersTitle": "Per i produttori agricoli",
+    "farmersDesc": "Pianificazione delle colture, irrigazione, fertilità del suolo e gestione delle risorse idriche con raccomandazioni motivate.",
+    "institutionsTitle": "Per le istituzioni",
+    "institutionsDesc": "Cartografia delle aree a rischio, pianificazione delle risorse idriche e report di conformità.",
+    "researchersTitle": "Per ricercatori e università",
+    "researchersDesc": "Modelli scientifici, set di dati aperti, ambiente di calcolo ed elaborazione riproducibile.",
+    "pilotCta": "Richiedi una sessione pilota",
+    "pilotNote": "I siti pilota sono limitati e selezionati sulla base dei dati."
+  },
+  "evidence": {
+    "title": "Scienza ed evidenze",
+    "lead": "Ogni affermazione scientifica è collegata a una fonte, una data e un metodo di validazione.",
+    "what": "Ogni documento scientifico segue lo stesso flusso logico: metodo, dati, limiti dichiarati, esiti.",
+    "audience": "Ricercatori, revisori, autorità e chiunque valuti le affermazioni del progetto.",
+    "evidence": [
+      "Riferimenti DOI degli studi selezionati",
+      "Versione del modello e intervallo di incertezza"
+    ],
+    "limits": [
+      "I modelli di bilancio idrico semplificati sovrastimano l'umidità in suoli sabbiosi",
+      "I dati satellitari possono essere offuscati dalla copertura nuvolosa",
+      "Le previsioni stagionali restano entro un intervallo ampio"
+    ],
+    "next": [
+      "Leggere la metodologia completa e le assunzioni del modello",
+      "Consultare i dataset aperti e la guida alla riproducibilità"
+    ],
+    "refsTitle": "Metodo e riferimenti",
+    "refs": [
+      "Metodi di modellazione del suolo e del bilancio idrico",
+      "Standard FAO-56 per l'evapotraspirazione",
+      "Protocolli di campionamento e di controllo qualità"
+    ],
+    "limitsTitle": "Limiti dichiarati",
+    "nextTitle": "Prossimo passo"
+  },
+  "ai": {
+    "title": "Intelligenza artificiale responsabile",
+    "lead": "L'IA è un supporto, non un sostituto del metodo scientifico. Deve dichiarare i propri limiti.",
+    "what": "Gli strumenti di IA aiutano a formulare domande e a cercare nella base di conoscenze, ma non sostituiscono il parere di un agronomo né l'osservazione sul campo.",
+    "audience": "Produttori, tecnici, ricercatori e chiunque usi strumenti automatici nella pianificazione agricola.",
+    "evidence": [
+      "Viene mostrata una fonte per ogni risposta",
+      "Etichetta di bozza per le risposte senza fonte"
+    ],
+    "limits": [
+      "Le raccomandazioni non sostituiscono l'agronomo o il diritto locale",
+      "Il modello può consigliare pratiche non adatte alla regione specifica",
+      "Solo i domini dichiarati sono supportati (fa/en/ar/ur)"
+    ],
+    "next": [
+      "Segnala una risposta non corretta affinché venga verificata da un operatore umano",
+      "Consulta la procedura completa del sistema"
+    ],
+    "sourceRule": "Ogni risposta deve riportare la fonte o essere etichettata come bozza del modello.",
+    "limitsTitle": "Limiti dichiarati",
+    "nextTitle": "Prossimo passo"
+  },
+  "trust": {
+    "title": "Provenienza e affidabilità del sistema",
+    "lead": "Provenienza è tracciare ogni dato fino alla sua fonte, non un sempliceadesivo.",
+    "what": "Ogni dato dichiarato porta un marchio di provenienza: origine, data e servizio che l'ha prodotto.",
+    "audience": "Partner istituzionali, revisori, ricercatori e organismi di controllo.",
+    "evidence": [
+      "Identificativo della fonte e ora di recupero",
+      "Versione dei dati e cronologia delle modifiche"
+    ],
+    "limits": [
+      "L'indirizzo del registro del carbonio non è ancora disponibile",
+      "L'esploratore della provenienza non è ancora disponibile per alcuni dataset"
+    ],
+    "next": [
+      "Esplora la provenienza di ogni dato del sistema",
+      "Consulta il rapporto annuale sulla trasparenza"
+    ],
+    "provenanceTitle": "Esploratore della provenienza",
+    "provenanceDesc": "Segui ogni dato fino al servizio, all'immagine del dato e alla data di acquisizione.",
+    "registryTitle": "Registro del carbonio",
+    "registryDesc": "I crediti di carbonio generati dal progetto sono accessibili e verificabili; per ora l'indirizzo della blockchain non è ancora disponibile.",
+    "disclosureTitle": "Divulgazione responsabile",
+    "disclosureDesc": "La divulgazione delle vulnerabilità avviene in modo riservato, senza esporre dati degli utenti.",
+    "statusCta": "Vedi lo stato dei servizi"
+  },
+  "developers": {
+    "title": "Sviluppatori e API",
+    "lead": "Sviluppatori, integratori e partner tecnici: consultate i contratti, provate gli endpoint, collaborate.",
+    "what": "Ogni endpoint è documentato, ogni modifica API è tracciata e ogni richiesta porta un identificatore di correlazione.",
+    "audience": "Sviluppatori, integratori, università, team di ricerca e partner tecnici.",
+    "evidence": [
+      "Un contratto API con versione",
+      "Esempi di richiesta e risposta"
+    ],
+    "limits": [
+      "Le scritture sono consentite solo in ambienti autorizzati",
+      "Gli strumenti automatizzati non sono consentiti sulla superficie pubblica"
+    ],
+    "next": [
+      "Consultare la guida di avvio rapido e gli esempi di integrazione",
+      "Richiedere una chiave API e un ambiente di prova"
+    ],
+    "docsTitle": "Documentazione API",
+    "docsDesc": "Ogni endpoint è documentato con esempi di richiesta e risposta, limiti di frequenza e codici di errore.",
+    "toolsTitle": "Strumenti di sviluppo",
+    "toolsDesc": "Gli strumenti includono client generati, raccolte di test ed esempi di integrazione.",
+    "changesTitle": "Registro delle modifiche",
+    "changesDesc": "Ogni modifica API è associata a una versione e pubblicata nel registro delle modifiche.",
+    "publicNote": "L'ambiente pubblico è in sola lettura. I test e le scritture sono protetti da autenticazione e limitati alle operazioni consentite."
+  },
+  "accessibility": {
+    "title": "Dichiarazione di accessibilità",
+    "lead": "L'accessibilità è un requisito funzionale: nessuna funzione deve dipendere esclusivamente dal colore o dal suono.",
+    "what": "Il sito è realizzato per essere navigabile da tastiera, con contrasto conforme, struttura semantica corretta e supporto completo per la modalità RTL/LTR.",
+    "audience": "Persone con disabilità, anziani, utenti con tecnologia assistenziale e chi naviga con tasteo o tastiera.",
+    "evidence": [
+      "Controlli axe automatici",
+      "Controlli di direzione e lingua nei browser"
+    ],
+    "limits": [
+      "Alcune mappe interattive hanno un'alternativa testuale limitata",
+      "Alcuni documenti scientifici sono disponibili solo in formato testo"
+    ],
+    "next": [
+      "Segnala un problema di accessibilità con l'indirizzo della pagina",
+      "Consulta la guida all'uso della tastiera e del navigatore vocale"
+    ],
+    "standardTitle": "Standard applicati",
+    "standardDesc": "Il sito mira alla conformità WCAG 2.2 livello AA. Le verifiche automatiche non sostituiscono la verifica manuale con le persone.",
+    "feedbackTitle": "Segnalazione dei problemi di accessibilità",
+    "feedbackDesc": "Se incontri una barriera, segnala la pagina interessata. Provvederemo a risolverla nel ciclo di aggiornamento successivo."
+  },
+  "statements": {
+    "title": "Missione, visione e manifesto",
+    "lead": "Il manifesto del progetto definisce cosa costruiamo, chi ne beneficia e a quale scopo tecnico ed economico.",
+    "versionLabel": "Revisione libera",
+    "missionTitle": "La nostra missione",
+    "missionBody": "Proteggere acqua, suolo e mezzi di sussistenza con strumenti scientifici verificabili. Ogni decisione deve essere comprensibile, riproducibile e utile a chi lavora la terra.",
+    "quoteLabel": "Dichiarazione",
+    "transparencyTitle": "Trasparenza del progetto",
+    "transparencyBody": "Se qualcosa non funziona, lo diciamo: proponiamo «in lavorazione» anziché fingere il completamento. Ogni modifica permanente viene tracciata nel registro del progetto."
+  },
+  "legal": {
+    "title": "Termini e condizioni",
+    "version": "v libera — bozza",
+    "lead": "I dati personali sono raccolti per un motivo preciso, conservati per il tempo necessario e protetti.",
+    "termsTitle": "Condizioni d'uso",
+    "termsBody": "L'uso della piattaforma implica l'accettazione delle presenti condizioni. Il progetto non rivendica certificazioni esterne non verificate.",
+    "privacyTitle": "Dati personali",
+    "privacyBody": "Utilizziamo i dati personali per fornire il servizio richiesto. Non condividiamo i dati identificativi per finalità commerciali.",
+    "cookiesTitle": "Cookie e lingua",
+    "cookiesBody": "Utilizziamo un cookie tecnico per ricordare la lingua scelta; puoi modificarlo in qualsiasi momento dalle preferenze del browser."
+  },
+  "learn": {
+    "emptyTitle": "Il contenuto formativo non è ancora disponibile per questa selezione",
+    "emptyDesc": "I materiali di formazione sono in fase di revisione. Nel frattempo puoi consultare il glossario e le guide metodologiche sul sito.",
+    "title": "Contenuti e formazione",
+    "lead": "Videolezioni, glossario bilingue e guide operative da usare sul campo."
+  },
+  "platformOverview": {
+    "title": "Panoramica della piattaforma",
+    "lead": "Ogni utente trova il proprio percorso: dal territorio all'acqua, dal terreno ai dati, senza perdersi.",
+    "itemHome": "Pagina principale",
+    "itemHomeDesc": "Profili territoriali, prodotti del mercato e attività del progetto in una sola vista.",
+    "itemScience": "Scienza applicata",
+    "itemScienceDesc": "Modelli di suolo, acqua, clima ed erosione con risultati verificabili.",
+    "itemMarket": "Mercato",
+    "itemMarketDesc": "Prodotti con origine tracciata e produttori verificati.",
+    "itemStatus": "Stato del sistema",
+    "itemStatusDesc": "Salute dei servizi e dei database in tempo reale, comprensibile e trasparente.",
+    "cta": "Scopri di più"
+  },
+  "public": {
+    "home": {
+      "title": "Piattaforma di monitoraggio ecologico e supporto alle decisioni",
+      "lead": "Monitoraggio di suolo, acqua, clima e carbonio su base scientifica.",
+      "provenanceLabel": "Fonte dell’affermazione",
+      "liveWhenAvailable": "In tempo reale, quando il gateway è raggiungibile",
+      "whatTitle": "Che cos’è",
+      "whatLead": "Una piattaforma, quattro parti, un contratto.",
+      "whatDesc": "Un motore scientifico che dichiara la versione del modello, un gateway che pubblica ciò che sa servire, un client offline-first e un mercato che paga ciò che viene effettivamente coltivato.",
+      "keyMetrics": "Cosa riporta il gateway",
+      "beneficiaries": "Produttori registrati",
+      "activeMarkets": "Mercati attivi",
+      "landProfiles": "Profili dei terreni",
+      "carbonProjects": "Progetti sul carbonio",
+      "quickActions": "Dove andare dopo",
+      "enterMarket": "Entra nel mercato"
+    },
+    "why": {
+      "title": "Perché Eco Nojin?",
+      "lead": "I problemi complessi di acqua, suolo e sussistenza richiedono decisioni tracciabili.",
+      "provenanceLabel": "Fonte della strategia",
+      "whatTitle": "Dal problema alla risposta",
+      "whatLead": "Ogni capacità nasce da un problema reale.",
+      "whatDesc": "Ogni risposta mostra insieme i suoi dati, il suo modello, i suoi limiti e il passo successivo.",
+      "audience": "Contadini, responsabili, ricercatori e partner di attuazione",
+      "problemSolutionTable": "Problema e risposta",
+      "problem": "Problema",
+      "solution": "Risposta",
+      "p1_problem": "Dati sparsi senza fonti",
+      "p1_solution": "Un profilo dati condiviso e una catena di provenienza",
+      "p2_problem": "Nessun metodo di analisi riproducibile",
+      "p2_solution": "Modelli con versione e manifesti di esecuzione",
+      "p3_problem": "Decisioni prese senza limiti visibili",
+      "p3_solution": "Prove, incertezza e stato dei dati",
+      "p4_problem": "Accesso diseguale agli strumenti",
+      "p4_solution": "PWA, più lingue e canali inclusivi",
+      "evidenceItems": [
+        "Workshop con gli stakeholder",
+        "Ricerca sul campo",
+        "Piloti documentati"
+      ],
+      "limitsItems": [
+        "La generalizzazione regionale è limitata",
+        "L’impatto a lungo termine è ancora in misurazione",
+        "Costi e impatto economico variano secondo il contesto"
+      ],
+      "nextItems": [
+        "Pubblica un rapporto d’impatto",
+        "Aggiungi una valutazione economica",
+        "Estendi un pilota controllato"
+      ]
+    },
+    "cta": {
+      "title": "Partecipa",
+      "lead": "Il tuo accesso al mercato, al motore scientifico e alla formazione comincia qui.",
+      "provenanceLabel": "Fonte dell’affermazione",
+      "whatTitle": "Che cos’è",
+      "whatLead": "Quattro percorsi, ciascuno verso un endpoint reale.",
+      "whatDesc": "Scegli il percorso adatto al tuo lavoro. Nulla in questa pagina invia da qualche parte che non esista.",
+      "audience": "Contadini, cooperative, ricercatori, pianificatori e i loro finanziatori",
+      "primaryCTAs": "I percorsi",
+      "cta1_title": "Entra nel mercato",
+      "cta1_desc": "Cerca, elenca e regola, con ogni ordine tracciabile.",
+      "cta1_action": "Vedi il mercato",
+      "cta2_title": "Usa il motore scientifico",
+      "cta2_desc": "Esegui un modello di suolo, idrologia, clima o carbonio.",
+      "cta2_action": "Apri il motore",
+      "cta3_title": "Leggi il manuale di campo",
+      "cta3_desc": "Tabelle di riferimento e guide per il lavoro stesso.",
+      "cta3_action": "Apri il manuale",
+      "cta4_title": "Verifica la piattaforma",
+      "cta4_desc": "Cosa ha trovato la suite di verifica, compresi i suoi fallimenti.",
+      "cta4_action": "Vedi lo stato",
+      "evidenceItems": [
+        "Ogni percorso invia a un endpoint che il gateway pubblica.",
+        "Un percorso irraggiungibile lo dichiara invece di sembrare funzionante."
+      ],
+      "limitsItems": [
+        "Un percorso vale quanto il contratto che gli sta dietro; il contratto è collegato.",
+        "Nulla in questa pagina promette un risultato che i controlli non abbiano dimostrato."
+      ],
+      "nextItems": [
+        "Scegli un percorso invece di tutti e quattro.",
+        "Leggi il contratto prima di farvi affidamento."
+      ],
+      "body": "Scegli il percorso adatto al tuo lavoro. Ciascuno invia a un endpoint reale.",
+      "optionsTitle": "Da dove cominciare",
+      "farmersLink": "Coltivo qualcosa",
+      "governmentLink": "Lavoro per un ente pubblico",
+      "investorsLink": "Finanzio lavori come questi",
+      "ngosLink": "Lavoro per un’organizzazione senza scopo di lucro",
+      "newsletterBody": "Note occasionali su ciò che è cambiato e su ciò che i controlli hanno trovato.",
+      "newsletterConsent": "Inviatemi la newsletter",
+      "newsletterSubmit": "Iscriviti"
+    },
+    "science": {
+      "evidenceBase": {
+        "title": "Base di evidenza scientifica",
+        "lead": "Riferimenti scientifici con stato della fonte e limiti.",
+        "provenanceLabel": "Fonte della biblioteca delle prove",
+        "whatTitle": "Prove tracciabili",
+        "whatLead": "Ogni record dichiara il proprio stato di verifica.",
+        "whatDesc": "L’elenco seguente è una dimostrazione di standard di riferimento e non sostituisce la revisione delle fonti.",
+        "audience": "Ricercatori, consulenti e utenti che hanno bisogno di un riferimento",
+        "evidenceCatalog": "Catalogo di riferimento",
+        "evidenceItems": [
+          "Standard FAO/IPCC/OGC",
+          "Riferimenti scientifici tracciabili",
+          "Pipeline riproducibili"
+        ],
+        "limitsItems": [
+          "Le stime modellate sono contrassegnate esplicitamente",
+          "Restano i vuoti di calibrazione regionale",
+          "È necessaria la revisione umana delle fonti"
+        ],
+        "nextItems": [
+          "Aggiungi revisioni sistematiche aggiornate",
+          "Collega al registro dei modelli",
+          "Attiva le mappe delle lacune di evidenza"
+        ],
+        "demoLabel": "Demo",
+        "emptyTitle": "Nessuna fonte scientifica caricata",
+        "emptyDesc": "Fino a quando il registro scientifico non sarà collegato, questa pagina mostra solo la struttura delle fonti."
+      }
+    },
+    "channels": {
+      "title": "Canali di accesso",
+      "lead": "La stessa piattaforma, sul dispositivo che chi legge ha davvero.",
+      "provenanceLabel": "Fonte dell’affermazione",
+      "whatTitle": "Che cos’è",
+      "whatLead": "Un contratto, quattro modi per raggiungerlo.",
+      "whatDesc": "Il gateway decide quale canale può servire quale superficie e il client rende ciò che sa.",
+      "audience": "Contadini, cooperative, ricercatori, pianificatori e i loro finanziatori",
+      "channels": "Canali disponibili",
+      "webPwa": "Web e app installabile",
+      "mobileApp": "App mobile",
+      "ussd": "USSD",
+      "sms": "SMS",
+      "voice": "Voce",
+      "telegram": "Telegram",
+      "evidenceItems": [
+        "Lo stato mostrato è quello che l’endpoint del canale riporta, letto al momento della richiesta.",
+        "Un canale irraggiungibile lo dichiara invece di ripiegare in silenzio."
+      ],
+      "limitsItems": [
+        "Un canale più stretto di un modulo può trasportare solo un piccolo insieme di campi.",
+        "Un canale fuori uso non può essere descritto come disponibile."
+      ],
+      "nextItems": [
+        "Scegli il canale che il tuo dispositivo supporta davvero.",
+        "Leggi lo stato del canale prima di farvi affidamento."
+      ],
+      "ussdLabel": "USSD",
+      "ussdBody": "Funziona su qualsiasi telefono con tastiera. Non serve un piano dati.",
+      "smsLabel": "SMS",
+      "smsBody": "Aggiornamenti testuali brevi sullo stato che serve a un contadino senza aprire nulla, e solo per gli eventi a cui è iscritto.",
+      "voiceLabel": "Voce",
+      "voiceBody": "Istruzioni lette ad alta voce per chi non può usare uno schermo.",
+      "webLabel": "Web",
+      "webBody": "L’interfaccia completa, per un dispositivo in grado di mostrare uno schermo.",
+      "whatsappLabel": "WhatsApp",
+      "whatsappBody": "Avvisi del mercato su un canale che molti produttori usano già."
+    },
+    "visit": {
+      "title": "Visita in azienda",
+      "lead": "Una guida per osservare i siti pilota e registrare ciò che vedi.",
+      "provenanceLabel": "Fonte dell’affermazione",
+      "whatTitle": "Che cos’è",
+      "whatLead": "Richiedi una visita e cosa succede dopo.",
+      "whatDesc": "La richiesta di visita viene inviata al gateway. Non viene promessa alcuna data finché la richiesta non ha ricevuto risposta.",
+      "audience": "Contadini, cooperative, ricercatori e i team che ospitano le visite",
+      "visitSteps": "I passaggi di una visita",
+      "s1_title": "Concordare lo scopo",
+      "s1_desc": "Lo scopo della visita, concordato prima che qualcuno parta.",
+      "s2_title": "Registrare il sito",
+      "s2_desc": "Il luogo, con le coordinate che il gateway detiene.",
+      "s3_title": "Osservare",
+      "s3_desc": "Ciò che è stato osservato, registrato sul sito anziché ricordato in seguito.",
+      "s4_title": "Inviare l’osservazione",
+      "s4_desc": "L’osservazione viene inviata al gateway, che la conserva sul sito.",
+      "scheduleVisit": "Richiedi una visita",
+      "body": "La richiesta di visita viene inviata al gateway.",
+      "visitNote": "Non viene promessa alcuna data finché la richiesta non ha ricevuto risposta."
+    },
+    "a11y": {
+      "metaTitle": "Dichiarazione di accessibilità",
+      "metaDescription": "Che cosa questa build misura su contrasto e caratteri, che cosa non dichiara e come segnalare una barriera.",
+      "measuredTitle": "Su che cosa si fonda questa dichiarazione",
+      "contrastTitle": "Contrasto dei colori",
+      "contrastBody": "Un cancello misura ogni coppia di token di primo piano e di sfondo dichiarata dal foglio di stile, nei temi chiaro e scuro, rispetto al minimo WCAG di quella coppia.",
+      "contrastPairs": "coppie di token misurate",
+      "contrastFloor": "minimo di ogni coppia",
+      "contrastPass": "ogni coppia misurata raggiunge il proprio minimo",
+      "fontsTitle": "Caratteri",
+      "fontsBody": "Il foglio di stile dichiara tre famiglie di caratteri e otto file di font. Ogni sistema che la piattaforma serve è elencato sotto con ciò che arriva davvero allo schermo.",
+      "fontsBundled": "Fornito da questa origine",
+      "fontsFallback": "Non fornito qui; si usa il carattere installato del lettore",
+      "fontsGap": "Un sistema di questa colonna è tracciato con un carattere già installato sul dispositivo del lettore, quindi il suo aspetto non dipende da questa build. Un elenco vuoto significa che nessuna lingua è in quello stato.",
+      "assistiveTitle": "Tastiera e focus",
+      "assistiveBody": "Ogni controllo interattivo è raggiungibile e utilizzabile da tastiera, e l'anello di focus non viene mai rimosso. Un collegamento di salto è il primo elemento focalizzabile di ogni pagina.",
+      "inclusiveTitle": "Canali oltre il browser",
+      "inclusiveBody": "Lo stesso contenuto si raggiunge via USSD, SMS e voce, così chi legge non ha bisogno di uno smartphone, di un piano dati o di un browser moderno.",
+      "notClaimedTitle": "Che cosa questa dichiarazione non dichiara",
+      "notClaimedItems": [
+        "Non è stata svolta alcuna verifica esterna di accessibilità, quindi non è dichiarato alcun livello di conformità.",
+        "Le due misurazioni qui sotto sono una registrazione momentanea. Una build successiva può divergere, e il timbro dice quando è stata presa.",
+        "Il comportamento degli screen reader non è controllato automaticamente dal cancello di questa build.",
+        "Non è stato svolto alcuno studio d’uso con persone che usano tecnologie assistive.",
+        "La conformità WCAG è una proprietà di una release, non di questa pagina."
+      ],
+      "feedbackTitle": "Segnalare una barriera",
+      "feedbackBody": "Se una parte di questo sito le impedisce di procedere, lo dica e indichi la pagina. Una barriera mai segnalata non può essere messa in priorità.",
+      "measuredBy": "Misurato da",
+      "measuredAt": "misurato il",
+      "fontsFamilies": "famiglie tipografiche dichiarate",
+      "fontsFiles": "file di font su disco",
+      "fontsLocales": "lingue servite da una famiglia fornita"
+    },
+    "telecom": {
+      "metaTitle": "Accesso via USSD, SMS e voce",
+      "metaDescription": "Testi USSD e SMS con i limiti rigidi di carattere sempre visibili, accanto allo stato in tempo reale del gateway vocale.",
+      "editorTitle": "Editor del messaggio",
+      "editorLead": "USSD e SMS hanno limiti rigidi. Il testo che li supera viene diviso oppure non inviato, quindi entrambi i limiti restano sempre visibili qui.",
+      "editorUssd": "Testo USSD",
+      "editorSms": "Testo SMS",
+      "editorLimitUssd": "Limite USSD",
+      "editorLimitSms": "Limite SMS",
+      "editorRule": "GSM 07.05 divide un messaggio in segmenti da 160 caratteri e il telefono non ne mostra più di 20.",
+      "editorOver": "Più di un segmento; il testo viene diviso su entrambi.",
+      "editorWithin": "Rientra in un solo segmento.",
+      "editorSegments": "segmenti",
+      "editorUssdNote": "Un codice di servizio funziona su qualunque telefono base con * e #, e la rete non trasporta più di 182 caratteri.",
+      "menuTitle": "Il menu di servizio così come lo costruisce il gateway",
+      "menuBody": "Questo testo è prodotto dal motore del gateway stesso, non scritto a mano, e torna nella lingua richiesta.",
+      "menuUnavailable": "Il gateway non costruisce un menu per questa lingua.",
+      "languagesTitle": "Lingue che il gateway vocale riporta",
+      "languagesBody": "Questo è l'elenco in tempo reale del gateway, non un desiderio.",
+      "smsDeliveryTitle": "Consegna SMS",
+      "smsDeliveryBody": "Non esiste un contratto per la consegna SMS, quindi qui non è mostrato alcuno stato di consegna."
+    },
+    "simple": {
+      "metaTitle": "Versione a bassa banda",
+      "metaDescription": "Lo stesso contenuto con meno immagini, meno script e quattordici lingue, per una rete debole.",
+      "guaranteeTitle": "Che cosa rende più leggera questa versione",
+      "guaranteeNoImages": "Nessuna immagine viene caricata.",
+      "guaranteeNoScripts": "Su questa pagina non gira alcuno script.",
+      "guaranteeSmall": "Il documento HTML è piccolo e non porta alcun sovraccarico di rendering.",
+      "guaranteeLanguages": "Tutte e quattordici le lingue sono servite da un'unica rotta.",
+      "guaranteeOffline": "Se una richiesta fallisce la pagina mostra il proprio stato invece di inventare un numero.",
+      "languagesTitle": "Il menu del gateway nella tua lingua",
+      "languagesBody": "Il gateway costruisce un menu in tre lingue. Per le altre undici la pagina lo dice chiaramente: non esiste."
+    },
+    "integrity": {
+      "metaTitle": "Evidenze e riferimenti",
+      "metaDescription": "Che cosa queste pagine possono mostrare da un contratto reale e che cosa è etichettato come aspirazione.",
+      "claimTitle": "La regola che queste pagine seguono",
+      "claimBody": "Ogni numero che vedi qui è tornato da una chiamata in tempo reale. Se la chiamata non risponde, la pagina dice che non è disponibile e non mostra alcun numero.",
+      "traceabilityTitle": "Tracciabilità",
+      "traceabilityBody": "Ogni riga indica il percorso del contratto e il metodo di lettura, così puoi ripetere tu la richiesta.",
+      "aspirationTitle": "Aspirazione, non rapporto",
+      "aspirationLead": "La regola permanente del piano master è «nessuna dichiarazione di validazione esterna»: qui nulla afferma che un ente esterno a questo archivio abbia approvato qualcosa. Tutto ciò che va oltre è etichettato come aspirazione.",
+      "aspirationItems": [
+        "La validazione esterna dei modelli non è stata svolta.",
+        "La pubblicazione in un archivio esterno non è stata svolta.",
+        "La revisione tra pari da parte di un ricercatore esterno non è stata svolta."
+      ],
+      "noExternalTitle": "Sulla validazione esterna",
+      "noExternalBody": "Questa pagina non mostra certificati esterni perché in questo archivio non ne è registrato alcuno. Quando ce ne sarà uno, apparirà qui con nome e data.",
+      "modelCardsTitle": "Schede di modello",
+      "modelCardsBody": "Dominio di validità e limiti di ogni modello, letti dal registro dei modelli della piattaforma stessa.",
+      "agrovocTitle": "Vocabolario AGROVOC",
+      "agrovocBody": "Ricerca offline nel grafo della conoscenza agronomica, senza servizi esterni nel percorso.",
+      "contractTitle": "Il contratto che risolverebbe la cosa",
+      "contractBody": "Una lettura verificata che restituisca quel numero. Fino ad allora questa pagina non inventa nulla."
+    },
+    "legalTexts": {
+      "metaTitle": "Testi legali",
+      "metaDescription": "Testi legali pubblicati con lingua e numero di versione, esattamente come il gateway li conserva.",
+      "localesTitle": "Lingue che hanno un testo legale",
+      "slugsTitle": "Identificatori pubblicati",
+      "versionsTitle": "Cronologia delle versioni",
+      "versionLabel": "versione",
+      "statusLabel": "stato",
+      "effectiveLabel": "in vigore dal",
+      "publishedOnly": "In questa lingua non esiste ancora alcun testo pubblicato; l'elenco grezzo del gateway è qui sotto."
+    },
+    "statement": {
+      "metaTitle": "Dichiarazioni",
+      "metaDescription": "Missione, trasparenza e ciò che deliberatamente non è ancora dichiarato.",
+      "aspirationTitle": "Ciò che non è ancora dichiarato",
+      "aspirationBody": "Ogni cifra prodotta finora da questa piattaforma è un ritorno da dati che ha prodotto lei stessa. Finché nulla è verificato dall'esterno di questo archivio, qui non si scrive alcuna cifra su impatto, beneficiari o scala."
+    },
+    "about": {
+      "metaTitle": "Informazioni sulla piattaforma",
+      "metaDescription": "Che cos'è questa piattaforma, per chi è e che cosa non dichiara ancora."
+    }
+  },
+  "offline": {
+    "code": "Connessione non disponibile",
+    "title": "Modalità offline",
+    "description": "I dati in cache sono disponibili; riprova quando vuoi aggiornare.",
+    "retry": "Riprova"
+  },
+  "layout": {
+    "mainNav": "Navigazione principale",
+    "language": "Lingua"
   },
   "nav": {
     "home": "Home",
-    "about": "Informazioni",
     "science": "Scienza",
     "market": "Mercato",
-    "status": "Stato"
+    "status": "Stato",
+    "modelCount": "Numero di modelli",
+    "about": "Informazioni"
   },
   "home": {
     "title": "Hydroma Nojin — Gestione intelligente del territorio",
@@ -34,15 +791,6 @@
     "cppMissing": "Kernel numerici: nessun pacchetto registrato",
     "kernels": "Kernel implementati"
   },
-  "market": {
-    "title": "Mercato",
-    "lead": "Prodotti con origine tracciata: chi li ha prodotti, come sono stati coltivati e con quali dati verificati.",
-    "products": "Prodotti",
-    "producers": "Produttori",
-    "organic": "Agricoltura biologica",
-    "organicBadge": "Biologico",
-    "empty": "Nessun prodotto corrisponde ai filtri scelti."
-  },
   "cover": {
     "subtitle": "Acqua, suolo, vita",
     "slogan": "Prima il terreno, poi la produzione. L'acqua prima. Il raccolto dopo.",
@@ -63,25 +811,324 @@
     "realData": "Dato reale dell'ecosistema",
     "unavailable": "Non ancora disponibile"
   },
+  "search": {
+    "label": "Cerca in questo catalogo",
+    "placeholder": "Digita un termine",
+    "submit": "Cerca",
+    "noResults": "Nessun risultato per “{term}”. Il gateway non ha trovato nulla per quel termine."
+  },
   "statusPage": {
     "title": "Stato del sistema",
     "subtitle": "Elenco degli ultimi risultati di salute dei servizi che alimentano le pagine pubbliche e il marketplace.",
     "service": "Servizio",
     "state": "Stato",
-    "science": "Servizi scientifici",
-    "storage": "Archiviazione",
+    "cpp": "Nucleo numerico C++",
+    "supabase": "Connessione al database (Supabase)",
+    "dbReachable": "Connessione al database",
     "landscapes": "Profili territoriali",
     "projects": "Progetti",
     "activeProjects": "Progetti attivi",
+    "endpoint": "Endpoint",
+    "result": "Risultato",
     "label": "Indicatore",
     "rows": "righe",
     "landProfileList": "Elenco dei profili territoriali",
     "noLandProfiles": "Nessun profilo territoriale disponibile.",
+    "emptyDbNote": "Il database è inizializzato ma non contiene ancora record del database reale. Nessun valore è inventato: la riga vuota è dichiarata, non simulata.",
+    "notFoundTitle": "Pagina non trovata",
+    "notFoundDetail": "L’indirizzo che hai seguito non esiste in questa lingua. Il selettore di lingua qui sopra riporta a una pagina che esiste.",
+    "notFoundHome": "Torna alla home",
+    "science": "Servizi scientifici",
+    "storage": "Archiviazione",
     "operational": "Operativo",
     "available": "Disponibile",
-    "requestUnavailable": "Non è stato possibile completare la richiesta in questo momento.",
-    "emptyDbNote": "Il database è inizializzato ma non contiene ancora record del database reale. Nessun valore è inventato: la riga vuota è dichiarata, non simulata.",
-    "notFoundTitle": "Pagina non trovata"
+    "requestUnavailable": "Non è stato possibile completare la richiesta in questo momento."
+  },
+  "market": {
+    "title": "Mercato",
+    "lead": "Prodotti con origine tracciata: chi li ha prodotti, come sono stati coltivati e con quali dati verificati.",
+    "products": "Prodotti",
+    "producers": "Produttori",
+    "organic": "Agricoltura biologica",
+    "organicBadge": "Biologico",
+    "empty": "Nessun prodotto corrisponde ai filtri scelti.",
+    "product": {
+      "backToMarket": "Torna al mercato",
+      "verifiedProduct": "Prodotto verificato",
+      "pricing": "Prezzo",
+      "quantity": "Quantità",
+      "unitPrice": "Prezzo unitario",
+      "qty": "Q.tà",
+      "productSpecs": "Specifiche del prodotto",
+      "ecoImpact": "Impatto ecologico",
+      "carbonSequestration": "Sequestro del carbonio",
+      "waterSavings": "Risparmio idrico",
+      "soilRestoration": "Restauro del suolo",
+      "productProvenance": "Provenienza del prodotto",
+      "dataUnavailable": "I dati di prodotto in tempo reale non sono disponibili; questo dettaglio proviene dal catalogo demo.",
+      "addToCart": "Aggiungi al carrello",
+      "escrowOption": "Opzione di deposito in garanzia",
+      "inStock": "Disponibile",
+      "outOfStock": "Esaurito",
+      "available": "disponibili",
+      "rating": "Valutazione",
+      "status": "Stato",
+      "total": "Totale",
+      "specsTitle": "Specifiche complete",
+      "ecoImpactTitle": "Impatto ecologico dettagliato",
+      "reviewsTitle": "Recensioni verificate di acquirenti",
+      "qaTitle": "Domande e risposte",
+      "traceabilityTitle": "Tracciabilità della catena di fornitura",
+      "pricingHistoryTitle": "Andamento dei prezzi",
+      "similarTitle": "Prodotti simili",
+      "bulkTitle": "Prezzi per quantità",
+      "certificationsTitle": "Certificazioni e documenti",
+      "shippingTitle": "Opzioni di spedizione",
+      "warrantyTitle": "Informazioni sulla garanzia",
+      "compareTitle": "Confronto rapido",
+      "specs": "Specifiche",
+      "reviews": "Recensioni",
+      "qa": "D&R",
+      "traceability": "Tracciabilità",
+      "pricingHistory": "Andamento dei prezzi",
+      "similar": "Simili",
+      "bulk": "Quantità",
+      "certifications": "Certificazioni",
+      "shipping": "Spedizione",
+      "warranty": "Garanzia",
+      "compare": "Confronta"
+    },
+    "compare": {
+      "title": "Confronto tra prodotti",
+      "lead": "Confronta fino a 4 prodotti affiancati",
+      "selectProducts": "Seleziona i prodotti da confrontare",
+      "maxFour": "Massimo 4 prodotti",
+      "feature": "Caratteristica",
+      "price": "Prezzo",
+      "category": "Categoria",
+      "origin": "Origine",
+      "producer": "Produttore",
+      "rating": "Valutazione",
+      "availability": "Disponibilità",
+      "organic": "Biologico",
+      "verified": "Verificato",
+      "carbonImpact": "Impatto sul carbonio",
+      "waterImpact": "Impatto sull’acqua",
+      "soilImpact": "Impatto sul suolo",
+      "actions": "Azioni",
+      "view": "Visualizza",
+      "noProductsSelected": "Nessun prodotto selezionato per il confronto",
+      "antiFraudWarning": "⚠ Analisi antifrode disponibile nelle pagine di confronto dettagliate",
+      "dataUnavailable": "I dati di confronto in tempo reale non sono disponibili; questa tabella mostra dati demo.",
+      "compareProvenance": "Provenienza dei dati di confronto",
+      "productsTitle": "Confronto tra prodotti",
+      "pricesTitle": "Confronto dell’andamento dei prezzi",
+      "ecoImpactTitle": "Confronto dell’impatto ecologico",
+      "certificationsTitle": "Confronto delle certificazioni",
+      "sellersTitle": "Confronto dei venditori",
+      "shippingTitle": "Confronto delle spedizioni",
+      "warrantyTitle": "Confronto delle garanzie",
+      "bulkTitle": "Confronto dei prezzi per quantità",
+      "fraudCheckTitle": "Analisi antifrode",
+      "exportTitle": "Esporta il confronto",
+      "saveTitle": "Confronti salvati",
+      "shareTitle": "Condividi il confronto",
+      "alertsTitle": "Avvisi di calo dei prezzi"
+    },
+    "template": {
+      "title": "Capacità del mercato",
+      "description": "Questa rotta è registrata nel framework del mercato e mostra uno stato non disponibile finché la sua fonte dati non è collegata.",
+      "status": "Dati non disponibili",
+      "source": "Origine della rotta",
+      "method": "Modello della rotta",
+      "unavailableTitle": "Questa capacità non è ancora collegata",
+      "unavailableDescription": "Non viene mostrato alcun dato non verificato. Dopo il collegamento all’API verranno aggiunti origine e data di osservazione.",
+      "contractTitle": "Contratto dei dati",
+      "contractDescription": "Input, output, livello di accesso e responsabile devono essere registrati nel manifest.",
+      "nextTitle": "Passaggio successivo",
+      "nextDescription": "Integrazione API, test i18n e di accessibilità sono richiesti prima della beta.",
+      "back": "Torna al mercato"
+    },
+    "cart": {
+      "title": "Carrello",
+      "empty": "Il tuo carrello è vuoto.",
+      "summary": "Riepilogo dell’ordine",
+      "cartProvenance": "Origine del carrello",
+      "decrease": "Diminuisci la quantità",
+      "increase": "Aumenta la quantità",
+      "demoNotice": "Questo è un carrello demo; per l’uso reale serve un carrello API con accesso effettuato."
+    },
+    "bazaar": {
+      "title": "Mercati locali",
+      "lead": "Mercati in tempo reale registrati presso il gateway.",
+      "detailTitle": "Dettagli del mercato",
+      "create": "Crea un mercato",
+      "source": "Registro dei mercati",
+      "empty": "Non è ancora stato registrato alcun mercato.",
+      "type": "Tipo",
+      "status": "Stato",
+      "address": "Indirizzo",
+      "location": "Località",
+      "approval": "Approvazione",
+      "approved": "Approvato",
+      "pending": "In attesa di revisione",
+      "visibility": "Visibilità pubblica",
+      "visible": "Visibile",
+      "hidden": "Nascosto",
+      "browseProducts": "Cerca prodotti",
+      "allBazaars": "Tutti i mercati"
+    },
+    "bazaarCreate": {
+      "title": "Crea un mercato",
+      "lead": "Invia una richiesta di registrazione del mercato perché il gateway la esamini.",
+      "name": "Nome del mercato",
+      "type": "Tipo di mercato",
+      "types": {
+        "cooperative": "Cooperativa",
+        "individual": "Singolo",
+        "farmersMarket": "Mercato contadino",
+        "mixed": "Misto",
+        "other": "Altro"
+      },
+      "description": "Descrizione",
+      "address": "Indirizzo",
+      "location": "Località",
+      "villageId": "Identificatore del villaggio (UUID)",
+      "rulesDocument": "Regole del mercato",
+      "contactEmail": "Email di contatto",
+      "contactPhone": "Telefono di contatto",
+      "acceptEcommerce": "Accetto le regole del commercio elettronico.",
+      "acceptTrading": "Accetto le regole di acquisto e vendita.",
+      "submit": "Invia la registrazione",
+      "signIn": "Accedi",
+      "loadingSession": "Caricamento della sessione",
+      "authRequired": "Per inviare una registrazione serve una sessione con accesso effettuato.",
+      "acceptRequired": "Entrambi i gruppi di regole devono essere accettati.",
+      "invalidField": "Inserisci un valore valido per questo campo.",
+      "successTitle": "Registrazione inviata",
+      "successDescription": "Il mercato è stato creato ed è in attesa di revisione.",
+      "viewCreated": "Vedi il mercato",
+      "back": "Torna ai mercati"
+    },
+    "wallet": {
+      "title": "EcoWallet",
+      "balance": "Saldo",
+      "totalEarned": "Totale guadagnato",
+      "totalRedeemed": "Totale riscattato",
+      "accountStatus": "Stato del conto",
+      "active": "Attivo",
+      "inactive": "Non attivo",
+      "earnings": "Registro delle entrate",
+      "noEarnings": "Non sono disponibili voci di entrata.",
+      "withdrawalUnavailable": "Il prelievo non è disponibile tramite il contratto attuale del gateway."
+    },
+    "checkout": {
+      "step1Cart": "Carrello",
+      "step2Escrow": "Deposito in garanzia",
+      "step3Confirm": "Conferma",
+      "cartReview": "Revisione del carrello",
+      "subtotal": "Subtotale",
+      "platformFee": "Commissione della piattaforma",
+      "escrowFee": "Commissione del deposito in garanzia",
+      "escrowSetup": "Configura il deposito in garanzia",
+      "ecowallet": "EcoWallet",
+      "card": "Carta",
+      "contractAcceptance": "Ho letto e accetto il contratto di deposito in garanzia e i relativi termini.",
+      "transactionKey": "Chiave della transazione",
+      "confirmAndLock": "Conferma e blocca il deposito in garanzia",
+      "acceptContractFirst": "Accetta prima il contratto",
+      "confirmation": "Conferma della transazione",
+      "orderPlaced": "Ordine inviato",
+      "escrowStatus": "Stato del deposito in garanzia",
+      "viewOrders": "Vedi gli ordini",
+      "checkoutProvenance": "Origine del flusso di pagamento",
+      "processing": "Invio in corso…",
+      "apiUnavailable": "Il servizio di deposito in garanzia non è disponibile; l’ordine non è stato confermato.",
+      "demoCart": "Questo carrello contiene dati demo e deve essere caricato dall’API prima di un invio reale."
+    },
+    "escrow": {
+      "title": "Deposito in garanzia",
+      "escrowStatus": "Lo stato del deposito in garanzia che riporta il gateway.",
+      "amount": "Importo",
+      "contractHash": "Hash del contratto",
+      "orderId": "ID ordine",
+      "parties": "Parti",
+      "buyer": "Acquirente",
+      "seller": "Venditore",
+      "arbitrator": "Arbitro",
+      "platform": "Piattaforma",
+      "eventTimeline": "Cronologia degli eventi",
+      "signed": "Firmato",
+      "notSigned": "Non firmato",
+      "escrowComplete": "Il deposito in garanzia è completo.",
+      "releaseFunds": "Rilascia i fondi",
+      "cancelEscrow": "Annulla il deposito in garanzia",
+      "openDispute": "Apri una controversia",
+      "dataUnavailable": "I dati del deposito in garanzia in tempo reale non sono disponibili; il dettaglio mostrato proviene dal record demo.",
+      "confirmRelease": "Rilasciare i fondi?",
+      "confirmReleaseDesc": "Questa azione procede solo dopo l’autorizzazione e l’esame delle condizioni.",
+      "confirmReleaseButton": "Conferma il rilascio",
+      "escrowProvenance": "Origine del deposito in garanzia",
+      "released": "I fondi sono stati rilasciati",
+      "cancelled": "Il deposito in garanzia è stato annullato"
+    },
+    "surface": {
+      "back": "Torna al mercato",
+      "actionTitle": "Endpoint di azione",
+      "actionLead": "Questo percorso del mercato è un comando che il gateway esegue, non un documento che pubblica.",
+      "actionStatus": "Endpoint di azione",
+      "actionSource": "Fonte dichiarata",
+      "actionCommandTitle": "Il comando",
+      "actionCommandDescription": "Il gateway monta questo percorso come scrittura. Non ha una pagina propria perché una scrittura non è qualcosa che un lettore legge.",
+      "actionReadTitle": "Il lato di lettura",
+      "actionReadDescription": "Questo è l'endpoint che pubblica lo stesso oggetto per la lettura.",
+      "actionReadLink": "Apri la pagina di lettura",
+      "actionNoRead": "Il gateway non pubblica endpoint di lettura per questo comando, quindi non c'è nulla da collegare. Aggiungerlo spetta al proprietario di questa superficie.",
+      "actionFormTitle": "Qui non c'è un modulo",
+      "actionFormDescription": "Questa pagina non offre di proposito alcun pulsante di invio. Un modulo affermerebbe un corpo di richiesta e un ruolo di chiamante che il contratto non descrive, e un comando che sposta denaro è vietato finché non lo precede un passo di contratto versionato.",
+      "actionDeclaredBy": "Dichiarato in"
+    },
+    "escrowOrders": {
+      "title": "Ordini in garanzia",
+      "lead": "Ordini custoditi in garanzia, come il gateway di commercio li riporta per la tua sessione.",
+      "authHint": "Questo elenco è limitato alla tua sessione autenticata. Una richiesta non autenticata viene rifiutata dal gateway, non mostrata come vuota.",
+      "escrowByDefault": "I fondi restano in garanzia per impostazione predefinita e vengono rilasciati solo con una transizione d'ordine consentita."
+    },
+    "orderRecord": {
+      "title": "Ordine",
+      "lead": "Un ordine commerciale, le sue righe, le sue intenzioni di pagamento e le transizioni che la macchina a stati consente ora.",
+      "authHint": "Questo ordine viene letto solo per la tua sessione autenticata.",
+      "transitions": "Transizioni consentite",
+      "track": "Cronologia di tracciamento",
+      "evidence": "Prove"
+    },
+    "orderTransitions": {
+      "title": "Transizioni consentite",
+      "lead": "Gli stati successivi che la macchina a stati dell'ordine consente per questo ordine.",
+      "transition": "Transizione",
+      "note": "Una transizione che il gateway non consente restituisce un errore, quindi questa pagina non offre alcun comando."
+    },
+    "form": {
+      "loadingSession": "Caricamento della sessione",
+      "authRequired": "Per inviare questo modulo serve una sessione autenticata.",
+      "signIn": "Accedi",
+      "invalidField": "Controlla il campo evidenziato e invia di nuovo.",
+      "requiredHint": "I campi che il gateway indica come obbligatori devono essere compilati. Il gateway ricontrolla ogni valore."
+    },
+    "demand": {
+      "title": "Pubblica una richiesta B2B",
+      "lead": "Registra una richiesta di acquisto con cui comuni e venditori possono essere abbinati. La tua identità proviene dalla sessione e qui non viene richiesta.",
+      "provenance": "Comando di richiesta",
+      "listProvenance": "Le tue richieste",
+      "commodity": "Merce",
+      "quantity": "Quantità richiesta",
+      "unit": "Unità",
+      "frequency": "Frequenza",
+      "submit": "Invia la richiesta",
+      "yourDemands": "Le tue richieste",
+      "createdTitle": "Richiesta inviata",
+      "createdDescription": "Il gateway ha registrato la richiesta. Compare fra le tue richieste senza alcun nome associato."
+    }
   },
   "common": {
     "error": "Errore",
@@ -91,197 +1138,28 @@
     "audienceLabel": "Per chi è",
     "evidenceLabel": "Evidenze",
     "limitsLabel": "Limiti",
-    "nextLabel": "Prossimo passo"
+    "nextLabel": "Prossimo passo",
+    "evidence": "Prove",
+    "limits": "Limiti",
+    "next": "Passaggio successivo",
+    "live": "In tempo reale",
+    "beta": "Beta",
+    "planned": "Pianificato",
+    "open": "Aperto",
+    "demo": "Demo",
+    "view": "Visualizza",
+    "back": "Indietro",
+    "card": "Carta",
+    "total": "Totale",
+    "proceedToCheckout": "Continua al pagamento",
+    "signed": "Firmato",
+    "pending": "In sospeso",
+    "cancel": "Annulla",
+    "released": "Rilasciato",
+    "static": "Contenuti"
   },
   "a11y": {
     "skipToContent": "Vai al contenuto principale"
-  },
-  "footer": {
-    "sitemap": "Mappa del sito",
-    "techStack": "Tecnologia della piattaforma",
-    "navTitle": "Piattaforma"
-  },
-  "about": {
-    "title": "Informazioni su Hydroma Nojin",
-    "lead": "Un insieme di strumenti scientifici per proteggere acqua, suolo e mezzi di sussistenza nelle aree rurali.",
-    "what": "Hydroma Nojin è un insieme di strumenti di monitoraggio ambientale costruiti per operare dove internet è debole e gli strumenti di misura sono costosi.",
-    "audience": "Produttori, cooperative, agenzie governative, università, ricercatori e organizzazioni della società civile.",
-    "evidence": [
-      "I modelli scientifici si basano su metodi pubblicati e revisionati",
-      "Ogni valore numerico mostra la propria fonte e la propria data",
-      "Le decisioni agronomiche includono il motivo delle raccomandazioni"
-    ],
-    "limits": [
-      "Nessun sistema può sostituire la conoscenza locale dell'agricoltore",
-      "Le previsioni climatiche a lungo termine hanno un elevato margine di errore"
-    ],
-    "next": [
-      "Registrati per consultare i tuoi profili territoriali",
-      "Richiedi una sessione di formazione per la tua comunità"
-    ]
-  },
-  "statements": {
-    "title": "Missione, visione e manifesto",
-    "lead": "Il manifesto del progetto definisce cosa costruiamo, chi ne beneficia e a quale scopo tecnico ed economico.",
-    "missionTitle": "La nostra missione",
-    "missionBody": "Proteggere acqua, suolo e mezzi di sussistenza con strumenti scientifici verificabili. Ogni decisione deve essere comprensibile, riproducibile e utile a chi lavora la terra.",
-    "quoteLabel": "Dichiarazione",
-    "versionLabel": "Revisione libera",
-    "transparencyTitle": "Trasparenza del progetto",
-    "transparencyBody": "Se qualcosa non funziona, lo diciamo: proponiamo «in lavorazione» anziché fingere il completamento. Ogni modifica permanente viene tracciata nel registro del progetto."
-  },
-  "platformOverview": {
-    "title": "Panoramica della piattaforma",
-    "lead": "Ogni utente trova il proprio percorso: dal territorio all'acqua, dal terreno ai dati, senza perdersi.",
-    "itemHome": "Pagina principale",
-    "itemHomeDesc": "Profili territoriali, prodotti del mercato e attività del progetto in una sola vista.",
-    "itemScience": "Scienza applicata",
-    "itemScienceDesc": "Modelli di suolo, acqua, clima ed erosione con risultati verificabili.",
-    "itemMarket": "Mercato",
-    "itemMarketDesc": "Prodotti con origine tracciata e produttori verificati.",
-    "itemStatus": "Stato del sistema",
-    "itemStatusDesc": "Salute dei servizi e dei database in tempo reale, comprensibile e trasparente.",
-    "cta": "Scopri di più"
-  },
-  "services": {
-    "title": "Servizi e soluzioni",
-    "lead": "Tre servizi distinti coprono terra, impresa e ricerca scientifica.",
-    "what": "Ogni servizio nasce da un problema reale e restituisce un risultato che il destinatario può usare.",
-    "audience": "Produttori, istituzioni, comunità scientifiche, università e privati.",
-    "farmersTitle": "Per i produttori agricoli",
-    "farmersDesc": "Pianificazione delle colture, irrigazione, fertilità del suolo e gestione delle risorse idriche con raccomandazioni motivate.",
-    "institutionsTitle": "Per le istituzioni",
-    "institutionsDesc": "Cartografia delle aree a rischio, pianificazione delle risorse idriche e report di conformità.",
-    "researchersTitle": "Per ricercatori e università",
-    "researchersDesc": "Modelli scientifici, set di dati aperti, ambiente di calcolo ed elaborazione riproducibile.",
-    "pilotCta": "Richiedi una sessione pilota",
-    "pilotNote": "I siti pilota sono limitati e selezionati sulla base dei dati.",
-    "limits": [
-      "I siti pilota sono limitati e selezionati sulla base dei dati",
-      "Servizi di intelligenza artificiale limitati a domini agronomici dichiarati"
-    ],
-    "next": [
-      "Registrati per iniziare dal tuo profilo territoriale",
-      "Consulta l'elenco completo dei modelli scientifici"
-    ]
-  },
-  "evidence": {
-    "title": "Scienza ed evidenze",
-    "lead": "Ogni affermazione scientifica è collegata a una fonte, una data e un metodo di validazione.",
-    "what": "Ogni documento scientifico segue lo stesso flusso logico: metodo, dati, limiti dichiarati, esiti.",
-    "audience": "Ricercatori, revisori, autorità e chiunque valuti le affermazioni del progetto.",
-    "refsTitle": "Metodo e riferimenti",
-    "refs": [
-      "Metodi di modellazione del suolo e del bilancio idrico",
-      "Standard FAO-56 per l'evapotraspirazione",
-      "Protocolli di campionamento e di controllo qualità"
-    ],
-    "limitsTitle": "Limiti dichiarati",
-    "limits": [
-      "I modelli di bilancio idrico semplificati sovrastimano l'umidità in suoli sabbiosi",
-      "I dati satellitari possono essere offuscati dalla copertura nuvolosa",
-      "Le previsioni stagionali restano entro un intervallo ampio"
-    ],
-    "nextTitle": "Prossimo passo",
-    "next": [
-      "Leggere la metodologia completa e le assunzioni del modello",
-      "Consultare i dataset aperti e la guida alla riproducibilità"
-    ]
-  },
-  "learn": {
-    "title": "Contenuti e formazione",
-    "lead": "Videolezioni, glossario bilingue e guide operative da usare sul campo.",
-    "emptyTitle": "Il contenuto formativo non è ancora disponibile per questa selezione",
-    "emptyDesc": "I materiali di formazione sono in fase di revisione. Nel frattempo puoi consultare il glossario e le guide metodologiche sul sito."
-  },
-  "legal": {
-    "title": "Termini e condizioni",
-    "lead": "I dati personali sono raccolti per un motivo preciso, conservati per il tempo necessario e protetti.",
-    "version": "v libera — bozza",
-    "termsTitle": "Condizioni d'uso",
-    "termsBody": "L'uso della piattaforma implica l'accettazione delle presenti condizioni. Il progetto non rivendica certificazioni esterne non verificate.",
-    "privacyTitle": "Dati personali",
-    "privacyBody": "Utilizziamo i dati personali per fornire il servizio richiesto. Non condividiamo i dati identificativi per finalità commerciali.",
-    "cookiesTitle": "Cookie e lingua",
-    "cookiesBody": "Utilizziamo un cookie tecnico per ricordare la lingua scelta; puoi modificarlo in qualsiasi momento dalle preferenze del browser."
-  },
-  "ai": {
-    "title": "Intelligenza artificiale responsabile",
-    "lead": "L'IA è un supporto, non un sostituto del metodo scientifico. Deve dichiarare i propri limiti.",
-    "what": "Gli strumenti di IA aiutano a formulare domande e a cercare nella base di conoscenze, ma non sostituiscono il parere di un agronomo né l'osservazione sul campo.",
-    "audience": "Produttori, tecnici, ricercatori e chiunque usi strumenti automatici nella pianificazione agricola.",
-    "sourceRule": "Ogni risposta deve riportare la fonte o essere etichettata come bozza del modello.",
-    "limitsTitle": "Limiti dichiarati",
-    "limits": [
-      "Le raccomandazioni non sostituiscono l'agronomo o il diritto locale",
-      "Il modello può consigliare pratiche non adatte alla regione specifica",
-      "Solo i domini dichiarati sono supportati (fa/en/ar/ur)"
-    ],
-    "nextTitle": "Prossimo passo",
-    "next": [
-      "Segnala una risposta non corretta affinché venga verificata da un operatore umano",
-      "Consulta la procedura completa del sistema"
-    ]
-  },
-  "trust": {
-    "title": "Provenienza e affidabilità del sistema",
-    "lead": "Provenienza è tracciare ogni dato fino alla sua fonte, non un sempliceadesivo.",
-    "what": "Ogni dato dichiarato porta un marchio di provenienza: origine, data e servizio che l'ha prodotto.",
-    "audience": "Partner istituzionali, revisori, ricercatori e organismi di controllo.",
-    "provenanceTitle": "Esploratore della provenienza",
-    "provenanceDesc": "Segui ogni dato fino al servizio, all'immagine del dato e alla data di acquisizione.",
-    "registryTitle": "Registro del carbonio",
-    "registryDesc": "I crediti di carbonio generati dal progetto sono accessibili e verificabili; per ora l'indirizzo della blockchain non è ancora disponibile.",
-    "disclosureTitle": "Divulgazione responsabile",
-    "disclosureDesc": "La divulgazione delle vulnerabilità avviene in modo riservato, senza esporre dati degli utenti.",
-    "statusCta": "Vedi lo stato dei servizi",
-    "limits": [
-      "L'indirizzo del registro del carbonio non è ancora disponibile",
-      "L'esploratore della provenienza non è ancora disponibile per alcuni dataset"
-    ],
-    "next": [
-      "Esplora la provenienza di ogni dato del sistema",
-      "Consulta il rapporto annuale sulla trasparenza"
-    ]
-  },
-  "developers": {
-    "title": "Sviluppatori e API",
-    "lead": "Sviluppatori, integratori e partner tecnici: consultate i contratti, provate gli endpoint, collaborate.",
-    "what": "Ogni endpoint è documentato, ogni modifica API è tracciata e ogni richiesta porta un identificatore di correlazione.",
-    "audience": "Sviluppatori, integratori, università, team di ricerca e partner tecnici.",
-    "docsTitle": "Documentazione API",
-    "docsDesc": "Ogni endpoint è documentato con esempi di richiesta e risposta, limiti di frequenza e codici di errore.",
-    "toolsTitle": "Strumenti di sviluppo",
-    "toolsDesc": "Gli strumenti includono client generati, raccolte di test ed esempi di integrazione.",
-    "changesTitle": "Registro delle modifiche",
-    "changesDesc": "Ogni modifica API è associata a una versione e pubblicata nel registro delle modifiche.",
-    "publicNote": "L'ambiente pubblico è in sola lettura. I test e le scritture sono protetti da autenticazione e limitati alle operazioni consentite.",
-    "limits": [
-      "Le scritture sono consentite solo in ambienti autorizzati",
-      "Gli strumenti automatizzati non sono consentiti sulla superficie pubblica"
-    ],
-    "next": [
-      "Consultare la guida di avvio rapido e gli esempi di integrazione",
-      "Richiedere una chiave API e un ambiente di prova"
-    ]
-  },
-  "accessibility": {
-    "title": "Dichiarazione di accessibilità",
-    "lead": "L'accessibilità è un requisito funzionale: nessuna funzione deve dipendere esclusivamente dal colore o dal suono.",
-    "what": "Il sito è realizzato per essere navigabile da tastiera, con contrasto conforme, struttura semantica corretta e supporto completo per la modalità RTL/LTR.",
-    "audience": "Persone con disabilità, anziani, utenti con tecnologia assistenziale e chi naviga con tasteo o tastiera.",
-    "standardTitle": "Standard applicati",
-    "standardDesc": "Il sito mira alla conformità WCAG 2.2 livello AA. Le verifiche automatiche non sostituiscono la verifica manuale con le persone.",
-    "feedbackTitle": "Segnalazione dei problemi di accessibilità",
-    "feedbackDesc": "Se incontri una barriera, segnala la pagina interessata. Provvederemo a risolverla nel ciclo di aggiornamento successivo.",
-    "limits": [
-      "Alcune mappe interattive hanno un'alternativa testuale limitata",
-      "Alcuni documenti scientifici sono disponibili solo in formato testo"
-    ],
-    "next": [
-      "Segnala un problema di accessibilità con l'indirizzo della pagina",
-      "Consulta la guida all'uso della tastiera e del navigatore vocale"
-    ]
   },
   "auth": {
     "meta": {
@@ -335,7 +1213,15 @@
       "ar": "Arabo",
       "it": "Italiano",
       "ru": "Russo",
-      "zh": "Cinese"
+      "ur": "Urdu",
+      "de": "Tedesco",
+      "es": "Spagnolo",
+      "fr": "Francese",
+      "hi": "Hindi",
+      "ms": "Malese",
+      "pt": "Portoghese",
+      "zh": "Cinese",
+      "bn": "Bengalese"
     },
     "errors": {
       "forbidden": "La richiesta è stata rifiutata dal confine di sessione. Ricarica la pagina e riprova.",
@@ -394,7 +1280,7 @@
       "signedOut": "Non hai effettuato l'accesso.",
       "signedOutLead": "Accedi per vedere l'account associato a questa sessione.",
       "signedIn": "Accesso effettuato",
-      "email": "Email",
+      "email": "E-mail",
       "fullName": "Nome",
       "role": "Ruolo",
       "language": "Lingua dell'interfaccia",
@@ -624,6 +1510,10 @@
       "title": "Perché questa piattaforma",
       "description": "Il problema, la soluzione e le prove verificabili"
     },
+    "marketplace-market-cart-product_id": {
+      "title": "Voce del carrello",
+      "description": "Una singola voce del carrello, risolta dal suo identificatore al momento della richiesta."
+    },
     "marketplace-market-producers": {
       "title": "Produttori",
       "description": "I produttori che il mercato ha registrato, con lo stato di verifica registrato."
@@ -631,6 +1521,562 @@
     "marketplace-market-stats": {
       "title": "Statistiche del mercato",
       "description": "Contatori letti dall’endpoint delle statistiche, oppure la constatazione che il servizio non ha risposto."
+    },
+    "hydroma-hydroma-carbon-credits-token_id-history": {
+      "title": "La storia dei movimenti di un credito di carbonio, nell’ordine in cui il libro mastro la registra.",
+      "description": "Record del registro"
+    },
+    "hydroma-hydroma-carbon-verra-registry_id": {
+      "title": "Un record di registro per identificatore, con lo stato che riporta il motore.",
+      "description": "Standard del registro"
+    },
+    "hydroma-hydroma-carbon-verra-standards": {
+      "title": "Gli standard di registro che il motore implementa, con la versione che riporta per ciascuno.",
+      "description": "Esecuzione climatica"
+    },
+    "hydroma-hydroma-climate-model_id-run": {
+      "title": "Un’esecuzione climatica e gli input che il motore ha registrato per essa.",
+      "description": "Scenari climatici"
+    },
+    "hydroma-hydroma-climate-scenarios": {
+      "title": "Gli scenari che il motore può eseguire, con le ipotesi documentate di ciascuno.",
+      "description": "Esecuzione economica"
+    },
+    "hydroma-hydroma-economics-model_id-run": {
+      "title": "Un risultato economico e le ipotesi che il motore ha registrato per esso.",
+      "description": "Griglia delle quote"
+    },
+    "hydroma-hydroma-elevation-grid-site_id": {
+      "title": "Dati di quota per un sito, con la fonte e la risoluzione che il motore registra.",
+      "description": "Esecuzione idrologica"
+    },
+    "hydroma-hydroma-hydrology-model_id-run": {
+      "title": "Un risultato idrologico e gli input che il motore ha registrato per esso.",
+      "description": "Esecuzione del suolo"
+    },
+    "hydroma-hydroma-soil-model_id-run": {
+      "title": "Un risultato del suolo e gli input che il motore ha registrato per esso.",
+      "description": "Fabbisogno idrico della coltura"
+    },
+    "admin-admin-content-item_id-translations": {
+      "title": "Traduzioni dei contenuti",
+      "description": "In quali lingue è tradotto un elemento di contenuto, come registrato dal gateway."
+    },
+    "admin-admin-errors-error_id": {
+      "title": "Record di errore",
+      "description": "Un errore registrato e il contesto che il gateway ne conserva."
+    },
+    "admin-admin-errors-summary": {
+      "title": "Riepilogo degli errori",
+      "description": "Un conteggio degli errori registrati per gravità, calcolato sugli errori che il gateway detiene davvero."
+    },
+    "admin-admin-models": {
+      "title": "Modelli registrati",
+      "description": "I modelli registrati dal gateway, con la versione e la documentazione che ciascuno pubblica."
+    },
+    "admin-admin-overview-health": {
+      "title": "Salute dei servizi",
+      "description": "Cosa riporta ogni servizio sulla propria disponibilità, letto al momento della richiesta."
+    },
+    "admin-admin-overview-metrics": {
+      "title": "Metriche della piattaforma",
+      "description": "Le metriche nominate della piattaforma, come riportate dal gateway, con le loro unità."
+    },
+    "admin-admin-security-audit": {
+      "title": "Audit di sicurezza",
+      "description": "Gli eventi di audit registrati dal gateway, con l’attore e l’azione per ciascuno."
+    },
+    "admin-admin-security-logins": {
+      "title": "Registri di accesso",
+      "description": "I tentativi di accesso registrati dal gateway, con l’esito e l’indirizzo da cui sono arrivati."
+    },
+    "workspace-workspace-disputes-dispute_id": {
+      "title": "Record di controversia",
+      "description": "Una controversia per identificatore, con la prova allegata e lo stato raggiunto."
+    },
+    "workspace-workspace-finance-accounts": {
+      "title": "Conti finanziari",
+      "description": "I conti finanziari che questo spazio di lavoro detiene, con lo stato che il gateway registra per ciascuno."
+    },
+    "workspace-workspace-finance-idempotency-keys": {
+      "title": "Chiavi di idempotenza",
+      "description": "Le chiavi di idempotenza usate da questo spazio di lavoro, perché una richiesta ripetuta sia riconosciuta come una sola."
+    },
+    "workspace-workspace-finance-ledger-accounts-account_id-balance": {
+      "title": "Saldo del conto",
+      "description": "Il saldo che il libro mastro detiene per un conto alla scrittura in cui è stato letto."
+    },
+    "workspace-workspace-finance-ledger-entries": {
+      "title": "Voci del libro mastro",
+      "description": "Tutte le scritture che lo spazio di lavoro detiene, in ordine, con l’importo e il segno di ciascuna."
+    },
+    "workspace-workspace-finance-ledger-profit-and-loss": {
+      "title": "Ricavi e spese riassunti dalle scritture stesse, sul periodo indicato.",
+      "description": "Bilancio di verifica"
+    },
+    "workspace-workspace-finance-ledger-trial-balance": {
+      "title": "Debiti e crediti totalizzati dalle scritture, e indicazione se le due parti concordano.",
+      "description": "Portafoglio dello spazio di lavoro"
+    },
+    "workspace-workspace-finance-wallet": {
+      "title": "Il portafoglio dello spazio di lavoro come lo registra il libro mastro, con le scritture dietro il saldo.",
+      "description": "Attivi del conto"
+    },
+    "research-research-hub-runs-run_id-share": {
+      "title": "Esecuzione condivisa",
+      "description": "Un’esecuzione per identificatore e lo stato di condivisione che registra l’hub di ricerca."
+    },
+    "research-research-science-citations": {
+      "title": "Citazioni",
+      "description": "Le citazioni che l’hub di ricerca detiene, con gli identificatori a cui si risolvono."
+    },
+    "research-research-science-datasets-slug-doi": {
+      "title": "DOI del set di dati",
+      "description": "Il DOI registrato per un set di dati e se è stato emesso."
+    },
+    "research-research-science-model-cards": {
+      "title": "Schede dei modelli",
+      "description": "Le schede dei modelli che l’hub di ricerca detiene, con i modelli che documentano."
+    },
+    "inclusive-auth-2fa-methods": {
+      "title": "Metodi a due fattori",
+      "description": "I metodi a due fattori di cui dispone il servizio account."
+    },
+    "inclusive-auth-account-bio": {
+      "title": "Biografia dell’account",
+      "description": "La biografia registrata dal titolare dell’account, modificabile da lui."
+    },
+    "inclusive-auth-assets": {
+      "title": "Gli attivi che il servizio account ha collegato a un conto.",
+      "description": "Abbonamento"
+    },
+    "inclusive-auth-billing-subscription": {
+      "title": "Lo stato di abbonamento che registra il servizio di fatturazione, con il suo piano e il suo periodo.",
+      "description": "Texti legali"
+    },
+    "inclusive-auth-billing-usage": {
+      "title": "Utilizzo",
+      "description": "Quanto del limite registrato è stato consumato, secondo quanto riporta il servizio di fatturazione."
+    },
+    "inclusive-auth-export-data": {
+      "title": "Esportazione dei dati",
+      "description": "Cosa può esportare il servizio account su un account e in quale formato."
+    },
+    "inclusive-auth-notifications-preferences": {
+      "title": "Preferenze di notifica",
+      "description": "Le preferenze di notifica che il servizio account ha registrato."
+    },
+    "inclusive-auth-privacy-settings": {
+      "title": "Impostazioni sulla privacy",
+      "description": "Le scelte sulla privacy che il servizio account ha registrato per un account."
+    },
+    "inclusive-auth-referrals": {
+      "title": "Referral",
+      "description": "I referral registrati su un account, con lo stato raggiunto da ciascuno."
+    },
+    "inclusive-auth-rewards": {
+      "title": "Premi",
+      "description": "I premi che il servizio account ha registrato, con la base di ciascuno."
+    },
+    "learning-learn-content-search": {
+      "title": "Cerca nel contenuto formativo",
+      "description": "Cerca nella biblioteca formativa pubblicata. I risultati sono quelli trovati dall’indice, senza alcun ordinamento aggiunto qui."
+    },
+    "learning-learn-manual-climate-normals-site_id": {
+      "title": "Normali climatiche",
+      "description": "Normali climatiche di lungo periodo per una stazione, con il periodo e il riferimento su cui sono calcolati i valori."
+    },
+    "learning-learn-manual-crop-calendar": {
+      "title": "Calendario colturale",
+      "description": "Finestre di semina e raccolta per coltura e regione, dalle tabelle fornite dal motore."
+    },
+    "learning-learn-manual-crop-params": {
+      "title": "Parametri della coltura",
+      "description": "I parametri che i modelli usano per ciascuna coltura: coefficienti, fasi di crescita e soglie di stress."
+    },
+    "learning-learn-manual-sites": {
+      "title": "Siti di riferimento",
+      "description": "I siti a cui fa riferimento il manuale, con le coordinate che il motore registra per ciascuno."
+    },
+    "learning-learn-manual-sites-site_id": {
+      "title": "Sito",
+      "description": "Un sito di riferimento per identificatore, con i campi che il motore ne conserva."
+    },
+    "learning-learn-manual-soil-regions": {
+      "title": "Regioni pedologiche",
+      "description": "Le regioni pedologiche descritte dal manuale, con la classificazione che ciascuna segue."
+    },
+    "learning-learn-manual-status": {
+      "title": "Stato del manuale",
+      "description": "Cosa riporta il servizio del manuale sul proprio contenuto: cosa è pubblicato e cosa è in revisione."
+    },
+    "learning-learn-manual-weather-daily-site_id": {
+      "title": "Meteo giornaliero",
+      "description": "Osservazioni meteorologiche giornaliere per un sito, nell’ordine restituito dal servizio, con le unità."
+    },
+    "learning-public-education-advanced-search": {
+      "title": "Ricerca avanzata",
+      "description": "Ricerca su più criteri nella biblioteca formativa, con i gruppi di termini reali indicizzati dal servizio."
+    },
+    "learning-learn-legal": {
+      "title": "I testi legali che la piattaforma pubblica, con la lingua e la versione di ciascuno.",
+      "description": "Le lingue in cui i testi legali sono pubblicati, come registrate."
+    },
+    "learning-learn-legal-locales": {
+      "title": "Lingue legali",
+      "description": "Slug legali"
+    },
+    "learning-learn-legal-slugs": {
+      "title": "I documenti legali che la piattaforma detiene, elencati per slug.",
+      "description": "Stato dell’autenticazione a due fattori"
+    },
+    "inclusive-auth-2fa-status": {
+      "title": "Se l’autenticazione a due fattori è attiva per questo conto, secondo quanto riporta il servizio account.",
+      "description": "Lo stato che il servizio account detiene per questo conto, incluse eventuali restrizioni applicate."
+    },
+    "inclusive-auth-account-status": {
+      "title": "Stato del conto",
+      "description": "Dati del vecchio sistema di account"
+    },
+    "inclusive-auth-legacy": {
+      "title": "Dati ereditati dal precedente sistema di account, per la revisione della migrazione e non per l’uso quotidiano.",
+      "description": "Il mio account"
+    },
+    "inclusive-auth-me": {
+      "title": "Il record di account che il servizio detiene per questa identità, esattamente come lo archivia.",
+      "description": "Notifiche indirizzate a questo account, nell’ordine in cui il servizio le detiene."
+    },
+    "inclusive-auth-notifications": {
+      "title": "Notifiche",
+      "description": "Servizi collegati"
+    },
+    "inclusive-auth-oauth-connections": {
+      "title": "I servizi di terze parti collegati a questo account, con gli ambiti concessi a ciascuno.",
+      "description": "Preferenze"
+    },
+    "inclusive-auth-preferences": {
+      "title": "Le preferenze che il servizio account ha registrato per questo account.",
+      "description": "Preferenze estese"
+    },
+    "inclusive-auth-preferences-extended": {
+      "title": "L’insieme completo delle preferenze, incluse le chiavi che il servizio riserva a uso futuro.",
+      "description": "Profilo pubblico"
+    },
+    "inclusive-auth-profile-public": {
+      "title": "La parte del tuo profilo visibile agli altri, come la pubblica il servizio.",
+      "description": "Limite di frequenza"
+    },
+    "inclusive-auth-rate-limit": {
+      "title": "Quello che puoi ancora inviare e quanto resta nella tua finestra, secondo il calcolo del servizio.",
+      "description": "Stato del gate di fase"
+    },
+    "public-ai-analysis-providers": {
+      "title": "Fornitori di analisi",
+      "description": "Fornitori di analisi"
+    },
+    "public-ai-health": {
+      "title": "Salute del servizio IA",
+      "description": "Cosa riportano gli endpoint IA sulla propria disponibilità, letto al momento della richiesta."
+    },
+    "public-ai-history": {
+      "title": "Cronologia delle analisi",
+      "description": "Le analisi registrate in precedenza, come le detiene il gateway."
+    },
+    "public-ai-scenarios": {
+      "title": "Scenari di analisi",
+      "description": "Gli scenari registrati dal gateway per l’analisi, con il loro stato registrato."
+    },
+    "public-ai-stream": {
+      "title": "Flusso di analisi",
+      "description": "Il flusso di eventi di analisi che il gateway espone, con gli eventi che riporta al momento."
+    },
+    "public-ai-tools": {
+      "title": "Strumenti IA",
+      "description": "Gli strumenti che la superficie IA espone, elencati dal registro anziché descritti a mano."
+    },
+    "public-ai-tools-tool_id": {
+      "title": "Strumento IA",
+      "description": "Uno strumento per identificatore, con il contratto che il gateway pubblica per esso."
+    },
+    "public-ai-tools-tool_id-schema": {
+      "title": "Schema dello strumento",
+      "description": "Lo schema di input che uno strumento dichiara, esattamente come lo restituisce il gateway."
+    },
+    "public-help-personas": {
+      "title": "Profili di lettore",
+      "description": "I profili di lettore per cui è scritta la guida, come registrati."
+    },
+    "public-trust-blockchain-ecocoin-health": {
+      "title": "Salute della catena EcoCoin",
+      "description": "Cosa riporta l’endpoint EcoCoin sulla propria disponibilità."
+    },
+    "public-trust-blockchain-ecocoin-stats": {
+      "title": "Statistiche EcoCoin",
+      "description": "I contatori della catena come il gateway li registra al momento della richiesta."
+    },
+    "public-trust-blockchain-ecocoin-wallet-user_id": {
+      "title": "Portafoglio EcoCoin",
+      "description": "Un portafoglio per identificatore, con il saldo che riporta la catena."
+    },
+    "public-trust-blockchain-health": {
+      "title": "Salute della catena",
+      "description": "Disponibilità degli endpoint blockchain, letta al momento della richiesta."
+    },
+    "public-trust-blockchain-impact-certificate-certificate_id": {
+      "title": "Certificato di impatto",
+      "description": "Un certificato di impatto per identificatore, con lo stato registrato sulla catena."
+    },
+    "public-trust-blockchain-info": {
+      "title": "Informazioni sulla catena",
+      "description": "I parametri della catena che riporta il gateway: rete, indirizzi dei contratti e stato."
+    },
+    "public-trust-blockchain-oracle-metrics-activity_id": {
+      "title": "Metriche dell’oracolo",
+      "description": "Le metriche di prezzo che l’oracolo registra per un’attività, con il relativo orario di osservazione."
+    },
+    "public-trust-blockchain-stats": {
+      "title": "Statistiche della catena",
+      "description": "I contatori della catena come registrati, con l’altezza di blocco a cui sono stati letti."
+    },
+    "public-trust-blockchain-transactions": {
+      "title": "Transazioni della catena",
+      "description": "Le transazioni che riporta il gateway, con i campi che restituisce davvero."
+    },
+    "public-trust-blockchain-transactions-tx_hash": {
+      "title": "Transazione della catena",
+      "description": "Una transazione per hash, con lo stato registrato sulla catena."
+    },
+    "public-trust-blockchain-verification": {
+      "title": "Verifica della catena",
+      "description": "Lo stato di verifica che il gateway detiene per un’affermazione registrata."
+    },
+    "public-trust-cors-proxy-status": {
+      "title": "Stato del proxy",
+      "description": "Se il proxy CORS è disponibile, letto al momento della richiesta."
+    },
+    "public-trust-data-availability": {
+      "title": "Disponibilità dei dati",
+      "description": "Quali set di dati il gateway può servire al momento e quali no."
+    },
+    "public-trust-data-freshness": {
+      "title": "Freschezza dei dati",
+      "description": "Da quanto tempo non viene aggiornato ciascun set di dati registrato, secondo quanto riporta il gateway."
+    },
+    "public-trust-data-lineage": {
+      "title": "Linea di genesi dei dati",
+      "description": "Da dove proviene ciascun set di dati registrato, secondo quanto riporta il gateway."
+    },
+    "public-trust-data-quality": {
+      "title": "Qualità dei dati",
+      "description": "I segnali di qualità che il gateway calcola, non un punteggio che la piattaforma asserisce."
+    },
+    "public-trust-mrv-reports": {
+      "title": "Report MRV",
+      "description": "I record di monitoraggio, reporting e verifica che il gateway detiene."
+    },
+    "public-trust-report-period-period": {
+      "title": "Report di periodo",
+      "description": "Un periodo di reporting e i record che il gateway detiene per esso."
+    },
+    "public-trust-transparency-log": {
+      "title": "Registro di trasparenza",
+      "description": "La cronologia di divulgazione e modifica che il gateway registra, nell’ordine in cui la detiene."
+    },
+    "public-trust-blockchain-phasegate-status": {
+      "title": "Se il gate di fase è aperto, come riporta l’endpoint della catena al momento della richiesta.",
+      "description": "Saldo della tesoreria"
+    },
+    "public-trust-blockchain-treasury-balance": {
+      "title": "Il saldo della tesoreria che la catena registra, con l’altezza di blocco a cui è stato letto.",
+      "description": "Versioni del contenuto"
+    },
+    "public-public-pilot-stats": {
+      "title": "Statistiche del pilota",
+      "description": "I contatori del programma pilota, come riportati dal servizio che li possiede."
+    },
+    "system-system-dashboard-public-analytics": {
+      "title": "Analisi pubblica",
+      "description": "Le cifre aggregate che pubblica il dashboard pubblico, con la finestra coperta da ciascuna."
+    },
+    "system-system-dashboard-public-carbon": {
+      "title": "Dashboard pubblico del carbonio",
+      "description": "Le cifre del carbonio che pubblica il dashboard pubblico, con la versione del metodo che riporta il motore."
+    },
+    "system-system-dashboard-public-full": {
+      "title": "Dashboard pubblico completo",
+      "description": "Tutti i pannelli che pubblica il dashboard pubblico, nell’ordine restituito dal servizio."
+    },
+    "system-system-dashboard-public-mrv": {
+      "title": "Dashboard pubblico MRV",
+      "description": "I record di monitoraggio, reporting e verifica che il dashboard pubblico espone."
+    },
+    "system-system-dashboard-public-projects": {
+      "title": "Progetti pubblici",
+      "description": "I progetti che il dashboard pubblico elenca, con lo stato in cui ciascuno è registrato."
+    },
+    "system-system-dashboard-public-satellite": {
+      "title": "Dashboard pubblico satellitare",
+      "description": "Gli strati satellitari che il dashboard pubblico serve, con l’ora di acquisizione di ciascuno."
+    },
+    "system-system-dashboard-public-simulations": {
+      "title": "Simulazioni pubbliche",
+      "description": "Le esecuzioni di simulazione che pubblica il dashboard pubblico, con i parametri con cui sono state eseguite."
+    },
+    "system-system-dashboard-public-soil": {
+      "title": "Dashboard pubblico dei suoli",
+      "description": "Le misure del suolo che pubblica il dashboard pubblico, con la profondità di campionamento e la data di ciascuna."
+    },
+    "system-system-dashboard-public-test": {
+      "title": "Sonda del dashboard pubblico",
+      "description": "Un autoverifica della catena di elaborazione del dashboard pubblico, pubblicata perché un’interruzione sia visibile prima di essere segnalata."
+    },
+    "system-system-dashboard-public-tourism": {
+      "title": "Dashboard pubblico del turismo",
+      "description": "Le cifre del turismo che pubblica il dashboard pubblico, con il periodo che coprono."
+    },
+    "system-system-dashboard-public-weather": {
+      "title": "Dashboard pubblico meteo",
+      "description": "Le osservazioni meteorologiche che pubblica il dashboard pubblico, con la stazione e l’orario di ciascuna."
+    },
+    "admin-admin-bots": {
+      "title": "Bot",
+      "description": "I bot registrati dal gateway, con lo stato che riporta per ciascuno."
+    },
+    "admin-admin-content": {
+      "title": "Registro dei contenuti",
+      "description": "I contenuti che la piattaforma detiene, con il loro stato di pubblicazione registrato."
+    },
+    "admin-admin-content-item_id": {
+      "title": "Elemento di contenuto",
+      "description": "Un elemento di contenuto per identificatore, con lo stato registrato e la copertura di traduzione."
+    },
+    "admin-admin-content-item_id-versions": {
+      "title": "Ogni versione di un elemento di contenuto, con la modifica registrata per ciascuna.",
+      "description": "Le mie richieste del villaggio"
+    },
+    "admin-admin-dashboard-overview": {
+      "title": "Panoramica della piattaforma",
+      "description": "I contatori della piattaforma letti dal gateway, senza alcun valore che il servizio non abbia riportato."
+    },
+    "admin-admin-errors": {
+      "title": "Registro degli errori",
+      "description": "Gli errori registrati dal gateway, con il loro stato e la loro rotta."
+    },
+    "admin-admin-health": {
+      "title": "Salute del gateway",
+      "description": "Cosa riporta il gateway sul proprio stato, letto al momento della richiesta."
+    },
+    "admin-admin-models-name": {
+      "title": "Modello registrato",
+      "description": "Un modello registrato per nome, con la versione e la documentazione che il gateway pubblica per esso."
+    },
+    "admin-admin-overview": {
+      "title": "Panoramica della piattaforma",
+      "description": "I contatori della piattaforma letti dal gateway, senza alcun valore che il servizio non abbia riportato."
+    },
+    "admin-admin-settings": {
+      "title": "Configurazione della piattaforma",
+      "description": "La configurazione registrata dal gateway, con l’origine di ogni valore."
+    },
+    "admin-admin-telemetry": {
+      "title": "Telemetria",
+      "description": "La telemetria emessa dal gateway, con l’intervallo su cui è stata raccolta."
+    },
+    "admin-admin-telemetry-metrics": {
+      "title": "Metriche di telemetria",
+      "description": "Le metriche di telemetria nominate che riporta il gateway, con le loro unità."
+    },
+    "admin-admin-telemetry-traces": {
+      "title": "Tracce di telemetria",
+      "description": "Le tracce di richiesta registrate dal gateway, con il loro stato e la loro durata."
+    },
+    "hydroma-hydroma-analyses-crop-water-req": {
+      "title": "Una stima del fabbisogno idrico di una coltura, con il metodo e gli input che il modello registra.",
+      "description": "Analisi delle acque sotterranee"
+    },
+    "hydroma-hydroma-analyses-groundwater": {
+      "title": "Risultati sulle acque sotterranee con la versione del modello e l’incertezza che riporta il motore.",
+      "description": "Progetto di irrigazione"
+    },
+    "hydroma-hydroma-analyses-irrigation-design": {
+      "title": "Un risultato di progetto di irrigazione, con le ipotesi che il motore ha registrato per esso.",
+      "description": "Analisi del deflusso"
+    },
+    "hydroma-hydroma-analyses-runoff": {
+      "title": "Una stima del deflusso con la versione del modello e gli input che il motore detiene.",
+      "description": "Progettazione di strutture"
+    },
+    "hydroma-hydroma-analyses-structure-design": {
+      "title": "Un risultato di progettazione di strutture e i coefficienti di sicurezza che il motore ha applicato.",
+      "description": "Analisi topografica"
+    },
+    "hydroma-hydroma-analyses-topography": {
+      "title": "Risultati topografici come li calcola il motore, con la risoluzione registrata.",
+      "description": "Contabilità del carbonio"
+    },
+    "hydroma-hydroma-carbon": {
+      "title": "Stime del carbonio dal motore, con la versione del metodo e l’incertezza mostrate.",
+      "description": "Saldo dei crediti di carbonio"
+    },
+    "hydroma-hydroma-carbon-credits-balance": {
+      "title": "Il saldo di crediti che riporta il motore, con i progetti a cui è attribuito.",
+      "description": "Impianto dei crediti"
+    },
+    "hydroma-hydroma-carbon-credits-retire": {
+      "title": "Gli impianti che il motore detiene, con la quantità attribuita a ciascuno.",
+      "description": "Verifica dei crediti"
+    },
+    "hydroma-hydroma-carbon-credits-token_id-verify": {
+      "title": "Lo stato di verifica che il motore registra per un credito, con il metodo usato.",
+      "description": "Trasferimento di crediti"
+    },
+    "hydroma-hydroma-carbon-credits-transfer": {
+      "title": "I trasferimenti tra conti registrati, come li ha registrati il motore.",
+      "description": "Metodi del carbonio"
+    },
+    "hydroma-hydroma-carbon-methods": {
+      "title": "I metodi di contabilità del carbonio che il motore implementa, con la versione e il riferimento documentale.",
+      "description": "Modelli climatici"
+    },
+    "hydroma-hydroma-climate": {
+      "title": "I modelli climatici che il motore ha implementato, con la versione e l’ambito che ciascuno documenta.",
+      "description": "Modello climatico"
+    },
+    "hydroma-hydroma-climate-model_id": {
+      "title": "Un modello climatico per identificatore, con la sua versione e l’ambito documentato.",
+      "description": "Database del motore"
+    },
+    "hydroma-hydroma-db-stats": {
+      "title": "Cosa riporta il motore sul proprio archivio: il backend, la raggiungibilità e il numero di record.",
+      "description": "Modelli economici"
+    },
+    "hydroma-hydroma-economics": {
+      "title": "I modelli economici che il motore ha implementato, con la base di costo che ciascuno assume.",
+      "description": "Modello economico"
+    },
+    "hydroma-hydroma-economics-model_id": {
+      "title": "Un modello economico per identificatore, con la base di costo che assume.",
+      "description": "Modello di quota"
+    },
+    "hydroma-hydroma-elevation-model_id": {
+      "title": "Un modello di quota per identificatore, con la risoluzione e l’estensione che copre.",
+      "description": "Aziende agricole"
+    },
+    "hydroma-hydroma-farms": {
+      "title": "Le aziende agricole che il motore ha registrate, con la superficie e la località che registra per ciascuna.",
+      "description": "Modello idrologico"
+    },
+    "hydroma-hydroma-hydrology-model_id": {
+      "title": "Un modello idrologico per identificatore, con la versione e la calibrazione che riporta il motore.",
+      "description": "Provenienza del set di dati"
+    },
+    "hydroma-hydroma-provenance-dataset_id": {
+      "title": "Da dove viene un set di dati, quando è stato acquisito e quale servizio lo ha prodotto.",
+      "description": "Modello del suolo"
+    },
+    "hydroma-hydroma-soil-model_id": {
+      "title": "Modello del suolo",
+      "description": "Un modello del suolo per identificatore, con i parametri e la calibrazione che usa."
     },
     "marketplace-market-admin-orders": {
       "title": "Gestione ordini",
@@ -647,6 +2093,14 @@
     "marketplace-market-marketplaces-marketplace_id": {
       "title": "Scheda del mercato",
       "description": "Un mercato per identificatore: lo stato che il gateway gli porta, non una descrizione di ciò che dovrebbe essere."
+    },
+    "marketplace-market-marketplaces-marketplace_id-approve": {
+      "title": "Coda di approvazione dei mercati",
+      "description": "I mercati in attesa di approvazione, elencati esattamente come li riporta il gateway."
+    },
+    "marketplace-market-marketplaces-marketplace_id-members": {
+      "title": "Membri del mercato",
+      "description": "I membri registrati su un mercato, con i ruoli che il gateway conserva per essi."
     },
     "marketplace-market-marketplaces-marketplace_id-shops": {
       "title": "Negozi del mercato",
@@ -779,12 +2233,538 @@
     "marketplace-market-wallet-verification-methods-method_id": {
       "title": "Metodo di verifica",
       "description": "Un metodo di verifica per identificatore e il suo stato configurato."
+    },
+    "marketplace-market-villages-b2b-demands-my": {
+      "title": "Le richieste di acquisto registrate per i villaggi a cui appartieni, come le detiene il gateway.",
+      "description": "Abbinamenti di villaggio"
+    },
+    "marketplace-market-villages-b2b-matches-village_id": {
+      "title": "I fornitori con cui una richiesta di acquisto è stata abbinata, con il punteggio calcolato dal gateway.",
+      "description": "Imprenditori di villaggio"
+    },
+    "marketplace-market-villages-entrepreneurs": {
+      "title": "Gli imprenditori che il gateway ha registrato per un villaggio, come registrati.",
+      "description": "Il mio record di imprenditore"
+    },
+    "marketplace-market-villages-entrepreneurs-me": {
+      "title": "Il record di imprenditore detenuto per il tuo account, con i campi che il gateway archivia.",
+      "description": "Investimenti nei villaggi"
+    },
+    "marketplace-market-villages-investments": {
+      "title": "Gli investimenti registrati per i villaggi, con gli importi che riporta il gateway.",
+      "description": "Comunità nomadi"
+    },
+    "marketplace-market-villages-nomadic-communities": {
+      "title": "Le comunità pastorali che il gateway ha registrato, con gli insediamenti che registra per esse.",
+      "description": "Opportunità di villaggio"
+    },
+    "marketplace-market-villages-opportunities": {
+      "title": "Le opportunità che il gateway ha pubblicato per i villaggi, con il loro stato registrato.",
+      "description": "Team dell’opportunità"
+    },
+    "marketplace-market-villages-opportunities-opportunity_id-team": {
+      "title": "Il team registrato per un’opportunità, con i ruoli che il gateway detiene per ciascuno.",
+      "description": "Villaggi coinvolti"
+    },
+    "marketplace-market-villages-projects-project_id-engaged": {
+      "title": "I villaggi registrati come coinvolti in un progetto, con il ruolo che ciascuno detiene.",
+      "description": "Record di villaggio"
+    },
+    "marketplace-market-villages-village_id": {
+      "title": "Un villaggio per identificatore, con i campi che il gateway registra per esso.",
+      "description": "Traguardi"
+    },
+    "research-research-hub-runs": {
+      "title": "Esecuzioni di ricerca",
+      "description": "Le esecuzioni di riproduzione registrate nell’hub di ricerca, con il loro stato."
+    },
+    "research-research-hub-shared": {
+      "title": "Esecuzioni condivise",
+      "description": "Le esecuzioni che l’account ha scelto di condividere, come registrate."
+    },
+    "research-research-science-agrovoc": {
+      "title": "Termini Agrovoc",
+      "description": "I termini del vocabolario controllato, come li restituisce il servizio terminologico."
+    },
+    "research-research-science-citations-index": {
+      "title": "Indice delle citazioni",
+      "description": "L’indice delle citazioni che l’hub di ricerca mantiene, con la sua copertura dichiarata."
+    },
+    "research-research-science-datasets": {
+      "title": "Set di dati di ricerca",
+      "description": "I set di dati registrati dall’hub di ricerca, con il loro stato di accesso."
+    },
+    "research-research-science-zenodo-status": {
+      "title": "Stato di Zenodo",
+      "description": "Lo stato dell’integrazione con Zenodo, secondo quanto riporta l’hub di ricerca."
+    },
+    "system-system-analytics-activity-timeline": {
+      "title": "L’attività registrata dal gateway, nell’ordine in cui è accaduta.",
+      "description": "Riepilogo del carbonio"
+    },
+    "system-system-analytics-carbon-summary": {
+      "title": "I contatori del carbonio come li ha calcolati il servizio di analisi, con la finestra indicata.",
+      "description": "Andamento dell’NDVI"
+    },
+    "system-system-analytics-ndvi-trends": {
+      "title": "Gli andamenti dell’indice di vegetazione come li detiene il servizio di analisi, con il periodo coperto da ciascuno.",
+      "description": "Panoramica delle analisi"
+    },
+    "system-system-analytics-overview": {
+      "title": "I contatori di analisi che riporta il servizio, e la finestra che coprono.",
+      "description": "Metriche di prestazioni"
+    },
+    "system-system-analytics-performance-metrics": {
+      "title": "Latenza e throughput come li ha misurati il servizio, con il campione indicato.",
+      "description": "Impatto di uno scenario"
+    },
+    "system-system-analytics-scenario-impact": {
+      "title": "Che cosa ha calcolato il servizio di analisi per uno scenario, con le ipotesi che ha usato.",
+      "description": "Andamento dei suoli"
+    },
+    "system-system-analytics-soil-trends": {
+      "title": "Le misure del suolo nel tempo, come le detiene il servizio di analisi.",
+      "description": "Esecuzione dell’agente"
+    },
+    "system-system-automation-agent-run": {
+      "title": "Un’esecuzione dell’agente e ciò che ha registrato, inclusa un’esecuzione fallita.",
+      "description": "Salute dell’automazione"
+    },
+    "system-system-automation-health": {
+      "title": "Se i servizi di automazione sono disponibili, letto al momento della richiesta.",
+      "description": "Dati del dashboard di sistema"
+    },
+    "system-system-dashboard-data": {
+      "title": "I contatori mostrati dal dashboard, ciascuno riconducibile al servizio che lo ha prodotto.",
+      "description": "Raccomandazioni per l’azienda"
+    },
+    "system-system-dashboard-recommendations-farm_id": {
+      "title": "Le raccomandazioni che il motore ha calcolato per un’azienda, con le ipotesi usate per ciascuna.",
+      "description": "Eventi di sistema"
+    },
+    "system-system-events": {
+      "title": "Gli eventi registrati dal gateway, con il loro tipo e il loro orario.",
+      "description": "Dispositivi collegati"
+    },
+    "system-system-iot-devices": {
+      "title": "I dispositivi registrati dal gateway, con l’orario dell’ultima lettura che detiene per ciascuno.",
+      "description": "Record del dispositivo"
+    },
+    "system-system-iot-devices-device_id": {
+      "title": "Un dispositivo per identificatore, con lo stato che il gateway registra per esso.",
+      "description": "Letture del dispositivo"
+    },
+    "system-system-iot-devices-device_id-readings": {
+      "title": "Le letture che un dispositivo ha riportato, nell’ordine in cui il gateway le detiene, con le loro unità.",
+      "description": "Attività in background"
+    },
+    "system-system-jobs": {
+      "title": "Le attività in background che il gateway ha eseguito, con lo stato in cui ciascuna è terminata.",
+      "description": "Attività in background"
+    },
+    "system-system-jobs-job_id": {
+      "title": "Un’attività per identificatore, con il suo output registrato o il suo fallimento registrato.",
+      "description": "Log di sistema"
+    },
+    "system-system-logs": {
+      "title": "I record di log del gateway, con la gravità e la rotta per cui sono stati emessi.",
+      "description": "I record di log del gateway, con la gravità e la rotta per cui sono stati emessi."
+    },
+    "workspace-workspace-analytics": {
+      "title": "Analisi dello spazio di lavoro",
+      "description": "I contatori dello spazio di lavoro con accesso effettuato, calcolati dai record che detiene."
+    },
+    "workspace-workspace-analytics-usage": {
+      "title": "Analisi dell’utilizzo",
+      "description": "Come è stato realmente usato lo spazio di lavoro, secondo i suoi stessi record."
+    },
+    "workspace-workspace-carbon": {
+      "title": "Carbonio dello spazio di lavoro",
+      "description": "Le cifre di carbonio delle attività registrate dello spazio di lavoro stesso."
+    },
+    "workspace-workspace-carbon-credits": {
+      "title": "Crediti di carbonio dello spazio di lavoro",
+      "description": "I crediti attribuiti allo spazio di lavoro, con i progetti da cui provengono."
+    },
+    "workspace-workspace-commerce-orders": {
+      "title": "Ordini di commercio",
+      "description": "Gli ordini di questo spazio di lavoro, con lo stato reale in cui si trova ciascuno."
+    },
+    "workspace-workspace-commerce-orders-order_id": {
+      "title": "Ordine di commercio",
+      "description": "Un ordine per identificatore, con il suo stato registrato e le transizioni attraversate."
+    },
+    "workspace-workspace-commerce-orders-order_id-transitions": {
+      "title": "Transizioni di ordine",
+      "description": "Le transizioni di stato attraversate da un ordine, nell’ordine registrato."
+    },
+    "workspace-workspace-dashboard": {
+      "title": "Dashboard dello spazio di lavoro",
+      "description": "Le cifre registrate dallo spazio di lavoro stesso, raggruppate per tipo di attività."
+    },
+    "workspace-workspace-disputes": {
+      "title": "Controversie",
+      "description": "Le controversie sollevate in questo spazio di lavoro e lo stato raggiunto da ciascuna."
+    },
+    "workspace-workspace-documents": {
+      "title": "Documenti",
+      "description": "I documenti che questo spazio di lavoro detiene, con il loro stato registrato."
+    },
+    "workspace-workspace-notifications": {
+      "title": "Notifiche",
+      "description": "Notifiche indirizzate a questo spazio di lavoro, come registrate."
+    },
+    "workspace-workspace-profile": {
+      "title": "Profilo dello spazio di lavoro",
+      "description": "Il profilo che questo spazio di lavoro ha registrato per sé."
+    },
+    "workspace-workspace-settings": {
+      "title": "Configurazione dello spazio di lavoro",
+      "description": "La configurazione registrata per questo spazio di lavoro, con l’origine di ogni valore."
+    },
+    "inclusive-auth-achievements": {
+      "title": "I traguardi registrati su un account, con i criteri per cui ciascuno è stato concesso.",
+      "description": "Cronologia delle attività"
+    },
+    "inclusive-auth-activity-history": {
+      "title": "Che cosa il servizio account ha registrato come attività su un account.",
+      "description": "Chiavi API"
+    },
+    "inclusive-auth-api-keys": {
+      "title": "Le chiavi API che un account detiene, con gli ambiti e le date di creazione registrati.",
+      "description": "Testo legale"
+    },
+    "inclusive-auth-api-keys-key_id": {
+      "title": "Chiave API",
+      "description": "Una chiave API per identificatore, con i suoi ambiti e l’ultimo utilizzo registrato."
+    },
+    "learning-learn-legal-locale-slug": {
+      "title": "Un testo legale in una lingua, con la versione che il record riporta.",
+      "description": "Cronologia delle versioni"
+    },
+    "learning-learn-legal-locale-slug-versions": {
+      "title": "Ogni versione di un testo legale, con la modifica registrata per ciascuna.",
+      "description": "Cronologia dei crediti"
+    },
+    "hydroma-hydroma-models": {
+      "title": "Registro dei modelli",
+      "description": "Ogni modello dichiarato dal motore, con la sua versione, il metodo citato e lo stato di validazione che pubblica su sé stesso."
+    },
+    "hydroma-hydroma-models-model_id": {
+      "title": "Modello",
+      "description": "La scheda di un modello nel registro: versione, riferimento del metodo, stato di validazione dichiarato e i casi di test che lo sostengono."
+    },
+    "hydroma-hydroma-models-model_id-validation": {
+      "title": "Rapporto di validazione",
+      "description": "Il rapporto di validazione che il gateway costruisce dai casi di test dichiarati di un modello."
+    },
+    "hydroma-hydroma-slaughterhouse-status": {
+      "title": "Riepilogo di validazione",
+      "description": "Quanti modelli dichiara il registro e come ciascuno descrive il proprio stato di validazione."
+    },
+    "hydroma-hydroma-validation": {
+      "title": "Verifica delle formule",
+      "description": "Ogni formula del motore viene ridesunta e confrontata con un valore pubblicato, un’identità o un secondo modulo. Ogni controllo dichiara la propria fonte, il valore atteso e la tolleranza rispetto a cui è giudicato."
+    },
+    "hydroma-hydroma-validation-checks": {
+      "title": "Controlli di verifica",
+      "description": "Il catalogo dei controlli di verifica che il motore esegue. Questa proiezione non porta né fonte né tolleranza."
+    },
+    "hydroma-hydroma-validation-reference-data": {
+      "title": "Dati di riferimento",
+      "description": "I valori pubblicati rispetto a cui la suite di verifica deve essere giudicata, esattamente come il repository li conserva."
+    },
+    "hydroma-hydroma-validation-run": {
+      "title": "Esegui un controllo",
+      "description": "Esegui un controllo di verifica e leggi il valore prodotto dal motore accanto a quello che era previsto produrre."
+    },
+    "hydroma-hydroma-indices": {
+      "title": "Indici",
+      "description": "Otto indici da telerilevamento e agroclimatici, dall’indice di carbonio ancorato a RothC agli indici di fenologia e bilancio idrico."
+    },
+    "hydroma-hydroma-indices-model_id": {
+      "title": "Indice",
+      "description": "Il contratto dei parametri e la scheda pubblicata di un indice."
+    },
+    "hydroma-hydroma-mrv": {
+      "title": "Monitoraggio, reporting e verifica",
+      "description": "I due strumenti MRV: le fasce di assicurazione qualità e l’insieme di metriche che separa le osservazioni reali da quelle simulate."
+    },
+    "hydroma-hydroma-mrv-model_id": {
+      "title": "Strumento MRV",
+      "description": "Il contratto dei parametri e la scheda pubblicata di uno strumento MRV."
+    },
+    "hydroma-hydroma-simulation": {
+      "title": "Simulazione",
+      "description": "Due strumenti di simulazione: la calibrazione di Sobol secondo Saltelli e le matrici di scenari di HyDroMa."
+    },
+    "hydroma-hydroma-simulation-model_id": {
+      "title": "Strumento di simulazione",
+      "description": "Il contratto dei parametri e la scheda pubblicata di uno strumento di simulazione."
+    },
+    "hydroma-hydroma-soil": {
+      "title": "Modelli del suolo",
+      "description": "Nove strumenti del suolo: il triangolo tessiturale USDA, Keys to Soil Taxonomy, la curva di ritenzione di van Genuchten, il pedotrasferimento, la fisica, la chimica, la salinità, la salute e le raccomandazioni."
+    },
+    "hydroma-hydroma-water": {
+      "title": "Modelli idrici",
+      "description": "Quattro strumenti idrici: il deflusso SCS-CN e a metodo razionale, il modello di falda e il servizio confinato e non confinato."
+    },
+    "hydroma-hydroma-water-model_id": {
+      "title": "Strumento idrico",
+      "description": "Il contratto dei parametri e la scheda pubblicata di un modello idrico."
+    },
+    "marketplace-market-escrow-orders": {
+      "title": "Ordini in garanzia",
+      "description": "Ordini custoditi in garanzia, come il gateway di commercio li riporta per la tua sessione."
+    },
+    "marketplace-market-orders-order": {
+      "title": "Ordine",
+      "description": "Un ordine commerciale, le sue righe, le sue intenzioni di pagamento e le transizioni che la macchina a stati consente ora."
+    },
+    "marketplace-market-orders-order-transitions": {
+      "title": "Transizioni consentite",
+      "description": "Gli stati successivi che la macchina a stati dell'ordine consente per questo ordine."
     }
   },
-  "offline": {
-    "code": "Connessione non disponibile",
-    "title": "Modalità offline",
-    "description": "I dati in cache sono disponibili; riprova quando vuoi aggiornare.",
-    "retry": "Riprova"
+  "pages": {
+    "research": {
+      "hubRuns": {
+        "noKey": "Questo feed è cifrato con una chiave client anonima. Questo indirizzo non contiene alcun user_key, quindi non è stata inviata alcuna richiesta.",
+        "keyHint": "Per leggere le esecuzioni di una chiave, aggiungi il suo user_key a questo indirizzo come parametro, ad esempio ?user_key=…"
+      }
+    }
+  },
+  "footer": {
+    "sitemap": "Mappa del sito",
+    "techStack": "Tecnologia della piattaforma",
+    "navTitle": "Piattaforma"
+  },
+  "surface": {
+    "back": "Indietro",
+    "unverifiedNote": "Il gateway ha riportato questi valori ma non li ha contrassegnati come verificati. Un valore riportato non è un valore misurato: la piattaforma mostra ciò che il gateway ha restituito e non afferma nulla di più.",
+    "verifiedNote": "Il gateway ha contrassegnato questa esecuzione come verificata.",
+    "shapeNote": "Il contratto pubblicato per questa rotta non dichiara alcun campo, quindi i valori qui sotto compaiono esattamente come il gateway li ha restituiti e con i nomi di chiave propri del gateway. Nulla in questa pagina è tradotto, arrotondato o verificato.",
+    "emptyTitle": "Non è stato restituito nulla",
+    "emptyDescription": "Il gateway ha risposto ma non aveva nulla da mostrare.",
+    "dashboards": {
+      "emptyTitle": "Il gateway non ha restituito dati del dashboard",
+      "emptyDescription": "La rotta del dashboard ha risposto ma non conteneva alcun campo dati.",
+      "full": {
+        "title": "Dashboard pubblico completo",
+        "description": "L’intera risposta del dashboard pubblico in un’unica risposta."
+      },
+      "projects": {
+        "title": "Progetti sul carbonio",
+        "description": "L’elenco pubblico dei progetti che riporta il gateway."
+      },
+      "carbon": {
+        "title": "Carbonio",
+        "description": "Il riepilogo pubblico del carbonio che riporta il gateway."
+      },
+      "analytics": {
+        "title": "Analisi della piattaforma",
+        "description": "I contatori di analisi pubblica che riporta il gateway."
+      },
+      "weather": {
+        "title": "Meteo",
+        "description": "Il riepilogo meteo pubblico che riporta il gateway."
+      },
+      "satellite": {
+        "title": "Satellite",
+        "description": "Il riepilogo satellitare pubblico che riporta il gateway."
+      },
+      "soil": {
+        "title": "Suolo",
+        "description": "Il riepilogo pubblico dei suoli che riporta il gateway."
+      },
+      "mrv": {
+        "title": "Misurazione, reporting e verifica",
+        "description": "Il riepilogo MRV pubblico che riporta il gateway."
+      },
+      "simulations": {
+        "title": "Simulazioni",
+        "description": "Il riepilogo pubblico delle simulazioni che riporta il gateway."
+      },
+      "tourism": {
+        "title": "Turismo",
+        "description": "Il riepilogo pubblico del turismo che riporta il gateway."
+      },
+      "test": {
+        "title": "Raggiungibilità del router",
+        "description": "Il gateway indica se questo router è in servizio. È un controllo di raggiungibilità, non un’affermazione sulla piattaforma."
+      }
+    },
+    "market": {
+      "emptyTitle": "Il gateway non ha restituito dati",
+      "emptyDescription": "La rotta ha risposto ma non aveva nulla da mostrare.",
+      "stats": {
+        "title": "Statistiche del mercato",
+        "description": "Contatori letti dall’endpoint delle statistiche del mercato."
+      },
+      "producers": {
+        "title": "Produttori",
+        "description": "I produttori che il mercato ha registrato."
+      }
+    },
+    "content": {
+      "title": "Ricerca nei contenuti",
+      "description": "Cerca nella biblioteca formativa pubblicata.",
+      "searchTitle": "Cerca contenuti",
+      "searchLabel": "Cerca contenuti",
+      "searchPlaceholder": "Una parola o una frase",
+      "searchSubmit": "Cerca",
+      "resultsFor": "Risultati per “{search}”",
+      "noResults": "Nessuna corrispondenza per “{search}”.",
+      "emptyDescription": "Il gateway ha risposto ma non aveva nulla da mostrare."
+    }
+  },
+  "why": {
+    "title": "Perché Eco Nojin?",
+    "lead": "Questa pagina afferma solo ciò che sostengono i controlli eseguiti e i contatori del gateway. Tutto ciò che la piattaforma non può dimostrare è dichiarato non disponibile anziché riempito.",
+    "problemTitle": "Il problema",
+    "problemBody": "I piccoli agricoltori producono la maggior parte degli alimenti che vengono mangiati, e sono il gruppo meno servito dai dati e dai consigli disponibili. Le decisioni su suolo, acqua e clima vengono prese nell’incertezza, senza traccia di che cosa è stato deciso né perché.",
+    "solutionTitle": "La soluzione",
+    "solutionBody": "Una piattaforma che mette il dato scientifico accanto al campo: modelli che dichiarano la propria versione, provenienza per ogni valore e un mercato che paga ciò che viene effettivamente coltivato.",
+    "evidenceTitle": "Cosa la rende verificabile",
+    "evidenceBody": "Ogni cifra di questa piattaforma porta con sé la propria fonte, la versione del metodo e i limiti che il metodo dichiara. Dove un valore è riportato anziché misurato, la pagina lo dice invece di presentare i due come equivalenti.",
+    "limitsTitle": "Cosa non fa",
+    "limitsBody": "Non sostituisce la conoscenza locale e non rivendica un aumento di resa che non ha misurato. Un modello che non si applica al tuo suolo viene mostrato come non applicabile al tuo suolo.",
+    "whatTitle": "Cos’è questa piattaforma",
+    "whatLead": "Una piattaforma integrata di intelligenza ecologica: un motore scientifico, un gateway API, un client offline-first e un bus di eventi.",
+    "whatDesc": "Modellazione di suolo, idrologia, clima, erosione e carbonio dietro un unico contratto, con un client che funziona senza rete.",
+    "audience": "Contadini, cooperative, ricercatori, pianificatori e i loro finanziatori",
+    "problem": "Il problema",
+    "solution": "La risposta di questa piattaforma",
+    "problemSolutionTable": "Problema e risposta",
+    "provenanceLabel": "Fonte dell’affermazione",
+    "problemRows": [
+      {
+        "problem": "Un contadino non in linea non può raggiungere un dashboard che presuppone una connessione.",
+        "solution": "Il client detiene i set di dati di riferimento e dichiara quale superficie non è disponibile invece di mostrare un numero vecchio come se fosse attuale."
+      },
+      {
+        "problem": "Arriva un risultato di modello senza modo di distinguere una misurazione da una stima.",
+        "solution": "Ogni superficie porta un timbro di provenienza che nomina la fonte, il metodo e se il valore è verificato."
+      },
+      {
+        "problem": "Un’affermazione senza alcun controllo eseguito dietro.",
+        "solution": "L’unica fonte delle affermazioni della piattaforma è la suite di verifica, e il suo risultato viene letto in tempo reale dal gateway."
+      }
+    ],
+    "evidenceItems": [
+      "Ogni affermazione di questa pagina viene letta al momento della richiesta dalla suite di verifica eseguita, non da un riepilogo memorizzato.",
+      "Il risultato mostrato è il risultato dell’esecuzione, inclusa un’esecuzione fallita."
+    ],
+    "limitsItems": [
+      "Un modello che non si applica al tuo suolo viene mostrato come non applicabile al tuo suolo.",
+      "Dove un valore è riportato anziché misurato, la pagina lo dice invece di presentare i due come equivalenti."
+    ],
+    "nextItems": [
+      "Leggi la metodologia e le ipotesi dietro ogni modello.",
+      "Controlla la suite di verifica, compresi i suoi fallimenti."
+    ]
+  },
+  "manual": {
+    "title": "Manuale di campo",
+    "lead": "Tabelle di riferimento e guide per il lavoro stesso.",
+    "sites": {
+      "title": "Siti climatici di riferimento",
+      "description": "I siti registrati nel set di dati di riferimento, con località, quota e classificazione climatica. Ogni colonna è un campo che il gateway restituisce.",
+      "emptyTitle": "Il set di dati dei siti è vuoto",
+      "emptyDescription": "Il gateway ha risposto ma non ha restituito alcuna riga.",
+      "searchTitle": "Ricerca siti",
+      "searchLabel": "Cerca siti",
+      "searchPlaceholder": "ID sito, paese o provincia",
+      "searchSubmit": "Cerca",
+      "searchHint": "Il gateway cerca nei campi site_id, country e province con un unico valore.",
+      "searching": "Risultati della ricerca per “{search}”",
+      "emptySearch": "Nessun sito corrisponde a “{search}”."
+    },
+    "cropCalendar": "Calendario colturale",
+    "cropParams": "Parametri della coltura",
+    "climateNormals": "Normali climatiche",
+    "weatherDaily": "Meteo giornaliero",
+    "soilRegions": "Regioni pedologiche",
+    "status": {
+      "title": "Stato del manuale",
+      "description": "Cosa riporta il servizio del manuale sul proprio contenuto.",
+      "back": "Indietro",
+      "present": "Pubblicato",
+      "missing": "Non ancora scritto",
+      "missingDescription": "Questa sezione è dichiarata nel catalogo ma non ha ancora testo.",
+      "size": "Dimensione",
+      "tables": "Tabelle",
+      "tableCaption": "Le tabelle che il manuale detiene",
+      "tableName": "Tabella",
+      "tableRows": "Righe",
+      "emptyDescription": "Il gateway ha risposto ma non ha restituito alcuna riga."
+    },
+    "search": "Cerca",
+    "back": "Torna all’elenco dei siti",
+    "columnNote": "I nomi delle colonne sono i nomi dei campi del set di dati. L’interfaccia non aggiunge unità o etichette che il gateway non abbia restituito.",
+    "tableCaption": "Righe restituite dal set di dati di riferimento",
+    "truncated": "Visualizzazione di {shown} su {total} righe riportate dal gateway",
+    "offline": "Il dispositivo è offline; la richiesta non ha mai raggiunto il gateway.",
+    "site": {
+      "title": "Sito {siteId}",
+      "description": "Il record che il set di dati di riferimento detiene per questo sito.",
+      "back": "Torna all’elenco dei siti",
+      "offline": "Il dispositivo è offline.",
+      "related": "Set di dati correlati a questo sito",
+      "relatedNormals": "Normali climatiche",
+      "relatedWeather": "Meteo giornaliero"
+    },
+    "normals": {
+      "title": "Normali climatiche",
+      "description": "Medie di lungo periodo per questo sito, sul periodo indicato dal set di dati.",
+      "emptyTitle": "Nessuna normale climatica",
+      "emptyDescription": "Il gateway ha risposto ma non ha restituito righe per questo sito.",
+      "backToSite": "Torna al sito"
+    },
+    "weather": {
+      "title": "Meteo giornaliero",
+      "description": "Osservazioni giornaliere per questo sito, con la stazione e l’orario di ciascuna.",
+      "emptyTitle": "Nessuna osservazione meteorologica",
+      "emptyDescription": "Il gateway ha risposto ma non ha restituito righe per questo sito.",
+      "backToSite": "Torna al sito"
+    },
+    "crops": {
+      "title": "Calendario colturale",
+      "description": "Finestre di semina e raccolta per coltura e regione, dalle tabelle fornite dal motore.",
+      "emptyTitle": "Nessun calendario colturale",
+      "emptyDescription": "Il gateway ha risposto ma non ha restituito alcuna riga."
+    },
+    "soil": {
+      "title": "Regioni pedologiche",
+      "description": "Le regioni pedologiche descritte dal manuale, con la classificazione che ciascuna segue.",
+      "emptyTitle": "Nessuna regione pedologica",
+      "emptyDescription": "Il gateway ha risposto ma non ha restituito alcuna riga."
+    },
+    "calendar": {
+      "title": "Calendario di crescita",
+      "description": "La finestra di crescita per coltura, come la riporta il motore.",
+      "emptyTitle": "Nessun calendario di crescita",
+      "emptyDescription": "Il gateway ha risposto ma non ha restituito alcuna riga."
+    }
+  },
+  "sponsors": {
+    "title": "Partner",
+    "lead": "Le organizzazioni i cui contratti e dati rendono possibili queste cifre.",
+    "empty": "Non è ancora elencato alcun partner.",
+    "show": "Mostra",
+    "region_label": "Dichiarazione dei finanziamenti",
+    "disclosure": "Questa sezione è finanziata da {sponsor}.",
+    "policy_title": "Informativa sul patrocinio",
+    "policy_intro": "Il patrocinio significa che un sostenitore nominato viene riconosciuto per il lavoro svolto da questa piattaforma. Non è pubblicità.",
+    "no_ads": "Non facciamo pubblicità algoritmica. In questo prodotto non c’è una rete pubblicitaria, né SDK pubblicitari di terze parti, né tracciamento delle visualizzazioni, né targeting comportamentale.",
+    "no_targeting": "Una risposta di patrocinio non porta dati utente, dispositivo o referring site, quindi non esiste una superficie pubblicitaria personalizzabile.",
+    "contextual": "Un riconoscimento del patrocinio compare solo sulla superficie di servizio che il patrocinatore ha finanziato. Non compare mai accanto a un consiglio che diamo a un contadino.",
+    "no_advisory": "Sulle superfici di agronomia, pagamento, regolamento o banda ridotta non è presente alcun posizionamento di sponsor.",
+    "transparency": "Tutti gli sponsor attuali sono elencati in questa pagina, compresi quelli sospesi o conclusi, con il motivo.",
+    "green_claims": "Ogni sponsor riconferma ogni trimestre che le proprie dichiarazioni ambientali siano ancora documentate. Uno sponsor che non lo fa viene sospeso.",
+    "current_sponsors": "Sponsor attuali",
+    "become": "Come funziona il patrocinio",
+    "none": "Al momento non è elencato alcuno sponsor."
   }
 }
