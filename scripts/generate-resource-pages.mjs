@@ -532,7 +532,10 @@ const CONTRACT_SHAPES = [
   // `{"exists": bool}`
   ['/api/v1/marketplace/villages/entrepreneurs/me', 'record'],
   // One engagement, not a list of them.
-  ['/api/v1/marketplace/villages/projects/{project_id}/engaged', 'record'],
+  // village_hub.py:1049 declares `response_model=list` and :1054 returns
+  // `[_serialize_engagement(e) for e in engagements]` — a bare array of
+  // engagements, not one engagement. `record` rendered a single row over a list.
+  ['/api/v1/marketplace/villages/projects/{project_id}/engaged', 'rows'],
   // village_hub.py:300 — `response_model=dict`, one village profile.
   ['/api/v1/marketplace/villages/{village_id}', 'record'],
 
@@ -683,6 +686,48 @@ const CONTRACT_SHAPES = [
   // --- farms ----------------------------------------------------------------
   // farms.py: `response_model=list[FarmOut]`
   ['/api/v1/farms', 'rows'],
+  // --- merged from the per-domain shape reports, 2026-09-29 ---------------------
+  // Every row below was read from the handler that serves it; the evidence is the
+  // agent's citation, kept inline so a reviewer can check it without re-running
+  // the generator. A bare array carries no rowsKey, which is what the third slot
+  // being absent means — not an omission.
+    ["/api/v1/auth/sessions", "record"],  // auth.py:1060 returns {status: 'success', data: sessions} — the {status, data} envelope
+    ["/api/v1/manual/climate-normals/{site_id}", "rows", "rows"],  // manual_data.py:142 returns {count, months}, but response_model=ManualMonthsResponse(ManualRowsResponse) publishes only rows, so months is filtered off the wire
+    ["/api/v1/manual/sites/{site_id}", "record"],  // manual_data.py:121 returns df.iloc[0].to_dict() with response_model=ManualSite — one site
+    ["/api/v1/manual/weather-daily/{site_id}", "rows", "rows"],  // manual_data.py:134 returns {count, rows: df.head(limit).to_dict('records')} with response_model=ManualRowsResponse
+    ["/api/v1/marketplace/cart", "record"],  // routers/marketplace.py:582 returns {"cart_id": cart.id, "items": cart.items, "total_items": cart.total_items, "subtotal": cart.subtotal} (empty cart at :581 returns {"cart_id": None, "items": [], "total_items": 0, "subtotal": 0}) — one cart document, items is a field of it
+    ["/api/v1/marketplace/marketplaces", "rows", "marketplaces"],  // routers/marketplace.py:994 returns {"marketplaces": [{"id": m.id, "name": m.name, "slug": m.slug, …, "created_at": m.created_at.isoformat()} for m in marketplaces]}
+    ["/api/v1/marketplace/orders", "rows", "orders"],  // routers/marketplace.py:323 returns {"orders": [{"id": o.id, "product_name": o.product_name, "buyer_name": o.buyer_name, "seller_id": …, "quantity_kg": o.quantity_kg, "total_price": o.total_price, "status": o.status.value, "created_at": o.created_at.isoformat()} for o in orders], "count": len(orders)}
+    ["/api/v1/marketplace/payments", "record"],  // routers/marketplace.py:1164 `return out`, where out = payment.to_dict() (plus `out["bank_instructions"]` for the bank method) — one payment document, not a list
+
+  // --- merged from the per-domain shape reports, 2026-09-29 ---------------------
+  // Every row below was read from the handler that serves it; the evidence is the
+  // agent's citation, kept inline so a reviewer can check it without re-running
+  // the generator. A bare array carries no rowsKey, which is what the third slot
+  // being absent means — not an omission.
+    ["/api/v1/admin/content", "rows"],  // services/api_gateway/routers/admin_content.py:90 `@router.get("", response_model=List[ContentResponse])` returning `items` at :113 — a bare list
+    ["/api/v1/admin/users", "rows"],  // services/api_gateway/routers/admin_users.py:48 `@router.get("", response_model=List[UserResponse])` returning `users` at :57 — a bare list
+    ["/api/v1/auth/sessions", "record"],  // auth.py:1060 returns {status: 'success', data: sessions} — the {status, data} envelope
+    ["/api/v1/contact", "record"],  // DEFECT — services/api_gateway/routers/contact.py:60 declares only `@router.post("")`, returning `{"ok": True}` at :65. The catalogue publishes this as GET /api/v1/contact for /public/ai/feedback and /trust/disclosure, so a generated page would fetch a method the router does not serve. Shape declared as record because that is what the sole handler returns; the method mismatch is reported, not fixed.
+    ["/api/v1/hydroma/indices/{model_id}", "record"],  // services/api_gateway/routers/hydroma_indices.py:572-577 — `return spec`, the single `_SPECS` entry keyed by model_id.
+    ["/api/v1/hydroma/models/{model_id}", "record"],  // services/api_gateway/routers/hydroma_dashboard.py:737-749 — `return ModelDetail(**model_data)`, one document.
+    ["/api/v1/hydroma/models/{model_id}/validation", "record"],  // services/api_gateway/routers/hydroma_dashboard.py:752-800 — `return ValidationReport(...)`, one document with a `details` list, not a rows envelope.
+    ["/api/v1/hydroma/mrv/{model_id}", "record"],  // services/api_gateway/routers/hydroma_mrv.py:144-149 — `return spec`, the single `_SPECS` entry keyed by model_id.
+    ["/api/v1/hydroma/simulation/{model_id}", "record"],  // services/api_gateway/routers/hydroma_simulation.py:89-94 — `return spec`, the single `_SPECS` entry keyed by model_id.
+    ["/api/v1/hydroma/soil/{model_id}", "record"],  // services/api_gateway/routers/hydroma_soil.py:431-436 — `return spec`, the single `_SPECS` entry keyed by model_id.
+    ["/api/v1/hydroma/water/{model_id}", "record"],  // services/api_gateway/routers/hydroma_water.py:269-274 — `return spec`, the single `_SPECS` entry keyed by model_id.
+    ["/api/v1/manual/climate-normals/{site_id}", "rows", "rows"],  // manual_data.py:142 returns {count, months}, but response_model=ManualMonthsResponse(ManualRowsResponse) publishes only rows, so months is filtered off the wire
+    ["/api/v1/manual/sites/{site_id}", "record"],  // manual_data.py:121 returns df.iloc[0].to_dict() with response_model=ManualSite — one site
+    ["/api/v1/manual/weather-daily/{site_id}", "rows", "rows"],  // manual_data.py:134 returns {count, rows: df.head(limit).to_dict('records')} with response_model=ManualRowsResponse
+    ["/api/v1/marketplace/cart", "record"],  // routers/marketplace.py:582 returns {"cart_id": cart.id, "items": cart.items, "total_items": cart.total_items, "subtotal": cart.subtotal} (empty cart at :581 returns {"cart_id": None, "items": [], "total_items": 0, "subtotal": 0}) — one cart document, items is a field of it
+    ["/api/v1/marketplace/marketplaces", "rows", "marketplaces"],  // routers/marketplace.py:994 returns {"marketplaces": [{"id": m.id, "name": m.name, "slug": m.slug, …, "created_at": m.created_at.isoformat()} for m in marketplaces]}
+    ["/api/v1/marketplace/orders", "rows", "orders"],  // routers/marketplace.py:323 returns {"orders": [{"id": o.id, "product_name": o.product_name, "buyer_name": o.buyer_name, "seller_id": …, "quantity_kg": o.quantity_kg, "total_price": o.total_price, "status": o.status.value, "created_at": o.created_at.isoformat()} for o in orders], "count": len(orders)}
+    ["/api/v1/marketplace/payments", "record"],  // routers/marketplace.py:1164 `return out`, where out = payment.to_dict() (plus `out["bank_instructions"]` for the bank method) — one payment document, not a list
+    ["/api/v1/organizations", "rows", "organizations"],  // services/api_gateway/routers/organizations.py:90 `@router.get("")` returning `{"organizations": orgs, "count": len(orgs)}` at :115 — an envelope whose row key is `organizations`
+    ["/api/v1/platform/health", "record"],  // services/api_gateway/routers/platform.py:253 `@router.get("/health")` returning `{"status", "service", "cpp_available", "db_backend", "db_reachable"}` at :264 — one record
+    ["/api/v1/sync/status", "record"],  // services/api_gateway/routers/sync.py:25 `@router.get("/status")` returning `{"status", "mode", "cloud", "local_pending_events", "supabase_connected", "supabase_error", "note"}` at :32 — one record
+    ["/api/v1/tool-registry/{tool_id}", "record"],  // services/api_gateway/routers/tool_registry.py:224-234 — `return _to_response(tool)`; one ToolResponse for one ToolRegistryEntry row.
+
 ];
 
 /**
