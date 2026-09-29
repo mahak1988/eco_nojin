@@ -2527,6 +2527,310 @@
     "marketplace-market-orders-order-transitions": {
       "title": "Allowed transitions",
       "description": "The next states the order state machine allows for this order."
+    },
+    "hydroma-hydroma-tools-aquacrop-runner": {
+      "title": "AquaCrop runner",
+      "description": "AquaCrop runner: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-carbon-calculator": {
+      "title": "calculator carbon",
+      "description": "Calculator carbon: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-climate-adaptive-phenology": {
+      "title": "phenology climate",
+      "description": "Phenology climate: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-crop-scenarios": {
+      "title": "crop",
+      "description": "Crop: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-crop-water-requirement": {
+      "title": "water crop",
+      "description": "Water crop: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-decision-support": {
+      "title": "support decision",
+      "description": "Support decision: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-dynamic-stress-engine": {
+      "title": "dynamic engine",
+      "description": "Dynamic engine: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-et0-calculator": {
+      "title": "ET0 calculator",
+      "description": "ET0 calculator: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-gaussian-process-surrogate": {
+      "title": "surrogate Gaussian",
+      "description": "Surrogate Gaussian: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-groundwater-model": {
+      "title": "groundwater model",
+      "description": "Groundwater model: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-groundwater-service": {
+      "title": "groundwater service",
+      "description": "Groundwater service: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-hecras-simulation": {
+      "title": "HEC-RAS simulation",
+      "description": "HEC-RAS simulation: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-hydrology-fallback": {
+      "title": "fallback hydrology",
+      "description": "Fallback hydrology: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-hydrology-fast": {
+      "title": "fast hydrology",
+      "description": "Fast hydrology: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-hydroma-core": {
+      "title": "HyDroMa core",
+      "description": "HyDroMa core: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-indices-fallback": {
+      "title": "fallback index",
+      "description": "Fallback index: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-indices-fast": {
+      "title": "fast index",
+      "description": "Fast index: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-irrigation-scheduler": {
+      "title": "scheduler irrigation",
+      "description": "Scheduler irrigation: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-modflow6": {
+      "title": "MODFLOW 6 model",
+      "description": "MODFLOW 6 model: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-monte-carlo-scenarios": {
+      "title": "Monte Carlo",
+      "description": "Monte Carlo: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-mrv-iot-ingest": {
+      "title": "ingest MRV",
+      "description": "Ingest MRV: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-mrv-metrics": {
+      "title": "metrics MRV",
+      "description": "Metrics MRV: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-mrv-nojin": {
+      "title": "nojin MRV",
+      "description": "Nojin MRV: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-mrv-quality-assurance": {
+      "title": "quality MRV",
+      "description": "Quality MRV: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-multi-stress-engine": {
+      "title": "multi engine",
+      "description": "Multi engine: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-ndvi-analysis": {
+      "title": "NDVI analysis",
+      "description": "NDVI analysis: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-optimization-optimizer": {
+      "title": "optimizer",
+      "description": "Optimizer: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-physics-informed-network": {
+      "title": "informed physics",
+      "description": "Informed physics: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-rothc-runner": {
+      "title": "RothC runner",
+      "description": "RothC runner: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-scenario-manager": {
+      "title": "manager scenario",
+      "description": "Manager scenario: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-seed-optimization": {
+      "title": "optimization seed",
+      "description": "Optimization seed: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-soil-chemistry": {
+      "title": "chemistry soil",
+      "description": "Chemistry soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-soil-degradation-model": {
+      "title": "degradation soil model",
+      "description": "Degradation soil model: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-soil-health": {
+      "title": "health soil",
+      "description": "Health soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-soil-pedotransfer": {
+      "title": "pedotransfer soil",
+      "description": "Pedotransfer soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-soil-physics": {
+      "title": "physics soil",
+      "description": "Physics soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-soil-physics-fallback": {
+      "title": "physics soil service",
+      "description": "Physics soil service: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-soil-physics-fast": {
+      "title": "physics soil",
+      "description": "Physics soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-soil-recommendations": {
+      "title": "recommendations soil",
+      "description": "Recommendations soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-soil-salinity": {
+      "title": "salinity soil",
+      "description": "Salinity soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-soil-taxonomy": {
+      "title": "taxonomy soil",
+      "description": "Taxonomy soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-soil-texture": {
+      "title": "texture soil",
+      "description": "Texture soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-soil-water-retention": {
+      "title": "retention soil",
+      "description": "Retention soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-topographic-calculations": {
+      "title": "calculator topography",
+      "description": "Calculator topography: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-uncertainty-knowledge": {
+      "title": "knowledge uncertainty",
+      "description": "Knowledge uncertainty: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-water-quality": {
+      "title": "quality water",
+      "description": "Quality water: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-watershed-calculator": {
+      "title": "calculator watershed",
+      "description": "Calculator watershed: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-weap-simulation": {
+      "title": "WEAP simulation",
+      "description": "WEAP simulation: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-swat-plus": {
+      "title": "SWAT+ simulation",
+      "description": "SWAT+ simulation: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-swat-runner": {
+      "title": "SWAT runner",
+      "description": "SWAT runner: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "hydroma-hydroma-tools-what-if-engine": {
+      "title": "what-if scenario engine",
+      "description": "What-if scenario engine: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+    },
+    "workspace-workspace": {
+      "title": "Workspace",
+      "description": "Workspace dashboard: assigned work, system health and day-to-day operations."
+    },
+    "workspace-workspace-approvals": {
+      "title": "Approvals",
+      "description": "Pending approvals: requests waiting on your decision before anything moves forward."
+    },
+    "workspace-workspace-assignments": {
+      "title": "Assignments",
+      "description": "Current work assignments: who is working on what, and the state of each."
+    },
+    "workspace-workspace-cases": {
+      "title": "Cases",
+      "description": "Case record: open requests and complaints, with where each one stands."
+    },
+    "workspace-workspace-knowledge": {
+      "title": "Knowledge",
+      "description": "Search the published knowledge base and see the source behind every hit."
+    },
+    "workspace-workspace-operations": {
+      "title": "Operations",
+      "description": "Sync status: cloud connection, events still queued, and the last result."
+    },
+    "workspace-workspace-operations-jobs": {
+      "title": "Jobs",
+      "description": "Scheduled jobs and the current state of each one."
+    },
+    "workspace-workspace-overview": {
+      "title": "Overview",
+      "description": "The organisations you belong to and your role in each."
+    },
+    "workspace-workspace-reports": {
+      "title": "Reports",
+      "description": "Routine reports: what was produced, and what still needs review."
+    },
+    "workspace-workspace-settings-access": {
+      "title": "Access and roles",
+      "description": "Who can reach the workspace, and with which permission."
+    },
+    "workspace-workspace-settings-notifications": {
+      "title": "Notification preferences",
+      "description": "Choose the channels you want to be notified on."
+    },
+    "workspace-workspace-targets": {
+      "title": "Targets",
+      "description": "Announced targets: the numbers being aimed for and the progress towards them."
+    },
+    "workspace-workspace-team": {
+      "title": "Team",
+      "description": "The team members and their membership in each organisation."
+    },
+    "admin-admin": {
+      "title": "Admin",
+      "description": "Platform administration: overall status, maintenance and alerts."
+    },
+    "admin-admin-design-tokens": {
+      "title": "Design tokens",
+      "description": "The shared design values the interface is built from."
+    },
+    "admin-admin-feature-flags": {
+      "title": "Feature flags",
+      "description": "What is switched on and what is switched off in this environment."
+    },
+    "admin-admin-jobs": {
+      "title": "Scheduled jobs",
+      "description": "The scheduled jobs and the state of each one’s last run."
+    },
+    "admin-admin-localization-translations": {
+      "title": "Available locales",
+      "description": "The locales the platform content is translated into."
+    },
+    "admin-admin-security": {
+      "title": "Security",
+      "description": "An overview of sign-ins, connections and risks."
+    },
+    "admin-admin-users": {
+      "title": "Users",
+      "description": "User accounts and their state."
+    },
+    "public-trust-audits": {
+      "title": "Security audit",
+      "description": "The security audit trail: who did what, and when."
+    },
+    "public-trust-carbon-registry": {
+      "title": "Carbon registry",
+      "description": "The standards available for carbon registries."
+    },
+    "public-trust-disclosure": {
+      "title": "Disclosure",
+      "description": "Contact us to ask a question or to report a problem."
+    },
+    "public-trust-provenance": {
+      "title": "Provenance",
+      "description": "Where each figure came from, with the chain of evidence."
+    },
+    "public-trust-report": {
+      "title": "Report",
+      "description": "The published figures: applications, land received and coverage."
     }
   },
   "pages": {

@@ -2525,6 +2525,310 @@
     "marketplace-market-orders-order-transitions": {
       "title": "الانتقالات المسموح بها",
       "description": "الحالات التالية التي يسمح بها آلة حالة الطلب لهذا الطلب."
+    },
+    "hydroma-hydroma-tools-aquacrop-runner": {
+      "title": "AquaCrop مشغّل",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-carbon-calculator": {
+      "title": "حاسبة كربون",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-climate-adaptive-phenology": {
+      "title": "فن زیست‌شناسی مناخ",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-crop-scenarios": {
+      "title": "محصول",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-crop-water-requirement": {
+      "title": "ماء محصول",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-decision-support": {
+      "title": "دعم قرار",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-dynamic-stress-engine": {
+      "title": "پویا موتور",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-et0-calculator": {
+      "title": "ET0 حاسبة",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-gaussian-process-surrogate": {
+      "title": "جانشین گاوسی",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-groundwater-model": {
+      "title": "مياه جوفية مدل",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-groundwater-service": {
+      "title": "مياه جوفية سرویس",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-hecras-simulation": {
+      "title": "HEC-RAS شبیه‌سازی",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-hydrology-fallback": {
+      "title": "پشتیبان هيدرولوجيا",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-hydrology-fast": {
+      "title": "سریع هيدرولوجيا",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-hydroma-core": {
+      "title": "HyDroMa هسته",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-indices-fallback": {
+      "title": "پشتیبان مؤشر",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-indices-fast": {
+      "title": "سریع مؤشر",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-irrigation-scheduler": {
+      "title": "زمان‌بند irrigation",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-modflow6": {
+      "title": "MODFLOW 6 مدل",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-monte-carlo-scenarios": {
+      "title": "مونت كارلو",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-mrv-iot-ingest": {
+      "title": "ورود MRV",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-mrv-metrics": {
+      "title": "سنجه‌ها MRV",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-mrv-nojin": {
+      "title": "nojin MRV",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-mrv-quality-assurance": {
+      "title": "کیفیت MRV",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-multi-stress-engine": {
+      "title": "چندگانه موتور",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-ndvi-analysis": {
+      "title": "NDVI تحلیل",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-optimization-optimizer": {
+      "title": "بهینه‌ساز",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-physics-informed-network": {
+      "title": "آگاهانه فيزياء",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-rothc-runner": {
+      "title": "RothC مشغّل",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-scenario-manager": {
+      "title": "مدیر سيناريو",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-seed-optimization": {
+      "title": "بهینه‌سازی بذرة",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-soil-chemistry": {
+      "title": "كيمياء تربة",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-soil-degradation-model": {
+      "title": "تدهور تربة مدل",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-soil-health": {
+      "title": "صحة تربة",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-soil-pedotransfer": {
+      "title": "انتقال خاکی تربة",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-soil-physics": {
+      "title": "فيزياء تربة",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-soil-physics-fallback": {
+      "title": "فيزياء تربة سرویس",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-soil-physics-fast": {
+      "title": "فيزياء تربة",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-soil-recommendations": {
+      "title": "توصيات تربة",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-soil-salinity": {
+      "title": "ملوحة تربة",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-soil-taxonomy": {
+      "title": "تصنيف تربة",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-soil-texture": {
+      "title": "قوام تربة",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-soil-water-retention": {
+      "title": "نگهداشت تربة",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-topographic-calculations": {
+      "title": "حاسبة topography",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-uncertainty-knowledge": {
+      "title": "دانش عدم قطعیت",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-water-quality": {
+      "title": "کیفیت ماء",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-watershed-calculator": {
+      "title": "حاسبة مستجمعات",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-weap-simulation": {
+      "title": "WEAP شبیه‌سازی",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-swat-plus": {
+      "title": "SWAT+ شبیه‌سازی",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-swat-runner": {
+      "title": "SWAT مشغّل",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "hydroma-hydroma-tools-what-if-engine": {
+      "title": "چه‌اگر سيناريو موتور",
+      "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+    },
+    "workspace-workspace": {
+      "title": "مساحة العمل",
+      "description": "لوحة مساحة العمل: المهام المعيّنة والصحة العامة والعمليات اليومية."
+    },
+    "workspace-workspace-approvals": {
+      "title": "الموافقات",
+      "description": "الموافقات المعلقة: طلبات تنتظر قرارك قبل المتابعة."
+    },
+    "workspace-workspace-assignments": {
+      "title": "التكليفات",
+      "description": "تكليفات العمل الحالية: من يعمل على ماذا، وحالة كل مهمة."
+    },
+    "workspace-workspace-cases": {
+      "title": "الحالات",
+      "description": "سجل الحالات: الطلبات والشكاوى المفتوحة تحت المتابعة."
+    },
+    "workspace-workspace-knowledge": {
+      "title": "المعرفة",
+      "description": "ابحث في قاعدة المعرفة المنشورة واحصل على المصدر المرتبط بكل نتيجة."
+    },
+    "workspace-workspace-operations": {
+      "title": "العمليات",
+      "description": "حالة المزامنة: اتصال السحابة، الأحداث المعلّقة وآخر نتيجة."
+    },
+    "workspace-workspace-operations-jobs": {
+      "title": "الوظائف",
+      "description": "الوظائف المجدولة والحالة الحالية لكل منها."
+    },
+    "workspace-workspace-overview": {
+      "title": "نظرة عامة",
+      "description": "المنظمات التي تنتمي إليها وأدوارك فيها."
+    },
+    "workspace-workspace-reports": {
+      "title": "التقارير",
+      "description": "تقارير روتينية: ما الذي أُنتج، وما الذي يحتاج مراجعة."
+    },
+    "workspace-workspace-settings-access": {
+      "title": "الوصول والأدوار",
+      "description": "من يمكنه الوصول إلى مساحة العمل، وبأي صلاحية."
+    },
+    "workspace-workspace-settings-notifications": {
+      "title": "تفضيلات الإشعارات",
+      "description": "اختر القنوات التي تريد تلقي الإشعارات عليها."
+    },
+    "workspace-workspace-targets": {
+      "title": "الأهداف",
+      "description": "الأهداف المعلنة: الأرقام المستهدفة والتقدم نحوها."
+    },
+    "workspace-workspace-team": {
+      "title": "الفريق",
+      "description": "أعضاء الفريق وعضويتهم في كل منظمة."
+    },
+    "admin-admin": {
+      "title": "الإدارة",
+      "description": "لوحة إدارة المنصة: الحالة العامة والصيانة والتنبيهات."
+    },
+    "admin-admin-design-tokens": {
+      "title": "رموز التصميم",
+      "description": "رموز التصميم المشتركة التي تُبنى عليها الواجهة."
+    },
+    "admin-admin-feature-flags": {
+      "title": "مفاتيح الميزات",
+      "description": "ما هو مفعّل وما هو معطّل في هذه البيئة."
+    },
+    "admin-admin-jobs": {
+      "title": "الوظائف المجدولة",
+      "description": "الوظائف المجدولة وحالة آخر تشغيل لكل منها."
+    },
+    "admin-admin-localization-translations": {
+      "title": "اللغات المتاحة",
+      "description": "اللغات التي يُترجم إليها محتوى المنصة."
+    },
+    "admin-admin-security": {
+      "title": "الأمان",
+      "description": "نظرة عامة على عمليات الدخول والاتصالات والمخاطر."
+    },
+    "admin-admin-users": {
+      "title": "المستخدمون",
+      "description": "حسابات المستخدمين وحالاتها."
+    },
+    "public-trust-audits": {
+      "title": "التدقيق الأمني",
+      "description": "سجل التدقيق الأمني: من فعل ماذا ومتى."
+    },
+    "public-trust-carbon-registry": {
+      "title": "سجل الكربون",
+      "description": "معايير الاعتماد المتاحة لسجلات الكربون."
+    },
+    "public-trust-disclosure": {
+      "title": "الإفصاح",
+      "description": "راسلنا للتوضيح أو للإبلاغ عن مشكلة."
+    },
+    "public-trust-provenance": {
+      "title": "المصدر",
+      "description": "من أين جاءت كل معلومة، مع سلسلة الأدلة."
+    },
+    "public-trust-report": {
+      "title": "التقرير",
+      "description": "أرقام البرنامج المعلنة: الطلبات والمساحة المستلمة والنطاق."
     }
   },
   "pages": {

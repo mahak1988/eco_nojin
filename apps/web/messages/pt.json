@@ -2525,6 +2525,310 @@
     "marketplace-market-orders-order-transitions": {
       "title": "Transições permitidas",
       "description": "Os estados seguintes que a máquina de estados da encomenda permite para esta encomenda."
+    },
+    "hydroma-hydroma-tools-aquacrop-runner": {
+      "title": "AquaCrop исполнитель",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-carbon-calculator": {
+      "title": "калькулятор углерод",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-climate-adaptive-phenology": {
+      "title": "фенология климат",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-crop-scenarios": {
+      "title": "культура",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-crop-water-requirement": {
+      "title": "вода культура",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-decision-support": {
+      "title": "поддержка решение",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-dynamic-stress-engine": {
+      "title": "динамический двигатель",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-et0-calculator": {
+      "title": "ET0 калькулятор",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-gaussian-process-surrogate": {
+      "title": "суррогат гауссов",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-groundwater-model": {
+      "title": "подземные воды модель",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-groundwater-service": {
+      "title": "подземные воды сервис",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-hecras-simulation": {
+      "title": "HEC-RAS моделирование",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-hydrology-fallback": {
+      "title": "резервный гидрология",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-hydrology-fast": {
+      "title": "быстрый гидрология",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-hydroma-core": {
+      "title": "HyDroMa ядро",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-indices-fallback": {
+      "title": "резервный индекс",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-indices-fast": {
+      "title": "быстрый индекс",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-irrigation-scheduler": {
+      "title": "планировщик орошение",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-modflow6": {
+      "title": "MODFLOW 6 модель",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-monte-carlo-scenarios": {
+      "title": "Монте-Карло",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-mrv-iot-ingest": {
+      "title": "загрузка MRV",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-mrv-metrics": {
+      "title": "метрики MRV",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-mrv-nojin": {
+      "title": "nojin MRV",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-mrv-quality-assurance": {
+      "title": "качество MRV",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-multi-stress-engine": {
+      "title": "мульти двигатель",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-ndvi-analysis": {
+      "title": "NDVI анализ",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-optimization-optimizer": {
+      "title": "оптимизатор",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-physics-informed-network": {
+      "title": "информированный физика",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-rothc-runner": {
+      "title": "RothC исполнитель",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-scenario-manager": {
+      "title": "менеджер сценарий",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-seed-optimization": {
+      "title": "оптимизация семя",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-soil-chemistry": {
+      "title": "химия почва",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-soil-degradation-model": {
+      "title": "деградация почва модель",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-soil-health": {
+      "title": "здоровье почва",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-soil-pedotransfer": {
+      "title": "педотрансфер почва",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-soil-physics": {
+      "title": "физика почва",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-soil-physics-fallback": {
+      "title": "физика почва сервис",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-soil-physics-fast": {
+      "title": "физика почва",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-soil-recommendations": {
+      "title": "рекомендации почва",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-soil-salinity": {
+      "title": "засоленность почва",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-soil-taxonomy": {
+      "title": "таксономия почва",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-soil-texture": {
+      "title": "текстура почва",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-soil-water-retention": {
+      "title": "удержание почва",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-topographic-calculations": {
+      "title": "калькулятор топография",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-uncertainty-knowledge": {
+      "title": "знание неопределённость",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-water-quality": {
+      "title": "качество вода",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-watershed-calculator": {
+      "title": "калькулятор водосбор",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-weap-simulation": {
+      "title": "WEAP моделирование",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-swat-plus": {
+      "title": "SWAT+ моделирование",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-swat-runner": {
+      "title": "SWAT исполнитель",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "hydroma-hydroma-tools-what-if-engine": {
+      "title": "что-если сценарий двигатель",
+      "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+    },
+    "workspace-workspace": {
+      "title": "Espaço de trabalho",
+      "description": "Painel do espaço de trabalho: trabalho atribuído, estado do sistema e operações diárias."
+    },
+    "workspace-workspace-approvals": {
+      "title": "Aprovações",
+      "description": "Aprovações pendentes: pedidos à espera da sua decisão antes de avançar."
+    },
+    "workspace-workspace-assignments": {
+      "title": "Atribuições",
+      "description": "Atribuições de trabalho atuais: quem trabalha em quê e o estado de cada uma."
+    },
+    "workspace-workspace-cases": {
+      "title": "Processos",
+      "description": "Registo de processos: pedidos e reclamações em aberto, com o estado de cada um."
+    },
+    "workspace-workspace-knowledge": {
+      "title": "Conhecimento",
+      "description": "Pesquise na base de conhecimento publicada e veja a origem de cada resultado."
+    },
+    "workspace-workspace-operations": {
+      "title": "Operações",
+      "description": "Estado da sincronização: ligação à nuvem, eventos pendentes e o último resultado."
+    },
+    "workspace-workspace-operations-jobs": {
+      "title": "Tarefas",
+      "description": "Tarefas agendadas e o estado atual de cada uma."
+    },
+    "workspace-workspace-overview": {
+      "title": "Visão geral",
+      "description": "As organizações a que pertence e o seu papel em cada uma."
+    },
+    "workspace-workspace-reports": {
+      "title": "Relatórios",
+      "description": "Relatórios periódicos: o que foi produzido e o que ainda carece de revisão."
+    },
+    "workspace-workspace-settings-access": {
+      "title": "Acesso e funções",
+      "description": "Quem pode chegar ao espaço de trabalho e com que permissão."
+    },
+    "workspace-workspace-settings-notifications": {
+      "title": "Preferências de notificação",
+      "description": "Escolha os canais em que quer ser notificado."
+    },
+    "workspace-workspace-targets": {
+      "title": "Metas",
+      "description": "Metas anunciadas: os números perseguidos e o progresso até eles."
+    },
+    "workspace-workspace-team": {
+      "title": "Equipa",
+      "description": "Os membros da equipa e a sua pertença a cada organização."
+    },
+    "admin-admin": {
+      "title": "Administração",
+      "description": "Painel de administração da plataforma: estado geral, manutenção e alertas."
+    },
+    "admin-admin-design-tokens": {
+      "title": "Tokens de design",
+      "description": "Os valores de design partilhados a partir dos quais a interface é construída."
+    },
+    "admin-admin-feature-flags": {
+      "title": "Feature flags",
+      "description": "O que está ligado e o que está desligado neste ambiente."
+    },
+    "admin-admin-jobs": {
+      "title": "Tarefas agendadas",
+      "description": "As tarefas agendadas e o estado da última execução de cada uma."
+    },
+    "admin-admin-localization-translations": {
+      "title": "Localizações disponíveis",
+      "description": "Os idiomas para os quais o conteúdo da plataforma é traduzido."
+    },
+    "admin-admin-security": {
+      "title": "Segurança",
+      "description": "Uma visão geral de entradas, ligações e riscos."
+    },
+    "admin-admin-users": {
+      "title": "Utilizadores",
+      "description": "Contas de utilizador e o respetivo estado."
+    },
+    "public-trust-audits": {
+      "title": "Auditoria de segurança",
+      "description": "O rasto de auditoria de segurança: quem fez o quê, e quando."
+    },
+    "public-trust-carbon-registry": {
+      "title": "Registo de carbono",
+      "description": "Os padrões disponíveis para os registos de carbono."
+    },
+    "public-trust-disclosure": {
+      "title": "Denúncia",
+      "description": "Contacte-nos para fazer uma pergunta ou comunicar um problema."
+    },
+    "public-trust-provenance": {
+      "title": "Proveniência",
+      "description": "De onde vem cada dado, com a cadeia de evidências."
+    },
+    "public-trust-report": {
+      "title": "Relatório",
+      "description": "Os números publicados: pedidos, área recebida e cobertura."
     }
   },
   "pages": {

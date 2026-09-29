@@ -2525,6 +2525,310 @@
     "marketplace-market-orders-order-transitions": {
       "title": "Разрешённые переходы",
       "description": "Следующие состояния, которые машина состояний заказа разрешает для этого заказа."
+    },
+    "hydroma-hydroma-tools-aquacrop-runner": {
+      "title": "AquaCrop رَنر",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-carbon-calculator": {
+      "title": "کیلکولیٹر کاربن",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-climate-adaptive-phenology": {
+      "title": "فینولوژی آب و ہوا",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-crop-scenarios": {
+      "title": "فصل",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-crop-water-requirement": {
+      "title": "پانی فصل",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-decision-support": {
+      "title": "معاونت فیصلہ",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-dynamic-stress-engine": {
+      "title": "ڈائنامک انجن",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-et0-calculator": {
+      "title": "ET0 کیلکولیٹر",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-gaussian-process-surrogate": {
+      "title": "متبادل گاؤسی",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-groundwater-model": {
+      "title": "زیر زمین پانی ماڈل",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-groundwater-service": {
+      "title": "زیر زمین پانی سروس",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-hecras-simulation": {
+      "title": "HEC-RAS سمولیشن",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-hydrology-fallback": {
+      "title": "فالبیک ہائیڈرولوگی",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-hydrology-fast": {
+      "title": "تیز ہائیڈرولوگی",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-hydroma-core": {
+      "title": "HyDroMa مرکز",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-indices-fallback": {
+      "title": "فالبیک انڈیکس",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-indices-fast": {
+      "title": "تیز انڈیکس",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-irrigation-scheduler": {
+      "title": "شیڈولر آبپاشی",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-modflow6": {
+      "title": "MODFLOW 6 ماڈل",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-monte-carlo-scenarios": {
+      "title": "مونٹ کارلو",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-mrv-iot-ingest": {
+      "title": "انجنسٹ MRV",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-mrv-metrics": {
+      "title": "میٹرکس MRV",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-mrv-nojin": {
+      "title": "nojin MRV",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-mrv-quality-assurance": {
+      "title": "معیار MRV",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-multi-stress-engine": {
+      "title": "کثیر انجن",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-ndvi-analysis": {
+      "title": "NDVI تجزیہ",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-optimization-optimizer": {
+      "title": "آپٹیمائزر",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-physics-informed-network": {
+      "title": "آگاہ فزکس",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-rothc-runner": {
+      "title": "RothC رَنر",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-scenario-manager": {
+      "title": "منیجر منظرنامہ",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-seed-optimization": {
+      "title": "بہتری بیج",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-soil-chemistry": {
+      "title": "کیمیا خاک",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-soil-degradation-model": {
+      "title": "خرابی خاک ماڈل",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-soil-health": {
+      "title": "صحت خاک",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-soil-pedotransfer": {
+      "title": "پیڈو ٹرانسفر خاک",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-soil-physics": {
+      "title": "فزکس خاک",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-soil-physics-fallback": {
+      "title": "فزکس خاک سروس",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-soil-physics-fast": {
+      "title": "فزکس خاک",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-soil-recommendations": {
+      "title": "سفارشات خاک",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-soil-salinity": {
+      "title": "نمکیت خاک",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-soil-taxonomy": {
+      "title": "درجہ بندی خاک",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-soil-texture": {
+      "title": "بافت خاک",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-soil-water-retention": {
+      "title": "برقراری خاک",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-topographic-calculations": {
+      "title": "کیلکولیٹر ٹاپوگرافی",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-uncertainty-knowledge": {
+      "title": "علم غیر یقینیت",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-water-quality": {
+      "title": "معیار پانی",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-watershed-calculator": {
+      "title": "کیلکولیٹر ویٹر شیڈ",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-weap-simulation": {
+      "title": "WEAP سمولیشن",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-swat-plus": {
+      "title": "SWAT+ سمولیشن",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-swat-runner": {
+      "title": "SWAT رَنر",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "hydroma-hydroma-tools-what-if-engine": {
+      "title": "کیا اگر منظرنامہ انجن",
+      "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+    },
+    "workspace-workspace": {
+      "title": "Рабочее пространство",
+      "description": "Панель рабочего пространства: назначенные задачи, состояние системы и ежедневные операции."
+    },
+    "workspace-workspace-approvals": {
+      "title": "Согласования",
+      "description": "Ожидающие согласования: заявки, которые нельзя продолжить без вашего решения."
+    },
+    "workspace-workspace-assignments": {
+      "title": "Назначения",
+      "description": "Текущие рабочие назначения: кто над чем работает и в каком состоянии каждое."
+    },
+    "workspace-workspace-cases": {
+      "title": "Обращения",
+      "description": "Журнал обращений: открытые запросы и жалобы с состоянием каждого."
+    },
+    "workspace-workspace-knowledge": {
+      "title": "База знаний",
+      "description": "Поиск по опубликованной базе знаний с указанием источника для каждого результата."
+    },
+    "workspace-workspace-operations": {
+      "title": "Операции",
+      "description": "Состояние синхронизации: подключение к облаку, события в очереди и последний результат."
+    },
+    "workspace-workspace-operations-jobs": {
+      "title": "Задачи",
+      "description": "Запланированные задания и текущее состояние каждого."
+    },
+    "workspace-workspace-overview": {
+      "title": "Обзор",
+      "description": "Организации, в которых вы состоите, и ваша роль в каждой."
+    },
+    "workspace-workspace-reports": {
+      "title": "Отчёты",
+      "description": "Регулярные отчёты: что произведено и что ещё требует проверки."
+    },
+    "workspace-workspace-settings-access": {
+      "title": "Доступ и роли",
+      "description": "Кто имеет доступ к рабочему пространству и с какими правами."
+    },
+    "workspace-workspace-settings-notifications": {
+      "title": "Настройки уведомлений",
+      "description": "Выберите каналы, по которым хотите получать уведомления."
+    },
+    "workspace-workspace-targets": {
+      "title": "Цели",
+      "description": "Заявленные цели: к каким показателям стремимся и как близко."
+    },
+    "workspace-workspace-team": {
+      "title": "Команда",
+      "description": "Участники команды и их членство в каждой организации."
+    },
+    "admin-admin": {
+      "title": "Администрирование",
+      "description": "Панель администрирования платформы: общее состояние, обслуживание и оповещения."
+    },
+    "admin-admin-design-tokens": {
+      "title": "Дизайн-токены",
+      "description": "Общие значения оформления, на которых построен интерфейс."
+    },
+    "admin-admin-feature-flags": {
+      "title": "Флаги функций",
+      "description": "Что включено и выключено в этом окружении."
+    },
+    "admin-admin-jobs": {
+      "title": "Запланированные задания",
+      "description": "Запланированные задания и состояние последнего запуска каждого."
+    },
+    "admin-admin-localization-translations": {
+      "title": "Доступные языки",
+      "description": "Языки, на которые переведён контент платформы."
+    },
+    "admin-admin-security": {
+      "title": "Безопасность",
+      "description": "Обзор входов, подключений и рисков."
+    },
+    "admin-admin-users": {
+      "title": "Пользователи",
+      "description": "Учётные записи пользователей и их состояние."
+    },
+    "public-trust-audits": {
+      "title": "Аудит безопасности",
+      "description": "Журнал аудита безопасности: кто, что и когда сделал."
+    },
+    "public-trust-carbon-registry": {
+      "title": "Реестр углерода",
+      "description": "Доступные стандарты для реестров углерода."
+    },
+    "public-trust-disclosure": {
+      "title": "Раскрытие информации",
+      "description": "Свяжитесь с нами, чтобы задать вопрос или сообщить о проблеме."
+    },
+    "public-trust-provenance": {
+      "title": "Происхождение данных",
+      "description": "Откуда взяты данные, с цепочкой доказательств."
+    },
+    "public-trust-report": {
+      "title": "Отчёт",
+      "description": "Опубликованные цифры: заявки, принятые площади и охват."
     }
   },
   "pages": {

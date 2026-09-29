@@ -2525,6 +2525,310 @@
     "marketplace-market-orders-order-transitions": {
       "title": "اجازت شدہ تبدیلیاں",
       "description": "وہ اگلی حالتیں جو آرڈر اسٹیٹ مشین اس آرڈر کے لیے اجازت دیتی ہے۔"
+    },
+    "hydroma-hydroma-tools-aquacrop-runner": {
+      "title": "AquaCrop 运行器",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-carbon-calculator": {
+      "title": "计算器 碳",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-climate-adaptive-phenology": {
+      "title": "物候 气候",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-crop-scenarios": {
+      "title": "作物",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-crop-water-requirement": {
+      "title": "水 作物",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-decision-support": {
+      "title": "支持 决策",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-dynamic-stress-engine": {
+      "title": "动态 引擎",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-et0-calculator": {
+      "title": "ET0 计算器",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-gaussian-process-surrogate": {
+      "title": "替代 高斯",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-groundwater-model": {
+      "title": "地下水 模型",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-groundwater-service": {
+      "title": "地下水 服务",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-hecras-simulation": {
+      "title": "HEC-RAS 模拟",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-hydrology-fallback": {
+      "title": "回退 水文",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-hydrology-fast": {
+      "title": "快速 水文",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-hydroma-core": {
+      "title": "HyDroMa 核心",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-indices-fallback": {
+      "title": "回退 指数",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-indices-fast": {
+      "title": "快速 指数",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-irrigation-scheduler": {
+      "title": "调度 灌溉",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-modflow6": {
+      "title": "MODFLOW 6 模型",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-monte-carlo-scenarios": {
+      "title": "蒙特卡洛",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-mrv-iot-ingest": {
+      "title": "接入 MRV",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-mrv-metrics": {
+      "title": "指标 MRV",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-mrv-nojin": {
+      "title": "nojin MRV",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-mrv-quality-assurance": {
+      "title": "质量 MRV",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-multi-stress-engine": {
+      "title": "多 引擎",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-ndvi-analysis": {
+      "title": "NDVI 分析",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-optimization-optimizer": {
+      "title": "优化器",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-physics-informed-network": {
+      "title": "信息 物理",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-rothc-runner": {
+      "title": "RothC 运行器",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-scenario-manager": {
+      "title": "管理器 情景",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-seed-optimization": {
+      "title": "优化 种子",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-soil-chemistry": {
+      "title": "化学 土壤",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-soil-degradation-model": {
+      "title": "退化 土壤 模型",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-soil-health": {
+      "title": "健康 土壤",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-soil-pedotransfer": {
+      "title": "土壤传递 土壤",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-soil-physics": {
+      "title": "物理 土壤",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-soil-physics-fallback": {
+      "title": "物理 土壤 服务",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-soil-physics-fast": {
+      "title": "物理 土壤",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-soil-recommendations": {
+      "title": "建议 土壤",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-soil-salinity": {
+      "title": "盐度 土壤",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-soil-taxonomy": {
+      "title": "分类 土壤",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-soil-texture": {
+      "title": "质地 土壤",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-soil-water-retention": {
+      "title": "保持 土壤",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-topographic-calculations": {
+      "title": "计算器 地形",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-uncertainty-knowledge": {
+      "title": "知识 不确定性",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-water-quality": {
+      "title": "质量 水",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-watershed-calculator": {
+      "title": "计算器 流域",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-weap-simulation": {
+      "title": "WEAP 模拟",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-swat-plus": {
+      "title": "SWAT+ 模拟",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-swat-runner": {
+      "title": "SWAT 运行器",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "hydroma-hydroma-tools-what-if-engine": {
+      "title": "假如 情景 引擎",
+      "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+    },
+    "workspace-workspace": {
+      "title": "ورک اسپیس",
+      "description": "ورک اسپیس ڈیش بورڈ: تفویض شدہ کام، نظام کی حالت اور روزانہ کارروائی۔"
+    },
+    "workspace-workspace-approvals": {
+      "title": "منظوریاں",
+      "description": "زیر التوا منظوریاں: درخواستیں جو آگے بڑھنے سے پہلے آپ کے فیصلے کا انتظار کر رہی ہیں۔"
+    },
+    "workspace-workspace-assignments": {
+      "title": "اسائنمنٹس",
+      "description": "موجودہ کام کے اسائنمنٹس: کون کس چیز پر کام کر رہا ہے اور ہر ایک کی حالت۔"
+    },
+    "workspace-workspace-cases": {
+      "title": "کیسز",
+      "description": "کیس ریکارڈ: کھلے ہوئے درخواستیں اور شکایتیں، ہر ایک کی پیش رفت کے ساتھ۔"
+    },
+    "workspace-workspace-knowledge": {
+      "title": "علم",
+      "description": "شائع شدہ معلوماتی ذخیرے میں تلاش کریں اور ہر نتیجے کا ماخذ دیکھیں۔"
+    },
+    "workspace-workspace-operations": {
+      "title": "آپریشنز",
+      "description": "سنک کی حالت: کلاؤڈ کنکشن، زیر التوا واقعات اور تازہ ترین نتیجہ۔"
+    },
+    "workspace-workspace-operations-jobs": {
+      "title": "جوبز",
+      "description": "شیڈول شدہ جوبز اور ہر ایک کی موجودہ حالت۔"
+    },
+    "workspace-workspace-overview": {
+      "title": "جائزہ",
+      "description": "وہ تنظیمیں جن کا آپ حصہ دار ہیں اور ہر ایک میں آپ کا کردار۔"
+    },
+    "workspace-workspace-reports": {
+      "title": "رپورٹس",
+      "description": "باقاعدہ رپورٹس: کیا تیار ہوا اور کس کی نظرثانی باقی ہے۔"
+    },
+    "workspace-workspace-settings-access": {
+      "title": "رسائی اور کردار",
+      "description": "کون ورک اسپیس تک رسائی رکھتا ہے اور کس اجازت کے ساتھ۔"
+    },
+    "workspace-workspace-settings-notifications": {
+      "title": "اطلاع کی ترجیحات",
+      "description": "وہ چینل منتخب کریں جہاں آپ اطلاعیاں حاصل کرنا چاہتے ہیں۔"
+    },
+    "workspace-workspace-targets": {
+      "title": "اہداف",
+      "description": "اعلام شدہ اہداف: جن اعد کا ہدف رکھا گیا ہے اور اس ترقی۔"
+    },
+    "workspace-workspace-team": {
+      "title": "ٹیم",
+      "description": "ٹیم کے ارکان اور ہر تنظیم میں ان کی رکنیت۔"
+    },
+    "admin-admin": {
+      "title": "ایڈمن",
+      "description": "پلیٹ فارم ایڈمن ڈیش بورڈ: مجموعی حالت، دیکھ بھال اور انتباہات۔"
+    },
+    "admin-admin-design-tokens": {
+      "title": "ڈیزائن ٹوکن",
+      "description": "مشترکہ ڈیزائن قدریں جن سے انٹرفیس بنایا گیا ہے۔"
+    },
+    "admin-admin-feature-flags": {
+      "title": "فیچر فلیگز",
+      "description": "اس ماحول میں کیا فعال ہے اور کیا غیر فعال ہے۔"
+    },
+    "admin-admin-jobs": {
+      "title": "شیڈول شدہ جوبز",
+      "description": "شیڈول شدہ جوبز اور ہر ایک کے آخری رن کی حالت۔"
+    },
+    "admin-admin-localization-translations": {
+      "title": "دستیاب زبانیں",
+      "description": "وہ زبانیں جن میں پلیٹ فارم مواد کا ترجمہ کیا گیا ہے۔"
+    },
+    "admin-admin-security": {
+      "title": "سیکیورٹی",
+      "description": "لاگ ان، کنکشنز اور خطرات کا جائزہ۔"
+    },
+    "admin-admin-users": {
+      "title": "صارفین",
+      "description": "صارف اکاؤنٹس اور ان کی حالت۔"
+    },
+    "public-trust-audits": {
+      "title": "سیکیورٹی آڈٹ",
+      "description": "سیکیورٹی آڈٹ کا ریکارڈ: کس نے کیا اور کب کیا۔"
+    },
+    "public-trust-carbon-registry": {
+      "title": "کاربن رجسٹری",
+      "description": "کاربن رجسٹری کے لیے دستیاب معیارات۔"
+    },
+    "public-trust-disclosure": {
+      "title": "افشاگری",
+      "description": "سوال پوچھنے یا مسئلہ رپورٹ کرنے کے لیے ہم سے رابطہ کریں۔"
+    },
+    "public-trust-provenance": {
+      "title": "ماخذ",
+      "description": "ہر اعد کہاں سے آیا، ثبوتی سلسلے کے ساتھ۔"
+    },
+    "public-trust-report": {
+      "title": "رپورٹ",
+      "description": "شائع شدہ اعداد: درخواستیں، موصول شدہ زمین اور کوریج۔"
     }
   },
   "pages": {

@@ -2525,6 +2525,310 @@
     "marketplace-market-orders-order-transitions": {
       "title": "Transitions autorisées",
       "description": "Les états suivants que la machine à états de commande autorise pour cette commande."
+    },
+    "hydroma-hydroma-tools-aquacrop-runner": {
+      "title": "AquaCrop exécuteur",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-carbon-calculator": {
+      "title": "calculatrice carbone",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-climate-adaptive-phenology": {
+      "title": "phénologie climat",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-crop-scenarios": {
+      "title": "culture",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-crop-water-requirement": {
+      "title": "eau culture",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-decision-support": {
+      "title": "soutien décision",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-dynamic-stress-engine": {
+      "title": "dynamique moteur",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-et0-calculator": {
+      "title": "ET0 calculatrice",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-gaussian-process-surrogate": {
+      "title": "substitut gaussien",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-groundwater-model": {
+      "title": "nappe phréatique modèle",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-groundwater-service": {
+      "title": "nappe phréatique service",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-hecras-simulation": {
+      "title": "HEC-RAS simulation",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-hydrology-fallback": {
+      "title": "repli hydrologie",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-hydrology-fast": {
+      "title": "rapide hydrologie",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-hydroma-core": {
+      "title": "HyDroMa noyau",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-indices-fallback": {
+      "title": "repli indice",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-indices-fast": {
+      "title": "rapide indice",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-irrigation-scheduler": {
+      "title": "planificateur irrigation",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-modflow6": {
+      "title": "MODFLOW 6 modèle",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-monte-carlo-scenarios": {
+      "title": "Monte-Carlo",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-mrv-iot-ingest": {
+      "title": "ingestion MRV",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-mrv-metrics": {
+      "title": "métriques MRV",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-mrv-nojin": {
+      "title": "nojin MRV",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-mrv-quality-assurance": {
+      "title": "qualité MRV",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-multi-stress-engine": {
+      "title": "multi moteur",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-ndvi-analysis": {
+      "title": "NDVI analyse",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-optimization-optimizer": {
+      "title": "optimiseur",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-physics-informed-network": {
+      "title": "informé physique",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-rothc-runner": {
+      "title": "RothC exécuteur",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-scenario-manager": {
+      "title": "gestion scénario",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-seed-optimization": {
+      "title": "optimisation graine",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-soil-chemistry": {
+      "title": "chimie sol",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-soil-degradation-model": {
+      "title": "dégradation sol modèle",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-soil-health": {
+      "title": "santé sol",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-soil-pedotransfer": {
+      "title": "pédotransfert sol",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-soil-physics": {
+      "title": "physique sol",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-soil-physics-fallback": {
+      "title": "physique sol service",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-soil-physics-fast": {
+      "title": "physique sol",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-soil-recommendations": {
+      "title": "recommandations sol",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-soil-salinity": {
+      "title": "salinité sol",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-soil-taxonomy": {
+      "title": "taxonomie sol",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-soil-texture": {
+      "title": "texture sol",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-soil-water-retention": {
+      "title": "rétention sol",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-topographic-calculations": {
+      "title": "calculatrice topographie",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-uncertainty-knowledge": {
+      "title": "connaissance incertitude",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-water-quality": {
+      "title": "qualité eau",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-watershed-calculator": {
+      "title": "calculatrice bassin versant",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-weap-simulation": {
+      "title": "WEAP simulation",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-swat-plus": {
+      "title": "SWAT+ simulation",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-swat-runner": {
+      "title": "SWAT exécuteur",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "hydroma-hydroma-tools-what-if-engine": {
+      "title": "what-if scénario moteur",
+      "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+    },
+    "workspace-workspace": {
+      "title": "Espace de travail",
+      "description": "Tableau de bord de l’espace de travail : tâches assignées, état du système et opérations quotidiennes."
+    },
+    "workspace-workspace-approvals": {
+      "title": "Approbations",
+      "description": "Approbations en attente : demandes qui attendent votre décision avant d’aller plus loin."
+    },
+    "workspace-workspace-assignments": {
+      "title": "Affectations",
+      "description": "Affectations de travail en cours : qui travaille sur quoi, et l’état de chacune."
+    },
+    "workspace-workspace-cases": {
+      "title": "Dossiers",
+      "description": "Registre des dossiers : demandes et réclamations ouvertes, avec l’avancement de chacune."
+    },
+    "workspace-workspace-knowledge": {
+      "title": "Connaissances",
+      "description": "Recherchez dans la base de connaissances publiée et voyez la source de chaque résultat."
+    },
+    "workspace-workspace-operations": {
+      "title": "Exploitation",
+      "description": "État de synchronisation : connexion au cloud, événements en attente et dernier résultat."
+    },
+    "workspace-workspace-operations-jobs": {
+      "title": "Tâches",
+      "description": "Tâches planifiées et état actuel de chacune."
+    },
+    "workspace-workspace-overview": {
+      "title": "Vue d’ensemble",
+      "description": "Les organisations auxquelles vous appartenez et votre rôle dans chacune."
+    },
+    "workspace-workspace-reports": {
+      "title": "Rapports",
+      "description": "Rapports périodiques : ce qui a été produit et ce qui reste à réviser."
+    },
+    "workspace-workspace-settings-access": {
+      "title": "Accès et rôles",
+      "description": "Qui peut accéder à l’espace de travail, et avec quelle autorisation."
+    },
+    "workspace-workspace-settings-notifications": {
+      "title": "Préférences de notification",
+      "description": "Choisissez les canaux sur lesquels vous souhaitez être notifié."
+    },
+    "workspace-workspace-targets": {
+      "title": "Objectifs",
+      "description": "Objectifs annoncés : les chiffres visés et les progrès vers ceux-ci."
+    },
+    "workspace-workspace-team": {
+      "title": "Équipe",
+      "description": "Les membres de l’équipe et leur appartenance à chaque organisation."
+    },
+    "admin-admin": {
+      "title": "Administration",
+      "description": "Tableau de bord de l’administration de la plateforme : état général, maintenance et alertes."
+    },
+    "admin-admin-design-tokens": {
+      "title": "Jetons de design",
+      "description": "Les valeurs de design partagées sur lesquelles repose l’interface."
+    },
+    "admin-admin-feature-flags": {
+      "title": "Indicateurs de fonctionnalité",
+      "description": "Ce qui est activé et ce qui est désactivé dans cet environnement."
+    },
+    "admin-admin-jobs": {
+      "title": "Tâches planifiées",
+      "description": "Les tâches planifiées et l’état de leur dernière exécution."
+    },
+    "admin-admin-localization-translations": {
+      "title": "Paramètres régionaux disponibles",
+      "description": "Les langues dans lesquelles le contenu de la plateforme est traduit."
+    },
+    "admin-admin-security": {
+      "title": "Sécurité",
+      "description": "Vue d’ensemble des connexions, des accès et des risques."
+    },
+    "admin-admin-users": {
+      "title": "Utilisateurs",
+      "description": "Les comptes utilisateurs et leur état."
+    },
+    "public-trust-audits": {
+      "title": "Audit de sécurité",
+      "description": "La piste d’audit de sécurité : qui a fait quoi, et quand."
+    },
+    "public-trust-carbon-registry": {
+      "title": "Registre carbone",
+      "description": "Les normes disponibles pour les registres carbone."
+    },
+    "public-trust-disclosure": {
+      "title": "Signalement",
+      "description": "Contactez-nous pour poser une question ou signaler un problème."
+    },
+    "public-trust-provenance": {
+      "title": "Provenance",
+      "description": "D’où vient chaque donnée, avec la chaîne de preuves."
+    },
+    "public-trust-report": {
+      "title": "Rapport",
+      "description": "Les chiffres publiés : demandes, surfaces reçues et couverture."
     }
   },
   "pages": {

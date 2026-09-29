@@ -2525,6 +2525,310 @@
     "marketplace-market-orders-order-transitions": {
       "title": "Peralihan yang dibenarkan",
       "description": "Keadaan seterusnya yang dibenarkan oleh mesin keadaan pesanan untuk pesanan ini."
+    },
+    "hydroma-hydroma-tools-aquacrop-runner": {
+      "title": "AquaCrop pelari",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-carbon-calculator": {
+      "title": "kalkulator karbon",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-climate-adaptive-phenology": {
+      "title": "fenologi iklim",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-crop-scenarios": {
+      "title": "tanaman",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-crop-water-requirement": {
+      "title": "air tanaman",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-decision-support": {
+      "title": "sokongan keputusan",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-dynamic-stress-engine": {
+      "title": "dinamik enjin",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-et0-calculator": {
+      "title": "ET0 kalkulator",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-gaussian-process-surrogate": {
+      "title": "pengganti Gaussian",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-groundwater-model": {
+      "title": "air bawah tanah model",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-groundwater-service": {
+      "title": "air bawah tanah perkhidmatan",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-hecras-simulation": {
+      "title": "HEC-RAS simulasi",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-hydrology-fallback": {
+      "title": "fallback hidrologi",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-hydrology-fast": {
+      "title": "pantas hidrologi",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-hydroma-core": {
+      "title": "HyDroMa teras",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-indices-fallback": {
+      "title": "fallback indeks",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-indices-fast": {
+      "title": "pantas indeks",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-irrigation-scheduler": {
+      "title": "penjadual pengairan",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-modflow6": {
+      "title": "MODFLOW 6 model",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-monte-carlo-scenarios": {
+      "title": "Monte Carlo",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-mrv-iot-ingest": {
+      "title": "serapan MRV",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-mrv-metrics": {
+      "title": "metrik MRV",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-mrv-nojin": {
+      "title": "nojin MRV",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-mrv-quality-assurance": {
+      "title": "kualiti MRV",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-multi-stress-engine": {
+      "title": "berbilang enjin",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-ndvi-analysis": {
+      "title": "NDVI analisis",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-optimization-optimizer": {
+      "title": "pengoptimum",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-physics-informed-network": {
+      "title": "bermaklumat fizik",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-rothc-runner": {
+      "title": "RothC pelari",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-scenario-manager": {
+      "title": "pengurus senario",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-seed-optimization": {
+      "title": "pengoptimum benih",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-soil-chemistry": {
+      "title": "kimia tanah",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-soil-degradation-model": {
+      "title": "kemerosotan tanah model",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-soil-health": {
+      "title": "kualiti kesihatan tanah",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-soil-pedotransfer": {
+      "title": "pedotransfer tanah",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-soil-physics": {
+      "title": "fizik tanah",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-soil-physics-fallback": {
+      "title": "fizik tanah perkhidmatan",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-soil-physics-fast": {
+      "title": "fizik tanah",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-soil-recommendations": {
+      "title": "cadangan tanah",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-soil-salinity": {
+      "title": "kemasinan tanah",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-soil-taxonomy": {
+      "title": "taksonomi tanah",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-soil-texture": {
+      "title": "tekstur tanah",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-soil-water-retention": {
+      "title": "pengekalan tanah",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-topographic-calculations": {
+      "title": "kalkulator topografi",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-uncertainty-knowledge": {
+      "title": "pengetahuan ketidakpastian",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-water-quality": {
+      "title": "kualiti air",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-watershed-calculator": {
+      "title": "kalkulator laluan",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-weap-simulation": {
+      "title": "WEAP simulasi",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-swat-plus": {
+      "title": "SWAT+ simulasi",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-swat-runner": {
+      "title": "SWAT pelari",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "hydroma-hydroma-tools-what-if-engine": {
+      "title": "what-if senario enjin",
+      "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+    },
+    "workspace-workspace": {
+      "title": "Ruang kerja",
+      "description": "Papan pemuka ruang kerja: kerja yang ditugaskan, kesihatan sistem dan operasi harian."
+    },
+    "workspace-workspace-approvals": {
+      "title": "Kelulusan",
+      "description": "Kelulusan belum selesai: permintaan yang menunggu keputusan anda sebelum diteruskan."
+    },
+    "workspace-workspace-assignments": {
+      "title": "Tugasan",
+      "description": "Tugasan kerja semasa: sesiapa mengendalikan apa dan status setiap satu."
+    },
+    "workspace-workspace-cases": {
+      "title": "Kes",
+      "description": "Rekod kes: permintaan dan aduan yang terbuka, bersama kemajuan setiap satu."
+    },
+    "workspace-workspace-knowledge": {
+      "title": "Pengetahuan",
+      "description": "Cari dalam pangkalan pengetahuan yang diterbitkan dan lihat sumber setiap hasil."
+    },
+    "workspace-workspace-operations": {
+      "title": "Operasi",
+      "description": "Status penyegerahan: sambungan awan, acara belum selesai dan hasil terakhir."
+    },
+    "workspace-workspace-operations-jobs": {
+      "title": "Pekerjaan",
+      "description": "Pekerjaan terjadual dan keadaan semasa setiap satu."
+    },
+    "workspace-workspace-overview": {
+      "title": "Gambaran keseluruhan",
+      "description": "Organisasi yang anda gabung dan peranan anda dalam setiap satu."
+    },
+    "workspace-workspace-reports": {
+      "title": "Laporan",
+      "description": "Laporan rutin: apa yang dihasilkan dan apa yang masih perlu disemak."
+    },
+    "workspace-workspace-settings-access": {
+      "title": "Akses dan peranan",
+      "description": "Siapa boleh mengakses ruang kerja dan dengan kebenaran yang mana."
+    },
+    "workspace-workspace-settings-notifications": {
+      "title": "Keutamaan pemberitahuan",
+      "description": "Pilih saluran yang anda mahu menerima pemberitahuan."
+    },
+    "workspace-workspace-targets": {
+      "title": "Sasaran",
+      "description": "Sasaran yang diumumkan: nombor yang disasarkan dan kemajuan ke arahnya."
+    },
+    "workspace-workspace-team": {
+      "title": "Pasukan",
+      "description": "Anggota pasukan dan keanggotaan mereka dalam setiap organisasi."
+    },
+    "admin-admin": {
+      "title": "Pentadbiran",
+      "description": "Papan pemuka pentadbiran platform: keadaan keseluruhan, penyelenggaraan dan amaran."
+    },
+    "admin-admin-design-tokens": {
+      "title": "Token reka bentuk",
+      "description": "Nilai reka bentuk kongsi yang menjadi asas antara muka."
+    },
+    "admin-admin-feature-flags": {
+      "title": "Tanda ciri",
+      "description": "Apa yang dihidupkan dan apa yang dimatikan dalam persekitaran ini."
+    },
+    "admin-admin-jobs": {
+      "title": "Pekerjaan terjadual",
+      "description": "Pekerjaan terjadual dan keadaan larian terakhir setiap satu."
+    },
+    "admin-admin-localization-translations": {
+      "title": "Locale tersedia",
+      "description": "Bahasa yang kandungan platform diterjemahkan ke dalamnya."
+    },
+    "admin-admin-security": {
+      "title": "Keselamatan",
+      "description": "Ringkasan log masuk, sambungan dan risiko."
+    },
+    "admin-admin-users": {
+      "title": "Pengguna",
+      "description": "Akaun pengguna dan keadaannya."
+    },
+    "public-trust-audits": {
+      "title": "Audit keselamatan",
+      "description": "Jejak audit keselamatan: siapa melakukan apa dan bila."
+    },
+    "public-trust-carbon-registry": {
+      "title": "Pendaftaran karbon",
+      "description": "Standard yang tersedia untuk pendaftaran karbon."
+    },
+    "public-trust-disclosure": {
+      "title": "Pendedahan",
+      "description": "Hubungi kami untuk bertanya atau melaporkan masalah."
+    },
+    "public-trust-provenance": {
+      "title": "Asal usul",
+      "description": "Dari mana setiap data berasal, dengan rantaian bukti."
+    },
+    "public-trust-report": {
+      "title": "Laporan",
+      "description": "Nombor yang diterbitkan: permohonan, keluasan diterima dan liputan."
     }
   },
   "pages": {

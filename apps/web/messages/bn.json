@@ -2525,6 +2525,310 @@
     "marketplace-market-orders-order-transitions": {
       "title": "অনুমোদিত অবস্থান্তর",
       "description": "অর্ডার স্টেট মেশিন এই অর্ডারের জন্য যে পরবর্তী অবস্থাগুলির অনুমতি দেয়।"
+    },
+    "hydroma-hydroma-tools-aquacrop-runner": {
+      "title": "AquaCrop চালক",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-carbon-calculator": {
+      "title": "গণনাকারী কার্বন",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-climate-adaptive-phenology": {
+      "title": "ফিনোলজি জলবায়ু",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-crop-scenarios": {
+      "title": "ফসল",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-crop-water-requirement": {
+      "title": "পানি ফসল",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-decision-support": {
+      "title": "সহায়তা সিদ্ধান্ত",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-dynamic-stress-engine": {
+      "title": "গতিশীল ইঞ্জিন",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-et0-calculator": {
+      "title": "ET0 গণনাকারী",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-gaussian-process-surrogate": {
+      "title": "প্রতিস্থাপক গাউসীয়",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-groundwater-model": {
+      "title": "ভূগর্ভস্থ পানি মডেল",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-groundwater-service": {
+      "title": "ভূগর্ভস্থ পানি সেবা",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-hecras-simulation": {
+      "title": "HEC-RAS সিমুলেশন",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-hydrology-fallback": {
+      "title": "ফলব্যাক জলবিজ্ঞান",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-hydrology-fast": {
+      "title": "দ্রুত জলবিজ্ঞান",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-hydroma-core": {
+      "title": "HyDroMa কেন্দ্র",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-indices-fallback": {
+      "title": "ফলব্যাক সূচক",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-indices-fast": {
+      "title": "দ্রুত সূচক",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-irrigation-scheduler": {
+      "title": "শিডিউলার সেচ",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-modflow6": {
+      "title": "MODFLOW 6 মডেল",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-monte-carlo-scenarios": {
+      "title": "মন্টে কার্লো",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-mrv-iot-ingest": {
+      "title": "গ্রহণ এমআরভি",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-mrv-metrics": {
+      "title": "মেট্রিক্স এমআরভি",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-mrv-nojin": {
+      "title": "nojin এমআরভি",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-mrv-quality-assurance": {
+      "title": "মান এমআরভি",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-multi-stress-engine": {
+      "title": "বহু ইঞ্জিন",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-ndvi-analysis": {
+      "title": "NDVI বিশ্লেষণ",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-optimization-optimizer": {
+      "title": "অনুকূলকারী",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-physics-informed-network": {
+      "title": "তথ্যভিত্তিক পদার্থবিজ্ঞান",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-rothc-runner": {
+      "title": "RothC চালক",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-scenario-manager": {
+      "title": "ম্যানেজার পরিস্থিতি",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-seed-optimization": {
+      "title": "অনুকূলীকরণ বীজ",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-soil-chemistry": {
+      "title": "রসায়ন মাটি",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-soil-degradation-model": {
+      "title": "অবনতি মাটি মডেল",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-soil-health": {
+      "title": "স্বাস্থ্য মাটি",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-soil-pedotransfer": {
+      "title": "পেডোট্রান্সফার মাটি",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-soil-physics": {
+      "title": "পদার্থবিজ্ঞান মাটি",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-soil-physics-fallback": {
+      "title": "পদার্থবিজ্ঞান মাটি সেবা",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-soil-physics-fast": {
+      "title": "পদার্থবিজ্ঞান মাটি",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-soil-recommendations": {
+      "title": "পরামর্শ মাটি",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-soil-salinity": {
+      "title": "লবণাক্ততা মাটি",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-soil-taxonomy": {
+      "title": "শ্রেণিবিন্যাস মাটি",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-soil-texture": {
+      "title": "গঠন মাটি",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-soil-water-retention": {
+      "title": "সংরক্ষণ মাটি",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-topographic-calculations": {
+      "title": "গণনাকারী ভূ-প্রকৃতি",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-uncertainty-knowledge": {
+      "title": "জ্ঞান অনিশ্চয়তা",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-water-quality": {
+      "title": "মান পানি",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-watershed-calculator": {
+      "title": "গণনাকারী বাসিন্দা অঞ্চল",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-weap-simulation": {
+      "title": "WEAP সিমুলেশন",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-swat-plus": {
+      "title": "SWAT+ সিমুলেশন",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-swat-runner": {
+      "title": "SWAT চালক",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "hydroma-hydroma-tools-what-if-engine": {
+      "title": "যদি পরিস্থিতি ইঞ্জিন",
+      "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+    },
+    "workspace-workspace": {
+      "title": "ওয়ার্কস্পেস",
+      "description": "ওয়ার্কস্পেস ড্যাশবোর্ড: নিয়োজিত কাজ, স্বাস্থ্য এবং দৈনন্দিন কার্যক্রম।"
+    },
+    "workspace-workspace-approvals": {
+      "title": "অনুমোদন",
+      "description": "অপেক্ষমাণ অনুমোদন: পরবর্তী পদক্ষেপের আগে আপনার সিদ্ধান্তের অপেক্ষায় থাকা অনুরোধ।"
+    },
+    "workspace-workspace-assignments": {
+      "title": "দায়িত্ব",
+      "description": "বর্তমান কাজের দায়িত্ব: কে কী নিয়ে কাজ করছেন এবং প্রতিটির অবস্থা।"
+    },
+    "workspace-workspace-cases": {
+      "title": "কেস",
+      "description": "কেস রেকর্ড: খোলা অনুরোধ ও অভিযোগ এবং তাদের অগ্রগতি।"
+    },
+    "workspace-workspace-knowledge": {
+      "title": "জ্ঞান",
+      "description": "প্রকাশিত জ্ঞানভাণ্ডারে অনুসন্ধান করুন এবং প্রতিটি ফলাফলের সঙ্গে উৎস দেখুন।"
+    },
+    "workspace-workspace-operations": {
+      "title": "কার্যক্রম",
+      "description": "সিঙ্কের অবস্থা: মেঘ সংযোগ, অমীমাণ ঘটনা এবং সর্বশেষ ফলাফল।"
+    },
+    "workspace-workspace-operations-jobs": {
+      "title": "চাকরি",
+      "description": "নির্ধারিত কাজ এবং প্রতিটির বর্তমান অবস্থা।"
+    },
+    "workspace-workspace-overview": {
+      "title": "সংক্ষিপ্ত বিবরণ",
+      "description": "আপনার সংগঠনগুলো এবং সেগুলোতে আপনার ভূমিকা।"
+    },
+    "workspace-workspace-reports": {
+      "title": "প্রতিবেদন",
+      "description": "নিয়মিত প্রতিবেদন: কী তৈরি হয়েছে এবং কী পর্যালোচনা দরকার।"
+    },
+    "workspace-workspace-settings-access": {
+      "title": "প্রবেশাধিকার ও ভূমিকা",
+      "description": "কারা কর্মক্ষেত্রে প্রবেশ করতে পারেন এবং কোন সুবিধায়।"
+    },
+    "workspace-workspace-settings-notifications": {
+      "title": "বিজ্ঞপ্তির পছন্দ",
+      "description": "বেছে নিন কোন চ্যানেলে আপনি বিজ্ঞপ্তি পেতে চান।"
+    },
+    "workspace-workspace-targets": {
+      "title": "লক্ষ্য",
+      "description": "ঘোষিত লক্ষ্য: লক্ষ্য সংখ্যা ও তার দিকে অগ্রগতি।"
+    },
+    "workspace-workspace-team": {
+      "title": "দল",
+      "description": "দলের সদস্য এবং প্রতিটি সংগঠনে তাদের সদস্যপদ।"
+    },
+    "admin-admin": {
+      "title": "অ্যাডমিন",
+      "description": "প্ল্যাটফর্ম প্রশাসন ড্যাশবোর্ড: সামগ্রিক অবস্থা, রক্ষণাবেক্ষণ ও সতর্কতা।"
+    },
+    "admin-admin-design-tokens": {
+      "title": "ডিজাইন টোকেন",
+      "description": "সম্ভাপ্ত ভিজ্যুয়াল ভাষা যা ইন্টারফেস তৈরি করে।"
+    },
+    "admin-admin-feature-flags": {
+      "title": "ফিচার ফ্ল্যাগ",
+      "description": "এই পরিবেশে কোন সুবিধা চালু আছে এবং কোনটি বন্ধ।"
+    },
+    "admin-admin-jobs": {
+      "title": "নির্ধারিত কাজ",
+      "description": "নির্ধারিত কাজ এবং প্রতিটির সর্বশেষ চালানোর অবস্থা।"
+    },
+    "admin-admin-localization-translations": {
+      "title": "উপলব্ধ ভাষা",
+      "description": "ভাষাগুলো যেগুলোতে প্ল্যাটফর্মের বিষয়বস্তু অনূদিত হয়েছে।"
+    },
+    "admin-admin-security": {
+      "title": "নিরাপত্তা",
+      "description": "লগইন, সংযোগ এবং ঝুঁকির একটি সংক্ষিপ্ত বিবরণ।"
+    },
+    "admin-admin-users": {
+      "title": "ব্যবহারকারী",
+      "description": "ব্যবহারকারীর অ্যাকাউন্ট এবং তাদের অবস্থা।"
+    },
+    "public-trust-audits": {
+      "title": "নিরাপত্তা নিরীক্ষা",
+      "description": "নিরাপত্তা নিরীক্ষার রেকর্ড: কে কী করেছে এবং কখন।"
+    },
+    "public-trust-carbon-registry": {
+      "title": "কার্বন রেজিস্ট্রি",
+      "description": "কার্বন রেজিস্ট্রির জন্য উপলব্ধ মানক।"
+    },
+    "public-trust-disclosure": {
+      "title": "উন্মোচন",
+      "description": "জিজ্ঞাসা বা সমস্যা জানাতে আমাদের সঙ্গে যোগাযোগ করুন।"
+    },
+    "public-trust-provenance": {
+      "title": "প্রমাণ সূত্র",
+      "description": "প্রতিটি তথ্য কোথা থেকে এসেছে, প্রমাণের সূত্রসহ।"
+    },
+    "public-trust-report": {
+      "title": "প্রতিবেদন",
+      "description": "ঘোষিত সংখ্যা: আবেদন, জমা জমি এবং পরিসর।"
     }
   },
   "pages": {

@@ -2728,6 +2728,310 @@
     "marketplace-market-orders-order-transitions": {
       "title": "گذارهای مجاز",
       "description": "وضعیت‌های بعدی که ماشین حالت سفارش برای این سفارش مجاز می‌داند."
+    },
+    "hydroma-hydroma-tools-aquacrop-runner": {
+      "title": "AquaCrop اجراگر",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-carbon-calculator": {
+      "title": "ماشین‌حساب کربن",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-climate-adaptive-phenology": {
+      "title": "فن‌زیست‌شناسی اقلیم",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-crop-scenarios": {
+      "title": "محصول",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-crop-water-requirement": {
+      "title": "آب محصول",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-decision-support": {
+      "title": "پشتیبانی تصمیم",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-dynamic-stress-engine": {
+      "title": "پویا موتور",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-et0-calculator": {
+      "title": "ET0 ماشین‌حساب",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-gaussian-process-surrogate": {
+      "title": "جانشین گاوسی",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-groundwater-model": {
+      "title": "آب زیرزمینی مدل",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-groundwater-service": {
+      "title": "آب زیرزمینی سرویس",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-hecras-simulation": {
+      "title": "HEC-RAS شبیه‌سازی",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-hydrology-fallback": {
+      "title": "پشتیبان هیدرولوژی",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-hydrology-fast": {
+      "title": "سریع هیدرولوژی",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-hydroma-core": {
+      "title": "HyDroMa هسته",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-indices-fallback": {
+      "title": "پشتیبان شاخص",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-indices-fast": {
+      "title": "سریع شاخص",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-irrigation-scheduler": {
+      "title": "زمان‌بند آبیاری",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-modflow6": {
+      "title": "MODFLOW 6 مدل",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-monte-carlo-scenarios": {
+      "title": "مونت کارلو",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-mrv-iot-ingest": {
+      "title": "ورود MRV",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-mrv-metrics": {
+      "title": "سنجه‌ها MRV",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-mrv-nojin": {
+      "title": "nojin MRV",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-mrv-quality-assurance": {
+      "title": "کیفیت MRV",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-multi-stress-engine": {
+      "title": "چندگانه موتور",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-ndvi-analysis": {
+      "title": "NDVI تحلیل",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-optimization-optimizer": {
+      "title": "بهینه‌ساز",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-physics-informed-network": {
+      "title": "آگاه فیزیک",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-rothc-runner": {
+      "title": "RothC اجراگر",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-scenario-manager": {
+      "title": "مدیریت سناریو",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-seed-optimization": {
+      "title": "بهینه‌سازی بذر",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-soil-chemistry": {
+      "title": "شیمی خاک",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-soil-degradation-model": {
+      "title": "تخریب خاک مدل",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-soil-health": {
+      "title": "سلامت خاک",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-soil-pedotransfer": {
+      "title": "پدوترانسفر خاک",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-soil-physics": {
+      "title": "فیزیک خاک",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-soil-physics-fallback": {
+      "title": "فیزیک خاک سرویس",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-soil-physics-fast": {
+      "title": "فیزیک خاک",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-soil-recommendations": {
+      "title": "توصیه‌ها خاک",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-soil-salinity": {
+      "title": "شوری خاک",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-soil-taxonomy": {
+      "title": "طبقه‌بندی خاک",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-soil-texture": {
+      "title": "بافت خاک",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-soil-water-retention": {
+      "title": "نگهداری خاک",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-topographic-calculations": {
+      "title": "ماشین‌حساب توپوگرافی",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-uncertainty-knowledge": {
+      "title": "دانش عدم‌قطعیت",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-water-quality": {
+      "title": "کیفیت آب",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-watershed-calculator": {
+      "title": "ماشین‌حساب آبشار",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-weap-simulation": {
+      "title": "WEAP شبیه‌سازی",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-swat-plus": {
+      "title": "SWAT+ شبیه‌سازی",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-swat-runner": {
+      "title": "SWAT اجراگر",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "hydroma-hydroma-tools-what-if-engine": {
+      "title": "چه‌اگر سناریو موتور",
+      "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+    },
+    "workspace-workspace": {
+      "title": "فضای کار",
+      "description": "داشبورد فضای کار: کارهای محول‌شده، سلامت سامانه و عملیات روزانه."
+    },
+    "workspace-workspace-approvals": {
+      "title": "تأییدها",
+      "description": "تأییدهای در انتظار: درخواست‌هایی که پیش از ادامهٔ کار به تصمیم شما نیاز دارند."
+    },
+    "workspace-workspace-assignments": {
+      "title": "واگذاری‌ها",
+      "description": "واگذاری‌های جاری کار: چه کسی روی چه چیزی کار می‌کند و وضعیت هرکدام چیست."
+    },
+    "workspace-workspace-cases": {
+      "title": "پرونده‌ها",
+      "description": "سجل پرونده‌ها: درخواست‌ها و شکایت‌های باز و مرحلهٔ پیشرفت هرکدام."
+    },
+    "workspace-workspace-knowledge": {
+      "title": "دانش",
+      "description": "در پایگاه دانش منتشرشده جست‌وجو کنید و منبع هر نتیجه را ببینید."
+    },
+    "workspace-workspace-operations": {
+      "title": "عملیات",
+      "description": "وضعیت همگام‌سازی: اتصال به ابر، رویدادهای در صف و آخرین نتیجه."
+    },
+    "workspace-workspace-operations-jobs": {
+      "title": "کارها",
+      "description": "کارهای زمان‌بندی‌شده و وضعیت کنونی هرکدام."
+    },
+    "workspace-workspace-overview": {
+      "title": "نمای کلی",
+      "description": "سازمان‌هایی که در آن‌ها عضو هستید و نقش شما در هرکدام."
+    },
+    "workspace-workspace-reports": {
+      "title": "گزارش‌ها",
+      "description": "گزارش‌های دوره‌ای: چه چیزی تهیه شد و چه چیزی نیاز به بازبینی دارد."
+    },
+    "workspace-workspace-settings-access": {
+      "title": "دسترسی و نقش‌ها",
+      "description": "چه کسی به فضای کار دسترسی دارد و با چه سطحی از مجوز."
+    },
+    "workspace-workspace-settings-notifications": {
+      "title": "ترجیحات اعلان",
+      "description": "کانال‌هایی را انتخاب کنید که می‌خواهید اعلان دریافت کنید."
+    },
+    "workspace-workspace-targets": {
+      "title": "اهداف",
+      "description": "اهداف اعلام‌شده: اعد هدف و میزان پیشرفت به سوی آن‌ها."
+    },
+    "workspace-workspace-team": {
+      "title": "تیم",
+      "description": "اعضای تیم و عضویت هرکدام در سازمان‌ها."
+    },
+    "admin-admin": {
+      "title": "مدیریت",
+      "description": "داشبورد مدیریت پلتفرم: وضعیت کلی، نگهداری و هشدارها."
+    },
+    "admin-admin-design-tokens": {
+      "title": "توکن‌های طراحی",
+      "description": "مقادیر طراحی مشترکی که رابط کاربری بر پایهٔ آن‌ها ساخته می‌شود."
+    },
+    "admin-admin-feature-flags": {
+      "title": "پرچم‌های ویژگی",
+      "description": "در این محیط چه چیزی روشن و چه چیزی خاموش است."
+    },
+    "admin-admin-jobs": {
+      "title": "کارهای زمان‌بندی‌شده",
+      "description": "کارهای زمان‌بندی‌شده و وضعیت آخرین اجرای هرکدام."
+    },
+    "admin-admin-localization-translations": {
+      "title": "زبان‌های موجود",
+      "description": "زبان‌هایی که محتوای پلتفرم به آن‌ها ترجمه شده است."
+    },
+    "admin-admin-security": {
+      "title": "امنیت",
+      "description": "نمای کلی از ورودها، اتصال‌ها و ریسک‌ها."
+    },
+    "admin-admin-users": {
+      "title": "کاربران",
+      "description": "حساب‌های کاربری و وضعیت آن‌ها."
+    },
+    "public-trust-audits": {
+      "title": "ممیزی امنیتی",
+      "description": "رد ممیزی امنیتی: چه کسی چه کاری را چه زمانی انجام داد."
+    },
+    "public-trust-carbon-registry": {
+      "title": "ثبت کربن",
+      "description": "معیارهای در دسترس برای رجیستری‌های کربن."
+    },
+    "public-trust-disclosure": {
+      "title": "افشاگری",
+      "description": "برای پرسیدن پرسش یا گزارش مشکل با ما تماس بگیرید."
+    },
+    "public-trust-provenance": {
+      "title": "منشأ داده",
+      "description": "هر داده از کجا آمده، همراه با زنجیرهٔ شواهد."
+    },
+    "public-trust-report": {
+      "title": "گزارش",
+      "description": "ارقام منتشرشده: درخواست‌ها، مساحت دریافت‌شده و پوشش."
     }
   },
   "pages": {

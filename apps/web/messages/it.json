@@ -2525,6 +2525,310 @@
     "marketplace-market-orders-order-transitions": {
       "title": "Transizioni consentite",
       "description": "Gli stati successivi che la macchina a stati dell'ordine consente per questo ordine."
+    },
+    "hydroma-hydroma-tools-aquacrop-runner": {
+      "title": "AquaCrop esecutore",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-carbon-calculator": {
+      "title": "calcolatrice carbonio",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-climate-adaptive-phenology": {
+      "title": "fenologia clima",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-crop-scenarios": {
+      "title": "coltura",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-crop-water-requirement": {
+      "title": "acqua coltura",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-decision-support": {
+      "title": "supporto decisione",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-dynamic-stress-engine": {
+      "title": "dinamico motore",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-et0-calculator": {
+      "title": "ET0 calcolatrice",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-gaussian-process-surrogate": {
+      "title": "surrogato gaussiano",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-groundwater-model": {
+      "title": "acqua sotterranea modello",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-groundwater-service": {
+      "title": "acqua sotterranea servizio",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-hecras-simulation": {
+      "title": "HEC-RAS simulazione",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-hydrology-fallback": {
+      "title": "fallback idrologia",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-hydrology-fast": {
+      "title": "veloce idrologia",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-hydroma-core": {
+      "title": "HyDroMa nucleo",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-indices-fallback": {
+      "title": "fallback indice",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-indices-fast": {
+      "title": "veloce indice",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-irrigation-scheduler": {
+      "title": "pianificatore irrigazione",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-modflow6": {
+      "title": "MODFLOW 6 modello",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-monte-carlo-scenarios": {
+      "title": "Monte Carlo",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-mrv-iot-ingest": {
+      "title": "ingest MRV",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-mrv-metrics": {
+      "title": "metriche MRV",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-mrv-nojin": {
+      "title": "nojin MRV",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-mrv-quality-assurance": {
+      "title": "qualità MRV",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-multi-stress-engine": {
+      "title": "multi motore",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-ndvi-analysis": {
+      "title": "NDVI analisi",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-optimization-optimizer": {
+      "title": "ottimizzatore",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-physics-informed-network": {
+      "title": "informato fisica",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-rothc-runner": {
+      "title": "RothC esecutore",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-scenario-manager": {
+      "title": "gestore scenario",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-seed-optimization": {
+      "title": "ottimizzazione seme",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-soil-chemistry": {
+      "title": "chimica suolo",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-soil-degradation-model": {
+      "title": "degrado suolo modello",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-soil-health": {
+      "title": "salute suolo",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-soil-pedotransfer": {
+      "title": "pedotransfer suolo",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-soil-physics": {
+      "title": "fisica suolo",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-soil-physics-fallback": {
+      "title": "fisica suolo servizio",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-soil-physics-fast": {
+      "title": "fisica suolo",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-soil-recommendations": {
+      "title": "raccomandazioni suolo",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-soil-salinity": {
+      "title": "salinita suolo",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-soil-taxonomy": {
+      "title": "tassonomia suolo",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-soil-texture": {
+      "title": "tessitura suolo",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-soil-water-retention": {
+      "title": "ritenzione suolo",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-topographic-calculations": {
+      "title": "calcolatrice topografia",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-uncertainty-knowledge": {
+      "title": "conoscenza incertezza",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-water-quality": {
+      "title": "qualità acqua",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-watershed-calculator": {
+      "title": "calcolatrice bacino",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-weap-simulation": {
+      "title": "WEAP simulazione",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-swat-plus": {
+      "title": "SWAT+ simulazione",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-swat-runner": {
+      "title": "SWAT esecutore",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "hydroma-hydroma-tools-what-if-engine": {
+      "title": "what-if scenario motore",
+      "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+    },
+    "workspace-workspace": {
+      "title": "Spazio di lavoro",
+      "description": "Pannello dello spazio di lavoro: attività assegnate, stato del sistema e operazioni quotidiane."
+    },
+    "workspace-workspace-approvals": {
+      "title": "Approvazioni",
+      "description": "Approvazioni in sospeso: richieste che attendono la tua decisione prima di proseguire."
+    },
+    "workspace-workspace-assignments": {
+      "title": "Assegnazioni",
+      "description": "Assegnazioni di lavoro correnti: chi sta lavorando su cosa e lo stato di ciascuna."
+    },
+    "workspace-workspace-cases": {
+      "title": "Casi",
+      "description": "Registro dei casi: richieste e reclami aperti, con lo stato di ciascuno."
+    },
+    "workspace-workspace-knowledge": {
+      "title": "Conoscenza",
+      "description": "Cerca nella base di conoscenza pubblicata e vedi la fonte di ogni risultato."
+    },
+    "workspace-workspace-operations": {
+      "title": "Operazioni",
+      "description": "Stato della sincronizzazione: connessione al cloud, eventi in coda e ultimo risultato."
+    },
+    "workspace-workspace-operations-jobs": {
+      "title": "Job",
+      "description": "Job pianificati e stato attuale di ciascuno."
+    },
+    "workspace-workspace-overview": {
+      "title": "Panoramica",
+      "description": "Le organizzazioni a cui appartieni e il tuo ruolo in ciascuna."
+    },
+    "workspace-workspace-reports": {
+      "title": "Rapporti",
+      "description": "Rapporti periodici: cosa è stato prodotto e cosa resta da rivedere."
+    },
+    "workspace-workspace-settings-access": {
+      "title": "Accessi e ruoli",
+      "description": "Chi può entrare nello spazio di lavoro e con quale permesso."
+    },
+    "workspace-workspace-settings-notifications": {
+      "title": "Preferenze di notifica",
+      "description": "Scegli i canali su cui vuoi ricevere notifiche."
+    },
+    "workspace-workspace-targets": {
+      "title": "Obiettivi",
+      "description": "Obiettivi annunciati: i numeri da raggiungere e i progressi verso di essi."
+    },
+    "workspace-workspace-team": {
+      "title": "Team",
+      "description": "I membri del team e la loro appartenenza a ciascuna organizzazione."
+    },
+    "admin-admin": {
+      "title": "Amministrazione",
+      "description": "Pannello di amministrazione della piattaforma: stato generale, manutenzione e avvisi."
+    },
+    "admin-admin-design-tokens": {
+      "title": "Token di design",
+      "description": "I valori di progetto condivisi da cui è costruita l’interfaccia."
+    },
+    "admin-admin-feature-flags": {
+      "title": "Feature flag",
+      "description": "Che cosa è attivo e che cosa è spento in questo ambiente."
+    },
+    "admin-admin-jobs": {
+      "title": "Job pianificati",
+      "description": "I job pianificati e lo stato dell’ultima esecuzione di ciascuno."
+    },
+    "admin-admin-localization-translations": {
+      "title": "Lingue disponibili",
+      "description": "Le lingue in cui è tradotto il contenuto della piattaforma."
+    },
+    "admin-admin-security": {
+      "title": "Sicurezza",
+      "description": "Una panoramica di accessi, connessioni e rischi."
+    },
+    "admin-admin-users": {
+      "title": "Utenti",
+      "description": "Gli account utente e il loro stato."
+    },
+    "public-trust-audits": {
+      "title": "Audit di sicurezza",
+      "description": "La traccia di audit di sicurezza: chi ha fatto cosa, e quando."
+    },
+    "public-trust-carbon-registry": {
+      "title": "Registro del carbonio",
+      "description": "Gli standard disponibili per i registri del carbonio."
+    },
+    "public-trust-disclosure": {
+      "title": "Segnalazione",
+      "description": "Contattaci per fare una domanda o segnalare un problema."
+    },
+    "public-trust-provenance": {
+      "title": "Provenienza",
+      "description": "Da dove proviene ogni dato, con la catena delle prove."
+    },
+    "public-trust-report": {
+      "title": "Rapporto",
+      "description": "I numeri pubblicati: domande, superfici ricevute e copertura."
     }
   },
   "pages": {

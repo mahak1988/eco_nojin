@@ -1,0 +1,2914 @@
+{
+  "ar": {
+    "pageMeta": {
+      "hydroma-hydroma-tools-aquacrop-runner": {
+        "title": "AquaCrop مشغّل",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-carbon-calculator": {
+        "title": "حاسبة كربون",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-climate-adaptive-phenology": {
+        "title": "فن زیست‌شناسی مناخ",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-crop-scenarios": {
+        "title": "محصول",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-crop-water-requirement": {
+        "title": "ماء محصول",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-decision-support": {
+        "title": "دعم قرار",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-dynamic-stress-engine": {
+        "title": "پویا موتور",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-et0-calculator": {
+        "title": "ET0 حاسبة",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-gaussian-process-surrogate": {
+        "title": "جانشین گاوسی",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-groundwater-model": {
+        "title": "مياه جوفية مدل",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-groundwater-service": {
+        "title": "مياه جوفية سرویس",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-hecras-simulation": {
+        "title": "HEC-RAS شبیه‌سازی",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-hydrology-fallback": {
+        "title": "پشتیبان هيدرولوجيا",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-hydrology-fast": {
+        "title": "سریع هيدرولوجيا",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-hydroma-core": {
+        "title": "HyDroMa هسته",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-indices-fallback": {
+        "title": "پشتیبان مؤشر",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-indices-fast": {
+        "title": "سریع مؤشر",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-irrigation-scheduler": {
+        "title": "زمان‌بند irrigation",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-modflow6": {
+        "title": "MODFLOW 6 مدل",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-monte-carlo-scenarios": {
+        "title": "مونت كارلو",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-mrv-iot-ingest": {
+        "title": "ورود MRV",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-mrv-metrics": {
+        "title": "سنجه‌ها MRV",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-mrv-nojin": {
+        "title": "nojin MRV",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-mrv-quality-assurance": {
+        "title": "کیفیت MRV",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-multi-stress-engine": {
+        "title": "چندگانه موتور",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-ndvi-analysis": {
+        "title": "NDVI تحلیل",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-optimization-optimizer": {
+        "title": "بهینه‌ساز",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-physics-informed-network": {
+        "title": "آگاهانه فيزياء",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-rothc-runner": {
+        "title": "RothC مشغّل",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-scenario-manager": {
+        "title": "مدیر سيناريو",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-seed-optimization": {
+        "title": "بهینه‌سازی بذرة",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-soil-chemistry": {
+        "title": "كيمياء تربة",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-soil-degradation-model": {
+        "title": "تدهور تربة مدل",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-soil-health": {
+        "title": "صحة تربة",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-soil-pedotransfer": {
+        "title": "انتقال خاکی تربة",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-soil-physics": {
+        "title": "فيزياء تربة",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-soil-physics-fallback": {
+        "title": "فيزياء تربة سرویس",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-soil-physics-fast": {
+        "title": "فيزياء تربة",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-soil-recommendations": {
+        "title": "توصيات تربة",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-soil-salinity": {
+        "title": "ملوحة تربة",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-soil-taxonomy": {
+        "title": "تصنيف تربة",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-soil-texture": {
+        "title": "قوام تربة",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-soil-water-retention": {
+        "title": "نگهداشت تربة",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-topographic-calculations": {
+        "title": "حاسبة topography",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-uncertainty-knowledge": {
+        "title": "دانش عدم قطعیت",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-water-quality": {
+        "title": "کیفیت ماء",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-watershed-calculator": {
+        "title": "حاسبة مستجمعات",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-weap-simulation": {
+        "title": "WEAP شبیه‌سازی",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-swat-plus": {
+        "title": "SWAT+ شبیه‌سازی",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-swat-runner": {
+        "title": "SWAT مشغّل",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      },
+      "hydroma-hydroma-tools-what-if-engine": {
+        "title": "چه‌اگر سيناريو موتور",
+        "description": "سجل الأداة كما تنشره سجلات HyDroMa: المجال والفئة والدقة والمرحلة والمعلمات التي يعلنها المحرك."
+      }
+    }
+  },
+  "bn": {
+    "pageMeta": {
+      "hydroma-hydroma-tools-aquacrop-runner": {
+        "title": "AquaCrop চালক",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-carbon-calculator": {
+        "title": "গণনাকারী কার্বন",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-climate-adaptive-phenology": {
+        "title": "ফিনোলজি জলবায়ু",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-crop-scenarios": {
+        "title": "ফসল",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-crop-water-requirement": {
+        "title": "পানি ফসল",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-decision-support": {
+        "title": "সহায়তা সিদ্ধান্ত",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-dynamic-stress-engine": {
+        "title": "গতিশীল ইঞ্জিন",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-et0-calculator": {
+        "title": "ET0 গণনাকারী",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-gaussian-process-surrogate": {
+        "title": "প্রতিস্থাপক গাউসীয়",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-groundwater-model": {
+        "title": "ভূগর্ভস্থ পানি মডেল",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-groundwater-service": {
+        "title": "ভূগর্ভস্থ পানি সেবা",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-hecras-simulation": {
+        "title": "HEC-RAS সিমুলেশন",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-hydrology-fallback": {
+        "title": "ফলব্যাক জলবিজ্ঞান",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-hydrology-fast": {
+        "title": "দ্রুত জলবিজ্ঞান",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-hydroma-core": {
+        "title": "HyDroMa কেন্দ্র",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-indices-fallback": {
+        "title": "ফলব্যাক সূচক",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-indices-fast": {
+        "title": "দ্রুত সূচক",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-irrigation-scheduler": {
+        "title": "শিডিউলার সেচ",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-modflow6": {
+        "title": "MODFLOW 6 মডেল",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-monte-carlo-scenarios": {
+        "title": "মন্টে কার্লো",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-mrv-iot-ingest": {
+        "title": "গ্রহণ এমআরভি",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-mrv-metrics": {
+        "title": "মেট্রিক্স এমআরভি",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-mrv-nojin": {
+        "title": "nojin এমআরভি",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-mrv-quality-assurance": {
+        "title": "মান এমআরভি",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-multi-stress-engine": {
+        "title": "বহু ইঞ্জিন",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-ndvi-analysis": {
+        "title": "NDVI বিশ্লেষণ",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-optimization-optimizer": {
+        "title": "অনুকূলকারী",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-physics-informed-network": {
+        "title": "তথ্যভিত্তিক পদার্থবিজ্ঞান",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-rothc-runner": {
+        "title": "RothC চালক",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-scenario-manager": {
+        "title": "ম্যানেজার পরিস্থিতি",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-seed-optimization": {
+        "title": "অনুকূলীকরণ বীজ",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-soil-chemistry": {
+        "title": "রসায়ন মাটি",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-soil-degradation-model": {
+        "title": "অবনতি মাটি মডেল",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-soil-health": {
+        "title": "স্বাস্থ্য মাটি",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-soil-pedotransfer": {
+        "title": "পেডোট্রান্সফার মাটি",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-soil-physics": {
+        "title": "পদার্থবিজ্ঞান মাটি",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-soil-physics-fallback": {
+        "title": "পদার্থবিজ্ঞান মাটি সেবা",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-soil-physics-fast": {
+        "title": "পদার্থবিজ্ঞান মাটি",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-soil-recommendations": {
+        "title": "পরামর্শ মাটি",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-soil-salinity": {
+        "title": "লবণাক্ততা মাটি",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-soil-taxonomy": {
+        "title": "শ্রেণিবিন্যাস মাটি",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-soil-texture": {
+        "title": "গঠন মাটি",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-soil-water-retention": {
+        "title": "সংরক্ষণ মাটি",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-topographic-calculations": {
+        "title": "গণনাকারী ভূ-প্রকৃতি",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-uncertainty-knowledge": {
+        "title": "জ্ঞান অনিশ্চয়তা",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-water-quality": {
+        "title": "মান পানি",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-watershed-calculator": {
+        "title": "গণনাকারী বাসিন্দা অঞ্চল",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-weap-simulation": {
+        "title": "WEAP সিমুলেশন",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-swat-plus": {
+        "title": "SWAT+ সিমুলেশন",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-swat-runner": {
+        "title": "SWAT চালক",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      },
+      "hydroma-hydroma-tools-what-if-engine": {
+        "title": "যদি পরিস্থিতি ইঞ্জিন",
+        "description": "টুল রেজিস্ট্রির প্রকাশিত টুল রেকর্ড: ডোমেইন, বিভাগ, নিভুততা, পর্ব এবং ইঞ্জিন ঘোষণা করা প্যারামিটার।"
+      }
+    }
+  },
+  "de": {
+    "pageMeta": {
+      "hydroma-hydroma-tools-aquacrop-runner": {
+        "title": "AquaCrop Runner",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-carbon-calculator": {
+        "title": "Rechner Kohlenstoff",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-climate-adaptive-phenology": {
+        "title": "Phénologie Klima",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-crop-scenarios": {
+        "title": "Kulturpflanze",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-crop-water-requirement": {
+        "title": "Wasser Kulturpflanze",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-decision-support": {
+        "title": "Unterstützung Entscheidung",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-dynamic-stress-engine": {
+        "title": "dynamisch Motor",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-et0-calculator": {
+        "title": "ET0 Rechner",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-gaussian-process-surrogate": {
+        "title": "Ersatzmodell Gauß",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-groundwater-model": {
+        "title": "Grundwasser Modell",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-groundwater-service": {
+        "title": "Grundwasser Dienst",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-hecras-simulation": {
+        "title": "HEC-RAS Simulation",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-hydrology-fallback": {
+        "title": "Fallback Hydrologie",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-hydrology-fast": {
+        "title": "schnell Hydrologie",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-hydroma-core": {
+        "title": "HyDroMa Kern",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-indices-fallback": {
+        "title": "Fallback Index",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-indices-fast": {
+        "title": "schnell Index",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-irrigation-scheduler": {
+        "title": "Scheduler Bewässerung",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-modflow6": {
+        "title": "MODFLOW 6 Modell",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-monte-carlo-scenarios": {
+        "title": "Monte-Carlo",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-mrv-iot-ingest": {
+        "title": "Ingest MRV",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-mrv-metrics": {
+        "title": "Metriken MRV",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-mrv-nojin": {
+        "title": "nojin MRV",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-mrv-quality-assurance": {
+        "title": "Qualität MRV",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-multi-stress-engine": {
+        "title": "Multi Motor",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-ndvi-analysis": {
+        "title": "NDVI Analyse",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-optimization-optimizer": {
+        "title": "Optimierer",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-physics-informed-network": {
+        "title": "informiert Physik",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-rothc-runner": {
+        "title": "RothC Runner",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-scenario-manager": {
+        "title": "Manager Szenario",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-seed-optimization": {
+        "title": "Optimierung Saatgut",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-soil-chemistry": {
+        "title": "Chemie Boden",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-soil-degradation-model": {
+        "title": "Degradation Boden Modell",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-soil-health": {
+        "title": "Gesundheit Boden",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-soil-pedotransfer": {
+        "title": "Pedotransfer Boden",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-soil-physics": {
+        "title": "Physik Boden",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-soil-physics-fallback": {
+        "title": "Physik Boden Dienst",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-soil-physics-fast": {
+        "title": "Physik Boden",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-soil-recommendations": {
+        "title": "Empfehlungen Boden",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-soil-salinity": {
+        "title": "Salinität Boden",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-soil-taxonomy": {
+        "title": "Taxonomie Boden",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-soil-texture": {
+        "title": "Textur Boden",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-soil-water-retention": {
+        "title": "Rückhalt Boden",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-topographic-calculations": {
+        "title": "Rechner Topografie",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-uncertainty-knowledge": {
+        "title": "Wissen Unsicherheit",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-water-quality": {
+        "title": "Qualität Wasser",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-watershed-calculator": {
+        "title": "Rechner Einzugsgebiet",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-weap-simulation": {
+        "title": "WEAP Simulation",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-swat-plus": {
+        "title": "SWAT+ Simulation",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-swat-runner": {
+        "title": "SWAT Runner",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      },
+      "hydroma-hydroma-tools-what-if-engine": {
+        "title": "Was-wäre-wenn Szenario Motor",
+        "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+      }
+    }
+  },
+  "en": {
+    "pageMeta": {
+      "hydroma-hydroma-tools-aquacrop-runner": {
+        "title": "AquaCrop runner",
+        "description": "AquaCrop runner: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-carbon-calculator": {
+        "title": "calculator carbon",
+        "description": "Calculator carbon: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-climate-adaptive-phenology": {
+        "title": "phenology climate",
+        "description": "Phenology climate: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-crop-scenarios": {
+        "title": "crop",
+        "description": "Crop: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-crop-water-requirement": {
+        "title": "water crop",
+        "description": "Water crop: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-decision-support": {
+        "title": "support decision",
+        "description": "Support decision: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-dynamic-stress-engine": {
+        "title": "dynamic engine",
+        "description": "Dynamic engine: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-et0-calculator": {
+        "title": "ET0 calculator",
+        "description": "ET0 calculator: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-gaussian-process-surrogate": {
+        "title": "surrogate Gaussian",
+        "description": "Surrogate Gaussian: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-groundwater-model": {
+        "title": "groundwater model",
+        "description": "Groundwater model: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-groundwater-service": {
+        "title": "groundwater service",
+        "description": "Groundwater service: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-hecras-simulation": {
+        "title": "HEC-RAS simulation",
+        "description": "HEC-RAS simulation: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-hydrology-fallback": {
+        "title": "fallback hydrology",
+        "description": "Fallback hydrology: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-hydrology-fast": {
+        "title": "fast hydrology",
+        "description": "Fast hydrology: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-hydroma-core": {
+        "title": "HyDroMa core",
+        "description": "HyDroMa core: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-indices-fallback": {
+        "title": "fallback index",
+        "description": "Fallback index: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-indices-fast": {
+        "title": "fast index",
+        "description": "Fast index: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-irrigation-scheduler": {
+        "title": "scheduler irrigation",
+        "description": "Scheduler irrigation: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-modflow6": {
+        "title": "MODFLOW 6 model",
+        "description": "MODFLOW 6 model: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-monte-carlo-scenarios": {
+        "title": "Monte Carlo",
+        "description": "Monte Carlo: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-mrv-iot-ingest": {
+        "title": "ingest MRV",
+        "description": "Ingest MRV: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-mrv-metrics": {
+        "title": "metrics MRV",
+        "description": "Metrics MRV: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-mrv-nojin": {
+        "title": "nojin MRV",
+        "description": "Nojin MRV: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-mrv-quality-assurance": {
+        "title": "quality MRV",
+        "description": "Quality MRV: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-multi-stress-engine": {
+        "title": "multi engine",
+        "description": "Multi engine: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-ndvi-analysis": {
+        "title": "NDVI analysis",
+        "description": "NDVI analysis: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-optimization-optimizer": {
+        "title": "optimizer",
+        "description": "Optimizer: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-physics-informed-network": {
+        "title": "informed physics",
+        "description": "Informed physics: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-rothc-runner": {
+        "title": "RothC runner",
+        "description": "RothC runner: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-scenario-manager": {
+        "title": "manager scenario",
+        "description": "Manager scenario: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-seed-optimization": {
+        "title": "optimization seed",
+        "description": "Optimization seed: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-soil-chemistry": {
+        "title": "chemistry soil",
+        "description": "Chemistry soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-soil-degradation-model": {
+        "title": "degradation soil model",
+        "description": "Degradation soil model: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-soil-health": {
+        "title": "health soil",
+        "description": "Health soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-soil-pedotransfer": {
+        "title": "pedotransfer soil",
+        "description": "Pedotransfer soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-soil-physics": {
+        "title": "physics soil",
+        "description": "Physics soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-soil-physics-fallback": {
+        "title": "physics soil service",
+        "description": "Physics soil service: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-soil-physics-fast": {
+        "title": "physics soil",
+        "description": "Physics soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-soil-recommendations": {
+        "title": "recommendations soil",
+        "description": "Recommendations soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-soil-salinity": {
+        "title": "salinity soil",
+        "description": "Salinity soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-soil-taxonomy": {
+        "title": "taxonomy soil",
+        "description": "Taxonomy soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-soil-texture": {
+        "title": "texture soil",
+        "description": "Texture soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-soil-water-retention": {
+        "title": "retention soil",
+        "description": "Retention soil: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-topographic-calculations": {
+        "title": "calculator topography",
+        "description": "Calculator topography: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-uncertainty-knowledge": {
+        "title": "knowledge uncertainty",
+        "description": "Knowledge uncertainty: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-water-quality": {
+        "title": "quality water",
+        "description": "Quality water: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-watershed-calculator": {
+        "title": "calculator watershed",
+        "description": "Calculator watershed: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-weap-simulation": {
+        "title": "WEAP simulation",
+        "description": "WEAP simulation: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-swat-plus": {
+        "title": "SWAT+ simulation",
+        "description": "SWAT+ simulation: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-swat-runner": {
+        "title": "SWAT runner",
+        "description": "SWAT runner: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      },
+      "hydroma-hydroma-tools-what-if-engine": {
+        "title": "what-if scenario engine",
+        "description": "What-if scenario engine: the HyDroMa tool registry record for this tool, with the domain, category, fidelity and phase it declares."
+      }
+    }
+  },
+  "es": {
+    "pageMeta": {
+      "hydroma-hydroma-tools-aquacrop-runner": {
+        "title": "AquaCrop ejecutor",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-carbon-calculator": {
+        "title": "calculadora carbono",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-climate-adaptive-phenology": {
+        "title": "fenología clima",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-crop-scenarios": {
+        "title": "cultivo",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-crop-water-requirement": {
+        "title": "agua cultivo",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-decision-support": {
+        "title": "apoyo decisión",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-dynamic-stress-engine": {
+        "title": "dinámico motor",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-et0-calculator": {
+        "title": "ET0 calculadora",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-gaussian-process-surrogate": {
+        "title": "sustituto gaussiano",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-groundwater-model": {
+        "title": "agua subterránea modelo",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-groundwater-service": {
+        "title": "agua subterránea servicio",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-hecras-simulation": {
+        "title": "HEC-RAS simulación",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-hydrology-fallback": {
+        "title": "respaldo hidrología",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-hydrology-fast": {
+        "title": "rápido hidrología",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-hydroma-core": {
+        "title": "HyDroMa núcleo",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-indices-fallback": {
+        "title": "respaldo índice",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-indices-fast": {
+        "title": "rápido índice",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-irrigation-scheduler": {
+        "title": "planificador riego",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-modflow6": {
+        "title": "MODFLOW 6 modelo",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-monte-carlo-scenarios": {
+        "title": "Monte Carlo",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-mrv-iot-ingest": {
+        "title": "ingesta MRV",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-mrv-metrics": {
+        "title": "métricas MRV",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-mrv-nojin": {
+        "title": "nojin MRV",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-mrv-quality-assurance": {
+        "title": "calidad MRV",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-multi-stress-engine": {
+        "title": "múltiple motor",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-ndvi-analysis": {
+        "title": "NDVI análisis",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-optimization-optimizer": {
+        "title": "optimizador",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-physics-informed-network": {
+        "title": "informado física",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-rothc-runner": {
+        "title": "RothC ejecutor",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-scenario-manager": {
+        "title": "gestor escenario",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-seed-optimization": {
+        "title": "optimización semilla",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-soil-chemistry": {
+        "title": "química suelo",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-soil-degradation-model": {
+        "title": "degradación suelo modelo",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-soil-health": {
+        "title": "salud suelo",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-soil-pedotransfer": {
+        "title": "pedotransferencia suelo",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-soil-physics": {
+        "title": "física suelo",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-soil-physics-fallback": {
+        "title": "física suelo servicio",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-soil-physics-fast": {
+        "title": "física suelo",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-soil-recommendations": {
+        "title": "recomendaciones suelo",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-soil-salinity": {
+        "title": "salinidad suelo",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-soil-taxonomy": {
+        "title": "taxonomía suelo",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-soil-texture": {
+        "title": "textura suelo",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-soil-water-retention": {
+        "title": "retención suelo",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-topographic-calculations": {
+        "title": "calculadora topografía",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-uncertainty-knowledge": {
+        "title": "conocimiento incertidumbre",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-water-quality": {
+        "title": "calidad agua",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-watershed-calculator": {
+        "title": "calculadora cuenca",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-weap-simulation": {
+        "title": "WEAP simulación",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-swat-plus": {
+        "title": "SWAT+ simulación",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-swat-runner": {
+        "title": "SWAT ejecutor",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      },
+      "hydroma-hydroma-tools-what-if-engine": {
+        "title": "qué-si escenario motor",
+        "description": "El registro que publica el registro de herramientas de HyDroMa: dominio, categoría, fidelidad, fase y los parámetros que declara el motor."
+      }
+    }
+  },
+  "fa": {
+    "pageMeta": {
+      "hydroma-hydroma-tools-aquacrop-runner": {
+        "title": "AquaCrop اجراگر",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-carbon-calculator": {
+        "title": "ماشین‌حساب کربن",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-climate-adaptive-phenology": {
+        "title": "فن‌زیست‌شناسی اقلیم",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-crop-scenarios": {
+        "title": "محصول",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-crop-water-requirement": {
+        "title": "آب محصول",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-decision-support": {
+        "title": "پشتیبانی تصمیم",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-dynamic-stress-engine": {
+        "title": "پویا موتور",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-et0-calculator": {
+        "title": "ET0 ماشین‌حساب",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-gaussian-process-surrogate": {
+        "title": "جانشین گاوسی",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-groundwater-model": {
+        "title": "آب زیرزمینی مدل",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-groundwater-service": {
+        "title": "آب زیرزمینی سرویس",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-hecras-simulation": {
+        "title": "HEC-RAS شبیه‌سازی",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-hydrology-fallback": {
+        "title": "پشتیبان هیدرولوژی",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-hydrology-fast": {
+        "title": "سریع هیدرولوژی",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-hydroma-core": {
+        "title": "HyDroMa هسته",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-indices-fallback": {
+        "title": "پشتیبان شاخص",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-indices-fast": {
+        "title": "سریع شاخص",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-irrigation-scheduler": {
+        "title": "زمان‌بند آبیاری",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-modflow6": {
+        "title": "MODFLOW 6 مدل",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-monte-carlo-scenarios": {
+        "title": "مونت کارلو",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-mrv-iot-ingest": {
+        "title": "ورود MRV",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-mrv-metrics": {
+        "title": "سنجه‌ها MRV",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-mrv-nojin": {
+        "title": "nojin MRV",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-mrv-quality-assurance": {
+        "title": "کیفیت MRV",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-multi-stress-engine": {
+        "title": "چندگانه موتور",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-ndvi-analysis": {
+        "title": "NDVI تحلیل",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-optimization-optimizer": {
+        "title": "بهینه‌ساز",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-physics-informed-network": {
+        "title": "آگاه فیزیک",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-rothc-runner": {
+        "title": "RothC اجراگر",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-scenario-manager": {
+        "title": "مدیریت سناریو",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-seed-optimization": {
+        "title": "بهینه‌سازی بذر",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-soil-chemistry": {
+        "title": "شیمی خاک",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-soil-degradation-model": {
+        "title": "تخریب خاک مدل",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-soil-health": {
+        "title": "سلامت خاک",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-soil-pedotransfer": {
+        "title": "پدوترانسفر خاک",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-soil-physics": {
+        "title": "فیزیک خاک",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-soil-physics-fallback": {
+        "title": "فیزیک خاک سرویس",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-soil-physics-fast": {
+        "title": "فیزیک خاک",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-soil-recommendations": {
+        "title": "توصیه‌ها خاک",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-soil-salinity": {
+        "title": "شوری خاک",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-soil-taxonomy": {
+        "title": "طبقه‌بندی خاک",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-soil-texture": {
+        "title": "بافت خاک",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-soil-water-retention": {
+        "title": "نگهداری خاک",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-topographic-calculations": {
+        "title": "ماشین‌حساب توپوگرافی",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-uncertainty-knowledge": {
+        "title": "دانش عدم‌قطعیت",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-water-quality": {
+        "title": "کیفیت آب",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-watershed-calculator": {
+        "title": "ماشین‌حساب آبشار",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-weap-simulation": {
+        "title": "WEAP شبیه‌سازی",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-swat-plus": {
+        "title": "SWAT+ شبیه‌سازی",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-swat-runner": {
+        "title": "SWAT اجراگر",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      },
+      "hydroma-hydroma-tools-what-if-engine": {
+        "title": "چه‌اگر سناریو موتور",
+        "description": "رکوردی که رجیستری ابزارهای HyDroMa منتشر می‌کند: دامنه، دسته، دقت، مرحله و پارامترهایی که موتور اعلام می‌کند."
+      }
+    }
+  },
+  "fr": {
+    "pageMeta": {
+      "hydroma-hydroma-tools-aquacrop-runner": {
+        "title": "AquaCrop exécuteur",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-carbon-calculator": {
+        "title": "calculatrice carbone",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-climate-adaptive-phenology": {
+        "title": "phénologie climat",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-crop-scenarios": {
+        "title": "culture",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-crop-water-requirement": {
+        "title": "eau culture",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-decision-support": {
+        "title": "soutien décision",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-dynamic-stress-engine": {
+        "title": "dynamique moteur",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-et0-calculator": {
+        "title": "ET0 calculatrice",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-gaussian-process-surrogate": {
+        "title": "substitut gaussien",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-groundwater-model": {
+        "title": "nappe phréatique modèle",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-groundwater-service": {
+        "title": "nappe phréatique service",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-hecras-simulation": {
+        "title": "HEC-RAS simulation",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-hydrology-fallback": {
+        "title": "repli hydrologie",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-hydrology-fast": {
+        "title": "rapide hydrologie",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-hydroma-core": {
+        "title": "HyDroMa noyau",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-indices-fallback": {
+        "title": "repli indice",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-indices-fast": {
+        "title": "rapide indice",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-irrigation-scheduler": {
+        "title": "planificateur irrigation",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-modflow6": {
+        "title": "MODFLOW 6 modèle",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-monte-carlo-scenarios": {
+        "title": "Monte-Carlo",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-mrv-iot-ingest": {
+        "title": "ingestion MRV",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-mrv-metrics": {
+        "title": "métriques MRV",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-mrv-nojin": {
+        "title": "nojin MRV",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-mrv-quality-assurance": {
+        "title": "qualité MRV",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-multi-stress-engine": {
+        "title": "multi moteur",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-ndvi-analysis": {
+        "title": "NDVI analyse",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-optimization-optimizer": {
+        "title": "optimiseur",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-physics-informed-network": {
+        "title": "informé physique",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-rothc-runner": {
+        "title": "RothC exécuteur",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-scenario-manager": {
+        "title": "gestion scénario",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-seed-optimization": {
+        "title": "optimisation graine",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-soil-chemistry": {
+        "title": "chimie sol",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-soil-degradation-model": {
+        "title": "dégradation sol modèle",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-soil-health": {
+        "title": "santé sol",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-soil-pedotransfer": {
+        "title": "pédotransfert sol",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-soil-physics": {
+        "title": "physique sol",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-soil-physics-fallback": {
+        "title": "physique sol service",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-soil-physics-fast": {
+        "title": "physique sol",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-soil-recommendations": {
+        "title": "recommandations sol",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-soil-salinity": {
+        "title": "salinité sol",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-soil-taxonomy": {
+        "title": "taxonomie sol",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-soil-texture": {
+        "title": "texture sol",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-soil-water-retention": {
+        "title": "rétention sol",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-topographic-calculations": {
+        "title": "calculatrice topographie",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-uncertainty-knowledge": {
+        "title": "connaissance incertitude",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-water-quality": {
+        "title": "qualité eau",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-watershed-calculator": {
+        "title": "calculatrice bassin versant",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-weap-simulation": {
+        "title": "WEAP simulation",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-swat-plus": {
+        "title": "SWAT+ simulation",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-swat-runner": {
+        "title": "SWAT exécuteur",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      },
+      "hydroma-hydroma-tools-what-if-engine": {
+        "title": "what-if scénario moteur",
+        "description": "La fiche publiée par le registre des outils HyDroMa : domaine, catégorie, fidélité, phase et les paramètres déclarés par le moteur."
+      }
+    }
+  },
+  "hi": {
+    "pageMeta": {
+      "hydroma-hydroma-tools-aquacrop-runner": {
+        "title": "AquaCrop रनर",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-carbon-calculator": {
+        "title": "कैलकुलेटर कार्बन",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-climate-adaptive-phenology": {
+        "title": "फीनोलॉजी जलवायु",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-crop-scenarios": {
+        "title": "फसल",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-crop-water-requirement": {
+        "title": "पानी फसल",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-decision-support": {
+        "title": "समर्थन निर्णय",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-dynamic-stress-engine": {
+        "title": "गतिशील इंजन",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-et0-calculator": {
+        "title": "ET0 कैलकुलेटर",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-gaussian-process-surrogate": {
+        "title": "प्रतिस्थापक गॉसियन",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-groundwater-model": {
+        "title": "भूजल मॉडल",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-groundwater-service": {
+        "title": "भूजल सेवा",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-hecras-simulation": {
+        "title": "HEC-RAS सिमुलेशन",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-hydrology-fallback": {
+        "title": "फ़ॉलबैक जलविज्ञान",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-hydrology-fast": {
+        "title": "तेज़ जलविज्ञान",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-hydroma-core": {
+        "title": "HyDroMa केंद्र",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-indices-fallback": {
+        "title": "फ़ॉलबैक सूचक",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-indices-fast": {
+        "title": "तेज़ सूचक",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-irrigation-scheduler": {
+        "title": "शेड्यूलर सिंचाई",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-modflow6": {
+        "title": "MODFLOW 6 मॉडल",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-monte-carlo-scenarios": {
+        "title": "मोंटे कार्लो",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-mrv-iot-ingest": {
+        "title": "इनजेस्ट एमआरवी",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-mrv-metrics": {
+        "title": "मेट्रिक्स एमआरवी",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-mrv-nojin": {
+        "title": "nojin एमआरवी",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-mrv-quality-assurance": {
+        "title": "गुणवत्ता एमआरवी",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-multi-stress-engine": {
+        "title": "बहु इंजन",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-ndvi-analysis": {
+        "title": "NDVI विश्लेषण",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-optimization-optimizer": {
+        "title": "ऑप्टिमाइज़र",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-physics-informed-network": {
+        "title": "सूचित भौतिकी",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-rothc-runner": {
+        "title": "RothC रनर",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-scenario-manager": {
+        "title": "प्रबंधक परिदृश्य",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-seed-optimization": {
+        "title": "अनुकूलन बीज",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-soil-chemistry": {
+        "title": "रसायन मिट्टी",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-soil-degradation-model": {
+        "title": "अपरदन मिट्टी मॉडल",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-soil-health": {
+        "title": "स्वास्थ्य मिट्टी",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-soil-pedotransfer": {
+        "title": "पेडोट्रांसफर मिट्टी",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-soil-physics": {
+        "title": "भौतिकी मिट्टी",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-soil-physics-fallback": {
+        "title": "भौतिकी मिट्टी सेवा",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-soil-physics-fast": {
+        "title": "भौतिकी मिट्टी",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-soil-recommendations": {
+        "title": "सिफारिशें मिट्टी",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-soil-salinity": {
+        "title": "लवणता मिट्टी",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-soil-taxonomy": {
+        "title": "वर्गीकरण मिट्टी",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-soil-texture": {
+        "title": "बनावट मिट्टी",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-soil-water-retention": {
+        "title": "प्रतिधारण मिट्टी",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-topographic-calculations": {
+        "title": "कैलकुलेटर स्थलाकृतिक",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-uncertainty-knowledge": {
+        "title": "ज्ञान अनिश्चिता",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-water-quality": {
+        "title": "गुणवत्ता पानी",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-watershed-calculator": {
+        "title": "कैलकुलेटर watershed",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-weap-simulation": {
+        "title": "WEAP सिमुलेशन",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-swat-plus": {
+        "title": "SWAT+ सिमुलेशन",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-swat-runner": {
+        "title": "SWAT रनर",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      },
+      "hydroma-hydroma-tools-what-if-engine": {
+        "title": "क्या-अगर परिदृश्य इंजन",
+        "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+      }
+    }
+  },
+  "it": {
+    "pageMeta": {
+      "hydroma-hydroma-tools-aquacrop-runner": {
+        "title": "AquaCrop esecutore",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-carbon-calculator": {
+        "title": "calcolatrice carbonio",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-climate-adaptive-phenology": {
+        "title": "fenologia clima",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-crop-scenarios": {
+        "title": "coltura",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-crop-water-requirement": {
+        "title": "acqua coltura",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-decision-support": {
+        "title": "supporto decisione",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-dynamic-stress-engine": {
+        "title": "dinamico motore",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-et0-calculator": {
+        "title": "ET0 calcolatrice",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-gaussian-process-surrogate": {
+        "title": "surrogato gaussiano",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-groundwater-model": {
+        "title": "acqua sotterranea modello",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-groundwater-service": {
+        "title": "acqua sotterranea servizio",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-hecras-simulation": {
+        "title": "HEC-RAS simulazione",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-hydrology-fallback": {
+        "title": "fallback idrologia",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-hydrology-fast": {
+        "title": "veloce idrologia",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-hydroma-core": {
+        "title": "HyDroMa nucleo",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-indices-fallback": {
+        "title": "fallback indice",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-indices-fast": {
+        "title": "veloce indice",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-irrigation-scheduler": {
+        "title": "pianificatore irrigazione",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-modflow6": {
+        "title": "MODFLOW 6 modello",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-monte-carlo-scenarios": {
+        "title": "Monte Carlo",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-mrv-iot-ingest": {
+        "title": "ingest MRV",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-mrv-metrics": {
+        "title": "metriche MRV",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-mrv-nojin": {
+        "title": "nojin MRV",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-mrv-quality-assurance": {
+        "title": "qualità MRV",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-multi-stress-engine": {
+        "title": "multi motore",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-ndvi-analysis": {
+        "title": "NDVI analisi",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-optimization-optimizer": {
+        "title": "ottimizzatore",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-physics-informed-network": {
+        "title": "informato fisica",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-rothc-runner": {
+        "title": "RothC esecutore",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-scenario-manager": {
+        "title": "gestore scenario",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-seed-optimization": {
+        "title": "ottimizzazione seme",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-soil-chemistry": {
+        "title": "chimica suolo",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-soil-degradation-model": {
+        "title": "degrado suolo modello",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-soil-health": {
+        "title": "salute suolo",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-soil-pedotransfer": {
+        "title": "pedotransfer suolo",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-soil-physics": {
+        "title": "fisica suolo",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-soil-physics-fallback": {
+        "title": "fisica suolo servizio",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-soil-physics-fast": {
+        "title": "fisica suolo",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-soil-recommendations": {
+        "title": "raccomandazioni suolo",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-soil-salinity": {
+        "title": "salinita suolo",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-soil-taxonomy": {
+        "title": "tassonomia suolo",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-soil-texture": {
+        "title": "tessitura suolo",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-soil-water-retention": {
+        "title": "ritenzione suolo",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-topographic-calculations": {
+        "title": "calcolatrice topografia",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-uncertainty-knowledge": {
+        "title": "conoscenza incertezza",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-water-quality": {
+        "title": "qualità acqua",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-watershed-calculator": {
+        "title": "calcolatrice bacino",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-weap-simulation": {
+        "title": "WEAP simulazione",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-swat-plus": {
+        "title": "SWAT+ simulazione",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-swat-runner": {
+        "title": "SWAT esecutore",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      },
+      "hydroma-hydroma-tools-what-if-engine": {
+        "title": "what-if scenario motore",
+        "description": "Il record pubblicato dal registro degli strumenti HyDroMa: dominio, categoria, fedeltà, fase e i parametri dichiarati dal motore."
+      }
+    }
+  },
+  "ms": {
+    "pageMeta": {
+      "hydroma-hydroma-tools-aquacrop-runner": {
+        "title": "AquaCrop pelari",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-carbon-calculator": {
+        "title": "kalkulator karbon",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-climate-adaptive-phenology": {
+        "title": "fenologi iklim",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-crop-scenarios": {
+        "title": "tanaman",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-crop-water-requirement": {
+        "title": "air tanaman",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-decision-support": {
+        "title": "sokongan keputusan",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-dynamic-stress-engine": {
+        "title": "dinamik enjin",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-et0-calculator": {
+        "title": "ET0 kalkulator",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-gaussian-process-surrogate": {
+        "title": "pengganti Gaussian",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-groundwater-model": {
+        "title": "air bawah tanah model",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-groundwater-service": {
+        "title": "air bawah tanah perkhidmatan",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-hecras-simulation": {
+        "title": "HEC-RAS simulasi",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-hydrology-fallback": {
+        "title": "fallback hidrologi",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-hydrology-fast": {
+        "title": "pantas hidrologi",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-hydroma-core": {
+        "title": "HyDroMa teras",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-indices-fallback": {
+        "title": "fallback indeks",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-indices-fast": {
+        "title": "pantas indeks",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-irrigation-scheduler": {
+        "title": "penjadual pengairan",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-modflow6": {
+        "title": "MODFLOW 6 model",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-monte-carlo-scenarios": {
+        "title": "Monte Carlo",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-mrv-iot-ingest": {
+        "title": "serapan MRV",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-mrv-metrics": {
+        "title": "metrik MRV",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-mrv-nojin": {
+        "title": "nojin MRV",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-mrv-quality-assurance": {
+        "title": "kualiti MRV",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-multi-stress-engine": {
+        "title": "berbilang enjin",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-ndvi-analysis": {
+        "title": "NDVI analisis",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-optimization-optimizer": {
+        "title": "pengoptimum",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-physics-informed-network": {
+        "title": "bermaklumat fizik",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-rothc-runner": {
+        "title": "RothC pelari",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-scenario-manager": {
+        "title": "pengurus senario",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-seed-optimization": {
+        "title": "pengoptimum benih",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-soil-chemistry": {
+        "title": "kimia tanah",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-soil-degradation-model": {
+        "title": "kemerosotan tanah model",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-soil-health": {
+        "title": "kualiti kesihatan tanah",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-soil-pedotransfer": {
+        "title": "pedotransfer tanah",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-soil-physics": {
+        "title": "fizik tanah",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-soil-physics-fallback": {
+        "title": "fizik tanah perkhidmatan",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-soil-physics-fast": {
+        "title": "fizik tanah",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-soil-recommendations": {
+        "title": "cadangan tanah",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-soil-salinity": {
+        "title": "kemasinan tanah",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-soil-taxonomy": {
+        "title": "taksonomi tanah",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-soil-texture": {
+        "title": "tekstur tanah",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-soil-water-retention": {
+        "title": "pengekalan tanah",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-topographic-calculations": {
+        "title": "kalkulator topografi",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-uncertainty-knowledge": {
+        "title": "pengetahuan ketidakpastian",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-water-quality": {
+        "title": "kualiti air",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-watershed-calculator": {
+        "title": "kalkulator laluan",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-weap-simulation": {
+        "title": "WEAP simulasi",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-swat-plus": {
+        "title": "SWAT+ simulasi",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-swat-runner": {
+        "title": "SWAT pelari",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      },
+      "hydroma-hydroma-tools-what-if-engine": {
+        "title": "what-if senario enjin",
+        "description": "Rekod yang diterbitkan oleh registri alatan HyDroMa: domain, kategori, kesetiaan, fasa dan parameter yang diisytiharkan oleh enjin."
+      }
+    }
+  },
+  "pt": {
+    "pageMeta": {
+      "hydroma-hydroma-tools-aquacrop-runner": {
+        "title": "AquaCrop исполнитель",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-carbon-calculator": {
+        "title": "калькулятор углерод",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-climate-adaptive-phenology": {
+        "title": "фенология климат",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-crop-scenarios": {
+        "title": "культура",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-crop-water-requirement": {
+        "title": "вода культура",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-decision-support": {
+        "title": "поддержка решение",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-dynamic-stress-engine": {
+        "title": "динамический двигатель",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-et0-calculator": {
+        "title": "ET0 калькулятор",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-gaussian-process-surrogate": {
+        "title": "суррогат гауссов",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-groundwater-model": {
+        "title": "подземные воды модель",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-groundwater-service": {
+        "title": "подземные воды сервис",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-hecras-simulation": {
+        "title": "HEC-RAS моделирование",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-hydrology-fallback": {
+        "title": "резервный гидрология",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-hydrology-fast": {
+        "title": "быстрый гидрология",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-hydroma-core": {
+        "title": "HyDroMa ядро",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-indices-fallback": {
+        "title": "резервный индекс",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-indices-fast": {
+        "title": "быстрый индекс",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-irrigation-scheduler": {
+        "title": "планировщик орошение",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-modflow6": {
+        "title": "MODFLOW 6 модель",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-monte-carlo-scenarios": {
+        "title": "Монте-Карло",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-mrv-iot-ingest": {
+        "title": "загрузка MRV",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-mrv-metrics": {
+        "title": "метрики MRV",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-mrv-nojin": {
+        "title": "nojin MRV",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-mrv-quality-assurance": {
+        "title": "качество MRV",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-multi-stress-engine": {
+        "title": "мульти двигатель",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-ndvi-analysis": {
+        "title": "NDVI анализ",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-optimization-optimizer": {
+        "title": "оптимизатор",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-physics-informed-network": {
+        "title": "информированный физика",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-rothc-runner": {
+        "title": "RothC исполнитель",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-scenario-manager": {
+        "title": "менеджер сценарий",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-seed-optimization": {
+        "title": "оптимизация семя",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-soil-chemistry": {
+        "title": "химия почва",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-soil-degradation-model": {
+        "title": "деградация почва модель",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-soil-health": {
+        "title": "здоровье почва",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-soil-pedotransfer": {
+        "title": "педотрансфер почва",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-soil-physics": {
+        "title": "физика почва",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-soil-physics-fallback": {
+        "title": "физика почва сервис",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-soil-physics-fast": {
+        "title": "физика почва",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-soil-recommendations": {
+        "title": "рекомендации почва",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-soil-salinity": {
+        "title": "засоленность почва",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-soil-taxonomy": {
+        "title": "таксономия почва",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-soil-texture": {
+        "title": "текстура почва",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-soil-water-retention": {
+        "title": "удержание почва",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-topographic-calculations": {
+        "title": "калькулятор топография",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-uncertainty-knowledge": {
+        "title": "знание неопределённость",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-water-quality": {
+        "title": "качество вода",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-watershed-calculator": {
+        "title": "калькулятор водосбор",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-weap-simulation": {
+        "title": "WEAP моделирование",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-swat-plus": {
+        "title": "SWAT+ моделирование",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-swat-runner": {
+        "title": "SWAT исполнитель",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      },
+      "hydroma-hydroma-tools-what-if-engine": {
+        "title": "что-если сценарий двигатель",
+        "description": "O registo que o registo de ferramentas da HyDroMa publica: domínio, categoria, fidelidade, fase e os parâmetros declarados pelo motor."
+      }
+    }
+  },
+  "ru": {
+    "pageMeta": {
+      "hydroma-hydroma-tools-aquacrop-runner": {
+        "title": "AquaCrop رَنر",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-carbon-calculator": {
+        "title": "کیلکولیٹر کاربن",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-climate-adaptive-phenology": {
+        "title": "فینولوژی آب و ہوا",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-crop-scenarios": {
+        "title": "فصل",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-crop-water-requirement": {
+        "title": "پانی فصل",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-decision-support": {
+        "title": "معاونت فیصلہ",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-dynamic-stress-engine": {
+        "title": "ڈائنامک انجن",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-et0-calculator": {
+        "title": "ET0 کیلکولیٹر",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-gaussian-process-surrogate": {
+        "title": "متبادل گاؤسی",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-groundwater-model": {
+        "title": "زیر زمین پانی ماڈل",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-groundwater-service": {
+        "title": "زیر زمین پانی سروس",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-hecras-simulation": {
+        "title": "HEC-RAS سمولیشن",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-hydrology-fallback": {
+        "title": "فالبیک ہائیڈرولوگی",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-hydrology-fast": {
+        "title": "تیز ہائیڈرولوگی",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-hydroma-core": {
+        "title": "HyDroMa مرکز",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-indices-fallback": {
+        "title": "فالبیک انڈیکس",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-indices-fast": {
+        "title": "تیز انڈیکس",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-irrigation-scheduler": {
+        "title": "شیڈولر آبپاشی",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-modflow6": {
+        "title": "MODFLOW 6 ماڈل",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-monte-carlo-scenarios": {
+        "title": "مونٹ کارلو",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-mrv-iot-ingest": {
+        "title": "انجنسٹ MRV",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-mrv-metrics": {
+        "title": "میٹرکس MRV",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-mrv-nojin": {
+        "title": "nojin MRV",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-mrv-quality-assurance": {
+        "title": "معیار MRV",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-multi-stress-engine": {
+        "title": "کثیر انجن",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-ndvi-analysis": {
+        "title": "NDVI تجزیہ",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-optimization-optimizer": {
+        "title": "آپٹیمائزر",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-physics-informed-network": {
+        "title": "آگاہ فزکس",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-rothc-runner": {
+        "title": "RothC رَنر",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-scenario-manager": {
+        "title": "منیجر منظرنامہ",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-seed-optimization": {
+        "title": "بہتری بیج",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-soil-chemistry": {
+        "title": "کیمیا خاک",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-soil-degradation-model": {
+        "title": "خرابی خاک ماڈل",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-soil-health": {
+        "title": "صحت خاک",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-soil-pedotransfer": {
+        "title": "پیڈو ٹرانسفر خاک",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-soil-physics": {
+        "title": "فزکس خاک",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-soil-physics-fallback": {
+        "title": "فزکس خاک سروس",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-soil-physics-fast": {
+        "title": "فزکس خاک",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-soil-recommendations": {
+        "title": "سفارشات خاک",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-soil-salinity": {
+        "title": "نمکیت خاک",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-soil-taxonomy": {
+        "title": "درجہ بندی خاک",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-soil-texture": {
+        "title": "بافت خاک",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-soil-water-retention": {
+        "title": "برقراری خاک",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-topographic-calculations": {
+        "title": "کیلکولیٹر ٹاپوگرافی",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-uncertainty-knowledge": {
+        "title": "علم غیر یقینیت",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-water-quality": {
+        "title": "معیار پانی",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-watershed-calculator": {
+        "title": "کیلکولیٹر ویٹر شیڈ",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-weap-simulation": {
+        "title": "WEAP سمولیشن",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-swat-plus": {
+        "title": "SWAT+ سمولیشن",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-swat-runner": {
+        "title": "SWAT رَنر",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      },
+      "hydroma-hydroma-tools-what-if-engine": {
+        "title": "کیا اگر منظرنامہ انجن",
+        "description": "Запись, которую публикует реестр инструментов HyDroMa: домен, категория, точность, фаза и параметры, объявленные движком."
+      }
+    }
+  },
+  "ur": {
+    "pageMeta": {
+      "hydroma-hydroma-tools-aquacrop-runner": {
+        "title": "AquaCrop 运行器",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-carbon-calculator": {
+        "title": "计算器 碳",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-climate-adaptive-phenology": {
+        "title": "物候 气候",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-crop-scenarios": {
+        "title": "作物",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-crop-water-requirement": {
+        "title": "水 作物",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-decision-support": {
+        "title": "支持 决策",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-dynamic-stress-engine": {
+        "title": "动态 引擎",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-et0-calculator": {
+        "title": "ET0 计算器",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-gaussian-process-surrogate": {
+        "title": "替代 高斯",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-groundwater-model": {
+        "title": "地下水 模型",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-groundwater-service": {
+        "title": "地下水 服务",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-hecras-simulation": {
+        "title": "HEC-RAS 模拟",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-hydrology-fallback": {
+        "title": "回退 水文",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-hydrology-fast": {
+        "title": "快速 水文",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-hydroma-core": {
+        "title": "HyDroMa 核心",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-indices-fallback": {
+        "title": "回退 指数",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-indices-fast": {
+        "title": "快速 指数",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-irrigation-scheduler": {
+        "title": "调度 灌溉",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-modflow6": {
+        "title": "MODFLOW 6 模型",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-monte-carlo-scenarios": {
+        "title": "蒙特卡洛",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-mrv-iot-ingest": {
+        "title": "接入 MRV",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-mrv-metrics": {
+        "title": "指标 MRV",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-mrv-nojin": {
+        "title": "nojin MRV",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-mrv-quality-assurance": {
+        "title": "质量 MRV",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-multi-stress-engine": {
+        "title": "多 引擎",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-ndvi-analysis": {
+        "title": "NDVI 分析",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-optimization-optimizer": {
+        "title": "优化器",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-physics-informed-network": {
+        "title": "信息 物理",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-rothc-runner": {
+        "title": "RothC 运行器",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-scenario-manager": {
+        "title": "管理器 情景",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-seed-optimization": {
+        "title": "优化 种子",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-soil-chemistry": {
+        "title": "化学 土壤",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-soil-degradation-model": {
+        "title": "退化 土壤 模型",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-soil-health": {
+        "title": "健康 土壤",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-soil-pedotransfer": {
+        "title": "土壤传递 土壤",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-soil-physics": {
+        "title": "物理 土壤",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-soil-physics-fallback": {
+        "title": "物理 土壤 服务",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-soil-physics-fast": {
+        "title": "物理 土壤",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-soil-recommendations": {
+        "title": "建议 土壤",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-soil-salinity": {
+        "title": "盐度 土壤",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-soil-taxonomy": {
+        "title": "分类 土壤",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-soil-texture": {
+        "title": "质地 土壤",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-soil-water-retention": {
+        "title": "保持 土壤",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-topographic-calculations": {
+        "title": "计算器 地形",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-uncertainty-knowledge": {
+        "title": "知识 不确定性",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-water-quality": {
+        "title": "质量 水",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-watershed-calculator": {
+        "title": "计算器 流域",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-weap-simulation": {
+        "title": "WEAP 模拟",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-swat-plus": {
+        "title": "SWAT+ 模拟",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-swat-runner": {
+        "title": "SWAT 运行器",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      },
+      "hydroma-hydroma-tools-what-if-engine": {
+        "title": "假如 情景 引擎",
+        "description": "وہ ریکارڈ جو HyDroMa ٹول رجسٹری شائع کرتی ہے: ڈومین، زمرہ، درستگی، مرحلہ اور انجن کے بیان کردہ پیمانے۔"
+      }
+    }
+  },
+  "zh": {
+    "pageMeta": {
+      "hydroma-hydroma-tools-aquacrop-runner": {
+        "title": "AquaCrop",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-carbon-calculator": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-climate-adaptive-phenology": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-crop-scenarios": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-crop-water-requirement": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-decision-support": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-dynamic-stress-engine": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-et0-calculator": {
+        "title": "ET0",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-gaussian-process-surrogate": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-groundwater-model": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-groundwater-service": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-hecras-simulation": {
+        "title": "HEC-RAS",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-hydrology-fallback": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-hydrology-fast": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-hydroma-core": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-indices-fallback": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-indices-fast": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-irrigation-scheduler": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-modflow6": {
+        "title": "MODFLOW 6",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-monte-carlo-scenarios": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-mrv-iot-ingest": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-mrv-metrics": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-mrv-nojin": {
+        "title": "nojin",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-mrv-quality-assurance": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-multi-stress-engine": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-ndvi-analysis": {
+        "title": "NDVI",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-optimization-optimizer": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-physics-informed-network": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-rothc-runner": {
+        "title": "RothC",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-scenario-manager": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-seed-optimization": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-soil-chemistry": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-soil-degradation-model": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-soil-health": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-soil-pedotransfer": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-soil-physics": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-soil-physics-fallback": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-soil-physics-fast": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-soil-recommendations": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-soil-salinity": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-soil-taxonomy": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-soil-texture": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-soil-water-retention": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-topographic-calculations": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-uncertainty-knowledge": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-water-quality": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-watershed-calculator": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-weap-simulation": {
+        "title": "WEAP",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-swat-plus": {
+        "title": "SWAT+",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-swat-runner": {
+        "title": "SWAT",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      },
+      "hydroma-hydroma-tools-what-if-engine": {
+        "title": "HyDroMa",
+        "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+      }
+    }
+  }
+}

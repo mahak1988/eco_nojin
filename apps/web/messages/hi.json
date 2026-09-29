@@ -2525,6 +2525,310 @@
     "marketplace-market-orders-order-transitions": {
       "title": "अनुमत परिवर्तन",
       "description": "वे अगली अवस्थाएँ जो ऑर्डर स्थिति मशीन इस ऑर्डर के लिए अनुमति देती है।"
+    },
+    "hydroma-hydroma-tools-aquacrop-runner": {
+      "title": "AquaCrop रनर",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-carbon-calculator": {
+      "title": "कैलकुलेटर कार्बन",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-climate-adaptive-phenology": {
+      "title": "फीनोलॉजी जलवायु",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-crop-scenarios": {
+      "title": "फसल",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-crop-water-requirement": {
+      "title": "पानी फसल",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-decision-support": {
+      "title": "समर्थन निर्णय",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-dynamic-stress-engine": {
+      "title": "गतिशील इंजन",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-et0-calculator": {
+      "title": "ET0 कैलकुलेटर",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-gaussian-process-surrogate": {
+      "title": "प्रतिस्थापक गॉसियन",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-groundwater-model": {
+      "title": "भूजल मॉडल",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-groundwater-service": {
+      "title": "भूजल सेवा",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-hecras-simulation": {
+      "title": "HEC-RAS सिमुलेशन",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-hydrology-fallback": {
+      "title": "फ़ॉलबैक जलविज्ञान",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-hydrology-fast": {
+      "title": "तेज़ जलविज्ञान",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-hydroma-core": {
+      "title": "HyDroMa केंद्र",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-indices-fallback": {
+      "title": "फ़ॉलबैक सूचक",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-indices-fast": {
+      "title": "तेज़ सूचक",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-irrigation-scheduler": {
+      "title": "शेड्यूलर सिंचाई",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-modflow6": {
+      "title": "MODFLOW 6 मॉडल",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-monte-carlo-scenarios": {
+      "title": "मोंटे कार्लो",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-mrv-iot-ingest": {
+      "title": "इनजेस्ट एमआरवी",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-mrv-metrics": {
+      "title": "मेट्रिक्स एमआरवी",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-mrv-nojin": {
+      "title": "nojin एमआरवी",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-mrv-quality-assurance": {
+      "title": "गुणवत्ता एमआरवी",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-multi-stress-engine": {
+      "title": "बहु इंजन",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-ndvi-analysis": {
+      "title": "NDVI विश्लेषण",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-optimization-optimizer": {
+      "title": "ऑप्टिमाइज़र",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-physics-informed-network": {
+      "title": "सूचित भौतिकी",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-rothc-runner": {
+      "title": "RothC रनर",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-scenario-manager": {
+      "title": "प्रबंधक परिदृश्य",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-seed-optimization": {
+      "title": "अनुकूलन बीज",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-soil-chemistry": {
+      "title": "रसायन मिट्टी",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-soil-degradation-model": {
+      "title": "अपरदन मिट्टी मॉडल",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-soil-health": {
+      "title": "स्वास्थ्य मिट्टी",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-soil-pedotransfer": {
+      "title": "पेडोट्रांसफर मिट्टी",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-soil-physics": {
+      "title": "भौतिकी मिट्टी",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-soil-physics-fallback": {
+      "title": "भौतिकी मिट्टी सेवा",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-soil-physics-fast": {
+      "title": "भौतिकी मिट्टी",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-soil-recommendations": {
+      "title": "सिफारिशें मिट्टी",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-soil-salinity": {
+      "title": "लवणता मिट्टी",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-soil-taxonomy": {
+      "title": "वर्गीकरण मिट्टी",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-soil-texture": {
+      "title": "बनावट मिट्टी",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-soil-water-retention": {
+      "title": "प्रतिधारण मिट्टी",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-topographic-calculations": {
+      "title": "कैलकुलेटर स्थलाकृतिक",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-uncertainty-knowledge": {
+      "title": "ज्ञान अनिश्चिता",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-water-quality": {
+      "title": "गुणवत्ता पानी",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-watershed-calculator": {
+      "title": "कैलकुलेटर watershed",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-weap-simulation": {
+      "title": "WEAP सिमुलेशन",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-swat-plus": {
+      "title": "SWAT+ सिमुलेशन",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-swat-runner": {
+      "title": "SWAT रनर",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "hydroma-hydroma-tools-what-if-engine": {
+      "title": "क्या-अगर परिदृश्य इंजन",
+      "description": "वह रिकॉर्ड जो HyDroMa टूल रजिस्ट्री प्रकाशित करती है: डोमेन, श्रेणी, निष्पादन, चरण और इंजन द्वारा घोषित पैरामीटर।"
+    },
+    "workspace-workspace": {
+      "title": "कार्यक्षेत्र",
+      "description": "कार्यक्षेत्र डैशबोर्ड: सौंपे गए कार्य, सिस्टम स्थिति और दैनिक संचालन।"
+    },
+    "workspace-workspace-approvals": {
+      "title": "अनुमोदन",
+      "description": "लंबित अनुमोदन: आगे बढ़ने से पहले आपके निर्णय की प्रतीक्षा कर रहे अनुरोध।"
+    },
+    "workspace-workspace-assignments": {
+      "title": "कार्य आवंटन",
+      "description": "वर्तमान कार्य आवंटन: कौन किस पर काम कर रहा है और हर कार्य की स्थिति।"
+    },
+    "workspace-workspace-cases": {
+      "title": "केस",
+      "description": "केस रिकॉर्ड: खुले अनुरोध और शिकायतें, हर एक की प्रगति के साथ।"
+    },
+    "workspace-workspace-knowledge": {
+      "title": "ज्ञान",
+      "description": "प्रकाशित ज्ञान आधार में खोजें और हर परिणाम का स्रोत देखें।"
+    },
+    "workspace-workspace-operations": {
+      "title": "संचालन",
+      "description": "सिंक स्थिति: क्लाउड कनेक्शन, लंबित घटनाएँ और अंतिम परिणाम।"
+    },
+    "workspace-workspace-operations-jobs": {
+      "title": "जॉब",
+      "description": "निर्धारित जॉब और प्रत्येक की वर्तमान स्थिति।"
+    },
+    "workspace-workspace-overview": {
+      "title": "अवलोकन",
+      "description": "आपकी संस्थाएँ और उनमें आपकी भूमिका।"
+    },
+    "workspace-workspace-reports": {
+      "title": "रिपोर्ट",
+      "description": "नियमित रिपोर्ट: क्या तैयार हुआ और किसकी समीक्षा बाकी है।"
+    },
+    "workspace-workspace-settings-access": {
+      "title": "पहुँच और भूमिकाएँ",
+      "description": "कार्यक्षेत्र तक कौन पहुँच सकता है, और किस अनुमति से।"
+    },
+    "workspace-workspace-settings-notifications": {
+      "title": "सूचना प्राथमिकताएँ",
+      "description": "वे चैनल चुनें जिन पर आप सूचना पाना चाहते हैं।"
+    },
+    "workspace-workspace-targets": {
+      "title": "लक्ष्य",
+      "description": "घोषित लक्ष्य: जिन संख्याओं का प्रयास हो रहा है और उन तक की प्रगति।"
+    },
+    "workspace-workspace-team": {
+      "title": "टीम",
+      "description": "टीम के सदस्य और हर संस्था में उनकी सदस्यता।"
+    },
+    "admin-admin": {
+      "title": "प्रशासन",
+      "description": "प्लेटफ़ॉर्म प्रशासन डैशबोर्ड: समग्र स्थिति, रखरखाव और चेतावनियाँ।"
+    },
+    "admin-admin-design-tokens": {
+      "title": "डिज़ाइन टोकन",
+      "description": "वे साझा डिज़ाइन मान जिनसे इंटरफ़ेस बना है।"
+    },
+    "admin-admin-feature-flags": {
+      "title": "फ़ीचर फ़्लैग",
+      "description": "इस वातावरण में क्या चालू है और क्या बंद है।"
+    },
+    "admin-admin-jobs": {
+      "title": "निर्धारित जॉब",
+      "description": "निर्धारित जॉब और हर एक के अंतिम चलाने की स्थिति।"
+    },
+    "admin-admin-localization-translations": {
+      "title": "उपलब्ध लोकेल",
+      "description": "वे लोकेल जिनमें प्लेटफ़ॉर्म सामग्री अनूदित है।"
+    },
+    "admin-admin-security": {
+      "title": "सुरक्षा",
+      "description": "लॉगिन, कनेक्शन और जोखिमों का अवलोकन।"
+    },
+    "admin-admin-users": {
+      "title": "उपयोगकर्ता",
+      "description": "उपयोगकर्ता खाते और उनकी स्थिति।"
+    },
+    "public-trust-audits": {
+      "title": "सुरक्षा ऑडिट",
+      "description": "सुरक्षा ऑडिट का अभिलेख: किसने क्या और कब किया।"
+    },
+    "public-trust-carbon-registry": {
+      "title": "कार्बन रजिस्ट्री",
+      "description": "कार्बन रजिस्ट्री के लिए उपलब्ध मानक।"
+    },
+    "public-trust-disclosure": {
+      "title": "प्रकटीकरण",
+      "description": "कोई प्रश्न पूछने या समस्या बताने के लिए हमसे संपर्क करें।"
+    },
+    "public-trust-provenance": {
+      "title": "प्रवर्तकता",
+      "description": "हर आँकड़ा कहाँ से आया, प्रमाण-शृंखला के साथ।"
+    },
+    "public-trust-report": {
+      "title": "रिपोर्ट",
+      "description": "प्रकाशित आँकड़े: आवेदन, प्राप्त भूमि और कवरेज।"
     }
   },
   "pages": {

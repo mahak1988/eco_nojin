@@ -1,0 +1,184 @@
+{
+  "shapes": [
+    {
+      "endpoint": "/api/v1/marketplace/admin/orders",
+      "shape": "rows",
+      "rowsKey": "orders",
+      "evidence": "routers/marketplace.py:904 returns {\"orders\": [{\"id\": o.id, \"product_name\": o.product_name, \"buyer_name\": o.buyer_name, \"seller_id\": …, \"quantity_kg\": o.quantity_kg, \"total_price\": o.total_price, \"status\": o.status.value, \"created_at\": o.created_at.isoformat()} for o in orders]}"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/admin/stats",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "routers/marketplace.py:852 returns {\"total_products\": len(products), \"total_producers\": len(producers), \"organic_products\": sum(1 for p in products if p.get(\"organic_certified\")), \"orders\": order_manager.get_revenue_stats()} — four counters, one document"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/cart",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "routers/marketplace.py:582 returns {\"cart_id\": cart.id, \"items\": cart.items, \"total_items\": cart.total_items, \"subtotal\": cart.subtotal} (empty cart at :581 returns {\"cart_id\": None, \"items\": [], \"total_items\": 0, \"subtotal\": 0}) — one cart document, items is a field of it"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/marketplaces",
+      "shape": "rows",
+      "rowsKey": "marketplaces",
+      "evidence": "routers/marketplace.py:994 returns {\"marketplaces\": [{\"id\": m.id, \"name\": m.name, \"slug\": m.slug, …, \"created_at\": m.created_at.isoformat()} for m in marketplaces]}"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/marketplaces/{marketplace_id}",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "routers/marketplace.py:1030 returns {\"id\": marketplace.id, \"name\": …, \"slug\": …, \"marketplace_type\": …, \"founder_ids\": …, \"status\": …, \"admin_approved\": …, \"created_at\": …} — one marketplace document"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/marketplaces/{marketplace_id}/shops",
+      "shape": "rows",
+      "rowsKey": "shops",
+      "evidence": "routers/marketplace.py:1094 returns {\"shops\": [{\"id\": s.id, \"marketplace_id\": s.marketplace_id, \"user_id\": s.user_id, \"shop_name\": s.shop_name, \"shop_description\": …, \"status\": s.status, \"is_verified\": s.is_verified, \"created_at\": s.created_at.isoformat()} for s in shops]}"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/orders",
+      "shape": "rows",
+      "rowsKey": "orders",
+      "evidence": "routers/marketplace.py:323 returns {\"orders\": [{\"id\": o.id, \"product_name\": o.product_name, \"buyer_name\": o.buyer_name, \"seller_id\": …, \"quantity_kg\": o.quantity_kg, \"total_price\": o.total_price, \"status\": o.status.value, \"created_at\": o.created_at.isoformat()} for o in orders], \"count\": len(orders)}"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/orders/{order_id}/track",
+      "shape": "rows",
+      "rowsKey": "timeline",
+      "evidence": "routers/marketplace.py:417 returns {\"order_id\": order.id, \"order_number\": …, \"current_status\": …, \"timeline\": [{\"timestamp\": …, \"status\": …, \"title\": …, \"description\": …}, …]} — the list is the tracking timeline"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/payments",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "routers/marketplace.py:1164 `return out`, where out = payment.to_dict() (plus `out[\"bank_instructions\"]` for the bank method) — one payment document, not a list"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/payments/{payment_id}/escrow",
+      "shape": "rows",
+      "rowsKey": "entries",
+      "evidence": "routers/marketplace.py:1257 returns {\"payment_id\": payment_id, \"payment_status\": payment.status, \"escrow_status\": payment.escrow_status, \"entries\": [{\"id\": e.id, \"entry_type\": e.entry_type, \"amount\": float(e.amount) …} for e in entries]}"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/producers",
+      "shape": "rows",
+      "rowsKey": "producers",
+      "evidence": "routers/marketplace.py:261 returns {\"producers\": [{\"id\": p.id, \"name\": p.name, \"location\": p.location, \"producer_type\": p.producer_type, \"rating\": p.rating, \"total_sales\": p.total_sales, \"certifications\": [c.value for c in p.certifications]} for p in producers], \"count\": len(producers)}"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/products",
+      "shape": "rows",
+      "rowsKey": "products",
+      "evidence": "routers/marketplace.py:92 returns {\"products\": [{\"id\": p.id, \"name\": p.name, \"slug\": …, \"category\": …, \"description\": …, \"price_per_kg\": …, \"quantity_available_kg\": …, \"organic_certified\": …, \"producer_name\": …, \"origin_location\": …, \"traceability_code\": …, \"images\": …} for p in products], \"count\": len(products)}"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/products/search",
+      "shape": "rows",
+      "rowsKey": "results",
+      "evidence": "routers/marketplace.py:158 returns {\"query\": q, \"results\": [{\"id\": p.id, \"name\": p.name, \"price_per_kg\": p.price_per_kg} for p in results], \"count\": len(results)}"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/products/{product_id}",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "routers/marketplace.py:174 returns {\"id\": product.id, \"name\": product.name, \"category\": …, \"description\": …, \"price_per_kg\": …, \"quantity_available_kg\": …, \"minimum_order_kg\": …, \"organic_certified\": …, \"carbon_footprint_kg_co2\": …, \"water_footprint_liters\": …, \"producer_name\": …, \"origin_location\": …, \"harvest_date\": …, \"batch_number\": …, \"traceability_code\": …, \"images\": …} — one product document"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/products/{product_id}/carbon-credits",
+      "shape": "rows",
+      "rowsKey": "credits",
+      "evidence": "routers/marketplace.py:515 returns {\"product_id\": product_id, \"product_name\": product.name, \"carbon_footprint_kg_co2\": …, \"count\": len(credits), \"credits\": [{\"token_id\": c.credit_id, \"amount_tonnes\": c.amount, \"owner\": c.owner, \"issued_at\": …, \"retired\": c.retired, \"retired_at\": …, \"tx_hash\": c.tx_hash} for c in credits]}"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/products/{product_id}/trace",
+      "shape": "rows",
+      "rowsKey": "events",
+      "evidence": "routers/marketplace.py:206 returns {\"product_id\": product_id, \"traceability_code\": product.traceability_code, \"events\": [{\"timestamp\": r.timestamp.isoformat(), \"event\": r.event, \"location\": r.location, \"actor\": r.actor, \"notes\": r.notes} for r in trace], \"qr_data\": trace_system.generate_qr_data(…)}"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/stats",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "routers/marketplace.py:434 returns {\"total_products\": len(products), \"total_producers\": len(producers), \"organic_products\": sum(1 for p in products if p.organic_certified), \"orders\": manager.get_revenue_stats()} — a counter block, not a table"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/vendors/{vendor_id}",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "routers/marketplace.py:801 returns {\"id\": r.id, \"shop_name\": r.shop_name, \"name\": r.shop_name, \"description\": …, \"location\": …, \"village_id\": r.village_id, \"status\": r.status, \"is_verified\": …, \"rating\": …, \"total_sales\": …} — one vendor document"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/vendors/{vendor_id}/orders",
+      "shape": "rows",
+      "rowsKey": "orders",
+      "evidence": "routers/marketplace.py:839 returns {\"orders\": vendor_orders, \"count\": len(vendor_orders)}"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/vendors/{vendor_id}/products",
+      "shape": "rows",
+      "rowsKey": "products",
+      "evidence": "routers/marketplace.py:824 returns {\"products\": vendor_products, \"vendor_id\": vendor_id}"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/villages/b2b/demands/my",
+      "shape": "rows",
+      "rowsKey": null,
+      "evidence": "routers/village_hub.py:997 `return [_serialize_b2b_demand(d) for d in demands]`, declared `@router.get(\"/b2b/demands/my\", response_model=list)` at :989 — a bare array, so there is no envelope key"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/villages/b2b/matches/{village_id}",
+      "shape": "rows",
+      "rowsKey": null,
+      "evidence": "routers/village_hub.py:1005 `return await service.match_b2b_demands(village_id)`, declared `@router.get(\"/b2b/matches/{village_id}\", response_model=list)` at :1000 — a bare array"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/villages/entrepreneurs",
+      "shape": "rows",
+      "rowsKey": "profiles",
+      "evidence": "routers/village_hub.py:635 returns {\"profiles\": [_serialize_entrepreneur_profile(p) for p in profiles], \"count\": len(profiles)} — the list key is `profiles`, not `entrepreneurs`"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/villages/entrepreneurs/me",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "routers/village_hub.py:604 returns {\"exists\": False} when there is no profile, otherwise :605 `return _serialize_entrepreneur_profile(profile)` — one document either way, declared `response_model=dict` at :595"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/villages/investments",
+      "shape": "rows",
+      "rowsKey": null,
+      "evidence": "routers/village_hub.py:674 `return [_serialize_investment(i) for i in investments]`, declared `@router.get(\"/investments\", response_model=list)` at :666 — a bare array"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/villages/nomadic-communities",
+      "shape": "rows",
+      "rowsKey": null,
+      "evidence": "routers/village_hub.py:1189 `return [_serialize_nomadic(c) for c in communities]`, declared `@router.get(\"/nomadic-communities\", response_model=list)` at :1182 — a bare array"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/villages/opportunities",
+      "shape": "rows",
+      "rowsKey": null,
+      "evidence": "routers/village_hub.py:516 `return [_serialize_opportunity(o) for o in opps]`, declared `@router.get(\"/opportunities\", response_model=list)` at :491 — a bare array"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/villages/opportunities/{opportunity_id}/team",
+      "shape": "rows",
+      "rowsKey": null,
+      "evidence": "routers/village_hub.py:1046 `return [_serialize_engagement(e) for e in team]`, declared `@router.get(\"/opportunities/{opportunity_id}/team\", response_model=list)` at :1041 — a bare array"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/villages/projects/{project_id}/engaged",
+      "shape": "rows",
+      "rowsKey": null,
+      "evidence": "routers/village_hub.py:1054 `return [_serialize_engagement(e) for e in engagements]`, declared `@router.get(\"/projects/{project_id}/engaged\", response_model=list)` at :1049 — a bare array of engagements, not one engagement"
+    },
+    {
+      "endpoint": "/api/v1/marketplace/villages/{village_id}",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "routers/village_hub.py:307 `return profile` (with profile[\"name\"] set from _get_village_name), declared `@router.get(\"/{village_id}\", response_model=dict)` at :300 — one village profile document"
+    }
+  ]
+}

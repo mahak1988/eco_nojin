@@ -2525,6 +2525,310 @@
     "marketplace-market-orders-order-transitions": {
       "title": "允许的转换",
       "description": "订单状态机为该订单允许的下一批状态。"
+    },
+    "hydroma-hydroma-tools-aquacrop-runner": {
+      "title": "AquaCrop",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-carbon-calculator": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-climate-adaptive-phenology": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-crop-scenarios": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-crop-water-requirement": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-decision-support": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-dynamic-stress-engine": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-et0-calculator": {
+      "title": "ET0",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-gaussian-process-surrogate": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-groundwater-model": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-groundwater-service": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-hecras-simulation": {
+      "title": "HEC-RAS",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-hydrology-fallback": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-hydrology-fast": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-hydroma-core": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-indices-fallback": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-indices-fast": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-irrigation-scheduler": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-modflow6": {
+      "title": "MODFLOW 6",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-monte-carlo-scenarios": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-mrv-iot-ingest": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-mrv-metrics": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-mrv-nojin": {
+      "title": "nojin",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-mrv-quality-assurance": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-multi-stress-engine": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-ndvi-analysis": {
+      "title": "NDVI",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-optimization-optimizer": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-physics-informed-network": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-rothc-runner": {
+      "title": "RothC",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-scenario-manager": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-seed-optimization": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-soil-chemistry": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-soil-degradation-model": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-soil-health": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-soil-pedotransfer": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-soil-physics": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-soil-physics-fallback": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-soil-physics-fast": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-soil-recommendations": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-soil-salinity": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-soil-taxonomy": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-soil-texture": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-soil-water-retention": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-topographic-calculations": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-uncertainty-knowledge": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-water-quality": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-watershed-calculator": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-weap-simulation": {
+      "title": "WEAP",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-swat-plus": {
+      "title": "SWAT+",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-swat-runner": {
+      "title": "SWAT",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "hydroma-hydroma-tools-what-if-engine": {
+      "title": "HyDroMa",
+      "description": "HyDroMa 工具注册表发布的记录：领域、类别、保真度、阶段以及引擎声明的参数。"
+    },
+    "workspace-workspace": {
+      "title": "工作区",
+      "description": "工作区仪表板：已分配的工作、系统健康状况与日常运营。"
+    },
+    "workspace-workspace-approvals": {
+      "title": "审批",
+      "description": "待审批：需要您决定后才能继续处理的请求。"
+    },
+    "workspace-workspace-assignments": {
+      "title": "任务分派",
+      "description": "当前工作分派：谁在做什么，以及每项任务的状态。"
+    },
+    "workspace-workspace-cases": {
+      "title": "案例",
+      "description": "案例记录：未结的请求与投诉，以及各自的进展。"
+    },
+    "workspace-workspace-knowledge": {
+      "title": "知识库",
+      "description": "搜索已发布的知识库，并查看每条结果的来源。"
+    },
+    "workspace-workspace-operations": {
+      "title": "运维",
+      "description": "同步状态：云端连接、排队中的事件以及最近一次结果。"
+    },
+    "workspace-workspace-operations-jobs": {
+      "title": "作业",
+      "description": "已排定的作业及其当前状态。"
+    },
+    "workspace-workspace-overview": {
+      "title": "概览",
+      "description": "您所属的组织以及您在其中的角色。"
+    },
+    "workspace-workspace-reports": {
+      "title": "报告",
+      "description": "例行报告：已产出什么，以及还有哪些需要复核。"
+    },
+    "workspace-workspace-settings-access": {
+      "title": "访问与角色",
+      "description": "谁可以访问工作区，以及拥有什么权限。"
+    },
+    "workspace-workspace-settings-notifications": {
+      "title": "通知偏好",
+      "description": "选择您希望接收通知的渠道。"
+    },
+    "workspace-workspace-targets": {
+      "title": "目标",
+      "description": "已公布的目标：要争取的数值以及当前进展。"
+    },
+    "workspace-workspace-team": {
+      "title": "团队",
+      "description": "团队成员及其在各组织中的归属。"
+    },
+    "admin-admin": {
+      "title": "管理",
+      "description": "平台管理仪表板：整体状态、维护与告警。"
+    },
+    "admin-admin-design-tokens": {
+      "title": "设计令牌",
+      "description": "构建界面所依据的共享设计值。"
+    },
+    "admin-admin-feature-flags": {
+      "title": "功能开关",
+      "description": "此环境中哪些功能已启用、哪些已停用。"
+    },
+    "admin-admin-jobs": {
+      "title": "定时作业",
+      "description": "定时作业以及每个作业上次运行的状态。"
+    },
+    "admin-admin-localization-translations": {
+      "title": "可用语言",
+      "description": "平台内容已翻译的语言。"
+    },
+    "admin-admin-security": {
+      "title": "安全",
+      "description": "登录、连接与风险的概览。"
+    },
+    "admin-admin-users": {
+      "title": "用户",
+      "description": "用户账户及其状态。"
+    },
+    "public-trust-audits": {
+      "title": "安全审计",
+      "description": "安全审计轨迹：谁在何时做了什么。"
+    },
+    "public-trust-carbon-registry": {
+      "title": "碳登记",
+      "description": "碳登记可用的标准。"
+    },
+    "public-trust-disclosure": {
+      "title": "披露",
+      "description": "联系我们提出问题或报告问题。"
+    },
+    "public-trust-provenance": {
+      "title": "来源",
+      "description": "每项数据的出处，并附证据链。"
+    },
+    "public-trust-report": {
+      "title": "报告",
+      "description": "已公布的数字：申请、接收面积与覆盖范围。"
     }
   },
   "pages": {

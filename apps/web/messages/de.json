@@ -2525,6 +2525,310 @@
     "marketplace-market-orders-order-transitions": {
       "title": "Zulässige Übergaben",
       "description": "Die nächsten Zustände, die die Bestellungs-Zustandsmaschine für diese Bestellung zulässt."
+    },
+    "hydroma-hydroma-tools-aquacrop-runner": {
+      "title": "AquaCrop Runner",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-carbon-calculator": {
+      "title": "Rechner Kohlenstoff",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-climate-adaptive-phenology": {
+      "title": "Phénologie Klima",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-crop-scenarios": {
+      "title": "Kulturpflanze",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-crop-water-requirement": {
+      "title": "Wasser Kulturpflanze",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-decision-support": {
+      "title": "Unterstützung Entscheidung",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-dynamic-stress-engine": {
+      "title": "dynamisch Motor",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-et0-calculator": {
+      "title": "ET0 Rechner",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-gaussian-process-surrogate": {
+      "title": "Ersatzmodell Gauß",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-groundwater-model": {
+      "title": "Grundwasser Modell",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-groundwater-service": {
+      "title": "Grundwasser Dienst",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-hecras-simulation": {
+      "title": "HEC-RAS Simulation",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-hydrology-fallback": {
+      "title": "Fallback Hydrologie",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-hydrology-fast": {
+      "title": "schnell Hydrologie",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-hydroma-core": {
+      "title": "HyDroMa Kern",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-indices-fallback": {
+      "title": "Fallback Index",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-indices-fast": {
+      "title": "schnell Index",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-irrigation-scheduler": {
+      "title": "Scheduler Bewässerung",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-modflow6": {
+      "title": "MODFLOW 6 Modell",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-monte-carlo-scenarios": {
+      "title": "Monte-Carlo",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-mrv-iot-ingest": {
+      "title": "Ingest MRV",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-mrv-metrics": {
+      "title": "Metriken MRV",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-mrv-nojin": {
+      "title": "nojin MRV",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-mrv-quality-assurance": {
+      "title": "Qualität MRV",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-multi-stress-engine": {
+      "title": "Multi Motor",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-ndvi-analysis": {
+      "title": "NDVI Analyse",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-optimization-optimizer": {
+      "title": "Optimierer",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-physics-informed-network": {
+      "title": "informiert Physik",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-rothc-runner": {
+      "title": "RothC Runner",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-scenario-manager": {
+      "title": "Manager Szenario",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-seed-optimization": {
+      "title": "Optimierung Saatgut",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-soil-chemistry": {
+      "title": "Chemie Boden",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-soil-degradation-model": {
+      "title": "Degradation Boden Modell",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-soil-health": {
+      "title": "Gesundheit Boden",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-soil-pedotransfer": {
+      "title": "Pedotransfer Boden",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-soil-physics": {
+      "title": "Physik Boden",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-soil-physics-fallback": {
+      "title": "Physik Boden Dienst",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-soil-physics-fast": {
+      "title": "Physik Boden",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-soil-recommendations": {
+      "title": "Empfehlungen Boden",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-soil-salinity": {
+      "title": "Salinität Boden",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-soil-taxonomy": {
+      "title": "Taxonomie Boden",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-soil-texture": {
+      "title": "Textur Boden",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-soil-water-retention": {
+      "title": "Rückhalt Boden",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-topographic-calculations": {
+      "title": "Rechner Topografie",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-uncertainty-knowledge": {
+      "title": "Wissen Unsicherheit",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-water-quality": {
+      "title": "Qualität Wasser",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-watershed-calculator": {
+      "title": "Rechner Einzugsgebiet",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-weap-simulation": {
+      "title": "WEAP Simulation",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-swat-plus": {
+      "title": "SWAT+ Simulation",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-swat-runner": {
+      "title": "SWAT Runner",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "hydroma-hydroma-tools-what-if-engine": {
+      "title": "Was-wäre-wenn Szenario Motor",
+      "description": "Der Registry-Eintrag, den die HyDroMa-Werkzeugliste veröffentlicht: Domäne, Kategorie, Auflösung, Phase und die vom Motor deklarierten Parameter."
+    },
+    "workspace-workspace": {
+      "title": "Arbeitsbereich",
+      "description": "Arbeitsbereich-Dashboard: zugewiesene Aufgaben, Systemzustand und tägliche Vorgänge."
+    },
+    "workspace-workspace-approvals": {
+      "title": "Genehmigungen",
+      "description": "Ausstehende Genehmigungen: Anfragen, die vor dem nächsten Schritt auf Ihre Entscheidung warten."
+    },
+    "workspace-workspace-assignments": {
+      "title": "Zuweisungen",
+      "description": "Aktuelle Arbeitszuweisungen: wer an was arbeitet und in welchem Stand."
+    },
+    "workspace-workspace-cases": {
+      "title": "Fälle",
+      "description": "Fallakte: offene Anfragen und Beschwerden mit ihrem Fortschritt."
+    },
+    "workspace-workspace-knowledge": {
+      "title": "Wissen",
+      "description": "Durchsuche das veröffentlichte Wissensarchiv und sieh die Quelle jedes Treffers."
+    },
+    "workspace-workspace-operations": {
+      "title": "Betrieb",
+      "description": "Synchronisationsstatus: Cloud-Verbindung, ausstehende Ereignisse und letztes Ergebnis."
+    },
+    "workspace-workspace-operations-jobs": {
+      "title": "Aufträge",
+      "description": "Geplante Aufträge und ihr aktueller Status."
+    },
+    "workspace-workspace-overview": {
+      "title": "Überblick",
+      "description": "Die Organisationen, denen Sie angehören, und Ihre Rollen darin."
+    },
+    "workspace-workspace-reports": {
+      "title": "Berichte",
+      "description": "Regelmäßige Berichte: was erstellt wurde und was geprüft werden muss."
+    },
+    "workspace-workspace-settings-access": {
+      "title": "Zugriff und Rollen",
+      "description": "Wer auf den Arbeitsbereich zugreifen darf und mit welcher Berechtigung."
+    },
+    "workspace-workspace-settings-notifications": {
+      "title": "Benachrichtigungseinstellungen",
+      "description": "Wählen Sie die Kanäle, über die Sie benachrichtigt werden möchten."
+    },
+    "workspace-workspace-targets": {
+      "title": "Ziele",
+      "description": "Angekündigte Ziele: die Zielwerte und der Fortschritt darauf zu."
+    },
+    "workspace-workspace-team": {
+      "title": "Team",
+      "description": "Teammitglieder und ihre Mitgliedschaft in den einzelnen Organisationen."
+    },
+    "admin-admin": {
+      "title": "Verwaltung",
+      "description": "Plattform-Verwaltung: Gesamtzustand, Wartung und Warnungen."
+    },
+    "admin-admin-design-tokens": {
+      "title": "Design-Tokens",
+      "description": "Die gemeinsamen Gestaltungswerte, aus denen die Oberfläche entsteht."
+    },
+    "admin-admin-feature-flags": {
+      "title": "Feature-Flags",
+      "description": "Was in dieser Umgebung aktiviert und was abgeschaltet ist."
+    },
+    "admin-admin-jobs": {
+      "title": "Geplante Aufträge",
+      "description": "Geplante Aufträge und der Status ihres letzten Laufs."
+    },
+    "admin-admin-localization-translations": {
+      "title": "Verfügbare Sprachen",
+      "description": "Die Sprachen, in die die Inhalte der Plattform übersetzt sind."
+    },
+    "admin-admin-security": {
+      "title": "Sicherheit",
+      "description": "Überblick über Anmeldungen, Verbindungen und Risiken."
+    },
+    "admin-admin-users": {
+      "title": "Benutzer",
+      "description": "Benutzerkonten und ihr Status."
+    },
+    "public-trust-audits": {
+      "title": "Sicherheitsaudit",
+      "description": "Protokoll des Sicherheitsaudits: wer hat was und wann getan."
+    },
+    "public-trust-carbon-registry": {
+      "title": "CO₂-Register",
+      "description": "Die verfügbaren Standards für Kohlenstoffregister."
+    },
+    "public-trust-disclosure": {
+      "title": "Offenlegung",
+      "description": "Nehmen Sie Kontakt auf, um eine Frage zu stellen oder ein Problem zu melden."
+    },
+    "public-trust-provenance": {
+      "title": "Herkunft",
+      "description": "Woher jede Angabe stammt, mit der Belegkette."
+    },
+    "public-trust-report": {
+      "title": "Bericht",
+      "description": "Die gemeldeten Zahlen: Anträge, Flächen und Umfang."
     }
   },
   "pages": {

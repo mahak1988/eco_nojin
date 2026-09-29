@@ -1,0 +1,82 @@
+{
+  "shapes": [
+    {
+      "endpoint": "/api/v1/tool-registry/{tool_id}",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "services/api_gateway/routers/tool_registry.py:224-234 — `return _to_response(tool)`; one ToolResponse for one ToolRegistryEntry row."
+    },
+    {
+      "endpoint": "/api/v1/hydroma/soil/{model_id}",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "services/api_gateway/routers/hydroma_soil.py:431-436 — `return spec`, the single `_SPECS` entry keyed by model_id."
+    },
+    {
+      "endpoint": "/api/v1/hydroma/water/{model_id}",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "services/api_gateway/routers/hydroma_water.py:269-274 — `return spec`, the single `_SPECS` entry keyed by model_id."
+    },
+    {
+      "endpoint": "/api/v1/hydroma/climate/{model_id}",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "services/api_gateway/routers/hydroma_climate.py:258-263 — `return spec`, the single `_SPECS` entry keyed by model_id."
+    },
+    {
+      "endpoint": "/api/v1/hydroma/economics/{model_id}",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "services/api_gateway/routers/hydroma_economics.py:371-376 — `return spec`, the single `_SPECS` entry keyed by model_id."
+    },
+    {
+      "endpoint": "/api/v1/hydroma/carbon/{model_id}",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "services/api_gateway/routers/hydroma_carbon.py:81-86 — `return spec`, the single `_SPECS` entry keyed by model_id."
+    },
+    {
+      "endpoint": "/api/v1/hydroma/indices/{model_id}",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "services/api_gateway/routers/hydroma_indices.py:572-577 — `return spec`, the single `_SPECS` entry keyed by model_id."
+    },
+    {
+      "endpoint": "/api/v1/hydroma/mrv/{model_id}",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "services/api_gateway/routers/hydroma_mrv.py:144-149 — `return spec`, the single `_SPECS` entry keyed by model_id."
+    },
+    {
+      "endpoint": "/api/v1/hydroma/simulation/{model_id}",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "services/api_gateway/routers/hydroma_simulation.py:89-94 — `return spec`, the single `_SPECS` entry keyed by model_id."
+    },
+    {
+      "endpoint": "/api/v1/hydroma/models/{model_id}",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "services/api_gateway/routers/hydroma_dashboard.py:737-749 — `return ModelDetail(**model_data)`, one document."
+    },
+    {
+      "endpoint": "/api/v1/hydroma/models/{model_id}/validation",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "services/api_gateway/routers/hydroma_dashboard.py:752-800 — `return ValidationReport(...)`, one document with a `details` list, not a rows envelope."
+    },
+    {
+      "endpoint": "/api/v1/carbon/credits/{token_id}/history",
+      "shape": "rows",
+      "rowsKey": "history",
+      "evidence": "services/api_gateway/routers/carbon.py:154-164 — `return {\"token_id\": token_id, \"history\": history}`; the envelope key is `history`, not `token_id`."
+    },
+    {
+      "endpoint": "/api/v1/carbon/verra/{registry_id}",
+      "shape": "record",
+      "rowsKey": null,
+      "evidence": "services/api_gateway/routers/carbon.py:214-227 — `return result`, one Verra project record."
+    }
+  ]
+}
