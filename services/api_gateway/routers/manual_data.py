@@ -29,16 +29,28 @@ class ManualStatusResponse(BaseModel):
     tables: dict[str, int] = Field(default_factory=dict)
 
 
-class ManualRowsResponse(BaseModel):
-    """A dataset page.
+class ManualDatasetPage(BaseModel):
+    """The part every dataset page shares: a row count.
 
-    `rows` holds the dataframe records exactly as stored, so the record type is
-    the dataset's own column names. The manual tables are not homogeneous and the
+    The list itself is deliberately *not* a field of this base. The key the
+    records arrive under is the dataset's own name — `rows`, `crops`, `regions`,
+    `months` — and a subclass that inherits one key while its handler builds
+    another is filtered down to that inherited key, so the page asks for
+    `crops` and reads a 200 carrying only an empty `rows`.
+    """
+
+    count: int
+
+
+class ManualRowsResponse(ManualDatasetPage):
+    """Weather-daily and crop-calendar records, under the key `rows`.
+
+    The records hold the dataframe exactly as stored, so the record type is the
+    dataset's own column names. The manual tables are not homogeneous and the
     published contract therefore describes the envelope precisely while leaving
     the cell shape to the payload, which is what the client reads back.
     """
 
-    count: int
     rows: list[dict[str, Any]] = Field(default_factory=list)
 
 
@@ -65,16 +77,22 @@ class ManualSitesResponse(BaseModel):
     sites: list[ManualSite] = Field(default_factory=list)
 
 
-class ManualRegionsResponse(ManualRowsResponse):
-    """Soil hydraulic regions; same envelope as any other dataset page."""
+class ManualRegionsResponse(ManualDatasetPage):
+    """Soil hydraulic regions, under the key `regions` that `manual_soil` builds."""
+
+    regions: list[dict[str, Any]] = Field(default_factory=list)
 
 
-class ManualCropsResponse(ManualRowsResponse):
-    """Crop water parameters; same envelope as any other dataset page."""
+class ManualCropsResponse(ManualDatasetPage):
+    """Crop water parameters, under the key `crops` that `manual_crop_params` builds."""
+
+    crops: list[dict[str, Any]] = Field(default_factory=list)
 
 
-class ManualMonthsResponse(ManualRowsResponse):
-    """Monthly climate normals; same envelope as any other dataset page."""
+class ManualMonthsResponse(ManualDatasetPage):
+    """Monthly climate normals, under the key `months` that `manual_normals` builds."""
+
+    months: list[dict[str, Any]] = Field(default_factory=list)
 
 
 @router.get("/status", response_model=ManualStatusResponse)
